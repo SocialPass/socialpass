@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
-from .models import AirdropGate, AirdropList, Requirement, Signature
+from .models import (
+	AirdropGate, AirdropList, Requirement, Signature, TicketGate, TicketList
+)
 
 
 User = get_user_model()
@@ -40,5 +42,17 @@ class AirdropGateAdmin(admin.ModelAdmin):
 class AirdropListAdmin(admin.ModelAdmin):
 	list_display = ("airdropgate", "wallet_address")
 	search_fields = ("airdropgate__title", "wallet_address")
+
+
+@admin.register(TicketGate)
+class TicketGateAdmin(admin.ModelAdmin):
+	list_display = ("title", "user", "date", "location")
+	search_fields = ("title", "user__username", "location")
+
+
+@admin.register(TicketList)
+class TicketListAdmin(admin.ModelAdmin):
+	list_display = ("ticketgate", "wallet_address", "ticket_url")
+	search_fields = ("ticketgate__title", "wallet_address", "ticket_url")
 
 

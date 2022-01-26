@@ -100,3 +100,28 @@ class AirdropList(DBModel):
 
 	def __str__(self):
 		return f"Airdrop List (Token Gate: {self.airdropgate.title})"
+
+
+class TicketGate(TokenGate):
+	"""
+	Stores an Ticket type token gate.
+	"""
+	date = models.DateTimeField()
+	location = models.CharField(max_length=1024)
+	capacity = models.IntegerField(validators=[MinValueValidator(1)])
+	deadline = models.DateTimeField()
+
+
+class TicketList(DBModel):
+	"""
+	List of all the tickets distributed by the respective Ticket token gates.
+	"""
+	ticketgate = models.ForeignKey(
+		TicketGate, on_delete=models.CASCADE, related_name="ticket_lists"
+	)
+	wallet_address = models.CharField(max_length=400)
+	ticket_url = models.URLField()
+	token_id = models.IntegerField()
+
+	def __str__(self):
+		return f"Ticket List (Token Gate: {self.ticketgate.title})"

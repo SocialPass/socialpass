@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
-import { Greeting } from '@nfty/shared';
 import { Home, DayOne, DayTwo } from './pages'
 
 function App() {

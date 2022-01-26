@@ -10,7 +10,7 @@ Development & deployment is handled with a single `package.json` file at `/front
 
 `cd v3/frontend`
 
-`yarn`
+`yarn install`
 
 ## Moonclave
 `yarn start:moonclave`

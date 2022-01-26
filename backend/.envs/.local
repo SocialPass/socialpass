@@ -1,0 +1,4 @@
+# Local
+# ------------------------------------------------------------------------------
+NFTY_DATABASE_URL="postgres:///v3db"
+DJANGO_SETTINGS_MODULE=config.settings.local

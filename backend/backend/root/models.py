@@ -42,6 +42,22 @@ class TokenGate(DBModel):
 		return self.title
 
 
+class Signature(DBModel):
+	"""
+	Stores details used to verify wallets.
+	"""
+	tokengate = models.ForeignKey(
+		TokenGate, on_delete=models.CASCADE, related_name="signatures"
+	)
+	unique_code = models.CharField(max_length=400, unique=True)
+	signing_message = models.CharField(max_length=400)
+	wallet_address = models.CharField(max_length=400)
+	is_verified = models.BooleanField(default=False)
+
+	def __str__(self):
+		return self.unique_code
+
+
 class Requirement(DBModel):
 	"""
 	Stores a requirement for a token gate, allowing for multiple requirements 

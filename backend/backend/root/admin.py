@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
-from .models import AirdropGate, AirdropList, Requirement
+from .models import AirdropGate, AirdropList, Requirement, Signature
 
 
 User = get_user_model()
@@ -15,6 +15,14 @@ admin.site.index_title = "NFTY Labs Admin"
 
 
 # Admin registrations
+
+@admin.register(Signature)
+class SignatureAdmin(admin.ModelAdmin):
+	list_display = (
+		"tokengate", "unique_code", "wallet_address", "is_verified"
+	)
+	search_fields = ("tokengate__title", "unique_code", "wallet_address")
+
 
 @admin.register(Requirement)
 class RequirementAdmin(admin.ModelAdmin):

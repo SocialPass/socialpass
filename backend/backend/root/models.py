@@ -57,3 +57,30 @@ class Requirement(DBModel):
 
 	def __str__(self):
 		return f"Requirement (Token Gate: {self.tokengate.title})"
+
+
+class AirdropGate(TokenGate):
+	"""
+	Stores an Airdrop type token gate.
+	"""
+	chain = models.CharField(max_length=50, choices=BLOCKCHAINS)
+	asset_type = models.CharField(max_length=50, choices=ASSET_TYPES)
+	asset_address = models.CharField(max_length=400)
+	amount_per_person = models.IntegerField(validators=[MinValueValidator(1)])
+	total_amount = models.IntegerField(validators=[MinValueValidator(1)])
+	start_date = models.DateTimeField()
+	end_date = models.DateTimeField()
+
+
+class AirdropList(DBModel):
+	"""
+	List of all the airdrops distributed by the respective Airdrop token gates.
+	"""
+	airdropgate = models.ForeignKey(
+		AirdropGate, on_delete=models.CASCADE, related_name="airdrop_lists"
+	)
+	wallet_address = models.CharField(max_length=400)
+	transaction_hash = models.CharField(max_length=400)
+
+	def __str__(self):
+		return f"Airdrop List (Token Gate: {self.airdropgate.title})"

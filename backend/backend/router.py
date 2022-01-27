@@ -27,6 +27,8 @@ urlpatterns += [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
+    # Django REST auth
+    path("dj-rest-auth/", include("dj_rest_auth.urls")),
 ]
 
 # Debug URL's

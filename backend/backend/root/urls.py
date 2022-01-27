@@ -1,10 +1,18 @@
 from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
+from .views import AirdropGateViewSet
+
+
 if settings.DEBUG:
     router = DefaultRouter()
 else:
     router = SimpleRouter()
+
+
+# Register the routes
+
+router.register(r"airdropgates", AirdropGateViewSet, basename="airdropgates")
 
 
 app_name = "root"

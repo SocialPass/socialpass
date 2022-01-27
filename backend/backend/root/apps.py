@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class RootConfig(AppConfig):
-    name = "backend.root"
+    name = "root"
     verbose_name = _("Root")
 
     def ready(self):

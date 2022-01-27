@@ -7,12 +7,8 @@ function DayOne() {
 	<>
 	  <main>
 		<h2>Welcome to the Day One!</h2>
-		<TokenGate type='EVENT'/>
+		<TokenGate id={1} gateType='AIRDROP'/>
 	  </main>
-	  <nav>
-		<Link to="/day-one">Day One</Link>
-		<Link to="/day-two">Day Two</Link>
-	  </nav>
 	</>
   );
 }

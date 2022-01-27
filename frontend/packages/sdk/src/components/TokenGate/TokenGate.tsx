@@ -1,48 +1,36 @@
 import React from 'react';
-import { Provider } from 'wagmi'
+import TicketGate from './_TicketGate';
+import AirdropGate from './_AirdropGate';
+import ProviderHandler from './_ProviderHandler';
 
 interface TokenGateProps {
-	type?: string
-	provider?: any
+	id: number // ID of tokengate
+	gateType: string // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
+	provider?: any // [optional]: Externally passed in wagmi provider
 }
 
-interface TokenGateProps {
-	provider?: any
-	children?: any
+interface GateTypeSwitchProps {
+	id: number // ID of tokengate
+	gateType: string // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
 }
 
-// Conditionally provide WAGMI provider
-// If 'provider' is provided, then just render children
-const ProviderHandler: React.FC<TokenGateProps> = ({provider, children}) => {
-	if (provider === undefined){
-		return (
-			<Provider>
-				{children}
-			</Provider>
-		)
+// Conditionally render TokenGate component based on gateType
+// Based on 'gateType' provided, import/use other components in this directory
+const GateTypeSwitchHandler = ({id, gateType}:GateTypeSwitchProps) => {
+	switch(gateType){
+		case 'AIRDROP':
+			return <AirdropGate/>
+		case 'TICKET':
+			return <TicketGate/>
 	}
-	return (
-		<>
-			{children}
-		</>
-	)
-}
-
-// Conditionally render TokenGate component based on type
-// Based on 'type' provided, import/use other components in this directory
-const TokenGateHandler: React.FC<TokenGateProps> = ({type, children}) => {
-	return (
-		<>
-		TGHandler: {type}
-		</>
-	)
 }
 
 
-const TokenGate: React.FC<TokenGateProps> = ({ type, provider }) => {
+// Main TokenGate component
+const TokenGate: React.FC<TokenGateProps> = ({ id, gateType, provider }: TokenGateProps) => {
 	return (
 		<ProviderHandler provider={provider}>
-			<TokenGateHandler type={type}/>
+			<GateTypeSwitchHandler id={id} gateType={gateType}/>
 		</ProviderHandler>
 	);
 }

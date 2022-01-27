@@ -7,10 +7,6 @@ function Home() {
 	  <main>
 		<h2>Welcome to the Home!</h2>
 	  </main>
-	  <ul>
-		<li><Link to="/day-one">Day One</Link></li>
-		<li><Link to="/day-two">Day Two</Link></li>
-	  </ul>
 	</>
   );
 }

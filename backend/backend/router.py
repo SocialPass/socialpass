@@ -20,7 +20,6 @@ urlpatterns += [
     # API base url
     path("api/", include("root.urls")),
     # DRF auth token
-    path("auth-token/", obtain_auth_token),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
         "api/docs/",
@@ -28,7 +27,7 @@ urlpatterns += [
         name="api-docs",
     ),
     # Django REST auth
-    path("dj-rest-auth/", include("dj_rest_auth.urls")),
+    path("api/auth/", include("dj_rest_auth.urls")),
 ]
 
 # Debug URL's

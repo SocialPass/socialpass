@@ -19,3 +19,21 @@ class AirdropGateSerializer(serializers.ModelSerializer):
 			**validated_data
 		)
 		return airdropgate
+
+
+class TicketGateSerializer(serializers.ModelSerializer):
+	"""
+	Serializes Ticket token gates.
+	"""
+	class Meta:
+		model = TicketGate
+		fields = "__all__"
+		read_only_fields = ["user", "general_type"]
+
+	def create(self, validated_data):
+		# Create the token gate
+		ticketgate = TicketGate.objects.create(
+			user=self.context["request"].user, general_type="TICKET", 
+			**validated_data
+		)
+		return ticketgate

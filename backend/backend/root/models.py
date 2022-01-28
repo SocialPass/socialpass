@@ -3,7 +3,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
-from .model_field_schemas import REQUIREMENTS_SCHEMA
+from .model_field_schemas import (
+	REQUIREMENTS_SCHEMA, REQUIREMENTS_SCHEMA_REQUIRED
+)
 from .validators import JSONSchemaValidator
 
 
@@ -100,8 +102,9 @@ class TicketGate(TokenGate):
 	capacity = models.IntegerField(validators=[MinValueValidator(1)])
 	deadline = models.DateTimeField()
 	requirements = models.JSONField(
-		default=list, 
-		validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA)]
+		default=list, validators=[
+			JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA_REQUIRED)
+		]
 	)
 
 

@@ -1,7 +1,7 @@
 from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from .views import AirdropGateViewSet
+from .views import AirdropGateViewSet, TicketGateViewSet
 
 
 if settings.DEBUG:
@@ -13,6 +13,7 @@ else:
 # Register the routes
 
 router.register(r"airdropgates", AirdropGateViewSet, basename="airdropgates")
+router.register(r"ticketgates", TicketGateViewSet, basename="ticketgates")
 
 
 app_name = "root"

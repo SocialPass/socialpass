@@ -1,5 +1,7 @@
 # Stores schemas for model JSON fields (and alike)
 
+import copy
+
 from .model_field_choices import BLOCKCHAINS, ASSET_TYPES
 
 
@@ -45,3 +47,7 @@ REQUIREMENTS_SCHEMA = {
 		"required": ["chain", "asset_type", "asset_address", "amount"]
 	}
 }
+
+
+REQUIREMENTS_SCHEMA_REQUIRED = copy.deepcopy(REQUIREMENTS_SCHEMA)
+REQUIREMENTS_SCHEMA_REQUIRED["minItems"] = 1

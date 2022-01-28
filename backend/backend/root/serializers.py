@@ -28,8 +28,8 @@ class AirdropGateSerializer(serializers.ModelSerializer):
 		requirements_data = validated_data.pop("requirements", [])
 		if not requirements_data:
 			raise serializers.ValidationError({
-				"detail": "Please set the requirements."}
-			)
+				"detail": "Please set the requirements."
+			})
 
 		# Create the token gate
 		airdropgate = AirdropGate.objects.create(
@@ -63,7 +63,6 @@ class AirdropGateSerializer(serializers.ModelSerializer):
 		instance.end_date = validated_data.get("end_date", instance.end_date)
 
 		instance.save()
-		print(requirements_data)
 
 		# Delete old and create new requirements (if applicable)
 		if is_new_requirements:

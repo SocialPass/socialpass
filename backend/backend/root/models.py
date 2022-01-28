@@ -58,23 +58,6 @@ class Signature(DBModel):
 		return self.unique_code
 
 
-class Requirement(DBModel):
-	"""
-	Stores a requirement for a token gate, allowing for multiple requirements 
-	per gate. Each requirement is validated during the access process.
-	"""
-	tokengate = models.ForeignKey(
-		TokenGate, on_delete=models.CASCADE, related_name="requirements"
-	)
-	chain = models.CharField(max_length=50, choices=BLOCKCHAINS)
-	asset_type = models.CharField(max_length=50, choices=ASSET_TYPES)
-	asset_address = models.CharField(max_length=400)
-	amount = models.IntegerField(default=1, validators=[MinValueValidator(1)])
-
-	def __str__(self):
-		return f"Requirement (Token Gate: {self.tokengate.title})"
-
-
 class AirdropGate(TokenGate):
 	"""
 	Stores an Airdrop type token gate.

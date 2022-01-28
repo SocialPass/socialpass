@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 
 from .models import (
-	AirdropGate, AirdropList, Requirement, Signature, TicketGate, TicketList
+	AirdropGate, AirdropList, Signature, TicketGate, TicketList
 )
 
 
@@ -24,12 +24,6 @@ class SignatureAdmin(admin.ModelAdmin):
 		"tokengate", "unique_code", "wallet_address", "is_verified"
 	)
 	search_fields = ("tokengate__title", "unique_code", "wallet_address")
-
-
-@admin.register(Requirement)
-class RequirementAdmin(admin.ModelAdmin):
-	list_display = ("tokengate", "chain", "asset_type")
-	search_fields = ("tokengate__title", "chain", "asset_type")
 
 
 @admin.register(AirdropGate)

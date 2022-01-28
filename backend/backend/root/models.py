@@ -3,6 +3,8 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
+from .model_field_schemas import REQUIREMENTS_SCHEMA
+from .validators import JSONSchemaValidator
 
 
 class User(AbstractUser):
@@ -69,6 +71,10 @@ class AirdropGate(TokenGate):
 	total_amount = models.IntegerField(validators=[MinValueValidator(1)])
 	start_date = models.DateTimeField()
 	end_date = models.DateTimeField()
+	requirements = models.JSONField(
+		default=list, blank=True, null=True, 
+		validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA)]
+	)
 
 
 class AirdropList(DBModel):

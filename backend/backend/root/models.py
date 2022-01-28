@@ -99,6 +99,10 @@ class TicketGate(TokenGate):
 	location = models.CharField(max_length=1024)
 	capacity = models.IntegerField(validators=[MinValueValidator(1)])
 	deadline = models.DateTimeField()
+	requirements = models.JSONField(
+		default=list, 
+		validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA)]
+	)
 
 
 class TicketList(DBModel):

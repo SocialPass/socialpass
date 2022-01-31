@@ -18,7 +18,7 @@ class IsTokenGateOwner(permissions.BasePermission):
 	"""
 	def has_object_permission(self, request, view, obj):
 		try:
-			tokengate = TokenGate.objects.get(
+			tokengate = TokenGate.objects.select_related("user").get(
 				id=view.kwargs.get("tokengate_id")
 			)
 		except Exception as e:

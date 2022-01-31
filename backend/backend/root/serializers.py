@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import AirdropGate, TicketGate
+from .models import AirdropGate, AirdropList, TicketGate
 
 
 class AirdropGateSerializer(serializers.ModelSerializer):
@@ -10,7 +10,7 @@ class AirdropGateSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = AirdropGate
 		fields = "__all__"
-		read_only_fields = ["user", "general_type"]
+		read_only_fields = ["created_at", "updated_at", "user", "general_type"]
 
 	def create(self, validated_data):
 		# Create the token gate
@@ -21,6 +21,25 @@ class AirdropGateSerializer(serializers.ModelSerializer):
 		return airdropgate
 
 
+class AirdropListSerializer(serializers.ModelSerializer):
+	"""
+	Serializes airdrops.
+	"""
+	class Meta:
+		model = AirdropList
+		fields = "__all__"
+		read_only_fields = ["created_at", "updated_at", "tokengate"]
+
+	def create(self, validated_data):
+		# Create the airdrop list
+		view_kwargs = self.context["request"].parser_context["kwargs"]
+		tokengate_id = view_kwargs["tokengate_id"]
+		airdroplist = AirdropList.objects.create(
+			tokengate_id=tokengate_id, **validated_data
+		)
+		return airdroplist
+
+
 class TicketGateSerializer(serializers.ModelSerializer):
 	"""
 	Serializes Ticket token gates.
@@ -28,7 +47,7 @@ class TicketGateSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = TicketGate
 		fields = "__all__"
-		read_only_fields = ["user", "general_type"]
+		read_only_fields = ["created_at", "updated_at", "user", "general_type"]
 
 	def create(self, validated_data):
 		# Create the token gate

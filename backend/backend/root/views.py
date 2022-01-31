@@ -1,9 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .models import AirdropGate, TicketGate
-from .permissions import IsOwner
-from .serializers import AirdropGateSerializer, TicketGateSerializer
+from .models import AirdropGate, AirdropList, TicketGate
+from .permissions import IsOwner, IsTokenGateOwner
+from .serializers import (
+	AirdropGateSerializer, AirdropListSerializer, TicketGateSerializer
+)
 
 
 class AirdropGateViewSet(viewsets.ModelViewSet):
@@ -25,6 +27,22 @@ class AirdropGateViewSet(viewsets.ModelViewSet):
 		else:
 			permission_classes = [IsOwner]
 		return [permission() for permission in permission_classes]
+
+
+class AirdropListViewSet(viewsets.ModelViewSet):
+	"""
+	A viewset for viewing and editing airdrop lists.
+	"""
+	serializer_class = AirdropListSerializer
+	permission_classes = [IsTokenGateOwner]
+
+	def get_queryset(self):
+		"""
+		Return the required queryset.
+		"""
+		return AirdropList.objects.filter(
+			tokengate__id=self.kwargs["tokengate_id"]
+		)
 
 
 class TicketGateViewSet(viewsets.ModelViewSet):

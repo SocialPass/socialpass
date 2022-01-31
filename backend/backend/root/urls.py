@@ -1,7 +1,10 @@
 from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from .views import AirdropGateViewSet, AirdropListViewSet, TicketGateViewSet
+from .views import (
+	AirdropGateViewSet, AirdropListViewSet, TicketGateViewSet, 
+	TicketListViewSet
+)
 
 
 if settings.DEBUG:
@@ -21,6 +24,12 @@ router.register(
 )
 
 router.register(r"ticketgates", TicketGateViewSet, basename="ticketgates")
+
+router.register(
+	r"ticketgates/(?P<tokengate_id>\d+)/ticketlists",
+	TicketListViewSet,
+	basename="ticketlists"
+)
 
 
 app_name = "root"

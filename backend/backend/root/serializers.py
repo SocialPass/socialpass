@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import AirdropGate, AirdropList, TicketGate
+from .models import AirdropGate, AirdropList, TicketGate, TicketList
 
 
 class AirdropGateSerializer(serializers.ModelSerializer):
@@ -47,3 +47,13 @@ class TicketGateSerializer(serializers.ModelSerializer):
 			**validated_data
 		)
 		return ticketgate
+
+
+class TicketListSerializer(serializers.ModelSerializer):
+	"""
+	Serializes ticket lists.
+	"""
+	class Meta:
+		model = TicketList
+		fields = "__all__"
+		read_only_fields = ["created_at", "updated_at", "tokengate"]

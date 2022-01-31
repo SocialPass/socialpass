@@ -34,8 +34,8 @@ class AirdropGateAdmin(admin.ModelAdmin):
 
 @admin.register(AirdropList)
 class AirdropListAdmin(admin.ModelAdmin):
-	list_display = ("airdropgate", "wallet_address")
-	search_fields = ("airdropgate__title", "wallet_address")
+	list_display = ("tokengate", "wallet_address")
+	search_fields = ("tokengate__title", "wallet_address")
 
 
 @admin.register(TicketGate)
@@ -46,7 +46,7 @@ class TicketGateAdmin(admin.ModelAdmin):
 
 @admin.register(TicketList)
 class TicketListAdmin(admin.ModelAdmin):
-	list_display = ("ticketgate", "wallet_address", "ticket_url")
-	search_fields = ("ticketgate__title", "wallet_address", "ticket_url")
+	list_display = ("tokengate", "wallet_address", "ticket_url")
+	search_fields = ("tokengate__title", "wallet_address", "ticket_url")
 
 

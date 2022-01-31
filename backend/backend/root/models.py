@@ -83,14 +83,14 @@ class AirdropList(DBModel):
 	"""
 	List of all the airdrops distributed by the respective Airdrop token gates.
 	"""
-	airdropgate = models.ForeignKey(
+	tokengate = models.ForeignKey(
 		AirdropGate, on_delete=models.CASCADE, related_name="airdrop_lists"
 	)
 	wallet_address = models.CharField(max_length=400)
 	transaction_hash = models.CharField(max_length=400)
 
 	def __str__(self):
-		return f"Airdrop List (Token Gate: {self.airdropgate.title})"
+		return f"Airdrop List (Token Gate: {self.tokengate.title})"
 
 
 class TicketGate(TokenGate):
@@ -112,7 +112,7 @@ class TicketList(DBModel):
 	"""
 	List of all the tickets distributed by the respective Ticket token gates.
 	"""
-	ticketgate = models.ForeignKey(
+	tokengate = models.ForeignKey(
 		TicketGate, on_delete=models.CASCADE, related_name="ticket_lists"
 	)
 	wallet_address = models.CharField(max_length=400)
@@ -120,4 +120,4 @@ class TicketList(DBModel):
 	token_id = models.IntegerField()
 
 	def __str__(self):
-		return f"Ticket List (Token Gate: {self.ticketgate.title})"
+		return f"Ticket List (Token Gate: {self.tokengate.title})"

@@ -29,9 +29,9 @@ class AirdropGateViewSet(viewsets.ModelViewSet):
 		return [permission() for permission in permission_classes]
 
 
-class AirdropListViewSet(viewsets.ModelViewSet):
+class AirdropListViewSet(viewsets.ReadOnlyModelViewSet):
 	"""
-	A viewset for viewing and editing airdrop lists.
+	A viewset for viewing airdrop lists.
 	"""
 	serializer_class = AirdropListSerializer
 	permission_classes = [IsTokenGateOwner]

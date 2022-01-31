@@ -23,21 +23,12 @@ class AirdropGateSerializer(serializers.ModelSerializer):
 
 class AirdropListSerializer(serializers.ModelSerializer):
 	"""
-	Serializes airdrops.
+	Serializes airdrop lists.
 	"""
 	class Meta:
 		model = AirdropList
 		fields = "__all__"
 		read_only_fields = ["created_at", "updated_at", "tokengate"]
-
-	def create(self, validated_data):
-		# Create the airdrop list
-		view_kwargs = self.context["request"].parser_context["kwargs"]
-		tokengate_id = view_kwargs["tokengate_id"]
-		airdroplist = AirdropList.objects.create(
-			tokengate_id=tokengate_id, **validated_data
-		)
-		return airdroplist
 
 
 class TicketGateSerializer(serializers.ModelSerializer):

@@ -7,3 +7,13 @@ class IsOwner(permissions.BasePermission):
 	"""
 	def has_object_permission(self, request, view, obj):
 		return obj.user == request.user
+
+
+class IsTokenGateOwner(permissions.BasePermission):
+	"""
+	Parent-level permission to only allow owners of an object's parent to edit 
+	it.
+	"""
+	def has_object_permission(self, request, view, obj):
+		return obj.tokengate.user == request.user
+		

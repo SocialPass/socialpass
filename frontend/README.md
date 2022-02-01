@@ -15,7 +15,7 @@ Development & deployment is handled with a single `package.json` file at `/front
 ## Moonclave
 `yarn start:moonclave`
 
-## Shared
+## SDK
 TBD
 
 Storybook (or similar package) might be useful here for standalone development.

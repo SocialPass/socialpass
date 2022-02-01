@@ -1,8 +1,6 @@
 import React from 'react';
 import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
 
 // API key for Ethereum node
 // Two popular services are Infura (infura.io) and Alchemy (alchemy.com)
@@ -18,12 +16,6 @@ const connectors = ({ chainId }) => {
 	chain.mainnet.rpcUrls[0]
   return [
 	new InjectedConnector({ chains }),
-	new WalletConnectConnector({
-	  options: {
-		infuraId: infuraId,
-		qrcode: true,
-	  },
-	}),
   ]
  }
 
@@ -61,7 +53,6 @@ const ProviderAuthentication = ({children, provider}:ProviderProps) => {
 	// If NO accountData provided, show login options
 	return (
 		<div>
-		<h1>login</h1>
 		  {connectData.connectors.map((x) => (
 			<button disabled={!x.ready} key={x.id} onClick={() => connect(x)}>
 			  {x.name}
@@ -77,23 +68,13 @@ const ProviderAuthentication = ({children, provider}:ProviderProps) => {
 
 
 const ProviderHandler = ({children, provider}:ProviderProps) => {
-	// If provider is provided, simply render the
-	if (provider){
-		return (
-		<ProviderAuthentication>
-			{children}
-		</ProviderAuthentication>
-		)
-	}
-
 	return (
 		<Provider
 			connectors={connectors}
 			connectorStorageKey="nftyv3.wallet"
 			autoConnect>
-			<ProviderAuthentication>
-				{children}
-			</ProviderAuthentication>
+			{children}
+			<ProviderAuthentication/>
 		</Provider>
 	)
 

@@ -6,14 +6,12 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "postinstall": "lerna bootstrap",
-    "build": "lerna run build",
+
     "build:sdk": "yarn workspace @nfty/sdk build",
-    "build:moonclave": "yarn build:sdk && yarn workspace @nfty/moonclave build",
-    "start:moonclave": "yarn build:sdk && lerna run --scope '{@nfty/sdk,@nfty/moonclave}' watch --parallel",
-    "format:check": "prettier --check \"./**/*.{ts,tsx,js,json,jsx,css,scss,md}\"",
-    "format:fix": "prettier --write \"./**/*.{ts,tsx,js,json,jsx,css,scss,md}\"",
-    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx --color",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --color --fix"
+    "start:sdk": "",
+
+    "build:whitelabel": "yarn build:sdk && yarn workspace @nfty/whitelabel build",
+    "start:whitelabel": "lerna run --scope '{@nfty/sdk,@nfty/whitelabel}' dev --parallel"
   },
   "workspaces": {
     "packages": [

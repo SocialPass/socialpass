@@ -2,15 +2,15 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import { TokenGate } from '@nfty/sdk';
 
-function DayTwo() {
+function Ticketing() {
   return (
 	<>
 	  <main>
-		<h2>Welcome to the Day Two!</h2>
-		<TokenGate id={2} gateType='TICKET'/>
+		<h2>Ticketing Demo</h2>
+		<TokenGate gateType="TICKET" id={1}/>
 	  </main>
 	</>
   );
 }
 
-export default DayTwo;
+export default Ticketing;

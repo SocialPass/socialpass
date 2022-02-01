@@ -1,47 +1,30 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
 import pkg from './package.json';
-
 const input = './src/index.ts';
 
-const external = [
-  ...Object.keys(pkg.dependencies || {}),
-  ...Object.keys(pkg.peerDependencies || {}),
-  'react/jsx-runtime',
-];
+const extensions = ['.js', '.ts', '.jsx', '.tsx'];
 
-const plugins = [
-  nodeResolve({
-	browser: true,
-	extensions: ['.ts', '.tsx'],
-  }),
-  typescript({
-	tsconfig: './tsconfig.build.json',
-	typescript: require('typescript'),
-  }),
-];
-
-const rollupConfig = [
-  {
-	input,
-	output: {
-	  file: pkg.module,
-	  format: 'esm',
-	  sourcemap: true,
-	},
-	plugins,
-	external,
+export default {
+  input: [
+	input
+  ],
+  output: {
+	file: pkg.main,
+	format: 'esm',
+	preserveModules: true,
+	preserveModulesRoot: 'src',
+	sourcemap: true,
   },
-  {
-	input,
-	output: {
-	  file: pkg.main,
-	  format: 'cjs',
-	  sourcemap: true,
-	},
-	plugins,
-	external,
-  },
-];
-
-export default rollupConfig;
+  plugins: [
+	resolve(),
+	commonjs(),
+	typescript({
+	  tsconfig: './tsconfig.build.json',
+	  declaration: true,
+	  declarationDir: 'dist',
+	})
+  ],
+  external: ['react', 'react-dom'],
+};

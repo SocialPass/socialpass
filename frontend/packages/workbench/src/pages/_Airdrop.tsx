@@ -6,7 +6,7 @@ function Airdrop() {
   return (
 	<>
 	  <main>
-		<h2>Airdrop Demo</h2>
+		<h2>Airdrop Workbench</h2>
 		<TokenGate gateType="AIRDROP" id={1}/>
 	  </main>
 	</>

@@ -10,8 +10,8 @@
     "build:sdk": "yarn workspace @nfty/sdk build",
     "start:sdk": "",
 
-    "build:whitelabel": "yarn build:sdk && yarn workspace @nfty/whitelabel build",
-    "start:whitelabel": "lerna run --scope '{@nfty/sdk,@nfty/whitelabel}' dev --parallel"
+    "build:workbench": "yarn build:sdk && yarn workspace @nfty/workbench build",
+    "start:workbench": "lerna run --scope '{@nfty/sdk,@nfty/workbench}' dev --parallel"
   },
   "workspaces": {
     "packages": [
@@ -19,6 +19,7 @@
     ]
   },
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^4.0.0",
+    "tsdx": "0.14.1"
   }
 }

@@ -46,6 +46,8 @@ const GateTypeSwitchHandler = ({id, gateType}:GateTypeSwitchProps) => {
 			return <AirdropGate id={id} gateType={gateType}/>
 		case 'TICKET':
 			return <TicketGate id={id} gateType={gateType}/>
+		default:
+			return <></>
 	}
 }
 
@@ -53,8 +55,7 @@ const GateTypeSwitchHandler = ({id, gateType}:GateTypeSwitchProps) => {
 // Main TokenGate component
 const TokenGate: React.FC<TokenGateProps> = ({ id, gateType, provider }: TokenGateProps) => {
 	return (
-		<div style={{ border: '10px solid red', }}>
-		<h1>TOKENGATE COMPONENT</h1>
+		<div style={{ border: '10px solid red', width: '50%' }}>
 		<ProviderHandler provider={provider}>
 			<GateTypeSwitchHandler id={id} gateType={gateType}/>
 		</ProviderHandler>

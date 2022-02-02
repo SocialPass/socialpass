@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <div>
-      <h2>Component Pages</h2>
+      <h2>NFTY Workbench</h2>
       <ul>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/ticket">Ticketing</Link></li>

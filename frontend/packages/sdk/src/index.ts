@@ -7,6 +7,8 @@ Relative imports/exports should be constrained to the respective src/{folder}/{f
 import { Sample } from "./components/Sample";
 export { Sample };
 */
+import { Buffer } from 'buffer';
+window.Buffer = Buffer;
 
 import { TokenGate } from "./components/TokenGate";
 export { TokenGate };

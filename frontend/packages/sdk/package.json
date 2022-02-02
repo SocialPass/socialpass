@@ -1,0 +1,34 @@
+{
+  "name": "@nfty/sdk",
+  "private": true,
+  "version": "1.0.0",
+  "files": ["dist"],
+  "main": "./dist/my-lib.umd.js",
+  "module": "./dist/my-lib.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/my-lib.es.js",
+      "require": "./dist/my-lib.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsc && vite build --watch",
+    "build": "tsc && vite build"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "ethers": "^5.5.1",
+    "events": "^3.3.0",
+    "process": "^0.11.10",
+    "react": "^17.0.2",
+    "util": "^0.12.4",
+    "wagmi": "0.2.6"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
+    "@vitejs/plugin-react": "^1.0.7",
+    "typescript": "^4.4.4",
+    "vite": "^2.7.2"
+  }
+}

@@ -87,7 +87,7 @@ const ProviderHandler = ({children, provider}:ProviderProps) => {
 	return (
 		<Provider
 			connectors={connectors}
-			connectorStorageKey="nftyv3.wallet">
+			connectorStorageKey="socialpass.wallet">
 			{children}
 			<ProviderAuthentication/>
 		</Provider>

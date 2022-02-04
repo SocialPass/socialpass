@@ -6,11 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0004_ticketgate_ticketlist'),
+        ("root", "0004_ticketgate_ticketlist"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Requirement',
+            name="Requirement",
         ),
     ]

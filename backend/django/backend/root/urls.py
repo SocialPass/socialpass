@@ -1,11 +1,8 @@
-from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from .views import (
-	AirdropGateViewSet, AirdropListViewSet, TicketGateViewSet, 
-	TicketListViewSet
-)
+from django.conf import settings
 
+from .views import AirdropGateViewSet, AirdropListViewSet, TicketGateViewSet, TicketListViewSet
 
 if settings.DEBUG:
     router = DefaultRouter()
@@ -18,17 +15,17 @@ else:
 router.register(r"airdropgates", AirdropGateViewSet, basename="airdropgates")
 
 router.register(
-	r"airdropgates/(?P<tokengate_id>\d+)/airdroplists",
-	AirdropListViewSet,
-	basename="airdroplists"
+    r"airdropgates/(?P<tokengate_id>\d+)/airdroplists",
+    AirdropListViewSet,
+    basename="airdroplists",
 )
 
 router.register(r"ticketgates", TicketGateViewSet, basename="ticketgates")
 
 router.register(
-	r"ticketgates/(?P<tokengate_id>\d+)/ticketlists",
-	TicketListViewSet,
-	basename="ticketlists"
+    r"ticketgates/(?P<tokengate_id>\d+)/ticketlists",
+    TicketListViewSet,
+    basename="ticketlists",
 )
 
 

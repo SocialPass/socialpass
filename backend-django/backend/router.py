@@ -11,15 +11,22 @@ from django.views.generic import TemplateView
 
 # Base Django URL's
 urlpatterns = [
-    # Django Admin, use {% url 'admin:index' %}
+    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path(
+        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
+    ),
+    # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # Your stuff: custom urls includes go here
+    # User management
+    path("accounts/", include("allauth.urls")),
+
+    # Custom stuff goes here
 ]
 
 # DRF API URLS
 urlpatterns += [
     # API base url
-    path("api/", include("root.urls")),
+    path("api/", include("root.urls_api")),
     # DRF auth token
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(

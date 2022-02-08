@@ -6,7 +6,6 @@ function Ticketing() {
   return (
 	<>
 	  <main>
-		<h2>Ticketing Workbench</h2>
 		<TokenGate gateType="TICKET" id={1}/>
 	  </main>
 	</>

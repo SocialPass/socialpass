@@ -3,6 +3,7 @@ import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
+import { ProviderProps } from '../../../props';
 
 // API key for Ethereum node
 // Two popular services are Infura (infura.io) and Alchemy (alchemy.com)
@@ -34,62 +35,12 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
   ]
  }
 
-interface ProviderProps {
-	children?: any
-	provider?: any
-}
-
-// Web3 Provider authentication
-// Renders TokenGate children (Ticket, Airdrop, etc.,), or login screen
-const ProviderAuthentication = ({children, provider}:ProviderProps) => {
-	const [{ data: connectData, error: connectError }, connect] = useConnect();
-	const [{ data: accountData }, disconnect] = useAccount({
-		fetchEns: true,
-	});
-
-	// If accountData provided, show children
-	if (accountData) {
-		return (
-		  <div>
-			<img src={accountData.ens?.avatar || ''} alt="ENS Avatar" />
-			<div>
-			  {accountData.ens?.name
-				? `${accountData.ens?.name} (${accountData.address})`
-				: accountData.address}
-			</div>
-			<div>Connected to {accountData.connector?.name}</div>
-			<button onClick={disconnect}>Disconnect</button>
-			<br/>
-			{children}
-		  </div>
-		)
-	}
-
-	// If NO accountData provided, show login options
-	return (
-		<div>
-
-		  {connectData.connectors.map((x) => (
-			<button disabled={!x.ready} key={x.id} onClick={() => connect(x)}>
-			  {x.name}
-			  {!x.ready && ' (unsupported)'}
-			</button>
-		  ))}
-		  {connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
-		  <br/>
-		  {children}
-		</div>
-	)
-}
-
-
 const ProviderHandler = ({children, provider}:ProviderProps) => {
 	return (
 		<Provider
 			connectors={connectors}
 			connectorStorageKey="socialpass.wallet">
 			{children}
-			<ProviderAuthentication/>
 		</Provider>
 	)
 

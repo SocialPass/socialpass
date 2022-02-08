@@ -1,65 +1,48 @@
 import React from 'react';
-import ProviderHandler from './ProviderHandler';
+import ProviderHandler from './web3/provider';
+import AirdropGate from './gates/airdrop';
+import TicketGate from './gates/ticket';
+import ProviderAuthentication from "./web3/login";
+import { TokenGateParentProps, GateTypeSwitchProps } from '../../props';
 
-interface TokenGateProps {
-	id: number // ID of tokengate
-	gateType: string // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
-	provider?: any // [optional]: web3 provider
-}
-
-interface GateTypeSwitchProps {
-	id: number // ID of tokengate
-	gateType: string // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
-}
-
-const AirdropGate = ({id, gateType}: TokenGateProps) => {
-	return (
-		<>
-		<h2>AirdropGate Component</h2>
-		<ul>
-			Gate Info
-			<li>ID: {id}</li>
-			<li>Type: {gateType}</li>
-		</ul>
-		</>
-	)
-}
-
-const TicketGate = ({id, gateType}: TokenGateProps) => {
-	return (
-		<>
-		<h2>TicketGate Component</h2>
-		<ul>
-			Gate Info
-			<li>ID: {id}</li>
-			<li>Type: {gateType}</li>
-		</ul>
-		</>
-	)
-}
-
-// Conditionally render TokenGate component based on gateType
-// Based on 'gateType' provided, import/use other components in this directory
-const GateTypeSwitchHandler = ({id, gateType}:GateTypeSwitchProps) => {
-	switch(gateType){
-		case 'AIRDROP':
-			return <AirdropGate id={id} gateType={gateType}/>
-		case 'TICKET':
-			return <TicketGate id={id} gateType={gateType}/>
-		default:
-			return <></>
+// 1. Conditionally render Child component based on gateType
+// 2. Render Parent around child (Parent component is for styling, etc.)
+// 3. Handle ProviderAuthentication, pass current setp down to Child
+const GateHandler = ({json, gateType}:GateTypeSwitchProps) => {
+	const Child = () => {
+		switch(gateType){
+			case 'AIRDROP':
+				return <AirdropGate json={json} gateType={gateType}/>
+			case 'TICKET':
+				return <TicketGate json={json} gateType={gateType}/>
+			default:
+				return <></>
+		}
 	}
+
+	const Parent = ({children, json}:{children:any}) => {
+		return (
+			<div style={{border: '1px solid red', padding: '1rem'}}>
+				{children}
+				<ProviderAuthentication/>
+			</div>
+		)
+	}
+
+	return <Parent><Child/></Parent>
 }
 
 
-// Main TokenGate component
-const TokenGate: React.FC<TokenGateProps> = ({ id, gateType, provider }: TokenGateProps) => {
+// Main TokenGate component. Does a couple of things
+// 1. Setup WAGMI provider (need to make optional in future)
+// 2. Renders GateHandler
+// 3. API call based on provided ID. JSON object is passed down to GateHandler
+const TokenGate = ({ id, gateType, provider }: TokenGateParentProps) => {
+	const json = '';
 	return (
-		<div style={{ border: '10px solid red', width: '50%' }}>
 		<ProviderHandler provider={provider}>
-			<GateTypeSwitchHandler id={id} gateType={gateType}/>
+			<GateHandler json={json} gateType={gateType}/>
 		</ProviderHandler>
-		</div>
 	);
 }
 

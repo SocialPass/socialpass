@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Link } from "react-router-dom";
-import { Home, Ticketing, Airdrop } from './pages'
+import { Ticketing, Airdrop } from './pages'
 
 function App() {
   return (
@@ -8,16 +8,17 @@ function App() {
       <div>
       <h2>NFTY Workbench</h2>
       <ul>
-        <li><Link to="/">Home</Link></li>
         <li><Link to="/ticket">Ticketing</Link></li>
         <li><Link to="/airdrop">Airdrop</Link></li>
       </ul>
       </div>
+      <div style={{ display: "flex", justifyContent: "center", margin: '10rem'}}>
         <Routes>
-          <Route index element={<Home />} />
+          <Route index element={<Ticketing />} />
           <Route path="ticket" element={<Ticketing />} />
           <Route path="airdrop" element={<Airdrop />} />
         </Routes>
+      </div>
     </div>
   );
 }

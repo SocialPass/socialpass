@@ -1,35 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProviderHandler from './web3/provider';
 import AirdropGate from './gates/airdrop';
 import TicketGate from './gates/ticket';
 import ProviderAuthentication from "./web3/login";
 import { TokenGateParentProps, GateTypeSwitchProps } from '../../props';
 
+// Main four responsibilities of GateHandler
 // 1. Conditionally render Child component based on gateType
-// 2. Render Parent around child (Parent component is for styling, etc.)
-// 3. Handle ProviderAuthentication, pass current setp down to Child
+// 2. Render Parent around Child (Parent component is for styling, etc.)
+// 3. Pass in ProviderAuthentication
+// 3. Provide set/setStep state for children to use
 const GateHandler = ({json, gateType}:GateTypeSwitchProps) => {
-	const Child = () => {
+	const Child = ({step, setStep}:{step:number, setStep: any}) => {
 		switch(gateType){
 			case 'AIRDROP':
-				return <AirdropGate json={json} gateType={gateType}/>
+				return <AirdropGate json={json} gateType={gateType} step={step} setStep={setStep}/>
 			case 'TICKET':
-				return <TicketGate json={json} gateType={gateType}/>
+				return <TicketGate json={json} gateType={gateType} step={step} setStep={setStep}/>
 			default:
 				return <></>
 		}
 	}
 
-	const Parent = ({children, json}:{children:any}) => {
+	const Parent = () => {
+		const [step, setStep] = useState(0);
 		return (
 			<div style={{border: '1px solid red', padding: '1rem'}}>
-				{children}
-				<ProviderAuthentication/>
+				<Child step={step} setStep={setStep}/>
+				<ProviderAuthentication setStep={setStep} step={step}/>
 			</div>
 		)
 	}
 
-	return <Parent><Child/></Parent>
+	return <Parent/>
 }
 
 

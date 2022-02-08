@@ -5,7 +5,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
-    global: 'globalThis',
+    global: 'window',
   },
   resolve: {
     alias: {

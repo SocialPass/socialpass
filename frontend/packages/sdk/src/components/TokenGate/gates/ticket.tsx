@@ -1,7 +1,7 @@
 import React from 'react';
 import {TokenGateChildProps} from '../../../props';
 
-const TicketGate = ({json, gateType}: TokenGateChildProps) => {
+const TicketGate = ({json, gateType, step, setStep}: TokenGateChildProps) => {
 	return (
 		<>
 		<h2>TicketGate Component</h2>
@@ -9,6 +9,7 @@ const TicketGate = ({json, gateType}: TokenGateChildProps) => {
 			Gate Info
 			<li>JSON: {json}</li>
 			<li>Type: {gateType}</li>
+			<li>Step: {step}</li>
 		</ul>
 		</>
 	)

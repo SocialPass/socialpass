@@ -1,9 +1,10 @@
 import React from 'react';
 import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
+import { LoginProps } from '../../../props';
 
 // Web3 Provider authentication
 // Renders TokenGate children (Ticket, Airdrop, etc.,), or login screen
-const ProviderAuthentication = () => {
+const ProviderAuthentication = ({step, setStep}:LoginProps) => {
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
 	const [{ data: accountData }, disconnect] = useAccount({
 		fetchEns: true,

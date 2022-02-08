@@ -7,11 +7,18 @@ export interface TokenGateParentProps {
 export interface TokenGateChildProps {
 	json: any // JSON info of tokengate
 	gateType: string // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
+	step: number
+	setStep: any
 }
 
 export interface ProviderProps {
 	children?: any
 	provider?: any
+}
+
+export interface LoginProps {
+	step: number
+	setStep: any
 }
 
 

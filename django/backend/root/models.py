@@ -3,7 +3,11 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
-from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENTS_SCHEMA_REQUIRED
+from .model_field_schemas import (
+    REQUIREMENTS_SCHEMA,
+    REQUIREMENTS_SCHEMA_REQUIRED,
+    SOFTWARE_TYPES_SCHEMA,
+)
 from .validators import JSONSchemaValidator
 
 
@@ -23,6 +27,22 @@ class DBModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class SoftwarePlan(DBModel):
+    """
+    Specific plan details for the user accounts.
+    """
+    
+    name = models.CharField(max_length=255)
+    details = models.TextField(blank=True)
+    software_types = models.JSONField(
+        default=list,
+        validators=[JSONSchemaValidator(limit_value=SOFTWARE_TYPES_SCHEMA)],
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class TokenGate(DBModel):

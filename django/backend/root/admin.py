@@ -2,7 +2,14 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from .models import AirdropGate, AirdropList, Signature, TicketGate, TicketList
+from .models import (
+    AirdropGate,
+    AirdropList,
+    Signature,
+    SoftwarePlan,
+    TicketGate,
+    TicketList
+)
 
 User = get_user_model()
 
@@ -17,6 +24,12 @@ admin.site.index_title = "NFTY Labs Admin"
 # Admin registrations
 
 admin.site.register(User, UserAdmin)
+
+
+@admin.register(SoftwarePlan)
+class SoftwarePlanAdmin(admin.ModelAdmin):
+    list_display = ("name", "software_types")
+    search_fields = ("name",)
 
 
 @admin.register(Signature)

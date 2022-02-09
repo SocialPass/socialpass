@@ -29,11 +29,11 @@ class DBModel(models.Model):
         abstract = True
 
 
-class SoftwarePlan(DBModel):
+class Team(DBModel):
     """
-    Specific plan details for the user accounts.
+    Team manager for software plans && token gates
     """
-    
+
     name = models.CharField(max_length=255)
     details = models.TextField(blank=True)
     software_types = models.JSONField(

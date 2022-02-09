@@ -6,7 +6,7 @@ from .models import (
     AirdropGate,
     AirdropList,
     Signature,
-    SoftwarePlan,
+    Team,
     TicketGate,
     TicketList
 )
@@ -26,8 +26,8 @@ admin.site.index_title = "NFTY Labs Admin"
 admin.site.register(User, UserAdmin)
 
 
-@admin.register(SoftwarePlan)
-class SoftwarePlanAdmin(admin.ModelAdmin):
+@admin.register(Team)
+class TeamAdmin(admin.ModelAdmin):
     list_display = ("name", "software_types")
     search_fields = ("name",)
 

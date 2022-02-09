@@ -1,34 +1,75 @@
 {
+  "version": "0.1.0",
+  "license": "MIT",
   "name": "@nfty/sdk",
-  "private": true,
-  "version": "0.0.1",
-  "files": ["dist"],
-  "main": "./dist/my-lib.umd.js",
-  "module": "./dist/my-lib.es.js",
-  "exports": {
-    ".": {
-      "import": "./dist/my-lib.es.js",
-      "require": "./dist/my-lib.umd.js"
-    }
+  "author": "rizzo",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
   },
   "scripts": {
-    "dev": "tsc && vite build --watch",
-    "build": "tsc && vite build"
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "module": "dist/sdk.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/sdk.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/sdk.esm.js",
+      "limit": "10 KB"
+    }
+  ],
   "dependencies": {
-    "buffer": "^6.0.3",
     "ethers": "^5.5.1",
-    "events": "^3.3.0",
-    "process": "^0.11.10",
-    "react": "^17.0.2",
-    "util": "^0.12.4",
     "wagmi": "0.2.6"
   },
   "devDependencies": {
-    "@types/react": "^17.0.33",
-    "@types/react-dom": "^17.0.10",
-    "@vitejs/plugin-react": "^1.0.7",
-    "typescript": "^4.4.4",
-    "vite": "^2.7.2"
+    "@babel/core": "^7.17.2",
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@storybook/addon-essentials": "^6.4.18",
+    "@storybook/addon-info": "^5.3.21",
+    "@storybook/addon-links": "^6.4.18",
+    "@storybook/addons": "^6.4.18",
+    "@storybook/react": "^6.4.18",
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.11",
+    "babel-loader": "^8.2.3",
+    "husky": "^7.0.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-is": "^17.0.2",
+    "size-limit": "^7.0.8",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   }
 }

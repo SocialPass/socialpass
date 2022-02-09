@@ -8,5 +8,5 @@ import { Sample } from "./components/Sample";
 export { Sample };
 */
 
-import { TokenGate } from "./components/TokenGate";
+import { TokenGate } from "./TokenGate";
 export { TokenGate };

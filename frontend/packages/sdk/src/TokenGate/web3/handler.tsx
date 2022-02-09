@@ -3,7 +3,7 @@ import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
-import { ProviderProps } from '../../../props';
+import { ProviderHandlerProps } from '../props';
 
 // API key for Ethereum node
 // Two popular services are Infura (infura.io) and Alchemy (alchemy.com)
@@ -35,7 +35,7 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
   ]
  }
 
-const ProviderHandler = ({children, provider}:ProviderProps) => {
+const ProviderHandler = ({children}:ProviderHandlerProps) => {
 	return (
 		<Provider
 			connectors={connectors}

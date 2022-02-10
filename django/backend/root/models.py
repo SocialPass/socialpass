@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -9,6 +9,16 @@ from .model_field_schemas import (
     SOFTWARE_TYPES_SCHEMA,
 )
 from .validators import JSONSchemaValidator
+
+
+class CustomUserManager(UserManager):
+    """
+    Select the team for users. Small optimization when using `request.user` in 
+    the site views, especially the permission system.
+    """
+
+    def get(self, *args, **kwargs):
+        return super().select_related("team").get(*args, **kwargs)
 
 
 class DBModel(models.Model):
@@ -46,6 +56,8 @@ class User(AbstractUser):
     team = models.ForeignKey(
         Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="users"
     )
+
+    objects = CustomUserManager()
 
 
 class TokenGate(DBModel):

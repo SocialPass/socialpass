@@ -23,17 +23,13 @@ const GateHandler = () => {
 	}
 
 	// Wrapper around GateSwitch (initial styling, provider authentication)
-	const Wrapper = () => {
-		return (
-			<div style={{border: '1px solid red', padding: '1rem', width: '50%',}}>
-				<h1>SocialPass</h1>
-				<GateSwitch/>
-				<Web3ProviderAuthentication/>
-			</div>
-		)
-	}
-
-	return <Wrapper/>
+	return (
+		<div style={{border: '1px solid red', padding: '1rem', width: '50%',}}>
+			<h1>SocialPass</h1>
+			<GateSwitch/>
+			<Web3ProviderAuthentication/>
+		</div>
+	)
 }
 
 
@@ -41,9 +37,9 @@ const GateHandler = () => {
 // 1. Setup WAGMI provider (need to make optional in future)
 // 2. Renders GateHandler
 // 3. API call based on provided ID. JSON object is passed down to GateHandler
-const TokenGate = ({ id, gateType }: TokenGateProviderInterface) => {
+const TokenGate = ({ id, gateType,styles }: TokenGateProviderInterface) => {
 	return (
-		<TokenGateProvider id={id} gateType={gateType}>
+		<TokenGateProvider id={id} gateType={gateType} styles={styles}>
 			<Web3ProviderWrapper>
 				<GateHandler/>
 			</Web3ProviderWrapper>

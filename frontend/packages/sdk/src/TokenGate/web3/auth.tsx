@@ -4,28 +4,49 @@ import { TokenGateContext } from '../context';
 
 // Web3 Provider authentication
 const Web3ProviderAuthentication = () => {
-	// global context
+	/****************** GLOBALS *************************/
+	// context
 	const { setStep, json } = React.useContext(TokenGateContext);
 	// wallet connect hooks
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
 	// wallet account hooks
-	const [{ data: accountData }, disconnect] = useAccount({fetchEns: true,});
+	const [{ data: accountData, loading: accountLoading }, disconnect] = useAccount();
 	// walet sig hooks
 	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
 
+
+	/****************** HOOKS *************************/
+	// Step Handler, updates on accountData.address change
+	useEffect(() => {
+		if (accountData && accountData?.address) {
+			console.log('setting 1')
+			setStep(1);
+		} else {
+			console.log('setting 0');
+			setStep(0)
+		}
+	},[accountData?.address]);
+
+
+	/****************** FUNCTIONS *************************/
 	// Signature Handler
-	const signatureHandler = useCallback(async (message) => {
+	const signatureHandler = async (message:string) => {
 		// Sign Message
 		const signRes = await signMessage({ message: message });
 		if (signRes.error) throw signRes.error;
 
 		// Verify Message/Wallet
-	},[])
+		console.log(signRes);
+
+		// Update Step
+		setStep(2);
 
 
+	}
+
+	/****************** RETURN *************************/
 	// If accountData provided...
 	if (accountData) {
-		setStep(1)
 		return (
 		  <div>
 			<h4>Verify Wallet</h4>
@@ -45,7 +66,6 @@ const Web3ProviderAuthentication = () => {
 
 	// If NO accountData provided...
 	else {
-		setStep(0)
 		return (
 			<div>
 				<h4>Connect Wallet</h4>

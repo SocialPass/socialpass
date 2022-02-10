@@ -22,17 +22,18 @@ admin.site.index_title = "NFTY Labs Admin"
 
 
 # Admin registrations
+
 @admin.register(User)
 class UserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
-        (None, {
-            'fields': ('team',),
+        ("Team", {
+            "fields": ("team",),
         }),
     )
 
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {
-            'fields': ('team',),
+        ("Team", {
+            "fields": ("team",),
         }),
     )
 

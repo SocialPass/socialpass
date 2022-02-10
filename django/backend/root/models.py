@@ -11,12 +11,6 @@ from .model_field_schemas import (
 from .validators import JSONSchemaValidator
 
 
-class User(AbstractUser):
-    """
-    Default custom user model for backend.
-    """
-
-
 class DBModel(models.Model):
     """
     Abstract base model that provides useful timestamps.
@@ -43,6 +37,15 @@ class Team(DBModel):
 
     def __str__(self):
         return self.name
+
+
+class User(AbstractUser):
+    """
+    Default custom user model for backend.
+    """
+    team = models.ForeignKey(
+        Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="users"
+    )
 
 
 class TokenGate(DBModel):

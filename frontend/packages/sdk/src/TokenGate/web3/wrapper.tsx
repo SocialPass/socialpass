@@ -18,7 +18,10 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
 	chains.find((x) => x.id === chainId)?.rpcUrls?.[0] ??
 	chain.mainnet.rpcUrls[0]
   return [
-	new InjectedConnector({ chains }),
+	new InjectedConnector({
+		chains,
+		options: { shimDisconnect: true },
+	}),
 	new WalletConnectConnector({
 	  options: {
 		infuraId,
@@ -27,7 +30,7 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
 	}),
 	new WalletLinkConnector({
 	  options: {
-		appName: 'My wagmi app',
+		appName: 'SocialPass',
 		jsonRpcUrl: `${rpcUrl}/${infuraId}`,
 	  },
 	}),
@@ -37,6 +40,7 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
 const Web3ProviderWrapper = ({children}:{children:any}) => {
 	return (
 		<Provider
+			autoConnect
 			connectors={connectors}
 			connectorStorageKey="socialpass.wallet">
 			{children}

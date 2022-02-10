@@ -1,15 +1,27 @@
-import React from 'react';
-import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
+import React, { useCallback, useEffect } from 'react';
+import {  useConnect, useAccount, useSignMessage } from 'wagmi'
 import { TokenGateContext } from '../context';
 
 // Web3 Provider authentication
 const Web3ProviderAuthentication = () => {
-	const { setStep } = React.useContext(TokenGateContext);
-
+	// global context
+	const { setStep, json } = React.useContext(TokenGateContext);
+	// wallet connect hooks
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
-	const [{ data: accountData }, disconnect] = useAccount({
-		fetchEns: true,
-	});
+	// wallet account hooks
+	const [{ data: accountData }, disconnect] = useAccount({fetchEns: true,});
+	// walet sig hooks
+	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
+
+	// Signature Handler
+	const signatureHandler = useCallback(async (message) => {
+		// Sign Message
+		const signRes = await signMessage({ message: message });
+		if (signRes.error) throw signRes.error;
+
+		// Verify Message/Wallet
+	},[])
+
 
 	// If accountData provided...
 	if (accountData) {
@@ -24,13 +36,14 @@ const Web3ProviderAuthentication = () => {
 				: accountData.address}
 			</div>
 			<div>Connected to {accountData.connector?.name}</div>
-			<button onClick={disconnect}>Disconnect</button>
+			<button onClick={() => disconnect()}>Disconnect</button>
+			<button onClick={() => signatureHandler('json')}>Sign Message</button>
 			<br/>
 		  </div>
 		)
 	}
 
-	// If NO accountData provided, show login options
+	// If NO accountData provided...
 	else {
 		setStep(0)
 		return (

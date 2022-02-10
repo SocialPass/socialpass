@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import AirdropGate, AirdropList, TicketGate, TicketList
-from .permissions import IsOwner, IsTokenGateOwner
+from .permissions_api import IsOwner, IsTokenGateOwner
 from .serializers import AirdropGateSerializer, AirdropListSerializer, TicketGateSerializer, TicketListSerializer
 
 

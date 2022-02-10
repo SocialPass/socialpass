@@ -1,9 +1,11 @@
 import React from 'react';
 import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
-import { ProviderAuthProps } from '../props';
+import { TokenGateContext } from '../context';
 
 // Web3 Provider authentication
-const ProviderAuthentication = ({step, setStep}:ProviderAuthProps) => {
+const Web3ProviderAuthentication = () => {
+	const { setStep } = React.useContext(TokenGateContext);
+
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
 	const [{ data: accountData }, disconnect] = useAccount({
 		fetchEns: true,
@@ -11,7 +13,7 @@ const ProviderAuthentication = ({step, setStep}:ProviderAuthProps) => {
 
 	// If accountData provided...
 	if (accountData) {
-		setStep(1);
+		setStep(1)
 		return (
 		  <div>
 			<h4>Verify Wallet</h4>
@@ -30,7 +32,7 @@ const ProviderAuthentication = ({step, setStep}:ProviderAuthProps) => {
 
 	// If NO accountData provided, show login options
 	else {
-		setStep(0);
+		setStep(0)
 		return (
 			<div>
 				<h4>Connect Wallet</h4>
@@ -47,4 +49,4 @@ const ProviderAuthentication = ({step, setStep}:ProviderAuthProps) => {
 	}
 }
 
-export default ProviderAuthentication;
+export default Web3ProviderAuthentication;

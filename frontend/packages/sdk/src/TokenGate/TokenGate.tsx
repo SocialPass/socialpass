@@ -1,47 +1,39 @@
 import React, { useState } from 'react';
 import AirdropGate from './gates/airdrop';
 import TicketGate from './gates/ticket';
-import ProviderHandler from './web3/handler';
-import ProviderAuthentication from "./web3/auth";
-import {
-	TokenGateParentProps,
-	GateTypeSwitchProps,
-	TokenGateChildProps
-} from './props';
+import Web3ProviderWrapper from './web3/wrapper';
+import Web3ProviderAuthentication from "./web3/auth";
+import { TokenGateProviderInterface } from './props';
+import { TokenGateProvider, TokenGateContext } from './context';
 
-// Main four responsibilities of GateHandler
-// 1. Conditionally render Child component based on gateType
-// 2. Render Parent around Child (Parent component is for styling, etc.)
-// 3. Pass in ProviderAuthentication
-// 3. Provide set/setStep state for children to use
-	// 0: Initial, connect wallet
-	// 1: Verify
-	// 2: Success
-	// 3: Failure
-const GateHandler = ({json, gateType}:GateTypeSwitchProps) => {
-	const Child = ({json, gateType, step, setStep}:TokenGateChildProps) => {
+// GateHandler
+const GateHandler = () => {
+	const { gateType } = React.useContext(TokenGateContext);
+
+	// Render correct gate based on type
+	const GateSwitch = () => {
 		switch(gateType){
 			case 'AIRDROP':
-				return <AirdropGate json={json} gateType={gateType} step={step} setStep={setStep}/>
+				return <AirdropGate/>
 			case 'TICKET':
-				return <TicketGate json={json} gateType={gateType} step={step} setStep={setStep}/>
+				return <TicketGate/>
 			default:
-				return <div><strong>{gateType}</strong> coming soon</div>
+				return <strong>{gateType} coming soon</strong>
 		}
 	}
 
-	const Parent = () => {
-		const [step, setStep] = useState(0);
+	// Wrapper around GateSwitch (initial styling, provider authentication)
+	const Wrapper = () => {
 		return (
 			<div style={{border: '1px solid red', padding: '1rem', width: '50%',}}>
 				<h1>SocialPass</h1>
-				<Child json={json} gateType={gateType} step={step} setStep={setStep}/>
-				<ProviderAuthentication json={json} gateType={gateType} step={step} setStep={setStep}/>
+				<GateSwitch/>
+				<Web3ProviderAuthentication/>
 			</div>
 		)
 	}
 
-	return <Parent/>
+	return <Wrapper/>
 }
 
 
@@ -49,12 +41,13 @@ const GateHandler = ({json, gateType}:GateTypeSwitchProps) => {
 // 1. Setup WAGMI provider (need to make optional in future)
 // 2. Renders GateHandler
 // 3. API call based on provided ID. JSON object is passed down to GateHandler
-const TokenGate = ({ id, gateType }: TokenGateParentProps) => {
-	const json = '';
+const TokenGate = ({ id, gateType }: TokenGateProviderInterface) => {
 	return (
-		<ProviderHandler>
-			<GateHandler json={json} gateType={gateType}/>
-		</ProviderHandler>
+		<TokenGateProvider id={id} gateType={gateType}>
+			<Web3ProviderWrapper>
+				<GateHandler/>
+			</Web3ProviderWrapper>
+		</TokenGateProvider>
 	);
 }
 

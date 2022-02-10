@@ -5,31 +5,17 @@ enum GateType {
   TELEGRAM = "TELEGRAM"
 }
 
-export interface TokenGateParentProps {
+export interface TokenGateContextInterface {
+  id: string // ID of tokengate
+  gateType: GateType // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
+  step: number
+  setStep: any
+  json: any
+  setJson: any
+}
+
+export interface TokenGateProviderInterface {
 	id: string // ID of tokengate
 	gateType: GateType // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
-}
-
-export interface TokenGateChildProps {
-	json: any // JSON info of tokengate
-	gateType: GateType // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
-	step: number
-	setStep: any
-}
-
-export interface ProviderAuthProps {
-	json: any // JSON info of tokengate
-	gateType: GateType // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
-	step: number
-	setStep: any
-}
-
-export interface ProviderHandlerProps {
-	children: any
-}
-
-
-export interface GateTypeSwitchProps {
-	gateType: GateType // Type of tokengate: [TICKET, AIDRDROP, DISCORD, TELEGRAM]
-	json: any // JSON info of tokengate
+  children?: any
 }

@@ -71,12 +71,21 @@ class TokenGate(DBModel):
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tokengates")
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, related_name="tokengates")
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     general_type = models.CharField(max_length=50, choices=TOKENGATE_TYPES)
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        """
+        Method overridden to set the team.
+        """
+
+        self.team = self.user.team
+        super(TokenGate, self).save(*args, **kwargs)
 
 
 class Signature(DBModel):

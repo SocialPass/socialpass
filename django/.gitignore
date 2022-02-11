@@ -273,5 +273,3 @@ tags
 backend/media/
 
 .pytest_cache/
-.env
-.envs/.production

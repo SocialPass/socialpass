@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AirdropGate from './gates/airdrop';
 import TicketGate from './gates/ticket';
 import Web3ProviderWrapper from './web3/wrapper';
 import Web3ProviderAuthentication from "./web3/auth";
 import { TokenGateProviderInterface } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
+import { fetchGateHandler } from './api';
 
 // GateHandler
 const GateHandler = () => {
-	const { gateType } = React.useContext(TokenGateContext);
+	const { id, gateType } = React.useContext(TokenGateContext);
+	// Gate Handler, updates on ID change
+	useEffect(() => {
+		fetchGateHandler({id, gateType});
+	},[id]);
 
 	// Render correct gate based on type
 	const GateSwitch = () => {

@@ -38,17 +38,15 @@ interface TicketGateResponse extends TokenGateResponse {
 }
 function fetchTicketGate({id}:{id:string}): void | Promise<TicketGateResponse[]> {
 	// For now, consider the data is stored on a static `users.json` file
-	return fetch('/users.json')
+	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}?format=json`, {
+	})
 		// the JSON body is taken from the response
+		.then(res => res.json())
 		.then(res => {
-			if (res.ok){
-				return res.json();
-			}
-		})
-		.then(res => {
-			// The response has an `any` type, so we need to cast
-			// it to the `User` type, and return it from the promise
-			return res as TicketGateResponse[]
+				console.log(res)
+				// The response has an `any` type, so we need to cast
+				// it to the `User` type, and return it from the promise
+				return res as AidropGateResponse[]
 		})
 }
 
@@ -64,12 +62,12 @@ function fetchAirdropGate({id}:{id:string}): Promise<AidropGateResponse[]> {
 	console.log(id)
 
 	// For now, consider the data is stored on a static `users.json` file
-	return fetch(`api/airdropgates/${id}`, {
-		mode: 'cors',
+	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/${id}?format=json`, {
 	})
 		// the JSON body is taken from the response
 		.then(res => res.json())
 		.then(res => {
+				console.log(res)
 				// The response has an `any` type, so we need to cast
 				// it to the `User` type, and return it from the promise
 				return res as AidropGateResponse[]

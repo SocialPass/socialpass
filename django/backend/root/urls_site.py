@@ -4,7 +4,7 @@ from . import views_site
 
 
 urlpatterns = [
-    path("", views_site.index, name="index"),
-    path("test-permission/", views_site.test_permission, name="test_permission"),
-    path("test-permission-class/", views_site.TestPermission.as_view(), name="test_permission_class"),
+	# Airdrop token gates
+    path("airdropgates/", views_site.AirdropGateListView.as_view(), name="airdropgate_list"),
+    path("airdropgates/<int:pk>/", views_site.AirdropGateDetailView.as_view(), name="airdropgate_detail"),
 ]

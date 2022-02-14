@@ -1,19 +1,7 @@
 /*
 API Interface for @nfty/sdk <> nfty django
 */
-import { GateType } from './props';
-
-/*
-Shared
-*/
-interface TokenGateResponse {
-	id: string
-	title: string
-	description: string
-	general_type: string
-	requirements: any
-	gateType: GateType
-}
+import { GateType, TicketGateResponse, AidropGateResponse } from './props';
 
 
 /*
@@ -33,10 +21,6 @@ export function fetchGateHandler({id}:{id:string}){
 /*
 TicketGate
 */
-interface TicketGateResponse extends TokenGateResponse {
-	name: string
-	age: string
-}
 function fetchTicketGate({id}:{id:string}): void | Promise<TicketGateResponse[]> {
 	// For now, consider the data is stored on a static `users.json` file
 	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}/?format=json`, {
@@ -47,7 +31,7 @@ function fetchTicketGate({id}:{id:string}): void | Promise<TicketGateResponse[]>
 				console.log(res)
 				// The response has an `any` type, so we need to cast
 				// it to the `User` type, and return it from the promise
-				return res as AidropGateResponse[]
+				return res as TicketGateResponse[]
 		})
 }
 
@@ -55,10 +39,6 @@ function fetchTicketGate({id}:{id:string}): void | Promise<TicketGateResponse[]>
 /*
 AirdropGate
 */
-interface AidropGateResponse extends TokenGateResponse {
-	name: string
-	age: string
-}
 function fetchAirdropGate({id}:{id:string}): Promise<AidropGateResponse[]> {
 	console.log(id)
 

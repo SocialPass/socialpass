@@ -4,14 +4,15 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "postinstall": "lerna bootstrap",
-
-    "build:sdk": "yarn workspace @nfty/sdk build",
-    "start:sdk": "",
-
-    "build:workbench": "yarn build:sdk && yarn workspace @nfty/workbench build",
-    "start:workbench": "lerna run --scope '{@nfty/sdk,@nfty/workbench}' dev --parallel"
+    "start": "yarn workspace @nfty/sdk start",
+    "build": "yarn workspace @nfty/sdk build",
+    "test": "yarn workspace @nfty/sdk test",
+    "lint": "yarn workspace @nfty/sdk lint",
+    "prepare": "yarn workspace @nfty/sdk prepare",
+    "size": "yarn workspace @nfty/sdk size",
+    "analyze": "yarn workspace @nfty/sdk analyze",
+    "storybook": "yarn workspace @nfty/sdk storybook",
+    "build-storybook": "yarn workspace @nfty/sdk build-storybook"
   },
   "workspaces": {
     "packages": [

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -11,10 +11,14 @@ from .model_field_schemas import (
 from .validators import JSONSchemaValidator
 
 
-class User(AbstractUser):
+class CustomUserManager(UserManager):
     """
-    Default custom user model for backend.
+    Select the team for users. Small optimization when using `request.user` in 
+    the site views, especially the permission system.
     """
+
+    def get(self, *args, **kwargs):
+        return super().select_related("team").get(*args, **kwargs)
 
 
 class DBModel(models.Model):
@@ -29,11 +33,11 @@ class DBModel(models.Model):
         abstract = True
 
 
-class SoftwarePlan(DBModel):
+class Team(DBModel):
     """
-    Specific plan details for the user accounts.
+    Team manager for software plans && token gates
     """
-    
+
     name = models.CharField(max_length=255)
     details = models.TextField(blank=True)
     software_types = models.JSONField(
@@ -43,6 +47,17 @@ class SoftwarePlan(DBModel):
 
     def __str__(self):
         return self.name
+
+
+class User(AbstractUser):
+    """
+    Default custom user model for backend.
+    """
+    team = models.ForeignKey(
+        Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="users"
+    )
+
+    objects = CustomUserManager()
 
 
 class TokenGate(DBModel):
@@ -56,12 +71,21 @@ class TokenGate(DBModel):
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tokengates")
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, related_name="tokengates")
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     general_type = models.CharField(max_length=50, choices=TOKENGATE_TYPES)
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        """
+        Method overridden to set the team.
+        """
+
+        self.team = self.user.team
+        super(TokenGate, self).save(*args, **kwargs)
 
 
 class Signature(DBModel):

@@ -2,8 +2,8 @@
 Base settings to build other settings files upon.
 """
 from pathlib import Path
-
 import environ
+import sys
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # backend/
@@ -41,10 +41,14 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-DATABASES = {
-    "default": env.db("NFTY_DATABASE_URL", default="postgres:///v3db"),
-}
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# Restricts DB against collectstatic command
+if len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    DATABASES = {
+        "default": env.db("NFTY_DATABASE_URL", default="postgres:///v3db"),
+    }
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
+    DATABASES["default"]["ATOMIC_REQUESTS"] = True
+
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

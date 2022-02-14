@@ -6,7 +6,7 @@ from .models import (
     AirdropGate,
     AirdropList,
     Signature,
-    SoftwarePlan,
+    Team,
     TicketGate,
     TicketList
 )
@@ -23,11 +23,23 @@ admin.site.index_title = "NFTY Labs Admin"
 
 # Admin registrations
 
-admin.site.register(User, UserAdmin)
+@admin.register(User)
+class UserAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + (
+        ("Team", {
+            "fields": ("team",),
+        }),
+    )
+
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ("Team", {
+            "fields": ("team",),
+        }),
+    )
 
 
-@admin.register(SoftwarePlan)
-class SoftwarePlanAdmin(admin.ModelAdmin):
+@admin.register(Team)
+class TeamAdmin(admin.ModelAdmin):
     list_display = ("name", "software_types")
     search_fields = ("name",)
 
@@ -40,8 +52,8 @@ class SignatureAdmin(admin.ModelAdmin):
 
 @admin.register(AirdropGate)
 class AirdropGateAdmin(admin.ModelAdmin):
-    list_display = ("title", "chain", "asset_type", "user")
-    search_fields = ("title", "chain", "asset_type", "user__username")
+    list_display = ("title", "chain", "asset_type", "user", "team")
+    search_fields = ("title", "chain", "asset_type", "user__username", "team__name")
 
 
 @admin.register(AirdropList)
@@ -52,8 +64,8 @@ class AirdropListAdmin(admin.ModelAdmin):
 
 @admin.register(TicketGate)
 class TicketGateAdmin(admin.ModelAdmin):
-    list_display = ("title", "user", "date", "location")
-    search_fields = ("title", "user__username", "location")
+    list_display = ("title", "user", "team", "date", "location")
+    search_fields = ("title", "user__username", "team__name", "location")
 
 
 @admin.register(TicketList)

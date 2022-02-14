@@ -1,4 +1,4 @@
-#frontend
+// frontend
 **/node_modules
 scripts/flow/*/.flowconfig
 .flowconfig
@@ -24,3 +24,4 @@ chrome-user-data
 *.swp
 *.swo
 **/lib
+**/dist

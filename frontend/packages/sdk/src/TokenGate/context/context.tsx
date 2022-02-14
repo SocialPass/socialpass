@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react"
-import { TokenGateProviderInterface, TokenGateContextInterface, GateType } from './props';
+import { TokenGateProviderInterface, TokenGateContextInterface, GateType } from '../props';
 
 export const TokenGateContext = createContext<TokenGateContextInterface>({} as TokenGateContextInterface);
 

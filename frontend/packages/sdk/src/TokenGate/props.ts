@@ -47,7 +47,7 @@ export interface TicketGateResponse extends BaseTokenGateResponse {
 }
 
 // Extended props for TicketGate
-export interface AidropGateResponse extends TokenGateResponse {
+export interface AidropGateResponse extends BaseTokenGateResponse {
   name: string
   age: string
 }

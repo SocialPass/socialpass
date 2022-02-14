@@ -9,10 +9,10 @@ import { fetchGateHandler } from './api';
 
 // GateHandler
 const GateHandler = () => {
-	const { id, gateType } = React.useContext(TokenGateContext);
+	const { id, gateType, setGateType, json, setJson } = React.useContext(TokenGateContext);
 	// Gate Handler, updates on ID change
 	useEffect(() => {
-		fetchGateHandler({id, gateType});
+		fetchGateHandler({id});
 	},[id]);
 
 	// Render correct gate based on type
@@ -22,8 +22,10 @@ const GateHandler = () => {
 				return <AirdropGate/>
 			case 'TICKET':
 				return <TicketGate/>
+			case 'LOADING':
+				return <strong>{gateType}</strong>
 			default:
-				return <strong>{gateType} coming soon</strong>
+				return <strong>error</strong>
 		}
 	}
 
@@ -42,9 +44,9 @@ const GateHandler = () => {
 // 1. Setup WAGMI provider (need to make optional in future)
 // 2. Renders GateHandler
 // 3. API call based on provided ID. JSON object is passed down to GateHandler
-const TokenGate = ({ id, gateType,styles }: TokenGateProviderInterface) => {
+const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 	return (
-		<TokenGateProvider id={id} gateType={gateType} styles={styles}>
+		<TokenGateProvider id={id} styles={styles}>
 			<Web3ProviderWrapper>
 				<GateHandler/>
 			</Web3ProviderWrapper>

@@ -1,7 +1,7 @@
 /*
 API Interface for @nfty/sdk <> nfty django
 */
-import {GateType} from './props';
+import { GateType } from './props';
 
 /*
 Shared
@@ -12,20 +12,21 @@ interface TokenGateResponse {
 	description: string
 	general_type: string
 	requirements: any
+	gateType: GateType
 }
 
 
 /*
 Gate Handler
 */
-export function fetchGateHandler({id, gateType}:{id:string, gateType:GateType}){
-	switch(gateType){
+export function fetchGateHandler({id}:{id:string}){
+	switch(id){
 		case 'AIRDROP':
 			return fetchAirdropGate({id});
 		case 'TICKET':
 			return fetchTicketGate({id});
 		default:
-			return console.log(`${gateType} coming soon`)
+			return console.log(`could not route to proper API`)
 	}
 }
 
@@ -38,7 +39,7 @@ interface TicketGateResponse extends TokenGateResponse {
 }
 function fetchTicketGate({id}:{id:string}): void | Promise<TicketGateResponse[]> {
 	// For now, consider the data is stored on a static `users.json` file
-	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}?format=json`, {
+	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}/?format=json`, {
 	})
 		// the JSON body is taken from the response
 		.then(res => res.json())
@@ -62,7 +63,7 @@ function fetchAirdropGate({id}:{id:string}): Promise<AidropGateResponse[]> {
 	console.log(id)
 
 	// For now, consider the data is stored on a static `users.json` file
-	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/${id}?format=json`, {
+	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/${id}/?format=json`, {
 	})
 		// the JSON body is taken from the response
 		.then(res => res.json())

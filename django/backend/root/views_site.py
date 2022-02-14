@@ -5,9 +5,11 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 
-from .models import AirdropGate
+from .models import AirdropGate, TicketGate
 from .permissions_site import team_has_software_type_permission
 
+
+# Airdrop token gates
 
 @method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
 class AirdropGateListView(ListView):
@@ -87,3 +89,83 @@ class AirdropGateUpdateView(UpdateView):
 			self.request, messages.SUCCESS, "Token gate updated successfully."
 		)
 		return reverse("airdropgate_detail", args=(self.object.pk,))
+
+
+# Ticket token gates
+
+@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+class TicketGateListView(ListView):
+	"""
+	Returns a list of Ticket token gates.
+	"""
+	model = TicketGate
+	paginate_by = 15
+	context_object_name = "tokengates"
+
+	def get_queryset(self):
+		qs = TicketGate.objects.filter(team=self.request.user.team)
+		qs = qs.order_by("-updated_at")
+
+		query_title = self.request.GET.get("title", "")
+		if query_title:
+			qs = qs.filter(title__icontains=query_title)
+
+		return qs
+
+
+@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+class TicketGateDetailView(DetailView):
+	"""
+	Returns the details of an Ticket token gate.
+	"""
+	model = TicketGate
+	context_object_name = "tokengate"
+
+	def get_queryset(self):
+		qs = TicketGate.objects.filter(team=self.request.user.team)
+		return qs
+
+
+@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+class TicketGateCreateView(CreateView):
+	"""
+	Creates a new Ticket token gate.
+	"""
+	model = TicketGate
+	fields = [
+		"title", "description", "date", "location", "capacity", "deadline", 
+		"requirements"
+	]
+
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		form.instance.general_type = "TICKET"
+		return super().form_valid(form)
+
+	def get_success_url(self):
+		messages.add_message(
+			self.request, messages.SUCCESS, "Token gate created successfully."
+		)
+		return reverse("ticketgate_list")
+
+
+@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+class TicketGateUpdateView(UpdateView):
+	"""
+	Updates an Ticket token gate.
+	"""
+	model = TicketGate
+	fields = [
+		"title", "description", "date", "location", "capacity", "deadline", 
+		"requirements"
+	]
+
+	def get_queryset(self):
+		qs = TicketGate.objects.filter(team=self.request.user.team)
+		return qs
+
+	def get_success_url(self):
+		messages.add_message(
+			self.request, messages.SUCCESS, "Token gate updated successfully."
+		)
+		return reverse("ticketgate_detail", args=(self.object.pk,))

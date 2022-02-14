@@ -7,6 +7,7 @@
     </form>
 
     <h3>List</h3>
+    <a href="{% url 'airdropgate_create' %}">Create</a>
     <ul>
     {% for tokengate in tokengates %}
         <li>{{ tokengate.title }}</li>
@@ -33,5 +34,4 @@
             {% endif %}
         </span>
     </div>
-
 {% endblock %}

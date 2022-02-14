@@ -18,7 +18,7 @@
 
     <!-- NFTY CSS -->
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
-      
+
     <!-- Custom styles for this template -->
     <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
     {% endblock %}
@@ -32,8 +32,8 @@
 
        <!-- Add Fontawesome icons -->
     <script src="https://kit.fontawesome.com/6acfae172e.js" crossorigin="anonymous"></script>
-    {% endblock javascript %}    
-    
+    {% endblock javascript %}
+
     <!-- Add Rubik font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,14 +56,14 @@
             {% with request.resolver_match.url_name as url_name %}
               <ul class="nav flex-column mb-auto">
                 <li class="nav-item">
-                  <a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="/dashboard">
+                  <a class="nav-link {% if url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
                     <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-dashboard.png' %}" />
                     <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-dashboard-white.png' %}" />
                     Dashboard
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link {% if url_name == 'airdrop-gate' %}active{% endif %}" href="/airdrop-gate">
+                  <a class="nav-link {% if url_name == 'airdrop-gate' %}active{% endif %}" href="{% url 'airdropgate_list' %}">
                     <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-airdrop.png' %}" />
                     <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-airdrop-white.png' %}" />
                     Airdrop Gate
@@ -105,14 +105,14 @@
                   <div class="mt-1" data-bs-toggle="dropdown" aria-expanded="false">
                     <img class="user-icon" src="{% static 'images/icon-user.png' %}" />
                   </div>
-                  <div class="dropdown-menu dropdown-menu-end p-0">                    
+                  <div class="dropdown-menu dropdown-menu-end p-0">
                     <a href="/settings" class="list-group-item bg-light">
                       <i class="fa-solid fa-gear me-2"></i>Settings
                     </a>
                     <a href="/contact-us" class="list-group-item bg-light">
                       <i class="fa-solid fa-circle-question me-2 "></i>Help
                     </a>
-                    <a href="/account/logout" class="list-group-item bg-light">
+                    <a href="{% url 'account_logout' %}" class="list-group-item bg-light">
                       <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout
                     </a>
                   </div>
@@ -164,7 +164,7 @@
         return null;
       }
 
-      function eraseCookie(name) {   
+      function eraseCookie(name) {
         document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       }
 
@@ -192,7 +192,7 @@
     <script>
       window.addEventListener('DOMContentLoaded', () => {
         var element = document.documentElement;
-        
+
         /* Run whatever you want */});
     </script>
     {% endcomment %}

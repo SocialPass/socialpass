@@ -1,38 +1,21 @@
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from django.views import defaults as default_views
-from django.views.generic import TemplateView
 
 # Base Django URL's
 urlpatterns = [
-    path("dashboard/", TemplateView.as_view(template_name="pages/home.html"), name="dashboard"),
-    path(
-        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
-    ),
-    path(
-        "airdrop-gate/", TemplateView.as_view(template_name="pages/airdrop_gate.html"), name="airdrop-gate"
-    ),
-    path(
-        "ticket-gate/", TemplateView.as_view(template_name="pages/ticket_gate.html"), name="ticket-gate"
-    ),
-    path(
-        "settings/", TemplateView.as_view(template_name="pages/settings.html"), name="settings"
-    ),
-    path(
-        "contact-us/", TemplateView.as_view(template_name="pages/help.html"), name="contact-us"
-    ),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("accounts/", include("allauth.urls")),
 
     # Custom stuff goes here
+    path("", include("root.urls_site")),
 ]
 
 # DRF API URLS

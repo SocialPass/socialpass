@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import reverse
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 
@@ -64,3 +64,26 @@ class AirdropGateCreateView(CreateView):
 			self.request, messages.SUCCESS, "Token gate created successfully."
 		)
 		return reverse("airdropgate_list")
+
+
+@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+class AirdropGateUpdateView(UpdateView):
+	"""
+	Updates an Airdrop token gate.
+	"""
+	model = AirdropGate
+	fields = [
+		"title", "description", "chain", "asset_type", "asset_address", 
+		"amount_per_person", "total_amount", "start_date", "end_date", 
+		"requirements"
+	]
+
+	def get_queryset(self):
+		qs = AirdropGate.objects.filter(team=self.request.user.team)
+		return qs
+
+	def get_success_url(self):
+		messages.add_message(
+			self.request, messages.SUCCESS, "Token gate updated successfully."
+		)
+		return reverse("airdropgate_detail", args=(self.object.pk,))

@@ -10,7 +10,10 @@
     <a href="{% url 'airdropgate_create' %}">Create</a>
     <ul>
     {% for tokengate in tokengates %}
-        <li>{{ tokengate.title }}</li>
+        <li>
+            {{ tokengate.title }}
+            <a href="{% url 'airdropgate_update' tokengate.pk %}">Update</a>
+        </li>
     {% empty %}
         <li>No tokengates yet.</li>
     {% endfor %}

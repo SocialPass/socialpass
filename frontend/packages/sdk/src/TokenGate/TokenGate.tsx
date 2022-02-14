@@ -9,23 +9,28 @@ import { fetchGateHandler } from './api';
 
 // GateHandler
 const GateHandler = () => {
-	const { id, gateType, setGateType, json, setJson } = React.useContext(TokenGateContext);
+	const { id, json, setJson } = React.useContext(TokenGateContext);
+
 	// Gate Handler, updates on ID change
+	// Fetches & Sets TokenGate JSON
 	useEffect(() => {
-		fetchGateHandler({id});
+		// get json
+		let _json = fetchGateHandler({id});
+
+		//setJson(_json);
 	},[id]);
 
 	// Render correct gate based on type
 	const GateSwitch = () => {
-		switch(gateType){
+		switch(id){
 			case 'AIRDROP':
 				return <AirdropGate/>
 			case 'TICKET':
 				return <TicketGate/>
-			case 'LOADING':
-				return <strong>{gateType}</strong>
+			case 'ERROR':
+				return <strong>Error</strong>
 			default:
-				return <strong>error</strong>
+				return <strong>Loading...</strong>
 		}
 	}
 

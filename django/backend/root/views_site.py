@@ -17,6 +17,7 @@ class AirdropGateListView(ListView):
 
 	def get_queryset(self):
 		qs = AirdropGate.objects.filter(team=self.request.user.team)
+		qs = qs.order_by("-updated_at")
 
 		query_title = self.request.GET.get("title", "")
 		if query_title:

@@ -245,6 +245,21 @@ b {
     }
 }
 
+/* logo */
+
+.logo {
+    width: 150px !important;
+}
+
+.user-icon {
+    width: 29px;
+}
+
+/* Padding */
+.px-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
 
 /* Positioning */
 
@@ -699,7 +714,7 @@ b {
 .btn-gradient-alt {
     color: var(--white-color);
     background-color: var(--primary-color);
-    background: linear-gradient(135deg, var(--tertiary-color), var(--secondary-color), var(--primary-color));
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
     border: 0;
 }
 
@@ -1027,6 +1042,20 @@ textarea.form-control-lg {
     background-color: var(--primary-color);
 }
 
+/* Sidebar */
+
+.dark-mode .sidebar .nav-link,
+.dark-mode .sidebar .nav-link.active,
+
+
+.dark-mode a.list-group-item {
+    color: #FFFFFF !important;
+}
+
+/* Header dropdown */
+.list-group-item:hover {
+    color: var(--primary-color);
+}
 
 /* Animation */
 
@@ -2712,13 +2741,14 @@ textarea.form-control-lg {
 
 
 /**
- * NFTY Connect specific
+ * NFTY SocialPass specific
  */
 
 
 /* Body */
 
-.nftyconnect body {
+.nftysocialpass body,
+ main {
     background: linear-gradient(
         90deg,
         hsla(var(--primary-color-hsl), 0.1),
@@ -2727,7 +2757,7 @@ textarea.form-control-lg {
     );
 }
 
-.nftyconnect.dark-mode body {
+.nftysocialpass.dark-mode body {
     background: linear-gradient(
         90deg,
         hsla(var(--primary-color-hsl), 0.02),
@@ -2738,19 +2768,26 @@ textarea.form-control-lg {
     );
 }
 
-.nftyconnect.dark-mode .body-alt-dm {
+.nftysocialpass.dark-mode .body-alt-dm {
     background: none;
 }
 
 
 /* Dark mode toggle */
 
-.nftyconnect .dark-mode-toggle-btn {
-    background-color: var(--body-bg-color);
-    border-color: hsla(var(--primary-color-hsl), 0.5);
+.nftysocialpass .dark-mode-toggle-btn {
+    background-color: rgba(121,8,142,.1);
+    border-color: transparent;
+    height: 1.7em;
+    width: 4em;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(121,8,142,1)'/></svg>") !important;
 }
 
-.nftyconnect.dark-mode .dark-mode-toggle-btn {
+.form-switch .form-check-input:checked {
+    background-color: #FFFFFF !important;
+}
+
+.nftysocialpass.dark-mode .dark-mode-toggle-btn {
     background-color: var(--bg-light-color);
     border-color: transparent;
 }
@@ -2758,21 +2795,21 @@ textarea.form-control-lg {
 
 /* Footer */
 
-.nftyconnect .footer {
+.nftysocialpass .footer {
     border-top: 2px solid var(--secondary-color);
 }
 
 @media (min-width: 768px) {
-    .nftyconnect .col-footer {
+    .nftysocialpass .col-footer {
         border-left: 1px dashed hsla(0, 0%, 0%, 0.1);
         border-right: 1px dashed hsla(0, 0%, 0%, 0.1);
     }
 
-    .nftyconnect .col-footer:first-child {
+    .nftysocialpass .col-footer:first-child {
         border-right: 0;
     }
 
-    .nftyconnect .col-footer:last-child {
+    .nftysocialpass .col-footer:last-child {
         border-left: 0;
     }
 }
@@ -2789,7 +2826,7 @@ textarea.form-control-lg {
     }
 }
 
-.nftyconnect .notifications-container {
+.nftysocialpass .notifications-container {
     --width: 400px;
 
     position: fixed;
@@ -2807,7 +2844,7 @@ textarea.form-control-lg {
 }
 
 @media (max-width: 575.98px) {
-    .nftyconnect .notifications-container {
+    .nftysocialpass .notifications-container {
         --width: 300px;
 
         right: calc(50% - (var(--width) / 2));
@@ -2841,7 +2878,7 @@ textarea.form-control-lg {
     }
 }
 
-.nftyconnect .notification {
+.nftysocialpass .notification {
     --main-color-hsl: 210, 100%, 56%;
     --main-color: hsl(var(--main-color-hsl));
     --bg-color: hsl(210, 100%, 99.5%);
@@ -2853,38 +2890,38 @@ textarea.form-control-lg {
     animation: notificationGlow 1s infinite;
 }
 
-.nftyconnect.dark-mode .notification {
+.nftysocialpass.dark-mode .notification {
     --bg-color: hsl(210, 25%, 15%);
 }
 
-.nftyconnect .notification-success {
+.nftysocialpass .notification-success {
     --main-color-hsl: 147, 50%, 47%;
     --bg-color: hsl(147, 50%, 97.5%);
 }
 
-.nftyconnect.dark-mode .notification-success {
+.nftysocialpass.dark-mode .notification-success {
     --bg-color: hsl(147, 25%, 15%);
 }
 
-.nftyconnect .notification-warning {
+.nftysocialpass .notification-warning {
     --main-color-hsl: 48, 89%, 50%;
     --bg-color: hsl(48, 89%, 97.5%);
 }
 
-.nftyconnect.dark-mode .notification-warning {
+.nftysocialpass.dark-mode .notification-warning {
     --bg-color: hsl(48, 25%, 15%);
 }
 
-.nftyconnect .notification-error {
+.nftysocialpass .notification-error {
     --main-color-hsl: 6, 78%, 57%;
     --bg-color: hsl(6, 78%, 97.5%);
 }
 
-.nftyconnect.dark-mode .notification-error {
+.nftysocialpass.dark-mode .notification-error {
     --bg-color: hsl(6, 25%, 15%);
 }
 
-.nftyconnect .notification .icon-container {
+.nftysocialpass .notification .icon-container {
     color: var(--main-color);
 }
 
@@ -2897,47 +2934,47 @@ textarea.form-control-lg {
     }
 }
 
-.nftyconnect .notification.fade {
+.nftysocialpass .notification.fade {
     animation: notificationFade 2s;
 }
 
 
 /* User settings */
 
-.nftyconnect .user-settings-sidebar {
+.nftysocialpass .user-settings-sidebar {
     border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
 }
 
 @media (min-width: 768px) {
-    .nftyconnect .user-settings-sidebar {
+    .nftysocialpass .user-settings-sidebar {
         border-right: 1px solid hsla(0, 0%, 0%, 0.1);
         border-bottom: 0;
     }
 }
 
-.nftyconnect.dark-mode .user-settings-sidebar {
+.nftysocialpass.dark-mode .user-settings-sidebar {
     border-color: hsla(0, 0%, 100%, 0.1);
 }
 
 
 /* QR Code container */
 
-.nftyconnect .qr-code {
+.nftysocialpass .qr-code {
     background-color: hsla(0, 0%, 0%, 0.01);
 }
 
 
 /* Token gate type and chain select */
 
-.nftyconnect .token-gate-type-select-card .icon-container,
-.nftyconnect .token-gate-chain-select-card .logo-container {
+.nftysocialpass .token-gate-type-select-card .icon-container,
+.nftysocialpass .token-gate-chain-select-card .logo-container {
     width: 64px;
     height: 64px;
 }
 
 @media (min-width: 768px) {
-    .nftyconnect .token-gate-type-select-card,
-    .nftyconnect .token-gate-chain-select-card {
+    .nftysocialpass .token-gate-type-select-card,
+    .nftysocialpass .token-gate-chain-select-card {
         min-height: 310px;
     }
 }
@@ -2946,29 +2983,29 @@ textarea.form-control-lg {
 /* Token gate details */
 
 @media (min-width: 576px) {
-    .nftyconnect .token-gate-details-img-container {
+    .nftysocialpass .token-gate-details-img-container {
         height: 300px;
     }
 }
 
-.nftyconnect .token-gate-details-img-container a {
+.nftysocialpass .token-gate-details-img-container a {
     cursor: zoom-in;
 }
 
 
 /* About NFTY */
 
-.nftyconnect .about-nfty-card {
+.nftysocialpass .about-nfty-card {
     margin: var(--container-adjusmtent-spacing);
 }
 
-.nftyconnect .about-nfty-card .icon-container {
+.nftysocialpass .about-nfty-card .icon-container {
     width: 64px;
     height: 64px;
 }
 
 @media (min-width: 576px) {
-    .nftyconnect .about-nfty-card-description {
+    .nftysocialpass .about-nfty-card-description {
         height: 80px;
         margin-bottom: 0;
         overflow: hidden;
@@ -2978,23 +3015,23 @@ textarea.form-control-lg {
 
 /* Admin */
 
-.nftyconnect .admin-highlight-row {
+.nftysocialpass .admin-highlight-row {
     border-radius: 6px;
 }
 
-.nftyconnect .admin-highlight-row:hover {
+.nftysocialpass .admin-highlight-row:hover {
     box-shadow: inset 0 0 0 3px hsla(var(--primary-color-hsl), 0.3);
 }
 
 
 /* Token gate cards */
 
-.nftyconnect .tokengate-card-img-container {
+.nftysocialpass .tokengate-card-img-container {
     height: 200px;
 }
 
 @media (min-width: 768px) {
-    .nftyconnect .tokengate-card-content-container {
+    .nftysocialpass .tokengate-card-content-container {
         height: 120px;
     }
 }
@@ -3003,7 +3040,7 @@ textarea.form-control-lg {
 /* Creator cards */
 
 @media (min-width: 768px) {
-    .nftyconnect .creator-card-description {
+    .nftysocialpass .creator-card-description {
         height: 70px;
     }
 }

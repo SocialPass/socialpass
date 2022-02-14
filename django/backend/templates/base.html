@@ -1,6 +1,7 @@
-{% load static i18n %}<!DOCTYPE html>
+{% load static i18n %}
+<!doctype html>
 {% get_current_language as LANGUAGE_CODE %}
-<html lang="{{ LANGUAGE_CODE }}">
+<html class="nftysocialpass" lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -14,6 +15,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" integrity="sha512-GQGU0fMMi238uA+a/bdWJfpUGKUkBdgfFdgBm72SUQ6BeyWjoY/ton0tEjH+OSH9iP4Dfh+7HM0I9f5eR0L/4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
+
+    <!-- NFTY CSS -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+      
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
     {% endblock %}
     <!-- Le javascript
     ================================================== -->
@@ -23,78 +30,174 @@
       <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.min.js" integrity="sha512-OvBgP9A2JBgiRad/mM36mkzXSXaJE9BEIENnVEmeZdITvwT09xnxLtT4twkCa8m/loMbPHsvPl0T8lRGVBwjlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
       <!-- Your stuff: Third-party javascript libraries go here -->
 
-    {% endblock javascript %}
-
+       <!-- Add Fontawesome icons -->
+    <script src="https://kit.fontawesome.com/6acfae172e.js" crossorigin="anonymous"></script>
+    {% endblock javascript %}    
+    
+    <!-- Add Rubik font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-
   <body>
-
-    <div class="mb-1">
-      <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="container-fluid">
-          <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <a class="navbar-brand" href="{% url 'home' %}">SocialPass</a>
-
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
-              </li>
-              {% if request.user.is_authenticated %}
+    <div class="container-fluid">
+      <div class="row">
+        <nav id="sidebarMenu" class=" col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+          <div class="position-sticky pt-3">
+            <a href="/dashboard">
+              <img class="logo ms-2 mb-3 d-none d-sm-block d-none-dm" src="{% static 'images/socialpass.png' %}" />
+              <img class="logo ms-2 mb-3 d-none d-sm-block d-none-lm" src="{% static 'images/socialpass-white.png' %}" />
+            </a>
+            <div class="container-fluid">
+              <button class="navbar-toggler position-absolute d-sm-none collapsed end-0 pe-3 zindex-tooltip" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            {% with request.resolver_match.url_name as url_name %}
+              <ul class="nav flex-column mb-auto">
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
+                  <a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="/dashboard">
+                    <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-dashboard.png' %}" />
+                    <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-dashboard-white.png' %}" />
+                    Dashboard
+                  </a>
                 </li>
-              {% else %}
-                {% if ACCOUNT_ALLOW_REGISTRATION %}
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
-              </li>
-              {% endif %}
                 <li class="nav-item">
-                  {# URL provided by django-allauth/account/urls.py #}
-                  <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
+                  <a class="nav-link {% if url_name == 'airdrop-gate' %}active{% endif %}" href="/airdrop-gate">
+                    <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-airdrop.png' %}" />
+                    <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-airdrop-white.png' %}" />
+                    Airdrop Gate
+                  </a>
                 </li>
-              {% endif %}
-            </ul>
+                <li class="nav-item">
+                  <a class="nav-link {% if url_name == 'ticket-gate' %}active{% endif %}" href="/ticket-gate">
+                    <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-ticket.png' %}" />
+                    <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-ticket-white.png' %}" />
+                    Ticket Gate
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <div class="form-check form-switch nav-link active pe-auto">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                      <img class="nav-item-icon ms-0 d-none-dm" src="{% static 'images/icon-bulb.png' %}" />
+                      <img class="nav-item-icon ms-0 d-none-lm" src="{% static 'images/icon-bulb-white.png' %}" />
+                    </label>
+                    <input class="dark-mode-toggle-btn form-check-input ms-0 float-none mt-0" type="checkbox" id="flexSwitchCheckDefault" onclick="toggleDarkMode()">
+                  </div>
+                </li>
+              </ul>
+            {% endwith %}
           </div>
-        </div>
-      </nav>
-
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <header class="navbar navbar-light pt-3 pb-2 mb-3">
+            <button class="navbar-toggler d-md-none collapsed border-0" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <a href="/dashboard">
+              <img class="logo ms-2 d-block d-sm-none d-none-dm" src="{% static 'images/socialpass.png' %}" />
+              <img class="logo ms-2 d-block d-sm-none d-none-lm" src="{% static 'images/socialpass.png' %}" />
+            </a>
+            <div class="container-fluid">
+              <a class="navbar-brand"></a>
+              <div class="d-flex">
+                <div class="btn-group">
+                  <div class="mt-1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img class="user-icon" src="{% static 'images/icon-user.png' %}" />
+                  </div>
+                  <div class="dropdown-menu dropdown-menu-end p-0">                    
+                    <a href="/settings" class="list-group-item bg-light">
+                      <i class="fa-solid fa-gear me-2"></i>Settings
+                    </a>
+                    <a href="/contact-us" class="list-group-item bg-light">
+                      <i class="fa-solid fa-circle-question me-2 "></i>Help
+                    </a>
+                    <a href="/account/logout" class="list-group-item bg-light">
+                      <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+          {% block content %}
+            <div class="text-center empty-content">
+              <p class="fs-1 fw-bold">Ready for your first token gate?</p>
+              <a class="btn btn-gradient-alt me-3">Create Token Gate</a>
+            </div>
+          {% endblock content %}
+        </main>
+      </div>
     </div>
-
-    <div class="container">
-
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
-
-      {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
-      {% endblock content %}
-
-    </div> <!-- /container -->
-
     {% block modal %}{% endblock modal %}
 
     {% block inline_javascript %}
+    <script>
+      /* Code block for handling dark mode start */
+
+      function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + (days*24*60*60*1000));
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+      function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+      }
+
+      function eraseCookie(name) {   
+        document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
+
+      function toggleDarkMode() {
+        var rootElem = document.documentElement;
+
+        // Turn off dark mode
+        // Remove class, and erase cookie
+        if (rootElem.classList.contains("dark-mode")) {
+          rootElem.classList.remove("dark-mode");
+          eraseCookie("modePreference");
+        }
+
+        // Turn on dark mode
+        // Add class, and set cookie
+        else {
+          rootElem.classList.add("dark-mode");
+          setCookie("modePreference", "dark-mode");
+        }
+      }
+    </script>
     {% comment %}
     Script tags with only code, no src (defer by default). To run
     with a "defer" so that you run inline code:
     <script>
-      window.addEventListener('DOMContentLoaded', () => {/* Run whatever you want */});
+      window.addEventListener('DOMContentLoaded', () => {
+        var element = document.documentElement;
+        
+        /* Run whatever you want */});
     </script>
     {% endcomment %}
     {% endblock inline_javascript %}
+    <script src="{% static 'js/dashboard.js' %}"></script>
   </body>
 </html>
+

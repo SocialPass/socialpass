@@ -18,30 +18,44 @@ const GateHandler = () => {
 		let _json = fetchGateHandler({id});
 
 		//setJson(_json);
+		//setStatusCode(_statusCode)
 	},[id]);
 
 	// Render correct gate based on type
 	const GateSwitch = () => {
-		switch(id){
+		let _id = id.split('_');
+		switch(_id[0]){
 			case 'AIRDROP':
 				return <AirdropGate/>
 			case 'TICKET':
 				return <TicketGate/>
-			case 'ERROR':
-				return <strong>Error</strong>
 			default:
 				return <strong>Loading...</strong>
 		}
 	}
 
+	// Error Component
+	const Error = () => {
+		return (
+			<h1>Error</h1>
+		)
+	}
+
+
+
 	// Wrapper around GateSwitch (initial styling, provider authentication)
-	return (
-		<div style={{border: '1px solid red', padding: '1rem', width: '50%',}}>
-			<h1>SocialPass</h1>
-			<GateSwitch/>
-			<Web3ProviderAuthentication/>
-		</div>
-	)
+	const Wrapper = () => {
+		return (
+			<div style={{border: '1px solid red', padding: '1rem', width: '50%',}}>
+				<h1>SocialPass</h1>
+				<GateSwitch/>
+				<Web3ProviderAuthentication/>
+			</div>
+		)
+	}
+
+
+	return <Wrapper/>
 }
 
 

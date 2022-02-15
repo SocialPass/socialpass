@@ -8,7 +8,8 @@ import { GateType, TicketGateResponse, AidropGateResponse } from './props';
 Gate Handler
 */
 export function fetchGateHandler({id}:{id:string}){
-	switch(id){
+	let _id = id.split('_');
+	switch(_id[0]){
 		case 'AIRDROP':
 			return fetchAirdropGate({id});
 		case 'TICKET':

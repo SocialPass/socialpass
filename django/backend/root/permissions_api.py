@@ -3,19 +3,19 @@ from rest_framework import permissions
 from .models import TokenGate
 
 
-class IsOwner(permissions.BasePermission):
+class IsTeamMember(permissions.BasePermission):
     """
-    Object-level permission to only allow owners of an object to edit it.
+    Object-level permission to only allow team members to edit the token gate.
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
+        return obj.team == request.user.team
 
 
-class IsTokenGateOwner(permissions.BasePermission):
+class IsTokenGateTeamMember(permissions.BasePermission):
     """
-    Parent-level permission to only allow owners of an object's parent token
-    gate to edit it.
+    Parent-level permission to only allow team members of an object's parent 
+    token gate to edit it.
     """
 
     def has_object_permission(self, request, view, obj):
@@ -26,4 +26,4 @@ class IsTokenGateOwner(permissions.BasePermission):
         except Exception as e:
             return False
 
-        return tokengate.user == request.user
+        return tokengate.team == request.user.team

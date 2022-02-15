@@ -11,7 +11,7 @@ class AirdropGateSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirdropGate
         fields = "__all__"
-        read_only_fields = ["created_at", "updated_at", "user", "general_type"]
+        read_only_fields = ["created_at", "updated_at", "user", "team", "general_type"]
 
     def create(self, validated_data):
         # Create the token gate
@@ -40,7 +40,7 @@ class TicketGateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketGate
         fields = "__all__"
-        read_only_fields = ["created_at", "updated_at", "user", "general_type"]
+        read_only_fields = ["created_at", "updated_at", "user", "team", "general_type"]
 
     def create(self, validated_data):
         # Create the token gate

@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import AirdropGate, AirdropList, TicketGate, TicketList
-from .permissions_api import IsOwner, IsTokenGateOwner
+from .permissions_api import IsTeamMember, IsTokenGateTeamMember
 from .serializers import AirdropGateSerializer, AirdropListSerializer, TicketGateSerializer, TicketListSerializer
 
 
@@ -24,7 +24,7 @@ class AirdropGateViewSet(viewsets.ModelViewSet):
         elif self.action == "create":
             permission_classes = [IsAuthenticated]
         else:
-            permission_classes = [IsOwner]
+            permission_classes = [IsTeamMember]
         return [permission() for permission in permission_classes]
 
 
@@ -34,7 +34,7 @@ class AirdropListViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = AirdropListSerializer
-    permission_classes = [IsTokenGateOwner]
+    permission_classes = [IsTokenGateTeamMember]
 
     def get_queryset(self):
         """
@@ -61,7 +61,7 @@ class TicketGateViewSet(viewsets.ModelViewSet):
         elif self.action == "create":
             permission_classes = [IsAuthenticated]
         else:
-            permission_classes = [IsOwner]
+            permission_classes = [IsTeamMember]
         return [permission() for permission in permission_classes]
 
 
@@ -71,7 +71,7 @@ class TicketListViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = TicketListSerializer
-    permission_classes = [IsTokenGateOwner]
+    permission_classes = [IsTokenGateTeamMember]
 
     def get_queryset(self):
         """

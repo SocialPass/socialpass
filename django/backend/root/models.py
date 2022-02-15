@@ -13,7 +13,7 @@ from .validators import JSONSchemaValidator
 
 class CustomUserManager(UserManager):
     """
-    Select the team for users. Small optimization when using `request.user` in 
+    Select the team for users. Small optimization when using `request.user` in
     the site views, especially the permission system.
     """
 
@@ -79,6 +79,24 @@ class TokenGate(DBModel):
     def __str__(self):
         return self.title
 
+    def generate_signature_request(self):
+        import secrets
+        """
+        generate 1-time Signature model to be consumed and signed by the client for verification
+        returns unique code (for lookup) and message (for signature)
+        """
+        x = Signature.objects.create(
+            tokengate=self,
+            unique_code=secrets.token_hex(32),
+            signing_message="",
+            wallet_address="",
+        )
+        return {
+            "id": x.unique_code,
+            "message": x.signing_message,
+            "issued_at": x.created_at
+        }
+
     def save(self, *args, **kwargs):
         """
         Method overridden to set the team.
@@ -92,11 +110,10 @@ class Signature(DBModel):
     """
     Stores details used to verify wallets.
     """
-
+    unique_code = models.CharField(primary_key=True, max_length=100, unique=True)
     tokengate = models.ForeignKey(
         TokenGate, on_delete=models.CASCADE, related_name="signatures"
     )
-    unique_code = models.CharField(max_length=400, unique=True)
     signing_message = models.CharField(max_length=400)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)

@@ -1,5 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import reverse
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
@@ -7,6 +9,32 @@ from django.utils.decorators import method_decorator
 
 from .models import AirdropGate, TicketGate
 from .permissions_site import team_has_software_type_permission
+
+
+# Dashboard and user related
+
+@method_decorator(login_required, name="dispatch")
+class DashboardView(TemplateView):
+	"""
+	Main dashboard page.
+	"""
+	template_name = "root/dashboard.html"
+
+
+@method_decorator(login_required, name="dispatch")
+class UserDetailView(TemplateView):
+	"""
+	Returns the details of the logged in user.
+	"""
+	template_name = "root/user_detail.html"
+
+
+@method_decorator(login_required, name="dispatch")
+class TeamDetailView(TemplateView):
+	"""
+	Returns the details of the logged in user's team.
+	"""
+	template_name = "root/team_detail.html"
 
 
 # Airdrop token gates

@@ -56,7 +56,7 @@
             {% with request.resolver_match.url_name as url_name %}
               <ul class="nav flex-column mb-auto">
                 <li class="nav-item">
-                  <a class="nav-link {% if url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
+                  <a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
                     <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-dashboard.png' %}" />
                     <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-dashboard-white.png' %}" />
                     Dashboard

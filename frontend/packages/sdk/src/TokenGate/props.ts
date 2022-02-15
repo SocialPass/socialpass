@@ -24,25 +24,33 @@ export interface TokenGateProviderInterface {
 export interface TokenGateContextInterface {
   id: string // ID of tokengate
   styles?: any // Styles of tokengate
+
   step: number // Step of token gate
   setStep: any // Set step of token gate
-  json: any | APIError | TicketGateResponse | AidropGateResponse
+
+  // initial fetch tokengate
+  json: APIError | TicketGateResponse | AidropGateResponse
   setJson: any
   httpStatus: number
   setHttpStatus: any
+
+  // verify tokengate
+  json2: any
+  setJson2: any
+  httpStatus2: number
+  setHttpStatus2: any
 }
 
 /*
-API TYPES
+API TYPES -- Fetch TokenGates
 */
-
-export interface APIError {
+export interface APIFetchError {
   httpStatus: number
   message?: string
 }
 
 // Props for base TokenGate API response
-export interface BaseTokenGateResponse {
+export interface TokenGateFetchResponse {
   id: string
   httpStatus: number
   title: string
@@ -52,7 +60,7 @@ export interface BaseTokenGateResponse {
 }
 
 // Extended props for TicketGate
-export interface TicketGateResponse extends BaseTokenGateResponse {
+export interface TicketGateFetchResponse extends TokenGateFetchResponse {
   asset_address: string
   asset_type: string
   chain: string
@@ -60,6 +68,11 @@ export interface TicketGateResponse extends BaseTokenGateResponse {
 }
 
 // Extended props for TicketGate
-export interface AidropGateResponse extends BaseTokenGateResponse {
+export interface AidropGateFetchResponse extends TokenGateFetchResponse {
 
 }
+
+
+/*
+API TYPES -- Verify TokenGates (json2)
+*/

@@ -19,10 +19,8 @@ const Web3ProviderAuthentication = () => {
 	// Step Handler, updates on accountData.address change
 	useEffect(() => {
 		if (accountData && accountData?.address) {
-			console.log('setting 1')
 			setStep(1);
 		} else {
-			console.log('setting 0');
 			setStep(0)
 		}
 	},[accountData?.address]);
@@ -66,7 +64,6 @@ const Web3ProviderAuthentication = () => {
 
 	// If NO accountData provided...
 	else {
-		connectData.connectors.map((x) => console.log(x))
 		return (
 			<div>
 				<h4>Connect Wallet</h4>

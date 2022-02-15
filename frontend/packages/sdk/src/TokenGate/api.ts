@@ -1,57 +1,85 @@
 /*
 API Interface for @nfty/sdk <> nfty django
 */
-import { GateType, TicketGateResponse, AidropGateResponse } from './props';
+import { GateType, APIError, TicketGateResponse, AidropGateResponse } from './props';
 
 
 /*
 Gate Handler
 */
-export function fetchGateHandler({id}:{id:string}){
+export async function fetchGateHandler({id}:{id:string}){
 	let _id = id.split('_');
 	switch(_id[0]){
 		case 'AIRDROP':
-			return fetchAirdropGate({id});
+			return await fetchAirdropGate(_id[1]);
 		case 'TICKET':
-			return fetchTicketGate({id});
+			return await fetchTicketGate(_id[1]);
 		default:
 			return console.log(`could not route to proper API`)
 	}
+
 }
 
 /*
 TicketGate
 */
-function fetchTicketGate({id}:{id:string}): void | Promise<TicketGateResponse[]> {
-	// For now, consider the data is stored on a static `users.json` file
-	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}/?format=json`, {
+function fetchTicketGate(id:string): Promise<APIError> | Promise<TicketGateResponse> {
+	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}/?format=json`).then((response) => {
+	  if (response.ok) {
+		return response.json();
+	  } else {
+		  throw response;
+	  }
 	})
-		// the JSON body is taken from the response
-		.then(res => res.json())
-		.then(res => {
-				console.log(res)
-				// The response has an `any` type, so we need to cast
-				// it to the `User` type, and return it from the promise
-				return res as TicketGateResponse[]
-		})
+	.then((json) => {
+	   let obj = {
+		   "id": json.id,
+		   "httpStatus": 200,
+		   "title": json.title,
+		   "description": json.description,
+		   "general_type": json.general_type,
+		   "requirements": json.requirements,
+		 }
+	   return obj as AidropGateResponse;
+	})
+	.catch((error) => {
+	  return error as APIError;
+	});
 }
-
 
 /*
 AirdropGate
 */
-function fetchAirdropGate({id}:{id:string}): Promise<AidropGateResponse[]> {
-	console.log(id)
-
-	// For now, consider the data is stored on a static `users.json` file
-	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/${id}/?format=json`, {
+function fetchAirdropGate(id:string): Promise<APIError> | Promise<AidropGateResponse > {
+	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/${id}/?format=json`).then((response) => {
+	  if (response.ok) {
+		return response.json();
+	  } else {
+		  throw response;
+	  }
 	})
-		// the JSON body is taken from the response
-		.then(res => res.json())
-		.then(res => {
-				console.log(res)
-				// The response has an `any` type, so we need to cast
-				// it to the `User` type, and return it from the promise
-				return res as AidropGateResponse[]
-		})
+	.then((json) => {
+	  let obj = {
+		//base
+  		"id": json.id,
+  		"httpStatus": 200,
+  		"title": json.title,
+  		"description": json.description,
+  		"general_type": json.general_type,
+  		"requirements": json.requirements,
+		//airdrop
+		"asset_address": json.asset_address,
+		"asset_type": json.asset_type,
+		"chain": json.chain,
+		"end_date": json.end_date,
+		}
+	  return obj as AidropGateResponse;
+	})
+	.catch((error) => {
+		let e = {
+			"httpStatus": error.status,
+			"message": error.statusText
+		}
+	  return e as APIError;
+	});
 }

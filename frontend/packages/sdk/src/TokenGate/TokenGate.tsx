@@ -2,23 +2,28 @@ import React, { useState, useEffect } from 'react';
 import AirdropGate from './gates/airdrop';
 import TicketGate from './gates/ticket';
 import Web3ProviderWrapper from './web3/wrapper';
-import Web3ProviderAuthentication from "./web3/auth";
 import { TokenGateProviderInterface } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
 import { fetchGateHandler } from './api';
 
 // GateHandler
 const GateHandler = () => {
-	const { id, json, setJson } = React.useContext(TokenGateContext);
+	const { id, json, setJson, httpStatus, setHttpStatus } = React.useContext(TokenGateContext);
 
 	// Gate Handler, updates on ID change
 	// Fetches & Sets TokenGate JSON
 	useEffect(() => {
-		// get json
-		let _json = fetchGateHandler({id});
+		(async function() {
+			// set status to initial status (0)
+			setHttpStatus(0);
 
-		//setJson(_json);
-		//setStatusCode(_statusCode)
+			// fetch and set API response
+			let response = await fetchGateHandler({id});
+			if (response && response.httpStatus){
+				setJson(response);
+				setHttpStatus(response.httpStatus)
+			}
+		})();
 	},[id]);
 
 	// Render correct gate based on type
@@ -30,32 +35,62 @@ const GateHandler = () => {
 			case 'TICKET':
 				return <TicketGate/>
 			default:
-				return <strong>Loading...</strong>
+				return <Loading/>
 		}
 	}
 
 	// Error Component
 	const Error = () => {
 		return (
-			<h1>Error</h1>
+			<div>
+				<h1>Error</h1>
+				<h2>Status Code: {httpStatus}</h2>
+			</div>
 		)
 	}
 
+	// Loading Component
+	const Loading = () => {
+		return (
+			<h1>Loading...</h1>
+		)
+	}
 
-
-	// Wrapper around GateSwitch (initial styling, provider authentication)
-	const Wrapper = () => {
+	const Styled = ({children}:{children:any}) => {
 		return (
 			<div style={{border: '1px solid red', padding: '1rem', width: '50%',}}>
 				<h1>SocialPass</h1>
-				<GateSwitch/>
-				<Web3ProviderAuthentication/>
+				{children}
 			</div>
 		)
 	}
 
 
-	return <Wrapper/>
+
+	// Status Wrapper
+	// Once http is 200, rendering is handed off to child gates
+	const Status = () => {
+		// initial http status is 0, indicates loading
+		if (httpStatus === 0){
+			return <Loading/>
+		}
+
+		// non-200 http status, indicates error
+		if (httpStatus !== 200) {
+			return <Error/>
+		}
+
+		// 200 status, indicates success
+		// hand rendering off to child gates in GateSwitch
+		return <GateSwitch/>
+	}
+
+
+	return (
+		<Styled>
+			<Status/>
+		</Styled>
+	)
 }
 
 

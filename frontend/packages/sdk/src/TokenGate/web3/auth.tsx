@@ -1,17 +1,50 @@
-import React from 'react';
-import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
-import { ProviderAuthProps } from '../props';
+import React, { useCallback, useEffect } from 'react';
+import {  useConnect, useAccount, useSignMessage } from 'wagmi'
+import { TokenGateContext } from '../context';
 
 // Web3 Provider authentication
-const ProviderAuthentication = ({step, setStep}:ProviderAuthProps) => {
+const Web3ProviderAuthentication = () => {
+	/****************** GLOBALS *************************/
+	// context
+	const { setStep, json } = React.useContext(TokenGateContext);
+	// wallet connect hooks
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
-	const [{ data: accountData }, disconnect] = useAccount({
-		fetchEns: true,
-	});
+	// wallet account hooks
+	const [{ data: accountData, loading: accountLoading }, disconnect] = useAccount();
+	// walet sig hooks
+	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
 
+
+	/****************** HOOKS *************************/
+	// Step Handler, updates on accountData.address change
+	useEffect(() => {
+		if (accountData && accountData?.address) {
+			setStep(1);
+		} else {
+			setStep(0)
+		}
+	},[accountData?.address]);
+
+
+	/****************** FUNCTIONS *************************/
+	// Signature Handler
+	const signatureHandler = async (message:string) => {
+		// Sign Message
+		const signRes = await signMessage({ message: message });
+		if (signRes.error) throw signRes.error;
+
+		// Verify Message/Wallet
+		console.log(signRes);
+
+		// Update Step
+		setStep(2);
+
+
+	}
+
+	/****************** RETURN *************************/
 	// If accountData provided...
 	if (accountData) {
-		setStep(1);
 		return (
 		  <div>
 			<h4>Verify Wallet</h4>
@@ -22,15 +55,15 @@ const ProviderAuthentication = ({step, setStep}:ProviderAuthProps) => {
 				: accountData.address}
 			</div>
 			<div>Connected to {accountData.connector?.name}</div>
-			<button onClick={disconnect}>Disconnect</button>
+			<button onClick={() => disconnect()}>Disconnect</button>
+			<button onClick={() => signatureHandler('json')}>Sign Message</button>
 			<br/>
 		  </div>
 		)
 	}
 
-	// If NO accountData provided, show login options
+	// If NO accountData provided...
 	else {
-		setStep(0);
 		return (
 			<div>
 				<h4>Connect Wallet</h4>
@@ -47,4 +80,4 @@ const ProviderAuthentication = ({step, setStep}:ProviderAuthProps) => {
 	}
 }
 
-export default ProviderAuthentication;
+export default Web3ProviderAuthentication;

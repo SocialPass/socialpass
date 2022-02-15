@@ -20,7 +20,7 @@
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "export NODE_OPTIONS=--openssl-legacy-provider && start-storybook -p 6006 --no-open",
     "build-storybook": "build-storybook"
   },
   "peerDependencies": {
@@ -49,8 +49,9 @@
     }
   ],
   "dependencies": {
+    "@venly/web3-provider": "0.27.0",
     "ethers": "^5.5.1",
-    "wagmi": "0.2.6"
+    "wagmi": "0.2.12"
   },
   "devDependencies": {
     "@babel/core": "^7.17.2",

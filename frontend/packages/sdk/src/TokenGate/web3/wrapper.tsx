@@ -1,9 +1,10 @@
 import React from 'react';
+import Venly from "@venly/web3-provider";
 import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
-import { ProviderHandlerProps } from '../props';
+import { VenlyConnector } from './connectors/venly';
 
 // API key for Ethereum node
 // Two popular services are Infura (infura.io) and Alchemy (alchemy.com)
@@ -19,7 +20,10 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
 	chains.find((x) => x.id === chainId)?.rpcUrls?.[0] ??
 	chain.mainnet.rpcUrls[0]
   return [
-	new InjectedConnector({ chains }),
+	new InjectedConnector({
+		chains,
+		options: { shimDisconnect: true },
+	}),
 	new WalletConnectConnector({
 	  options: {
 		infuraId,
@@ -28,16 +32,23 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
 	}),
 	new WalletLinkConnector({
 	  options: {
-		appName: 'My wagmi app',
+		appName: 'SocialPass',
 		jsonRpcUrl: `${rpcUrl}/${infuraId}`,
 	  },
 	}),
+	/*
+	new VenlyConnector(Venly,{
+		options: {
+			clientId: `${process.env.REACT_APP_VENLY_KEY}`
+		}
+	})*/
   ]
  }
 
-const ProviderHandler = ({children}:ProviderHandlerProps) => {
+const Web3ProviderWrapper = ({children}:{children:any}) => {
 	return (
 		<Provider
+			autoConnect
 			connectors={connectors}
 			connectorStorageKey="socialpass.wallet">
 			{children}
@@ -46,4 +57,4 @@ const ProviderHandler = ({children}:ProviderHandlerProps) => {
 
 }
 
-export default ProviderHandler;
+export default Web3ProviderWrapper;

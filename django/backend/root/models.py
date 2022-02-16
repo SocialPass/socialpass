@@ -58,6 +58,9 @@ class Membership(DBModel):
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
+    class Meta:
+        unique_together = ('team', 'user')
+
 class TokenGate(DBModel):
     """
     Base token gate model meant to be extended by the other types of gates in

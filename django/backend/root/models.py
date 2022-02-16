@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
+from model_utils.models import TimeStampedModel
 
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
 from .model_field_schemas import (
@@ -21,13 +22,10 @@ class CustomUserManager(UserManager):
         return super().select_related("team").get(*args, **kwargs)
 
 
-class DBModel(models.Model):
+class DBModel(TimeStampedModel):
     """
     Abstract base model that provides useful timestamps.
     """
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True

@@ -1,9 +1,215 @@
+{% load static i18n %}
 <!DOCTYPE html>
-<html>
-<head>
-    <title>NFTY v3</title>
-</head>
-<body>
-    {% block content %}{% endblock %}
-</body>
+{% get_current_language as LANGUAGE_CODE %}
+<html class="nftysocialpass" lang="{{ LANGUAGE_CODE }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}SocialPass{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+
+    {% block css %}
+    <!-- Latest compiled and minified Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" integrity="sha512-GQGU0fMMi238uA+a/bdWJfpUGKUkBdgfFdgBm72SUQ6BeyWjoY/ton0tEjH+OSH9iP4Dfh+7HM0I9f5eR0L/4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+
+    <!-- Soft UI Css Files -->
+    <link id="pagestyle" href="{% static 'css/soft-ui-dashboard.css' %}" rel="stylesheet" />
+
+    <!-- NFTY CSS -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    {% endblock %}
+    <!-- Le javascript
+    ================================================== -->
+    {# Placed at the top of the document so pages load faster with defer #}
+    {% block javascript %}
+      <!-- Bootstrap JS -->
+      <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.min.js" integrity="sha512-OvBgP9A2JBgiRad/mM36mkzXSXaJE9BEIENnVEmeZdITvwT09xnxLtT4twkCa8m/loMbPHsvPl0T8lRGVBwjlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <!-- Your stuff: Third-party javascript libraries go here -->
+
+        <!-- Add Fontawesome icons -->
+    <script src="https://kit.fontawesome.com/6acfae172e.js" crossorigin="anonymous"></script>
+    {% endblock javascript %}
+
+    <!-- Add Rubik font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="g-sidenav-show bg-gray-100">
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
+      <div class="sidenav-header">
+        <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+        <a class="navbar-brand m-0" href="https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard" target="_blank">
+          <img class="logo ms-2 mb-3 d-none d-sm-block d-none-dm" src="{% static 'images/socialpass.png' %}" />
+          <img class="logo ms-2 mb-3 d-none d-sm-block d-none-lm" src="{% static 'images/socialpass-white.png' %}" />
+        </a>
+      </div>
+      <div class="collapse navbar-collapse w-auto  max-height-vh-100 h-100" id="sidenav-collapse-main">
+        {% with request.resolver_match.url_name as url_name %}
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+              <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-dashboard.png' %}" />
+                <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-dashboard-white.png' %}" />
+              </div>
+              <span class="nav-link-text ms-1">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'airdropgate_list' %}active{% endif %}" href="{% url 'airdropgate_list' %}">
+              <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-airdrop.png' %}" />
+                <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-airdrop-white.png' %}" />
+              </div>
+              <span class="nav-link-text ms-1">Airdop Gate</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'ticketgate_list' %}active{% endif %}" href="{% url 'ticketgate_list' %}">
+              <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-ticket.png' %}" />
+                <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-ticket-white.png' %}" />
+              </div>
+              <span class="nav-link-text ms-1">Ticket Gate</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <div class="form-check form-switch nav-link pe-auto">
+              <label class="form-check-label" for="flexSwitchCheckDefault">
+                <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                  <img class="nav-item-icon ms-0 d-none-dm" src="{% static 'images/icon-bulb.png' %}" />
+                  <img class="nav-item-icon ms-0 d-none-lm" src="{% static 'images/icon-bulb-white.png' %}" />
+                </div>
+              </label>
+              <input class="dark-mode-toggle-btn form-check-input ms-0 float-none mt-0" type="checkbox" id="flexSwitchCheckDefault" onclick="toggleDarkMode()">
+            </div>
+          </li>
+        </ul>
+        {% endwith %}
+      </div>
+    </aside>
+    <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg vh-100">
+      <!-- Navbar -->
+      <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+          <div class="d-flex align-items-center">
+            <a href="javascript:;" class="nav-link p-0 text-body d-xl-none" id="iconNavbarSidenav">
+              <div class="sidenav-toggler-inner">
+                <i class="sidenav-toggler-line bg-primary"></i>
+                <i class="sidenav-toggler-line bg-primary"></i>
+                <i class="sidenav-toggler-line bg-primary"></i>
+              </div>
+            </a>
+          </div>
+          <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+              <!-- <div class="input-group">
+                <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                <input type="text" class="form-control" placeholder="Type here...">
+              </div> -->
+            </div>
+            <ul class="navbar-nav  justify-content-end">
+              <li class="nav-item dropdown d-flex align-items-center">
+                <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-user me-sm-1 user-icon"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end me-sm-n4" aria-labelledby="dropdownMenuButton">
+                  <a href="/settings" class="list-group-item">
+                    <i class="fa-solid fa-gear me-2"></i>Settings
+                  </a>
+                  <a href="/contact-us" class="list-group-item">
+                    <i class="fa-solid fa-circle-question me-2 "></i>Help
+                  </a>
+                  <a href="{% url 'account_logout' %}" class="list-group-item">
+                    <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- End Navbar -->
+      <div class="container-fluid py-4">
+        {% block content %}
+        
+        {% endblock content %}
+      </div>
+    </main>
+    <!--   Core JS Files   -->
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/chartjs.min.js"></script>
+    {% block inline_javascript %}
+    <script>
+      /* Code block for handling dark mode start */
+
+      function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + (days*24*60*60*1000));
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+      function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+      }
+
+      function eraseCookie(name) {
+        document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
+
+      function toggleDarkMode() {
+        var rootElem = document.documentElement;
+
+        // Turn off dark mode
+        // Remove class, and erase cookie
+        if (rootElem.classList.contains("dark-mode")) {
+          rootElem.classList.remove("dark-mode");
+          eraseCookie("modePreference");
+        }
+
+        // Turn on dark mode
+        // Add class, and set cookie
+        else {
+          rootElem.classList.add("dark-mode");
+          setCookie("modePreference", "dark-mode");
+        }
+      }
+    </script>
+    {% endblock inline_javascript %}
+    <script>
+      var win = navigator.platform.indexOf('Win') > -1;
+      if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+          damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+      }
+    </script>
+    <!-- Github buttons -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+    <script src="{% static 'js/soft-ui-dashboard.js' %}"></script>
+  </body>
 </html>

@@ -1055,10 +1055,17 @@ textarea.form-control-lg {
 }
 /* Sidebar */
 
+.navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link {
+    color: #ffffff !important
+}    
+
 .dark-mode .sidebar .nav-link,
 .dark-mode .sidebar .nav-link.active,
-
-
 .dark-mode a.list-group-item {
     color: var(--white-color) !important;
 }
@@ -1073,6 +1080,11 @@ textarea.form-control-lg {
 
 .dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
     background: var(--white-color) !important;
+}
+
+/* card */
+.dark-mode .card {
+    background: var(--bg-light-color) !important;
 }
 
 /* Header dropdown */
@@ -2803,7 +2815,7 @@ textarea.form-control-lg {
 /* Dark mode toggle */
 
 .nftysocialpass .dark-mode-toggle-btn {
-    background-color: rgba(121,8,142,.1);
+    background-color: rgba(121,8,142,.1) !important;
     border-color: transparent;
     height: 1.7em;
     width: 4em;

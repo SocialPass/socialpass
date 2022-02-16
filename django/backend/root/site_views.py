@@ -155,7 +155,7 @@ class TicketGateListView(ListView):
 
 	def get_queryset(self):
 		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])
-		qs = qs.order_by("-updated_at")
+		qs = qs.order_by("-modified")
 
 		query_title = self.request.GET.get("title", "")
 		if query_title:

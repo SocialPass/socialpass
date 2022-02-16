@@ -7,7 +7,7 @@
 {% block head_title %}{% translate "Account" %}{% endblock %}
 
 {% block inner %}
-<h1>{% translate "E-mail Addresses" %}</h1>
+<h3 class="font-weight-bolder text-info text-gradient">{% translate "E-mail Addresses" %}</h3>
 
 {% if user.emailaddress_set.all %}
 <p>{% translate 'The following e-mail addresses are associated with your account:' %}</p>

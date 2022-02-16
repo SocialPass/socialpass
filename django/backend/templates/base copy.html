@@ -1,5 +1,5 @@
 {% load static i18n %}
-<!doctype html>
+<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
 <html class="nftysocialpass" lang="{{ LANGUAGE_CODE }}">
   <head>
@@ -16,11 +16,14 @@
 
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
 
-    <!-- NFTY CSS -->
-    <link href="{% static 'css/main.css' %}" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+
+    <!-- Soft UI Css Files -->
+    <link id="pagestyle" href="{% static 'css/soft-ui-dashboard.css' %}" rel="stylesheet" />
+
+    <!-- NFTY CSS -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
     {% endblock %}
     <!-- Le javascript
     ================================================== -->
@@ -39,106 +42,204 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <nav id="sidebarMenu" class=" col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-          <div class="position-sticky pt-3">
-            <a href="/dashboard">
-              <img class="logo ms-2 mb-3 d-none d-sm-block d-none-dm" src="{% static 'images/socialpass.png' %}" />
-              <img class="logo ms-2 mb-3 d-none d-sm-block d-none-lm" src="{% static 'images/socialpass-white.png' %}" />
+<!-- 
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <title>
+    Soft UI Dashboard by Creative Tim
+  </title>
+   Font Awesome Icons
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  CSS Files
+  <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
+</head> -->
+
+  <body class="g-sidenav-show  bg-gray-100">
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
+      <div class="sidenav-header">
+        <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+        <a class="navbar-brand m-0" href="https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard" target="_blank">
+          <img class="logo ms-2 mb-3 d-none d-sm-block d-none-dm" src="{% static 'images/socialpass.png' %}" />
+          <img class="logo ms-2 mb-3 d-none d-sm-block d-none-lm" src="{% static 'images/socialpass-white.png' %}" />
+        </a>
+      </div>
+      <div class="collapse navbar-collapse w-auto  max-height-vh-100 h-100" id="sidenav-collapse-main">
+        {% with request.resolver_match.url_name as url_name %}
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+              <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-dashboard.png' %}" />
+                <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-dashboard-white.png' %}" />
+              </div>
             </a>
-            <div class="container-fluid">
-              <button class="navbar-toggler position-absolute d-sm-none collapsed end-0 pe-3 zindex-tooltip link-theme" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+              <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-dashboard.png' %}" />
+              <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-dashboard-white.png' %}" />
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'airdrop-gate' %}active{% endif %}" href="{% url 'airdropgate_list' %}">
+              <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-airdrop.png' %}" />
+              <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-airdrop-white.png' %}" />
+              Airdrop Gate
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'ticket-gate' %}active{% endif %}" href="/ticket-gate">
+              <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-ticket.png' %}" />
+              <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-ticket-white.png' %}" />
+              Ticket Gate
+            </a>
+          </li>
+          <li class="nav-item">
+            <div class="form-check form-switch nav-link active pe-auto">
+              <label class="form-check-label" for="flexSwitchCheckDefault">
+                <img class="nav-item-icon ms-0 d-none-dm" src="{% static 'images/icon-bulb.png' %}" />
+                <img class="nav-item-icon ms-0 d-none-lm" src="{% static 'images/icon-bulb-white.png' %}" />
+              </label>
+              <input class="dark-mode-toggle-btn form-check-input ms-0 float-none mt-0" type="checkbox" id="flexSwitchCheckDefault" onclick="toggleDarkMode()">
             </div>
-            {% with request.resolver_match.url_name as url_name %}
-              <ul class="nav flex-column mb-auto">
-                <li class="nav-item">
-                  <a class="nav-link {% if url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
-                    <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-dashboard.png' %}" />
-                    <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-dashboard-white.png' %}" />
-                    Dashboard
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {% if url_name == 'airdrop-gate' %}active{% endif %}" href="{% url 'airdropgate_list' %}">
-                    <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-airdrop.png' %}" />
-                    <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-airdrop-white.png' %}" />
-                    Airdrop Gate
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {% if url_name == 'ticket-gate' %}active{% endif %}" href="/ticket-gate">
-                    <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-ticket.png' %}" />
-                    <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-ticket-white.png' %}" />
-                    Ticket Gate
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <div class="form-check form-switch nav-link active pe-auto">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">
-                      <img class="nav-item-icon ms-0 d-none-dm" src="{% static 'images/icon-bulb.png' %}" />
-                      <img class="nav-item-icon ms-0 d-none-lm" src="{% static 'images/icon-bulb-white.png' %}" />
-                    </label>
-                    <input class="dark-mode-toggle-btn form-check-input ms-0 float-none mt-0" type="checkbox" id="flexSwitchCheckDefault" onclick="toggleDarkMode()">
-                  </div>
-                </li>
-              </ul>
-            {% endwith %}
-          </div>
-        </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <header class="navbar navbar-light pt-3 pb-2 mb-3">
-            <button class="navbar-toggler d-md-none collapsed border-0" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-              <i class="fa-solid fa-bars link-theme"></i>
-            </button>
-            <a href="/dashboard">
-              <img class="logo ms-2 d-block d-sm-none d-none-dm" src="{% static 'images/socialpass.png' %}" />
-              <img class="logo ms-2 d-block d-sm-none d-none-lm" src="{% static 'images/socialpass-white.png' %}" />
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'airdropgate_list' %}active{% endif %}" href="{% url 'airdropgate_list' %}">
+              <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-airdrop.png' %}" />
+                <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-airdrop-white.png' %}" />
+              </div>
+              <span class="nav-link-text ms-1">Airdop Gate</span>
             </a>
-            <div class="container-fluid">
-              <a class="navbar-brand"></a>
-              <div class="d-flex">
-                <div class="btn-group">
-                  <div class="mt-1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img class="user-icon" src="{% static 'images/icon-user.png' %}" />
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'ticketgate_list' %}active{% endif %}" href="{% url 'ticketgate_list' %}">
+              <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <img class="nav-item-icon d-none-dm" src="{% static 'images/icon-ticket.png' %}" />
+                <img class="nav-item-icon d-none-lm" src="{% static 'images/icon-ticket-white.png' %}" />
+              </div>
+              <span class="nav-link-text ms-1">Ticket Gate</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <div class="form-check form-switch nav-link pe-auto">
+              <label class="form-check-label" for="flexSwitchCheckDefault">
+                <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                  <img class="nav-item-icon ms-0 d-none-dm" src="{% static 'images/icon-bulb.png' %}" />
+                  <img class="nav-item-icon ms-0 d-none-lm" src="{% static 'images/icon-bulb-white.png' %}" />
+                </div>
+              </label>
+              <input class="dark-mode-toggle-btn form-check-input ms-0 float-none mt-0" type="checkbox" id="flexSwitchCheckDefault" onclick="toggleDarkMode()">
+            </div>
+          </li>
+        </ul>
+        {% endwith %}
+      </div>
+    </aside>
+    <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
+      <!-- Navbar -->
+      <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+          <div class="d-flex align-items-center">
+            <a href="javascript:;" class="nav-link p-0 text-body d-xl-none" id="iconNavbarSidenav">
+              <div class="sidenav-toggler-inner">
+                <i class="sidenav-toggler-line bg-primary"></i>
+                <i class="sidenav-toggler-line bg-primary"></i>
+                <i class="sidenav-toggler-line bg-primary"></i>
+              </div>
+            </a>
+          </div>
+          <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+              <!-- <div class="input-group">
+                <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                <input type="text" class="form-control" placeholder="Type here...">
+              </div> -->
+            </div>
+            <ul class="navbar-nav  justify-content-end">
+              <li class="nav-item dropdown d-flex align-items-center">
+                <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-user me-sm-1 user-icon"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end me-sm-n4" aria-labelledby="dropdownMenuButton">
+                  <a href="/settings" class="list-group-item">
+                    <i class="fa-solid fa-gear me-2"></i>Settings
+                  </a>
+                  <a href="/contact-us" class="list-group-item">
+                    <i class="fa-solid fa-circle-question me-2 "></i>Help
+                  </a>
+                  <a href="{% url 'account_logout' %}" class="list-group-item">
+                    <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- End Navbar -->
+      <div class="container-fluid py-4">
+        {% block content %}
+        <div>
+          <div class="row mt-4">
+            <div class="col-lg-6 mb-lg-0 mb-4">
+              <div class="card">
+                <div class="card-body p-3">
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="card" style="width: 18rem;">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Card title</h5>
+                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                          <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                      </div>
+                      <div class="d-flex flex-column h-100">
+                        <p class="mb-1 pt-2 text-bold">Built by developers</p>
+                        <h5 class="font-weight-bolder">Soft UI Dashboard</h5>
+                        <p class="mb-5">From colors, cards, typography to complex elements, you will find the full documentation.</p>
+                        <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                          Read More
+                          <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                  <div class="dropdown-menu dropdown-menu-end p-0">
-                    <a href="/settings" class="list-group-item">
-                      <i class="fa-solid fa-gear me-2"></i>Settings
-                    </a>
-                    <a href="/contact-us" class="list-group-item">
-                      <i class="fa-solid fa-circle-question me-2 "></i>Help
-                    </a>
-                    <a href="{% url 'account_logout' %}" class="list-group-item">
-                      <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="card h-100 p-3">
+                <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('../assets/img/ivancik.jpg');">
+                  <span class="mask bg-gradient-dark"></span>
+                  <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+                    <h5 class="text-white font-weight-bolder mb-4 pt-2">Work with the rockets</h5>
+                    <p class="text-white">Wealth creation is an evolutionarily recent positive-sum game. It is all about who take the opportunity first.</p>
+                    <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                      Read More
+                      <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                     </a>
                   </div>
                 </div>
               </div>
             </div>
-          </header>
-          {% if messages %}
-            {% for message in messages %}
-              <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-          {% block content %}
-            <div class="text-center empty-content">
-              <p class="fs-1 fw-bold">Ready for your first token gate?</p>
-              <a class="btn btn-gradient-alt me-3">Create Token Gate</a>
-            </div>
-          {% endblock content %}
-        </main>
+          </div>
+        </div>
+        {% endblock content %}
       </div>
-    </div>
-    {% block modal %}{% endblock modal %}
-
+    </main>
+    <!--   Core JS Files   -->
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/chartjs.min.js"></script>
     {% block inline_javascript %}
     <script>
       /* Code block for handling dark mode start */
@@ -186,18 +287,19 @@
         }
       }
     </script>
-    {% comment %}
-    Script tags with only code, no src (defer by default). To run
-    with a "defer" so that you run inline code:
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        var element = document.documentElement;
-
-        /* Run whatever you want */});
-    </script>
-    {% endcomment %}
     {% endblock inline_javascript %}
-    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script>
+      var win = navigator.platform.indexOf('Win') > -1;
+      if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+          damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+      }
+    </script>
+    <!-- Github buttons -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+    <script src="{% static 'js/soft-ui-dashboard.js' %}"></script>
   </body>
 </html>
-

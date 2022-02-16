@@ -6,7 +6,7 @@
 {% block head_title %}{% translate "Signup" %}{% endblock %}
 
 {% block inner %}
-<h1>{% translate "Sign Up" %}</h1>
+<h3 class="font-weight-bolder text-info text-gradient">{% translate "Sign Up" %}</h3>
 
 <p>{% blocktranslate %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
@@ -16,7 +16,7 @@
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
-  <button class="btn btn-primary" type="submit">{% translate "Sign Up" %} &raquo;</button>
+  <button class="btn btn-gradient-alt" type="submit">{% translate "Sign Up" %} &raquo;</button>
 </form>
 
 {% endblock %}

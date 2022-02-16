@@ -1,13 +1,13 @@
 {% extends "account/base.html" %}
 
+{% load static i18n %}
+
 {% load i18n %}
 
 {% block head_title %}{% translate "Verify Your E-mail Address" %}{% endblock %}
 
 {% block inner %}
-    <h1>{% translate "Verify Your E-mail Address" %}</h1>
-
-    <p>{% blocktranslate %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktranslate %}</p>
-
+<h3 class="font-weight-bolder text-info text-gradient">{% translate "Verify Your E-mail Address" %}</h3>
+<p class="position-absolute mt-4">{% blocktranslate %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktranslate %}</p>
 {% endblock %}
 

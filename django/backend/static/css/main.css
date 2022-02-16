@@ -2789,7 +2789,17 @@ textarea.form-control-lg {
     background: none;
 }
 
+.nftysocialpass a {
+    color: var(--primary-color) !important;
+}
 
+.nftysocialpass a:hover {
+    color: var(--secondary-color) !important;
+}
+
+.nftysocialpass .form-check-input {
+    background-color: var(--secondary-color) !important;
+}
 /* Dark mode toggle */
 
 .nftysocialpass .dark-mode-toggle-btn {

@@ -14,6 +14,7 @@ urlpatterns = [
     path("", views_site.DashboardView.as_view(), name="dashboard"),
     path("user-detail/", views_site.UserDetailView.as_view(), name="user_detail"),
     path("team-detail/", views_site.TeamDetailView.as_view(), name="team_detail"),
+    path("team-update/", views_site.TeamUpdateView.as_view(), name="team_update"),
 
 	# Airdrop token gates
     path("airdropgates/", views_site.AirdropGateListView.as_view(), name="airdropgate_list"),

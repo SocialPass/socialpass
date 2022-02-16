@@ -7,23 +7,23 @@ from . import site_views
 
 urlpatterns = [
     # General
+    path("", site_views.DashboardView.as_view(), name="dashboard"),
     path("settings/", TemplateView.as_view(template_name="pages/settings.html"), name="settings"),
     path("contact-us/", TemplateView.as_view(template_name="pages/help.html"), name="contact_us"),
 
-    # Dashboard and user related
-    path("", site_views.DashboardView.as_view(), name="dashboard"),
+    # User
     path("user-detail/", site_views.UserDetailView.as_view(), name="user_detail"),
-    path("team-detail/", site_views.TeamDetailView.as_view(), name="team_detail"),
 
+    # Team
+    path("<str:team>/team-detail/", site_views.TeamDetailView.as_view(), name="team_detail"),
 	# Airdrop token gates
-    path("airdropgates/", site_views.AirdropGateListView.as_view(), name="airdropgate_list"),
-    path("airdropgates/create/", site_views.AirdropGateCreateView.as_view(), name="airdropgate_create"),
-    path("airdropgates/<int:pk>/", site_views.AirdropGateDetailView.as_view(), name="airdropgate_detail"),
-    path("airdropgates/<int:pk>/update/", site_views.AirdropGateUpdateView.as_view(), name="airdropgate_update"),
-
+    path("<int:team_pk>/airdropgates/", site_views.AirdropGateListView.as_view(), name="airdropgate_list"),
+    path("<int:team_pk>/airdropgates/create/", site_views.AirdropGateCreateView.as_view(), name="airdropgate_create"),
+    path("<int:team_pk>/airdropgates/<int:pk>/", site_views.AirdropGateDetailView.as_view(), name="airdropgate_detail"),
+    path("<int:team_pk>/airdropgates/<int:pk>/update/", site_views.AirdropGateUpdateView.as_view(), name="airdropgate_update"),
     # Ticket token gates
-    path("ticketgates/", site_views.TicketGateListView.as_view(), name="ticketgate_list"),
-    path("ticketgates/create/", site_views.TicketGateCreateView.as_view(), name="ticketgate_create"),
-    path("ticketgates/<int:pk>/", site_views.TicketGateDetailView.as_view(), name="ticketgate_detail"),
-    path("ticketgates/<int:pk>/update/", site_views.TicketGateUpdateView.as_view(), name="ticketgate_update"),
+    path("<int:team_pk>/ticketgates/", site_views.TicketGateListView.as_view(), name="ticketgate_list"),
+    path("<int:team_pk>/ticketgates/create/", site_views.TicketGateCreateView.as_view(), name="ticketgate_create"),
+    path("<int:team_pk>/ticketgates/<int:pk>/", site_views.TicketGateDetailView.as_view(), name="ticketgate_detail"),
+    path("<int:team_pk>/ticketgates/<int:pk>/update/", site_views.TicketGateUpdateView.as_view(), name="ticketgate_update"),
 ]

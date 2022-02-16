@@ -7,8 +7,8 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 
-from .models import AirdropGate, TicketGate
-from .site_permissions import team_has_software_type_permission
+from .models import Team, AirdropGate, TicketGate
+from .site_permissions import member_has_permissions
 
 
 # Dashboard and user related
@@ -39,7 +39,7 @@ class TeamDetailView(TemplateView):
 
 # Airdrop token gates
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateListView(ListView):
 	"""
 	Returns a list of Airdrop token gates.
@@ -49,8 +49,8 @@ class AirdropGateListView(ListView):
 	context_object_name = "tokengates"
 
 	def get_queryset(self):
-		qs = AirdropGate.objects.filter(team=self.request.user.team)
-		qs = qs.order_by("-updated_at")
+		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])
+		qs = qs.order_by("-modified")
 
 		query_title = self.request.GET.get("title", "")
 		if query_title:
@@ -59,7 +59,7 @@ class AirdropGateListView(ListView):
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateDetailView(DetailView):
 	"""
 	Returns the details of an Airdrop token gate.
@@ -68,11 +68,11 @@ class AirdropGateDetailView(DetailView):
 	context_object_name = "tokengate"
 
 	def get_queryset(self):
-		qs = AirdropGate.objects.filter(team=self.request.user.team)
+		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateCreateView(CreateView):
 	"""
 	Creates a new Airdrop token gate.
@@ -96,7 +96,7 @@ class AirdropGateCreateView(CreateView):
 		return reverse("airdropgate_list")
 
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateUpdateView(UpdateView):
 	"""
 	Updates an Airdrop token gate.
@@ -109,7 +109,7 @@ class AirdropGateUpdateView(UpdateView):
 	]
 
 	def get_queryset(self):
-		qs = AirdropGate.objects.filter(team=self.request.user.team)
+		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 	def get_success_url(self):
@@ -121,7 +121,7 @@ class AirdropGateUpdateView(UpdateView):
 
 # Ticket token gates
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateListView(ListView):
 	"""
 	Returns a list of Ticket token gates.
@@ -131,7 +131,7 @@ class TicketGateListView(ListView):
 	context_object_name = "tokengates"
 
 	def get_queryset(self):
-		qs = TicketGate.objects.filter(team=self.request.user.team)
+		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])
 		qs = qs.order_by("-updated_at")
 
 		query_title = self.request.GET.get("title", "")
@@ -141,7 +141,7 @@ class TicketGateListView(ListView):
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateDetailView(DetailView):
 	"""
 	Returns the details of an Ticket token gate.
@@ -150,11 +150,11 @@ class TicketGateDetailView(DetailView):
 	context_object_name = "tokengate"
 
 	def get_queryset(self):
-		qs = TicketGate.objects.filter(team=self.request.user.team)
+		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateCreateView(CreateView):
 	"""
 	Creates a new Ticket token gate.
@@ -177,7 +177,7 @@ class TicketGateCreateView(CreateView):
 		return reverse("ticketgate_list")
 
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateUpdateView(UpdateView):
 	"""
 	Updates an Ticket token gate.
@@ -189,7 +189,7 @@ class TicketGateUpdateView(UpdateView):
 	]
 
 	def get_queryset(self):
-		qs = TicketGate.objects.filter(team=self.request.user.team)
+		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 	def get_success_url(self):

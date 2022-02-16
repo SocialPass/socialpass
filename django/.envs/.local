@@ -3,3 +3,4 @@
 NFTY_DATABASE_URL="postgres:///v3db"
 DJANGO_SETTINGS_MODULE=config.settings.local
 CORS_ORIGIN_WHITELIST=[]
+DJANGO_DEBUG=True

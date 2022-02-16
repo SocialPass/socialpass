@@ -99,15 +99,6 @@ class TokenGate(DBModel):
         }
 
 
-    def save(self, *args, **kwargs):
-        """
-        Method overridden to set the team.
-        """
-
-        self.team = self.user.team
-        super(TokenGate, self).save(*args, **kwargs)
-
-
 class Signature(DBModel):
     """
     Stores details used to verify wallets.

@@ -8,7 +8,7 @@ from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 
 from .models import AirdropGate, TicketGate
-from .permissions_site import team_has_software_type_permission
+from .site_permissions import team_has_software_type_permission
 
 
 # Dashboard and user related
@@ -79,8 +79,8 @@ class AirdropGateCreateView(CreateView):
 	"""
 	model = AirdropGate
 	fields = [
-		"title", "description", "chain", "asset_type", "asset_address", 
-		"amount_per_person", "total_amount", "start_date", "end_date", 
+		"title", "description", "chain", "asset_type", "asset_address",
+		"amount_per_person", "total_amount", "start_date", "end_date",
 		"requirements"
 	]
 
@@ -103,8 +103,8 @@ class AirdropGateUpdateView(UpdateView):
 	"""
 	model = AirdropGate
 	fields = [
-		"title", "description", "chain", "asset_type", "asset_address", 
-		"amount_per_person", "total_amount", "start_date", "end_date", 
+		"title", "description", "chain", "asset_type", "asset_address",
+		"amount_per_person", "total_amount", "start_date", "end_date",
 		"requirements"
 	]
 
@@ -161,7 +161,7 @@ class TicketGateCreateView(CreateView):
 	"""
 	model = TicketGate
 	fields = [
-		"title", "description", "date", "location", "capacity", "deadline", 
+		"title", "description", "date", "location", "capacity", "deadline",
 		"requirements"
 	]
 
@@ -184,7 +184,7 @@ class TicketGateUpdateView(UpdateView):
 	"""
 	model = TicketGate
 	fields = [
-		"title", "description", "date", "location", "capacity", "deadline", 
+		"title", "description", "date", "location", "capacity", "deadline",
 		"requirements"
 	]
 

@@ -15,13 +15,13 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
 
     # Custom stuff goes here
-    path("", include("root.urls_site")),
+    path("", include("root.site_urls")),
 ]
 
 # DRF API URLS
 urlpatterns += [
     # API base url
-    path("api/", include("root.urls_api")),
+    path("api/", include("root.api_urls")),
     # DRF auth token
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(

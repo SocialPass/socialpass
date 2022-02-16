@@ -1,18 +1,18 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import reverse
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
-
+from .forms import TeamForm
 from .models import Team, AirdropGate, TicketGate
 from .site_permissions import member_has_permissions
 
 
 # Dashboard and user related
-
 @method_decorator(login_required, name="dispatch")
 class DashboardView(TemplateView):
 	"""
@@ -35,6 +35,34 @@ class TeamDetailView(TemplateView):
 	Returns the details of the logged in user's team.
 	"""
 	template_name = "root/team_detail.html"
+
+
+@method_decorator(login_required, name="dispatch")
+class TeamUpdateView(FormView):
+	"""
+	Updates the user's team.
+	"""
+	form_class = TeamForm
+	template_name = "root/team_form.html"
+
+	def get_form(self, form_class=None):
+		if form_class is None:
+			form_class = self.get_form_class()
+
+		if self.request.user.team:
+			return self.form_class(instance=self.request.user.team, **self.get_form_kwargs())
+		else:
+			raise Http404
+
+	def form_valid(self, form):
+		form.save()
+		return super(TeamUpdateView, self).form_valid(form)
+
+	def get_success_url(self):
+		messages.add_message(
+			self.request, messages.SUCCESS, "Team information updated successfully."
+		)
+		return reverse("team_detail")
 
 
 # Airdrop token gates

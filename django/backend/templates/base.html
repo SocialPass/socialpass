@@ -20,30 +20,18 @@
     <!-- NFTY CSS -->
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
     {% endblock %}
-    <!-- Le javascript
-    ================================================== -->
-    {# Placed at the top of the document so pages load faster with defer #}
-    {% block javascript %}
-      <!-- Bootstrap JS -->
-      <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.min.js" integrity="sha512-OvBgP9A2JBgiRad/mM36mkzXSXaJE9BEIENnVEmeZdITvwT09xnxLtT4twkCa8m/loMbPHsvPl0T8lRGVBwjlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-      <!-- Your stuff: Third-party javascript libraries go here -->
-
-       <!-- Add Fontawesome icons -->
-    <script src="https://kit.fontawesome.com/6acfae172e.js" crossorigin="anonymous"></script>
-    {% endblock javascript %}
 
     <!-- Add Rubik font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-
   <body>
     <main class="main-content mt-0 vh-100">
       <div class="container">
         <div class="row justify-content-md-center">
           <div class="col-md-auto">
-            <div class="card card-plain mt-8">
+            <div class="card card-plain mt-7">
               <img class="logo" src="{% static 'images/socialpass.png' %}" />
               {% block content %}
 
@@ -53,11 +41,5 @@
         </div>
       </div>
     </main>
-
-    {% block inline_javascript %}
-    
-    {% endblock inline_javascript %}
-    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="{% static 'js/soft-ui-dashboard.js' %}"></script>
   </body>
 </html>

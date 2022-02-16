@@ -85,6 +85,7 @@ class AirdropGateCreateView(CreateView):
 	]
 
 	def form_valid(self, form):
+		form.instance.team = Team.objects.get(id=self.kwargs['team_pk'])
 		form.instance.user = self.request.user
 		form.instance.general_type = "AIRDROP"
 		return super().form_valid(form)
@@ -93,7 +94,7 @@ class AirdropGateCreateView(CreateView):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate created successfully."
 		)
-		return reverse("airdropgate_list")
+		return reverse("airdropgate_list", args=(self.kwargs['team_pk'],))
 
 
 @method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
@@ -116,7 +117,7 @@ class AirdropGateUpdateView(UpdateView):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate updated successfully."
 		)
-		return reverse("airdropgate_detail", args=(self.object.pk,))
+		return reverse("airdropgate_detail", args=(self.kwargs['team_pk'],self.object.pk,))
 
 
 # Ticket token gates
@@ -166,6 +167,7 @@ class TicketGateCreateView(CreateView):
 	]
 
 	def form_valid(self, form):
+		form.instance.team = Team.objects.get(id=self.kwargs['team_pk'])
 		form.instance.user = self.request.user
 		form.instance.general_type = "TICKET"
 		return super().form_valid(form)
@@ -174,7 +176,7 @@ class TicketGateCreateView(CreateView):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate created successfully."
 		)
-		return reverse("ticketgate_list")
+		return reverse("ticketgate_list", args=(self.kwargs['team_pk'],))
 
 
 @method_decorator(member_has_permissions("TICKET"), name="dispatch")
@@ -196,4 +198,4 @@ class TicketGateUpdateView(UpdateView):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate updated successfully."
 		)
-		return reverse("ticketgate_detail", args=(self.object.pk,))
+		return reverse("ticketgate_detail", args=(self.kwargs['team_pk'],self.object.pk,))

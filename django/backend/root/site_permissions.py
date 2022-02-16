@@ -17,7 +17,7 @@ def member_has_permissions(software_type):
 
             # check user has membership to team
             try:
-                membership = Membership.objects.get(team__id=kwargs['team_pk'], user__id=request.user.id)
+                membership = Membership.objects.select_related('team').get(team__id=kwargs['team_pk'], user__id=request.user.id)
                 # if software_type is blank, then we are only concerned with above membership
                 if software_type == '':
                     has_permission = True

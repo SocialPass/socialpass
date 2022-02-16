@@ -17,10 +17,10 @@ class CustomUserManager(UserManager):
     Select the team for users. Small optimization when using `request.user` in
     the site views, especially the permission system.
     """
-
+    """
     def get(self, *args, **kwargs):
         return super().select_related("team").get(*args, **kwargs)
-
+    """
 
 class DBModel(TimeStampedModel):
     """
@@ -30,33 +30,33 @@ class DBModel(TimeStampedModel):
     class Meta:
         abstract = True
 
+class User(AbstractUser):
+    """
+    Default custom user model for backend.
+    """
+    objects = CustomUserManager()
 
 class Team(DBModel):
     """
     Team manager for software plans && token gates
     """
-
     name = models.CharField(max_length=255)
     details = models.TextField(blank=True)
     software_types = models.JSONField(
         default=list,
         validators=[JSONSchemaValidator(limit_value=SOFTWARE_TYPES_SCHEMA)],
     )
+    members = models.ManyToManyField(User, through='Membership')
 
     def __str__(self):
         return self.name
 
-
-class User(AbstractUser):
+class Membership(DBModel):
     """
-    Default custom user model for backend.
+    Membership manager for users <> teams
     """
-    team = models.ForeignKey(
-        Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="users"
-    )
-
-    objects = CustomUserManager()
-
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
 class TokenGate(DBModel):
     """
@@ -94,6 +94,7 @@ class TokenGate(DBModel):
             "message": x.signing_message,
             "issued_at": x.created_at
         }
+
 
     def save(self, *args, **kwargs):
         """

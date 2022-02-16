@@ -7,6 +7,7 @@ from .models import (
     AirdropList,
     Signature,
     Team,
+    Membership,
     TicketGate,
     TicketList
 )
@@ -25,18 +26,11 @@ admin.site.index_title = "NFTY Labs Admin"
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + (
-        ("Team", {
-            "fields": ("team",),
-        }),
-    )
+    pass
 
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ("Team", {
-            "fields": ("team",),
-        }),
-    )
-
+@admin.register(Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    pass
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):

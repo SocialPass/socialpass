@@ -4,13 +4,13 @@ from .models import Membership
 
 def member_has_permissions(software_type):
     """
-    Check if the user is part of a team that has the specific software type
-    permission.
+    Check if the user has a membership to the team designated by 'team_pk',
+    as well as if the team has access to the software designated by 'software_type'.
     """
-
     def _method_wrapper(view_method):
         def _arguments_wrapper(request, *args, **kwargs):
             has_permission = False
+
             # redirect to login if anon
             if request.user.is_anonymous:
                 return redirect("account_login")
@@ -18,11 +18,11 @@ def member_has_permissions(software_type):
             # check user has membership to team
             try:
                 membership = Membership.objects.get(team__id=kwargs['team_pk'], user__id=request.user.id)
-
-                # todo: check membership has access to view
-
+                # if software_type is blank, then we are only concerned with above membership
+                if software_type == '':
+                    has_permission = True
                 # check team has access to software
-                if software_type in membership.team.software_types:
+                elif software_type in membership.team.software_types:
                     has_permission = True
             except Membership.DoesNotExist:
                 has_permission = False

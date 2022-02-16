@@ -13,8 +13,8 @@ urlpatterns = [
     # User
     path("user-detail/", site_views.UserDetailView.as_view(), name="user_detail"),
     # Team
-    path("<str:team>/team-detail/", site_views.TeamDetailView.as_view(), name="team_detail"),
-    path("<str:team>/team-update/", site_views.TeamUpdateView.as_view(), name="team_update"),
+    path("<int:team_pk>/team-detail/", site_views.TeamDetailView.as_view(), name="team_detail"),
+    path("<int:team_pk>/team-update/", site_views.TeamUpdateView.as_view(), name="team_update"),
 	# Airdrop token gates
     path("<int:team_pk>/airdropgates/", site_views.AirdropGateListView.as_view(), name="airdropgate_list"),
     path("<int:team_pk>/airdropgates/create/", site_views.AirdropGateCreateView.as_view(), name="airdropgate_create"),

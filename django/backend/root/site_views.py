@@ -29,40 +29,34 @@ class UserDetailView(TemplateView):
 	template_name = "root/user_detail.html"
 
 
-@method_decorator(login_required, name="dispatch")
-class TeamDetailView(TemplateView):
-	"""
-	Returns the details of the logged in user's team.
-	"""
-	template_name = "root/team_detail.html"
+@method_decorator(member_has_permissions(""), name="dispatch")
+class TeamDetailView(DetailView):
+    """
+    Returns the details of the logged in user's team.
+    """
+    model = Team
+    pk_url_kwarg = "team_pk"
 
 
-@method_decorator(login_required, name="dispatch")
-class TeamUpdateView(FormView):
-	"""
-	Updates the user's team.
-	"""
-	form_class = TeamForm
-	template_name = "root/team_form.html"
+@method_decorator(member_has_permissions(""), name="dispatch")
+class TeamUpdateView(UpdateView):
+    """
+    Updates the user's team.
+    """
+    form_class = TeamForm
+    model = Team
+    pk_url_kwarg = "team_pk"
+    template_name = "root/team_form.html"
 
-	def get_form(self, form_class=None):
-		if form_class is None:
-			form_class = self.get_form_class()
+    def form_valid(self, form):
+        form.save()
+        return super(TeamUpdateView, self).form_valid(form)
 
-		if self.request.user.team:
-			return self.form_class(instance=self.request.user.team, **self.get_form_kwargs())
-		else:
-			raise Http404
-
-	def form_valid(self, form):
-		form.save()
-		return super(TeamUpdateView, self).form_valid(form)
-
-	def get_success_url(self):
-		messages.add_message(
-			self.request, messages.SUCCESS, "Team information updated successfully."
-		)
-		return reverse("team_detail")
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Team information updated successfully."
+        )
+        return reverse("team_detail",args=(self.kwargs['team_pk'],))
 
 
 # Airdrop token gates

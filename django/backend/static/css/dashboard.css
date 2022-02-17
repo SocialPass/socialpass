@@ -1,4 +1,5 @@
-.nftysocialpass body {
+.nftysocialpass body,
+main {
   background: #F9F9FA;
 }
 
@@ -100,7 +101,11 @@ main {
   border: none !important;
 }
 
-/* Dark mode */
+.nftysocialpass .form-check-input {
+  background-color: rgba(121,8,142,.1) !important;
+}
+
+/* Table */
 
 .dark-mode td,
 .dark-mode td a.text-primary {

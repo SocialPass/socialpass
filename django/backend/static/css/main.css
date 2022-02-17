@@ -920,6 +920,7 @@ textarea.form-control-lg {
     padding: 20px;
     border: 1px solid hsla(0, 0%, 0%, 0.15);
     border-radius: 4px;
+    font-family: var(--bs-font-monospace);
 }
 
 .dark-mode .bs5-json-field-widget {
@@ -1049,11 +1050,6 @@ textarea.form-control-lg {
 
 .dark-mode a.list-group-item {
     color: #FFFFFF !important;
-}
-
-/* card */
-.dark-mode .card {
-    background: var(--bg-light-color) !important;
 }
 
 /* Header dropdown */
@@ -2751,8 +2747,14 @@ textarea.form-control-lg {
 
 /* Body */
 
-.nftysocialpass body {
-    background: #F9F9FA;
+.nftysocialpass body,
+ main {
+    background: linear-gradient(
+        90deg,
+        hsla(var(--primary-color-hsl), 0.1),
+        hsla(var(--secondary-color-hsl), 0.1),
+        hsla(var(--tertiary-color-hsl), 0.1)
+    );
 }
 
 .nftysocialpass.dark-mode body {
@@ -2771,15 +2773,10 @@ textarea.form-control-lg {
 }
 
 
-.nftysocialpass .form-check-input {
-    background-color: var(--secondary-color) !important;
-}
-
-
 /* Dark mode toggle */
 
 .nftysocialpass .dark-mode-toggle-btn {
-    background-color: rgba(121,8,142,.1) !important;
+    background-color: rgba(121,8,142,.1);
     border-color: transparent;
     height: 1.7em;
     width: 4em;

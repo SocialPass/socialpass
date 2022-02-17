@@ -37,7 +37,6 @@ main {
   color: var(--white-color) !important;
 }
 
-
 .navbar-vertical .navbar-nav>.nav-item .nav-link.active .d-none-lm {
   display: block !important;
 }

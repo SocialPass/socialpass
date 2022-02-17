@@ -121,7 +121,7 @@ class AirdropGateUpdateView(UpdateView):
 
 # Ticket token gates
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+# @method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
 class TicketGateListView(ListView):
 	"""
 	Returns a list of Ticket token gates.

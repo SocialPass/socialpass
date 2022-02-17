@@ -252,18 +252,9 @@ b {
 }
 
 .user-icon {
-    height: 29px;
     width: 29px;
-    border: 2px solid var(--primary-color);
-    padding: 6px;
-    border-radius: 50%;
-    color: var(--primary-color);
 }
 
-.dark-mode .user-icon {
-    color: #ffffff;
-    border-color: #ffffff;
-}
 /* Padding */
 .px-0 {
     padding-left: 0 !important;
@@ -1050,36 +1041,14 @@ textarea.form-control-lg {
     background-color: var(--primary-color);
 }
 
-.list-group-item {
-    border: none !important;
-}
 /* Sidebar */
-
-.navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
-    background: var(--primary-color) !important;
-    color: #ffffff !important;
-}
-
-.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link {
-    color: #ffffff !important
-}    
 
 .dark-mode .sidebar .nav-link,
 .dark-mode .sidebar .nav-link.active,
+
+
 .dark-mode a.list-group-item {
-    color: var(--white-color) !important;
-}
-
-.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link.active {
-    background: var(--secondary-color);
-}
-
-.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link .icon {
-    background: var(--secondary-color) !important
-}
-
-.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
-    background: var(--white-color) !important;
+    color: #FFFFFF !important;
 }
 
 /* card */
@@ -2801,17 +2770,12 @@ textarea.form-control-lg {
     background: none;
 }
 
-.nftysocialpass a {
-    color: var(--primary-color) !important;
-}
-
-.nftysocialpass a:hover {
-    color: var(--secondary-color) !important;
-}
 
 .nftysocialpass .form-check-input {
     background-color: var(--secondary-color) !important;
 }
+
+
 /* Dark mode toggle */
 
 .nftysocialpass .dark-mode-toggle-btn {

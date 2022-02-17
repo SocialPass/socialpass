@@ -1,3 +1,7 @@
+.nftysocialpass body {
+  background: #F9F9FA;
+}
+
 main {
   height: 100vh;
   display: inline-table;
@@ -7,36 +11,70 @@ main {
   margin-top: 150px;
 }
 
-/*
- * Sidebar
- */
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  /* rtl:raw: */
-  right: 0;
-  bottom: 0;
-  /* rtl:remove */
-  left: 0;
-  z-index: 100;
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+/* user icon */
+.user-icon {
+  height: 29px;
+  width: 29px;
+  border: 2px solid var(--primary-color);
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--primary-color);
 }
 
-.sidebar .nav-link {
-  font-weight: 500;
-  color: #79088E;
-  opacity: .6;
+.dark-mode .user-icon {
+  color: #ffffff;
+  border-color: #ffffff;
 }
 
-.sidebar .nav-link.active {
+/* Sidenav */
+
+.sidenav .nav-link {
   color: #79088E !important;
-  opacity: 1;
+}
+.navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
+  background: var(--primary-color) !important;
+  color: var(--white-color) !important;
 }
 
-/*
- * Navbar
- */
+
+.navbar-vertical .navbar-nav>.nav-item .nav-link.active .d-none-lm {
+  display: block !important;
+}
+
+.navbar-vertical .navbar-nav>.nav-item .nav-link.active .d-none-dm {
+  display: none;
+}
+
+.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link.active .d-none-lm {
+  display: none !important;
+}
+
+.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link.active .d-none-dm {
+  display: block !important;
+}
+
+.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link {
+  color: var(--white-color) !important;
+}
+
+.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link.active {
+  background: var(--secondary-color) !important;
+}
+
+.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link .icon {
+  background: var(--secondary-color) !important
+}
+
+.dark-mode .navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
+  background: var(--white-color) !important;
+}
+
+/* card */
+.dark-mode .card {
+  background: var(--bg-light-color) !important;
+}
+
+/* Navbar */
 
 .navbar {
   flex-wrap: initial;
@@ -55,4 +93,16 @@ main {
 
 .nav-item-icon {
   width: 100%;
+}
+
+/* Header dropdown */
+.list-group-item {
+  border: none !important;
+}
+
+/* Dark mode */
+
+.dark-mode td,
+.dark-mode td a.text-primary {
+  color: #ffffff !important;
 }

@@ -7,7 +7,7 @@ from . import site_views
 
 urlpatterns = [
     # General
-    path("", site_views.DashboardView.as_view(), name="dashboard"),
+    path("<int:team_pk>/", site_views.DashboardView.as_view(), name="dashboard"),
     path("settings/", TemplateView.as_view(template_name="pages/settings.html"), name="settings"),
     path("contact-us/", TemplateView.as_view(template_name="pages/help.html"), name="contact_us"),
     # User

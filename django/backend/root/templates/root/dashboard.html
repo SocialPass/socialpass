@@ -10,7 +10,7 @@
         </div>
         <h5 class="text-secondary">Airdrop Gate</h5>
         <p>Create and manage an Airddrop Gate token for your NFT.</p>
-        <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto stretched-link" href="{% url 'airdropgate_list' %}">
+        <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto stretched-link" href="{% url 'airdropgate_list' request.resolver_match.kwargs.team_pk %}">
           Get started
           <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
         </a>
@@ -23,7 +23,7 @@
         </div>
         <h5 class="text-secondary">Ticket Gate</h5>
         <p>Create and manage a Ticket Gate token for your NFT.</p>
-        <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto stretched-link" href="{% url 'ticketgate_list' %}">
+        <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto stretched-link" href="{% url 'ticketgate_list' request.resolver_match.kwargs.team_pk %}">
           Get started
           <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
         </a>

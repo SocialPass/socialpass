@@ -7,14 +7,12 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
-
 from .forms import TeamForm
-from .models import AirdropGate, TicketGate
-from .permissions_site import team_has_software_type_permission
+from .models import Team, AirdropGate, TicketGate
+from .site_permissions import member_has_permissions
 
 
 # Dashboard and user related
-
 @method_decorator(login_required, name="dispatch")
 class DashboardView(TemplateView):
 	"""
@@ -31,45 +29,39 @@ class UserDetailView(TemplateView):
 	template_name = "root/user_detail.html"
 
 
-@method_decorator(login_required, name="dispatch")
-class TeamDetailView(TemplateView):
-	"""
-	Returns the details of the logged in user's team.
-	"""
-	template_name = "root/team_detail.html"
+@method_decorator(member_has_permissions(""), name="dispatch")
+class TeamDetailView(DetailView):
+    """
+    Returns the details of the logged in user's team.
+    """
+    model = Team
+    pk_url_kwarg = "team_pk"
 
 
-@method_decorator(login_required, name="dispatch")
-class TeamUpdateView(FormView):
-	"""
-	Updates the user's team.
-	"""
-	form_class = TeamForm
-	template_name = "root/team_form.html"
+@method_decorator(member_has_permissions(""), name="dispatch")
+class TeamUpdateView(UpdateView):
+    """
+    Updates the user's team.
+    """
+    form_class = TeamForm
+    model = Team
+    pk_url_kwarg = "team_pk"
+    template_name = "root/team_form.html"
 
-	def get_form(self, form_class=None):
-		if form_class is None:
-			form_class = self.get_form_class()
+    def form_valid(self, form):
+        form.save()
+        return super(TeamUpdateView, self).form_valid(form)
 
-		if self.request.user.team:
-			return self.form_class(instance=self.request.user.team, **self.get_form_kwargs())
-		else:
-			raise Http404
-
-	def form_valid(self, form):
-		form.save()
-		return super(TeamUpdateView, self).form_valid(form)
-
-	def get_success_url(self):
-		messages.add_message(
-			self.request, messages.SUCCESS, "Team information updated successfully."
-		)
-		return reverse("team_detail")
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Team information updated successfully."
+        )
+        return reverse("team_detail",args=(self.kwargs['team_pk'],))
 
 
 # Airdrop token gates
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateListView(ListView):
 	"""
 	Returns a list of Airdrop token gates.
@@ -79,8 +71,8 @@ class AirdropGateListView(ListView):
 	context_object_name = "tokengates"
 
 	def get_queryset(self):
-		qs = AirdropGate.objects.filter(team=self.request.user.team)
-		qs = qs.order_by("-updated_at")
+		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])
+		qs = qs.order_by("-modified")
 
 		query_title = self.request.GET.get("title", "")
 		if query_title:
@@ -89,7 +81,7 @@ class AirdropGateListView(ListView):
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateDetailView(DetailView):
 	"""
 	Returns the details of an Airdrop token gate.
@@ -98,23 +90,24 @@ class AirdropGateDetailView(DetailView):
 	context_object_name = "tokengate"
 
 	def get_queryset(self):
-		qs = AirdropGate.objects.filter(team=self.request.user.team)
+		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateCreateView(CreateView):
 	"""
 	Creates a new Airdrop token gate.
 	"""
 	model = AirdropGate
 	fields = [
-		"title", "description", "chain", "asset_type", "asset_address", 
-		"amount_per_person", "total_amount", "start_date", "end_date", 
+		"title", "description", "chain", "asset_type", "asset_address",
+		"amount_per_person", "total_amount", "start_date", "end_date",
 		"requirements"
 	]
 
 	def form_valid(self, form):
+		form.instance.team = Team.objects.get(id=self.kwargs['team_pk'])
 		form.instance.user = self.request.user
 		form.instance.general_type = "AIRDROP"
 		return super().form_valid(form)
@@ -123,35 +116,35 @@ class AirdropGateCreateView(CreateView):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate created successfully."
 		)
-		return reverse("airdropgate_list")
+		return reverse("airdropgate_list", args=(self.kwargs['team_pk'],))
 
 
-@method_decorator(team_has_software_type_permission("AIRDROP"), name="dispatch")
+@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
 class AirdropGateUpdateView(UpdateView):
 	"""
 	Updates an Airdrop token gate.
 	"""
 	model = AirdropGate
 	fields = [
-		"title", "description", "chain", "asset_type", "asset_address", 
-		"amount_per_person", "total_amount", "start_date", "end_date", 
+		"title", "description", "chain", "asset_type", "asset_address",
+		"amount_per_person", "total_amount", "start_date", "end_date",
 		"requirements"
 	]
 
 	def get_queryset(self):
-		qs = AirdropGate.objects.filter(team=self.request.user.team)
+		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 	def get_success_url(self):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate updated successfully."
 		)
-		return reverse("airdropgate_detail", args=(self.object.pk,))
+		return reverse("airdropgate_detail", args=(self.kwargs['team_pk'],self.object.pk,))
 
 
 # Ticket token gates
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateListView(ListView):
 	"""
 	Returns a list of Ticket token gates.
@@ -161,8 +154,8 @@ class TicketGateListView(ListView):
 	context_object_name = "tokengates"
 
 	def get_queryset(self):
-		qs = TicketGate.objects.filter(team=self.request.user.team)
-		qs = qs.order_by("-updated_at")
+		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])
+		qs = qs.order_by("-modified")
 
 		query_title = self.request.GET.get("title", "")
 		if query_title:
@@ -171,7 +164,7 @@ class TicketGateListView(ListView):
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateDetailView(DetailView):
 	"""
 	Returns the details of an Ticket token gate.
@@ -180,22 +173,23 @@ class TicketGateDetailView(DetailView):
 	context_object_name = "tokengate"
 
 	def get_queryset(self):
-		qs = TicketGate.objects.filter(team=self.request.user.team)
+		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateCreateView(CreateView):
 	"""
 	Creates a new Ticket token gate.
 	"""
 	model = TicketGate
 	fields = [
-		"title", "description", "date", "location", "capacity", "deadline", 
+		"title", "description", "date", "location", "capacity", "deadline",
 		"requirements"
 	]
 
 	def form_valid(self, form):
+		form.instance.team = Team.objects.get(id=self.kwargs['team_pk'])
 		form.instance.user = self.request.user
 		form.instance.general_type = "TICKET"
 		return super().form_valid(form)
@@ -204,26 +198,26 @@ class TicketGateCreateView(CreateView):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate created successfully."
 		)
-		return reverse("ticketgate_list")
+		return reverse("ticketgate_list", args=(self.kwargs['team_pk'],))
 
 
-@method_decorator(team_has_software_type_permission("TICKET"), name="dispatch")
+@method_decorator(member_has_permissions("TICKET"), name="dispatch")
 class TicketGateUpdateView(UpdateView):
 	"""
 	Updates an Ticket token gate.
 	"""
 	model = TicketGate
 	fields = [
-		"title", "description", "date", "location", "capacity", "deadline", 
+		"title", "description", "date", "location", "capacity", "deadline",
 		"requirements"
 	]
 
 	def get_queryset(self):
-		qs = TicketGate.objects.filter(team=self.request.user.team)
+		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])
 		return qs
 
 	def get_success_url(self):
 		messages.add_message(
 			self.request, messages.SUCCESS, "Token gate updated successfully."
 		)
-		return reverse("ticketgate_detail", args=(self.object.pk,))
+		return reverse("ticketgate_detail", args=(self.kwargs['team_pk'],self.object.pk,))

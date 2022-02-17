@@ -7,12 +7,12 @@
     </form>
 
     <h3>List</h3>
-    <a href="{% url 'ticketgate_create' %}">Create</a>
+    <a href="{% url 'ticketgate_create' request.resolver_match.kwargs.team_pk %}">Create</a>
     <ul>
     {% for tokengate in tokengates %}
         <li>
             {{ tokengate.title }}
-            <a href="{% url 'ticketgate_update' tokengate.pk %}">Update</a>
+            <a href="{% url 'ticketgate_update' pk=tokengate.pk team_pk=request.resolver_match.kwargs.team_pk %}">Update</a>
         </li>
     {% empty %}
         <li>No tokengates yet.</li>

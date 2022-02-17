@@ -2,8 +2,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import AirdropGate, AirdropList, TicketGate, TicketList
-from .permissions_api import IsTeamMember, IsTokenGateTeamMember
-from .serializers import AirdropGateSerializer, AirdropListSerializer, TicketGateSerializer, TicketListSerializer
+from .api_permissions import IsTeamMember, IsTokenGateTeamMember
+from .api_serializers import AirdropGateSerializer, AirdropListSerializer, TicketGateSerializer, TicketListSerializer
 
 
 class AirdropGateViewSet(viewsets.ModelViewSet):

@@ -2,7 +2,7 @@ from rest_framework.routers import DefaultRouter, SimpleRouter
 
 from django.conf import settings
 
-from .views_api import AirdropGateViewSet, AirdropListViewSet, TicketGateViewSet, TicketListViewSet
+from .api_views import AirdropGateViewSet, AirdropListViewSet, TicketGateViewSet, TicketListViewSet
 
 if settings.DEBUG:
     router = DefaultRouter()

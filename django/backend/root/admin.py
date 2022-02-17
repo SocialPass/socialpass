@@ -7,6 +7,7 @@ from .models import (
     AirdropList,
     Signature,
     Team,
+    Membership,
     TicketGate,
     TicketList
 )
@@ -15,31 +16,31 @@ User = get_user_model()
 
 
 # Set up admin site titles
-
 admin.site.site_title = "NFTY Labs Admin"
 admin.site.site_header = "NFTY Labs Admin"
 admin.site.index_title = "NFTY Labs Admin"
 
 
 # Admin registrations
+class MembershipInline(admin.TabularInline):
+    model = Team.members.through
+
+@admin.register(Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    list_display = ("user", "team")
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + (
-        ("Team", {
-            "fields": ("team",),
-        }),
-    )
-
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ("Team", {
-            "fields": ("team",),
-        }),
-    )
-
+    inlines = [
+        MembershipInline,
+    ]
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
+    inlines = [
+        MembershipInline,
+    ]
+    exclude = ('members',)
     list_display = ("name", "software_types")
     search_fields = ("name",)
 

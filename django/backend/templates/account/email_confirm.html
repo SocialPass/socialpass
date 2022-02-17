@@ -7,7 +7,7 @@
 
 
 {% block inner %}
-<h1>{% translate "Confirm E-mail Address" %}</h1>
+<h3 class="font-weight-bolder text-info text-gradient">{% translate "Confirm E-mail Address" %}</h3>
 
 {% if confirmation %}
 
@@ -17,7 +17,7 @@
 
 <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
 {% csrf_token %}
-    <button class="btn btn-primary" type="submit">{% translate 'Confirm' %}</button>
+    <button class="btn btn-gradient-alt" type="submit">{% translate 'Confirm' %}</button>
 </form>
 
 {% else %}

@@ -1,11 +1,15 @@
 .nftysocialpass body,
 main {
-  background: #F9F9FA;
+  background: #F9F9FA !important;
+}
+
+.dark-mode body,
+main {
+  background-color: var(--body-bg-color) !important;
 }
 
 main {
-  height: 100vh;
-  display: inline-table;
+  height: 100vh;;
 }
 
 .empty-content {

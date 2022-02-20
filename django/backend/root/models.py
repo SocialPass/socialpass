@@ -94,12 +94,17 @@ class TokenGate(DBModel):
         from pytz import utc
         from datetime import datetime, timedelta
         expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
+        part_1 = f"NFTY Labs signed message v0{conn_response['payload']['Version']}\n"
+        part_2 = f"You are authenticating to: {conn_response['payload']['Service']}\n"
+        part_3 = f"Authorization ID: {service_auth_id}\n"
+        part_4 = f"Void after: {until}\n"
         x = Signature.objects.create(
             tokengate=self,
             signing_message={
-                'Gate': self.title,
-                'Owner': self.team.name,
-                'Request Expires': expires.ctime(),
+                "You are authenticating to:": self.title,
+                "Hosted by": self.team.name,
+                "Hosted at": 'https://...',
+                "Valid until": expires.ctime(),
             },
             expires=expires,
 

@@ -82,22 +82,28 @@ class TokenGate(DBModel):
 
     def generate_signature_request(self):
         import secrets
+        from pytz import utc
+        from datetime import datetime, timedelta
         """
-        generate 1-time Signature model to be consumed and signed by the client for verification
+        generate one-time Signature model to be consumed and signed by the client for verification
         returns unique code (for lookup) and message (for signature)
         """
+        expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
         x = Signature.objects.create(
             tokengate=self,
             unique_code=secrets.token_hex(32),
-            signing_message="",
-            wallet_address="",
+            signing_message={
+                'Gate': self.title,
+                'Owner': self.team.name,
+                'Request Expires': expires.ctime(),
+            },
+            expires=expires,
+
         )
         return {
             "id": x.unique_code,
             "message": x.signing_message,
-            "issued_at": x.created_at
         }
-
 
 class Signature(DBModel):
     """
@@ -107,9 +113,10 @@ class Signature(DBModel):
     tokengate = models.ForeignKey(
         TokenGate, on_delete=models.CASCADE, related_name="signatures"
     )
-    signing_message = models.CharField(max_length=400)
+    signing_message = models.JSONField()
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
+    expires = models.DateTimeField()
 
     def __str__(self):
         return self.unique_code

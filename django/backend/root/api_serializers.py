@@ -25,17 +25,6 @@ class AirdropGateSerializer(serializers.ModelSerializer):
         return gate.generate_signature_request()
 
 
-class AirdropListSerializer(serializers.ModelSerializer):
-    """
-    Serializes airdrop lists.
-    """
-
-    class Meta:
-        model = AirdropList
-        fields = "__all__"
-        read_only_fields = ["created_at", "updated_at", "tokengate"]
-
-
 class TicketGateSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket token gates.
@@ -56,14 +45,3 @@ class TicketGateSerializer(serializers.ModelSerializer):
 
     def get_signature(self, gate):
         return gate.generate_signature_request()
-
-
-class TicketListSerializer(serializers.ModelSerializer):
-    """
-    Serializes ticket lists.
-    """
-
-    class Meta:
-        model = TicketList
-        fields = "__all__"
-        read_only_fields = ["created_at", "updated_at", "tokengate"]

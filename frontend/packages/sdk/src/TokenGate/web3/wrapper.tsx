@@ -48,7 +48,6 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
 const Web3ProviderWrapper = ({children}:{children:any}) => {
 	return (
 		<Provider
-			autoConnect
 			connectors={connectors}
 			connectorStorageKey="socialpass.wallet">
 			{children}

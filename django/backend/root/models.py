@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -81,7 +82,6 @@ class TokenGate(DBModel):
         return self.title
 
     def generate_signature_request(self):
-        import secrets
         from pytz import utc
         from datetime import datetime, timedelta
         """
@@ -91,7 +91,6 @@ class TokenGate(DBModel):
         expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
         x = Signature.objects.create(
             tokengate=self,
-            unique_code=secrets.token_hex(32),
             signing_message={
                 'Gate': self.title,
                 'Owner': self.team.name,
@@ -109,7 +108,7 @@ class Signature(DBModel):
     """
     Stores details used to verify wallets.
     """
-    unique_code = models.CharField(primary_key=True, max_length=100, unique=True)
+    unique_code = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tokengate = models.ForeignKey(
         TokenGate, on_delete=models.CASCADE, related_name="signatures"
     )

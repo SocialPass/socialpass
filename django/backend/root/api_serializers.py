@@ -12,14 +12,6 @@ class AirdropGateSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirdropGate
         fields = "__all__"
-        read_only_fields = ["created_at", "updated_at", "user", "team", "general_type"]
-
-    def create(self, validated_data):
-        # Create the token gate
-        airdropgate = AirdropGate.objects.create(
-            user=self.context["request"].user, general_type="AIRDROP", **validated_data
-        )
-        return airdropgate
 
     def get_signature(self, gate):
         return gate.generate_signature_request()
@@ -34,14 +26,6 @@ class TicketGateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketGate
         fields = "__all__"
-        read_only_fields = ["created_at", "updated_at", "user", "team", "general_type"]
-
-    def create(self, validated_data):
-        # Create the token gate
-        ticketgate = TicketGate.objects.create(
-            user=self.context["request"].user, general_type="TICKET", **validated_data
-        )
-        return ticketgate
 
     def get_signature(self, gate):
         return gate.generate_signature_request()

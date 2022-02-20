@@ -12,6 +12,7 @@ class AirdropGateViewSet(GenericViewSet, RetrieveModelMixin):
     A viewset for viewing & accessing Airdrop token gates.
     """
     queryset = AirdropGate.objects.all()
+    lookup_field = 'public_id'
 
     def get_serializer_class(self):
         """
@@ -34,6 +35,7 @@ class TicketGateViewSet(GenericViewSet, RetrieveModelMixin):
     A viewset for viewing & accessing Ticket token gates.
     """
     queryset = TicketGate.objects.all()
+    lookup_field = 'public_id'
 
     def get_serializer_class(self):
         """

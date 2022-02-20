@@ -16,9 +16,9 @@ export async function fetchGateHandler({id}:{id:string}){
 	let _id = id.split('_');
 	switch(_id[0]){
 		case 'AIRDROP':
-			return await fetchAirdropGate(_id[1]);
+			return await fetchAirdropGate(id);
 		case 'TICKET':
-			return await fetchTicketGate(_id[1]);
+			return await fetchTicketGate(id);
 		default:
 			return console.log(`could not route to proper API`)
 	}

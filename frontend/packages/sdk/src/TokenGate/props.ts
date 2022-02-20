@@ -29,7 +29,7 @@ export interface TokenGateContextInterface {
   setStep: any // Set step of token gate
 
   // initial fetch tokengate
-  json: APIError | TicketGateResponse | AidropGateResponse
+  json: APIFetchError | TokenGateFetchResponse | AidropGateFetchResponse
   setJson: any
   httpStatus: number
   setHttpStatus: any

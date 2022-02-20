@@ -12,7 +12,7 @@ const TicketGate = () => {
 		<ul>
 			{json && Object.keys(json).map((keyName, i) => (
 				<li className="travelcompany-input" key={i}>
-					<span className="input-label">{keyName}: {json[keyName]}</span>
+					<span className="input-label">{keyName}</span>
 				</li>
 			))}
 		</ul>

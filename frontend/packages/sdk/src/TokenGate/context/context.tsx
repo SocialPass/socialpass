@@ -6,7 +6,7 @@ export const TokenGateContext = createContext<TokenGateContextInterface>({} as T
 export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInterface) => {
   const [step, setStep] = useState(0);
 
-  const [json, setJson] = useState(null);
+  const [json, setJson] = useState({});
   const [httpStatus, setHttpStatus] = useState(0);
 
   const [json2, setJson2] = useState(null);

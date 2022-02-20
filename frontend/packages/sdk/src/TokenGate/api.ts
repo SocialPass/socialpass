@@ -10,7 +10,7 @@ import {
 
 
 /*
-Gate Handler
+General
 */
 export async function fetchGateHandler({id}:{id:string}){
 	let _id = id.split('_');
@@ -25,10 +25,21 @@ export async function fetchGateHandler({id}:{id:string}){
 
 }
 
+function generateBaseObj(json:any){
+	return {
+	  "httpStatus": 200,
+	  "title": json.title,
+	  "description": json.description,
+	  "requirements": json.requirements,
+	  "signature": json.signature,
+  }
+}
+
 /*
 TicketGate
 */
 function fetchTicketGate(id:string): Promise<APIFetchError> | Promise<TicketGateFetchResponse> {
+	// set base response object and assign additional type-specific properties
 	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}/?format=json`).then((response) => {
 	  if (response.ok) {
 		return response.json();
@@ -37,15 +48,8 @@ function fetchTicketGate(id:string): Promise<APIFetchError> | Promise<TicketGate
 	  }
 	})
 	.then((json) => {
-	   let obj = {
-		   "id": json.id,
-		   "httpStatus": 200,
-		   "title": json.title,
-		   "description": json.description,
-		   "general_type": json.general_type,
-		   "requirements": json.requirements,
-		 }
-	   return obj as TicketGateFetchResponse;
+		let obj = generateBaseObj(json);
+		return obj as TicketGateFetchResponse;
 	})
 	.catch((error) => {
 	  let e = {
@@ -68,21 +72,15 @@ function fetchAirdropGate(id:string): Promise<APIFetchError> | Promise<AidropGat
 	  }
 	})
 	.then((json) => {
-	  let obj = {
-			//base
-  			"id": json.id,
-  			"httpStatus": 200,
-  			"title": json.title,
-  			"description": json.description,
-  			"general_type": json.general_type,
-  			"requirements": json.requirements,
-			//airdrop
+		// set base response object and assign additional type-specific properties
+		let obj = generateBaseObj(json);
+		Object.assign(obj, {
 			"asset_address": json.asset_address,
 			"asset_type": json.asset_type,
 			"chain": json.chain,
 			"end_date": json.end_date,
-		}
-	  return obj as AidropGateFetchResponse;
+		})
+		return obj as AidropGateFetchResponse;
 	})
 	.catch((error) => {
 		let e = {

@@ -71,7 +71,7 @@ class TokenGate(DBModel):
     Please note, this model should NOT be abstract so that other tables are
     able reference this table directly using foreign keys.
     """
-
+    public_id = models.CharField(max_length=64, editable=False, unique=True, db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tokengates")
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, related_name="tokengates")
     title = models.CharField(max_length=255)
@@ -81,13 +81,18 @@ class TokenGate(DBModel):
     def __str__(self):
         return self.title
 
+    def generate_public_id(self):
+        import secrets
+        return f"{self.general_type}_{secrets.token_urlsafe(32)}"
+
+
     def generate_signature_request(self):
-        from pytz import utc
-        from datetime import datetime, timedelta
         """
         generate one-time Signature model to be consumed and signed by the client for verification
         returns unique code (for lookup) and message (for signature)
         """
+        from pytz import utc
+        from datetime import datetime, timedelta
         expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
         x = Signature.objects.create(
             tokengate=self,
@@ -104,6 +109,14 @@ class TokenGate(DBModel):
             "message": x.signing_message,
         }
 
+    def save(self, *args, **kwargs):
+        """
+        overriden to set public_id
+        """
+        if not self.public_id:
+            self.public_id = self.generate_public_id()
+        super(TokenGate, self).save(*args, **kwargs)
+
 class Signature(DBModel):
     """
     Stores details used to verify wallets.
@@ -118,7 +131,7 @@ class Signature(DBModel):
     expires = models.DateTimeField()
 
     def __str__(self):
-        return self.unique_code
+        return str(self.unique_code)
 
 
 class AirdropGate(TokenGate):

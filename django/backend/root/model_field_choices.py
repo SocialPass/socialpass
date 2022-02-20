@@ -7,10 +7,10 @@ TOKENGATE_TYPES = (
 
 
 BLOCKCHAINS = (
-	(1, "Ethereum"),
-	(56, "BNB Chain"),
-    (43114, "Avalanche"),
-    (137, "Polygon")
+	('1', "Ethereum"),
+	('56', "BNB Chain"),
+    ('43114', "Avalanche"),
+    ('137', "Polygon")
 )
 
 

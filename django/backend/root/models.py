@@ -94,10 +94,6 @@ class TokenGate(DBModel):
         from pytz import utc
         from datetime import datetime, timedelta
         expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
-        part_1 = f"NFTY Labs signed message v0{conn_response['payload']['Version']}\n"
-        part_2 = f"You are authenticating to: {conn_response['payload']['Service']}\n"
-        part_3 = f"Authorization ID: {service_auth_id}\n"
-        part_4 = f"Void after: {until}\n"
         x = Signature.objects.create(
             tokengate=self,
             signing_message={
@@ -137,6 +133,14 @@ class Signature(DBModel):
 
     def __str__(self):
         return str(self.unique_code)
+
+    def validate(self, signed_message='', address=''):
+        """
+        Recover address ++ message from a signed message
+        Then verify message and address
+        """
+        return True
+
 
 
 class AirdropGate(TokenGate):

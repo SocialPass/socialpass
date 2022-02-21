@@ -69,6 +69,7 @@ class AirdropGateListView(ListView):
 	model = AirdropGate
 	paginate_by = 15
 	context_object_name = "tokengates"
+	template_name = "dashboard/airdropgate_list.html"
 
 	def get_queryset(self):
 		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])

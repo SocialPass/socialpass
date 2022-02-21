@@ -133,7 +133,7 @@ class Signature(DBModel):
     def __str__(self):
         return str(self.unique_code)
 
-    def validate(self, signed_message='', address='', public_id=''):
+    def validate(self, signed_message='', address='', tokengate_id=''):
         """
         Reusable method to validate a given signature
         """
@@ -143,7 +143,7 @@ class Signature(DBModel):
 
         # check if expired
         if self.expires < (datetime.utcnow().replace(tzinfo=utc)):
-            return False, 403, "Signature request has expired"
+            return False, 403, f"Signature request expired at {self.expires}"
 
         # check for id mismatch
         if self.tokengate.public_id != public_id:

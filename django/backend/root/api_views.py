@@ -53,15 +53,15 @@ class AirdropGateViewSet(GenericViewSet, RetrieveModelMixin):
 
         # get signature obj, throw 404 if not fund
         try:
-            signature = self.get_object(serialized.data.get('unique_code'))
+            signature = self.get_object(serialized.data.get('signature_id'))
         except Signature.DoesNotExist:
-            return Response('Signature does not exist', status=404)
+            return Response('Signature matching "signature_id" does not exist', status=404)
 
         # validate signature
         validation, status_code, error_message = signature.validate(
             address=serialized.data.get('address'),
             signed_message=serialized.data.get('signed_message'),
-            public_id=serialized.data.get('public_id')
+            tokengate_id=serialized.data.get('tokengate_id')
         )
         if not validation:
             return Response(error_message, status=status_code)

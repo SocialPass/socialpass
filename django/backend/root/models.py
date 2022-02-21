@@ -137,22 +137,26 @@ class Signature(DBModel):
         """
         Reusable method to validate a given signature
         """
+
+        ## 401 section: User has not provided invalid authentication details
         # check if already verified
         if self.is_verified:
-            return False, 403, "Signature message already verified."
+            return False, 401, "Signature message already verified."
 
         # check if expired
         if self.expires < (datetime.utcnow().replace(tzinfo=utc)):
-            return False, 403, f"Signature request expired at {self.expires}"
+            return False, 401, f"Signature request expired at {self.expires}"
 
         # check for id mismatch
         if self.tokengate.public_id != tokengate_id:
-            return False, 403, 'Signature x TokenGate ID mismatch.'
+            return False, 401, 'Signature x TokenGate ID mismatch.'
 
-        # 2. check if address matches recovered address
+        # check if address matches recovered address
 
-        # 3. check if address meets requirements
+        ## 403 section: User has authenticated, but does not meet requirements
+        # check if address meets requirements
 
+        ## 200 section: User has authenticated and met requirements
         # before success, mark as verified and save
         self.is_verified = True
         self.save()

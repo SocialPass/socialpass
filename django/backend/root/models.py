@@ -146,7 +146,7 @@ class Signature(DBModel):
             return False, 403, f"Signature request expired at {self.expires}"
 
         # check for id mismatch
-        if self.tokengate.public_id != public_id:
+        if self.tokengate.public_id != tokengate_id:
             return False, 403, 'Signature x TokenGate ID mismatch.'
 
         # 2. check if address matches recovered address
@@ -157,7 +157,7 @@ class Signature(DBModel):
         self.is_verified = True
         self.save()
 
-        return True, 'Error'
+        return True, 200, 'Success'
 
 
 

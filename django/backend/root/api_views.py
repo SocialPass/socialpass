@@ -1,6 +1,6 @@
-from rest_framework import status
-from rest_framework.mixins import RetrieveModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.shortcuts import get_object_or_404
+from rest_framework.generics import RetrieveAPIView, GenericAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,53 +8,31 @@ from .models import AirdropGate, TicketGate, Signature
 from .api_permissions import IsTeamMember, IsTokenGateTeamMember
 from .api_serializers import AirdropGateSerializer, TicketGateSerializer, VerifyGateSerializer
 
-class AirdropGateViewSet(GenericViewSet, RetrieveModelMixin):
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view
-        requires.
-        """
-        permission_classes = [AllowAny]
-        return [permission() for permission in permission_classes]
+class AirdropGateRetrieve(RetrieveAPIView):
+    """
+    View for retrieving airdrop gate by `public_id`
+    """
+    queryset = AirdropGate.objects.all()
+    serializer_class = AirdropGateSerializer
+    lookup_field = 'public_id'
+    permission_classes = [AllowAny]
 
-    def get_object(self, pk):
-        """
-        Instantiate and return the object based on action
-        """
-        if self.action == 'retrieve':
-            return AirdropGate.objects.get(public_id=pk)
-        if self.action == 'verify':
-            return Signature.objects.select_related('tokengate').get(unique_code=pk)
+class AirdropGateAccess(GenericAPIView):
+    """
+    APIView for accessing airdrop gates via verified `Signature`
+    """
+    queryset = Signature.objects.all()
+    permission_classes = [AllowAny]
 
-    def get_queryset(self):
-        """
-        Instantiate and return the queryset based on action
-        """
-        if self.action == 'retrieve':
-            return AirdropGate.objects.all()
-        if self.action == 'verify':
-            return Signature.objects.all()
-
-    def get_serializer_class(self):
-        """
-        Instantiate and return the serializer based on action
-        """
-        if self.action == 'retrieve':
-            return AirdropGateSerializer
-
-    @action(detail=False, methods=['post'])
-    def verify(self, request):
-        """
-        Custom detail action for verifying AirdropGate request.
-        """
+    def post(self, request):
         # serialize and verify data
         serialized = VerifyGateSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
 
         # get signature obj, throw 404 if not fund
         try:
-            signature = self.get_object(serialized.data.get('signature_id'))
-        except Signature.DoesNotExist:
+            signature = Signature.objects.get(unique_code=serialized.data.get('signature_id'))
+        except:
             return Response('Signature matching "signature_id" does not exist', status=404)
 
         # validate signature
@@ -66,24 +44,14 @@ class AirdropGateViewSet(GenericViewSet, RetrieveModelMixin):
         if not validation:
             return Response(error_message, status=status_code)
 
-        return Response(status=200)
+        # reward
+        return Response('ok', status=200)
 
-
-class TicketGateViewSet(GenericViewSet, RetrieveModelMixin):
+class TicketGateRetrieve(RetrieveAPIView):
+    """
+    View for retrieving airdrop gate by `public_id`
+    """
     queryset = TicketGate.objects.all()
+    serializer_class = TicketGateSerializer
     lookup_field = 'public_id'
-
-    def get_serializer_class(self):
-        """
-        Instantiate and return the serializer based on action
-        """
-        if self.action == 'retrieve':
-            return AirdropGateSerializer
-
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view
-        requires.
-        """
-        permission_classes = [AllowAny]
-        return [permission() for permission in permission_classes]
+    permission_classes = [AllowAny]

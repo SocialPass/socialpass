@@ -135,21 +135,22 @@ class Signature(DBModel):
 
     def validate(self, signed_message='', address='', public_id=''):
         """
-        Validate a given signature
+        Reusable method to validate a given signature
         """
-        # check if verified
+        # check if already verified
         if self.is_verified:
-            return False, "Signature message already verified."
-
-        # check for id mismatch
-        if self.tokengate.public_id != public_id:
-            return False, 'Signature x TokenGate ID mismatch.'
+            return False, 403, "Signature message already verified."
 
         # check if expired
         if self.expires < (datetime.utcnow().replace(tzinfo=utc)):
-            return False, "Signature request has expired"
+            return False, 403, "Signature request has expired"
+
+        # check for id mismatch
+        if self.tokengate.public_id != public_id:
+            return False, 403, 'Signature x TokenGate ID mismatch.'
 
         # 2. check if address matches recovered address
+
         # 3. check if address meets requirements
 
         # before success, mark as verified and save

@@ -1,4 +1,6 @@
 import uuid
+from pytz import utc
+from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -85,14 +87,11 @@ class TokenGate(DBModel):
         import secrets
         return f"{self.general_type}_{secrets.token_urlsafe(32)}"
 
-
     def generate_signature_request(self):
         """
         generate one-time Signature model to be consumed and signed by the client for verification
         returns unique code (for lookup) and message (for signature)
         """
-        from pytz import utc
-        from datetime import datetime, timedelta
         expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
         x = Signature.objects.create(
             tokengate=self,
@@ -134,12 +133,30 @@ class Signature(DBModel):
     def __str__(self):
         return str(self.unique_code)
 
-    def validate(self, signed_message='', address=''):
+    def validate(self, signed_message='', address='', public_id=''):
         """
-        Recover address ++ message from a signed message
-        Then verify message and address
+        Validate a given signature
         """
-        return True
+        # check if verified
+        if self.is_verified:
+            return False, "Signature message already verified."
+
+        # check for id mismatch
+        if self.tokengate.public_id != public_id:
+            return False, 'Signature x TokenGate ID mismatch.'
+
+        # check if expired
+        if self.expires < (datetime.utcnow().replace(tzinfo=utc)):
+            return False, "Signature request has expired"
+
+        # 2. check if address matches recovered address
+        # 3. check if address meets requirements
+
+        # before success, mark as verified and save
+        self.is_verified = True
+        self.save()
+
+        return True, 'Error'
 
 
 

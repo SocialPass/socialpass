@@ -42,8 +42,8 @@ class AirdropGateViewSet(GenericViewSet, RetrieveModelMixin):
         if self.action == 'retrieve':
             return AirdropGateSerializer
 
-    @action(detail=True, methods=['post'])
-    def verify(self, request, pk):
+    @action(detail=False, methods=['post'])
+    def verify(self, request):
         """
         Custom detail action for verifying AirdropGate request.
         """
@@ -51,22 +51,20 @@ class AirdropGateViewSet(GenericViewSet, RetrieveModelMixin):
         serialized = VerifyGateSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
 
-        # ensure TokenGate Public ID matches Signature.TokenGate Public ID
-        signature = self.get_object(pk)
-        if signature.tokengate.public_id != serialized.data.get('public_id'):
-            return Response('Signature x TokenGate ID mismatch', status=status.HTTP_400_BAD_REQUEST)
+        # get signature obj
+        try:
+            signature = self.get_object(serialized.data.get('unique_code'))
+        except Signature.DoesNotExist:
+            return Response('Signature does not exist', status=status.HTTP_404_NOT_FOUND)
 
         # validate signature
-        validation = signature.validate(
+        validation, error_message = signature.validate(
             address=serialized.data.get('address'),
-            signed_message=serialized.data.get('signed_message')
+            signed_message=serialized.data.get('signed_message'),
+            public_id=serialized.data.get('public_id')
         )
         if not validation:
-            return Response('Invalid signed message, please try again', status=status.HTTP_400_BAD_REQUEST)
-
-        # todo:
-        # 1. lookup address, ensure matches requirements
-        # 2. distribute reward
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_200_OK)
 

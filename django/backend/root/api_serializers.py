@@ -36,3 +36,4 @@ class VerifyGateSerializer(serializers.Serializer):
     address = serializers.CharField()
     signed_message = serializers.CharField()
     public_id = serializers.CharField()
+    unique_code = serializers.CharField()

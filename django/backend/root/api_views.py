@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import RetrieveAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny
@@ -8,6 +9,16 @@ from .models import AirdropGate, TicketGate, Signature
 from .api_permissions import IsTeamMember, IsTokenGateTeamMember
 from .api_serializers import AirdropGateSerializer, TicketGateSerializer, VerifyGateSerializer
 
+class GetSignatureObjectMixin:
+    """
+    Mixin to get signature object
+    """
+    def get_object(self, pk):
+        try:
+            return Signature.objects.get(unique_code=pk)
+        except:
+            raise Http404
+
 class AirdropGateRetrieve(RetrieveAPIView):
     """
     View for retrieving airdrop gate by `public_id`
@@ -17,7 +28,7 @@ class AirdropGateRetrieve(RetrieveAPIView):
     lookup_field = 'public_id'
     permission_classes = [AllowAny]
 
-class AirdropGateAccess(GenericAPIView):
+class AirdropGateAccess(GetSignatureObjectMixin, GenericAPIView):
     """
     APIView for accessing airdrop gates via verified `Signature`
     """
@@ -30,10 +41,7 @@ class AirdropGateAccess(GenericAPIView):
         serialized.is_valid(raise_exception=True)
 
         # get signature obj, throw 404 if not fund
-        try:
-            signature = Signature.objects.get(unique_code=serialized.data.get('signature_id'))
-        except:
-            return Response('Signature matching "signature_id" does not exist', status=404)
+        signature = self.get_object(serialized.data.get('signature_id'))
 
         # validate signature
         validation, status_code, error_message = signature.validate(

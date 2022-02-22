@@ -49,7 +49,10 @@ function generateJson1Obj(json:any){
 }
 
 function generateJson2Obj(json:any){
-	return json
+	return {
+		"httpStatus": 200,
+		"json": json
+	}
 }
 
 /*

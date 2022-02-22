@@ -1,14 +1,12 @@
 import uuid
 import json
-from web3.auto import w3
-from eth_account.messages import encode_defunct
-from pytz import utc
 from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
 from model_utils.models import TimeStampedModel
-
+from web3.auto import w3
+from pytz import utc
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
 from .model_field_schemas import (
     REQUIREMENTS_SCHEMA,
@@ -155,7 +153,7 @@ class Signature(DBModel):
             return False, 401, 'Signature x TokenGate ID mismatch.'
 
         # check if address matches recovered address
-        _msg = encode_defunct(text=json.dumps(self.signing_message))
+        _msg = json.dumps(self.signing_message)
         _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
         print(_recovered)
         '''

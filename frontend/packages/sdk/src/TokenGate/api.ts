@@ -49,13 +49,7 @@ function generateJson1Obj(json:any){
 }
 
 function generateJson2Obj(json:any){
-	return {
-	  "httpStatus": 200,
-	  "title": json.title,
-	  "description": json.description,
-	  "requirements": json.requirements,
-	  "signature": json.signature,
-  }
+	return json
 }
 
 /*
@@ -111,22 +105,15 @@ function accessTicketGate(address: string, tokengate_id: string, signature_id: s
 		}
 	  })
 	  .then((json) => {
-		  // set base response object and assign additional type-specific properties
-		  let obj = generateJson1Obj(json);
-		  Object.assign(obj, {
-			  "asset_address": json.asset_address,
-			  "asset_type": json.asset_type,
-			  "chain": json.chain,
-			  "end_date": json.end_date,
-		  })
-		  return obj as AidropGateRetrievalResponse;
+		  let obj = generateJson2Obj(json);
+		  return obj;
 	  })
 	  .catch((error) => {
-		  let e = {
-			  "httpStatus": error.status,
-			  "message": error.json()
-		  }
-		  return e as APIRetrievalError;
+		let e = {
+			"httpStatus": error.status,
+			"message": error.json()
+		}
+		return e as APIRetrievalError;
 	  });
 }
 
@@ -161,7 +148,9 @@ function fetchAirdropGate(id:string): Promise<APIRetrievalError> | Promise<Aidro
 	});
 }
 
-
+/*
+AirdropGate Access
+*/
 function accessAirdropGate(address: string, tokengate_id: string, signature_id: string, signed_message: string) {
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -179,29 +168,22 @@ function accessAirdropGate(address: string, tokengate_id: string, signature_id: 
 	};
 
 	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/access/`, requestOptions)
-	  .then((response) => {
+	.then((response) => {
 		if (response.ok) {
-		  return response.json();
+			return response.json();
 		} else {
 			throw response;
 		}
-	  })
-	  .then((json) => {
-		  // set base response object and assign additional type-specific properties
-		  let obj = generateJson1Obj(json);
-		  Object.assign(obj, {
-			  "asset_address": json.asset_address,
-			  "asset_type": json.asset_type,
-			  "chain": json.chain,
-			  "end_date": json.end_date,
-		  })
-		  return obj as AidropGateRetrievalResponse;
-	  })
-	  .catch((error) => {
-		  let e = {
-			  "httpStatus": error.status,
-			  "message": error.json()
-		  }
-		  return e as APIRetrievalError;
-	  });
+	})
+	.then((json) => {
+		let obj = generateJson2Obj(json);
+		return obj;
+	})
+	.catch((error) => {
+		let e = {
+			"httpStatus": error.status,
+			"message": error.json()
+		}
+		return e as APIRetrievalError;
+	});
 }

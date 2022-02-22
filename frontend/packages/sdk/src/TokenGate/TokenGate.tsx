@@ -8,7 +8,7 @@ import { fetchGateHandler } from './api';
 
 // GateHandler
 const GateHandler = () => {
-	const { id, json, setJson, httpStatus, setHttpStatus } = React.useContext(TokenGateContext);
+	const { id, json, setJson, httpStatus, setHttpStatus, httpStatus2 } = React.useContext(TokenGateContext);
 
 	// Gate Handler, updates on ID change
 	// Fetches & Sets TokenGate JSON
@@ -20,7 +20,6 @@ const GateHandler = () => {
 			// fetch and set API response
 			let response = await fetchGateHandler({id});
 			if (response && response.httpStatus){
-				console.log(response)
 				setJson(response);
 				setHttpStatus(response.httpStatus)
 			}
@@ -69,7 +68,7 @@ const GateHandler = () => {
 
 
 	// Status Wrapper
-	// Once http is 200, rendering is handed off to child gates
+	// Once httpStatus is 200, rendering is handed off to child gates
 	const Status = () => {
 		// initial http status is 0, indicates loading
 		if (httpStatus === 0){
@@ -80,6 +79,7 @@ const GateHandler = () => {
 		if (httpStatus !== 200) {
 			return <Error/>
 		}
+
 
 		// 200 status, indicates success
 		// hand rendering off to child gates in GateSwitch

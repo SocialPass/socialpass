@@ -43,9 +43,10 @@ const Web3ProviderAuthentication = () => {
 			let response = await accessGateHandler({
 				address: accountData.address,
 				tokengate_id: id,
-				signature_id: json?.signature.message,
+				signature_id: json?.signature.id,
 				signed_message: signRes.data
 			});
+			console.log(response)
 			if (response && response.httpStatus){
 				console.log(response)
 				setJson2(response);

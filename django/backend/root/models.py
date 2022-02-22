@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
+from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
 from web3.auto import w3
 from pytz import utc
@@ -94,20 +95,21 @@ class TokenGate(DBModel):
         returns unique code (for lookup) and message (for signature)
         """
         expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
-        x = Signature.objects.create(
+        message_obj = {
+            "You are accessing": self.title,
+            "Hosted by": self.team.name,
+            "Hosted at": 'https://...',
+            "Valid until": expires.ctime(),
+        }
+        message = '\n'.join(': '.join((key,val)) for (key,val) in message_obj.items())
+        signature = Signature.objects.create(
             tokengate=self,
-            signing_message={
-                "You are authenticating to:": self.title,
-                "Hosted by": self.team.name,
-                "Hosted at": 'https://...',
-                "Valid until": expires.ctime(),
-            },
+            signing_message=message,
             expires=expires,
-
         )
         return {
-            "id": x.unique_code,
-            "message": x.signing_message,
+            "id": signature.unique_code,
+            "message": signature.signing_message,
         }
 
     def save(self, *args, **kwargs):
@@ -153,13 +155,11 @@ class Signature(DBModel):
             return False, 401, 'Signature x TokenGate ID mismatch.'
 
         # check if address matches recovered address
-        _msg = json.dumps(self.signing_message)
+        _msg = encode_defunct(text=self.signing_message)
         _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
         print(_recovered)
-        '''
         if (_recovered != address):
             return False, 401, 'Signature x Address mismatch.'
-        '''
 
         ## 403 section: User has authenticated, but does not meet requirements
         # check if address meets requirements

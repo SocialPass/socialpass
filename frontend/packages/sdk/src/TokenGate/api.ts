@@ -178,7 +178,7 @@ function accessAirdropGate(address: string, tokengate_id: string, signature_id: 
 	  body: urlencoded,
 	};
 
-	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/access/`, requestOptions)
+	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/access/`, requestOptions)
 	  .then((response) => {
 		if (response.ok) {
 		  return response.json();

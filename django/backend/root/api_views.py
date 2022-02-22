@@ -23,9 +23,9 @@ class AirdropGateRetrieve(RetrieveAPIView):
     """
     View for retrieving airdrop gate by `public_id`
     """
+    lookup_field = 'public_id'
     queryset = AirdropGate.objects.all()
     serializer_class = AirdropGateSerializer
-    lookup_field = 'public_id'
     permission_classes = [AllowAny]
 
 class AirdropGateAccess(GetSignatureObjectMixin, APIView):
@@ -58,9 +58,9 @@ class TicketGateRetrieve(RetrieveAPIView):
     """
     View for retrieving ticket gate by `public_id`
     """
+    lookup_field = 'public_id'
     queryset = TicketGate.objects.all()
     serializer_class = TicketGateSerializer
-    lookup_field = 'public_id'
     permission_classes = [AllowAny]
 
 class TicketGateAccess(GetSignatureObjectMixin, APIView):

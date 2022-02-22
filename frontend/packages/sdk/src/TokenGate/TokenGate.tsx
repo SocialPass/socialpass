@@ -20,6 +20,7 @@ const GateHandler = () => {
 			// fetch and set API response
 			let response = await fetchGateHandler({id});
 			if (response && response.httpStatus){
+				console.log(response)
 				setJson(response);
 				setHttpStatus(response.httpStatus)
 			}

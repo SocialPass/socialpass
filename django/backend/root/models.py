@@ -1,5 +1,4 @@
 import uuid
-import json
 from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
@@ -128,7 +127,7 @@ class Signature(DBModel):
     tokengate = models.ForeignKey(
         TokenGate, on_delete=models.CASCADE, related_name="signatures"
     )
-    signing_message = models.JSONField()
+    signing_message = models.CharField(max_length=1024)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
     expires = models.DateTimeField()

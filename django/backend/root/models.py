@@ -233,7 +233,6 @@ class TicketList(DBModel):
     )
     wallet_address = models.CharField(max_length=400)
     ticket_url = models.URLField()
-    token_id = models.IntegerField()
 
     def __str__(self):
         return f"Ticket List (Token Gate: {self.tokengate.title})"

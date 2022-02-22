@@ -158,13 +158,18 @@ class Signature(DBModel):
         _msg = encode_defunct(text=json.dumps(self.signing_message))
         _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
         print(_recovered)
+        '''
+        if (_recovered != address):
+            return False, 401, 'Signature x Address mismatch.'
+        '''
 
         ## 403 section: User has authenticated, but does not meet requirements
         # check if address meets requirements
 
         ## 200 section: User has authenticated and met requirements
-        # before success, mark as verified and save
+        # before success, mark as verified, update address, and save
         #self.is_verified = True
+        #self.wallet_address = _recovered
         self.save()
 
         return True, 200, 'Success'

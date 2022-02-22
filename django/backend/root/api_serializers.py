@@ -31,9 +31,26 @@ class TicketGateSerializer(serializers.ModelSerializer):
 
 class VerifyGateSerializer(serializers.Serializer):
     """
-    Serializes @action.verify request
+    Serializes /access request for all token gates
     """
     address = serializers.CharField()
     signed_message = serializers.CharField()
     tokengate_id = serializers.CharField()
     signature_id = serializers.CharField()
+
+class TicketListSerializer(serializers.ModelSerializer):
+    """
+    Serializes Ticket token gates.
+    """
+    class Meta:
+        model = TicketList
+        fields = "__all__"
+
+
+class AirdropListSerializer(serializers.ModelSerializer):
+    """
+    Serializes Airdrop token gates.
+    """
+    class Meta:
+        model = AirdropList
+        fields = "__all__"

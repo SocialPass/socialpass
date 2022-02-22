@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import RetrieveAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import AirdropGate, TicketGate, Signature
@@ -28,11 +28,10 @@ class AirdropGateRetrieve(RetrieveAPIView):
     lookup_field = 'public_id'
     permission_classes = [AllowAny]
 
-class AirdropGateAccess(GetSignatureObjectMixin, GenericAPIView):
+class AirdropGateAccess(GetSignatureObjectMixin, APIView):
     """
     APIView for accessing airdrop gates via verified `Signature`
     """
-    queryset = Signature.objects.all()
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -64,11 +63,10 @@ class TicketGateRetrieve(RetrieveAPIView):
     lookup_field = 'public_id'
     permission_classes = [AllowAny]
 
-class TicketGateAccess(GetSignatureObjectMixin, GenericAPIView):
+class TicketGateAccess(GetSignatureObjectMixin, APIView):
     """
     APIView for accessing ticket gate via verified `Signature`
     """
-    queryset = Signature.objects.all()
     permission_classes = [AllowAny]
 
     def post(self, request):

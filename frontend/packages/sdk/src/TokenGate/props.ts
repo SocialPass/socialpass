@@ -29,7 +29,7 @@ export interface TokenGateContextInterface {
   setStep: any // Set step of token gate
 
   // initial fetch tokengate
-  json: {} | APIFetchError | TokenGateFetchResponse | AidropGateFetchResponse
+  json: any | APIRetrievalError | TokenGateRetrievalResponse | AidropGateRetrievalResponse
   setJson: any
   httpStatus: number
   setHttpStatus: any
@@ -42,15 +42,15 @@ export interface TokenGateContextInterface {
 }
 
 /*
-API TYPES -- Fetch TokenGates
+API TYPES -- Retrieval TokenGates
 */
-export interface APIFetchError {
+export interface APIRetrievalError {
   httpStatus: number
   message?: string
 }
 
 // Props for base TokenGate API response
-export interface TokenGateFetchResponse {
+export interface TokenGateRetrievalResponse {
   httpStatus: number
   title: string
   description: string
@@ -60,7 +60,7 @@ export interface TokenGateFetchResponse {
 }
 
 // Extended props for TicketGate
-export interface TicketGateFetchResponse extends TokenGateFetchResponse {
+export interface TicketGateRetrievalResponse extends TokenGateRetrievalResponse {
   asset_address: string
   asset_type: string
   chain: string
@@ -68,6 +68,12 @@ export interface TicketGateFetchResponse extends TokenGateFetchResponse {
 }
 
 // Extended props for TicketGate
-export interface AidropGateFetchResponse extends TokenGateFetchResponse {
+export interface AidropGateRetrievalResponse extends TokenGateRetrievalResponse {
 
 }
+
+
+
+/*
+API TYPES -- Access TokenGates
+*/

@@ -57,9 +57,36 @@ class AirdropGateAccess(GetSignatureObjectMixin, GenericAPIView):
 
 class TicketGateRetrieve(RetrieveAPIView):
     """
-    View for retrieving airdrop gate by `public_id`
+    View for retrieving ticket gate by `public_id`
     """
     queryset = TicketGate.objects.all()
     serializer_class = TicketGateSerializer
     lookup_field = 'public_id'
     permission_classes = [AllowAny]
+
+class TicketGateAccess(GetSignatureObjectMixin, GenericAPIView):
+    """
+    APIView for accessing ticket gate via verified `Signature`
+    """
+    queryset = Signature.objects.all()
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # serialize and verify data
+        serialized = VerifyGateSerializer(data=request.data)
+        serialized.is_valid(raise_exception=True)
+
+        # get signature obj, throw 404 if not fund
+        signature = self.get_object(serialized.data.get('signature_id'))
+
+        # validate signature
+        validation, status_code, rsp_msg = signature.validate(
+            address=serialized.data.get('address'),
+            signed_message=serialized.data.get('signed_message'),
+            tokengate_id=serialized.data.get('tokengate_id')
+        )
+        if not validation:
+            return Response(rsp_msg, status=status_code)
+
+        # reward
+        return Response(rsp_msg, status=status_code)

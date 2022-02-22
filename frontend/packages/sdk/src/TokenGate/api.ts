@@ -40,7 +40,7 @@ TicketGate
 */
 function fetchTicketGate(id:string): Promise<APIFetchError> | Promise<TicketGateFetchResponse> {
 	// set base response object and assign additional type-specific properties
-	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}/?format=json`).then((response) => {
+	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/retrieve/${id}/?format=json`).then((response) => {
 	  if (response.ok) {
 		return response.json();
 	  } else {
@@ -64,7 +64,7 @@ function fetchTicketGate(id:string): Promise<APIFetchError> | Promise<TicketGate
 AirdropGate
 */
 function fetchAirdropGate(id:string): Promise<APIFetchError> | Promise<AidropGateFetchResponse > {
-	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/${id}/?format=json`).then((response) => {
+	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/retrieve/${id}/?format=json`).then((response) => {
 	  if (response.ok) {
 		return response.json();
 	  } else {

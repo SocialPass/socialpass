@@ -1,9 +1,12 @@
 import uuid
+from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
+from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
-
+from web3.auto import w3
+from pytz import utc
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
 from .model_field_schemas import (
     REQUIREMENTS_SCHEMA,
@@ -85,33 +88,27 @@ class TokenGate(DBModel):
         import secrets
         return f"{self.general_type}_{secrets.token_urlsafe(32)}"
 
-
     def generate_signature_request(self):
         """
         generate one-time Signature model to be consumed and signed by the client for verification
         returns unique code (for lookup) and message (for signature)
         """
-        from pytz import utc
-        from datetime import datetime, timedelta
         expires = (datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30))
-        part_1 = f"NFTY Labs signed message v0{conn_response['payload']['Version']}\n"
-        part_2 = f"You are authenticating to: {conn_response['payload']['Service']}\n"
-        part_3 = f"Authorization ID: {service_auth_id}\n"
-        part_4 = f"Void after: {until}\n"
-        x = Signature.objects.create(
+        message_obj = {
+            "You are accessing": self.title,
+            "Hosted by": self.team.name,
+            "Hosted at": 'https://...',
+            "Valid until": expires.ctime(),
+        }
+        message = '\n'.join(': '.join((key,val)) for (key,val) in message_obj.items())
+        signature = Signature.objects.create(
             tokengate=self,
-            signing_message={
-                "You are authenticating to:": self.title,
-                "Hosted by": self.team.name,
-                "Hosted at": 'https://...',
-                "Valid until": expires.ctime(),
-            },
+            signing_message=message,
             expires=expires,
-
         )
         return {
-            "id": x.unique_code,
-            "message": x.signing_message,
+            "id": signature.unique_code,
+            "message": signature.signing_message,
         }
 
     def save(self, *args, **kwargs):
@@ -130,13 +127,50 @@ class Signature(DBModel):
     tokengate = models.ForeignKey(
         TokenGate, on_delete=models.CASCADE, related_name="signatures"
     )
-    signing_message = models.JSONField()
+    signing_message = models.CharField(max_length=1024)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
     expires = models.DateTimeField()
 
     def __str__(self):
         return str(self.unique_code)
+
+    def validate(self, signed_message='', address='', tokengate_id=''):
+        """
+        Reusable method to validate a given signature
+        """
+
+        ## 401 section: User has not provided invalid authentication details
+        # check if already verified
+        if self.is_verified:
+            return False, 401, "Signature message already verified."
+
+        # check if expired
+        if self.expires < (datetime.utcnow().replace(tzinfo=utc)):
+            return False, 401, f"Signature request expired at {self.expires}"
+
+        # check for id mismatch
+        if self.tokengate.public_id != tokengate_id:
+            return False, 401, 'Signature x TokenGate ID mismatch.'
+
+        # check if address matches recovered address
+        _msg = encode_defunct(text=self.signing_message)
+        _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
+        print(_recovered)
+        if (_recovered != address):
+            return False, 401, 'Signature x Address mismatch.'
+
+        ## 403 section: User has authenticated, but does not meet requirements
+        # check if address meets requirements
+
+        ## 200 section: User has authenticated and met requirements
+        # before success, mark as verified, update address, and save
+        #self.is_verified = True
+        #self.wallet_address = _recovered
+        self.save()
+
+        return True, 200, 'Success'
+
 
 
 class AirdropGate(TokenGate):

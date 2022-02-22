@@ -1,8 +1,9 @@
 # general
 python-slugify==5.0.2  # https://github.com/un33k/python-slugify
 Pillow==9.0.1  # https://github.com/python-pillow/Pillow
-uvicorn[standard]==0.17.4  # https://github.com/encode/uvicorn
+uvicorn[standard]  # https://github.com/encode/uvicorn
 argon2-cffi==21.3.0
+web3==5.28.0
 
 # Django
 # ------------------------------------------------------------------------------

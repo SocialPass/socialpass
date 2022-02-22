@@ -1,80 +1,65 @@
-from rest_framework import viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated
-
-from .models import AirdropGate, AirdropList, TicketGate, TicketList
+from django.http import Http404
+from django.shortcuts import get_object_or_404
+from rest_framework.generics import RetrieveAPIView, GenericAPIView
+from rest_framework.permissions import AllowAny
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import AirdropGate, TicketGate, Signature
 from .api_permissions import IsTeamMember, IsTokenGateTeamMember
-from .api_serializers import AirdropGateSerializer, AirdropListSerializer, TicketGateSerializer, TicketListSerializer
+from .api_serializers import AirdropGateSerializer, TicketGateSerializer, VerifyGateSerializer
 
-
-class AirdropGateViewSet(viewsets.ModelViewSet):
+class GetSignatureObjectMixin:
     """
-    A viewset for viewing and editing Airdrop token gates.
+    Mixin to get signature object
     """
+    def get_object(self, pk):
+        try:
+            return Signature.objects.get(unique_code=pk)
+        except:
+            raise Http404
 
-    serializer_class = AirdropGateSerializer
+class AirdropGateRetrieve(RetrieveAPIView):
+    """
+    View for retrieving airdrop gate by `public_id`
+    """
     queryset = AirdropGate.objects.all()
+    serializer_class = AirdropGateSerializer
+    lookup_field = 'public_id'
+    permission_classes = [AllowAny]
 
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view
-        requires.
-        """
-        if self.action == "list" or self.action == "retrieve":
-            permission_classes = [AllowAny]
-        elif self.action == "create":
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsTeamMember]
-        return [permission() for permission in permission_classes]
-
-
-class AirdropListViewSet(viewsets.ReadOnlyModelViewSet):
+class AirdropGateAccess(GetSignatureObjectMixin, GenericAPIView):
     """
-    A viewset for viewing airdrop lists.
+    APIView for accessing airdrop gates via verified `Signature`
     """
+    queryset = Signature.objects.all()
+    permission_classes = [AllowAny]
 
-    serializer_class = AirdropListSerializer
-    permission_classes = [IsTokenGateTeamMember]
+    def post(self, request):
+        # serialize and verify data
+        serialized = VerifyGateSerializer(data=request.data)
+        serialized.is_valid(raise_exception=True)
 
-    def get_queryset(self):
-        """
-        Return the required queryset.
-        """
-        return AirdropList.objects.filter(tokengate__id=self.kwargs["tokengate_id"])
+        # get signature obj, throw 404 if not fund
+        signature = self.get_object(serialized.data.get('signature_id'))
 
+        # validate signature
+        validation, status_code, rsp_msg = signature.validate(
+            address=serialized.data.get('address'),
+            signed_message=serialized.data.get('signed_message'),
+            tokengate_id=serialized.data.get('tokengate_id')
+        )
+        if not validation:
+            return Response(rsp_msg, status=status_code)
 
-class TicketGateViewSet(viewsets.ModelViewSet):
+        # reward
+        return Response(rsp_msg, status=status_code)
+
+class TicketGateRetrieve(RetrieveAPIView):
     """
-    A viewset for viewing and editing Ticket token gates.
+    View for retrieving airdrop gate by `public_id`
     """
-
-    serializer_class = TicketGateSerializer
     queryset = TicketGate.objects.all()
-
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view
-        requires.
-        """
-        if self.action == "list" or self.action == "retrieve":
-            permission_classes = [AllowAny]
-        elif self.action == "create":
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsTeamMember]
-        return [permission() for permission in permission_classes]
-
-
-class TicketListViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    A viewset for viewing ticket lists.
-    """
-
-    serializer_class = TicketListSerializer
-    permission_classes = [IsTokenGateTeamMember]
-
-    def get_queryset(self):
-        """
-        Return the required queryset.
-        """
-        return TicketList.objects.filter(tokengate__id=self.kwargs["tokengate_id"])
+    serializer_class = TicketGateSerializer
+    lookup_field = 'public_id'
+    permission_classes = [AllowAny]

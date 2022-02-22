@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .models import (
+    TokenGate,
     AirdropGate,
     AirdropList,
     Signature,
@@ -20,6 +21,9 @@ admin.site.site_title = "NFTY Labs Admin"
 admin.site.site_header = "NFTY Labs Admin"
 admin.site.index_title = "NFTY Labs Admin"
 
+@admin.register(TokenGate)
+class TokenGateAdmin(admin.ModelAdmin):
+    pass
 
 # Admin registrations
 class MembershipInline(admin.TabularInline):

@@ -28,8 +28,10 @@ const Web3ProviderAuthentication = () => {
 
 	/****************** FUNCTIONS *************************/
 	// Signature Handler
-	const signatureHandler = async (message:string) => {
-		// Sign Message
+	const signatureHandler = async () => {
+		// message setup
+		let message = json?.signature.message
+
 		const signRes = await signMessage({ message: message });
 		if (signRes.error) throw signRes.error;
 
@@ -56,7 +58,7 @@ const Web3ProviderAuthentication = () => {
 			</div>
 			<div>Connected to {accountData.connector?.name}</div>
 			<button onClick={() => disconnect()}>Disconnect</button>
-			<button onClick={() => signatureHandler('json')}>Sign Message</button>
+			<button onClick={() => signatureHandler()}>Sign Message</button>
 			<br/>
 		  </div>
 		)

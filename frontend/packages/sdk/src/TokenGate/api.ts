@@ -10,26 +10,37 @@ import {
 
 
 /*
-Gate Handler
+General
 */
 export async function fetchGateHandler({id}:{id:string}){
 	let _id = id.split('_');
 	switch(_id[0]){
 		case 'AIRDROP':
-			return await fetchAirdropGate(_id[1]);
+			return await fetchAirdropGate(id);
 		case 'TICKET':
-			return await fetchTicketGate(_id[1]);
+			return await fetchTicketGate(id);
 		default:
 			return console.log(`could not route to proper API`)
 	}
 
 }
 
+function generateBaseObj(json:any){
+	return {
+	  "httpStatus": 200,
+	  "title": json.title,
+	  "description": json.description,
+	  "requirements": json.requirements,
+	  "signature": json.signature,
+  }
+}
+
 /*
 TicketGate
 */
 function fetchTicketGate(id:string): Promise<APIFetchError> | Promise<TicketGateFetchResponse> {
-	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/${id}/?format=json`).then((response) => {
+	// set base response object and assign additional type-specific properties
+	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/retrieve/${id}/?format=json`).then((response) => {
 	  if (response.ok) {
 		return response.json();
 	  } else {
@@ -37,15 +48,8 @@ function fetchTicketGate(id:string): Promise<APIFetchError> | Promise<TicketGate
 	  }
 	})
 	.then((json) => {
-	   let obj = {
-		   "id": json.id,
-		   "httpStatus": 200,
-		   "title": json.title,
-		   "description": json.description,
-		   "general_type": json.general_type,
-		   "requirements": json.requirements,
-		 }
-	   return obj as TicketGateFetchResponse;
+		let obj = generateBaseObj(json);
+		return obj as TicketGateFetchResponse;
 	})
 	.catch((error) => {
 	  let e = {
@@ -60,7 +64,7 @@ function fetchTicketGate(id:string): Promise<APIFetchError> | Promise<TicketGate
 AirdropGate
 */
 function fetchAirdropGate(id:string): Promise<APIFetchError> | Promise<AidropGateFetchResponse > {
-	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/${id}/?format=json`).then((response) => {
+	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/retrieve/${id}/?format=json`).then((response) => {
 	  if (response.ok) {
 		return response.json();
 	  } else {
@@ -68,21 +72,15 @@ function fetchAirdropGate(id:string): Promise<APIFetchError> | Promise<AidropGat
 	  }
 	})
 	.then((json) => {
-	  let obj = {
-			//base
-  			"id": json.id,
-  			"httpStatus": 200,
-  			"title": json.title,
-  			"description": json.description,
-  			"general_type": json.general_type,
-  			"requirements": json.requirements,
-			//airdrop
+		// set base response object and assign additional type-specific properties
+		let obj = generateBaseObj(json);
+		Object.assign(obj, {
 			"asset_address": json.asset_address,
 			"asset_type": json.asset_type,
 			"chain": json.chain,
 			"end_date": json.end_date,
-		}
-	  return obj as AidropGateFetchResponse;
+		})
+		return obj as AidropGateFetchResponse;
 	})
 	.catch((error) => {
 		let e = {

@@ -1,4 +1,7 @@
 import uuid
+import json
+from web3.auto import w3
+from eth_account.messages import encode_defunct
 from pytz import utc
 from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -152,13 +155,16 @@ class Signature(DBModel):
             return False, 401, 'Signature x TokenGate ID mismatch.'
 
         # check if address matches recovered address
+        _msg = encode_defunct(text=json.dumps(self.signing_message))
+        _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
+        print(_recovered)
 
         ## 403 section: User has authenticated, but does not meet requirements
         # check if address meets requirements
 
         ## 200 section: User has authenticated and met requirements
         # before success, mark as verified and save
-        self.is_verified = True
+        #self.is_verified = True
         self.save()
 
         return True, 200, 'Success'

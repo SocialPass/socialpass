@@ -44,16 +44,16 @@ class AirdropGateAccess(GetSignatureObjectMixin, GenericAPIView):
         signature = self.get_object(serialized.data.get('signature_id'))
 
         # validate signature
-        validation, status_code, error_message = signature.validate(
+        validation, status_code, rsp_msg = signature.validate(
             address=serialized.data.get('address'),
             signed_message=serialized.data.get('signed_message'),
             tokengate_id=serialized.data.get('tokengate_id')
         )
         if not validation:
-            return Response(error_message, status=status_code)
+            return Response(rsp_msg, status=status_code)
 
         # reward
-        return Response('ok', status=200)
+        return Response(rsp_msg, status=status_code)
 
 class TicketGateRetrieve(RetrieveAPIView):
     """

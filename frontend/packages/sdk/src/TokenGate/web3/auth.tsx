@@ -30,7 +30,7 @@ const Web3ProviderAuthentication = () => {
 	// Signature Handler
 	const signatureHandler = async () => {
 		// message setup
-		let message = JSON.stringify(json?.signature.message, null, 2)
+		let message = json?.signature.message
 
 		const signRes = await signMessage({ message: message });
 		if (signRes.error) throw signRes.error;

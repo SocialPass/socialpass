@@ -9,8 +9,8 @@ from .api_serializers import (
     AirdropGateSerializer,
     TicketGateSerializer,
     VerifyGateSerializer,
-    AirdropListSerializer,
-    TicketListSerializer
+    AirdropSerializer,
+    TicketSerializer
 )
 
 class GetSignatureObjectMixin:
@@ -38,7 +38,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
     and then creating / returning `AirdropList` entry
     """
     permission_classes = [AllowAny]
-    serializer_class = AirdropListSerializer
+    serializer_class = AirdropSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data={
@@ -89,7 +89,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
     and then creating / returning `TicketList` entry
     """
     permission_classes = [AllowAny]
-    serializer_class = TicketListSerializer
+    serializer_class = TicketSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data={

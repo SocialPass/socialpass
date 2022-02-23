@@ -5,12 +5,12 @@ from django.contrib.auth.admin import UserAdmin
 from .models import (
     TokenGate,
     AirdropGate,
-    AirdropList,
+    Airdrop,
     Signature,
     Team,
     Membership,
     TicketGate,
-    TicketList
+    Ticket
 )
 
 User = get_user_model()
@@ -61,8 +61,8 @@ class AirdropGateAdmin(admin.ModelAdmin):
     search_fields = ("title", "chain", "asset_type", "user__username", "team__name")
 
 
-@admin.register(AirdropList)
-class AirdropListAdmin(admin.ModelAdmin):
+@admin.register(Airdrop)
+class AirdropAdmin(admin.ModelAdmin):
     list_display = ("tokengate", "wallet_address")
     search_fields = ("tokengate__title", "wallet_address")
 
@@ -73,7 +73,7 @@ class TicketGateAdmin(admin.ModelAdmin):
     search_fields = ("title", "user__username", "team__name", "location")
 
 
-@admin.register(TicketList)
-class TicketListAdmin(admin.ModelAdmin):
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
     list_display = ("tokengate", "wallet_address", "ticket_url")
     search_fields = ("tokengate__title", "wallet_address", "ticket_url")

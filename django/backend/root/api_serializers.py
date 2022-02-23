@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import AirdropGate, AirdropList, TicketGate, TicketList
+from .models import AirdropGate, Airdrop, TicketGate, Ticket
 
 
 class AirdropGateSerializer(serializers.ModelSerializer):
@@ -38,19 +38,19 @@ class VerifyGateSerializer(serializers.Serializer):
     tokengate_id = serializers.CharField()
     signature_id = serializers.CharField()
 
-class TicketListSerializer(serializers.ModelSerializer):
+class TicketSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket token gates.
     """
     class Meta:
-        model = TicketList
+        model = Ticket
         fields = "__all__"
 
 
-class AirdropListSerializer(serializers.ModelSerializer):
+class AirdropSerializer(serializers.ModelSerializer):
     """
     Serializes Airdrop token gates.
     """
     class Meta:
-        model = AirdropList
+        model = Airdrop
         fields = "__all__"

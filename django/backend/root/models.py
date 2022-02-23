@@ -193,13 +193,16 @@ class AirdropGate(TokenGate):
     )
 
 
-class AirdropList(DBModel):
+class Airdrop(DBModel):
     """
     List of all the airdrops distributed by the respective Airdrop token gates.
     """
 
     tokengate = models.ForeignKey(
-        AirdropGate, on_delete=models.CASCADE, related_name="airdrop_lists"
+        AirdropGate, on_delete=models.CASCADE, related_name="airdrops"
+    )
+    signature = models.ForeignKey(
+        Signature, on_delete=models.SET_NULL, related_name="airdrops", null=True
     )
     wallet_address = models.CharField(max_length=400)
     transaction_hash = models.CharField(max_length=400)
@@ -223,13 +226,16 @@ class TicketGate(TokenGate):
     )
 
 
-class TicketList(DBModel):
+class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticket token gates.
     """
 
     tokengate = models.ForeignKey(
-        TicketGate, on_delete=models.CASCADE, related_name="ticket_lists"
+        TicketGate, on_delete=models.CASCADE, related_name="tickets"
+    )
+    signature = models.ForeignKey(
+        Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
     wallet_address = models.CharField(max_length=400)
     ticket_url = models.URLField()

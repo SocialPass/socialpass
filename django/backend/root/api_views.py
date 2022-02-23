@@ -71,7 +71,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
         # validate requirements
 
         # issue reward (201 created)
-        response = self.create(request, wallet_address=1, transaction_hash=1, tokengate=1)
+        response = self.create(request, wallet_address=serialized.data.get('address'), transaction_hash="0x", tokengate=signature.tokengate)
         return response
 
 class TicketGateRetrieve(RetrieveAPIView):
@@ -122,5 +122,5 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         # validate requirements
 
         # issue reward (201 created)
-        response = self.create(request, wallet_address=serialized.data.get('address'), ticket_url="https://test.local", tokengate=2)
+        response = self.create(request, wallet_address=serialized.data.get('address'), ticket_url="https://test.local", tokengate=signature.tokengate)
         return response

@@ -36,9 +36,12 @@ const Web3ProviderAuthentication = () => {
 		const signRes = await signMessage({ message: message });
 		if (signRes.error) throw signRes.error;
 
+		// reset http
+		setJson2(null);
+		setHttpStatus2(0);
+
 		// Verify Message/Wallet
 		if (signRes && accountData && accountData.address){
-			console.log(signRes);
 			// send off message
 			let response = await accessGateHandler({
 				address: accountData.address,
@@ -46,7 +49,6 @@ const Web3ProviderAuthentication = () => {
 				signature_id: json?.signature.id,
 				signed_message: signRes.data
 			});
-			console.log(response)
 			if (response && response.httpStatus){
 				console.log(response)
 				setJson2(response);

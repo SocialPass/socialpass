@@ -42,6 +42,9 @@ function generateJson1Obj(json:any){
 	return {
 	  "httpStatus": 200,
 	  "title": json.title,
+	  "team_name": json.team.name,
+	  "team_image": json.team.image,
+	  "general_type": json.general_type,
 	  "description": json.description,
 	  "requirements": json.requirements,
 	  "signature": json.signature,
@@ -69,6 +72,12 @@ function fetchTicketGate(id:string): Promise<APIRetrievalError> | Promise<Ticket
 	})
 	.then((json) => {
 		let obj = generateJson1Obj(json);
+		Object.assign(obj, {
+			"date": json.date,
+		  	"location": json.location,
+		  	"capacity": json.capacity,
+		  	"deadline": json.deadline
+		})
 		return obj as TicketGateRetrievalResponse;
 	})
 	.catch((error) => {

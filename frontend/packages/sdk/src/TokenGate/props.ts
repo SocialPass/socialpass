@@ -53,6 +53,8 @@ export interface APIRetrievalError {
 export interface TokenGateRetrievalResponse {
   httpStatus: number
   title: string
+  team_name: any
+  team_image: any
   description: string
   general_type: string
   requirements: any
@@ -69,7 +71,10 @@ export interface TicketGateRetrievalResponse extends TokenGateRetrievalResponse 
 
 // Extended props for TicketGate
 export interface AidropGateRetrievalResponse extends TokenGateRetrievalResponse {
-
+  date: any
+  location: any
+  capacity: any
+  deadline: any
 }
 
 

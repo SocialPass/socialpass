@@ -3,6 +3,9 @@ from rest_framework import serializers
 from .models import AirdropGate, Airdrop, TicketGate, Ticket, Team
 
 class TeamSerializer(serializers.ModelSerializer):
+    """
+    Team serializer
+    """
     class Meta:
         model = Team
         fields = ['name', 'image']
@@ -23,10 +26,19 @@ class BaseGateSerializer(serializers.ModelSerializer):
             "requirements",
             "signature",
         ]
-
     def get_signature(self, gate):
         return gate.generate_signature_request()
 
+class VerifyGateSerializer(serializers.Serializer):
+    """
+    Serializes /access request for all token gates
+    Accepts a signed message & corresponding wallet address,
+    as well related 'public_id'
+    """
+    address = serializers.CharField()
+    signed_message = serializers.CharField()
+    tokengate_id = serializers.CharField()
+    signature_id = serializers.CharField()
 
 class AirdropGateSerializer(BaseGateSerializer):
     """
@@ -41,6 +53,15 @@ class AirdropGateSerializer(BaseGateSerializer):
             "end_date"
         ]
 
+class AirdropSerializer(serializers.ModelSerializer):
+    """
+    Serializes Airdrop.
+    """
+    class Meta:
+        model = Airdrop
+        fields = ["wallet_address", "transaction_hash"]
+
+
 class TicketGateSerializer(BaseGateSerializer):
     """
     Serializes Ticket token gates.
@@ -54,28 +75,10 @@ class TicketGateSerializer(BaseGateSerializer):
             "deadline"
         ]
 
-class VerifyGateSerializer(serializers.Serializer):
-    """
-    Serializes /access request for all token gates
-    """
-    address = serializers.CharField()
-    signed_message = serializers.CharField()
-    tokengate_id = serializers.CharField()
-    signature_id = serializers.CharField()
-
 class TicketSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket.
     """
     class Meta:
         model = Ticket
-        fields = "__all__"
-
-
-class AirdropSerializer(serializers.ModelSerializer):
-    """
-    Serializes Airdrop.
-    """
-    class Meta:
-        model = Airdrop
-        fields = "__all__"
+        fields = ["wallet_address", "ticket_url"]

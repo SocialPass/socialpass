@@ -25,6 +25,7 @@ class BaseGateSerializer(serializers.ModelSerializer):
             "description",
             "requirements",
             "signature",
+            "general_type"
         ]
     def get_signature(self, gate):
         return gate.generate_signature_request()

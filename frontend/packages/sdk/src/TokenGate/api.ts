@@ -5,7 +5,10 @@ import {
 	GateType,
 	APIRetrievalError,
 	TicketGateRetrievalResponse,
-	AidropGateRetrievalResponse
+	AidropGateRetrievalResponse,
+	APIAccessError,
+	AirdropGateAccessResponse,
+	TicketGateAccessResponse
 } from './props';
 
 
@@ -54,7 +57,7 @@ function generateJson1Obj(json:any){
 function generateJson2Obj(json:any){
 	return {
 		"httpStatus": 200,
-		"json": json
+		"wallet_address": json.wallet_address
 	}
 }
 
@@ -92,7 +95,7 @@ function fetchTicketGate(id:string): Promise<APIRetrievalError> | Promise<Ticket
 /*
 TicketGate Access
 */
-function accessTicketGate(address: string, tokengate_id: string, signature_id: string, signed_message: string) {
+function accessTicketGate(address: string, tokengate_id: string, signature_id: string, signed_message: string): Promise<APIAccessError> | Promise<TicketGateAccessResponse> {
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -118,14 +121,17 @@ function accessTicketGate(address: string, tokengate_id: string, signature_id: s
 	  })
 	  .then((json) => {
 		  let obj = generateJson2Obj(json);
-		  return obj;
+		  Object.assign(obj, {
+			  "ticket_url": json.ticket_url
+		  })
+		  return obj as AirdropGateAccessResponse;
 	  })
 	  .catch((error) => {
 		let e = {
 			"httpStatus": error.status,
 			"message": error.json()
 		}
-		return e as APIRetrievalError;
+		return e as APIAccessError;
 	  });
 }
 
@@ -163,7 +169,7 @@ function fetchAirdropGate(id:string): Promise<APIRetrievalError> | Promise<Aidro
 /*
 AirdropGate Access
 */
-function accessAirdropGate(address: string, tokengate_id: string, signature_id: string, signed_message: string) {
+function accessAirdropGate(address: string, tokengate_id: string, signature_id: string, signed_message: string): Promise<APIAccessError> | Promise<AirdropGateAccessResponse> {
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -189,7 +195,10 @@ function accessAirdropGate(address: string, tokengate_id: string, signature_id: 
 	})
 	.then((json) => {
 		let obj = generateJson2Obj(json);
-		return obj;
+		Object.assign(obj, {
+			"transaction_hash": json.transaction_hash
+		})
+		return obj as TicketGateAccessResponse;
 	})
 	.catch((error) => {
 		let e = {

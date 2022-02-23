@@ -69,7 +69,7 @@ export interface TicketGateRetrievalResponse extends TokenGateRetrievalResponse 
   end_date: string
 }
 
-// Extended props for TicketGate
+// Extended props for AirdropGate
 export interface AidropGateRetrievalResponse extends TokenGateRetrievalResponse {
   date: any
   location: any
@@ -82,3 +82,24 @@ export interface AidropGateRetrievalResponse extends TokenGateRetrievalResponse 
 /*
 API TYPES -- Access TokenGates
 */
+export interface APIAccessError {
+  httpStatus: number
+  message?: string
+}
+
+
+// Props for base TokenGate API response
+export interface TokenGateAccessResponse {
+  httpStatus: number
+  wallet_address: string
+}
+
+// Extended props for TicketGate
+export interface AirdropGateAccessResponse extends TokenGateAccessResponse {
+  transaction_hash: string
+}
+
+// Extended props for TicketGate
+export interface TicketGateAccessResponse extends TokenGateAccessResponse {
+  ticket_url: string
+}

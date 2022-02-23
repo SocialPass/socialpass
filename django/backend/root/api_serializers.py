@@ -1,17 +1,33 @@
 from rest_framework import serializers
 
-from .models import AirdropGate, Airdrop, TicketGate, Ticket
+from .models import AirdropGate, Airdrop, TicketGate, Ticket, Team
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = ['name']
 
 
 class AirdropGateSerializer(serializers.ModelSerializer):
     """
     Serializes Airdrop token gates.
     """
+    #team = TeamSerializer()
     signature = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = AirdropGate
-        fields = "__all__"
+        fields = [
+            "team",
+            "title",
+            "description",
+            "signature",
+            "requirements",
+            "asset_address",
+            "asset_type",
+            "chain",
+            "end_date"
+        ]
 
     def get_signature(self, gate):
         return gate.generate_signature_request()
@@ -20,11 +36,22 @@ class TicketGateSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket token gates.
     """
+    team = TeamSerializer()
     signature = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = TicketGate
-        fields = "__all__"
+        fields = [
+            "team",
+            "title",
+            "description",
+            "signature",
+            "requirements",
+            "date",
+            "location",
+            "capacity",
+            "deadline"
+        ]
 
     def get_signature(self, gate):
         return gate.generate_signature_request()
@@ -40,7 +67,7 @@ class VerifyGateSerializer(serializers.Serializer):
 
 class TicketSerializer(serializers.ModelSerializer):
     """
-    Serializes Ticket token gates.
+    Serializes Ticket.
     """
     class Meta:
         model = Ticket
@@ -49,7 +76,7 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class AirdropSerializer(serializers.ModelSerializer):
     """
-    Serializes Airdrop token gates.
+    Serializes Airdrop.
     """
     class Meta:
         model = Airdrop

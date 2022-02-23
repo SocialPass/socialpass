@@ -57,7 +57,7 @@ class SignatureAdmin(admin.ModelAdmin):
 
 @admin.register(AirdropGate)
 class AirdropGateAdmin(admin.ModelAdmin):
-    list_display = ("title", "chain", "asset_type", "user", "team")
+    list_display = ("title", "public_id", "chain", "asset_type", "user", "team")
     search_fields = ("title", "chain", "asset_type", "user__username", "team__name")
 
 
@@ -69,7 +69,7 @@ class AirdropAdmin(admin.ModelAdmin):
 
 @admin.register(TicketGate)
 class TicketGateAdmin(admin.ModelAdmin):
-    list_display = ("title", "user", "team", "date", "location")
+    list_display = ("title", "public_id", "user", "team", "date", "location")
     search_fields = ("title", "user__username", "team__name", "location")
 
 

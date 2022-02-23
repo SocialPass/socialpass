@@ -43,6 +43,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data={
             "wallet_address": kwargs['wallet_address'],
+            "signature": kwargs['signature'],
             "transaction_hash": kwargs['transaction_hash'],
             "tokengate": kwargs['tokengate']
         })
@@ -100,7 +101,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data={
             "wallet_address": kwargs['wallet_address'],
-            "signature": kwargs['signature']
+            "signature": kwargs['signature'],
             "ticket_url": kwargs['ticket_url'],
             "tokengate": kwargs['tokengate']
         })

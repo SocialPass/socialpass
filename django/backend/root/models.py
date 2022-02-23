@@ -45,6 +45,7 @@ class Team(DBModel):
     Team manager for software plans && token gates
     """
     name = models.CharField(max_length=255)
+    image = models.ImageField(null=True, height_field=None, width_field=None, max_length=255)
     details = models.TextField(blank=True)
     software_types = models.JSONField(
         default=list,

@@ -5,56 +5,54 @@ from .models import AirdropGate, Airdrop, TicketGate, Ticket, Team
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ['name']
+        fields = ['name', 'image']
 
 
-class AirdropGateSerializer(serializers.ModelSerializer):
+class BaseGateSerializer(serializers.ModelSerializer):
     """
-    Serializes Airdrop token gates.
+    Base token gate serializer
     """
-    #team = TeamSerializer()
+    team = TeamSerializer()
     signature = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        model = AirdropGate
         fields = [
             "team",
             "title",
             "description",
-            "signature",
             "requirements",
+            "signature",
+        ]
+
+    def get_signature(self, gate):
+        return gate.generate_signature_request()
+
+
+class AirdropGateSerializer(BaseGateSerializer):
+    """
+    Serializes Airdrop token gates.
+    """
+    class Meta:
+        model = AirdropGate
+        fields = BaseGateSerializer.Meta.fields + [
             "asset_address",
             "asset_type",
             "chain",
             "end_date"
         ]
 
-    def get_signature(self, gate):
-        return gate.generate_signature_request()
-
-class TicketGateSerializer(serializers.ModelSerializer):
+class TicketGateSerializer(BaseGateSerializer):
     """
     Serializes Ticket token gates.
     """
-    team = TeamSerializer()
-    signature = serializers.SerializerMethodField(read_only=True)
-
     class Meta:
         model = TicketGate
-        fields = [
-            "team",
-            "title",
-            "description",
-            "signature",
-            "requirements",
+        fields = BaseGateSerializer.Meta.fields + [
             "date",
             "location",
             "capacity",
             "deadline"
         ]
-
-    def get_signature(self, gate):
-        return gate.generate_signature_request()
 
 class VerifyGateSerializer(serializers.Serializer):
     """

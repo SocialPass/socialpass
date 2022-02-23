@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import AirdropGate, Airdrop, TicketGate, Ticket, Team
+from .models import AirdropGate, Airdrop, TicketGate, Ticket, Team, Signature
 
 class TeamSerializer(serializers.ModelSerializer):
     """
@@ -22,10 +22,10 @@ class BaseGateSerializer(serializers.ModelSerializer):
         fields = [
             "team",
             "title",
+            "general_type",
             "description",
             "requirements",
-            "signature",
-            "general_type"
+            "signature"
         ]
     def get_signature(self, gate):
         return gate.generate_signature_request()
@@ -58,9 +58,12 @@ class AirdropSerializer(serializers.ModelSerializer):
     """
     Serializes Airdrop.
     """
+    tokengate = serializers.PrimaryKeyRelatedField(queryset=AirdropGate.objects.all(), write_only=True)
+    signature = serializers.PrimaryKeyRelatedField(queryset=Signature.objects.all(), write_only=True)
+
     class Meta:
         model = Airdrop
-        fields = ["wallet_address", "transaction_hash"]
+        fields = ["tokengate", "signature","wallet_address", "transaction_hash"]
 
 
 class TicketGateSerializer(BaseGateSerializer):
@@ -80,6 +83,8 @@ class TicketSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket.
     """
+    tokengate = serializers.PrimaryKeyRelatedField(queryset=TicketGate.objects.all(), write_only=True)
+    signature = serializers.PrimaryKeyRelatedField(queryset=Signature.objects.all(), write_only=True)
     class Meta:
         model = Ticket
-        fields = ["wallet_address", "ticket_url"]
+        fields = ["wallet_address", "ticket_url", "tokengate", "signature"]

@@ -154,6 +154,7 @@ class TicketGateListView(ListView):
 	model = TicketGate
 	paginate_by = 15
 	context_object_name = "tokengates"
+	template_name = "dashboard/ticketgate_list.html"
 
 	def get_queryset(self):
 		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])

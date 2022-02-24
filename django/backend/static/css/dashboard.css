@@ -1,10 +1,11 @@
+html,
 .nftysocialpass body,
 main {
   background: #F9F9FA !important;
 }
 
 .dark-mode body,
-main {
+.dark-mode main {
   background-color: var(--body-bg-color) !important;
 }
 

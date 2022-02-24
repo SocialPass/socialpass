@@ -18,12 +18,10 @@
 					</div>
 					<a href="{% url 'ticketgate_create' view.kwargs.team_pk %}" class="btn bg-gradient-primary btn-sm ms-auto my-0">Create</a>
 				</div>
-				{% if tokengates.count > 0 %}
 				<form method="GET" class="d-flex align-items-center">
 					<input type="text" class="form-control form-control-sm" name="title" placeholder="Search by title" value="{{ request.GET.title }}">
 					<button class="btn btn-link btn-sm px-2 ms-3 my-0" type="submit">Search</button>
 				</form>
-				{% endif %}
 			</div>
 			<div class="card-body px-0 py-2">
 				{% if tokengates.count > 0 %}

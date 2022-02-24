@@ -32,7 +32,6 @@
 						<thead>
 							<tr>
 								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
-								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Asset</th>
 								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
 								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
 								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Capacity</th>
@@ -48,16 +47,9 @@
 										<h6 class="mb-0">{{ tokengate.title }}</h6>
 									</div>
 								</td>
-                                <td class="align-middle">
-                                    {% for requirement in tokengate.requirements %}
-									<p class="text-xs font-weight-bold mb-0">{{ requirement.asset_type }}</p>
-									<p class="text-xs text-secondary mb-0">{{ requirement.asset_address }}</p>
-                                    {% endfor %}
-								</td>
-                                
 								<td class="align-middle">
 									<span class="text-secondary text-xs font-weight-bold">
-                                     {{ tokengate.date.date }}
+                                    {{ tokengate.date.date }}
                                     </span>
 								</td>
 								<td class="align-middle">

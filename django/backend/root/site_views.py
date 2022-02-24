@@ -173,6 +173,7 @@ class TicketGateDetailView(DetailView):
 	"""
 	model = TicketGate
 	context_object_name = "tokengate"
+	template_name = "dashboard/ticketgate_detail.html"
 
 	def get_queryset(self):
 		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])

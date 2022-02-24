@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect } from 'react';
 import {  useConnect, useAccount, useSignMessage } from 'wagmi'
 import { TokenGateContext } from '../context';
+import { accessGateHandler } from '../api';
 
 // Web3 Provider authentication
 const Web3ProviderAuthentication = () => {
 	/****************** GLOBALS *************************/
 	// context
-	const { setStep, json } = React.useContext(TokenGateContext);
+	const { id, json, setStep, setJson2, setHttpStatus2 } = React.useContext(TokenGateContext);
 	// wallet connect hooks
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
 	// wallet account hooks
@@ -31,12 +32,30 @@ const Web3ProviderAuthentication = () => {
 	const signatureHandler = async () => {
 		// message setup
 		let message = json?.signature.message
-
+		// sign message
 		const signRes = await signMessage({ message: message });
 		if (signRes.error) throw signRes.error;
 
+		// reset http
+		setJson2(null);
+		setHttpStatus2(0);
+
 		// Verify Message/Wallet
-		console.log(signRes);
+		if (signRes && accountData && accountData.address){
+			// send off message
+			let response = await accessGateHandler({
+				address: accountData.address,
+				tokengate_id: id,
+				signature_id: json?.signature.id,
+				signed_message: signRes.data
+			});
+			if (response && response.httpStatus){
+				console.log(response)
+				setJson2(response);
+				setHttpStatus2(response.httpStatus)
+			}
+		}
+
 
 		// Update Step
 		setStep(2);

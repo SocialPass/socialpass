@@ -1,39 +1,90 @@
 from rest_framework import serializers
 
-from .models import AirdropGate, AirdropList, TicketGate, TicketList
+from .models import AirdropGate, Airdrop, TicketGate, Ticket, Team, Signature
+
+class TeamSerializer(serializers.ModelSerializer):
+    """
+    Team serializer
+    """
+    class Meta:
+        model = Team
+        fields = ['name', 'image']
 
 
-class AirdropGateSerializer(serializers.ModelSerializer):
+class BaseGateSerializer(serializers.ModelSerializer):
     """
-    Serializes Airdrop token gates.
+    Base token gate serializer
     """
+    team = TeamSerializer()
     signature = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        model = AirdropGate
-        fields = "__all__"
-
-    def get_signature(self, gate):
-        return gate.generate_signature_request()
-
-class TicketGateSerializer(serializers.ModelSerializer):
-    """
-    Serializes Ticket token gates.
-    """
-    signature = serializers.SerializerMethodField(read_only=True)
-
-    class Meta:
-        model = TicketGate
-        fields = "__all__"
-
+        fields = [
+            "team",
+            "title",
+            "general_type",
+            "description",
+            "requirements",
+            "signature"
+        ]
     def get_signature(self, gate):
         return gate.generate_signature_request()
 
 class VerifyGateSerializer(serializers.Serializer):
     """
-    Serializes @action.verify request
+    Serializes /access request for all token gates
+    Accepts a signed message & corresponding wallet address,
+    as well related 'public_id'
     """
     address = serializers.CharField()
     signed_message = serializers.CharField()
     tokengate_id = serializers.CharField()
     signature_id = serializers.CharField()
+
+class AirdropGateSerializer(BaseGateSerializer):
+    """
+    Serializes Airdrop token gates.
+    """
+    class Meta:
+        model = AirdropGate
+        fields = BaseGateSerializer.Meta.fields + [
+            "asset_address",
+            "asset_type",
+            "chain",
+            "end_date"
+        ]
+
+class AirdropSerializer(serializers.ModelSerializer):
+    """
+    Serializes Airdrop.
+    """
+    tokengate = serializers.PrimaryKeyRelatedField(queryset=AirdropGate.objects.all(), write_only=True)
+    signature = serializers.PrimaryKeyRelatedField(queryset=Signature.objects.all(), write_only=True)
+
+    class Meta:
+        model = Airdrop
+        fields = ["tokengate", "signature","wallet_address", "transaction_hash"]
+
+
+class TicketGateSerializer(BaseGateSerializer):
+    """
+    Serializes Ticket token gates.
+    """
+    class Meta:
+        model = TicketGate
+        fields = BaseGateSerializer.Meta.fields + [
+            "date",
+            "location",
+            "capacity",
+            "deadline"
+        ]
+
+class TicketSerializer(serializers.ModelSerializer):
+    """
+    Serializes Ticket.
+    """
+    tokengate = serializers.PrimaryKeyRelatedField(queryset=TicketGate.objects.all(), write_only=True)
+    signature = serializers.PrimaryKeyRelatedField(queryset=Signature.objects.all(), write_only=True)
+    class Meta:
+        model = Ticket
+        fields = ["wallet_address", "ticket_url", "tokengate", "signature"]

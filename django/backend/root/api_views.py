@@ -1,13 +1,18 @@
+import uuid
 from django.http import Http404
-from django.shortcuts import get_object_or_404
 from rest_framework.generics import RetrieveAPIView, GenericAPIView
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import AirdropGate, TicketGate, Signature
 from .api_permissions import IsTeamMember, IsTokenGateTeamMember
-from .api_serializers import AirdropGateSerializer, TicketGateSerializer, VerifyGateSerializer
+from .api_serializers import (
+    AirdropGateSerializer,
+    TicketGateSerializer,
+    VerifyGateSerializer,
+    AirdropSerializer,
+    TicketSerializer
+)
 
 class GetSignatureObjectMixin:
     """
@@ -23,17 +28,30 @@ class AirdropGateRetrieve(RetrieveAPIView):
     """
     View for retrieving airdrop gate by `public_id`
     """
+    lookup_field = 'public_id'
     queryset = AirdropGate.objects.all()
     serializer_class = AirdropGateSerializer
-    lookup_field = 'public_id'
     permission_classes = [AllowAny]
 
-class AirdropGateAccess(GetSignatureObjectMixin, GenericAPIView):
+class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView):
     """
-    APIView for accessing airdrop gates via verified `Signature`
+    APIView for accessing airdrop gates via verified `Signature`,
+    and then creating / returning `AirdropList` entry
     """
-    queryset = Signature.objects.all()
     permission_classes = [AllowAny]
+    serializer_class = AirdropSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data={
+            "wallet_address": kwargs['wallet_address'],
+            "signature": kwargs['signature'],
+            "transaction_hash": kwargs['transaction_hash'],
+            "tokengate": kwargs['tokengate']
+        })
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
     def post(self, request):
         # serialize and verify data
@@ -52,24 +70,46 @@ class AirdropGateAccess(GetSignatureObjectMixin, GenericAPIView):
         if not validation:
             return Response(rsp_msg, status=status_code)
 
-        # reward
-        return Response(rsp_msg, status=status_code)
+        # TODO: validate requirements
+
+        # issue reward (201 created)
+        response = self.create(
+            request,
+            signature=serialized.data.get('signature_id'),
+            wallet_address=serialized.data.get('address'),
+            transaction_hash="0x",
+            tokengate=signature.tokengate
+        )
+        return response
 
 class TicketGateRetrieve(RetrieveAPIView):
     """
     View for retrieving ticket gate by `public_id`
     """
+    lookup_field = 'public_id'
     queryset = TicketGate.objects.all()
     serializer_class = TicketGateSerializer
-    lookup_field = 'public_id'
     permission_classes = [AllowAny]
 
-class TicketGateAccess(GetSignatureObjectMixin, GenericAPIView):
+class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView):
     """
-    APIView for accessing ticket gate via verified `Signature`
+    APIView for accessing ticket gate via verified `Signature`,
+    and then creating / returning `TicketList` entry
     """
-    queryset = Signature.objects.all()
     permission_classes = [AllowAny]
+    serializer_class = TicketSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data={
+            "wallet_address": kwargs['wallet_address'],
+            "signature": kwargs['signature'],
+            "ticket_url": kwargs['ticket_url'],
+            "tokengate": kwargs['tokengate']
+        })
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
     def post(self, request):
         # serialize and verify data
@@ -88,5 +128,14 @@ class TicketGateAccess(GetSignatureObjectMixin, GenericAPIView):
         if not validation:
             return Response(rsp_msg, status=status_code)
 
-        # reward
-        return Response(rsp_msg, status=status_code)
+        # TODO: validate requirements
+
+        # issue reward (201 created)
+        response = self.create(
+            request,
+            signature=serialized.data.get('signature_id'),
+            wallet_address=serialized.data.get('address'),
+            ticket_url="https://test.local",
+            tokengate=signature.tokengate
+        )
+        return response

@@ -29,7 +29,7 @@ export interface TokenGateContextInterface {
   setStep: any // Set step of token gate
 
   // initial fetch tokengate
-  json: {} | APIFetchError | TokenGateFetchResponse | AidropGateFetchResponse
+  json: any | APIRetrievalError | TokenGateRetrievalResponse | AidropGateRetrievalResponse
   setJson: any
   httpStatus: number
   setHttpStatus: any
@@ -42,17 +42,19 @@ export interface TokenGateContextInterface {
 }
 
 /*
-API TYPES -- Fetch TokenGates
+API TYPES -- Retrieval TokenGates
 */
-export interface APIFetchError {
+export interface APIRetrievalError {
   httpStatus: number
   message?: string
 }
 
 // Props for base TokenGate API response
-export interface TokenGateFetchResponse {
+export interface TokenGateRetrievalResponse {
   httpStatus: number
   title: string
+  team_name: any
+  team_image: any
   description: string
   general_type: string
   requirements: any
@@ -60,14 +62,44 @@ export interface TokenGateFetchResponse {
 }
 
 // Extended props for TicketGate
-export interface TicketGateFetchResponse extends TokenGateFetchResponse {
+export interface TicketGateRetrievalResponse extends TokenGateRetrievalResponse {
   asset_address: string
   asset_type: string
   chain: string
   end_date: string
 }
 
-// Extended props for TicketGate
-export interface AidropGateFetchResponse extends TokenGateFetchResponse {
+// Extended props for AirdropGate
+export interface AidropGateRetrievalResponse extends TokenGateRetrievalResponse {
+  date: any
+  location: any
+  capacity: any
+  deadline: any
+}
 
+
+
+/*
+API TYPES -- Access TokenGates
+*/
+export interface APIAccessError {
+  httpStatus: number
+  message?: string
+}
+
+
+// Props for base TokenGate API response
+export interface TokenGateAccessResponse {
+  httpStatus: number
+  wallet_address: string
+}
+
+// Extended props for TicketGate
+export interface AirdropGateAccessResponse extends TokenGateAccessResponse {
+  transaction_hash: string
+}
+
+// Extended props for TicketGate
+export interface TicketGateAccessResponse extends TokenGateAccessResponse {
+  ticket_url: string
 }

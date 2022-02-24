@@ -18,6 +18,30 @@ export class VenlyConnector extends Connector {
   constructor(Venly:any,config:any) {
 	super(config)
   }
+  getAccount(): any {
+  	return 'not implemented'
+  }
+  getChainId(): any {
+  	return 'not implemented'
+  }
+  getProvider(): any {
+  	return 'not implemented'
+  }
+  getSigner(): any {
+  	return 'not implemented'
+  }
+  isAuthorized(): any {
+  	return 'not implemented'
+  }
+  onAccountsChanged(): any {
+  	return 'not implemented'
+  }
+  onChainChanged(): any {
+  	return 'not implemented'
+  }
+  onDisconnect(): any {
+  	return 'not implemented'
+  }
 
   connect(): any {
 	return new Promise(async (resolve, reject) => {

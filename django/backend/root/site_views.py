@@ -89,6 +89,7 @@ class AirdropGateDetailView(DetailView):
 	"""
 	model = AirdropGate
 	context_object_name = "tokengate"
+	template_name = "dashboard/airdropgate_detail.html"
 
 	def get_queryset(self):
 		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])

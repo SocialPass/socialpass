@@ -6,17 +6,17 @@ from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, SOFTWARE_TYPES
 
 BLOCKCHAINS_ENUM = []
 for item in BLOCKCHAINS:
-    BLOCKCHAINS_ENUM.append(item[0])
+    BLOCKCHAINS_ENUM.append(item[1])
 
 
 ASSET_TYPES_ENUM = []
 for item in ASSET_TYPES:
-    ASSET_TYPES_ENUM.append(item[0])
+    ASSET_TYPES_ENUM.append(item[1])
 
 
 SOFTWARE_TYPES_ENUM = []
 for item in SOFTWARE_TYPES:
-    SOFTWARE_TYPES_ENUM.append(item[0])
+    SOFTWARE_TYPES_ENUM.append(item[1])
 
 
 REQUIREMENTS_SCHEMA = {

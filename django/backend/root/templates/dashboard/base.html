@@ -22,6 +22,7 @@
 			}
 		</style>
 	</head>
+	{% with request.resolver_match.url_name as url_name %}
 	<body class="g-sidenav-show bg-gray-100">
 
 		<!-- Start sidebar -->
@@ -36,7 +37,6 @@
 			<hr class="horizontal dark mt-0">
 			<div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
 				<ul class="navbar-nav">
-					{% with request.resolver_match.url_name as url_name %}
 					<li class="nav-item">
 						<a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' view.kwargs.team_pk %}">
 							<div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
@@ -61,7 +61,6 @@
 							<span class="nav-link-text">Ticket Gates</span>
 						</a>
 					</li>
-					{% endwith %}
 				</ul>
 			</div>
 		</aside>
@@ -137,4 +136,5 @@
 		<script src="{% static 'js/soft-ui-dashboard.js' %}"></script>
 		{% block extra_js %}{% endblock extra_js %}
 	</body>
+	{% endwith %}
 </html>

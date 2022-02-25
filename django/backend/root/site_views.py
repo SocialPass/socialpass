@@ -107,6 +107,7 @@ class AirdropGateCreateView(CreateView):
 		"amount_per_person", "total_amount", "start_date", "end_date",
 		"requirements"
 	]
+	template_name = "dashboard/airdropgate_form.html"
 
 	def form_valid(self, form):
 		form.instance.team = Team.objects.get(id=self.kwargs['team_pk'])
@@ -132,6 +133,7 @@ class AirdropGateUpdateView(UpdateView):
 		"amount_per_person", "total_amount", "start_date", "end_date",
 		"requirements"
 	]
+	template_name = "dashboard/airdropgate_form.html"
 
 	def get_queryset(self):
 		qs = AirdropGate.objects.filter(team__id=self.kwargs['team_pk'])

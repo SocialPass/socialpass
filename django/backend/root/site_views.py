@@ -193,6 +193,7 @@ class TicketGateCreateView(CreateView):
 		"title", "description", "date", "location", "capacity", "deadline",
 		"requirements"
 	]
+	template_name = "dashboard/ticketgate_form.html"
 
 	def form_valid(self, form):
 		form.instance.team = Team.objects.get(id=self.kwargs['team_pk'])
@@ -217,6 +218,7 @@ class TicketGateUpdateView(UpdateView):
 		"title", "description", "date", "location", "capacity", "deadline",
 		"requirements"
 	]
+	template_name = "dashboard/ticketgate_form.html"
 
 	def get_queryset(self):
 		qs = TicketGate.objects.filter(team__id=self.kwargs['team_pk'])

@@ -2,3 +2,5 @@ uvicorn[standard]
 fastapi
 boto3
 Pillow
+wheel
+web3==5.28.0

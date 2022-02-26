@@ -1,19 +1,11 @@
 from fastapi import Depends, FastAPI
-from routers import (
-    Requirements,
-    Ticketing,
-    Airdrop,
-    Discord,
-    Telegram
-)
+from routers.ticketing import routes as TicketingRouter
 
 # init app
 app = FastAPI()
 
 # setup routers
-app.include_router(Requirements.router)
-app.include_router(Ticketing.router)
-app.include_router(Airdrop.router)
+app.include_router(TicketingRouter.router)
 
 @app.get("/")
 async def root():

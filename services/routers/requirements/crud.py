@@ -3,8 +3,23 @@ import hashlib
 import json
 import secrets
 from eth_abi import decode_single, encode_abi, encode_single
+from pydantic import BaseModel
+from typing import Dict, List, Optional
 from web3 import Web3
+###
+### SCHEMAS
+###
 
+class Requirements(BaseModel):
+    chain: str
+    asset_type: str
+    asset_address: str
+    amount: int
+    token_id: Optional[List[int]]
+
+###
+### FUNCTIONS
+###
 def get_network(chain_rpc):
     # init web3 && token contract
     try:

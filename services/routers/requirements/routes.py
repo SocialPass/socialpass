@@ -1,17 +1,30 @@
 import json
 from fastapi import APIRouter
-from typing import Dict, List, Optional
+from pydantic import BaseModel
+from typing import List
 from .crud import (
     get_network,
     balanceOf,
     tokenOfOwnerByIndex,
     tokenURI,
+    Requirements
 )
 
 router = APIRouter(
     prefix="/requirements",
     tags=["requirements"],
 )
+
+@router.post("/verify")
+def verify_requirements(requirements_list:List[Requirements]):
+    # loop over list of Requirements
+    for i in requirements_list:
+        # determine chain
+
+        # determine asset lookup
+
+        # perform asset lookup
+        return
 
 @router.post("/verify-721-enumerable")
 def root(contract_address:str,wallet_address:str,chain_rpc:str,current_ticketed_snapshot:dict):

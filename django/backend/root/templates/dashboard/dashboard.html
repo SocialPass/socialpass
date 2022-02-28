@@ -1,0 +1,51 @@
+{% extends 'dashboard/base.html' %}
+{% load static i18n get_chain_name %}
+
+{% block title %}Dashboard - SocialPass {% endblock %}
+
+{% block navbar_page_name_1 %}Dashboard{% endblock %}
+{% block navbar_page_name_2 %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-0">
+				<div class="d-flex align-items-center py-3">
+					<div class="pe-2">
+						<h6 class="m-0">Dashboard</h6>
+						<div class="text-muted text-xs">Manage gated content for your NFTs</div>
+					</div>
+				</div>
+			</div>
+            <div class="row p-4">
+                <div class="col-lg-6 mb-lg-0 mb-4">
+                    <div class="card h-100 p-3 align-items-center border border-light shadow-none">
+                        <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 mb-2">
+                            <i class="fa-solid fa-parachute-box"></i>
+                        </div>
+                        <h5>Airdrop Gates</h5>
+                        <p>Create and manage Airdrop Gate tokens</p>
+                        <a class="btn-link text-uppercase font-weight-bold btn-sm m-0 me-3 px-0 stretched-link" href="{% url 'airdropgate_list' request.resolver_match.kwargs.team_pk %}">
+                            Get started
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card h-100 p-3 align-items-center border border-light shadow-none">
+                        <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 mb-2">
+                            <i class="fa-solid fa-ticket"></i>
+                        </div>
+                        <h5>Ticket Gates</h5>
+                        <p>Create and manage Ticket Gate tokens</p>
+                        <a class="btn-link text-uppercase font-weight-bold btn-sm mb-0 mt-auto stretched-link" href="{% url 'ticketgate_list' request.resolver_match.kwargs.team_pk %}">
+                            Get started
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

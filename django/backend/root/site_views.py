@@ -18,7 +18,7 @@ class DashboardView(TemplateView):
 	"""
 	Main dashboard page.
 	"""
-	template_name = "root/dashboard.html"
+	template_name = "dashboard/dashboard.html"
 
 
 @method_decorator(login_required, name="dispatch")

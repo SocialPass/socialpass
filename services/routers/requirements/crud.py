@@ -6,26 +6,47 @@ from eth_abi import decode_single, encode_abi, encode_single
 from pydantic import BaseModel
 from typing import Dict, List, Optional
 from web3 import Web3
+
+
 ###
 ### SCHEMAS
 ###
-
 class Requirements(BaseModel):
-    chain: str
-    asset_type: str
-    asset_address: str
     amount: int
+    blockchain: str
+    chain_id: Optional[str]
+    asset_type: Optional[str]
+    asset_address: Optional[str]
     token_id: Optional[List[int]]
 
 ###
 ### FUNCTIONS
 ###
-def get_network(chain_rpc):
-    # init web3 && token contract
+def get_rpc_url(chain_id:str):
+    API_KEY = '4sNPIDg5LBJubC6x_6N2Vr_76Xn_o1s9'
+    if chain_id == '1':
+        return f"https://eth-mainnet.alchemyapi.io/v2/{API_KEY}"
+
+    if chain_id == '56':
+        # bsc
+        return "https://bsc-dataseed1.binance.org"
+
+    if chain_id == '137':
+        # Matic
+        return "https://rpc-mainnet.matic.network"
+
+    if chain_id == '43114':
+        # avalanche
+        return f"https://api.avax.network/ext/bc/C/rpc"
+
+def get_web3(chain_id:str):
     try:
-        web3 = Web3(Web3.HTTPProvider(chain_rpc))
+        rpc_url = get_rpc_url(chain_id)
+        web3 = Web3(Web3.HTTPProvider(rpc_url))
         return web3
     except Exception as e:
+        rpc_url = get_rpc_url(chain_id)
+        print(rpc_url)
         error_response = {
             "statusCode": 200,
             "headers": {"Content-Type": "application/json"},

@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
 from .crud import (
-    get_network,
+    get_web3,
     balanceOf,
     tokenOfOwnerByIndex,
     tokenURI,
@@ -20,6 +20,8 @@ def verify_requirements(requirements_list:List[Requirements]):
     # loop over list of Requirements
     for i in requirements_list:
         # determine chain
+        web3 = get_web3(chain_id=i.chain_id)
+        return (web3.eth.block_number)
 
         # determine asset lookup
 
@@ -68,7 +70,7 @@ def root(contract_address:str,wallet_address:str,chain_rpc:str,current_ticketed_
         return error_response
 
     # init web3
-    web3 = get_network(chain_rpc)
+    web3 = get_web3(chain_rpc)
 
     # get users tokenbalance
     try:

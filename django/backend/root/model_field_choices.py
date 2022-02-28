@@ -5,8 +5,12 @@ TOKENGATE_TYPES = (
 	("TICKET", "TICKET")
 )
 
-
 BLOCKCHAINS = (
+    ('EVM', 'EVM'),
+)
+
+
+CHAIN_IDS = (
 	('1', "Ethereum"),
 	('56', "BNB Chain"),
     ('43114', "Avalanche"),

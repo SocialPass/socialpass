@@ -43,7 +43,7 @@ class UserDetailView(TemplateView):
     Returns the details of the logged in user.
     """
 
-    template_name = "root/user_detail.html"
+    template_name = "account/detail.html"
 
 
 @method_decorator(member_has_permissions(""), name="dispatch")

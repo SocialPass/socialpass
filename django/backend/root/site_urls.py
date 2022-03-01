@@ -7,16 +7,6 @@ urlpatterns = [
     # General
     path("", site_views.RedirectToTeamView.as_view(), name='dashboard-redirect'),
     path("<int:team_pk>/", site_views.DashboardView.as_view(), name="dashboard"),
-    path(
-        "settings/",
-        TemplateView.as_view(template_name="pages/settings.html"),
-        name="settings",
-    ),
-    path(
-        "contact-us/",
-        TemplateView.as_view(template_name="pages/help.html"),
-        name="contact_us",
-    ),
     # User
     path("user-detail/", site_views.UserDetailView.as_view(), name="user_detail"),
     # Team

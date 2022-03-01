@@ -7,23 +7,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0018_auto_20220216_0125'),
+        ("root", "0018_auto_20220216_0125"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='signature',
-            name='expires',
-            field=models.DateTimeField(default=datetime.datetime(2022, 2, 20, 17, 18, 29, 314161)),
+            model_name="signature",
+            name="expires",
+            field=models.DateTimeField(
+                default=datetime.datetime(2022, 2, 20, 17, 18, 29, 314161)
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='signature',
-            name='signing_message',
+            model_name="signature",
+            name="signing_message",
             field=models.JSONField(),
         ),
         migrations.AlterUniqueTogether(
-            name='membership',
-            unique_together={('team', 'user')},
+            name="membership",
+            unique_together={("team", "user")},
         ),
     ]

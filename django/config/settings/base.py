@@ -1,9 +1,10 @@
 """
 Base settings to build other settings files upon.
 """
-from pathlib import Path
-import environ
 import sys
+from pathlib import Path
+
+import environ
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # backend/
@@ -42,11 +43,13 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 # Restricts DB against collectstatic command
-if len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     DATABASES = {
         "default": env.db("NFTY_DATABASE_URL", default="postgres:///v3db"),
     }
-    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int(
+        "CONN_MAX_AGE", default=60
+    )  # noqa F405
     DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
@@ -295,7 +298,9 @@ REST_FRAMEWORK = {
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"])
+CORS_ALLOWED_ORIGINS = env.list(
+    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
+)
 # CORS_URLS_REGEX = r"^/api/.*$"
 
 # By Default swagger ui is available only to admin user. You can change permission classs to change that

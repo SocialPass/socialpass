@@ -7,22 +7,53 @@ import root.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0010_auto_20220131_1351'),
+        ("root", "0010_auto_20220131_1351"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SoftwarePlan',
+            name="SoftwarePlan",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=255)),
-                ('details', models.TextField(blank=True)),
-                ('software_types', models.JSONField(default=list, validators=[root.validators.JSONSchemaValidator(limit_value={'items': {'enum': ['TICKET', 'AIRDROP', 'DISCORD', 'TELEGRAM', 'MINT'], 'type': 'string'}, 'minItems': 1, 'type': 'array'})])),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=255)),
+                ("details", models.TextField(blank=True)),
+                (
+                    "software_types",
+                    models.JSONField(
+                        default=list,
+                        validators=[
+                            root.validators.JSONSchemaValidator(
+                                limit_value={
+                                    "items": {
+                                        "enum": [
+                                            "TICKET",
+                                            "AIRDROP",
+                                            "DISCORD",
+                                            "TELEGRAM",
+                                            "MINT",
+                                        ],
+                                        "type": "string",
+                                    },
+                                    "minItems": 1,
+                                    "type": "array",
+                                }
+                            )
+                        ],
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

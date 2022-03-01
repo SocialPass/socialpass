@@ -7,13 +7,15 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0019_auto_20220220_1718'),
+        ("root", "0019_auto_20220220_1718"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='signature',
-            name='unique_code',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+            model_name="signature",
+            name="unique_code",
+            field=models.UUIDField(
+                default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+            ),
         ),
     ]

@@ -37,12 +37,10 @@ REQUIREMENTS_SCHEMA = {
         "required": ["blockchain", "amount"],
         "anyOf": [
             {
-              "properties": {
-                "blockchain": { "enum": ["EVM"] }
-              },
-              "required": ["chain_id", "asset_type", "asset_address"]
+                "properties": {"blockchain": {"enum": ["EVM"]}},
+                "required": ["chain_id", "asset_type", "asset_address"],
             }
-        ]
+        ],
     },
 }
 
@@ -53,9 +51,6 @@ REQUIREMENTS_SCHEMA_REQUIRED["minItems"] = 1
 
 SOFTWARE_TYPES_SCHEMA = {
     "type": "array",
-    "items": {
-        "type": "string",
-        "enum": SOFTWARE_TYPES_ENUM
-    },
-    "minItems": 1
+    "items": {"type": "string", "enum": SOFTWARE_TYPES_ENUM},
+    "minItems": 1,
 }

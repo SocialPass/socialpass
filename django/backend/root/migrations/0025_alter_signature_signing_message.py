@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0024_alter_tokengate_public_id'),
+        ("root", "0024_alter_tokengate_public_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='signature',
-            name='signing_message',
+            model_name="signature",
+            name="signing_message",
             field=models.CharField(max_length=1024),
         ),
     ]

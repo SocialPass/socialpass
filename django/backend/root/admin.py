@@ -3,14 +3,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .models import (
-    TokenGate,
-    AirdropGate,
     Airdrop,
+    AirdropGate,
+    Membership,
     Signature,
     Team,
-    Membership,
+    Ticket,
     TicketGate,
-    Ticket
+    TokenGate,
 )
 
 User = get_user_model()
@@ -21,17 +21,21 @@ admin.site.site_title = "NFTY Labs Admin"
 admin.site.site_header = "NFTY Labs Admin"
 admin.site.index_title = "NFTY Labs Admin"
 
+
 @admin.register(TokenGate)
 class TokenGateAdmin(admin.ModelAdmin):
     pass
+
 
 # Admin registrations
 class MembershipInline(admin.TabularInline):
     model = Team.members.through
 
+
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
     list_display = ("user", "team")
+
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
@@ -39,12 +43,13 @@ class UserAdmin(UserAdmin):
         MembershipInline,
     ]
 
+
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     inlines = [
         MembershipInline,
     ]
-    exclude = ('members',)
+    exclude = ("members",)
     list_display = ("name", "software_types")
     search_fields = ("name",)
 

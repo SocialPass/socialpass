@@ -14,7 +14,7 @@ class IsTeamMember(permissions.BasePermission):
 
 class IsTokenGateTeamMember(permissions.BasePermission):
     """
-    Parent-level permission to only allow team members of an object's parent 
+    Parent-level permission to only allow team members of an object's parent
     token gate to edit it.
     """
 
@@ -23,7 +23,7 @@ class IsTokenGateTeamMember(permissions.BasePermission):
             tokengate = TokenGate.objects.select_related("user").get(
                 id=view.kwargs.get("tokengate_id")
             )
-        except Exception as e:
+        except Exception:
             return False
 
         return tokengate.team == request.user.team

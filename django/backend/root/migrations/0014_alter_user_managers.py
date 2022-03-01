@@ -7,14 +7,14 @@ import root.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0013_user_team'),
+        ("root", "0013_user_team"),
     ]
 
     operations = [
         migrations.AlterModelManagers(
-            name='user',
+            name="user",
             managers=[
-                ('objects', root.models.CustomUserManager()),
+                ("objects", root.models.CustomUserManager()),
             ],
         ),
     ]

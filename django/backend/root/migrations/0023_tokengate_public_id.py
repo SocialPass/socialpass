@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0022_auto_20220220_2005'),
+        ("root", "0022_auto_20220220_2005"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tokengate',
-            name='public_id',
-            field=models.CharField(blank=True, db_index=True, max_length=64, unique=True),
+            model_name="tokengate",
+            name="public_id",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=64, unique=True
+            ),
         ),
     ]

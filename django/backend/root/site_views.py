@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import reverse
+from django.shortcuts import reverse, redirect
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
@@ -19,11 +19,14 @@ class RedirectToTeamView(RedirectView):
 
     Redirects user to first found membership / team
     """
+    permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
-        membership = Membership.objects.filter(user=self.request.user).first()
-        return reverse("dashboard", args=(membership.team.pk,))
-
+        if self.request.user.is_authenticated:
+            membership = Membership.objects.filter(user=self.request.user).first()
+            return reverse("dashboard", args=(membership.team.pk,))
+        else:
+            return reverse('account_login')
 
 @method_decorator(login_required, name="dispatch")
 class DashboardView(TemplateView):

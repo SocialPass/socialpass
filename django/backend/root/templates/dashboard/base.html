@@ -92,8 +92,22 @@
 							<span class="d-none d-sm-inline ms-2">My Account</span>
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="userDropdown">
+                <strong class="nav-item">
+                  Teams
+                </strong>
+                {% for i in request.user.membership_set.all %}
+                <li>
+                  <a class="dropdown-item border-radius-md" href="{% url 'dashboard' i.team.pk %}">
+                    {{i.team.name}}
+                  </a>
+                </li>
+                {% endfor %}
+                <hr>
+                <strong class="nav-item">
+                  Account
+                </strong>
 								<li><a class="dropdown-item border-radius-md" href="/settings">Settings</a></li>
-								<li><a class="dropdown-item border-radius-md" href="/contact-us">Contact Us</a></li>
+								<li><a class="dropdown-item border-radius-md" href="{% url 'contact_us' %}">Contact Us</a></li>
 								<li><a class="dropdown-item border-radius-md" href="{% url 'account_logout' %}">Logout</a></li>
 							</ul>
 						</div>

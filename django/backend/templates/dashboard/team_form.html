@@ -1,0 +1,13 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ object.title }} - SocialPass {% endblock %}
+
+{% block navbar_page_name_1 %}Update Team Info{% endblock %}
+{% block navbar_page_name_2 %}Update Team Info{% endblock %}
+
+{% block content %}
+    <h1>Team Update Form</h1>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}

@@ -54,6 +54,7 @@ class TeamDetailView(DetailView):
 
     model = Team
     pk_url_kwarg = "team_pk"
+    template_name = "dashboard/team_detail.html"
 
 
 @method_decorator(member_has_permissions(""), name="dispatch")
@@ -65,7 +66,7 @@ class TeamUpdateView(UpdateView):
     form_class = TeamForm
     model = Team
     pk_url_kwarg = "team_pk"
-    template_name = "root/team_form.html"
+    template_name = "dashboard/team_form.html"
 
     def form_valid(self, form):
         form.save()

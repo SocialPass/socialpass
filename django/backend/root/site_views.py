@@ -3,16 +3,28 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from .forms import TeamForm
-from .models import AirdropGate, Team, TicketGate
+from .models import AirdropGate, Team, TicketGate, Membership
 from .site_permissions import member_has_permissions
 
 
-# Dashboard and user related
+class RedirectToTeamView(RedirectView):
+    """
+    Root URL View
+
+    Redirects user to first found membership / team
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        membership = Membership.objects.filter(user=self.request.user).first()
+        return reverse("dashboard", args=(membership.team.pk,))
+
+
 @method_decorator(login_required, name="dispatch")
 class DashboardView(TemplateView):
     """
@@ -61,9 +73,6 @@ class TeamUpdateView(UpdateView):
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
-
-
-# Airdrop token gates
 
 
 @method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
@@ -173,9 +182,6 @@ class AirdropGateUpdateView(UpdateView):
                 self.object.pk,
             ),
         )
-
-
-# Ticket token gates
 
 
 @method_decorator(member_has_permissions("TICKET"), name="dispatch")

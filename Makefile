@@ -2,45 +2,43 @@ SHELL := /bin/bash
 
 # python (django x fastapi)
 help:
-	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-py-create:
+py-create: ## Create virtual environment
 	python3 -m venv venv
 
-py-setup:
+py-setup: ## Install django ++ fastapi requirements
 	(source venv/bin/activate; \
 	pip3 install --upgrade pip; \
 	pip3 install -r django/config/requirements/local.txt; \
 	pip3 install -r services/requirements.txt; )
 
-py-start:
+py-start: ## Start django ++ fastapi server
 	(source venv/bin/activate; \
 	cd services && uvicorn main:app --reload --port 8080 & \
 	cd django && python3 manage.py runserver)
 
-py-lint:
+py-lint: ## Lint django ++ fastapi
 	(source venv/bin/activate; black django; isort django; flake8 django;\
 	black services; isort services; flake8 services;)
 
 
 
 # django
-django-setup:
+django-setup: ## Install django requirements
 	setup:
 	(source venv/bin/activate; \
 	pip3 install --upgrade pip; \
 	pip3 install -r django/config/requirements/local.txt; )
 
-django-run:
-	python3 manage.py runserver
+django-run: ## Start django server
+	(source venv/bin/activate; python3 django/manage.py runserver)
 
-django-migration:
-	python3 manage.py makemigrations
+django-migration: ## Create django migrations
+	(source venv/bin/activate; python3 django/manage.py makemigrations)
 
-django-migrate:
-	python3 manage.py migrate
+django-migrate: ## Migrate django migrations
+	(source venv/bin/activate; python3 django/manage.py migrate)
 
-django-superuser:
-	python3 manage.py createsuperuser
-
-django-lint:
+django-superuser: ## Create django superuser
+	(source venv/bin/activate; python3 django/manage.py createsuperuser)

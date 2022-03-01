@@ -88,26 +88,26 @@
 					<div class="ms-auto">
 						<div class="dropdown p-0 m-0">
 							<a class="d-flex align-items-center btn btn-link px-0 m-0" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="fa-solid fa-circle-user fs-4"></i>
-							<span class="d-none d-sm-inline ms-2">My Account</span>
+              {% for member in request.user.membership_set.all %}
+                {% if member.team.pk == view.kwargs.team_pk %}
+                <span class="d-none d-sm-inline ms-2">{{member.team.name}}</span>
+                <img src="{{member.team.image}}" alt="" height="30" width="30">
+                {% endif %}
+              {% endfor %}
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="userDropdown">
                 <strong class="nav-item">
-                  Teams
+                  Switch Teams
                 </strong>
-                {% for i in request.user.membership_set.all %}
+                {% for member in request.user.membership_set.all %}
+                {% if member.team.pk != view.kwargs.team_pk %}
                 <li>
-                  <a class="dropdown-item border-radius-md" href="{% url 'dashboard' i.team.pk %}">
-                    {{i.team.name}}
+                  <a class="dropdown-item border-radius-md" href="{% url 'dashboard' member.team.pk %}">
+                    {{member.team.name}}
                   </a>
                 </li>
+                {% endif %}
                 {% endfor %}
-                <hr>
-                <strong class="nav-item">
-                  Account
-                </strong>
-								<li><a class="dropdown-item border-radius-md" href="{% url 'user_detail' %}">Settings</a></li>
-								<li><a class="dropdown-item border-radius-md" href="{% url 'account_logout' %}">Logout</a></li>
 							</ul>
 						</div>
 					</div>

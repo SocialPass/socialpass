@@ -21,14 +21,18 @@ from .validators import JSONSchemaValidator
 
 class CustomUserManager(UserManager):
     """
-    Select the team for users. Small optimization when using `request.user` in
-    the site views, especially the permission system.
-    """
-
+    Prefetch members for user
     """
     def get(self, *args, **kwargs):
-        return super().select_related("team").get(*args, **kwargs)
+        return super().prefetch_related('membership_set').get(*args, **kwargs)
+
+class CustomMembershipManager(models.Manager):
     """
+    Prefetch teams for members
+    """
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).prefetch_related('team')
+
 
 
 class DBModel(TimeStampedModel):
@@ -75,7 +79,7 @@ class Membership(DBModel):
 
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-
+    objects = CustomMembershipManager()
     class Meta:
         unique_together = ("team", "user")
 

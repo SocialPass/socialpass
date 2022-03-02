@@ -35,8 +35,10 @@
 				</a>
 			</div>
 			<hr class="horizontal dark mt-0">
-			<div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+			<div class="collapse navbar-collapse w-auto h-100" id="sidenav-collapse-main">
 				<ul class="navbar-nav">
+
+          <!-- Main -->
           <li class="nav-item">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Main</h6>
           </li>
@@ -70,6 +72,8 @@
             </li>
             {% endif %}
           {% endfor %}
+
+          <!-- Team -->
           <li class="nav-item mt-4">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Team</h6>
           </li>
@@ -89,6 +93,28 @@
               <span class="nav-link-text">Manage Members</span>
             </a>
           </li>
+
+         <!-- User -->
+         <li class="nav-item mt-4">
+           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">User</h6>
+         </li>
+         <li class="nav-item">
+           <a class="nav-link {% if url_name == 'user_detail' %}active{% endif %}" href="{% url 'user_detail' %}">
+             <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+               <i class="fa-solid fa-house-chimney"></i>
+             </div>
+             <span class="nav-link-text">Account Settings</span>
+           </a>
+         </li>
+         <li class="nav-item">
+           <a class="nav-link {% if url_name == 'account_logout' %}active{% endif %}" href="{% url 'account_logout' %}">
+             <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+               <i class="fa-solid fa-house-chimney"></i>
+             </div>
+             <span class="nav-link-text">Logout</span>
+           </a>
+         </li>
+
 				</ul>
 			</div>
 		</aside>

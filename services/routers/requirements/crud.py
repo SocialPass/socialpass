@@ -19,27 +19,29 @@ class Requirements(BaseModel):
     asset_address: Optional[str]
     token_id: Optional[List[int]]
 
+
 ###
 ### FUNCTIONS
 ###
-def get_rpc_url(chain_id:str):
-    API_KEY = '4sNPIDg5LBJubC6x_6N2Vr_76Xn_o1s9'
-    if chain_id == '1':
+def get_rpc_url(chain_id: str):
+    API_KEY = "4sNPIDg5LBJubC6x_6N2Vr_76Xn_o1s9"
+    if chain_id == "1":
         return f"https://eth-mainnet.alchemyapi.io/v2/{API_KEY}"
 
-    if chain_id == '56':
+    if chain_id == "56":
         # bsc
         return "https://bsc-dataseed1.binance.org"
 
-    if chain_id == '137':
+    if chain_id == "137":
         # Matic
         return "https://rpc-mainnet.matic.network"
 
-    if chain_id == '43114':
+    if chain_id == "43114":
         # avalanche
         return f"https://api.avax.network/ext/bc/C/rpc"
 
-def get_web3(chain_id:str):
+
+def get_web3(chain_id: str):
     try:
         rpc_url = get_rpc_url(chain_id)
         web3 = Web3(Web3.HTTPProvider(rpc_url))
@@ -57,7 +59,7 @@ def get_web3(chain_id:str):
         return error_response
 
 
-def get_function_signature_bytes(text:str):
+def get_function_signature_bytes(text: str):
     hex_bytes = Web3.keccak(text=f"{text}")
     hex_bytes = hex_bytes[0:4].hex()
     return hex_bytes

@@ -48,22 +48,28 @@
 							<span class="nav-link-text">Dashboard</span>
 						</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link {% if url_name == 'airdropgate_list' or url_name == 'airdropgate_create' or url_name == 'airdropgate_detail' or url_name == 'airdropgate_update' %}active{% endif %}" href="{% url 'airdropgate_list' view.kwargs.team_pk %}">
-							<div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
-								<i class="fa-solid fa-parachute-box"></i>
-							</div>
-							<span class="nav-link-text">Airdrop Gates</span>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link {% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' %}active{% endif %}" href="{% url 'ticketgate_list' view.kwargs.team_pk %}">
-							<div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
-								<i class="fa-solid fa-ticket"></i>
-							</div>
-							<span class="nav-link-text">Ticket Gates</span>
-						</a>
-					</li>
+          {% for software in current_team.software_types %}
+            {% if software == 'TICKET' %}
+            <li class="nav-item">
+              <a class="nav-link {% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' %}active{% endif %}" href="{% url 'ticketgate_list' view.kwargs.team_pk %}">
+                <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
+                  <i class="fa-solid fa-ticket"></i>
+                </div>
+                <span class="nav-link-text">Ticket Gates</span>
+              </a>
+            </li>
+            {% endif %}
+            {% if software == 'AIRDROP' %}
+            <li class="nav-item">
+              <a class="nav-link {% if url_name == 'airdropgate_list' or url_name == 'airdropgate_create' or url_name == 'airdropgate_detail' or url_name == 'airdropgate_update' %}active{% endif %}" href="{% url 'airdropgate_list' view.kwargs.team_pk %}">
+                <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
+                  <i class="fa-solid fa-parachute-box"></i>
+                </div>
+                <span class="nav-link-text">Airdrop Gates</span>
+              </a>
+            </li>
+            {% endif %}
+          {% endfor %}
           <li class="nav-item mt-4">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Team</h6>
           </li>
@@ -110,12 +116,8 @@
 					<div class="ms-auto">
 						<div class="dropdown p-0 m-0">
 							<a class="d-flex align-items-center btn btn-link px-0 m-0" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              {% for member in request.user.membership_set.all %}
-                {% if member.team.pk == view.kwargs.team_pk %}
-                <span class="d-none d-sm-inline ms-2">{{member.team.name}}</span>
-                <img src="{{member.team.image}}" alt="" height="30" width="30">
-                {% endif %}
-              {% endfor %}
+                <span class="d-none d-sm-inline ms-2">{{current_team.name}}</span>
+                <img src="{{current_team.image}}" alt="" height="30" width="30">
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="userDropdown">
                 <strong class="nav-item">

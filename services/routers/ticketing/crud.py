@@ -35,9 +35,7 @@ def ticket_getter_lambda_handler(filename: str):
     is_placeholder = "yes"  # Passed as header, which can only be strings
 
     try:
-        response = s3.get_object(
-            Bucket=S3_BUCKET_NAME, Key=f"{S3_KEY}{filename}.png"
-        )
+        response = s3.get_object(Bucket=S3_BUCKET_NAME, Key=f"{S3_KEY}{filename}.png")
         ticket_img = response["Body"].read()
         is_placeholder = "no"
     except Exception as e:

@@ -1,7 +1,5 @@
 from fastapi import APIRouter
-from .crud import (
-    ticket_getter_lambda_handler
-)
+from .crud import ticket_getter_lambda_handler
 
 # setup router
 router = APIRouter(
@@ -11,7 +9,7 @@ router = APIRouter(
 
 ## ROUTES
 @router.get("/ticket-image-getter")
-def nftyirl_ticket_image_getter(filename: str=""):
+def nftyirl_ticket_image_getter(filename: str = ""):
     # log request
     print(filename)
 
@@ -22,9 +20,11 @@ def nftyirl_ticket_image_getter(filename: str=""):
     print(response)
     return response
 
+
 @router.get("/ticket-generator")
 def nftyirl_ticket_generator():
     return
+
 
 @router.get("/ticket-image-generator")
 def nftyirl_ticket_image_generator():

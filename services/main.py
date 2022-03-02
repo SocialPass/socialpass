@@ -4,7 +4,8 @@ from routers.requirements import routes as RequirementsRouter
 
 # init settings
 class Settings(BaseSettings):
-   infura_key:str
+    infura_key: str
+
 
 # init app
 app = FastAPI()

@@ -3,41 +3,28 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import reverse, redirect
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView, ContextMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from .forms import TeamForm
 from .models import AirdropGate, Team, TicketGate, Membership
-from .site_permissions import member_has_permissions
+from .site_permissions import team_has_permissions
 
 
-class RedirectToTeamView(RedirectView):
+class WebsiteCommonMixin(ContextMixin):
     """
-    Root URL View
-
-    Redirects user to first found membership / team
-    """
-    permanent = False
-
-    def get_redirect_url(self, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            membership = Membership.objects.filter(user=self.request.user).first()
-            return reverse("dashboard", args=(membership.team.pk,))
-        else:
-            return reverse('account_login')
-
-@method_decorator(login_required, name="dispatch")
-class DashboardView(TemplateView):
-    """
-    Main dashboard page.
+    Common context used site-wide
+    Used to set current_team from team_pk
     """
 
-    template_name = "dashboard/dashboard.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=Team.objects.get(pk=self.kwargs["team_pk"])))
+        return context
 
 
-@method_decorator(login_required, name="dispatch")
 class UserDetailView(TemplateView):
     """
     Returns the details of the logged in user.
@@ -46,19 +33,47 @@ class UserDetailView(TemplateView):
     template_name = "account/detail.html"
 
 
-@method_decorator(member_has_permissions(""), name="dispatch")
-class TeamDetailView(DetailView):
+class RedirectToTeamView(RedirectView):
+    """
+    Root URL View
+    Redirects user to first found membership / team.
+
+    If no membership / team found, redirect to socialpass landing page
+    """
+
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            membership = Membership.objects.filter(user=self.request.user).first()
+            if membership:
+                return reverse("dashboard", args=(membership.team.pk,))
+            else:
+                return redirect('https://socialpass.io')
+        else:
+            return reverse("account_login")
+
+
+@method_decorator(team_has_permissions(""), name="dispatch")
+class DashboardView(WebsiteCommonMixin, TemplateView):
+    """
+    Main dashboard page.
+    """
+
+    template_name = "dashboard/dashboard.html"
+
+
+@method_decorator(team_has_permissions(""), name="dispatch")
+class TeamDetailView(WebsiteCommonMixin, TemplateView):
     """
     Returns the details of the logged in user's team.
     """
 
-    model = Team
-    pk_url_kwarg = "team_pk"
     template_name = "dashboard/team_detail.html"
 
 
-@method_decorator(member_has_permissions(""), name="dispatch")
-class TeamUpdateView(UpdateView):
+@method_decorator(team_has_permissions(""), name="dispatch")
+class TeamUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates the user's team.
     """
@@ -79,8 +94,8 @@ class TeamUpdateView(UpdateView):
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
-class AirdropGateListView(ListView):
+@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+class AirdropGateListView(WebsiteCommonMixin, ListView):
     """
     Returns a list of Airdrop token gates.
     """
@@ -101,8 +116,8 @@ class AirdropGateListView(ListView):
         return qs
 
 
-@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
-class AirdropGateDetailView(DetailView):
+@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+class AirdropGateDetailView(WebsiteCommonMixin, DetailView):
     """
     Returns the details of an Airdrop token gate.
     """
@@ -116,8 +131,8 @@ class AirdropGateDetailView(DetailView):
         return qs
 
 
-@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
-class AirdropGateCreateView(CreateView):
+@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+class AirdropGateCreateView(WebsiteCommonMixin, CreateView):
     """
     Creates a new Airdrop token gate.
     """
@@ -138,7 +153,7 @@ class AirdropGateCreateView(CreateView):
     template_name = "dashboard/airdropgate_form.html"
 
     def form_valid(self, form):
-        form.instance.team = Team.objects.get(id=self.kwargs["team_pk"])
+        form.instance.team = self.context["current_team"]
         form.instance.user = self.request.user
         form.instance.general_type = "AIRDROP"
         return super().form_valid(form)
@@ -150,8 +165,8 @@ class AirdropGateCreateView(CreateView):
         return reverse("airdropgate_list", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(member_has_permissions("AIRDROP"), name="dispatch")
-class AirdropGateUpdateView(UpdateView):
+@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+class AirdropGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates an Airdrop token gate.
     """
@@ -188,8 +203,8 @@ class AirdropGateUpdateView(UpdateView):
         )
 
 
-@method_decorator(member_has_permissions("TICKET"), name="dispatch")
-class TicketGateListView(ListView):
+@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+class TicketGateListView(WebsiteCommonMixin, ListView):
     """
     Returns a list of Ticket token gates.
     """
@@ -210,8 +225,8 @@ class TicketGateListView(ListView):
         return qs
 
 
-@method_decorator(member_has_permissions("TICKET"), name="dispatch")
-class TicketGateDetailView(DetailView):
+@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+class TicketGateDetailView(WebsiteCommonMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
@@ -225,8 +240,8 @@ class TicketGateDetailView(DetailView):
         return qs
 
 
-@method_decorator(member_has_permissions("TICKET"), name="dispatch")
-class TicketGateCreateView(CreateView):
+@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+class TicketGateCreateView(WebsiteCommonMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
@@ -244,7 +259,7 @@ class TicketGateCreateView(CreateView):
     template_name = "dashboard/ticketgate_form.html"
 
     def form_valid(self, form):
-        form.instance.team = Team.objects.get(id=self.kwargs["team_pk"])
+        form.instance.team = self.context["current_team"]
         form.instance.user = self.request.user
         form.instance.general_type = "TICKET"
         return super().form_valid(form)
@@ -256,8 +271,8 @@ class TicketGateCreateView(CreateView):
         return reverse("ticketgate_list", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(member_has_permissions("TICKET"), name="dispatch")
-class TicketGateUpdateView(UpdateView):
+@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates an Ticket token gate.
     """

@@ -80,13 +80,21 @@
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'team_detail' or url_name == 'team_update' %}active{% endif %}" href="{% url 'team_detail' current_team.pk %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
-                <i class="fa-solid fa-ticket"></i>
+                <i class="fa-solid fa-gears"></i>
               </div>
-              <span class="nav-link-text">View Info</span>
+              <span class="nav-link-text">Team Settings</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if url_name == 'team_detaill' %}active{% endif %}" href="{% url 'ticketgate_list' current_team.pk %}">
+            <a class="nav-link" href="#">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
+                <i class="fa-solid fa-paint-brush"></i>
+              </div>
+              <span class="nav-link-text">Customize Page</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
                 <i class="fa-solid fa-ticket"></i>
               </div>
@@ -101,9 +109,9 @@
          <li class="nav-item">
            <a class="nav-link {% if url_name == 'user_detail' %}active{% endif %}" href="{% url 'user_detail' %}">
              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
-               <i class="fa-solid fa-house-chimney"></i>
+               <i class="fa-solid fa-user"></i>
              </div>
-             <span class="nav-link-text">View Info</span>
+             <span class="nav-link-text">User Settings</span>
            </a>
          </li>
          <li class="nav-item">

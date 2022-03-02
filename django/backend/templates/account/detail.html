@@ -1,10 +1,11 @@
-{% extends "account/_base_logdin.html" %}
+{% extends "account/auth_base.html" %}
 
-{% load i18n %}
+{% block title %}User Settings - SocialPass {% endblock %}
 
-{% block head_title %}{% translate "Sign Out" %}{% endblock %}
+{% block navbar_page_name_1 %}User Settings{% endblock %}
+{% block navbar_page_name_2 %}User Settings{% endblock %}
 
 {% block inner %}
-<h3 class="font-weight-bolder text-info text-gradient">{% translate "User Settings" %}</h3>
+<h3 class="font-weight-bolder text-info text-gradient">User Settings</h3>
 
 {% endblock %}

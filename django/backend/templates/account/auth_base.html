@@ -56,14 +56,38 @@
 
           <!-- User -->
           <li class="nav-item mt-4">
-            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Settings</h6>
+            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">User Settings</h6>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'user_detail' %}active{% endif %}" href="{% url 'user_detail' %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
                 <i class="fa-solid fa-gear"></i>
               </div>
-              <span class="nav-link-text">View Info</span>
+              <span class="nav-link-text">Update Info</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'account_change_password' %}active{% endif %}" href="{% url 'account_change_password' %}">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+                <i class="fa-solid fa-key"></i>
+              </div>
+              <span class="nav-link-text">Change Password</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'account_email' %}active{% endif %}" href="{% url 'account_email' %}">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+                <i class="fa-solid fa-envelope"></i>
+              </div>
+              <span class="nav-link-text">Manage Email</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+                <i class="fa-solid fa-trash"></i>
+              </div>
+              <span class="nav-link-text">Delete Account</span>
             </a>
           </li>
           <li class="nav-item">

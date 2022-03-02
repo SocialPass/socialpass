@@ -6,6 +6,62 @@
 {% block navbar_page_name_2 %}User Settings{% endblock %}
 
 {% block inner %}
-<h3 class="font-weight-bolder text-info text-gradient">User Settings</h3>
+<div class="row">
+  <div class="col-sm-10 col-md-8 mx-auto">
+    <div class="card mb-4">
+      <div class="card-header py-0">
+        <div class="d-flex align-items-center py-3">
+          <div class="pe-2">
+            <h6 class="m-0">User Detail</h6>
+            <div class="text-muted text-xs mb-3">
+              Details of a particular user.
+            </div>
+          </div>
+          <a href="" class="btn bg-gradient-primary btn-sm ms-auto my-0">Edit</a>
+        </div>
+      </div>
+      <div class="card-body py-2">
+        <div>
+          <h1 class="fw-bold fs-3">{{ request.user.name }}</h1>
+          <div class="text-muted text-xs mb-3">
+            <div>
+              Created: {{ request.user.date_joined }}
+            </div>
+            <div class="mt-1">
+              Last Login: {{ request.user.last_login }}
+            </div>
+          </div>
+          {% if request.user.details %}
+          <p class="text-muted">{{ request.user.details }}</p>
+          {% else %}
+          <p class="text-muted">Description not set.</p>
+          {% endif %}
+        </div>
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <tbody>
+              <tr>
+                <td class="align-middle fw-bold">
+                  Name
+                </td>
+                <td class="align-middle">
+                  {{ request.user.name }}
+                </td>
+              </tr>
+              <tr>
+                <td class="align-middle fw-bold">
+                  Email
+                </td>
+                <td class="align-middle">
+                  {{ request.user.details }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

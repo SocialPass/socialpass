@@ -86,19 +86,19 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link {% if url_name == 'team_members' %}active{% endif %}" href="{% url 'team_members' current_team.pk %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
-                <i class="fa-solid fa-paint-brush"></i>
+                <i class="fa-solid fa-ticket"></i>
               </div>
-              <span class="nav-link-text">Customize Page</span>
+              <span class="nav-link-text">Manage Members</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
-                <i class="fa-solid fa-ticket"></i>
+                <i class="fa-solid fa-paint-brush"></i>
               </div>
-              <span class="nav-link-text">Manage Members</span>
+              <span class="nav-link-text">Customize Page</span>
             </a>
           </li>
 

@@ -1,0 +1,72 @@
+{% extends 'dashboard/base.html' %}
+{% load static i18n get_chain_name crispy_forms_tags %}
+
+{% block title %}Manage Members - SocialPass {% endblock %}
+
+{% block navbar_page_name_1 %}Manage Members {% endblock %}
+{% block navbar_page_name_2 %}Manage Members {% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-10 col-md-8 mx-auto">
+    <div class="card mb-4">
+      <div class="card-header py-0">
+        <div class="d-flex align-items-center py-3">
+          <div class="pe-2">
+            <h6 class="m-0">Manage Members</h6>
+            <div class="text-muted text-xs mb-3">
+              Use the following form to update the team information.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body py-2">
+        <form class="form" method="post">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div class="text-end">
+            <input type="submit" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
+          </div>
+        </form>
+        <div class="my-3 mb-lg-4">
+          <h5 class="fw-bold fs-5">Team Members</h5>
+          <div class="text-muted text-xs mb-3">
+            List of members on {{current_team.name}} account
+          </div>
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for member in current_team.members.all %}
+                  <tr>
+                    <td>{{member.email}}</td>
+                    <td class="text-success">Confirmed</td>
+                    <td><a href="{% url 'team_member_delete' team_pk=current_team.pk member_pk=member.pk %}" class="btn btn-sm btn-outline-danger">Delete Team Member</a></td>
+                  </tr>
+                {% empty %}
+                {% endfor %}
+                {% for invite in current_team.invite_set.all %}
+                {% if invite.accepted != True %}
+                  <tr>
+                    <td>{{invite.email}}</td>
+                    <td class="text-warning">Pending</td>
+                    <td><a href="#" class="btn btn-sm btn-outline-warning">Revoke Invitation</a></td>
+                  </tr>
+                {% endif %}
+                {% empty %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

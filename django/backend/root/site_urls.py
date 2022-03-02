@@ -20,6 +20,16 @@ urlpatterns = [
         site_views.TeamUpdateView.as_view(),
         name="team_update",
     ),
+    path(
+        "<int:team_pk>/team-members/",
+        site_views.TeamMemberManageView.as_view(),
+        name="team_members",
+    ),
+    path(
+        "<int:team_pk>/team-members/<int:member_pk>/",
+        site_views.TeamMemberDeleteView.as_view(),
+        name="team_member_delete",
+    ),
     # Airdrop token gates
     path(
         "<int:team_pk>/airdropgates/",

@@ -78,30 +78,6 @@
           <pre class="bg-light p-3 rounded">No Requirements</pre>
           {% endif %}
         </div>
-        <div class="my-3 mb-lg-4">
-          <h5 class="fw-bold fs-5">Team Members</h5>
-          <div class="text-muted text-xs mb-3">
-            List of members on {{current_team.name}} account
-          </div>
-          <div class="table-responsive p-0">
-            <table class="table align-items-center mb-0">
-              <tbody>
-                {% for member in current_team.members.all %}
-                <tr>
-                  <td class="align-middle fw-bold">
-                    Name
-                  </td>
-                  <td class="align-middle">
-                  {{member}}
-                  </td>
-                </tr>
-
-                {% empty %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </div>
   </div>

@@ -1,6 +1,5 @@
 from django import forms
 from invitations.forms import InvitationAdminAddForm
-
 from root.models import Team, Invite
 
 

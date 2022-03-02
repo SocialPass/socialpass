@@ -5,11 +5,12 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView, ContextMixin
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
+from invitations.forms import InviteForm
 
 from .forms import TeamForm
-from .models import AirdropGate, Team, TicketGate, Membership
+from .models import AirdropGate, Team, TicketGate, Membership, Invite
 from .site_permissions import team_has_permissions
 
 
@@ -73,6 +74,45 @@ class TeamDetailView(WebsiteCommonMixin, TemplateView):
 
 
 @method_decorator(team_has_permissions(""), name="dispatch")
+class TeamMemberManageView(WebsiteCommonMixin, FormView):
+    """
+    Manage a team's members.
+    """
+    form_class = InviteForm
+    template_name = "dashboard/member_form.html"
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        instance = form.save(email=form.cleaned_data.get('email'))
+        instance.team = context['current_team']
+        instance.inviter = self.request.user
+        instance.save()
+        instance.send_invitation(self.request)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Team information updated successfully."
+        )
+        return reverse("team_members", args=(self.kwargs["team_pk"],))
+
+@method_decorator(team_has_permissions(""), name="dispatch")
+class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
+    """
+    Manage a team's members.
+    """
+
+    model = Membership
+    pk_url_kwarg = "member_pk"
+    template_name = "dashboard/member_delete.html"
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Team information updated successfully."
+        )
+        return reverse("team_members", args=(self.kwargs["team_pk"],))
+
+@method_decorator(team_has_permissions(""), name="dispatch")
 class TeamUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates the user's team.
@@ -83,13 +123,9 @@ class TeamUpdateView(WebsiteCommonMixin, UpdateView):
     pk_url_kwarg = "team_pk"
     template_name = "dashboard/team_form.html"
 
-    def form_valid(self, form):
-        form.save()
-        return super(TeamUpdateView, self).form_valid(form)
-
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
+            self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
 
@@ -152,8 +188,9 @@ class AirdropGateCreateView(WebsiteCommonMixin, CreateView):
     ]
     template_name = "dashboard/airdropgate_form.html"
 
-    def form_valid(self, form):
-        form.instance.team = self.context["current_team"]
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        form.instance.team = context["current_team"]
         form.instance.user = self.request.user
         form.instance.general_type = "AIRDROP"
         return super().form_valid(form)
@@ -258,8 +295,9 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
     ]
     template_name = "dashboard/ticketgate_form.html"
 
-    def form_valid(self, form):
-        form.instance.team = self.context["current_team"]
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        form.instance.team = context["current_team"]
         form.instance.user = self.request.user
         form.instance.general_type = "TICKET"
         return super().form_valid(form)

@@ -29,7 +29,7 @@
 		<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3" id="sidenav-main">
 			<div class="sidenav-header">
 				<i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-				<a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'dashboard' view.kwargs.team_pk %}">
+				<a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'dashboard' current_team.pk %}">
 					<img src="{% static 'images/socialpass-icon.png' %}" class="navbar-brand-img h-100" alt="main_logo">
 					<span class="ms-2 font-weight-bold text-primary fs-5">SocialPass</span>
 				</a>
@@ -41,7 +41,7 @@
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Main</h6>
           </li>
 					<li class="nav-item">
-						<a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' view.kwargs.team_pk %}">
+						<a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' current_team.pk %}">
 							<div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
 								<i class="fa-solid fa-house-chimney"></i>
 							</div>
@@ -51,7 +51,7 @@
           {% for software in current_team.software_types %}
             {% if software == 'TICKET' %}
             <li class="nav-item">
-              <a class="nav-link {% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' %}active{% endif %}" href="{% url 'ticketgate_list' view.kwargs.team_pk %}">
+              <a class="nav-link {% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' %}active{% endif %}" href="{% url 'ticketgate_list' current_team.pk %}">
                 <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
                   <i class="fa-solid fa-ticket"></i>
                 </div>
@@ -61,7 +61,7 @@
             {% endif %}
             {% if software == 'AIRDROP' %}
             <li class="nav-item">
-              <a class="nav-link {% if url_name == 'airdropgate_list' or url_name == 'airdropgate_create' or url_name == 'airdropgate_detail' or url_name == 'airdropgate_update' %}active{% endif %}" href="{% url 'airdropgate_list' view.kwargs.team_pk %}">
+              <a class="nav-link {% if url_name == 'airdropgate_list' or url_name == 'airdropgate_create' or url_name == 'airdropgate_detail' or url_name == 'airdropgate_update' %}active{% endif %}" href="{% url 'airdropgate_list' current_team.pk %}">
                 <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
                   <i class="fa-solid fa-parachute-box"></i>
                 </div>
@@ -74,7 +74,7 @@
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Team</h6>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if url_name == 'team_detail' or url_name == 'team_update' %}active{% endif %}" href="{% url 'team_detail' view.kwargs.team_pk %}">
+            <a class="nav-link {% if url_name == 'team_detail' or url_name == 'team_update' %}active{% endif %}" href="{% url 'team_detail' current_team.pk %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
                 <i class="fa-solid fa-ticket"></i>
               </div>
@@ -82,7 +82,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if url_name == 'team_detaill' %}active{% endif %}" href="{% url 'ticketgate_list' view.kwargs.team_pk %}">
+            <a class="nav-link {% if url_name == 'team_detaill' %}active{% endif %}" href="{% url 'ticketgate_list' current_team.pk %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
                 <i class="fa-solid fa-ticket"></i>
               </div>
@@ -124,7 +124,7 @@
                   Switch Teams
                 </strong>
                 {% for member in request.user.membership_set.all %}
-                {% if member.team.pk != view.kwargs.team_pk %}
+                {% if member.team.pk != current_team.pk %}
                 <li>
                   <a class="dropdown-item border-radius-md" href="{% url 'dashboard' member.team.pk %}">
                     {{member.team.name}}

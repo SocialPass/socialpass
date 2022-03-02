@@ -1,12 +1,109 @@
-{% extends "dashboard/base.html" %}
-{% block title %}{{ object.title }} - SocialPass {% endblock %}
+{% extends 'dashboard/base.html' %}
+{% load static i18n get_chain_name %}
 
-{% block navbar_page_name_1 %}Team Info{% endblock %}
+{% block title %}{{ current_team.name }} - SocialPass {% endblock %}
+
+{% block navbar_page_name_1 %}Team Info {% endblock %}
 {% block navbar_page_name_2 %}Team Info{% endblock %}
 
 {% block content %}
 <div class="row">
-    <h1>hello world</h1>
-    <h2>{{current_team.pk}}</h2>
+  <div class="col-sm-10 col-md-8 mx-auto">
+    <div class="card mb-4">
+      <div class="card-header py-0">
+        <div class="d-flex align-items-center py-3">
+          <div class="pe-2">
+            <h6 class="m-0">Team Detail</h6>
+            <div class="text-muted text-xs mb-3">
+              Details of a particular team.
+            </div>
+          </div>
+          <a href="{% url 'team_update' view.kwargs.team_pk %}" class="btn bg-gradient-primary btn-sm ms-auto my-0">Edit</a>
+        </div>
+      </div>
+      <div class="card-body py-2">
+        <div>
+          <h1 class="fw-bold fs-3">{{ current_team.name }}</h1>
+          <div class="text-muted text-xs mb-3">
+            <div>
+              Created: {{ current_team.created }}
+            </div>
+            <div class="mt-1">
+              Modified: {{ current_team.modified }}
+            </div>
+          </div>
+          {% if current_team.details %}
+          <p class="text-muted">{{ current_team.details }}</p>
+          {% else %}
+          <p class="text-muted">Description not set.</p>
+          {% endif %}
+        </div>
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <tbody>
+              <tr>
+                <td class="align-middle fw-bold">
+                  Name
+                </td>
+                <td class="align-middle">
+                  {{ current_team.name }}
+                </td>
+              </tr>
+              <tr>
+                <td class="align-middle fw-bold">
+                  Description
+                </td>
+                <td class="align-middle">
+                  {{ current_team.details }}
+                </td>
+              </tr>
+              <tr>
+                <td class="align-middle fw-bold">
+                  Website URL
+                </td>
+                <td class="align-middle">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="my-3 mb-lg-4">
+          <h5 class="fw-bold fs-5">Permissions</h5>
+          <div class="text-muted text-xs mb-3">
+           List of permissions on {{current_team.name}} account
+          </div>
+          {% if current_team.software_types %}
+          <pre class="bg-light px-4 rounded"><br />{% for item in current_team.software_types %}<span class="text-primary fw-bold">{{ item }}</span><br />-------------<br />{% endfor %}<br /></pre>
+          {% else %}
+          <pre class="bg-light p-3 rounded">No Requirements</pre>
+          {% endif %}
+        </div>
+        <div class="my-3 mb-lg-4">
+          <h5 class="fw-bold fs-5">Team Members</h5>
+          <div class="text-muted text-xs mb-3">
+            List of members on {{current_team.name}} account
+          </div>
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <tbody>
+                {% for member in current_team.members.all %}
+                <tr>
+                  <td class="align-middle fw-bold">
+                    Name
+                  </td>
+                  <td class="align-middle">
+                  {{member}}
+                  </td>
+                </tr>
+
+                {% empty %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

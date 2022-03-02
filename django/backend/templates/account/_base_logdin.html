@@ -38,37 +38,38 @@
       <div class="collapse navbar-collapse w-auto h-100" id="sidenav-collapse-main">
         <ul class="navbar-nav">
 
-          <!-- Main -->
+          <!-- Dashboard (back to main page) -->
           <li class="nav-item">
-            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Main</h6>
+            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Choose Team</h6>
           </li>
+          {% for member in request.user.membership_set.all %}
           <li class="nav-item">
-            <a class="nav-link {% if url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard_redirect' %}">
+            <a class="nav-link" href="{% url 'dashboard' member.team.pk %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
                 <i class="fa-solid fa-house-chimney"></i>
               </div>
-              <span class="nav-link-text">Dashboard</span>
+              <span class="nav-link-text">{{member.team.name}}</span>
             </a>
           </li>
-
-          <!-- Team -->
+          {% endfor %}
+          </li>
 
           <!-- User -->
           <li class="nav-item mt-4">
-            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">User</h6>
+            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Settings</h6>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'user_detail' %}active{% endif %}" href="{% url 'user_detail' %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
-                <i class="fa-solid fa-house-chimney"></i>
+                <i class="fa-solid fa-gear"></i>
               </div>
-              <span class="nav-link-text">Account Settings</span>
+              <span class="nav-link-text">View Info</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'account_logout' %}active{% endif %}" href="{% url 'account_logout' %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
-                <i class="fa-solid fa-house-chimney"></i>
+                <i class="fa-solid fa-sign-out"></i>
               </div>
               <span class="nav-link-text">Logout</span>
             </a>
@@ -99,26 +100,6 @@
             <h6 class="font-weight-bolder mb-0">{% block navbar_page_name_2 %}{% endblock %}</h6>
           </nav>
           <div class="ms-auto">
-            <div class="dropdown p-0 m-0">
-              <a class="d-flex align-items-center btn btn-link px-0 m-0" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="d-none d-sm-inline ms-2">{{current_team.name}}</span>
-                <img src="{{current_team.image}}" alt="" height="30" width="30">
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="userDropdown">
-                <strong class="nav-item">
-                  Switch Teams
-                </strong>
-                {% for member in request.user.membership_set.all %}
-                {% if member.team.pk != current_team.pk %}
-                <li>
-                  <a class="dropdown-item border-radius-md" href="{% url 'dashboard' member.team.pk %}">
-                    {{member.team.name}}
-                  </a>
-                </li>
-                {% endif %}
-                {% endfor %}
-              </ul>
-            </div>
           </div>
         </div>
       </nav>

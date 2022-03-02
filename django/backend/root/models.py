@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from eth_account.messages import encode_defunct
+from invitations.models import Invitation
 from model_utils.models import TimeStampedModel
 from pytz import utc
 from web3.auto import w3
@@ -85,6 +86,15 @@ class Membership(DBModel):
 
     class Meta:
         unique_together = ("team", "user")
+
+
+class Invite(Invitation):
+    """
+    Custom invite model inherited from beekeper invtations
+
+    Includes team on create
+    """
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True)
 
 
 class TokenGate(DBModel):

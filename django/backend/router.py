@@ -11,6 +11,8 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("accounts/", include("allauth.urls")),
+    # Invite management
+    path("invitations/", include('invitations.urls', namespace='invitations')),
     # Custom stuff goes here
     path("", include("root.site_urls")),
 ]

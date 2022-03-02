@@ -49,7 +49,7 @@ class RedirectToTeamView(RedirectView):
             if membership:
                 return reverse("dashboard", args=(membership.team.pk,))
             else:
-                return redirect('https://socialpass.io')
+                return 'https://socialpass.io'
         else:
             return reverse("account_login")
 

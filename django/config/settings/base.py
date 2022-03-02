@@ -86,6 +86,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "dj_rest_auth",
+    "invitations"
 ]
 
 LOCAL_APPS = [
@@ -267,7 +268,7 @@ LOGGING = {
 
 # django-allauth
 # ------------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", False)
+# ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -275,9 +276,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "config.adapters.AccountAdapter"
+# ACCOUNT_ADAPTER = "config.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
-ACCOUNT_FORMS = {"signup": "backend.root.forms.UserSignupForm"}
+# ACCOUNT_FORMS = {"signup": "backend.root.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "backend.root.adapters.SocialAccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
@@ -317,3 +318,10 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+## Django Invitations
+INVITATIONS_INVITATION_MODEL = "root.Invite"
+ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
+INVITATIONS_INVITATION_ONLY = True
+INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = True
+INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
+INVITATIONS_ADMIN_ADD_FORM = "backend.root.forms.CustomInvitationAdminAddForm"

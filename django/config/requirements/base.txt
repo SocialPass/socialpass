@@ -13,6 +13,7 @@ django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-allauth==0.47.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.14.0
 crispy-bootstrap5==0.6
+django-invitations==1.9.3
 
 # Django REST Framework
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework

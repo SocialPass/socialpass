@@ -40,5 +40,8 @@ django-migration: ## Create django migrations
 django-migrate: ## Migrate django migrations
 	(source venv/bin/activate; python3 django/manage.py migrate)
 
+django-up:: ## Create && migrate
+	(source venv/bin/activate; python3 django/manage.py makemigrations;python3 django/manage.py migrate)
+
 django-superuser: ## Create django superuser
 	(source venv/bin/activate; python3 django/manage.py createsuperuser)

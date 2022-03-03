@@ -4,7 +4,7 @@
 
 Hello,
 
-You ({{ email }}) have been invited to join {{ inviter.team }}
+You ({{ email }}) have been invited to join {{ team }}
 
 If you'd like to join, please go to {{ invite_url }}
 

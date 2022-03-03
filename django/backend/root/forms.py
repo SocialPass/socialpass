@@ -29,11 +29,9 @@ class CustomInviteForm(InviteForm):
 
 
 class CustomInvitationAdminAddForm(InvitationAdminAddForm):
-    def save(self, *args, **kwargs):
-        instance = super(CustomInvitationAdminAddForm, self).save(*args, **kwargs)
-        cleaned_data = super(CustomInvitationAdminAddForm, self).clean()
-        instance.team = cleaned_data.get("team")
-        return instance
+    class Meta:
+        model = Invite
+        fields = ("email", "inviter", "team")
 
     def validate_invitation(self, email):
         """
@@ -48,6 +46,15 @@ class CustomInvitationAdminAddForm(InvitationAdminAddForm):
         else:
             return True
 
-    class Meta:
-        model = Invite
-        fields = ("email", "inviter", "team")
+    def save(self, *args, **kwargs):
+        cleaned_data = super(InvitationAdminAddForm, self).clean()
+        email = cleaned_data.get("email")
+        params = {'email': email}
+        if cleaned_data.get("inviter"):
+           params['inviter'] = cleaned_data.get("inviter")
+        if cleaned_data.get("team"):
+           params['team'] = cleaned_data.get("team")
+        instance = Invite.create(**params)
+        instance.send_invitation(self.request)
+        super(InvitationAdminAddForm, self).save(*args, **kwargs)
+        return instance

@@ -104,34 +104,13 @@ class Invite(InvitationAbstract):
     """
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
     archived_email = models.EmailField(blank=True, null=True)
+
     def send_invitation(self, request, **kwargs):
-        current_site = kwargs.pop('site', Site.objects.get_current())
-        invite_url = reverse('accept_invite',
-                             args=[self.key])
-        invite_url = request.build_absolute_uri(invite_url)
-        ctx = kwargs
-        ctx.update({
-            'invite_url': invite_url,
-            'site_name': current_site.name,
-            'email': self.email,
-            'key': self.key,
-            'inviter': self.inviter,
-        })
-
-        email_template = 'invitations/email/email_invite'
-
-        get_invitations_adapter().send_mail(
-            email_template,
-            self.email,
-            ctx)
-        self.sent = timezone.now()
-        self.save()
-
-        invite_url_sent.send(
-            sender=self.__class__,
-            instance=self,
-            invite_url_sent=invite_url,
-            inviter=self.inviter)
+        # set custom kwargs for template
+        kwargs = {
+            'team': self.team
+        }
+        return super(Invite, self).send_invitation(request, **kwargs)
 
 class TokenGate(DBModel):
     """
@@ -232,7 +211,6 @@ class Signature(DBModel):
         # check if address matches recovered address
         _msg = encode_defunct(text=self.signing_message)
         _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
-        print(_recovered)
         if _recovered != address:
             return False, 401, "Signature x Address mismatch."
 

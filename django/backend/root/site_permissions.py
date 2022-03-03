@@ -3,7 +3,7 @@ from django.shortcuts import redirect, reverse
 from .models import Membership
 
 
-def team_has_permissions(software_type):
+def team_has_permissions(software_type:str=""):
     """
     Check if the user has a membership to the team designated by team_pk
     as well as if the team has access to the software designated by 'software_type'.

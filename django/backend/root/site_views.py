@@ -57,7 +57,7 @@ class RedirectToTeamView(RedirectView):
             return reverse("account_login")
 
 
-@method_decorator(team_has_permissions(""), name="dispatch")
+@method_decorator(team_has_permissions(software_type=""), name="dispatch")
 class DashboardView(WebsiteCommonMixin, TemplateView):
     """
     Main dashboard page.
@@ -66,7 +66,7 @@ class DashboardView(WebsiteCommonMixin, TemplateView):
     template_name = "dashboard/dashboard.html"
 
 
-@method_decorator(team_has_permissions(""), name="dispatch")
+@method_decorator(team_has_permissions(software_type=""), name="dispatch")
 class TeamDetailView(WebsiteCommonMixin, TemplateView):
     """
     Returns the details of the logged in user's team.
@@ -75,7 +75,7 @@ class TeamDetailView(WebsiteCommonMixin, TemplateView):
     template_name = "dashboard/team_detail.html"
 
 
-@method_decorator(team_has_permissions(""), name="dispatch")
+@method_decorator(team_has_permissions(software_type=""), name="dispatch")
 class TeamMemberManageView(WebsiteCommonMixin, FormView):
     """
     Manage a team's members.
@@ -98,7 +98,7 @@ class TeamMemberManageView(WebsiteCommonMixin, FormView):
         )
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
-@method_decorator(team_has_permissions(""), name="dispatch")
+@method_decorator(team_has_permissions(software_type=""), name="dispatch")
 class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
     """
     Manage a team's members.
@@ -131,7 +131,7 @@ class AcceptInviteView(AcceptInvite):
         except Exception as e:
             return super().post(self, *args, **kwargs)
 
-@method_decorator(team_has_permissions(""), name="dispatch")
+@method_decorator(team_has_permissions(software_type=""), name="dispatch")
 class TeamUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates the user's team.
@@ -149,7 +149,7 @@ class TeamUpdateView(WebsiteCommonMixin, UpdateView):
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
 class AirdropGateListView(WebsiteCommonMixin, ListView):
     """
     Returns a list of Airdrop token gates.
@@ -171,7 +171,7 @@ class AirdropGateListView(WebsiteCommonMixin, ListView):
         return qs
 
 
-@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
 class AirdropGateDetailView(WebsiteCommonMixin, DetailView):
     """
     Returns the details of an Airdrop token gate.
@@ -186,7 +186,7 @@ class AirdropGateDetailView(WebsiteCommonMixin, DetailView):
         return qs
 
 
-@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
 class AirdropGateCreateView(WebsiteCommonMixin, CreateView):
     """
     Creates a new Airdrop token gate.
@@ -221,7 +221,7 @@ class AirdropGateCreateView(WebsiteCommonMixin, CreateView):
         return reverse("airdropgate_list", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions("AIRDROP"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
 class AirdropGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates an Airdrop token gate.
@@ -259,7 +259,7 @@ class AirdropGateUpdateView(WebsiteCommonMixin, UpdateView):
         )
 
 
-@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateListView(WebsiteCommonMixin, ListView):
     """
     Returns a list of Ticket token gates.
@@ -281,7 +281,7 @@ class TicketGateListView(WebsiteCommonMixin, ListView):
         return qs
 
 
-@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateDetailView(WebsiteCommonMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
@@ -296,7 +296,7 @@ class TicketGateDetailView(WebsiteCommonMixin, DetailView):
         return qs
 
 
-@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateCreateView(WebsiteCommonMixin, CreateView):
     """
     Creates a new Ticket token gate.
@@ -328,7 +328,7 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         return reverse("ticketgate_list", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions("TICKET"), name="dispatch")
+@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates an Ticket token gate.

@@ -2,14 +2,19 @@ import uuid
 from datetime import datetime, timedelta
 
 from eth_account.messages import encode_defunct
+from invitations.adapters import get_invitations_adapter
 from invitations.models import Invitation
+from invitations.signals import invite_url_sent
 from model_utils.models import TimeStampedModel
 from pytz import utc
 from web3.auto import w3
 
+from django.contrib.sites.models import Site
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
+from django.shortcuts import reverse
 
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
 from .model_field_schemas import (
@@ -99,7 +104,34 @@ class Invite(InvitationAbstract):
     """
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
     archived_email = models.EmailField(blank=True, null=True)
+    def send_invitation(self, request, **kwargs):
+        current_site = kwargs.pop('site', Site.objects.get_current())
+        invite_url = reverse('accept_invite',
+                             args=[self.key])
+        invite_url = request.build_absolute_uri(invite_url)
+        ctx = kwargs
+        ctx.update({
+            'invite_url': invite_url,
+            'site_name': current_site.name,
+            'email': self.email,
+            'key': self.key,
+            'inviter': self.inviter,
+        })
 
+        email_template = 'invitations/email/email_invite'
+
+        get_invitations_adapter().send_mail(
+            email_template,
+            self.email,
+            ctx)
+        self.sent = timezone.now()
+        self.save()
+
+        invite_url_sent.send(
+            sender=self.__class__,
+            instance=self,
+            invite_url_sent=invite_url,
+            inviter=self.inviter)
 
 class TokenGate(DBModel):
     """

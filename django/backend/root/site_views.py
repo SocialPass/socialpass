@@ -1,4 +1,5 @@
-from django.contrib import messages
+from django.conf import settings
+from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import reverse, redirect
 from django.utils.decorators import method_decorator
@@ -7,11 +8,13 @@ from django.views.generic.base import RedirectView, ContextMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
+from invitations.views import AcceptInvite
 
 from .forms import TeamForm, CustomInviteForm
 from .models import AirdropGate, Team, TicketGate, Membership, Invite
 from .site_permissions import team_has_permissions
 
+User = auth.get_user_model()
 
 class WebsiteCommonMixin(ContextMixin):
     """
@@ -45,7 +48,7 @@ class RedirectToTeamView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         if self.request.user.is_authenticated:
-            membership = Membership.objects.filter(user=self.request.user).first()
+            membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
                 return reverse("dashboard", args=(membership.team.pk,))
             else:
@@ -110,6 +113,23 @@ class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
         return reverse("team_members", args=(self.kwargs["team_pk"],))
+
+class AcceptInviteView(AcceptInvite):
+    """
+    Inherited AcceptInvite from beekeeper-invitations
+    """
+    def post(self, *args, **kwargs):
+        """
+        Override invite view to either redirect to login or signup,
+        depending on if user has account or not
+        """
+        try:
+            self.object = self.get_object()
+            user = User.objects.get(email__iexact=self.object.email)
+            super().post(self, *args, **kwargs)
+            return redirect(reverse(settings.LOGIN_URL))
+        except Exception as e:
+            return super().post(self, *args, **kwargs)
 
 @method_decorator(team_has_permissions(""), name="dispatch")
 class TeamUpdateView(WebsiteCommonMixin, UpdateView):

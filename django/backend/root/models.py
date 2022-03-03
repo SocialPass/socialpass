@@ -87,14 +87,18 @@ class Membership(DBModel):
     class Meta:
         unique_together = ("team", "user")
 
+class InvitationAbstract(Invitation):
+    class Meta:
+        abstract = True
 
-class Invite(Invitation):
+class Invite(InvitationAbstract):
     """
     Custom invite model inherited from beekeper invtations
 
     Includes team on create
     """
-    team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    archived_email = models.EmailField(blank=True, null=True)
 
 
 class TokenGate(DBModel):

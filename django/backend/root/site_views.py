@@ -7,9 +7,8 @@ from django.views.generic.base import RedirectView, ContextMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
-from invitations.forms import InviteForm
 
-from .forms import TeamForm
+from .forms import TeamForm, CustomInviteForm
 from .models import AirdropGate, Team, TicketGate, Membership, Invite
 from .site_permissions import team_has_permissions
 
@@ -78,7 +77,7 @@ class TeamMemberManageView(WebsiteCommonMixin, FormView):
     """
     Manage a team's members.
     """
-    form_class = InviteForm
+    form_class = CustomInviteForm
     template_name = "dashboard/member_form.html"
 
     def form_valid(self, form, **kwargs):

@@ -7,8 +7,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('invitations', '0004_alter_invitation_id'),
-        ('root', '0029_auto_20220228_2150'),
+        ('invitations', '0003_auto_20151126_1523'),
+        ('root', '0029_auto_20220228_2150')
     ]
 
     operations = [

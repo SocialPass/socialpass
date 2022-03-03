@@ -26,7 +26,6 @@ py-lint: ## Lint django ++ fastapi
 
 # django
 django-setup: ## Install django requirements
-	setup:
 	(source venv/bin/activate; \
 	pip3 install --upgrade pip; \
 	pip3 install -r django/config/requirements/local.txt; )

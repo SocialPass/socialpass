@@ -95,11 +95,7 @@ INSTALLED_APPS += ["sendgrid"]  # noqa F405
 # https://anymail.readthedocs.io/en/stable/esps/sendgrid/
 EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
 ANYMAIL = {
-    "SENDGRID_API_KEY": env("SENDGRID_API_KEY"),
-    "SENDGRID_SENDER_DOMAIN": env("SENDGRID_DOMAIN"),
-    "SENDGRID_API_URL": env(
-        "SENDGRID_API_URL", default="https://api.sendgrid.net/socialpass"
-    ),
+    "SENDGRID_API_KEY": env("SENDGRID_API_KEY")
 }
 
 # LOGGING

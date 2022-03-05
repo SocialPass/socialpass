@@ -44,3 +44,11 @@ django-up:: ## Create && migrate
 
 django-superuser: ## Create django superuser
 	(source venv/bin/activate; python3 django/manage.py createsuperuser)
+
+
+# git
+git-master: ## push to master
+	git push origin master
+
+git-staging: ## push staging to master
+	git push origin master:staging

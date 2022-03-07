@@ -50,6 +50,9 @@ def verify_requirements(wallet_address: str, requirements: List[crud.Requirement
         # if so, return success,
         # if not, continue loop
         if token_balance >= req.amount:
-            return "OK"
+            return {
+                "wallet_address": wallet_address,
+                "token_balance": token_balance
+            }
 
     return HTTPException(status_code=403, detail="User does not meet requirements")

@@ -26,6 +26,7 @@ class Requirements(BaseModel):
 def get_rpc_url(chain_id: str):
     API_KEY = "4sNPIDg5LBJubC6x_6N2Vr_76Xn_o1s9"
     if chain_id == "1":
+        # eth
         return f"https://eth-mainnet.alchemyapi.io/v2/{API_KEY}"
 
     if chain_id == "56":
@@ -69,6 +70,18 @@ def balanceOf(w3=None, contract_address=None, wallet_address=None):
     # build calldata for eth.call (signature_bytes + abi encoded_params)
     signature_bytes = get_function_signature_bytes("balanceOf(address)")
     encoded_params = encode_single("address", wallet_address)
+    calldata = signature_bytes + encoded_params.hex()
+    # RPC call to contract
+    resp = w3.eth.call({"to": contract_address, "data": calldata})
+
+    # get integer from bytes response
+    token_balance = decode_single("uint256", resp)
+    return token_balance
+
+def balanceOf1155(w3=None, contract_address=None, token_id=None, wallet_address=None):
+    # build calldata for eth.call (signature_bytes + abi encoded_params)
+    signature_bytes = get_function_signature_bytes("balanceOf(address)")
+    encoded_params = encode_abi(["address", "uint256"], [wallet_address, token_id])
     calldata = signature_bytes + encoded_params.hex()
     # RPC call to contract
     resp = w3.eth.call({"to": contract_address, "data": calldata})

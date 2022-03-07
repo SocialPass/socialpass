@@ -12,16 +12,16 @@ router = APIRouter(
 
 
 @router.post("/verify")
-def verify_requirements(wallet_address: str, requirements_list: List[crud.Requirements]):
+def verify_requirements(wallet_address: str, requirements: List[crud.Requirements]):
     """
     Given a wallet address and array of requirements, `verify_requirements` will loop through
-    all requirements until a wallet has passed said requirements, or no requirements could be met.
+    the list requirements until a wallet has passed said requirements, or no requirements could be met.
 
     This function is to be blockchain & asset agnostic, meaning that the web3 provider,
-    as well as the type of asset lookup, will be determined on the `requirements_list` parameter.
+    as well as the type of asset lookup, will be determined on the `requirements` parameter.
     """
     # loop over list of Requirements
-    for req in requirements_list:
+    for req in requirements:
         # init token_balance && web3 based on chain
         token_balance = 0
         web3 = crud.get_web3(chain_id=req.chain_id)

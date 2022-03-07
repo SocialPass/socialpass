@@ -27,7 +27,15 @@ def get_rpc_url(chain_id: str):
     API_KEY = "4sNPIDg5LBJubC6x_6N2Vr_76Xn_o1s9"
     if chain_id == "1":
         # eth
-        return f"https://eth-mainnet.alchemyapi.io/v2/{API_KEY}"
+        return f"https://mainnet.infura.io/v3/{INFURA_API_KEY}"
+
+    if chain_id == "3":
+        # ropsten
+        return f"https://ropsten.infura.io/v3/{INFURA_API_KEY}"
+
+    if chain_id == "4":
+        # rinkeby
+        return f"https://rinkeby.infura.io/v3/{INFURA_API_KEY}"
 
     if chain_id == "56":
         # bsc

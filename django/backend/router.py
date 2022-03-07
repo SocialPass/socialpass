@@ -1,5 +1,3 @@
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -21,15 +19,6 @@ urlpatterns = [
 urlpatterns += [
     # API base url
     path("api/", include("root.api_urls")),
-    # DRF auth token
-    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
-    path(
-        "api/docs/",
-        SpectacularSwaggerView.as_view(url_name="api-schema"),
-        name="api-docs",
-    ),
-    # Django REST auth
-    path("api/auth/", include("dj_rest_auth.urls")),
 ]
 
 # Debug URL's

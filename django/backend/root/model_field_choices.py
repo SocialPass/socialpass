@@ -7,6 +7,8 @@ BLOCKCHAINS = (("EVM", "EVM"),)
 
 CHAIN_IDS = (
     ("1", "Ethereum"),
+    ("2", "Ropsten"),
+    ("4", "Rinkeby"),
     ("56", "BNB Chain"),
     ("43114", "Avalanche"),
     ("137", "Polygon"),

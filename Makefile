@@ -46,6 +46,16 @@ django-superuser: ## Create django superuser
 	(source venv/bin/activate; python3 django/manage.py createsuperuser)
 
 
+# fastapi
+fast-setup: ## Install fastapi requirements
+	(source venv/bin/activate; \
+	pip3 install --upgrade pip; \
+	pip3 install -r services/requirements.txt; )
+
+fast-up: ## Install fastapi requirements
+	(source venv/bin/activate; cd services && uvicorn main:app --reload --port 8080)
+
+
 # git
 git-master: ## push to master
 	git push origin master

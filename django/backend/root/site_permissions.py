@@ -35,7 +35,7 @@ def team_has_permissions(software_type:str=""):
             if has_permission:
                 return view_method(request, *args, **kwargs)
             else:
-                return redirect(reverse("dashboard", args=(kwargs["current_team"].pk,)))
+                return redirect("dashboard_redirect")
 
         return _arguments_wrapper
 

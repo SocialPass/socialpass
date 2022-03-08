@@ -11,7 +11,7 @@ from web3.auto import w3
 
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils import timezone
 from django.shortcuts import reverse
@@ -121,7 +121,6 @@ class TokenGate(DBModel):
     Please note, this model should NOT be abstract so that other tables are
     able reference this table directly using foreign keys.
     """
-
     public_id = models.CharField(
         max_length=64, editable=False, unique=True, db_index=True
     )
@@ -132,6 +131,13 @@ class TokenGate(DBModel):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     general_type = models.CharField(max_length=50, choices=TOKENGATE_TYPES)
+    requirements = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA)],
+    )
+    limit_per_person = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     def __str__(self):
         return self.title
@@ -238,12 +244,6 @@ class AirdropGate(TokenGate):
     total_amount = models.IntegerField(validators=[MinValueValidator(1)])
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    requirements = models.JSONField(
-        default=list,
-        blank=True,
-        null=True,
-        validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA)],
-    )
 
 
 class Airdrop(DBModel):
@@ -266,24 +266,18 @@ class Airdrop(DBModel):
 
 class TicketGate(TokenGate):
     """
-    Stores an Ticket type token gate.
+    Stores a Ticket type token gate.
     """
 
     date = models.DateTimeField()
     location = models.CharField(max_length=1024)
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    deadline = models.DateTimeField()
-    requirements = models.JSONField(
-        default=list,
-        validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA_REQUIRED)],
-    )
 
 
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticket token gates.
     """
-
     tokengate = models.ForeignKey(
         TicketGate, on_delete=models.CASCADE, related_name="tickets"
     )
@@ -291,7 +285,7 @@ class Ticket(DBModel):
         Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
     wallet_address = models.CharField(max_length=400)
-    ticket_url = models.URLField()
+    download_url = models.URLField()
 
     def __str__(self):
         return f"Ticket List (Token Gate: {self.tokengate.title})"

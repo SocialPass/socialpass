@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 from pydantic import BaseSettings
-from routers.requirements import routes as RequirementsRouter
+from routers.verify import routes as VerifyRouter
 
 # init settings
 class Settings(BaseSettings):
@@ -11,4 +11,4 @@ class Settings(BaseSettings):
 app = FastAPI()
 
 # setup routers
-app.include_router(RequirementsRouter.router)
+app.include_router(VerifyRouter.router)

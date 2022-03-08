@@ -29,6 +29,7 @@ class BaseGateSerializer(serializers.ModelSerializer):
             "description",
             "requirements",
             "signature",
+            "limit_per_person"
         ]
 
     def get_signature(self, gate):
@@ -91,7 +92,6 @@ class TicketGateSerializer(BaseGateSerializer):
             "date",
             "location",
             "capacity",
-            "deadline",
         ]
 
 
@@ -109,4 +109,4 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["wallet_address", "ticket_url", "tokengate", "signature"]
+        fields = ["wallet_address", "download_url", "tokengate", "signature"]

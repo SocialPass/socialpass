@@ -1,8 +1,7 @@
 import json
-import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from web3 import Web3
 from . import crud
 
@@ -12,7 +11,13 @@ router = APIRouter(
 )
 
 @router.post("/requirements")
-def verify_requirements(gate_type: str, wallet_address: str, requirements: List[crud.Requirements]):
+def verify_requirements(
+    wallet_address: str,
+    gate_type: crud.GateTypeEnum,
+    gate_limit: int,
+    reward_list: List[str],
+    requirements: List[crud.Requirements]
+):
     """
     Given a wallet address and array of requirements, `verify_requirements` will loop through
     the list requirements until a wallet has passed said requirements, or no requirements could be met.
@@ -22,54 +27,63 @@ def verify_requirements(gate_type: str, wallet_address: str, requirements: List[
     """
     # loop over list of Requirements
     for req in requirements:
-        # init token_balance && web3 based on chain
+        # init token balance
         token_balance = 0
-        web3 = crud.get_web3(chain_id=req.chain_id)
-        payload = {'key1': 'value1', 'key2': ['value2', 'value3']}
+        token_ids = None
 
+        # EVM
+        if req.blockchain == "EVM":
+            # determine / perform asset lookup
+            # simple balanceOf for erc20, use moralis nfts for 721/1155
+            if req.asset_type == "ERC20":
+                web3 = crud.get_web3(chain_id=req.chain_id)
+                token_balance = crud.balanceOf(
+                    w3=web3,
+                    contract_address=Web3.toChecksumAddress(req.asset_address),
+                    wallet_address=Web3.toChecksumAddress(wallet_address),
+                )
+            if req.asset_type == "ERC721":
+                tokens = crud.moralis_get_nfts(
+                    chain_id=hex(req.chain_id),
+                    contract_address=Web3.toChecksumAddress(req.asset_address),
+                    wallet_address=Web3.toChecksumAddress(wallet_address),
+                )
+                token_ids = tokens['result']
+                token_balance = tokens['total']
 
-        # perform asset lookup
-        requests.get(f"https://deep-index.moralis.io/api/v2/0xf7a8f04c7fe7c8a6ed692bdf5ee1658559cbe7dc/nft/0x51e613727fdd2e0b91b51c3e5427e9440a7957e4?chain=eth&format=decimal')
+            if req.asset_type == "ERC1155":
+                tokens = crud.moralis_get_nfts(
+                    chain_id=hex(req.chain_id),
+                    contract_address=Web3.toChecksumAddress(req.asset_address),
+                    wallet_address=Web3.toChecksumAddress(wallet_address),
+                )
+                token_ids = tokens['result']
+                token_balance = tokens['total']
 
-        # determine / perform asset lookup
-        if req.asset_type == "ERC20":
-            token_balance = crud.balanceOf(
-                w3=web3,
-                contract_address=Web3.toChecksumAddress(req.asset_address),
-                wallet_address=Web3.toChecksumAddress(wallet_address),
-            )
-        if req.asset_type == "ERC721":
-            token_balance = crud.balanceOf(
-                w3=web3,
-                contract_address=Web3.toChecksumAddress(req.asset_address),
-                wallet_address=Web3.toChecksumAddress(wallet_address),
-            )
-        if req.asset_type == "ERC1155":
-            token_balance = crud.balanceOf1155(
-                w3=web3,
-                contract_address=Web3.toChecksumAddress(req.asset_address),
-                wallet_address=Web3.toChecksumAddress(wallet_address),
-            )
+            # check if token_balance meets req;
+            # token_ids involve reward_list lookup; otherwise simple balanceOf
+            if req.asset_type == "ERC721" or req.asset_type == "ERC1155":
+                valid_ids = []
+                for i in token_ids:
+                    if i['token_id'] not in reward_list:
+                        valid_ids.append(i['token_id'])
+                    if len(valid_ids) >= gate_limit:
+                        break
+                if len(valid_ids) < req.amount:
+                    return HTTPException(status_code=403, detail="User does not meet requirements")
+            else:
+                if token_balance < req.amount:
+                    return HTTPException(status_code=403, detail="User does not meet requirements")
 
-        # check if token_balance meets requirements;
-        # if so, return success,
-        # if not, continue loop
-        if token_balance >= req.amount:
-            return {
-                "wallet_address": wallet_address,
-                "token_balance": token_balance
-            }
-
-    return HTTPException(status_code=403, detail="User does not meet requirements")
-
-
-@router.post("/issuance")
-def verify_issuance(gate_type: crud.GateTypeEnum, reward_list:List):
-    """
-    Given a specific gate type, wallet address, as well as the associated gate reward list,
-    determine if a reward (airdop, ticket, invite link, etc.) can be issued.
-
-    `verify_issuance` is meant to protect against double-spends and other spam/bad-actors
-    before the final token gate service call.
-    """
-    return
+            # return
+            if token_ids:
+                return {
+                    "wallet_address": wallet_address,
+                    "token_balance": token_balance,
+                    "valid_ids": valid_ids,
+                }
+            else:
+                return {
+                    "wallet_address": wallet_address,
+                    "token_balance": token_balance
+                }

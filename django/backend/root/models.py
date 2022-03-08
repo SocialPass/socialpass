@@ -9,6 +9,7 @@ from model_utils.models import TimeStampedModel
 from pytz import utc
 from web3.auto import w3
 
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -170,6 +171,36 @@ class TokenGate(DBModel):
             "message": signature.signing_message,
         }
 
+    def validate_requirements(self, *args, **kwargs):
+        """
+        method to validate requirements via the services api
+        either returns 200 success for reward creation,
+        or 403 forbidden for unauthenticated
+        """
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+
+        params = (
+            ('wallet_address', kwargs['wallet_address']),
+            ('gate_type', self.general_type),
+            ('gate_limit', self.limit_per_person),
+        )
+
+        json_data = {
+            'reward_list': kwargs['reward_list'],
+            'requirements': self.requirements
+        }
+
+        resp = requests.get('{settings.SERVICES_URL}/verify/requirements', headers=headers, params=params, json=json_data)
+
+        if resp.status_code == 200:
+            return True, resp.json()
+        else:
+            return False, resp.txt
+
+
     def save(self, *args, **kwargs):
         """
         overriden to set public_id
@@ -236,7 +267,6 @@ class AirdropGate(TokenGate):
     """
     Stores an Airdrop type token gate.
     """
-
     chain = models.CharField(max_length=50, choices=BLOCKCHAINS)
     asset_type = models.CharField(max_length=50, choices=ASSET_TYPES)
     asset_address = models.CharField(max_length=400)
@@ -259,6 +289,7 @@ class Airdrop(DBModel):
     )
     wallet_address = models.CharField(max_length=400)
     transaction_hash = models.CharField(max_length=400)
+    token_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"Airdrop List (Token Gate: {self.tokengate.title})"
@@ -285,6 +316,7 @@ class Ticket(DBModel):
         Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
     wallet_address = models.CharField(max_length=400)
+    token_id = models.IntegerField(null=True, blank=True)
     download_url = models.URLField()
 
     def __str__(self):

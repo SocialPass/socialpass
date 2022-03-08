@@ -311,3 +311,9 @@ INVITATIONS_INVITATION_ONLY = True
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_ADMIN_ADD_FORM = "backend.root.forms.CustomInvitationAdminAddForm"
+
+# Custom Code
+SERVICES_URL = env(
+    "SERVICES_URL",
+    default="http://localhost:8080",
+)

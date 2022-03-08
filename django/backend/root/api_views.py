@@ -69,16 +69,23 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
         # get signature obj, throw 404 if not fund
         signature = self.get_object(serialized.data.get("signature_id"))
 
-        # validate signature
-        validation, status_code, rsp_msg = signature.validate(
+        # validate signature;
+        sig_success, sig_code, rsp_msg = signature.validate(
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
             tokengate_id=serialized.data.get("tokengate_id"),
         )
-        if not validation:
-            return Response(rsp_msg, status=status_code)
+        if not sig_success:
+            return Response(rsp_msg, status=sig_code)
 
         # TODO: validate requirements
+        gate = signature.tokengate
+        req_success, req_code, req_msg = gate.validate_requirements(
+            wallet_address=serialized.data.get("address"),
+            reward_list=gate.airdrop_set.values_list('token_id', flat=True)
+        )
+        if not req_success:
+            return Response(req_msg, status=req_code)
 
         # issue reward (201 created)
         response = self.create(
@@ -133,16 +140,23 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         # get signature obj, throw 404 if not fund
         signature = self.get_object(serialized.data.get("signature_id"))
 
-        # validate signature
-        validation, status_code, rsp_msg = signature.validate(
+        # validate signature;
+        sig_success, sig_code, sig_msg = signature.validate(
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
             tokengate_id=serialized.data.get("tokengate_id"),
         )
-        if not validation:
-            return Response(rsp_msg, status=status_code)
+        if not sig_success:
+            return Response(sig_msg, status=sig_code)
 
         # TODO: validate requirements
+        gate = signature.tokengate
+        req_success, req_code, req_msg = gate.validate_requirements(
+            wallet_address=serialized.data.get("address"),
+            reward_list=gate.ticket_set.values_list('token_id', flat=True)
+        )
+        if not req_success:
+            return Response(req_msg, status=req_code)
 
         # issue reward (201 created)
         response = self.create(

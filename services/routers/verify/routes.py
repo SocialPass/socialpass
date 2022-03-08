@@ -10,7 +10,7 @@ router = APIRouter(
     tags=["verify"],
 )
 
-@router.post("/requirements")
+@router.get("/requirements")
 def verify_requirements(
     wallet_address: str,
     gate_type: crud.GateTypeEnum,

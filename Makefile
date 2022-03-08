@@ -13,7 +13,7 @@ py-setup: ## Install django ++ fastapi requirements
 	pip3 install -r django/config/requirements/local.txt; \
 	pip3 install -r services/requirements.txt; )
 
-py-start: ## Start django ++ fastapi server
+py-run: ## Start django ++ fastapi server
 	(source venv/bin/activate; \
 	cd services && uvicorn main:app --reload --port 8080 & \
 	cd django && python3 manage.py runserver)
@@ -52,7 +52,7 @@ fast-setup: ## Install fastapi requirements
 	pip3 install --upgrade pip; \
 	pip3 install -r services/requirements.txt; )
 
-fast-up: ## Install fastapi requirements
+fast-run: ## Install fastapi requirements
 	(source venv/bin/activate; cd services && uvicorn main:app --reload --port 8080)
 
 

@@ -95,6 +95,6 @@ def verify_requirements(
                     _balance = _balance / req.amount
                 return {
                     "wallet_address": wallet_address,
-                    "token_balance": token_balance
+                    "token_balance": token_balance,
                     "valid_passes": lower
                 }

@@ -54,6 +54,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
                 "tokengate": kwargs["tokengate"],
                 "token_id": p
             })
+        print(ticketdata)
         serializer = TicketSerializer(
             data=ticketdata,
             many=True
@@ -98,7 +99,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             wallet_address=serialized.data.get("address"),
             ticket_url="https://test.local",
             tokengate=signature.tokengate,
-            reward_list=reward_ids
+            reward_list=req_msg['valid_passes']
         )
         return response
 

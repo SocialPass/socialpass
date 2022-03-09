@@ -1,4 +1,5 @@
 import uuid
+import requests
 from datetime import datetime, timedelta
 
 from eth_account.messages import encode_defunct
@@ -174,7 +175,7 @@ class TokenGate(DBModel):
     def validate_requirements(self, *args, **kwargs):
         """
         method to validate requirements via the services api
-        either returns 200 success for reward creation,
+        either returns 200 success for authenticated
         or 403 forbidden for unauthenticated
         """
         headers = {
@@ -193,12 +194,13 @@ class TokenGate(DBModel):
             'requirements': self.requirements
         }
 
-        resp = requests.get('{settings.SERVICES_URL}/verify/requirements', headers=headers, params=params, json=json_data)
+        resp = requests.get(f'{settings.SERVICES_URL}/verify/requirements', headers=headers, params=params, json=json_data)
 
+        # return tuple of (access:bool, status:int, msg:str)
         if resp.status_code == 200:
-            return True, resp.json()
+            return True, 200, resp.json()
         else:
-            return False, resp.txt
+            return False, 403, resp.txt
 
 
     def save(self, *args, **kwargs):

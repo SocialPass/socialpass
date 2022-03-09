@@ -78,7 +78,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
         if not sig_success:
             return Response(rsp_msg, status=sig_code)
 
-        # TODO: validate requirements
+        # validate requirements
         gate = AirdropGate.objects.get(id=serialized.data.get("tokengate_id"))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
@@ -86,6 +86,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
         )
         if not req_success:
             return Response(req_msg, status=req_code)
+        print(req_msg)
 
         # issue reward (201 created)
         response = self.create(
@@ -149,7 +150,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         if not sig_success:
             return Response(sig_msg, status=sig_code)
 
-        # TODO: validate requirements
+        # validate requirements
         gate = TicketGate.objects.get(id=serialized.data.get("tokengate_id"))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
@@ -157,6 +158,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         )
         if not req_success:
             return Response(req_msg, status=req_code)
+        print(req_msg)
 
         # issue reward (201 created)
         response = self.create(

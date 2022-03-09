@@ -71,19 +71,30 @@ def verify_requirements(
                         break
                 if len(valid_ids) < req.amount:
                     return HTTPException(status_code=403, detail="User does not meet requirements")
-            else:
+            if req.asset_type == "ERC20":
                 if token_balance < req.amount:
                     return HTTPException(status_code=403, detail="User does not meet requirements")
 
             # return
-            if token_ids:
+            if valid_ids:
                 return {
                     "wallet_address": wallet_address,
                     "token_balance": token_balance,
-                    "valid_ids": valid_ids,
+                    "valid_passes": valid_ids,
                 }
             else:
+                # valid_ids's determine non-fungible passes
+                # for fungible tokens, divide required amount by the balance to get
+                # total valid passes
+                passes = []
+                counter = 0
+                _balance = token_balance
+                while _balance > 0:
+                    counter+=1
+                    passes.append(counter)
+                    _balance = _balance / req.amount
                 return {
                     "wallet_address": wallet_address,
                     "token_balance": token_balance
+                    "valid_passes": lower
                 }

@@ -258,8 +258,8 @@ class Signature(DBModel):
 
         # 200 section: User has authenticated and met requirements
         # before success, mark as verified, update address, and save
-        # self.is_verified = True
-        # self.wallet_address = _recovered
+        self.is_verified = True
+        self.wallet_address = _recovered
         self.save()
 
         return True, 200, "Success"

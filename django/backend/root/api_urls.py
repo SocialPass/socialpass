@@ -10,14 +10,14 @@ from .api_views import (
 app_name = "root"
 urlpatterns = [
     # airdrop
-    path(
-        "airdropgates/retrieve/<str:public_id>/",
-        AirdropGateRetrieve.as_view(),
-        name="airdropgate-retrieve",
-    ),
-    path(
-        "airdropgates/access/", AirdropGateAccess.as_view(), name="airdropgate-access"
-    ),
+    # path(
+    #    "airdropgates/retrieve/<str:public_id>/",
+    #    AirdropGateRetrieve.as_view(),
+    #    name="airdropgate-retrieve",
+    #),
+    #path(
+    #    "airdropgates/access/", AirdropGateAccess.as_view(), name="airdropgate-access"
+    #),
     # ticketing
     path(
         "ticketgates/retrieve/<str:public_id>/",

@@ -35,22 +35,22 @@ urlpatterns = [
     # Airdrop token gates
     path(
         "<int:team_pk>/airdropgates/",
-        site_views.AirdropGateListView.as_view(),
+        site_views.RedirectToTeamView.as_view(),
         name="airdropgate_list",
     ),
     path(
         "<int:team_pk>/airdropgates/create/",
-        site_views.AirdropGateCreateView.as_view(),
+        site_views.RedirectToTeamView.as_view(),
         name="airdropgate_create",
     ),
     path(
         "<int:team_pk>/airdropgates/<int:pk>/",
-        site_views.AirdropGateDetailView.as_view(),
+        site_views.RedirectToTeamView.as_view(),
         name="airdropgate_detail",
     ),
     path(
         "<int:team_pk>/airdropgates/<int:pk>/update/",
-        site_views.AirdropGateUpdateView.as_view(),
+        site_views.RedirectToTeamView.as_view(),
         name="airdropgate_update",
     ),
     # Ticket token gates

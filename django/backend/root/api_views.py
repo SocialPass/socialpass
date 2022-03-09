@@ -43,11 +43,10 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
     APIView for accessing ticket gate via verified `Signature`,
     and then creating / returning `TicketList` entry
     """
-
     permission_classes = [AllowAny]
     def create(self, request, *args, **kwargs):
         ticketdata = []
-        for p in kwargs['valid_passes']:
+        for p in kwargs['reward_list']:
             ticketdata.append({
                 "wallet_address": kwargs["wallet_address"],
                 "signature": kwargs["signature"],
@@ -83,9 +82,10 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
 
         # validate requirements
         gate = TicketGate.objects.get(public_id=serialized.data.get("tokengate_id"))
+        reward_ids = list(gate.tickets.all().values_list('token_id', flat=True))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
-            reward_list=gate.tickets.values_list('token_id', flat=True)
+            reward_list=reward_ids
         )
         if not req_success:
             return Response(req_msg, status=req_code)
@@ -98,6 +98,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             wallet_address=serialized.data.get("address"),
             ticket_url="https://test.local",
             tokengate=signature.tokengate,
+            reward_list=reward_ids
         )
         return response
 

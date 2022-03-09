@@ -28,7 +28,7 @@ REQUIREMENTS_SCHEMA = {
         "type": "object",
         "properties": {
             "blockchain": {"type": "string", "enum": BLOCKCHAINS_ENUM},
-            "chain_id": {"type": "string", "enum": CHAIN_ID_ENUM},
+            "chain_id": {"type": "integer", "enum": CHAIN_ID_ENUM},
             "asset_type": {"type": "string", "enum": ASSET_TYPES_ENUM},
             "asset_address": {"type": "string", "pattern": "^(0x|0X).*$"},
             "amount": {"type": "integer", "minimum": 1},

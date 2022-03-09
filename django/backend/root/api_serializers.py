@@ -109,4 +109,4 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["wallet_address", "download_url", "tokengate", "signature"]
+        fields = ["wallet_address", "token_id", "download_url", "tokengate", "signature"]

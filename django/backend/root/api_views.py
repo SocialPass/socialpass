@@ -50,7 +50,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             ticketdata.append({
                 "wallet_address": kwargs["wallet_address"],
                 "signature": kwargs["signature"],
-                "ticket_url": kwargs["ticket_url"],
+                "download_url": kwargs["download_url"],
                 "tokengate": kwargs["tokengate"],
                 "token_id": p
             })
@@ -97,7 +97,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             request,
             signature=serialized.data.get("signature_id"),
             wallet_address=serialized.data.get("address"),
-            ticket_url="https://test.local",
+            download_url="https://test.local",
             tokengate=signature.tokengate,
             reward_list=req_msg['valid_passes']
         )

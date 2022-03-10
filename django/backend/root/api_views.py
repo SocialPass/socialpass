@@ -45,6 +45,10 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
     """
     permission_classes = [AllowAny]
     def create(self, request, *args, **kwargs):
+        """
+        overriden create method to add arary of ticketdata,
+        based on the requiments verification response
+        """
         ticketdata = []
         for p in kwargs['reward_list']:
             ticketdata.append({
@@ -81,9 +85,10 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         if not sig_success:
             return Response(sig_msg, status=sig_code)
 
-        # validate requirements
+        # validate requirements against issued id's
+        # note: we exclude tickets created by this wallet
         gate = TicketGate.objects.get(public_id=serialized.data.get("tokengate_id"))
-        reward_ids = list(gate.tickets.all().values_list('token_id', flat=True))
+        reward_ids = list(gate.tickets.exclude(wallet_address=serialized.data.get("address")).values_list('token_id', flat=True))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
             reward_list=reward_ids

@@ -20,7 +20,7 @@ class GetSignatureObjectMixin:
     Mixin to get signature object
     """
 
-    def get_object(self, pk):
+    def get_signature(self, pk):
         try:
             return Signature.objects.get(unique_code=pk)
         except Exception:
@@ -48,35 +48,29 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
 
     def create(self, request, *args, **kwargs):
         """
-        overrode create method to add create array of ticket data,
-        based on the requirements verification response.
+        overrode create method to create and/or fetch ticket data,
+        as well as serializing / returning
         """
-        # setup and validate serializer data
+        # create and/or fetch ticket data
         ticketdata = []
-        for p in kwargs['reward_list']:
-            ticketdata.append({
-                "wallet_address": kwargs["wallet_address"],
-                "signature": kwargs["signature"],
-                "download_url": kwargs["download_url"],
-                "tokengate": kwargs["tokengate"],
-                "token_id": p
-            })
-        serializer = self.get_serializer(
+        for id in kwargs['current_reward_list']:
+            ticket = Ticket.objects.get_or_create(
+                wallet_address = kwargs["wallet_address"],
+                tokengate = kwargs["tokengate"],
+                token_id = id['token_id']
+            ))
+            if not ticket.signature:
+                ticket.signature = kwargs["signature"]
+                ticket.download_url = kwargs["download_url"]
+                ticket.save()
+            ticketdata.append(ticket)
+
+        # serialize & return ticket data
+        serializer = TicketSerializer(
             data=ticketdata,
             many=True
         )
         serializer.is_valid(raise_exception=True)
-
-        # create response data
-        response_data = []
-        for i in serializer.data:
-            print(i, serializer.data)
-            ticket = Ticket.objects.get_or_create(Ticket.objects.get_or_create(
-                wallet_address=i['wallet_address'],
-                tokengate=i["tokengate"],
-                token_id=i['token_id'],
-            ))
-            response_data.append(ticket)
         headers = self.get_success_headers(response_data)
         return Response(response_data, status=201, headers=headers)
 
@@ -90,7 +84,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         serialized.is_valid(raise_exception=True)
 
         # get signature obj, throw 404 if not fund
-        signature = self.get_object(serialized.data.get("signature_id"))
+        signature = self.get_signature(serialized.data.get("signature_id"))
 
         # validate signature;
         sig_success, sig_code, sig_msg = signature.validate(
@@ -107,7 +101,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         reward_ids = list(gate.tickets.exclude(wallet_address=serialized.data.get("address")).values_list('token_id', flat=True))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
-            reward_list=reward_ids
+            current_reward_list=reward_ids
         )
         if not req_success:
             return Response(req_msg, status=req_code)
@@ -119,7 +113,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             wallet_address=serialized.data.get("address"),
             download_url="https://test.local",
             tokengate=signature.tokengate,
-            reward_list=req_msg['valid_passes']
+            current_reward_list=req_msg['valid_passes']
         )
         return response
 
@@ -164,7 +158,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
         serialized.is_valid(raise_exception=True)
 
         # get signature obj, throw 404 if not fund
-        signature = self.get_object(serialized.data.get("signature_id"))
+        signature = self.get_signature(serialized.data.get("signature_id"))
 
         # validate signature;
         sig_success, sig_code, rsp_msg = signature.validate(
@@ -179,7 +173,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
         gate = AirdropGate.objects.get(id=serialized.data.get("tokengate_id"))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
-            reward_list=gate.airdrops.values_list('token_id', flat=True)
+            current_reward_list=gate.airdrops.values_list('token_id', flat=True)
         )
         if not req_success:
             return Response(req_msg, status=req_code)

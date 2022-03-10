@@ -70,6 +70,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         # create response data
         response_data = []
         for i in serializer.data:
+            print(i, serializer.data)
             ticket = Ticket.objects.get_or_create(Ticket.objects.get_or_create(
                 wallet_address=i['wallet_address'],
                 tokengate=i["tokengate"],

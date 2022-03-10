@@ -58,13 +58,13 @@ def verify_requirements(
             # check if token_balance meets req;
             # token_ids involve reward_list lookup; otherwise simple balanceOf
             if req.asset_type == "ERC721" or req.asset_type == "ERC1155":
-                valid_ids = []
+                validated_ids = []
                 for i in token_ids:
                     if i['token_id'] not in reward_list:
-                        valid_ids.append(i['token_id'])
-                    if len(valid_ids) >= gate_limit:
+                        validated_ids.append(i['token_id'])
+                    if len(validated_ids) >= gate_limit:
                         break
-                if len(valid_ids) < req.amount:
+                if len(validated_ids) < req.amount:
                     return HTTPException(status_code=403, detail="User does not meet requirements")
             if req.asset_type == "ERC20":
                 return HTTPException(status_code=400, detail="Not yet implemented")
@@ -73,5 +73,5 @@ def verify_requirements(
             return {
                 "wallet_address": wallet_address,
                 "token_balance": token_balance,
-                "valid_passes": valid_ids,
+                "validated_ids": validated_ids,
             }

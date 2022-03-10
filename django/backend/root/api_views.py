@@ -53,11 +53,11 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         """
         # create and/or fetch ticket data
         ticketdata = []
-        for id in kwargs['current_reward_list']:
+        for id in kwargs['validated_ids']:
             ticket = Ticket.objects.get_or_create(
                 wallet_address = kwargs["wallet_address"],
                 tokengate = kwargs["tokengate"],
-                token_id = id['token_id']
+                token_id = id
             ))
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
@@ -98,10 +98,10 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         # validate requirements against issued id's
         # note: we exclude tickets created by this wallet
         gate = TicketGate.objects.get(public_id=serialized.data.get("tokengate_id"))
-        reward_ids = list(gate.tickets.exclude(wallet_address=serialized.data.get("address")).values_list('token_id', flat=True))
+        issued_ids = list(gate.tickets.exclude(wallet_address=serialized.data.get("address")).values_list('token_id', flat=True))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
-            current_reward_list=reward_ids
+            current_reward_list=issued_ids
         )
         if not req_success:
             return Response(req_msg, status=req_code)
@@ -113,7 +113,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             wallet_address=serialized.data.get("address"),
             download_url="https://test.local",
             tokengate=signature.tokengate,
-            current_reward_list=req_msg['valid_passes']
+            validated_ids=req_msg['validated_ids']
         )
         return response
 

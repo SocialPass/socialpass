@@ -53,25 +53,26 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         # create and/or fetch ticket data
         ticketdata = []
         for id in kwargs['validated_ids']:
-            ticket = Ticket.objects.get_or_create(
+            ticket, created = Ticket.objects.get_or_create(
                 wallet_address = kwargs["wallet_address"],
                 tokengate = kwargs["tokengate"],
                 token_id = id
             )
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
-                ticket.download_url = kwargs["download_url"]
+                ticket.download_url = 'http://testing.local'
                 ticket.save()
-            ticketdata.append(ticket)
+            ticketdata.append(ticket.__dict__)
 
         # serialize & return ticket data
         serializer = TicketSerializer(
             data=ticketdata,
             many=True
         )
-        serializer.is_valid(raise_exception=True)
-        headers = self.get_success_headers(response_data)
-        return Response(response_data, status=201, headers=headers)
+        serializer.is_valid()
+        print(serializer.errors, serializer.data)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
     def post(self, request):
         """
@@ -100,7 +101,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         issued_ids = list(gate.tickets.exclude(wallet_address=serialized.data.get("address")).values_list('token_id', flat=True))
         req_success, req_code, req_msg = gate.validate_requirements(
             wallet_address=serialized.data.get("address"),
-            current_reward_list=issued_ids
+            reward_list=issued_ids
         )
         if not req_success:
             return Response(req_msg, status=req_code)
@@ -108,10 +109,9 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         # issue reward (201 created)
         response = self.create(
             request,
-            signature=serialized.data.get("signature_id"),
             wallet_address=serialized.data.get("address"),
-            download_url="https://test.local",
-            tokengate=signature.tokengate,
+            signature=signature,
+            tokengate=gate,
             validated_ids=req_msg['validated_ids']
         )
         return response

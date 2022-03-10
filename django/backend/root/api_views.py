@@ -44,10 +44,12 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
     and then creating / returning `TicketList` entry
     """
     permission_classes = [AllowAny]
+    serializer_class = TicketSerializer
+
     def create(self, request, *args, **kwargs):
         """
-        overriden create method to add arary of ticketdata,
-        based on the requiments verification response
+        overrode create method to add create array of ticket data,
+        based on the requirements verification response.
         """
         ticketdata = []
         for p in kwargs['reward_list']:
@@ -58,8 +60,8 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
                 "tokengate": kwargs["tokengate"],
                 "token_id": p
             })
-        print(ticketdata)
-        serializer = TicketSerializer(
+
+        serializer = self.get_serializer(
             data=ticketdata,
             many=True
         )
@@ -69,6 +71,10 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         return Response(serializer.data, status=201, headers=headers)
 
     def post(self, request):
+        """
+        overrode POST method to verify signature as well as requirements.
+        Will either throw HTTP error or proceed to reward creation
+        """
         # serialize and verify data
         serialized = VerifyGateSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
@@ -93,7 +99,6 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             wallet_address=serialized.data.get("address"),
             reward_list=reward_ids
         )
-        print(req_success, req_code, req_msg)
         if not req_success:
             return Response(req_msg, status=req_code)
 
@@ -168,7 +173,7 @@ class AirdropGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIVie
         )
         if not req_success:
             return Response(req_msg, status=req_code)
-        print(req_msg)
+
 
         # issue reward (201 created)
         response = self.create(

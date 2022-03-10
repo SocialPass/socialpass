@@ -198,7 +198,11 @@ class TokenGate(DBModel):
 
         # return tuple of (access:bool, status:int, msg:str)
         if resp.status_code == 200:
-            return True, 200, resp.json()
+            x = resp.json()
+            if x['status_code'] != 200:
+                return 403, 200, x['detail']
+            else:
+                return False, 200, x['detail']
         else:
             return False, 403, resp.txt
 

@@ -12,7 +12,7 @@ from .api_serializers import (
     TicketSerializer,
     VerifyGateSerializer,
 )
-from .models import AirdropGate, Signature, TicketGate
+from .models import AirdropGate, Signature, TicketGate, Ticket
 
 
 class GetSignatureObjectMixin:
@@ -51,6 +51,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         overrode create method to add create array of ticket data,
         based on the requirements verification response.
         """
+        # setup and validate serializer data
         ticketdata = []
         for p in kwargs['reward_list']:
             ticketdata.append({
@@ -60,15 +61,23 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
                 "tokengate": kwargs["tokengate"],
                 "token_id": p
             })
-
         serializer = self.get_serializer(
             data=ticketdata,
             many=True
         )
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
+
+        # create response data
+        response_data = []
+        for i in serializer.data:
+            ticket = Ticket.objects.get_or_create(Ticket.objects.get_or_create(
+                wallet_address=i['wallet_address'],
+                tokengate=i["tokengate"],
+                token_id=i['token_id'],
+            ))
+            response_data.append(ticket)
+        headers = self.get_success_headers(response_data)
+        return Response(response_data, status=201, headers=headers)
 
     def post(self, request):
         """

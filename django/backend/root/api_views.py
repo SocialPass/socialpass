@@ -44,7 +44,6 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
     and then creating / returning `TicketList` entry
     """
     permission_classes = [AllowAny]
-    serializer_class = TicketSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -58,7 +57,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
                 wallet_address = kwargs["wallet_address"],
                 tokengate = kwargs["tokengate"],
                 token_id = id
-            ))
+            )
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
                 ticket.download_url = kwargs["download_url"]

@@ -36,12 +36,7 @@ def verify_requirements(
             # determine / perform asset lookup
             # simple balanceOf for erc20, use moralis nfts for 721/1155
             if req.asset_type == "ERC20":
-                web3 = crud.get_web3(chain_id=req.chain_id)
-                token_balance = crud.balanceOf(
-                    w3=web3,
-                    contract_address=Web3.toChecksumAddress(req.asset_address),
-                    wallet_address=Web3.toChecksumAddress(wallet_address),
-                )
+                return HTTPException(status_code=400, detail="Not yet implemented")
             if req.asset_type == "ERC721":
                 tokens = crud.moralis_get_nfts(
                     chain_id=hex(req.chain_id),
@@ -72,29 +67,11 @@ def verify_requirements(
                 if len(valid_ids) < req.amount:
                     return HTTPException(status_code=403, detail="User does not meet requirements")
             if req.asset_type == "ERC20":
-                if token_balance < req.amount:
-                    return HTTPException(status_code=403, detail="User does not meet requirements")
+                return HTTPException(status_code=400, detail="Not yet implemented")
 
             # return
-            if valid_ids:
-                return {
-                    "wallet_address": wallet_address,
-                    "token_balance": token_balance,
-                    "valid_passes": valid_ids,
-                }
-            else:
-                # valid_ids's determine non-fungible passes
-                # for fungible tokens, divide required amount by the balance to get
-                # total valid passes
-                passes = []
-                counter = 0
-                _balance = token_balance
-                while _balance > 0:
-                    counter+=1
-                    passes.append(counter)
-                    _balance = _balance / req.amount
-                return {
-                    "wallet_address": wallet_address,
-                    "token_balance": token_balance,
-                    "valid_passes": lower
-                }
+            return {
+                "wallet_address": wallet_address,
+                "token_balance": token_balance,
+                "valid_passes": valid_ids,
+            }

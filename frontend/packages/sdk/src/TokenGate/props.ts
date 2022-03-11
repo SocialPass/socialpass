@@ -24,6 +24,8 @@ export interface TokenGateProviderInterface {
 export interface TokenGateContextInterface {
   id: string // ID of tokengate
   styles?: any // Styles of tokengate
+  gateType: any
+  setGateType: any
 
   step: number // Step of token gate
   setStep: any // Set step of token gate

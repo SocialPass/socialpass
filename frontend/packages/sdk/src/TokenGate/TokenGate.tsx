@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import AirdropGate from './gates/airdrop';
-import TicketGate from './gates/ticket';
 import Web3ProviderWrapper from './web3/wrapper';
+import BaseGate from './basegate';
 import { TokenGateProviderInterface } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
 import { fetchGateHandler } from './api';
+import './index.css'
 
 // GateHandler
 const GateHandler = () => {
-	const { id, json, setJson, httpStatus, setHttpStatus, httpStatus2 } = React.useContext(TokenGateContext);
+	const { id, json, styles, setGateType, setJson, httpStatus, setHttpStatus, httpStatus2 } = React.useContext(TokenGateContext);
 
 	// Gate Handler, updates on ID change
 	// Fetches & Sets TokenGate JSON
@@ -25,19 +25,6 @@ const GateHandler = () => {
 			}
 		})();
 	},[id]);
-
-	// Render correct gate based on type
-	const GateSwitch = () => {
-		let _id = id.split('_');
-		switch(_id[0]){
-			case 'AIRDROP':
-				return <AirdropGate/>
-			case 'TICKET':
-				return <TicketGate/>
-			default:
-				return <Loading/>
-		}
-	}
 
 	// Error Component
 	const Error = () => {
@@ -58,14 +45,20 @@ const GateHandler = () => {
 
 	const Styled = ({children}:{children:any}) => {
 		return (
-			<div style={{border: '1px solid red', padding: '1rem', width: '50%',}}>
-				<h1>SocialPass</h1>
-				{children}
+			<div className="styled-container">
+				<header className="styled-header">
+					<img src={require("../static/header1.svg")} alt="image" height="auto" width="100%"/>
+				</header>
+				<div className="styled-parent">
+					{children}
+				</div>
+				<footer className="styled-footer">
+					<small>?</small>
+					<small>SocialPass</small>
+				</footer>
 			</div>
 		)
 	}
-
-
 
 	// Status Wrapper
 	// Once httpStatus is 200, rendering is handed off to child gates
@@ -80,10 +73,15 @@ const GateHandler = () => {
 			return <Error/>
 		}
 
+		// 200 http status, indicates success
+		// return base gate and set gate type
+		if (httpStatus === 200) {
+			let _id = id.split('_');
+			setGateType(_id[0])
+			return <BaseGate/>
+		}
 
-		// 200 status, indicates success
-		// hand rendering off to child gates in GateSwitch
-		return <GateSwitch/>
+		return <Loading/>
 	}
 
 

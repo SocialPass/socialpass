@@ -1,0 +1,24 @@
+html, body {
+  height: 100%;
+}
+
+.styled-container {
+  overflow: hidden;
+  border-radius: 70px;
+  box-shadow: 0px 4px 24px 0px #00000040;
+}
+
+.styled-header {
+  overflow:hidden;
+}
+
+.styled-parent {
+  margin:0 3rem 1.5rem 3rem;
+}
+
+.styled-footer {
+  margin-top:auto;
+  display: flex;
+  margin:auto 3rem 1.5rem 3rem;
+  justify-content: space-between;
+}

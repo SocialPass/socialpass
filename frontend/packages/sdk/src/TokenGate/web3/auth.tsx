@@ -7,25 +7,13 @@ import { accessGateHandler } from '../api';
 const Web3ProviderAuthentication = () => {
 	/****************** GLOBALS *************************/
 	// context
-	const { id, json, setStep, setJson2, setHttpStatus2 } = React.useContext(TokenGateContext);
+	const { id, json, setJson2, setStep, setHttpStatus2 } = React.useContext(TokenGateContext);
 	// wallet connect hooks
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
 	// wallet account hooks
 	const [{ data: accountData, loading: accountLoading }, disconnect] = useAccount();
 	// walet sig hooks
 	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
-
-
-	/****************** HOOKS *************************/
-	// Step Handler, updates on accountData.address change
-	useEffect(() => {
-		if (accountData && accountData?.address) {
-			setStep(1);
-		} else {
-			setStep(0)
-		}
-	},[accountData?.address]);
-
 
 	/****************** FUNCTIONS *************************/
 	// Signature Handler
@@ -50,17 +38,11 @@ const Web3ProviderAuthentication = () => {
 				signed_message: signRes.data
 			});
 			if (response && response.httpStatus){
-				console.log(response)
 				setJson2(response);
-				setHttpStatus2(response.httpStatus)
+				setHttpStatus2(response.httpStatus);
+				setStep(2);
 			}
 		}
-
-
-		// Update Step
-		setStep(2);
-
-
 	}
 
 	/****************** RETURN *************************/

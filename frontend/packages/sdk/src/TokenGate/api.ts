@@ -5,9 +5,7 @@ import {
 	GateType,
 	APIRetrievalError,
 	TicketGateRetrievalResponse,
-	AidropGateRetrievalResponse,
 	APIAccessError,
-	AirdropGateAccessResponse,
 	TicketGateAccessResponse
 } from './props';
 
@@ -18,8 +16,6 @@ General
 export async function fetchGateHandler({id}:{id:string}){
 	let _id = id.split('_');
 	switch(_id[0]){
-		case 'AIRDROP':
-			return await fetchAirdropGate(id);
 		case 'TICKET':
 			return await fetchTicketGate(id);
 		default:
@@ -31,8 +27,6 @@ export async function fetchGateHandler({id}:{id:string}){
 export async function accessGateHandler({address, tokengate_id, signature_id, signed_message}:{address: string, tokengate_id: string, signature_id: string, signed_message: string}){
 	let _id = tokengate_id.split('_');
 	switch(_id[0]){
-		case 'AIRDROP':
-			return await accessAirdropGate(address, tokengate_id, signature_id, signed_message);
 		case 'TICKET':
 			return await accessTicketGate(address, tokengate_id, signature_id, signed_message);
 		default:
@@ -120,91 +114,18 @@ function accessTicketGate(address: string, tokengate_id: string, signature_id: s
 		}
 	  })
 	  .then((json) => {
-		  let obj = generateJson2Obj(json);
-		  Object.assign(obj, {
-			  "ticket_url": json.ticket_url
-		  })
-		  return obj as AirdropGateAccessResponse;
+		let response = [];
+		let obj = generateJson2Obj(json[0]);
+		Object.assign(obj, {
+			"download_url": json[0].download_url
+		});
+		return obj as TicketGateAccessResponse;
 	  })
 	  .catch((error) => {
 		let e = {
 			"httpStatus": error.status,
-			"message": error.json()
+			"message": error
 		}
 		return e as APIAccessError;
 	  });
-}
-
-/*
-AirdropGate Retrieval
-*/
-function fetchAirdropGate(id:string): Promise<APIRetrievalError> | Promise<AidropGateRetrievalResponse > {
-	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/retrieve/${id}/?format=json`).then((response) => {
-	  if (response.ok) {
-		return response.json();
-	  } else {
-		  throw response;
-	  }
-	})
-	.then((json) => {
-		// set base response object and assign additional type-specific properties
-		let obj = generateJson1Obj(json);
-		Object.assign(obj, {
-			"asset_address": json.asset_address,
-			"asset_type": json.asset_type,
-			"chain": json.chain,
-			"end_date": json.end_date,
-		})
-		return obj as AidropGateRetrievalResponse;
-	})
-	.catch((error) => {
-		let e = {
-			"httpStatus": error.status,
-			"message": error.json()
-		}
-	    return e as APIRetrievalError;
-	});
-}
-
-/*
-AirdropGate Access
-*/
-function accessAirdropGate(address: string, tokengate_id: string, signature_id: string, signed_message: string): Promise<APIAccessError> | Promise<AirdropGateAccessResponse> {
-	var myHeaders = new Headers();
-	myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-
-	var urlencoded = new URLSearchParams();
-	urlencoded.append("address", address);
-	urlencoded.append("tokengate_id", tokengate_id);
-	urlencoded.append("signature_id", signature_id);
-	urlencoded.append("signed_message", signed_message);
-
-	var requestOptions = {
-	  method: 'POST',
-	  headers: myHeaders,
-	  body: urlencoded,
-	};
-
-	return fetch(`${process.env.REACT_APP_API_URL}/airdropgates/access/`, requestOptions)
-	.then((response) => {
-		if (response.ok) {
-			return response.json();
-		} else {
-			throw response;
-		}
-	})
-	.then((json) => {
-		let obj = generateJson2Obj(json);
-		Object.assign(obj, {
-			"transaction_hash": json.transaction_hash
-		})
-		return obj as TicketGateAccessResponse;
-	})
-	.catch((error) => {
-		let e = {
-			"httpStatus": error.status,
-			"message": error.json()
-		}
-		return e as APIRetrievalError;
-	});
 }

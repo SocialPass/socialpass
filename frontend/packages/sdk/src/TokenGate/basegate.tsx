@@ -4,7 +4,6 @@ import Web3ProviderAuthentication from "./web3/auth";
 
 const BaseGate = () => {
 	const { gateType, json, json2, step, setStep } = React.useContext(TokenGateContext);
-
 	// Step 0
 	// Initial Get Access
 	if (step === 0){

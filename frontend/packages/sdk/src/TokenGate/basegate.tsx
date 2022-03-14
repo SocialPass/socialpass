@@ -9,13 +9,15 @@ const BaseGate = () => {
 	// Initial Get Access
 	if (step === 0){
 	return (
-		<div style={{display:'flex', justifyContent: 'space-between'}}>
-			<div style={{display:'flex', flexDirection:'column'}}>
+		<div className="styled-base-gate">
+			<div>
 				<img src={json.team_image} alt="Team Image"/>
 				<h3>{json.team_name}</h3>
 				<h1>{json.title}</h1>
 			</div>
-			<button onClick={() => setStep(1)}>Get Access</button>
+			<div>
+				<button onClick={() => setStep(1)}>Get Access</button>
+			</div>
 		</div>
 	)}
 
@@ -23,7 +25,7 @@ const BaseGate = () => {
 	// Select Wallet || Sign Message
 	if (step === 1){
 	return (
-		<div style={{display:'flex', justifyContent: 'space-between'}}>
+		<div className="styled-base-gate">
 			<Web3ProviderAuthentication/>
 		</div>
 	)}
@@ -34,7 +36,7 @@ const BaseGate = () => {
 	if (step === 2){
 	console.log(json2);
 	return (
-		<div style={{display:'flex', justifyContent: 'space-between'}}>
+		<div className="styled-base-gate">
 			JSON2 Response
 		</div>
 	)}

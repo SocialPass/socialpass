@@ -2,17 +2,21 @@ html, body {
   height: 100%;
 }
 
+
+/* containers */
 .styled-container {
   overflow: hidden;
-  border-radius: 70px;
+  border-radius: 35px;
   box-shadow: 0px 4px 24px 0px #00000040;
 }
 
 .styled-header {
+  height:30vh;
   overflow:hidden;
 }
 
 .styled-parent {
+  height:45vh;
   margin:0 3rem 1.5rem 3rem;
 }
 
@@ -21,4 +25,12 @@ html, body {
   display: flex;
   margin:auto 3rem 1.5rem 3rem;
   justify-content: space-between;
+}
+
+.styled-base-gate {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
 }

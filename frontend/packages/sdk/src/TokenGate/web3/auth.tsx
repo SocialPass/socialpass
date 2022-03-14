@@ -50,17 +50,21 @@ const Web3ProviderAuthentication = () => {
 	if (accountData) {
 		return (
 		  <div>
-			<h4>Verify Wallet</h4>
-			{accountData.ens?.avatar && <img src={accountData.ens?.avatar || ''} alt="ENS Avatar" />}
+			<h1>Verify Wallet</h1>
 			<div>
-			  {accountData.ens?.name
-				? `${accountData.ens?.name} (${accountData.address})`
-				: accountData.address}
+				<div>
+				{accountData.ens?.avatar && <img src={accountData.ens?.avatar || ''} alt="ENS Avatar" />}
+		  		{accountData.ens?.name
+					? `${accountData.ens?.name} (${accountData.address})`
+					: accountData.address}
+				</div>
+				<div>
+					<div>Connected to {accountData.connector?.name}</div>
+					<button onClick={() => signatureHandler()}>Sign Message</button>
+					<br/>
+					<button onClick={() => disconnect()}>Disconnect</button>
+				</div>
 			</div>
-			<div>Connected to {accountData.connector?.name}</div>
-			<button onClick={() => disconnect()}>Disconnect</button>
-			<button onClick={() => signatureHandler()}>Sign Message</button>
-			<br/>
 		  </div>
 		)
 	}
@@ -69,13 +73,16 @@ const Web3ProviderAuthentication = () => {
 	else {
 		return (
 			<div>
-				<h4>Connect Wallet</h4>
-			    {connectData.connectors.map((x) => (
-				<button disabled={!x.ready} key={x.id} onClick={() => connect(x)}>
-				  {x.name}
-				  {!x.ready && ' (unsupported)'}
-				</button>
-			  ))}
+				<h1>Connect Wallet</h1>
+				<div>
+			    	{connectData.connectors.map((x) => (
+					<button disabled={!x.ready} key={x.id}
+						onClick={() => connect(x)}>
+				  		{x.name}
+				  		{!x.ready && ' (unsupported)'}
+					</button>
+			  	))}
+			  	</div>
 			  {connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
 			  <br/>
 			</div>

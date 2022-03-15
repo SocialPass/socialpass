@@ -25,21 +25,21 @@ for item in SOFTWARE_TYPES:
 REQUIREMENTS_SCHEMA = {
     "type": "array",
     "title": "Blockchain Requirements",
-    "minItems": 1,
+    "format": "tabs",
     "properties": {},
     "items": {
         "title": "Requirement",
         "type": "object",
-        "required": ["blockchain", "asset_address", "amount"],
+        "required": ["blockchain", "asset_address", "amount", "chain_id", "asset_type"],
         "properties": {
             "blockchain": {
                 "type": "string",
-                "title": "blockchain",
+                "title": "Blockchain",
                 "enum": BLOCKCHAINS_ENUM
             },
             "chain_id": {
                 "type": "integer",
-                "title": "Chain ID",
+                "title": "Network",
                 "enum": CHAIN_ID_ENUM
             },
             "asset_type": {
@@ -55,13 +55,17 @@ REQUIREMENTS_SCHEMA = {
             "amount": {
                 "type": "integer",
                 "title": "Required Amount",
-                "default": 1,
-                "minimum": 1
+                "format": "number",
+                "minimum": 1,
             },
             "token_id": {
                 "type": "array",
                 "title": "Token IDs",
-                "items": {"type": "integer", "title": "Token ID"}, "minItems": 0
+                "items": {
+                    "type": "integer",
+                    "title": "Token ID",
+                },
+                "minItems": 0
             },
         },
     },

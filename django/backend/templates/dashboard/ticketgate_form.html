@@ -9,11 +9,10 @@
 {% block content %}
 <script src="{% static 'js/json-editor.min.js' %}"></script>
 <div class="row">
-	<div class="col-sm-10 col-md-8 mx-auto">
+	<div class="col-sm-10 col-md-12 mx-auto">
 		<div class="card mb-4">
 			<div class="card-header py-0">
 				<div class="d-flex align-items-center py-3">
-
 					{% if url_name == 'ticketgate_create'  %}
 					<div class="pe-2">
 						<h6 class="m-0">Ticket Gate Create</h6>
@@ -57,12 +56,18 @@
     theme: 'spectre',
     iconlib: 'fontawesome5',
     // UI
+    array_controls_top: true,
     disable_collapse: true,
+    disable_array_delete_all_rows: true,
+    disable_array_delete_last_row: true,
+    disable_array_reorder: true,
     disable_edit_json: true,
     disable_properties: true,
+    keep_oneof_values: false,
+    prompt_before_delete: false,
     remove_button_labels: true,
-    show_opt_in: true,
+    show_opt_in: false,
   });
-  console.log(editor)
+
 </script>
 {% endblock %}

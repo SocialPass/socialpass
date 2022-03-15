@@ -311,7 +311,6 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         "date",
         "location",
         "capacity",
-        "requirements",
     ]
     template_name = "dashboard/ticketgate_form.html"
 
@@ -351,9 +350,17 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
         "date",
         "location",
         "capacity",
-        "requirements",
     ]
     template_name = "dashboard/ticketgate_form.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        overrode to set json_schema as well as json data
+        """
+        context = super().get_context_data(**kwargs)
+        context['json_schema'] = json.dumps(REQUIREMENTS_SCHEMA)
+        print(context['json_schema'])
+        return context
 
     def get_queryset(self):
         qs = TicketGate.objects.filter(team__id=self.kwargs["team_pk"])

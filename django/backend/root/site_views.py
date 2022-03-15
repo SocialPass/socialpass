@@ -1,3 +1,4 @@
+import json
 from django.conf import settings
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,7 @@ from invitations.views import AcceptInvite
 from .forms import TeamForm, CustomInviteForm
 from .models import AirdropGate, Team, TicketGate, Membership, Invite
 from .site_permissions import team_has_permissions
+from .model_field_schemas import REQUIREMENTS_SCHEMA
 
 User = auth.get_user_model()
 
@@ -309,10 +311,18 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         "date",
         "location",
         "capacity",
-        "deadline",
         "requirements",
     ]
     template_name = "dashboard/ticketgate_form.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        overrode to set json_schema
+        """
+        context = super().get_context_data(**kwargs)
+        context['json_schema'] = json.dumps(REQUIREMENTS_SCHEMA)
+        print(context['json_schema'])
+        return context
 
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
@@ -341,7 +351,6 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
         "date",
         "location",
         "capacity",
-        "deadline",
         "requirements",
     ]
     template_name = "dashboard/ticketgate_form.html"

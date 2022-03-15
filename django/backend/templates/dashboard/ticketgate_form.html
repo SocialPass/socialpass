@@ -7,6 +7,7 @@
 {% block navbar_page_name_2 %}Ticket Gate {% if url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %}{% endblock %}
 
 {% block content %}
+<script src="{% static 'js/json-editor.min.js' %}"></script>
 <div class="row">
 	<div class="col-sm-10 col-md-8 mx-auto">
 		<div class="card mb-4">
@@ -38,6 +39,7 @@
 				<form class="form" method="post">
 					{% csrf_token %}
 					{{ form|crispy }}
+          <div id="editor_holder"></div>
 					<div class="text-end my-3">
 						<input type="submit" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
 					</div>
@@ -46,4 +48,21 @@
 		</div>
 	</div>
 </div>
+<script>
+  // Initialize the editor with a JSON schema
+  var _schema = '{{json_schema|safe}}';
+  console.log(_schema)
+  var editor = new JSONEditor(document.getElementById('editor_holder'),{
+    schema: JSON.parse(_schema),
+    theme: 'spectre',
+    iconlib: 'fontawesome5',
+    // UI
+    disable_collapse: true,
+    disable_edit_json: true,
+    disable_properties: true,
+    remove_button_labels: true,
+    show_opt_in: true,
+  });
+  console.log(editor)
+</script>
 {% endblock %}

@@ -33,7 +33,6 @@
 								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
 								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
 								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Capacity</th>
-								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Deadline</th>
 								<th class="text-secondary opacity-7"></th>
 							</tr>
 						</thead>
@@ -59,12 +58,6 @@
 									<span class="text-secondary text-xs font-weight-bold">
 									{{ tokengate.capacity }}
 									</span>
-								</td>
-                                <td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-									{{ tokengate.deadline.date }}
-									</span>
-								</td>
 								<td class="align-middle">
 									<a href="{% url 'ticketgate_detail' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
 									Details

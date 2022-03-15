@@ -24,23 +24,46 @@ for item in SOFTWARE_TYPES:
 
 REQUIREMENTS_SCHEMA = {
     "type": "array",
+    "title": "Blockchain Requirements",
+    "minItems": 1,
+    "properties": {},
     "items": {
+        "title": "Requirement",
         "type": "object",
+        "required": ["blockchain", "asset_address", "amount"],
         "properties": {
-            "blockchain": {"type": "string", "enum": BLOCKCHAINS_ENUM},
-            "chain_id": {"type": "integer", "enum": CHAIN_ID_ENUM},
-            "asset_type": {"type": "string", "enum": ASSET_TYPES_ENUM},
-            "asset_address": {"type": "string", "pattern": "^(0x|0X).*$"},
-            "amount": {"type": "integer", "minimum": 1},
-            "token_id": {"type": "array", "items": {"type": "integer"}, "minItems": 0},
+            "blockchain": {
+                "type": "string",
+                "title": "blockchain",
+                "enum": BLOCKCHAINS_ENUM
+            },
+            "chain_id": {
+                "type": "integer",
+                "title": "Chain ID",
+                "enum": CHAIN_ID_ENUM
+            },
+            "asset_type": {
+                "type": "string",
+                "title": "Asset Type",
+                "enum": ASSET_TYPES_ENUM
+            },
+            "asset_address": {
+                "type": "string",
+                "title": "Asset Address",
+                "pattern": "^(0x|0X).*$"
+            },
+            "amount": {
+                "type": "integer",
+                "title": "Required Amount",
+                "default": 1,
+                "minimum": 1
+            },
+            "token_id": {
+                "type": "array",
+                "title": "Token IDs",
+                "items": {"type": "integer", "title": "Token ID"}, "minItems": 0
+            },
         },
-        "required": ["blockchain", "amount"],
-        "anyOf": [
-            {
-                "properties": {"blockchain": {"enum": ["EVM"]}},
-                "required": ["chain_id", "asset_type", "asset_address"],
-            }
-        ],
     },
 }
 

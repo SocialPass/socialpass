@@ -74,50 +74,6 @@
 								</td>
 							</tr>
 						</tbody>
-						<tbody>
-							{% for tokengate in tokengates %}
-							<tr>
-								<td class="align-middle">
-									<div class="ps-3">
-										<h6 class="mb-0 text-sm">{{ tokengate.title }}</h6>
-										<p class="text-xs text-secondary mb-0">{% get_chain_name tokengate.chain %}</p>
-									</div>
-								</td>
-								<td class="align-middle">
-									<p class="text-xs font-weight-bold mb-0">{{ tokengate.asset_type }}</p>
-									<p class="text-xs text-secondary mb-0">{{ tokengate.asset_address }}</p>
-								</td>
-								<td class="align-middle">
-									<p class="text-xs text-secondary mb-0">
-										<span>Per person: </span>
-										<strong>{{ tokengate.amount_per_person }}</strong>
-									</p>
-									<p class="text-xs text-secondary mb-0">
-										<span>Total: </span>
-										<strong>{{ tokengate.total_amount }}</strong>
-									</p>
-								</td>
-								<td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-									{{ tokengate.start_date.date }}
-									</span>
-								</td>
-								<td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-									{{ tokengate.end_date.date }}
-									</span>
-								</td>
-								<td class="align-middle">
-									<a href="{% url 'ticketgate_detail' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
-									Details
-									</a>
-									<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 px-0">
-									Edit
-									</a>
-								</td>
-							</tr>
-							{% endfor %}
-						</tbody>
 					</table>
 				</div>
 				<div class="my-3 mb-lg-4">

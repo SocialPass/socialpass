@@ -12,7 +12,7 @@ from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
 from .forms import TeamForm, CustomInviteForm
-from .models import Team, Membership, Invite, TicketGate
+from .models import Team, Membership, Invite, TicketGate, Ticket
 from .site_permissions import team_has_permissions
 from .model_field_schemas import REQUIREMENTS_SCHEMA
 
@@ -184,7 +184,7 @@ class TicketGateDetailView(WebsiteCommonMixin, DetailView):
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = TicketGate.objects.filter(team__id=self.kwargs["team_pk"])
+        qs = TicketGate.objects.filter(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
         return qs
 
 
@@ -210,7 +210,6 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         """
         context = super().get_context_data(**kwargs)
         context['json_schema'] = json.dumps(REQUIREMENTS_SCHEMA)
-        print(context['json_schema'])
         return context
 
     def form_valid(self, form, **kwargs):
@@ -230,7 +229,7 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
-    Updates an Ticket token gate.
+    Updates a Ticket token gate.
     """
 
     model = TicketGate
@@ -249,11 +248,10 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
         """
         context = super().get_context_data(**kwargs)
         context['json_schema'] = json.dumps(REQUIREMENTS_SCHEMA)
-        print(context['json_schema'])
         return context
 
     def get_queryset(self):
-        qs = TicketGate.objects.filter(team__id=self.kwargs["team_pk"])
+        qs = TicketGate.objects.filter(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
         return qs
 
     def get_success_url(self):
@@ -267,3 +265,36 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
                 self.object.pk,
             ),
         )
+
+@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
+class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
+    """
+    Returns a list of ticket stats from ticket tokengates.
+    """
+
+    model = Ticket
+    paginate_by = 15
+    context_object_name = "tickets"
+    template_name = "dashboard/ticketgate_stats.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        overrode to set json_schema as well as json data
+        """
+        context = super().get_context_data(**kwargs)
+        context['current_gate'] = TicketGate.objects.get(pk=self.kwargs["pk"],team__id=self.kwargs["team_pk"])
+        return context
+
+    def get_queryset(self):
+        """
+        get queryset of Ticket models from given TicketGate
+        """
+        gate = TicketGate.objects.get(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
+        qs = gate.tickets.all()
+        qs = qs.order_by("-modified")
+
+        query_address = self.request.GET.get("address", "")
+        if query_address:
+            qs = qs.filter(wallet_address__icontains=query_address)
+
+        return qs

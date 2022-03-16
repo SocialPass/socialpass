@@ -56,4 +56,9 @@ urlpatterns = [
         site_views.TicketGateUpdateView.as_view(),
         name="ticketgate_update",
     ),
+    path(
+        "<int:team_pk>/ticketgates/<int:pk>/stats/",
+        site_views.TicketGateStatisticsView.as_view(),
+        name="ticketgate_stats",
+    ),
 ]

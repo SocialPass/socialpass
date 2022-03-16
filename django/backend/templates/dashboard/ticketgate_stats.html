@@ -30,6 +30,7 @@
               <tr>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Issued At</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Address</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Redeemed</th>
                 <th class="text-secondary opacity-7"></th>
               </tr>
             </thead>
@@ -47,7 +48,15 @@
                   </span>
                 </td>
                 <td class="align-middle">
-
+                  <span class="text-secondary text-xs font-weight-bold">
+                    {% if ticket.redeemed %}
+                    Yes
+                    {% else %}
+                    No
+                    {% endif %}
+                  </span>
+                </td>
+                <td class="align-middle">
                 </td>
               </tr>
               {% endfor %}

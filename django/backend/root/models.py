@@ -321,6 +321,7 @@ class Ticket(DBModel):
     wallet_address = models.CharField(max_length=400)
     token_id = models.IntegerField(null=True, blank=True)
     download_url = models.URLField()
+    redeemed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Ticket List (Token Gate: {self.tokengate.title})"

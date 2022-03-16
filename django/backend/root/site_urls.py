@@ -5,12 +5,15 @@ from django.views.generic import TemplateView
 from . import site_views
 
 urlpatterns = [
-    # General
-    path("", site_views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
     # User
-    url(r'^accept-invite/(?P<key>\w+)/?$', site_views.AcceptInviteView.as_view(), name='accept_invite'),
     path("accounts/info/", site_views.UserDetailView.as_view(), name="user_detail"),
+    url(
+        r'^accept-invite/(?P<key>\w+)/?$',
+        site_views.AcceptInviteView.as_view(),
+        name='accept_invite'
+    ),
     # Team
+    path("", site_views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
     path("<int:team_pk>/", site_views.DashboardView.as_view(), name="dashboard"),
     path(
         "<int:team_pk>/team-detail/",
@@ -31,27 +34,6 @@ urlpatterns = [
         "<int:team_pk>/team-members/<int:member_pk>/",
         site_views.TeamMemberDeleteView.as_view(),
         name="team_member_delete",
-    ),
-    # Airdrop token gates
-    path(
-        "<int:team_pk>/airdropgates/",
-        site_views.RedirectToTeamView.as_view(),
-        name="airdropgate_list",
-    ),
-    path(
-        "<int:team_pk>/airdropgates/create/",
-        site_views.RedirectToTeamView.as_view(),
-        name="airdropgate_create",
-    ),
-    path(
-        "<int:team_pk>/airdropgates/<int:pk>/",
-        site_views.RedirectToTeamView.as_view(),
-        name="airdropgate_detail",
-    ),
-    path(
-        "<int:team_pk>/airdropgates/<int:pk>/update/",
-        site_views.RedirectToTeamView.as_view(),
-        name="airdropgate_update",
     ),
     # Ticket token gates
     path(

@@ -13,6 +13,20 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image"]
 
 
+
+class VerifyGateSerializer(serializers.Serializer):
+    """
+    Serializes /access request for all token gates
+    Accepts a signed message & corresponding wallet address,
+    as well related 'public_id'
+    """
+
+    address = serializers.CharField()
+    signed_message = serializers.CharField()
+    tokengate_id = serializers.CharField()
+    signature_id = serializers.CharField()
+
+
 class BaseGateSerializer(serializers.ModelSerializer):
     """
     Base token gate serializer
@@ -34,52 +48,6 @@ class BaseGateSerializer(serializers.ModelSerializer):
 
     def get_signature(self, gate):
         return gate.generate_signature_request()
-
-
-class VerifyGateSerializer(serializers.Serializer):
-    """
-    Serializes /access request for all token gates
-    Accepts a signed message & corresponding wallet address,
-    as well related 'public_id'
-    """
-
-    address = serializers.CharField()
-    signed_message = serializers.CharField()
-    tokengate_id = serializers.CharField()
-    signature_id = serializers.CharField()
-
-
-class AirdropGateSerializer(BaseGateSerializer):
-    """
-    Serializes Airdrop token gates.
-    """
-
-    class Meta:
-        model = AirdropGate
-        fields = BaseGateSerializer.Meta.fields + [
-            "asset_address",
-            "asset_type",
-            "chain",
-            "end_date",
-        ]
-
-
-class AirdropSerializer(serializers.ModelSerializer):
-    """
-    Serializes Airdrop.
-    """
-
-    tokengate = serializers.PrimaryKeyRelatedField(
-        queryset=AirdropGate.objects.all(), write_only=True
-    )
-    signature = serializers.PrimaryKeyRelatedField(
-        queryset=Signature.objects.all(), write_only=True
-    )
-
-    class Meta:
-        model = Airdrop
-        fields = ["tokengate", "signature", "wallet_address", "transaction_hash"]
-
 
 class TicketGateSerializer(BaseGateSerializer):
     """

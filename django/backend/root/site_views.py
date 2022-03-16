@@ -12,7 +12,7 @@ from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
 from .forms import TeamForm, CustomInviteForm
-from .models import AirdropGate, Team, TicketGate, Membership, Invite
+from .models import Team, Membership, Invite, TicketGate
 from .site_permissions import team_has_permissions
 from .model_field_schemas import REQUIREMENTS_SCHEMA
 
@@ -149,116 +149,6 @@ class TeamUpdateView(WebsiteCommonMixin, UpdateView):
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
-
-
-@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
-class AirdropGateListView(WebsiteCommonMixin, ListView):
-    """
-    Returns a list of Airdrop token gates.
-    """
-
-    model = AirdropGate
-    paginate_by = 15
-    context_object_name = "tokengates"
-    template_name = "dashboard/airdropgate_list.html"
-
-    def get_queryset(self):
-        qs = AirdropGate.objects.filter(team__id=self.kwargs["team_pk"])
-        qs = qs.order_by("-modified")
-
-        query_title = self.request.GET.get("title", "")
-        if query_title:
-            qs = qs.filter(title__icontains=query_title)
-
-        return qs
-
-
-@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
-class AirdropGateDetailView(WebsiteCommonMixin, DetailView):
-    """
-    Returns the details of an Airdrop token gate.
-    """
-
-    model = AirdropGate
-    context_object_name = "tokengate"
-    template_name = "dashboard/airdropgate_detail.html"
-
-    def get_queryset(self):
-        qs = AirdropGate.objects.filter(team__id=self.kwargs["team_pk"])
-        return qs
-
-
-@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
-class AirdropGateCreateView(WebsiteCommonMixin, CreateView):
-    """
-    Creates a new Airdrop token gate.
-    """
-
-    model = AirdropGate
-    fields = [
-        "title",
-        "description",
-        "chain",
-        "asset_type",
-        "asset_address",
-        "amount_per_person",
-        "total_amount",
-        "start_date",
-        "end_date",
-        "requirements",
-    ]
-    template_name = "dashboard/airdropgate_form.html"
-
-    def form_valid(self, form, **kwargs):
-        context = self.get_context_data(**kwargs)
-        form.instance.team = context["current_team"]
-        form.instance.user = self.request.user
-        form.instance.general_type = "AIRDROP"
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Token gate created successfully."
-        )
-        return reverse("airdropgate_list", args=(self.kwargs["team_pk"],))
-
-
-@method_decorator(team_has_permissions(software_type="AIRDROP"), name="dispatch")
-class AirdropGateUpdateView(WebsiteCommonMixin, UpdateView):
-    """
-    Updates an Airdrop token gate.
-    """
-
-    model = AirdropGate
-    fields = [
-        "title",
-        "description",
-        "chain",
-        "asset_type",
-        "asset_address",
-        "amount_per_person",
-        "total_amount",
-        "start_date",
-        "end_date",
-        "requirements",
-    ]
-    template_name = "dashboard/airdropgate_form.html"
-
-    def get_queryset(self):
-        qs = AirdropGate.objects.filter(team__id=self.kwargs["team_pk"])
-        return qs
-
-    def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Token gate updated successfully."
-        )
-        return reverse(
-            "airdropgate_detail",
-            args=(
-                self.kwargs["team_pk"],
-                self.object.pk,
-            ),
-        )
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")

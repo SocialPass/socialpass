@@ -55,12 +55,13 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default=None)
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#cloudfront
 AWS_S3_CUSTOM_DOMAIN = env("DJANGO_AWS_S3_CUSTOM_DOMAIN", default=None)
-aws_s3_domain = AWS_S3_CUSTOM_DOMAIN or f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+aws_s3_domain = AWS_S3_CUSTOM_DOMAIN # or f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+
 # STATIC
-# ------------------------
-# STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
-# COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
-# STATIC_URL = f"https://{aws_s3_domain}/static/"
+# ------------------------------------------------------------------------------
+STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
+STATIC_URL = f"https://{aws_s3_domain}/static/"
+
 # MEDIA
 # ------------------------------------------------------------------------------
 DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"

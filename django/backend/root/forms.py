@@ -1,7 +1,7 @@
 from django import forms
 from invitations.forms import InvitationAdminAddForm, InviteForm
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited, UserRegisteredEmail
-from root.models import Team, Invite
+from root.models import Team, Invite, TicketGate
 
 class TeamForm(forms.ModelForm):
     """
@@ -13,6 +13,23 @@ class TeamForm(forms.ModelForm):
         exclude = [
             "software_types",
         ]
+
+class TicketGateForm(forms.ModelForm):
+    """
+    Allows ticketgate information to be updated.
+    """
+
+    class Meta:
+        model = TicketGate
+        fields = [
+               "title",
+               "description",
+               "date",
+               "location",
+               "capacity",
+               "requirements"
+        ]
+        widgets = {'requirements': forms.HiddenInput()}
 
 class CustomInviteForm(InviteForm):
     def validate_invitation(self, email):

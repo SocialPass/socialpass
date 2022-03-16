@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
-from .forms import TeamForm, CustomInviteForm
+from .forms import TeamForm, CustomInviteForm, TicketGateForm
 from .models import Team, Membership, Invite, TicketGate, Ticket
 from .site_permissions import team_has_permissions
 from .model_field_schemas import REQUIREMENTS_SCHEMA
@@ -195,13 +195,7 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
     """
 
     model = TicketGate
-    fields = [
-        "title",
-        "description",
-        "date",
-        "location",
-        "capacity",
-    ]
+    form_class = TicketGateForm
     template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):
@@ -233,13 +227,7 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
 
     model = TicketGate
-    fields = [
-        "title",
-        "description",
-        "date",
-        "location",
-        "capacity",
-    ]
+    form_class = TicketGateForm
     template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):

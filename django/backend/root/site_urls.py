@@ -7,6 +7,7 @@ from . import site_views
 urlpatterns = [
     # User
     path("accounts/info/", site_views.UserDetailView.as_view(), name="user_detail"),
+    path("accounts/delete/", site_views.UserDeleteView.as_view(), name="user_delete"),
     url(
         r'^accept-invite/(?P<key>\w+)/?$',
         site_views.AcceptInviteView.as_view(),

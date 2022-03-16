@@ -37,6 +37,23 @@ class UserDetailView(TemplateView):
 
     template_name = "account/detail.html"
 
+class UserDeleteView(DeleteView):
+    """
+    Returns the details of the logged in user.
+    """
+    model = User
+    template_name = "account/delete.html"
+
+    def get_object(self):
+        return self.request.user
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "User was deleted successfully."
+        )
+        return reverse("account_login")
+
+
 
 class RedirectToTeamView(RedirectView):
     """

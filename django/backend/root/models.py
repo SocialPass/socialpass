@@ -87,8 +87,8 @@ class Membership(DBModel):
     Membership manager for users <> teams
     """
 
-    team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     objects = CustomMembershipManager()
 
     class Meta:
@@ -126,7 +126,7 @@ class TokenGate(DBModel):
     public_id = models.CharField(
         max_length=64, editable=False, unique=True, db_index=True
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tokengates")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="tokengates")
     team = models.ForeignKey(
         Team, on_delete=models.CASCADE, blank=True, related_name="tokengates"
     )

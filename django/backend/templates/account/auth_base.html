@@ -46,7 +46,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'dashboard' member.team.pk %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
-                <i class="fa-solid fa-house-chimney"></i>
+                {% if member.team.image %}
+                <img src="{{member.team.image.url }}" alt="" height="30" width="30">
+                {% endif %}
               </div>
               <span class="nav-link-text">{{member.team.name}}</span>
             </a>

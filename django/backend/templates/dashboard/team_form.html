@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static i18n get_chain_name crispy_forms_tags %}
 
-{% block title %}Ticket Gate Form - SocialPass {% endblock %}
+{% block title %}Team Update - SocialPass {% endblock %}
 
 {% block navbar_page_name_1 %}Team Update {% endblock %}
 {% block navbar_page_name_2 %}Team Update {% endblock %}
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="card-body py-2">
-        <form class="form" method="post">
+        <form class="form" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{form|crispy}}
           <div class="text-end my-3">

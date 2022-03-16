@@ -153,7 +153,9 @@
 						<div class="dropdown p-0 m-0">
 							<a class="d-flex align-items-center btn btn-link px-0 m-0" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="d-none d-sm-inline ms-2">{{current_team.name}}</span>
-                <img src="{{current_team.image}}" alt="" height="30" width="30">
+                {% if current_team.image %}
+                <img src="{{current_team.image.url }}" alt="" height="30" width="30">
+                {% endif %}
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="userDropdown">
                 <strong class="nav-item">

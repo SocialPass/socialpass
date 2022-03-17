@@ -102,7 +102,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         )
         if not req_success:
             return Response(req_msg, status=req_code)
-
+        print(req_msg, req_code)
         # issue reward (201 created)
         response = self.create(
             request,

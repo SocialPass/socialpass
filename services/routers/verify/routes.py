@@ -36,7 +36,7 @@ def verify_requirements(
             # determine / perform asset lookup
             # simple balanceOf for erc20, use moralis nfts for 721/1155
             if req.asset_type == "ERC20":
-                return HTTPException(status_code=400, detail="Not yet implemented")
+                raise HTTPException(status_code=400, detail="Not yet implemented")
             if req.asset_type == "ERC721":
                 tokens = crud.moralis_get_nfts(
                     chain_id=hex(req.chain_id),
@@ -65,9 +65,9 @@ def verify_requirements(
                     if len(validated_ids) >= gate_limit:
                         break
                 if len(validated_ids) < req.amount:
-                    return HTTPException(status_code=403, detail="User does not meet requirements")
+                    raise HTTPException(status_code=403, detail="User does not meet requirements")
             if req.asset_type == "ERC20":
-                return HTTPException(status_code=400, detail="Not yet implemented")
+                raise HTTPException(status_code=400, detail="Not yet implemented")
 
             # return
             return {

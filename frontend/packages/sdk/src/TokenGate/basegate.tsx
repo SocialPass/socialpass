@@ -10,7 +10,7 @@ const BaseGate = () => {
 	return (
 		<div className="styled-base-gate">
 			<div>
-				<img src={json.team_image} alt="Team Image"/>
+				<img src={json.team_image} alt="Team Image" height="25" width="25"/>
 				<h3>{json.team_name}</h3>
 				<h1>{json.title}</h1>
 			</div>

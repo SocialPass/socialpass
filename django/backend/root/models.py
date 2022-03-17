@@ -304,6 +304,11 @@ class TicketGate(TokenGate):
     """
 
     date = models.DateTimeField()
+    timezone = models.CharField(
+        null=True,
+        verbose_name="time zone",
+        max_length=30,
+    )
     location = models.CharField(max_length=1024)
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
 

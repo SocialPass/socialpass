@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import reverse, redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView, ContextMixin
@@ -224,10 +225,15 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         return context
 
     def form_valid(self, form, **kwargs):
+        # set timzeone
+        tz = form.cleaned_data['timezone']
+        timezone.activate(tz)
+        # set rest of form
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
         form.instance.general_type = "TICKET"
+        form.save()
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -242,22 +248,27 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates a Ticket token gate.
     """
-
     model = TicketGate
     form_class = TicketGateForm
+    slug_field = "pk"
+    slug_url_kwarg = "pk"
     template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):
         """
-        overrode to set json_schema as well as json data
+        overrode to set json_schema
         """
         context = super().get_context_data(**kwargs)
         context['json_schema'] = json.dumps(REQUIREMENTS_SCHEMA)
         return context
 
-    def get_queryset(self):
-        qs = TicketGate.objects.filter(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
-        return qs
+    def get_object(self):
+        """
+        overrode to set timezone
+        """
+        obj = super().get_object()
+        timezone.activate(obj.timezone)
+        return obj
 
     def get_success_url(self):
         messages.add_message(

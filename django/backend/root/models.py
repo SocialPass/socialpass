@@ -197,11 +197,11 @@ class TokenGate(DBModel):
         resp = requests.get(f'{settings.SERVICES_URL}/verify/requirements', headers=headers, params=params, json=json_data)
 
         # return tuple of (access:bool, status:int, msg:str)
+        x = resp.json()
         if resp.status_code == 200:
-            x = resp.json()
             return True, 200, x
         else:
-            return False, 403, resp.txt
+            return False, 403, x
 
 
     def save(self, *args, **kwargs):

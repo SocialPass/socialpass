@@ -11,23 +11,15 @@
   <div class="col-sm-10 col-md-8 mx-auto">
     <div class="card mb-4">
       <div class="card-header py-0">
-        <div class="d-flex align-items-center py-3">
-          <div class="pe-2">
-            <h6 class="m-0">Delete Account</h6>
-            <div class="text-muted text-xs mb-3">
-              Use the following form to delete a team member
-            </div>
-          </div>
-        </div>
       </div>
       <div class="card-body py-2">
         <h3 class="font-weight-bolder">Delete account</h3>
-        <p>{% translate 'Are you sure you want to delete your account?' %}</p>
-        <form class="form" method="post">
+        <p>Are you sure you want to delete your account? Account deletion is irreversible.</p>
+        <form class="form" method="post" onsubmit="return confirm('Delete Account Forever?');">
           {% csrf_token %}
           {{ form|crispy }}
-          <div class="text-end">
-            <input type="submit" value="Delete" class="btn btn-danger btn-sm ms-auto my-0">
+          <div class="text-start">
+            <input type="submit" value="Delete" class="btn btn-danger btn-sm ms-auto">
           </div>
         </form>
       </div>

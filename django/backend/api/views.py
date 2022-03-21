@@ -2,11 +2,11 @@ from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from root.models import Signature, Ticket, TicketGate
 
 from django.http import Http404
 
 from .serializers import TicketGateSerializer, TicketSerializer, VerifyGateSerializer
-from root.models import Signature, Ticket, TicketGate
 
 
 class GetSignatureObjectMixin:

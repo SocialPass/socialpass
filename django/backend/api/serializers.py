@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from root.models import Signature, Team, Ticket, TicketGate
 
 

@@ -1,6 +1,6 @@
-from django.shortcuts import redirect
-
 from root.models import Membership
+
+from django.shortcuts import redirect
 
 
 def team_has_permissions(software_type: str):

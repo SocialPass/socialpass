@@ -10,5 +10,9 @@ urlpatterns = [
         views.TicketGateRetrieve.as_view(),
         name="ticketgate-retrieve",
     ),
-    path("ticketgates/access/", views.TicketGateAccess.as_view(), name="ticketgate-access"),
+    path(
+        "ticketgates/access/",
+        views.TicketGateAccess.as_view(),
+        name="ticketgate-access",
+    ),
 ]

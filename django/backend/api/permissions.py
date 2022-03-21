@@ -1,5 +1,4 @@
 from rest_framework import permissions
-
 from root.models import TokenGate
 
 

@@ -1,8 +1,8 @@
-import json
+from typing import List
+
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
 from web3 import Web3
+
 from . import crud
 
 router = APIRouter(
@@ -10,13 +10,14 @@ router = APIRouter(
     tags=["blockchain"],
 )
 
+
 @router.get("/verify-requirements")
 def verify_requirements(
     wallet_address: str,
     gate_type: crud.GateTypeEnum,
     gate_limit: int,
     reward_list: List[str],
-    requirements: List[crud.Requirements]
+    requirements: List[crud.Requirements],
 ):
     """
     Given a wallet address and array of requirements, `verify_requirements` will loop through
@@ -43,8 +44,8 @@ def verify_requirements(
                     contract_address=Web3.toChecksumAddress(req.asset_address),
                     wallet_address=Web3.toChecksumAddress(wallet_address),
                 )
-                token_ids = tokens['result']
-                token_balance = tokens['total']
+                token_ids = tokens["result"]
+                token_balance = tokens["total"]
 
             if req.asset_type == "ERC1155":
                 tokens = crud.moralis_get_nfts(
@@ -52,20 +53,22 @@ def verify_requirements(
                     contract_address=Web3.toChecksumAddress(req.asset_address),
                     wallet_address=Web3.toChecksumAddress(wallet_address),
                 )
-                token_ids = tokens['result']
-                token_balance = tokens['total']
+                token_ids = tokens["result"]
+                token_balance = tokens["total"]
 
             # check if token_balance meets req;
             # token_ids involve reward_list lookup; otherwise simple balanceOf
             if req.asset_type == "ERC721" or req.asset_type == "ERC1155":
                 validated_ids = []
                 for i in token_ids:
-                    if i['token_id'] not in reward_list:
-                        validated_ids.append(i['token_id'])
+                    if i["token_id"] not in reward_list:
+                        validated_ids.append(i["token_id"])
                     if len(validated_ids) >= gate_limit:
                         break
                 if len(validated_ids) < req.amount:
-                    raise HTTPException(status_code=403, detail="User does not meet requirements")
+                    raise HTTPException(
+                        status_code=403, detail="User does not meet requirements"
+                    )
             if req.asset_type == "ERC20":
                 raise HTTPException(status_code=400, detail="Not yet implemented")
 

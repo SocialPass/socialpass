@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from .crud import ticket_getter_lambda_handler
 
 # setup router

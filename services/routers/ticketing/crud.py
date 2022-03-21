@@ -1,8 +1,9 @@
 import base64
 import io
 import json
-import boto3
 import uuid
+
+import boto3
 from PIL import Image
 
 ## GLOBALS

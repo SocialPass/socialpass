@@ -1,23 +1,25 @@
 import json
+
+from invitations.views import AcceptInvite
+
 from django.conf import settings
-from django.contrib import messages, auth
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import reverse, redirect
+from django.contrib import auth, messages
+from django.shortcuts import redirect, reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-from django.views.generic.base import RedirectView, ContextMixin
+from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
-from invitations.views import AcceptInvite
 
-from .forms import TeamForm, CustomInviteForm, TicketGateForm
-from .models import Team, Membership, Invite, TicketGate, Ticket
-from .site_permissions import team_has_permissions
+from .forms import CustomInviteForm, TeamForm, TicketGateForm
 from .model_field_schemas import REQUIREMENTS_SCHEMA
+from .models import Membership, Team, Ticket, TicketGate
+from .site_permissions import team_has_permissions
 
 User = auth.get_user_model()
+
 
 class WebsiteCommonMixin(ContextMixin):
     """
@@ -38,10 +40,12 @@ class UserDetailView(TemplateView):
 
     template_name = "account/detail.html"
 
+
 class UserDeleteView(DeleteView):
     """
     Returns the details of the logged in user.
     """
+
     model = User
     template_name = "account/delete.html"
 
@@ -53,7 +57,6 @@ class UserDeleteView(DeleteView):
             self.request, messages.SUCCESS, "User was deleted successfully."
         )
         return reverse("account_login")
-
 
 
 class RedirectToTeamView(RedirectView):
@@ -72,7 +75,7 @@ class RedirectToTeamView(RedirectView):
             if membership:
                 return reverse("dashboard", args=(membership.team.pk,))
             else:
-                return 'https://socialpass.io'
+                return "https://socialpass.io"
         else:
             return reverse("account_login")
 
@@ -100,13 +103,14 @@ class TeamMemberManageView(WebsiteCommonMixin, FormView):
     """
     Manage a team's members.
     """
+
     form_class = CustomInviteForm
     template_name = "dashboard/member_form.html"
 
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
-        instance = form.save(email=form.cleaned_data.get('email'))
-        instance.team = context['current_team']
+        instance = form.save(email=form.cleaned_data.get("email"))
+        instance.team = context["current_team"]
         instance.inviter = self.request.user
         instance.save()
         instance.send_invitation(self.request)
@@ -117,6 +121,7 @@ class TeamMemberManageView(WebsiteCommonMixin, FormView):
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
         return reverse("team_members", args=(self.kwargs["team_pk"],))
+
 
 @method_decorator(team_has_permissions(software_type=""), name="dispatch")
 class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
@@ -134,10 +139,12 @@ class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
         )
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
+
 class AcceptInviteView(AcceptInvite):
     """
     Inherited AcceptInvite from beekeeper-invitations
     """
+
     def post(self, *args, **kwargs):
         """
         Override invite view to either redirect to login or signup,
@@ -146,10 +153,12 @@ class AcceptInviteView(AcceptInvite):
         try:
             self.object = self.get_object()
             user = User.objects.get(email__iexact=self.object.email)
-            super().post(self, *args, **kwargs)
-            return redirect(reverse(settings.LOGIN_URL))
-        except Exception as e:
+            if user:
+                super().post(self, *args, **kwargs)
+                return redirect(reverse(settings.LOGIN_URL))
+        except Exception:
             return super().post(self, *args, **kwargs)
+
 
 @method_decorator(team_has_permissions(software_type=""), name="dispatch")
 class TeamUpdateView(WebsiteCommonMixin, UpdateView):
@@ -202,7 +211,9 @@ class TicketGateDetailView(WebsiteCommonMixin, DetailView):
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = TicketGate.objects.filter(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
+        qs = TicketGate.objects.filter(
+            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
+        )
         return qs
 
 
@@ -221,12 +232,12 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         overrode to set json_schema
         """
         context = super().get_context_data(**kwargs)
-        context['json_schema'] = json.dumps(REQUIREMENTS_SCHEMA)
+        context["json_schema"] = json.dumps(REQUIREMENTS_SCHEMA)
         return context
 
     def form_valid(self, form, **kwargs):
         # set timzeone
-        tz = form.cleaned_data['timezone']
+        tz = form.cleaned_data["timezone"]
         timezone.activate(tz)
         # set rest of form
         context = self.get_context_data(**kwargs)
@@ -248,6 +259,7 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates a Ticket token gate.
     """
+
     model = TicketGate
     form_class = TicketGateForm
     slug_field = "pk"
@@ -259,7 +271,7 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
         overrode to set json_schema
         """
         context = super().get_context_data(**kwargs)
-        context['json_schema'] = json.dumps(REQUIREMENTS_SCHEMA)
+        context["json_schema"] = json.dumps(REQUIREMENTS_SCHEMA)
         return context
 
     def get_object(self):
@@ -282,6 +294,7 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
             ),
         )
 
+
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
     """
@@ -298,14 +311,18 @@ class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
         overrode to set json_schema as well as json data
         """
         context = super().get_context_data(**kwargs)
-        context['current_gate'] = TicketGate.objects.get(pk=self.kwargs["pk"],team__id=self.kwargs["team_pk"])
+        context["current_gate"] = TicketGate.objects.get(
+            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
+        )
         return context
 
     def get_queryset(self):
         """
         get queryset of Ticket models from given TicketGate
         """
-        gate = TicketGate.objects.get(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
+        gate = TicketGate.objects.get(
+            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
+        )
         qs = gate.tickets.all()
         qs = qs.order_by("-modified")
 

@@ -1,15 +1,12 @@
-from django.http import Http404
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .api_serializers import (
-    TicketGateSerializer,
-    TicketSerializer,
-    VerifyGateSerializer,
-)
-from .models import Signature, TicketGate, Ticket
+from django.http import Http404
+
+from .api_serializers import TicketGateSerializer, TicketSerializer, VerifyGateSerializer
+from .models import Signature, Ticket, TicketGate
 
 
 class GetSignatureObjectMixin:
@@ -40,6 +37,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
     APIView for accessing ticket gate via verified `Signature`,
     and then creating / returning `TicketList` entry
     """
+
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
@@ -49,23 +47,20 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         """
         # create and/or fetch ticket data
         ticketdata = []
-        for id in kwargs['validated_ids']:
+        for id in kwargs["validated_ids"]:
             ticket, created = Ticket.objects.get_or_create(
-                wallet_address = kwargs["wallet_address"],
-                tokengate = kwargs["tokengate"],
-                token_id = id
+                wallet_address=kwargs["wallet_address"],
+                tokengate=kwargs["tokengate"],
+                token_id=id,
             )
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
-                ticket.download_url = 'http://testing.local'
+                ticket.download_url = "http://testing.local"
                 ticket.save()
             ticketdata.append(ticket.__dict__)
 
         # serialize & return ticket data
-        serializer = TicketSerializer(
-            data=ticketdata,
-            many=True
-        )
+        serializer = TicketSerializer(data=ticketdata, many=True)
         serializer.is_valid()
         print(serializer.errors, serializer.data)
         headers = self.get_success_headers(serializer.data)
@@ -95,20 +90,25 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         # validate requirements against issued id's
         # note: we exclude tickets created by this wallet
         gate = TicketGate.objects.get(public_id=serialized.data.get("tokengate_id"))
-        issued_ids = list(gate.tickets.exclude(wallet_address=serialized.data.get("address")).values_list('token_id', flat=True))
-        req_success, req_code, req_msg = gate.validate_requirements(
-            wallet_address=serialized.data.get("address"),
-            reward_list=issued_ids
+        issued_ids = list(
+            gate.tickets.exclude(
+                wallet_address=serialized.data.get("address")
+            ).values_list("token_id", flat=True)
         )
+        req_success, req_code, req_msg = gate.validate_requirements(
+            wallet_address=serialized.data.get("address"), reward_list=issued_ids
+        )
+
         if not req_success:
             return Response(req_msg, status=req_code)
         print(req_msg, req_code)
+
         # issue reward (201 created)
         response = self.create(
             request,
             wallet_address=serialized.data.get("address"),
             signature=signature,
             tokengate=gate,
-            validated_ids=req_msg['validated_ids']
+            validated_ids=req_msg["validated_ids"],
         )
         return response

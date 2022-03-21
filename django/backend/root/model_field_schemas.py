@@ -35,22 +35,18 @@ REQUIREMENTS_SCHEMA = {
             "blockchain": {
                 "type": "string",
                 "title": "Blockchain",
-                "enum": BLOCKCHAINS_ENUM
+                "enum": BLOCKCHAINS_ENUM,
             },
-            "chain_id": {
-                "type": "integer",
-                "title": "Network",
-                "enum": CHAIN_ID_ENUM
-            },
+            "chain_id": {"type": "integer", "title": "Network", "enum": CHAIN_ID_ENUM},
             "asset_type": {
                 "type": "string",
                 "title": "Asset Type",
-                "enum": ASSET_TYPES_ENUM
+                "enum": ASSET_TYPES_ENUM,
             },
             "asset_address": {
                 "type": "string",
                 "title": "Asset Address",
-                "pattern": "^(0x|0X).*$"
+                "pattern": "^(0x|0X).*$",
             },
             "amount": {
                 "type": "integer",
@@ -65,7 +61,7 @@ REQUIREMENTS_SCHEMA = {
                     "type": "integer",
                     "title": "Token ID",
                 },
-                "minItems": 0
+                "minItems": 0,
             },
         },
     },

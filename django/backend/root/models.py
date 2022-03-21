@@ -1,29 +1,20 @@
 import uuid
-import requests
 from datetime import datetime, timedelta
 
+import requests
 from eth_account.messages import encode_defunct
-from invitations.adapters import get_invitations_adapter
 from invitations.models import Invitation
-from invitations.signals import invite_url_sent
 from model_utils.models import TimeStampedModel
 from pytz import utc
 from web3.auto import w3
 
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.utils import timezone
-from django.shortcuts import reverse
 
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
-from .model_field_schemas import (
-    REQUIREMENTS_SCHEMA,
-    REQUIREMENTS_SCHEMA_REQUIRED,
-    SOFTWARE_TYPES_SCHEMA,
-)
+from .model_field_schemas import REQUIREMENTS_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
 
 
@@ -94,9 +85,11 @@ class Membership(DBModel):
     class Meta:
         unique_together = ("team", "user")
 
+
 class InvitationAbstract(Invitation):
     class Meta:
         abstract = True
+
 
 class Invite(InvitationAbstract):
     """
@@ -104,15 +97,15 @@ class Invite(InvitationAbstract):
 
     Includes team on create
     """
+
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
     archived_email = models.EmailField(blank=True, null=True)
 
     def send_invitation(self, request, **kwargs):
         # set custom kwargs for template
-        kwargs = {
-            'team': self.team
-        }
+        kwargs = {"team": self.team}
         return super(Invite, self).send_invitation(request, **kwargs)
+
 
 class TokenGate(DBModel):
     """
@@ -123,10 +116,13 @@ class TokenGate(DBModel):
     Please note, this model should NOT be abstract so that other tables are
     able reference this table directly using foreign keys.
     """
+
     public_id = models.CharField(
         max_length=64, editable=False, unique=True, db_index=True
     )
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="tokengates")
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="tokengates"
+    )
     team = models.ForeignKey(
         Team, on_delete=models.CASCADE, blank=True, related_name="tokengates"
     )
@@ -139,7 +135,9 @@ class TokenGate(DBModel):
         null=True,
         validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA)],
     )
-    limit_per_person = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
+    limit_per_person = models.IntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+    )
 
     def __str__(self):
         return self.title
@@ -179,22 +177,27 @@ class TokenGate(DBModel):
         or 403 forbidden for unauthenticated
         """
         headers = {
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
+            "accept": "application/json",
+            "Content-Type": "application/json",
         }
 
         params = (
-            ('wallet_address', kwargs['wallet_address']),
-            ('gate_type', self.general_type),
-            ('gate_limit', self.limit_per_person),
+            ("wallet_address", kwargs["wallet_address"]),
+            ("gate_type", self.general_type),
+            ("gate_limit", self.limit_per_person),
         )
 
         json_data = {
-            'reward_list': kwargs['reward_list'],
-            'requirements': self.requirements
+            "reward_list": kwargs["reward_list"],
+            "requirements": self.requirements,
         }
 
-        resp = requests.get(f'{settings.SERVICES_URL}/verify/requirements', headers=headers, params=params, json=json_data)
+        resp = requests.get(
+            f"{settings.SERVICES_URL}/verify/requirements",
+            headers=headers,
+            params=params,
+            json=json_data,
+        )
 
         # return tuple of (access:bool, status:int, msg:str)
         x = resp.json()
@@ -202,7 +205,6 @@ class TokenGate(DBModel):
             return True, 200, x
         else:
             return False, 403, x
-
 
     def save(self, *args, **kwargs):
         """
@@ -270,6 +272,7 @@ class AirdropGate(TokenGate):
     """
     Stores an Airdrop type token gate.
     """
+
     chain = models.CharField(max_length=50, choices=BLOCKCHAINS)
     asset_type = models.CharField(max_length=50, choices=ASSET_TYPES)
     asset_address = models.CharField(max_length=400)
@@ -317,6 +320,7 @@ class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticket token gates.
     """
+
     tokengate = models.ForeignKey(
         TicketGate, on_delete=models.CASCADE, related_name="tickets"
     )

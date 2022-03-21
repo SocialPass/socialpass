@@ -11,7 +11,7 @@ urlpatterns = [
     # User management
     path("accounts/", include("allauth.urls")),
     # Invite management
-    path("invitations/", include('invitations.urls', namespace='invitations')),
+    path("invitations/", include("invitations.urls", namespace="invitations")),
     # Custom stuff goes here
     path("", include("root.site_urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

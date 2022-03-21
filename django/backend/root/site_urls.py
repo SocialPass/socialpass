@@ -1,6 +1,5 @@
 from django.conf.urls import url
 from django.urls import path
-from django.views.generic import TemplateView
 
 from . import site_views
 
@@ -9,9 +8,9 @@ urlpatterns = [
     path("accounts/info/", site_views.UserDetailView.as_view(), name="user_detail"),
     path("accounts/delete/", site_views.UserDeleteView.as_view(), name="user_delete"),
     url(
-        r'^accept-invite/(?P<key>\w+)/?$',
+        r"^accept-invite/(?P<key>\w+)/?$",
         site_views.AcceptInviteView.as_view(),
-        name='accept_invite'
+        name="accept_invite",
     ),
     # Team
     path("", site_views.RedirectToTeamView.as_view(), name="dashboard_redirect"),

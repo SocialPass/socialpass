@@ -1,9 +1,6 @@
 from django.urls import path
 
-from .api_views import (
-    TicketGateAccess,
-    TicketGateRetrieve,
-)
+from .api_views import TicketGateAccess, TicketGateRetrieve
 
 app_name = "root"
 urlpatterns = [

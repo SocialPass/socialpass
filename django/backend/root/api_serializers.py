@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Airdrop, AirdropGate, Signature, Team, Ticket, TicketGate
+from .models import Signature, Team, Ticket, TicketGate
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -11,7 +11,6 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ["name", "image"]
-
 
 
 class VerifyGateSerializer(serializers.Serializer):
@@ -43,11 +42,12 @@ class BaseGateSerializer(serializers.ModelSerializer):
             "description",
             "requirements",
             "signature",
-            "limit_per_person"
+            "limit_per_person",
         ]
 
     def get_signature(self, gate):
         return gate.generate_signature_request()
+
 
 class TicketGateSerializer(BaseGateSerializer):
     """
@@ -77,4 +77,10 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["wallet_address", "token_id", "download_url", "tokengate", "signature"]
+        fields = [
+            "wallet_address",
+            "token_id",
+            "download_url",
+            "tokengate",
+            "signature",
+        ]

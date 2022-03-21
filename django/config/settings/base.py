@@ -84,7 +84,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    "invitations"
+    "invitations",
 ]
 
 LOCAL_APPS = [
@@ -304,9 +304,9 @@ CORS_ALLOWED_ORIGINS = env.list(
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-## Django Invitations
+# Django Invitations
 INVITATIONS_INVITATION_MODEL = "root.Invite"
-ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
+ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 INVITATIONS_INVITATION_ONLY = True
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER

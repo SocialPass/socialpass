@@ -11,13 +11,13 @@ router = APIRouter(
 )
 
 
-@router.get("/verify-requirements")
+@router.post("/verify-requirements")
 def verify_requirements(
     wallet_address: str,
     gate_type: crud.GateTypeEnum,
     gate_limit: int,
     reward_list: List[str],
-    requirements: List[crud.Requirements],
+    requirements: List[crud.Requirement],
 ):
     """
     Given a wallet address and array of requirements, `verify_requirements` will loop through
@@ -34,47 +34,9 @@ def verify_requirements(
 
         # EVM
         if req.blockchain == "EVM":
-            # determine / perform asset lookup
-            # simple balanceOf for erc20, use moralis nfts for 721/1155
-            if req.asset_type == "ERC20":
-                raise HTTPException(status_code=400, detail="Not yet implemented")
-            if req.asset_type == "ERC721":
-                tokens = crud.moralis_get_nfts(
-                    chain_id=hex(req.chain_id),
-                    contract_address=Web3.toChecksumAddress(req.asset_address),
-                    wallet_address=Web3.toChecksumAddress(wallet_address),
-                )
-                token_ids = tokens["result"]
-                token_balance = tokens["total"]
-
-            if req.asset_type == "ERC1155":
-                tokens = crud.moralis_get_nfts(
-                    chain_id=hex(req.chain_id),
-                    contract_address=Web3.toChecksumAddress(req.asset_address),
-                    wallet_address=Web3.toChecksumAddress(wallet_address),
-                )
-                token_ids = tokens["result"]
-                token_balance = tokens["total"]
-
-            # check if token_balance meets req;
-            # token_ids involve reward_list lookup; otherwise simple balanceOf
-            if req.asset_type == "ERC721" or req.asset_type == "ERC1155":
-                validated_ids = []
-                for i in token_ids:
-                    if i["token_id"] not in reward_list:
-                        validated_ids.append(i["token_id"])
-                    if len(validated_ids) >= gate_limit:
-                        break
-                if len(validated_ids) < req.amount:
-                    raise HTTPException(
-                        status_code=403, detail="User does not meet requirements"
-                    )
-            if req.asset_type == "ERC20":
-                raise HTTPException(status_code=400, detail="Not yet implemented")
-
-            # return
-            return {
-                "wallet_address": wallet_address,
-                "token_balance": token_balance,
-                "validated_ids": validated_ids,
-            }
+            return crud.verify_evm_requirement(
+                req=req,
+                gate_limit=gate_limit,
+                reward_list=reward_list,
+                wallet_address=wallet_address
+            )

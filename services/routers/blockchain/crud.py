@@ -3,6 +3,7 @@ from enum import Enum
 from typing import List, Optional
 
 import requests
+from fastapi import HTTPException
 from eth_abi import decode_single, encode_abi, encode_single
 from pydantic import BaseModel
 from web3 import Web3
@@ -11,7 +12,7 @@ from web3 import Web3
 #
 # SCHEMAS
 #
-class Requirements(BaseModel):
+class Requirement(BaseModel):
     amount: int
     blockchain: str = "EVM"
     chain_id: Optional[int] = 1
@@ -26,7 +27,62 @@ class GateTypeEnum(Enum):
 
 
 #
-# FUNCTIONS
+# MAIN FUNCTIONS
+#
+def verify_evm_requirement(
+    req:Requirement,
+    gate_limit:int,
+    wallet_address:str,
+    reward_list:List[str]
+):
+    # Perform initial asset lookup
+    # ERC20 - Not yet implemented
+    if req.asset_type == "ERC20":
+        raise HTTPException(status_code=400, detail="Not yet implemented")
+    # ERC1155 - Not yet implemented
+    if req.asset_type == "ERC1155":
+        raise HTTPException(status_code=400, detail="Not yet implemented")
+    # ERC721 - Fetch list of owned token ID's
+    if req.asset_type == "ERC721":
+        tokens = moralis_get_nfts(
+            chain_id=hex(req.chain_id),
+            contract_address=Web3.toChecksumAddress(req.asset_address),
+            wallet_address=Web3.toChecksumAddress(wallet_address),
+        )
+        token_ids = tokens["result"]
+        token_balance = tokens["total"]
+
+    # Assert asset lookup response
+    if req.asset_type == "ERC20":
+        raise HTTPException(status_code=400, detail="Not yet implemented")
+    # ERC1155 - Not yet implemented
+    if req.asset_type == "ERC1155":
+        raise HTTPException(status_code=400, detail="Not yet implemented")
+
+    # ERC721: Verify retrieved ID's against the given reward_list
+    if req.asset_type == "ERC721":
+        validated_ids = []
+        for i in token_ids:
+            if i["token_id"] not in reward_list:
+                validated_ids.append(i["token_id"])
+            if len(validated_ids) >= gate_limit:
+                break
+        if len(validated_ids) < req.amount:
+            raise HTTPException(
+                status_code=403, detail="User does not meet requirements"
+            )
+
+    # return
+    return {
+        "wallet_address": wallet_address,
+        "token_balance": token_balance,
+        "validated_ids": validated_ids,
+    }
+
+
+
+#
+# INTERNAL FUNCTIONS
 #
 def moralis_get_nfts(chain_id: str, wallet_address: str, contract_address: str):
     """

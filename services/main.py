@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 from pydantic import BaseSettings
-from routers.verify import routes as VerifyRouter
+from routers.blockchain import routes as Blockchain
 
 
 # init settings
@@ -12,4 +12,4 @@ class Settings(BaseSettings):
 app = FastAPI()
 
 # setup routers
-app.include_router(VerifyRouter.router)
+app.include_router(Blockchain.router)

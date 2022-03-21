@@ -13,13 +13,13 @@ urlpatterns = [
     # Invite management
     path("invitations/", include("invitations.urls", namespace="invitations")),
     # Custom stuff goes here
-    path("", include("root.site_urls")),
+    path("", include("dashboard.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # DRF API URLS
 urlpatterns += [
     # API base url
-    path("api/", include("root.api_urls")),
+    path("api/", include("api.urls")),
 ]
 
 # Debug URL's

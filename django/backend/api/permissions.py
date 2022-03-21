@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from .models import TokenGate
+from root.models import TokenGate
 
 
 class IsTeamMember(permissions.BasePermission):

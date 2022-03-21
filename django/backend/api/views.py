@@ -5,8 +5,8 @@ from rest_framework.response import Response
 
 from django.http import Http404
 
-from .api_serializers import TicketGateSerializer, TicketSerializer, VerifyGateSerializer
-from .models import Signature, Ticket, TicketGate
+from .serializers import TicketGateSerializer, TicketSerializer, VerifyGateSerializer
+from root.models import Signature, Ticket, TicketGate
 
 
 class GetSignatureObjectMixin:

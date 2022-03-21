@@ -1,14 +1,14 @@
 from django.urls import path
 
-from .api_views import TicketGateAccess, TicketGateRetrieve
+from . import views
 
 app_name = "root"
 urlpatterns = [
     # ticketing
     path(
         "ticketgates/retrieve/<str:public_id>/",
-        TicketGateRetrieve.as_view(),
+        views.TicketGateRetrieve.as_view(),
         name="ticketgate-retrieve",
     ),
-    path("ticketgates/access/", TicketGateAccess.as_view(), name="ticketgate-access"),
+    path("ticketgates/access/", views.TicketGateAccess.as_view(), name="ticketgate-access"),
 ]

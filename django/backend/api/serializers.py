@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Signature, Team, Ticket, TicketGate
+from root.models import Signature, Team, Ticket, TicketGate
 
 
 class TeamSerializer(serializers.ModelSerializer):

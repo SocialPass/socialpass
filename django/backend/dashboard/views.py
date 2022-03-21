@@ -13,10 +13,10 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from .forms import CustomInviteForm, TeamForm, TicketGateForm
-from .model_field_schemas import REQUIREMENTS_SCHEMA
-from .models import Membership, Team, Ticket, TicketGate
-from .site_permissions import team_has_permissions
+from root.forms import CustomInviteForm, TeamForm, TicketGateForm
+from root.model_field_schemas import REQUIREMENTS_SCHEMA
+from root.models import Membership, Team, Ticket, TicketGate
+from .permissions import team_has_permissions
 
 User = auth.get_user_model()
 

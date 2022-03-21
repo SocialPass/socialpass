@@ -6,11 +6,11 @@ from web3 import Web3
 from . import crud
 
 router = APIRouter(
-    prefix="/verify",
-    tags=["verify"],
+    prefix="/blockchain",
+    tags=["blockchain"],
 )
 
-@router.get("/requirements")
+@router.get("/verify-requirements")
 def verify_requirements(
     wallet_address: str,
     gate_type: crud.GateTypeEnum,

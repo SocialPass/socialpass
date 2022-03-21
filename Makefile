@@ -56,9 +56,11 @@ fast-run: ## Install fastapi requirements
 	(source venv/bin/activate; cd services && uvicorn main:app --reload --port 8080)
 
 
-# git
-git-master: ## push to master
-	git push origin master
 
-git-staging: ## push staging to master
-	git push origin master:staging
+# frontend
+frontend-setup: ## install js requirements
+	cd frontend && yarn;
+
+frontend-run: ## Start django ++ fastapi server
+	cd frontend && yarn start & \
+	cd frontend && yarn storybook

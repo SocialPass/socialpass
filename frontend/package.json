@@ -1,18 +1,18 @@
 {
-  "name": "@nfty/frontend",
+  "name": "@socialpass/frontend",
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "yarn workspace @nfty/sdk start",
-    "build": "yarn workspace @nfty/sdk build",
-    "test": "yarn workspace @nfty/sdk test",
-    "lint": "yarn workspace @nfty/sdk lint",
-    "prepare": "yarn workspace @nfty/sdk prepare",
-    "size": "yarn workspace @nfty/sdk size",
-    "analyze": "yarn workspace @nfty/sdk analyze",
-    "storybook": "yarn workspace @nfty/sdk storybook",
-    "build-storybook": "yarn workspace @nfty/sdk build-storybook"
+    "start": "yarn workspace @socialpass/sdk start",
+    "build": "yarn workspace @socialpass/sdk build",
+    "test": "yarn workspace @socialpass/sdk test",
+    "lint": "yarn workspace @socialpass/sdk lint",
+    "prepare": "yarn workspace @socialpass/sdk prepare",
+    "size": "yarn workspace @socialpass/sdk size",
+    "analyze": "yarn workspace @socialpass/sdk analyze",
+    "storybook": "yarn workspace @socialpass/sdk storybook",
+    "build-storybook": "yarn workspace @socialpass/sdk build-storybook"
   },
   "workspaces": {
     "packages": [

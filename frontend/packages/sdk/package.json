@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "license": "MIT",
-  "name": "@nfty/sdk",
+  "name": "@socialpass/sdk",
   "author": "rizzo",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

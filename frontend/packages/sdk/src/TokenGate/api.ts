@@ -1,5 +1,5 @@
 /*
-API Interface for @nfty/sdk <> nfty django
+API Interface for @socialpass/sdk <> nfty django
 */
 import {
 	GateType,

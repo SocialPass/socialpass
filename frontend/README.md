@@ -1,7 +1,7 @@
 # SocialPass Development
-Monorepo setup with yarn workspaces and lerna. All projects are in the `packages` folder with the `@nfty` namespace.
+Monorepo setup with yarn workspaces and lerna. All projects are in the `packages` folder with the `socialpass` namespace.
 
-`@nfty/sdk` contains core SocialPass SDK, namely the `<TokenGate/>` component.
+`socialpass/sdk` contains core SocialPass SDK, namely the `<TokenGate/>` component.
 
 More documentation can be found in `packages/sdk/README.md`
 

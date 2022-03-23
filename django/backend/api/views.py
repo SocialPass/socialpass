@@ -10,7 +10,7 @@ from django.http import Http404
 from .serializers import (
     TeamSerializer,
     TokenGatePolymorphicSerializer,
-    VerifyGateSerializer,
+    AccessGateSerializer,
     TicketGateDetailSerializer,
     TicketGateSerializer,
     TicketSerializer
@@ -167,7 +167,7 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
         Will either throw HTTP error or proceed to reward creation
         """
         # serialize and verify data
-        serialized = VerifyGateSerializer(data=request.data)
+        serialized = AccessGateSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
 
         # get signature obj, throw 404 if not fund

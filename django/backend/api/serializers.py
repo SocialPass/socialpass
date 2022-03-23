@@ -15,7 +15,7 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image"]
 
 
-class VerifyGateSerializer(serializers.Serializer):
+class AccessGateSerializer(serializers.Serializer):
         """
         Serializes /access request for all token gates
         Accepts a signed message & corresponding wallet address,

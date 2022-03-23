@@ -57,7 +57,7 @@ class HostedPageRetrieve(APIView):
         # fetch available gates by team software_types
         for s in team.software_types:
             if s == 'TICKET':
-                ticketgates = TicketGateList.as_view(team=team, access=True)(request._request)
+                ticketgates = TicketGateList.as_view(team=team)(request._request)
                 response['ticket_gates'] = ticketgates.data
 
         # return response

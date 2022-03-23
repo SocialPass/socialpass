@@ -13,6 +13,8 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.http import Http404
+
 
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, SOFTWARE_TYPES_SCHEMA
@@ -78,6 +80,10 @@ class Team(DBModel):
         domain = kwargs['request'].META.get('HTTP_HOST') or kwargs['request'].META.get('SERVER_NAME')
         pieces = domain.split('.')
         subdomain = ".".join(pieces[:-2]) # join all but primary domain
+
+        # check if multiple subdomains; currently not supported
+        if len(subdomain.split('.')) > 1:
+            return None
 
         # compare against default site domain(s)
         default_domain = Site.objects.get(id=settings.SITE_ID)

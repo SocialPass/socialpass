@@ -4,6 +4,8 @@ from . import views
 
 app_name = "root"
 urlpatterns = [
+    # hosted page
+    path('hostedpage/', views.HostedPageRetrieve.as_view()),
     # ticketing
     path(
         "ticketgates/retrieve/<str:public_id>/",
@@ -15,9 +17,4 @@ urlpatterns = [
         views.TicketGateAccess.as_view(),
         name="ticketgate-access",
     ),
-    path(
-        "ticketgates/",
-        views.TicketGateList.as_view(),
-        name="ticketgate-list"
-    )
 ]

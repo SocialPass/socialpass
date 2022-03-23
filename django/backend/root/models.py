@@ -9,6 +9,7 @@ from pytz import utc
 from web3.auto import w3
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -70,7 +71,7 @@ class Team(DBModel):
     members = models.ManyToManyField(User, through="Membership")
     subdomain = models.CharField(max_length=128, null=True, unique=True)
 
-    @
+    @staticmethod
     def get_by_domain(**kwargs):
         # get subdomain
         path = kwargs['request'].get_full_path()
@@ -84,11 +85,11 @@ class Team(DBModel):
             return None
 
         # try to fetch related team
-            try:
-                team = Team.objects.get(subdomain=subdomain)
-                return team
-            except:
-                return None
+        try:
+            team = Team.objects.get(subdomain=subdomain)
+            return team
+        except:
+            return None
 
 
     def __str__(self):

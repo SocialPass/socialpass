@@ -3,16 +3,17 @@ from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from root.models import Signature, Ticket, TicketGate, Team
+from root.models import Signature, Ticket, TicketGate, Team, TokenGate
 
 from django.http import Http404
 
 from .serializers import (
-    TicketGateDetailSerializer,
-    TicketGateListSerializer,
-    TicketSerializer,
+    TeamSerializer,
+    TokenGatePolymorphicSerializer,
     VerifyGateSerializer,
-    TeamSerializer
+    TicketGateDetailSerializer,
+    TicketGateSerializer,
+    TicketSerializer
 )
 
 #
@@ -48,50 +49,73 @@ class HostedPageRetrieve(APIView):
     def get(self, request):
         response = {}
 
-        # try to get team
+        # 1. fetch team, raise 404 on error
         team = Team.get_by_domain(request=request)
         if team and team.subdomain:
             response['team'] = TeamSerializer(team).data
         else:
             raise Http404
 
-        # fetch available gates by team software_types
-        for s in team.software_types:
-            if s == 'TICKET':
-                ticketgates = TicketGateList.as_view(team=team)(request._request)
-                response['ticket_gates'] = ticketgates.data
+        # 2. fetch featured gates
+        featuredgates = FeaturedGateList.as_view(team=team)(request._request)
+        response['featured_gates'] = featuredgates.data
+
+        # 3. fetch available gates
+        allgates = AllGateList.as_view(team=team)(request._request)
+        response['all_gates'] = allgates.data
 
         # return response
         return Response(response)
 
 
-#
-# TICKETGATES ////////////////////////////////////////////////////////////////////////////////
-#
-class TicketGateList(ListAPIView):
+class FeaturedGateList(ListAPIView):
     """
-    View for retrieving ticket gates by subdomain
+    View for retrieving featured gates by subdomain
 
     Used internally by HostedPageRetrieve (access set to True)
     """
-    serializer_class = TicketGateListSerializer
+    serializer_class = TokenGatePolymorphicSerializer
     permission_classes = [AllowAny]
     team = None
 
     def get_queryset(self):
         # title querystring
         if self.request.GET.get('title'):
-            return TicketGate.objects.filter(
+            return TokenGate.objects.filter(
                 team=self.team,
+                featured=True,
                 title__icontains=self.request.GET['title']
             )
 
         # no querystring
-        return TicketGate.objects.filter(team=self.team)
+        return TokenGate.objects.filter(team=self.team, featured=True)
 
 
+class AllGateList(ListAPIView):
+    """
+    View for retrieving ticket gates by subdomain
 
+    Used internally by HostedPageRetrieve (access set to True)
+    """
+    serializer_class = TokenGatePolymorphicSerializer
+    permission_classes = [AllowAny]
+    team = None
 
+    def get_queryset(self):
+        # title querystring
+        if self.request.GET.get('title'):
+            return TokenGate.objects.filter(
+                team=self.team,
+                featured=False,
+                title__icontains=self.request.GET['title']
+            )
+
+        # no querystring
+        return TokenGate.objects.filter(team=self.team, featured=False)
+
+#
+# TICKETGATES ////////////////////////////////////////////////////////////////////////////////
+#
 class TicketGateRetrieve(RetrieveAPIView):
     """
     View for retrieving ticket gate by `public_id`

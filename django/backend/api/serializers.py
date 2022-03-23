@@ -1,8 +1,9 @@
 from rest_framework import serializers
+from rest_polymorphic.serializers import PolymorphicSerializer
 from root.models import Signature, Team, Ticket, TicketGate
 
 #
-# TEAM ////////////////////////////////////////////////////////////////////////////////////
+# MISC ////////////////////////////////////////////////////////////////////////////////////
 #
 class TeamSerializer(serializers.ModelSerializer):
     """
@@ -14,47 +15,59 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image"]
 
 
-#
-# BASE GATES ////////////////////////////////////////////////////////////////////////////////////
-#
 class VerifyGateSerializer(serializers.Serializer):
-    """
-    Serializes /access request for all token gates
-    Accepts a signed message & corresponding wallet address,
-    as well related 'public_id'
-    """
+        """
+        Serializes /access request for all token gates
+        Accepts a signed message & corresponding wallet address,
+        as well related 'public_id'
+        """
 
-    address = serializers.CharField()
-    signed_message = serializers.CharField()
-    tokengate_id = serializers.CharField()
-    signature_id = serializers.CharField()
+        address = serializers.CharField()
+        signed_message = serializers.CharField()
+        tokengate_id = serializers.CharField()
+        signature_id = serializers.CharField()
 
-class ListGateSerializer(serializers.ModelSerializer):
+
+#
+# TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
+#
+class TicketGateSerializer(serializers.ModelSerializer):
     """
-    Base token gate serializer
+    Serializes Ticket token gates for list views.
     """
-    team = TeamSerializer()
 
     class Meta:
+        model = TicketGate
         fields = [
-            "team",
             "title",
             "general_type",
             "description",
             "requirements",
             "limit_per_person",
+            "date",
+            "location",
+            "capacity",
         ]
 
+class TokenGatePolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        TicketGate: TicketGateSerializer,
+    }
 
-class DetailGateSerializer(serializers.ModelSerializer):
-    """
-    Base token gate serializer
-    """
 
+#
+# TICKETGATES ////////////////////////////////////////////////////////////////////////////////////
+#
+class TicketGateDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializes Ticket token gates for detail views.
+    Most notably, generates new signature
+    """
     team = TeamSerializer()
     signature = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
+        model = TicketGate
         fields = [
             "team",
             "title",
@@ -63,47 +76,19 @@ class DetailGateSerializer(serializers.ModelSerializer):
             "requirements",
             "signature",
             "limit_per_person",
+            "date",
+            "location",
+            "capacity",
         ]
 
     def get_signature(self, gate):
         return gate.generate_signature_request()
-
-#
-# TICKETGATES ////////////////////////////////////////////////////////////////////////////////////
-#
-class TicketGateListSerializer(serializers.ModelSerializer):
-    """
-    Serializes Ticket token gates for list views.
-    """
-
-    class Meta:
-        model = TicketGate
-        fields = ListGateSerializer.Meta.fields + [
-            "date",
-            "location",
-            "capacity",
-        ]
-
-
-class TicketGateDetailSerializer(DetailGateSerializer):
-    """
-    Serializes Ticket token gates for detail views.
-    """
-
-    class Meta:
-        model = TicketGate
-        fields = DetailGateSerializer.Meta.fields + [
-            "date",
-            "location",
-            "capacity",
-        ]
 
 
 class TicketSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket.
     """
-
     tokengate = serializers.PrimaryKeyRelatedField(
         queryset=TicketGate.objects.all(), write_only=True
     )

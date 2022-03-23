@@ -45,6 +45,8 @@ django-up:: ## Create && migrate
 django-superuser: ## Create django superuser
 	(source venv/bin/activate; python3 django/manage.py createsuperuser)
 
+django-turtle: ## django shell plus
+	(source venv/bin/activate; python3 django/manage.py shell_plus)
 
 # fastapi
 fast-setup: ## Install fastapi requirements

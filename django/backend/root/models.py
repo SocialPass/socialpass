@@ -7,6 +7,7 @@ from invitations.models import Invitation
 from model_utils.models import TimeStampedModel
 from pytz import utc
 from web3.auto import w3
+from polymorphic.models import PolymorphicModel
 
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -60,7 +61,7 @@ class Team(DBModel):
     """
     Team manager for software plans && token gates
     """
-
+    # base info
     name = models.CharField(max_length=255)
     image = models.ImageField(
         null=True, blank=True, height_field=None, width_field=None, max_length=255
@@ -71,7 +72,13 @@ class Team(DBModel):
         validators=[JSONSchemaValidator(limit_value=SOFTWARE_TYPES_SCHEMA)],
     )
     members = models.ManyToManyField(User, through="Membership")
+
+    # hosted page info
     subdomain = models.CharField(max_length=256, null=True, unique=True, validators=[RegexValidator(r'^[0-9a-zA-Z]*$', message="Subdomain only allows alphanumeric")])
+
+    @property
+    def featured_gates(self):
+        return self.team.tokengates.filter(featured=True)
 
     @staticmethod
     def get_by_domain(**kwargs):
@@ -136,7 +143,7 @@ class Invite(InvitationAbstract):
         return super(Invite, self).send_invitation(request, **kwargs)
 
 
-class TokenGate(DBModel):
+class TokenGate(DBModel, PolymorphicModel):
     """
     Base token gate model meant to be extended by the other types of gates in
     the system. Allows for field reuse, simpler grouped querying, and clearer
@@ -167,6 +174,7 @@ class TokenGate(DBModel):
     limit_per_person = models.IntegerField(
         default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
+    featured = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

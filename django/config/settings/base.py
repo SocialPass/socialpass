@@ -85,6 +85,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "invitations",
+    "polymorphic"
 ]
 
 LOCAL_APPS = [

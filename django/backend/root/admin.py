@@ -8,7 +8,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils import timezone
 
 from .forms import TimeZoneForm
-from .models import Airdrop, AirdropGate, Membership, Signature, Team, Ticket, TicketGate, TokenGate
+from .models import Membership, Signature, Team, Ticket, TicketGate, TokenGate
 
 User = get_user_model()
 
@@ -55,19 +55,6 @@ class TeamAdmin(admin.ModelAdmin):
 class SignatureAdmin(admin.ModelAdmin):
     list_display = ("tokengate", "unique_code", "wallet_address", "is_verified")
     search_fields = ("tokengate__title", "unique_code", "wallet_address")
-
-
-@admin.register(AirdropGate)
-class AirdropGateAdmin(admin.ModelAdmin):
-    list_display = ("title", "public_id", "chain", "asset_type", "user", "team")
-    search_fields = ("title", "chain", "asset_type", "user__username", "team__name")
-
-
-@admin.register(Airdrop)
-class AirdropAdmin(admin.ModelAdmin):
-    list_display = ("tokengate", "wallet_address")
-    search_fields = ("tokengate__title", "wallet_address")
-
 
 @admin.register(TicketGate)
 class TicketGateAdmin(admin.ModelAdmin):

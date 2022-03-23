@@ -190,18 +190,21 @@ class TokenGate(DBModel, PolymorphicModel):
         returns unique code (for lookup) and message (for signature)
         """
         expires = datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
-        message_obj = {
-            "You are accessing": self.title,
-            "Hosted by": self.team.name,
-            "Hosted at": "https://...",
-            "Valid until": expires.ctime(),
-        }
-        message = "\n".join(": ".join((key, val)) for (key, val) in message_obj.items())
         signature = Signature.objects.create(
             tokengate=self,
             signing_message=message,
             expires=expires,
         )
+        message_obj = {
+            "You are accessing": self.title,
+            "Hosted by": self.team.name,
+            "One-Time Code": signature.unique_code,
+            "Valid until": expires.ctime(),
+        }
+        message = "\n".join(": ".join((key, val)) for (key, val) in message_obj.items())
+        signature.signing_message = message
+        signature.save()
+
         return {
             "id": signature.unique_code,
             "message": signature.signing_message,

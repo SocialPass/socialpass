@@ -11,7 +11,7 @@ from web3.auto import w3
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.http import Http404
 
@@ -71,7 +71,7 @@ class Team(DBModel):
         validators=[JSONSchemaValidator(limit_value=SOFTWARE_TYPES_SCHEMA)],
     )
     members = models.ManyToManyField(User, through="Membership")
-    subdomain = models.CharField(max_length=128, null=True, unique=True)
+    subdomain = models.CharField(max_length=256, null=True, unique=True, validators=[RegexValidator(r'^[0-9a-zA-Z]*$', message="Subdomain only allows alphanumeric")])
 
     @staticmethod
     def get_by_domain(**kwargs):

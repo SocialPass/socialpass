@@ -68,6 +68,28 @@ class Team(DBModel):
         validators=[JSONSchemaValidator(limit_value=SOFTWARE_TYPES_SCHEMA)],
     )
     members = models.ManyToManyField(User, through="Membership")
+    subdomain = models.CharField(max_length=128, null=True, unique=True)
+
+    @
+    def get_by_domain(**kwargs):
+        # get subdomain
+        path = kwargs['request'].get_full_path()
+        domain = kwargs['request'].META.get('HTTP_HOST') or kwargs['request'].META.get('SERVER_NAME')
+        pieces = domain.split('.')
+        subdomain = ".".join(pieces[:-2]) # join all but primary domain
+
+        # compare against default site domain(s)
+        default_domain = Site.objects.get(id=settings.SITE_ID)
+        if domain in {default_domain.domain, "127.0.0.1:8000"}:
+            return None
+
+        # try to fetch related team
+            try:
+                team = Team.objects.get(subdomain=subdomain)
+                return team
+            except:
+                return None
+
 
     def __str__(self):
         return self.name

@@ -1,8 +1,8 @@
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView, ListAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from root.models import Signature, Ticket, TicketGate
+from root.models import Signature, Ticket, TicketGate, Team
 
 from django.http import Http404
 
@@ -11,7 +11,8 @@ from .serializers import TicketGateSerializer, TicketSerializer, VerifyGateSeria
 
 class GetSignatureObjectMixin:
     """
-    Mixin to get signature object
+    Mixin to get signature object, used in
+    token gate access views to verify the user request.
     """
 
     def get_signature(self, pk):
@@ -35,7 +36,7 @@ class TicketGateRetrieve(RetrieveAPIView):
 class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView):
     """
     APIView for accessing ticket gate via verified `Signature`,
-    and then creating / returning `TicketList` entry
+    and then creating / returning `Ticket` entry(s)
     """
 
     permission_classes = [AllowAny]
@@ -112,3 +113,4 @@ class TicketGateAccess(GetSignatureObjectMixin, CreateModelMixin, GenericAPIView
             validated_ids=req_msg["validated_ids"],
         )
         return response
+

@@ -15,4 +15,9 @@ urlpatterns = [
         views.TicketGateAccess.as_view(),
         name="ticketgate-access",
     ),
+    path(
+        "ticketgates/",
+        views.TicketGateList.as_view(),
+        name="ticketgate-list"
+    )
 ]

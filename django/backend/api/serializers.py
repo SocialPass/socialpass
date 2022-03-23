@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from root.models import Signature, Team, Ticket, TicketGate
 
-
+#
+# TEAM ////////////////////////////////////////////////////////////////////////////////////
+#
 class TeamSerializer(serializers.ModelSerializer):
     """
     Team serializer
@@ -12,6 +14,9 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image"]
 
 
+#
+# BASE GATES ////////////////////////////////////////////////////////////////////////////////////
+#
 class VerifyGateSerializer(serializers.Serializer):
     """
     Serializes /access request for all token gates
@@ -24,8 +29,24 @@ class VerifyGateSerializer(serializers.Serializer):
     tokengate_id = serializers.CharField()
     signature_id = serializers.CharField()
 
+class ListGateSerializer(serializers.ModelSerializer):
+    """
+    Base token gate serializer
+    """
+    team = TeamSerializer()
 
-class BaseGateSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = [
+            "team",
+            "title",
+            "general_type",
+            "description",
+            "requirements",
+            "limit_per_person",
+        ]
+
+
+class DetailGateSerializer(serializers.ModelSerializer):
     """
     Base token gate serializer
     """
@@ -47,15 +68,31 @@ class BaseGateSerializer(serializers.ModelSerializer):
     def get_signature(self, gate):
         return gate.generate_signature_request()
 
-
-class TicketGateSerializer(BaseGateSerializer):
+#
+# TICKETGATES ////////////////////////////////////////////////////////////////////////////////////
+#
+class TicketGateListSerializer(serializers.ModelSerializer):
     """
-    Serializes Ticket token gates.
+    Serializes Ticket token gates for list views.
     """
 
     class Meta:
         model = TicketGate
-        fields = BaseGateSerializer.Meta.fields + [
+        fields = ListGateSerializer.Meta.fields + [
+            "date",
+            "location",
+            "capacity",
+        ]
+
+
+class TicketGateDetailSerializer(DetailGateSerializer):
+    """
+    Serializes Ticket token gates for detail views.
+    """
+
+    class Meta:
+        model = TicketGate
+        fields = DetailGateSerializer.Meta.fields + [
             "date",
             "location",
             "capacity",

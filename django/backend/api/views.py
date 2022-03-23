@@ -8,7 +8,8 @@ from root.models import Signature, Ticket, TicketGate, Team
 from django.http import Http404
 
 from .serializers import (
-    TicketGateSerializer,
+    TicketGateDetailSerializer,
+    TicketGateListSerializer,
     TicketSerializer,
     VerifyGateSerializer,
     TeamSerializer
@@ -73,7 +74,7 @@ class TicketGateList(ListAPIView):
 
     Used internally by HostedPageRetrieve (access set to True)
     """
-    serializer_class = TicketGateSerializer
+    serializer_class = TicketGateListSerializer
     permission_classes = [AllowAny]
     team = None
 
@@ -98,7 +99,7 @@ class TicketGateRetrieve(RetrieveAPIView):
 
     lookup_field = "public_id"
     queryset = TicketGate.objects.all()
-    serializer_class = TicketGateSerializer
+    serializer_class = TicketGateDetailSerializer
     permission_classes = [AllowAny]
 
 

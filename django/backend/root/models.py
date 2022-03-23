@@ -76,35 +76,6 @@ class Team(DBModel):
     # hosted page info
     subdomain = models.CharField(max_length=256, null=True, unique=True, validators=[RegexValidator(r'^[0-9a-zA-Z]*$', message="Subdomain only allows alphanumeric")])
 
-    @property
-    def featured_gates(self):
-        return self.team.tokengates.filter(featured=True)
-
-    @staticmethod
-    def get_by_domain(**kwargs):
-        # get subdomain
-        path = kwargs['request'].get_full_path()
-        domain = kwargs['request'].META.get('HTTP_HOST') or kwargs['request'].META.get('SERVER_NAME')
-        pieces = domain.split('.')
-        subdomain = ".".join(pieces[:-2]) # join all but primary domain
-
-        # check if multiple subdomains; currently not supported
-        if len(subdomain.split('.')) > 1:
-            return None
-
-        # compare against default site domain(s)
-        default_domain = Site.objects.get(id=settings.SITE_ID)
-        if domain in {default_domain.domain, "127.0.0.1:8000"}:
-            return None
-
-        # try to fetch related team
-        try:
-            team = Team.objects.get(subdomain=subdomain)
-            return team
-        except:
-            return None
-
-
     def __str__(self):
         return self.name
 

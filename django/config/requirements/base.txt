@@ -4,10 +4,13 @@ Pillow==9.0.1  # https://github.com/python-pillow/Pillow
 uvicorn[standard]  # https://github.com/encode/uvicorn
 argon2-cffi==21.3.0
 web3==5.28.0
+django-polymorphic
+django-rest-polymorphic
+
 
 # Django
 # ------------------------------------------------------------------------------
-django==3.2.11  # pyup: < 4.0  # https://www.djangoproject.com/
+django==3.2.12  # https://www.djangoproject.com/
 django-environ==0.8.1  # https://github.com/joke2k/django-environ
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-allauth==0.47.0  # https://github.com/pennersr/django-allauth

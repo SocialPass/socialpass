@@ -14,7 +14,6 @@ router = APIRouter(
 @router.post("/verify-requirements")
 def verify_requirements(
     wallet_address: str,
-    gate_type: crud.GateTypeEnum,
     gate_limit: int,
     reward_list: List[str],
     requirements: List[crud.Requirement],
@@ -27,16 +26,21 @@ def verify_requirements(
     as well as the type of asset lookup, will be determined on the `requirements` parameter.
     """
     # loop over list of Requirements
-    for req in requirements:
-        # init token balance
-        token_balance = 0
-        token_ids = None
-
+    for idx, req in enumerate(requirements):
         # EVM
+        # Requirements failure verification throws HTTP error
+        # HTTP Error is not raised until last requirement in list
         if req.blockchain == "EVM":
-            return crud.verify_evm_requirement(
-                req=req,
-                gate_limit=gate_limit,
-                reward_list=reward_list,
-                wallet_address=wallet_address
-            )
+            try:
+                resp = crud.verify_evm_requirement(
+                    req=req,
+                    gate_limit=gate_limit,
+                    reward_list=reward_list,
+                    wallet_address=wallet_address
+                )
+                return resp
+            except HTTPException as e:
+                if idx == (len(requirements) - 1):
+                    raise e
+                else:
+                    pass

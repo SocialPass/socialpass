@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from enum import Enum
 from typing import List, Optional
 
@@ -19,12 +20,7 @@ class Requirement(BaseModel):
     asset_type: Optional[str]
     asset_address: Optional[str]
     token_id: Optional[List[int]]
-
-
-class GateTypeEnum(Enum):
-    TICKET = "TICKET"
-    AIRDROP = "AIRDROP"
-
+    to_block: Optional[int]
 
 #
 # MAIN FUNCTIONS
@@ -35,15 +31,48 @@ def verify_evm_requirement(
     wallet_address:str,
     reward_list:List[str]
 ):
-    # Perform initial asset lookup
-    # ERC20 - Not yet implemented
+    # init token balance
+    token_balance = 0
+    token_ids = None
+
+    # ERC20 ////////////////////////////////////////////////////////////////////////////
     if req.asset_type == "ERC20":
-        raise HTTPException(status_code=400, detail="Not yet implemented")
-    # ERC1155 - Not yet implemented
-    if req.asset_type == "ERC1155":
-        raise HTTPException(status_code=400, detail="Not yet implemented")
-    # ERC721 - Fetch list of owned token ID's
+        # initial balance lookup
+        tokens = moralis_get_fungible(
+            chain_id=hex(req.chain_id),
+            contract_addresses=[Web3.toChecksumAddress(req.asset_address)],
+            wallet_address=Web3.toChecksumAddress(wallet_address),
+            to_block=req.to_block
+        )
+        for token in tokens:
+            if token['token_address'].casefold() == req.asset_address.casefold():
+                decimals = int(token['decimals'])
+                token_balance = int(token['balance'])
+                break
+
+        # divide balance by required amount,
+        # issue validated_passes as whatever is lower (quotient or gate_limit)
+        if token_balance < req.amount:
+            raise HTTPException(
+                status_code=403, detail="User does not meet requirements"
+            )
+        quotient = token_balance / req.amount
+        if quotient >= gate_limit:
+            return {
+                "wallet_address": wallet_address,
+                "token_balance": token_balance,
+                "validated_passes": gate_limit
+            }
+        else:
+            return {
+               "wallet_address": wallet_address,
+               "token_balance": token_balance,
+               "validated_passes": int(quotient)
+           }
+
+    # ERC721 ////////////////////////////////////////////////////////////////////////////
     if req.asset_type == "ERC721":
+        # initial token ID lookup
         tokens = moralis_get_nfts(
             chain_id=hex(req.chain_id),
             contract_address=Web3.toChecksumAddress(req.asset_address),
@@ -52,15 +81,8 @@ def verify_evm_requirement(
         token_ids = tokens["result"]
         token_balance = tokens["total"]
 
-    # Assert asset lookup response
-    if req.asset_type == "ERC20":
-        raise HTTPException(status_code=400, detail="Not yet implemented")
-    # ERC1155 - Not yet implemented
-    if req.asset_type == "ERC1155":
-        raise HTTPException(status_code=400, detail="Not yet implemented")
-
-    # ERC721: Verify retrieved ID's against the given reward_list
-    if req.asset_type == "ERC721":
+        # loop retrieved token_id's against given reward_list (until gate_limit reached)
+        # issue validated_id's as whatever is lower (quotient or gate_limit)
         validated_ids = []
         for i in token_ids:
             if i["token_id"] not in reward_list:
@@ -71,22 +93,52 @@ def verify_evm_requirement(
             raise HTTPException(
                 status_code=403, detail="User does not meet requirements"
             )
+        # return
+        return {
+            "wallet_address": wallet_address,
+            "token_balance": token_balance,
+            "validated_ids": validated_ids,
+        }
 
-    # return
-    return {
-        "wallet_address": wallet_address,
-        "token_balance": token_balance,
-        "validated_ids": validated_ids,
-    }
-
-
+    # ERC1155 ////////////////////////////////////////////////////////////////////////////
+    if req.asset_type == "ERC1155":
+        raise HTTPException(status_code=400, detail="Not yet implemented")
 
 #
 # INTERNAL FUNCTIONS
 #
+def moralis_get_fungible(
+    chain_id: str,
+    wallet_address: str,
+    contract_addresses: List[str],
+    to_block: int
+):
+    """
+    Gets token balances for a specific address
+
+    Gets token owned by the given address, at the given contract_addresses, up until to_block
+    """
+    url = (
+        f"https://deep-index.moralis.io/api/v2/{wallet_address}/erc20/"
+    )
+    payload = {
+        "chain": chain_id,
+        "to_block": to_block,
+        "format": "decimal",
+        "contract_addresses": contract_addresses
+    }
+    headers = {
+        "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
+    }
+    r = requests.get(url, params=payload, headers=headers)
+    if r.status_code == 200:
+        return r.json()
+
+
+
 def moralis_get_nfts(chain_id: str, wallet_address: str, contract_address: str):
     """
-    Gets NFTs owned by the given address
+    Gets NFTs owned by the given address, at the given contract_address
 
     Use the token_address param to get results for a specific contract only
     Note results will include all indexed NFTs.

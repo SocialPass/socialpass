@@ -266,9 +266,6 @@ class Signature(DBModel):
         if _recovered != address:
             return False, 401, "Signature x Address mismatch."
 
-        # 403 section: User has authenticated, but does not meet requirements
-        # check if address meets requirements
-
         # 200 section: User has authenticated and met requirements
         # before success, mark as verified, update address, and save
         self.is_verified = True

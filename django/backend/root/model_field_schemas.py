@@ -54,6 +54,12 @@ REQUIREMENTS_SCHEMA = {
                 "format": "number",
                 "minimum": 1,
             },
+            "to_block": {
+                "type": "integer",
+                "title": "Snapshot block (for fungible tokens)",
+                "format": "number",
+                "minimum": 1,
+            },
             "token_id": {
                 "type": "array",
                 "title": "Token IDs",

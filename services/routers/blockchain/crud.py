@@ -27,7 +27,7 @@ class Requirement(BaseModel):
 #
 def verify_evm_requirement(
     req:Requirement,
-    gate_limit:int,
+    limit_per_person:int,
     wallet_address:str,
     reward_list:List[str]
 ):
@@ -51,17 +51,17 @@ def verify_evm_requirement(
                 break
 
         # divide balance by required amount,
-        # issue validated_passes as whatever is lower (quotient or gate_limit)
+        # issue validated_passes as whatever is lower (quotient or limit_per_person)
         if token_balance < req.amount:
             raise HTTPException(
                 status_code=403, detail="User does not meet requirements"
             )
         quotient = token_balance / req.amount
-        if quotient >= gate_limit:
+        if quotient >= limit_per_person:
             return {
                 "wallet_address": wallet_address,
                 "token_balance": token_balance,
-                "validated_passes": gate_limit
+                "validated_passes": limit_per_person
             }
         else:
             return {
@@ -81,13 +81,13 @@ def verify_evm_requirement(
         token_ids = tokens["result"]
         token_balance = tokens["total"]
 
-        # loop retrieved token_id's against given reward_list (until gate_limit reached)
-        # issue validated_id's as whatever is lower (quotient or gate_limit)
+        # loop retrieved token_id's against given reward_list (until limit_per_person reached)
+        # issue validated_id's as whatever is lower (quotient or limit_per_person)
         validated_ids = []
         for i in token_ids:
             if i["token_id"] not in reward_list:
                 validated_ids.append(i["token_id"])
-            if len(validated_ids) >= gate_limit:
+            if len(validated_ids) >= limit_per_person:
                 break
         if len(validated_ids) < req.amount:
             raise HTTPException(

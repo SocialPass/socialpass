@@ -194,8 +194,7 @@ class TokenGate(DBModel, PolymorphicModel):
 
         params = (
             ("wallet_address", kwargs["wallet_address"]),
-            ("gate_type", self.general_type),
-            ("gate_limit", self.limit_per_person),
+            ("limit_per_person", self.limit_per_person),
         )
 
         json_data = {

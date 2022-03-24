@@ -14,7 +14,7 @@ router = APIRouter(
 @router.post("/verify-requirements")
 def verify_requirements(
     wallet_address: str,
-    gate_limit: int,
+    limit_per_person: int,
     reward_list: List[str],
     requirements: List[crud.Requirement],
 ):
@@ -34,7 +34,7 @@ def verify_requirements(
             try:
                 resp = crud.verify_evm_requirement(
                     req=req,
-                    gate_limit=gate_limit,
+                    limit_per_person=limit_per_person,
                     reward_list=reward_list,
                     wallet_address=wallet_address
                 )

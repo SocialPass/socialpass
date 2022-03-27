@@ -1,7 +1,5 @@
 from typing import List
-
 from fastapi import APIRouter, HTTPException
-from web3 import Web3
 
 from . import crud
 

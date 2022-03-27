@@ -1,7 +1,8 @@
+wheel
 uvicorn[standard]
 fastapi
 boto3
 Pillow
-wheel
 gunicorn
 web3==5.28.0
+pillow

@@ -880,4 +880,12 @@ def generate_and_store_ticket(
         filename=filename
     )
 
-    return response
+    # generate presigned url
+    url = s3.generate_presigned_url(
+        ClientMethod='get_object',
+        Params={'Bucket': f"{settings.SERVICES_SPACES_DIRECTORY}", 'Key': 'f"{filename}.png"'},
+        ExpiresIn=3600
+    )
+
+    print(url)
+    return (ticket_img, response, url)

@@ -346,6 +346,7 @@ class Ticket(DBModel):
     image = models.ImageField(
         null=True, blank=True, height_field=None, width_field=None, max_length=255
     )
+    temporary_download_url = models.URLField(null=True, blank=True)
     redeemed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -368,11 +369,12 @@ class Ticket(DBModel):
                 if not ticket.signature:
                     ticket.signature = kwargs["signature"]
                 if not ticket.image:
-                    ticket.generate_ticket_image(
+                    generated_ticket = ticket.generate_ticket_image(
                         filename=ticket.filename,
                         embed='testing embed',
                         top_banner_text='SocialPass Ticket'
                     )
+                    ticket.temporary_download_url = generated_ticket["s3"]
                     ticket.image = f'tickets/{str(ticket.filename)}.png'
                 ticket.save()
                 ticketdata.append(ticket.__dict__)
@@ -388,11 +390,12 @@ class Ticket(DBModel):
                 if not ticket.signature:
                     ticket.signature = kwargs["signature"]
                 if not ticket.image:
-                    ticket.generate_ticket_image(
+                    generated_ticket = ticket.generate_ticket_image(
                         filename=ticket.filename,
                         embed='testing embed',
                         top_banner_text='SocialPass Ticket'
                     )
+                    ticket.temporary_download_url = generated_ticket["s3"]
                     ticket.image = f'tickets/{str(ticket.filename)}.png'
                 ticket.save()
                 ticketdata.append(ticket.__dict__)

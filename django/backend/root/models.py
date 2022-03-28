@@ -346,7 +346,7 @@ class Ticket(DBModel):
     image = models.ImageField(
         null=True, blank=True, height_field=None, width_field=None, max_length=255
     )
-    temporary_download_url = models.URLField(null=True, blank=True)
+    temporary_download_url = models.TextField(null=True, blank=True)
     redeemed = models.BooleanField(default=False)
 
     def __str__(self):

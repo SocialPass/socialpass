@@ -108,5 +108,5 @@ class TicketGateAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("tokengate", "wallet_address", "image_url")
-    search_fields = ("tokengate__title", "wallet_address", "image_url")
+    list_display = ("tokengate", "wallet_address", "image")
+    search_fields = ("tokengate__title", "wallet_address", "image")

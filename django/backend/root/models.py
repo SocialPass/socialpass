@@ -334,7 +334,7 @@ class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticket token gates.
     """
-
+    filename = models.UUIDField(default=uuid.uuid4, editable=False)
     tokengate = models.ForeignKey(
         TicketGate, on_delete=models.CASCADE, related_name="tickets"
     )
@@ -343,7 +343,9 @@ class Ticket(DBModel):
     )
     wallet_address = models.CharField(max_length=400)
     token_id = models.IntegerField(null=True, blank=True)
-    image_url = models.URLField()
+    image = models.ImageField(
+        null=True, blank=True, height_field=None, width_field=None, max_length=255
+    )
     redeemed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -365,10 +367,11 @@ class Ticket(DBModel):
                 )
                 if not ticket.signature:
                     ticket.signature = kwargs["signature"]
-                if not ticket.image_url:
+                if not ticket.image:
                     ticket.generate_ticket_image(
-
+                        filename=ticket.filename
                     )
+                    ticket.image = f'tickets/{str(ticket.filename)}.png'
                 ticket.save()
                 ticketdata.append(ticket.__dict__)
 
@@ -382,10 +385,11 @@ class Ticket(DBModel):
                 )
                 if not ticket.signature:
                     ticket.signature = kwargs["signature"]
-                if not ticket.image_url:
+                if not ticket.image:
                     ticket.generate_ticket_image(
-
+                        filename=ticket.filename
                     )
+                    ticket.image = f'tickets/{str(ticket.filename)}.png'
                 ticket.save()
                 ticketdata.append(ticket.__dict__)
 

@@ -9,10 +9,9 @@ import boto3
 from PIL import Image, ImageDraw, ImageFont
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import CircleModuleDrawer
-
 from config import settings
 
-# config
+# s3 client init
 s3 = boto3.client(
     "s3",
     region_name='nyc3',
@@ -20,11 +19,6 @@ s3 = boto3.client(
     aws_access_key_id=settings.SERVICES_SPACES_KEY,
     aws_secret_access_key=settings.SERVICES_SPACES_SECRET
 )
-
-# S3 config
-S3_BUCKET_NAME = settings.SERVICES_SPACES_BUCKET_NAME,
-S3_DIR = settings.SERVICES_SPACES_DIRECTORY,
-
 
 theme_list = [
     # Simple light themes
@@ -853,17 +847,16 @@ def store_ticket(ticket_img, filename):
     ticket_img.save(buffer, "PNG")
     buffer.seek(0)  # Rewind pointer back to start
 
-    """
+
     # put image into s3
     response = s3.put_object(
-        Bucket=S3_BUCKET_NAME,
-        Key=f"{S3_DIR}{filename}.png",
+        Bucket=settings.SERVICES_SPACES_BUCKET_NAME,
+        Key=f"{settings.SERVICES_SPACES_DIRECTORY}{filename}.png",
         Body=buffer,
         ContentType="image/png",
     )
-    """
 
-    return buffer
+    return response
 
 
 def generate_and_store_ticket(

@@ -848,7 +848,6 @@ def generate_ticket(
 
 
 def store_ticket(ticket_img, filename):
-    ticket_img.show()
     # Prepare image for S3
     buffer = io.BytesIO()
     ticket_img.save(buffer, "PNG")

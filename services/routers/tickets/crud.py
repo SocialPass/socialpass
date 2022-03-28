@@ -16,14 +16,14 @@ from config import settings
 s3 = boto3.client(
     "s3",
     region_name='nyc3',
-    endpoint_url=settings.SPACES_URL,
-    aws_access_key_id=settings.SPACES_KEY,
-    aws_secret_access_key=settings.SPACES_SECRET
+    endpoint_url=settings.SERVICES_SPACES_URL,
+    aws_access_key_id=settings.SERVICES_SPACES_KEY,
+    aws_secret_access_key=settings.SERVICES_SPACES_SECRET
 )
 
 # S3 config
-S3_BUCKET_NAME = "testing-socialpass-bucket"
-S3_KEY = "media/ticket-images/"
+S3_BUCKET_NAME = settings.SERVICES_SPACES_BUCKET_NAME,
+S3_DIR = settings.SERVICES_SPACES_DIRECTORY,
 
 
 theme_list = [
@@ -858,7 +858,7 @@ def store_ticket(ticket_img, filename):
     # put image into s3
     response = s3.put_object(
         Bucket=S3_BUCKET_NAME,
-        Key=f"{S3_KEY}{filename}.png",
+        Key=f"{S3_DIR}{filename}.png",
         Body=buffer,
         ContentType="image/png",
     )

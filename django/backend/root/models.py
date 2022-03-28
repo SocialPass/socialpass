@@ -344,7 +344,7 @@ class Ticket(DBModel):
     )
     wallet_address = models.CharField(max_length=400)
     token_id = models.IntegerField(null=True, blank=True)
-    download_url = models.URLField()
+    image_url = models.URLField()
     redeemed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -362,8 +362,8 @@ class Ticket(DBModel):
                 )
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
-            if not ticket.download_url:
-                ticket.download_url = "http://testing.local"
+            if not ticket.image_url:
+                ticket.image_url = "http://testing.local"
             ticket.save()
             ticketdata.append(ticket.__dict__)
         if isinstance(kwargs["validated_passes"], list):
@@ -375,8 +375,8 @@ class Ticket(DBModel):
                 )
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
-            if not ticket.download_url:
-                ticket.download_url = "http://testing.local"
+            if not ticket.image_url:
+                ticket.image_url = "http://testing.local"
             ticket.save()
             ticketdata.append(ticket.__dict__)
 

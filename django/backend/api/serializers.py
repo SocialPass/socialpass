@@ -101,7 +101,7 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = [
             "wallet_address",
             "token_id",
-            "download_url",
+            "image_url",
             "tokengate",
             "signature",
         ]

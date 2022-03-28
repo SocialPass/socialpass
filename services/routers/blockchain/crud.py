@@ -57,7 +57,7 @@ def verify_evm_requirement(
                 status_code=403, detail="User does not meet requirements"
             )
         quotient = token_balance / req.amount
-        if quotient >= limit_per_person:
+        if int(quotient) >= limit_per_person:
             return {
                 "wallet_address": wallet_address,
                 "token_balance": token_balance,
@@ -82,14 +82,14 @@ def verify_evm_requirement(
         token_balance = tokens["total"]
 
         # loop retrieved token_id's against given reward_list (until limit_per_person reached)
-        # issue validated_id's as whatever is lower (quotient or limit_per_person)
-        validated_ids = []
+        # issue passes as whatever is lower (quotient or limit_per_person)
+        validated_passes = []
         for i in token_ids:
             if i["token_id"] not in reward_list:
-                validated_ids.append(i["token_id"])
-            if len(validated_ids) >= limit_per_person:
+                validated_passes.append(i["token_id"])
+            if len(validated_passes) >= limit_per_person:
                 break
-        if len(validated_ids) < req.amount:
+        if len(validated_passes) < req.amount:
             raise HTTPException(
                 status_code=403, detail="User does not meet requirements"
             )
@@ -97,7 +97,7 @@ def verify_evm_requirement(
         return {
             "wallet_address": wallet_address,
             "token_balance": token_balance,
-            "validated_ids": validated_ids,
+            "validated_passes": validated_passes,
         }
 
     # ERC1155 ////////////////////////////////////////////////////////////////////////////

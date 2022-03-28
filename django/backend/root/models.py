@@ -162,7 +162,6 @@ class TokenGate(DBModel, PolymorphicModel):
         expires = datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
         signature = Signature.objects.create(
             tokengate=self,
-            signing_message=message,
             expires=expires,
         )
         message_obj = {
@@ -172,7 +171,7 @@ class TokenGate(DBModel, PolymorphicModel):
             "Valid until": expires.ctime(),
             "Version": signature.version
         }
-        message = "\n".join(": ".join((key, val)) for (key, val) in message_obj.items())
+        message = "\n".join(": ".join((key, str(val))) for (key, val) in message_obj.items())
         signature.signing_message = message
         signature.save()
 

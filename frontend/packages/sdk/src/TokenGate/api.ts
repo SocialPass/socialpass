@@ -91,18 +91,19 @@ TicketGate Access
 */
 function accessTicketGate(address: string, tokengate_id: string, signature_id: string, signed_message: string): Promise<APIAccessError> | Promise<TicketGateAccessResponse> {
 	var myHeaders = new Headers();
-	myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+	myHeaders.append("Content-Type", "application/json");
 
-	var urlencoded = new URLSearchParams();
-	urlencoded.append("address", address);
-	urlencoded.append("tokengate_id", tokengate_id);
-	urlencoded.append("signature_id", signature_id);
-	urlencoded.append("signed_message", signed_message);
+	var body = JSON.stringify({
+		"address": address,
+		"tokengate_id": tokengate_id,
+		"signature_id": signature_id,
+		"signed_message": signed_message,
+	})
 
 	var requestOptions = {
 	  method: 'POST',
 	  headers: myHeaders,
-	  body: urlencoded,
+	  body: body,
 	};
 
 	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/access/`, requestOptions)

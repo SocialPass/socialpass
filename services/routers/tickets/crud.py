@@ -1,19 +1,30 @@
 # NFTY (IRL) Ticket Generator
 # By NFTY Labs
-
+import io
 import random
 import re
 import qrcode
 import urllib.request
-
-from io import BytesIO
+import boto3
 from PIL import Image, ImageDraw, ImageFont
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import CircleModuleDrawer
 
+from config import settings
 
-# Stores the usables themes for the tickets plus helper functions (if needed)
-# By NFTY Labs
+# config
+s3 = boto3.client(
+    "s3",
+    region_name='nyc3',
+    endpoint_url='https://nyc3.digitaloceanspaces.com',
+    aws_access_key_id=settings.SPACES_KEY,
+    aws_secret_access_key=settings.SPACES_SECRET
+)
+
+# S3 config
+S3_BUCKET_NAME = "testing-socialpass-bucket"
+S3_KEY = "media/ticket-images/"
+
 
 theme_list = [
     # Simple light themes
@@ -357,7 +368,7 @@ def get_image_from_source(source):
 
     # If URL is provided, the image is downloaded from the URL
     if (re.match(url_regex, source) is not None):
-        source = BytesIO(urllib.request.urlopen(source).read())
+        source = io.BytesIO(urllib.request.urlopen(source).read())
 
     return Image.open(source).convert('RGBA')
 
@@ -834,3 +845,23 @@ def generate_ticket(
     result = overlay_center(ticket_with_bg, full_canvas)
 
     return result
+
+
+def store_ticket(ticket_img, filename):
+    ticket_img.show()
+    # Prepare image for S3
+    buffer = io.BytesIO()
+    ticket_img.save(buffer, "PNG")
+    buffer.seek(0)  # Rewind pointer back to start
+
+    """
+    # put image into s3
+    response = s3.put_object(
+        Bucket=S3_BUCKET_NAME,
+        Key=f"{S3_KEY}{filename}.png",
+        Body=buffer,
+        ContentType="image/png",
+    )
+    """
+
+    return buffer

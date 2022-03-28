@@ -1,12 +1,7 @@
 from fastapi import Depends, FastAPI
-from pydantic import BaseSettings
+from config import Settings
 from routers.blockchain import routes as Blockchain
 from routers.tickets import routes as Ticketing
-
-
-# init settings
-class Settings(BaseSettings):
-    infura_key: str
 
 
 # init app

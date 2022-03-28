@@ -114,13 +114,16 @@ class TicketGateRetrieve(RetrieveAPIView):
 
 class TicketGateAccess(CreateModelMixin, GenericAPIView):
     """
-    APIView for accessing ticket gate via verified `Signature`,
+    View for accessing ticket gate via verified `Signature`,
     and then creating / returning `Ticket` entry(s)
     """
 
     permission_classes = [AllowAny]
 
     def get_signature(self, pk):
+        """
+        Helper method to get the related signature model via request PK.
+        """
         # get related signature by pk
         try:
             return Signature.objects.get(unique_code=pk)
@@ -128,44 +131,23 @@ class TicketGateAccess(CreateModelMixin, GenericAPIView):
             raise Http404
 
     def create(self, request, *args, **kwargs):
-        ticketdata = []
-
-        # validated_passes can either be list of ID's, or integer of # of passes to create
-        # check which and proceed accordingly
-        if isinstance(kwargs["validated_passes"], int):
-            for id in range(kwargs["validated_passes"]):
-                ticket, created = Ticket.objects.get_or_create(
-                    wallet_address=kwargs["wallet_address"],
-                    tokengate=kwargs["tokengate"],
-                )
-            if not ticket.signature:
-                ticket.signature = kwargs["signature"]
-            if not ticket.download_url
-                ticket.download_url = "http://testing.local"
-            ticket.save()
-            ticketdata.append(ticket.__dict__)
-        if isinstance(kwargs["validated_passes"], list):
-            for id in kwargs["validated_passes"]:
-                ticket, created = Ticket.objects.get_or_create(
-                    wallet_address=kwargs["wallet_address"],
-                    tokengate=kwargs["tokengate"],
-                    token_id=id,
-                )
-            if not ticket.signature:
-                ticket.signature = kwargs["signature"]
-            if not ticket.download_url
-                ticket.download_url = "http://testing.local"
-            ticket.save()
-            ticketdata.append(ticket.__dict__)
+        """
+        CREATE method generates, serializes and returns ticket data
+        """
+        # generate ticket data from validated passes
+        ticketdata = Ticket.generate_from_validated_passes(**kwargs)
 
         # serialize & return ticket data
         serializer = TicketSerializer(data=ticketdata, many=True)
         serializer.is_valid()
-        print(serializer.errors, serializer.data)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=201, headers=headers)
 
     def post(self, request):
+        """
+        POST method validates signature, as well as gate requirements.
+        Success proceeds to self.creation
+        """
         # serialize and verify data
         serialized = AccessGateSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
@@ -173,7 +155,7 @@ class TicketGateAccess(CreateModelMixin, GenericAPIView):
         # get signature obj, throw 404 if not fund
         signature = self.get_signature(serialized.data.get("signature_id"))
 
-        # validate signature;
+        # validate signed_message from signature;
         sig_success, sig_code, sig_msg = signature.validate(
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
@@ -183,25 +165,19 @@ class TicketGateAccess(CreateModelMixin, GenericAPIView):
             return Response(sig_msg, status=sig_code)
 
         # validate requirements against issued id's
-        # note: we exclude tickets created by the wallet
         gate = TicketGate.objects.get(public_id=serialized.data.get("tokengate_id"))
-        issued_ids = list(
-            gate.tickets.exclude(
-                wallet_address=serialized.data.get("address")
-            ).values_list("token_id", flat=True)
-        )
         req_success, req_code, req_msg = gate.validate_requirements(
-            wallet_address=serialized.data.get("address"), reward_list=issued_ids
+            wallet_address=serialized.data.get("address")
         )
         if not req_success:
             return Response(req_msg, status=req_code)
 
-        # issue reward (201 created)
+        # issue reward (http201 created)
         response = self.create(
             request,
-            wallet_address=serialized.data.get("address"),
             signature=signature,
             tokengate=gate,
+            wallet_address=serialized.data.get("address"),
             validated_passes=req_msg["validated_passes"],
         )
         return response

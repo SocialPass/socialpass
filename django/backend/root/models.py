@@ -356,20 +356,23 @@ class Ticket(DBModel):
         """
         ticketdata = []
 
+        # validated_passes as amount of passes
         if isinstance(kwargs["validated_passes"], int):
             for id in range(kwargs["validated_passes"]):
                 ticket, created = Ticket.objects.get_or_create(
                     wallet_address=kwargs["wallet_address"],
                     tokengate=kwargs["tokengate"],
                 )
-            if not ticket.signature:
-                ticket.signature = kwargs["signature"]
-            if not ticket.image_url:
-                ticket.generate_ticket_image(
+                if not ticket.signature:
+                    ticket.signature = kwargs["signature"]
+                if not ticket.image_url:
+                    ticket.generate_ticket_image(
 
-                )
-            ticket.save()
-            ticketdata.append(ticket.__dict__)
+                    )
+                ticket.save()
+                ticketdata.append(ticket.__dict__)
+
+        # validated_passes as List of ID's
         if isinstance(kwargs["validated_passes"], list):
             for id in kwargs["validated_passes"]:
                 ticket, created = Ticket.objects.get_or_create(
@@ -377,14 +380,14 @@ class Ticket(DBModel):
                     tokengate=kwargs["tokengate"],
                     token_id=id,
                 )
-            if not ticket.signature:
-                ticket.signature = kwargs["signature"]
-            if not ticket.image_url:
-                ticket.generate_ticket_image(
+                if not ticket.signature:
+                    ticket.signature = kwargs["signature"]
+                if not ticket.image_url:
+                    ticket.generate_ticket_image(
 
-                )
-            ticket.save()
-            ticketdata.append(ticket.__dict__)
+                    )
+                ticket.save()
+                ticketdata.append(ticket.__dict__)
 
         return ticketdata
 

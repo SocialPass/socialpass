@@ -369,7 +369,9 @@ class Ticket(DBModel):
                     ticket.signature = kwargs["signature"]
                 if not ticket.image:
                     ticket.generate_ticket_image(
-                        filename=ticket.filename
+                        filename=ticket.filename,
+                        embed='testing embed',
+                        top_banner_text='SocialPass Ticket'
                     )
                     ticket.image = f'tickets/{str(ticket.filename)}.png'
                 ticket.save()
@@ -387,7 +389,9 @@ class Ticket(DBModel):
                     ticket.signature = kwargs["signature"]
                 if not ticket.image:
                     ticket.generate_ticket_image(
-                        filename=ticket.filename
+                        filename=ticket.filename,
+                        embed='testing embed',
+                        top_banner_text='SocialPass Ticket'
                     )
                     ticket.image = f'tickets/{str(ticket.filename)}.png'
                 ticket.save()
@@ -406,9 +410,9 @@ class Ticket(DBModel):
         }
 
         params = (
-            ("filename", 'filename'),
-            ("embed", 'embed'),
-            ("top_banner_text", 'top_banner_text'),
+            ("filename", kwargs['filename']),
+            ("embed", kwargs['embed']),
+            ("top_banner_text", kwargs['top_banner_text']),
         )
 
         json_data = {

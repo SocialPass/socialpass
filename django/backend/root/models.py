@@ -157,8 +157,7 @@ class TokenGate(DBModel, PolymorphicModel):
 
     def generate_signature_request(self):
         """
-        generate one-time Signature model to be consumed and signed by the client for verification
-        returns unique code (for lookup) and message (for signature)
+        generate one-time Signature model
         """
         expires = datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
         signature = Signature.objects.create(
@@ -171,6 +170,7 @@ class TokenGate(DBModel, PolymorphicModel):
             "Hosted by": self.team.name,
             "One-Time Code": signature.unique_code,
             "Valid until": expires.ctime(),
+            "Version": signature.version
         }
         message = "\n".join(": ".join((key, val)) for (key, val) in message_obj.items())
         signature.signing_message = message
@@ -238,6 +238,7 @@ class Signature(DBModel):
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
     expires = models.DateTimeField()
+    version = models.IntegerField(default=1)
 
     def __str__(self):
         return str(self.unique_code)

@@ -209,8 +209,8 @@ class TokenGate(DBModel, PolymorphicModel):
             "requirements": self.requirements,
         }
 
-        resp = requests.get(
-            f"{settings.SERVICES_URL}/verify/requirements",
+        resp = requests.post(
+            f"{settings.SERVICES_URL}/blockchain/verify-requirements",
             headers=headers,
             params=params,
             json=json_data,
@@ -363,7 +363,10 @@ class Ticket(DBModel):
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
             if not ticket.image_url:
-                ticket.image_url = "http://testing.local"
+                ticket.image_url = self.generate_ticket_image(
+                    filename=filename,
+                    embed=embed,
+                )
             ticket.save()
             ticketdata.append(ticket.__dict__)
         if isinstance(kwargs["validated_passes"], list):
@@ -376,8 +379,41 @@ class Ticket(DBModel):
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
             if not ticket.image_url:
-                ticket.image_url = "http://testing.local"
+                ticket.image_url = self.generate_ticket_image(
+                    filename=filename,
+                    embed=embed,
+                )
             ticket.save()
             ticketdata.append(ticket.__dict__)
 
         return ticketdata
+
+
+    def generate_ticket_image(self, **kwargs):
+        """
+        method to generate ticket image via the services api
+        """
+        headers = {
+            "accept": "application/json",
+            "Content-Type": "application/json",
+        }
+
+        params = (
+            ("filename", 'filename'),
+            ("embed", 'embed'),
+            ("top_banner_text", 'top_banner_text'),
+        )
+
+        json_data = {
+           'name': self.tokengate.name,
+           'date': self.tokengate.date,
+           'location': self.tokengate.location
+        }
+
+        resp = requests.post(
+            f"{settings.SERVICES_URL}/ticketing/generate-ticket-image",
+            headers=headers,
+            params=params,
+            json=json_data,
+        )
+        return resp.json()

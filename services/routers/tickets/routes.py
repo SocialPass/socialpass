@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 # routes
-@router.post("/generate-ticket")
+@router.post("/generate-ticket-image")
 def generate_ticket(
     event_data: dict,
     filename: str,

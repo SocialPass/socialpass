@@ -874,8 +874,6 @@ def generate_and_store_ticket(
         top_banner_text=top_banner_text
     )
 
-    #ticket_img.show()
-
     # Store ticket image into bucket
     response = store_ticket(
         ticket_img=ticket_img,

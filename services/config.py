@@ -4,9 +4,10 @@ from pydantic import BaseSettings
 
 # init settings
 class Settings(BaseSettings):
-    INFURA_KEY: Optional[str]
-    SPACES_KEY: str
-    SPACES_SECRET: str
+    SERVICES_INFURA_KEY: Optional[str]
+    SERVICES_SPACES_URL: str
+    SERVICES_SPACES_KEY: str
+    SERVICES_SPACES_SECRET: str
 
 
 @lru_cache()

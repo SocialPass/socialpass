@@ -350,9 +350,12 @@ class Ticket(DBModel):
         return f"Ticket List (Token Gate: {self.tokengate.title})"
 
     def generate_from_validated_passes(**kwargs):
+        """
+        Given a number of validated_passes, this method will generate
+        a given number of tickets.
+        """
         ticketdata = []
-        # validated_passes can either be list of ID's, or integer of # of passes to create
-        # check which and proceed accordingly
+
         if isinstance(kwargs["validated_passes"], int):
             for id in range(kwargs["validated_passes"]):
                 ticket, created = Ticket.objects.get_or_create(
@@ -362,9 +365,8 @@ class Ticket(DBModel):
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
             if not ticket.image_url:
-                ticket.image_url = self.generate_ticket_image(
-                    filename=filename,
-                    embed=embed,
+                ticket.generate_ticket_image(
+
                 )
             ticket.save()
             ticketdata.append(ticket.__dict__)
@@ -378,9 +380,8 @@ class Ticket(DBModel):
             if not ticket.signature:
                 ticket.signature = kwargs["signature"]
             if not ticket.image_url:
-                ticket.image_url = self.generate_ticket_image(
-                    filename=filename,
-                    embed=embed,
+                ticket.generate_ticket_image(
+
                 )
             ticket.save()
             ticketdata.append(ticket.__dict__)
@@ -404,8 +405,8 @@ class Ticket(DBModel):
         )
 
         json_data = {
-           'name': self.tokengate.name,
-           'date': self.tokengate.date,
+           'name': self.tokengate.title,
+           'date': self.tokengate.date.strftime("%m/%d/%Y, %H:%M:%S"),
            'location': self.tokengate.location
         }
 

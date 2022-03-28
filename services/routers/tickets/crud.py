@@ -883,7 +883,7 @@ def generate_and_store_ticket(
     # generate presigned url
     url = s3.generate_presigned_url(
         ClientMethod='get_object',
-        Params={'Bucket': f"{settings.SERVICES_SPACES_BUCKET_NAME}", 'Key': 'f"{settings.SERVICES_SPACES_DIRECTORY}{filename}.png"'},
+        Params={'Bucket': f"{settings.SERVICES_SPACES_BUCKET_NAME}", 'Key': f"{settings.SERVICES_SPACES_DIRECTORY}{filename}.png"},
         ExpiresIn=3600
     )
 

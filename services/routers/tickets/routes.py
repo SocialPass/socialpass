@@ -33,15 +33,8 @@ def generate_ticket(
 
     # return
     success_response = {
-        "headers": {"Content-Type": "application/json"},
-        "isBase64Encoded": False,
-        "statusCode": 200,
-        "body":
-            {
-                "s3": url,
-                "filename": filename,
-                "message": "Success! Ticket image generated.",
-            }
-        ,
+        "s3": url,
+        "filename": filename,
+        "message": "Success! Ticket image generated.",
     }
     return success_response

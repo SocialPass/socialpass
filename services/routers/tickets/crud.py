@@ -16,7 +16,7 @@ from config import settings
 s3 = boto3.client(
     "s3",
     region_name='nyc3',
-    endpoint_url=SETTINGS.SPACES_URL,
+    endpoint_url=settings.SPACES_URL,
     aws_access_key_id=settings.SPACES_KEY,
     aws_secret_access_key=settings.SPACES_SECRET
 )

@@ -71,14 +71,6 @@ export interface TicketGateRetrievalResponse extends TokenGateRetrievalResponse 
   end_date: string
 }
 
-// Extended props for AirdropGate
-export interface AidropGateRetrievalResponse extends TokenGateRetrievalResponse {
-  date: any
-  location: any
-  capacity: any
-  deadline: any
-}
-
 
 
 /*
@@ -97,11 +89,7 @@ export interface TokenGateAccessResponse {
 }
 
 // Extended props for TicketGate
-export interface AirdropGateAccessResponse extends TokenGateAccessResponse {
-  transaction_hash: string
-}
-
-// Extended props for TicketGate
 export interface TicketGateAccessResponse extends TokenGateAccessResponse {
   ticket_url: string
+  temporary_download_url: string
 }

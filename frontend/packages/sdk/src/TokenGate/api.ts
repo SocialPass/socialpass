@@ -89,7 +89,7 @@ function fetchTicketGate(id:string): Promise<APIRetrievalError> | Promise<Ticket
 /*
 TicketGate Access
 */
-function accessTicketGate(address: string, tokengate_id: string, signature_id: string, signed_message: string): Promise<APIAccessError> | Promise<TicketGateAccessResponse> {
+function accessTicketGate(address: string, tokengate_id: string, signature_id: string, signed_message: string): Promise<APIAccessError> | Promise<TicketGateAccessResponse[]> {
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/json");
 
@@ -116,11 +116,14 @@ function accessTicketGate(address: string, tokengate_id: string, signature_id: s
 	  })
 	  .then((json) => {
 		let response = [];
-		let obj = generateJson2Obj(json[0]);
-		Object.assign(obj, {
-			"download_url": json[0].download_url
-		});
-		return obj as TicketGateAccessResponse;
+		for (let i in json){
+			let obj = generateJson2Obj(json[i]);
+			Object.assign(obj, {
+				"temporary_download_url": json[i].temporary_download_url
+			});
+			response.push(obj)
+		}
+		return response as TicketGateAccessResponse[];
 	  })
 	  .catch((error) => {
 		let e = {

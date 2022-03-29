@@ -85,11 +85,9 @@ export interface APIAccessError {
 // Props for base TokenGate API response
 export interface TokenGateAccessResponse {
   httpStatus: number
-  wallet_address: string
+  reward: array
 }
 
 // Extended props for TicketGate
 export interface TicketGateAccessResponse extends TokenGateAccessResponse {
-  ticket_url: string
-  temporary_download_url: string
 }

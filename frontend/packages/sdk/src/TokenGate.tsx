@@ -50,7 +50,7 @@ const BaseGate = () => {
 
 // GateHandler
 const GateHandler = () => {
-	const { id, json, styles, setGateType, setJson, httpStatus, setHttpStatus, httpStatus2 } = useContext(TokenGateContext);
+	const { id, json, setGateType, setJson, httpStatus, setHttpStatus } = useContext(TokenGateContext);
 
 	// Gate Handler, updates on ID change
 	// Fetches & Sets TokenGate JSON

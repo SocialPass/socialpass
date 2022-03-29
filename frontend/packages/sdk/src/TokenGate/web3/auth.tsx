@@ -37,9 +37,10 @@ const Web3ProviderAuthentication = () => {
 				signature_id: json?.signature.id,
 				signed_message: signRes.data
 			});
-			if (response && response.httpStatus){
+			if (response){
+				//console.log(response)
 				setJson2(response);
-				setHttpStatus2(response.httpStatus);
+				//setHttpStatus2(response.httpStatus);
 				setStep(2);
 			}
 		}

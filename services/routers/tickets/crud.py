@@ -844,7 +844,7 @@ def generate_ticket(
 def store_ticket(ticket_img, filename):
     # Prepare image for S3
     buffer = io.BytesIO()
-    ticket_img.save(buffer, "PNG", transparency=0)
+    ticket_img.save(buffer, "PNG")
     buffer.seek(0)  # Rewind pointer back to start
 
 

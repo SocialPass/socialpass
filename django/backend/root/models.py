@@ -449,7 +449,7 @@ class Ticket(DBModel):
             ClientMethod='get_object',
             Params={
                 'Bucket': f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                'Key': f"tickets/{self.filename}.png"
+                'Key': f"media/tickets/{str(self.filename)}.png"
             },
             ExpiresIn=3600
         )

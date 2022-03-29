@@ -23,7 +23,7 @@ def generate_ticket(
     Generating & storing ticket are passed into a background task
     """
 
-    (ticket_img, response, url) = crud.generate_and_store_ticket(
+    (ticket_img, response) = crud.generate_and_store_ticket(
         event_data=event_data,
         embed=embed,
         scene_img_source=scene_img_source,
@@ -33,7 +33,6 @@ def generate_ticket(
 
     # return
     success_response = {
-        "s3": url,
         "filename": filename,
         "message": "Success! Ticket image generated.",
     }

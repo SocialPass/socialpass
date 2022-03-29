@@ -374,8 +374,8 @@ class Ticket(DBModel):
                         embed='testing embed',
                         top_banner_text='SocialPass Ticket'
                     )
-                    ticket.temporary_download_url = generated_ticket["s3"]
                     ticket.image = f'tickets/{str(ticket.filename)}.png'
+                ticket.temporary_download_url = ticket.generate_ticket_download_url()
                 ticket.save()
                 ticketdata.append(ticket.__dict__)
 
@@ -395,8 +395,8 @@ class Ticket(DBModel):
                         embed='testing embed',
                         top_banner_text='SocialPass Ticket'
                     )
-                    ticket.temporary_download_url = generated_ticket["s3"]
                     ticket.image = f'tickets/{str(ticket.filename)}.png'
+                ticket.temporary_download_url = ticket.generate_ticket_download_url()
                 ticket.save()
                 ticketdata.append(ticket.__dict__)
 
@@ -431,3 +431,26 @@ class Ticket(DBModel):
             json=json_data,
         )
         return resp.json()
+
+    def generate_ticket_download_url(self):
+        import boto3
+
+        # s3 client init
+        s3 = boto3.client(
+            "s3",
+            region_name='nyc3',
+            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+
+        # generate presigned url
+        url = s3.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={
+                'Bucket': f"{settings.AWS_STORAGE_BUCKET_NAME}",
+                'Key': f"tickets/{self.filename}.png"
+            },
+            ExpiresIn=3600
+        )
+        return url

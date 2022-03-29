@@ -6,7 +6,7 @@ argon2-cffi==21.3.0
 web3==5.28.0
 django-polymorphic
 django-rest-polymorphic
-
+boto3
 
 # Django
 # ------------------------------------------------------------------------------

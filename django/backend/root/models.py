@@ -281,40 +281,6 @@ class Signature(DBModel):
 
         return True, 200, "Success"
 
-
-class AirdropGate(TokenGate):
-    """
-    Stores an Airdrop type token gate.
-    """
-
-    chain = models.CharField(max_length=50, choices=BLOCKCHAINS)
-    asset_type = models.CharField(max_length=50, choices=ASSET_TYPES)
-    asset_address = models.CharField(max_length=400)
-    amount_per_person = models.IntegerField(validators=[MinValueValidator(1)])
-    total_amount = models.IntegerField(validators=[MinValueValidator(1)])
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
-
-
-class Airdrop(DBModel):
-    """
-    List of all the airdrops distributed by the respective Airdrop token gates.
-    """
-
-    tokengate = models.ForeignKey(
-        AirdropGate, on_delete=models.CASCADE, related_name="airdrops"
-    )
-    signature = models.ForeignKey(
-        Signature, on_delete=models.SET_NULL, related_name="airdrops", null=True
-    )
-    wallet_address = models.CharField(max_length=400)
-    transaction_hash = models.CharField(max_length=400)
-    token_id = models.IntegerField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Airdrop List (Token Gate: {self.tokengate.title})"
-
-
 class TicketGate(TokenGate):
     """
     Stores a Ticket type token gate.

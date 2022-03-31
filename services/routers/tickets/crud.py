@@ -535,8 +535,8 @@ class TicketPartGenerator:
 def generate_ticket(
     event_data,
     embed,
+    top_banner_text,
     theme=None,
-    top_banner_text="SocialPass Ticket",
     scene_img_source=None,
 ):
     """

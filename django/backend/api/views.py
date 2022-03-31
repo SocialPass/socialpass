@@ -1,20 +1,20 @@
-from rest_framework.generics import GenericAPIView, RetrieveAPIView, ListAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from root.models import Signature, Ticket, TicketGate, Team, TokenGate
+from root.models import Signature, Team, Ticket, TicketGate, TokenGate
 
 from django.http import Http404
 
 from .serializers import (
-    TeamSerializer,
-    TokenGatePolymorphicSerializer,
     AccessGateSerializer,
+    TeamSerializer,
     TicketGateDetailSerializer,
-    TicketGateSerializer,
-    TicketSerializer
+    TicketSerializer,
+    TokenGatePolymorphicSerializer,
 )
+
 
 #
 # HOSTED PAGE ////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@ class HostedPageRetrieve(APIView):
     All child list views will have the relevant team passed for querying.
     In addition, child list views will handle filtering by relevant QS
     """
+
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
@@ -40,20 +41,20 @@ class HostedPageRetrieve(APIView):
 
         # 1. fetch team, raise 404 on error
         try:
-            domain = request.GET.get('domain', None)
+            domain = request.GET.get("domain", None)
             team = Team.get_by_domain(domain)
             if team.subdomain:
-                response['team'] = TeamSerializer(team).data
-        except:
+                response["team"] = TeamSerializer(team).data
+        except Exception:
             raise Http404
 
         # 2. fetch featured gates
         featuredgates = FeaturedGateList.as_view(team=team)(request._request)
-        response['featured_gates'] = featuredgates.data
+        response["featured_gates"] = featuredgates.data
 
         # 3. fetch available gates
         allgates = AllGateList.as_view(team=team)(request._request)
-        response['all_gates'] = allgates.data
+        response["all_gates"] = allgates.data
 
         # return response
         return Response(response)
@@ -65,17 +66,18 @@ class FeaturedGateList(ListAPIView):
 
     Used internally by HostedPageRetrieve (access set to True)
     """
+
     serializer_class = TokenGatePolymorphicSerializer
     permission_classes = [AllowAny]
     team = None
 
     def get_queryset(self):
         # title querystring
-        if self.request.GET.get('title'):
+        if self.request.GET.get("title"):
             return TokenGate.objects.filter(
                 team=self.team,
                 featured=True,
-                title__icontains=self.request.GET['title']
+                title__icontains=self.request.GET["title"],
             )
 
         # no querystring
@@ -88,21 +90,23 @@ class AllGateList(ListAPIView):
 
     Used internally by HostedPageRetrieve (access set to True)
     """
+
     serializer_class = TokenGatePolymorphicSerializer
     permission_classes = [AllowAny]
     team = None
 
     def get_queryset(self):
         # title querystring
-        if self.request.GET.get('title'):
+        if self.request.GET.get("title"):
             return TokenGate.objects.filter(
                 team=self.team,
                 featured=False,
-                title__icontains=self.request.GET['title']
+                title__icontains=self.request.GET["title"],
             )
 
         # no querystring
         return TokenGate.objects.filter(team=self.team, featured=False)
+
 
 #
 # TICKETGATES ////////////////////////////////////////////////////////////////////////////////
@@ -187,4 +191,3 @@ class TicketGateAccess(CreateModelMixin, GenericAPIView):
             validated_passes=req_msg["validated_passes"],
         )
         return response
-

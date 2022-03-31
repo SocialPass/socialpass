@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
 from root.models import Signature, Team, Ticket, TicketGate
 
+
 #
 # MISC ////////////////////////////////////////////////////////////////////////////////////
 #
@@ -16,16 +17,16 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class AccessGateSerializer(serializers.Serializer):
-        """
-        Serializes /access request for all token gates
-        Accepts a signed message & corresponding wallet address,
-        as well related 'public_id'
-        """
+    """
+    Serializes /access request for all token gates
+    Accepts a signed message & corresponding wallet address,
+    as well related 'public_id'
+    """
 
-        address = serializers.CharField()
-        signed_message = serializers.CharField()
-        tokengate_id = serializers.CharField()
-        signature_id = serializers.CharField()
+    address = serializers.CharField()
+    signed_message = serializers.CharField()
+    tokengate_id = serializers.CharField()
+    signature_id = serializers.CharField()
 
 
 #
@@ -49,6 +50,7 @@ class TicketGateSerializer(serializers.ModelSerializer):
             "capacity",
         ]
 
+
 class TokenGatePolymorphicSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
         TicketGate: TicketGateSerializer,
@@ -63,6 +65,7 @@ class TicketGateDetailSerializer(serializers.ModelSerializer):
     Serializes Ticket token gates for detail views.
     Most notably, generates new signature
     """
+
     team = TeamSerializer()
     signature = serializers.SerializerMethodField(read_only=True)
 
@@ -89,6 +92,7 @@ class TicketSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket.
     """
+
     tokengate = serializers.PrimaryKeyRelatedField(
         queryset=TicketGate.objects.all(), write_only=True
     )

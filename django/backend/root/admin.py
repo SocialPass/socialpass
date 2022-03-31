@@ -56,6 +56,7 @@ class SignatureAdmin(admin.ModelAdmin):
     list_display = ("tokengate", "unique_code", "wallet_address", "is_verified")
     search_fields = ("tokengate__title", "unique_code", "wallet_address")
 
+
 @admin.register(TicketGate)
 class TicketGateAdmin(admin.ModelAdmin):
     list_display = (

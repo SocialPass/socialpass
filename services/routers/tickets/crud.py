@@ -8,9 +8,18 @@ import urllib.request
 import boto3
 import qrcode
 from config import settings
+from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFont
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import CircleModuleDrawer
+
+#
+# SCHEMAS
+#
+class EventData(BaseModel):
+    event_name: str         # Name of the event
+    event_date: str	        # Date (and time) of the event
+    event_location: str     # Where the event will be held
 
 # s3 client init
 s3 = boto3.client(

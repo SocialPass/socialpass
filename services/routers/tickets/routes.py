@@ -14,7 +14,7 @@ router = APIRouter(
 # routes
 @router.post("/generate-ticket-image")
 def generate_ticket(
-    event_data: dict,
+    event_data: crud.EventData,
     filename: str,
     embed: str,
     top_banner_text: Optional[str] = "SocialPass Ticket",

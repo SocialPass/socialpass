@@ -79,6 +79,28 @@ class Team(DBModel):
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def get_by_domain(domain):
+        # get subdomain
+        pieces = domain.split('.')
+        subdomain = ".".join(pieces[:-2]) # join all but primary domain
+
+        # check if multiple subdomains; currently not supported
+        if len(subdomain.split('.')) > 1:
+            return None
+
+        # compare against default site domain(s)
+        default_domain = Site.objects.get(id=settings.SITE_ID)
+        if domain in {default_domain.domain, "127.0.0.1:8000"}:
+            return None
+
+        # try to fetch related team
+        try:
+            team = Team.objects.get(subdomain=subdomain)
+            return team
+        except:
+            return None
+
 
 class Membership(DBModel):
     """

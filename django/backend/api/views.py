@@ -30,12 +30,18 @@ class HostedPageRetrieve(APIView):
     In addition, child list views will handle filtering by relevant QS
     """
     permission_classes = [AllowAny]
+
     def get(self, request, *args, **kwargs):
+        """
+        Method fetches team by given domain, and compiles all necessary data
+        for hosted page.
+        """
         response = {}
 
         # 1. fetch team, raise 404 on error
         try:
-            team = Team.objects.get(subdomain__iexact=self.kwargs['subdomain'])
+            domain = request.GET.get('domain', None)
+            team = Team.get_by_domain(domain)
             if team.subdomain:
                 response['team'] = TeamSerializer(team).data
         except:

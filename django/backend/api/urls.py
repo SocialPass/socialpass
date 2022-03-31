@@ -5,7 +5,7 @@ from . import views
 app_name = "root"
 urlpatterns = [
     # hosted page
-    path('hostedpage/<str:subdomain>/', views.HostedPageRetrieve.as_view()),
+    path('hostedpage/', views.HostedPageRetrieve.as_view()),
     # ticketing
     path(
         "ticketgates/retrieve/<str:public_id>/",

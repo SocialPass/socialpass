@@ -1,8 +1,6 @@
-from fastapi import Depends, FastAPI
-from config import Settings
+from fastapi import FastAPI
 from routers.blockchain import routes as Blockchain
 from routers.tickets import routes as Ticketing
-
 
 # init app
 app = FastAPI()

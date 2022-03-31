@@ -1,11 +1,9 @@
 import json
-from decimal import Decimal
-from enum import Enum
 from typing import List, Optional
 
 import requests
-from fastapi import HTTPException
 from eth_abi import decode_single, encode_abi, encode_single
+from fastapi import HTTPException
 from pydantic import BaseModel
 from web3 import Web3
 
@@ -22,14 +20,12 @@ class Requirement(BaseModel):
     token_id: Optional[List[int]]
     to_block: Optional[int]
 
+
 #
 # MAIN FUNCTIONS
 #
 def verify_evm_requirement(
-    req:Requirement,
-    limit_per_person:int,
-    wallet_address:str,
-    reward_list:List[str]
+    req: Requirement, limit_per_person: int, wallet_address: str, reward_list: List[str]
 ):
     # init token balance
     token_balance = 0
@@ -42,12 +38,12 @@ def verify_evm_requirement(
             chain_id=hex(req.chain_id),
             contract_addresses=[Web3.toChecksumAddress(req.asset_address)],
             wallet_address=Web3.toChecksumAddress(wallet_address),
-            to_block=req.to_block
+            to_block=req.to_block,
         )
         for token in tokens:
-            if token['token_address'].casefold() == req.asset_address.casefold():
-                decimals = int(token['decimals'])
-                token_balance = int(token['balance'])
+            if token["token_address"].casefold() == req.asset_address.casefold():
+                decimals = int(token["decimals"])
+                token_balance = int(token["balance"])
                 break
 
         # divide balance by required amount,
@@ -61,14 +57,14 @@ def verify_evm_requirement(
             return {
                 "wallet_address": wallet_address,
                 "token_balance": token_balance,
-                "validated_passes": limit_per_person
+                "validated_passes": limit_per_person,
             }
         else:
             return {
-               "wallet_address": wallet_address,
-               "token_balance": token_balance,
-               "validated_passes": int(quotient)
-           }
+                "wallet_address": wallet_address,
+                "token_balance": token_balance,
+                "validated_passes": int(quotient),
+            }
 
     # ERC721 ////////////////////////////////////////////////////////////////////////////
     if req.asset_type == "ERC721":
@@ -104,28 +100,24 @@ def verify_evm_requirement(
     if req.asset_type == "ERC1155":
         raise HTTPException(status_code=400, detail="Not yet implemented")
 
+
 #
 # INTERNAL FUNCTIONS
 #
 def moralis_get_fungible(
-    chain_id: str,
-    wallet_address: str,
-    contract_addresses: List[str],
-    to_block: int
+    chain_id: str, wallet_address: str, contract_addresses: List[str], to_block: int
 ):
     """
     Gets token balances for a specific address
 
     Gets token owned by the given address, at the given contract_addresses, up until to_block
     """
-    url = (
-        f"https://deep-index.moralis.io/api/v2/{wallet_address}/erc20/"
-    )
+    url = f"https://deep-index.moralis.io/api/v2/{wallet_address}/erc20/"
     payload = {
         "chain": chain_id,
         "to_block": to_block,
         "format": "decimal",
-        "contract_addresses": contract_addresses
+        "contract_addresses": contract_addresses,
     }
     headers = {
         "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
@@ -133,7 +125,6 @@ def moralis_get_fungible(
     r = requests.get(url, params=payload, headers=headers)
     if r.status_code == 200:
         return r.json()
-
 
 
 def moralis_get_nfts(chain_id: str, wallet_address: str, contract_address: str):

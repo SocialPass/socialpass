@@ -1,4 +1,5 @@
 from typing import List
+
 from fastapi import APIRouter, HTTPException
 
 from . import crud
@@ -34,7 +35,7 @@ def verify_requirements(
                     req=req,
                     limit_per_person=limit_per_person,
                     reward_list=reward_list,
-                    wallet_address=wallet_address
+                    wallet_address=wallet_address,
                 )
                 return resp
             except HTTPException as e:

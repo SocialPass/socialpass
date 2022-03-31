@@ -1,5 +1,7 @@
-from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Response, BackgroundTasks
+from typing import Optional
+
+from fastapi import APIRouter
+
 from . import crud
 
 # router setup
@@ -8,15 +10,15 @@ router = APIRouter(
     tags=["ticketing"],
 )
 
+
 # routes
 @router.post("/generate-ticket-image")
 def generate_ticket(
-    background_tasks: BackgroundTasks,
     event_data: dict,
     filename: str,
     embed: str,
     top_banner_text: Optional[str],
-    scene_img_source: Optional[str] = None
+    scene_img_source: Optional[str] = None,
 ):
     """
     Use the request to generate a ticket image and save.
@@ -28,7 +30,7 @@ def generate_ticket(
         embed=embed,
         scene_img_source=scene_img_source,
         top_banner_text=top_banner_text,
-        filename=filename
+        filename=filename,
     )
 
     # return

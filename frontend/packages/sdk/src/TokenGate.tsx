@@ -12,7 +12,7 @@ const BaseGate = () => {
 	// Initial Get Access
 	if (step === 0){
 	return (
-		<div className="styled-base-gate">
+		<div className="base-gate">
 			<div>
 				<img src={json.team_image} alt="Team Image" height="25" width="25"/>
 				<h3>{json.team_name}</h3>
@@ -28,7 +28,7 @@ const BaseGate = () => {
 	// Select Wallet || Sign Message
 	if (step === 1){
 	return (
-		<div className="styled-base-gate">
+		<div className="base-gate">
 			<Web3ProviderAuthentication/>
 		</div>
 	)}
@@ -39,7 +39,7 @@ const BaseGate = () => {
 	if (step === 2){
 	console.log(json2);
 	return (
-		<div className="styled-base-gate">
+		<div className="base-gate">
 			JSON2 Response
 		</div>
 	)}
@@ -87,14 +87,14 @@ const GateHandler = () => {
 
 	const Styled = ({children}:{children:any}) => {
 		return (
-			<div className="styled-container">
-				<header className="styled-header">
-					<img src={require("./static/header1.svg")} alt="image" height="auto" width="100%"/>
+			<div className="container">
+				<header className="header">
+					<img src={require("./static/images/header1.svg")} alt="image"/>
 				</header>
-				<div className="styled-parent">
+				<div className="parent">
 					{children}
 				</div>
-				<footer className="styled-footer">
+				<footer className="footer">
 					<small>?</small>
 					<small>SocialPass</small>
 				</footer>

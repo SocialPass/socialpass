@@ -4,7 +4,7 @@ import Web3ProviderAuthentication from "./web3/auth";
 import { TokenGateProviderInterface } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
 import { fetchGateHandler } from './api';
-import './index.css'
+import './index.css';
 
 const BaseGate = () => {
 	const { gateType, json, json2, step, setStep } = React.useContext(TokenGateContext);
@@ -13,13 +13,16 @@ const BaseGate = () => {
 	if (step === 0){
 	return (
 		<div className="base-gate">
-			<div>
-				<img src={json.team_image} alt="Team Image" height="25" width="25"/>
+			<div className="image">
+				<img src={json.team_image} alt="Team Image"/>
 				<h3>{json.team_name}</h3>
-				<h1>{json.title}</h1>
 			</div>
-			<div>
-				<button onClick={() => setStep(1)}>Get Access</button>
+			<div className="title">
+				<h1>{json.title}</h1>
+				<p>{json.description}</p>
+			</div>
+			<div className="btn">
+				<button className="btn-primary" onClick={() => setStep(1)}>Get Access</button>
 			</div>
 		</div>
 	)}
@@ -45,7 +48,6 @@ const BaseGate = () => {
 	)}
 
 	return <></>
-
 }
 
 // GateHandler
@@ -85,7 +87,7 @@ const GateHandler = () => {
 		)
 	}
 
-	const Styled = ({children}:{children:any}) => {
+	const StyledContainer = ({children}:{children:any}) => {
 		return (
 			<div className="container">
 				<header className="header">
@@ -95,8 +97,11 @@ const GateHandler = () => {
 					{children}
 				</div>
 				<footer className="footer">
-					<small>?</small>
-					<small>SocialPass</small>
+					<img src={require("./static/images/FAQ.svg")} alt="image"/>
+					<small style={{display:'flex',alignItems:'center'}}>
+						Powered by &nbsp;
+						<img src={require("./static/images/socialpass.svg")} alt="image"/>
+					</small>
 				</footer>
 			</div>
 		)
@@ -128,9 +133,9 @@ const GateHandler = () => {
 
 
 	return (
-		<Styled>
+		<StyledContainer>
 			<Status/>
-		</Styled>
+		</StyledContainer>
 	)
 }
 

@@ -61,6 +61,11 @@ small {
   color: #959191;
 }
 
+header {
+  position:relative;
+  overflow:hidden;
+}
+
 footer {
   display: flex;
   flex-wrap: wrap;
@@ -69,6 +74,16 @@ footer {
   margin: 2.25rem 2.25rem 1rem 2.25rem;
 }
 
+/*
+ELEMENTS
+*/
+.ticker {
+  position:absolute;
+  display:block;
+  max-width:44%;
+  top:0;
+  right:0;
+}
 
 /*
 THEMES

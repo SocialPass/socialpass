@@ -6,7 +6,7 @@ import { accessGateHandler } from '../api';
 const ConnectorImage = ({connector}) => {
 	switch(connector){
 		case 'MetaMask':
-			return <img height="55" width="55" src={require("../static/images/connectors/metamask.svg")} alt="image"/>
+			return <img src={require("../static/images/connectors/metamask.svg")} alt="image"/>
 
 		default:
 			return null;

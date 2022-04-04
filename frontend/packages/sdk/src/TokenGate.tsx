@@ -6,6 +6,16 @@ import { TokenGateProvider, TokenGateContext } from './context';
 import { fetchGateHandler } from './api';
 import './index.css';
 
+const TickerImage = ({gateType}) => {
+	switch(gateType){
+		case 'TICKET':
+			return <img className="ticker" src={require("./static/images/gates/ticket.svg")} alt="image"/>
+
+		default:
+			return null;
+	}
+}
+
 const BaseGate = () => {
 	const { gateType, json, json2, step, setStep } = React.useContext(TokenGateContext);
 	// Step 0
@@ -50,7 +60,7 @@ const BaseGate = () => {
 
 // GateHandler
 const GateHandler = () => {
-	const { id, json, setGateType, setJson, httpStatus, setHttpStatus } = useContext(TokenGateContext);
+	const { id, json, gateType, setGateType, setJson, httpStatus, setHttpStatus } = useContext(TokenGateContext);
 
 	// Gate Handler, updates on ID change
 	// Fetches & Sets TokenGate JSON
@@ -85,10 +95,11 @@ const GateHandler = () => {
 		)
 	}
 
-	const StyledContainer = ({children}:{children:any}) => {
+	const StyledContainer = ({children, gateType}) => {
 		return (
 			<div className="container">
-				<header className="header">
+				<header>
+					<TickerImage gateType={gateType}/>
 					<img src={require("./static/images/header1.svg")} alt="image"/>
 				</header>
 				<div className="parent">
@@ -131,7 +142,7 @@ const GateHandler = () => {
 
 
 	return (
-		<StyledContainer>
+		<StyledContainer gateType={gateType}>
 			<Status/>
 		</StyledContainer>
 	)

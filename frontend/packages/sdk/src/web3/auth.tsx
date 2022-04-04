@@ -3,8 +3,18 @@ import {  useConnect, useAccount, useSignMessage } from 'wagmi'
 import { TokenGateContext } from '../context';
 import { accessGateHandler } from '../api';
 
+const ConnectorImage = ({connector}) => {
+	switch(connector){
+		case 'MetaMask':
+			return <img height="55" width="55" src={require("../static/images/connectors/metamask.svg")} alt="image"/>
+
+		default:
+			return null;
+	}
+}
+
 // Web3 Provider authentication
-const Web3ProviderAuthentication = () => {
+export const Web3ProviderAuthentication = () => {
 	/****************** GLOBALS *************************/
 	// context
 	const { id, json, setJson2, setStep, setHttpStatus2 } = React.useContext(TokenGateContext);
@@ -45,27 +55,31 @@ const Web3ProviderAuthentication = () => {
 		}
 	}
 
-	/****************** RETURN *************************/
 	// If accountData provided...
 	if (accountData) {
+		let address = accountData.address.substring(0,7) + "......" + accountData.address.substring(accountData.address.length-7);
 		return (
-		  <div>
-			<h1>Verify Wallet</h1>
-			<div>
-				<div>
-				{accountData.ens?.avatar && <img src={accountData.ens?.avatar || ''} alt="ENS Avatar" />}
-		  		{accountData.ens?.name
-					? `${accountData.ens?.name} (${accountData.address})`
-					: accountData.address}
-				</div>
-				<div>
-					<div>Connected to {accountData.connector?.name}</div>
-					<button onClick={() => signatureHandler()}>Sign Message</button>
-					<br/>
-					<button onClick={() => disconnect()}>Disconnect</button>
+		<div className="base-gate">
+			<div className="title">
+				<h1>Almost There</h1>
+				<p>Your wallet is almost connected! You need to click the “Sign Message” button to complete connection.</p>
+				<h3>Connected Wallet</h3>
+				<div style={{display:'flex'}}>
+					<ConnectorImage connector={accountData.connector?.name}/>
+					<div>
+						<div>{accountData.connector?.name}</div>
+						<div>
+							{accountData.ens?.name
+							? `${accountData.ens?.name} (${accountData.address})`
+							: address}
+						</div>
+					</div>
 				</div>
 			</div>
-		  </div>
+			<div className="btn">
+				<button className="btn-primary" onClick={() => signatureHandler()}>Sign Message</button>
+			</div>
+		</div>
 		)
 	}
 
@@ -89,5 +103,3 @@ const Web3ProviderAuthentication = () => {
 		)
 	}
 }
-
-export default Web3ProviderAuthentication;

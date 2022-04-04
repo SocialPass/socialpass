@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Web3ProviderWrapper from './web3/wrapper';
-import Web3ProviderAuthentication from "./web3/auth";
+import { Web3ProviderAuthentication } from "./web3/auth";
 import { TokenGateProviderInterface } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
 import { fetchGateHandler } from './api';
@@ -31,9 +31,7 @@ const BaseGate = () => {
 	// Select Wallet || Sign Message
 	if (step === 1){
 	return (
-		<div className="base-gate">
-			<Web3ProviderAuthentication/>
-		</div>
+		<Web3ProviderAuthentication/>
 	)}
 
 

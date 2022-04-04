@@ -19,18 +19,16 @@ html, body {
   font-style: normal;
 }
 
+h1, h2, h3 {
+  margin:0;
+  padding:0;
+}
+
 h1 {
   font-size: 4vh;
   font-weight: 700;
   font-style: bold;
   line-height: 1.25em;
-  margin:0;
-  padding:0;
-}
-
-h1, h2, h3 {
-  margin:0;
-  padding:0;
 }
 
 h2 {
@@ -80,7 +78,7 @@ THEMES
   border-radius: 20px;
   color:white;
   border: none;
-  min-height:75px;
+  min-height:80px;
   font-weight: 700;
   font-size: 2.5vh;
   padding:0;
@@ -108,7 +106,7 @@ CONTAINERS
 .base-gate {
  display: flex;
  flex-wrap: wrap;
- align-items:start;
+ align-items:center;
 }
 
 .image {
@@ -128,6 +126,7 @@ CONTAINERS
 
 .title, .btn {
   flex:1;
-  margin:0rem 2.25rem 0 2.25rem;
+  margin:.5rem 2.25rem 0 2.25rem;
   word-break: break-word;
+  min-width:250px;
 }

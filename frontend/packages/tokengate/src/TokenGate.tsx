@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Web3ProviderWrapper from './web3/wrapper';
-import { Web3ProviderAuthentication } from "./web3/auth";
+import { Web3Login } from "./web3/login";
 import { TokenGateProviderInterface } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
 import { fetchGateHandler } from './api';
 import './index.css';
 
+
+// TickerImage component
 const TickerImage = ({gateType}) => {
 	switch(gateType){
 		case 'TICKET':
@@ -15,6 +17,71 @@ const TickerImage = ({gateType}) => {
 			return null;
 	}
 }
+
+// Loading Component
+const Loading = () => {
+	return (
+		<h1>Loading...</h1>
+	)
+}
+
+// Error Component
+const Error = ({httpStatus}) => {
+	return (
+		<div>
+			<h1>Error</h1>
+			<h2>Status Code: {httpStatus}</h2>
+		</div>
+	)
+}
+
+// Status Wrapper
+// Once httpStatus is 200, rendering is handed off to BaseGate
+const Status = ({httpStatus, id, setGateType}) => {
+	// initial http status is 0, indicates loading
+	if (httpStatus === 0){
+		return <Loading/>
+	}
+
+	// non-200 http status, indicates error
+	if (httpStatus !== 200) {
+		return <Error httpStatus={httpStatus}/>
+	}
+
+	// 200 http status, indicates success
+	// return base gate and set gate type
+	if (httpStatus === 200) {
+		let _id = id.split('_');
+		setGateType(_id[0])
+		return <BaseGate/>
+	}
+
+	return <Loading/>
+}
+
+// StyledContainer component
+//
+const StyledContainer = ({children, gateType}) => {
+	return (
+		<div className="container">
+			<header>
+				<TickerImage gateType={gateType}/>
+				<img src={require("./static/images/header1.svg")} alt="image"/>
+			</header>
+			<div className="parent">
+				{children}
+			</div>
+			<footer className="footer">
+				<img src={require("./static/images/FAQ.svg")} alt="image"/>
+				<small style={{display:'flex',alignItems:'center'}}>
+					Powered by &nbsp;
+					<img src={require("./static/images/socialpass.svg")} alt="image"/>
+				</small>
+			</footer>
+		</div>
+	)
+}
+
 
 const BaseGate = () => {
 	const { gateType, json, json2, step, setStep } = React.useContext(TokenGateContext);
@@ -41,7 +108,7 @@ const BaseGate = () => {
 	// Select Wallet || Sign Message
 	if (step === 1){
 	return (
-		<Web3ProviderAuthentication/>
+		<Web3Login/>
 	)}
 
 
@@ -78,72 +145,9 @@ const GateHandler = () => {
 		})();
 	},[id]);
 
-	// Error Component
-	const Error = () => {
-		return (
-			<div>
-				<h1>Error</h1>
-				<h2>Status Code: {httpStatus}</h2>
-			</div>
-		)
-	}
-
-	// Loading Component
-	const Loading = () => {
-		return (
-			<h1>Loading...</h1>
-		)
-	}
-
-	const StyledContainer = ({children, gateType}) => {
-		return (
-			<div className="container">
-				<header>
-					<TickerImage gateType={gateType}/>
-					<img src={require("./static/images/header1.svg")} alt="image"/>
-				</header>
-				<div className="parent">
-					{children}
-				</div>
-				<footer className="footer">
-					<img src={require("./static/images/FAQ.svg")} alt="image"/>
-					<small style={{display:'flex',alignItems:'center'}}>
-						Powered by &nbsp;
-						<img src={require("./static/images/socialpass.svg")} alt="image"/>
-					</small>
-				</footer>
-			</div>
-		)
-	}
-
-	// Status Wrapper
-	// Once httpStatus is 200, rendering is handed off to child gates
-	const Status = () => {
-		// initial http status is 0, indicates loading
-		if (httpStatus === 0){
-			return <Loading/>
-		}
-
-		// non-200 http status, indicates error
-		if (httpStatus !== 200) {
-			return <Error/>
-		}
-
-		// 200 http status, indicates success
-		// return base gate and set gate type
-		if (httpStatus === 200) {
-			let _id = id.split('_');
-			setGateType(_id[0])
-			return <BaseGate/>
-		}
-
-		return <Loading/>
-	}
-
-
 	return (
 		<StyledContainer gateType={gateType}>
-			<Status/>
+			<Status httpStatus={httpStatus} id={id} setGateType={setGateType}/>
 		</StyledContainer>
 	)
 }

@@ -17,7 +17,7 @@ const ConnectorImage = ({connector}) => {
 }
 
 // Web3 Provider authentication
-export const Web3ProviderAuthentication = () => {
+export const Web3Login = () => {
 	/****************** GLOBALS *************************/
 	// context
 	const { id, json, setJson2, setStep, setHttpStatus2 } = React.useContext(TokenGateContext);

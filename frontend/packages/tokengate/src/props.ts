@@ -31,7 +31,7 @@ export interface TokenGateContextInterface {
   setStep: any // Set step of token gate
 
   // initial fetch tokengate
-  json: any | APIRetrievalError | TokenGateRetrievalResponse | AidropGateRetrievalResponse
+  json: any | APIRetrievalError | TokenGateRetrievalResponse
   setJson: any
   httpStatus: number
   setHttpStatus: any
@@ -85,7 +85,7 @@ export interface APIAccessError {
 // Props for base TokenGate API response
 export interface TokenGateAccessResponse {
   httpStatus: number
-  reward: array
+  reward: any[]
 }
 
 // Extended props for TicketGate

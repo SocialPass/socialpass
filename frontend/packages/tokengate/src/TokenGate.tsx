@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
+import {  useConnect, useAccount, useSignMessage } from 'wagmi'
 import Web3ProviderWrapper from './web3/wrapper';
 import { Web3Login } from "./web3/login";
 import { TokenGateProviderInterface, GateType } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
-import { retrieveGateHandler } from './api';
+import { accessGateHandler, retrieveGateHandler } from './api';
 import './index.css';
 
-
 // TickerImage component
-const TickerImage = ({gateType}:{gateType:GateType}) => {
+const TickerImage = () => {
+	const { gateType } = useContext(TokenGateContext);
 	switch(gateType){
 		case 'TICKET':
 			return <img className="ticker" src={require("./static/images/gates/ticket.svg")} alt="image"/>
@@ -26,7 +27,8 @@ const Loading = () => {
 }
 
 // Error Component
-const Error = ({httpStatus}:{httpStatus:number}) => {
+const Error = () => {
+	const { httpStatus } = useContext(TokenGateContext);
 	return (
 		<div>
 			<h1>Error</h1>
@@ -36,8 +38,10 @@ const Error = ({httpStatus}:{httpStatus:number}) => {
 }
 
 // Status Wrapper
-// Once httpStatus is 200, rendering is handed off to BaseGate
-const Status = ({httpStatus, id, json, setGateType}:{httpStatus:number, id:string, json:any, setGateType:any}) => {
+// Renders 1 of 3 statuses (Loading, Error, or BaseGate)
+const Status = () => {
+	const { id, json, gateType, httpStatus } = useContext(TokenGateContext);
+
 	// initial http status is 0, indicates loading
 	if (httpStatus === 0){
 		return <Loading/>
@@ -45,13 +49,12 @@ const Status = ({httpStatus, id, json, setGateType}:{httpStatus:number, id:strin
 
 	// non-200 http status, indicates error
 	if (httpStatus !== 200) {
-		return <Error httpStatus={httpStatus}/>
+		return <Error/>
 	}
 
 	// 200 http status, indicates success
 	// return base gate and set gate type
 	if (httpStatus === 200) {
-		setGateType(json.general_type)
 		return <BaseGate/>
 	}
 
@@ -59,12 +62,11 @@ const Status = ({httpStatus, id, json, setGateType}:{httpStatus:number, id:strin
 }
 
 // StyledContainer component
-//
 const StyledContainer = ({children, gateType}:{children:React.ReactNode, gateType:GateType}) => {
 	return (
 		<div className="container">
 			<header>
-				<TickerImage gateType={gateType}/>
+				<TickerImage/>
 				<img src={require("./static/images/header1.svg")} alt="image"/>
 			</header>
 			<div className="parent">
@@ -124,12 +126,12 @@ const BaseGate = () => {
 	return <></>
 }
 
-// GateHandler
+
+// GateHandler, updates on ID change
+// Fetches & Sets TokenGate JSON, then passes da
 const GateHandler = () => {
 	const { id, json, gateType, setGateType, setJson, httpStatus, setHttpStatus } = useContext(TokenGateContext);
 
-	// Gate Handler, updates on ID change
-	// Fetches & Sets TokenGate JSON
 	useEffect(() => {
 		(async function() {
 			// set status to initial status (0)
@@ -139,23 +141,29 @@ const GateHandler = () => {
 			let response = await retrieveGateHandler(id);
 			if (response && response.httpStatus){
 				setJson(response);
-				setHttpStatus(response.httpStatus)
+				setHttpStatus(response.httpStatus);
 			}
 		})();
 	},[id]);
 
+	useEffect(() => {
+		if (httpStatus === 200){
+			setGateType(json?.general_type);
+		}
+	},[json, httpStatus]);
+
 	return (
 		<StyledContainer gateType={gateType}>
-			<Status httpStatus={httpStatus} id={id} json={json} setGateType={setGateType}/>
+			<Status/>
 		</StyledContainer>
 	)
 }
 
 
 // Main TokenGate component. Does a couple of things
-// 1. Setup WAGMI provider (need to make optional in future)
+// 1. Setup TokenGateProvider (react context)
+// 1. Setup WAGMI web3 provider (need to make optional in future)
 // 2. Renders GateHandler
-// 3. API call based on provided ID. JSON object is passed down to GateHandler
 const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 	return (
 		<TokenGateProvider id={id} styles={styles}>

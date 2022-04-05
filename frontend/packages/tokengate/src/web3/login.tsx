@@ -3,6 +3,8 @@ import {  useConnect, useAccount, useSignMessage } from 'wagmi'
 import { TokenGateContext } from '../context';
 import { accessGateHandler } from '../api';
 
+// ConnectorImage
+// Return image based on connector props
 const ConnectorImage = ({connector}:{connector:string|undefined}) => {
 	switch(connector){
 		case 'MetaMask':
@@ -16,20 +18,45 @@ const ConnectorImage = ({connector}:{connector:string|undefined}) => {
 	}
 }
 
-// Web3 Provider authentication
-export const Web3Login = () => {
-	/****************** GLOBALS *************************/
-	// context
-	const { id, json, gateType, setJson2, setStep, setHttpStatus2 } = React.useContext(TokenGateContext);
+// ConnectorWallets
+// Return UI for wallet connectors
+const ConnectorWallets = () => {
 	// wallet connect hooks
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
-	// wallet account hooks
-	const [{ data: accountData, loading: accountLoading }, disconnect] = useAccount();
-	// walet sig hooks
-	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
 
-	/****************** FUNCTIONS *************************/
-	// Signature Handler
+	return (
+		<div className="base-gate">
+			<div className="title">
+				<h1>Connect Your Wallet</h1>
+			</div>
+			<div className="wallets">
+				{connectData.connectors.map((x) => (
+				<button disabled={!x.ready} key={x.id}
+					onClick={() => connect(x)}>
+					<ConnectorImage connector={x.name}/>
+					{x.name}
+					{!x.ready && ' (unsupported)'}
+				</button>
+			  ))}
+			</div>
+			{connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
+		</div>
+	)
+}
+
+// ConnectorWallets
+// Return UI for message signing via connected account
+const ConnectorSignature = () => {
+	// context hooks
+	const { id, json, gateType, setJson2, setStep, setHttpStatus2 } = React.useContext(TokenGateContext);
+	// wallet data hooks
+	const [{ data: accountData, loading: accountLoading }, disconnect] = useAccount();
+	// wallet signature hooks
+	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
+	// truncated address
+	let address = accountData?.address ? accountData.address.substring(0,7) + "......" + accountData.address.substring(accountData.address.length-7) : '';
+
+	// signatureHandler function
 	const signatureHandler = async () => {
 		// message setup
 		let message = json?.signature.message
@@ -59,17 +86,14 @@ export const Web3Login = () => {
 		}
 	}
 
-	// If accountData provided...
-	if (accountData) {
-		let address = accountData.address.substring(0,7) + "......" + accountData.address.substring(accountData.address.length-7);
-		return (
+	return (
 		<div className="base-gate">
 			<div className="title">
 				<h1>Almost There</h1>
 				<p>Your wallet is almost connected! You need to click the “Sign Message” button to complete connection.</p>
 				<h3>Connected Wallet</h3>
 				<div style={{display:'flex'}}>
-					<ConnectorImage connector={accountData.connector?.name}/>
+					<ConnectorImage connector={accountData?.connector?.name}/>
 					<div>
 						<div>{accountData.connector?.name}</div>
 						<div>
@@ -87,28 +111,20 @@ export const Web3Login = () => {
 				<button className="btn-primary" onClick={() => signatureHandler()}>Sign Message</button>
 			</div>
 		</div>
-		)
+	)
+}
+
+// Web3 Provider authentication
+export const Web3Login = () => {
+	const [{ data: accountData, loading: accountLoading }, disconnect] = useAccount();
+
+	// If accountData provided...
+	if (accountData) {
+		return <ConnectorSignature/>
 	}
 
 	// If NO accountData provided...
 	else {
-		return (
-			<div className="base-gate">
-				<div className="title">
-					<h1>Connect Your Wallet</h1>
-				</div>
-				<div className="wallets">
-						{connectData.connectors.map((x) => (
-						<button disabled={!x.ready} key={x.id}
-							onClick={() => connect(x)}>
-							<ConnectorImage connector={x.name}/>
-							{x.name}
-							{!x.ready && ' (unsupported)'}
-						</button>
-					  ))}
-				</div>
-				{connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
-			</div>
-		)
+		return <ConnectorWallets/>
 	}
 }

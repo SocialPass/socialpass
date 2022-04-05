@@ -45,7 +45,7 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
   ]
  }
 
-const Web3ProviderWrapper = ({children}:{children:any}) => {
+const Web3ProviderWrapper = ({children}:{children:React.ReactNode}) => {
 	return (
 		<Provider
 			connectors={connectors}

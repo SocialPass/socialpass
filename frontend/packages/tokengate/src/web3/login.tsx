@@ -3,7 +3,7 @@ import {  useConnect, useAccount, useSignMessage } from 'wagmi'
 import { TokenGateContext } from '../context';
 import { accessGateHandler } from '../api';
 
-const ConnectorImage = ({connector}) => {
+const ConnectorImage = ({connector}:{connector:string|undefined}) => {
 	switch(connector){
 		case 'MetaMask':
 			return <img src={require("../static/images/connectors/metamask.svg")} alt="image"/>

@@ -33,7 +33,10 @@ function generateJson2Obj(){
 	}
 }
 
-export async function fetchGateHandler(id:string){
+// Retrieve Gate Handler
+// Retrieves any type of tokengate (provided the ID) and assigns response object properties accordingly
+// Notably, response object structure changes on `json.general_type`
+export async function retrieveGateHandler(id:string): APIRetrievalError | TicketGateRetrievalResponse {
 	try {
 		let response = await fetch(`${process.env.REACT_APP_API_URL}/tokengates/retrieve/${id}/?format=json`);
 		if (response.ok) {
@@ -64,6 +67,8 @@ export async function fetchGateHandler(id:string){
 	}
 }
 
+// Access Gate Handler
+// Accesses any type of token gate, depending on the provided `gateType`
 export async function accessGateHandler({address, tokengate_id, signature_id, signed_message, gateType}:{address: string, tokengate_id: string, signature_id: string, signed_message: string, gateType: string}){
 	switch(gateType){
 		case 'TICKET':
@@ -74,9 +79,7 @@ export async function accessGateHandler({address, tokengate_id, signature_id, si
 
 }
 
-/*
-TicketGate Access
-*/
+// Access Ticket Gate
 function accessTicketGate(
 	address: string,
 	tokengate_id: string,

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Web3ProviderWrapper from './web3/wrapper';
 import { Web3Login } from "./web3/login";
-import { TokenGateProviderInterface } from './props';
+import { TokenGateProviderInterface, GateType } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
-import { fetchGateHandler } from './api';
+import { retrieveGateHandler } from './api';
 import './index.css';
 
 
 // TickerImage component
-const TickerImage = ({gateType}) => {
+const TickerImage = ({gateType}:{gateType:GateType}) => {
 	switch(gateType){
 		case 'TICKET':
 			return <img className="ticker" src={require("./static/images/gates/ticket.svg")} alt="image"/>
@@ -26,7 +26,7 @@ const Loading = () => {
 }
 
 // Error Component
-const Error = ({httpStatus}) => {
+const Error = ({httpStatus}:{httpStatus:number}) => {
 	return (
 		<div>
 			<h1>Error</h1>
@@ -37,7 +37,7 @@ const Error = ({httpStatus}) => {
 
 // Status Wrapper
 // Once httpStatus is 200, rendering is handed off to BaseGate
-const Status = ({httpStatus, id, json, setGateType}) => {
+const Status = ({httpStatus, id, json, setGateType}:{httpStatus:number, id:string, json:any, setGateType:any}) => {
 	// initial http status is 0, indicates loading
 	if (httpStatus === 0){
 		return <Loading/>
@@ -60,7 +60,7 @@ const Status = ({httpStatus, id, json, setGateType}) => {
 
 // StyledContainer component
 //
-const StyledContainer = ({children, gateType}) => {
+const StyledContainer = ({children, gateType}:{children:React.ReactNode, gateType:GateType}) => {
 	return (
 		<div className="container">
 			<header>
@@ -136,7 +136,7 @@ const GateHandler = () => {
 			setHttpStatus(0);
 
 			// fetch and set API response
-			let response = await fetchGateHandler(id);
+			let response = await retrieveGateHandler(id);
 			if (response && response.httpStatus){
 				setJson(response);
 				setHttpStatus(response.httpStatus)

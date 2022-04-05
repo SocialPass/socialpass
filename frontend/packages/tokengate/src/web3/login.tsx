@@ -20,7 +20,7 @@ const ConnectorImage = ({connector}) => {
 export const Web3Login = () => {
 	/****************** GLOBALS *************************/
 	// context
-	const { id, json, setJson2, setStep, setHttpStatus2 } = React.useContext(TokenGateContext);
+	const { id, json, gateType, setJson2, setStep, setHttpStatus2 } = React.useContext(TokenGateContext);
 	// wallet connect hooks
 	const [{ data: connectData, error: connectError }, connect] = useConnect();
 	// wallet account hooks
@@ -45,6 +45,7 @@ export const Web3Login = () => {
 		if (signRes && accountData && accountData.address){
 			// send off message
 			let response = await accessGateHandler({
+				gateType: gateType,
 				address: accountData.address,
 				tokengate_id: id,
 				signature_id: json?.signature.id,

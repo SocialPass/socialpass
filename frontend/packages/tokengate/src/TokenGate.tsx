@@ -37,7 +37,7 @@ const Error = ({httpStatus}) => {
 
 // Status Wrapper
 // Once httpStatus is 200, rendering is handed off to BaseGate
-const Status = ({httpStatus, id, setGateType}) => {
+const Status = ({httpStatus, id, json, setGateType}) => {
 	// initial http status is 0, indicates loading
 	if (httpStatus === 0){
 		return <Loading/>
@@ -51,8 +51,7 @@ const Status = ({httpStatus, id, setGateType}) => {
 	// 200 http status, indicates success
 	// return base gate and set gate type
 	if (httpStatus === 200) {
-		let _id = id.split('_');
-		setGateType(_id[0])
+		setGateType(json.general_type)
 		return <BaseGate/>
 	}
 
@@ -137,7 +136,7 @@ const GateHandler = () => {
 			setHttpStatus(0);
 
 			// fetch and set API response
-			let response = await fetchGateHandler({id});
+			let response = await fetchGateHandler(id);
 			if (response && response.httpStatus){
 				setJson(response);
 				setHttpStatus(response.httpStatus)
@@ -147,7 +146,7 @@ const GateHandler = () => {
 
 	return (
 		<StyledContainer gateType={gateType}>
-			<Status httpStatus={httpStatus} id={id} setGateType={setGateType}/>
+			<Status httpStatus={httpStatus} id={id} json={json} setGateType={setGateType}/>
 		</StyledContainer>
 	)
 }

@@ -1,10 +1,8 @@
 import React from 'react';
-import Venly from "@venly/web3-provider";
 import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
-import { VenlyConnector } from './connectors/venly';
 
 // API key for Ethereum node
 // Two popular services are Infura (infura.io) and Alchemy (alchemy.com)

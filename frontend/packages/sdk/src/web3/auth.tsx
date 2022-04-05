@@ -7,7 +7,10 @@ const ConnectorImage = ({connector}) => {
 	switch(connector){
 		case 'MetaMask':
 			return <img src={require("../static/images/connectors/metamask.svg")} alt="image"/>
-
+		case 'WalletConnect':
+			return <img src={require("../static/images/connectors/walletconnect.svg")} alt="image"/>
+		case 'Coinbase Wallet':
+			return <img src={require("../static/images/connectors/coinbase-wallet.svg")} alt="image"/>
 		default:
 			return null;
 	}
@@ -73,6 +76,9 @@ export const Web3ProviderAuthentication = () => {
 							? `${accountData.ens?.name} (${accountData.address})`
 							: address}
 						</div>
+						<button onClick={() => disconnect()}>
+						Switch Wallets
+						</button>
 					</div>
 				</div>
 			</div>
@@ -86,19 +92,21 @@ export const Web3ProviderAuthentication = () => {
 	// If NO accountData provided...
 	else {
 		return (
-			<div>
-				<h1>Connect Wallet</h1>
-				<div>
-			    	{connectData.connectors.map((x) => (
-					<button disabled={!x.ready} key={x.id}
-						onClick={() => connect(x)}>
-				  		{x.name}
-				  		{!x.ready && ' (unsupported)'}
-					</button>
-			  	))}
-			  	</div>
-			  {connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
-			  <br/>
+			<div className="base-gate">
+				<div className="title">
+					<h1>Connect Your Wallet</h1>
+				</div>
+				<div className="wallets">
+						{connectData.connectors.map((x) => (
+						<button disabled={!x.ready} key={x.id}
+							onClick={() => connect(x)}>
+							<ConnectorImage connector={x.name}/>
+							{x.name}
+							{!x.ready && ' (unsupported)'}
+						</button>
+					  ))}
+				</div>
+				{connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
 			</div>
 		)
 	}

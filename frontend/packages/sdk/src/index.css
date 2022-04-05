@@ -19,7 +19,7 @@ html, body {
   font-style: normal;
 }
 
-h1, h2, h3 {
+h2, h3 {
   margin:0;
   padding:0;
 }
@@ -144,4 +144,35 @@ CONTAINERS
   margin:.5rem 2.25rem 0 2.25rem;
   word-break: break-word;
   min-width:250px;
+}
+
+.wallets {
+  display:flex;
+  flex-basis:100% !important;
+  flex-wrap:wrap;
+  justify-content:space-evenly;
+  margin:.5rem 2.25rem 0 2.25rem;
+}
+
+.wallets button {
+  background: #FFFFFF;
+  box-shadow: 0px 4px 17px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  min-width:144px;
+  max-width:164px;
+  min-height:140px;
+  max-height:164px;
+  display:flex;
+  flex-direction:column;
+  justify-content: end;
+  align-items:center;
+  border: 0px;
+  font-weight: 600;
+  font-size: 1.5vh;
+  padding-bottom:2vh;
+}
+
+
+.wallets button img {
+  padding:.25rem;
 }

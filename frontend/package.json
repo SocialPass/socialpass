@@ -4,15 +4,15 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "yarn workspace @socialpass/sdk start",
-    "build": "yarn workspace @socialpass/sdk build",
-    "test": "yarn workspace @socialpass/sdk test",
-    "lint": "yarn workspace @socialpass/sdk lint",
-    "prepare": "yarn workspace @socialpass/sdk prepare",
-    "size": "yarn workspace @socialpass/sdk size",
-    "analyze": "yarn workspace @socialpass/sdk analyze",
-    "storybook": "yarn workspace @socialpass/sdk storybook",
-    "build-storybook": "yarn workspace @socialpass/sdk build-storybook"
+    "start": "yarn workspace @socialpass/tokengate start",
+    "build": "yarn workspace @socialpass/tokengate build",
+    "test": "yarn workspace @socialpass/tokengate test",
+    "lint": "yarn workspace @socialpass/tokengate lint",
+    "prepare": "yarn workspace @socialpass/tokengate prepare",
+    "size": "yarn workspace @socialpass/tokengate size",
+    "analyze": "yarn workspace @socialpass/tokengate analyze",
+    "storybook": "yarn workspace @socialpass/tokengate storybook",
+    "build-storybook": "yarn workspace @socialpass/tokengate build-storybook"
   },
   "workspaces": {
     "packages": [

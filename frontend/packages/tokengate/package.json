@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "license": "MIT",
-  "name": "@socialpass/sdk",
+  "name": "@socialpass/tokengate",
   "author": "rizzo",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -37,22 +37,21 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "module": "dist/sdk.esm.js",
+  "module": "dist/tokengate.esm.js",
   "size-limit": [
     {
-      "path": "dist/sdk.cjs.production.min.js",
+      "path": "dist/tokengate.cjs.production.min.js",
       "limit": "1s"
     },
     {
-      "path": "dist/sdk.esm.js",
+      "path": "dist/tokengate.esm.js",
       "limit": "1s",
       "import": "{ TokenGate }"
     }
   ],
   "dependencies": {
-    "@venly/web3-provider": "0.27.0",
     "ethers": "^5.5.1",
-    "wagmi": "0.2.12"
+    "wagmi": "0.2.24"
   },
   "devDependencies": {
     "@babel/core": "^7.17.2",

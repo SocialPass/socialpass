@@ -1,4 +1,4 @@
-# @socialpass/sdk
+# @socialpass/tokengate
 
 # Documentation
 https://www.notion.so/Frontend-SDK-842e20a5ca5a47198f133fae886a11c5

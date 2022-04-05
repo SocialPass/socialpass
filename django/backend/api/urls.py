@@ -6,12 +6,13 @@ app_name = "root"
 urlpatterns = [
     # hosted page
     path("hostedpage/", views.HostedPageRetrieve.as_view()),
-    # ticketing
+    # tokengates
     path(
-        "ticketgates/retrieve/<str:public_id>/",
-        views.TicketGateRetrieve.as_view(),
+        "tokengates/retrieve/<str:public_id>/",
+        views.TokenGateRetrieve.as_view(),
         name="ticketgate-retrieve",
     ),
+    # ticketing
     path(
         "ticketgates/access/",
         views.TicketGateAccess.as_view(),

@@ -13,6 +13,7 @@ from .serializers import (
     TicketGateDetailSerializer,
     TicketSerializer,
     TokenGatePolymorphicSerializer,
+    TokenGateDetailPolymorphicSerializer
 )
 
 
@@ -109,19 +110,23 @@ class AllGateList(ListAPIView):
 
 
 #
-# TICKETGATES ////////////////////////////////////////////////////////////////////////////////
+# GENERAL TOKENGATE ////////////////////////////////////////////////////////////////////////////////
 #
-class TicketGateRetrieve(RetrieveAPIView):
+class TokenGateRetrieve(RetrieveAPIView):
     """
     View for retrieving ticket gate by `public_id`
     """
 
     lookup_field = "public_id"
-    queryset = TicketGate.objects.all()
-    serializer_class = TicketGateDetailSerializer
+    queryset = TokenGate.objects.all()
+    serializer_class = TokenGateDetailPolymorphicSerializer
     permission_classes = [AllowAny]
 
 
+
+#
+# TICKETGATE ////////////////////////////////////////////////////////////////////////////////
+#
 class TicketGateAccess(CreateModelMixin, GenericAPIView):
     """
     View for accessing ticket gate via verified `Signature`,

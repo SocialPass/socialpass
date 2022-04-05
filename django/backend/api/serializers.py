@@ -30,34 +30,6 @@ class AccessGateSerializer(serializers.Serializer):
 
 
 #
-# TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
-#
-class TicketGateSerializer(serializers.ModelSerializer):
-    """
-    Serializes Ticket token gates for list views.
-    """
-
-    class Meta:
-        model = TicketGate
-        fields = [
-            "title",
-            "general_type",
-            "description",
-            "requirements",
-            "limit_per_person",
-            "date",
-            "location",
-            "capacity",
-        ]
-
-
-class TokenGatePolymorphicSerializer(PolymorphicSerializer):
-    model_serializer_mapping = {
-        TicketGate: TicketGateSerializer,
-    }
-
-
-#
 # TICKETGATES ////////////////////////////////////////////////////////////////////////////////////
 #
 class TicketGateDetailSerializer(serializers.ModelSerializer):
@@ -109,3 +81,37 @@ class TicketSerializer(serializers.ModelSerializer):
             "tokengate",
             "signature",
         ]
+
+
+
+#
+# TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
+#
+class TicketGateSerializer(serializers.ModelSerializer):
+    """
+    Serializes Ticket token gates for list views.
+    """
+
+    class Meta:
+        model = TicketGate
+        fields = [
+            "title",
+            "general_type",
+            "description",
+            "requirements",
+            "limit_per_person",
+            "date",
+            "location",
+            "capacity",
+        ]
+
+
+class TokenGatePolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        TicketGate: TicketGateSerializer,
+    }
+
+class TokenGateDetailPolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        TicketGate: TicketGateDetailSerializer,
+    }

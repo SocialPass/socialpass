@@ -38,20 +38,22 @@ export async function fetchGateHandler(id:string){
 		let response = await fetch(`${process.env.REACT_APP_API_URL}/tokengates/retrieve/${id}/?format=json`);
 		if (response.ok) {
 			let json = await response.json();
+			let obj = generateJson1Obj(json);
+			switch(json.general_type){
+				case 'TICKET':
+					Object.assign(obj, {
+						"date": json.date,
+						  "location": json.location,
+						  "capacity": json.capacity,
+						  "deadline": json.deadline
+					})
+					return obj as TicketGateRetrievalResponse;
+				default:
+					return obj
+			}
 	  	} else {
 		  	throw response;
 	  	}
-		switch(json.general_type){
-			case 'TICKET':
-				let obj = generateJson1Obj(json);
-				Object.assign(obj, {
-					"date": json.date,
-				  	"location": json.location,
-				  	"capacity": json.capacity,
-				  	"deadline": json.deadline
-				})
-				return obj as TicketGateRetrievalResponse;
-		}
 	}
 	catch(error){
 		let e = {

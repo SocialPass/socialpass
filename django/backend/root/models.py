@@ -153,9 +153,8 @@ class TokenGate(DBModel, PolymorphicModel):
     Please note, this model should NOT be abstract so that other tables are
     able reference this table directly using foreign keys.
     """
-
-    public_id = models.CharField(
-        max_length=64, editable=False, unique=True, db_index=True
+    public_id = models.UUIDField(
+        max_length=64, default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="tokengates"
@@ -179,11 +178,6 @@ class TokenGate(DBModel, PolymorphicModel):
 
     def __str__(self):
         return self.title
-
-    def generate_public_id(self):
-        import secrets
-
-        return f"{self.general_type}_{secrets.token_urlsafe(32)}"
 
     def generate_signature_request(self):
         """
@@ -253,14 +247,6 @@ class TokenGate(DBModel, PolymorphicModel):
             return True, 200, x
         else:
             return False, 403, x
-
-    def save(self, *args, **kwargs):
-        """
-        overriden to set public_id
-        """
-        if not self.public_id:
-            self.public_id = self.generate_public_id()
-        super(TokenGate, self).save(*args, **kwargs)
 
 
 class Signature(DBModel):

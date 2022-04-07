@@ -1,7 +1,5 @@
 from typing import List
-
-from fastapi import APIRouter, HTTPException
-
+from fastapi import APIRouter, HTTPException, Body
 from . import crud
 
 router = APIRouter(
@@ -14,8 +12,7 @@ router = APIRouter(
 def verify_requirements(
     wallet_address: str,
     limit_per_person: int,
-    reward_list: List[str],
-    requirements: List[crud.Requirement],
+    requirements: List[crud.Requirement] = Body(..., embed=True)
 ):
     """
     Given a wallet address and array of requirements, `verify_requirements` will loop through
@@ -34,7 +31,6 @@ def verify_requirements(
                 resp = crud.verify_evm_requirement(
                     req=req,
                     limit_per_person=limit_per_person,
-                    reward_list=reward_list,
                     wallet_address=wallet_address,
                 )
                 return resp

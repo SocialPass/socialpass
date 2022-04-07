@@ -230,7 +230,6 @@ class TokenGate(DBModel, PolymorphicModel):
         )
 
         json_data = {
-            "reward_list": issued_passes,
             "requirements": self.requirements,
         }
 

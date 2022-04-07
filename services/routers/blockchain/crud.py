@@ -25,7 +25,7 @@ class Requirement(BaseModel):
 # MAIN FUNCTIONS
 #
 def verify_evm_requirement(
-    req: Requirement, limit_per_person: int, wallet_address: str, reward_list: List[str]
+    req: Requirement, limit_per_person: int, wallet_address: str
 ):
     # init token balance
     token_balance = 0
@@ -81,10 +81,10 @@ def verify_evm_requirement(
         # issue passes as whatever is lower (quotient or limit_per_person)
         validated_passes = []
         for i in token_ids:
-            if i["token_id"] not in reward_list:
-                validated_passes.append(i["token_id"])
-            if len(validated_passes) >= limit_per_person:
+            validated_passes.append(i["token_id"])
+            if len(validated_passes) == limit_per_person:
                 break
+
         if len(validated_passes) < req.amount:
             raise HTTPException(
                 status_code=403, detail="User does not meet requirements"

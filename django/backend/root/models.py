@@ -403,9 +403,9 @@ class Ticket(DBModel):
         )
 
         json_data = {
-            "name": self.tokengate.title,
-            "date": self.tokengate.date.strftime("%m/%d/%Y, %H:%M:%S"),
-            "location": self.tokengate.location,
+            "event_name": self.tokengate.title,
+            "event_date": self.tokengate.date.strftime("%m/%d/%Y, %H:%M:%S"),
+            "event_location": self.tokengate.location,
         }
 
         resp = requests.post(

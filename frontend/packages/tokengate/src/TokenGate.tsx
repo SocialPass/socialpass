@@ -134,14 +134,17 @@ const GateHandler = () => {
 
 	useEffect(() => {
 		(async function() {
-			// set status to initial status (0)
-			setHttpStatus(0);
+			// check for ID string before
+			if (typeof id === 'string' && id.length > 0){
+				// set status to initial status (0)
+				setHttpStatus(0);
 
-			// fetch and set API response
-			let response = await retrieveGateHandler(id);
-			if (response && response.httpStatus){
-				setJson(response);
-				setHttpStatus(response.httpStatus);
+				// fetch and set API response
+				let response = await retrieveGateHandler(id);
+				if (response && response.httpStatus){
+					setJson(response);
+					setHttpStatus(response.httpStatus);
+				}
 			}
 		})();
 	},[id]);

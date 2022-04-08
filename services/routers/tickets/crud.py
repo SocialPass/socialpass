@@ -597,7 +597,7 @@ def generate_ticket(
         ),
         TicketPartGenerator.generate_text_section(
             width=DEFAULT_WIDTH,
-            text=event_data["event_name"],
+            text=event_data.event_name,
             color=CONTENT_TEXT_COLOR,
             font=CONTENT_FONT,
             x_start_offset=DEFAULT_MARGIN,
@@ -620,7 +620,7 @@ def generate_ticket(
             ),
             TicketPartGenerator.generate_text_section(
                 width=EVENT_GATE_LIMIT_WIDTH,
-                text=event_data["gate_limit"],
+                text=event_data.gate_limit,
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -645,7 +645,7 @@ def generate_ticket(
         ),
         TicketPartGenerator.generate_text_section(
             width=EVENT_DATE_WIDTH,
-            text=event_data["event_date"],
+            text=event_data.event_date,
             color=CONTENT_TEXT_COLOR,
             font=CONTENT_FONT,
             x_start_offset=DEFAULT_MARGIN,
@@ -667,7 +667,7 @@ def generate_ticket(
         ),
         TicketPartGenerator.generate_text_section(
             width=DEFAULT_WIDTH,
-            text=event_data["event_location"],
+            text=event_data.event_location,
             color=CONTENT_TEXT_COLOR,
             font=CONTENT_FONT,
             x_start_offset=DEFAULT_MARGIN,

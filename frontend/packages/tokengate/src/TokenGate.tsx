@@ -37,9 +37,76 @@ const Error = () => {
 	)
 }
 
-// Status Wrapper
+
+// Reward status wrapper
+// Renders 1 of 2 (Success or failure)
+const RewardStatus = () => {
+	const { json2, httpStatus2 } = useContext(TokenGateContext);
+	console.log('helloooo', json2, httpStatus2);
+
+	// initial http status is 0, indicates loading
+	if (httpStatus2 === 0){
+		return <Loading/>
+	}
+
+	// non-200 http status, indicates error
+	if (httpStatus2 !== 200) {
+		return (
+			<div className="base-gate">
+				<div className="title">
+					<h1>Oh no!</h1>
+					<p>You're NGMI! Click the button to try again</p>
+				</div>
+				<div className="btn">
+					<button className="btn-primary">Get Access</button>
+				</div>
+			</div>
+		)
+	}
+
+	// 200 http status, indicates success
+	// return base gate and set gate type
+	if (httpStatus2 === 200) {
+		return (
+			<div className="base-gate">
+				<div className="title">
+					<h1>Congrats!</h1>
+					<p>You made it! Click the button to connect to your token gate</p>
+				</div>
+				<div className="btn">
+					<button className="btn-primary">Get Access</button>
+				</div>
+			</div>
+		)
+	}
+
+	return <Loading/>
+}
+
+
+const InitialGate = () => {
+	const { json, setStep } = React.useContext(TokenGateContext);
+
+	return (
+		<div className="base-gate">
+			<div className="image">
+				<img src={json.team_image} alt="Team Image"/>
+				<h3>{json.team_name}</h3>
+			</div>
+			<div className="title">
+				<h1>{json.title}</h1>
+				<p>{json.description}</p>
+			</div>
+			<div className="btn">
+				<button className="btn-primary" onClick={() => setStep(1)}>Get Access</button>
+			</div>
+		</div>
+	)
+}
+
+// Initial Status Wrapper
 // Renders 1 of 3 statuses (Loading, Error, or BaseGate)
-const Status = () => {
+const InitialStatus = () => {
 	const { id, json, gateType, httpStatus } = useContext(TokenGateContext);
 
 	// initial http status is 0, indicates loading
@@ -85,24 +152,13 @@ const StyledContainer = ({children, gateType}:{children:React.ReactNode, gateTyp
 
 
 const BaseGate = () => {
-	const { gateType, json, json2, step, setStep } = React.useContext(TokenGateContext);
+	const { step } = React.useContext(TokenGateContext);
+
 	// Step 0
 	// Initial Get Access
 	if (step === 0){
 	return (
-		<div className="base-gate">
-			<div className="image">
-				<img src={json.team_image} alt="Team Image"/>
-				<h3>{json.team_name}</h3>
-			</div>
-			<div className="title">
-				<h1>{json.title}</h1>
-				<p>{json.description}</p>
-			</div>
-			<div className="btn">
-				<button className="btn-primary" onClick={() => setStep(1)}>Get Access</button>
-			</div>
-		</div>
+		<InitialGate/>
 	)}
 
 	// Step 1
@@ -116,11 +172,8 @@ const BaseGate = () => {
 	// Step 2
 	// json2 response
 	if (step === 2){
-	console.log(json2);
 	return (
-		<div className="base-gate">
-			JSON2 Response
-		</div>
+		<RewardStatus/>
 	)}
 
 	return <></>
@@ -157,7 +210,7 @@ const GateHandler = () => {
 
 	return (
 		<StyledContainer gateType={gateType}>
-			<Status/>
+			<InitialStatus/>
 		</StyledContainer>
 	)
 }

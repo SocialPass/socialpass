@@ -70,6 +70,9 @@ const ConnectorSignature = () => {
 
 		// Verify Message/Wallet
 		if (signRes && accountData && accountData.address){
+			// set step, proceed to reward screen
+			setStep(2);
+
 			// send off message
 			let response = await accessGateHandler({
 				gateType: gateType,
@@ -81,7 +84,6 @@ const ConnectorSignature = () => {
 			if (response && response.httpStatus){
 				setJson2(response);
 				setHttpStatus2(response.httpStatus);
-				setStep(2);
 			}
 		}
 	}

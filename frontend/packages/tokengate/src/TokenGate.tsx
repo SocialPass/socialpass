@@ -218,8 +218,11 @@ const GateHandler = () => {
 
 // Main TokenGate component. Does a couple of things
 // 1. Setup TokenGateProvider (react context)
-// 1. Setup WAGMI web3 provider (need to make optional in future)
-// 2. Renders GateHandler
+// 2. Setup WAGMI web3 provider (need to make optional in future)
+// 3. Renders GateHandler, which takes over token gate logic
+// Takes in the following props:
+// 1. ID: Public ID provided in SocialPass dashboard
+// 2. Styles: Object used to configure styles (TBD)
 const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 	return (
 		<TokenGateProvider id={id} styles={styles}>

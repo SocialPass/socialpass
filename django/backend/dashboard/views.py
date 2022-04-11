@@ -8,7 +8,6 @@ from root.models import Membership, Team, Ticket, TicketGate
 from django.conf import settings
 from django.contrib import auth, messages
 from django.shortcuts import redirect, reverse
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
@@ -236,9 +235,6 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         return context
 
     def form_valid(self, form, **kwargs):
-        # set timzeone
-        tz = form.cleaned_data["timezone"]
-        timezone.activate(tz)
         # set rest of form
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
@@ -273,14 +269,6 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context["json_schema"] = json.dumps(REQUIREMENTS_SCHEMA)
         return context
-
-    def get_object(self):
-        """
-        overrode to set timezone
-        """
-        obj = super().get_object()
-        timezone.activate(obj.timezone)
-        return obj
 
     def get_success_url(self):
         messages.add_message(

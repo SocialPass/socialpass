@@ -65,47 +65,10 @@ class TicketGateAdmin(admin.ModelAdmin):
         "user",
         "team",
         "location",
-        "event_datetime_in_timezone",
+        "date",
+        "timezone"
     )
     search_fields = ("title", "user__username", "team__name", "location")
-
-    def event_datetime_in_timezone(self, gate):
-        """
-        Display each gate time on the changelist in its own timezone
-        """
-        fmt = "%Y-%m-%d %I:%M:%p %Z"
-        dt = gate.date.astimezone(pytz_timezone(gate.timezone))
-        return dt.strftime(fmt)
-
-    event_datetime_in_timezone.short_description = "Event time"
-
-    def add_view(self, request, form_url="", extra_context=None):
-        """
-        Override add view so we can peek at the timezone they've entered and
-        set the current time zone accordingly before the form is processed
-        """
-        if request.method == "POST":
-            tz_form = TimeZoneForm(request.POST)
-            if tz_form.is_valid():
-                timezone.activate(tz_form.cleaned_data["timezone"])
-        return super(TicketGateAdmin, self).add_view(request, form_url, extra_context)
-
-    def change_view(self, request, object_id, form_url="", extra_context=None):
-        """
-        Override change view so we can peek at the timezone they've entered and
-        set the current time zone accordingly before the form is processed
-        """
-        if request.method == "POST":
-            tz_form = TimeZoneForm(request.POST)
-            if tz_form.is_valid():
-                timezone.activate(tz_form.cleaned_data["timezone"])
-        else:
-            obj = self.get_object(request, unquote(object_id))
-            timezone.activate(obj.timezone)
-        return super(TicketGateAdmin, self).change_view(
-            request, object_id, form_url, extra_context
-        )
-
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):

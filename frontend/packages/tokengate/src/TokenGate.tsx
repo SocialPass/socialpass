@@ -7,7 +7,9 @@ import { TokenGateProvider, TokenGateContext } from './context';
 import { accessGateHandler, retrieveGateHandler } from './api';
 import './index.css';
 
+/************************************* DISPLAY COMPONENTS *************************************/
 // TickerImage component
+// Displays ticker tape in header top right corner for type of gate
 const TickerImage = () => {
 	const { gateType } = useContext(TokenGateContext);
 	switch(gateType){
@@ -20,6 +22,7 @@ const TickerImage = () => {
 }
 
 // Loading Component
+// todo
 const Loading = () => {
 	return (
 		<h1>Loading...</h1>
@@ -27,6 +30,7 @@ const Loading = () => {
 }
 
 // Error Component
+// todo
 const Error = () => {
 	const { httpStatus } = useContext(TokenGateContext);
 	return (
@@ -37,98 +41,8 @@ const Error = () => {
 	)
 }
 
-
-// Reward status wrapper
-// Renders 1 of 2 (Success or failure)
-const RewardStatus = () => {
-	const { json2, httpStatus2 } = useContext(TokenGateContext);
-	console.log('helloooo', json2, httpStatus2);
-
-	// initial http status is 0, indicates loading
-	if (httpStatus2 === 0){
-		return <Loading/>
-	}
-
-	// non-200 http status, indicates error
-	if (httpStatus2 !== 200) {
-		return (
-			<div className="base-gate">
-				<div className="title">
-					<h1>Oh no!</h1>
-					<p>You're NGMI! Click the button to try again</p>
-				</div>
-				<div className="btn">
-					<button className="btn-primary">Get Access</button>
-				</div>
-			</div>
-		)
-	}
-
-	// 200 http status, indicates success
-	// return base gate and set gate type
-	if (httpStatus2 === 200) {
-		return (
-			<div className="base-gate">
-				<div className="title">
-					<h1>Congrats!</h1>
-					<p>You made it! Click the button to connect to your token gate</p>
-				</div>
-				<div className="btn">
-					<button className="btn-primary">Get Access</button>
-				</div>
-			</div>
-		)
-	}
-
-	return <Loading/>
-}
-
-
-const InitialGate = () => {
-	const { json, setStep } = React.useContext(TokenGateContext);
-
-	return (
-		<div className="base-gate">
-			<div className="image">
-				<img src={json.team_image} alt="Team Image"/>
-				<h3>{json.team_name}</h3>
-			</div>
-			<div className="title">
-				<h1>{json.title}</h1>
-				<p>{json.description}</p>
-			</div>
-			<div className="btn">
-				<button className="btn-primary" onClick={() => setStep(1)}>Get Access</button>
-			</div>
-		</div>
-	)
-}
-
-// Initial Status Wrapper
-// Renders 1 of 3 statuses (Loading, Error, or BaseGate)
-const InitialStatus = () => {
-	const { id, json, gateType, httpStatus } = useContext(TokenGateContext);
-
-	// initial http status is 0, indicates loading
-	if (httpStatus === 0){
-		return <Loading/>
-	}
-
-	// non-200 http status, indicates error
-	if (httpStatus !== 200) {
-		return <Error/>
-	}
-
-	// 200 http status, indicates success
-	// return base gate and set gate type
-	if (httpStatus === 200) {
-		return <BaseGate/>
-	}
-
-	return <Loading/>
-}
-
 // StyledContainer component
+// Display root layout (header, main content, footer)
 const StyledContainer = ({children, gateType}:{children:React.ReactNode, gateType:GateType}) => {
 	return (
 		<div className="container">
@@ -151,32 +65,113 @@ const StyledContainer = ({children, gateType}:{children:React.ReactNode, gateTyp
 }
 
 
+// InitialGate component
+// Displays initial content of gate on-load
+const InitialGate = () => {
+	const { json, setStep } = React.useContext(TokenGateContext);
+	return (
+		<div className="base-gate">
+			<div className="image">
+				<img src={json.team_image} alt="Team Image"/>
+				<h3>{json.team_name}</h3>
+			</div>
+			<div className="title">
+				<h1>{json.title}</h1>
+				<p>{json.description}</p>
+			</div>
+			<div className="btn">
+				<button className="btn-primary" onClick={() => setStep(1)}>Get Access</button>
+			</div>
+		</div>
+	)
+}
+
+
+/************************************* Logic COMPONENTS *************************************/
+// Reward component
+// Display tokengate reward screen (Success or failure)
+const Reward = () => {
+	const { json2, httpStatus2 } = useContext(TokenGateContext);
+
+	// non-200 http status, indicates failure
+	if (httpStatus2 !== 200 && httpStatus2 !== 0) {
+		return (
+			<div className="base-gate">
+				<div className="title">
+					<h1>Oh no!</h1>
+					<p>You're NGMI. Click the button to try again</p>
+				</div>
+				<div className="btn">
+					<button className="btn-primary">Get Access</button>
+				</div>
+			</div>
+		)
+	}
+
+	// 200 http status, indicates success
+	if (httpStatus2 === 200) {
+		return (
+			<div className="base-gate">
+				<div className="title">
+					<h1>Congrats!</h1>
+					<p>You made it. Click the button to connect to your token gate</p>
+				</div>
+				<div className="btn">
+					<button className="btn-primary">Get Access</button>
+				</div>
+			</div>
+		)
+	}
+
+	// all else, return loading
+	return <Loading/>
+}
+
+
+// BaseGate component
+// handles rendering base on state
 const BaseGate = () => {
-	const { step } = React.useContext(TokenGateContext);
+	const { id, json, step, httpStatus } = useContext(TokenGateContext);
 
-	// Step 0
-	// Initial Get Access
-	if (step === 0){
-	return (
-		<InitialGate/>
-	)}
+	// initial http status is 0, indicates loading
+	if (httpStatus === 0){
+		return <Loading/>
+	}
 
-	// Step 1
-	// Select Wallet || Sign Message
-	if (step === 1){
-	return (
-		<Web3Login/>
-	)}
+	// non-200 http status, indicates error
+	if (httpStatus !== 200) {
+		return <Error/>
+	}
+
+	// 200 http status, indicates success
+	// delegate to tokengate step
+	if (httpStatus === 200) {
+		// Step 0
+		// Initial Get Access
+		if (step === 0){
+		return (
+			<InitialGate/>
+		)}
+
+		// Step 1
+		// Select Wallet || Sign Message
+		if (step === 1){
+		return (
+			<Web3Login/>
+		)}
 
 
-	// Step 2
-	// json2 response
-	if (step === 2){
-	return (
-		<RewardStatus/>
-	)}
+		// Step 2
+		// json2 response
+		if (step === 2){
+		return (
+			<Reward/>
+		)}
+	}
 
-	return <></>
+
+
+	return <Loading/>
 }
 
 
@@ -210,7 +205,7 @@ const GateHandler = () => {
 
 	return (
 		<StyledContainer gateType={gateType}>
-			<InitialStatus/>
+			<BaseGate/>
 		</StyledContainer>
 	)
 }

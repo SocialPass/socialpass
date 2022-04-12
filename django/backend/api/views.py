@@ -131,11 +131,11 @@ class TicketGateScanner(APIView):
     """
     View for scanning tickets for a ticket-gate
     """
+    gate = None
 
-    def valid_scanner(self, request):
+    def validate_credentials(self, request):
         """
-        Check for valid scanner attempt
-        Used to acces the ticketscanner app
+        Validates credentials for access into ticket scanner
         """
         public_id = request.GET.get("id")
         scanner_code = request.GET.get("site_code")
@@ -149,39 +149,43 @@ class TicketGateScanner(APIView):
         except:
             raise Http404
 
-    def valid_ticket(self, request):
+    def validate_ticket(self, request):
         """
-        Check for valid ticket
-        Verifies QR code data provided against Ticket table
+        Validates QR Code data for ticket scanner application
         """
         qrdata = request.data.get("qr_code")
         if not qrdata:
             raise Http404
         try:
-            return Response("OK", status=200)
+            # parse qr data and lookup ticket
+            embed_code, filename = qrdata.split("/")
+            t = Ticket.objects.get(embed_code=embed_code, filename=filename, tokengate=self.gate)
+            # fetch ticketdata for response
+            r = {
+                "scanned": Ticket.objects.filter(tokengate=self.gate).count(),
+                "total": self.gate.capacity
+            }
+            # todo: set ticket as redeemed
+            #t.redeemed = True
+            return Response(r, status=200)
         except:
-            return Response("Not OK", status=403)
+            raise Http404
 
     def get(self, request, *args, **kwargs):
         """
         GET method
-        Handles valid_scanner check
+        Handles validate_credentials check
         """
-        # check for valid scanner code
-        return self.valid_scanner(request)
+        return self.validate_credentials(request)
 
     def post(self, request, *args, **kwargs):
         """
         POST method
-        Handles valid_scanner check,
-        as well as valid_ticket check
+        Handles validate_credentials check,
+        as well as validate_ticket check
         """
-        # check for valid scanner attempt
-        self.valid_scanner(request)
-        # check for valid ticket
-        return self.valid_ticket()
-
-
+        self.validate_credentials(request)
+        return self.validate_ticket()
 
 
 class TicketGateAccess(CreateModelMixin, GenericAPIView):

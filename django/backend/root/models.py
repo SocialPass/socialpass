@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, timedelta
 
 import requests
+import secrets
 from eth_account.messages import encode_defunct
 from invitations.models import Invitation
 from model_utils.models import TimeStampedModel
@@ -321,7 +322,7 @@ class Ticket(DBModel):
     """
 
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    embed_code = models.UUIDField(default=uuid.uuid4, editable=True)
+    embed_code = models.CharField(max_length=1024)
     tokengate = models.ForeignKey(
         TicketGate, on_delete=models.CASCADE, related_name="tickets"
     )
@@ -339,57 +340,25 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket List (Token Gate: {self.tokengate.title})"
 
-    def generate_from_validated_passes(**kwargs):
+    def populate_ticketdata(self, **kwargs):
         """
-        Given a number of validated_passes, this method will generate
-        a given number of tickets.
+        method to populate necessary ticketdata on creation
         """
-        ticketdata = []
+        if not self.signature:
+            self.signature = kwargs["signature"]
+        if not self.embed_code:
+            self.embed_code = secrets.token_urlsafe(256)
+        if not self.image:
+            self.services_generate_ticket_image(
+                filename=self.filename,
+                embed=f"{self.embed_code}/{self.filename}",
+                top_banner_text="SocialPass Ticket",
+            )
+            self.image = f"tickets/{str(self.filename)}.png"
+        # always generate download url
+        self.temporary_download_url = self.generate_ticket_download_url()
 
-        # validated_passes as amount of passes
-        if isinstance(kwargs["validated_passes"], int):
-            for id in range(kwargs["validated_passes"]):
-                ticket, created = Ticket.objects.get_or_create(
-                    wallet_address=kwargs["wallet_address"],
-                    tokengate=kwargs["tokengate"],
-                )
-                if not ticket.signature:
-                    ticket.signature = kwargs["signature"]
-                if not ticket.image:
-                    ticket.generate_ticket_image(
-                        filename=ticket.filename,
-                        embed="testing embed",
-                        top_banner_text="SocialPass Ticket",
-                    )
-                    ticket.image = f"tickets/{str(ticket.filename)}.png"
-                ticket.temporary_download_url = ticket.generate_ticket_download_url()
-                ticket.save()
-                ticketdata.append(ticket.__dict__)
-
-        # validated_passes as List of ID's
-        if isinstance(kwargs["validated_passes"], list):
-            for id in kwargs["validated_passes"]:
-                ticket, created = Ticket.objects.get_or_create(
-                    wallet_address=kwargs["wallet_address"],
-                    tokengate=kwargs["tokengate"],
-                    token_id=id,
-                )
-                if not ticket.signature:
-                    ticket.signature = kwargs["signature"]
-                if not ticket.image:
-                    ticket.generate_ticket_image(
-                        filename=ticket.filename,
-                        embed="testing embed",
-                        top_banner_text="SocialPass Ticket",
-                    )
-                    ticket.image = f"tickets/{str(ticket.filename)}.png"
-                ticket.temporary_download_url = ticket.generate_ticket_download_url()
-                ticket.save()
-                ticketdata.append(ticket.__dict__)
-
-        return ticketdata
-
-    def generate_ticket_image(self, **kwargs):
+    def services_generate_ticket_image(self, **kwargs):
         """
         method to generate ticket image via the services api
         """
@@ -440,3 +409,35 @@ class Ticket(DBModel):
             ExpiresIn=3600,
         )
         return url
+
+    def generate_from_validated_passes(**kwargs):
+        """
+        Given a number of validated_passes, this method will generate
+        a given number of tickets.
+        """
+        ticketdata = []
+
+        # validated_passes as amount of passes ()
+        if isinstance(kwargs["validated_passes"], int):
+            for id in range(kwargs["validated_passes"]):
+                ticket, created = Ticket.objects.get_or_create(
+                    wallet_address=kwargs["wallet_address"],
+                    tokengate=kwargs["tokengate"],
+                )
+                ticket.populate_ticketdata(**kwargs)
+                ticket.save()
+                ticketdata.append(ticket.__dict__)
+
+        # validated_passes as List of ID's
+        if isinstance(kwargs["validated_passes"], list):
+            for id in kwargs["validated_passes"]:
+                ticket, created = Ticket.objects.get_or_create(
+                    wallet_address=kwargs["wallet_address"],
+                    tokengate=kwargs["tokengate"],
+                    token_id=id,
+                )
+                ticket.populate_ticketdata(**kwargs)
+                ticket.save()
+                ticketdata.append(ticket.__dict__)
+
+        return ticketdata

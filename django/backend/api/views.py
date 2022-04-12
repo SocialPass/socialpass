@@ -127,6 +127,59 @@ class TokenGateRetrieve(RetrieveAPIView):
 #
 # TICKETGATE ////////////////////////////////////////////////////////////////////////////////
 #
+class TicketGateScanner(APIView):
+    """
+    View for scanning tickets for a ticket-gate
+
+    On GET:
+    Returns pass / fail for access, (depending on ID)
+
+
+    On POST:
+    Returns pass / fail, and updates ticket entry
+    """
+
+    def valid_scan_attempt(self, request):
+        print(request.data)
+        # get code
+        scanner_code = request.GET.get("site_code")
+        if not scanner_code:
+            raise Http404
+        # check code is valid
+        try:
+            return TicketGate.objects.get(scanner_code=scanner_code)
+        except:
+            raise Http404
+
+    def valid_ticket(self, request):
+        # get ticket
+        embed_code = request.data.get("qr_code")
+        if not ticket:
+            raise Http404
+
+        # check ticket is valid
+        try:
+            ticket = Ticket.objects.get(tokengate=self.gate, embed_code=embed_code)
+            ticket.redeemed = True
+            ticket.save()
+            return Response("OK", status=200)
+        except:
+            return Response("Not OK", status=403)
+
+
+
+
+    def get(self, request, *args, **kwargs):
+        self.valid_scan_attempt(request)
+        return Response(content='OK', status=200)
+
+    def post(self, request, *args, **kwargs):
+        self.gate = self.valid_scan_attempt(request)
+        self.valid_ticket()
+
+
+
+
 class TicketGateAccess(CreateModelMixin, GenericAPIView):
     """
     View for accessing ticket gate via verified `Signature`,

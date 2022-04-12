@@ -18,4 +18,9 @@ urlpatterns = [
         views.TicketGateAccess.as_view(),
         name="ticketgate-access",
     ),
+    path(
+        "ticketgates/scan/",
+        views.TicketGateScanner.as_view(),
+        name="ticketgate-scan"
+    )
 ]

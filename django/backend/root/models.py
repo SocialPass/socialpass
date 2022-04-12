@@ -312,6 +312,7 @@ class TicketGate(TokenGate):
     )
     location = models.CharField(max_length=1024)
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
+    scanner_code = models.UUIDField(default=uuid.uuid4, editable=True)
 
 
 class Ticket(DBModel):
@@ -320,6 +321,7 @@ class Ticket(DBModel):
     """
 
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
+    embed_code = models.UUIDField(default=uuid.uuid4, editable=True)
     tokengate = models.ForeignKey(
         TicketGate, on_delete=models.CASCADE, related_name="tickets"
     )

@@ -304,6 +304,8 @@ class TicketGate(TokenGate):
     """
     Stores a Ticket type token gate.
     """
+    def set_scanner_code():
+        return secrets.token_urlsafe(256)
 
     date = models.DateTimeField()
     timezone = models.CharField(
@@ -313,16 +315,18 @@ class TicketGate(TokenGate):
     )
     location = models.CharField(max_length=1024)
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    scanner_code = models.UUIDField(default=uuid.uuid4, editable=True)
+    scanner_code = models.CharField(max_length=1024, default=set_scanner_code)
 
 
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticket token gates.
     """
+    def set_embed_code():
+        return secrets.token_urlsafe(256)
 
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    embed_code = models.CharField(max_length=1024)
+    embed_code = models.CharField(max_length=1024, default=set_embed_code)
     tokengate = models.ForeignKey(
         TicketGate, on_delete=models.CASCADE, related_name="tickets"
     )
@@ -346,8 +350,6 @@ class Ticket(DBModel):
         """
         if not self.signature:
             self.signature = kwargs["signature"]
-        if not self.embed_code:
-            self.embed_code = secrets.token_urlsafe(256)
         if not self.image:
             self.services_generate_ticket_image(
                 filename=self.filename,

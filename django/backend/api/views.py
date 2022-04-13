@@ -137,39 +137,65 @@ class TicketGateScanner(APIView):
         """
         Validates credentials for access into ticket scanner
         """
-        public_id = request.GET.get("id")
         scanner_code = request.GET.get("site_code")
         if not scanner_code:
-            raise Http404
-        if not public_id:
-            raise Http404
+            return Response(status=401)
         try:
-            self.gate = TicketGate.objects.get(public_id=public_id, scanner_code=scanner_code)
+            self.gate = TicketGate.objects.get(scanner_code=scanner_code)
             return Response(content='OK', status=200)
         except:
-            raise Http404
+            return Response(status=401)
 
     def validate_ticket(self, request):
         """
         Validates QR Code data for ticket scanner application
+        Uses self.gate provided from validate_credentials
         """
+        # setup response
+        ticket_count = Ticket.objects.filter(tokengate=self.gate, redeemed=True).count()
+        ticket_limit = self.gate.capacity
+        response = {
+            "count": ticket_count,
+            "limit": ticket_limit,
+            "message": ""
+        }
+
+        # get QR data
         qrdata = request.data.get("qr_code")
         if not qrdata:
-            raise Http404
+            response['message'] = "Invalid QR data"
+            return Response(response, status=401)
+
+        # parse ticket data
         try:
-            # parse qr data and lookup ticket
             embed_code, filename = qrdata.split("/")
-            t = Ticket.objects.get(embed_code=embed_code, filename=filename, tokengate=self.gate)
-            # fetch ticketdata for response
-            r = {
-                "scanned": Ticket.objects.filter(tokengate=self.gate).count(),
-                "total": self.gate.capacity
-            }
-            # todo: set ticket as redeemed
-            #t.redeemed = True
-            return Response(r, status=200)
-        except:
-            raise Http404
+        except ValueError:
+            response['message'] = "Invalid ticketdata format"
+            return Response(response, status=401)
+
+        # lookup ticketdata
+        try:
+            scanned_ticket = Ticket.objects.get(embed_code=embed_code, filename=filename, tokengate=self.gate)
+        except Ticket.DoesNotExist:
+            response['message'] = "Invalid ticketdata content"
+            return Response(response, status=401)
+
+        # check ticket is not redeemed
+        if scanned_ticket.redeemed:
+            response['message'] = "Ticket valid, but already redeemed"
+            return Response(response, status=403)
+
+        # check gate capacity if ticket was added (+ 1)
+        if (ticket_count + 1) > self.gate.capacity:
+            response['message'] = "At capacity"
+            return Response(response, status=403)
+
+        # ticket has passed all checks
+        # return succesful response and mark ticket as updated
+        response['message'] = "OK"
+        response["count"] = ticket_count + 1
+        scanned_ticket.redeemed=True
+        return Response(response, status=200)
 
     def get(self, request, *args, **kwargs):
         """

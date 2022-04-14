@@ -1,12 +1,10 @@
 import json
-from typing import List, Optional
-
 import requests
+from typing import List, Optional
 from eth_abi import decode_single, encode_abi, encode_single
 from fastapi import HTTPException
 from pydantic import BaseModel
 from web3 import Web3
-
 
 #
 # SCHEMAS
@@ -32,27 +30,27 @@ def verify_evm_requirement(
     token_ids = None
 
     # ERC20 ////////////////////////////////////////////////////////////////////////////
-    if req.asset_type == "ERC20":
+    if req['asset_type'] == "ERC20":
         # initial balance lookup
         tokens = moralis_get_fungible(
-            chain_id=hex(req.chain_id),
-            contract_addresses=[Web3.toChecksumAddress(req.asset_address)],
+            chain_id=hex(req['chain_id']),
+            contract_addresses=[Web3.toChecksumAddress(req['asset_address'])],
             wallet_address=Web3.toChecksumAddress(wallet_address),
-            to_block=req.to_block,
+            to_block=req['to_block'],
         )
         for token in tokens:
-            if token["token_address"].casefold() == req.asset_address.casefold():
+            if token["token_address"].casefold() == req['asset_address'].casefold():
                 decimals = int(token["decimals"])
                 token_balance = int(token["balance"])
                 break
 
         # divide balance by required amount,
         # issue validated_passes as whatever is lower (quotient or limit_per_person)
-        if token_balance < req.amount:
+        if token_balance < req['amount']:
             raise HTTPException(
                 status_code=403, detail="User does not meet requirements"
             )
-        quotient = token_balance / req.amount
+        quotient = token_balance / req['amount']
         if int(quotient) >= limit_per_person:
             return {
                 "wallet_address": wallet_address,
@@ -67,11 +65,11 @@ def verify_evm_requirement(
             }
 
     # ERC721 ////////////////////////////////////////////////////////////////////////////
-    if req.asset_type == "ERC721":
+    if req['asset_type'] == "ERC721":
         # initial token ID lookup
         tokens = moralis_get_nfts(
-            chain_id=hex(req.chain_id),
-            contract_address=Web3.toChecksumAddress(req.asset_address),
+            chain_id=hex(req['chain_id']),
+            contract_address=Web3.toChecksumAddress(req['asset_address']),
             wallet_address=Web3.toChecksumAddress(wallet_address),
         )
         token_ids = tokens["result"]
@@ -85,7 +83,7 @@ def verify_evm_requirement(
             if len(validated_passes) == limit_per_person:
                 break
 
-        if len(validated_passes) < req.amount:
+        if len(validated_passes) < req['amount']:
             raise HTTPException(
                 status_code=403, detail="User does not meet requirements"
             )
@@ -97,7 +95,7 @@ def verify_evm_requirement(
         }
 
     # ERC1155 ////////////////////////////////////////////////////////////////////////////
-    if req.asset_type == "ERC1155":
+    if req['asset_type'] == "ERC1155":
         raise HTTPException(status_code=400, detail="Not yet implemented")
 
 
@@ -258,3 +256,37 @@ def tokenURI(w3=None, contract_address=None, token_id=0):
     # cleanup whitespace bytes
     token_uri = token_uri.replace("\x00", "").strip()
     return token_uri
+
+
+
+class Utilities():
+    def validate_requirements(
+        wallet_address: str,
+        limit_per_person: int,
+        requirements: List[Requirement]
+    ):
+        """
+        Given a wallet address and array of requirements, `verify_requirements` will loop through
+        the list requirements until a wallet has passed said requirements, or no requirements could be met.
+
+        This function is to be blockchain & asset agnostic, meaning that the web3 provider,
+        as well as the type of asset lookup, will be determined on the `requirements` parameter.
+        """
+        # loop over list of Requirements
+        for idx, req in enumerate(requirements):
+            # EVM
+            # Requirements failure verification throws HTTP error
+            # HTTP Error is not raised until last requirement in list
+            if req['blockchain'] == "EVM":
+                try:
+                    resp = verify_evm_requirement(
+                        req=req,
+                        limit_per_person=limit_per_person,
+                        wallet_address=wallet_address,
+                    )
+                    return resp
+                except HTTPException as e:
+                    if idx == (len(requirements) - 1):
+                        raise e
+                    else:
+                        pass

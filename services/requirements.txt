@@ -1,9 +1,0 @@
-wheel
-uvicorn[standard]
-fastapi
-boto3
-Pillow
-gunicorn
-web3==5.28.0
-pillow
-qrcode

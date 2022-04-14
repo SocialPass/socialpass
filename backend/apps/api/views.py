@@ -15,12 +15,104 @@ from .serializers import (
     TokenGatePolymorphicSerializer,
     TokenGateDetailPolymorphicSerializer
 )
+from apps.utilities import Blockchain
 
 
 #
-# HOSTED PAGE ////////////////////////////////////////////////////////////////////////////////
+# WIDGET API ////////////////////////////////////////////////////////////////////////////////
 #
-class HostedPageRetrieve(APIView):
+class TokenGateRetrieve(RetrieveAPIView):
+    """
+    View for retrieving ticket gate by `public_id`.
+    Generates `Signature` alongside tokengate
+    """
+
+    lookup_field = "public_id"
+    queryset = TokenGate.objects.all()
+    serializer_class = TokenGateDetailPolymorphicSerializer
+    permission_classes = [AllowAny]
+
+
+class TicketGateAccess(CreateModelMixin, GenericAPIView):
+    """
+    View for accessing ticket gate via verified `Signature`,
+    and then creating / returning `Ticket` entry(s)
+    """
+
+    permission_classes = [AllowAny]
+
+    def get_signature(self, pk):
+        """
+        Helper method to get the related signature model via request PK.
+        """
+        # get related signature by pk
+        try:
+            return Signature.objects.get(unique_code=pk)
+        except Exception:
+            raise Http404
+
+    def create(self, request, *args, **kwargs):
+        """
+        CREATE method generates, serializes and returns ticket data
+        """
+        # generate ticket data from validated passes
+        ticketdata = Ticket.generate_from_validated_passes(**kwargs)
+
+        # serialize & return ticket data
+        serializer = TicketSerializer(data=ticketdata, many=True)
+        serializer.is_valid()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
+
+    def post(self, request):
+        """
+        POST method validates signature, as well as gate requirements.
+        Success proceeds to self.creation
+        """
+        # serialize and verify data
+        serialized = AccessGateSerializer(data=request.data)
+        serialized.is_valid(raise_exception=True)
+
+        # get signature obj, throw 404 if not fund
+        signature = self.get_signature(serialized.data.get("signature_id"))
+
+        # validate signed_message from signature;
+        sig_success, sig_code, sig_msg = signature.validate(
+            address=serialized.data.get("address"),
+            signed_message=serialized.data.get("signed_message"),
+            tokengate_id=serialized.data.get("tokengate_id"),
+        )
+        if not sig_success:
+            return Response(sig_msg, status=sig_code)
+
+        # validate requirements
+        return Response('Breakpoint', status=200)
+        ############################### TODO: refactor everything below
+        gate = signature.tokengate
+        req_success, req_code, req_msg = Blockchain.Utilities.validate_requirements(
+            limit_per_person=gate.limit_per_person,
+            requirements=gate.requirements,
+            wallet_address=serialized.data.get("address")
+        )
+        if not req_success:
+            return Response(req_msg, status=req_code)
+        print('hellloooo')
+        return Response(req_msg, status=req_code)
+
+        # issue reward (http201 created)
+        response = self.create(
+            request,
+            signature=signature,
+            tokengate=gate,
+            wallet_address=serialized.data.get("address"),
+            validated_passes=req_msg["validated_passes"],
+        )
+        return response
+
+#
+# EXPLORE API ////////////////////////////////////////////////////////////////////////////////
+#
+class ExplorePageRetrieve(APIView):
     """
     Wrapper view for fetching all relevant hosted page info.
 
@@ -84,7 +176,6 @@ class FeaturedGateList(ListAPIView):
         # no querystring
         return TokenGate.objects.filter(team=self.team, featured=True)
 
-
 class AllGateList(ListAPIView):
     """
     View for retrieving ticket gates by subdomain
@@ -108,24 +199,8 @@ class AllGateList(ListAPIView):
         # no querystring
         return TokenGate.objects.filter(team=self.team, featured=False)
 
-
 #
-# GENERAL TOKENGATE ////////////////////////////////////////////////////////////////////////////////
-#
-class TokenGateRetrieve(RetrieveAPIView):
-    """
-    View for retrieving ticket gate by `public_id`
-    """
-
-    lookup_field = "public_id"
-    queryset = TokenGate.objects.all()
-    serializer_class = TokenGateDetailPolymorphicSerializer
-    permission_classes = [AllowAny]
-
-
-
-#
-# TICKETGATE ////////////////////////////////////////////////////////////////////////////////
+# TICKET SCANNER API ////////////////////////////////////////////////////////////////////////////////
 #
 class TicketGateScanner(APIView):
     """
@@ -213,73 +288,3 @@ class TicketGateScanner(APIView):
         self.validate_credentials(request)
         return self.validate_ticket()
 
-
-class TicketGateAccess(CreateModelMixin, GenericAPIView):
-    """
-    View for accessing ticket gate via verified `Signature`,
-    and then creating / returning `Ticket` entry(s)
-    """
-
-    permission_classes = [AllowAny]
-
-    def get_signature(self, pk):
-        """
-        Helper method to get the related signature model via request PK.
-        """
-        # get related signature by pk
-        try:
-            return Signature.objects.get(unique_code=pk)
-        except Exception:
-            raise Http404
-
-    def create(self, request, *args, **kwargs):
-        """
-        CREATE method generates, serializes and returns ticket data
-        """
-        # generate ticket data from validated passes
-        ticketdata = Ticket.generate_from_validated_passes(**kwargs)
-
-        # serialize & return ticket data
-        serializer = TicketSerializer(data=ticketdata, many=True)
-        serializer.is_valid()
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
-
-    def post(self, request):
-        """
-        POST method validates signature, as well as gate requirements.
-        Success proceeds to self.creation
-        """
-        # serialize and verify data
-        serialized = AccessGateSerializer(data=request.data)
-        serialized.is_valid(raise_exception=True)
-
-        # get signature obj, throw 404 if not fund
-        signature = self.get_signature(serialized.data.get("signature_id"))
-
-        # validate signed_message from signature;
-        sig_success, sig_code, sig_msg = signature.validate(
-            address=serialized.data.get("address"),
-            signed_message=serialized.data.get("signed_message"),
-            tokengate_id=serialized.data.get("tokengate_id"),
-        )
-        if not sig_success:
-            return Response(sig_msg, status=sig_code)
-
-        # validate requirements against issued id's
-        gate = TicketGate.objects.get(public_id=serialized.data.get("tokengate_id"))
-        req_success, req_code, req_msg = gate.validate_requirements(
-            wallet_address=serialized.data.get("address")
-        )
-        if not req_success:
-            return Response(req_msg, status=req_code)
-
-        # issue reward (http201 created)
-        response = self.create(
-            request,
-            signature=signature,
-            tokengate=gate,
-            wallet_address=serialized.data.get("address"),
-            validated_passes=req_msg["validated_passes"],
-        )
-        return response

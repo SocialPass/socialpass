@@ -7,6 +7,8 @@ web3==5.28.0
 django-polymorphic
 django-rest-polymorphic
 boto3
+Pillow
+qrcode
 
 # Django
 # ------------------------------------------------------------------------------

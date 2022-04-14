@@ -541,77 +541,54 @@ class TicketPartGenerator:
         return img
 
 
-def generate_ticket(
-    event_data,
-    embed,
-    top_banner_text,
-    theme=None,
-    scene_img_source=None,
-):
-    """
-    Generates the actual image for the ticket.
+    def generate_ticket(
+        event_data,
+        embed,
+        top_banner_text,
+        theme=None,
+        scene_img_source=None,
+    ):
+        """
+        Generates the actual image for the ticket.
 
-    Note:
-        - This method should NOT be pre-maturely optimized or abstracted. It
-        is better to keep everything readable and easy to understand before
-        the ticket designs are fully finalized.
-    """
-    # Set theme data (for now, just random is supported)
-    theme_data = {"name": "Random", "rarity": "N/A"}
+        Note:
+            - This method should NOT be pre-maturely optimized or abstracted. It
+            is better to keep everything readable and easy to understand before
+            the ticket designs are fully finalized.
+        """
+        # Set theme data (for now, just random is supported)
+        theme_data = {"name": "Random", "rarity": "N/A"}
 
-    # Select which theme to set (randomize if one is not provided)
-    if isinstance(theme, dict):
-        theme_to_set = theme
-    else:
-        theme_to_set = random.choice(theme_list)
+        # Select which theme to set (randomize if one is not provided)
+        if isinstance(theme, dict):
+            theme_to_set = theme
+        else:
+            theme_to_set = random.choice(theme_list)
 
-    set_theme(theme_to_set)
+        set_theme(theme_to_set)
 
-    # Dictionary to hold all the ticket parts before assembly
-    ticket_parts = {}
+        # Dictionary to hold all the ticket parts before assembly
+        ticket_parts = {}
 
-    # Top banner
-    ticket_parts["top_banner"] = make_white_transparent(
-        Image.new("RGB", (DEFAULT_WIDTH, SPACE_BEFORE_TOP_BANNER), color="white")
-    )
-    top_banner_img = TicketPartGenerator.generate_banner(
-        width=DEFAULT_WIDTH,
-        height=TOP_BANNER_HEIGHT,
-        bg_color=BANNER_COLOR,
-        color=BANNER_TEXT_COLOR,
-        font=BANNER_FONT,
-        text=top_banner_text,
-    )
-    ticket_parts["top_banner"] = concat_v(ticket_parts["top_banner"], top_banner_img)
-
-    # Event name
-    ticket_parts["event_name"] = concat_v(
-        TicketPartGenerator.generate_text_section(
+        # Top banner
+        ticket_parts["top_banner"] = make_white_transparent(
+            Image.new("RGB", (DEFAULT_WIDTH, SPACE_BEFORE_TOP_BANNER), color="white")
+        )
+        top_banner_img = TicketPartGenerator.generate_banner(
             width=DEFAULT_WIDTH,
-            text="Event",
-            color=TITLE_TEXT_COLOR,
-            font=TITLE_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=0,
-        ),
-        TicketPartGenerator.generate_text_section(
-            width=DEFAULT_WIDTH,
-            text=event_data.event_name,
-            color=CONTENT_TEXT_COLOR,
-            font=CONTENT_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=TEXT_CONTENT_V_SPACING,
-        ),
-    )
+            height=TOP_BANNER_HEIGHT,
+            bg_color=BANNER_COLOR,
+            color=BANNER_TEXT_COLOR,
+            font=BANNER_FONT,
+            text=top_banner_text,
+        )
+        ticket_parts["top_banner"] = concat_v(ticket_parts["top_banner"], top_banner_img)
 
-    # Event gate limit
-    if "gate_limit" in event_data:
-        ticket_parts["event_gate_limit"] = concat_v(
+        # Event name
+        ticket_parts["event_name"] = concat_v(
             TicketPartGenerator.generate_text_section(
-                width=EVENT_GATE_LIMIT_WIDTH,
-                text="Gate Limit",
+                width=DEFAULT_WIDTH,
+                text="Event",
                 color=TITLE_TEXT_COLOR,
                 font=TITLE_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -619,8 +596,8 @@ def generate_ticket(
                 v_spacing=0,
             ),
             TicketPartGenerator.generate_text_section(
-                width=EVENT_GATE_LIMIT_WIDTH,
-                text=event_data.gate_limit,
+                width=DEFAULT_WIDTH,
+                text=event_data.event_name,
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -628,239 +605,271 @@ def generate_ticket(
                 v_spacing=TEXT_CONTENT_V_SPACING,
             ),
         )
-    else:
-        global EVENT_DATE_WIDTH
-        EVENT_DATE_WIDTH = DEFAULT_WIDTH
 
-    # Event date
-    ticket_parts["event_date"] = concat_v(
-        TicketPartGenerator.generate_text_section(
-            width=EVENT_DATE_WIDTH,
-            text="Date",
-            color=TITLE_TEXT_COLOR,
-            font=TITLE_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=0,
-        ),
-        TicketPartGenerator.generate_text_section(
-            width=EVENT_DATE_WIDTH,
-            text=event_data.event_date,
-            color=CONTENT_TEXT_COLOR,
-            font=CONTENT_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=TEXT_CONTENT_V_SPACING,
-        ),
-    )
-
-    # Event location
-    ticket_parts["event_location"] = concat_v(
-        TicketPartGenerator.generate_text_section(
-            width=DEFAULT_WIDTH,
-            text="Location",
-            color=TITLE_TEXT_COLOR,
-            font=TITLE_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=0,
-        ),
-        TicketPartGenerator.generate_text_section(
-            width=DEFAULT_WIDTH,
-            text=event_data.event_location,
-            color=CONTENT_TEXT_COLOR,
-            font=CONTENT_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=TEXT_CONTENT_V_SPACING,
-        ),
-    )
-
-    # QR code
-    ticket_parts["qr_code"] = TicketPartGenerator.generate_qr_code(embed)
-
-    # Scene image
-    if scene_img_source:
-        # Ticket still gets generated if the scene image source doesn't work
-        try:
-            scene_img = TicketPartGenerator.generate_scene_image(
-                scene_img_source, ticket_parts["qr_code"].height
+        # Event gate limit
+        if "gate_limit" in event_data:
+            ticket_parts["event_gate_limit"] = concat_v(
+                TicketPartGenerator.generate_text_section(
+                    width=EVENT_GATE_LIMIT_WIDTH,
+                    text="Gate Limit",
+                    color=TITLE_TEXT_COLOR,
+                    font=TITLE_FONT,
+                    x_start_offset=DEFAULT_MARGIN,
+                    x_end_offset=DEFAULT_MARGIN,
+                    v_spacing=0,
+                ),
+                TicketPartGenerator.generate_text_section(
+                    width=EVENT_GATE_LIMIT_WIDTH,
+                    text=event_data.gate_limit,
+                    color=CONTENT_TEXT_COLOR,
+                    font=CONTENT_FONT,
+                    x_start_offset=DEFAULT_MARGIN,
+                    x_end_offset=DEFAULT_MARGIN,
+                    v_spacing=TEXT_CONTENT_V_SPACING,
+                ),
             )
-        except Exception as e:
-            print("Error getting scene image.", e)
-            scene_img = None
-        ticket_parts["scene_img"] = scene_img
-    else:
-        ticket_parts["scene_img"] = None
+        else:
+            global EVENT_DATE_WIDTH
+            EVENT_DATE_WIDTH = DEFAULT_WIDTH
 
-    # Bottom banner
-    ticket_parts["bottom_banner"] = TicketPartGenerator.generate_banner(
-        width=DEFAULT_WIDTH,
-        height=BOTTOM_BANNER_HEIGHT,
-        bg_color=BANNER_COLOR,
-        color=BANNER_TEXT_COLOR,
-        font=BANNER_FONT,
-        text=None,
-    )
-
-    # Theme name
-    ticket_parts["theme_name"] = concat_v(
-        TicketPartGenerator.generate_text_section(
-            width=THEME_NAME_WIDTH,
-            text="Theme",
-            color=TITLE_TEXT_COLOR,
-            font=FOOTER_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=0,
-            v_spacing=0,
-        ),
-        TicketPartGenerator.generate_text_section(
-            width=THEME_NAME_WIDTH,
-            text=theme_data["name"],
-            color=CONTENT_TEXT_COLOR,
-            font=FOOTER_FONT,
-            x_start_offset=DEFAULT_MARGIN,
-            x_end_offset=0,
-            v_spacing=TEXT_CONTENT_V_SPACING,
-        ),
-    )
-
-    # Theme rarity
-    ticket_parts["theme_rarity"] = concat_v(
-        TicketPartGenerator.generate_text_section(
-            width=THEME_RARITY_WIDTH,
-            text="Rarity",
-            color=TITLE_TEXT_COLOR,
-            font=FOOTER_FONT,
-            x_start_offset=int(DEFAULT_MARGIN / 2),
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=0,
-        ),
-        TicketPartGenerator.generate_text_section(
-            width=THEME_RARITY_WIDTH,
-            text=theme_data["rarity"],
-            color=CONTENT_TEXT_COLOR,
-            font=FOOTER_FONT,
-            x_start_offset=int(DEFAULT_MARGIN / 2),
-            x_end_offset=DEFAULT_MARGIN,
-            v_spacing=TEXT_CONTENT_V_SPACING,
-        ),
-    )
-
-    # Putting everything together into one image
-
-    # Top banner and event name
-    ticket_img = concat_v(
-        ticket_parts["top_banner"], ticket_parts["event_name"], SPACE_AFTER_TOP_BANNER
-    )
-
-    # Gate limit and event date
-    if "gate_limit" in event_data:
-        event_gate_limit_date_img = concat_h(
-            ticket_parts["event_gate_limit"], ticket_parts["event_date"]
+        # Event date
+        ticket_parts["event_date"] = concat_v(
+            TicketPartGenerator.generate_text_section(
+                width=EVENT_DATE_WIDTH,
+                text="Date",
+                color=TITLE_TEXT_COLOR,
+                font=TITLE_FONT,
+                x_start_offset=DEFAULT_MARGIN,
+                x_end_offset=DEFAULT_MARGIN,
+                v_spacing=0,
+            ),
+            TicketPartGenerator.generate_text_section(
+                width=EVENT_DATE_WIDTH,
+                text=event_data.event_date,
+                color=CONTENT_TEXT_COLOR,
+                font=CONTENT_FONT,
+                x_start_offset=DEFAULT_MARGIN,
+                x_end_offset=DEFAULT_MARGIN,
+                v_spacing=TEXT_CONTENT_V_SPACING,
+            ),
         )
+
+        # Event location
+        ticket_parts["event_location"] = concat_v(
+            TicketPartGenerator.generate_text_section(
+                width=DEFAULT_WIDTH,
+                text="Location",
+                color=TITLE_TEXT_COLOR,
+                font=TITLE_FONT,
+                x_start_offset=DEFAULT_MARGIN,
+                x_end_offset=DEFAULT_MARGIN,
+                v_spacing=0,
+            ),
+            TicketPartGenerator.generate_text_section(
+                width=DEFAULT_WIDTH,
+                text=event_data.event_location,
+                color=CONTENT_TEXT_COLOR,
+                font=CONTENT_FONT,
+                x_start_offset=DEFAULT_MARGIN,
+                x_end_offset=DEFAULT_MARGIN,
+                v_spacing=TEXT_CONTENT_V_SPACING,
+            ),
+        )
+
+        # QR code
+        ticket_parts["qr_code"] = TicketPartGenerator.generate_qr_code(embed)
+
+        # Scene image
+        if scene_img_source:
+            # Ticket still gets generated if the scene image source doesn't work
+            try:
+                scene_img = TicketPartGenerator.generate_scene_image(
+                    scene_img_source, ticket_parts["qr_code"].height
+                )
+            except Exception as e:
+                print("Error getting scene image.", e)
+                scene_img = None
+            ticket_parts["scene_img"] = scene_img
+        else:
+            ticket_parts["scene_img"] = None
+
+        # Bottom banner
+        ticket_parts["bottom_banner"] = TicketPartGenerator.generate_banner(
+            width=DEFAULT_WIDTH,
+            height=BOTTOM_BANNER_HEIGHT,
+            bg_color=BANNER_COLOR,
+            color=BANNER_TEXT_COLOR,
+            font=BANNER_FONT,
+            text=None,
+        )
+
+        # Theme name
+        ticket_parts["theme_name"] = concat_v(
+            TicketPartGenerator.generate_text_section(
+                width=THEME_NAME_WIDTH,
+                text="Theme",
+                color=TITLE_TEXT_COLOR,
+                font=FOOTER_FONT,
+                x_start_offset=DEFAULT_MARGIN,
+                x_end_offset=0,
+                v_spacing=0,
+            ),
+            TicketPartGenerator.generate_text_section(
+                width=THEME_NAME_WIDTH,
+                text=theme_data["name"],
+                color=CONTENT_TEXT_COLOR,
+                font=FOOTER_FONT,
+                x_start_offset=DEFAULT_MARGIN,
+                x_end_offset=0,
+                v_spacing=TEXT_CONTENT_V_SPACING,
+            ),
+        )
+
+        # Theme rarity
+        ticket_parts["theme_rarity"] = concat_v(
+            TicketPartGenerator.generate_text_section(
+                width=THEME_RARITY_WIDTH,
+                text="Rarity",
+                color=TITLE_TEXT_COLOR,
+                font=FOOTER_FONT,
+                x_start_offset=int(DEFAULT_MARGIN / 2),
+                x_end_offset=DEFAULT_MARGIN,
+                v_spacing=0,
+            ),
+            TicketPartGenerator.generate_text_section(
+                width=THEME_RARITY_WIDTH,
+                text=theme_data["rarity"],
+                color=CONTENT_TEXT_COLOR,
+                font=FOOTER_FONT,
+                x_start_offset=int(DEFAULT_MARGIN / 2),
+                x_end_offset=DEFAULT_MARGIN,
+                v_spacing=TEXT_CONTENT_V_SPACING,
+            ),
+        )
+
+        # Putting everything together into one image
+
+        # Top banner and event name
         ticket_img = concat_v(
-            ticket_img, event_gate_limit_date_img, SPACE_AFTER_EVENT_DATA_ITEMS
+            ticket_parts["top_banner"], ticket_parts["event_name"], SPACE_AFTER_TOP_BANNER
         )
-    else:
+
+        # Gate limit and event date
+        if "gate_limit" in event_data:
+            event_gate_limit_date_img = concat_h(
+                ticket_parts["event_gate_limit"], ticket_parts["event_date"]
+            )
+            ticket_img = concat_v(
+                ticket_img, event_gate_limit_date_img, SPACE_AFTER_EVENT_DATA_ITEMS
+            )
+        else:
+            ticket_img = concat_v(
+                ticket_img, ticket_parts["event_date"], SPACE_AFTER_EVENT_DATA_ITEMS
+            )
+
+        # Event location
         ticket_img = concat_v(
-            ticket_img, ticket_parts["event_date"], SPACE_AFTER_EVENT_DATA_ITEMS
+            ticket_img, ticket_parts["event_location"], SPACE_AFTER_EVENT_DATA_ITEMS
         )
 
-    # Event location
-    ticket_img = concat_v(
-        ticket_img, ticket_parts["event_location"], SPACE_AFTER_EVENT_DATA_ITEMS
-    )
-
-    # QR code and scene image
-    qr_code_scene_img = TicketPartGenerator.join_qr_code_scene_image(
-        ticket_parts["qr_code"], 0, ticket_parts["scene_img"]
-    )
-    ticket_img = concat_v(ticket_img, qr_code_scene_img, SPACE_AFTER_EVENT_DATA)
-
-    # Bottom banner
-    ticket_img = concat_v(
-        ticket_img, ticket_parts["bottom_banner"], SPACE_AFTER_QR_CODE_SCENE_IMAGE
-    )
-
-    # Footer
-    theme_text_sections_img = concat_h(
-        ticket_parts["theme_name"], ticket_parts["theme_rarity"]
-    )
-    theme_section_img = make_white_transparent(
-        Image.new(
-            "RGB", (DEFAULT_WIDTH - theme_text_sections_img.width, 1), color="white"
+        # QR code and scene image
+        qr_code_scene_img = TicketPartGenerator.join_qr_code_scene_image(
+            ticket_parts["qr_code"], 0, ticket_parts["scene_img"]
         )
-    )
-    theme_section_img = concat_h(theme_section_img, theme_text_sections_img)
-    ticket_img = concat_v(ticket_img, theme_section_img, SPACE_AFTER_BOTTOM_BANNER)
-    footer_img = make_white_transparent(
-        Image.new("RGB", (DEFAULT_WIDTH, SPACE_AFTER_THEME_DATA), color="white")
-    )
-    ticket_img = concat_v(ticket_img, footer_img)
+        ticket_img = concat_v(ticket_img, qr_code_scene_img, SPACE_AFTER_EVENT_DATA)
 
-    # Create the background image and notch
-    # Scaling down creates anti-aliasing
-    scale = 2
-    bg_width = ticket_img.width * scale
-    bg_height = ticket_img.height * scale
-    notch_radius = TOP_NOTCH_RADIUS * scale
+        # Bottom banner
+        ticket_img = concat_v(
+            ticket_img, ticket_parts["bottom_banner"], SPACE_AFTER_QR_CODE_SCENE_IMAGE
+        )
 
-    ticket_with_bg = Image.new("RGB", (bg_width, bg_height), color=BG_COLOR)
-    draw = ImageDraw.Draw(ticket_with_bg)
-    x0 = (bg_width - (notch_radius * 2)) // 2
-    x1 = x0 + (notch_radius * 2)
-    y0 = -notch_radius
-    y1 = notch_radius
-    draw.ellipse((x0, y0, x1, y1), fill=WORKING_CANVAS_COLOR)
-    ticket_with_bg = ticket_with_bg.resize(
-        (bg_width // scale, bg_height // scale), resample=Image.ANTIALIAS
-    )
-    ticket_with_bg.paste(ticket_img, (0, 0), ticket_img)
+        # Footer
+        theme_text_sections_img = concat_h(
+            ticket_parts["theme_name"], ticket_parts["theme_rarity"]
+        )
+        theme_section_img = make_white_transparent(
+            Image.new(
+                "RGB", (DEFAULT_WIDTH - theme_text_sections_img.width, 1), color="white"
+            )
+        )
+        theme_section_img = concat_h(theme_section_img, theme_text_sections_img)
+        ticket_img = concat_v(ticket_img, theme_section_img, SPACE_AFTER_BOTTOM_BANNER)
+        footer_img = make_white_transparent(
+            Image.new("RGB", (DEFAULT_WIDTH, SPACE_AFTER_THEME_DATA), color="white")
+        )
+        ticket_img = concat_v(ticket_img, footer_img)
 
-    # Create the full canvas and result
-    full_canvas = Image.new(
-        "RGB",
-        (
-            ticket_img.width + WORKING_CANVAS_PADDING,
-            ticket_img.height + WORKING_CANVAS_PADDING,
-        ),
-        color=WORKING_CANVAS_COLOR,
-    )
-    result = overlay_center(ticket_with_bg, full_canvas)
+        # Create the background image and notch
+        # Scaling down creates anti-aliasing
+        scale = 2
+        bg_width = ticket_img.width * scale
+        bg_height = ticket_img.height * scale
+        notch_radius = TOP_NOTCH_RADIUS * scale
 
-    return result
+        ticket_with_bg = Image.new("RGB", (bg_width, bg_height), color=BG_COLOR)
+        draw = ImageDraw.Draw(ticket_with_bg)
+        x0 = (bg_width - (notch_radius * 2)) // 2
+        x1 = x0 + (notch_radius * 2)
+        y0 = -notch_radius
+        y1 = notch_radius
+        draw.ellipse((x0, y0, x1, y1), fill=WORKING_CANVAS_COLOR)
+        ticket_with_bg = ticket_with_bg.resize(
+            (bg_width // scale, bg_height // scale), resample=Image.ANTIALIAS
+        )
+        ticket_with_bg.paste(ticket_img, (0, 0), ticket_img)
 
+        # Create the full canvas and result
+        full_canvas = Image.new(
+            "RGB",
+            (
+                ticket_img.width + WORKING_CANVAS_PADDING,
+                ticket_img.height + WORKING_CANVAS_PADDING,
+            ),
+            color=WORKING_CANVAS_COLOR,
+        )
+        result = overlay_center(ticket_with_bg, full_canvas)
 
-def store_ticket(ticket_img, filename):
-    # Prepare image for S3
-    buffer = io.BytesIO()
-    ticket_img.save(buffer, "PNG")
-    buffer.seek(0)  # Rewind pointer back to start
-
-    # put image into s3
-    response = s3.put_object(
-        Bucket=settings.SERVICES_SPACES_BUCKET_NAME,
-        Key=f"{settings.SERVICES_SPACES_DIRECTORY}{filename}.png",
-        Body=buffer,
-        ContentType="image/png",
-    )
-
-    return response
+        return result
 
 
-def generate_and_store_ticket(
-    event_data, embed, scene_img_source, top_banner_text, filename
-):
-    # Generate ticket image from request data
-    ticket_img = generate_ticket(
-        event_data=event_data,
-        embed=embed,
-        scene_img_source=scene_img_source,
-        top_banner_text=top_banner_text,
-    )
+    def store_ticket(ticket_img, filename):
+        # Prepare image for S3
+        buffer = io.BytesIO()
+        ticket_img.save(buffer, "PNG")
+        buffer.seek(0)  # Rewind pointer back to start
 
-    # Store ticket image into bucket
-    response = store_ticket(ticket_img=ticket_img, filename=filename)
+        # put image into s3
+        response = s3.put_object(
+            Bucket=settings.SERVICES_SPACES_BUCKET_NAME,
+            Key=f"{settings.SERVICES_SPACES_DIRECTORY}{filename}.png",
+            Body=buffer,
+            ContentType="image/png",
+        )
 
-    return (ticket_img, response)
+        return response
+
+
+    def generate_and_store_ticket(
+        event_data: EventData,
+        filename: str,
+        embed: str,
+        top_banner_text: Optional[str] = "SocialPass Ticket",
+        scene_img_source: Optional[str] = None,
+    ):
+        """
+        Use the request to generate a ticket image and save.
+        Generating & storing ticket are passed into a background task
+        """
+        # Generate ticket image from request data
+        ticket_img = generate_ticket(
+            event_data=event_data,
+            embed=embed,
+            scene_img_source=scene_img_source,
+            top_banner_text=top_banner_text,
+        )
+
+        # Store ticket image into bucket
+        response = store_ticket(ticket_img=ticket_img, filename=filename)
+
+        return (ticket_img, response)
+

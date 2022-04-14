@@ -4,8 +4,8 @@ from . import views
 
 app_name = "root"
 urlpatterns = [
-    # hosted page
-    path("hostedpage/", views.HostedPageRetrieve.as_view()),
+    # explore page
+    path("explorepage/", views.ExplorePageRetrieve.as_view()),
     # tokengates
     path(
         "tokengates/retrieve/<str:public_id>/",

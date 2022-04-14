@@ -1,55 +1,55 @@
 SHELL := /bin/bash
 
-# python (django x fastapi)
+# python (backend x fastapi)
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 py-create: ## Create virtual environment
 	python3 -m venv venv
 
-py-setup: ## Install django ++ fastapi requirements
+py-setup: ## Install backend ++ fastapi requirements
 	(source venv/bin/activate; \
 	pip3 install --upgrade pip; \
-	pip3 install -r django/config/requirements/local.txt; \
+	pip3 install -r backend/config/requirements/local.txt; \
 	pip3 install -r services/requirements.txt; )
 
-py-run: ## Start django ++ fastapi server
+py-run: ## Start backend ++ fastapi server
 	(source venv/bin/activate; \
 	cd services && uvicorn main:app --reload --port 8080 & \
-	cd django && python3 manage.py runserver)
+	cd backend && python3 manage.py runserver)
 
-py-lint: ## Lint django ++ fastapi
-	(source venv/bin/activate; black django; isort django; flake8 django;\
+py-lint: ## Lint backend ++ fastapi
+	(source venv/bin/activate; black backend; isort backend; flake8 backend;\
 	black services; isort services; flake8 services;)
 
 
 
-# django
-django-setup: ## Install django requirements
+# backend
+backend-setup: ## Install backend requirements
 	(source venv/bin/activate; \
 	pip3 install --upgrade pip; \
-	pip3 install -r django/config/requirements/local.txt; )
+	pip3 install -r backend/config/requirements/local.txt; )
 
-django-run: ## Start django server
-	(source venv/bin/activate; python3 django/manage.py runserver)
+backend-run: ## Start backend server
+	(source venv/bin/activate; python3 backend/manage.py runserver)
 
-django-migration: ## Create django migrations
-	(source venv/bin/activate; python3 django/manage.py makemigrations)
+backend-migration: ## Create backend migrations
+	(source venv/bin/activate; python3 backend/manage.py makemigrations)
 
-django-migrate: ## Migrate django migrations
-	(source venv/bin/activate; python3 django/manage.py migrate)
+backend-migrate: ## Migrate backend migrations
+	(source venv/bin/activate; python3 backend/manage.py migrate)
 
-django-up:: ## Create && migrate
-	(source venv/bin/activate; python3 django/manage.py makemigrations;python3 django/manage.py migrate)
+backend-up:: ## Create && migrate
+	(source venv/bin/activate; python3 backend/manage.py makemigrations;python3 backend/manage.py migrate)
 
-django-superuser: ## Create django superuser
-	(source venv/bin/activate; python3 django/manage.py createsuperuser)
+backend-superuser: ## Create backend superuser
+	(source venv/bin/activate; python3 backend/manage.py createsuperuser)
 
-django-turtle: ## django shell plus
-	(source venv/bin/activate; python3 django/manage.py shell_plus)
+backend-turtle: ## backend shell plus
+	(source venv/bin/activate; python3 backend/manage.py shell_plus)
 
-django-lint: ## Lint django repo
-	(source venv/bin/activate; cd django; black .; isort .; flake8 .;)
+backend-lint: ## Lint backend repo
+	(source venv/bin/activate; cd backend; black .; isort .; flake8 .;)
 
 
 # fastapi
@@ -69,6 +69,6 @@ fast-lint: ## Lint fastapi
 frontend-setup: ## install js requirements
 	cd frontend && yarn;
 
-frontend-run: ## Start django ++ fastapi server
+frontend-run: ## Start backend ++ fastapi server
 	cd frontend && yarn start & \
 	cd frontend && yarn storybook

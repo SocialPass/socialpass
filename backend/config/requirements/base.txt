@@ -19,6 +19,7 @@ django-allauth==0.47.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.14.0
 crispy-bootstrap5==0.6
 django-invitations==1.9.3
+django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
 
 # Django REST Framework
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework

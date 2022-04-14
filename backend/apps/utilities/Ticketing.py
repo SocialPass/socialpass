@@ -1,5 +1,6 @@
 # NFTY (IRL) Ticket Generator
 # By NFTY Labs
+import os
 import io
 import random
 import re
@@ -7,8 +8,10 @@ import urllib.request
 
 import boto3
 import qrcode
-from config import settings
+from django.conf import settings
+from django.templatetags.static import static
 from pydantic import BaseModel
+from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import CircleModuleDrawer
@@ -25,9 +28,9 @@ class EventData(BaseModel):
 s3 = boto3.client(
     "s3",
     region_name="nyc3",
-    endpoint_url=settings.SERVICES_SPACES_URL,
-    aws_access_key_id=settings.SERVICES_SPACES_KEY,
-    aws_secret_access_key=settings.SERVICES_SPACES_SECRET,
+    endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
 )
 
 theme_list = [
@@ -202,13 +205,10 @@ def set_theme(new_theme):
 
 
 # Fonts (and related)
-
-BASE_FONT_TYPE = "static/fonts/RobotoMono-Bold.ttf"  # Default font
-
+BASE_FONT_TYPE = os.path.join(settings.APPS_DIR, "utilities/fonts/RobotoMono-Bold.ttf")  # Default font
 
 def get_base_pil_font(size):
     return ImageFont.truetype(BASE_FONT_TYPE, size)
-
 
 TITLE_FONT = get_base_pil_font(12 * DEFAULT_SCALE)  # Font for text titles
 CONTENT_FONT = get_base_pil_font(14 * DEFAULT_SCALE)  # Font for text content
@@ -540,7 +540,7 @@ class TicketPartGenerator:
 
         return img
 
-
+    @staticmethod
     def generate_ticket(
         event_data,
         embed,
@@ -597,7 +597,7 @@ class TicketPartGenerator:
             ),
             TicketPartGenerator.generate_text_section(
                 width=DEFAULT_WIDTH,
-                text=event_data.event_name,
+                text=event_data['event_name'],
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -620,7 +620,7 @@ class TicketPartGenerator:
                 ),
                 TicketPartGenerator.generate_text_section(
                     width=EVENT_GATE_LIMIT_WIDTH,
-                    text=event_data.gate_limit,
+                    text=event_data['gate_limit'],
                     color=CONTENT_TEXT_COLOR,
                     font=CONTENT_FONT,
                     x_start_offset=DEFAULT_MARGIN,
@@ -645,7 +645,7 @@ class TicketPartGenerator:
             ),
             TicketPartGenerator.generate_text_section(
                 width=EVENT_DATE_WIDTH,
-                text=event_data.event_date,
+                text=event_data['event_date'],
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -667,7 +667,7 @@ class TicketPartGenerator:
             ),
             TicketPartGenerator.generate_text_section(
                 width=DEFAULT_WIDTH,
-                text=event_data.event_location,
+                text=event_data['event_location'],
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -831,7 +831,7 @@ class TicketPartGenerator:
 
         return result
 
-
+    @staticmethod
     def store_ticket(ticket_img, filename):
         # Prepare image for S3
         buffer = io.BytesIO()
@@ -840,15 +840,15 @@ class TicketPartGenerator:
 
         # put image into s3
         response = s3.put_object(
-            Bucket=settings.SERVICES_SPACES_BUCKET_NAME,
-            Key=f"{settings.SERVICES_SPACES_DIRECTORY}{filename}.png",
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Key=f"{settings.AWS_TICKET_DIRECTORY}{filename}.png",
             Body=buffer,
             ContentType="image/png",
         )
 
         return response
 
-
+class Utilities():
     def generate_and_store_ticket(
         event_data: EventData,
         filename: str,
@@ -861,7 +861,7 @@ class TicketPartGenerator:
         Generating & storing ticket are passed into a background task
         """
         # Generate ticket image from request data
-        ticket_img = generate_ticket(
+        ticket_img = TicketPartGenerator.generate_ticket(
             event_data=event_data,
             embed=embed,
             scene_img_source=scene_img_source,
@@ -869,7 +869,7 @@ class TicketPartGenerator:
         )
 
         # Store ticket image into bucket
-        response = store_ticket(ticket_img=ticket_img, filename=filename)
+        response = TicketPartGenerator.store_ticket(ticket_img=ticket_img, filename=filename)
 
         return (ticket_img, response)
 

@@ -19,6 +19,7 @@ from django.db import models
 from .model_field_choices import TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
+from apps.utilities import Ticketing
 
 
 class CustomUserManager(UserManager):
@@ -313,7 +314,12 @@ class Ticket(DBModel):
             self.signature = kwargs["signature"]
         # set image
         if not self.image:
-            TicketGateClass.services_generate_ticket_image(
+            Ticketing.Utilities.generate_and_store_ticket(
+                event_data={
+                    "event_name": self.tokengate.title,
+                    "event_date": self.tokengate.date.strftime("%m/%d/%Y, %H:%M:%S"),
+                    "event_location": self.tokengate.location,
+                },
                 filename=self.filename,
                 embed=f"{self.embed_code}/{self.filename}",
                 top_banner_text="SocialPass Ticket",
@@ -339,7 +345,7 @@ class Ticket(DBModel):
         )
 
         # generate presigned url
-        url = s3.generate_presigned_url(
+        self.temporary_download_url = s3.generate_presigned_url(
             ClientMethod="get_object",
             Params={
                 "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
@@ -347,7 +353,6 @@ class Ticket(DBModel):
             },
             ExpiresIn=3600,
         )
-        return url
 
     def generate_from_validated_passes(**kwargs):
         """
@@ -355,7 +360,6 @@ class Ticket(DBModel):
         Accepts validate_passes as integer (fungible), or as list (non-fungible)
         """
         ticketdata = []
-
         # validated_passes as amount of passes ()
         if isinstance(kwargs["validated_passes"], int):
             for id in range(kwargs["validated_passes"]):

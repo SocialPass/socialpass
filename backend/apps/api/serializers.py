@@ -4,7 +4,7 @@ from apps.root.models import Signature, Team, Ticket, TicketGate
 
 
 #
-# MISC ////////////////////////////////////////////////////////////////////////////////////
+# GENERAL ////////////////////////////////////////////////////////////////////////////////////
 #
 class TeamSerializer(serializers.ModelSerializer):
     """
@@ -14,51 +14,6 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ["name", "image"]
-
-
-class AccessGateSerializer(serializers.Serializer):
-    """
-    Serializes /access request for all token gates
-    Accepts a signed message & corresponding wallet address,
-    as well related 'public_id'
-    """
-
-    address = serializers.CharField()
-    signed_message = serializers.CharField()
-    tokengate_id = serializers.CharField()
-    signature_id = serializers.CharField()
-
-
-#
-# TICKETGATES ////////////////////////////////////////////////////////////////////////////////////
-#
-class TicketGateDetailSerializer(serializers.ModelSerializer):
-    """
-    Serializes Ticket token gates for detail views.
-    Most notably, generates new signature
-    """
-
-    team = TeamSerializer()
-    signature = serializers.SerializerMethodField(read_only=True)
-
-    class Meta:
-        model = TicketGate
-        fields = [
-            "team",
-            "title",
-            "general_type",
-            "description",
-            "requirements",
-            "signature",
-            "limit_per_person",
-            "date",
-            "location",
-            "capacity",
-        ]
-
-    def get_signature(self, gate):
-        return gate.generate_signature_request()
-
 
 class TicketSerializer(serializers.ModelSerializer):
     """
@@ -87,14 +42,30 @@ class TicketSerializer(serializers.ModelSerializer):
 #
 # TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
 #
+class AccessGateSerializer(serializers.Serializer):
+    """
+    Serializes /access request for all token gates
+    Accepts a signed message & corresponding wallet address,
+    as well related 'public_id'
+    """
+
+    address = serializers.CharField()
+    signed_message = serializers.CharField()
+    tokengate_id = serializers.CharField()
+    signature_id = serializers.CharField()
+
+
 class TicketGateSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket token gates for list views.
     """
+    team = TeamSerializer()
+
 
     class Meta:
         model = TicketGate
         fields = [
+            "team",
             "title",
             "general_type",
             "description",
@@ -109,9 +80,4 @@ class TicketGateSerializer(serializers.ModelSerializer):
 class TokenGatePolymorphicSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
         TicketGate: TicketGateSerializer,
-    }
-
-class TokenGateDetailPolymorphicSerializer(PolymorphicSerializer):
-    model_serializer_mapping = {
-        TicketGate: TicketGateDetailSerializer,
     }

@@ -1,5 +1,4 @@
-from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
-from rest_framework.mixins import CreateModelMixin
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,28 +9,57 @@ from django.http import Http404
 from .serializers import (
     AccessGateSerializer,
     TeamSerializer,
-    TicketGateDetailSerializer,
     TicketSerializer,
     TokenGatePolymorphicSerializer,
-    TokenGateDetailPolymorphicSerializer
 )
 from apps.utilities import Blockchain
 
 
 #
-# WIDGET API ////////////////////////////////////////////////////////////////////////////////
+# TOKENGATE API ////////////////////////////////////////////////////////////////////////////////
 #
 class TokenGateRetrieve(RetrieveAPIView):
     """
-    View for retrieving ticket gate by `public_id`. Additionally,
-    - Generates / returns `Signature` alongside tokengate response
-    - Fetches ownership information for later authentication
+    View for retrieving tokengate by `public_id`
     """
 
     lookup_field = "public_id"
     queryset = TokenGate.objects.all()
-    serializer_class = TokenGateDetailPolymorphicSerializer
+    serializer_class = TokenGatePolymorphicSerializer
     permission_classes = [AllowAny]
+
+class TokenGateRequestAccess(APIView):
+    """
+    View requests access into tokengate. Can either be type "BLOCKCHAIN" or type "FIAT"
+
+    BLOCKCHAIN type
+        - Request includes tokengate ID
+        - Response includes `Signature` and redeemable assets (NFT only)
+
+    FIAT type TBD
+    """
+    pass
+
+
+class TokenGateGrantAccess(APIView):
+    """
+    View grants access into tokengate. Can either be type "BLOCKCHAIN" or type "FIAT"
+
+    BLOCKCHAIN type
+        - Request includes signed message and claimable assets (if NFT)
+        - Response includes `Signature`
+
+    FIAT type TBD
+    """
+    pass
+
+
+class TicketGateGrantAccess(TokenGateGrantAccess):
+    """
+    View for granting access into TicketGate
+    Subclass TokenGateGrantAccess for authentication
+    """
+    pass
 
 class TokenGateAuthentication():
     """

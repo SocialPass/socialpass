@@ -189,8 +189,7 @@ const GateHandler = () => {
 				setHttpStatus(0);
 
 				// fetch and set API response
-				const TokenGateRetrieveInstance = new TokenGateRetrieve()
-				const response = await TokenGateRetrieveInstance.call(id);
+				const response = await TokenGateRetrieve.call(id);
 				console.log('api response', response)
 				if (response && response.httpStatus){
 					setJson(response);

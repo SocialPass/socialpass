@@ -20,21 +20,20 @@ function generateJson2Obj(){
 }
 
 export class TokenGateRetrieve {
-	// Generate json1 object based on token gate retrieval
-	generate_json(json:any){
-		return {
-		  "httpStatus": 200,
-		  "title": json.title,
-		  "team_name": json.team.name,
-		  "team_image": json.team.image,
-		  "general_type": json.general_type,
-		  "description": json.description,
-		  "requirements": json.requirements,
-	  }
-	}
-
 	// wrapper for backend - TokenGateRetrieve
-	call(public_id:str): APIRetrievalError | TicketGateRetrievalResponse {
+	static call = (public_id:string): APIRetrievalError | TicketGateRetrievalResponse => {
+		const generate_json = (json:any) => {
+			return {
+			  "httpStatus": 200,
+			  "title": json.title,
+			  "team_name": json.team.name,
+			  "team_image": json.team.image,
+			  "general_type": json.general_type,
+			  "description": json.description,
+			  "requirements": json.requirements,
+		  }
+		}
+
 		// set url
 		const url = `${process.env.REACT_APP_API_URL}/tokengates/retrieve/${public_id}/`
 
@@ -47,7 +46,7 @@ export class TokenGateRetrieve {
 		return fetch(url, requestOptions)
 	  	.then(response => response.json())
 	  	.then(json => {
-	  		let obj = this.generate_json(json);
+	  		let obj = generate_json(json);
 	  		Object.assign(obj, {
 				"date": json.date,
 				"location": json.location,
@@ -55,14 +54,14 @@ export class TokenGateRetrieve {
 				"deadline": json.deadline
 	  		})
 			console.log(obj)
-			return obj
+			return obj as TicketGateRetrievalResponse
 	  	})
 	  	.catch(error => console.log('error', error));
 	}
 }
 
 // wrapper for backend - TicketGateRequestAccess
-function ticketGateRequestAccess(public_id:str, type:str){
+function ticketGateRequestAccess(public_id:string, type:string){
 	// set url
 	const url = `${process.env.REACT_APP_API_URL}/ticketgates/request-access/${public_id}?type=${str}/`
 

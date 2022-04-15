@@ -91,7 +91,7 @@ class BlockchainRequestAccessOutput(serializers.ModelSerializer):
         fields = ["signing_message"]
 
 
-class BlockchainGrantAccessSerializer(serializers.Serializer):
+class BlockchainGrantAccessInput(serializers.Serializer):
     """
     Serializes data for TokenGateGrantBlockchainAccess
     - Wallet address
@@ -101,6 +101,7 @@ class BlockchainGrantAccessSerializer(serializers.Serializer):
     address = serializers.CharField()
     signed_message = serializers.CharField()
     signature_id = serializers.CharField()
+    access_data = serializers.JSONField(required=False)
 
 
 class FiatGrantAccessSerializer(serializers.Serializer):

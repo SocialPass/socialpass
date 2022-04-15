@@ -8,8 +8,7 @@ from django.http import Http404
 from .serializers import (
     TokenGatePolymorphicSerializer,
     BlockchainRequestAccessInput,
-    BlockchainRequestAccessOutput
-
+    BlockchainGrantAccessInput
 )
 from apps.utilities import Blockchain
 
@@ -31,9 +30,7 @@ class TokenGateRequestAccess(APIView):
 
     BLOCKCHAIN type
         - Request includes tokengate ID
-        - Response includes `Signature` and redeemable assets (NFT only)
-
-    FIAT type TBD
+        - Response includes `Signature`
     """
     signature = None # related signature model
     tokengate = None # related tokengate model
@@ -50,19 +47,12 @@ class TokenGateRequestAccess(APIView):
         serialized = BlockchainRequestAccessInput(data=request.data)
         serialized.is_valid(raise_exception=True)
 
-        # Generate Signature (to be signed)
-        self.signature = Signature.objects.create(
-            wallet_address=serialized.data.get("address"),
-            tokengate=self.tokengate
-        )
-
-        # Serialize data
-        print(self.signature)
-        return Response("ok")
-
-        serialized = BlockchainRequestAccessOutput(data=self.signature)
-        serialized.is_valid(raise_exception=True)
-        return Response(serialized.data)
+        # Generate Signature (to be signed by client)
+        self.signature = Signature.objects.create(tokengate=self.tokengate)
+        return Response({
+            "signature_message":self.signature.signing_message,
+            "signature_id": self.signature.unique_code
+        })
 
     def post(self, request, *args, **kwargs):
         """
@@ -88,11 +78,34 @@ class TokenGateGrantAccess(APIView):
     BLOCKCHAIN type
         - Request includes tokengate ID
         - Response includes `Signature` and redeemable assets (NFT only)
-
-    FIAT type TBD
     """
+    def get_signature(self, pk):
+        """
+        Helper method to get the related signature model via request PK.
+        """
+        # get related signature by pk
+        try:
+            return Signature.objects.get(unique_code=pk)
+        except Exception:
+            raise Http404
+
     def blockchain(self, request, *args, **kwargs):
-        return Response("Not yet implemented")
+        # Serialize data
+        serialized = BlockchainGrantAccessInput(data=request.data)
+        serialized.is_valid(raise_exception=True)
+
+        # Get signature from data
+        signature = self.get_signature(serialized.data.get("signature_id"))
+
+        # Validate signature
+        sig_success, sig_code, sig_msg = signature.validate(
+            address=serialized.data.get("address"),
+            signed_message=serialized.data.get("signed_message"),
+            tokengate_id=serialized.data.get("tokengate_id"),
+        )
+        if not sig_success:
+            return Response(sig_msg, status=sig_code)
+
 
     def post(self, request,  *args, **kwargs):
         """
@@ -104,7 +117,7 @@ class TokenGateGrantAccess(APIView):
             raise Http404
 
         if type == 'blockchain':
-            return blockchain(self, request, *args, **kwargs)
+            return self.blockchain(request, *args, **kwargs)
 
 
 class TicketGateRequestAccess(TokenGateRequestAccess):
@@ -113,9 +126,6 @@ class TicketGateRequestAccess(TokenGateRequestAccess):
     Ticketgate specific
     """
     def post(self, request, *args, **kwargs):
-        """
-        POST
-        """
         return super().post(request, *args, **kwargs)
 
 
@@ -125,7 +135,4 @@ class TicketGateGrantAccess(TokenGateGrantAccess):
     Ticketgate specific
     """
     def post(self, request, *args, **kwargs):
-        """
-        POST
-        """
         return super().post(request, *args, **kwargs)

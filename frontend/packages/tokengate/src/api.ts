@@ -10,20 +10,6 @@ import {
 } from './props';
 
 
-// Generate json1 object based on token gate retrieval
-function generateJson1Obj(json:any){
-	return {
-	  "httpStatus": 200,
-	  "title": json.title,
-	  "team_name": json.team.name,
-	  "team_image": json.team.image,
-	  "general_type": json.general_type,
-	  "description": json.description,
-	  "requirements": json.requirements,
-	  "signature": json.signature,
-  }
-}
-
 // Generate json2 object based on token gate access
 function generateJson2Obj(){
 	let reward : any[] = [];
@@ -33,96 +19,90 @@ function generateJson2Obj(){
 	}
 }
 
-// Retrieve Gate Handler
-// Retrieves any type of tokengate (provided the ID) and assigns response object properties accordingly
-// Notably, response object structure changes on `json.general_type`
-export async function retrieveGateHandler(id:string): Promise<APIRetrievalError> | Promise<TicketGateRetrievalResponse> {
-	try {
-		let response = await fetch(`${process.env.REACT_APP_API_URL}/tokengates/retrieve/${id}/?format=json`);
-		if (response.ok) {
-			let json = await response.json();
-			let obj = generateJson1Obj(json);
-			switch(json.general_type){
-				case 'TICKET':
-					Object.assign(obj, {
-						"date": json.date,
-						  "location": json.location,
-						  "capacity": json.capacity,
-						  "deadline": json.deadline
-					})
-					return obj as TicketGateRetrievalResponse;
-				default:
-					return obj
-			}
-	  	} else {
-		  	throw response;
-	  	}
+export class TokenGateRetrieve {
+	// Generate json1 object based on token gate retrieval
+	generate_json(json:any){
+		return {
+		  "httpStatus": 200,
+		  "title": json.title,
+		  "team_name": json.team.name,
+		  "team_image": json.team.image,
+		  "general_type": json.general_type,
+		  "description": json.description,
+		  "requirements": json.requirements,
+	  }
 	}
-	catch(error){
-		let e = {
-			  "httpStatus": error.status,
-			  "message": error.json()
-		  }
-		return e as APIRetrievalError;
+
+	// wrapper for backend - TokenGateRetrieve
+	call(public_id:str): APIRetrievalError | TicketGateRetrievalResponse {
+		// set url
+		const url = `${process.env.REACT_APP_API_URL}/tokengates/retrieve/${public_id}/`
+
+		// set request options
+		var requestOptions = {
+	  	method: 'GET',
+	  	redirect: 'follow'
+		};
+
+		return fetch(url, requestOptions)
+	  	.then(response => response.json())
+	  	.then(json => {
+	  		let obj = this.generate_json(json);
+	  		Object.assign(obj, {
+				"date": json.date,
+				"location": json.location,
+				"capacity": json.capacity,
+				"deadline": json.deadline
+	  		})
+			console.log(obj)
+			return obj
+	  	})
+	  	.catch(error => console.log('error', error));
 	}
 }
 
-// Access Gate Handler
-// Accesses any type of token gate, depending on the provided `gateType`
-export async function accessGateHandler({address, tokengate_id, signature_id, signed_message, gateType}:{address: string, tokengate_id: string, signature_id: string, signed_message: string, gateType: string}){
-	switch(gateType){
-		case 'TICKET':
-			return await accessTicketGate(address, tokengate_id, signature_id, signed_message);
-		default:
-			return console.log(`could not route to proper API`)
-	}
+// wrapper for backend - TicketGateRequestAccess
+function ticketGateRequestAccess(public_id:str, type:str){
+	// set url
+	const url = `${process.env.REACT_APP_API_URL}/ticketgates/request-access/${public_id}?type=${str}/`
 
-}
-
-// Access Ticket Gate
-function accessTicketGate(
-	address: string,
-	tokengate_id: string,
-	signature_id: string,
-	signed_message: string
-): Promise<APIAccessError> | Promise<TicketGateAccessResponse> {
-	var myHeaders = new Headers();
-	myHeaders.append("Content-Type", "application/json");
-
-	var body = JSON.stringify({
-		"address": address,
-		"tokengate_id": tokengate_id,
-		"signature_id": signature_id,
-		"signed_message": signed_message,
-	})
-
-	var requestOptions = {
-	  method: 'POST',
-	  headers: myHeaders,
-	  body: body,
+	// set request options
+	const requestOptions = {
+  	method: 'POST',
+  	body: '', // empty body
+  	redirect: 'follow'
 	};
 
-	return fetch(`${process.env.REACT_APP_API_URL}/ticketgates/access/`, requestOptions)
-	  .then((response) => {
-		if (response.ok) {
-		  return response.json();
-		} else {
-			throw response;
-		}
-	  })
-	  .then((json) => {
-		let response = [];
-		let obj = generateJson2Obj();
-		for (let i in json){
-			obj.reward.push(json[i])
-		}
-		return obj as TicketGateAccessResponse;
-	  })
-	  .catch((error) => {
-		let e = {
-			"httpStatus": error.status,
-			"message": error
-		}
-		return e as APIAccessError;
-	  });
+	// fetch
+	return fetch(url, requestOptions)
+  	.then(response => response.text())
+  	.then(result => console.log(result))
+  	.catch(error => console.log('error', error));
+}
+
+// wrapper for backend - TicketGateRequestAccess
+function ticketGateGrantAccess(){
+	// setup url
+	const url = `${process.env.REACT_APP_API_URL}/ticketgates/grant-access/${public_id}?type=${str}/`
+
+	// set body
+	const body = JSON.stringify({
+  	"address": address,
+  	"signed_message": signed_message,
+  	"signature_id": signature_id,
+  	"access_data": access_data
+	});
+
+	// set request options
+	const requestOptions = {
+  	method: 'POST',
+  	body: body, // empty body
+  	redirect: 'follow'
+	};
+
+	// fetch
+	return fetch(url, requestOptions)
+  	.then(response => response.text())
+  	.then(result => console.log(result))
+  	.catch(error => console.log('error', error));
 }

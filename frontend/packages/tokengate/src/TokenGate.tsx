@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
 import {  useConnect, useAccount, useSignMessage } from 'wagmi'
+
 import Web3ProviderWrapper from './web3/wrapper';
 import { Web3Login } from "./web3/login";
 import { TokenGateProviderInterface, GateType } from './props';
 import { TokenGateProvider, TokenGateContext } from './context';
-import { accessGateHandler, retrieveGateHandler } from './api';
+import { TokenGateRetrieve } from './api';
 import './index.css';
 
 /************************************* DISPLAY COMPONENTS *************************************/
@@ -188,7 +189,9 @@ const GateHandler = () => {
 				setHttpStatus(0);
 
 				// fetch and set API response
-				let response = await retrieveGateHandler(id);
+				const TokenGateRetrieveInstance = new TokenGateRetrieve()
+				const response = await TokenGateRetrieveInstance.call(id);
+				console.log('api response', response)
 				if (response && response.httpStatus){
 					setJson(response);
 					setHttpStatus(response.httpStatus);

@@ -29,7 +29,7 @@ class TokenGateRequestAccess(APIView):
     Can either be type "BLOCKCHAIN" or type "FIAT"
 
     BLOCKCHAIN type
-        - Request includes tokengate ID
+        - Empty request (aside from path / query params)
         - Response includes `Signature`
     """
     signature = None # related signature model
@@ -43,10 +43,6 @@ class TokenGateRequestAccess(APIView):
             raise Http404
 
     def blockchain(self, request, *args, **kwargs):
-        # Serialize data
-        serialized = BlockchainRequestAccessInput(data=request.data)
-        serialized.is_valid(raise_exception=True)
-
         # Generate Signature (to be signed by client)
         self.signature = Signature.objects.create(tokengate=self.tokengate)
         return Response({

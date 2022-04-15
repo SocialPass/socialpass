@@ -18,7 +18,7 @@ urlpatterns = [
 # DRF API URLS
 urlpatterns += [
     # API base url
-    path("api/", include("apps.api.urls")),
+    path("api/", include("apps.api_widget.urls")),
 ]
 
 # Debug URL's

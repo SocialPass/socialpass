@@ -181,33 +181,6 @@ class TokenGate(DBModel, PolymorphicModel):
     def __str__(self):
         return self.title
 
-    def generate_signature_request(self):
-        """
-        generate one-time Signature model
-        """
-        expires = datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
-        signature = Signature.objects.create(
-            tokengate=self,
-            expires=expires,
-        )
-        message_obj = {
-            "You are accessing": self.title,
-            "Hosted by": self.team.name,
-            "One-Time Code": signature.unique_code,
-            "Valid until": expires.ctime(),
-            "Version": signature.version,
-        }
-        message = "\n".join(
-            ": ".join((key, str(val))) for (key, val) in message_obj.items()
-        )
-        signature.signing_message = message
-        signature.save()
-
-        return {
-            "id": signature.unique_code,
-            "message": signature.signing_message,
-        }
-
 
 class Signature(DBModel):
     """
@@ -226,6 +199,21 @@ class Signature(DBModel):
 
     def __str__(self):
         return str(self.unique_code)
+
+    def populate(self):
+        expires = datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
+        signing_message_obj = {
+            "You are accessing": self.tokengate.title,
+            "Hosted by": self.tokengate.team.name,
+            "One-Time Code": self.unique_code,
+            "Valid until": expires.ctime(),
+            "Version": self.version,
+        }
+        signing_message = "\n".join(
+            ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()
+        )
+        self.expires = expires
+        self.signing_message = signing_message
 
     def validate(self, signed_message="", address="", tokengate_id=""):
         """
@@ -258,6 +246,11 @@ class Signature(DBModel):
         self.save()
 
         return True, 200, "Success"
+
+    def save(self, *args, **kwargs):
+        if not self.expires or self.signing_message:
+            self.populate()
+        super().save(*args, **kwargs)
 
 
 class TicketGate(TokenGate):
@@ -304,7 +297,7 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket List (Token Gate: {self.tokengate.title})"
 
-    def populate_ticketdata(self, **kwargs):
+    def populate(self, **kwargs):
         """
         method to populate necessary ticketdata on creation
         assumes .save() will be called after
@@ -367,7 +360,7 @@ class Ticket(DBModel):
                     wallet_address=kwargs["wallet_address"],
                     tokengate=kwargs["tokengate"],
                 )
-                ticket.populate_ticketdata(**kwargs)
+                ticket.populate(**kwargs)
                 ticket.save()
                 ticketdata.append(ticket.__dict__)
 
@@ -379,7 +372,7 @@ class Ticket(DBModel):
                     tokengate=kwargs["tokengate"],
                     token_id=id,
                 )
-                ticket.populate_ticketdata(**kwargs)
+                ticket.populate(**kwargs)
                 ticket.save()
                 ticketdata.append(ticket.__dict__)
 

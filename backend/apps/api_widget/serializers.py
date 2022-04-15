@@ -4,7 +4,7 @@ from apps.root.models import Signature, Team, Ticket, TicketGate
 
 
 #
-# GENERAL ////////////////////////////////////////////////////////////////////////////////////
+# MODEL SERIALIZERS ////////////////////////////////////////////////////////////////////////////////
 #
 class TeamSerializer(serializers.ModelSerializer):
     """
@@ -42,25 +42,11 @@ class TicketSerializer(serializers.ModelSerializer):
 #
 # TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
 #
-class AccessGateSerializer(serializers.Serializer):
-    """
-    Serializes /access request for all token gates
-    Accepts a signed message & corresponding wallet address,
-    as well related 'public_id'
-    """
-
-    address = serializers.CharField()
-    signed_message = serializers.CharField()
-    tokengate_id = serializers.CharField()
-    signature_id = serializers.CharField()
-
-
 class TicketGateSerializer(serializers.ModelSerializer):
     """
-    Serializes Ticket token gates for list views.
+    Serializes Ticket token gates
     """
     team = TeamSerializer()
-
 
     class Meta:
         model = TicketGate
@@ -78,6 +64,54 @@ class TicketGateSerializer(serializers.ModelSerializer):
 
 
 class TokenGatePolymorphicSerializer(PolymorphicSerializer):
+    """
+    Polymorphic serializer
+    Switches serializer on content type
+    """
     model_serializer_mapping = {
         TicketGate: TicketGateSerializer,
     }
+
+class BlockchainRequestAccessInput(serializers.Serializer):
+    """
+    Serializes data for TokenGateRequestBlockchainAccess input
+    - Signature model to be signed
+    - Redeemable assets (if applicable)
+    """
+    address = serializers.CharField()
+
+class BlockchainRequestAccessOutput(serializers.ModelSerializer):
+    """
+    Serializes data for TokenGateRequestBlockchainAccess output
+    - Signature model to be signed
+    """
+
+    class Meta:
+        model = Signature
+        fields = ["signing_message"]
+
+
+class BlockchainGrantAccessSerializer(serializers.Serializer):
+    """
+    Serializes data for TokenGateGrantBlockchainAccess
+    - Wallet address
+    - Signed message (Signature model)
+    - Signature id
+    """
+    address = serializers.CharField()
+    signed_message = serializers.CharField()
+    signature_id = serializers.CharField()
+
+
+class FiatGrantAccessSerializer(serializers.Serializer):
+    """
+    Serializes data for TokenGateRequestFiatAccess
+    """
+    pass
+
+
+class FiatRequestAccessSerializer(serializers.Serializer):
+    """
+    Serializes data for TokenGateRequestFiatAccess
+    """
+    pass

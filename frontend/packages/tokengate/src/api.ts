@@ -2,26 +2,16 @@
 API Interface for @socialpass/tokengate
 */
 import {
-	GateType,
 	APIRetrievalError,
 	TicketGateRetrievalResponse,
-	APIAccessError,
-	TicketGateAccessResponse
 } from './props';
 
-
-// Generate json2 object based on token gate access
-function generateJson2Obj(){
-	let reward : any[] = [];
-	return {
-		"httpStatus": 200,
-		"reward": reward
-	}
-}
-
+// TokenGateRetrieve class
+// Used for retrieving any type of tokengate via .call()
 export class TokenGateRetrieve {
 	// wrapper for backend - TokenGateRetrieve
-	static call = (public_id:string): APIRetrievalError | TicketGateRetrievalResponse => {
+	static call = async (public_id:string): Promise<APIRetrievalError | TicketGateRetrievalResponse> => {
+		// generate json method
 		const generate_json = (json:any) => {
 			return {
 			  "httpStatus": 200,
@@ -39,8 +29,7 @@ export class TokenGateRetrieve {
 
 		// set request options
 		var requestOptions = {
-	  	method: 'GET',
-	  	redirect: 'follow'
+	  		method: 'GET',
 		};
 
 		return fetch(url, requestOptions)
@@ -56,52 +45,71 @@ export class TokenGateRetrieve {
 			console.log(obj)
 			return obj as TicketGateRetrievalResponse
 	  	})
-	  	.catch(error => console.log('error', error));
+	  	.catch(error => {
+			  let e = {
+					"httpStatus": error.status,
+					"message": error.json()
+				}
+			  return e as APIRetrievalError;
+		  });
 	}
 }
 
-// wrapper for backend - TicketGateRequestAccess
-function ticketGateRequestAccess(public_id:string, type:string){
-	// set url
-	const url = `${process.env.REACT_APP_API_URL}/ticketgates/request-access/${public_id}?type=${str}/`
+// TokenGateRequestAccess class
+// Used for requesting access to a TicketGate
+export class TokenGateRequestAccess {
+	// wrapper for backend - TicketGateRequestAccess
+	static ticketGateRequestAccess = async (public_id:string, type:string) => {
+		// set url
+		const url = `${process.env.REACT_APP_API_URL}/ticketgates/request-access/${public_id}?type=${type}/`
 
-	// set request options
-	const requestOptions = {
-  	method: 'POST',
-  	body: '', // empty body
-  	redirect: 'follow'
-	};
+		// set request options
+		const requestOptions = {
+			  method: 'POST',
+			  body: '', // empty body
+		};
 
-	// fetch
-	return fetch(url, requestOptions)
-  	.then(response => response.text())
-  	.then(result => console.log(result))
-  	.catch(error => console.log('error', error));
+		// fetch
+		return fetch(url, requestOptions)
+			  .then(response => response.text())
+			  .then(result => console.log(result))
+			  .catch(error => console.log('error', error));
+	}
 }
 
-// wrapper for backend - TicketGateRequestAccess
-function ticketGateGrantAccess(){
-	// setup url
-	const url = `${process.env.REACT_APP_API_URL}/ticketgates/grant-access/${public_id}?type=${str}/`
+// TokenGateGrantAccess class
+// Used for granting access to a TicketGate
+export class TokenGateGrantAccess {
+	// wrapper for backend - TicketGateRequestAccess
+	static ticketGateGrantAccess = async (
+		public_id:string,
+		type:string,
+		address:string,
+		signed_message:string,
+		signature_id:string,
+		access_data:any
+	) => {
+		// setup url
+		const url = `${process.env.REACT_APP_API_URL}/ticketgates/grant-access/${public_id}?type=${type}/`
 
-	// set body
-	const body = JSON.stringify({
-  	"address": address,
-  	"signed_message": signed_message,
-  	"signature_id": signature_id,
-  	"access_data": access_data
-	});
+		// set body
+		const body = JSON.stringify({
+			  "address": address,
+			  "signed_message": signed_message,
+			  "signature_id": signature_id,
+			  "access_data": access_data
+		});
 
-	// set request options
-	const requestOptions = {
-  	method: 'POST',
-  	body: body, // empty body
-  	redirect: 'follow'
-	};
+		// set request options
+		const requestOptions = {
+			  method: 'POST',
+			  body: body
+		};
 
-	// fetch
-	return fetch(url, requestOptions)
-  	.then(response => response.text())
-  	.then(result => console.log(result))
-  	.catch(error => console.log('error', error));
+		// fetch
+		return fetch(url, requestOptions)
+		  .then(response => response.text())
+		  .then(result => console.log(result))
+		  .catch(error => console.log('error', error));
+	}
 }

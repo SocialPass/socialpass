@@ -1,6 +1,6 @@
 import React from 'react';
 import {  useConnect } from 'wagmi';
-import { Web3ConnectorImage } from './';
+import { Web3ConnectorImage } from './Web3ConnectorImage';
 
 // ConnectorWallets
 // Return UI for wallet connectors

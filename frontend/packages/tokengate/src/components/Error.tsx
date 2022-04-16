@@ -3,12 +3,11 @@ import { TokenGateContext } from '../context';
 
 // Error Component
 // todo
-export const Error = () => {
-	const { httpStatus } = useContext(TokenGateContext);
+export const Error = ({statusCode, message}) => {
 	return (
 		<div>
 			<h1>Error</h1>
-			<h2>Status Code: {httpStatus}</h2>
+			<h2>Status Code</h2>
 		</div>
 	)
 }

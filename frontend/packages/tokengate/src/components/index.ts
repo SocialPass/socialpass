@@ -1,8 +1,4 @@
 export { Error } from './Error'
 export { Loading } from './Loading'
-export { TickerImage } from './TickerImage'
 export { StyledContainer } from './StyledContainer'
 export { Web3Checkout } from './Web3Checkout'
-export { Web3ConnectorImage } from './Web3ConnectorImage'
-export { Web3ConnectWallet } from './Web3ConnectWallet'
-export { BaseGate } from './BaseGate'

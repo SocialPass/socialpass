@@ -13,45 +13,49 @@ export enum GateType {
   LOADING = "LOADING"
 }
 
+/*
+Context types
+*/
 // Intial Props for TokenGate component
 export interface TokenGateProviderInterface {
-	id: string // ID of tokengate
-  children?: any // Children of provider (main application)
-  styles?:any  // Styles of tokengate
+	id: string
+  children?: any
+  styles?:any
 }
 
 // Props for TokenGate component context
 export interface TokenGateContextInterface {
-  id: string // ID of tokengate
-  styles?: any // Styles of tokengate
+  id: string
+  styles?: any
   gateType: any
   setGateType: any
 
-  step: number // Step of token gate
-  setStep: any // Set step of token gate
+  retrieveJson: any
+  setRetrieveJson: any
+  retrieveError: any
+  setRetrieveError: any
 
-  // initial fetch tokengate
-  json: any | APIRetrievalError | TokenGateRetrievalResponse
-  setJson: any
-  httpStatus: number
-  setHttpStatus: any
+  requestAccessJson: any
+  setRequestAccessJson: any
+  setRequestAccessError: any
+  requestAccessError: any
 
-  // verify tokengate
-  json2: any
-  setJson2: any
-  httpStatus2: number
-  setHttpStatus2: any
+  grantAccessJson: any
+  setgGrantAccessJson: any
+  grantAccessError: any
+  setGrantAccessError: any
 }
 
 /*
-API TYPES -- Retrieval TokenGates
+API TYPES - Retrieve
 */
-export interface APIRetrievalError {
-  httpStatus: number
-  message?: string
+export interface TicketGateRetrievalResponse {
+  asset_address: string
+  asset_type: string
+  chain: string
+  end_date: string
 }
 
-// Props for base TokenGate API response
 export interface TokenGateRetrievalResponse {
   httpStatus: number
   title: string
@@ -60,34 +64,45 @@ export interface TokenGateRetrievalResponse {
   description: string
   general_type: string
   requirements: any
-  signature: any
+  // ticketing
+  ticket?: TicketGateRetrievalResponse
 }
 
-// Extended props for TicketGate
-export interface TicketGateRetrievalResponse extends TokenGateRetrievalResponse {
-  asset_address: string
-  asset_type: string
-  chain: string
-  end_date: string
-}
-
-
-
-/*
-API TYPES -- Access TokenGates
-*/
-export interface APIAccessError {
+export interface TokenGateRetrievalError {
   httpStatus: number
   message?: string
 }
 
 
-// Props for base TokenGate API response
-export interface TokenGateAccessResponse {
+/*
+API TYPES - Request Access
+*/
+export interface TicketGateRequestAccessResponse {}
+
+export interface TokenGateRequestAccessResponse {
   httpStatus: number
-  reward: any[]
+  // ticketing
+  ticket?: TicketGateRequestAccessResponse
 }
 
-// Extended props for TicketGate
-export interface TicketGateAccessResponse extends TokenGateAccessResponse {
+export interface TokenGateRetrieveAccessError {
+  httpStatus: number
+  message?: string
+}
+
+
+/*
+API TYPES - Grant Access
+*/
+export interface TicketGateGrantAccessResponse {}
+
+export interface TokenGateGrantAccessResponse {
+  httpStatus: number
+  // ticketing
+  ticket?: TicketGateGrantAccessResponse
+}
+
+export interface TokenGateGrantAccessError {
+  httpStatus: number
+  message?: string
 }

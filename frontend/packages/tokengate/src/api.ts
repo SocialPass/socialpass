@@ -2,15 +2,15 @@
 API Interface for @socialpass/tokengate
 */
 import {
-	APIRetrievalError,
-	TicketGateRetrievalResponse,
+	TokenGateRetrievalError,
+	TokenGateRetrievalResponse,
 } from './props';
 
 // TokenGateRetrieve class
 // Used for retrieving any type of tokengate via .call()
 export class TokenGateRetrieve {
 	// wrapper for backend - TokenGateRetrieve
-	static call = async (public_id:string): Promise<APIRetrievalError | TicketGateRetrievalResponse> => {
+	static call = async (public_id:string): Promise<TokenGateRetrievalError | TokenGateRetrievalResponse> => {
 		// generate json method
 		const generate_json = (json:any) => {
 			return {
@@ -42,15 +42,14 @@ export class TokenGateRetrieve {
 				"capacity": json.capacity,
 				"deadline": json.deadline
 	  		})
-			console.log(obj)
-			return obj as TicketGateRetrievalResponse
+			return obj as TokenGateRetrievalResponse
 	  	})
 	  	.catch(error => {
 			  let e = {
 					"httpStatus": error.status,
 					"message": error.json()
 				}
-			  return e as APIRetrievalError;
+			  return e as TokenGateRetrievalError;
 		  });
 	}
 }

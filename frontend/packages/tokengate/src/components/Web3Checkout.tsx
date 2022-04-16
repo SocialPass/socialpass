@@ -1,6 +1,6 @@
 import React from 'react';
 import {  useAccount } from 'wagmi'
-import { Web3ConnectWallet } from './'
+import { Web3ConnectWallet } from './Web3ConnectWallet'
 
 // Web3Checkout
 // Handles signature && asset selection (if applicable)
@@ -11,7 +11,7 @@ export const Web3Checkout = () => {
 	// account data present, proceed to rest of checkout
 	if (accountData){
 		// Return either signature or asset selection (if applicable)
-		return
+		return null
 	}
 
 	// account data loading

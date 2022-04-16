@@ -1,5 +1,6 @@
 import React from 'react';
-import {TickerImage} from './'
+import {TickerImage} from './TickerImage';
+
 // StyledContainer component
 // Display root layout (header, main content, footer)
 export const StyledContainer = ({children}:{children:React.ReactNode}) => {

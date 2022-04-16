@@ -1,22 +1,22 @@
 import React from 'react';
 import { TokenGateContext } from '../context';
-import { BaseGate, Web3Checkout } from '../components';
+import { BaseGate } from './BaseGate';
 
 // TicketGate Component
 export const TicketGate = (): JSX.Element => {
-	const { json, setStep, step } = React.useContext(TokenGateContext);
+	const { retrieveJson } = React.useContext(TokenGateContext);
 	return (
 		<BaseGate>
 			<div className="image">
-				<img src={json.team_image} alt="Team Image"/>
-				<h3>{json.team_name}</h3>
+				<img src={retrieveJson.team_image} alt="Team Image"/>
+				<h3>{retrieveJson.team_name}</h3>
 			</div>
 			<div className="title">
-				<h1>{json.title}</h1>
-				<p>{json.description}</p>
+				<h1>{retrieveJson.title}</h1>
+				<p>{retrieveJson.description}</p>
 			</div>
 			<div className="btn">
-				<button className="btn-primary" onClick={() => setStep(1)}>Get Access</button>
+				<button className="btn-primary" onClick={() => console.log(1)}>Get Access</button>
 			</div>
 		</BaseGate>
 	)

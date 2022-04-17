@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useMemo } from 'react';
 import Web3ProviderWrapper from './web3/wrapper';
 
 import { TokenGateRetrieve } from './api';
@@ -10,43 +10,52 @@ require<any>('./index.css');
 
 // TokenGateRender
 // Switch statement to render correct token-gate
-const TokenGateRender = (): JSX.Element => {
+const TokenGateRender = React.memo(() => {
 	const { gateType } = useContext(TokenGateContext);
-	console.log('gate render', gateType);
-	switch(gateType){
-		case('TICKET'):
-			return <TicketGate/>
-		default:
-			return <LoadingGate/>
-	}
-}
+	console.log('gate render', gateType)
+
+	return useMemo(() => {
+		// The rest of your rendering logic
+		switch(gateType){
+			case('TICKET'):
+				return <TicketGate/>
+			default:
+				return <LoadingGate/>
+		}
+  	}, [gateType]);
+})
 
 // InitialDataFetch, updates on ID change
 // Fetches & Sets TokenGate JSON, then passes data
-const TokenGateFetch = (): null => {
-	const { id, setRetrieveJson, setRetrieveError } = useContext(TokenGateContext);
-	console.log('gate fetch');
-	// fetch initial tokengate API
+
+const TokenGateFetch = () => {
+	const { id, setRetrieveJson, setGateType, setRetrieveError } = useContext(TokenGateContext);
+	console.log('gate fetch', id);
+
 	useEffect(() => {
 		(async function() {
+			console.log('http request');
 			// check for ID string before
 			if (typeof id === 'string' && id.length > 0){
-				// fetch and set API response
 				const response = await TokenGateRetrieve.call(id);
 				if (response && response.httpStatus){
 					if (response.httpStatus === 200){
 						setRetrieveJson(response);
+						setGateType(response?.general_type);
 					} else {
 						setRetrieveError(response);
 					}
-
 				}
 			}
 		})();
 	},[id]);
 
-	return null
+
+
+	// fetch initial tokengate API
+	return null;
 }
+
 
 // Main TokenGate component. Does a couple of things
 // 1. Setup TokenGateProvider (react context)

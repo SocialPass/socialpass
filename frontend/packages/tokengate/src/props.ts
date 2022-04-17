@@ -71,6 +71,7 @@ export interface TokenGateRetrievalResponse {
 export interface TokenGateRetrievalError {
   httpStatus: number
   message?: string
+  general_type?:string
 }
 
 

@@ -5,6 +5,7 @@ import { BaseGate } from './BaseGate';
 // TicketGate Component
 export const TicketGate = (): JSX.Element => {
 	const { retrieveJson } = React.useContext(TokenGateContext);
+	console.log('ticketgate');
 	return (
 		<BaseGate>
 			<div className="image">

@@ -5,6 +5,7 @@ export const TokenGateContext = createContext<TokenGateContextInterface>({} as T
 
 export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInterface) => {
   const [gateType, setGateType] = useState(null);
+  const [checkoutType, setCheckoutType] = useState(null);
 
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
@@ -18,9 +19,11 @@ export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInte
   return (
 	<TokenGateContext.Provider value={{
     id,
+    styles,
     setGateType,
     gateType,
-    styles,
+    checkoutType,
+    setCheckoutType,
     retrieveJson,
     setRetrieveJson,
     retrieveError,

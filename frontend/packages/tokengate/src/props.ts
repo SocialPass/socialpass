@@ -29,8 +29,8 @@ export interface TokenGateContextInterface {
   styles?: any
   gateType: any
   setGateType: any
-  checkoutType:any
-  setCheckoutType:any
+  checkoutSelection:any
+  setCheckoutSelection:any
 
   retrieveJson: any
   setRetrieveJson: any

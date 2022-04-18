@@ -12,15 +12,21 @@ export const Web3ConnectWallet = () => {
 	if (connectData){
 		// Return either signature or asset selection (if applicable)
 		return (
-			<div className="wallets">
-				{connectData?.connectors.map((x) => (
-				<button disabled={!x.ready} key={x.id}
-					onClick={() => connect(x)}>
-					<Web3ConnectorImage connector={x.name}/>
-					{x.name}
-					{!x.ready && ' (unsupported)'}
-				</button>
-			  ))}
+			<div className="base-gate">
+				<div className="title">
+					<h1>Connect Your Wallet</h1>
+				</div>
+				<div className="wallets">
+					{connectData.connectors.map((x) => (
+					<button disabled={!x.ready} key={x.id}
+						onClick={() => connect(x)}>
+						<Web3ConnectorImage connector={x.name}/>
+						{x.name}
+						{!x.ready && ' (unsupported)'}
+					</button>
+				  ))}
+				</div>
+				{connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
 			</div>
 		)
 	}

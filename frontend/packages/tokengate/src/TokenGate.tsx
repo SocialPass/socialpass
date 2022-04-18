@@ -38,7 +38,9 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 					<StyledContainer>
 						<Routes>
 							<Route index element={<Init />} />
+
 							<Route path="/gate/ticket" element={<TicketGate />} />
+
 							<Route path="/checkout/web3" element={<CheckoutWeb3 />} />
 						</Routes>
 					</StyledContainer>

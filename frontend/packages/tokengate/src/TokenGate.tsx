@@ -10,9 +10,9 @@ import { TokenGateProvider } from './context';
 import { TokenGateProviderInterface } from './props';
 import Web3ProviderWrapper from './web3/wrapper';
 import {
-	Landing,
+	Init,
 	TicketGate,
-	LoadingGate
+	CheckoutWeb3
 } from './pages';
 require<any>('./index.css');
 
@@ -32,13 +32,14 @@ history.replace('/');
 const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 	return (
 		<Router history={history}>
+			<base href="/"/> {/* set static asset to base path for relative imports */}
 			<TokenGateProvider id={id} styles={styles}>
 				<Web3ProviderWrapper>
 					<StyledContainer>
 						<Routes>
-							<Route index element={<Landing />} />
-							<Route path="/ticket-gate" element={<TicketGate />} />
-							<Route path="/loading-gate" element={<LoadingGate />} />
+							<Route index element={<Init />} />
+							<Route path="/gate/ticket" element={<TicketGate />} />
+							<Route path="/checkout/web3" element={<CheckoutWeb3 />} />
 						</Routes>
 					</StyledContainer>
 				</Web3ProviderWrapper>

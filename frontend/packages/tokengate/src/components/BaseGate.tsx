@@ -2,9 +2,8 @@ import React from 'react';
 import { TokenGateContext } from '../context';
 
 // BaseGate component
-export const BaseGate = (): JSX.Element => {
+export const BaseGate = ({navigateTo}:{navigateTo:any}): JSX.Element => {
 	const { retrieveJson, setCheckoutType } = React.useContext(TokenGateContext);
-	console.log('hello')
 	return (
 		<div className="base-gate">
 			<div className="image">
@@ -16,7 +15,7 @@ export const BaseGate = (): JSX.Element => {
 				<p>{retrieveJson.description}</p>
 			</div>
 			<div className="btn">
-				<button className="btn-primary" onClick={() => setCheckoutType('BLOCKCHAIN')}>Get Access</button>
+				<button className="btn-primary" onClick={() => navigateTo()}>Get Access</button>
 			</div>
 		</div>
 	)

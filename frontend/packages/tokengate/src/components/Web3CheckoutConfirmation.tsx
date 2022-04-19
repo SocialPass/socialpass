@@ -5,7 +5,7 @@ import { TokenGateContext } from '../context';
 import { Web3ConnectorImage } from './Web3ConnectorImage';
 
 
-// TicketGate Component
+// Web3CheckoutConfirmation Component
 export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:any, disconnect:any}): JSX.Element => {
 	// tokengate context
 	const { id, gateType, requestAccessJson, setRequestAccessJson, setRequestAccessError } = useContext(TokenGateContext);
@@ -50,34 +50,35 @@ export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:
 
 		// Verify Message/Wallet
 		if (signRes && accountData){
-			console.log(id, gateType, signRes.data, signData, signLoading)
+			console.log(id, gateType, signRes.data, signLoading, requestAccessJson,)
 			return
 		}
 	}
-		return (
-		<div className="base-gate">
-			<div className="title">
-				<h1>Almost There</h1>
-				<p>Your wallet is almost connected! You need to click the “Sign Message” button to complete connection.</p>
-				<h3>Connected Wallet</h3>
-				<div style={{display:'flex'}}>
-					<Web3ConnectorImage connector={accountData?.connector?.name}/>
+
+	return (
+	<div className="base-gate">
+		<div className="title">
+			<h1>Almost There</h1>
+			<p>Your wallet is almost connected! You need to click the “Sign Message” button to complete connection.</p>
+			<h3>Connected Wallet</h3>
+			<div style={{display:'flex'}}>
+				<Web3ConnectorImage connector={accountData?.connector?.name}/>
+				<div>
+					<div>{accountData.connector?.name}</div>
 					<div>
-						<div>{accountData.connector?.name}</div>
-						<div>
-							{accountData.ens?.name
-							? `${accountData.ens?.name} (${accountData.address})`
-							: address}
-						</div>
-						<button onClick={() => disconnect()}>
-						Switch Wallets
-						</button>
+						{accountData.ens?.name
+						? `${accountData.ens?.name} (${accountData.address})`
+						: address}
 					</div>
+					<button onClick={() => disconnect()}>
+					Switch Wallets
+					</button>
 				</div>
 			</div>
-			<div className="btn">
-				<button className="btn-primary" onClick={() => signatureHandler()}>Checkout</button>
-			</div>
 		</div>
-	)
+		<div className="btn">
+			<button className="btn-primary" onClick={() => signatureHandler()}>Checkout</button>
+		</div>
+	</div>
+)
 }

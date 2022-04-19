@@ -6,10 +6,12 @@ export const BaseGate = ({navigateTo}:{navigateTo:any}): JSX.Element => {
 	const { retrieveJson } = React.useContext(TokenGateContext);
 	return (
 		<div className="base-gate">
-			<div className="image">
-				<img src={retrieveJson.team_image} alt="Team Image"/>
-				<h3>{retrieveJson.team_name}</h3>
-			</div>
+			{retrieveJson &&
+				<div className="team-info">
+					<img src={retrieveJson?.team.image} alt="Team Image"/>
+					<h4>{retrieveJson?.team.name}</h4>
+				</div>
+			}
 			<div className="title">
 				<h1>{retrieveJson.title}</h1>
 				<p>{retrieveJson.description}</p>

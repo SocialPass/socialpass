@@ -1,5 +1,6 @@
 import React from 'react';
-import {TickerImage} from './TickerImage';
+import { TickerImage } from './TickerImage';
+import { TokenGateContext } from '../context';
 
 // StyledContainer component
 // Display root layout (header, main content, footer)

@@ -3,7 +3,7 @@ import { TokenGateContext } from '../context';
 
 // BaseGate component
 export const BaseGate = ({navigateTo}:{navigateTo:any}): JSX.Element => {
-	const { retrieveJson, setCheckoutType } = React.useContext(TokenGateContext);
+	const { retrieveJson } = React.useContext(TokenGateContext);
 	return (
 		<div className="base-gate">
 			<div className="image">

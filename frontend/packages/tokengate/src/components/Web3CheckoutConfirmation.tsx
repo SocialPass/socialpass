@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {  useSignMessage } from 'wagmi'
+import { TicketGateRequestAccess } from '../api';
 import { TokenGateContext } from '../context';
 import { Web3ConnectorImage } from './Web3ConnectorImage';
 
@@ -7,22 +8,44 @@ import { Web3ConnectorImage } from './Web3ConnectorImage';
 // TicketGate Component
 export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:any, disconnect:any}): JSX.Element => {
 	// tokengate context
-	const { id, gateType, } = React.useContext(TokenGateContext);
+	const { id, gateType, requestAccessJson, setRequestAccessJson, setRequestAccessError } = useContext(TokenGateContext);
 	// wallet signature hooks
 	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
 	// truncated address
 	let address = accountData?.address ? accountData.address.substring(0,7) + "......" +
 	accountData.address.substring(accountData.address.length-7) : '';
 
+	// useEffect hook to request signature (based on web3 account data change)
+	useEffect(() => {
+	(async function() {
+		let response;
+		if (accountData && accountData?.address){
+			switch(gateType){
+				case('TICKET'):
+					response = await TicketGateRequestAccess.call(id, 'blockchain');
+					break;
+				default:
+					response = null;
+			}
+			if (response && response.httpStatus){
+				if (response.httpStatus === 200){
+					setRequestAccessJson(response);
+				} else {
+					setRequestAccessError(response);
+				}
+
+				// navigate to gate-specific completion page,
+			}
+		}
+		})();
+	},[accountData?.address]);
+
 	// checkout handler
 	// handles signing message and posting related data to API
 	// signatureHandler function
 	const signatureHandler = async () => {
-		// todo
-		const message = '';
-
 		// sign message
-		const signRes = await signMessage({ message: message });
+		const signRes = await signMessage({ message: requestAccessJson.signature_message });
 		if (signRes.error) throw signRes.error;
 
 		// Verify Message/Wallet
@@ -53,7 +76,7 @@ export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:
 				</div>
 			</div>
 			<div className="btn">
-				<button className="btn-primary" onClick={() => console.log('')}>Checkout</button>
+				<button className="btn-primary" onClick={() => signatureHandler()}>Checkout</button>
 			</div>
 		</div>
 	)

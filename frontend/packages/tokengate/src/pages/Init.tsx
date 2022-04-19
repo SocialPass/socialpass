@@ -1,9 +1,7 @@
-import React from 'react';
 import { useEffect, useContext } from 'react';
 import { TokenGateContext } from '../context';
 import { TokenGateRetrieve } from '../api';
 import { useNavigate } from "react-router-dom";
-import { Loading } from '../components';
 
 // Root Page
 // Fetches & Sets initial JSON, then navigate based on response
@@ -34,5 +32,5 @@ export const Init = () => {
 		})();
 	},[id]);
 
-	return <Loading/>
+	return null;
 }

@@ -19,7 +19,7 @@ from django.db import models
 from .model_field_choices import TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
-from apps.utilities import Ticketing
+from apps.utilities import Ticketing, Blockchain
 
 
 class CustomUserManager(UserManager):
@@ -181,6 +181,18 @@ class TokenGate(DBModel, PolymorphicModel):
     def __str__(self):
         return self.title
 
+    def validate_against_requirements(self, **kwargs):
+        """
+        calls Blockchain.Utilities.validate_requirements
+        returns list of validated choices
+        """
+        return Blockchain.Utilities.validate_choices_against_requirements(
+            limit_per_person=self.limit_per_person,
+            requirements=self.requirements,
+            wallet_address=kwargs['wallet_address'],
+            selected_choices=kwargs['selected_choices']
+        )
+
 
 class Signature(DBModel):
     """
@@ -239,7 +251,6 @@ class Signature(DBModel):
         if _recovered != address:
             return False, 401, "Signature x Address mismatch."
 
-        # 200 section: User has authenticated and met requirements
         # before success, mark as verified, update address, and save
         self.is_verified = True
         self.wallet_address = _recovered

@@ -4,13 +4,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.root.models import Signature, Team, Ticket, TicketGate, TokenGate
 from django.http import Http404
-
 from .serializers import (
     TokenGatePolymorphicSerializer,
     BlockchainRequestAccessInput,
     BlockchainGrantAccessInput
 )
-from apps.utilities import Blockchain
 
 
 class TokenGateRetrieve(RetrieveAPIView):
@@ -109,9 +107,23 @@ class TokenGateGrantAccess(APIView):
         if not sig_success:
             return Response(sig_msg, status=sig_code)
 
-        # todo:
-        # validate requirements / checkout selection
-        return Response('Not yet implemented')
+        # todo: validate requirements / checkout selection
+        # todo
+        testdata = {
+            'blockchain': "EVM",
+            'chain_id': 4,
+            'asset_type': "ERC721",
+            'asset_address': '0x363472d6Becb3254a7F804A5447E0848c3E69673'
+        }
+        validated = self.tokengate.validate_against_requirements(
+            wallet_address=serialized.data.get("address"),
+            selected_choices=[testdata]
+        )
+
+        if not validated:
+            return Response('Your blockchain checkout selection could not be validated', status=403)
+
+        return Response('OK')
 
     def post(self, request,  *args, **kwargs):
         """

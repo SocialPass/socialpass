@@ -230,7 +230,7 @@ class Signature(DBModel):
             return False, 401, f"Signature request expired at {self.expires}"
 
         # check for id mismatch
-        if str(self.tokengate.public_id) != tokengate_id:
+        if str(self.tokengate.public_id) != str(tokengate_id):
             return False, 401, "Signature x TokenGate ID mismatch."
 
         # check if address matches recovered address

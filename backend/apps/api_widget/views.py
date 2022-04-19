@@ -75,6 +75,13 @@ class TokenGateGrantAccess(APIView):
         - Request includes tokengate ID
         - Response includes `Signature` and redeemable assets (NFT only)
     """
+    def get_object(self):
+        # use .get if you are really sure it can only be one shopping cart per user
+        try:
+            self.tokengate = TokenGate.objects.get(public_id=self.kwargs['public_id'])
+        except TokenGate.DoesNotExist:
+            raise Http404
+
     def get_signature(self, pk):
         """
         Helper method to get the related signature model via request PK.
@@ -97,16 +104,22 @@ class TokenGateGrantAccess(APIView):
         sig_success, sig_code, sig_msg = signature.validate(
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
-            tokengate_id=serialized.data.get("tokengate_id"),
+            tokengate_id=self.tokengate.public_id
         )
         if not sig_success:
             return Response(sig_msg, status=sig_code)
 
+        # todo:
+        # validate requirements / checkout selection
+        return Response('Not yet implemented')
 
     def post(self, request,  *args, **kwargs):
         """
         POST calls blockchain or fiat, depending on 'type' query string
         """
+        # get tokengate
+        self.get_object()
+
         # handle type
         type = self.request.query_params.get("type")
         if not type:
@@ -122,6 +135,7 @@ class TicketGateRequestAccess(TokenGateRequestAccess):
     Ticketgate specific
     """
     def post(self, request, *args, **kwargs):
+        # TokenGateRequestAccess.post
         return super().post(request, *args, **kwargs)
 
 
@@ -131,4 +145,8 @@ class TicketGateGrantAccess(TokenGateGrantAccess):
     Ticketgate specific
     """
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        # TokenGateGrantAccess.post
+        x = super().post(request, *args, **kwargs)
+
+        # todo: issue tickets
+        return x

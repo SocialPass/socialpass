@@ -60,6 +60,7 @@ export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:
 	// handles signing message and posting related data to API
 	useEffect(() => {
 		(async function() {
+			if (signData){
 			let response;
 			switch(gateType){
 				case('TICKET'):
@@ -79,7 +80,7 @@ export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:
 					break;
 				default:
 					response = null;
-			}
+			}}
 		})();
 	},[signData]);
 

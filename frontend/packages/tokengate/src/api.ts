@@ -34,37 +34,56 @@ export class TokenGateRetrieve {
 	}
 }
 
-// TicketGateRequestAccess class
-// Used for requesting access to a TicketGate
-const generate_ticketgate_requestaccess_json = (json:any) => {
-	return {
-	  "httpStatus": 200,
-	  "signature_id": json.signature_id,
-	  "signature_message": json.signature_message,
-  }
+// TokenGateRequestAccess class
+// Used for requesting access to any tokengate
+export class TokenGateRequestAccess {
+	static call = async(public_id:string, gate_type: string, access_type:string, address:string) => {
+		let response: any;
+		switch(gate_type){
+			case('TICKET'):
+				response = await TicketGateRequestAccess.call(public_id, access_type, address);
+				break;
+			default:
+				response = null;
+		}
+		return response;
+	}
 }
 
+// TicketGateRequestAccess class
+// Used for requesting access to a TicketGate
 export class TicketGateRequestAccess {
 	// wrapper for backend - TicketGateRequestAccess
-	static call = async (public_id:string, type:string) => {
+	static call = async (public_id:string, type:string, address:string) => {
 		// set url
-
 		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/request-access/${public_id}?type=${type}`
+
+		// set body
+		const body = JSON.stringify({
+			  "address": address
+		});
 
 		// set request options
 		const requestOptions = {
 			  method: 'POST',
-			  body: '', // empty body
+			  body: body,
+			  headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			  },
 		};
 
 		// fetch
 		return fetch(url, requestOptions)
 			.then(response => response.json())
 			.then(json => {
-				let obj = generate_ticketgate_requestaccess_json(json);
-				Object.assign(obj, {
-				})
-			  return obj
+				let obj = json;
+				  Object.assign(obj, {
+					"httpStatus": 200,
+					"signature_id": json.signature_id,
+					"signature_message": json.signature_message,
+				  })
+			    return obj
 			})
 			.catch(error => {
 				let e = {

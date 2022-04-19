@@ -181,7 +181,7 @@ class TokenGate(DBModel, PolymorphicModel):
     def __str__(self):
         return self.title
 
-    def validate_against_requirements(self, **kwargs):
+    def validate_choices_against_requirements(self, **kwargs):
         """
         calls Blockchain.Utilities.validate_requirements
         returns list of validated choices
@@ -192,6 +192,11 @@ class TokenGate(DBModel, PolymorphicModel):
             wallet_address=kwargs['wallet_address'],
             selected_choices=kwargs['selected_choices']
         )
+
+    def fetch_options_against_requirements(self, **kwargs):
+        """
+        fetches
+        """
 
 
 class Signature(DBModel):

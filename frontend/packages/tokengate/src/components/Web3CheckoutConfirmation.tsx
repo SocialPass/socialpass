@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import {  useSignMessage } from 'wagmi'
 import { TokenGateContext } from '../context';
 import { Web3ConnectorImage } from './Web3ConnectorImage';
-import { TicketGateRequestAccess, TicketGateGrantAccess } from '../api';
+import { TicketGateGrantAccess } from '../api';
 
 
 // Web3CheckoutConfirmation Component
@@ -32,29 +32,6 @@ export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:
 	// truncated address
 	let address = accountData?.address ? accountData.address.substring(0,7) + "......" +
 	accountData.address.substring(accountData.address.length-7) : '';
-
-	// useEffect hook to request signature (based on web3 account data change)
-	useEffect(() => {
-		(async function() {
-			let response;
-			if (accountData && accountData?.address){
-				switch(gateType){
-					case('TICKET'):
-						response = await TicketGateRequestAccess.call(id, 'blockchain');
-						break;
-					default:
-						response = null;
-				}
-				if (response && response.httpStatus){
-					if (response.httpStatus === 200){
-						setRequestAccessJson(response);
-					} else {
-						setRequestAccessError(response);
-					}
-				}
-			}
-			})();
-	},[accountData?.address]);
 
 	// checkout handler
 	// handles signing message and posting related data to API

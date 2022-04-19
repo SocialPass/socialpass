@@ -41,11 +41,21 @@ class TokenGateRequestAccess(APIView):
             raise Http404
 
     def blockchain(self, request, *args, **kwargs):
+        # Serialize data
+        serialized = BlockchainRequestAccessInput(data=request.data)
+        serialized.is_valid(raise_exception=True)
+
         # Generate Signature (to be signed by client)
-        self.signature = Signature.objects.create(tokengate=self.tokengate)
+        self.signature = Signature.objects.create(tokengate=self.tokengate, wallet_address=serialized.data.get("address"))
+
+        # Get Web3 checkout options (available assets per requirement)
+        checkout_options = []
+
+        # return web3 checkout options, signature message, and signature ID
         return Response({
             "signature_message":self.signature.signing_message,
-            "signature_id": self.signature.unique_code
+            "signature_id": self.signature.unique_code,
+            "checkout_options": checkout_options
         })
 
     def post(self, request, *args, **kwargs):
@@ -109,15 +119,15 @@ class TokenGateGrantAccess(APIView):
 
         # todo: validate requirements / checkout selection
         # todo
-        testdata = {
+        testdata = [{
             'blockchain': "EVM",
             'chain_id': 4,
             'asset_type': "ERC721",
             'asset_address': '0x363472d6Becb3254a7F804A5447E0848c3E69673'
-        }
-        validated = self.tokengate.validate_against_requirements(
+        }]
+        validated = self.tokengate.validate_choices_against_requirements(
             wallet_address=serialized.data.get("address"),
-            selected_choices=[testdata]
+            selected_choices=testdata
         )
 
         if not validated:

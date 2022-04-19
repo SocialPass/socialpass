@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import { MoralisProvider } from "react-moralis";
 import { createBrowserHistory } from 'history'
 import { StyledContainer } from './components';
 import { TokenGateProvider } from './context';
@@ -35,6 +36,8 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 			<base href="/"/> {/* set static asset to base path for relative imports */}
 			<TokenGateProvider id={id} styles={styles}>
 				<Web3ProviderWrapper>
+					<MoralisProvider serverUrl="https://sjvidvgoouqa.usemoralis.com:2053/server" appId="aVoltQQdQ5zSS3QKU8HuFs2NFmkLMnTDCR5HMxA9">
+
 					<StyledContainer>
 						<Routes>
 							<Route index element={<Init />} />
@@ -44,6 +47,7 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 							<Route path="/checkout/web3" element={<CheckoutWeb3 />} />
 						</Routes>
 					</StyledContainer>
+					</MoralisProvider>
 				</Web3ProviderWrapper>
 			</TokenGateProvider>
 		</Router>

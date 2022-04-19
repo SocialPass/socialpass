@@ -17,7 +17,7 @@ class Requirement(BaseModel):
     token_id: Optional[List[int]]
     to_block: Optional[int]
 
-class SelectedChoice(BaseModel):
+class SelectedOption(BaseModel):
     blockchain: str = "EVM"
     chain_id: Optional[int] = 1
     asset_type: Optional[str]
@@ -77,12 +77,12 @@ def moralis_get_nfts(chain_id: str, wallet_address: str, contract_address: str):
 #
 # Internal functions
 #
-def validate_evm_fungible(wallet_address: str, choice: SelectedChoice, requirement:Requirement):
+def validate_evm_fungible(wallet_address: str, choice: SelectedOption, requirement:Requirement):
     print('fungible')
     return False
 
 
-def validate_evm_nonfungible(wallet_address: str, choice: SelectedChoice, requirement:Requirement):
+def validate_evm_nonfungible(wallet_address: str, choice: SelectedOption, requirement:Requirement):
     print('nonfungible')
     return False
 
@@ -95,14 +95,14 @@ class Utilities():
         wallet_address: str,
         limit_per_person: int,
         requirements: List[Requirement],
-        selected_choices: List[SelectedChoice]
+        selected_choices: List[SelectedOption]
     ):
         """
-        Accepts a wallet address, list of requirements, and list of selected choices
+        Accepts a wallet address, list of requirements, and list of selected choices (optional)
         This method will will loop through selected_choices, ensuring
-        1. SelectedChoice data exists in Requirement data
-        2. Wallet address possesses SelectedChoice data
-        3. Return verified_choices
+        1. SelectedOption data exists in Requirement data
+        2. Wallet address possesses Requirement data
+        3. Return
         """
         verified_choices = []
         for requirement in requirements:

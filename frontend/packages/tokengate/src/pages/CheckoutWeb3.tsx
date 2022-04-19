@@ -6,7 +6,7 @@ import { TokenGateContext } from '../context';
 // TicketGate Component
 export const CheckoutWeb3 = (): JSX.Element => {
 	// tokengate context
-	const { checkoutSelection } = useContext(TokenGateContext);
+	const { web3CheckoutSelection } = useContext(TokenGateContext);
 	// wallet data hooks
 	const [{ data: accountData, error: accountError, loading: accountLoading }, disconnect] = useAccount();
 
@@ -14,12 +14,15 @@ export const CheckoutWeb3 = (): JSX.Element => {
 	// return either checkout confirmation or checkout selection
 	if (accountData){
 		// checkout selection (choose NFT's / assets to redeem)
-		if (!checkoutSelection){
-			return <Web3CheckoutSelection accountData={accountData}/>
+		if (web3CheckoutSelection.length === 0){
+			return (
+				<Web3CheckoutSelection accountData={accountData}/>
+			)
+
 		}
 
 		// proceed to web3 checkout confirmation
-		if (checkoutSelection){
+		if (web3CheckoutSelection){
 			return (
 				<Web3CheckoutConfirmation accountData={accountData} disconnect={disconnect}/>
 			)

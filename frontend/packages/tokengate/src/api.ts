@@ -90,7 +90,7 @@ export class TicketGateGrantAccess {
 		access_data:any
 	) => {
 		// setup url
-		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/grant-access/${public_id}?type=${type}/`
+		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/grant-access/${public_id}?type=${type}`
 
 		// set body
 		const body = JSON.stringify({
@@ -103,13 +103,28 @@ export class TicketGateGrantAccess {
 		// set request options
 		const requestOptions = {
 			  method: 'POST',
-			  body: body
+			  body: body,
+			  headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			  },
 		};
 
 		// fetch
 		return fetch(url, requestOptions)
-		  .then(response => response.text())
-		  .then(result => console.log(result))
-		  .catch(error => console.log('error', error));
+		.then(response => response.json())
+		.then(json => {
+			let obj = json;
+			Object.assign(obj, {
+			})
+		  return obj
+		})
+		.catch(error => {
+			let e = {
+				  "httpStatus": error.status,
+				  "message": error.json()
+			  }
+			return e;
+		});
 	}
 }

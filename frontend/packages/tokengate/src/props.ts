@@ -43,7 +43,7 @@ export interface TokenGateContextInterface {
   requestAccessError: any
 
   grantAccessJson: any
-  setgGrantAccessJson: any
+  setGrantAccessJson: any
   grantAccessError: any
   setGrantAccessError: any
 }

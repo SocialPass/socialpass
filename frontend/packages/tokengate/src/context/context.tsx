@@ -13,7 +13,7 @@ export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInte
   const [requestAccessJson, setRequestAccessJson] = useState(null);
   const [setRequestAccessError, requestAccessError] = useState(null);
 
-  const [grantAccessJson, setgGrantAccessJson] = useState(null);
+  const [grantAccessJson, setGrantAccessJson] = useState(null);
   const [grantAccessError, setGrantAccessError] = useState(null);
 
   return (
@@ -35,7 +35,7 @@ export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInte
     requestAccessError,
 
     grantAccessJson,
-    setgGrantAccessJson,
+    setGrantAccessJson,
     grantAccessError,
     setGrantAccessError,
   }}>

@@ -1,59 +1,87 @@
 import React, { useContext, useEffect } from 'react';
 import {  useSignMessage } from 'wagmi'
-import { TicketGateRequestAccess } from '../api';
 import { TokenGateContext } from '../context';
 import { Web3ConnectorImage } from './Web3ConnectorImage';
+import { TicketGateRequestAccess, TicketGateGrantAccess } from '../api';
 
 
 // Web3CheckoutConfirmation Component
 export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:any, disconnect:any}): JSX.Element => {
 	// tokengate context
-	const { id, gateType, requestAccessJson, setRequestAccessJson, setRequestAccessError } = useContext(TokenGateContext);
+	const {
+		id,
+		gateType,
+		requestAccessJson,
+		setRequestAccessJson,
+		setRequestAccessError,
+		setGrantAccessJson,
+		setGrantAccessError
+	} = useContext(TokenGateContext);
+
 	// wallet signature hooks
-	const [{ data: signData, error: signError, loading: signLoading }, signMessage] = useSignMessage();
+	// setup with signature_message
+	const [{
+			data: signData,
+			error: signError,
+			loading: signLoading
+		},
+		signMessage
+	] = useSignMessage({
+		message: requestAccessJson?.signature_message
+	});
 	// truncated address
 	let address = accountData?.address ? accountData.address.substring(0,7) + "......" +
 	accountData.address.substring(accountData.address.length-7) : '';
 
 	// useEffect hook to request signature (based on web3 account data change)
 	useEffect(() => {
-	(async function() {
-		let response;
-		if (accountData && accountData?.address){
-			switch(gateType){
-				case('TICKET'):
-					response = await TicketGateRequestAccess.call(id, 'blockchain');
-					break;
-				default:
-					response = null;
-			}
-			if (response && response.httpStatus){
-				if (response.httpStatus === 200){
-					setRequestAccessJson(response);
-				} else {
-					setRequestAccessError(response);
+		(async function() {
+			let response;
+			if (accountData && accountData?.address){
+				switch(gateType){
+					case('TICKET'):
+						response = await TicketGateRequestAccess.call(id, 'blockchain');
+						break;
+					default:
+						response = null;
 				}
-
-				// navigate to gate-specific completion page,
+				if (response && response.httpStatus){
+					if (response.httpStatus === 200){
+						setRequestAccessJson(response);
+					} else {
+						setRequestAccessError(response);
+					}
+				}
 			}
-		}
-		})();
+			})();
 	},[accountData?.address]);
 
 	// checkout handler
 	// handles signing message and posting related data to API
-	// signatureHandler function
-	const signatureHandler = async () => {
-		// sign message
-		const signRes = await signMessage({ message: requestAccessJson.signature_message });
-		if (signRes.error) throw signRes.error;
-
-		// Verify Message/Wallet
-		if (signRes && accountData){
-			console.log(id, gateType, signRes.data, signLoading, requestAccessJson,)
-			return
-		}
-	}
+	useEffect(() => {
+		(async function() {
+			let response;
+			switch(gateType){
+				case('TICKET'):
+					response = await TicketGateGrantAccess.call(
+						id,
+						'blockchain',
+						accountData.address,
+						signData,
+						requestAccessJson.signature_id,
+						'access_data',
+					);
+					if (response.httpStatus === 200){
+						setGrantAccessJson(response);
+					} else {
+						setGrantAccessError(response);
+					}
+					break;
+				default:
+					response = null;
+			}
+		})();
+	},[signData]);
 
 	return (
 	<div className="base-gate">
@@ -77,7 +105,7 @@ export const Web3CheckoutConfirmation = ({accountData, disconnect}:{accountData:
 			</div>
 		</div>
 		<div className="btn">
-			<button className="btn-primary" onClick={() => signatureHandler()}>Checkout</button>
+			<button className="btn-primary" onClick={async () => await signMessage()}>Checkout</button>
 		</div>
 	</div>
 )

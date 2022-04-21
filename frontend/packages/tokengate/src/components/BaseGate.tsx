@@ -12,11 +12,11 @@ export const BaseGate = ({navigateTo}:{navigateTo:any}): JSX.Element => {
 					<h4>{retrieveJson?.team.name}</h4>
 				</div>
 			}
-			<div className="title">
+			<div className="base-inside">
 				<h1>{retrieveJson.title}</h1>
 				<p>{retrieveJson.description}</p>
 			</div>
-			<div className="btn">
+			<div className="base-inside">
 				<button className="btn-primary" onClick={() => navigateTo()}>Get Access</button>
 			</div>
 		</div>

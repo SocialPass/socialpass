@@ -1,25 +1,45 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useMoralisWeb3Api } from "react-moralis";
 import { TokenGateRequestAccess } from '../api';
 import { TokenGateContext } from '../context';
-import { Loading } from "../components";
+import { Loading } from "./";
+
+const CheckoutSelection = ({checkout_options}) => {
+	return checkout_options.map(function(item, index){
+		return (
+		<div>
+			<h3>{item.options.result[0].name}</h3>
+			<div>{item.options.result[0].symbol}</div>
+			<small>{item.options.result[0].token_address}</small>
+			<div>
+				{
+					item.options.result.map((option, index) => {
+						return (
+							<button>
+								<li>Token ID: {option.token_id}</li>
+							</button>
+						)
+					})
+				}
+			</div>
+		</div>
+		)
+	})
+}
+
 
 export const Web3CheckoutSelection = ({accountData}:{accountData:any}) => {
-	// tokengate context
-	const { id,
+	const {
+		id,
+		retrieveJson,
 		gateType,
-		requestAccessError,
 		requestAccessJson,
 		setRequestAccessJson,
 		setRequestAccessError,
 	} = useContext(TokenGateContext);
-	// local state
-	const [ loading, setLoading ] = useState(false);
 
 	// useEffect hook to request access (based on web3 account data change)
 	useEffect(() => {
 		(async function() {
-			setLoading(true);
 			let response: any;
 			if (accountData && accountData.address){
 				response = await TokenGateRequestAccess.call(id, gateType, 'blockchain', accountData.address)
@@ -27,30 +47,30 @@ export const Web3CheckoutSelection = ({accountData}:{accountData:any}) => {
 					if (response.httpStatus === 200){
 						setRequestAccessJson(response);
 					} else {
+						console.log('????')
 						setRequestAccessError(response);
 					}
 				}
-				setLoading(false);
 			}
 			})();
 	},[accountData?.address]);
 
-	// useEffect hook to setCheckoutOptions (based on requestAccessJson)
-	useEffect(() => {
-		console.log(requestAccessJson);
-	}, [requestAccessJson])
-
-
-	// loading
-	if (loading === true){
-		return <Loading/>
+	// requestAccessJson
+	if (requestAccessJson){
+		return (
+			<div>
+				<div className="base-inside">
+					<h1>Checkout Options</h1>
+					<p>Select which assets you want to verify for access</p>
+				</div>
+				<div className="web3-checkout-options">
+					<CheckoutSelection checkout_options={requestAccessJson.checkout_options}/>
+				</div>
+			</div>
+		)
 	}
 
-	// requestAccessError
-	// requestAccessJson
-
-	return  (
-		<h1>Web3 Checkout Selection</h1>
-	)
+	// default, loading
+	return <Loading/>
 
 }

@@ -6,6 +6,8 @@ import { TokenGateContext } from '../context';
 export const Loading = () => {
 	console.log('loading')
 	return (
-		<h1>Loading...</h1>
+		<div className="base-inside">
+			<h1>Loading...</h1>
+		</div>
 	)
 }

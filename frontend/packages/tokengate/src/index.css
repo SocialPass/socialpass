@@ -20,7 +20,7 @@ html, body {
 }
 
 h1 {
-  font-size: 4vh;
+  font-size: 2.33rem;
   font-weight: 700;
   font-style: bold;
   line-height: 1.25em;
@@ -31,11 +31,11 @@ h2, h3 {
 }
 
 h2 {
-  font-size: 3vh;
+  font-size: 1.55rem;
 }
 
 h3 {
-  font-size: 2vh;
+  font-size: 1.33rem;
 }
 
 img {
@@ -50,9 +50,10 @@ p {
   font-family: 'Rubik';
   font-style: normal;
   font-weight: 300;
-  font-size: 1.75vh;
-  line-height: 3vh;
+  font-size: 1.11rem;
+  line-height: 2rem;
   color: #959191;
+  margin:0;
 }
 
 small {
@@ -78,35 +79,6 @@ footer {
 }
 
 /*
-ELEMENTS
-*/
-.ticker {
-  position:absolute;
-  display:block;
-  max-width:44%;
-  top:0;
-  right:0;
-}
-
-.team-info img {
-  height:7vh;
-  width:7vh;
-  border: 11px solid white;
-  border-radius:66px;
-}
-
-.team-info h4 {
-  margin:0;
-}
-
-.title, .btn {
-  flex:1;
-  margin:2.25rem 2.25rem 0 2.25rem;
-  word-break: break-word;
-  min-width:250px;
-}
-
-/*
 THEMES
 */
 .btn-primary {
@@ -116,7 +88,7 @@ THEMES
   border: none;
   min-height:80px;
   font-weight: 700;
-  font-size: 2.5vh;
+  font-size: 1.69rem;
   padding:0;
   margin:0;
   min-width:250px;
@@ -140,13 +112,12 @@ CONTAINERS
   border-radius: 50px;
   overflow:hidden;
   max-height:787px;
-  min-width:341px;
+  min-width:363px;
 }
 
 .parent {
   min-height:355px;
   flex:1;
-  display:flex;
 }
 
 .base-gate {
@@ -163,4 +134,42 @@ CONTAINERS
   justify-content: center;
   top:-66px;
   left:2.25rem;
+}
+
+.base-inside {
+  flex:1;
+  margin:3rem 2.25rem 0 2.25rem;
+  word-break: break-word;
+  min-width:250px;
+}
+
+.web3-checkout-options {
+  overflow-y:scroll;
+  max-height:150px;
+  padding:0 2.25rem 2.25rem 2.25rem;
+
+}
+
+
+
+/*
+ELEMENTS
+*/
+.ticker {
+  position:absolute;
+  display:block;
+  max-width:44%;
+  top:0;
+  right:0;
+}
+
+.team-info img {
+  height:7vh;
+  width:7vh;
+  border: 11px solid white;
+  border-radius:66px;
+}
+
+.team-info h4 {
+  margin:0;
 }

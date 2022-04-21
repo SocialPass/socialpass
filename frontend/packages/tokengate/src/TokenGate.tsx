@@ -13,8 +13,12 @@ import Web3ProviderWrapper from './web3/wrapper';
 import {
 	Init,
 	TicketGate,
-	CheckoutWeb3
 } from './pages';
+import {
+	Web3ConnectWallet,
+	Web3CheckoutSelection,
+	Web3CheckoutConfirmation
+} from './pages/Web3Checkout/';
 require<any>('./index.css');
 
 
@@ -36,18 +40,19 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 			<base href="/"/> {/* set static asset to base path for relative imports */}
 			<TokenGateProvider id={id} styles={styles}>
 				<Web3ProviderWrapper>
-					<MoralisProvider serverUrl="https://sjvidvgoouqa.usemoralis.com:2053/server" appId="aVoltQQdQ5zSS3QKU8HuFs2NFmkLMnTDCR5HMxA9">
-
 					<StyledContainer>
+
 						<Routes>
 							<Route index element={<Init />} />
 
 							<Route path="/gate/ticket" element={<TicketGate />} />
 
-							<Route path="/checkout/web3" element={<CheckoutWeb3 />} />
+							<Route path="/checkout/web3/connect" element={<Web3ConnectWallet />} />
+							<Route path="/checkout/web3/select" element={<Web3CheckoutSelection />} />
+							<Route path="/checkout/web3/confirm" element={<Web3CheckoutConfirmation />} />
 						</Routes>
+
 					</StyledContainer>
-					</MoralisProvider>
 				</Web3ProviderWrapper>
 			</TokenGateProvider>
 		</Router>

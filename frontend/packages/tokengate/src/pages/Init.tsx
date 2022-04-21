@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 // Root Page
 // Fetches & Sets initial JSON, then navigate based on response
 export const Init = () => {
-	const { id, setRetrieveJson, setGateType, setRetrieveError } = useContext(TokenGateContext);
+	const { id, setRetrieveJson, setRetrieveError } = useContext(TokenGateContext);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -17,7 +17,6 @@ export const Init = () => {
 				if (response && response.httpStatus){
 					if (response.httpStatus === 200){
 						setRetrieveJson(response);
-						setGateType(response?.general_type);
 
 						// navigate based on gate type
 						switch(response?.general_type){

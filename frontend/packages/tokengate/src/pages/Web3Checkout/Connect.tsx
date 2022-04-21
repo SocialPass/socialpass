@@ -1,16 +1,24 @@
-import React from 'react';
-import {  useConnect } from 'wagmi';
-import { Web3ConnectorImage } from './Web3ConnectorImage';
+import React, { useEffect } from 'react';
+import {  useConnect, useAccount } from 'wagmi';
+import { useNavigate } from "react-router-dom";
+import { Web3ConnectorImage } from '../../components/Web3ConnectorImage';
+import { Loading } from '../../components/Loading';
 
 // ConnectorWallets
 // Return UI for wallet connectors
 export const Web3ConnectWallet = () => {
-	// wallet connect hooks
+	const navigate = useNavigate();
 	const [{ data: connectData, error: connectError, loading: loadingConnect }, connect] = useConnect();
+	const [{ data: accountData, error: accountError, loading: accountLoading }, disconnect] = useAccount();
 
-	// account data present, proceed to rest of checkout
+	useEffect(() => {
+		if (accountData?.address){
+			navigate('/checkout/web3/select');
+		}
+	}, [accountData?.address])
+
+	// wallet connectors
 	if (connectData){
-		// Return either signature or asset selection (if applicable)
 		return (
 			<div>
 				<div className="base-inside">
@@ -30,4 +38,7 @@ export const Web3ConnectWallet = () => {
 			</div>
 		)
 	}
+
+
+	return <Loading/>
 }

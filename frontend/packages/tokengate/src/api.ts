@@ -95,6 +95,36 @@ export class TicketGateRequestAccess {
 	  }
 }
 
+// TokenGateRequestAccess class
+// Used for requesting access to any tokengate
+export class TokenGateGrantAccess {
+	static call = async(
+		public_id:string,
+		gate_type:string,
+		type:string,
+		address:string,
+		signed_message:string,
+		signature_id:string,
+		access_data:any
+	) => {
+		let response: any;
+		switch(gate_type){
+			case('TICKET'):
+				response = await TicketGateGrantAccess.call(
+					public_id=public_id,
+					type=type,
+					address=address,
+					signed_message=signed_message,
+					signature_id=signature_id,
+					access_data=access_data,
+				);
+				break;
+			default:
+				response = null;
+		}
+		return response;
+	}
+}
 
 // TicketGateGrantAccess class
 // Used for granting access to a TicketGate

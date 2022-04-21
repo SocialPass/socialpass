@@ -23,6 +23,6 @@ export const TicketGate = (): JSX.Element => {
 	// default, return baseGate
 	// todo: customize basegate more, perhaps current content as children
 	return (
-		<BaseGate navigateTo={() => navigate('/checkout/web3')}/>
+		<BaseGate navigateTo={() => navigate('/checkout/web3/connect')}/>
 	)
 }

@@ -19,7 +19,7 @@ from django.db import models
 from .model_field_choices import TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
-from apps.utilities import Ticketing, Blockchain
+from apps.gates import Ticketing, Blockchain
 
 
 class CustomUserManager(UserManager):

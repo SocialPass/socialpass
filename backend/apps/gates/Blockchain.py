@@ -25,35 +25,35 @@ class SelectedOption(BaseModel):
     token_id: Optional[List[int]]
 
 
+
 #
 # MORALIS FUNCTIONS
 #
 def moralis_get_fungible(
-    chain_id: str, wallet_address: str, contract_addresses: List[str], to_block: int
+    chain_id: str, wallet_address: str, token_addresses: List[str], to_block: int
 ):
     """
     Gets token balances for a specific address
 
-    Gets token owned by the given address, at the given contract_addresses, up until to_block
+    Gets token owned by the given address, at the given token_addresses, up until to_block
     """
     url = f"https://deep-index.moralis.io/api/v2/{wallet_address}/erc20/"
     payload = {
         "chain": chain_id,
         "to_block": to_block,
         "format": "decimal",
-        "contract_addresses": contract_addresses,
+        "token_addresses": token_addresses,
     }
     headers = {
         "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
     }
     r = requests.get(url, params=payload, headers=headers)
-    if r.status_code == 200:
-        return r.json()
+    return r.json()
 
 
-def moralis_get_nfts(chain_id: str, wallet_address: str, contract_address: str):
+def moralis_get_nfts(chain_id: str, wallet_address: str, token_address: str):
     """
-    Gets NFTs owned by the given address, at the given contract_address
+    Gets NFTs owned by the given address, at the given token_address
 
     Use the token_address param to get results for a specific contract only
     Note results will include all indexed NFTs.
@@ -63,90 +63,69 @@ def moralis_get_nfts(chain_id: str, wallet_address: str, contract_address: str):
     the very first time it is requested
     """
     url = (
-        f"https://deep-index.moralis.io/api/v2/{wallet_address}/nft/{contract_address}"
+        f"https://deep-index.moralis.io/api/v2/{wallet_address}/nft/{token_address}"
     )
-    payload = {"chain": chain_id, "format": "decimal", "limit": 28072}
+    payload = {
+        "chain": chain_id,
+        "format": "decimal"
+    }
     headers = {
         "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
     }
     r = requests.get(url, params=payload, headers=headers)
-    if r.status_code == 200:
-        return r.json()
-
-
-#
-# Internal functions
-#
-def validate_evm_fungible(wallet_address: str, choice: SelectedOption, requirement:Requirement):
-    print('fungible')
-    return False
-
-
-def validate_evm_nonfungible(wallet_address: str, choice: SelectedOption, requirement:Requirement):
-    print('nonfungible')
-    return False
+    return r.json()
 
 
 #
 # Public Utilities class
 #
 class Utilities():
-    def validate_choices_against_requirements(
-        wallet_address: str,
-        limit_per_person: int,
-        requirements: List[Requirement],
-        selected_choices: List[SelectedOption]
+    def get_options_against_requirements(
+        wallet_address:str,
+        requirements: List[Requirement]
     ):
         """
-        Accepts a wallet address, list of requirements, and list of selected choices (optional)
-        This method will will loop through selected_choices, ensuring
-        1. SelectedOption data exists in Requirement data
-        2. Wallet address possesses Requirement data
-        3. Return
+        Return list of requirements, each augmented with available asset options
         """
-        verified_choices = []
+        options = []
+        # loop over requirements
         for requirement in requirements:
-            for choice in selected_choices:
-                # preflight, check verified_choices has not met the limit
-                if len(verified_choices) == limit_per_person:
-                    break
+            # fungible
+            print(requirement)
+            if requirement['asset_type'] == "ERC20":
+                print('fungible')
+                options.append({
+                    "requirement": requirement,
+                    "options": moralis_get_fungible(
+                        chain_id=hex(requirement['chain_id']),
+                        wallet_address=wallet_address,
+                        token_addresses=requirement['asset_address'],
+                        to_block=requirement['to_block']
+                    )
+                })
+            # non fungible
+            if requirement['asset_type'] == "ERC721" or requirement['asset_type'] == "ERC1155":
+                print('nonfungible')
+                options.append({
+                    "requirement": requirement,
+                    "options": moralis_get_nfts(
+                        chain_id=hex(requirement['chain_id']),
+                        wallet_address=wallet_address,
+                        token_address=requirement['asset_address']
+                    )
+                })
 
-                # 1. validate choice data against requirement data
-                if choice['asset_address'] != requirement['asset_address']:
-                    continue
-                if choice['blockchain'] != requirement['blockchain']:
-                    continue
-                if choice['chain_id'] != requirement['chain_id']:
-                    continue
-
-                # 2. validate wallet address against requirement
-                # EVM
-                if requirement['blockchain'] == 'EVM':
-                    if requirement['asset_type'] == 'ERC20':
-                        is_validated = validate_evm_fungible(
-                            choice=choice,
-                            wallet_address=wallet_address,
-                            requirement=requirement
-                        )
-                        if is_validated is False:
-                            continue
-                    if requirement['asset_type'] == 'ERC721' or \
-                    requirement['asset_type'] == 'ERC1155':
-                        is_validated = validate_evm_nonfungible(
-                            choice=choice,
-                            wallet_address=wallet_address,
-                            requirement=requirement
-                        )
-                        if is_validated is False:
-                            continue
-
-                # 3. validated, append choice to verified_choices
-                verified_choices.append(choice)
-                print('verified_choices', verified_choices)
-
-            # only executed on preflight check BREAK
-            break
+        return options
 
 
-        # return
-        return verified_choices
+    def validate_options_against_requirements(
+        wallet_addres:str,
+        limit_per_person: int,
+        selected_options: List[SelectedOption],
+        requirements: List[Requirement]
+    ):
+        """
+        Validate list of selected options against selected requirements, each augmented with available asset options
+        """
+        return
+

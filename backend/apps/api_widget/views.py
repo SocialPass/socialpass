@@ -49,7 +49,9 @@ class TokenGateRequestAccess(APIView):
         self.signature = Signature.objects.create(tokengate=self.tokengate, wallet_address=serialized.data.get("address"))
 
         # Get Web3 checkout options (available assets per requirement)
-        checkout_options = []
+        checkout_options = self.tokengate.fetch_options_against_requirements(
+            wallet_address=serialized.data.get("address")
+        )
 
         # return web3 checkout options, signature message, and signature ID
         return Response({

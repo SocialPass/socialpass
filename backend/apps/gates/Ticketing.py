@@ -205,7 +205,7 @@ def set_theme(new_theme):
 
 
 # Fonts (and related)
-BASE_FONT_TYPE = os.path.join(settings.APPS_DIR, "utilities/fonts/RobotoMono-Bold.ttf")  # Default font
+BASE_FONT_TYPE = os.path.join(settings.APPS_DIR, "gates/fonts/RobotoMono-Bold.ttf")  # Default font
 
 def get_base_pil_font(size):
     return ImageFont.truetype(BASE_FONT_TYPE, size)

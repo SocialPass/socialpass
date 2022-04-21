@@ -17,28 +17,23 @@ export const Web3ConnectWallet = () => {
 		}
 	}, [accountData?.address])
 
-	// wallet connectors
-	if (connectData){
-		return (
-			<div>
-				<div className="base-inside">
-					<h1>Connect Your Wallet</h1>
-				</div>
-				<div className="base-inside">
-					{connectData.connectors.map((x) => (
-					<button disabled={!x.ready} key={x.id}
-						onClick={() => connect(x)}>
-						<Web3ConnectorImage connector={x.name}/>
-						{x.name}
-						{!x.ready && ' (unsupported)'}
-					</button>
-				  ))}
-				</div>
-				{connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
+
+	return (
+		<div className="row">
+			<div className="base-inside">
+				<h1>Connect Your Wallet</h1>
 			</div>
-		)
-	}
-
-
-	return <Loading/>
+			<div className="base-inside">
+				{connectData.connectors.map((x) => (
+				<button disabled={!x.ready} key={x.id}
+					onClick={() => connect(x)}>
+					<Web3ConnectorImage connector={x.name}/>
+					{x.name}
+					{!x.ready && ' (unsupported)'}
+				</button>
+			  ))}
+			</div>
+			{connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
+		</div>
+	)
 }

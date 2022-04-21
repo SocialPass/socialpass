@@ -15,6 +15,12 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 			<header>
 				<TickerImage gateType={retrieveJson?.general_type}/>
 				<img src={headerImage} alt="image"/>
+				{retrieveJson &&
+					<div className="team-info">
+						<img src={retrieveJson?.team.image} alt="Team Image"/>
+						<h4>{retrieveJson?.team.name}</h4>
+					</div>
+				}
 			</header>
 			<div className="parent">
 				{children}

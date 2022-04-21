@@ -79,23 +79,13 @@ export const Web3CheckoutSelection = () => {
 
 	if (requestAccessJson){
 		return (
-			<div className="base-gate">
+			<div className="row">
 				<div className="base-inside">
 					<h1>Checkout Options</h1>
 					<p>Select which assets you want to verify for access</p>
 					<p>
 						{web3CheckoutSelection.length} / {retrieveJson.limit_per_person} claimed
 					</p>
-				</div>
-				<div className="web3-checkout-options">
-					<CheckoutSelection
-						limit={retrieveJson.limit_per_person}
-						checkoutOptions={requestAccessJson.checkout_options}
-						web3CheckoutSelection={web3CheckoutSelection}
-						setWeb3CheckoutSelection={setWeb3CheckoutSelection}
-					/>
-				</div>
-				<div className="base-inside">
 					{web3CheckoutSelection.length > 0
 						?
 						(
@@ -106,6 +96,14 @@ export const Web3CheckoutSelection = () => {
 							<button disabled>Select more options</button>
 						)
 					}
+				</div>
+				<div className="base-inside">
+					<CheckoutSelection
+						limit={retrieveJson.limit_per_person}
+						checkoutOptions={requestAccessJson.checkout_options}
+						web3CheckoutSelection={web3CheckoutSelection}
+						setWeb3CheckoutSelection={setWeb3CheckoutSelection}
+					/>
 				</div>
 			</div>
 		)

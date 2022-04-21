@@ -56,8 +56,8 @@ export const Web3CheckoutConfirmation = (): JSX.Element => {
 	}
 
 	return (
-		<div className="base-gate">
-			<div className="title">
+		<div className="row">
+			<div className="base-inside">
 				<h1>Almost There</h1>
 				<p>Your wallet is almost connected! You need to click the “Sign Message” button to complete connection.</p>
 				<h3>Connected Wallet</h3>
@@ -76,7 +76,7 @@ export const Web3CheckoutConfirmation = (): JSX.Element => {
 					</div>
 				</div>
 			</div>
-			<div className="btn">
+			<div className="base-inside">
 				<button className="btn-primary" onClick={async () => await signMessage()}>Checkout</button>
 			</div>
 		</div>

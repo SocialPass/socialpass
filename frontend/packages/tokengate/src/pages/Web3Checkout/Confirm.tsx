@@ -53,8 +53,6 @@ export const Web3CheckoutConfirmation = (): JSX.Element => {
 	useEffect(() => {
 		if (!accountData?.address){
 			console.log('navigate');
-			// reset associated state
-			setWeb3CheckoutSelection([]);
 			// navigate to wallet connection page
 			navigate("/checkout/web3/connect");
 		}

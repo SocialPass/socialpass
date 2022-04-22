@@ -8,7 +8,7 @@ export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInte
   const [retrieveError, setRetrieveError] = useState(null);
 
   const [requestAccessJson, setRequestAccessJson] = useState(null);
-  const [setRequestAccessError, requestAccessError] = useState(null);
+  const [requestAccessError, setRequestAccessError] = useState(null);
 
   const [grantAccessJson, setGrantAccessJson] = useState(null);
   const [grantAccessError, setGrantAccessError] = useState(null);

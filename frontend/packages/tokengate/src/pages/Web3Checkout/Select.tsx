@@ -15,32 +15,46 @@ const CheckoutSelection = ({checkoutOptions, limit, web3CheckoutSelection, setWe
 		}]);
 	}
 
+
+	// available
 	return checkoutOptions.map(function(item, index){
-		return (
-		<div>
-			<h3>{item.options.result[0].name}</h3>
-			<div>{item.options.result[0].symbol}</div>
-			<small>{item.options.result[0].token_address}</small>
-			<div>
-				{
-					item.options.result.map((option, index) => {
-						if (web3CheckoutSelection.length < limit){
-							return (
-								<button onClick={() => add_checkout_selection(item.requirement, option)}>
-									<li>Token ID: {option.token_id}</li>
-								</button>
-							)
+		if (item.options.result.length > 0){
+			return (
+				<div>
+					<h3>{item.options.result[0].name}</h3>
+					<div>{item.options.result[0].symbol}</div>
+					<small>{item.options.result[0].token_address}</small>
+					<div>
+						{
+							item.options.result.map((option, index) => {
+								if (web3CheckoutSelection.length < limit){
+									return (
+										<button onClick={() => add_checkout_selection(item.requirement, option)}>
+											<li>Token ID: {option.token_id}</li>
+										</button>
+									)
+								}
+								return (
+									<button disabled>
+										<li>Token ID: {option.token_id}</li>
+									</button>
+								)
+							})
 						}
-						return (
-							<button disabled>
-								<li>Token ID: {option.token_id}</li>
-							</button>
-						)
-					})
-				}
-			</div>
-		</div>
-		)
+					</div>
+				</div>
+			)
+		} else {
+			return (
+				<div>
+					<small>{item.requirement.asset_address}</small>
+					<div>
+						No matching assets found
+					</div>
+				</div>
+			)
+		}
+
 	})
 }
 
@@ -63,6 +77,12 @@ export const Web3CheckoutSelection = () => {
 	useEffect(() => {
 		(async function() {
 			let response: any;
+			// reset state
+			setRequestAccessJson(null);
+			setRequestAccessError(null);
+			setWeb3CheckoutSelection([]);
+
+			// api call
 			if (accountData && accountData.address){
 				response = await TokenGateRequestAccess.call(id, retrieveJson.general_type, 'blockchain', accountData.address)
 				if (response && response.httpStatus){
@@ -83,6 +103,15 @@ export const Web3CheckoutSelection = () => {
 				<div className="base-inside">
 					<h1>Checkout Options</h1>
 					<p>Select which assets you want to verify for access</p>
+					<CheckoutSelection
+						limit={retrieveJson.limit_per_person}
+						checkoutOptions={requestAccessJson.checkout_options}
+						web3CheckoutSelection={web3CheckoutSelection}
+						setWeb3CheckoutSelection={setWeb3CheckoutSelection}
+					/>
+
+				</div>
+				<div className="base-inside">
 					<p>
 						{web3CheckoutSelection.length} / {retrieveJson.limit_per_person} claimed
 					</p>
@@ -96,14 +125,6 @@ export const Web3CheckoutSelection = () => {
 							<button disabled>Select more options</button>
 						)
 					}
-				</div>
-				<div className="base-inside">
-					<CheckoutSelection
-						limit={retrieveJson.limit_per_person}
-						checkoutOptions={requestAccessJson.checkout_options}
-						web3CheckoutSelection={web3CheckoutSelection}
-						setWeb3CheckoutSelection={setWeb3CheckoutSelection}
-					/>
 				</div>
 			</div>
 		)

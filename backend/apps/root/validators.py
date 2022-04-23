@@ -1,6 +1,5 @@
-import jsonschema
-
 import django
+import jsonschema
 from django.core.validators import BaseValidator
 
 

@@ -1,28 +1,19 @@
 # NFTY (IRL) Ticket Generator
 # By NFTY Labs
-import os
 import io
+import os
 import random
 import re
 import urllib.request
+from typing import Optional
 
 import boto3
 import qrcode
 from django.conf import settings
-from django.templatetags.static import static
-from pydantic import BaseModel
-from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
+from pydantic import BaseModel
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import CircleModuleDrawer
-
-#
-# SCHEMAS
-#
-class EventData(BaseModel):
-    event_name: str         # Name of the event
-    event_date: str	        # Date (and time) of the event
-    event_location: str     # Where the event will be held
 
 # s3 client init
 s3 = boto3.client(
@@ -33,8 +24,16 @@ s3 = boto3.client(
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
 )
 
+
+# SCHEMAS
+class EventData(BaseModel):
+    event_name: str  # Name of the event
+    event_date: str  # Date (and time) of the event
+    event_location: str  # Where the event will be held
+
+
 # public utilities class
-class Utilities():
+class Utilities:
     def generate_and_store_ticket(
         event_data: EventData,
         filename: str,
@@ -55,10 +54,11 @@ class Utilities():
         )
 
         # Store ticket image into bucket
-        response = TicketPartGenerator.store_ticket(ticket_img=ticket_img, filename=filename)
+        response = TicketPartGenerator.store_ticket(
+            ticket_img=ticket_img, filename=filename
+        )
 
         return (ticket_img, response)
-
 
 
 theme_list = [
@@ -233,10 +233,14 @@ def set_theme(new_theme):
 
 
 # Fonts (and related)
-BASE_FONT_TYPE = os.path.join(settings.APPS_DIR, "gates/fonts/RobotoMono-Bold.ttf")  # Default font
+BASE_FONT_TYPE = os.path.join(
+    settings.APPS_DIR, "gates/fonts/RobotoMono-Bold.ttf"
+)  # Default font
+
 
 def get_base_pil_font(size):
     return ImageFont.truetype(BASE_FONT_TYPE, size)
+
 
 TITLE_FONT = get_base_pil_font(12 * DEFAULT_SCALE)  # Font for text titles
 CONTENT_FONT = get_base_pil_font(14 * DEFAULT_SCALE)  # Font for text content
@@ -610,7 +614,9 @@ class TicketPartGenerator:
             font=BANNER_FONT,
             text=top_banner_text,
         )
-        ticket_parts["top_banner"] = concat_v(ticket_parts["top_banner"], top_banner_img)
+        ticket_parts["top_banner"] = concat_v(
+            ticket_parts["top_banner"], top_banner_img
+        )
 
         # Event name
         ticket_parts["event_name"] = concat_v(
@@ -625,7 +631,7 @@ class TicketPartGenerator:
             ),
             TicketPartGenerator.generate_text_section(
                 width=DEFAULT_WIDTH,
-                text=event_data['event_name'],
+                text=event_data["event_name"],
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -648,7 +654,7 @@ class TicketPartGenerator:
                 ),
                 TicketPartGenerator.generate_text_section(
                     width=EVENT_GATE_LIMIT_WIDTH,
-                    text=event_data['gate_limit'],
+                    text=event_data["gate_limit"],
                     color=CONTENT_TEXT_COLOR,
                     font=CONTENT_FONT,
                     x_start_offset=DEFAULT_MARGIN,
@@ -673,7 +679,7 @@ class TicketPartGenerator:
             ),
             TicketPartGenerator.generate_text_section(
                 width=EVENT_DATE_WIDTH,
-                text=event_data['event_date'],
+                text=event_data["event_date"],
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -695,7 +701,7 @@ class TicketPartGenerator:
             ),
             TicketPartGenerator.generate_text_section(
                 width=DEFAULT_WIDTH,
-                text=event_data['event_location'],
+                text=event_data["event_location"],
                 color=CONTENT_TEXT_COLOR,
                 font=CONTENT_FONT,
                 x_start_offset=DEFAULT_MARGIN,
@@ -779,7 +785,9 @@ class TicketPartGenerator:
 
         # Top banner and event name
         ticket_img = concat_v(
-            ticket_parts["top_banner"], ticket_parts["event_name"], SPACE_AFTER_TOP_BANNER
+            ticket_parts["top_banner"],
+            ticket_parts["event_name"],
+            SPACE_AFTER_TOP_BANNER,
         )
 
         # Gate limit and event date

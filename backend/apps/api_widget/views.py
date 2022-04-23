@@ -1,23 +1,23 @@
-from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView, CreateAPIView
+from django.http import Http404
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from apps.root.models import Signature, Team, Ticket, TicketGate, TokenGate
-from django.http import Http404
-from apps.gates import (
-    Ticketing,
-    Blockchain
-)
+
+from apps.gates import Blockchain
+from apps.root.models import Signature, TokenGate
+
 from .serializers import (
-    TokenGatePolymorphicSerializer,
+    BlockchainGrantAccessInput,
     BlockchainRequestAccessInput,
-    BlockchainGrantAccessInput
+    TokenGatePolymorphicSerializer,
 )
+
 
 class TokenGateRetrieve(RetrieveAPIView):
     """
     RetrieveAPIView for retrieving tokengate by `public_id`
     """
+
     lookup_field = "public_id"
     queryset = TokenGate.objects.all()
     serializer_class = TokenGatePolymorphicSerializer
@@ -35,9 +35,10 @@ class TokenGateRequestAccess(RetrieveAPIView):
         - Empty request (aside from path / query params)
         - Response includes `Signature`
     """
+
     lookup_field = "public_id"
     queryset = TokenGate.objects.all()
-    signature = None # related signature model
+    signature = None  # related signature model
     tokengate = None
 
     def blockchain(self, request, *args, **kwargs):
@@ -48,21 +49,23 @@ class TokenGateRequestAccess(RetrieveAPIView):
         # Generate Signature (to be signed by client)
         self.signature = Signature.objects.create(
             tokengate=super().get_object(),
-            wallet_address=serialized.data.get("address")
+            wallet_address=serialized.data.get("address"),
         )
 
         # Get Web3 checkout options (available assets per requirement)
         checkout_options = Blockchain.Utilities.get_options_against_requirements(
             requirements=self.tokengate.requirements,
-            wallet_address=serialized.data.get("address")
+            wallet_address=serialized.data.get("address"),
         )
 
         # return web3 checkout options, signature message, and signature ID
-        return Response({
-            "signature_message":self.signature.signing_message,
-            "signature_id": self.signature.unique_code,
-            "checkout_options": checkout_options
-        })
+        return Response(
+            {
+                "signature_message": self.signature.signing_message,
+                "signature_id": self.signature.unique_code,
+                "checkout_options": checkout_options,
+            }
+        )
 
     def post(self, request, *args, **kwargs):
         """
@@ -76,7 +79,7 @@ class TokenGateRequestAccess(RetrieveAPIView):
         if not type:
             raise Http404
 
-        if type == 'blockchain':
+        if type == "blockchain":
             return self.blockchain(request, *args, **kwargs)
 
 
@@ -91,9 +94,10 @@ class TokenGateGrantAccess(RetrieveAPIView):
         - Request includes tokengate ID
         - Response includes `Signature` and redeemable assets (NFT only)
     """
+
     lookup_field = "public_id"
     queryset = TokenGate.objects.all()
-    signature = None # related signature model
+    signature = None  # related signature model
     tokengate = None
 
     def get_signature(self, pk):
@@ -119,25 +123,26 @@ class TokenGateGrantAccess(RetrieveAPIView):
             signature=signature,
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
-            tokengate_id=self.tokengate.public_id
+            tokengate_id=self.tokengate.public_id,
         )
         if not signature_success:
             return Response(signature_msg, status=401)
 
-        return Response('Signature OK, but Requirements validation not yet implemented')
+        return Response("Signature OK, but Requirements validation not yet implemented")
 
         # todo: validate requirements / checkout selection
         validated = self.tokengate.validate_choices_against_requirements(
-            wallet_address=serialized.data.get("address"),
-            selected_choices=[]
+            wallet_address=serialized.data.get("address"), selected_choices=[]
         )
 
         if not validated:
-            return Response('Your blockchain checkout selection could not be validated', status=403)
+            return Response(
+                "Your blockchain checkout selection could not be validated", status=403
+            )
 
-        return Response('OK')
+        return Response("OK")
 
-    def post(self, request,  *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         """
         POST calls blockchain or fiat, depending on 'type' query string
         """
@@ -149,7 +154,7 @@ class TokenGateGrantAccess(RetrieveAPIView):
         if not type:
             raise Http404
 
-        if type == 'blockchain':
+        if type == "blockchain":
             return self.blockchain(request, *args, **kwargs)
 
 
@@ -158,6 +163,7 @@ class TicketGateRequestAccess(TokenGateRequestAccess):
     Subclass TicketGateRequestAccess for requesting access
     Ticketgate specific
     """
+
     def post(self, request, *args, **kwargs):
         # TokenGateRequestAccess.post
         return super().post(request, *args, **kwargs)
@@ -168,6 +174,7 @@ class TicketGateGrantAccess(TokenGateGrantAccess):
     Subclass TokenGateGrantAccess for granting access
     Ticketgate specific
     """
+
     def post(self, request, *args, **kwargs):
         # TokenGateGrantAccess.post
         x = super().post(request, *args, **kwargs)

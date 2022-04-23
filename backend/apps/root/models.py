@@ -1,30 +1,25 @@
+import secrets
 import uuid
 from datetime import datetime, timedelta
 
-import requests
-import secrets
-from eth_account.messages import encode_defunct
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.db import models
 from invitations.models import Invitation
 from model_utils.models import TimeStampedModel
 from polymorphic.models import PolymorphicModel
 from pytz import utc
 
-from django.conf import settings
-from django.contrib.auth.models import AbstractUser, UserManager
-from django.contrib.sites.models import Site
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
-from django.db import models
-
 from .model_field_choices import TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
-from apps.gates import Ticketing, Blockchain
 
 
 class CustomUserManager(UserManager):
     """
     Prefetch members for user
     """
+
     def get(self, *args, **kwargs):
         return super().prefetch_related("membership_set").get(*args, **kwargs)
 
@@ -33,6 +28,7 @@ class CustomMembershipManager(models.Manager):
     """
     Prefetch teams for members
     """
+
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset(*args, **kwargs).prefetch_related("team")
 
@@ -41,6 +37,7 @@ class DBModel(TimeStampedModel):
     """
     Abstract base model that provides useful timestamps.
     """
+
     class Meta:
         abstract = True
 
@@ -49,6 +46,7 @@ class User(AbstractUser):
     """
     Default custom user model for backend.
     """
+
     objects = CustomUserManager()
 
 
@@ -56,6 +54,7 @@ class Team(DBModel):
     """
     Team manager for software plans && token gates
     """
+
     # base info
     name = models.CharField(max_length=255)
     image = models.ImageField(
@@ -143,6 +142,7 @@ class TokenGate(DBModel, PolymorphicModel):
     Please note, this model should NOT be abstract so that other tables are
     able reference this table directly using foreign keys.
     """
+
     public_id = models.UUIDField(
         max_length=64, default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
@@ -172,10 +172,12 @@ class TokenGate(DBModel, PolymorphicModel):
         """
         return self.title
 
+
 class Signature(DBModel):
     """
     Stores details used to verify wallets.
     """
+
     def set_expires():
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
@@ -218,6 +220,7 @@ class TicketGate(TokenGate):
     """
     Stores a Ticket type token gate.
     """
+
     def set_scanner_code():
         return secrets.token_urlsafe(256)
 
@@ -236,6 +239,7 @@ class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticket token gates.
     """
+
     def set_embed_code():
         return secrets.token_urlsafe(256)
 

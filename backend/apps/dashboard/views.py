@@ -1,10 +1,5 @@
 import json
 
-from invitations.views import AcceptInvite
-from apps.root.forms import CustomInviteForm, TeamForm, TicketGateForm
-from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
-from apps.root.models import Membership, Team, Ticket, TicketGate
-
 from django.conf import settings
 from django.contrib import auth, messages
 from django.shortcuts import redirect, reverse
@@ -14,6 +9,11 @@ from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
+from invitations.views import AcceptInvite
+
+from apps.root.forms import CustomInviteForm, TeamForm, TicketGateForm
+from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
+from apps.root.models import Membership, Team, Ticket, TicketGate
 
 from .permissions import team_has_permissions
 

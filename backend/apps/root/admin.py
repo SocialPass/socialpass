@@ -1,13 +1,7 @@
-from urllib.parse import unquote
-
-from pytz import timezone as pytz_timezone
-
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from django.utils import timezone
 
-from .forms import TimeZoneForm
 from .models import Membership, Signature, Team, Ticket, TicketGate, TokenGate
 
 User = get_user_model()
@@ -66,9 +60,10 @@ class TicketGateAdmin(admin.ModelAdmin):
         "team",
         "location",
         "date",
-        "timezone"
+        "timezone",
     )
     search_fields = ("title", "user__username", "team__name", "location")
+
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):

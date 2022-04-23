@@ -329,7 +329,6 @@ MEDIA_URL = f"https://{AWS_LOCATION}/media/"
 AWS_TICKET_DIRECTORY = env("DJANGO_AWS_TICKET_DIRECTORY")
 
 
-
 # Your stuff...
 # ------------------------------------------------------------------------------
 # Django Invitations
@@ -339,4 +338,3 @@ INVITATIONS_INVITATION_ONLY = True
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
-

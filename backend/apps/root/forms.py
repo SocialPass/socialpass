@@ -1,8 +1,8 @@
 import pytz
-from invitations.forms import InvitationAdminAddForm, InviteForm
-from .models import Invite, Team, TicketGate
-
 from django import forms
+from invitations.forms import InvitationAdminAddForm, InviteForm
+
+from .models import Invite, Team, TicketGate
 
 
 class TimeZoneForm(forms.Form):

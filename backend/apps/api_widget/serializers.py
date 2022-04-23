@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
-from apps.root.models import Signature, Team, Ticket, TicketGate
+
+from apps.root.models import Signature, Team, TicketGate
 
 
 #
@@ -17,24 +18,27 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class TicketGateSerializer(serializers.ModelSerializer):
-        """
-        Serializes Ticket token gates
-        """
-        team = TeamSerializer()
+    """
+    Serializes Ticket token gates
+    """
 
-        class Meta:
-            model = TicketGate
-            fields = [
-                "team",
-                "title",
-                "general_type",
-                "description",
-                "requirements",
-                "limit_per_person",
-                "date",
-                "location",
-                "capacity",
-            ]
+    team = TeamSerializer()
+
+    class Meta:
+        model = TicketGate
+        fields = [
+            "team",
+            "title",
+            "general_type",
+            "description",
+            "requirements",
+            "limit_per_person",
+            "date",
+            "location",
+            "capacity",
+        ]
+
+
 #
 # TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
 #
@@ -43,6 +47,7 @@ class TokenGatePolymorphicSerializer(PolymorphicSerializer):
     Polymorphic serializer
     Switches serializer on content type
     """
+
     model_serializer_mapping = {
         TicketGate: TicketGateSerializer,
     }
@@ -57,7 +62,9 @@ class BlockchainRequestAccessInput(serializers.Serializer):
     - Signature model to be signed
     - Redeemable assets (if applicable)
     """
+
     address = serializers.CharField()
+
 
 class BlockchainRequestAccessOutput(serializers.ModelSerializer):
     """
@@ -77,6 +84,7 @@ class BlockchainGrantAccessInput(serializers.Serializer):
     - Signed message (Signature model)
     - Signature id
     """
+
     address = serializers.CharField()
     signed_message = serializers.CharField()
     signature_id = serializers.CharField()

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import requests
 from eth_account.messages import encode_defunct
@@ -22,12 +22,7 @@ class Requirement(BaseModel):
 
 
 class SelectedOption(BaseModel):
-    blockchain: str = "EVM"
-    chain_id: Optional[int] = 1
-    asset_type: Optional[str]
-    asset_address: Optional[str]
-    token_id: Optional[List[int]]
-
+    pass
 
 #
 # Public Utilities class
@@ -65,7 +60,7 @@ class Utilities:
 
         return True, "OK"
 
-    def get_options_against_requirements(
+    def fetch_options_against_requirements(
         wallet_address: str, requirements: List[Requirement]
     ):
         """
@@ -75,7 +70,6 @@ class Utilities:
         # loop over requirements
         for requirement in requirements:
             # fungible
-            print(requirement)
             if requirement["asset_type"] == "ERC20":
                 print("fungible")
                 options.append(
@@ -111,11 +105,10 @@ class Utilities:
     def validate_options_against_requirements(
         wallet_addres: str,
         limit_per_person: int,
-        selected_options: List[SelectedOption],
-        requirements: List[Requirement],
+        options: List[Union[Requirement, SelectedOption]]
     ):
         """
-        Validate list of selected options against selected requirements, each augmented with available asset options
+        Validate options against given requirements
         """
         return "Not yet implemented"
 

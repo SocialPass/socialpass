@@ -49,7 +49,7 @@ class TokenGateRequestAccess(RetrieveAPIView):
         )
 
         # Get Web3 checkout options (available assets per requirement)
-        checkout_options = Blockchain.Utilities.get_options_against_requirements(
+        checkout_options = Blockchain.Utilities.fetch_options_against_requirements(
             requirements=self.tokengate.requirements,
             wallet_address=serialized.data.get("address"),
         )

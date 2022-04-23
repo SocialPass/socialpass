@@ -14,7 +14,7 @@ backend-setup: ## Install backend requirements
 	pip3 install -r backend/config/requirements/local.txt; )
 
 backend-run: ## Start backend server
-	(source venv/bin/activate; python3 backend/manage.py runserver_plus)
+	(source venv/bin/activate; python3 backend/manage.py runserver)
 
 backend-migration: ## Create backend migrations
 	(source venv/bin/activate; python3 backend/manage.py makemigrations)

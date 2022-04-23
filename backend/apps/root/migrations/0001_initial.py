@@ -506,39 +506,6 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.CreateModel(
-            name="Invite",
-            fields=[
-                (
-                    "invitation_ptr",
-                    models.OneToOneField(
-                        auto_created=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        parent_link=True,
-                        primary_key=True,
-                        serialize=False,
-                        to="invitations.invitation",
-                    ),
-                ),
-                (
-                    "archived_email",
-                    models.EmailField(blank=True, max_length=254, null=True),
-                ),
-                (
-                    "team",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="root.team",
-                    ),
-                ),
-            ],
-            options={
-                "abstract": False,
-            },
-            bases=("invitations.invitation",),
-        ),
-        migrations.CreateModel(
             name="Ticket",
             fields=[
                 (

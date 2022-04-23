@@ -6,11 +6,7 @@ from rest_framework.response import Response
 from apps.gates import Blockchain
 from apps.root.models import Signature, TokenGate
 
-from .serializers import (
-    BlockchainGrantAccessInput,
-    BlockchainRequestAccessInput,
-    TokenGatePolymorphicSerializer,
-)
+from .serializers import BlockchainGrantAccessInput, BlockchainRequestAccessInput, TokenGatePolymorphicSerializer
 
 
 class TokenGateRetrieve(RetrieveAPIView):

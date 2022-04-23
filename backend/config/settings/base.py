@@ -79,11 +79,11 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "corsheaders",
     "crispy_forms",
     "crispy_bootstrap5",
     "rest_framework",
     "rest_framework.authtoken",
-    "invitations",
     "polymorphic",
 ]
 
@@ -138,9 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -275,13 +275,6 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 15,
 }
 
-# django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_ALLOWED_ORIGINS = env.list(
-    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
-)
-# CORS_URLS_REGEX = r"^/api/.*$"
-
-
 # STORAGES
 # ------------------------------------------------------------------------------
 # https://django-storages.readthedocs.io/en/latest/#installation
@@ -328,12 +321,8 @@ MEDIA_URL = f"https://{AWS_LOCATION}/media/"
 AWS_TICKET_DIRECTORY = env("DJANGO_AWS_TICKET_DIRECTORY")
 
 
-# Your stuff...
-# ------------------------------------------------------------------------------
-# Django Invitations
-INVITATIONS_INVITATION_MODEL = "root.Invite"
-ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
-INVITATIONS_INVITATION_ONLY = True
-INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
-INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
-INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
+# django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
+CORS_ALLOWED_ORIGINS = env.list(
+    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
+)
+CORS_URLS_REGEX = r"^/api/.*$"

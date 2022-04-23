@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
-from invitations.models import Invitation
 from model_utils.models import TimeStampedModel
 from polymorphic.models import PolymorphicModel
 from pytz import utc
@@ -95,36 +94,6 @@ class Membership(DBModel):
 
     class Meta:
         unique_together = ("team", "user")
-
-    def __str__(self):
-        """
-        return string representation of model
-        """
-        return f"{self.team.name}-{self.user.email}"
-
-
-class InvitationAbstract(Invitation):
-    class Meta:
-        abstract = True
-
-
-class Invite(InvitationAbstract):
-    """
-    Custom invite model inherited from beekeper invtations
-
-    Includes team on create
-    """
-
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
-    archived_email = models.EmailField(blank=True, null=True)
-
-    def send_invitation(self, request, **kwargs):
-        """
-        custom send_invitation method for adding team to kwargs
-        """
-        # set custom kwargs for template
-        kwargs = {"team": self.team}
-        return super(Invite, self).send_invitation(request, **kwargs)
 
     def __str__(self):
         """

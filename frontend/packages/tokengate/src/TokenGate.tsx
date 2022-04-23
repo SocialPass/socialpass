@@ -4,7 +4,6 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import { MoralisProvider } from "react-moralis";
 import { createBrowserHistory } from 'history'
 import { StyledContainer } from './components';
 import { TokenGateProvider } from './context';
@@ -13,12 +12,9 @@ import Web3ProviderWrapper from './web3/wrapper';
 import {
 	Init,
 	TicketGate,
-} from './pages';
-import {
 	Web3ConnectWallet,
-	Web3CheckoutSelection,
-	Web3CheckoutConfirmation
-} from './pages/Web3Checkout/';
+	Web3CheckoutConfirmation,
+} from './pages';
 require<any>('./index.css');
 
 
@@ -44,12 +40,9 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 
 						<Routes>
 							<Route index element={<Init />} />
-
 							<Route path="/gate/ticket" element={<TicketGate />} />
-
 							<Route path="/checkout/web3/connect" element={<Web3ConnectWallet />} />
-							<Route path="/checkout/web3/select" element={<Web3CheckoutSelection />} />
-							<Route path="/checkout/web3/confirm" element={<Web3CheckoutConfirmation />} />
+							<Route path="/checkout/web3/checkout" element={<Web3CheckoutConfirmation/>} />
 						</Routes>
 
 					</StyledContainer>

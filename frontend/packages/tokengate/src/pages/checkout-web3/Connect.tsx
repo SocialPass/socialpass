@@ -13,7 +13,7 @@ export const Web3ConnectWallet = () => {
 
 	useEffect(() => {
 		if (accountData?.address){
-			navigate('/checkout/web3/select');
+			navigate('/checkout/web3/checkout');
 		}
 	}, [accountData?.address])
 
@@ -38,5 +38,5 @@ export const Web3ConnectWallet = () => {
 		)
 	}
 
-	return <Loading/>
+	return null;
 }

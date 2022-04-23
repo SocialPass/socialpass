@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
-import { BaseGate } from '../components';
-import { TokenGateContext } from '../context';
+import { BaseGate } from '../../components';
+import { TokenGateContext } from '../../context';
 
 // TicketGate Component
 export const TicketGate = (): JSX.Element => {

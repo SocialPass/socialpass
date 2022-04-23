@@ -3,3 +3,4 @@ export { Loading } from './Loading';
 export { StyledContainer } from './StyledContainer';
 export { BaseGate } from './BaseGate';
 export { Web3ConnectorImage } from './Web3ConnectorImage';
+export { Web3CheckoutSelection } from './Web3CheckoutSelection';

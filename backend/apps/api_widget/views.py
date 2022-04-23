@@ -10,7 +10,6 @@ from .serializers import (
     BlockchainGrantAccessInput
 )
 
-
 class TokenGateRetrieve(RetrieveAPIView):
     """
     RetrieveAPIView for retrieving tokengate by `public_id`
@@ -21,8 +20,10 @@ class TokenGateRetrieve(RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-class TokenGateRequestAccess(APIView):
+class TokenGateRequestAccess(RetrieveAPIView):
     """
+    Base of RetrieveAPIView for fetching associated Tokengate
+
     View requests access into tokengate.
     Can either be type "BLOCKCHAIN" or type "FIAT"
 
@@ -30,15 +31,9 @@ class TokenGateRequestAccess(APIView):
         - Empty request (aside from path / query params)
         - Response includes `Signature`
     """
+    lookup_field = "public_id"
+    queryset = TokenGate.objects.all()
     signature = None # related signature model
-    tokengate = None # related tokengate model
-
-    def get_object(self):
-        # use .get if you are really sure it can only be one shopping cart per user
-        try:
-            self.tokengate = TokenGate.objects.get(public_id=self.kwargs['public_id'])
-        except TokenGate.DoesNotExist:
-            raise Http404
 
     def blockchain(self, request, *args, **kwargs):
         # Serialize data
@@ -46,7 +41,10 @@ class TokenGateRequestAccess(APIView):
         serialized.is_valid(raise_exception=True)
 
         # Generate Signature (to be signed by client)
-        self.signature = Signature.objects.create(tokengate=self.tokengate, wallet_address=serialized.data.get("address"))
+        self.signature = Signature.objects.create(
+            tokengate=super().get_object(),
+            wallet_address=serialized.data.get("address")
+        )
 
         # Get Web3 checkout options (available assets per requirement)
         checkout_options = self.tokengate.fetch_options_against_requirements(
@@ -65,7 +63,7 @@ class TokenGateRequestAccess(APIView):
         POST calls blockchain or fiat, depending on 'type' query string
         """
         # get tokengate
-        self.get_object()
+        self.tokengate = self.get_object()
 
         # check type
         type = request.query_params.get("type")
@@ -76,8 +74,10 @@ class TokenGateRequestAccess(APIView):
             return self.blockchain(request, *args, **kwargs)
 
 
-class TokenGateGrantAccess(APIView):
+class TokenGateGrantAccess(RetrieveAPIView):
     """
+    Base of RetrieveAPIView for fetching associated Tokengate
+
     View grants access into tokengate.
     Can either be type "BLOCKCHAIN" or type "FIAT"
 
@@ -85,12 +85,6 @@ class TokenGateGrantAccess(APIView):
         - Request includes tokengate ID
         - Response includes `Signature` and redeemable assets (NFT only)
     """
-    def get_object(self):
-        # use .get if you are really sure it can only be one shopping cart per user
-        try:
-            self.tokengate = TokenGate.objects.get(public_id=self.kwargs['public_id'])
-        except TokenGate.DoesNotExist:
-            raise Http404
 
     def get_signature(self, pk):
         """
@@ -120,16 +114,9 @@ class TokenGateGrantAccess(APIView):
             return Response(sig_msg, status=sig_code)
 
         # todo: validate requirements / checkout selection
-        # todo
-        testdata = [{
-            'blockchain': "EVM",
-            'chain_id': 4,
-            'asset_type': "ERC721",
-            'asset_address': '0x363472d6Becb3254a7F804A5447E0848c3E69673'
-        }]
         validated = self.tokengate.validate_choices_against_requirements(
             wallet_address=serialized.data.get("address"),
-            selected_choices=testdata
+            selected_choices=[]
         )
 
         if not validated:
@@ -142,7 +129,7 @@ class TokenGateGrantAccess(APIView):
         POST calls blockchain or fiat, depending on 'type' query string
         """
         # get tokengate
-        self.get_object()
+        self.tokengate = self.get_object()
 
         # handle type
         type = self.request.query_params.get("type")

@@ -15,54 +15,29 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = ["name", "image"]
 
-class TicketSerializer(serializers.ModelSerializer):
-    """
-    Serializes Ticket.
-    """
 
-    tokengate = serializers.PrimaryKeyRelatedField(
-        queryset=TicketGate.objects.all(), write_only=True
-    )
-    signature = serializers.PrimaryKeyRelatedField(
-        queryset=Signature.objects.all(), write_only=True
-    )
+class TicketGateSerializer(serializers.ModelSerializer):
+        """
+        Serializes Ticket token gates
+        """
+        team = TeamSerializer()
 
-    class Meta:
-        model = Ticket
-        fields = [
-            "wallet_address",
-            "token_id",
-            "temporary_download_url",
-            "tokengate",
-            "signature",
-        ]
-
-
-
+        class Meta:
+            model = TicketGate
+            fields = [
+                "team",
+                "title",
+                "general_type",
+                "description",
+                "requirements",
+                "limit_per_person",
+                "date",
+                "location",
+                "capacity",
+            ]
 #
 # TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
 #
-class TicketGateSerializer(serializers.ModelSerializer):
-    """
-    Serializes Ticket token gates
-    """
-    team = TeamSerializer()
-
-    class Meta:
-        model = TicketGate
-        fields = [
-            "team",
-            "title",
-            "general_type",
-            "description",
-            "requirements",
-            "limit_per_person",
-            "date",
-            "location",
-            "capacity",
-        ]
-
-
 class TokenGatePolymorphicSerializer(PolymorphicSerializer):
     """
     Polymorphic serializer
@@ -72,6 +47,10 @@ class TokenGatePolymorphicSerializer(PolymorphicSerializer):
         TicketGate: TicketGateSerializer,
     }
 
+
+#
+# CHECKOUT - WEB3 ///////////////////////////////////////////////////////////////////////////////
+#
 class BlockchainRequestAccessInput(serializers.Serializer):
     """
     Serializes data for TokenGateRequestBlockchainAccess input
@@ -102,17 +81,3 @@ class BlockchainGrantAccessInput(serializers.Serializer):
     signed_message = serializers.CharField()
     signature_id = serializers.CharField()
     access_data = serializers.JSONField(required=False)
-
-
-class FiatGrantAccessSerializer(serializers.Serializer):
-    """
-    Serializes data for TokenGateRequestFiatAccess
-    """
-    pass
-
-
-class FiatRequestAccessSerializer(serializers.Serializer):
-    """
-    Serializes data for TokenGateRequestFiatAccess
-    """
-    pass

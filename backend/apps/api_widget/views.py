@@ -4,6 +4,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.root.models import Signature, Team, Ticket, TicketGate, TokenGate
 from django.http import Http404
+from apps.gates import (
+    Ticketing,
+    Blockchain
+)
 from .serializers import (
     TokenGatePolymorphicSerializer,
     BlockchainRequestAccessInput,
@@ -48,7 +52,8 @@ class TokenGateRequestAccess(RetrieveAPIView):
         )
 
         # Get Web3 checkout options (available assets per requirement)
-        checkout_options = self.tokengate.fetch_options_against_requirements(
+        checkout_options = Blockchain.Utilities.get_options_against_requirements(
+            requirements=self.tokengate.requirements,
             wallet_address=serialized.data.get("address")
         )
 
@@ -110,13 +115,16 @@ class TokenGateGrantAccess(RetrieveAPIView):
         signature = self.get_signature(serialized.data.get("signature_id"))
 
         # Validate signature
-        sig_success, sig_code, sig_msg = signature.validate(
+        signature_success, signature_msg = Blockchain.Utilities.validate_signature(
+            signature=signature,
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
             tokengate_id=self.tokengate.public_id
         )
-        if not sig_success:
-            return Response(sig_msg, status=sig_code)
+        if not signature_success:
+            return Response(signature_msg, status=401)
+
+        return Response('Signature OK, but Requirements validation not yet implemented')
 
         # todo: validate requirements / checkout selection
         validated = self.tokengate.validate_choices_against_requirements(

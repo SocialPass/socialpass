@@ -33,6 +33,34 @@ s3 = boto3.client(
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
 )
 
+# public utilities class
+class Utilities():
+    def generate_and_store_ticket(
+        event_data: EventData,
+        filename: str,
+        embed: str,
+        top_banner_text: Optional[str] = "SocialPass Ticket",
+        scene_img_source: Optional[str] = None,
+    ):
+        """
+        Use the request to generate a ticket image and save.
+        Generating & storing ticket are passed into a background task
+        """
+        # Generate ticket image from request data
+        ticket_img = TicketPartGenerator.generate_ticket(
+            event_data=event_data,
+            embed=embed,
+            scene_img_source=scene_img_source,
+            top_banner_text=top_banner_text,
+        )
+
+        # Store ticket image into bucket
+        response = TicketPartGenerator.store_ticket(ticket_img=ticket_img, filename=filename)
+
+        return (ticket_img, response)
+
+
+
 theme_list = [
     # Simple light themes
     {
@@ -847,29 +875,3 @@ class TicketPartGenerator:
         )
 
         return response
-
-class Utilities():
-    def generate_and_store_ticket(
-        event_data: EventData,
-        filename: str,
-        embed: str,
-        top_banner_text: Optional[str] = "SocialPass Ticket",
-        scene_img_source: Optional[str] = None,
-    ):
-        """
-        Use the request to generate a ticket image and save.
-        Generating & storing ticket are passed into a background task
-        """
-        # Generate ticket image from request data
-        ticket_img = TicketPartGenerator.generate_ticket(
-            event_data=event_data,
-            embed=embed,
-            scene_img_source=scene_img_source,
-            top_banner_text=top_banner_text,
-        )
-
-        # Store ticket image into bucket
-        response = TicketPartGenerator.store_ticket(ticket_img=ticket_img, filename=filename)
-
-        return (ticket_img, response)
-

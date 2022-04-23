@@ -8,7 +8,6 @@ from invitations.models import Invitation
 from model_utils.models import TimeStampedModel
 from polymorphic.models import PolymorphicModel
 from pytz import utc
-from web3.auto import w3
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -177,6 +176,8 @@ class Signature(DBModel):
     """
     Stores details used to verify wallets.
     """
+    def set_expires():
+        return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
     unique_code = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tokengate = models.ForeignKey(
@@ -185,7 +186,7 @@ class Signature(DBModel):
     signing_message = models.CharField(max_length=1024)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
-    expires = models.DateTimeField()
+    expires = models.DateTimeField(default=set_expires)
     version = models.IntegerField(default=1)
 
     def __str__(self):
@@ -193,6 +194,24 @@ class Signature(DBModel):
         return string representation of model
         """
         return str(self.unique_code)
+
+    def save(self, *args, **kwargs):
+        """
+        override save to set signing message (aggregate from other fields)
+        """
+        if not self.signing_message:
+            signing_message_obj = {
+                "You are accessing": self.tokengate.title,
+                "Hosted by": self.tokengate.team.name,
+                "One-Time Code": self.unique_code,
+                "Valid until": self.expires.ctime(),
+                "Version": self.version,
+            }
+            signing_message = "\n".join(
+                ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()
+            )
+            self.signing_message = signing_message
+        super().save(*args, **kwargs)
 
 
 class TicketGate(TokenGate):

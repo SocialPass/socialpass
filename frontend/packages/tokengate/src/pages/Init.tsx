@@ -13,7 +13,9 @@ export const Init = () => {
 		(async function() {
 			// check for ID string on start
 			if (typeof id === 'string' && id.length > 0){
-				const response = await TokenGateRetrieve.call(id);
+				const response = await TokenGateRetrieve.call({
+					"public_id":id
+				});
 				if (response && response.httpStatus){
 					if (response.httpStatus === 200){
 						setRetrieveJson(response);

@@ -37,7 +37,12 @@ export const Web3CheckoutConfirmation = () => {
 			let response: any;
 			// api call
 			if (accountData && accountData.address){
-				response = await TokenGateRequestAccess.call(id, retrieveJson.general_type, 'blockchain', accountData.address)
+				response = await TokenGateRequestAccess.call({
+					"public_id":id,
+					"gate_type":retrieveJson.general_type,
+					"access_type":'blockchain',
+					"address":accountData.address
+				});
 				if (response && response.httpStatus){
 					if (response.httpStatus === 200){
 						setRequestAccessJson(response);
@@ -49,24 +54,25 @@ export const Web3CheckoutConfirmation = () => {
 		})();
 	},[accountData?.address]);
 
+
 	// checkout handler
 	// handles signing message and posting related data to API
 	useEffect(() => {
 		(async function() {
 			if (signData){
 			let response;
-				response = await TokenGateGrantAccess.call(
-					id,
-					retrieveJson.general_type,
-					'blockchain',
-					accountData.address,
-					signData,
-					requestAccessJson.signature_id,
-					'access_data'
-				)
+				response = await TokenGateGrantAccess.call({
+					'gate_type':retrieveJson.general_type,
+					'public_id':id,
+					'access_type':'blockchain',
+					'address':accountData.address,
+					'signed_message':signData,
+					'signature_id':requestAccessJson.signature_id,
+					'access_data':'access_data',
+				})
 				if (response.httpStatus === 200){
 					setGrantAccessJson(response);
-					//naviagate(success)
+					//navigate(success)
 				} else {
 					setGrantAccessError(response);
 					//navigate(error)
@@ -74,7 +80,6 @@ export const Web3CheckoutConfirmation = () => {
 			}
 		})();
 	},[signData]);
-
 
 	// disconnect handler
 	// useEffect hook to navigate back on wallet disconnect

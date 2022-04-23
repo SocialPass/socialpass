@@ -2,7 +2,7 @@
 // Used for retrieving any type of tokengate via .call()
 export class TokenGateRetrieve {
 	// wrapper for backend - TokenGateRetrieve
-	static call = async (public_id:string) => {
+	static call = async ({public_id}) => {
 		// set url
 		const url = `${process.env.REACT_APP_API_URL}/api/tokengates/retrieve/${public_id}/`
 
@@ -37,11 +37,15 @@ export class TokenGateRetrieve {
 // TokenGateRequestAccess class
 // Used for requesting access to any tokengate
 export class TokenGateRequestAccess {
-	static call = async(public_id:string, gate_type: string, access_type:string, address:string) => {
+	static call = async({gate_type, public_id, access_type, address}) => {
 		let response: any;
 		switch(gate_type){
 			case('TICKET'):
-				response = await TicketGateRequestAccess.call(public_id, access_type, address);
+				response = await TicketGateRequestAccess.call({
+					'public_id':public_id,
+					'access_type':access_type,
+					'address':address
+				});
 				break;
 			default:
 				response = null;
@@ -54,9 +58,9 @@ export class TokenGateRequestAccess {
 // Used for requesting access to a TicketGate
 export class TicketGateRequestAccess {
 	// wrapper for backend - TicketGateRequestAccess
-	static call = async (public_id:string, type:string, address:string) => {
+	static call = async ({public_id, access_type, address}) => {
 		// set url
-		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/request-access/${public_id}?type=${type}`
+		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/request-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({
@@ -98,26 +102,18 @@ export class TicketGateRequestAccess {
 // TokenGateRequestAccess class
 // Used for requesting access to any tokengate
 export class TokenGateGrantAccess {
-	static call = async(
-		public_id:string,
-		gate_type:string,
-		type:string,
-		address:string,
-		signed_message:string,
-		signature_id:string,
-		access_data:any
-	) => {
+	static call = async({gate_type, public_id, access_type, address, signed_message, signature_id, access_data}) => {
 		let response: any;
 		switch(gate_type){
 			case('TICKET'):
-				response = await TicketGateGrantAccess.call(
-					public_id=public_id,
-					type=type,
-					address=address,
-					signed_message=signed_message,
-					signature_id=signature_id,
-					access_data=access_data,
-				);
+				response = await TicketGateGrantAccess.call({
+					'public_id':public_id,
+					'access_type':access_type,
+					'address':address,
+					'signed_message':signed_message,
+					'signature_id':signature_id,
+					'access_data':access_data,
+				});
 				break;
 			default:
 				response = null;
@@ -130,16 +126,9 @@ export class TokenGateGrantAccess {
 // Used for granting access to a TicketGate
 export class TicketGateGrantAccess {
 	// wrapper for backend - TicketGateRequestAccess
-	static call = async (
-		public_id:string,
-		type:string,
-		address:string,
-		signed_message:string,
-		signature_id:string,
-		access_data:any
-	) => {
+	static call = async ({public_id, access_type, address, signed_message, signature_id, access_data}) => {
 		// setup url
-		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/grant-access/${public_id}?type=${type}`
+		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/grant-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({

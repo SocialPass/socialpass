@@ -68,7 +68,7 @@ export const Web3CheckoutConfirmation = () => {
 					'address':accountData.address,
 					'signed_message':signData,
 					'signature_id':requestAccessJson.signature_id,
-					'access_data':'access_data',
+					'access_data':web3CheckoutSelection,
 				})
 				if (response.httpStatus === 200){
 					setGrantAccessJson(response);

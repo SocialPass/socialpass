@@ -124,17 +124,17 @@ class TokenGateGrantAccess(RetrieveAPIView):
         if not signature_success:
             return Response(signature_msg, status=401)
 
-        return Response("Signature OK, but Requirements validation not yet implemented")
-
-        # todo: validate requirements / checkout selection
-        validated = self.tokengate.validate_choices_against_requirements(
-            wallet_address=serialized.data.get("address"), selected_choices=[]
+        # validate_options_against_requirements
+        web3_validated_sucess, web3_validated_msg = \
+        Blockchain.Utilities.validate_options_against_requirements(
+            wallet_address=serialized.data.get("address"),
+            limit_per_person=self.tokengate.limit_per_person,
+            requirements=self.tokengate.requirements,
+            requirements_with_options=serialized.data.get("access_data")
         )
 
-        if not validated:
-            return Response(
-                "Your blockchain checkout selection could not be validated", status=403
-            )
+        if not web3_validated_sucess:
+            return Response(web3_validated_msg, status=403)
 
         return Response("OK")
 

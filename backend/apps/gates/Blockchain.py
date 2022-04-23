@@ -21,8 +21,13 @@ class Requirement(BaseModel):
     to_block: Optional[int]
 
 
-class SelectedOption(BaseModel):
-    pass
+class SelectedAsset(BaseModel):
+    asset_address: str #token_address
+    asset_type: str #contract_type
+    metadata: str #metadata
+    name: str #name
+    token_id: str #token_id
+    token_uri: str #token_uri
 
 #
 # Public Utilities class
@@ -66,13 +71,13 @@ class Utilities:
         """
         Return list of requirements, each augmented with available asset options
         """
-        options = []
+        requirements_with_options = []
         # loop over requirements
         for requirement in requirements:
             # fungible
             if requirement["asset_type"] == "ERC20":
                 print("fungible")
-                options.append(
+                requirements_with_options.append(
                     {
                         "requirement": requirement,
                         "options": moralis_get_fungible(
@@ -89,7 +94,7 @@ class Utilities:
                 or requirement["asset_type"] == "ERC1155"
             ):
                 print("nonfungible")
-                options.append(
+                requirements_with_options.append(
                     {
                         "requirement": requirement,
                         "options": moralis_get_nfts(
@@ -100,17 +105,44 @@ class Utilities:
                     }
                 )
 
-        return options
+        return requirements_with_options
 
     def validate_options_against_requirements(
-        wallet_addres: str,
+        wallet_address: str,
         limit_per_person: int,
-        options: List[Union[Requirement, SelectedOption]]
+        requirements: List[Requirement],
+        requirements_with_options: List[Union[Requirement, SelectedAsset]]
     ):
         """
-        Validate options against given requirements
+        Validate options against given options (union of requirement ++ selected asset
         """
-        return "Not yet implemented"
+        verified_options = []
+        if len(requirements_with_options) == 0:
+            return False, "no requirements_with_options provided"
+
+        for obj in requirements_with_options:
+            # check length vs limit_per_person
+            if len(requirements_with_options) > limit_per_person:
+                return False, "Option length exceeds gate limit"
+
+            # check obj.requirement exists in tokengate.requirements
+            if obj['requirement'] not in requirements:
+                return False, "Requirement x option mismatch"
+
+            # check obj.requirement data matches obj.option data (address, asset_type, chain_id)
+            if (obj['requirement']['asset_address'].upper() != obj['option']['token_address'].upper()):
+                return False, "Asset address mismatch"
+            if (obj['requirement']['asset_type'] != obj['option']['contract_type']):
+                return False, "Asset type mismatch"
+
+            # validate wallet_address against obj.option data
+            return(False, 'validate wallet_address against obj.option data - not yet implemented')
+
+            # all verified_options
+            # append to verified_options
+
+        # only return if all options succeed
+        return True, verified_options
 
 
 #
@@ -155,4 +187,9 @@ def moralis_get_nfts(chain_id: str, wallet_address: str, token_address: str):
         "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
     }
     r = requests.get(url, params=payload, headers=headers)
-    return r.json()
+    if r.status_code == 200:
+        json = r.json()
+        if json['total'] > 0:
+            return json['result']
+
+    return []

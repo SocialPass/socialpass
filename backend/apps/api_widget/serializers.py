@@ -88,4 +88,4 @@ class BlockchainGrantAccessInput(serializers.Serializer):
     address = serializers.CharField()
     signed_message = serializers.CharField()
     signature_id = serializers.CharField()
-    access_data = serializers.JSONField(required=False)
+    access_data = serializers.JSONField(required=False, default=[])

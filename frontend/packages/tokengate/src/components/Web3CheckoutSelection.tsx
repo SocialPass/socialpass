@@ -13,15 +13,15 @@ export const Web3CheckoutSelection = ({checkoutOptions, limit, web3CheckoutSelec
 
 	// available
 	return checkoutOptions.map(function(item, index){
-		if (item.options.result.length > 0){
+		if (item.options.length > 0){
 			return (
 				<div>
-					<h3>{item.options.result[0].name}</h3>
-					<div>{item.options.result[0].symbol}</div>
-					<small>{item.options.result[0].token_address}</small>
+					<h3>{item.options[0].name}</h3>
+					<div>{item.options[0].symbol}</div>
+					<small>{item.options[0].token_address}</small>
 					<div>
 						{
-							item.options.result.map((option, index) => {
+							item.options.map((option, index) => {
 								if (web3CheckoutSelection.length < limit){
 									return (
 										<button onClick={() => add_checkout_selection(item.requirement, option)}>

@@ -34,6 +34,7 @@ class TokenGateRequestAccess(RetrieveAPIView):
     lookup_field = "public_id"
     queryset = TokenGate.objects.all()
     signature = None # related signature model
+    tokengate = None
 
     def blockchain(self, request, *args, **kwargs):
         # Serialize data
@@ -85,6 +86,10 @@ class TokenGateGrantAccess(RetrieveAPIView):
         - Request includes tokengate ID
         - Response includes `Signature` and redeemable assets (NFT only)
     """
+    lookup_field = "public_id"
+    queryset = TokenGate.objects.all()
+    signature = None # related signature model
+    tokengate = None
 
     def get_signature(self, pk):
         """

@@ -26,7 +26,6 @@ class CustomUserManager(UserManager):
     """
     Prefetch members for user
     """
-
     def get(self, *args, **kwargs):
         return super().prefetch_related("membership_set").get(*args, **kwargs)
 
@@ -35,7 +34,6 @@ class CustomMembershipManager(models.Manager):
     """
     Prefetch teams for members
     """
-
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset(*args, **kwargs).prefetch_related("team")
 
@@ -44,7 +42,6 @@ class DBModel(TimeStampedModel):
     """
     Abstract base model that provides useful timestamps.
     """
-
     class Meta:
         abstract = True
 
@@ -53,7 +50,6 @@ class User(AbstractUser):
     """
     Default custom user model for backend.
     """
-
     objects = CustomUserManager()
 
 
@@ -61,7 +57,6 @@ class Team(DBModel):
     """
     Team manager for software plans && token gates
     """
-
     # base info
     name = models.CharField(max_length=255)
     image = models.ImageField(
@@ -73,8 +68,6 @@ class Team(DBModel):
         validators=[JSONSchemaValidator(limit_value=SOFTWARE_TYPES_SCHEMA)],
     )
     members = models.ManyToManyField(User, through="Membership")
-
-    # hosted page info
     subdomain = models.CharField(
         max_length=256,
         null=True,
@@ -87,29 +80,10 @@ class Team(DBModel):
     )
 
     def __str__(self):
+        """
+        return string representation of model
+        """
         return self.name
-
-    @staticmethod
-    def get_by_domain(domain):
-        # get subdomain
-        pieces = domain.split(".")
-        subdomain = ".".join(pieces[:-2])  # join all but primary domain
-
-        # check if multiple subdomains; currently not supported
-        if len(subdomain.split(".")) > 1:
-            return None
-
-        # compare against default site domain(s)
-        default_domain = Site.objects.get(id=settings.SITE_ID)
-        if domain in {default_domain.domain, "127.0.0.1:8000"}:
-            return None
-
-        # try to fetch related team
-        try:
-            team = Team.objects.get(subdomain=subdomain)
-            return team
-        except Exception:
-            return None
 
 
 class Membership(DBModel):
@@ -123,6 +97,12 @@ class Membership(DBModel):
 
     class Meta:
         unique_together = ("team", "user")
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"{self.team.name}-{self.user.email}"
 
 
 class InvitationAbstract(Invitation):
@@ -141,9 +121,18 @@ class Invite(InvitationAbstract):
     archived_email = models.EmailField(blank=True, null=True)
 
     def send_invitation(self, request, **kwargs):
+        """
+        custom send_invitation method for adding team to kwargs
+        """
         # set custom kwargs for template
         kwargs = {"team": self.team}
         return super(Invite, self).send_invitation(request, **kwargs)
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"{self.team.name}-{self.user.email}"
 
 
 class TokenGate(DBModel, PolymorphicModel):
@@ -179,29 +168,10 @@ class TokenGate(DBModel, PolymorphicModel):
     featured = models.BooleanField(default=False)
 
     def __str__(self):
+        """
+        return string representation of model
+        """
         return self.title
-
-    def validate_options_against_requirements(self, **kwargs):
-        """
-        calls Blockchain.Utilities.validate_requirements
-        returns list of validated choices
-        """
-        return Blockchain.Utilities.validate_options_against_requirements(
-            limit_per_person=self.limit_per_person,
-            requirements=self.requirements,
-            wallet_address=kwargs['wallet_address'],
-            selected_choices=kwargs['selected_choices']
-        )
-
-    def fetch_options_against_requirements(self, **kwargs):
-        """
-        fetches
-        """
-        return Blockchain.Utilities.get_options_against_requirements(
-            requirements=self.requirements,
-            wallet_address=kwargs['wallet_address'],
-        )
-
 
 class Signature(DBModel):
     """
@@ -219,58 +189,10 @@ class Signature(DBModel):
     version = models.IntegerField(default=1)
 
     def __str__(self):
+        """
+        return string representation of model
+        """
         return str(self.unique_code)
-
-    def populate(self):
-        expires = datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
-        signing_message_obj = {
-            "You are accessing": self.tokengate.title,
-            "Hosted by": self.tokengate.team.name,
-            "One-Time Code": self.unique_code,
-            "Valid until": expires.ctime(),
-            "Version": self.version,
-        }
-        signing_message = "\n".join(
-            ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()
-        )
-        self.expires = expires
-        self.signing_message = signing_message
-
-    def validate(self, signed_message="", address="", tokengate_id=""):
-        """
-        Reusable method to validate a given signature
-        """
-
-        # 401 section: User has not provided invalid authentication details
-        # check if already verified
-        if self.is_verified:
-            return False, 401, "Signature message already verified."
-
-        # check if expired
-        if self.expires < (datetime.utcnow().replace(tzinfo=utc)):
-            return False, 401, f"Signature request expired at {self.expires}"
-
-        # check for id mismatch
-        if str(self.tokengate.public_id) != str(tokengate_id):
-            return False, 401, "Signature x TokenGate ID mismatch."
-
-        # check if address matches recovered address
-        _msg = encode_defunct(text=self.signing_message)
-        _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
-        if _recovered != address:
-            return False, 401, "Signature x Address mismatch."
-
-        # before success, mark as verified, update address, and save
-        self.is_verified = True
-        self.wallet_address = _recovered
-        self.save()
-
-        return True, 200, "Success"
-
-    def save(self, *args, **kwargs):
-        if not self.expires or self.signing_message:
-            self.populate()
-        super().save(*args, **kwargs)
 
 
 class TicketGate(TokenGate):
@@ -316,84 +238,3 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Token Gate: {self.tokengate.title})"
-
-    def populate(self, **kwargs):
-        """
-        method to populate necessary ticketdata on creation
-        assumes .save() will be called after
-        """
-        # set signature
-        if not self.signature:
-            self.signature = kwargs["signature"]
-        # set image
-        if not self.image:
-            Ticketing.Utilities.generate_and_store_ticket(
-                event_data={
-                    "event_name": self.tokengate.title,
-                    "event_date": self.tokengate.date.strftime("%m/%d/%Y, %H:%M:%S"),
-                    "event_location": self.tokengate.location,
-                },
-                filename=self.filename,
-                embed=f"{self.embed_code}/{self.filename}",
-                top_banner_text="SocialPass Ticket",
-            )
-            self.image = f"tickets/{str(self.filename)}.png"
-        # always generate download url
-        self.set_ticket_download_url()
-
-    def set_ticket_download_url(self):
-        """
-        method sets ticket download url
-        assumes .save() will be called after
-        """
-        import boto3
-
-        # s3 client init
-        s3 = boto3.client(
-            "s3",
-            region_name="nyc3",
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-
-        # generate presigned url
-        self.temporary_download_url = s3.generate_presigned_url(
-            ClientMethod="get_object",
-            Params={
-                "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                "Key": f"media/tickets/{str(self.filename)}.png",
-            },
-            ExpiresIn=3600,
-        )
-
-    def generate_from_validated_passes(**kwargs):
-        """
-        Given a number of validated_passes, this method will generate a given number of tickets.
-        Accepts validate_passes as integer (fungible), or as list (non-fungible)
-        """
-        ticketdata = []
-        # validated_passes as amount of passes ()
-        if isinstance(kwargs["validated_passes"], int):
-            for id in range(kwargs["validated_passes"]):
-                ticket, created = Ticket.objects.get_or_create(
-                    wallet_address=kwargs["wallet_address"],
-                    tokengate=kwargs["tokengate"],
-                )
-                ticket.populate(**kwargs)
-                ticket.save()
-                ticketdata.append(ticket.__dict__)
-
-        # validated_passes as List of ID's
-        if isinstance(kwargs["validated_passes"], list):
-            for id in kwargs["validated_passes"]:
-                ticket, created = Ticket.objects.get_or_create(
-                    wallet_address=kwargs["wallet_address"],
-                    tokengate=kwargs["tokengate"],
-                    token_id=id,
-                )
-                ticket.populate(**kwargs)
-                ticket.save()
-                ticketdata.append(ticket.__dict__)
-
-        return ticketdata

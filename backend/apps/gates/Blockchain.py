@@ -10,7 +10,11 @@ from web3.auto import w3
 # MORALIS FUNCTIONS
 #
 def moralis_get_fungible(
-    chain_id="", wallet_address="", token_addresses=[], to_block=None
+    chain_id="",
+    wallet_address="",
+    token_addresses=[],
+    to_block=None,
+    required_amount=0
 ):
     """
     Gets token balances for a specific address
@@ -28,10 +32,22 @@ def moralis_get_fungible(
         "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
     }
     r = requests.get(url, params=payload, headers=headers)
-    return r.json()
+    if r.status_code == 200:
+        json = r.json()
+        if json['balance'] > required_amount:
+            return json
+
+    return []
 
 
-def moralis_get_nfts(chain_id="", wallet_address="", token_address=""):
+
+def moralis_get_nfts(
+    chain_id="",
+    wallet_address="",
+    token_address="",
+    token_ids=None,
+    required_amount=0
+):
     """
     Gets NFTs owned by the given address, at the given token_address
 
@@ -48,12 +64,28 @@ def moralis_get_nfts(chain_id="", wallet_address="", token_address=""):
         "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
     }
     r = requests.get(url, params=payload, headers=headers)
-    if r.status_code == 200:
-        json = r.json()
-        if json['total'] > 0:
-            return json['result']
+    if r.status_code != 200:
+        return []
 
-    return []
+    json = r.json()
+    if json['total'] == 0:
+        return []
+
+    data = []
+    for idx, token in enumerate(json['result']):
+        # check for required_amount
+        if int(token['amount']) < required_amount:
+            continue
+
+        # check for token_ids (if applicable)
+        if token_ids:
+            if int(token['token_id']) not in token_ids:
+                continue
+        # append matching data
+        data.append(token)
+
+    return data
+
 
 
 #
@@ -115,6 +147,7 @@ class Utilities:
                         chain_id=hex(requirement["chain_id"]),
                         wallet_address=wallet_address,
                         token_address=requirement["asset_address"],
+                        token_ids=requirement.get('token_id') # optional
                     )
                 })
 
@@ -130,30 +163,66 @@ class Utilities:
         """
         Validate options against given options (union of requirement ++ selected asset
         """
-        verified_options = []
+        validated_options = []
         if len(requirements_with_options) == 0:
             return False, "no requirements_with_options provided"
 
         for obj in requirements_with_options:
+            requirement = obj['requirement']
+            option = obj['option']
+
             # check length vs limit_per_person
             if len(requirements_with_options) > limit_per_person:
                 return False, "Option length exceeds gate limit"
 
             # check obj.requirement exists in tokengate.requirements
-            if obj['requirement'] not in requirements:
+            if requirement not in requirements:
                 return False, "Requirement x option mismatch"
 
             # check obj.requirement data matches obj.option data (address, asset_type, chain_id)
-            if (obj['requirement']['asset_address'].upper() != obj['option']['token_address'].upper()):
+            if (requirement['asset_address'].upper() != option['token_address'].upper()):
                 return False, "Asset address mismatch"
-            if (obj['requirement']['asset_type'] != obj['option']['contract_type']):
+            if (requirement['asset_type'] != option['contract_type']):
                 return False, "Asset type mismatch"
 
             # validate wallet_address against obj.option data
-            return(False, 'validate wallet_address against obj.option data - not yet implemented')
+            if requirement["asset_type"] == "ERC20":
+                data = moralis_get_fungible(
+                    wallet_address=wallet_address,
+                    chain_id=hex(requirement["chain_id"]),
+                    token_addresses=requirement["asset_address"],
+                    to_block=requirement["to_block"],
+                )
+                # check data exists
+                print('hello', data)
+                if not data:
+                    return False, "ERC20 token lookup not found"
+            if requirement["asset_type"] == "ERC721":
+                data = moralis_get_nfts(
+                    wallet_address=wallet_address,
+                    chain_id=hex(requirement["chain_id"]),
+                    token_address=requirement["asset_address"],
+                    token_ids=[int(option['token_id'])]
+                )
+                # check data exists
+                print('hello', data)
+                if not data:
+                    return False, "ERC721 NFT lookup not found"
+            if requirement["asset_type"] == "ERC1155":
+                data = moralis_get_nfts(
+                    wallet_address=wallet_address,
+                    chain_id=hex(requirement["chain_id"]),
+                    token_address=requirement["asset_address"],
+                    token_ids=[option['token_id']]
+                )
+                # check data exists
+                print('hello', data)
+                if not data:
+                    return False, "ERC1155 NFT lookup not found"
 
-            # all verified_options
-            # append to verified_options
+            # validation completed
+            # append to validated_options
+            validated_options.append(option)
 
         # only return if all options succeed
-        return True, verified_options
+        return True, validated_options

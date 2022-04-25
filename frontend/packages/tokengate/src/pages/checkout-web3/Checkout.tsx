@@ -98,7 +98,7 @@ export const Web3CheckoutConfirmation = () => {
 
 	if (requestAccessJson){
 		return (
-			<div className="row d-flex align-items-start flex-grow-1">
+			<div className="row d-flex align-items-center flex-grow-1">
 				<div className="col-md-6">
 					<h1>Checkout Options</h1>
 					<p>Select which assets you want to verify for access</p>

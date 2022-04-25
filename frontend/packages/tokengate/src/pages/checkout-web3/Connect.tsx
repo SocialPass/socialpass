@@ -18,7 +18,7 @@ export const Web3ConnectWallet = () => {
 
 	if (connectData){
 		return (
-			<div className="row d-flex align-items-start flex-grow-1">
+			<div className="row d-flex align-items-center flex-grow-1">
 				<div className="col-md-6">
 					<h1>Connect Your Wallet</h1>
 				</div>

@@ -11,23 +11,20 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 	const logoImage = require("../static/images/socialpass.svg");
 
 	return (
-		<div className="container">
-			<header>
+		<div className="container-fluid h-100 d-flex flex-column p-0">
+			<header style={{ backgroundImage: `url(${headerImage})`, minHeight: '150px', height: '27.9%'}}>
 				<TickerImage gateType={retrieveJson?.general_type}/>
-				<img src={headerImage} alt="image"/>
-				{retrieveJson &&
-					<div className="team-info">
-						<img className="team-header" src={retrieveJson?.team.image} alt="Team Image"/>
-						<h4>{retrieveJson?.team.name}</h4>
-					</div>
-				}
+				<div className="team-info">
+					<img src={retrieveJson?.team.image} alt="Team Image"/>
+					<h4>{retrieveJson?.team.name}</h4>
+				</div>
 			</header>
-			<div className="parent">
-				{children}
+			<div className="d-flex align-items-center flex-grow-1 px-5">
+			{children}
 			</div>
-			<footer className="footer">
+			<footer>
 				<img src={FAQImage} alt="image"/>
-				<small style={{display:'flex',alignItems:'center'}}>
+				<small>
 					Powered by &nbsp;
 					<img src={logoImage} alt="image"/>
 				</small>

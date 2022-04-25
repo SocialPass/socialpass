@@ -5,7 +5,7 @@ BASE HTML
 @font-face {
   font-family: 'rubik';
   src: local('rubik'),
-     url('./static/fonts/Rubik/Rubik-VariableFont_wght.ttf') format("truetype");
+   url('./static/fonts/Rubik/Rubik-VariableFont_wght.ttf') format("truetype");
 }
 
 html, body {
@@ -70,6 +70,7 @@ header {
   position:relative;
   max-height:288px;
   display:flex;
+  border-radius: 50px 50px 0 0;
 }
 
 footer {
@@ -79,6 +80,46 @@ footer {
   justify-content: space-between;
   margin: 2.25rem 2.25rem 1.5rem 2.25rem;
 }
+
+#root {
+  height:100%;
+}
+
+.container-fluid {
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
+  border-radius: 50px;
+  max-height:787px;
+  min-width:363px;
+}
+
+
+/*
+ELEMENTS
+*/
+.ticker {
+  position:absolute;
+  display:block;
+  max-width:44%;
+  top:0;
+  right:0;
+}
+
+.team-info {
+  position: relative;
+  bottom: -169px;
+}
+
+.team-info img {
+  height:7vh;
+  width:7vh;
+  border: 11px solid white;
+  border-radius:66px;
+}
+
+.team-info h4 {
+  margin:0;
+}
+
 
 /*
 THEMES
@@ -100,80 +141,4 @@ THEMES
 .btn-primary:disabled {
   opacity:.5;
   cursor:not-allowed;
-}
-
-
-/*
-CONTAINERS
-*/
-#root {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-}
-.container {
-  display:flex;
-  flex-direction:column;
-  flex: 1;
-  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
-  border-radius: 50px;
-  max-height:787px;
-  min-width:363px;
-}
-
-.parent {
-  min-height:355px;
-  flex:1;
-}
-
-.row {
- display: flex;
- position:relative;
- flex-wrap: wrap;
- align-items:start;
-}
-
-.team-info {
-  position:absolute;
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
-  bottom:-33px;
-  left:2.25rem;
-}
-
-.base-inside {
-  flex:1;
-  margin:3rem 2.25rem 0 2.25rem;
-  word-break: break-word;
-  min-width:250px;
-}
-
-
-
-
-/*
-ELEMENTS
-*/
-.ticker {
-  position:absolute;
-  display:block;
-  max-width:44%;
-  top:0;
-  right:0;
-}
-
-.team-info img {
-  height:7vh;
-  width:7vh;
-  border: 11px solid white;
-  border-radius:66px;
-}
-
-.team-info h4 {
-  margin:0;
-}
-
-.team-header {
-
 }

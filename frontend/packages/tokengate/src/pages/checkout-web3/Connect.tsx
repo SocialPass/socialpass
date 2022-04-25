@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import {  useConnect, useAccount } from 'wagmi';
 import { useNavigate } from "react-router-dom";
 import { Web3ConnectorImage } from '../../components/Web3ConnectorImage';
-import { Loading } from '../../components/Loading';
 
 // ConnectorWallets
 // Return UI for wallet connectors
@@ -19,11 +18,11 @@ export const Web3ConnectWallet = () => {
 
 	if (connectData){
 		return (
-			<div className="row">
-				<div className="base-inside">
+			<div className="row d-flex align-items-start flex-grow-1">
+				<div className="col-md-6">
 					<h1>Connect Your Wallet</h1>
 				</div>
-				<div className="base-inside">
+				<div className="col-md-6">
 					{connectData.connectors.map((x) => (
 					<button disabled={!x.ready} key={x.id}
 						onClick={() => connect(x)}>

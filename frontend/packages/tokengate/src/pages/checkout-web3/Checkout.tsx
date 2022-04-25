@@ -98,8 +98,8 @@ export const Web3CheckoutConfirmation = () => {
 
 	if (requestAccessJson){
 		return (
-			<div className="row">
-				<div className="base-inside">
+			<div className="row d-flex align-items-start flex-grow-1">
+				<div className="col-md-6">
 					<h1>Checkout Options</h1>
 					<p>Select which assets you want to verify for access</p>
 					<Web3CheckoutSelection
@@ -109,7 +109,7 @@ export const Web3CheckoutConfirmation = () => {
 						setWeb3CheckoutSelection={setWeb3CheckoutSelection}
 					/>
 				</div>
-				<div className="base-inside">
+				<div className="col-md-6">
 					<p>
 						{web3CheckoutSelection.length} / {retrieveJson.limit_per_person} claimed
 					</p>

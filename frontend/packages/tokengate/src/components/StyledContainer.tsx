@@ -19,7 +19,7 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 					<h4>{retrieveJson?.team.name}</h4>
 				</div>
 			</header>
-			<div className="d-flex align-items-center flex-grow-1 px-5">
+			<div className="d-flex align-items-center flex-grow-1">
 			{children}
 			</div>
 			<footer>

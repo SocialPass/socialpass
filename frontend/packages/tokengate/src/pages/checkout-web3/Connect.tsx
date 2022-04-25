@@ -26,7 +26,6 @@ export const Web3ConnectWallet = () => {
 					{connectData.connectors.map((x) => (
 					<button disabled={!x.ready} key={x.id}
 						onClick={() => connect(x)}>
-						<Web3ConnectorImage connector={x.name}/>
 						{x.name}
 						{!x.ready && ' (unsupported)'}
 					</button>

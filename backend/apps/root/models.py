@@ -10,9 +10,9 @@ from polymorphic.models import PolymorphicModel
 from pytz import utc
 
 from .model_field_choices import TOKENGATE_TYPES
-from .model_field_schemas import REQUIREMENTS_SCHEMA, SOFTWARE_TYPES_SCHEMA
+from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENT_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
-
+from apps.gates import Ticketing
 
 class CustomUserManager(UserManager):
     """
@@ -221,7 +221,12 @@ class Ticket(DBModel):
         Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
     wallet_address = models.CharField(max_length=400)
-    token_id = models.IntegerField(null=True, blank=True)
+    requirement = models.JSONField(
+        blank=True,
+        null=True,
+        validators=[JSONSchemaValidator(limit_value=REQUIREMENT_SCHEMA)],
+    )
+    option = models.JSONField(blank=True, null=True)
     image = models.ImageField(
         null=True, blank=True, height_field=None, width_field=None, max_length=255
     )
@@ -230,3 +235,28 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Token Gate: {self.tokengate.title})"
+
+    def populate_data(self, **kwargs):
+        """
+        method to populate necessary ticketdata on creation
+        """
+        # set signature
+        if not self.signature:
+            self.signature=kwargs['signature']
+
+        # create ticket image
+        if not self.image:
+            Ticketing.Utilities.create_ticket_store_s3(
+                event_data={
+                    "event_name": self.tokengate.title,
+                    "event_date": self.tokengate.date.strftime("%m/%d/%Y, %H:%M:%S"),
+                    "event_location": self.tokengate.location,
+                },
+                filename=self.filename,
+                embed=f"{self.embed_code}/{self.filename}",
+                top_banner_text="SocialPass Ticket",
+            )
+            self.image = f"tickets/{str(self.filename)}.png"
+        # set download url (always)
+        self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(ticket=self)
+        self.save()

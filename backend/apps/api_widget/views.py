@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.gates import Blockchain
-from apps.root.models import Signature, TokenGate
+from apps.root.models import Signature, TokenGate, Ticket
 
 from .serializers import BlockchainGrantAccessInput, BlockchainRequestAccessInput, TokenGatePolymorphicSerializer
 
@@ -48,10 +48,12 @@ class TokenGateRequestAccess(RetrieveAPIView):
             wallet_address=serialized.data.get("address"),
         )
 
-        # Get Web3 checkout options (available assets per requirement)
-        checkout_options = Blockchain.Utilities.fetch_options_against_requirements(
-            requirements=self.tokengate.requirements,
-            wallet_address=serialized.data.get("address"),
+        # fetch blockchain checkout options
+        checkout_options = (
+            Blockchain.Utilities.fetch_checkout_options_against_requirements(
+                requirements=self.tokengate.requirements,
+                wallet_address=serialized.data.get("address"),
+            )
         )
 
         # return web3 checkout options, signature message, and signature ID
@@ -95,14 +97,16 @@ class TokenGateGrantAccess(RetrieveAPIView):
     queryset = TokenGate.objects.all()
     signature = None  # related signature model
     tokengate = None
+    wallet_address = None
+    checkout_selections = None
 
-    def get_signature(self, pk):
+    def set_signature(self, pk):
         """
         Helper method to get the related signature model via request PK.
         """
         # get related signature by pk
         try:
-            return Signature.objects.get(unique_code=pk)
+            self.signature = Signature.objects.get(unique_code=pk)
         except Exception:
             raise Http404
 
@@ -112,11 +116,11 @@ class TokenGateGrantAccess(RetrieveAPIView):
         serialized.is_valid(raise_exception=True)
 
         # Get signature from data
-        signature = self.get_signature(serialized.data.get("signature_id"))
+        self.set_signature(serialized.data.get("signature_id"))
 
         # Validate signature
         signature_success, signature_msg = Blockchain.Utilities.validate_signature(
-            signature=signature,
+            signature=self.signature,
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
             tokengate_id=self.tokengate.public_id,
@@ -124,19 +128,23 @@ class TokenGateGrantAccess(RetrieveAPIView):
         if not signature_success:
             return Response(signature_msg, status=401)
 
-        # validate_options_against_requirements
-        web3_validated_sucess, web3_validated_msg = \
-        Blockchain.Utilities.validate_options_against_requirements(
+        # validate blockchain checkout options against requirements
+        (
+            web3_validated_sucess,
+            web3_validated_msg,
+        ) = Blockchain.Utilities.validate_checkout_selections_against_requirements(
             wallet_address=serialized.data.get("address"),
             limit_per_person=self.tokengate.limit_per_person,
             requirements=self.tokengate.requirements,
-            requirements_with_options=serialized.data.get("access_data")
+            requirements_with_options=serialized.data.get("access_data"),
         )
 
         if not web3_validated_sucess:
             return Response(web3_validated_msg, status=403)
 
-        return Response("OK")
+        # set class data
+        self.checkout_selections = web3_validated_msg
+        self.wallet_address = serialized.data.get("address")
 
     def post(self, request, *args, **kwargs):
         """
@@ -162,7 +170,9 @@ class TicketGateRequestAccess(TokenGateRequestAccess):
 
     def post(self, request, *args, **kwargs):
         # TokenGateRequestAccess.post
-        return super().post(request, *args, **kwargs)
+        response = super().post(request, *args, **kwargs)
+        if response:
+            return response
 
 
 class TicketGateGrantAccess(TokenGateGrantAccess):
@@ -173,7 +183,27 @@ class TicketGateGrantAccess(TokenGateGrantAccess):
 
     def post(self, request, *args, **kwargs):
         # TokenGateGrantAccess.post
-        x = super().post(request, *args, **kwargs)
+        response = super().post(request, *args, **kwargs)
+        if response:
+            return response
 
-        # todo: issue tickets
-        return x
+        # loop over TokenGateGrantAccess.checkout_selections & create Ticket
+        ticket_data = []
+        for obj in self.checkout_selections:
+            ticket, created = Ticket.objects.get_or_create(
+                wallet_address=self.wallet_address,
+                tokengate=self.tokengate,
+                requirement=obj['requirement'],
+                option=obj['option']
+            )
+
+            # set data after getting / creating
+            ticket.populate_data(signature=self.signature)
+
+            # append ticket download URL to ticket_data
+            ticket_data.append(ticket.temporary_download_url)
+
+        # return
+        return Response(ticket_data, status=200)
+
+

@@ -21,62 +21,65 @@ SOFTWARE_TYPES_ENUM = []
 for item in SOFTWARE_TYPES:
     SOFTWARE_TYPES_ENUM.append(item[1])
 
+REQUIREMENT = {
+    "title": "Requirement",
+    "type": "object",
+    "required": ["blockchain", "asset_address", "amount", "chain_id", "asset_type"],
+    "properties": {
+        "blockchain": {
+            "type": "string",
+            "title": "Blockchain",
+            "enum": BLOCKCHAINS_ENUM,
+        },
+        "chain_id": {"type": "integer", "title": "Network", "enum": CHAIN_ID_ENUM},
+        "asset_type": {
+            "type": "string",
+            "title": "Asset Type",
+            "enum": ASSET_TYPES_ENUM,
+        },
+        "asset_address": {
+            "type": "string",
+            "title": "Asset Address",
+            "pattern": "^(0x|0X).*$",
+        },
+        "amount": {
+            "type": "integer",
+            "title": "Required Amount",
+            "format": "number",
+            "minimum": 1,
+        },
+        "to_block": {
+            "type": "integer",
+            "title": "Snapshot block (for fungible tokens)",
+            "format": "number",
+            "minimum": 1,
+        },
+        "token_id": {
+            "type": "array",
+            "title": "Token IDs",
+            "items": {
+                "type": "integer",
+                "title": "Token ID",
+            },
+            "minItems": 0,
+        },
+    },
+}
+
+REQUIREMENT_SCHEMA = {
+    "type": "object",
+    "title": "Blockchain Requirements",
+    "format": "tabs",
+    "properties": REQUIREMENT,
+}
 
 REQUIREMENTS_SCHEMA = {
     "type": "array",
     "title": "Blockchain Requirements",
     "format": "tabs",
     "properties": {},
-    "items": {
-        "title": "Requirement",
-        "type": "object",
-        "required": ["blockchain", "asset_address", "amount", "chain_id", "asset_type"],
-        "properties": {
-            "blockchain": {
-                "type": "string",
-                "title": "Blockchain",
-                "enum": BLOCKCHAINS_ENUM,
-            },
-            "chain_id": {"type": "integer", "title": "Network", "enum": CHAIN_ID_ENUM},
-            "asset_type": {
-                "type": "string",
-                "title": "Asset Type",
-                "enum": ASSET_TYPES_ENUM,
-            },
-            "asset_address": {
-                "type": "string",
-                "title": "Asset Address",
-                "pattern": "^(0x|0X).*$",
-            },
-            "amount": {
-                "type": "integer",
-                "title": "Required Amount",
-                "format": "number",
-                "minimum": 1,
-            },
-            "to_block": {
-                "type": "integer",
-                "title": "Snapshot block (for fungible tokens)",
-                "format": "number",
-                "minimum": 1,
-            },
-            "token_id": {
-                "type": "array",
-                "title": "Token IDs",
-                "items": {
-                    "type": "integer",
-                    "title": "Token ID",
-                },
-                "minItems": 0,
-            },
-        },
-    },
+    "items": REQUIREMENT
 }
-
-
-REQUIREMENTS_SCHEMA_REQUIRED = copy.deepcopy(REQUIREMENTS_SCHEMA)
-REQUIREMENTS_SCHEMA_REQUIRED["minItems"] = 1
-
 
 SOFTWARE_TYPES_SCHEMA = {
     "type": "array",

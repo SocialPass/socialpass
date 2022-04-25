@@ -34,7 +34,23 @@ class EventData(BaseModel):
 
 # public utilities class
 class Utilities:
-    def generate_and_store_ticket(
+    def fetch_ticket_download_url(ticket=None):
+        """
+        method sets ticket download url
+        assumes .save() will be called after
+        """
+
+        # generate presigned url
+        return s3.generate_presigned_url(
+            ClientMethod="get_object",
+            Params={
+                "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
+                "Key": f"media/tickets/{str(ticket.filename)}.png",
+            },
+            ExpiresIn=3600,
+        )
+
+    def create_ticket_store_s3 (
         event_data: EventData,
         filename: str,
         embed: str,
@@ -42,8 +58,8 @@ class Utilities:
         scene_img_source: Optional[str] = None,
     ):
         """
-        Use the request to generate a ticket image and save.
-        Generating & storing ticket are passed into a background task
+        Use the request to generate a ticket image and save into s3-compatible bucket.
+        Returns ticket image as well as s3 storage response
         """
         # Generate ticket image from request data
         ticket_img = TicketPartGenerator.generate_ticket(
@@ -58,7 +74,7 @@ class Utilities:
             ticket_img=ticket_img, filename=filename
         )
 
-        return (ticket_img, response)
+        return ticket_img, response
 
 
 theme_list = [
@@ -234,7 +250,7 @@ def set_theme(new_theme):
 
 # Fonts (and related)
 BASE_FONT_TYPE = os.path.join(
-    settings.APPS_DIR, "gates/fonts/RobotoMono-Bold.ttf"
+    settings.ROOT_DIR, "static/fonts/RobotoMono-Bold.ttf"
 )  # Default font
 
 

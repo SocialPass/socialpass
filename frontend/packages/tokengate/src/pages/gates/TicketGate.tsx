@@ -11,7 +11,7 @@ export const TicketGate = (): JSX.Element => {
 	// default, return baseGate
 	// todo: customize basegate more, perhaps current content as children
 	return (
-			<div className="row d-flex align-items-center flex-grow-1">
+			<div className="row d-flex align-items-center justify-content-center flex-grow-1">
 				<div className="col-md-6">
 					<h1>{retrieveJson.title}</h1>
 					<p>{retrieveJson.description}</p>

@@ -12,6 +12,7 @@ export const Web3CheckoutConfirmation = () => {
 	const {
 		id,
 		retrieveJson,
+		setBackButton,
 		requestAccessJson,
 		setRequestAccessJson,
 		setRequestAccessError,
@@ -30,6 +31,16 @@ export const Web3CheckoutConfirmation = () => {
 	useSignMessage({
 		message: requestAccessJson?.signature_message
 	});
+
+	// useEffect hook to set back button and its side effects
+	useEffect(() => {
+		const back_button = () => {
+			disconnect();
+			setWeb3CheckoutSelection([]);
+			navigate(-1);
+		}
+		setBackButton(() => back_button);
+	},[])
 
 	// request access handler (based on web3 account data change)
 	useEffect(() => {
@@ -85,7 +96,7 @@ export const Web3CheckoutConfirmation = () => {
 	// useEffect hook to navigate back on wallet disconnect
 	useEffect(() => {
 		if (!accountData?.address){
-			console.log('navigate');
+			console.log('navigate to connect');
 			// navigate to wallet connection page
 			navigate("/checkout/web3/connect");
 		}
@@ -98,7 +109,7 @@ export const Web3CheckoutConfirmation = () => {
 
 	if (requestAccessJson){
 		return (
-			<div className="row d-flex align-items-center flex-grow-1">
+			<div className="row d-flex align-items-center justify-content-center flex-grow-1">
 				<div className="col-md-6">
 					<h1>Checkout Options</h1>
 					<p>Select which assets you want to verify for access</p>

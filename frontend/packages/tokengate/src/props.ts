@@ -29,6 +29,10 @@ export interface TokenGateContextInterface {
   id: string
   styles?: any
 
+  // navigation
+  backButton:any
+  setBackButton:any
+
   // retrieve gate
   retrieveJson: any
   setRetrieveJson: any

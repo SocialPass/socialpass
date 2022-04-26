@@ -16,6 +16,7 @@ import {
 	Web3CheckoutConfirmation,
 } from './pages';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
 require<any>('./index.css');
 
 

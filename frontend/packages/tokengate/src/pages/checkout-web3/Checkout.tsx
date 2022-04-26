@@ -24,7 +24,7 @@ export const Web3CheckoutConfirmation = () => {
 	// navigation
 	const navigate = useNavigate();
 	// web3 account hooks
-	const [{ data: accountData, error: accountError }, disconnect] = useAccount();
+	const [{ data: accountData, loading: accountLoading, error: accountError }, disconnect] = useAccount();
 	// wallet signature hooks
 	// setup with signature_message
 	const [{data: signData, error: signError,loading: signLoading}, signMessage] =
@@ -72,6 +72,7 @@ export const Web3CheckoutConfirmation = () => {
 		(async function() {
 			if (signData){
 			let response;
+			console.log(web3CheckoutSelection)
 				response = await TokenGateGrantAccess.call({
 					'gate_type':retrieveJson.general_type,
 					'public_id':id,
@@ -96,7 +97,6 @@ export const Web3CheckoutConfirmation = () => {
 	// useEffect hook to navigate back on wallet disconnect
 	useEffect(() => {
 		if (!accountData?.address){
-			console.log('navigate to connect');
 			// navigate to wallet connection page
 			navigate("/checkout/web3/connect");
 		}
@@ -107,33 +107,43 @@ export const Web3CheckoutConfirmation = () => {
 		return <Loading/>
 	}
 
+	if (accountLoading){
+		return <Loading/>
+	}
+
 	if (requestAccessJson){
 		return (
-			<div className="row d-flex align-items-center justify-content-center flex-grow-1">
-				<div className="col-md-6">
-					<h1>Checkout Options</h1>
-					<p>Select which assets you want to verify for access</p>
+			<div className="row m-0">
+				<div className="col-md-6 d-flex flex-column">
+					<h2>Select Your Asset(s)</h2>
+					<p>Select the asset(s) you would like to redeem your Token Gate with</p>
 					<Web3CheckoutSelection
-						limit={retrieveJson.limit_per_person}
 						checkoutOptions={requestAccessJson.checkout_options}
 						web3CheckoutSelection={web3CheckoutSelection}
 						setWeb3CheckoutSelection={setWeb3CheckoutSelection}
 					/>
 				</div>
-				<div className="col-md-6">
+				<div style={{background: '#FBFBFB'}} className="col-md-6 d-flex flex-column">
 					<p>
 						{web3CheckoutSelection.length} / {retrieveJson.limit_per_person} claimed
 					</p>
+					<div>
+					{
+						web3CheckoutSelection
+						? <div>Select assets</div>
+						: <div>Select assets</div>
+					}
+					</div>
 					{web3CheckoutSelection.length > 0
 						?
 						(
-							<button className="btn-primary" onClick={() => signMessage()}>
+							<button className="btn-primary mt-auto" onClick={() => signMessage()}>
 								Confirm
 							</button>
 						)
 						:
 						(
-							<button className="btn-primary" disabled>Select more options</button>
+							<button className="btn-primary mt-auto" disabled>Select more options</button>
 						)
 					}
 				</div>
@@ -141,7 +151,5 @@ export const Web3CheckoutConfirmation = () => {
 		)
 	}
 
-	// default, loading
 	return <Loading/>
-
 }

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Provider, chain, defaultChains, defaultL2Chains, useConnect, useAccount } from 'wagmi'
+import { Provider, chain, defaultChains, defaultL2Chains } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 
 // API key for Ethereum node
 // Two popular services are Infura (infura.io) and Alchemy (alchemy.com)
@@ -28,7 +28,7 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
 		qrcode: true,
 	  },
 	}),
-	new WalletLinkConnector({
+	new CoinbaseWalletConnector({
 	  options: {
 		appName: 'SocialPass',
 		jsonRpcUrl: `${rpcUrl}/${infuraId}`,

@@ -14,7 +14,7 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 	const _backButton = require("../static/images/back.svg");
 
 	return (
-		<div className="container-fluid h-100 d-flex flex-column p-0">
+		<div className="container-fluid p-0">
 			{
 				location.pathname.includes("/checkout")
 				?
@@ -39,10 +39,7 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 					</div>
 				</header>
 			}
-
-			<div className="d-flex flex-grow-1 p-4">
 			{children}
-			</div>
 			<footer>
 				<img src={FAQImage} alt="image"/>
 				<small>

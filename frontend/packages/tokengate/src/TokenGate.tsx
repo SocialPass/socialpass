@@ -36,9 +36,6 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 	return (
 		<Router history={history}>
 			<base href="/"/> {/* set static asset to base path for relative imports */}
-			<head>
-				<meta name="viewport" content="width=device-width, initial-scale=1"/>
-			</head>
 			<TokenGateProvider id={id} styles={styles}>
 				<Web3ProviderWrapper>
 					<StyledContainer>

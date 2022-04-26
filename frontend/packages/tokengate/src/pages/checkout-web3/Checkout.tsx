@@ -113,7 +113,7 @@ export const Web3CheckoutConfirmation = () => {
 
 	if (requestAccessJson){
 		return (
-			<div className="row m-0">
+			<div className="row m-0 flex-grow-1">
 				<div className="col-md-6 d-flex flex-column">
 					<h2>Select Your Asset(s)</h2>
 					<p>Select the asset(s) you would like to redeem your Token Gate with</p>

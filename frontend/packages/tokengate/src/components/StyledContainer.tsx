@@ -14,7 +14,7 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 	const _backButton = require("../static/images/back.svg");
 
 	return (
-		<div className="container-fluid p-0">
+		<div className="container-fluid p-0 d-flex flex-column">
 			{
 				location.pathname.includes("/checkout")
 				?
@@ -32,11 +32,11 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 				</header>
 				:
 				<header className="header" style={{backgroundImage: `url(${headerImage})`}}>
-					<TickerImage gateType={retrieveJson?.general_type}/>
 					<div className="team-info">
 						<img src={retrieveJson?.team.image} alt="Team Image"/>
 						<h4>{retrieveJson?.team.name}</h4>
 					</div>
+					<TickerImage gateType={retrieveJson?.general_type}/>
 				</header>
 			}
 			{children}

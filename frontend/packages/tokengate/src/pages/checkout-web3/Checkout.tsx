@@ -45,6 +45,8 @@ export const Web3CheckoutConfirmation = () => {
 	// request access handler (based on web3 account data change)
 	useEffect(() => {
 		(async function() {
+			setRequestAccessJson(null);
+			setRequestAccessError(null);
 			let response: any;
 			// api call
 			if (accountData && accountData.address){

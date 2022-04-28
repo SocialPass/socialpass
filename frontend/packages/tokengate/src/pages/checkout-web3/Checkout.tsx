@@ -106,11 +106,11 @@ export const Web3CheckoutConfirmation = () => {
 
 
 	if (signLoading){
-		return <Loading/>
+		return <Loading loadingText='Verifying checkout selections and eligibility'/>
 	}
 
 	if (accountLoading){
-		return <Loading/>
+		return <Loading loadingText='Loading account data'/>
 	}
 
 	if (requestAccessJson){
@@ -153,5 +153,5 @@ export const Web3CheckoutConfirmation = () => {
 		)
 	}
 
-	return <Loading/>
+	return <Loading loadingText="Gathering Your Eligible NFTS"/>
 }

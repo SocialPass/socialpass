@@ -31,14 +31,16 @@ export const Web3ConnectWallet = () => {
 				<div className="col-12">
 					<h2>Connect Your Wallet</h2>
 					<p>Connect the wallet that has the required asset(s) for this Token Gate</p>
-					<div className="row col-12">
+					<div className="row col-12 m-0">
 						{connectData.connectors.map((x) => (
-							<button className="btn-secondary d-flex flex-column align-items-center justify-content-center col-md-4" disabled={!x.ready} key={x.id}
+							<div className="col-12 col-md-4">
+								<button className="btn-secondary d-flex flex-column align-items-center justify-content-center w-100" disabled={!x.ready} key={x.id}
 								onClick={() => connect(x)}>
 								<Web3ConnectorImage connector={x.name}/>
 								{x.name}
 								{!x.ready && ' (unsupported)'}
-							</button>
+								</button>
+							</div>
 						))}
 						{connectError && <div>{connectError?.message ?? 'Failed to connect'}</div>}
 					</div>

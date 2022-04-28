@@ -86,7 +86,7 @@ footer {
 .container-fluid {
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
-  min-height:750px;
+  min-height:769px;
   overflow:hidden;
   min-width:333px;
 }

@@ -33,7 +33,7 @@ export const Web3ConnectWallet = () => {
 					<p>Connect the wallet that has the required asset(s) for this Token Gate</p>
 					<div className="row col-12 m-0">
 						{connectData.connectors.map((x) => (
-							<div className="col-12 col-md-4">
+							<div className="col-xs-6 col-md-4">
 								<button className="btn-secondary d-flex flex-column align-items-center justify-content-center w-100 mt-3" disabled={!x.ready} key={x.id}
 								onClick={() => connect(x)}>
 								<Web3ConnectorImage connector={x.name}/>

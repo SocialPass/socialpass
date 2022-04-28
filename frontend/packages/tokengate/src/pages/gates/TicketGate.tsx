@@ -15,20 +15,18 @@ export const TicketGate = (): JSX.Element => {
 				<div className="col col-md-9">
 					<h1>{retrieveJson.title}</h1>
 					<p>{retrieveJson.description}</p>
-					<div>
-						<p className="d-flex align-items-center m-0">
+					<div className="w-100">
+						<p className="d-flex align-items-center m-0 mt-1 mb-1">
 							<img src={require("../../static/images/icons/clock.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
-							{retrieveJson.date}
+							{retrieveJson.date} {retrieveJson.timezone}
 						</p>
-						<p className="d-flex align-items-center m-0">
+						<p className="d-flex align-items-center m-0 mt-1 mb-1">
 							<img src={require("../../static/images/icons/location.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
 							{retrieveJson.location}
 						</p>
-					</div>
-					<div className="d-flex">
-						<span className="bg-success p-3">
-							{retrieveJson.ticket_count} out of {retrieveJson.capacity} available
-						</span>
+						<div className="bg-success p-3 strong">
+							<strong>{retrieveJson.capacity - retrieveJson.ticket_count}</strong> out of {retrieveJson.capacity} available
+						</div>
 					</div>
 				</div>
 			</div>

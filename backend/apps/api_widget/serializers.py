@@ -25,6 +25,8 @@ class TicketGateSerializer(serializers.ModelSerializer):
         source='tickets.count',
         read_only=True
     )
+    date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+
     team = TeamSerializer()
 
     class Meta:
@@ -37,6 +39,7 @@ class TicketGateSerializer(serializers.ModelSerializer):
             "requirements",
             "limit_per_person",
             "date",
+            "timezone",
             "location",
             "capacity",
             "ticket_count"

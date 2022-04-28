@@ -22,14 +22,12 @@ html, body {
 h1 {
   font-size: 2.69rem;
   font-weight: bold;
-  line-height: 1.25em;
 }
 
 h2 {
   font-size: 1.89em;
   font-weight: 700;
   font-style: bold;
-  line-height: 1.25em;
 }
 
 h3 {
@@ -38,6 +36,10 @@ h3 {
 
 h4 {
   font-size:1.23rem;
+}
+
+h5 {
+  font-size:1.05rem;
 }
 
 img {
@@ -51,7 +53,6 @@ button {
 p {
   font-weight: 300;
   font-size: 1.01rem;
-  line-height: 2rem;
   color: #95959C;
 }
 
@@ -59,7 +60,6 @@ small {
   font-style: normal;
   font-weight: 300;
   font-size: 12px;
-  line-height: 20px;
   color: #959191;
 }
 
@@ -92,7 +92,7 @@ footer {
 }
 
 .small-header {
-  min-height: 150px;
+  min-height: 188px;
   height: 23.9%;
   background-size:cover;
   box-shadow:inset 0 0 0 2000px rgba(0, 0, 0, .5);
@@ -117,7 +117,6 @@ ELEMENTS
 .team-info {
   position:absolute;
   top:75%;
-  left:2.33em;
 }
 
 .team-info img {
@@ -133,6 +132,7 @@ ELEMENTS
   left: 50%;
   color:white;
   transform: translateX(-50%);
+  text-align:center;
 }
 
 .back {
@@ -176,9 +176,8 @@ BOOSTRAP OVERRIDES
   color:black;
   font-weight: 700;
   font-size: 17px;
-  line-height: 20px;
   text-align: center;
-  border-width: 5px;
+  border: solid 3px black;
   border-radius: 20px;
 }
 

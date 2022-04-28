@@ -12,21 +12,19 @@ export const TicketGate = (): JSX.Element => {
 	return (
 		<div className="row flex-grow-1 m-0 mt-3 align-items-center">
 			<div className="col-md-7 mb-4 d-flex">
-				<div className="col col-md-9">
+				<div className="col col-md-10">
 					<h1>{retrieveJson.title}</h1>
 					<p>{retrieveJson.description}</p>
-					<div className="w-100">
-						<p className="d-flex align-items-center m-0 mt-1 mb-1">
-							<img src={require("../../static/images/icons/clock.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
-							{retrieveJson.date} {retrieveJson.timezone}
-						</p>
-						<p className="d-flex align-items-center m-0 mt-1 mb-1">
-							<img src={require("../../static/images/icons/location.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
-							{retrieveJson.location}
-						</p>
-						<div className="bg-success p-3 strong">
-							<strong>{retrieveJson.capacity - retrieveJson.ticket_count}</strong> out of {retrieveJson.capacity} available
-						</div>
+					<p className="d-flex align-items-center m-0 mt-1 mb-1">
+						<img src={require("../../static/images/icons/clock.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
+						{retrieveJson.date} {retrieveJson.timezone}
+					</p>
+					<p className="d-flex align-items-center m-0 mt-1 mb-1">
+						<img src={require("../../static/images/icons/location.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
+						{retrieveJson.location}
+					</p>
+					<div className="bg-success p-3 strong">
+						<strong>{retrieveJson.capacity - retrieveJson.ticket_count}</strong> out of {retrieveJson.capacity} available
 					</div>
 				</div>
 			</div>

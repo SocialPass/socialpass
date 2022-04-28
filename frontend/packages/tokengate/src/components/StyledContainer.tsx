@@ -19,7 +19,6 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 				location.pathname.includes("/checkout")
 				?
 				<header className="small-header" style={{backgroundImage: `url(${headerImage})`}}>
-					<TickerImage gateType={retrieveJson?.general_type}/>
 						{backButton &&
 						<div className="back" onClick={() => backButton()}>
 							<img src={_backButton} alt="Back Button" height="24" width="24"/>
@@ -27,19 +26,20 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 						</div>
 						}
 					<div className="small-team-info">
-						<h4>{retrieveJson?.team.name}</h4>
+						<h4>{retrieveJson?.title}</h4>
+						<h5>by: {retrieveJson?.team.name}</h5>
 					</div>
 				</header>
 				:
 				<header className="header" style={{backgroundImage: `url(${headerImage})`}}>
-					<div className="team-info">
+					<div className="team-info mx-3 mx-md-5 ps-2">
 						<img src={retrieveJson?.team.image} alt="Team Image"/>
 						<h4>{retrieveJson?.team.name}</h4>
 					</div>
 					<TickerImage gateType={retrieveJson?.general_type}/>
 				</header>
 			}
-			<div className="d-flex mx-4 mt-5 flex-grow-1 h-100">
+			<div className="d-flex mx-3 mx-md-5 mt-5 flex-grow-1 h-100">
 				{children}
 			</div>
 			<footer>

@@ -14,6 +14,9 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'rubik';
+  -ms-word-break: break-word;
+  word-break: break-word;
+
 }
 
 h1 {
@@ -85,7 +88,7 @@ footer {
   border-radius: 50px;
   min-height:750px;
   overflow:hidden;
-  min-width:363px;
+  min-width:333px;
 }
 
 .small-header {
@@ -114,7 +117,7 @@ ELEMENTS
 .team-info {
   position:absolute;
   top:75%;
-  left:3.69em;
+  left:2.33em;
 }
 
 .team-info img {
@@ -180,4 +183,10 @@ BOOSTRAP OVERRIDES
   border-radius: 20px;
   //border-image-source: linear-gradient(90deg, #DB1D7A 0%, #772A81 100%);
   border-image-slice: 1;
+}
+
+.bg-success {
+  background: #CDFFCC !important;
+  color:#0FBE0C;
+  border-radius: 7px;
 }

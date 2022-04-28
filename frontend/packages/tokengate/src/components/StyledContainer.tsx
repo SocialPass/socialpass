@@ -39,7 +39,7 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 					<TickerImage gateType={retrieveJson?.general_type}/>
 				</header>
 			}
-			<div className="d-flex mx-5 mt-5 flex-grow-1 h-100">
+			<div className="d-flex mx-4 mt-5 flex-grow-1 h-100">
 				{children}
 			</div>
 			<footer>

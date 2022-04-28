@@ -47,6 +47,7 @@ export const Web3CheckoutConfirmation = () => {
 		(async function() {
 			setRequestAccessJson(null);
 			setRequestAccessError(null);
+			setWeb3CheckoutSelection([]);
 			let response: any;
 			// api call
 			if (accountData && accountData.address){

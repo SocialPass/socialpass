@@ -7,21 +7,29 @@ export const TicketGate = (): JSX.Element => {
 	const navigate = useNavigate();
 	const { retrieveJson } = useContext(TokenGateContext);
 
-
 	// default, return baseGate
 	// todo: customize basegate more, perhaps current content as children
 	return (
 		<div className="row flex-grow-1 m-0 mt-3 align-items-center">
-			<div className="col-md-7 mb-4">
-				<div className="col col-md-10">
+			<div className="col-md-7 mb-4 d-flex">
+				<div className="col col-md-9">
 					<h1>{retrieveJson.title}</h1>
 					<p>{retrieveJson.description}</p>
-					<p>Friday, April 15 | 8:00 - 10:30 PM EST
-						James L. Knight Center | Miami, FL
-					</p>
-					<span className="bg-success p-3">
-						4,000 out of 50,000 available
-					</span>
+					<div>
+						<p className="d-flex align-items-center m-0">
+							<img src={require("../../static/images/icons/clock.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
+							{retrieveJson.date}
+						</p>
+						<p className="d-flex align-items-center m-0">
+							<img src={require("../../static/images/icons/location.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
+							{retrieveJson.location}
+						</p>
+					</div>
+					<div className="d-flex">
+						<span className="bg-success p-3">
+							4,000 out of 50,000 available
+						</span>
+					</div>
 				</div>
 			</div>
 			<div className="col-md-5">

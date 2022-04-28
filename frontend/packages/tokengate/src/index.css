@@ -13,14 +13,12 @@ html, body {
   width:100%;
   margin: 0;
   padding: 0;
-  font-family: 'rubik', sans-serif !important;
-  font-style: normal;
+  font-family: 'rubik';
 }
 
 h1 {
-  font-size: 2.33rem;
-  font-weight: 700;
-  font-style: bold;
+  font-size: 2.69rem;
+  font-weight: bold;
   line-height: 1.25em;
 }
 
@@ -36,7 +34,7 @@ h3 {
 }
 
 h4 {
-  font-size:1.13rem;
+  font-size:1.23rem;
 }
 
 img {
@@ -48,16 +46,13 @@ button {
 }
 
 p {
-  font-family: 'Rubik';
-  font-style: normal;
   font-weight: 300;
   font-size: 1.11rem;
   line-height: 2rem;
-  color: #959191;
+  color: #95959C;
 }
 
 small {
-  font-family: 'Rubik';
   font-style: normal;
   font-weight: 300;
   font-size: 12px;
@@ -119,13 +114,13 @@ ELEMENTS
 
 .team-info {
   position:absolute;
-  top:65%;
-  left:.69rem;
+  top:75%;
+  left:3.69em;
 }
 
 .team-info img {
-  height:8vh;
-  width:8vh;
+  height:66px;
+  width:66px;
   border: 7px solid white;
   border-radius:66px;
 }
@@ -163,7 +158,6 @@ BOOSTRAP OVERRIDES
   font-size: 1.69rem;
   padding:0;
   margin:0;
-  min-width:250px;
   width:100%;
 }
 
@@ -174,8 +168,6 @@ BOOSTRAP OVERRIDES
 
 .btn-secondary {
   height: 164px;
-  left: 304px;
-  top: 497px;
   background: #FFFFFF;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   /* Small Button Text */

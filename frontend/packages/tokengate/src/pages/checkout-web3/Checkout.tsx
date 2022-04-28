@@ -115,8 +115,8 @@ export const Web3CheckoutConfirmation = () => {
 
 	if (requestAccessJson){
 		return (
-			<div className="row m-0 m-0 flex-grow-1">
-				<div className="col-md-6 pt-3 d-flex flex-column">
+			<div className="row flex-grow-1 m-0 mt-2">
+				<div className="col-md-7">
 					<h2>Select Your Asset(s)</h2>
 					<p>Select the asset(s) you would like to redeem your Token Gate with</p>
 					<Web3CheckoutSelection
@@ -125,7 +125,7 @@ export const Web3CheckoutConfirmation = () => {
 						setWeb3CheckoutSelection={setWeb3CheckoutSelection}
 					/>
 				</div>
-				<div style={{background: '#FBFBFB'}} className="col-md-6 pt-3 d-flex flex-column">
+				<div style={{background: '#FBFBFB'}} className="col-md-5 pt-3 d-flex flex-column">
 					<p>
 						{web3CheckoutSelection.length} / {retrieveJson.limit_per_person} claimed
 					</p>

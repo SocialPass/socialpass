@@ -17,10 +17,6 @@ export class TokenGateRetrieve {
 	  		let obj = json;
 	  		Object.assign(obj, {
 				"httpStatus": 200,
-				"date": json.date,
-				"location": json.location,
-				"capacity": json.capacity,
-				"deadline": json.deadline
 	  		})
 			return obj
 	  	})
@@ -82,11 +78,9 @@ export class TicketGateRequestAccess {
 			.then(response => response.json())
 			.then(json => {
 				let obj = json;
-				  Object.assign(obj, {
-					"httpStatus": 200,
-					"signature_id": json.signature_id,
-					"signature_message": json.signature_message,
-				  })
+				Object.assign(obj, {
+					  "httpStatus": 200,
+				})
 			    return obj
 			})
 			.catch(error => {
@@ -154,7 +148,8 @@ export class TicketGateGrantAccess {
 		.then(json => {
 			let obj = json;
 			Object.assign(obj, {
-			})
+				"httpStatus": 200,
+			  })
 		  return obj
 		})
 		.catch(error => {

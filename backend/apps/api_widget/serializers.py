@@ -21,7 +21,10 @@ class TicketGateSerializer(serializers.ModelSerializer):
     """
     Serializes Ticket token gates
     """
-
+    ticket_count = serializers.IntegerField(
+        source='tickets.count',
+        read_only=True
+    )
     team = TeamSerializer()
 
     class Meta:
@@ -36,6 +39,7 @@ class TicketGateSerializer(serializers.ModelSerializer):
             "date",
             "location",
             "capacity",
+            "ticket_count"
         ]
 
 

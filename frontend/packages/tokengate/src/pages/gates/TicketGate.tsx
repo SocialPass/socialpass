@@ -6,7 +6,7 @@ import { TokenGateContext } from '../../context';
 export const TicketGate = (): JSX.Element => {
 	const navigate = useNavigate();
 	const { retrieveJson } = useContext(TokenGateContext);
-
+	console.log(retrieveJson);
 	// default, return baseGate
 	// todo: customize basegate more, perhaps current content as children
 	return (
@@ -27,13 +27,13 @@ export const TicketGate = (): JSX.Element => {
 					</div>
 					<div className="d-flex">
 						<span className="bg-success p-3">
-							4,000 out of 50,000 available
+							{retrieveJson.ticket_count} out of {retrieveJson.capacity} available
 						</span>
 					</div>
 				</div>
 			</div>
 			<div className="col-md-5">
-				<button className="btn-primary" onClick={() => navigate('/checkout/web3/connect')}>Get Access</button>
+				<button className="btn-primary" onClick={() => navigate('/checkout/web3/connect')}>Claim Tickets</button>
 			</div>
 		</div>
 		)

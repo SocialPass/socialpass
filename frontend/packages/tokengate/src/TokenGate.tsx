@@ -1,10 +1,9 @@
 import React from 'react';
 import {
-  unstable_HistoryRouter as Router,
+  MemoryRouter,
   Routes,
   Route,
 } from "react-router-dom";
-import { createBrowserHistory } from 'history'
 import { StyledContainer } from './components';
 import { TokenGateProvider } from './context';
 import { TokenGateProviderInterface } from './props';
@@ -20,10 +19,6 @@ import 'bootstrap/dist/js/bootstrap.js';
 require<any>('./index.css');
 
 
-// setup browser history
-let history = createBrowserHistory();
-history.replace('/');
-
 // Main TokenGate component. Does a couple of things
 // 1. Setup TokenGateProvider (react context)
 // 2. Setup TokenGateProvider (react context)
@@ -34,7 +29,7 @@ history.replace('/');
 // 2. Styles: Object used to configure styles (TBD)
 const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 	return (
-		<Router history={history}>
+		<MemoryRouter>
 			<base href="/"/> {/* set static asset to base path for relative imports */}
 			<TokenGateProvider id={id} styles={styles}>
 				<Web3ProviderWrapper>
@@ -50,7 +45,7 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 					</StyledContainer>
 				</Web3ProviderWrapper>
 			</TokenGateProvider>
-		</Router>
+		</MemoryRouter>
 	);
 }
 

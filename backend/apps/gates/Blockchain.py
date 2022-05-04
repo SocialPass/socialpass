@@ -122,33 +122,37 @@ class Utilities:
         for requirement in requirements:
             # fungible
             if requirement["asset_type"] == "ERC20":
-                requirements_with_options.append(
-                    {
-                        "requirement": requirement,
-                        "options": moralis_get_fungible(
-                            chain_id=hex(requirement["chain_id"]),
-                            wallet_address=wallet_address,
-                            token_addresses=requirement["asset_address"],
-                            to_block=requirement["to_block"],
-                        ),
-                    }
+                fungible_options = moralis_get_fungible(
+                    chain_id=hex(requirement["chain_id"]),
+                    wallet_address=wallet_address,
+                    token_addresses=requirement["asset_address"],
+                    to_block=requirement["to_block"],
                 )
+                if fungible_options:
+                    requirements_with_options.append(
+                        {
+                            "requirement": requirement,
+                            "options": fungible_options
+                        }
+                    )
             # non fungible
             if (
                 requirement["asset_type"] == "ERC721"
                 or requirement["asset_type"] == "ERC1155"
             ):
-                requirements_with_options.append(
-                    {
-                        "requirement": requirement,
-                        "options": moralis_get_nfts(
-                            chain_id=hex(requirement["chain_id"]),
-                            wallet_address=wallet_address,
-                            token_address=requirement["asset_address"],
-                            token_ids=requirement.get("token_id"),  # optional
-                        ),
-                    }
+                nft_options = moralis_get_nfts(
+                    chain_id=hex(requirement["chain_id"]),
+                    wallet_address=wallet_address,
+                    token_address=requirement["asset_address"],
+                    token_ids=requirement.get("token_id"),  # optional
                 )
+                if nft_options:
+                    requirements_with_options.append(
+                        {
+                            "requirement": requirement,
+                            "options": nft_options
+                        }
+                    )
 
         return requirements_with_options
 

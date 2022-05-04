@@ -42,7 +42,7 @@ class TokenGateRequestAccess(APIView):
         POST calls blockchain or fiat, depending on 'type' query string
         """
         # set tokengate
-        self.set_tokengate()
+        self.set_tokengate(*args, **kwargs)
 
         # Serialize data
         serialized = BlockchainRequestAccessInput(data=request.data)
@@ -60,7 +60,9 @@ class TokenGateRequestAccess(APIView):
             wallet_address=serialized.data.get("address"),
         )
 
-        print(checkout_options)
+        if not checkout_options:
+            return Response('No available assets to verify', status=403)
+
 
         # return web3 checkout options, signature message, and signature ID
         self.request_access_data = {
@@ -101,7 +103,7 @@ class TokenGateGrantAccess(APIView):
         POST calls blockchain or fiat, depending on 'type' query string
         """
         # set tokengate
-        self.set_tokengate()
+        self.set_tokengate(*args, **kwargs)
 
         # Serialize data
         serialized = BlockchainGrantAccessInput(data=request.data)
@@ -151,6 +153,9 @@ class TicketGateRequestAccess(TokenGateRequestAccess):
         response = super().post(request, *args, **kwargs)
         if response:
             return response
+
+        # return data
+        return Response(self.request_access_data)
 
 
 class TicketGateGrantAccess(TokenGateGrantAccess):

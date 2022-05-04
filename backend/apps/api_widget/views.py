@@ -1,4 +1,5 @@
 from django.http import Http404
+from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -20,85 +21,70 @@ class TokenGateRetrieve(RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-class TokenGateRequestAccess(RetrieveAPIView):
+class TokenGateRequestAccess(APIView):
     """
-    Base of RetrieveAPIView for fetching associated Tokengate
-
     View requests access into tokengate.
-    Can either be type "BLOCKCHAIN" or type "FIAT"
-
-    BLOCKCHAIN type
-        - Empty request (aside from path / query params)
-        - Response includes `Signature`
+    Based on wallet address, return request_access_data
     """
 
-    lookup_field = "public_id"
-    queryset = TokenGate.objects.all()
-    signature = None  # related signature model
-    tokengate = None
+    signature = None  # signature model
+    tokengate = None #
+    request_access_data = None
 
-    def blockchain(self, request, *args, **kwargs):
+    def set_tokengate(self, *args, **kwargs):
+        try:
+            self.tokengate = TokenGate.objects.get(public_id=kwargs['public_id'])
+        except Exception:
+            raise Http404
+
+    def post(self, request, *args, **kwargs):
+        """
+        POST calls blockchain or fiat, depending on 'type' query string
+        """
+        # set tokengate
+        self.set_tokengate()
+
         # Serialize data
         serialized = BlockchainRequestAccessInput(data=request.data)
         serialized.is_valid(raise_exception=True)
 
         # Generate Signature (to be signed by client)
         self.signature = Signature.objects.create(
-            tokengate=super().get_object(),
+            tokengate=self.tokengate,
             wallet_address=serialized.data.get("address"),
         )
 
         # fetch blockchain checkout options
-        checkout_options = (
-            Blockchain.Utilities.fetch_checkout_options_against_requirements(
-                requirements=self.tokengate.requirements,
-                wallet_address=serialized.data.get("address"),
-            )
+        checkout_options = Blockchain.Utilities.fetch_checkout_options_against_requirements(
+            requirements=self.tokengate.requirements,
+            wallet_address=serialized.data.get("address"),
         )
+
+        print(checkout_options)
 
         # return web3 checkout options, signature message, and signature ID
-        return Response(
-            {
-                "signature_message": self.signature.signing_message,
-                "signature_id": self.signature.unique_code,
-                "checkout_options": checkout_options,
-            }
-        )
+        self.request_access_data = {
+            "signature_message": self.signature.signing_message,
+            "signature_id": self.signature.unique_code,
+            "checkout_options": checkout_options,
+        }
 
-    def post(self, request, *args, **kwargs):
-        """
-        POST calls blockchain or fiat, depending on 'type' query string
-        """
-        # get tokengate
-        self.tokengate = self.get_object()
 
-        # check type
-        type = request.query_params.get("type")
-        if not type:
+class TokenGateGrantAccess(APIView):
+    """
+    View grants access into tokengate
+    """
+
+    signature = None  # signature model
+    tokengate = None # tokengate model
+    wallet_address = None # wallet address (from signature)
+    checkout_selections = None # checkout selections
+
+    def set_tokengate(self, *args, **kwargs):
+        try:
+            self.tokengate = TokenGate.objects.get(public_id=kwargs['public_id'])
+        except Exception:
             raise Http404
-
-        if type == "blockchain":
-            return self.blockchain(request, *args, **kwargs)
-
-
-class TokenGateGrantAccess(RetrieveAPIView):
-    """
-    Base of RetrieveAPIView for fetching associated Tokengate
-
-    View grants access into tokengate.
-    Can either be type "BLOCKCHAIN" or type "FIAT"
-
-    BLOCKCHAIN type
-        - Request includes tokengate ID
-        - Response includes `Signature` and redeemable assets (NFT only)
-    """
-
-    lookup_field = "public_id"
-    queryset = TokenGate.objects.all()
-    signature = None  # related signature model
-    tokengate = None
-    wallet_address = None
-    checkout_selections = None
 
     def set_signature(self, pk):
         """
@@ -110,7 +96,13 @@ class TokenGateGrantAccess(RetrieveAPIView):
         except Exception:
             raise Http404
 
-    def blockchain(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        """
+        POST calls blockchain or fiat, depending on 'type' query string
+        """
+        # set tokengate
+        self.set_tokengate()
+
         # Serialize data
         serialized = BlockchainGrantAccessInput(data=request.data)
         serialized.is_valid(raise_exception=True)
@@ -146,21 +138,6 @@ class TokenGateGrantAccess(RetrieveAPIView):
         self.checkout_selections = web3_validated_msg
         self.wallet_address = serialized.data.get("address")
 
-    def post(self, request, *args, **kwargs):
-        """
-        POST calls blockchain or fiat, depending on 'type' query string
-        """
-        # get tokengate
-        self.tokengate = self.get_object()
-
-        # handle type
-        type = self.request.query_params.get("type")
-        if not type:
-            raise Http404
-
-        if type == "blockchain":
-            return self.blockchain(request, *args, **kwargs)
-
 
 class TicketGateRequestAccess(TokenGateRequestAccess):
     """
@@ -170,6 +147,7 @@ class TicketGateRequestAccess(TokenGateRequestAccess):
 
     def post(self, request, *args, **kwargs):
         # TokenGateRequestAccess.post
+        # note: will throw http response on error. return in that case
         response = super().post(request, *args, **kwargs)
         if response:
             return response
@@ -183,6 +161,7 @@ class TicketGateGrantAccess(TokenGateGrantAccess):
 
     def post(self, request, *args, **kwargs):
         # TokenGateGrantAccess.post
+        # note: will throw http response on error. return in that case
         response = super().post(request, *args, **kwargs)
         if response:
             return response
@@ -205,5 +184,3 @@ class TicketGateGrantAccess(TokenGateGrantAccess):
 
         # return
         return Response(ticket_data, status=200)
-
-

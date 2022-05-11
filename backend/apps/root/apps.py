@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
-
+from invitations.apps import Config as InvitationsConfig
 
 class RootConfig(AppConfig):
     name = "apps.root"
@@ -8,6 +8,11 @@ class RootConfig(AppConfig):
 
     def ready(self):
         try:
-            import backend.root.signals  # noqa F401
-        except ImportError:
+            print('import signals')
+            import apps.root.signals
+        except ImportError as e:
+            print('error,',e,'\n')
             pass
+
+class OverrideInvitationsConfig(InvitationsConfig):
+    default_auto_field = 'django.db.models.AutoField'

@@ -13,15 +13,15 @@
       <div class="card-header py-0">
         <div class="d-flex align-items-center py-3">
           <div class="pe-2">
-            <h6 class="m-0">Delete Team Members</h6>
+            <h6 class="m-0">Remove Team Members</h6>
             <div class="text-muted text-xs mb-3">
-              Use the following form to delete a team member
+              Use the following form to remove a team member fro your team
             </div>
           </div>
         </div>
       </div>
       <div class="card-body py-2">
-        <h3 class="font-weight-bolder">Delete {{object.user.email}}?</h3>
+        <h3 class="font-weight-bolder">Delete {{object.user.email}} from '{{object.team.name}}'?</h3>
         <p>{% translate 'Are you sure you want to delete this user?' %}</p>
         <form class="form" method="post">
           {% csrf_token %}

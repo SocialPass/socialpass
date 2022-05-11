@@ -5,12 +5,13 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 
 urlpatterns = [
+    path("", include("apps.dashboard.urls")),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # User management
+    # Customer account management
     path("accounts/", include("allauth.urls")),
-    # Custom stuff goes here
-    path("", include("apps.dashboard.urls")),
+    # Customer Invitations
+    path("invitations/", include('invitations.urls', namespace='invitations')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # DRF API URLS

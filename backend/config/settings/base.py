@@ -85,11 +85,12 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "polymorphic",
+    "invitations"
 ]
 
 LOCAL_APPS = [
     "apps.root",
-    # Your stuff: custom apps go here
+    "apps.dashboard"
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -253,7 +254,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-# ACCOUNT_ADAPTER = "config.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = 'apps.root.models.InvitationsAdapter'
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 # ACCOUNT_FORMS = {"signup": "apps.root.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -321,8 +322,18 @@ MEDIA_URL = f"https://{AWS_LOCATION}/media/"
 AWS_TICKET_DIRECTORY = env("DJANGO_AWS_TICKET_DIRECTORY")
 
 
+# Your stuff...
+# ------------------------------------------------------------------------------
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_ALLOWED_ORIGINS = env.list(
-    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
+"CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
 )
 CORS_URLS_REGEX = r"^/api/.*$"
+# Django Invitations - https://github.com/jazzband/django-invitations
+INVITATIONS_INVITATION_MODEL = "root.Invite"
+ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
+INVITATIONS_INVITATION_ONLY = True
+INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
+INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
+INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
+INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"

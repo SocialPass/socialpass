@@ -8,6 +8,8 @@ class RootConfig(AppConfig):
 
     def ready(self):
         try:
-            import backend.root.signals  # noqa F401
-        except ImportError:
+            print('import signals')
+            import apps.root.signals
+        except ImportError as e:
+            print('error,',e,'\n')
             pass

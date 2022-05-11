@@ -43,11 +43,11 @@
                 </tr>
               </thead>
               <tbody>
-                {% for member in current_team.members.all %}
+                {% for member in memberships %}
                   <tr>
-                    <td>{{member.email}}</td>
+                    <td>{{member.user.email}}</td>
                     <td class="text-success">Confirmed</td>
-                    <td><a href="{% url 'team_member_delete' team_pk=current_team.pk member_pk=member.pk %}" class="btn btn-sm btn-outline-danger">Delete Team Member</a></td>
+                    <td><a href="{% url 'team_member_delete' team_pk=current_team.pk member_pk=member.id %}" class="btn btn-sm btn-outline-danger">Delete Team Member</a></td>
                   </tr>
                 {% empty %}
                 {% endfor %}
@@ -56,7 +56,7 @@
                   <tr>
                     <td>{{invite.email}}</td>
                     <td class="text-warning">Pending</td>
-                    <td><a href="#" class="btn btn-sm btn-outline-warning"></a></td>
+                    <td></td>
                   </tr>
                 {% endif %}
                 {% empty %}

@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('invitations', '0004_alter_invitation_id'),
         ('root', '0005_ticket_option_alter_ticket_requirement'),
     ]
 

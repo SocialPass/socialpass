@@ -85,11 +85,11 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "polymorphic",
-    "invitations"
 ]
 
 LOCAL_APPS = [
-    "apps.root",
+    "apps.root.apps.RootConfig",
+    "apps.root.apps.OverrideInvitationsConfig",
     "apps.dashboard"
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

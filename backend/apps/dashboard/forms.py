@@ -35,7 +35,6 @@ class TicketGateForm(forms.ModelForm):
         model = TicketGate
         fields = [
             "title",
-            "description",
             "date",
             "timezone",
             "location",
@@ -43,5 +42,30 @@ class TicketGateForm(forms.ModelForm):
             "requirements",
         ]
         widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'title',
+            }),
+            'date': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'date',
+                'type': 'date',
+            }),
             "requirements": forms.HiddenInput(),
         }
+        # widgets = {
+        #     'email': forms.EmailInput(attrs={
+        #     'class': 'form-control',
+        #     'style': 'background-color: black',
+        #     'placeholder': 'Your Email',
+        #     }),
+        #     'name': forms.TextInput(attrs={
+        #     'class': 'form-control',
+        #     'style': 'background-color: black',
+        #     'placeholder': 'Your Name'}),
+        #     'text': forms.Textarea(attrs={
+        #     'rows': 3,
+        #     'style': 'background-color: black',
+        #     'class': 'form-control',
+        #     'placeholder': 'Hello Roylan,'})
+        #  }

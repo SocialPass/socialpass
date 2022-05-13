@@ -22,7 +22,7 @@
 
 :root {
     /* Black and white colors */
-    
+
     --white-color: hsl(0, 0%, 100%);
     --black-color: hsl(0, 0%, 0%);
 
@@ -1598,7 +1598,6 @@ textarea.form-control-lg {
     color: var(--white-color);
     background-color: var(--black-color);
 }
-
 
 /* NFT details */
 

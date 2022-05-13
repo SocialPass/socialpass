@@ -40,18 +40,17 @@
 
         {{ emailaddress.email }}
         {% if emailaddress.verified %}
-        <span class="verified">{% translate "Verified" %}</span>
+        <span class="verified">{% translate "Verified" %} {% if emailaddress.primary %}<span>{% translate "Primary" %}</span>{% endif %}</span>
         {% else %}
         <span class="unverified">{% translate "Unverified" %}</span>
         {% endif %}
-        {% if emailaddress.primary %}<span class="primary">{% translate "Primary" %}</span>{% endif %}
       </label>
     </div>
       {% endfor %}
 
-    <div class="form-group">
-          <button class="secondaryAction btn bg-gradient-primary btn-sm" type="submit" name="action_primary" >{% translate 'Make Primary' %}</button>
-          <button class="secondaryAction btn bg-gradient-primary btn-sm" type="submit" name="action_send" >{% translate 'Re-send Verification' %}</button>
+    <div class="form-group d-flex gap-3">
+        <button class="secondaryAction btn bg-gradient-primary btn-sm" type="submit" name="action_primary" >{% translate 'Make Primary' %}</button>
+        <button class="secondaryAction btn bg-gradient-primary btn-sm" type="submit" name="action_send" >{% translate 'Re-send Verification' %}</button>
     </div>
 
     </fieldset>
@@ -68,7 +67,9 @@
         <form method="post" action="{% url 'account_email' %}" class="add_email">
             {% csrf_token %}
             {{ form|crispy }}
-            <button class="btn bg-gradient-primary btn-sm" name="action_add" type="submit">{% translate "Add E-mail" %}</button>
+            <div class="d-flex flex-row-reverse">
+              <button class="btn bg-gradient-primary btn-sm" name="action_add" type="submit">{% translate "Add E-mail" %}</button>
+            </div>
         </form>
 
     {% endblock %}

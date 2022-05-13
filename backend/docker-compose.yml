@@ -1,0 +1,49 @@
+version: "3.9"
+
+networks:
+  backend:
+    name: backend
+
+x-common-variables: &postgres-common-variables
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+services:
+  db:
+    image: postgres
+    environment: *postgres-common-variables
+    networks:
+      - backend
+    volumes:
+      - ./.docker-volumes/data/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: socialpass-django-backend
+    networks:
+      - backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    expose:
+      - 8000 # django server
+      - 8888 # django shell_plus
+    environment:
+      <<: *postgres-common-variables
+      NFTY_DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy

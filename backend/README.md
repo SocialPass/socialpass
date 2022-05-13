@@ -6,6 +6,19 @@ Contains core API, business logic, and database schema
 # Documentation
 https://www.notion.so/Backend-Django-54edff9f8bcf4bc49483caa6d46a7d96
 
+# Local Development (Docker)
+
+## Initial Setup
+Clone Repo
+`git clone git@github.com:nftylabs/socialpass.git`
+`cd socialpass/backend`
+
+## Apply migrations
+`docker-compose run web python manage.py migrate`
+
+## Start Server
+`docker-compose up`
+
 # Local Development
 Details on local development
 

@@ -53,19 +53,3 @@ class TicketGateForm(forms.ModelForm):
             }),
             "requirements": forms.HiddenInput(),
         }
-        # widgets = {
-        #     'email': forms.EmailInput(attrs={
-        #     'class': 'form-control',
-        #     'style': 'background-color: black',
-        #     'placeholder': 'Your Email',
-        #     }),
-        #     'name': forms.TextInput(attrs={
-        #     'class': 'form-control',
-        #     'style': 'background-color: black',
-        #     'placeholder': 'Your Name'}),
-        #     'text': forms.Textarea(attrs={
-        #     'rows': 3,
-        #     'style': 'background-color: black',
-        #     'class': 'form-control',
-        #     'placeholder': 'Hello Roylan,'})
-        #  }

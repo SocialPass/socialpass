@@ -166,17 +166,40 @@
 			<!-- End navbar -->
 
 			<div class="container-fluid py-4">
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                {{ message }}
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+				<!-- Start Django messages -->
+				{% if messages %}
+				<div id="django-messages" class="row">
+					{% for message in messages %}
+						{% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+						<div class="alert alert-info" role="alert">
+							{{ message }}
+						</div>
+						{% endif %}	
+
+						{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+						<div class="alert alert-danger" role="alert">
+							{{ message }}
+						</div>
+						{% endif %}
+
+						{% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+						<div class="alert alert-primary" role="alert">
+							{{ message }}
+						</div>
+						{% endif %}
+
+						{% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+						<div class="alert alert-warning" role="alert">
+							{{ message }}
+						</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+				{% endif %}
+				<!-- End Django messages -->
+				
 				{% block content %}{% endblock %}
+				
 				<!-- Start footer -->
 				<footer class="footer pt-3">
 					<div class="container-fluid">

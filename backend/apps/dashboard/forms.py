@@ -1,6 +1,7 @@
 import pytz
 from django import forms
 
+from apps.root import pricing_service
 from apps.root.models import Team, TicketGate
 
 
@@ -45,3 +46,10 @@ class TicketGateForm(forms.ModelForm):
         widgets = {
             "requirements": forms.HiddenInput(),
         }
+
+    def save(self, commit: bool = ...) -> TicketGate:
+        """Sets TicketGate price after save"""
+        obj = super().save(commit)
+
+        if commit:
+            pricing_service.set_ticket_gate_price(obj)

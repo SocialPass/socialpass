@@ -1,3 +1,4 @@
+import math
 import secrets
 import uuid
 from datetime import datetime, timedelta
@@ -8,7 +9,6 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from polymorphic.models import PolymorphicModel
 from pytz import utc
-from requests import delete
 
 from .model_field_choices import TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENT_SCHEMA, SOFTWARE_TYPES_SCHEMA
@@ -221,6 +221,22 @@ class TicketGate(TokenGate):
     # TODO: add constraint so that price and pricing_rule should be set
     # together. Thus one can't be null if the other is not null.
 
+    __initial_capacity = None
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.__initial_capacity = self.capacity
+
+    def save(self, *args, **kwargs):
+        """
+        Forbid downgrading capacity.
+        """
+        if self.__initial_capacity is not None and self.__initial_capacity != self.capacity:
+            # This is a limitation that should only exist at V1 until a more robust way to handle payments is defined
+            raise ValueError("Cannot edit capacit once it has been set")
+
+        super().save(*args, **kwargs)
+
 
 class Ticket(DBModel):
     """
@@ -260,7 +276,7 @@ class Ticket(DBModel):
         """
         # set signature
         if not self.signature:
-            self.signature=kwargs['signature']
+            self.signature = kwargs['signature']
 
         # create ticket image
         if not self.image:
@@ -304,6 +320,10 @@ class PricingRule(DBModel):
             )
         ]
 
+    @property
+    def safe_max_capacity(self) -> int:
+        return math.inf if self.max_capacity is None else self.max_capacity
+
     def __str__(self):
         return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_capacity})" # noqa
 
@@ -324,3 +344,12 @@ class PricingRuleGroup(DBModel):
 
     def __repr__(self):
         return f"Pricing Rule Group({self.name})"
+
+
+class TokenGatePayment(DBModel):
+    """Registers a payment done for TokenGate"""
+    value = models.FloatField(validators=[MinValueValidator(0)])
+    token_gate = models.ForeignKey(
+        TokenGate, on_delete=models.RESTRICT, related_name="payments"
+    )
+    timestamp = models.DateTimeField(auto_now_add=True)

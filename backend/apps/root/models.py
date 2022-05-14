@@ -8,6 +8,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from polymorphic.models import PolymorphicModel
 from pytz import utc
+from requests import delete
 
 from .model_field_choices import TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENT_SCHEMA, SOFTWARE_TYPES_SCHEMA
@@ -79,7 +80,8 @@ class Team(DBModel):
     pricing_rule_group = models.ForeignKey(
         "PricingRuleGroup",
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        blank=True
     )
 
     def __str__(self):
@@ -208,6 +210,16 @@ class TicketGate(TokenGate):
     location = models.CharField(max_length=1024)
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
     scanner_code = models.CharField(max_length=1024, default=set_scanner_code)
+    price = models.DecimalField(
+        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10,
+        null=True, blank=True, default=None
+    )
+    pricing_rule = models.ForeignKey(
+        "PricingRule", null=True, blank=True, default=None,
+        on_delete=models.RESTRICT  # Forbids pricing rules from being deleted
+    )
+    # TODO: add constraint so that price and pricing_rule should be set
+    # together. Thus one can't be null if the other is not null.
 
 
 class Ticket(DBModel):
@@ -271,9 +283,13 @@ class Ticket(DBModel):
 class PricingRule(DBModel):
     """Maps a capacity to a price per capacity"""
     min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    max_capacity = models.IntegerField(null=True)
+    max_capacity = models.IntegerField(null=True, blank=True)
     price_per_capacity = models.FloatField(validators=[MinValueValidator(0)])
-    group = models.ForeignKey("PricingRuleGroup", on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+    group = models.ForeignKey(
+        "PricingRuleGroup", related_name="pricing_rules",
+        on_delete=models.CASCADE  # if group is deleted, delete all rules
+    )
 
     class Meta:
         constraints = [
@@ -298,6 +314,10 @@ class PricingRule(DBModel):
 class PricingRuleGroup(DBModel):
 
     name = models.CharField(max_length=100)
+
+    @property
+    def active_rules(self):
+        return self.pricing_rules.filter(active=True)
 
     def __str__(self):
         return f"{self.name}"

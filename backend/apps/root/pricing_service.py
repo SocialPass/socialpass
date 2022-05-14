@@ -43,7 +43,7 @@ def get_pricing_rule_for_capacity(
     for rule_range in pricing_rule_ranges:
         if (
             capacity >= rule_range.min_capacity
-            and capacity <= rule_range.max_capacity
+            and capacity <= rule_range.safe_max_capacity
         ):
             return rule_range
 
@@ -52,7 +52,7 @@ def get_pricing_rule_for_capacity(
 
 def get_pricing_group_for_ticket(ticket_gate: TicketGate) -> PricingRuleGroup:
     """Returns the pricing group for a given ticket gate."""
-    return ticket_gate.team.pricing_group
+    return ticket_gate.team.pricing_rule_group
 
 
 def calculate_ticket_gate_price_per_ticket_for_team(team: Team, *, capacity: int = None):
@@ -61,7 +61,7 @@ def calculate_ticket_gate_price_per_ticket_for_team(team: Team, *, capacity: int
     The price is calculated by finding the first pricing rule that matches the
     capacity.
     """
-    pricing_group = team.pricing_group
+    pricing_group = team.pricing_rule_group
     pricing_rule = get_pricing_rule_for_capacity(pricing_group, capacity)
     return pricing_rule.price_per_ticket
 

@@ -38,7 +38,19 @@
 				<form class="form" method="post">
 					{% csrf_token %}
 					{{ form|crispy }}
-          <div id="editor_holder"></div>
+					<div>
+						<div class="text-muted text-xs mb-3">
+							The price of the ticket gate will be calculated based on the capacity. <a href="#" id="understand-pricing">Understand our pricing model.</a>
+						</div>
+						<!-- TODO: form_template would allow us for a cleaner implementation -->
+						<div id="price-placeholder">
+							<span>Inform the capacity to preview the TicketGate price.</span>
+						</div>
+						<div id="price-calc" style="display: none">
+							<strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
+						</div>
+					</div>
+          			<div id="editor_holder"></div>
 					<div class="text-end my-3">
 						<input type="submit" id="submit" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
 					</div>
@@ -48,6 +60,29 @@
 	</div>
 </div>
 <script>
+	const formatter = new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD',
+		minimumFractionDigits: 2
+	})
+
+	document.getElementById('id_capacity').addEventListener('change', function() {
+		var capacity = document.getElementById('id_capacity').value;
+		fetch("{% url 'ticketgate_price_estimator' view.kwargs.team_pk %}?capacity=" + capacity).then(function(response) {
+			return response.json();
+		}).then(function(data) {
+			document.getElementById('price-placeholder').style.display = 'none';
+			document.getElementById('price-calc').style.display = 'block';
+
+			document.getElementById('price-calc-capacity').innerHTML = capacity;
+			console.log(data)
+			document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
+			document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
+
+		});
+	})
+
+
   // Initialize the editor with a JSON schema
   var _schema = '{{json_schema|safe}}';
   var json_data = "{{object.requirements|safe}}";

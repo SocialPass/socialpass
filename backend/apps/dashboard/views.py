@@ -292,9 +292,12 @@ def estimate_ticket_gate_price(request, team_pk):
     """
     team = Team.objects.get(pk=team_pk)
     try:
-        capacity = request.GET.get("capacity")
+        capacity = int(request.GET.get("capacity"))
     except KeyError:
         return JsonResponse({"detail": "capacity is required"}, status=400)
+    except TypeError:
+        return JsonResponse({"detail": "capacity must be an integer"}, status=400)
+        
 
     price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(team, capacity=capacity)
     return JsonResponse(

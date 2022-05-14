@@ -284,7 +284,7 @@ class PricingRule(DBModel):
     """Maps a capacity to a price per capacity"""
     min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
     max_capacity = models.IntegerField(null=True, blank=True)
-    price_per_capacity = models.FloatField(validators=[MinValueValidator(0)])
+    price_per_ticket = models.FloatField(validators=[MinValueValidator(0)])
     active = models.BooleanField(default=True)
     group = models.ForeignKey(
         "PricingRuleGroup", related_name="pricing_rules",

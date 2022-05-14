@@ -42,14 +42,5 @@ class TicketGateForm(forms.ModelForm):
             "requirements",
         ]
         widgets = {
-            'title': forms.TextInput(attrs={
-                'class': 'form-control',
-                'id': 'title',
-            }),
-            'date': forms.TextInput(attrs={
-                'class': 'form-control',
-                'id': 'date',
-                'type': 'date',
-            }),
             "requirements": forms.HiddenInput(),
         }

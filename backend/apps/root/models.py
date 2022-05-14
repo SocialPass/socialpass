@@ -14,6 +14,7 @@ from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENT_SCHEMA, SOFTWA
 from .validators import JSONSchemaValidator
 from apps.gates import Ticketing
 
+
 class CustomUserManager(UserManager):
     """
     Prefetch members for user
@@ -74,6 +75,11 @@ class Team(DBModel):
                 r"^[0-9a-zA-Z]*$", message="Subdomain only allows alphanumeric"
             )
         ],
+    )
+    pricing_rule_group = models.ForeignKey(
+        "PricingRuleGroup",
+        on_delete=models.CASCADE,
+        null=True
     )
 
     def __str__(self):
@@ -260,3 +266,41 @@ class Ticket(DBModel):
         # set download url (always)
         self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(ticket=self)
         self.save()
+
+
+class PricingRule(DBModel):
+    """Maps a capacity to a price per capacity"""
+    min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
+    max_capacity = models.IntegerField(null=True)
+    price_per_capacity = models.FloatField(validators=[MinValueValidator(0)])
+    group = models.ForeignKey("PricingRuleGroup", on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            # adds constraint so that max_capacity is necessarily
+            # greater than min_capacity
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_max_capacity__gt__min_capacity",
+                check=(
+                    models.Q(max_capacity__isnull=True)
+                    | models.Q(max_capacity__gt=models.F("min_capacity"))
+                ),
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_capacity})" # noqa
+
+    def __repr__(self):
+        return f"PricingRule({self.min_capacity} - {self.max_capacity})"
+
+
+class PricingRuleGroup(DBModel):
+
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def __repr__(self):
+        return f"Pricing Rule Group({self.name})"

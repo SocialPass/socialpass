@@ -2,7 +2,10 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Membership, Signature, Team, Ticket, TicketGate, TokenGate
+from .models import (
+    Membership, Signature, Team, Ticket, TicketGate, TokenGate,
+    PricingRule, PricingRuleGroup
+)
 
 User = get_user_model()
 
@@ -69,3 +72,13 @@ class TicketGateAdmin(admin.ModelAdmin):
 class TicketAdmin(admin.ModelAdmin):
     list_display = ("tokengate", "wallet_address", "image")
     search_fields = ("tokengate__title", "wallet_address", "image")
+
+
+@admin.register(PricingRule)
+class PricingRuleAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(PricingRuleGroup)
+class PricingRuleGroupAdmin(admin.ModelAdmin):
+    pass

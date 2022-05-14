@@ -1,0 +1,69 @@
+[
+    {
+        "model": "root.pricingrulegroup",
+        "pk": 1,
+        "fields": {
+            "name": "Default Pricing Table"
+        }
+    },
+    {
+        "model": "root.pricingrule",
+        "pk": 1,
+        "fields": {
+            "group": 1,
+            "min_capacity": 1,
+            "max_capacity": 100,
+            "price_per_capacity": 2
+        }
+    },
+    {
+        "model": "root.pricingrule",
+        "pk": 2,
+        "fields": {
+            "group": 1,
+            "min_capacity": 101,
+            "max_capacity": 1000,
+            "price_per_capacity": 2.50
+        }
+    },
+    {
+        "model": "root.pricingrule",
+        "pk": 3,
+        "fields": {
+            "group": 1,
+            "min_capacity": 1001,
+            "max_capacity": 5000,
+            "price_per_capacity": 3.00
+        }
+    },
+    {
+        "model": "root.pricingrule",
+        "pk": 4,
+        "fields": {
+            "group": 1,
+            "min_capacity": 5001,
+            "max_capacity": 10000,
+            "price_per_capacity": 3.50
+        }
+    },
+    {
+        "model": "root.pricingrule",
+        "pk": 5,
+        "fields": {
+            "group": 1,
+            "min_capacity": 10001,
+            "max_capacity": 100000,
+            "price_per_capacity": 4.00
+        }
+    },
+    {
+        "model": "root.pricingrule",
+        "pk": 6,
+        "fields": {
+            "group": 1,
+            "min_capacity": 100001,
+            "max_capacity": null,
+            "price_per_capacity": 5
+        }
+    }
+]

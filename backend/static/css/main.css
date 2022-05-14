@@ -854,6 +854,17 @@ textarea.form-control-lg {
     -moz-appearance: textfield;
 }
 
+.asteriskField{
+    color: red;
+}
+
+.verified{
+    color: #82d616;
+}
+.unverified{
+    color: #ea0606;
+}
+
 /* File input reset */
 
 .form-control[type="file"] {

@@ -14,7 +14,7 @@ from apps.root import pricing_service
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
 from apps.root.models import Membership, Team, Ticket, TicketGate
 
-from .forms import TeamForm, TicketGateForm
+from .forms import TeamForm, TicketGateForm, TicketGateUpdateForm
 from .permissions import team_has_permissions
 
 User = auth.get_user_model()
@@ -221,7 +221,7 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
 
     model = TicketGate
-    form_class = TicketGateForm
+    form_class = TicketGateUpdateForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
     template_name = "dashboard/ticketgate_form.html"

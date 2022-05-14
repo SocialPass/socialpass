@@ -221,22 +221,6 @@ class TicketGate(TokenGate):
     # TODO: add constraint so that price and pricing_rule should be set
     # together. Thus one can't be null if the other is not null.
 
-    __initial_capacity = None
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.__initial_capacity = self.capacity
-
-    def save(self, *args, **kwargs):
-        """
-        Forbid downgrading capacity.
-        """
-        if self.__initial_capacity is not None and self.__initial_capacity != self.capacity:
-            # This is a limitation that should only exist at V1 until a more robust way to handle payments is defined
-            raise ValueError("Cannot edit capacit once it has been set")
-
-        super().save(*args, **kwargs)
-
 
 class Ticket(DBModel):
     """

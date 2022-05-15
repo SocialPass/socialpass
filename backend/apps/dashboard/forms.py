@@ -35,7 +35,6 @@ class TicketGateForm(forms.ModelForm):
         model = TicketGate
         fields = [
             "title",
-            "description",
             "date",
             "timezone",
             "location",

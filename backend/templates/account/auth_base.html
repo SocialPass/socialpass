@@ -130,7 +130,12 @@
       <!-- End navbar -->
 
       <div class="container-fluid py-4">
+        <!-- Start Django messages -->
+				{% include '../components/django_messages.html' %}
+				<!-- End Django messages -->
+
         {% block inner %}{% endblock %}
+
         <!-- Start footer -->
         <footer class="footer pt-3">
           <div class="container-fluid">

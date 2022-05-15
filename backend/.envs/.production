@@ -43,4 +43,8 @@ DJANGO_AWS_ACCESS_KEY_ID='test'
 DJANGO_AWS_SECRET_ACCESS_KEY='test'
 DJANGO_AWS_STORAGE_BUCKET_NAME='test'
 
-
+# STRIPE
+# ------------------------------------------------------------------------------
+# TODO: rotate keys and move to secrets manager
+STRIPE_PUBLISHABLE_KEY=pk_live_51KvpFEJ8LTYPBcCzf1bhdJLxXw68IpenyXIYGcE20ka3C0Cz0HDNdDlHUtYgrRmGhLfgcq9zWUBDeyLB0k7fYmuK00dP6iYxBl
+STRIPE_SECRET_KEY=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

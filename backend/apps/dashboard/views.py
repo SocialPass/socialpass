@@ -1,8 +1,10 @@
 import json
+import stripe
 
+from django.conf import settings
 from django.contrib import auth, messages
 from django.http import JsonResponse
-from django.shortcuts import reverse
+from django.shortcuts import redirect, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
@@ -12,7 +14,7 @@ from django.views.generic.list import ListView
 from apps.root import pricing_service
 
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
-from apps.root.models import Membership, Team, Ticket, TicketGate
+from apps.root.models import Membership, Team, Ticket, TicketGate, TokenGateStripePayment
 
 from .forms import TeamForm, TicketGateForm, TicketGateUpdateForm
 from .permissions import team_has_permissions
@@ -205,13 +207,77 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.general_type = "TICKET"
         form.save()
+        
+        # create checkout session
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        success_callback = self.request.build_absolute_uri(
+            reverse("stripe_success_callback", args=(self.kwargs["team_pk"], '{CHECKOUT_SESSION_ID}'))
+        )
+        failure_callback = self.request.build_absolute_uri(
+            reverse("stripe_failure_callback", args=(self.kwargs["team_pk"], '{CHECKOUT_SESSION_ID}'))
+        )
+        print(success_callback)
+        self.checkout_session = stripe.checkout.Session.create(
+            success_url=success_callback,
+            cancel_url=failure_callback,
+            payment_method_types=['card'],
+            mode='payment',
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': form.instance.title,
+                    },
+                    'unit_amount': int(form.instance.price * 100), # amount unit is in cent of dollars
+                },
+                'quantity': 1,
+            }]
+        )
+        TokenGateStripePayment.objects.create(
+            token_gate=form.instance,
+            value=form.instance.price,
+            stripe_checkout_session_id=self.checkout_session['id'],            
+        )
+
         return super().form_valid(form)
 
     def get_success_url(self):
+        return self.checkout_session['url']
+
+
+class TicketCreateStripeCallbackView:
+
+    @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
+    @staticmethod
+    def success(request, **kwargs):
+        # update payment status
+        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=kwargs['session_id'])
+        payment.status = "PROCESSING"
+        payment.save()
+
         messages.add_message(
-            self.request, messages.SUCCESS, "Token gate created successfully."
+            request, messages.SUCCESS, "Token gate created and payment is being processed."
         )
-        return reverse("ticketgate_list", args=(self.kwargs["team_pk"],))
+        return redirect(
+            reverse("ticketgate_list", args=(kwargs["team_pk"],))
+        )
+
+    @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
+    @staticmethod
+    def failure(request, **kwargs):
+        # update payment status
+        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=kwargs['session_id'])
+        payment.status = "CANCELLED"
+        payment.save()
+
+        # TODO: we won't handle failures gracefully since a payment will be submitted only on ticket creation
+        # TODO: add sentry event so that administrator can contact user.
+        messages.add_message(
+            request, messages.ERROR, "Token gate created but could not process payment."
+        )
+        return redirect(
+            reverse("ticketgate_list", args=(kwargs["team_pk"],))
+        )
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")

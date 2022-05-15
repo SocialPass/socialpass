@@ -74,7 +74,6 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
-    "payments.apps.PaymentsConfig"
 ]
 THIRD_PARTY_APPS = [
     "allauth",
@@ -90,6 +89,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.root",
+    "apps.payments"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

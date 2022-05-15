@@ -10,7 +10,7 @@ from model_utils.models import TimeStampedModel
 from polymorphic.models import PolymorphicModel
 from pytz import utc
 
-from .model_field_choices import TOKENGATE_TYPES
+from .model_field_choices import TOKENGATE_TYPES, STIPE_PAYMENT_STATUSES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENT_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
 from apps.gates import Ticketing
@@ -330,10 +330,15 @@ class PricingRuleGroup(DBModel):
         return f"Pricing Rule Group({self.name})"
 
 
-class TokenGatePayment(DBModel):
+class TokenGateStripePayment(DBModel):
     """Registers a payment done for TokenGate"""
-    value = models.FloatField(validators=[MinValueValidator(0)])
+    # TODO: This model could be more abstracted from the TokenGate
+
     token_gate = models.ForeignKey(
         TokenGate, on_delete=models.RESTRICT, related_name="payments"
     )
-    timestamp = models.DateTimeField(auto_now_add=True)
+    value = models.FloatField(validators=[MinValueValidator(0)])
+    status = models.CharField(choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING")
+    stripe_checkout_session_id = models.CharField(max_length=1024)
+    callaback_timestamp = models.DateTimeField(null=True, blank=True)
+    acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)

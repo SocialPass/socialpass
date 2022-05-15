@@ -9,6 +9,9 @@ DJANGO_AWS_SECRET_ACCESS_KEY="DYwJpv+er/7DmkxDW3RMS+Nz2nzeXbfaPqVwLQ4QfVs"
 DJANGO_AWS_STORAGE_BUCKET_NAME="testing-socialpass-bucket"
 DJANGO_AWS_S3_ENDPOINT_URL="https://fra1.digitaloceanspaces.com"
 NFTY_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+
 # STRIPE
-STRIPE_PUBLISHABLE_KEY=pk_live_51KvpFEJ8LTYPBcCzf1bhdJLxXw68IpenyXIYGcE20ka3C0Cz0HDNdDlHUtYgrRmGhLfgcq9zWUBDeyLB0k7fYmuK00dP6iYxBl
-STRIPE_SECRET_KEY=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
+# ------------------------------------------------------------------------------
+# TODO: rotate keys and move to secrets manager
+STRIPE_PUBLISHABLE_KEY=pk_test_51KvpFEJ8LTYPBcCzm7n9CwVTMZot5OZXRetW0zhxEv3vdw8Rq2AMjInnELpoytzCMnoLDGJ3T2fEArpcPRDb9gHV00sBtRcqcN
+STRIPE_SECRET_KEY=sk_test_51KvpFEJ8LTYPBcCzJ6xTqDNnSXbo6ugNgJRoZCyi51UMgnRUNUulQAqkfJsTIEcczkg4pA204tdCZbslzymFdLbh007N9oEGq0

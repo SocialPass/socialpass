@@ -30,6 +30,7 @@ class TicketGateUpdateForm(forms.ModelForm):
     Allows ticketgate information to be updated.
     
     Restricts editing capacity
+    TODO: restrict capacity editing only if payment was processed.
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
@@ -68,6 +69,12 @@ class TicketGateForm(forms.ModelForm):
         ]
         widgets = {
             "requirements": forms.HiddenInput(),
+            'date': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'date',
+                'type': 'date',
+            }),
+
         }
 
     def save(self, commit: bool = ...) -> TicketGate:

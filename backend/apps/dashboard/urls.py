@@ -60,5 +60,14 @@ urlpatterns = [
         views.estimate_ticket_gate_price,
         name="ticketgate_price_estimator",
     ),
-    path('', include('payments.urls'))
+    path(
+        "<int:team_pk>/checkout/success/<str:session_id>",
+        views.TicketCreateStripeCallbackView.success,
+        name="stripe_success_callback",
+    ),
+    path(
+        "<int:team_pk>/checkout/failure/<str:session_id>",
+        views.TicketCreateStripeCallbackView.failure,
+        name="stripe_failure_callback",
+    ),
 ]

@@ -40,10 +40,11 @@
 
         {{ emailaddress.email }}
         {% if emailaddress.verified %}
-        <span class="verified">{% translate "Verified" %} {% if emailaddress.primary %}<span>{% translate "Primary" %}</span>{% endif %}</span>
+        <span class="verified">{% translate "Verified" %} </span>
         {% else %}
         <span class="unverified">{% translate "Unverified" %}</span>
         {% endif %}
+        {% if emailaddress.primary %}<span>{% translate "Primary" %}</span>{% endif %}
       </label>
     </div>
       {% endfor %}

@@ -74,6 +74,7 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    "payments.apps.PaymentsConfig"
 ]
 THIRD_PARTY_APPS = [
     "allauth",
@@ -326,3 +327,7 @@ CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
 )
 CORS_URLS_REGEX = r"^/api/.*$"
+
+STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
+
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")

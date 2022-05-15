@@ -60,4 +60,5 @@ urlpatterns = [
         views.estimate_ticket_gate_price,
         name="ticketgate_price_estimator",
     ),
+    path('', include('payments.urls'))
 ]

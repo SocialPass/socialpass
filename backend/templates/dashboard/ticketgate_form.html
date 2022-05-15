@@ -8,6 +8,8 @@
 
 {% block content %}
 <script src="{% static 'js/json-editor.min.js' %}"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{% static 'js/main.js' %}"></script>
 <div class="row">
 	<div class="col-sm-10 col-md-12 mx-auto">
 		<div class="card mb-4">
@@ -52,7 +54,7 @@
 					</div>
           			<div id="editor_holder"></div>
 					<div class="text-end my-3">
-						<input type="submit" id="submit" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
+						<input type="submit" id="submitBtn" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
 					</div>
 				</form>
 			</div>

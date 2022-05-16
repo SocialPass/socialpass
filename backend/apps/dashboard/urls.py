@@ -3,9 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # User
-    path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
-    path("accounts/delete/", views.UserDeleteView.as_view(), name="user_delete"),
     # Team
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
     path("<int:team_pk>/", views.DashboardView.as_view(), name="dashboard"),
@@ -29,7 +26,11 @@ urlpatterns = [
         views.TeamMemberDeleteView.as_view(),
         name="team_member_delete",
     ),
-    # Ticket token gates
+    # User Accounts
+    path("accounts/accept-invite/<str:key>/", views.AcceptInviteView.as_view(), name="accept_invite"),
+    path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
+    path("accounts/delete/", views.UserDeleteView.as_view(), name="user_delete"),
+    # Ticketing
     path(
         "<int:team_pk>/ticketgates/",
         views.TicketGateListView.as_view(),

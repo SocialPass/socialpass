@@ -1,10 +1,8 @@
 import pytz
 from django import forms
-
-from apps.root import pricing_service
-from apps.root.models import Team, TicketGate, Invite
 from invitations.forms import InvitationAdminAddForm, InviteForm
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
+from apps.root.models import Team, TicketGate, Invite
 
 
 class TimeZoneForm(forms.Form):
@@ -27,11 +25,9 @@ class TeamForm(forms.ModelForm):
         ]
 
 
-class TicketGateUpdateForm(forms.ModelForm):
+class TicketGateForm(forms.ModelForm):
     """
     Allows ticketgate information to be updated.
-
-    Restricts editing capacity
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
@@ -44,39 +40,12 @@ class TicketGateUpdateForm(forms.ModelForm):
             "date",
             "timezone",
             "location",
-            "requirements",
-        ]
-        widgets = {
-            "requirements": forms.HiddenInput(),
-        }
-
-class TicketGateForm(forms.ModelForm):
-    """
-    Allows ticketgate information to be updated.
-    """
-
-    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
-
-    class Meta:
-        model = TicketGate
-        fields = [
-            "title",
-            "date",
-            "timezone",
-            "location",
             "capacity",
             "requirements",
         ]
         widgets = {
             "requirements": forms.HiddenInput(),
         }
-
-    def save(self, commit: bool = ...) -> TicketGate:
-        """Sets TicketGate price after save"""
-        obj = super().save(commit)
-
-        if commit:
-            pricing_service.set_ticket_gate_price(obj)
 
 
 class CustomInviteForm(InviteForm):
@@ -114,9 +83,9 @@ class CustomInvitationAdminAddForm(InvitationAdminAddForm):
         params = {"email": email}
         if cleaned_data.get("inviter"):
             params["inviter"] = cleaned_data.get("inviter")
-            if cleaned_data.get("team"):
-                params["team"] = cleaned_data.get("team")
-            instance = Invite.create(**params)
-            instance.send_invitation(self.request)
-            super(InvitationAdminAddForm, self).save(*args, **kwargs)
-            return instance
+        if cleaned_data.get("team"):
+            params["team"] = cleaned_data.get("team")
+        instance = Invite.create(**params)
+        instance.send_invitation(self.request)
+        super(InvitationAdminAddForm, self).save(*args, **kwargs)
+        return instance

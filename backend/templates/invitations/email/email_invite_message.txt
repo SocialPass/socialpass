@@ -4,7 +4,7 @@
 
 Hello,
 
-You ({{ email }}) have been invited to join {{ team }}
+You ({{ email }}) have been invited to join '{{ team }}' on SocialPass
 
 If you'd like to join, please go to {{ invite_url }}
 

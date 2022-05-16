@@ -82,3 +82,5 @@ class TicketGateForm(forms.ModelForm):
 
         if commit:
             pricing_service.set_ticket_gate_price(obj)
+
+        return obj

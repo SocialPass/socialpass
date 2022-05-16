@@ -61,13 +61,23 @@ urlpatterns = [
         name="ticketgate_price_estimator",
     ),
     path(
-        "<int:team_pk>/checkout/success",
-        views.TicketCreateStripeCallbackView.success,
-        name="stripe_success_callback",
+        "<int:team_pk>/ticketgates/<int:pk>/checkout",
+        views.TicketGateCheckout.checkout,
+        name="ticketgate_checkout",
     ),
     path(
-        "<int:team_pk>/checkout/failure",
-        views.TicketCreateStripeCallbackView.failure,
-        name="stripe_failure_callback",
+        "<int:team_pk>/ticketgates/<int:pk>/checkout/success",
+        views.TicketGateCheckout.success,
+        name="ticketgate_checkout_success_callback",
+    ),
+    path(
+        "<int:team_pk>/ticketgates/<int:pk>/checkout/failure",
+        views.TicketGateCheckout.failure,
+        name="ticketgate_checkout_failure_callback",
+    ),
+    path(
+        "webhooks/stripe",
+        views.TicketGateCheckout.stripe_webhook,
+        name="stripe_webhook",
     ),
 ]

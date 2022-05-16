@@ -21,9 +21,9 @@ ASSET_TYPES = (("ERC20", "ERC20"), ("ERC721", "ERC721"), ("ERC1155", "ERC1155"))
 SOFTWARE_TYPES = (("TICKET", "TICKET"),)
 
 STIPE_PAYMENT_STATUSES = (
-    ("PENDING", "PENDING"), # checkout session created
-    ("PROCESSING", "PROCESSING"), # stripe has already called back
-    ("CANCELLED", "CANCELLED"), # stripe has called back with a cancel
-    ("SUCCESS", "SUCCESS"), # stripe's async aknowledgement of the payment with success
-    ("FAILURE", "FAILURE"), # stripe's async aknowledgement of the payment with error
+    ("PENDING", "Pending"), # checkout session created
+    ("PROCESSING", "Processing"), # stripe has already called back
+    ("CANCELLED", "Cancelled"), # stripe has called back with a cancel
+    ("SUCCESS", "Succeeded"), # stripe's async aknowledgement of the payment with success
+    ("FAILURE", "Failed"), # stripe's async aknowledgement of the payment with error
 )

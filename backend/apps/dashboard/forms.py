@@ -25,33 +25,13 @@ class TeamForm(forms.ModelForm):
         ]
 
 
-class TicketGateUpdateForm(forms.ModelForm):
-    """
-    Allows ticketgate information to be updated.
-    
-    Restricts editing capacity
-    TODO: restrict capacity editing only if payment was processed.
-    """
-
-    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
-
-    class Meta:
-        model = TicketGate
-        fields = [
-            "title",
-            "description",
-            "date",
-            "timezone",
-            "location",
-            "requirements",
-        ]
-        widgets = {
-            "requirements": forms.HiddenInput(),
-        }
-
 class TicketGateForm(forms.ModelForm):
     """
     Allows ticketgate information to be updated.
+
+    Features:
+    - capacity is disabled if there is a payment in process.
+    - price is updated when capacity is changed.
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
@@ -76,11 +56,21 @@ class TicketGateForm(forms.ModelForm):
 
         }
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        instance = getattr(self, "instance", None)
+        if not instance:
+            return
+
+        if pricing_service.get_in_progress_payment(instance):
+            self.fields['capacity'].disabled = True
+
     def save(self, commit: bool = ...) -> TicketGate:
         """Sets TicketGate price after save"""
         obj = super().save(commit)
 
-        if commit:
+        if 'capacity' in self.changed_data:
             pricing_service.set_ticket_gate_price(obj)
 
         return obj

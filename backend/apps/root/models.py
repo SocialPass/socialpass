@@ -1,3 +1,4 @@
+import math
 import secrets
 import uuid
 from datetime import datetime, timedelta
@@ -13,6 +14,7 @@ from .model_field_choices import TOKENGATE_TYPES
 from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENT_SCHEMA, SOFTWARE_TYPES_SCHEMA
 from .validators import JSONSchemaValidator
 from apps.gates import Ticketing
+
 
 class CustomUserManager(UserManager):
     """
@@ -74,6 +76,12 @@ class Team(DBModel):
                 r"^[0-9a-zA-Z]*$", message="Subdomain only allows alphanumeric"
             )
         ],
+    )
+    pricing_rule_group = models.ForeignKey(
+        "PricingRuleGroup",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
 
     def __str__(self):
@@ -202,6 +210,16 @@ class TicketGate(TokenGate):
     location = models.CharField(max_length=1024)
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
     scanner_code = models.CharField(max_length=1024, default=set_scanner_code)
+    price = models.DecimalField(
+        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10,
+        null=True, blank=True, default=None
+    )
+    pricing_rule = models.ForeignKey(
+        "PricingRule", null=True, blank=True, default=None,
+        on_delete=models.RESTRICT  # Forbids pricing rules from being deleted
+    )
+    # TODO: add constraint so that price and pricing_rule should be set
+    # together. Thus one can't be null if the other is not null.
 
 
 class Ticket(DBModel):
@@ -242,7 +260,7 @@ class Ticket(DBModel):
         """
         # set signature
         if not self.signature:
-            self.signature=kwargs['signature']
+            self.signature = kwargs['signature']
 
         # create ticket image
         if not self.image:
@@ -260,3 +278,62 @@ class Ticket(DBModel):
         # set download url (always)
         self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(ticket=self)
         self.save()
+
+
+class PricingRule(DBModel):
+    """Maps a capacity to a price per capacity"""
+    min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
+    max_capacity = models.IntegerField(null=True, blank=True)
+    price_per_ticket = models.FloatField(validators=[MinValueValidator(0)])
+    active = models.BooleanField(default=True)
+    group = models.ForeignKey(
+        "PricingRuleGroup", related_name="pricing_rules",
+        on_delete=models.CASCADE  # if group is deleted, delete all rules
+    )
+
+    class Meta:
+        constraints = [
+            # adds constraint so that max_capacity is necessarily
+            # greater than min_capacity
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_max_capacity__gt__min_capacity",
+                check=(
+                    models.Q(max_capacity__isnull=True)
+                    | models.Q(max_capacity__gt=models.F("min_capacity"))
+                ),
+            )
+        ]
+
+    @property
+    def safe_max_capacity(self) -> int:
+        return math.inf if self.max_capacity is None else self.max_capacity
+
+    def __str__(self):
+        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})" # noqa
+
+    def __repr__(self):
+        return f"PricingRule({self.min_capacity} - {self.max_capacity})"
+
+
+class PricingRuleGroup(DBModel):
+
+    name = models.CharField(max_length=100)
+
+    @property
+    def active_rules(self):
+        return self.pricing_rules.filter(active=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def __repr__(self):
+        return f"Pricing Rule Group({self.name})"
+
+
+class TokenGatePayment(DBModel):
+    """Registers a payment done for TokenGate"""
+    value = models.FloatField(validators=[MinValueValidator(0)])
+    token_gate = models.ForeignKey(
+        TokenGate, on_delete=models.RESTRICT, related_name="payments"
+    )
+    timestamp = models.DateTimeField(auto_now_add=True)

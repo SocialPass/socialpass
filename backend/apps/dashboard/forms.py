@@ -1,6 +1,7 @@
 import pytz
 from django import forms
 
+from apps.root import pricing_service
 from apps.root.models import Team, TicketGate
 
 
@@ -24,6 +25,29 @@ class TeamForm(forms.ModelForm):
         ]
 
 
+class TicketGateUpdateForm(forms.ModelForm):
+    """
+    Allows ticketgate information to be updated.
+    
+    Restricts editing capacity
+    """
+
+    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+
+    class Meta:
+        model = TicketGate
+        fields = [
+            "title",
+            "description",
+            "date",
+            "timezone",
+            "location",
+            "requirements",
+        ]
+        widgets = {
+            "requirements": forms.HiddenInput(),
+        }
+
 class TicketGateForm(forms.ModelForm):
     """
     Allows ticketgate information to be updated.
@@ -44,3 +68,10 @@ class TicketGateForm(forms.ModelForm):
         widgets = {
             "requirements": forms.HiddenInput(),
         }
+
+    def save(self, commit: bool = ...) -> TicketGate:
+        """Sets TicketGate price after save"""
+        obj = super().save(commit)
+
+        if commit:
+            pricing_service.set_ticket_gate_price(obj)

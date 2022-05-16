@@ -64,15 +64,17 @@
                   {{ tokengate.tickets.all.count }}
                   </span>
 								<td class="align-middle">
-									<a href="{% url 'ticketgate_detail' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
-									Details
-									</a>
-                  <a href="{% url 'ticketgate_stats' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
-                  Stats
-                  </a>
-									<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 px-0">
-									Edit
-									</a>
+									<div class="px-4 d-flex flex-row-reverse gap-8">
+                      <a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 px-0">
+                      Edit
+                      </a>
+                      <a href="{% url 'ticketgate_stats' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
+                        Stats
+                        </a>
+                      <a href="{% url 'ticketgate_detail' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
+                        Details
+                      </a>
+                  </div>
 								</td>
 							</tr>
 							{% endfor %}

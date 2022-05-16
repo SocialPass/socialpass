@@ -30,10 +30,12 @@
 						</div>
 					</div>
 					{% endif %}
-					<a href="{% url 'ticketgate_list' view.kwargs.team_pk %}" class="btn bg-gradient-secondary btn-sm ms-auto my-0">
-						<i class="fa-solid fa-angle-left"></i>
-						Back
-					</a>
+          <a href="{% url 'ticketgate_list' view.kwargs.team_pk %}" class="btn bg-gradient-secondary btn-sm ms-auto my-0">
+              <div class="d-flex align-items-center justify-content-center gap-2" >
+                <i class="fa-solid fa-angle-left fs-6"></i>
+                <span class="fs-6">Back</span>
+              </div>
+          </a>
 				</div>
 			</div>
 			<div class="card-body py-2">
@@ -110,5 +112,7 @@
   editor.on('change',() => {
      document.getElementById("id_requirements").value = JSON.stringify(editor.getValue());
   });
+  console.log(editor)
+  console.log(json_data)
 </script>
 {% endblock %}

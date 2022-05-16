@@ -105,6 +105,9 @@
             <div class="row">
               <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
                 <div class="card card-plain mt-8">
+                <!-- Start Django messages -->
+                {% include '../components/django_messages.html' %}
+                <!-- End Django messages -->
                 {% block inner %}
                 {% endblock %}
                 </div>

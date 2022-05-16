@@ -139,10 +139,10 @@
 					</nav>
 					<div class="ms-auto">
 						<div class="dropdown p-0 m-0">
-							<a class="d-flex align-items-center btn btn-link px-0 m-0" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+							<a class="d-flex align-items-center btn btn-link px-0 m-0 gap-2" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="d-none d-sm-inline ms-2">{{current_team.name}}</span>
                 {% if current_team.image %}
-                <img src="{{current_team.image.url }}" alt="" height="30" width="30">
+                <img class="rounded-circle" src="{{current_team.image.url }}" alt="" height="30" width="30">
                 {% endif %}
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="userDropdown">
@@ -166,7 +166,12 @@
 			<!-- End navbar -->
 
 			<div class="container-fluid py-4">
+				<!-- Start Django messages -->
+				{% include '../components/django_messages.html' %}
+				<!-- End Django messages -->
+				
 				{% block content %}{% endblock %}
+				
 				<!-- Start footer -->
 				<footer class="footer pt-3">
 					<div class="container-fluid">

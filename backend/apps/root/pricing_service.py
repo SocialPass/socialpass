@@ -86,12 +86,41 @@ def set_ticket_gate_price(ticket_gate: TicketGate):
     ticket_gate.save()
 
 
+def get_ticket_gate_pending_payment_value(ticket_gate: TicketGate):
+    """Returns the pending payment value of a ticket gate."""
+    total_payments = get_effective_payments(ticket_gate.payments).sum('value')
+    return min(ticket_gate.price - total_payments, 0)
+
+
 def get_effective_payments(payments: TokenGateStripePayment.objects) -> TokenGateStripePayment.objects:
     """Returns all succeded payments for a ticket gate."""
     return payments.filter(status="SUCCESS")
 
 
-def get_ticket_gate_pending_payment_value(ticket_gate: TicketGate):
-    """Returns the pending payment value of a ticket gate."""
-    total_payments = get_effective_payments(ticket_gate.payments).sum('value')
-    return min(ticket_gate.price - total_payments, 0)
+def get_in_progress_payment(ticket_gate: TicketGate) -> TokenGateStripePayment:
+    """Returns the payment of a ticket gate which is either PENDING or PROCESSING."""
+    return ticket_gate.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
+
+
+def issue_payment(ticket_gate: TicketGate, stripe_checkout_session_id: str) -> TokenGateStripePayment:
+    """
+    Issues a payment for a ticket gate.
+    Adds validation to ensure that there is only one payment in progress issued per ticket gate.
+    """
+    if get_in_progress_payment(ticket_gate.payments):
+        raise ValueError("There is already a pending payment for this ticket gate.")
+
+    payment = TokenGateStripePayment(
+        ticket_gate=ticket_gate,
+        value=ticket_gate.price,
+        stripe_checkout_session_id=stripe_checkout_session_id,
+        status="PENDING",
+    )
+    payment.save()
+    return payment
+
+
+def fulfill_payment(payment: TokenGateStripePayment):
+    """Fulfills a payment for a ticket gate."""
+    payment.status = "SUCCESS"
+    payment.save()

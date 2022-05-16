@@ -220,41 +220,48 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         )
 
 
-class TicketGateCheckout:
-    """TODO: transform TicketGateCheckout into a TemplateView with its own checkout template"""
+@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
+class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
+    """
+    Checkout intermediate step for TicketGate.
 
-    @team_has_permissions(software_type="TICKET")
-    @staticmethod
-    def checkout(request, *, team_pk=None, pk=None):
-        token_gate = TicketGate.objects.get(id=pk)
+    Handles stripe integration.
+    """
 
-        if token_gate.payments.filter(status="SUCCESS").count() > 0:
+    template_name: str = "dashboard/ticketgate_checkout.html"
+
+    def get_object(self, **kwargs):
+        return TicketGate.objects.get(
+            pk=kwargs['pk'], team_pk=kwargs['team_pk']
+        )
+
+    def get(self, request, *args, **kwargs):
+        """Renders checkout page if payment is still pending"""
+        ticket_gate = self.get_object(**kwargs)
+
+        if pricing_service.get_ticket_gate_pending_payment_value(ticket_gate) == 0:
+            # Payment was already done.
             messages.add_message(
-                request, messages.INFO, f"Cannot procceed to checkout since payment has already succeded."
+                request, messages.INFO, "The payment has already been processed."
             )
-            return redirect(reverse("ticketgate_detail", args=(team_pk, pk)))
-
-        if token_gate.payments.filter(status="PROCESSING").count() > 0:
-            messages.add_message(
-                request, messages.INFO, f"Cannot procceed to checkout since there is a payment being processed."
+            return redirect(
+                "ticketgate_detail",
+                args=(kwargs['team_pk'], kwargs['pk'])
             )
-            return redirect(reverse("ticketgate_detail", args=(team_pk, pk)))
 
-        pending_payments = token_gate.payments.filter(status="PENDING")
-        if pending_payments.count() != 1:
-            # TODO: add sentry
-            print("This should go to sentry because it is probably a bug")
-        if pending_payments.count() == 1:
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *, team_pk=None, pk=None):
+        """Issue payment and redirect to stripe checkout"""
+        ticket_gate = self.get_object(team_pk=team_pk, pk=pk)
+
+        issued_payment = pricing_service.get_in_progress_payment(ticket_gate)
+        if issued_payment:
+            # There is already a payment in progress, redirect to it
             stripe_session = stripe.checkout.Session.retrieve(
-                pending_payments.last().stripe_checkout_session_id
+                issued_payment.stripe_checkout_session_id
             )
             return redirect(stripe_session['url'])
-
-        # There is no payment, or previous payments failed. Create new payment
-        
-        # TODO: move payment creation to CreateView
-        # TODO: retries (payment failure) should be handled elsewhere
-        # TODO: move this into a service
 
         # build callback urls
         success_callback = request.build_absolute_uri(
@@ -276,49 +283,44 @@ class TicketGateCheckout:
                 'price_data': {
                     'currency': 'usd',
                     'product_data': {
-                        'name': token_gate.title,
+                        'name': ticket_gate.title,
                     },
-                    'unit_amount': int(token_gate.price * 100), # amount unit is in cent of dollars
+                    'unit_amount': int(ticket_gate.price * 100),  # amount unit is in cent of dollars
                 },
                 'quantity': 1,
             }]
         )
 
         # create payment intent
-        TokenGateStripePayment.objects.create(
-            token_gate=token_gate,
-            value=token_gate.price,
-            stripe_checkout_session_id=checkout_session['id'],            
-        )
+        pricing_service.issue_payment(ticket_gate, checkout_session['id'])
 
         return redirect(checkout_session['url'])
 
     @team_has_permissions(software_type="TICKET")
     @staticmethod
-    def success(request, **kwargs):
+    def success_stripe_callback(request, **kwargs):
         # update payment status
         stripe_session_id = request.GET['session_id']
 
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
         payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
-       
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
+            message = "Ticket gate created and payment succeeded."
         else:
             payment.status = "PROCESSING"
-
+            message = "Ticket gate created and payment is being processed."
         payment.save()
 
-        messages.add_message(
-            request, messages.SUCCESS, f"Ticket gate created and payment is being processed."
-        )
+        messages.add_message(request, messages.SUCCESS, message)
         return redirect(
-            redirect(reverse("ticketgate_detail", args=(kwargs["team_pk"], payment.token_gate.id)))
+            "ticketgate_detail",
+            args=(kwargs["team_pk"], payment.token_gate.id)
         )
 
     @team_has_permissions(software_type="TICKET")
     @staticmethod
-    def failure(request, **kwargs):
+    def failure_stripe_callback(request, **kwargs):
         # update payment status
         payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
         payment.status = "CANCELLED"
@@ -326,22 +328,24 @@ class TicketGateCheckout:
 
         # TODO: add sentry event so that administrator can contact user.
         messages.add_message(
-            request, messages.ERROR, f"Ticket gate created but could not process payment."
+            request, messages.ERROR, "Ticket gate created but could not process payment."
         )
         return redirect(
-            redirect(reverse("ticketgate_detail", args=(kwargs["team_pk"], payment.token_gate.id)))
+            "ticketgate_detail",
+            args=(kwargs["team_pk"], payment.token_gate.id)
         )
 
     @csrf_exempt
     @staticmethod
     def stripe_webhook(request):
         """
-        TODO:
-        Webhook should only be required for asynchronous payment processing
-        
+        !NOT IN USE AT THE MOMENT!
+
+        TODO: Webhook is only required for asynchronous payment processing
+
         https://stripe.com/docs/payments/payment-methods/overview
         https://stripe.com/docs/sources
-        
+
         What payment methods are we going to accept?
         """
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -354,17 +358,16 @@ class TicketGateCheckout:
             event = stripe.Webhook.construct_event(
                 payload, sig_header, endpoint_secret
             )
-        except ValueError as e:
+        except ValueError:
             # Invalid payload
             return HttpResponse(status=400)
-        except stripe.error.SignatureVerificationError as e:
+        except stripe.error.SignatureVerificationError:
             # Invalid signature
             return HttpResponse(status=400)
 
-        # Handle the checkout.session.completed event
+        # Event is being handled at success/failure synchronous callback
         # if event['type'] == 'checkout.session.completed':
-            # TODO handle payment status on this event instead of callback
-        
+
         if event['type'] == 'checkout.session.async_payment_succeeded':
             session = event['data']['object']
 
@@ -382,6 +385,7 @@ class TicketGateCheckout:
             payment.save()
 
         return HttpResponse(status=200)
+
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):

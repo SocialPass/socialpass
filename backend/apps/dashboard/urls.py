@@ -62,17 +62,17 @@ urlpatterns = [
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/checkout",
-        views.TicketGateCheckout.checkout,
+        views.TicketGateCheckout.as_view(),
         name="ticketgate_checkout",
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/checkout/success",
-        views.TicketGateCheckout.success,
+        views.TicketGateCheckout.success_stripe_callback,
         name="ticketgate_checkout_success_callback",
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/checkout/failure",
-        views.TicketGateCheckout.failure,
+        views.TicketGateCheckout.failure_stripe_callback,
         name="ticketgate_checkout_failure_callback",
     ),
     path(

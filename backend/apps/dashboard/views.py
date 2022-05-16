@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urljoin
 import stripe
 
 from django.conf import settings
@@ -210,13 +211,14 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         
         # create checkout session
         stripe.api_key = settings.STRIPE_SECRET_KEY
+       
         success_callback = self.request.build_absolute_uri(
-            reverse("stripe_success_callback", args=(self.kwargs["team_pk"], '{CHECKOUT_SESSION_ID}'))
-        )
+            reverse("stripe_success_callback", args=(self.kwargs["team_pk"],))
+        ) + "?session_id={CHECKOUT_SESSION_ID}"
         failure_callback = self.request.build_absolute_uri(
-            reverse("stripe_failure_callback", args=(self.kwargs["team_pk"], '{CHECKOUT_SESSION_ID}'))
-        )
-        print(success_callback)
+            reverse("stripe_failure_callback", args=(self.kwargs["team_pk"],))
+        ) + "?session_id={CHECKOUT_SESSION_ID}"
+        
         self.checkout_session = stripe.checkout.Session.create(
             success_url=success_callback,
             cancel_url=failure_callback,
@@ -247,11 +249,11 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
 
 class TicketCreateStripeCallbackView:
 
-    @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
+    @team_has_permissions(software_type="TICKET")
     @staticmethod
     def success(request, **kwargs):
         # update payment status
-        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=kwargs['session_id'])
+        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
         payment.status = "PROCESSING"
         payment.save()
 
@@ -262,11 +264,11 @@ class TicketCreateStripeCallbackView:
             reverse("ticketgate_list", args=(kwargs["team_pk"],))
         )
 
-    @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
+    @team_has_permissions(software_type="TICKET")
     @staticmethod
     def failure(request, **kwargs):
         # update payment status
-        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=kwargs['session_id'])
+        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
         payment.status = "CANCELLED"
         payment.save()
 

@@ -1,8 +1,14 @@
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
+from django.utils.safestring import mark_safe
 
-from .models import Membership, Signature, Team, Ticket, TicketGate, TokenGate
+from apps.root import pricing_service
+from apps.root.models import (
+    Membership, Signature, Team, Ticket, TicketGate, TokenGate,
+    PricingRule, PricingRuleGroup
+)
 
 User = get_user_model()
 
@@ -69,3 +75,48 @@ class TicketGateAdmin(admin.ModelAdmin):
 class TicketAdmin(admin.ModelAdmin):
     list_display = ("tokengate", "wallet_address", "image")
     search_fields = ("tokengate__title", "wallet_address", "image")
+
+
+@admin.register(PricingRule)
+class PricingRuleAdmin(admin.ModelAdmin):
+    pass
+
+
+class PricingRuleInline(admin.TabularInline):
+    model = PricingRule
+    extra = 0
+
+
+@admin.register(PricingRuleGroup)
+class PricingRuleGroupAdmin(admin.ModelAdmin):
+    inlines = [PricingRuleInline]
+
+    def identify_pricing_group_errors(self, request, queryset):
+        for pricing_group in queryset:
+            errors = pricing_service.identify_pricing_group_errors(
+                pricing_group
+            )
+            if errors:
+                messages.warning(
+                    request, list_as_messages_str(errors, pricing_group.name)
+                )
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+
+        errors = pricing_service.identify_pricing_group_errors(form.instance)
+        if errors:
+            errors_msg = list_as_messages_str(
+                errors,
+                "Recently edited PricingGroup has the following problems:"
+            )
+            messages.warning(request, errors_msg)
+
+    actions = [identify_pricing_group_errors]
+
+
+def list_as_messages_str(elements: list, title: str):
+    ul_string = f"<div><h3>{title}</h3>\n"
+    ul_string += "\n".join(["<div>" + str(s) + "</div>" for s in elements])
+    ul_string += "\n</div>"
+    return mark_safe(ul_string)

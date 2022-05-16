@@ -4,16 +4,18 @@ from invitations.views import AcceptInvite
 from django.conf import settings
 from django.contrib import auth, messages
 from django.shortcuts import redirect, reverse
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
+from apps.root import pricing_service
 
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
 from apps.root.models import Membership, Team, Ticket, TicketGate
-from apps.root.forms import TeamForm, TicketGateForm, CustomInviteForm
+from .forms import TeamForm, TicketGateForm, TicketGateUpdateForm, CustomInviteForm
 from .permissions import team_has_permissions
 
 User = auth.get_user_model()
@@ -258,7 +260,7 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
     """
 
     model = TicketGate
-    form_class = TicketGateForm
+    form_class = TicketGateUpdateForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
     template_name = "dashboard/ticketgate_form.html"
@@ -320,3 +322,26 @@ class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
             qs = qs.filter(wallet_address__icontains=query_address)
 
         return qs
+
+
+@team_has_permissions(software_type="TICKET")
+def estimate_ticket_gate_price(request, team_pk):
+    """
+    Returns a list of ticket stats from ticket tokengates.
+    """
+    team = Team.objects.get(pk=team_pk)
+    try:
+        capacity = int(request.GET.get("capacity"))
+    except KeyError:
+        return JsonResponse({"detail": "capacity is required"}, status=400)
+    except TypeError:
+        return JsonResponse({"detail": "capacity must be an integer"}, status=400)
+
+
+    price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(team, capacity=capacity)
+    return JsonResponse(
+        {
+            "price_per_ticket": price_per_ticket,
+            "price": price_per_ticket * capacity
+        }
+    )

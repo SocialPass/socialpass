@@ -224,7 +224,6 @@ class TicketGateCheckout:
     """TODO: transform TicketGateCheckout into a TemplateView with its own checkout template"""
 
     @team_has_permissions(software_type="TICKET")
-    @staticmethod
     def checkout(request, *, team_pk=None, pk=None):
         token_gate = TicketGate.objects.get(id=pk)
 
@@ -251,7 +250,7 @@ class TicketGateCheckout:
             return redirect(stripe_session['url'])
 
         # There is no payment, or previous payments failed. Create new payment
-        
+
         # TODO: move payment creation to CreateView
         # TODO: retries (payment failure) should be handled elsewhere
         # TODO: move this into a service
@@ -288,20 +287,19 @@ class TicketGateCheckout:
         TokenGateStripePayment.objects.create(
             token_gate=token_gate,
             value=token_gate.price,
-            stripe_checkout_session_id=checkout_session['id'],            
+            stripe_checkout_session_id=checkout_session['id'],
         )
 
         return redirect(checkout_session['url'])
 
     @team_has_permissions(software_type="TICKET")
-    @staticmethod
     def success(request, **kwargs):
         # update payment status
         stripe_session_id = request.GET['session_id']
 
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
         payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
-       
+
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
         else:
@@ -317,7 +315,6 @@ class TicketGateCheckout:
         )
 
     @team_has_permissions(software_type="TICKET")
-    @staticmethod
     def failure(request, **kwargs):
         # update payment status
         payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
@@ -328,9 +325,7 @@ class TicketGateCheckout:
         messages.add_message(
             request, messages.ERROR, f"Ticket gate created but could not process payment."
         )
-        return redirect(
-            redirect(reverse("ticketgate_detail", args=(kwargs["team_pk"], payment.token_gate.id)))
-        )
+        return redirect((reverse("ticketgate_update", args=(kwargs["team_pk"], payment.token_gate.id))))
 
     @csrf_exempt
     @staticmethod
@@ -338,10 +333,10 @@ class TicketGateCheckout:
         """
         TODO:
         Webhook should only be required for asynchronous payment processing
-        
+
         https://stripe.com/docs/payments/payment-methods/overview
         https://stripe.com/docs/sources
-        
+
         What payment methods are we going to accept?
         """
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -364,7 +359,7 @@ class TicketGateCheckout:
         # Handle the checkout.session.completed event
         # if event['type'] == 'checkout.session.completed':
             # TODO handle payment status on this event instead of callback
-        
+
         if event['type'] == 'checkout.session.async_payment_succeeded':
             session = event['data']['object']
 
@@ -466,7 +461,7 @@ def estimate_ticket_gate_price(request, team_pk):
         return JsonResponse({"detail": "capacity is required"}, status=400)
     except TypeError:
         return JsonResponse({"detail": "capacity must be an integer"}, status=400)
-        
+
 
     price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(team, capacity=capacity)
     return JsonResponse(

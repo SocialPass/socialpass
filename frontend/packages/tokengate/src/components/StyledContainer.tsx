@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { useLocation } from 'react-router-dom'
-import { TickerImage } from './TickerImage';
 import { TokenGateContext } from '../context';
 
 // StyledContainer component
@@ -36,7 +35,6 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 						<img src={retrieveJson?.team.image} alt="Team Image"/>
 						<h4>{retrieveJson?.team.name}</h4>
 					</div>
-					<TickerImage gateType={retrieveJson?.general_type}/>
 				</header>
 			}
 			<div className="d-flex mx-3 mx-md-5 mt-5 flex-grow-1 h-100">

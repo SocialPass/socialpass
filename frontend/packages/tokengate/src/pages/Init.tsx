@@ -17,15 +17,13 @@ export const Init = () => {
 					"public_id":id
 				});
 				if (response && response.httpStatus){
+					// success
 					if (response.httpStatus === 200){
 						setRetrieveJson(response);
-
-						// navigate based on gate type
-						switch(response?.general_type){
-							case('TICKET'):
-								navigate('/gate/ticket')
-						}
-					} else {
+						navigate('/gate/ticket')
+					}
+					// error
+					else {
 						setRetrieveError(response);
 					}
 				}

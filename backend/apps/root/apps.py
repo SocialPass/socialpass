@@ -8,7 +8,6 @@ class RootConfig(AppConfig):
 
     def ready(self):
         try:
-            print('import signals')
             import apps.root.signals
         except ImportError as e:
             print('error,',e,'\n')

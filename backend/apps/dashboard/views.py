@@ -383,7 +383,6 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
         return redirect(checkout_session['url'])
 
     @team_has_permissions(software_type="TICKET")
-    @staticmethod
     def success_stripe_callback(request, **kwargs):
         # update payment status
         stripe_session_id = request.GET['session_id']
@@ -407,7 +406,6 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
         )
 
     @team_has_permissions(software_type="TICKET")
-    @staticmethod
     def failure_stripe_callback(request, **kwargs):
         # update payment status
         payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
@@ -419,12 +417,11 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
             request, messages.ERROR, "Ticket gate created but could not process payment."
         )
         return redirect(
-            "ticketgate_detail",
+            "ticketgate_checkout",
             **kwargs
         )
 
     @csrf_exempt
-    @staticmethod
     def stripe_webhook(request):
         """
         !NOT IN USE AT THE MOMENT!

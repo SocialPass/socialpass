@@ -1,5 +1,11 @@
 from functools import lru_cache
 import json
+from invitations.views import AcceptInvite
+
+from django.conf import settings
+from django.contrib import auth, messages
+from django.shortcuts import redirect, reverse
+from django.http import JsonResponse
 import stripe
 
 from django.conf import settings
@@ -11,14 +17,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
 from apps.root import pricing_service
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
 from apps.root.models import Membership, Team, Ticket, TicketGate, TokenGateStripePayment
-
-from .forms import TeamForm, TicketGateForm
+from .forms import TeamForm, TicketGateForm, CustomInviteForm
 from .permissions import team_has_permissions
 
 User = auth.get_user_model()
@@ -77,10 +82,28 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
                 return reverse("dashboard", args=(membership.team.pk,))
-            else:
-                return "https://socialpass.io"
         else:
             return reverse("account_login")
+
+
+class AcceptInviteView(AcceptInvite):
+    """
+    Inherited AcceptInvite from beekeeper-invitations
+    """
+
+    def post(self, *args, **kwargs):
+        """
+        Override invite view to either redirect to login or signup,
+        depending on if user has account or not
+        """
+        try:
+            self.object = self.get_object()
+            user = User.objects.get(email__iexact=self.object.email)
+            if user:
+                super().post(self, *args, **kwargs)
+                return redirect(reverse(settings.LOGIN_URL))
+        except Exception as e:
+            return super().post(self, *args, **kwargs)
 
 
 @method_decorator(team_has_permissions(software_type=""), name="dispatch")
@@ -102,12 +125,32 @@ class TeamDetailView(WebsiteCommonMixin, TemplateView):
 
 
 @method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamMemberManageView(WebsiteCommonMixin, TemplateView):
+class TeamMemberManageView(WebsiteCommonMixin, FormView):
     """
     Manage a team's members.
     """
-
+    form_class = CustomInviteForm
     template_name = "dashboard/member_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['memberships'] = Membership.objects.filter(team=context["current_team"])
+        return context
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        instance = form.save(email=form.cleaned_data.get("email"))
+        instance.team = context["current_team"]
+        instance.inviter = self.request.user
+        instance.save()
+        instance.send_invitation(self.request)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Team information updated successfully."
+        )
+        return reverse("team_members", args=(self.kwargs["team_pk"],))
 
 
 @method_decorator(team_has_permissions(software_type=""), name="dispatch")

@@ -9,6 +9,8 @@ boto3==1.21.46
 Pillow==9.1.0
 qrcode==7.3.1
 psycopg  # https://github.com/psycopg/psycopg2
+stripe==3.0.0
+
 
 # Django
 # ------------------------------------------------------------------------------
@@ -25,3 +27,4 @@ django-crispy-forms==1.14.0
 crispy-bootstrap5==0.6
 django-polymorphic==3.1.0
 django-rest-polymorphic==0.1.9
+git+https://github.com/jazzband/django-invitations.git@045dc4d55369be33e9c8711dd1c9d0bc793d64cb

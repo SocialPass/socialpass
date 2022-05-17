@@ -48,3 +48,19 @@ INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
 # Your stuff...
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
+
+
+# EMAIL
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
+DEFAULT_FROM_EMAIL = env(
+    "DJANGO_DEFAULT_FROM_EMAIL",
+    default="SocialPass <noreply@socialpass.io>",
+)
+# https://docs.djangoproject.com/en/dev/ref/settings/#server-email
+# SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
+EMAIL_SUBJECT_PREFIX = env(
+    "DJANGO_EMAIL_SUBJECT_PREFIX",
+    default="[SocialPass]",
+)

@@ -1,4 +1,4 @@
-from .models import PricingRuleGroup, Team, TicketGate
+from .models import PricingRuleGroup, Team, TicketGate, TokenGateStripePayment
 
 
 def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:
@@ -86,7 +86,12 @@ def set_ticket_gate_price(ticket_gate: TicketGate):
     ticket_gate.save()
 
 
+def get_effective_payments(payments: TokenGateStripePayment.objects) -> TokenGateStripePayment.objects:
+    """Returns all succeded payments for a ticket gate."""
+    return payments.filter(status="SUCCESS")
+
+
 def get_ticket_gate_pending_payment_value(ticket_gate: TicketGate):
     """Returns the pending payment value of a ticket gate."""
-    total_payments = ticket_gate.payments.all().sum('value')
+    total_payments = get_effective_payments(ticket_gate.payments).sum('value')
     return min(ticket_gate.price - total_payments, 0)

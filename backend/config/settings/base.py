@@ -329,6 +329,7 @@ CORS_ALLOWED_ORIGINS = env.list(
 "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
 )
 CORS_URLS_REGEX = r"^/api/.*$"
+
 # Django Invitations - https://github.com/jazzband/django-invitations
 INVITATIONS_INVITATION_MODEL = "root.Invite"
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
@@ -337,3 +338,7 @@ INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
 INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
+
+# STRIPE
+STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")

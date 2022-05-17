@@ -13,9 +13,11 @@
 			<div class="card-header py-0">
 				<div class="d-flex align-items-center py-3">
 					<div class="pe-2">
-						<h6 class="m-0">Ticket Gate Detail</h6>
+						<h6 class="m-0">Ticket Gate Checkout</h6>
 						<div class="text-muted text-xs mb-3">
-							Details of a particular token gate.
+							Please, confirm the information of the Ticket Gate before heading to checkout.
+
+							All this information, with exception of the capacity may be edited later.
 						</div>
 					</div>
 					<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.pk %}" class="btn bg-gradient-primary btn-sm ms-auto my-0">Edit</a>
@@ -79,6 +81,11 @@
 					<pre class="bg-light p-3 rounded">No Requirements</pre>
 					{% endif %}
 				</div>
+
+				<form method="post">
+					{% csrf_token %}
+					<input type="submit" value="Procceed to Checkout" />
+				</form>
 			</div>
 		</div>
 	</div>

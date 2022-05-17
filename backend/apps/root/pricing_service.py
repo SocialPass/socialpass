@@ -1,3 +1,5 @@
+from django.db.models import Sum
+
 from .models import PricingRuleGroup, Team, TicketGate, TokenGateStripePayment
 
 
@@ -66,30 +68,29 @@ def calculate_ticket_gate_price_per_ticket_for_team(team: Team, *, capacity: int
     return pricing_rule.price_per_ticket
 
 
-def calculate_ticket_gate_price_per_ticket(
+def get_pricing_rule_for_ticket(
     ticket_gate: TicketGate,
 ) -> float:
-    """Calculates the price of a ticket gate for a given capacity.
-
-    The price is calculated by finding the first pricing rule that matches the
-    capacity.
-    """
+    """Gets the pricing rule that applies to the ticket capacity"""
     pricing_group = get_pricing_group_for_ticket(ticket_gate)
-    pricing_rule = get_pricing_rule_for_capacity(
-        pricing_group, ticket_gate.capacity)
-    return pricing_rule.price_per_ticket
+    return get_pricing_rule_for_capacity(pricing_group, ticket_gate.capacity)
 
 
 def set_ticket_gate_price(ticket_gate: TicketGate):
-    """Sets the price of a ticket gate for a given capacity."""
-    ticket_gate.price = calculate_ticket_gate_price_per_ticket(ticket_gate) * ticket_gate.capacity
+    """Sets the price of a ticket based on its capacity."""
+    ticket_gate.pricing_rule = get_pricing_rule_for_ticket(ticket_gate)
+    ticket_gate.price = ticket_gate.pricing_rule.price_per_ticket * ticket_gate.capacity
     ticket_gate.save()
 
 
 def get_ticket_gate_pending_payment_value(ticket_gate: TicketGate):
     """Returns the pending payment value of a ticket gate."""
-    total_payments = get_effective_payments(ticket_gate.payments).sum('value')
-    return min(ticket_gate.price - total_payments, 0)
+    effective_payments_value = get_effective_payments(
+        ticket_gate.payments
+    ).aggregate(Sum('value'))['value__sum'] or 0
+    return max(
+        (ticket_gate.price or 0) - effective_payments_value, 0
+    )
 
 
 def get_effective_payments(payments: TokenGateStripePayment.objects) -> TokenGateStripePayment.objects:
@@ -107,11 +108,11 @@ def issue_payment(ticket_gate: TicketGate, stripe_checkout_session_id: str) -> T
     Issues a payment for a ticket gate.
     Adds validation to ensure that there is only one payment in progress issued per ticket gate.
     """
-    if get_in_progress_payment(ticket_gate.payments):
+    if get_in_progress_payment(ticket_gate):
         raise ValueError("There is already a pending payment for this ticket gate.")
 
     payment = TokenGateStripePayment(
-        ticket_gate=ticket_gate,
+        token_gate=ticket_gate,
         value=ticket_gate.price,
         stripe_checkout_session_id=stripe_checkout_session_id,
         status="PENDING",

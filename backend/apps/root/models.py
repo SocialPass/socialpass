@@ -309,7 +309,7 @@ class PricingRule(DBModel):
         return math.inf if self.max_capacity is None else self.max_capacity
 
     def __str__(self):
-        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_capacity})" # noqa
+        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})" # noqa
 
     def __repr__(self):
         return f"PricingRule({self.min_capacity} - {self.max_capacity})"

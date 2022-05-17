@@ -1,3 +1,4 @@
+from functools import lru_cache
 import json
 import stripe
 
@@ -6,18 +7,18 @@ from django.contrib import auth, messages
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, reverse
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from django.views.decorators.csrf import csrf_exempt
-from apps.root import pricing_service
 
+from apps.root import pricing_service
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
 from apps.root.models import Membership, Team, Ticket, TicketGate, TokenGateStripePayment
 
-from .forms import TeamForm, TicketGateForm, TicketGateUpdateForm
+from .forms import TeamForm, TicketGateForm
 from .permissions import team_has_permissions
 
 User = auth.get_user_model()
@@ -210,9 +211,47 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
 
         return super().form_valid(form)
 
-    def get_success_url(self):
+    def get_success_url(self):        
         return reverse(
             "ticketgate_checkout",
+            args=(
+                self.kwargs["team_pk"],
+                self.object.pk,
+            ),
+        )
+
+
+@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
+class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
+    """
+    Updates a Ticket token gate.
+    """
+
+    model = TicketGate
+    form_class = TicketGateForm
+    slug_field = "pk"
+    slug_url_kwarg = "pk"
+    template_name = "dashboard/ticketgate_form.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        overrode to set json_schema
+        """
+        context = super().get_context_data(**kwargs)
+        context["json_schema"] = json.dumps(REQUIREMENTS_SCHEMA)
+        return context
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Token gate updated successfully."
+        )
+        if pricing_service.get_ticket_gate_pending_payment_value(self.object):
+            view = "ticketgate_checkout"
+        else:
+            view = "ticketgate_detail"
+
+        return reverse(
+            view,
             args=(
                 self.kwargs["team_pk"],
                 self.object.pk,
@@ -230,14 +269,22 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
 
     template_name: str = "dashboard/ticketgate_checkout.html"
 
-    def get_object(self, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
+        self.kwargs = kwargs
+        return super().dispatch(request, *args, **kwargs)
+
+    @lru_cache
+    def get_object(self):
         return TicketGate.objects.get(
-            pk=kwargs['pk'], team_pk=kwargs['team_pk']
+            pk=self.kwargs['pk'], team__pk=self.kwargs['team_pk']
         )
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs, tokengate=self.get_object())
 
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""
-        ticket_gate = self.get_object(**kwargs)
+        ticket_gate = self.get_object()
 
         if pricing_service.get_ticket_gate_pending_payment_value(ticket_gate) == 0:
             # Payment was already done.
@@ -246,14 +293,14 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
             )
             return redirect(
                 "ticketgate_detail",
-                args=(kwargs['team_pk'], kwargs['pk'])
+                **kwargs
             )
 
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *, team_pk=None, pk=None):
         """Issue payment and redirect to stripe checkout"""
-        ticket_gate = self.get_object(team_pk=team_pk, pk=pk)
+        ticket_gate = self.get_object()
 
         issued_payment = pricing_service.get_in_progress_payment(ticket_gate)
         if issued_payment:
@@ -301,9 +348,10 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
     def success_stripe_callback(request, **kwargs):
         # update payment status
         stripe_session_id = request.GET['session_id']
-
+        stripe.api_key = settings.STRIPE_SECRET_KEY
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
         payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
+
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
             message = "Ticket gate created and payment succeeded."
@@ -313,9 +361,10 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
         payment.save()
 
         messages.add_message(request, messages.SUCCESS, message)
+        print(kwargs)
         return redirect(
             "ticketgate_detail",
-            args=(kwargs["team_pk"], payment.token_gate.id)
+            **kwargs
         )
 
     @team_has_permissions(software_type="TICKET")
@@ -332,7 +381,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
         )
         return redirect(
             "ticketgate_detail",
-            args=(kwargs["team_pk"], payment.token_gate.id)
+            **kwargs
         )
 
     @csrf_exempt
@@ -388,39 +437,6 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
-    """
-    Updates a Ticket token gate.
-    """
-
-    model = TicketGate
-    form_class = TicketGateUpdateForm
-    slug_field = "pk"
-    slug_url_kwarg = "pk"
-    template_name = "dashboard/ticketgate_form.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        overrode to set json_schema
-        """
-        context = super().get_context_data(**kwargs)
-        context["json_schema"] = json.dumps(REQUIREMENTS_SCHEMA)
-        return context
-
-    def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Token gate updated successfully."
-        )
-        return reverse(
-            "ticketgate_detail",
-            args=(
-                self.kwargs["team_pk"],
-                self.object.pk,
-            ),
-        )
-
-
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
 class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
@@ -470,7 +486,6 @@ def estimate_ticket_gate_price(request, team_pk):
         return JsonResponse({"detail": "capacity is required"}, status=400)
     except TypeError:
         return JsonResponse({"detail": "capacity must be an integer"}, status=400)
-        
 
     price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(team, capacity=capacity)
     return JsonResponse(

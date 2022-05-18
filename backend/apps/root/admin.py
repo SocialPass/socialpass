@@ -1,14 +1,10 @@
-from django.contrib import admin
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
 from apps.root import pricing_service
-from apps.root.models import (
-    Membership, Signature, Team, Ticket, TicketedEvent,
-    PricingRule, PricingRuleGroup
-)
+from apps.root.models import Membership, PricingRule, PricingRuleGroup, Signature, Team, Ticket, TicketedEvent
 
 User = get_user_model()
 
@@ -17,6 +13,7 @@ User = get_user_model()
 admin.site.site_title = "SocialPass Admin"
 admin.site.site_header = "SocialPass Admin"
 admin.site.index_title = "SocialPass Admin"
+
 
 # Admin registrations
 class MembershipInline(admin.TabularInline):
@@ -87,9 +84,7 @@ class PricingRuleGroupAdmin(admin.ModelAdmin):
 
     def identify_pricing_group_errors(self, request, queryset):
         for pricing_group in queryset:
-            errors = pricing_service.identify_pricing_group_errors(
-                pricing_group
-            )
+            errors = pricing_service.identify_pricing_group_errors(pricing_group)
             if errors:
                 messages.warning(
                     request, list_as_messages_str(errors, pricing_group.name)
@@ -101,8 +96,7 @@ class PricingRuleGroupAdmin(admin.ModelAdmin):
         errors = pricing_service.identify_pricing_group_errors(form.instance)
         if errors:
             errors_msg = list_as_messages_str(
-                errors,
-                "Recently edited PricingGroup has the following problems:"
+                errors, "Recently edited PricingGroup has the following problems:"
             )
             messages.warning(request, errors_msg)
 

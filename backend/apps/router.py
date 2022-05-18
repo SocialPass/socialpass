@@ -11,7 +11,7 @@ urlpatterns = [
     # Customer account management
     path("accounts/", include("allauth.urls")),
     # Customer Invitations
-    path("invitations/", include('invitations.urls', namespace='invitations')),
+    path("invitations/", include("invitations.urls", namespace="invitations")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # DRF API URLS

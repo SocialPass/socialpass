@@ -1,11 +1,13 @@
 import secrets
+
 from allauth.account.signals import user_logged_in
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
-from invitations.signals import invite_accepted
+
 from apps.root.models import Invite, Membership
 
 User = get_user_model()
+
 
 @receiver(user_logged_in)
 def login_membership_callback(request, user, **kwargs):
@@ -15,7 +17,9 @@ def login_membership_callback(request, user, **kwargs):
     """
     # Check for latest accepted invite
     try:
-        invite = Invite.objects.filter(email__iexact=user.email, accepted=True).latest('sent')
+        invite = Invite.objects.filter(email__iexact=user.email, accepted=True).latest(
+            "sent"
+        )
     except Invite.DoesNotExist:
         return
 

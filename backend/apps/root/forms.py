@@ -1,10 +1,10 @@
 import pytz
 from django import forms
+from invitations.exceptions import AlreadyAccepted, AlreadyInvited
+from invitations.forms import InvitationAdminAddForm, InviteForm
 
 from apps.root import pricing_service
-from apps.root.models import Team, TicketedEvent, Invite
-from invitations.forms import InvitationAdminAddForm, InviteForm
-from invitations.exceptions import AlreadyAccepted, AlreadyInvited
+from apps.root.models import Invite, Team, TicketedEvent
 
 
 class TimeZoneForm(forms.Form):
@@ -22,7 +22,7 @@ class TeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TicketedEventForm(forms.ModelForm):
@@ -49,12 +49,13 @@ class TicketedEventForm(forms.ModelForm):
         ]
         widgets = {
             "requirements": forms.HiddenInput(),
-            'date': forms.TextInput(attrs={
-                'class': 'form-control',
-                'id': 'date',
-                'type': 'date',
-            }),
-
+            "date": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "id": "date",
+                    "type": "date",
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs) -> None:
@@ -65,13 +66,13 @@ class TicketedEventForm(forms.ModelForm):
             return
 
         if pricing_service.get_in_progress_payment(instance):
-            self.fields['capacity'].disabled = True
+            self.fields["capacity"].disabled = True
 
     def save(self, commit: bool = ...) -> TicketedEvent:
         """Sets TicketedEvent price after save"""
         obj = super().save(commit)
 
-        if 'capacity' in self.changed_data:
+        if "capacity" in self.changed_data:
             pricing_service.set_ticket_gate_price(obj)
 
         return obj

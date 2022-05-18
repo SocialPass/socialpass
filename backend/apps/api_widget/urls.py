@@ -5,18 +5,18 @@ from . import views
 app_name = "root"
 urlpatterns = [
     path(
-        "tokengates/retrieve/<str:public_id>/",
-        views.TokenGateRetrieve.as_view(),
+        "event-portal/retrieve/<str:public_id>/",
+        views.TicketedEventRetrieve.as_view(),
         name="ticketgate-retrieve",
     ),
     path(
-        "ticketgates/request-access/<str:public_id>",
-        views.TicketGateRequestAccess.as_view(),
+        "event-portal/request-access/<str:public_id>",
+        views.TicketedEventRequestAccess.as_view(),
         name="tokengate-request-access",
     ),
     path(
-        "ticketgates/grant-access/<str:public_id>",
-        views.TicketGateGrantAccess.as_view(),
+        "event-portal/grant-access/<str:public_id>",
+        views.TicketedEventGrantAccess.as_view(),
         name="tokengate-grant-access",
     ),
 ]

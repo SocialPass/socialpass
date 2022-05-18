@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from apps.root.models import Signature, Team, TicketedEvent
 
 
@@ -19,10 +20,8 @@ class TicketedEventSerializer(serializers.ModelSerializer):
     """
     Serializes Ticketed events
     """
-    ticket_count = serializers.IntegerField(
-        source='tickets.count',
-        read_only=True
-    )
+
+    ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
     date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
 
     team = TeamSerializer()
@@ -40,7 +39,7 @@ class TicketedEventSerializer(serializers.ModelSerializer):
             "timezone",
             "location",
             "capacity",
-            "ticket_count"
+            "ticket_count",
         ]
 
 

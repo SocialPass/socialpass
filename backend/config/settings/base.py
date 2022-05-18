@@ -45,7 +45,9 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # Restricts DB against collectstatic command
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     DATABASES = {
-        "default": env.db("NFTY_DATABASE_URL", default="postgres:///local_socialpass_db"),
+        "default": env.db(
+            "NFTY_DATABASE_URL", default="postgres:///local_socialpass_db"
+        ),
     }
     DATABASES["default"]["CONN_MAX_AGE"] = env.int(
         "CONN_MAX_AGE", default=60
@@ -89,7 +91,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "apps.root.apps.RootConfig",
     "apps.root.apps.OverrideInvitationsConfig",
-    "apps.dashboard"
+    "apps.dashboard",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -253,7 +255,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = 'apps.root.models.InvitationsAdapter'
+ACCOUNT_ADAPTER = "apps.root.models.InvitationsAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 # ACCOUNT_FORMS = {"signup": "apps.root.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -325,7 +327,7 @@ AWS_TICKET_DIRECTORY = env("DJANGO_AWS_TICKET_DIRECTORY")
 # ------------------------------------------------------------------------------
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_ALLOWED_ORIGINS = env.list(
-"CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
+    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
 )
 CORS_URLS_REGEX = r"^/api/.*$"
 

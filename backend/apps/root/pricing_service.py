@@ -35,9 +35,7 @@ def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:
     return errors
 
 
-def get_pricing_rule_for_capacity(
-    pricing_group: PricingRuleGroup, capacity: int
-):
+def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int):
     """Returns the pricing rule for a given capacity."""
     pricing_rules = pricing_group.active_rules.filter(active=True)
     pricing_rule_ranges = pricing_rules.order_by("min_capacity")
@@ -57,7 +55,9 @@ def get_pricing_group_for_ticket(ticket_gate: TicketedEvent) -> PricingRuleGroup
     return ticket_gate.team.pricing_rule_group
 
 
-def calculate_ticket_gate_price_per_ticket_for_team(team: Team, *, capacity: int = None):
+def calculate_ticket_gate_price_per_ticket_for_team(
+    team: Team, *, capacity: int = None
+):
     """Returns the estimated price of a ticket gate for a given team.
 
     The price is calculated by finding the first pricing rule that matches the
@@ -85,15 +85,18 @@ def set_ticket_gate_price(ticket_gate: TicketedEvent):
 
 def get_ticket_gate_pending_payment_value(ticket_gate: TicketedEvent):
     """Returns the pending payment value of a ticket gate."""
-    effective_payments_value = get_effective_payments(
-        ticket_gate.payments
-    ).aggregate(Sum('value'))['value__sum'] or 0
-    return max(
-        (ticket_gate.price or 0) - effective_payments_value, 0
+    effective_payments_value = (
+        get_effective_payments(ticket_gate.payments).aggregate(Sum("value"))[
+            "value__sum"
+        ]
+        or 0
     )
+    return max((ticket_gate.price or 0) - effective_payments_value, 0)
 
 
-def get_effective_payments(payments: TicketedEventStripePayment.objects) -> TicketedEventStripePayment.objects:
+def get_effective_payments(
+    payments: TicketedEventStripePayment.objects,
+) -> TicketedEventStripePayment.objects:
     """Returns all succeded payments for a ticket gate."""
     return payments.filter(status="SUCCESS")
 
@@ -103,7 +106,9 @@ def get_in_progress_payment(ticket_gate: TicketedEvent) -> TicketedEventStripePa
     return ticket_gate.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 
 
-def issue_payment(ticket_gate: TicketedEvent, stripe_checkout_session_id: str) -> TicketedEventStripePayment:
+def issue_payment(
+    ticket_gate: TicketedEvent, stripe_checkout_session_id: str
+) -> TicketedEventStripePayment:
     """
     Issues a payment for a ticket gate.
     Adds validation to ensure that there is only one payment in progress issued per ticket gate.

@@ -27,7 +27,11 @@ urlpatterns = [
         name="team_member_delete",
     ),
     # User Accounts
-    path("accounts/accept-invite/<str:key>/", views.AcceptInviteView.as_view(), name="accept_invite"),
+    path(
+        "accounts/accept-invite/<str:key>/",
+        views.AcceptInviteView.as_view(),
+        name="accept_invite",
+    ),
     path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
     path("accounts/delete/", views.UserDeleteView.as_view(), name="user_delete"),
     # Ticketing

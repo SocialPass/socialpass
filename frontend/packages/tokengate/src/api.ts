@@ -1,10 +1,10 @@
-// TokenGateRetrieve class
+// TicketedEventRetrieve class
 // Used for retrieving any type of tokengate via .call()
-export class TokenGateRetrieve {
-	// wrapper for backend - TokenGateRetrieve
+export class TicketedEventRetrieve {
+	// wrapper for backend - TicketedEventRetrieve
 	static call = async ({public_id}) => {
 		// set url
-		const url = `${process.env.REACT_APP_API_URL}/api/tokengates/retrieve/${public_id}/`
+		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/retrieve/${public_id}/`
 
 		// set request options
 		var requestOptions = {
@@ -30,33 +30,13 @@ export class TokenGateRetrieve {
 	}
 }
 
-// TokenGateRequestAccess class
-// Used for requesting access to any tokengate
-export class TokenGateRequestAccess {
-	static call = async({gate_type, public_id, access_type, address}) => {
-		let response: any;
-		switch(gate_type){
-			case('TICKET'):
-				response = await TicketGateRequestAccess.call({
-					'public_id':public_id,
-					'access_type':access_type,
-					'address':address
-				});
-				break;
-			default:
-				response = null;
-		}
-		return response;
-	}
-}
-
-// TicketGateRequestAccess class
-// Used for requesting access to a TicketGate
-export class TicketGateRequestAccess {
-	// wrapper for backend - TicketGateRequestAccess
+// TicketedEventRequestAccess class
+// Used for requesting access to a TicketedEvent
+export class TicketedEventRequestAccess {
+	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address}) => {
 		// set url
-		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/request-access/${public_id}?type=${access_type}`
+		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/request-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({
@@ -93,36 +73,13 @@ export class TicketGateRequestAccess {
 	  }
 }
 
-// TokenGateRequestAccess class
-// Used for requesting access to any tokengate
-export class TokenGateGrantAccess {
-	static call = async({gate_type, public_id, access_type, address, signed_message, signature_id, access_data}) => {
-		let response: any;
-		switch(gate_type){
-			case('TICKET'):
-				response = await TicketGateGrantAccess.call({
-					'public_id':public_id,
-					'access_type':access_type,
-					'address':address,
-					'signed_message':signed_message,
-					'signature_id':signature_id,
-					'access_data':access_data,
-				});
-				break;
-			default:
-				response = null;
-		}
-		return response;
-	}
-}
-
-// TicketGateGrantAccess class
-// Used for granting access to a TicketGate
-export class TicketGateGrantAccess {
-	// wrapper for backend - TicketGateRequestAccess
+// TicketedEventGrantAccess class
+// Used for granting access to a TicketedEvent
+export class TicketedEventGrantAccess {
+	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address, signed_message, signature_id, access_data}) => {
 		// setup url
-		const url = `${process.env.REACT_APP_API_URL}/api/ticketgates/grant-access/${public_id}?type=${access_type}`
+		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/grant-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({

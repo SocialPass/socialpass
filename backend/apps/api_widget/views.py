@@ -1,19 +1,16 @@
 from django.http import Http404
-from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.gates import Blockchain
-from apps.root.models import Ticket, TicketedEvent, Signature
+from apps.root.models import Signature, Ticket, TicketedEvent
 
-from .serializers import (
-    BlockchainGrantAccessInput, BlockchainRequestAccessInput,
-    TicketedEventSerializer
-)
+from .serializers import BlockchainGrantAccessInput, BlockchainRequestAccessInput, TicketedEventSerializer
 
 
-class TokenGateRetrieve(RetrieveAPIView):
+class TicketedEventRetrieve(RetrieveAPIView):
     """
     RetrieveAPIView for retrieving tokengate by `public_id`
     """
@@ -24,19 +21,22 @@ class TokenGateRetrieve(RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-class TokenGateRequestAccess(APIView):
+class TicketedEventRequestAccess(APIView):
     """
-    View requests access into Ticketed Event
-    Based on wallet address, return request_access_data
+    Subclass TicketGateRequestAccess for requesting access
+    Ticketgate specific
     """
 
     signature = None  # signature model
-    tokengate = None #
+    tokengate = None  #
     request_access_data = None
 
-    def set_tokengate(self, *args, **kwargs):
+    def set_ticketed_event(self, *args, **kwargs):
+        """
+        SET_TOKENGATE sets tokengate
+        """
         try:
-            self.tokengate = TokenGate.objects.get(public_id=kwargs['public_id'])
+            self.tokengate = TicketedEvent.objects.get(public_id=kwargs["public_id"])
         except Exception:
             raise Http404
 
@@ -45,7 +45,7 @@ class TokenGateRequestAccess(APIView):
         POST calls blockchain or fiat, depending on 'type' query string
         """
         # set tokengate
-        self.set_tokengate(*args, **kwargs)
+        self.set_ticketed_event(*args, **kwargs)
 
         # Serialize data
         serialized = BlockchainRequestAccessInput(data=request.data)
@@ -58,14 +58,15 @@ class TokenGateRequestAccess(APIView):
         )
 
         # fetch blockchain checkout options
-        checkout_options = Blockchain.Utilities.fetch_checkout_options_against_requirements(
-            requirements=self.tokengate.requirements,
-            wallet_address=serialized.data.get("address"),
+        checkout_options = (
+            Blockchain.Utilities.fetch_checkout_options_against_requirements(
+                requirements=self.tokengate.requirements,
+                wallet_address=serialized.data.get("address"),
+            )
         )
 
         if not checkout_options:
-            return Response('No available assets to verify', status=403)
-
+            return Response("No available assets to verify", status=403)
 
         # return web3 checkout options, signature message, and signature ID
         self.request_access_data = {
@@ -74,20 +75,23 @@ class TokenGateRequestAccess(APIView):
             "checkout_options": checkout_options,
         }
 
+        return Response(self.request_access_data)
 
-class TokenGateGrantAccess(APIView):
+
+class TicketedEventGrantAccess(APIView):
     """
-    View grants access into tokengate
+    Subclass TicketedEventGrantAccess for granting access
+    Ticketgate specific
     """
 
     signature = None  # signature model
-    tokengate = None # tokengate model
-    wallet_address = None # wallet address (from signature)
-    checkout_selections = None # checkout selections
+    tokengate = None  # tokengate model
+    wallet_address = None  # wallet address (from signature)
+    checkout_selections = None  # checkout selections
 
-    def set_tokengate(self, *args, **kwargs):
+    def set_ticketed_event(self, *args, **kwargs):
         try:
-            self.tokengate = TokenGate.objects.get(public_id=kwargs['public_id'])
+            self.tokengate = TicketedEvent.objects.get(public_id=kwargs["public_id"])
         except Exception:
             raise Http404
 
@@ -102,11 +106,8 @@ class TokenGateGrantAccess(APIView):
             raise Http404
 
     def post(self, request, *args, **kwargs):
-        """
-        POST calls blockchain or fiat, depending on 'type' query string
-        """
         # set tokengate
-        self.set_tokengate(*args, **kwargs)
+        self.set_ticketed_event(*args, **kwargs)
 
         # Serialize data
         serialized = BlockchainGrantAccessInput(data=request.data)
@@ -143,45 +144,14 @@ class TokenGateGrantAccess(APIView):
         self.checkout_selections = web3_validated_msg
         self.wallet_address = serialized.data.get("address")
 
-
-class TicketGateRequestAccess(TokenGateRequestAccess):
-    """
-    Subclass TicketGateRequestAccess for requesting access
-    Ticketgate specific
-    """
-
-    def post(self, request, *args, **kwargs):
-        # TokenGateRequestAccess.post
-        # note: will throw http response on error. return in that case
-        response = super().post(request, *args, **kwargs)
-        if response:
-            return response
-
-        # return data
-        return Response(self.request_access_data)
-
-
-class TicketGateGrantAccess(TokenGateGrantAccess):
-    """
-    Subclass TokenGateGrantAccess for granting access
-    Ticketgate specific
-    """
-
-    def post(self, request, *args, **kwargs):
-        # TokenGateGrantAccess.post
-        # note: will throw http response on error. return in that case
-        response = super().post(request, *args, **kwargs)
-        if response:
-            return response
-
-        # loop over TokenGateGrantAccess.checkout_selections & create Ticket
+        # loop over TicketedEventGrantAccess.checkout_selections & create Ticket
         ticket_data = []
         for obj in self.checkout_selections:
             ticket, created = Ticket.objects.get_or_create(
                 wallet_address=self.wallet_address,
                 tokengate=self.tokengate,
-                requirement=obj['requirement'],
-                option=obj['option']
+                requirement=obj["requirement"],
+                option=obj["option"],
             )
 
             # set data after getting / creating

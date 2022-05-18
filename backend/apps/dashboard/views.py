@@ -1,26 +1,24 @@
-from functools import lru_cache
 import json
-from invitations.views import AcceptInvite
+from functools import lru_cache
 
+import stripe
 from django.conf import settings
 from django.contrib import auth, messages
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.shortcuts import redirect, reverse
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, JsonResponse
-from django.utils.decorators import method_decorator
+from django.shortcuts import redirect, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
+from invitations.views import AcceptInvite
 
 from apps.root import pricing_service
+from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
 from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEventStripePayment
-from apps.root.forms import TeamForm, TicketedEventForm, CustomInviteForm
-
-import stripe
 
 User = auth.get_user_model()
 
@@ -38,7 +36,7 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
             user_has_membership = Membership.objects.select_related("team").get(
                 team__id=self.kwargs["team_pk"], user__id=self.request.user.id
             )
-        except:
+        except Exception:
             user_has_membership = False
 
         return user_logged_in and user_has_membership
@@ -113,7 +111,7 @@ class AcceptInviteView(AcceptInvite):
             if user:
                 super().post(self, *args, **kwargs)
                 return redirect(reverse(settings.LOGIN_URL))
-        except Exception as e:
+        except Exception:
             return super().post(self, *args, **kwargs)
 
 
@@ -137,12 +135,13 @@ class TeamMemberManageView(TeamContextMixin, FormView):
     """
     Manage a team's members.
     """
+
     form_class = CustomInviteForm
     template_name = "dashboard/member_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['memberships'] = Membership.objects.filter(team=context["current_team"])
+        context["memberships"] = Membership.objects.filter(team=context["current_team"])
         return context
 
     def form_valid(self, form, **kwargs):
@@ -320,7 +319,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
     @lru_cache
     def get_object(self):
         return TicketedEvent.objects.get(
-            pk=self.kwargs['pk'], team__pk=self.kwargs['team_pk']
+            pk=self.kwargs["pk"], team__pk=self.kwargs["team_pk"]
         )
 
     def get_context_data(self, **kwargs):
@@ -335,10 +334,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
             )
-            return redirect(
-                "ticketgate_detail",
-                **kwargs
-            )
+            return redirect("ticketgate_detail", **kwargs)
 
         return super().get(request, *args, **kwargs)
 
@@ -352,15 +348,21 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
             stripe_session = stripe.checkout.Session.retrieve(
                 issued_payment.stripe_checkout_session_id
             )
-            return redirect(stripe_session['url'])
+            return redirect(stripe_session["url"])
 
         # build callback urls
-        success_callback = request.build_absolute_uri(
-            reverse("ticketgate_checkout_success_callback", args=(team_pk, pk))
-        ) + "?session_id={CHECKOUT_SESSION_ID}"
-        failure_callback = request.build_absolute_uri(
-            reverse("ticketgate_checkout_failure_callback", args=(team_pk, pk))
-        ) + "?session_id={CHECKOUT_SESSION_ID}"
+        success_callback = (
+            request.build_absolute_uri(
+                reverse("ticketgate_checkout_success_callback", args=(team_pk, pk))
+            )
+            + "?session_id={CHECKOUT_SESSION_ID}"
+        )
+        failure_callback = (
+            request.build_absolute_uri(
+                reverse("ticketgate_checkout_failure_callback", args=(team_pk, pk))
+            )
+            + "?session_id={CHECKOUT_SESSION_ID}"
+        )
 
         # create checkout session
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -368,32 +370,37 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
             client_reference_id=request.user.id,
             success_url=success_callback,
             cancel_url=failure_callback,
-            payment_method_types=['card'],
-            mode='payment',
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': ticket_gate.title,
+            payment_method_types=["card"],
+            mode="payment",
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {
+                            "name": ticket_gate.title,
+                        },
+                        "unit_amount": int(
+                            ticket_gate.price * 100
+                        ),  # amount unit is in cent of dollars
                     },
-                    'unit_amount': int(ticket_gate.price * 100),  # amount unit is in cent of dollars
-                },
-                'quantity': 1,
-            }]
+                    "quantity": 1,
+                }
+            ],
         )
 
         # create payment intent
-        pricing_service.issue_payment(ticket_gate, checkout_session['id'])
+        pricing_service.issue_payment(ticket_gate, checkout_session["id"])
 
-        return redirect(checkout_session['url'])
-
+        return redirect(checkout_session["url"])
 
     def success_stripe_callback(request, **kwargs):
         # update payment status
-        stripe_session_id = request.GET['session_id']
+        stripe_session_id = request.GET["session_id"]
         stripe.api_key = settings.STRIPE_SECRET_KEY
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
-        payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
+        payment = TicketedEventStripePayment.objects.get(
+            stripe_checkout_session_id=stripe_session_id
+        )
 
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
@@ -405,26 +412,23 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
         messages.add_message(request, messages.SUCCESS, message)
         print(kwargs)
-        return redirect(
-            "ticketgate_detail",
-            **kwargs
-        )
-
+        return redirect("ticketgate_detail", **kwargs)
 
     def failure_stripe_callback(request, **kwargs):
         # update payment status
-        payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
+        payment = TicketedEventStripePayment.objects.get(
+            stripe_checkout_session_id=request.GET["session_id"]
+        )
         payment.status = "CANCELLED"
         payment.save()
 
         # TODO: add sentry event so that administrator can contact user.
         messages.add_message(
-            request, messages.ERROR, "Ticket gate created but could not process payment."
+            request,
+            messages.ERROR,
+            "Ticket gate created but could not process payment.",
         )
-        return redirect(
-            "ticketgate_checkout",
-            **kwargs
-        )
+        return redirect("ticketgate_checkout", **kwargs)
 
     @csrf_exempt
     def stripe_webhook(request):
@@ -441,13 +445,11 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
         payload = request.body
-        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
         event = None
 
         try:
-            event = stripe.Webhook.construct_event(
-                payload, sig_header, endpoint_secret
-            )
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
         except ValueError:
             # Invalid payload
             return HttpResponse(status=400)
@@ -458,19 +460,23 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
         # Event is being handled at success/failure synchronous callback
         # if event['type'] == 'checkout.session.completed':
 
-        if event['type'] == 'checkout.session.async_payment_succeeded':
-            session = event['data']['object']
+        if event["type"] == "checkout.session.async_payment_succeeded":
+            session = event["data"]["object"]
 
             # Fulfill the purchase
-            payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=session.id)
+            payment = TicketedEventStripePayment.objects.get(
+                stripe_checkout_session_id=session.id
+            )
             payment.status = "SUCCESS"
             payment.save()
 
-        elif event['type'] == 'checkout.session.async_payment_failed':
-            session = event['data']['object']
+        elif event["type"] == "checkout.session.async_payment_failed":
+            session = event["data"]["object"]
 
             # Send an email to the customer asking them to retry their order
-            payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=session.id)
+            payment = TicketedEventStripePayment.objects.get(
+                stripe_checkout_session_id=session.id
+            )
             payment.status = "FAILURE"
             payment.save()
 
@@ -526,10 +532,9 @@ def estimate_ticket_gate_price(request, team_pk):
     except TypeError:
         return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
-    price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(team, capacity=capacity)
+    price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(
+        team, capacity=capacity
+    )
     return JsonResponse(
-        {
-            "price_per_ticket": price_per_ticket,
-            "price": price_per_ticket * capacity
-        }
+        {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
     )

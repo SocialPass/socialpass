@@ -18,209 +18,855 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'abstract': False,
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "abstract": False,
             },
             managers=[
-                ('objects', apps.root.models.CustomUserManager()),
+                ("objects", apps.root.models.CustomUserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='Membership',
+            name="Membership",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PricingRule',
+            name="PricingRule",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('min_capacity', models.IntegerField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('max_capacity', models.IntegerField(blank=True, null=True)),
-                ('price_per_ticket', models.FloatField(validators=[django.core.validators.MinValueValidator(0)])),
-                ('active', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "min_capacity",
+                    models.IntegerField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                ("max_capacity", models.IntegerField(blank=True, null=True)),
+                (
+                    "price_per_ticket",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(0)]
+                    ),
+                ),
+                ("active", models.BooleanField(default=True)),
             ],
         ),
         migrations.CreateModel(
-            name='PricingRuleGroup',
+            name="PricingRuleGroup",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Signature',
+            name="Signature",
             fields=[
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('unique_code', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('signing_message', models.CharField(max_length=1024)),
-                ('wallet_address', models.CharField(max_length=400)),
-                ('is_verified', models.BooleanField(default=False)),
-                ('expires', models.DateTimeField(default=apps.root.models.Signature.set_expires)),
-                ('version', models.IntegerField(default=1)),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "unique_code",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("signing_message", models.CharField(max_length=1024)),
+                ("wallet_address", models.CharField(max_length=400)),
+                ("is_verified", models.BooleanField(default=False)),
+                (
+                    "expires",
+                    models.DateTimeField(
+                        default=apps.root.models.Signature.set_expires
+                    ),
+                ),
+                ("version", models.IntegerField(default=1)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('name', models.CharField(max_length=255)),
-                ('image', models.ImageField(blank=True, max_length=255, null=True, upload_to='')),
-                ('description', models.TextField(blank=True)),
-                ('subdomain', models.CharField(max_length=256, null=True, unique=True, validators=[django.core.validators.RegexValidator('^[0-9a-zA-Z]*$', message='Subdomain only allows alphanumeric')])),
-                ('members', models.ManyToManyField(through='root.Membership', to=settings.AUTH_USER_MODEL)),
-                ('pricing_rule_group', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='root.pricingrulegroup')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True, max_length=255, null=True, upload_to=""
+                    ),
+                ),
+                ("description", models.TextField(blank=True)),
+                (
+                    "subdomain",
+                    models.CharField(
+                        max_length=256,
+                        null=True,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                "^[0-9a-zA-Z]*$",
+                                message="Subdomain only allows alphanumeric",
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "members",
+                    models.ManyToManyField(
+                        through="root.Membership", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
+                (
+                    "pricing_rule_group",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="root.pricingrulegroup",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='TicketedEvent',
+            name="TicketedEvent",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('public_id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True)),
-                ('title', models.CharField(max_length=255)),
-                ('description', models.TextField(blank=True)),
-                ('requirements', models.JSONField(blank=True, default=list, null=True, validators=[apps.root.validators.JSONSchemaValidator(limit_value={'format': 'tabs', 'items': {'properties': {'amount': {'format': 'number', 'minimum': 1, 'title': 'Required Amount', 'type': 'integer'}, 'asset_address': {'pattern': '^(0x|0X).*$', 'title': 'Asset Address', 'type': 'string'}, 'asset_type': {'enum': ['ERC20', 'ERC721', 'ERC1155'], 'title': 'Asset Type', 'type': 'string'}, 'blockchain': {'enum': ['EVM'], 'title': 'Blockchain', 'type': 'string'}, 'chain_id': {'enum': [1, 2, 4, 56, 43114, 137], 'title': 'Network', 'type': 'integer'}, 'to_block': {'format': 'number', 'minimum': 1, 'title': 'Snapshot block (for fungible tokens)', 'type': 'integer'}, 'token_id': {'items': {'title': 'Token ID', 'type': 'integer'}, 'minItems': 0, 'title': 'Token IDs', 'type': 'array'}}, 'required': ['blockchain', 'asset_address', 'amount', 'chain_id', 'asset_type'], 'title': 'Requirement', 'type': 'object'}, 'properties': {}, 'title': 'Blockchain Requirements', 'type': 'array'})])),
-                ('limit_per_person', models.IntegerField(default=1, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(100)])),
-                ('featured', models.BooleanField(default=False)),
-                ('date', models.DateTimeField()),
-                ('timezone', models.CharField(max_length=30, null=True, verbose_name='time zone')),
-                ('location', models.CharField(max_length=1024)),
-                ('capacity', models.IntegerField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('scanner_code', models.CharField(default=apps.root.models.TicketedEvent.set_scanner_code, max_length=1024)),
-                ('price', models.DecimalField(blank=True, decimal_places=2, default=None, max_digits=10, null=True, validators=[django.core.validators.MinValueValidator(0)])),
-                ('pricing_rule', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.RESTRICT, to='root.pricingrule')),
-                ('team', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='root.team')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "requirements",
+                    models.JSONField(
+                        blank=True,
+                        default=list,
+                        null=True,
+                        validators=[
+                            apps.root.validators.JSONSchemaValidator(
+                                limit_value={
+                                    "format": "tabs",
+                                    "items": {
+                                        "properties": {
+                                            "amount": {
+                                                "format": "number",
+                                                "minimum": 1,
+                                                "title": "Required Amount",
+                                                "type": "integer",
+                                            },
+                                            "asset_address": {
+                                                "pattern": "^(0x|0X).*$",
+                                                "title": "Asset Address",
+                                                "type": "string",
+                                            },
+                                            "asset_type": {
+                                                "enum": ["ERC20", "ERC721", "ERC1155"],
+                                                "title": "Asset Type",
+                                                "type": "string",
+                                            },
+                                            "blockchain": {
+                                                "enum": ["EVM"],
+                                                "title": "Blockchain",
+                                                "type": "string",
+                                            },
+                                            "chain_id": {
+                                                "enum": [1, 2, 4, 56, 43114, 137],
+                                                "title": "Network",
+                                                "type": "integer",
+                                            },
+                                            "to_block": {
+                                                "format": "number",
+                                                "minimum": 1,
+                                                "title": "Snapshot block (for fungible tokens)",
+                                                "type": "integer",
+                                            },
+                                            "token_id": {
+                                                "items": {
+                                                    "title": "Token ID",
+                                                    "type": "integer",
+                                                },
+                                                "minItems": 0,
+                                                "title": "Token IDs",
+                                                "type": "array",
+                                            },
+                                        },
+                                        "required": [
+                                            "blockchain",
+                                            "asset_address",
+                                            "amount",
+                                            "chain_id",
+                                            "asset_type",
+                                        ],
+                                        "title": "Requirement",
+                                        "type": "object",
+                                    },
+                                    "properties": {},
+                                    "title": "Blockchain Requirements",
+                                    "type": "array",
+                                }
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "limit_per_person",
+                    models.IntegerField(
+                        default=1,
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(100),
+                        ],
+                    ),
+                ),
+                ("featured", models.BooleanField(default=False)),
+                ("date", models.DateTimeField()),
+                (
+                    "timezone",
+                    models.CharField(
+                        max_length=30, null=True, verbose_name="time zone"
+                    ),
+                ),
+                ("location", models.CharField(max_length=1024)),
+                (
+                    "capacity",
+                    models.IntegerField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "scanner_code",
+                    models.CharField(
+                        default=apps.root.models.TicketedEvent.set_scanner_code,
+                        max_length=1024,
+                    ),
+                ),
+                (
+                    "price",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        default=None,
+                        max_digits=10,
+                        null=True,
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "pricing_rule",
+                    models.ForeignKey(
+                        blank=True,
+                        default=None,
+                        null=True,
+                        on_delete=django.db.models.deletion.RESTRICT,
+                        to="root.pricingrule",
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        blank=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="root.team",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='TicketedEventStripePayment',
+            name="TicketedEventStripePayment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('value', models.FloatField(validators=[django.core.validators.MinValueValidator(0)])),
-                ('status', models.CharField(choices=[('PENDING', 'Pending'), ('PROCESSING', 'Processing'), ('CANCELLED', 'Cancelled'), ('SUCCESS', 'Succeeded'), ('FAILURE', 'Failed')], default='PENDING', max_length=30)),
-                ('stripe_checkout_session_id', models.CharField(max_length=1024)),
-                ('callaback_timestamp', models.DateTimeField(blank=True, null=True)),
-                ('acknowledgement_timestamp', models.DateTimeField(blank=True, null=True)),
-                ('ticketed_event', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='payments', to='root.ticketedevent')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "value",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(0)]
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("PENDING", "Pending"),
+                            ("PROCESSING", "Processing"),
+                            ("CANCELLED", "Cancelled"),
+                            ("SUCCESS", "Succeeded"),
+                            ("FAILURE", "Failed"),
+                        ],
+                        default="PENDING",
+                        max_length=30,
+                    ),
+                ),
+                ("stripe_checkout_session_id", models.CharField(max_length=1024)),
+                ("callaback_timestamp", models.DateTimeField(blank=True, null=True)),
+                (
+                    "acknowledgement_timestamp",
+                    models.DateTimeField(blank=True, null=True),
+                ),
+                (
+                    "ticketed_event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.RESTRICT,
+                        related_name="payments",
+                        to="root.ticketedevent",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Ticket',
+            name="Ticket",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('filename', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('embed_code', models.CharField(default=apps.root.models.Ticket.set_embed_code, max_length=1024)),
-                ('wallet_address', models.CharField(max_length=400)),
-                ('requirement', models.JSONField(blank=True, null=True, validators=[apps.root.validators.JSONSchemaValidator(limit_value={'format': 'tabs', 'properties': {'properties': {'amount': {'format': 'number', 'minimum': 1, 'title': 'Required Amount', 'type': 'integer'}, 'asset_address': {'pattern': '^(0x|0X).*$', 'title': 'Asset Address', 'type': 'string'}, 'asset_type': {'enum': ['ERC20', 'ERC721', 'ERC1155'], 'title': 'Asset Type', 'type': 'string'}, 'blockchain': {'enum': ['EVM'], 'title': 'Blockchain', 'type': 'string'}, 'chain_id': {'enum': [1, 2, 4, 56, 43114, 137], 'title': 'Network', 'type': 'integer'}, 'to_block': {'format': 'number', 'minimum': 1, 'title': 'Snapshot block (for fungible tokens)', 'type': 'integer'}, 'token_id': {'items': {'title': 'Token ID', 'type': 'integer'}, 'minItems': 0, 'title': 'Token IDs', 'type': 'array'}}, 'required': ['blockchain', 'asset_address', 'amount', 'chain_id', 'asset_type'], 'title': 'Requirement', 'type': 'object'}, 'title': 'Blockchain Requirements', 'type': 'object'})])),
-                ('option', models.JSONField(blank=True, null=True)),
-                ('image', models.ImageField(blank=True, max_length=255, null=True, upload_to='')),
-                ('temporary_download_url', models.TextField(blank=True, null=True)),
-                ('redeemed', models.BooleanField(default=False)),
-                ('signature', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='tickets', to='root.signature')),
-                ('ticketed_event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tickets', to='root.ticketedevent')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                ("filename", models.UUIDField(default=uuid.uuid4, editable=False)),
+                (
+                    "embed_code",
+                    models.CharField(
+                        default=apps.root.models.Ticket.set_embed_code, max_length=1024
+                    ),
+                ),
+                ("wallet_address", models.CharField(max_length=400)),
+                (
+                    "requirement",
+                    models.JSONField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            apps.root.validators.JSONSchemaValidator(
+                                limit_value={
+                                    "format": "tabs",
+                                    "properties": {
+                                        "properties": {
+                                            "amount": {
+                                                "format": "number",
+                                                "minimum": 1,
+                                                "title": "Required Amount",
+                                                "type": "integer",
+                                            },
+                                            "asset_address": {
+                                                "pattern": "^(0x|0X).*$",
+                                                "title": "Asset Address",
+                                                "type": "string",
+                                            },
+                                            "asset_type": {
+                                                "enum": ["ERC20", "ERC721", "ERC1155"],
+                                                "title": "Asset Type",
+                                                "type": "string",
+                                            },
+                                            "blockchain": {
+                                                "enum": ["EVM"],
+                                                "title": "Blockchain",
+                                                "type": "string",
+                                            },
+                                            "chain_id": {
+                                                "enum": [1, 2, 4, 56, 43114, 137],
+                                                "title": "Network",
+                                                "type": "integer",
+                                            },
+                                            "to_block": {
+                                                "format": "number",
+                                                "minimum": 1,
+                                                "title": "Snapshot block (for fungible tokens)",
+                                                "type": "integer",
+                                            },
+                                            "token_id": {
+                                                "items": {
+                                                    "title": "Token ID",
+                                                    "type": "integer",
+                                                },
+                                                "minItems": 0,
+                                                "title": "Token IDs",
+                                                "type": "array",
+                                            },
+                                        },
+                                        "required": [
+                                            "blockchain",
+                                            "asset_address",
+                                            "amount",
+                                            "chain_id",
+                                            "asset_type",
+                                        ],
+                                        "title": "Requirement",
+                                        "type": "object",
+                                    },
+                                    "title": "Blockchain Requirements",
+                                    "type": "object",
+                                }
+                            )
+                        ],
+                    ),
+                ),
+                ("option", models.JSONField(blank=True, null=True)),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True, max_length=255, null=True, upload_to=""
+                    ),
+                ),
+                ("temporary_download_url", models.TextField(blank=True, null=True)),
+                ("redeemed", models.BooleanField(default=False)),
+                (
+                    "signature",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="tickets",
+                        to="root.signature",
+                    ),
+                ),
+                (
+                    "ticketed_event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="tickets",
+                        to="root.ticketedevent",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='signature',
-            name='ticketed_event',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='signatures', to='root.ticketedevent'),
+            model_name="signature",
+            name="ticketed_event",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="signatures",
+                to="root.ticketedevent",
+            ),
         ),
         migrations.AddField(
-            model_name='pricingrule',
-            name='group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pricing_rules', to='root.pricingrulegroup'),
+            model_name="pricingrule",
+            name="group",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="pricing_rules",
+                to="root.pricingrulegroup",
+            ),
         ),
         migrations.AddField(
-            model_name='membership',
-            name='team',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='root.team'),
+            model_name="membership",
+            name="team",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="root.team",
+            ),
         ),
         migrations.AddField(
-            model_name='membership',
-            name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="membership",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.CreateModel(
-            name='Invite',
+            name="Invite",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('accepted', models.BooleanField(default=False, verbose_name='accepted')),
-                ('key', models.CharField(max_length=64, unique=True, verbose_name='key')),
-                ('sent', models.DateTimeField(null=True, verbose_name='sent')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('email', models.EmailField(max_length=254, unique=True, verbose_name='e-mail address')),
-                ('archived_email', models.EmailField(blank=True, max_length=254, null=True)),
-                ('inviter', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('team', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='root.team')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "accepted",
+                    models.BooleanField(default=False, verbose_name="accepted"),
+                ),
+                (
+                    "key",
+                    models.CharField(max_length=64, unique=True, verbose_name="key"),
+                ),
+                ("sent", models.DateTimeField(null=True, verbose_name="sent")),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        max_length=254, unique=True, verbose_name="e-mail address"
+                    ),
+                ),
+                (
+                    "archived_email",
+                    models.EmailField(blank=True, max_length=254, null=True),
+                ),
+                (
+                    "inviter",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="root.team",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddConstraint(
-            model_name='pricingrule',
-            constraint=models.CheckConstraint(check=models.Q(('max_capacity__isnull', True), ('max_capacity__gt', django.db.models.expressions.F('min_capacity')), _connector='OR'), name='root_pricingrule_max_capacity__gt__min_capacity'),
+            model_name="pricingrule",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    ("max_capacity__isnull", True),
+                    (
+                        "max_capacity__gt",
+                        django.db.models.expressions.F("min_capacity"),
+                    ),
+                    _connector="OR",
+                ),
+                name="root_pricingrule_max_capacity__gt__min_capacity",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='membership',
-            unique_together={('team', 'user')},
+            name="membership",
+            unique_together={("team", "user")},
         ),
     ]

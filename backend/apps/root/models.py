@@ -2,21 +2,26 @@ import math
 import secrets
 import uuid
 from datetime import datetime, timedelta
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
-
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.crypto import get_random_string
 from invitations import signals
 from invitations.adapters import get_invitations_adapter
 from invitations.base_invitation import AbstractBaseInvitation
 from model_utils.models import TimeStampedModel
 from pytz import utc
 
-from .model_field_choices import STIPE_PAYMENT_STATUSES
-from .model_field_schemas import REQUIREMENTS_SCHEMA, REQUIREMENT_SCHEMA
-from .validators import JSONSchemaValidator
 from apps.gates import Ticketing
+
+from .model_field_choices import STIPE_PAYMENT_STATUSES
+from .model_field_schemas import REQUIREMENT_SCHEMA, REQUIREMENTS_SCHEMA
+from .validators import JSONSchemaValidator
 
 
 class CustomUserManager(UserManager):
@@ -77,10 +82,7 @@ class Team(DBModel):
         ],
     )
     pricing_rule_group = models.ForeignKey(
-        "PricingRuleGroup",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        "PricingRuleGroup", on_delete=models.CASCADE, null=True, blank=True
     )
 
     def __str__(self):
@@ -135,7 +137,9 @@ class Invite(DBModel, AbstractBaseInvitation):
 
     def send_invitation(self, request, **kwargs):
         current_site = get_current_site(request)
-        invite_url = reverse(settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key])
+        invite_url = reverse(
+            settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key]
+        )
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(
@@ -203,15 +207,23 @@ class TicketedEvent(DBModel):
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
     scanner_code = models.CharField(max_length=1024, default=set_scanner_code)
     price = models.DecimalField(
-        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10,
-        null=True, blank=True, default=None
+        validators=[MinValueValidator(0)],
+        decimal_places=2,
+        max_digits=10,
+        null=True,
+        blank=True,
+        default=None,
     )
     # TODO: add constraint so that price and pricing_rule should be set
     # together. Thus one can't be null if the other is not null.
     pricing_rule = models.ForeignKey(
-        "PricingRule", null=True, blank=True, default=None,
-        on_delete=models.RESTRICT  # Forbids pricing rules from being deleted
+        "PricingRule",
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.RESTRICT,  # Forbids pricing rules from being deleted
     )
+
 
 class Signature(DBModel):
     """
@@ -294,14 +306,16 @@ class Ticket(DBModel):
         """
         # set signature
         if not self.signature:
-            self.signature = kwargs['signature']
+            self.signature = kwargs["signature"]
 
         # create ticket image
         if not self.image:
             Ticketing.Utilities.create_ticket_store_s3(
                 event_data={
                     "event_name": self.ticketed_event.title,
-                    "event_date": self.ticketed_event.date.strftime("%m/%d/%Y, %H:%M:%S"),
+                    "event_date": self.ticketed_event.date.strftime(
+                        "%m/%d/%Y, %H:%M:%S"
+                    ),
                     "event_location": self.ticketed_event.location,
                 },
                 filename=self.filename,
@@ -310,19 +324,23 @@ class Ticket(DBModel):
             )
             self.image = f"tickets/{str(self.filename)}.png"
         # set download url (always)
-        self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(ticket=self)
+        self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(
+            ticket=self
+        )
         self.save()
 
 
 class PricingRule(DBModel):
     """Maps a capacity to a price per capacity"""
+
     min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
     max_capacity = models.IntegerField(null=True, blank=True)
     price_per_ticket = models.FloatField(validators=[MinValueValidator(0)])
     active = models.BooleanField(default=True)
     group = models.ForeignKey(
-        "PricingRuleGroup", related_name="pricing_rules",
-        on_delete=models.CASCADE  # if group is deleted, delete all rules
+        "PricingRuleGroup",
+        related_name="pricing_rules",
+        on_delete=models.CASCADE,  # if group is deleted, delete all rules
     )
 
     class Meta:
@@ -343,7 +361,7 @@ class PricingRule(DBModel):
         return math.inf if self.max_capacity is None else self.max_capacity
 
     def __str__(self):
-        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})" # noqa
+        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})"  # noqa
 
     def __repr__(self):
         return f"PricingRule({self.min_capacity} - {self.max_capacity})"
@@ -365,17 +383,19 @@ class PricingRuleGroup(DBModel):
 
 class TicketedEventStripePayment(DBModel):
     """Registers a payment done for TicketedEvent"""
+
     # TODO: This model could be more abstracted from the TicketedEvent
 
     ticketed_event = models.ForeignKey(
         TicketedEvent, on_delete=models.RESTRICT, related_name="payments"
     )
     value = models.FloatField(validators=[MinValueValidator(0)])
-    status = models.CharField(choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING")
+    status = models.CharField(
+        choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"
+    )
     stripe_checkout_session_id = models.CharField(max_length=1024)
     callaback_timestamp = models.DateTimeField(null=True, blank=True)
     acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
-
 
 
 # here for backwards compatibility, historic allauth adapter

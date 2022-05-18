@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import {  useAccount, useSignMessage } from 'wagmi';
 import { useNavigate } from "react-router-dom";
-import { TokenGateRequestAccess, TokenGateGrantAccess } from '../../api';
+import { EventPortalRequestAccess, EventPortalGrantAccess } from '../../api';
 import { TokenGateContext } from '../../context';
 import { Loading, Web3CheckoutSelection } from '../../components';
 
@@ -51,9 +51,8 @@ export const Web3CheckoutConfirmation = () => {
 			let response: any;
 			// api call
 			if (accountData && accountData.address){
-				response = await TokenGateRequestAccess.call({
+				response = await EventPortalRequestAccess.call({
 					"public_id":id,
-					"gate_type":retrieveJson.general_type,
 					"access_type":'blockchain',
 					"address":accountData.address
 				});
@@ -76,8 +75,7 @@ export const Web3CheckoutConfirmation = () => {
 			if (signData){
 			let response;
 			console.log(web3CheckoutSelection)
-				response = await TokenGateGrantAccess.call({
-					'gate_type':retrieveJson.general_type,
+				response = await EventPortalGrantAccess.call({
 					'public_id':id,
 					'access_type':'blockchain',
 					'address':accountData.address,

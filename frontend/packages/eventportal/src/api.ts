@@ -1,7 +1,7 @@
-// TicketedEventRetrieve class
+// EventPortalRetrieve class
 // Used for retrieving any type of tokengate via .call()
-export class TicketedEventRetrieve {
-	// wrapper for backend - TicketedEventRetrieve
+export class EventPortalRetrieve {
+	// wrapper for backend - EventPortalRetrieve
 	static call = async ({public_id}) => {
 		// set url
 		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/retrieve/${public_id}/`
@@ -30,10 +30,10 @@ export class TicketedEventRetrieve {
 	}
 }
 
-// TicketedEventRequestAccess class
-// Used for requesting access to a TicketedEvent
-export class TicketedEventRequestAccess {
-	// wrapper for backend - TicketedEventRequestAccess
+// EventPortalRequestAccess class
+// Used for requesting access to a EventPortal
+export class EventPortalRequestAccess {
+	// wrapper for backend - EventPortalRequestAccess
 	static call = async ({public_id, access_type, address}) => {
 		// set url
 		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/request-access/${public_id}?type=${access_type}`
@@ -73,10 +73,10 @@ export class TicketedEventRequestAccess {
 	  }
 }
 
-// TicketedEventGrantAccess class
-// Used for granting access to a TicketedEvent
-export class TicketedEventGrantAccess {
-	// wrapper for backend - TicketedEventRequestAccess
+// EventPortalGrantAccess class
+// Used for granting access to a EventPortal
+export class EventPortalGrantAccess {
+	// wrapper for backend - EventPortalRequestAccess
 	static call = async ({public_id, access_type, address, signed_message, signature_id, access_data}) => {
 		// setup url
 		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/grant-access/${public_id}?type=${access_type}`

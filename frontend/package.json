@@ -4,15 +4,15 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "yarn workspace @socialpass/ticketportal start",
-    "build": "yarn workspace @socialpass/ticketportal build",
-    "test": "yarn workspace @socialpass/ticketportal test",
-    "lint": "yarn workspace @socialpass/ticketportal lint",
-    "prepare": "yarn workspace @socialpass/ticketportal prepare",
-    "size": "yarn workspace @socialpass/ticketportal size",
-    "analyze": "yarn workspace @socialpass/ticketportal analyze",
-    "storybook": "yarn workspace @socialpass/ticketportal storybook",
-    "build-storybook": "yarn workspace @socialpass/ticketportal build-storybook"
+    "start": "yarn workspace @socialpass/eventportal start",
+    "build": "yarn workspace @socialpass/eventportal build",
+    "test": "yarn workspace @socialpass/eventportal test",
+    "lint": "yarn workspace @socialpass/eventportal lint",
+    "prepare": "yarn workspace @socialpass/eventportal prepare",
+    "size": "yarn workspace @socialpass/eventportal size",
+    "analyze": "yarn workspace @socialpass/eventportal analyze",
+    "storybook": "yarn workspace @socialpass/eventportal storybook",
+    "build-storybook": "yarn workspace @socialpass/eventportal build-storybook"
   },
   "workspaces": {
     "packages": [

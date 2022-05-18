@@ -8,5 +8,5 @@ import { Sample } from "./components/Sample";
 export { Sample };
 */
 
-import TicketPortal from "./TicketPortal";
-export { TicketPortal };
+import EventPortal from "./EventPortal";
+export { EventPortal };

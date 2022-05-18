@@ -1,6 +1,6 @@
 import { useEffect, useContext } from 'react';
 import { TokenGateContext } from '../context';
-import { TokenGateRetrieve } from '../api';
+import { EventPortalRetrieve } from '../api';
 import { useNavigate } from "react-router-dom";
 
 // Root Page
@@ -13,7 +13,7 @@ export const Init = () => {
 		(async function() {
 			// check for ID string on start
 			if (typeof id === 'string' && id.length > 0){
-				const response = await TokenGateRetrieve.call({
+				const response = await EventPortalRetrieve.call({
 					"public_id":id
 				});
 				if (response && response.httpStatus){

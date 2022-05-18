@@ -10,7 +10,7 @@ from apps.root.models import Signature, Ticket, TicketedEvent
 from .serializers import BlockchainGrantAccessInput, BlockchainRequestAccessInput, TicketedEventSerializer
 
 
-class TicketedEventRetrieve(RetrieveAPIView):
+class EventPortalRetrieve(RetrieveAPIView):
     """
     RetrieveAPIView for retrieving tokengate by `public_id`
     """
@@ -21,7 +21,7 @@ class TicketedEventRetrieve(RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-class TicketedEventRequestAccess(APIView):
+class EventPortalRequestAccess(APIView):
     """
     Subclass TicketGateRequestAccess for requesting access
     Ticketgate specific
@@ -78,7 +78,7 @@ class TicketedEventRequestAccess(APIView):
         return Response(self.request_access_data)
 
 
-class TicketedEventGrantAccess(APIView):
+class EventPortalGrantAccess(APIView):
     """
     Subclass TicketedEventGrantAccess for granting access
     Ticketgate specific

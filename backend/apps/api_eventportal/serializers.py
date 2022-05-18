@@ -31,7 +31,6 @@ class TicketedEventSerializer(serializers.ModelSerializer):
         fields = [
             "team",
             "title",
-            "general_type",
             "description",
             "requirements",
             "limit_per_person",

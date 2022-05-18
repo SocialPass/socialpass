@@ -27,7 +27,7 @@ require<any>('./index.css');
 // Takes in the following props:
 // 1. ID: Public ID provided in SocialPass dashboard
 // 2. Styles: Object used to configure styles (TBD)
-const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
+const EventPortal = ({ id, styles }: TokenGateProviderInterface) => {
 	return (
 		<MemoryRouter>
 			<base href="/"/> {/* set static asset to base path for relative imports */}
@@ -49,4 +49,4 @@ const TokenGate = ({ id, styles }: TokenGateProviderInterface) => {
 	);
 }
 
-export default TokenGate;
+export default EventPortal;

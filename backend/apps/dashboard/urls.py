@@ -33,27 +33,27 @@ urlpatterns = [
     # Ticketing
     path(
         "<int:team_pk>/ticketgates/",
-        views.TicketGateListView.as_view(),
+        views.TicketedEventListView.as_view(),
         name="ticketgate_list",
     ),
     path(
         "<int:team_pk>/ticketgates/create/",
-        views.TicketGateCreateView.as_view(),
+        views.TicketedEventCreateView.as_view(),
         name="ticketgate_create",
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/",
-        views.TicketGateDetailView.as_view(),
+        views.TicketedEventDetailView.as_view(),
         name="ticketgate_detail",
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/update/",
-        views.TicketGateUpdateView.as_view(),
+        views.TicketedEventUpdateView.as_view(),
         name="ticketgate_update",
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/stats/",
-        views.TicketGateStatisticsView.as_view(),
+        views.TicketedEventStatisticsView.as_view(),
         name="ticketgate_stats",
     ),
     path(
@@ -63,22 +63,22 @@ urlpatterns = [
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/checkout",
-        views.TicketGateCheckout.as_view(),
+        views.TicketedEventCheckout.as_view(),
         name="ticketgate_checkout",
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/checkout/success",
-        views.TicketGateCheckout.success_stripe_callback,
+        views.TicketedEventCheckout.success_stripe_callback,
         name="ticketgate_checkout_success_callback",
     ),
     path(
         "<int:team_pk>/ticketgates/<int:pk>/checkout/failure",
-        views.TicketGateCheckout.failure_stripe_callback,
+        views.TicketedEventCheckout.failure_stripe_callback,
         name="ticketgate_checkout_failure_callback",
     ),
     path(
         "webhooks/stripe",
-        views.TicketGateCheckout.stripe_webhook,
+        views.TicketedEventCheckout.stripe_webhook,
         name="stripe_webhook",
     ),
 ]

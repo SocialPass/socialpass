@@ -5,9 +5,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.gates import Blockchain
-from apps.root.models import Signature, TokenGate, Ticket
+from apps.root.models import Ticket, TicketedEvent, Signature
 
-from .serializers import BlockchainGrantAccessInput, BlockchainRequestAccessInput, TokenGatePolymorphicSerializer
+from .serializers import (
+    BlockchainGrantAccessInput, BlockchainRequestAccessInput,
+    TicketedEventSerializer
+)
 
 
 class TokenGateRetrieve(RetrieveAPIView):
@@ -16,14 +19,14 @@ class TokenGateRetrieve(RetrieveAPIView):
     """
 
     lookup_field = "public_id"
-    queryset = TokenGate.objects.all()
-    serializer_class = TokenGatePolymorphicSerializer
+    queryset = TicketedEvent.objects.all()
+    serializer_class = TicketedEventSerializer
     permission_classes = [AllowAny]
 
 
 class TokenGateRequestAccess(APIView):
     """
-    View requests access into tokengate.
+    View requests access into Ticketed Event
     Based on wallet address, return request_access_data
     """
 

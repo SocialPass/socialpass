@@ -2,7 +2,7 @@ import pytz
 from django import forms
 
 from apps.root import pricing_service
-from apps.root.models import Team, TicketGate, Invite
+from apps.root.models import Team, TicketedEvent, Invite
 from invitations.forms import InvitationAdminAddForm, InviteForm
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 
@@ -27,9 +27,9 @@ class TeamForm(forms.ModelForm):
         ]
 
 
-class TicketGateForm(forms.ModelForm):
+class TicketedEventForm(forms.ModelForm):
     """
-    Allows ticketgate information to be updated.
+    Allows ticketed event information to be updated.
 
     Features:
     - capacity is disabled if there is a payment in process.
@@ -39,7 +39,7 @@ class TicketGateForm(forms.ModelForm):
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
 
     class Meta:
-        model = TicketGate
+        model = TicketedEvent
         fields = [
             "title",
             "description",
@@ -69,8 +69,8 @@ class TicketGateForm(forms.ModelForm):
         if pricing_service.get_in_progress_payment(instance):
             self.fields['capacity'].disabled = True
 
-    def save(self, commit: bool = ...) -> TicketGate:
-        """Sets TicketGate price after save"""
+    def save(self, commit: bool = ...) -> TicketedEvent:
+        """Sets TicketedEvent price after save"""
         obj = super().save(commit)
 
         if 'capacity' in self.changed_data:

@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 
 from apps.root import pricing_service
 from apps.root.models import (
-    Membership, Signature, Team, Ticket, TicketGate, TokenGate,
+    Membership, Signature, Team, Ticket, TicketedEvent,
     PricingRule, PricingRuleGroup
 )
 
@@ -14,15 +14,9 @@ User = get_user_model()
 
 
 # Set up admin site titles
-admin.site.site_title = "NFTY Labs Admin"
-admin.site.site_header = "NFTY Labs Admin"
-admin.site.index_title = "NFTY Labs Admin"
-
-
-@admin.register(TokenGate)
-class TokenGateAdmin(admin.ModelAdmin):
-    pass
-
+admin.site.site_title = "SocialPass Admin"
+admin.site.site_header = "SocialPass Admin"
+admin.site.index_title = "SocialPass Admin"
 
 # Admin registrations
 class MembershipInline(admin.TabularInline):
@@ -47,18 +41,18 @@ class TeamAdmin(admin.ModelAdmin):
         MembershipInline,
     ]
     exclude = ("members",)
-    list_display = ("name", "software_types")
+    list_display = ("name",)
     search_fields = ("name",)
 
 
 @admin.register(Signature)
 class SignatureAdmin(admin.ModelAdmin):
-    list_display = ("tokengate", "unique_code", "wallet_address", "is_verified")
-    search_fields = ("tokengate__title", "unique_code", "wallet_address")
+    list_display = ("ticketed_event", "unique_code", "wallet_address", "is_verified")
+    search_fields = ("ticketed_event__title", "unique_code", "wallet_address")
 
 
-@admin.register(TicketGate)
-class TicketGateAdmin(admin.ModelAdmin):
+@admin.register(TicketedEvent)
+class TicketedEventAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "public_id",
@@ -73,8 +67,8 @@ class TicketGateAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("tokengate", "wallet_address", "image")
-    search_fields = ("tokengate__title", "wallet_address", "image")
+    list_display = ("ticketed_event", "wallet_address", "image")
+    search_fields = ("ticketed_event__title", "wallet_address", "image")
 
 
 @admin.register(PricingRule)

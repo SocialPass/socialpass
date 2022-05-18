@@ -1,6 +1,6 @@
 from django.db.models import Sum
 
-from .models import PricingRuleGroup, Team, TicketGate, TokenGateStripePayment
+from .models import PricingRuleGroup, Team, TicketedEvent, TicketedEventStripePayment
 
 
 def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:
@@ -52,7 +52,7 @@ def get_pricing_rule_for_capacity(
     raise ValueError("Could not find pricing_rule for capacity")
 
 
-def get_pricing_group_for_ticket(ticket_gate: TicketGate) -> PricingRuleGroup:
+def get_pricing_group_for_ticket(ticket_gate: TicketedEvent) -> PricingRuleGroup:
     """Returns the pricing group for a given ticket gate."""
     return ticket_gate.team.pricing_rule_group
 
@@ -69,21 +69,21 @@ def calculate_ticket_gate_price_per_ticket_for_team(team: Team, *, capacity: int
 
 
 def get_pricing_rule_for_ticket(
-    ticket_gate: TicketGate,
+    ticket_gate: TicketedEvent,
 ) -> float:
     """Gets the pricing rule that applies to the ticket capacity"""
     pricing_group = get_pricing_group_for_ticket(ticket_gate)
     return get_pricing_rule_for_capacity(pricing_group, ticket_gate.capacity)
 
 
-def set_ticket_gate_price(ticket_gate: TicketGate):
+def set_ticket_gate_price(ticket_gate: TicketedEvent):
     """Sets the price of a ticket based on its capacity."""
     ticket_gate.pricing_rule = get_pricing_rule_for_ticket(ticket_gate)
     ticket_gate.price = ticket_gate.pricing_rule.price_per_ticket * ticket_gate.capacity
     ticket_gate.save()
 
 
-def get_ticket_gate_pending_payment_value(ticket_gate: TicketGate):
+def get_ticket_gate_pending_payment_value(ticket_gate: TicketedEvent):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = get_effective_payments(
         ticket_gate.payments
@@ -93,17 +93,17 @@ def get_ticket_gate_pending_payment_value(ticket_gate: TicketGate):
     )
 
 
-def get_effective_payments(payments: TokenGateStripePayment.objects) -> TokenGateStripePayment.objects:
+def get_effective_payments(payments: TicketedEventStripePayment.objects) -> TicketedEventStripePayment.objects:
     """Returns all succeded payments for a ticket gate."""
     return payments.filter(status="SUCCESS")
 
 
-def get_in_progress_payment(ticket_gate: TicketGate) -> TokenGateStripePayment:
+def get_in_progress_payment(ticket_gate: TicketedEvent) -> TicketedEventStripePayment:
     """Returns the payment of a ticket gate which is either PENDING or PROCESSING."""
     return ticket_gate.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 
 
-def issue_payment(ticket_gate: TicketGate, stripe_checkout_session_id: str) -> TokenGateStripePayment:
+def issue_payment(ticket_gate: TicketedEvent, stripe_checkout_session_id: str) -> TicketedEventStripePayment:
     """
     Issues a payment for a ticket gate.
     Adds validation to ensure that there is only one payment in progress issued per ticket gate.
@@ -111,7 +111,7 @@ def issue_payment(ticket_gate: TicketGate, stripe_checkout_session_id: str) -> T
     if get_in_progress_payment(ticket_gate):
         raise ValueError("There is already a pending payment for this ticket gate.")
 
-    payment = TokenGateStripePayment(
+    payment = TicketedEventStripePayment(
         token_gate=ticket_gate,
         value=ticket_gate.price,
         stripe_checkout_session_id=stripe_checkout_session_id,
@@ -121,7 +121,7 @@ def issue_payment(ticket_gate: TicketGate, stripe_checkout_session_id: str) -> T
     return payment
 
 
-def fulfill_payment(payment: TokenGateStripePayment):
+def fulfill_payment(payment: TicketedEventStripePayment):
     """Fulfills a payment for a ticket gate."""
     payment.status = "SUCCESS"
     payment.save()

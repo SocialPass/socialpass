@@ -25,6 +25,4 @@ django-cors-headers==3.11.0
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-crispy-forms==1.14.0
 crispy-bootstrap5==0.6
-django-polymorphic==3.1.0
-django-rest-polymorphic==0.1.9
 git+https://github.com/jazzband/django-invitations.git@045dc4d55369be33e9c8711dd1c9d0bc793d64cb

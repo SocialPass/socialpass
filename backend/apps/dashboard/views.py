@@ -16,8 +16,8 @@ from django.views.generic.list import ListView
 
 from apps.root import pricing_service
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
-from apps.root.models import Membership, Team, Ticket, TicketGate, TokenGateStripePayment
-from apps.root.forms import TeamForm, TicketGateForm, CustomInviteForm
+from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEventStripePayment
+from apps.root.forms import TeamForm, TicketedEventForm, CustomInviteForm
 from .permissions import team_has_permissions
 
 import stripe
@@ -185,18 +185,18 @@ class TeamUpdateView(WebsiteCommonMixin, UpdateView):
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateListView(WebsiteCommonMixin, ListView):
+class TicketedEventListView(WebsiteCommonMixin, ListView):
     """
     Returns a list of Ticket token gates.
     """
 
-    model = TicketGate
+    model = TicketedEvent
     paginate_by = 15
     context_object_name = "tokengates"
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):
-        qs = TicketGate.objects.filter(team__id=self.kwargs["team_pk"])
+        qs = TicketedEvent.objects.filter(team__id=self.kwargs["team_pk"])
         qs = qs.order_by("-modified")
 
         query_title = self.request.GET.get("title", "")
@@ -207,30 +207,30 @@ class TicketGateListView(WebsiteCommonMixin, ListView):
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateDetailView(WebsiteCommonMixin, DetailView):
+class TicketedEventDetailView(WebsiteCommonMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
 
-    model = TicketGate
+    model = TicketedEvent
     context_object_name = "tokengate"
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = TicketGate.objects.filter(
+        qs = TicketedEvent.objects.filter(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         return qs
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateCreateView(WebsiteCommonMixin, CreateView):
+class TicketedEventCreateView(WebsiteCommonMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
 
-    model = TicketGate
-    form_class = TicketGateForm
+    model = TicketedEvent
+    form_class = TicketedEventForm
     template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):
@@ -261,13 +261,13 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
+class TicketedEventUpdateView(WebsiteCommonMixin, UpdateView):
     """
     Updates a Ticket token gate.
     """
 
-    model = TicketGate
-    form_class = TicketGateForm
+    model = TicketedEvent
+    form_class = TicketedEventForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
     template_name = "dashboard/ticketgate_form.html"
@@ -299,9 +299,9 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
+class TicketedEventCheckout(WebsiteCommonMixin, TemplateView):
     """
-    Checkout intermediate step for TicketGate.
+    Checkout intermediate step for TicketedEvent.
 
     Handles stripe integration.
     """
@@ -314,7 +314,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
 
     @lru_cache
     def get_object(self):
-        return TicketGate.objects.get(
+        return TicketedEvent.objects.get(
             pk=self.kwargs['pk'], team__pk=self.kwargs['team_pk']
         )
 
@@ -388,7 +388,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
         stripe_session_id = request.GET['session_id']
         stripe.api_key = settings.STRIPE_SECRET_KEY
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
-        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
+        payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
 
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
@@ -408,7 +408,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
     @team_has_permissions(software_type="TICKET")
     def failure_stripe_callback(request, **kwargs):
         # update payment status
-        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
+        payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
         payment.status = "CANCELLED"
         payment.save()
 
@@ -457,7 +457,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
             session = event['data']['object']
 
             # Fulfill the purchase
-            payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=session.id)
+            payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=session.id)
             payment.status = "SUCCESS"
             payment.save()
 
@@ -465,7 +465,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
             session = event['data']['object']
 
             # Send an email to the customer asking them to retry their order
-            payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=session.id)
+            payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=session.id)
             payment.status = "FAILURE"
             payment.save()
 
@@ -473,7 +473,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
 
 
 @method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
+class TicketedEventStatisticsView(WebsiteCommonMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -488,16 +488,16 @@ class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
         overrode to set json_schema as well as json data
         """
         context = super().get_context_data(**kwargs)
-        context["current_gate"] = TicketGate.objects.get(
+        context["current_gate"] = TicketedEvent.objects.get(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         return context
 
     def get_queryset(self):
         """
-        get queryset of Ticket models from given TicketGate
+        get queryset of Ticket models from given TicketedEvent
         """
-        gate = TicketGate.objects.get(
+        gate = TicketedEvent.objects.get(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         qs = gate.tickets.all()

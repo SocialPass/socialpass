@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from rest_polymorphic.serializers import PolymorphicSerializer
-
-from apps.root.models import Signature, Team, TicketGate
+from apps.root.models import Signature, Team, TicketedEvent
 
 
 #
@@ -17,9 +15,9 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image"]
 
 
-class TicketGateSerializer(serializers.ModelSerializer):
+class TicketedEventSerializer(serializers.ModelSerializer):
     """
-    Serializes Ticket token gates
+    Serializes Ticketed events
     """
     ticket_count = serializers.IntegerField(
         source='tickets.count',
@@ -30,7 +28,7 @@ class TicketGateSerializer(serializers.ModelSerializer):
     team = TeamSerializer()
 
     class Meta:
-        model = TicketGate
+        model = TicketedEvent
         fields = [
             "team",
             "title",
@@ -44,20 +42,6 @@ class TicketGateSerializer(serializers.ModelSerializer):
             "capacity",
             "ticket_count"
         ]
-
-
-#
-# TOKENGATES ////////////////////////////////////////////////////////////////////////////////////
-#
-class TokenGatePolymorphicSerializer(PolymorphicSerializer):
-    """
-    Polymorphic serializer
-    Switches serializer on content type
-    """
-
-    model_serializer_mapping = {
-        TicketGate: TicketGateSerializer,
-    }
 
 
 #

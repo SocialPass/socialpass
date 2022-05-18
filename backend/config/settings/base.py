@@ -45,7 +45,7 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # Restricts DB against collectstatic command
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     DATABASES = {
-        "default": env.db("NFTY_DATABASE_URL", default="postgres:///v3db"),
+        "default": env.db("NFTY_DATABASE_URL", default="postgres:///local_socialpass_db"),
     }
     DATABASES["default"]["CONN_MAX_AGE"] = env.int(
         "CONN_MAX_AGE", default=60
@@ -84,7 +84,6 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "rest_framework",
     "rest_framework.authtoken",
-    "polymorphic",
 ]
 
 LOCAL_APPS = [
@@ -332,12 +331,13 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 # Django Invitations - https://github.com/jazzband/django-invitations
 INVITATIONS_INVITATION_MODEL = "root.Invite"
-ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
+INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 INVITATIONS_INVITATION_ONLY = True
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
 INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
+INVITATIONS_EMAIL_MAX_LENGTH = 254
 
 # STRIPE
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")

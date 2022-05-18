@@ -1,7 +1,4 @@
 # Stores choices for model fields
-
-TOKENGATE_TYPES = (("TICKET", "TICKET"),)
-
 BLOCKCHAINS = (("EVM", "EVM"),)
 
 

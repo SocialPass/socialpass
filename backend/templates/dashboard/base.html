@@ -50,8 +50,6 @@
 							<span class="nav-link-text">Dashboard</span>
 						</a>
 					</li>
-          {% for software in current_team.software_types %}
-            {% if software == 'TICKET' %}
             <li class="nav-item">
               <a class="nav-link {% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' %}active{% endif %}" href="{% url 'ticketgate_list' current_team.pk %}">
                 <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
@@ -60,8 +58,6 @@
                 <span class="nav-link-text">Ticket Gates</span>
               </a>
             </li>
-            {% endif %}
-          {% endfor %}
 
           <!-- Team -->
           <li class="nav-item mt-4">
@@ -169,9 +165,9 @@
 				<!-- Start Django messages -->
 				{% include '../components/django_messages.html' %}
 				<!-- End Django messages -->
-				
+
 				{% block content %}{% endblock %}
-				
+
 				<!-- Start footer -->
 				<footer class="footer pt-3">
 					<div class="container-fluid">

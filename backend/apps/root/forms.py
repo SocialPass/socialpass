@@ -22,9 +22,7 @@ class TeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        exclude = [
-            "software_types",
-        ]
+        fields = '__all__'
 
 
 class TicketedEventForm(forms.ModelForm):

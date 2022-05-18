@@ -4,6 +4,7 @@ from invitations.views import AcceptInvite
 
 from django.conf import settings
 from django.contrib import auth, messages
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import redirect, reverse
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
@@ -24,19 +25,26 @@ import stripe
 User = auth.get_user_model()
 
 
-class TeamContextMixin(ContextMixin):
+class TeamContextMixin(UserPassesTestMixin, ContextMixin):
     """
     Common context used site-wide
     Used to set current_team from team_pk
     """
 
-    def dispatch(self, request, *args, **kwargs):
-       try:
-           membership = Membership.objects.select_related("team").get(
-               team__id=self.kwargs["team_pk"], user__id=self.request.user.id
-           )
-       except Membership.DoesNotExist:
-           return redirect("dashboard_redirect")
+    def test_func(self):
+        # check user authenticated and membership to team PK
+        user_logged_in = self.request.user.is_authenticated
+        try:
+            user_has_membership = Membership.objects.select_related("team").get(
+                team__id=self.kwargs["team_pk"], user__id=self.request.user.id
+            )
+        except:
+            user_has_membership = False
+
+        return user_logged_in and user_has_membership
+
+    def handle_no_permission(self):
+        return LoginRequiredMixin.handle_no_permission(self)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

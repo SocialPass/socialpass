@@ -18,18 +18,25 @@ from apps.root import pricing_service
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
 from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEventStripePayment
 from apps.root.forms import TeamForm, TicketedEventForm, CustomInviteForm
-from .permissions import team_has_permissions
 
 import stripe
 
 User = auth.get_user_model()
 
 
-class WebsiteCommonMixin(ContextMixin):
+class TeamContextMixin(ContextMixin):
     """
     Common context used site-wide
     Used to set current_team from team_pk
     """
+
+    def dispatch(self, request, *args, **kwargs):
+       try:
+           membership = Membership.objects.select_related("team").get(
+               team__id=self.kwargs["team_pk"], user__id=self.request.user.id
+           )
+       except Membership.DoesNotExist:
+           return redirect("dashboard_redirect")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -102,8 +109,7 @@ class AcceptInviteView(AcceptInvite):
             return super().post(self, *args, **kwargs)
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class DashboardView(WebsiteCommonMixin, TemplateView):
+class DashboardView(TeamContextMixin, TemplateView):
     """
     Main dashboard page.
     """
@@ -111,8 +117,7 @@ class DashboardView(WebsiteCommonMixin, TemplateView):
     template_name = "dashboard/dashboard.html"
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamDetailView(WebsiteCommonMixin, TemplateView):
+class TeamDetailView(TeamContextMixin, TemplateView):
     """
     Returns the details of the logged in user's team.
     """
@@ -120,8 +125,7 @@ class TeamDetailView(WebsiteCommonMixin, TemplateView):
     template_name = "dashboard/team_detail.html"
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamMemberManageView(WebsiteCommonMixin, FormView):
+class TeamMemberManageView(TeamContextMixin, FormView):
     """
     Manage a team's members.
     """
@@ -149,8 +153,7 @@ class TeamMemberManageView(WebsiteCommonMixin, FormView):
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
+class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     """
     Manage a team's members.
     """
@@ -166,8 +169,7 @@ class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamUpdateView(WebsiteCommonMixin, UpdateView):
+class TeamUpdateView(TeamContextMixin, UpdateView):
     """
     Updates the user's team.
     """
@@ -184,8 +186,7 @@ class TeamUpdateView(WebsiteCommonMixin, UpdateView):
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketedEventListView(WebsiteCommonMixin, ListView):
+class TicketedEventListView(TeamContextMixin, ListView):
     """
     Returns a list of Ticket token gates.
     """
@@ -206,8 +207,7 @@ class TicketedEventListView(WebsiteCommonMixin, ListView):
         return qs
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketedEventDetailView(WebsiteCommonMixin, DetailView):
+class TicketedEventDetailView(TeamContextMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
@@ -223,8 +223,7 @@ class TicketedEventDetailView(WebsiteCommonMixin, DetailView):
         return qs
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketedEventCreateView(WebsiteCommonMixin, CreateView):
+class TicketedEventCreateView(TeamContextMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
@@ -260,8 +259,7 @@ class TicketedEventCreateView(WebsiteCommonMixin, CreateView):
         )
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketedEventUpdateView(WebsiteCommonMixin, UpdateView):
+class TicketedEventUpdateView(TeamContextMixin, UpdateView):
     """
     Updates a Ticket token gate.
     """
@@ -298,8 +296,7 @@ class TicketedEventUpdateView(WebsiteCommonMixin, UpdateView):
         )
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketedEventCheckout(WebsiteCommonMixin, TemplateView):
+class TicketedEventCheckout(TeamContextMixin, TemplateView):
     """
     Checkout intermediate step for TicketedEvent.
 
@@ -382,7 +379,7 @@ class TicketedEventCheckout(WebsiteCommonMixin, TemplateView):
 
         return redirect(checkout_session['url'])
 
-    @team_has_permissions(software_type="TICKET")
+
     def success_stripe_callback(request, **kwargs):
         # update payment status
         stripe_session_id = request.GET['session_id']
@@ -405,7 +402,7 @@ class TicketedEventCheckout(WebsiteCommonMixin, TemplateView):
             **kwargs
         )
 
-    @team_has_permissions(software_type="TICKET")
+
     def failure_stripe_callback(request, **kwargs):
         # update payment status
         payment = TicketedEventStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
@@ -472,8 +469,7 @@ class TicketedEventCheckout(WebsiteCommonMixin, TemplateView):
         return HttpResponse(status=200)
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketedEventStatisticsView(WebsiteCommonMixin, ListView):
+class TicketedEventStatisticsView(TeamContextMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -510,7 +506,6 @@ class TicketedEventStatisticsView(WebsiteCommonMixin, ListView):
         return qs
 
 
-@team_has_permissions(software_type="TICKET")
 def estimate_ticket_gate_price(request, team_pk):
     """
     Returns a list of ticket stats from ticket tokengates.

@@ -6,10 +6,24 @@ from pathlib import Path
 
 import environ
 
+# SENTRY
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+
 # backend/
 APPS_DIR = ROOT_DIR / "apps"
 env = environ.Env()
+
+sentry_sdk.init(
+    dsn=env('SENTRY_DSN', default=""),
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=0,  # Performance not an issue for this admin dashboard.
+    send_default_pii=env.bool('SENTRY_SEND_PII', default=True),
+    environment=env('SENTRY_ENV_NAME', default='unset-env')
+)
+
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:

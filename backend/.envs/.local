@@ -15,3 +15,6 @@ NFTY_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
 # TODO: rotate keys and move to secrets manager
 STRIPE_PUBLISHABLE_KEY=pk_test_51KvpFEJ8LTYPBcCzm7n9CwVTMZot5OZXRetW0zhxEv3vdw8Rq2AMjInnELpoytzCMnoLDGJ3T2fEArpcPRDb9gHV00sBtRcqcN
 STRIPE_SECRET_KEY=sk_test_51KvpFEJ8LTYPBcCzJ6xTqDNnSXbo6ugNgJRoZCyi51UMgnRUNUulQAqkfJsTIEcczkg4pA204tdCZbslzymFdLbh007N9oEGq0
+
+# SENTRY
+SENTRY_ENV_NAME=development

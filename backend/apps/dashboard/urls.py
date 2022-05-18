@@ -80,5 +80,5 @@ urlpatterns = [
         "webhooks/stripe",
         views.TicketGateCheckout.stripe_webhook,
         name="stripe_webhook",
-    ),
+    )
 ]

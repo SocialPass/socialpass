@@ -15,18 +15,15 @@ def login_membership_callback(request, user, **kwargs):
     Upon login, check for a recently-accepted invitation
     If invite exists, create a membership to that team
     """
-    # Check for latest accepted invite
-    try:
-        invite = Invite.objects.filter(email__iexact=user.email, accepted=True).latest(
-            "sent"
-        )
-    except Invite.DoesNotExist:
-        return
+    # Check for accepted invites without membership
+    invites = Invite.objects.filter(email__iexact=user.email, accepted=True, membership=None)
 
-    # Create membership if one does not exist
-    membership = Membership.objects.get_or_create(team=invite.team, user=user)
+    # Create membership based on invites witout membership
+    for invite in invites:
+        membership, created = Membership.objects.get_or_create(team=invite.team, user=user)
 
-    # update invite (archive email address, entire instance could be deleted instead)
-    invite.archived_email = invite.email
-    invite.email = f"{secrets.token_urlsafe(12)}{invite.archived_email}"
-    invite.save()
+        # update invite (add membership, archive email address, entire instance could be deleted instead)
+        invite.membership = membership
+        invite.archived_email = invite.email
+        invite.email = f"{secrets.token_urlsafe(12)}{invite.archived_email}"
+        invite.save()

@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
-from django.urls import reverse
+from django.shortcuts import redirect, reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from invitations import signals
@@ -119,31 +119,31 @@ class Invite(DBModel, AbstractBaseInvitation):
     )
     # custom
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    membership = models.ForeignKey(Membership, on_delete=models.CASCADE, blank=True, null=True)
     archived_email = models.EmailField(blank=True, null=True)
 
     @classmethod
     def create(cls, email, inviter=None, **kwargs):
-        key = get_random_string(64).lower()
-        instance = cls._default_manager.create(
-            email=email, key=key, inviter=inviter, **kwargs
-        )
-        return instance
+       key = get_random_string(64).lower()
+       instance = cls._default_manager.create(
+           email=email, key=key, inviter=inviter, **kwargs
+       )
+       return instance
 
     def key_expired(self):
-        expiration_date = self.sent + datetime.timedelta(
+        expiration_date = self.sent + timedelta(
             days=settings.INVITATIONS_INVITATION_EXPIRY,
         )
         return expiration_date <= timezone.now()
 
     def send_invitation(self, request, **kwargs):
         current_site = get_current_site(request)
-        invite_url = reverse(
-            settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key]
-        )
+        invite_url = reverse(settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(
             {
+                "team": self.team,
                 "invite_url": invite_url,
                 "site_name": current_site.name,
                 "email": self.email,
@@ -249,23 +249,19 @@ class Signature(DBModel):
         """
         return str(self.unique_code)
 
-    def save(self, *args, **kwargs):
-        """
-        override save to set signing message (aggregate from other fields)
-        """
-        if not self.signing_message:
-            signing_message_obj = {
-                "You are accessing": self.ticketed_event.title,
-                "Hosted by": self.ticketed_event.team.name,
-                "One-Time Code": self.unique_code,
-                "Valid until": self.expires.ctime(),
-                "Version": self.version,
-            }
-            signing_message = "\n".join(
-                ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()
-            )
-            self.signing_message = signing_message
-        super().save(*args, **kwargs)
+    @property
+    def signing_message(self):
+        signing_message_obj = {
+            "You are accessing": self.ticketed_event.title,
+            "Hosted by": self.ticketed_event.team.name,
+            "One-Time Code": self.unique_code,
+            "Valid until": self.expires.ctime(),
+            "Version": self.version,
+        }
+        signing_message = "\n".join(
+            ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()
+        )
+        return signing_message
 
 
 class Ticket(DBModel):
@@ -398,6 +394,7 @@ class TicketedEventStripePayment(DBModel):
     acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
 
 
+# https://github.com/jazzband/django-invitations/blob/045dc4d55369be33e9c8711dd1c9d0bc793d64cb/invitations/models.py#L76-L96
 # here for backwards compatibility, historic allauth adapter
 if settings.INVITATIONS_ACCOUNT_ADAPTER == "invitations.models.InvitationsAdapter":
     from allauth.account.adapter import DefaultAccountAdapter
@@ -409,7 +406,7 @@ if settings.INVITATIONS_ACCOUNT_ADAPTER == "invitations.models.InvitationsAdapte
                 "account_verified_email",
             ):
                 return True
-            elif settings.INVITATION_ONLY is True:
+            elif settings.INVITATIONS_INVITATION_ONLY is True:
                 # Site is ONLY open for invites
                 return False
             else:

@@ -224,6 +224,10 @@ class TicketedEvent(DBModel):
         on_delete=models.RESTRICT,  # Forbids pricing rules from being deleted
     )
 
+    @property
+    def has_pending_checkout(self):
+        return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
+
 
 class Signature(DBModel):
     """

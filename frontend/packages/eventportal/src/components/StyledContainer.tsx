@@ -11,11 +11,11 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 	const FAQImage = require("../static/images/FAQ.svg");
 	const logoImage = require("../static/images/socialpass.svg");
 	const _backButton = require("../static/images/back.svg");
-
+	console.log(location)
 	return (
 		<div className="container-fluid p-0 d-flex flex-column">
 			{
-				location.pathname !== "/gate/ticket"
+				location.pathname.includes('checkout')
 				?
 				<header className="small-header" style={{backgroundImage: `url(${headerImage})`}}>
 						{backButton &&

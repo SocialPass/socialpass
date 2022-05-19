@@ -8,14 +8,14 @@ const Tabs = ({checkoutOptions}) => {
 			if(item.options.length > 0){
 				return (
 				<li className="nav-item" role="presentation">
-					<button className={checkoutIndex === 0 ? 'nav-link active' : 'nav-link'} id={`tab-${checkoutIndex}-tab`} data-bs-toggle="tab" data-bs-target={`#tab-${checkoutIndex}`} role="tab" aria-controls={`tab-${checkoutIndex}`} aria-selected="true">todo</button>
+					<button className={checkoutIndex === 0 ? 'nav-link active' : 'nav-link'} id={`tab-${checkoutIndex}-tab`} data-bs-toggle="tab" data-bs-target={`#tab-${checkoutIndex}`} role="tab" aria-controls={`tab-${checkoutIndex}`} aria-selected="true">Asset Name</button>
 				</li>
 				)
 			}
 			else {
 				return (
 					<li className="nav-item" role="presentation">
-						<button className="nav-link disabled" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" role="tab" aria-controls="home" aria-selected="true">todo</button>
+						<button className="nav-link disabled" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" role="tab" aria-controls="home" aria-selected="true">Asset Name</button>
 					</li>
 				)
 			}

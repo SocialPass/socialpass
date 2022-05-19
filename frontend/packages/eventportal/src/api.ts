@@ -1,10 +1,11 @@
-// EventPortalRetrieve class
-// Used for retrieving any type of tokengate via .call()
-export class EventPortalRetrieve {
-	// wrapper for backend - EventPortalRetrieve
+const baseURL = `${process.env.REACT_APP_API_URL}/api/event-portal`
+
+// TicketedEventRetrieve API call
+export class TicketedEventRetrieve {
+	// wrapper for backend - TicketedEventRetrieve
 	static call = async ({public_id}) => {
 		// set url
-		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/retrieve/${public_id}/`
+		const url = `${baseURL}/ticketed-event/retrieve/${public_id}/`
 
 		// set request options
 		var requestOptions = {
@@ -30,13 +31,13 @@ export class EventPortalRetrieve {
 	}
 }
 
-// EventPortalRequestAccess class
-// Used for requesting access to a EventPortal
-export class EventPortalRequestAccess {
-	// wrapper for backend - EventPortalRequestAccess
+// TicketedEventRequestAccess class
+// Used for requesting access to a TicketedEvent
+export class TicketedEventRequestAccess {
+	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address}) => {
 		// set url
-		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/request-access/${public_id}?type=${access_type}`
+		const url = `${baseURL}/ticketed-event/request-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({
@@ -73,13 +74,13 @@ export class EventPortalRequestAccess {
 	  }
 }
 
-// EventPortalGrantAccess class
-// Used for granting access to a EventPortal
-export class EventPortalGrantAccess {
-	// wrapper for backend - EventPortalRequestAccess
+// TicketedEventGrantAccess class
+// Used for granting access to a TicketedEvent
+export class TicketedEventGrantAccess {
+	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address, signed_message, signature_id, access_data}) => {
 		// setup url
-		const url = `${process.env.REACT_APP_API_URL}/api/event-portal/grant-access/${public_id}?type=${access_type}`
+		const url = `${baseURL}/ticketed-event/grant-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({

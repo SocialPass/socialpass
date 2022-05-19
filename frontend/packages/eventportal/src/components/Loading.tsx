@@ -1,5 +1,5 @@
 import React from 'react';
-import { TokenGateContext } from '../context';
+import { EventPortalContext } from '../context';
 
 // Loading Component
 // todo

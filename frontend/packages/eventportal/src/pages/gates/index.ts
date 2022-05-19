@@ -1,1 +1,1 @@
-export { TicketGate } from './TicketGate';
+export { TicketedEvent } from './TicketedEvent';

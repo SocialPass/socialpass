@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
-import { TokenGateContext } from '../../context';
+import { EventPortalContext } from '../../context';
 
-// TicketGate Component
-export const TicketGate = (): JSX.Element => {
+// TicketedEvent Component
+export const TicketedEvent = (): JSX.Element => {
 	const navigate = useNavigate();
-	const { retrieveJson } = useContext(TokenGateContext);
+	const { retrieveJson } = useContext(EventPortalContext);
 	console.log(retrieveJson);
 	// default, return baseGate
 	// todo: customize basegate more, perhaps current content as children

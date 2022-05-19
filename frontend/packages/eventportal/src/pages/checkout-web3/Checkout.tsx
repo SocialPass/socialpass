@@ -1,14 +1,14 @@
 import React, { useContext, useEffect } from 'react';
 import {  useAccount, useSignMessage } from 'wagmi';
 import { useNavigate } from "react-router-dom";
-import { EventPortalRequestAccess, EventPortalGrantAccess } from '../../api';
-import { TokenGateContext } from '../../context';
+import { TicketedEventRequestAccess, TicketedEventGrantAccess } from '../../api';
+import { EventPortalContext } from '../../context';
 import { Loading, Web3CheckoutSelection } from '../../components';
 
 
 // Web3CheckoutSelection
 export const Web3CheckoutConfirmation = () => {
-	// tokengate context hooks
+	// eventportal context hooks
 	const {
 		id,
 		retrieveJson,
@@ -20,7 +20,7 @@ export const Web3CheckoutConfirmation = () => {
 		setWeb3CheckoutSelection,
 		setGrantAccessJson,
 		setGrantAccessError
-	} = useContext(TokenGateContext);
+	} = useContext(EventPortalContext);
 	// navigation
 	const navigate = useNavigate();
 	// web3 account hooks
@@ -51,7 +51,7 @@ export const Web3CheckoutConfirmation = () => {
 			let response: any;
 			// api call
 			if (accountData && accountData.address){
-				response = await EventPortalRequestAccess.call({
+				response = await TicketedEventRequestAccess.call({
 					"public_id":id,
 					"access_type":'blockchain',
 					"address":accountData.address
@@ -75,7 +75,7 @@ export const Web3CheckoutConfirmation = () => {
 			if (signData){
 			let response;
 			console.log(web3CheckoutSelection)
-				response = await EventPortalGrantAccess.call({
+				response = await TicketedEventGrantAccess.call({
 					'public_id':id,
 					'access_type':'blockchain',
 					'address':accountData.address,
@@ -117,7 +117,7 @@ export const Web3CheckoutConfirmation = () => {
 			<div className="row flex-grow-1 m-0 mt-2">
 				<div className="col-md-7">
 					<h2>Select Your Asset(s)</h2>
-					<p>Select the asset(s) you would like to redeem your Token Gate with</p>
+					<p>Select the asset(s) you would like to redeem your Event with</p>
 					<Web3CheckoutSelection
 						checkoutOptions={requestAccessJson.checkout_options}
 						web3CheckoutSelection={web3CheckoutSelection}

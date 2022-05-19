@@ -1,9 +1,9 @@
 import React, { createContext, useState } from "react"
-import { TokenGateProviderInterface, TokenGateContextInterface } from '../props';
+import { EventPortalProviderInterface, EventPortalContextInterface } from '../types';
 
-export const TokenGateContext = createContext<TokenGateContextInterface>({} as TokenGateContextInterface);
+export const EventPortalContext = createContext<EventPortalContextInterface>({} as EventPortalContextInterface);
 
-export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInterface) => {
+export const EventPortalProvider = ({ children, id, styles }:EventPortalProviderInterface) => {
   const [backButton, setBackButton] = useState(null);
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
@@ -17,7 +17,7 @@ export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInte
   const [web3CheckoutSelection, setWeb3CheckoutSelection ] = useState([]);
 
   return (
-	<TokenGateContext.Provider value={{
+	<EventPortalContext.Provider value={{
     id,
     styles,
     backButton,
@@ -42,6 +42,6 @@ export const TokenGateProvider = ({ children, id, styles }:TokenGateProviderInte
     setGrantAccessError,
   }}>
 	  {children}
-	</TokenGateContext.Provider>
+	</EventPortalContext.Provider>
   );
 };

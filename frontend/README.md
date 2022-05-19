@@ -1,8 +1,8 @@
 # SocialPass Development
 
-`socialpass/tokengate` contains core SocialPass frontend, namely the `<TokenGate/>` component.
+`socialpass/eventportal` contains core SocialPass frontend, namely the `<EventPortal/>` component.
 
-More documentation can be found in `packages/tokengate/README.md`
+More documentation can be found in `packages/eventportal/README.md`
 
 # Setup
 `git clone ...`
@@ -14,7 +14,7 @@ More documentation can be found in `packages/tokengate/README.md`
 # SocialPass - Frontend
 This folder is a monorepo setup with yarn workspaces and lerna. 
 
-## TicketPortal
+## EventPortal
 # Documentation
 https://www.notion.so/Frontend-SDK-842e20a5ca5a47198f133fae886a11c5
 

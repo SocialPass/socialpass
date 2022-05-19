@@ -4,18 +4,18 @@ from . import views
 
 urlpatterns = [
     path(
-        "retrieve/<str:public_id>/",
-        views.EventPortalRetrieve.as_view(),
-        name="ticketgate-retrieve",
+        "ticketed-event/retrieve/<str:public_id>/",
+        views.TicketedEventRetrieve.as_view(),
+        name="ticketedevent-retrieve",
     ),
     path(
-        "request-access/<str:public_id>",
-        views.EventPortalRequestAccess.as_view(),
-        name="tokengate-request-access",
+        "ticketed-event/request-access/<str:public_id>",
+        views.TicketedEventRequestAccess.as_view(),
+        name="ticketedevent-request-access",
     ),
     path(
-        "grant-access/<str:public_id>",
-        views.EventPortalGrantAccess.as_view(),
-        name="tokengate-grant-access",
+        "ticketed-event/grant-access/<str:public_id>",
+        views.TicketedEventGrantAccess.as_view(),
+        name="ticketedevent-grant-access",
     ),
 ]

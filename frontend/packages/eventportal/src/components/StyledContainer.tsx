@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { useLocation } from 'react-router-dom'
-import { TokenGateContext } from '../context';
+import { EventPortalContext } from '../context';
 
 // StyledContainer component
 // Display root layout (header, main content, footer)
 export const StyledContainer = ({children}:{children:React.ReactNode}) => {
-	const { backButton, retrieveJson } = useContext(TokenGateContext);
+	const { backButton, retrieveJson } = useContext(EventPortalContext);
 	const location = useLocation();
 	const headerImage = require("../static/images/header1.svg");
 	const FAQImage = require("../static/images/FAQ.svg");

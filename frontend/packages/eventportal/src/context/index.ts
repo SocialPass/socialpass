@@ -1,2 +1,2 @@
-import {TokenGateProvider, TokenGateContext} from "./context";
-export { TokenGateProvider, TokenGateContext };
+import {EventPortalProvider, EventPortalContext} from "./context";
+export { EventPortalProvider, EventPortalContext };

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { TokenGateContext } from '../context';
+import { EventPortalContext } from '../context';
 
 /************************************* Logic COMPONENTS *************************************/
 // Reward component
-// Display tokengate reward screen (Success or failure)
+// Display reward screen (Success or failure)
 export const Reward = () => {
 	return (
 		<div className="base-gate">

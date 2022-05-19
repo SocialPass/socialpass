@@ -2,12 +2,12 @@ import React, { useEffect, useContext} from 'react';
 import {  useConnect, useAccount } from 'wagmi';
 import { useNavigate } from "react-router-dom";
 import { Web3ConnectorImage } from '../../components/Web3ConnectorImage';
-import { TokenGateContext } from '../../context';
+import { EventPortalContext } from '../../context';
 
 // ConnectorWallets
 // Return UI for wallet connectors
 export const Web3ConnectWallet = () => {
-	const {setBackButton} = useContext(TokenGateContext);
+	const {setBackButton} = useContext(EventPortalContext);
 	const navigate = useNavigate();
 	const [{ data: connectData, error: connectError, loading: loadingConnect }, connect] = useConnect();
 	const [{ data: accountData, error: accountError, loading: accountLoading }, disconnect] = useAccount();
@@ -30,7 +30,7 @@ export const Web3ConnectWallet = () => {
 			<div className="row flex-grow-1">
 				<div className="col-12">
 					<h2>Connect Your Wallet</h2>
-					<p>Connect the wallet that has the required asset(s) for this Token Gate</p>
+					<p>Connect the wallet that has the required asset(s) for this Event</p>
 					<div className="row">
 						{connectData.connectors.map((x) => (
 							<div className="col-6 col-md-4">

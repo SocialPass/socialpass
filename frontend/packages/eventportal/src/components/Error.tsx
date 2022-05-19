@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { TokenGateContext } from '../context';
+import { EventPortalContext } from '../context';
 
 // Error Component
 // todo

@@ -1,15 +1,15 @@
 /*
 Context types
 */
-// Intial Props for TokenGate component
-export interface TokenGateProviderInterface {
+// Intial Props for EventPortal component
+export interface EventPortalProviderInterface {
 	id: string
   children?: any
   styles?:any
 }
 
-// Props for TokenGate component context
-export interface TokenGateContextInterface {
+// Props for EventPortal component context
+export interface EventPortalContextInterface {
   // base
   id: string
   styles?: any

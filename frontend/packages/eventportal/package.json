@@ -46,7 +46,7 @@
     {
       "path": "dist/eventportal.esm.js",
       "limit": "1s",
-      "import": "{ TokenGate }"
+      "import": "{ EventPortal }"
     }
   ],
   "dependencies": {

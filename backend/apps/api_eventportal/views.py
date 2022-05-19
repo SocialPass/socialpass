@@ -12,7 +12,7 @@ from .serializers import BlockchainGrantAccessInput, BlockchainRequestAccessInpu
 
 class TicketedEventRetrieve(RetrieveAPIView):
     """
-    RetrieveAPIView for retrieving tokengate by `public_id`
+    RetrieveAPIView for retrieving ticketed_event by `public_id`
     """
 
     lookup_field = "public_id"
@@ -28,15 +28,15 @@ class TicketedEventRequestAccess(APIView):
     """
 
     signature = None  # signature model
-    tokengate = None  #
+    ticketed_event = None  #
     request_access_data = None
 
     def set_ticketed_event(self, *args, **kwargs):
         """
-        SET_TOKENGATE sets tokengate
+        SET_TOKENGATE sets ticketed_event
         """
         try:
-            self.tokengate = TicketedEvent.objects.get(public_id=kwargs["public_id"])
+            self.ticketed_event = TicketedEvent.objects.get(public_id=kwargs["public_id"])
         except Exception:
             raise Http404
 
@@ -44,7 +44,7 @@ class TicketedEventRequestAccess(APIView):
         """
         POST calls blockchain or fiat, depending on 'type' query string
         """
-        # set tokengate
+        # set ticketed_event
         self.set_ticketed_event(*args, **kwargs)
 
         # Serialize data
@@ -53,14 +53,14 @@ class TicketedEventRequestAccess(APIView):
 
         # Generate Signature (to be signed by client)
         self.signature = Signature.objects.create(
-            tokengate=self.tokengate,
+            ticketed_event=self.ticketed_event,
             wallet_address=serialized.data.get("address"),
         )
 
         # fetch blockchain checkout options
         checkout_options = (
             Blockchain.Utilities.fetch_checkout_options_against_requirements(
-                requirements=self.tokengate.requirements,
+                requirements=self.ticketed_event.requirements,
                 wallet_address=serialized.data.get("address"),
             )
         )
@@ -85,13 +85,13 @@ class TicketedEventGrantAccess(APIView):
     """
 
     signature = None  # signature model
-    tokengate = None  # tokengate model
+    ticketed_event = None  # ticketed_event model
     wallet_address = None  # wallet address (from signature)
     checkout_selections = None  # checkout selections
 
     def set_ticketed_event(self, *args, **kwargs):
         try:
-            self.tokengate = TicketedEvent.objects.get(public_id=kwargs["public_id"])
+            self.ticketed_event = TicketedEvent.objects.get(public_id=kwargs["public_id"])
         except Exception:
             raise Http404
 
@@ -106,7 +106,7 @@ class TicketedEventGrantAccess(APIView):
             raise Http404
 
     def post(self, request, *args, **kwargs):
-        # set tokengate
+        # set ticketed_event
         self.set_ticketed_event(*args, **kwargs)
 
         # Serialize data
@@ -121,7 +121,7 @@ class TicketedEventGrantAccess(APIView):
             signature=self.signature,
             address=serialized.data.get("address"),
             signed_message=serialized.data.get("signed_message"),
-            tokengate_id=self.tokengate.public_id,
+            ticketed_event_id=self.ticketed_event.public_id,
         )
         if not signature_success:
             return Response(signature_msg, status=401)
@@ -132,8 +132,8 @@ class TicketedEventGrantAccess(APIView):
             web3_validated_msg,
         ) = Blockchain.Utilities.validate_checkout_selections_against_requirements(
             wallet_address=serialized.data.get("address"),
-            limit_per_person=self.tokengate.limit_per_person,
-            requirements=self.tokengate.requirements,
+            limit_per_person=self.ticketed_event.limit_per_person,
+            requirements=self.ticketed_event.requirements,
             requirements_with_options=serialized.data.get("access_data"),
         )
 
@@ -149,7 +149,7 @@ class TicketedEventGrantAccess(APIView):
         for obj in self.checkout_selections:
             ticket, created = Ticket.objects.get_or_create(
                 wallet_address=self.wallet_address,
-                tokengate=self.tokengate,
+                ticketed_event=self.ticketed_event,
                 requirement=obj["requirement"],
                 option=obj["option"],
             )

@@ -1,5 +1,8 @@
 from .base import *  # noqa
 from .base import env
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -82,6 +85,23 @@ STATIC_URL = f"https://{AWS_LOCATION}/static/"
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
 
+# SENTRY
+# ------------------------------------------------------------------------------
+SENTRY_DSN = env("SENTRY_DSN")
+SENTRY_LOG_LEVEL = env.int("DJANGO_SENTRY_LOG_LEVEL", logging.INFO)
+sentry_logging = LoggingIntegration(
+    level=SENTRY_LOG_LEVEL,  # Capture info and above as breadcrumbs
+    event_level=logging.ERROR,  # Send errors as events
+)
+integrations = [sentry_logging, DjangoIntegration(), RedisIntegration()]
+
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    integrations=integrations,
+    traces_sample_rate=0,  # Performance not an issue for this admin dashboard.
+    send_default_pii=env.bool('SENTRY_SEND_PII', default=True),
+    environment=env('SENTRY_ENV_NAME', default='unset-env')
+)
 
 # Your stuff...
 # ------------------------------------------------------------------------------

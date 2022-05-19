@@ -1,27 +1,18 @@
-from django.contrib import admin
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
 from apps.root import pricing_service
-from apps.root.models import (
-    Membership, Signature, Team, Ticket, TicketGate, TokenGate,
-    PricingRule, PricingRuleGroup
-)
+from apps.root.models import Membership, PricingRule, PricingRuleGroup, Signature, Team, Ticket, TicketedEvent
 
 User = get_user_model()
 
 
 # Set up admin site titles
-admin.site.site_title = "NFTY Labs Admin"
-admin.site.site_header = "NFTY Labs Admin"
-admin.site.index_title = "NFTY Labs Admin"
-
-
-@admin.register(TokenGate)
-class TokenGateAdmin(admin.ModelAdmin):
-    pass
+admin.site.site_title = "SocialPass Admin"
+admin.site.site_header = "SocialPass Admin"
+admin.site.index_title = "SocialPass Admin"
 
 
 # Admin registrations
@@ -47,18 +38,18 @@ class TeamAdmin(admin.ModelAdmin):
         MembershipInline,
     ]
     exclude = ("members",)
-    list_display = ("name", "software_types")
+    list_display = ("name",)
     search_fields = ("name",)
 
 
 @admin.register(Signature)
 class SignatureAdmin(admin.ModelAdmin):
-    list_display = ("tokengate", "unique_code", "wallet_address", "is_verified")
-    search_fields = ("tokengate__title", "unique_code", "wallet_address")
+    list_display = ("ticketed_event", "unique_code", "wallet_address", "is_verified")
+    search_fields = ("ticketed_event__title", "unique_code", "wallet_address")
 
 
-@admin.register(TicketGate)
-class TicketGateAdmin(admin.ModelAdmin):
+@admin.register(TicketedEvent)
+class TicketedEventAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "public_id",
@@ -73,8 +64,8 @@ class TicketGateAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("tokengate", "wallet_address", "image")
-    search_fields = ("tokengate__title", "wallet_address", "image")
+    list_display = ("ticketed_event", "wallet_address", "image")
+    search_fields = ("ticketed_event__title", "wallet_address", "image")
 
 
 @admin.register(PricingRule)
@@ -93,9 +84,7 @@ class PricingRuleGroupAdmin(admin.ModelAdmin):
 
     def identify_pricing_group_errors(self, request, queryset):
         for pricing_group in queryset:
-            errors = pricing_service.identify_pricing_group_errors(
-                pricing_group
-            )
+            errors = pricing_service.identify_pricing_group_errors(pricing_group)
             if errors:
                 messages.warning(
                     request, list_as_messages_str(errors, pricing_group.name)
@@ -107,8 +96,7 @@ class PricingRuleGroupAdmin(admin.ModelAdmin):
         errors = pricing_service.identify_pricing_group_errors(form.instance)
         if errors:
             errors_msg = list_as_messages_str(
-                errors,
-                "Recently edited PricingGroup has the following problems:"
+                errors, "Recently edited PricingGroup has the following problems:"
             )
             messages.warning(request, errors_msg)
 

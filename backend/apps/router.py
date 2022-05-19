@@ -11,13 +11,13 @@ urlpatterns = [
     # Customer account management
     path("accounts/", include("allauth.urls")),
     # Customer Invitations
-    path("invitations/", include('invitations.urls', namespace='invitations')),
+    path("invitations/", include("invitations.urls", namespace="invitations")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # DRF API URLS
 urlpatterns += [
-    # API base url
-    path("api/", include("apps.api_widget.urls")),
+    # API - Event Portal
+    path("api/event-portal/", include("apps.api_eventportal.urls")),
 ]
 
 # Debug URL's

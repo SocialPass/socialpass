@@ -1,10 +1,11 @@
 # SocialPass
 SocialPass MonoRepo
 
-# Development
-Three subfolders have their own related README.
+## Development
+Backend & Frontend subfolders have their own related README.
 
-Additionally, there is a root-level `Makefile` that should jumpstart development across repos. (Any useful commands are welcome here)
+Additionally, there is a root-level `Makefile` that should jumpstart development across repos. 
+(Please feel free to useful commands are welcome here)
 
 # Main Documentation
 https://www.notion.so/SOCIALPASS-206e973f4e784c7184b1b6834c8a56ee

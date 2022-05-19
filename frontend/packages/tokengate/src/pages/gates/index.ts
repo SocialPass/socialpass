@@ -1,1 +1,0 @@
-export { TicketGate } from './TicketGate';

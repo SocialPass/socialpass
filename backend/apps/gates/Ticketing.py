@@ -50,7 +50,7 @@ class Utilities:
             ExpiresIn=3600,
         )
 
-    def create_ticket_store_s3 (
+    def create_ticket_store_s3(
         event_data: EventData,
         filename: str,
         embed: str,

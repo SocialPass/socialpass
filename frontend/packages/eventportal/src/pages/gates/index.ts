@@ -1,0 +1,1 @@
+export { TicketedEvent } from './TicketedEvent';

@@ -67,17 +67,6 @@
             </tbody>
           </table>
         </div>
-        <div class="my-3 mb-lg-4">
-          <h5 class="fw-bold fs-5">Permissions</h5>
-          <div class="text-muted text-xs mb-3">
-           List of permissions on {{current_team.name}} account
-          </div>
-          {% if current_team.software_types %}
-          <pre class="bg-light px-4 rounded"><br />{% for item in current_team.software_types %}<span class="text-primary fw-bold">{{ item }}</span><br />-------------<br />{% endfor %}<br /></pre>
-          {% else %}
-          <pre class="bg-light p-3 rounded">No Requirements</pre>
-          {% endif %}
-        </div>
       </div>
     </div>
   </div>

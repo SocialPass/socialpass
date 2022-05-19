@@ -1,35 +1,48 @@
-from functools import lru_cache
 import json
-from invitations.views import AcceptInvite
+from functools import lru_cache
 
+import stripe
 from django.conf import settings
 from django.contrib import auth, messages
-from django.shortcuts import redirect, reverse
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, JsonResponse
-from django.utils.decorators import method_decorator
+from django.shortcuts import redirect, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
+from invitations.views import AcceptInvite
 
 from apps.root import pricing_service
+from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm
 from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
-from apps.root.models import Membership, Team, Ticket, TicketGate, TokenGateStripePayment
-from apps.root.forms import TeamForm, TicketGateForm, CustomInviteForm
-from .permissions import team_has_permissions
-
-import stripe
+from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEventStripePayment
 
 User = auth.get_user_model()
 
 
-class WebsiteCommonMixin(ContextMixin):
+class TeamContextMixin(UserPassesTestMixin, ContextMixin):
     """
     Common context used site-wide
     Used to set current_team from team_pk
     """
+
+    def test_func(self):
+        # check user authenticated and membership to team PK
+        user_logged_in = self.request.user.is_authenticated
+        try:
+            user_has_membership = Membership.objects.select_related("team").get(
+                team__id=self.kwargs["team_pk"], user__id=self.request.user.id
+            )
+        except Exception:
+            user_has_membership = False
+
+        return user_logged_in and user_has_membership
+
+    def handle_no_permission(self):
+        return LoginRequiredMixin.handle_no_permission(self)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -98,12 +111,11 @@ class AcceptInviteView(AcceptInvite):
             if user:
                 super().post(self, *args, **kwargs)
                 return redirect(reverse(settings.LOGIN_URL))
-        except Exception as e:
+        except Exception:
             return super().post(self, *args, **kwargs)
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class DashboardView(WebsiteCommonMixin, TemplateView):
+class DashboardView(TeamContextMixin, TemplateView):
     """
     Main dashboard page.
     """
@@ -111,8 +123,7 @@ class DashboardView(WebsiteCommonMixin, TemplateView):
     template_name = "dashboard/dashboard.html"
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamDetailView(WebsiteCommonMixin, TemplateView):
+class TeamDetailView(TeamContextMixin, TemplateView):
     """
     Returns the details of the logged in user's team.
     """
@@ -120,17 +131,17 @@ class TeamDetailView(WebsiteCommonMixin, TemplateView):
     template_name = "dashboard/team_detail.html"
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamMemberManageView(WebsiteCommonMixin, FormView):
+class TeamMemberManageView(TeamContextMixin, FormView):
     """
     Manage a team's members.
     """
+
     form_class = CustomInviteForm
     template_name = "dashboard/member_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['memberships'] = Membership.objects.filter(team=context["current_team"])
+        context["memberships"] = Membership.objects.filter(team=context["current_team"])
         return context
 
     def form_valid(self, form, **kwargs):
@@ -149,8 +160,7 @@ class TeamMemberManageView(WebsiteCommonMixin, FormView):
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
+class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     """
     Manage a team's members.
     """
@@ -166,8 +176,7 @@ class TeamMemberDeleteView(WebsiteCommonMixin, DeleteView):
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions(software_type=""), name="dispatch")
-class TeamUpdateView(WebsiteCommonMixin, UpdateView):
+class TeamUpdateView(TeamContextMixin, UpdateView):
     """
     Updates the user's team.
     """
@@ -184,19 +193,18 @@ class TeamUpdateView(WebsiteCommonMixin, UpdateView):
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateListView(WebsiteCommonMixin, ListView):
+class TicketedEventListView(TeamContextMixin, ListView):
     """
     Returns a list of Ticket token gates.
     """
 
-    model = TicketGate
+    model = TicketedEvent
     paginate_by = 15
     context_object_name = "tokengates"
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):
-        qs = TicketGate.objects.filter(team__id=self.kwargs["team_pk"])
+        qs = TicketedEvent.objects.filter(team__id=self.kwargs["team_pk"])
         qs = qs.order_by("-modified")
 
         query_title = self.request.GET.get("title", "")
@@ -206,31 +214,29 @@ class TicketGateListView(WebsiteCommonMixin, ListView):
         return qs
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateDetailView(WebsiteCommonMixin, DetailView):
+class TicketedEventDetailView(TeamContextMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
 
-    model = TicketGate
+    model = TicketedEvent
     context_object_name = "tokengate"
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = TicketGate.objects.filter(
+        qs = TicketedEvent.objects.filter(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         return qs
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateCreateView(WebsiteCommonMixin, CreateView):
+class TicketedEventCreateView(TeamContextMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
 
-    model = TicketGate
-    form_class = TicketGateForm
+    model = TicketedEvent
+    form_class = TicketedEventForm
     template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):
@@ -260,14 +266,13 @@ class TicketGateCreateView(WebsiteCommonMixin, CreateView):
         )
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
+class TicketedEventUpdateView(TeamContextMixin, UpdateView):
     """
     Updates a Ticket token gate.
     """
 
-    model = TicketGate
-    form_class = TicketGateForm
+    model = TicketedEvent
+    form_class = TicketedEventForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
     template_name = "dashboard/ticketgate_form.html"
@@ -298,10 +303,9 @@ class TicketGateUpdateView(WebsiteCommonMixin, UpdateView):
         )
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
+class TicketedEventCheckout(TeamContextMixin, TemplateView):
     """
-    Checkout intermediate step for TicketGate.
+    Checkout intermediate step for TicketedEvent.
 
     Handles stripe integration.
     """
@@ -314,8 +318,8 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
 
     @lru_cache
     def get_object(self):
-        return TicketGate.objects.get(
-            pk=self.kwargs['pk'], team__pk=self.kwargs['team_pk']
+        return TicketedEvent.objects.get(
+            pk=self.kwargs["pk"], team__pk=self.kwargs["team_pk"]
         )
 
     def get_context_data(self, **kwargs):
@@ -330,10 +334,7 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
             )
-            return redirect(
-                "ticketgate_detail",
-                **kwargs
-            )
+            return redirect("ticketgate_detail", **kwargs)
 
         return super().get(request, *args, **kwargs)
 
@@ -347,15 +348,21 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
             stripe_session = stripe.checkout.Session.retrieve(
                 issued_payment.stripe_checkout_session_id
             )
-            return redirect(stripe_session['url'])
+            return redirect(stripe_session["url"])
 
         # build callback urls
-        success_callback = request.build_absolute_uri(
-            reverse("ticketgate_checkout_success_callback", args=(team_pk, pk))
-        ) + "?session_id={CHECKOUT_SESSION_ID}"
-        failure_callback = request.build_absolute_uri(
-            reverse("ticketgate_checkout_failure_callback", args=(team_pk, pk))
-        ) + "?session_id={CHECKOUT_SESSION_ID}"
+        success_callback = (
+            request.build_absolute_uri(
+                reverse("ticketgate_checkout_success_callback", args=(team_pk, pk))
+            )
+            + "?session_id={CHECKOUT_SESSION_ID}"
+        )
+        failure_callback = (
+            request.build_absolute_uri(
+                reverse("ticketgate_checkout_failure_callback", args=(team_pk, pk))
+            )
+            + "?session_id={CHECKOUT_SESSION_ID}"
+        )
 
         # create checkout session
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -363,32 +370,37 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
             client_reference_id=request.user.id,
             success_url=success_callback,
             cancel_url=failure_callback,
-            payment_method_types=['card'],
-            mode='payment',
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': ticket_gate.title,
+            payment_method_types=["card"],
+            mode="payment",
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {
+                            "name": ticket_gate.title,
+                        },
+                        "unit_amount": int(
+                            ticket_gate.price * 100
+                        ),  # amount unit is in cent of dollars
                     },
-                    'unit_amount': int(ticket_gate.price * 100),  # amount unit is in cent of dollars
-                },
-                'quantity': 1,
-            }]
+                    "quantity": 1,
+                }
+            ],
         )
 
         # create payment intent
-        pricing_service.issue_payment(ticket_gate, checkout_session['id'])
+        pricing_service.issue_payment(ticket_gate, checkout_session["id"])
 
-        return redirect(checkout_session['url'])
+        return redirect(checkout_session["url"])
 
-    @team_has_permissions(software_type="TICKET")
     def success_stripe_callback(request, **kwargs):
         # update payment status
-        stripe_session_id = request.GET['session_id']
+        stripe_session_id = request.GET["session_id"]
         stripe.api_key = settings.STRIPE_SECRET_KEY
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
-        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
+        payment = TicketedEventStripePayment.objects.get(
+            stripe_checkout_session_id=stripe_session_id
+        )
 
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
@@ -400,26 +412,23 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
 
         messages.add_message(request, messages.SUCCESS, message)
         print(kwargs)
-        return redirect(
-            "ticketgate_detail",
-            **kwargs
-        )
+        return redirect("ticketgate_detail", **kwargs)
 
-    @team_has_permissions(software_type="TICKET")
     def failure_stripe_callback(request, **kwargs):
         # update payment status
-        payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=request.GET['session_id'])
+        payment = TicketedEventStripePayment.objects.get(
+            stripe_checkout_session_id=request.GET["session_id"]
+        )
         payment.status = "CANCELLED"
         payment.save()
 
         # TODO: add sentry event so that administrator can contact user.
         messages.add_message(
-            request, messages.ERROR, "Ticket gate created but could not process payment."
+            request,
+            messages.ERROR,
+            "Ticket gate created but could not process payment.",
         )
-        return redirect(
-            "ticketgate_checkout",
-            **kwargs
-        )
+        return redirect("ticketgate_checkout", **kwargs)
 
     @csrf_exempt
     def stripe_webhook(request):
@@ -436,13 +445,11 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
         payload = request.body
-        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
         event = None
 
         try:
-            event = stripe.Webhook.construct_event(
-                payload, sig_header, endpoint_secret
-            )
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
         except ValueError:
             # Invalid payload
             return HttpResponse(status=400)
@@ -453,27 +460,30 @@ class TicketGateCheckout(WebsiteCommonMixin, TemplateView):
         # Event is being handled at success/failure synchronous callback
         # if event['type'] == 'checkout.session.completed':
 
-        if event['type'] == 'checkout.session.async_payment_succeeded':
-            session = event['data']['object']
+        if event["type"] == "checkout.session.async_payment_succeeded":
+            session = event["data"]["object"]
 
             # Fulfill the purchase
-            payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=session.id)
+            payment = TicketedEventStripePayment.objects.get(
+                stripe_checkout_session_id=session.id
+            )
             payment.status = "SUCCESS"
             payment.save()
 
-        elif event['type'] == 'checkout.session.async_payment_failed':
-            session = event['data']['object']
+        elif event["type"] == "checkout.session.async_payment_failed":
+            session = event["data"]["object"]
 
             # Send an email to the customer asking them to retry their order
-            payment = TokenGateStripePayment.objects.get(stripe_checkout_session_id=session.id)
+            payment = TicketedEventStripePayment.objects.get(
+                stripe_checkout_session_id=session.id
+            )
             payment.status = "FAILURE"
             payment.save()
 
         return HttpResponse(status=200)
 
 
-@method_decorator(team_has_permissions(software_type="TICKET"), name="dispatch")
-class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
+class TicketedEventStatisticsView(TeamContextMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -488,16 +498,16 @@ class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
         overrode to set json_schema as well as json data
         """
         context = super().get_context_data(**kwargs)
-        context["current_gate"] = TicketGate.objects.get(
+        context["current_gate"] = TicketedEvent.objects.get(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         return context
 
     def get_queryset(self):
         """
-        get queryset of Ticket models from given TicketGate
+        get queryset of Ticket models from given TicketedEvent
         """
-        gate = TicketGate.objects.get(
+        gate = TicketedEvent.objects.get(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         qs = gate.tickets.all()
@@ -510,7 +520,6 @@ class TicketGateStatisticsView(WebsiteCommonMixin, ListView):
         return qs
 
 
-@team_has_permissions(software_type="TICKET")
 def estimate_ticket_gate_price(request, team_pk):
     """
     Returns a list of ticket stats from ticket tokengates.
@@ -523,10 +532,9 @@ def estimate_ticket_gate_price(request, team_pk):
     except TypeError:
         return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
-    price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(team, capacity=capacity)
+    price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(
+        team, capacity=capacity
+    )
     return JsonResponse(
-        {
-            "price_per_ticket": price_per_ticket,
-            "price": price_per_ticket * capacity
-        }
+        {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
     )

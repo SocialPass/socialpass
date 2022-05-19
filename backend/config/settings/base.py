@@ -47,7 +47,9 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # Restricts DB against collectstatic command
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     DATABASES = {
-        "default": env.db("NFTY_DATABASE_URL", default="postgres:///v3db"),
+        "default": env.db(
+            "NFTY_DATABASE_URL", default="postgres:///local_socialpass_db"
+        ),
     }
     DATABASES["default"]["CONN_MAX_AGE"] = env.int(
         "CONN_MAX_AGE", default=60
@@ -86,13 +88,12 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "rest_framework",
     "rest_framework.authtoken",
-    "polymorphic",
 ]
 
 LOCAL_APPS = [
     "apps.root.apps.RootConfig",
     "apps.root.apps.OverrideInvitationsConfig",
-    "apps.dashboard"
+    "apps.dashboard",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -256,7 +257,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = 'apps.root.models.InvitationsAdapter'
+ACCOUNT_ADAPTER = "apps.root.models.InvitationsAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 # ACCOUNT_FORMS = {"signup": "apps.root.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -328,18 +329,21 @@ AWS_TICKET_DIRECTORY = env("DJANGO_AWS_TICKET_DIRECTORY")
 # ------------------------------------------------------------------------------
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_ALLOWED_ORIGINS = env.list(
-"CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
+    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
 )
 CORS_URLS_REGEX = r"^/api/.*$"
 
 # Django Invitations - https://github.com/jazzband/django-invitations
 INVITATIONS_INVITATION_MODEL = "root.Invite"
-ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
+INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 INVITATIONS_INVITATION_ONLY = True
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
 INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
+INVITATIONS_EMAIL_MAX_LENGTH = 254
+INVITATIONS_INVITATION_EXPIRY = 3
+INVITATIONS_CONFIRMATION_URL_NAME = "invitations:accept-invite"
 
 # STRIPE
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")

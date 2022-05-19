@@ -130,10 +130,7 @@ class Utilities:
                 )
                 if fungible_options:
                     requirements_with_options.append(
-                        {
-                            "requirement": requirement,
-                            "options": fungible_options
-                        }
+                        {"requirement": requirement, "options": fungible_options}
                     )
             # non fungible
             if (
@@ -148,10 +145,7 @@ class Utilities:
                 )
                 if nft_options:
                     requirements_with_options.append(
-                        {
-                            "requirement": requirement,
-                            "options": nft_options
-                        }
+                        {"requirement": requirement, "options": nft_options}
                     )
 
         return requirements_with_options
@@ -221,10 +215,7 @@ class Utilities:
 
             # validation completed
             # append to validated_options
-            validated_options.append({
-                'option': option,
-                'requirement': requirement
-            })
+            validated_options.append({"option": option, "requirement": requirement})
 
         # only return if all options succeed
         return True, validated_options

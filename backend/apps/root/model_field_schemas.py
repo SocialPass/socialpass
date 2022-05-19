@@ -1,8 +1,5 @@
 # Stores schemas for model JSON fields (and alike)
-
-import copy
-
-from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS, SOFTWARE_TYPES
+from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 
 BLOCKCHAINS_ENUM = []
 for item in BLOCKCHAINS:
@@ -15,11 +12,6 @@ for item in CHAIN_IDS:
 ASSET_TYPES_ENUM = []
 for item in ASSET_TYPES:
     ASSET_TYPES_ENUM.append(item[1])
-
-
-SOFTWARE_TYPES_ENUM = []
-for item in SOFTWARE_TYPES:
-    SOFTWARE_TYPES_ENUM.append(item[1])
 
 REQUIREMENT = {
     "title": "Requirement",
@@ -78,11 +70,5 @@ REQUIREMENTS_SCHEMA = {
     "title": "Blockchain Requirements",
     "format": "tabs",
     "properties": {},
-    "items": REQUIREMENT
-}
-
-SOFTWARE_TYPES_SCHEMA = {
-    "type": "array",
-    "items": {"type": "string", "enum": SOFTWARE_TYPES_ENUM},
-    "minItems": 1,
+    "items": REQUIREMENT,
 }

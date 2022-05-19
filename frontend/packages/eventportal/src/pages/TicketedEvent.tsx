@@ -1,14 +1,17 @@
 import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
-import { EventPortalContext } from '../../context';
+import { Reward } from "../components";
+import { EventPortalContext } from '../context';
 
 // TicketedEvent Component
 export const TicketedEvent = (): JSX.Element => {
 	const navigate = useNavigate();
-	const { retrieveJson } = useContext(EventPortalContext);
-	console.log(retrieveJson);
+	const { retrieveJson, grantAccessJson} = useContext(EventPortalContext);
 	// default, return baseGate
 	// todo: customize basegate more, perhaps current content as children
+	if (grantAccessJson){
+		return <Reward grantAccessJson={grantAccessJson}/>
+	}
 	return (
 		<div className="row flex-grow-1 m-0 mt-3 align-items-center">
 			<div className="col-md-7 mb-4 d-flex">
@@ -16,11 +19,11 @@ export const TicketedEvent = (): JSX.Element => {
 					<h1>{retrieveJson.title}</h1>
 					<p>{retrieveJson.description}</p>
 					<p className="d-flex align-items-center m-0 mt-1 mb-1">
-						<img src={require("../../static/images/icons/clock.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
+						<img src={require("../static/images/icons/clock.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
 						{retrieveJson.date} {retrieveJson.timezone}
 					</p>
 					<p className="d-flex align-items-center m-0 mt-1 mb-1">
-						<img src={require("../../static/images/icons/location.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
+						<img src={require("../static/images/icons/location.svg")} height="16.9" width="16.9" className="me-1" alt="Date & Time"/>
 						{retrieveJson.location}
 					</p>
 					<div className="bg-success p-3 strong">

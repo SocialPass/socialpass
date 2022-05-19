@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {  useAccount, useSignMessage } from 'wagmi';
 import { useNavigate } from "react-router-dom";
 import { TicketedEventRequestAccess, TicketedEventGrantAccess } from '../../api';
@@ -23,6 +23,7 @@ export const Web3CheckoutConfirmation = () => {
 	} = useContext(EventPortalContext);
 	// navigation
 	const navigate = useNavigate();
+	const [loading, setLoading] = useState(false);
 	// web3 account hooks
 	const [{ data: accountData, loading: accountLoading, error: accountError }, disconnect] = useAccount();
 	// wallet signature hooks
@@ -73,8 +74,8 @@ export const Web3CheckoutConfirmation = () => {
 	useEffect(() => {
 		(async function() {
 			if (signData){
+			setLoading(true);
 			let response;
-			console.log(web3CheckoutSelection)
 				response = await TicketedEventGrantAccess.call({
 					'public_id':id,
 					'access_type':'blockchain',
@@ -84,11 +85,12 @@ export const Web3CheckoutConfirmation = () => {
 					'access_data':web3CheckoutSelection,
 				})
 				if (response.httpStatus === 200){
+					setLoading(false);
 					setGrantAccessJson(response);
-					//navigate(success)
+					navigate('/gate/ticket/reward');
 				} else {
+					setLoading(false);
 					setGrantAccessError(response);
-					//navigate(error)
 				}
 			}
 		})();
@@ -112,7 +114,7 @@ export const Web3CheckoutConfirmation = () => {
 		return <Loading loadingText='Loading account data'/>
 	}
 
-	if (requestAccessJson){
+	if (!loading && requestAccessJson){
 		return (
 			<div className="row flex-grow-1 m-0 mt-2">
 				<div className="col-md-7">

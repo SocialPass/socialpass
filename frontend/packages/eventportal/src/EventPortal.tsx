@@ -36,6 +36,7 @@ const EventPortal = ({ id, styles }: EventPortalProviderInterface) => {
 						<Routes>
 							<Route index element={<Init />} />
 							<Route path="/gate/ticket" element={<TicketedEvent />} />
+							<Route path="/gate/ticket/reward" element={<TicketedEvent />} />
 							<Route path="/checkout/web3/connect" element={<Web3ConnectWallet />} />
 							<Route path="/checkout/web3/checkout" element={<Web3CheckoutConfirmation/>} />
 						</Routes>

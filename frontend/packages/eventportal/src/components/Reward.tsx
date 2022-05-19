@@ -4,15 +4,20 @@ import { EventPortalContext } from '../context';
 /************************************* Logic COMPONENTS *************************************/
 // Reward component
 // Display reward screen (Success or failure)
-export const Reward = () => {
+export const Reward = ({grantAccessJson}:{grantAccessJson}) => {
+	console.log(grantAccessJson);
 	return (
-		<div className="base-gate">
-			<div className="title">
-				<h1>Oh no!</h1>
-				<p>You're NGMI. Click the button to try again</p>
+		<div className="row flex-grow-1 m-0 mt-3 align-items-center">
+			<div className="col-md-7 mb-4 d-flex">
+				<div className="col col-md-10">
+					<h1>Congrats!</h1>
+					<p>You made it! Click the button to download your ticket</p>
+				</div>
 			</div>
-			<div className="btn">
-				<button className="btn-primary">Get Access</button>
+			<div className="col-md-5">
+				<a className="btn btn-primary" target="_blank" href={grantAccessJson['0']}>
+					Download Tickets
+				</a>
 			</div>
 		</div>
 	)

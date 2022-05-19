@@ -15,7 +15,7 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 	return (
 		<div className="container-fluid p-0 d-flex flex-column">
 			{
-				location.pathname.includes("/checkout")
+				location.pathname !== "/gate/ticket"
 				?
 				<header className="small-header" style={{backgroundImage: `url(${headerImage})`}}>
 						{backButton &&

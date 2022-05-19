@@ -124,6 +124,7 @@ ELEMENTS
   width:66px;
   border: 7px solid white;
   border-radius:66px;
+  background:white;
 }
 
 .small-team-info {
@@ -151,7 +152,7 @@ ELEMENTS
 BOOSTRAP OVERRIDES
 */
 .btn-primary {
-  background: linear-gradient(90deg, #DB1D7A 0%, #772A81 100%);
+  background: #EF7C4E;
   border-radius: 20px;
   color:white;
   border: none;

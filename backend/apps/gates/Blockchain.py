@@ -83,7 +83,7 @@ def moralis_get_nfts(
 #
 class Utilities:
     def validate_signature(
-        signature=None, signed_message="", address="", tokengate_id=""
+        signature=None, signed_message="", address="", ticketed_event_id=""
     ):
         """
         Reusable method to validate a given signature
@@ -98,7 +98,7 @@ class Utilities:
             return False, f"Signature request expired at {signature.expires}"
 
         # check for id mismatch
-        if str(signature.tokengate.public_id) != str(tokengate_id):
+        if str(signature.tokengate.public_id) != str(ticketed_event_id):
             return False, "Signature x TokenGate ID mismatch."
 
         # check if address matches recovered address

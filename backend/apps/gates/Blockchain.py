@@ -98,7 +98,7 @@ class Utilities:
             return False, f"Signature request expired at {signature.expires}"
 
         # check for id mismatch
-        if str(signature.tokengate.public_id) != str(ticketed_event_id):
+        if str(signature.ticketed_event.public_id) != str(ticketed_event_id):
             return False, "Signature x TokenGate ID mismatch."
 
         # check if address matches recovered address
@@ -171,7 +171,7 @@ class Utilities:
             if len(requirements_with_options) > limit_per_person:
                 return False, "Option length exceeds gate limit"
 
-            # check obj.requirement exists in tokengate.requirements
+            # check obj.requirement exists in ticketed_event.requirements
             if requirement not in requirements:
                 return False, "Requirement x option mismatch"
 

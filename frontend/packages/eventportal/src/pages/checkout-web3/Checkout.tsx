@@ -106,7 +106,7 @@ export const Web3CheckoutConfirmation = () => {
 	}, [accountData?.address])
 
 
-	if (signLoading){
+	if (loading || signLoading){
 		return <Loading loadingText='Verifying checkout selections and eligibility'/>
 	}
 

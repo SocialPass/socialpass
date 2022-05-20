@@ -1,16 +1,17 @@
 import React, { useContext } from 'react';
 import { useLocation } from 'react-router-dom'
 import { EventPortalContext } from '../context';
+import headerImage from "../static/images/header1.svg";
+import FAQImage from "../static/images/FAQ.svg";
+import logoImage from "../static/images/socialpass.svg";
+import _backButton from "../static/images/back.svg";
 
 // StyledContainer component
 // Display root layout (header, main content, footer)
 export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 	const { backButton, retrieveJson } = useContext(EventPortalContext);
 	const location = useLocation();
-	const headerImage = require("../static/images/header1.svg");
-	const FAQImage = require("../static/images/FAQ.svg");
-	const logoImage = require("../static/images/socialpass.svg");
-	const _backButton = require("../static/images/back.svg");
+
 	console.log(location)
 	return (
 		<div className="container-fluid p-0 d-flex flex-column">

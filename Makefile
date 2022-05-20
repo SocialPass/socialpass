@@ -33,8 +33,3 @@ backend-turtle: ## backend shell plus
 
 backend-lint: ## Lint backend repo
 	(source venv/bin/activate; cd backend; black .; isort .; flake8 .;)
-
-
-# frontend
-frontend-setup: ## install js requirements
-	cd frontend && yarn;

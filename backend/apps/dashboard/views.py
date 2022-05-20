@@ -289,7 +289,7 @@ class TicketedEventUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(
             self.request, messages.SUCCESS, "Token gate updated successfully."
         )
-        if pricing_service.get_ticket_gate_pending_payment_value(self.object):
+        if pricing_service.get_ticketed_event_pending_payment_value(self.object):
             view = "ticketgate_checkout"
         else:
             view = "ticketgate_detail"
@@ -327,9 +327,9 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""
-        ticket_gate = self.get_object()
+        ticketed_event = self.get_object()
 
-        if pricing_service.get_ticket_gate_pending_payment_value(ticket_gate) == 0:
+        if pricing_service.get_ticketed_event_pending_payment_value(ticketed_event) == 0:
             # Payment was already done.
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
@@ -340,9 +340,9 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
     def post(self, request, *, team_pk=None, pk=None):
         """Issue payment and redirect to stripe checkout"""
-        ticket_gate = self.get_object()
+        ticketed_event = self.get_object()
 
-        issued_payment = pricing_service.get_in_progress_payment(ticket_gate)
+        issued_payment = pricing_service.get_in_progress_payment(ticketed_event)
         if issued_payment:
             # There is already a payment in progress, redirect to it
             stripe_session = stripe.checkout.Session.retrieve(
@@ -377,10 +377,10 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
                     "price_data": {
                         "currency": "usd",
                         "product_data": {
-                            "name": ticket_gate.title,
+                            "name": ticketed_event.title,
                         },
                         "unit_amount": int(
-                            ticket_gate.price * 100
+                            ticketed_event.price * 100
                         ),  # amount unit is in cent of dollars
                     },
                     "quantity": 1,
@@ -389,7 +389,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
         )
 
         # create payment intent
-        pricing_service.issue_payment(ticket_gate, checkout_session["id"])
+        pricing_service.issue_payment(ticketed_event, checkout_session["id"])
 
         return redirect(checkout_session["url"])
 
@@ -520,7 +520,7 @@ class TicketedEventStatisticsView(TeamContextMixin, ListView):
         return qs
 
 
-def estimate_ticket_gate_price(request, team_pk):
+def estimate_ticketed_event_price(request, team_pk):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -532,7 +532,7 @@ def estimate_ticket_gate_price(request, team_pk):
     except TypeError:
         return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
-    price_per_ticket = pricing_service.calculate_ticket_gate_price_per_ticket_for_team(
+    price_per_ticket = pricing_service.calculate_ticketed_event_price_per_ticket_for_team(
         team, capacity=capacity
     )
     return JsonResponse(

@@ -50,12 +50,12 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
     raise ValueError("Could not find pricing_rule for capacity")
 
 
-def get_pricing_group_for_ticket(ticket_gate: TicketedEvent) -> PricingRuleGroup:
+def get_pricing_group_for_ticket(ticketed_event: TicketedEvent) -> PricingRuleGroup:
     """Returns the pricing group for a given ticket gate."""
-    return ticket_gate.team.pricing_rule_group
+    return ticketed_event.team.pricing_rule_group
 
 
-def calculate_ticket_gate_price_per_ticket_for_team(
+def calculate_ticketed_event_price_per_ticket_for_team(
     team: Team, *, capacity: int = None
 ):
     """Returns the estimated price of a ticket gate for a given team.
@@ -69,29 +69,29 @@ def calculate_ticket_gate_price_per_ticket_for_team(
 
 
 def get_pricing_rule_for_ticket(
-    ticket_gate: TicketedEvent,
+    ticketed_event: TicketedEvent,
 ) -> float:
     """Gets the pricing rule that applies to the ticket capacity"""
-    pricing_group = get_pricing_group_for_ticket(ticket_gate)
-    return get_pricing_rule_for_capacity(pricing_group, ticket_gate.capacity)
+    pricing_group = get_pricing_group_for_ticket(ticketed_event)
+    return get_pricing_rule_for_capacity(pricing_group, ticketed_event.capacity)
 
 
-def set_ticket_gate_price(ticket_gate: TicketedEvent):
+def set_ticketed_event_price(ticketed_event: TicketedEvent):
     """Sets the price of a ticket based on its capacity."""
-    ticket_gate.pricing_rule = get_pricing_rule_for_ticket(ticket_gate)
-    ticket_gate.price = ticket_gate.pricing_rule.price_per_ticket * ticket_gate.capacity
-    ticket_gate.save()
+    ticketed_event.pricing_rule = get_pricing_rule_for_ticket(ticketed_event)
+    ticketed_event.price = ticketed_event.pricing_rule.price_per_ticket * ticketed_event.capacity
+    ticketed_event.save()
 
 
-def get_ticket_gate_pending_payment_value(ticket_gate: TicketedEvent):
+def get_ticketed_event_pending_payment_value(ticketed_event: TicketedEvent):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = (
-        get_effective_payments(ticket_gate.payments).aggregate(Sum("value"))[
+        get_effective_payments(ticketed_event.payments).aggregate(Sum("value"))[
             "value__sum"
         ]
         or 0
     )
-    return max((ticket_gate.price or 0) - effective_payments_value, 0)
+    return max((ticketed_event.price or 0) - effective_payments_value, 0)
 
 
 def get_effective_payments(
@@ -101,24 +101,24 @@ def get_effective_payments(
     return payments.filter(status="SUCCESS")
 
 
-def get_in_progress_payment(ticket_gate: TicketedEvent) -> TicketedEventStripePayment:
+def get_in_progress_payment(ticketed_event: TicketedEvent) -> TicketedEventStripePayment:
     """Returns the payment of a ticket gate which is either PENDING or PROCESSING."""
-    return ticket_gate.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
+    return ticketed_event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 
 
 def issue_payment(
-    ticket_gate: TicketedEvent, stripe_checkout_session_id: str
+    ticketed_event: TicketedEvent, stripe_checkout_session_id: str
 ) -> TicketedEventStripePayment:
     """
     Issues a payment for a ticket gate.
     Adds validation to ensure that there is only one payment in progress issued per ticket gate.
     """
-    if get_in_progress_payment(ticket_gate):
+    if get_in_progress_payment(ticketed_event):
         raise ValueError("There is already a pending payment for this ticket gate.")
 
     payment = TicketedEventStripePayment(
-        token_gate=ticket_gate,
-        value=ticket_gate.price,
+        ticketed_event=ticketed_event,
+        value=ticketed_event.price,
         stripe_checkout_session_id=stripe_checkout_session_id,
         status="PENDING",
     )

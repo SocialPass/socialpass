@@ -62,7 +62,7 @@ urlpatterns = [
     ),
     path(
         "<int:team_pk>/ticketgates/estimate_price/",
-        views.estimate_ticket_gate_price,
+        views.estimate_ticketed_event_price,
         name="ticketgate_price_estimator",
     ),
     path(

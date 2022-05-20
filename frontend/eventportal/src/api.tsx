@@ -1,20 +1,21 @@
-console.log(import.meta.env)
-const baseURL = `${import.meta.env.VITE_APP_API_URL}/event-portal`;
-
 // TicketedEventRetrieve API call
 export class TicketedEventRetrieve {
 	// wrapper for backend - TicketedEventRetrieve
 	static call = async ({public_id}) => {
 		// set url
-		const url = `${baseURL}/ticketed-event/retrieve/${public_id}/`
-
+		const url = `/api/event-portal/ticketed-event/retrieve/${public_id}/`
 		// set request options
 		var requestOptions = {
 	  		method: 'GET',
 		};
 
 		return fetch(url, requestOptions)
-	  	.then(response => response.json())
+		.then((response) => {
+			if (response.ok) {
+				return response.json();
+		    }
+		    throw response;
+		})
 	  	.then(json => {
 	  		let obj = json;
 	  		Object.assign(obj, {
@@ -23,6 +24,7 @@ export class TicketedEventRetrieve {
 			return obj
 	  	})
 	  	.catch(error => {
+			  console.log(error);
 			  let e = {
 					"httpStatus": error.status,
 					"message": error.json()
@@ -38,7 +40,7 @@ export class TicketedEventRequestAccess {
 	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address}) => {
 		// set url
-		const url = `${baseURL}/ticketed-event/request-access/${public_id}?type=${access_type}`
+		const url = `/api/event-portal/ticketed-event/request-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({
@@ -57,22 +59,27 @@ export class TicketedEventRequestAccess {
 
 		// fetch
 		return fetch(url, requestOptions)
-			.then(response => response.json())
-			.then(json => {
-				let obj = json;
-				Object.assign(obj, {
-					  "httpStatus": 200,
-				})
-			    return obj
+		.then((response) => {
+			if (response.ok) {
+				return response.json();
+			}
+			throw response;
+		})
+		.then(json => {
+			let obj = json;
+			Object.assign(obj, {
+				  "httpStatus": 200,
 			})
-			.catch(error => {
-				let e = {
-					  "httpStatus": error.status,
-					  "message": error.json()
-				  }
-				return e;
-			});
-	  }
+		    return obj
+		})
+		.catch(error => {
+			let e = {
+				  "httpStatus": error.status,
+				  "message": error.json()
+			  }
+			return e;
+		});
+  }
 }
 
 // TicketedEventGrantAccess class
@@ -81,7 +88,7 @@ export class TicketedEventGrantAccess {
 	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address, signed_message, signature_id, access_data}) => {
 		// setup url
-		const url = `${baseURL}/ticketed-event/grant-access/${public_id}?type=${access_type}`
+		const url = `/api/event-portal/ticketed-event/grant-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({
@@ -103,7 +110,12 @@ export class TicketedEventGrantAccess {
 
 		// fetch
 		return fetch(url, requestOptions)
-		.then(response => response.json())
+		.then((response) => {
+			if (response.ok) {
+				return response.json();
+			}
+			throw response;
+		})
 		.then(json => {
 			let obj = json;
 			Object.assign(obj, {

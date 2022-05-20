@@ -24,15 +24,15 @@ export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 						</div>
 						}
 					<div className="small-team-info">
-						<h4>{retrieveJson?.title}</h4>
-						<h5>by: {retrieveJson?.team.name}</h5>
+						<h4>{retrieveJson && retrieveJson?.title}</h4>
+						<h5>by: {retrieveJson && retrieveJson?.team.name}</h5>
 					</div>
 				</header>
 				:
 				<header className="header" style={{backgroundImage: `url(${headerImage})`}}>
 					<div className="team-info mx-3 mx-md-5 ps-2">
-						<img src={retrieveJson?.team.image} alt="Team Image"/>
-						<h4>{retrieveJson?.team.name}</h4>
+						<img src={retrieveJson && retrieveJson.team && retrieveJson.team.image} alt="Team Image"/>
+						<h4>{retrieveJson && retrieveJson.team && retrieveJson?.team.name}</h4>
 					</div>
 				</header>
 			}

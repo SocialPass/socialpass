@@ -11,8 +11,6 @@ import _backButton from "../static/images/back.svg";
 export const StyledContainer = ({children}:{children:React.ReactNode}) => {
 	const { backButton, retrieveJson } = useContext(EventPortalContext);
 	const location = useLocation();
-
-	console.log(location)
 	return (
 		<div className="container-fluid p-0 d-flex flex-column">
 			{

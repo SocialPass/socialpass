@@ -1,18 +1,8 @@
-/*
-Context types
-*/
-// Intial Props for EventPortal component
-export interface EventPortalProviderInterface {
-	id: string
-  children?: any
-  styles?:any
-}
-
 // Props for EventPortal component context
 export interface EventPortalContextInterface {
   // base
   id: string
-  styles?: any
+  setID: any
 
   // navigation
   backButton:any

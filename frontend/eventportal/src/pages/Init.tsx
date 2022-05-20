@@ -6,30 +6,30 @@ import { useNavigate } from "react-router-dom";
 // Root Page
 // Fetches & Sets initial JSON, then navigate based on response
 export const Init = () => {
-	const { id, setRetrieveJson, setRetrieveError } = useContext(EventPortalContext);
+	// context
+	const { setID, setRetrieveJson, setRetrieveError } = useContext(EventPortalContext);
+	// navigation hook
 	const navigate = useNavigate();
+	// TODO: get id from path
+	let id = window.location.pathname;
+	id = id.replace('/','');
 
-	useEffect(() => {
-		(async function() {
-			// check for ID string on start
-			if (typeof id === 'string' && id.length > 0){
-				const response = await TicketedEventRetrieve.call({
-					"public_id":id
-				});
-				if (response && response.httpStatus){
-					// success
-					if (response.httpStatus === 200){
-						setRetrieveJson(response);
-						navigate('/gate/ticket')
-					}
-					// error
-					else {
-						setRetrieveError(response);
-					}
+	(async function() {
+		if (id !== '/'){
+			const response = await TicketedEventRetrieve.call({"public_id":id});
+			if (response && response.httpStatus){
+				// success
+				if (response.httpStatus === 200){
+					setRetrieveJson(response);
+					navigate('/gate/ticket')
+				}
+				// error
+				else {
+					setRetrieveError(response);
 				}
 			}
-		})();
-	},[id]);
+		}
+	})();
 
 	return null;
 }

@@ -3,7 +3,8 @@ import { EventPortalProviderInterface, EventPortalContextInterface } from '../ty
 
 export const EventPortalContext = createContext<EventPortalContextInterface>({} as EventPortalContextInterface);
 
-export const EventPortalProvider = ({ children, id, styles }:EventPortalProviderInterface) => {
+export const EventPortalProvider = ({ children }:EventPortalProviderInterface) => {
+  const [id, setID] = useState('');
   const [backButton, setBackButton] = useState(null);
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
@@ -19,7 +20,7 @@ export const EventPortalProvider = ({ children, id, styles }:EventPortalProvider
   return (
 	<EventPortalContext.Provider value={{
     id,
-    styles,
+    setID,
     backButton,
     setBackButton,
 

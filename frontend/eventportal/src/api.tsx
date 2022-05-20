@@ -1,5 +1,5 @@
-console.log(process.env)
-const baseURL = `${process.env.REACT_APP_API_URL}/api/event-portal`
+console.log(import.meta.env)
+const baseURL = `${import.meta.env.VITE_APP_API_URL}/event-portal`;
 
 // TicketedEventRetrieve API call
 export class TicketedEventRetrieve {

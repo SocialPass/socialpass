@@ -38,7 +38,3 @@ backend-lint: ## Lint backend repo
 # frontend
 frontend-setup: ## install js requirements
 	cd frontend && yarn;
-
-frontend-run: ## Start backend ++ fastapi server
-	cd frontend && yarn start & \
-	cd frontend && yarn storybook

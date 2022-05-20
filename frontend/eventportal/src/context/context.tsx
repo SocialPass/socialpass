@@ -1,9 +1,9 @@
 import React, { createContext, useState } from "react"
-import { EventPortalProviderInterface, EventPortalContextInterface } from '../types';
+import { EventPortalContextInterface } from '../types';
 
 export const EventPortalContext = createContext<EventPortalContextInterface>({} as EventPortalContextInterface);
 
-export const EventPortalProvider = ({ children }:EventPortalProviderInterface) => {
+export const EventPortalProvider = ({ children }:{children:any}) => {
   const [id, setID] = useState('');
   const [backButton, setBackButton] = useState(null);
   const [retrieveJson, setRetrieveJson] = useState(null);

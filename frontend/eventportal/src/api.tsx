@@ -1,9 +1,15 @@
+
+// Event Portal API
+const prodURL = import.meta.env.VITE_APP_API_URL
+const devURL = '/api'
+const baseURL = import.meta.env.PROD ? prodURL : devURL;
+
 // TicketedEventRetrieve API call
 export class TicketedEventRetrieve {
 	// wrapper for backend - TicketedEventRetrieve
 	static call = async ({public_id}) => {
 		// set url
-		const url = `/api/event-portal/ticketed-event/retrieve/${public_id}/`
+		const url = `${baseURL}/event-portal/ticketed-event/retrieve/${public_id}/`
 		// set request options
 		var requestOptions = {
 	  		method: 'GET',
@@ -40,7 +46,7 @@ export class TicketedEventRequestAccess {
 	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address}) => {
 		// set url
-		const url = `/api/event-portal/ticketed-event/request-access/${public_id}?type=${access_type}`
+		const url = `${baseURL}/event-portal/ticketed-event/request-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({
@@ -88,7 +94,7 @@ export class TicketedEventGrantAccess {
 	// wrapper for backend - TicketedEventRequestAccess
 	static call = async ({public_id, access_type, address, signed_message, signature_id, access_data}) => {
 		// setup url
-		const url = `/api/event-portal/ticketed-event/grant-access/${public_id}?type=${access_type}`
+		const url = `${baseURL}/event-portal/ticketed-event/grant-access/${public_id}?type=${access_type}`
 
 		// set body
 		const body = JSON.stringify({

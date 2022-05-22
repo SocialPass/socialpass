@@ -330,7 +330,7 @@ AWS_TICKET_DIRECTORY = env("DJANGO_AWS_TICKET_DIRECTORY")
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
 )
-CORS_URLS_REGEX = r"^/api/.*$"
+CORS_URLS_REGEX = env("CORS_URLS_REGEX")
 
 # Django Invitations - https://github.com/jazzband/django-invitations
 INVITATIONS_INVITATION_MODEL = "root.Invite"

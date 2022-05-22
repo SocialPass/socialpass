@@ -331,6 +331,7 @@ CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
 )
 CORS_URLS_REGEX = env("CORS_URLS_REGEX")
+CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
 # Django Invitations - https://github.com/jazzband/django-invitations
 INVITATIONS_INVITATION_MODEL = "root.Invite"

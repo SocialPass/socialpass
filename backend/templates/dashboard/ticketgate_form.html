@@ -44,7 +44,7 @@
         <div type="button"
           onclick="ShowSelectedFormId()"
           class="nav-link active"
-          id="${divId}-tab" data-bs-toggle="tab" data-bs-target="#${divId}" role="tab" aria-controls="${divId}" aria-selected="true">
+          id="${divId}-tab" data-bs-toggle="pill" data-bs-target="#${divId}" role="tab">
           Requirement ${requirementsAbsoluteCounter}
           <button onclick="deleteRequirement(${requirementsAbsoluteCounter})" type="button" class="btn-close btn-close-white bg-primary btn-sm" aria-label="Close"></button>
         </div>
@@ -60,8 +60,8 @@
   function _createRequirementForm(initialData = null){
     let divId = "requiremtsForm-"+requirementsAbsoluteCounter
     let form = document.getElementById("tokenRequirementForms").innerHTML;
-    form += `
-       <div class="tab-pane fade show active py-3" id="${divId}" role="tabpanel" aria-labelledby="${divId}-tab">
+    formText = `
+       <div class="tab-pane fade active show py-3" id="${divId}" role="tabpanel">
         <div class="form-group">
           <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
           <select class="form-control" id="blockChainSelect-${requirementsAbsoluteCounter}">
@@ -97,7 +97,8 @@
 
       </div>
       `;
-    document.getElementById("tokenRequirementForms").innerHTML = form;
+    form += formText;
+    document.getElementById("tokenRequirementForms").innerHTML = formText;
 
     let requiremtSchema = JSON.parse('{{json_schema|safe}}');
     let blockchainOptions = requiremtSchema.properties.properties.blockchain.enum;

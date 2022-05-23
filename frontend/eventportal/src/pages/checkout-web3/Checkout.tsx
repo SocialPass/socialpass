@@ -87,7 +87,7 @@ export const Web3CheckoutConfirmation = () => {
 				if (response.httpStatus === 200){
 					setLoading(false);
 					setGrantAccessJson(response);
-					navigate('/gate/ticket/reward');
+					navigate('/ticketed-event/reward');
 				} else {
 					setLoading(false);
 					setGrantAccessError(response);

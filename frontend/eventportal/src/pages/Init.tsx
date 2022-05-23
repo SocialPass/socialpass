@@ -21,6 +21,7 @@ export const Init = () => {
 					if (response && response.httpStatus){
 						// success
 						if (response.httpStatus === 200){
+							setID(id);
 							setRetrieveJson(response);
 							navigate('/ticketed-event');
 						}

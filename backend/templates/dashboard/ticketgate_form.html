@@ -7,8 +7,6 @@
 {% block navbar_page_name_2 %}Ticket Gate {% if url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %}{% endblock %}
 
 {% block content %}
-<script src="{% static 'js/json-editor.min.js' %}"></script>
-<script src="https://js.stripe.com/v3/"></script>
 <script src="{% static 'js/main.js' %}"></script>
 <script>
   var requirementsAbsoluteCounter = 0; // this counter keeps track of how many requirements were added in total. Absolute counter is never decremented. It is used to avoid equal IDs after deleting middle requirements.
@@ -62,7 +60,7 @@
   function _createRequirementForm(initialData = null){
     let divId = "requiremtsForm-"+requirementsAbsoluteCounter
     let form = document.getElementById("tokenRequirementForms").innerHTML;
-    form = `
+    form += `
        <div class="tab-pane fade show active py-3" id="${divId}" role="tabpanel" aria-labelledby="${divId}-tab">
         <div class="form-group">
           <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>

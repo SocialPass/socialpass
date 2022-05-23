@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
-from django.shortcuts import redirect, reverse
+from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from invitations import signals
@@ -124,11 +124,11 @@ class Invite(DBModel, AbstractBaseInvitation):
 
     @classmethod
     def create(cls, email, inviter=None, **kwargs):
-       key = get_random_string(64).lower()
-       instance = cls._default_manager.create(
-           email=email, key=key, inviter=inviter, **kwargs
-       )
-       return instance
+        key = get_random_string(64).lower()
+        instance = cls._default_manager.create(
+            email=email, key=key, inviter=inviter, **kwargs
+        )
+        return instance
 
     def key_expired(self):
         expiration_date = self.sent + timedelta(
@@ -335,7 +335,11 @@ class PricingRule(DBModel):
 
     min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
     max_capacity = models.IntegerField(null=True, blank=True)
-    price_per_ticket = models.FloatField(validators=[MinValueValidator(0)])
+    price_per_ticket = models.DecimalField(
+        validators=[MinValueValidator(0)],
+        decimal_places=2,
+        max_digits=10
+    )
     active = models.BooleanField(default=True)
     group = models.ForeignKey(
         "PricingRuleGroup",
@@ -389,7 +393,11 @@ class TicketedEventStripePayment(DBModel):
     ticketed_event = models.ForeignKey(
         TicketedEvent, on_delete=models.RESTRICT, related_name="payments"
     )
-    value = models.FloatField(validators=[MinValueValidator(0)])
+    value = models.DecimalField(
+        validators=[MinValueValidator(0)],
+        decimal_places=2,
+        max_digits=10
+    )
     status = models.CharField(
         choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"
     )

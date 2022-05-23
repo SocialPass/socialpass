@@ -20,9 +20,13 @@
 							All this information, with exception of the capacity may be edited later.
 						</div>
 					</div>
-					<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.pk %}" class="btn bg-gradient-primary btn-sm ms-auto my-0">Edit</a>
 				</div>
 			</div>
+			<form class="card-body py-2" method="post">
+				{% csrf_token %}
+				<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.pk %}" style="float:right"  class="btn bg-gradient-primary btn-sm ms-auto my-0">Edit information</a>
+				<input type="submit" class="btn bg-gradient-primary btn-sm ms-auto my-0" style="float:right; margin-right: 10px;" value="Procceed to Checkout" />
+			</form>
 			<div class="card-body py-2">
 				<div>
 					<h1 class="fw-bold fs-3">{{ tokengate.title }}</h1>
@@ -67,6 +71,14 @@
 									{{ tokengate.capacity }}
 								</td>
 							</tr>
+							<tr>
+								<td class="align-middle fw-bold">
+									Price
+								</td>
+								<td class="align-middle">
+									{{ tokengate.capacity }} tickets x {{tokengate.pricing_rule.price_per_ticket}} $/ticket = ${{ tokengate.price }}
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
@@ -81,11 +93,6 @@
 					<pre class="bg-light p-3 rounded">No Requirements</pre>
 					{% endif %}
 				</div>
-
-				<form method="post">
-					{% csrf_token %}
-					<input type="submit" value="Procceed to Checkout" />
-				</form>
 			</div>
 		</div>
 	</div>

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db.models import Sum
 
 from .models import PricingRuleGroup, Team, TicketedEvent, TicketedEventStripePayment
@@ -85,7 +86,7 @@ def set_ticketed_event_price(ticketed_event: TicketedEvent):
 
 def get_ticketed_event_pending_payment_value(ticketed_event: TicketedEvent):
     """Returns the pending payment value of a ticket gate."""
-    effective_payments_value = (
+    effective_payments_value = Decimal(
         get_effective_payments(ticketed_event.payments).aggregate(Sum("value"))[
             "value__sum"
         ]

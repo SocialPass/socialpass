@@ -7,6 +7,7 @@
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<title>{% block title %}SocialPass{% endblock title %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
 		<!-- Theme font -->
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -20,6 +21,16 @@
 				width: 36px;
 				height: 36px;
 			}
+      .asteriskField{
+        color: red;
+      }
+
+      .verified{
+          color: #82d616;
+      }
+      .unverified{
+          color: #ea0606;
+      }
 		</style>
 	</head>
 	{% with request.resolver_match.url_name as url_name %}

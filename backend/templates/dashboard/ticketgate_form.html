@@ -10,39 +10,249 @@
 <script src="{% static 'js/json-editor.min.js' %}"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{% static 'js/main.js' %}"></script>
+<script>
+  var requirementsAbsoluteCounter = 0; // this counter keeps track of how many requirements were added in total. Absolute counter is never decremented. It is used to avoid equal IDs after deleting middle requirements.
+  var requirementsCounter = 0; // this counter keeps track of how many requirements are in the screen.
+  var tokenIdsCounter = []; // each requirement has its own token_id counter, at its index of the array.
+  var currentFormId = 0;
+
+  function populateWithInitialData(){
+    let initialRequirementsData = "{{object.requirements|safe}}";
+
+    if (initialRequirementsData){
+      for (requirement in initialRequirementsData){
+        addRequirement(requirement)
+      }
+    }else{
+      addRequirement()
+    }
+
+  }
+
+  function ShowSelectedFormId(){
+    const RequirementTitle = event.target.innerHTML
+    const requirementNumber = RequirementTitle.split("Requirement ")
+    currentFormId = requirementNumber[1][0];
+    console.log(currentFormId)
+  }
+
+  function addRequirement(initialData = null) {
+    let list = document.getElementById("nav-requirement").innerHTML;
+    let divId = "requiremtsForm-"+requirementsAbsoluteCounter;
+    console.log(divId)
+
+    list +=
+      `
+        <div type="button"
+          onclick="ShowSelectedFormId()"
+          class="nav-link active"
+          id="${divId}-tab" data-bs-toggle="tab" data-bs-target="#${divId}" role="tab" aria-controls="${divId}" aria-selected="true">
+          Requirement ${requirementsAbsoluteCounter}
+          <button onclick="deleteRequirement(${requirementsAbsoluteCounter})" type="button" class="btn-close btn-close-white bg-primary btn-sm" aria-label="Close"></button>
+        </div>
+      `;
+
+    document.getElementById("nav-requirement").innerHTML = list;
+    _createRequirementForm();
+    tokenIdsCounter.push(0);
+    requirementsCounter++;
+    requirementsAbsoluteCounter++;
+  }
+
+  function _createRequirementForm(initialData = null){
+    let divId = "requiremtsForm-"+requirementsAbsoluteCounter
+    let form = document.getElementById("tokenRequirementForms").innerHTML;
+    form = `
+       <div class="tab-pane fade show active py-3" id="${divId}" role="tabpanel" aria-labelledby="${divId}-tab">
+        <div class="form-group">
+          <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
+          <select class="form-control" id="blockChainSelect-${requirementsAbsoluteCounter}">
+
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="networkSelect">Network <span class="asteriskField">*</span></label>
+          <select class="form-control" id="networkSelect-${requirementsAbsoluteCounter}">
+
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="assetTypeSelect">Asset Type <span class="asteriskField">*</span></label>
+          <select class="form-control" id="assetTypeSelect-${requirementsAbsoluteCounter}" placeholder="ERC20">
+
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="assetAdressInput">Asset Address <span class="asteriskField">*</span></label>
+          <input onchange="verifyAssetAddressPattern(${requirementsAbsoluteCounter})" required type="text" class="form-control" id="assetAdressInput-${requirementsAbsoluteCounter}">
+        </div>
+        <div class="form-group">
+          <label for="requiredAmountInput">Required Amount <span class="asteriskField">*</span></label>
+          <input required type="number" class="form-control" id="requiredAmountInput-${requirementsAbsoluteCounter}">
+        </div>
+        <div class="d-flex flex-row align-items-center gap-3">
+          <label>Token IDs</label>
+          <button type="button" onclick="addNewTokenIdToRequirement(${requirementsAbsoluteCounter})" class="btn btn-primary btn-sm" ><i class="fa-regular fa-plus fs-6"></i></button>
+        </div>
+        <div id="tokenIdGroup-${requirementsAbsoluteCounter}" class="d-flex flex-column align-items-start gap-3"></div>
+        <i type="button" onclick="popTokenIdFromRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-trash-can"></i>
+
+      </div>
+      `;
+    document.getElementById("tokenRequirementForms").innerHTML = form;
+
+    let requiremtSchema = JSON.parse('{{json_schema|safe}}');
+    let blockchainOptions = requiremtSchema.properties.properties.blockchain.enum;
+    let chainsOptions = requiremtSchema.properties.properties.chain_id.enum;
+    let assetTypeOptions = requiremtSchema.properties.properties.asset_type.enum;
+    for(let i = 0; i<blockchainOptions.length; i++){
+      let select = document.getElementById(`blockChainSelect-${requirementsAbsoluteCounter}`).innerHTML
+      select = select + `<option value="${blockchainOptions[i]}">${blockchainOptions[i]}</option>`;
+      document.getElementById(`blockChainSelect-${requirementsAbsoluteCounter}`).innerHTML = select
+    }
+    for(let i = 0; i<chainsOptions.length; i++){
+      let select = document.getElementById(`networkSelect-${requirementsAbsoluteCounter}`).innerHTML
+      select = select + `<option value="${chainsOptions[i]}">${chainsOptions[i]}</option>`;
+      document.getElementById(`networkSelect-${requirementsAbsoluteCounter}`).innerHTML = select
+    }
+    for(let i = 0; i<assetTypeOptions.length; i++){
+      let select = document.getElementById(`assetTypeSelect-${requirementsAbsoluteCounter}`).innerHTML
+      select = select + `<option value="${assetTypeOptions[i]}">${assetTypeOptions[i]}</option>`;
+      document.getElementById(`assetTypeSelect-${requirementsAbsoluteCounter}`).innerHTML = select
+    }
+
+    if (initialData){
+      // fill from initial data
+      document.getElementById("blockChainSelect-"+requirementsAbsoluteCounter).value = initialData.blockchain
+      document.getElementById("networkSelect-"+requirementsAbsoluteCounter).value = initialData.chain_id
+      document.getElementById("assetTypeSelect-"+requirementsAbsoluteCounter).value = initialData.asset_type
+      document.getElementById("requiredAmountInput-"+requirementsAbsoluteCounter).value = initialData.amount
+      document.getElementById("assetAdressInput-"+requirementsAbsoluteCounter).value = initialData.asset_address
+
+      for (token_id in initialData.token_id){
+        addNewTokenIdToRequirement(requirementsAbsoluteCounter, token_id)
+      }
+    }
+  }
+
+  function deleteRequirementForm(requirementIdx) {
+    document.getElementById(`requiremtsForm-${requirementIdx}`).remove();
+  }
+
+  function deleteRequirement(requirementIdx) {
+    if (requirementsCounter == 1){
+      // must have at least one requirement.
+      return
+    }
+    event.target.parentNode.remove(); //remove the nav-tab
+    deleteRequirementForm(requirementIdx);
+    // requirementsAbsoluteCounter is not decremented
+    requirementsCounter--;
+
+  }
+
+  function popTokenIdFromRequirement(requirementIdx){
+    console.log(requirementIdx)
+    console.log(tokenIdsCounter[requirementIdx])
+    document.getElementById(`tokenId-${requirementIdx}-${tokenIdsCounter[requirementIdx] - 1}`).remove();
+    tokenIdsCounter[requirementIdx] = tokenIdsCounter[requirementIdx] - 1;
+  }
+
+  function addNewTokenIdToRequirement(requirementIdx, initialData=null){
+    const tokenIdGroupId = 'tokenIdGroup-'+ requirementIdx
+
+    let list = document.getElementById(tokenIdGroupId).innerHTML;
+
+    list +=
+        `
+          <div id="tokenId-${requirementIdx}-${tokenIdsCounter[requirementIdx]}" class="d-flex flex-row align-items-center gap-3">
+            <label>Token ID ${tokenIdsCounter[requirementIdx]}</label>
+            <input type="text" class="form-control">
+          </div>
+        `;
+
+    document.getElementById(tokenIdGroupId).innerHTML = list;
+    tokenIdsCounter[requirementIdx] = tokenIdsCounter[requirementIdx] + 1;
+  }
+
+  function fillRequirementsAndSubmitForm(){
+    let requirementsData = []
+    for (let requirementIdx = 0; requirementIdx < requirementsAbsoluteCounter; requirementIdx++){
+      requirementForm = document.getElementById(`requiremtsForm-${requirementIdx}`)
+      console.log(requirementForm);
+      if (requirementForm == null){
+        continue
+      }
+      console.log(requirementIdx);
+      requirementData = {
+        "blockchain": document.getElementById("blockChainSelect-"+requirementIdx).value,
+        "chain_id": document.getElementById("networkSelect-"+requirementIdx).value,
+        "asset_type": document.getElementById("assetTypeSelect-"+requirementIdx).value,
+        "amount": document.getElementById("requiredAmountInput-"+requirementIdx).value,
+        "asset_address": document.getElementById("assetAdressInput-"+requirementIdx).value,
+        "token_id": []
+      }
+      for (let token_idx = 0; token_idx < tokenIdsCounter[requirementIdx]; token_idx++){
+        requirementData["token_id"].push(
+          document.getElementById(`tokenId-${requirementIdx}-${token_idx}`).getElementsByTagName('input')[0].value
+        )
+      }
+      requirementsData.push(requirementData)
+    }
+    let initial_form_id = document.getElementById('requirementFormId').value;
+    console.log(initial_form_id)
+    initial_form_id = JSON.stringify(requirementsData);
+    console.log(initial_form_id);
+    document.getElementById('requirementFormId').submit();
+    console.log("submmited form");
+    event.preventDefault();
+  }
+
+  function verifyAssetAddressPattern(assetAddressId){
+    const value = document.getElementById(`assetAdressInput-${assetAddressId}`).value;
+    const regex = new RegExp('^(0x|0X).*$');
+    const isAssetAddressValid = regex.test(value);
+    if(!isAssetAddressValid){
+      alert("Asset Address invalid. It must start with '0x' or '0X'");
+    }
+  }
+</script>
 <div class="row">
-	<div class="col-sm-10 col-md-12 mx-auto">
-		<div class="card mb-4">
-			<div class="card-header py-0">
-				<div class="d-flex align-items-center py-3">
-					{% if url_name == 'ticketgate_create'  %}
-					<div class="pe-2">
-						<h6 class="m-0">Ticket Gate Create</h6>
-						<div class="text-muted text-xs mb-3">
-							Use the following form to create an ticket gate.
-						</div>
-					</div>
-					{% else %}
-					<div class="pe-2">
-						<h6 class="m-0">Ticket Gate Update</h6>
-						<div class="text-muted text-xs mb-3">
-							Use the following form to update the ticket gate.
-						</div>
-					</div>
-					{% endif %}
-          <a href="{% url 'ticketgate_list' view.kwargs.team_pk %}" class="btn bg-gradient-secondary btn-sm ms-auto my-0">
-              <div class="d-flex align-items-center justify-content-center gap-2" >
-                <i class="fa-solid fa-angle-left fs-6"></i>
-                <span class="fs-6">Back</span>
-              </div>
+  <div class="col-sm-10 col-md-12 mx-auto">
+    <div class="card mb-4">
+      <div class="card-header py-0">
+        <div class="d-flex align-items-center py-3">
+          {% if url_name == 'ticketgate_create' %}
+          <div class="pe-2">
+            <h6 class="m-0">Ticket Gate Create</h6>
+            <div class="text-muted text-xs mb-3">
+              Use the following form to create an ticket gate.
+            </div>
+          </div>
+          {% else %}
+          <div class="pe-2">
+            <h6 class="m-0">Ticket Gate Update</h6>
+            <div class="text-muted text-xs mb-3">
+              Use the following form to update the ticket gate.
+            </div>
+          </div>
+          {% endif %}
+          <a
+            href="{% url 'ticketgate_list' view.kwargs.team_pk %}"
+            class="btn bg-gradient-secondary btn-sm ms-auto my-0"
+          >
+            <div class="d-flex align-items-center justify-content-center gap-2">
+              <i class="fa-solid fa-angle-left fs-6"></i>
+              <span class="fs-6">Back</span>
+            </div>
           </a>
-				</div>
-			</div>
-			<div class="card-body py-2">
-				<form class="form" method="post">
-					{% csrf_token %}
-					{{ form|crispy }}
-					<div>
+        </div>
+      </div>
+      <div class="card-body py-2">
+        <form id="requirementFormId" class="form" method="post">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div>
 						<div class="text-muted text-xs mb-3">
 							The price of the ticket gate will be calculated based on the capacity. <a href="#" id="understand-pricing">Understand our pricing model.</a>
 						</div>
@@ -54,14 +264,30 @@
 							<strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
 						</div>
 					</div>
-          			<div id="editor_holder"></div>
-					<div class="text-end my-3">
-						<input type="submit" id="submitBtn" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+          <div id="blockchainRequirementsFormTitle" class="py-2 fw-bold">Blockchain Requirements</div>
+          <div>
+            <nav>
+              <div id="nav-requirement" class="nav nav-tabs" id="pills-tab" role="tablist">
+                <div
+                  type="button"
+                  onclick="addRequirement()"
+                  class="nav-link"
+                >
+                  Add requirement
+                </div>
+              </div>
+            </nav>
+          </div>
+          <div class="tab-content" id="tokenRequirementForms"></div>
+        </form>
+        <div class="d-flex flex-row-reverse px-2">
+          <button onclick="fillRequirementsAndSubmitForm()" id="submitBtn" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
+            submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
 	const formatter = new Intl.NumberFormat('en-US', {
@@ -86,33 +312,7 @@
 		});
 	})
 
-
   // Initialize the editor with a JSON schema
-  var _schema = '{{json_schema|safe}}';
-  var json_data = "{{object.requirements|safe}}";
-  var editor = new JSONEditor(document.getElementById('editor_holder'),{
-    schema: JSON.parse(_schema),
-    theme: 'spectre',
-    iconlib: 'fontawesome5',
-    startval: json_data ? JSON.parse(json_data.replace(/'/g, '"')) : null,
-    // UI
-    array_controls_top: true,
-    disable_collapse: true,
-    disable_array_delete_all_rows: true,
-    disable_array_delete_last_row: true,
-    disable_array_reorder: true,
-    disable_edit_json: true,
-    disable_properties: true,
-    keep_oneof_values: false,
-    prompt_before_delete: false,
-    remove_button_labels: true,
-    show_opt_in: false,
-  });
-
-  editor.on('change',() => {
-     document.getElementById("id_requirements").value = JSON.stringify(editor.getValue());
-  });
-  console.log(editor)
-  console.log(json_data)
+  populateWithInitialData()
 </script>
 {% endblock %}

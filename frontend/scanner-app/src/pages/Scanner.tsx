@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { Header } from "../components/Header";
 import QrReader from "react-qr-reader";
+import { useTicket } from "../contexts/TicketContext";
 
 export function Scanner() {
   const [facingModeState, setFacingModeState] = useState<String>("user");
-  const [scanFlag, setScanFlag] = useState<String>("");
+  const { fetchTicket }: any = useTicket();
 
   const eventData = {
     total: 750,
@@ -20,17 +21,15 @@ export function Scanner() {
     }
   }
 
-  const handleScan = useCallback(async (qrcode: any) => {
-    if (qrcode) {
-      fetchTicket(qrcode);
-    }
+  const handleScan = useCallback(
+    async (qrcode: any) => {
+      if (qrcode) {
+        fetchTicket(qrcode);
+      }
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function fetchTicket(qrcode: any) {
-    console.log(qrcode);
-    setScanFlag("success");
-  }
+    []
+  );
 
   const handleError = useCallback((err: any) => {
     console.log(err);
@@ -43,47 +42,34 @@ export function Scanner() {
         attendees={eventData.attendees}
         title={eventData.title}
       />
-      {scanFlag === "success" && (
-        <div
-          className="modal fade"
-          id="exampleModal"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <button
-            type="button"
-            className="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-          <div className="alert alert-success" role="alert">
-            Success scan!
-          </div>
+      {/* {scanFlag === "success" && (
+        <div className="alert alert-success" role="alert">
+          Success scan!
         </div>
       )}
       {scanFlag === "denied" && (
         <div className="alert alert-danger" role="alert">
           Error scan!
         </div>
-      )}
+      )} */}
       {facingModeState === "user" ? (
-        <div className="mb-2">
+        <div className="d-flex justify-content-center align-items-center mb-2">
           <QrReader
             facingMode={"user"}
             delay={500}
             onError={handleError}
             onScan={handleScan}
+            style={{ width: "80%", height: "80%" }}
           />
         </div>
       ) : (
-        <div className="mb-2">
+        <div className="d-flex justify-content-center align-items-center mb-2">
           <QrReader
             facingMode={"environment"}
             delay={500}
             onError={handleError}
             onScan={handleScan}
-            style={{ width: "50%", height: "50%" }}
+            style={{ width: "80%", height: "80%" }}
           />
         </div>
       )}

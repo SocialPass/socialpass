@@ -10,9 +10,9 @@ import { useToast } from "../../../contexts/ToastContext";
 import { Container } from "./styles";
 
 const icons: any = {
-  info: <FiInfo size={24} />,
-  error: <FiAlertCircle size={24} />,
-  success: <FiCheckCircle size={24} />,
+  info: <FiInfo size={28} />,
+  error: <FiAlertCircle size={28} />,
+  success: <FiCheckCircle size={28} />,
 };
 
 function Toast({ toast, style }: any) {
@@ -21,7 +21,7 @@ function Toast({ toast, style }: any) {
   useEffect(() => {
     const timer = setTimeout(() => {
       removeToast(toast.id);
-    }, 3500);
+    }, 1500);
 
     return () => {
       clearTimeout(timer);

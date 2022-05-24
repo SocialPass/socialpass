@@ -27,22 +27,30 @@
 
   }
 
-  function ShowSelectedFormId(){
+  function navigateBetweenForms(){
     const RequirementTitle = event.target.innerHTML
     const requirementNumber = RequirementTitle.split("Requirement ")
-    currentFormId = requirementNumber[1][0];
-    console.log(currentFormId)
+    currentFormId = parseInt(requirementNumber[1][0]);
+
+    let currentDivId = "requiremtsForm-"+currentFormId;
+    let allForms = document.querySelectorAll('#tokenRequirementForms > *');
+    allForms.forEach(element => {
+      element.setAttribute("class", "tab-pane fade py-3")
+    })
+    let currentForm = document.getElementById(currentDivId);
+
+    currentForm.setAttribute("class", "tab-pane fade show active py-3")
   }
 
   function addRequirement(initialData = null) {
+
     let list = document.getElementById("nav-requirement").innerHTML;
     let divId = "requiremtsForm-"+requirementsAbsoluteCounter;
-    console.log(divId)
 
     list +=
       `
         <div type="button"
-          onclick="ShowSelectedFormId()"
+          onclick="navigateBetweenForms()"
           class="nav-link active"
           id="${divId}-tab" data-bs-toggle="pill" data-bs-target="#${divId}" role="tab">
           Requirement ${requirementsAbsoluteCounter}
@@ -58,10 +66,12 @@
   }
 
   function _createRequirementForm(initialData = null){
+
     let divId = "requiremtsForm-"+requirementsAbsoluteCounter
     let form = document.getElementById("tokenRequirementForms").innerHTML;
-    formText = `
-       <div class="tab-pane fade active show py-3" id="${divId}" role="tabpanel">
+    form += `
+       <div class="tab-pane fade show active py-3" id="${divId}" role="tabpanel">
+        ${divId}
         <div class="form-group">
           <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
           <select class="form-control" id="blockChainSelect-${requirementsAbsoluteCounter}">
@@ -97,9 +107,19 @@
 
       </div>
       `;
-    form += formText;
-    document.getElementById("tokenRequirementForms").innerHTML = formText;
 
+    document.getElementById("tokenRequirementForms").innerHTML = form;
+
+    //hide all requirements form
+    let allForms = document.querySelectorAll('#tokenRequirementForms > *');
+    allForms.forEach(element => {
+      element.setAttribute("class", "tab-pane fade py-3")
+    })
+
+    //show just the created requirement form
+    document.getElementById(divId).setAttribute("class", "tab-pane fade show active py-3")
+
+    //fill the options
     let requiremtSchema = JSON.parse('{{json_schema|safe}}');
     let blockchainOptions = requiremtSchema.properties.properties.blockchain.enum;
     let chainsOptions = requiremtSchema.properties.properties.chain_id.enum;
@@ -151,8 +171,6 @@
   }
 
   function popTokenIdFromRequirement(requirementIdx){
-    console.log(requirementIdx)
-    console.log(tokenIdsCounter[requirementIdx])
     document.getElementById(`tokenId-${requirementIdx}-${tokenIdsCounter[requirementIdx] - 1}`).remove();
     tokenIdsCounter[requirementIdx] = tokenIdsCounter[requirementIdx] - 1;
   }
@@ -178,11 +196,9 @@
     let requirementsData = []
     for (let requirementIdx = 0; requirementIdx < requirementsAbsoluteCounter; requirementIdx++){
       requirementForm = document.getElementById(`requiremtsForm-${requirementIdx}`)
-      console.log(requirementForm);
       if (requirementForm == null){
         continue
       }
-      console.log(requirementIdx);
       requirementData = {
         "blockchain": document.getElementById("blockChainSelect-"+requirementIdx).value,
         "chain_id": document.getElementById("networkSelect-"+requirementIdx).value,
@@ -199,11 +215,8 @@
       requirementsData.push(requirementData)
     }
     let initial_form_id = document.getElementById('requirementFormId').value;
-    console.log(initial_form_id)
     initial_form_id = JSON.stringify(requirementsData);
-    console.log(initial_form_id);
     document.getElementById('requirementFormId').submit();
-    console.log("submmited form");
     event.preventDefault();
   }
 
@@ -304,7 +317,6 @@
 			document.getElementById('price-calc').style.display = 'block';
 
 			document.getElementById('price-calc-capacity').innerHTML = capacity;
-			console.log(data)
 			document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
 			document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
 

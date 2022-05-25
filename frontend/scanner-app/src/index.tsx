@@ -13,10 +13,11 @@ createServer({
   seeds(server) {
     server.db.loadData({
       eventInfo: {
-        id: 1,
-        attendees: 212,
-        totalAmount: 1000,
-        createdAt: new Date("2022-05-22 09:00:00"),
+        event_name: "Event Name",
+        event_attendance: "750",
+        event_capacity: "1000",
+        event_date: "2022-12-12T22:30:00Z",
+        event_venue: "The Ritz Carlton - South Beach",
       },
     });
   },

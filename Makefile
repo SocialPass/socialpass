@@ -13,6 +13,9 @@ backend-setup: ## Install backend requirements
 	pip3 install --upgrade pip; \
 	pip3 install -r backend/config/requirements/local.txt; )
 
+backend-collect: ## collectstatic backend
+	(source venv/bin/activate; python3 backend/manage.py collectstatic --no-input)
+
 backend-run: ## Start backend server
 	(source venv/bin/activate; python3 backend/manage.py runserver)
 

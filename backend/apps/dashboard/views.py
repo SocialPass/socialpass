@@ -288,6 +288,10 @@ class TicketedEventUpdateView(TeamContextMixin, UpdateView):
         """
         context = super().get_context_data(**kwargs)
         context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
+        context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
+        context['BLOCKHAINS_CHOICES'] = json.dumps(dict(BLOCKCHAINS))
+        context['CHAIN_IDS_CHOICES'] = json.dumps(dict(CHAIN_IDS))
+        context['ASSET_TYPES_CHOICES'] = json.dumps(dict(ASSET_TYPES))
         return context
 
     def get_success_url(self):

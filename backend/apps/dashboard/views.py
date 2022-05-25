@@ -17,7 +17,8 @@ from invitations.views import AcceptInvite
 
 from apps.root import pricing_service
 from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm
-from apps.root.model_field_schemas import REQUIREMENTS_SCHEMA
+from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
+from apps.root.model_field_choices import BLOCKCHAINS, CHAIN_IDS, ASSET_TYPES
 from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEventStripePayment
 
 User = auth.get_user_model()
@@ -244,7 +245,11 @@ class TicketedEventCreateView(TeamContextMixin, CreateView):
         overrode to set json_schema
         """
         context = super().get_context_data(**kwargs)
-        context["json_schema"] = json.dumps(REQUIREMENTS_SCHEMA)
+        context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
+        context['BLOCKHAINS_CHOICES'] = json.dumps(dict(BLOCKCHAINS))
+        context['CHAIN_IDS_CHOICES'] = json.dumps(dict(CHAIN_IDS))
+        context['ASSET_TYPES_CHOICES'] = json.dumps(dict(ASSET_TYPES))
+
         return context
 
     def form_valid(self, form, **kwargs):
@@ -282,7 +287,10 @@ class TicketedEventUpdateView(TeamContextMixin, UpdateView):
         overrode to set json_schema
         """
         context = super().get_context_data(**kwargs)
-        context["json_schema"] = json.dumps(REQUIREMENTS_SCHEMA)
+        context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
+        context['BLOCKHAINS_CHOICES'] = json.dumps(dict(BLOCKCHAINS))
+        context['CHAIN_IDS_CHOICES'] = json.dumps(dict(CHAIN_IDS))
+        context['ASSET_TYPES_CHOICES'] = json.dumps(dict(ASSET_TYPES))
         return context
 
     def get_success_url(self):

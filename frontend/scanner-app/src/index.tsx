@@ -3,7 +3,39 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import { createServer, Model } from "miragejs";
 
+createServer({
+  models: {
+    eventInfo: Model,
+  },
+
+  seeds(server) {
+    server.db.loadData({
+      eventInfo: {
+        id: 1,
+        attendees: 212,
+        totalAmount: 1000,
+        createdAt: new Date("2022-05-22 09:00:00"),
+      },
+    });
+  },
+
+  routes() {
+    this.namespace = "api";
+
+    this.get("/eventInfo", () => {
+      return this.schema.all("eventInfo");
+    });
+
+    this.post("/ticketToken", (schema, request) => {
+      const data = JSON.parse(request.requestBody);
+      console.log(data);
+
+      return { status: "succeess" };
+    });
+  },
+});
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

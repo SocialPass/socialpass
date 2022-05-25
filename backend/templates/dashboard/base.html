@@ -7,7 +7,7 @@
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<title>{% block title %}SocialPass{% endblock title %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
 		<!-- Theme font -->
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -35,6 +35,7 @@
 	</head>
 	{% with request.resolver_match.url_name as url_name %}
 	<body class="g-sidenav-show bg-gray-100">
+		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 		<!-- Start sidebar -->
 		<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3" id="sidenav-main">
@@ -196,7 +197,6 @@
 
 		<!-- JavaScript -->
 		<script src="{% static 'js/popper.min.js' %}"></script>
-		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 		<script src="{% static 'js/perfect-scrollbar.min.js' %}"></script>
 		<script src="{% static 'js/smooth-scrollbar.min.js' %}"></script>
 		<script>

@@ -84,12 +84,15 @@
   </div>
 </div>
 <script>
+  // Helper functions to manage addition/removal/submission of requirement forms and nav-tabs
+
   var requirementsAbsoluteCounter = 0; // this counter keeps track of how many requirements were added in total. Absolute counter is never decremented. It is used to avoid equal IDs after deleting middle requirements.
   var requirementsCounter = 0; // this counter keeps track of how many requirements are in the screen.
   var tokenIdsCounter = []; // each requirement has its own token_id counter, at its index of the array.
   var currentFormId = 0;
 
-  function populateWithInitialData(){
+  window.onload = function(){
+    // adds the requirement forms from the initial data. This data is passed by the server and stored in the form context.
     let initialRequirementsData = JSON.parse('{{form.requirements.value|safe}}');
 
     if (initialRequirementsData.length > 0){
@@ -103,10 +106,11 @@
   }
 
   function addRequirement(initialData = null) {
-
+    // adds a requirement form to the screen.
     let list = document.getElementById("nav-requirement").innerHTML;
     let divId = "requirementDiv-"+requirementsAbsoluteCounter;
 
+    // add nav-item
     list +=
       `
         <li class="nav-item" role="presentation">
@@ -121,13 +125,15 @@
           </button>
         </li>
       `;
-    // 
     document.getElementById("nav-requirement").innerHTML = list;
+    
+    // adds form to tab-content
     tokenIdsCounter.push(0);
     _createRequirementForm(initialData);
     requirementsCounter++;
     requirementsAbsoluteCounter++;
 
+    // show the added tab and hide the rest
     let triggerEl = document.getElementById(`${divId}-tab`)
     let tabTrigger = new bootstrap.Tab(triggerEl)
     tabTrigger.show()
@@ -191,16 +197,7 @@
     `;
     document.getElementById("tokenRequirementForms").appendChild(new_div);
 
-    //hide all requirements form
-    let allForms = document.querySelectorAll('#tokenRequirementForms > active');
-    allForms.forEach(element => {
-      element.setAttribute("class", "tab-pane fade py-3")
-    })
-
-    //show just the created requirement form
-    document.getElementById(divId).setAttribute("class", "tab-pane fade show active py-3")
-
-    //fill the options
+    //fill the options for the selects from the provided choices in the context
     let requiremtSchema = JSON.parse('{{json_schema|safe}}');
     let blockchainOptions = JSON.parse('{{BLOCKHAINS_CHOICES|safe}}');
     let assetTypeOptions = JSON.parse('{{ASSET_TYPES_CHOICES|safe}}');
@@ -318,8 +315,6 @@
     }
   }
 
-</script>
-<script>
 	const formatter = new Intl.NumberFormat('en-US', {
 		style: 'currency',
 		currency: 'USD',
@@ -340,8 +335,5 @@
 
 		});
 	})
-
-  // Initialize the editor with a JSON schema
-  populateWithInitialData()
 </script>
 {% endblock %}

@@ -15,9 +15,9 @@
   var currentFormId = 0;
 
   function populateWithInitialData(){
-    let initialRequirementsData = "{{object.requirements|safe}}";
+    let initialRequirementsData = JSON.parse('{{form.requirements.value|safe}}');
 
-    if (initialRequirementsData){
+    if (initialRequirementsData.length > 0){
       for (requirement in initialRequirementsData){
         addRequirement(requirement)
       }
@@ -32,7 +32,7 @@
     const requirementNumber = RequirementTitle.split("Requirement ")
     currentFormId = parseInt(requirementNumber[1][0]);
 
-    let currentDivId = "requiremtsForm-"+currentFormId;
+    let currentDivId = "requirementDiv-"+currentFormId;
     let allForms = document.querySelectorAll('#tokenRequirementForms > *');
     allForms.forEach(element => {
       element.setAttribute("class", "tab-pane fade py-3")
@@ -45,7 +45,7 @@
   function addRequirement(initialData = null) {
 
     let list = document.getElementById("nav-requirement").innerHTML;
-    let divId = "requiremtsForm-"+requirementsAbsoluteCounter;
+    let divId = "requirementDiv-"+requirementsAbsoluteCounter;
 
     list +=
       `
@@ -67,44 +67,48 @@
 
   function _createRequirementForm(initialData = null){
 
-    let divId = "requiremtsForm-"+requirementsAbsoluteCounter
+    let divId = "requirementDiv-"+requirementsAbsoluteCounter
+    let formId = "requirementForm-"+requirementsAbsoluteCounter
     let form = document.getElementById("tokenRequirementForms").innerHTML;
     form += `
        <div class="tab-pane fade show active py-3" id="${divId}" role="tabpanel">
         Blockchain Requirements ${requirementsAbsoluteCounter}
-        <div class="form-group">
-          <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
-          <select class="form-control" id="blockChainSelect-${requirementsAbsoluteCounter}">
+        <form id="${formId}">
+          <div class="form-group">
+            <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
+            <select class="form-control" id="blockChainSelect-${requirementsAbsoluteCounter}">
 
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="networkSelect">Network <span class="asteriskField">*</span></label>
-          <select class="form-control" id="networkSelect-${requirementsAbsoluteCounter}">
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="networkSelect">Network <span class="asteriskField">*</span></label>
+            <select required class="form-control" id="networkSelect-${requirementsAbsoluteCounter}">
 
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="assetTypeSelect">Asset Type <span class="asteriskField">*</span></label>
-          <select class="form-control" id="assetTypeSelect-${requirementsAbsoluteCounter}" placeholder="ERC20">
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="assetTypeSelect">Asset Type <span class="asteriskField">*</span></label>
+            <select required class="form-control" id="assetTypeSelect-${requirementsAbsoluteCounter}" placeholder="ERC20">
 
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="assetAdressInput">Asset Address <span class="asteriskField">*</span></label>
-          <input onchange="verifyAssetAddressPattern(${requirementsAbsoluteCounter})" required type="text" class="form-control" id="assetAdressInput-${requirementsAbsoluteCounter}">
-        </div>
-        <div class="form-group">
-          <label for="requiredAmountInput">Required Amount <span class="asteriskField">*</span></label>
-          <input required type="number" class="form-control" id="requiredAmountInput-${requirementsAbsoluteCounter}">
-        </div>
-        <div class="d-flex flex-row align-items-center gap-3">
-          <label>Token IDs</label>
-          <button type="button" onclick="addNewTokenIdToRequirement(${requirementsAbsoluteCounter})" class="btn btn-primary btn-sm" ><i class="fa-regular fa-plus fs-6"></i></button>
-        </div>
-        <div id="tokenIdGroup-${requirementsAbsoluteCounter}" class="d-flex flex-column align-items-start gap-3"></div>
-        <i type="button" onclick="popTokenIdFromRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-trash-can"></i>
-
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="assetAdressInput">Asset Address <span class="asteriskField">*</span></label>
+            <input required pattern="^(0x|0X).*$" required type="text" class="form-control" id="assetAdressInput-${requirementsAbsoluteCounter}"
+                   oninvalid="this.setCustomValidity('Asset Address must start with 0x')"
+                   oninput="this.setCustomValidity('')">
+          </div>
+          <div class="form-group">
+            <label for="requiredAmountInput">Required Amount <span class="asteriskField">*</span></label>
+            <input required type="number" class="form-control" id="requiredAmountInput-${requirementsAbsoluteCounter}">
+          </div>
+          <div class="d-flex flex-row align-items-center gap-3">
+            <label>Token IDs</label>
+            <button type="button" onclick="addNewTokenIdToRequirement(${requirementsAbsoluteCounter})" class="btn btn-primary btn-sm" ><i class="fa-regular fa-plus fs-6"></i></button>
+          </div>
+          <div id="tokenIdGroup-${requirementsAbsoluteCounter}" class="d-flex flex-column align-items-start gap-3"></div>
+          <i type="button" onclick="popTokenIdFromRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-trash-can"></i>
+        </form>
       </div>
       `;
 
@@ -154,8 +158,12 @@
     }
   }
 
+  function validateAssetAddress(){
+    
+  }
+
   function deleteRequirementForm(requirementIdx) {
-    document.getElementById(`requiremtsForm-${requirementIdx}`).remove();
+    document.getElementById(`requirementDiv-${requirementIdx}`).remove();
   }
 
   function deleteRequirement(requirementIdx) {
@@ -195,10 +203,17 @@
   function fillRequirementsAndSubmitForm(){
     let requirementsData = []
     for (let requirementIdx = 0; requirementIdx < requirementsAbsoluteCounter; requirementIdx++){
-      requirementForm = document.getElementById(`requiremtsForm-${requirementIdx}`)
+      let requirementForm = document.getElementById(`requirementForm-${requirementIdx}`)
       if (requirementForm == null){
         continue
       }
+
+      if (!requirementForm.reportValidity()){
+        let triggerEl = document.getElementById(`requirementDiv-${requirementIdx}-tab`)
+        bootstrap.Tab.getInstance(triggerEl).show()
+        return
+      }
+
       requirementData = {
         "blockchain": document.getElementById("blockChainSelect-"+requirementIdx).value,
         "chain_id": document.getElementById("networkSelect-"+requirementIdx).value,
@@ -214,20 +229,14 @@
       }
       requirementsData.push(requirementData)
     }
-    let initial_form_id = document.getElementById('requirementFormId').value;
-    initial_form_id = JSON.stringify(requirementsData);
-    document.getElementById('requirementFormId').submit();
-    event.preventDefault();
-  }
+    document.getElementById('id_requirements').value = JSON.stringify(requirementsData);
 
-  function verifyAssetAddressPattern(assetAddressId){
-    const value = document.getElementById(`assetAdressInput-${assetAddressId}`).value;
-    const regex = new RegExp('^(0x|0X).*$');
-    const isAssetAddressValid = regex.test(value);
-    if(!isAssetAddressValid){
-      alert("Asset Address invalid. It must start with '0x' or '0X'");
+    let form = document.getElementById('requirementFormId');
+    if (form.reportValidity()){
+      form.submit();
     }
   }
+
 </script>
 <div class="row">
   <div class="col-sm-10 col-md-12 mx-auto">
@@ -276,22 +285,22 @@
 							<strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
 						</div>
 					</div>
-          <div id="blockchainRequirementsFormTitle" class="py-2 fw-bold">Blockchain Requirements</div>
-          <div>
-            <nav>
-              <div id="nav-requirement" class="nav nav-tabs" id="pills-tab" role="tablist">
-                <div
-                  type="button"
-                  onclick="addRequirement()"
-                  class="nav-link"
-                >
-                  Add requirement
-                </div>
-              </div>
-            </nav>
-          </div>
-          <div class="tab-content" id="tokenRequirementForms"></div>
         </form>
+        <div id="blockchainRequirementsFormTitle" class="py-2 fw-bold">Blockchain Requirements</div>
+        <div>
+          <nav>
+            <div id="nav-requirement" class="nav nav-tabs" id="pills-tab" role="tablist">
+              <div
+                type="button"
+                onclick="addRequirement()"
+                class="nav-link"
+              >
+                Add requirement
+              </div>
+            </div>
+          </nav>
+        </div>
+        <div class="tab-content" id="tokenRequirementForms"></div>
         <div class="d-flex flex-row-reverse px-2">
           <button onclick="fillRequirementsAndSubmitForm()" id="submitBtn" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
             submit

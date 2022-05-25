@@ -73,7 +73,7 @@ class TicketedEventForm(forms.ModelForm):
         obj = super().save(commit)
 
         if "capacity" in self.changed_data:
-            pricing_service.set_ticket_gate_price(obj)
+            pricing_service.set_ticketed_event_price(obj)
 
         return obj
 

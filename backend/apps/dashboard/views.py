@@ -311,6 +311,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
     """
 
     template_name: str = "dashboard/ticketgate_checkout.html"
+    stripe.api_key = settings.STRIPE_SECRET_KEY
 
     def dispatch(self, request, *args, **kwargs):
         self.kwargs = kwargs
@@ -365,7 +366,6 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
         )
 
         # create checkout session
-        stripe.api_key = settings.STRIPE_SECRET_KEY
         checkout_session = stripe.checkout.Session.create(
             client_reference_id=request.user.id,
             success_url=success_callback,
@@ -396,7 +396,6 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
     def success_stripe_callback(request, **kwargs):
         # update payment status
         stripe_session_id = request.GET["session_id"]
-        stripe.api_key = settings.STRIPE_SECRET_KEY
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
         payment = TicketedEventStripePayment.objects.get(
             stripe_checkout_session_id=stripe_session_id
@@ -442,7 +441,6 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
         What payment methods are we going to accept?
         """
-        stripe.api_key = settings.STRIPE_SECRET_KEY
         endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]

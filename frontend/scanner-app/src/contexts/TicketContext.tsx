@@ -6,15 +6,23 @@ const TicketContext = createContext({});
 const TicketProvider = ({ children }: any) => {
   const { addToast } = useToast();
   const [scanFlag, setScanFlag] = useState<String>("");
+  const [statusEvent, setStatusEvent] = useState<String>("");
+
+  const eventData = {
+    total: 750,
+    attendees: 212,
+    title: "Event title",
+  };
 
   function fetchTicket(qrcode: any) {
     console.log(qrcode);
     setScanFlag("success");
     addToast({
-      type: "error",
-      title: "scan error",
-      description: "scan again",
+      type: "success",
+      title: "scan success",
+      description: "",
     });
+    setStatusEvent("reached");
   }
 
   return (
@@ -23,6 +31,8 @@ const TicketProvider = ({ children }: any) => {
         fetchTicket,
         scanFlag,
         setScanFlag,
+        eventData,
+        statusEvent,
       }}
     >
       {children}

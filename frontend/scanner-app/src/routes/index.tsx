@@ -13,7 +13,7 @@ function Routes() {
   return (
     <BrowserRouter>
       <RoutesRom>
-        <Route path="/Home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/scanner" element={<Scanner />} />
         <Route path="/end-event" element={<EventClose />} />
       </RoutesRom>

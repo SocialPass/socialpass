@@ -13,10 +13,9 @@ createServer({
 
   seeds(server) {
     server.db.loadData({
-      eventInfo: {
-        event_name: "Event Name",
-        event_attendance: "750",
-        event_capacity: "1000",
+      eventInfos: {
+        event_name: "Event name title",
+        event_attendance: "30",
         event_date: "2022-12-12T22:30:00Z",
         event_venue: "The Ritz Carlton - South Beach",
       },
@@ -34,7 +33,7 @@ createServer({
       const data = JSON.parse(request.requestBody);
       console.log(data);
 
-      return { status: "succeess" };
+      return { status: "success" };
     });
 
     this.post("/ticketToken/error", (schema, request) => {

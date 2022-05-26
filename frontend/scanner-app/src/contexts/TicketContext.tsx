@@ -1,29 +1,73 @@
+/* eslint-disable eqeqeq */
 import React, { createContext, useContext, useState } from "react";
+import { api } from "../services/api";
 import { useToast } from "./ToastContext";
 
 const TicketContext = createContext({});
 
+type EventDataProps = {
+  event_name: String;
+  event_attendance: String;
+  event_date: String;
+  event_venue: String;
+};
+
 const TicketProvider = ({ children }: any) => {
   const { addToast } = useToast();
   const [scanFlag, setScanFlag] = useState<String>("");
+  const [eventData, setEventData] = useState<EventDataProps>({
+    event_name: "Event Name",
+    event_attendance: "30",
+    event_date: "2022-12-12T22:30:00Z",
+    event_venue: "The Ritz Carlton - South Beach",
+  });
   const [statusEvent, setStatusEvent] = useState<String>("");
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [attendeesAmount, setAttendeesAmount] = useState<number>(() => {
+    const attendees = localStorage.getItem("@attendeesAmount");
+    if (attendees == null || attendees == undefined) {
+      return 0;
+    }
+    return Number(attendees);
+  });
 
-  const eventData = {
-    total: 750,
-    attendees: 212,
-    title: "Event title",
-  };
+  function increaseAttendeesAmount() {
+    setAttendeesAmount(
+      (prevAttendeesAmount: number) => prevAttendeesAmount + 1
+    );
 
-  function fetchTicket(qrcode: any) {
-    console.log(qrcode);
-    setScanFlag("success");
-    addToast({
-      type: "success",
-      title: "scan success",
-      description: "",
-    });
-    setStatusEvent("reached");
+    let value = Number(localStorage.getItem("@attendeesAmount"));
+    localStorage.setItem("@attendeesAmount", (++value).toString());
   }
+
+  async function fetchTicket(qrcode: any) {
+    try {
+      const response = await api.post("/ticketToken/success", qrcode);
+      setScanFlag(response.data);
+      if (response.data.status == "success") {
+        increaseAttendeesAmount();
+      }
+      addToast({
+        type: "success",
+        title: "scan success",
+        description: "",
+      });
+    } catch (error) {
+      addToast({
+        type: "error",
+        title: "scan failed",
+        description: "",
+      });
+    }
+  }
+
+  // function syncDelay(milliseconds: number) {
+  //   let start = new Date().getTime();
+  //   let end = 0;
+  //   while (end - start < milliseconds) {
+  //     end = new Date().getTime();
+  //   }
+  // }
 
   return (
     <TicketContext.Provider
@@ -31,8 +75,14 @@ const TicketProvider = ({ children }: any) => {
         fetchTicket,
         scanFlag,
         setScanFlag,
-        eventData,
         statusEvent,
+        eventData,
+        setEventData,
+        loading,
+        setLoading,
+        setStatusEvent,
+        attendeesAmount,
+        setAttendeesAmount,
       }}
     >
       {children}

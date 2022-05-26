@@ -3,7 +3,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 type HeaderProps = {
-  total: number;
+  total: String;
   attendees: number;
   title: String;
 };
@@ -23,11 +23,11 @@ export function Header({ total, attendees, title }: HeaderProps) {
       </div>
       <div className="d-flex flex-column align-items-center">
         <h3>{title}</h3>
-        {attendees && (
-          <h6 className="text-secondary">
-            Attendees {attendees}/{total}
-          </h6>
-        )}
+        <h6 className="text-secondary">
+          Attendees{" "}
+          {attendees === null || attendees === undefined ? 0 : attendees}/
+          {total}
+        </h6>
       </div>
       <div></div>
     </header>

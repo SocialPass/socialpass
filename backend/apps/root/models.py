@@ -71,16 +71,6 @@ class Team(DBModel):
     )
     description = models.TextField(blank=True)
     members = models.ManyToManyField(User, through="Membership")
-    subdomain = models.CharField(
-        max_length=256,
-        null=True,
-        unique=True,
-        validators=[
-            RegexValidator(
-                r"^[0-9a-zA-Z]*$", message="Subdomain only allows alphanumeric"
-            )
-        ],
-    )
     pricing_rule_group = models.ForeignKey(
         "PricingRuleGroup", on_delete=models.CASCADE, null=True, blank=True
     )
@@ -112,6 +102,9 @@ class Membership(DBModel):
 
 
 class Invite(DBModel, AbstractBaseInvitation):
+    """
+    Custom invite inherited from django-invitations
+    """
     email = models.EmailField(
         unique=True,
         verbose_name="e-mail address",
@@ -177,9 +170,6 @@ class TicketedEvent(DBModel):
     Stores data for ticketed event
     """
 
-    def set_scanner_code():
-        return secrets.token_urlsafe(256)
-
     public_id = models.UUIDField(
         max_length=64, default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
@@ -205,7 +195,6 @@ class TicketedEvent(DBModel):
     )
     location = models.CharField(max_length=1024)
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    scanner_code = models.CharField(max_length=1024, default=set_scanner_code)
     price = models.DecimalField(
         validators=[MinValueValidator(0)],
         decimal_places=2,
@@ -273,11 +262,8 @@ class Ticket(DBModel):
     List of all the tickets distributed by the respective Ticketed Event.
     """
 
-    def set_embed_code():
-        return secrets.token_urlsafe(256)
-
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    embed_code = models.CharField(max_length=1024, default=set_embed_code)
+    embed_code = models.UUIDField(default=uuid.uuid4)
     ticketed_event = models.ForeignKey(
         TicketedEvent, on_delete=models.CASCADE, related_name="tickets"
     )

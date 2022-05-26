@@ -493,8 +493,7 @@ class Migration(migrations.Migration):
                 (
                     "scanner_code",
                     models.CharField(
-                        default=apps.root.models.TicketedEvent.set_scanner_code,
-                        max_length=1024,
+                        max_length=1024
                     ),
                 ),
                 (
@@ -638,7 +637,7 @@ class Migration(migrations.Migration):
                 (
                     "embed_code",
                     models.CharField(
-                        default=apps.root.models.Ticket.set_embed_code, max_length=1024
+                        max_length=1024
                     ),
                 ),
                 ("wallet_address", models.CharField(max_length=400)),

@@ -61,20 +61,21 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         # check user authenticated and membership to team PK
         user_logged_in = self.request.user.is_authenticated
         try:
-            user_has_membership = Membership.objects.select_related("team").get(
+            user_membership = Membership.objects.select_related("team").get(
                 team__id=self.kwargs["team_pk"], user__id=self.request.user.id
             )
+            self.team = user_membership.team
         except Exception:
-            user_has_membership = False
+            user_membership = False
 
-        return user_logged_in and user_has_membership
+        return user_logged_in and user_membership
 
     def handle_no_permission(self):
         return LoginRequiredMixin.handle_no_permission(self)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(dict(current_team=Team.objects.get(pk=self.kwargs["team_pk"])))
+        context.update(dict(current_team=self.team))
         return context
 
 

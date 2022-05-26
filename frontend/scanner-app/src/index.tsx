@@ -29,11 +29,18 @@ createServer({
       return this.schema.all("eventInfo");
     });
 
-    this.post("/ticketToken", (schema, request) => {
+    this.post("/ticketToken/success", (schema, request) => {
       const data = JSON.parse(request.requestBody);
       console.log(data);
 
       return { status: "succeess" };
+    });
+
+    this.post("/ticketToken/error", (schema, request) => {
+      const data = JSON.parse(request.requestBody);
+      console.log(data);
+
+      return { status: "error" };
     });
   },
 });

@@ -1,9 +1,9 @@
 {% extends "account/auth_base.html" %}
 
-{% block title %}User Settings - SocialPass {% endblock %}
+{% block title %}User Details - SocialPass {% endblock %}
 
-{% block navbar_page_name_1 %}User Settings{% endblock %}
-{% block navbar_page_name_2 %}User Settings{% endblock %}
+{% block navbar_page_name_1 %}User Details{% endblock %}
+{% block navbar_page_name_2 %}User Details{% endblock %}
 
 {% block inner %}
 <div class="row">
@@ -12,7 +12,7 @@
       <div class="card-header py-0">
         <div class="d-flex align-items-center py-3">
           <div class="pe-2">
-            <h6 class="m-0">User Detail</h6>
+            <h6 class="m-0">User Details</h6>
             <div class="text-muted text-xs mb-3">
               Details of a particular user.
             </div>
@@ -30,8 +30,8 @@
               Last Login: {{ request.user.last_login }}
             </div>
           </div>
-          {% if request.user.details %}
-          <p class="text-muted">{{ request.user.details }}</p>
+          {% if request.user.description %}
+          <p class="text-muted">{{ request.user.description }}</p>
           {% else %}
           <p class="text-muted">Description not set.</p>
           {% endif %}
@@ -44,7 +44,7 @@
                   Name
                 </td>
                 <td class="align-middle">
-                  {{ request.user.name }}
+                  {{ request.user.username }}
                 </td>
               </tr>
               <tr>
@@ -52,7 +52,7 @@
                   Email
                 </td>
                 <td class="align-middle">
-                  {{ request.user.details }}
+                  {{ request.user.email }}
                 </td>
               </tr>
             </tbody>

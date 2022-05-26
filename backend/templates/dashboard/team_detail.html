@@ -32,8 +32,8 @@
               Modified: {{ current_team.modified }}
             </div>
           </div>
-          {% if current_team.details %}
-          <p class="text-muted">{{ current_team.details }}</p>
+          {% if current_team.description %}
+          <p class="text-muted">{{ current_team.description }}</p>
           {% else %}
           <p class="text-muted">Description not set.</p>
           {% endif %}
@@ -54,14 +54,15 @@
                   Description
                 </td>
                 <td class="align-middle">
-                  {{ current_team.details }}
+                  {{ current_team.description }}
                 </td>
               </tr>
               <tr>
                 <td class="align-middle fw-bold">
-                  Website URL
+                  Team Members
                 </td>
                 <td class="align-middle">
+                  {{ current_team.members.count }}
                 </td>
               </tr>
             </tbody>

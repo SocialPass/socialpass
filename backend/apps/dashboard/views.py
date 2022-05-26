@@ -23,6 +23,33 @@ from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEv
 
 User = auth.get_user_model()
 
+class UserDetailView(TemplateView):
+    """
+    Returns the details of the logged in user.
+    """
+
+    template_name = "account/detail.html"
+
+
+class AcceptInviteView(AcceptInvite):
+    """
+    Inherited AcceptInvite from beekeeper-invitations
+    """
+
+    def post(self, *args, **kwargs):
+        """
+        Override invite view to either redirect to login or signup,
+        depending on if user has account or not
+        """
+        try:
+            self.object = self.get_object()
+            user = User.objects.get(email__iexact=self.object.email)
+            if user:
+                super().post(self, *args, **kwargs)
+                return redirect(reverse(settings.LOGIN_URL))
+        except Exception:
+            return super().post(self, *args, **kwargs)
+
 
 class TeamContextMixin(UserPassesTestMixin, ContextMixin):
     """
@@ -51,32 +78,6 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         return context
 
 
-class UserDetailView(TemplateView):
-    """
-    Returns the details of the logged in user.
-    """
-
-    template_name = "account/detail.html"
-
-
-class UserDeleteView(DeleteView):
-    """
-    Returns the details of the logged in user.
-    """
-
-    model = User
-    template_name = "account/delete.html"
-
-    def get_object(self):
-        return self.request.user
-
-    def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "User was deleted successfully."
-        )
-        return reverse("account_login")
-
-
 class RedirectToTeamView(RedirectView):
     """
     Root URL View
@@ -91,37 +92,9 @@ class RedirectToTeamView(RedirectView):
         if self.request.user.is_authenticated:
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
-                return reverse("dashboard", args=(membership.team.pk,))
+                return reverse("ticketgate_list", args=(membership.team.pk,))
         else:
             return reverse("account_login")
-
-
-class AcceptInviteView(AcceptInvite):
-    """
-    Inherited AcceptInvite from beekeeper-invitations
-    """
-
-    def post(self, *args, **kwargs):
-        """
-        Override invite view to either redirect to login or signup,
-        depending on if user has account or not
-        """
-        try:
-            self.object = self.get_object()
-            user = User.objects.get(email__iexact=self.object.email)
-            if user:
-                super().post(self, *args, **kwargs)
-                return redirect(reverse(settings.LOGIN_URL))
-        except Exception:
-            return super().post(self, *args, **kwargs)
-
-
-class DashboardView(TeamContextMixin, TemplateView):
-    """
-    Main dashboard page.
-    """
-
-    template_name = "dashboard/dashboard.html"
 
 
 class TeamDetailView(TeamContextMixin, TemplateView):

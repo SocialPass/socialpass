@@ -44,7 +44,7 @@
           </li>
           {% for member in request.user.membership_set.all %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'dashboard' member.team.pk %}">
+            <a class="nav-link" href="{% url 'ticketgate_list' member.team.pk %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
                 <i class="fa-solid fa-house-chimney"></i>
               </div>
@@ -80,14 +80,6 @@
                 <i class="fa-solid fa-envelope"></i>
               </div>
               <span class="nav-link-text">Manage Email</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if url_name == 'user_delete' %}active{% endif %}" href="{% url 'user_delete' %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
-                <i class="fa-solid fa-trash"></i>
-              </div>
-              <span class="nav-link-text">Delete Account</span>
             </a>
           </li>
           <li class="nav-item">
@@ -141,7 +133,7 @@
           <div class="container-fluid">
             <div class="d-flex align-items-center justify-content-center">
               <div class="copyright text-xs text-muted">
-                © {% now "Y" %} NFTY Labs. All rights reserved
+                © {% now "Y" %} SPTech Group Inc. All rights reserved
               </div>
             </div>
           </div>

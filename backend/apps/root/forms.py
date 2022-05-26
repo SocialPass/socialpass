@@ -22,7 +22,7 @@ class TeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = "__all__"
+        fields = ["name", "description", "image"]
 
 
 class TicketedEventForm(forms.ModelForm):

@@ -34,7 +34,7 @@ export function Home() {
     
     <body  
     style={{backgroundColor: "#3995B8"}}>
-      {<h2 style={{border: 15, padding: 50, margin: 20}}>SocialPass Logo</h2>}
+      {<h2 style={{padding: 50, textAlign: 'center'}}>SocialPass Logo</h2>}
       <div></div>
       
       <EventContainer

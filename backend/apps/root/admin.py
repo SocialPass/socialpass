@@ -4,7 +4,10 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
 from apps.root import pricing_service
-from apps.root.models import Membership, PricingRule, PricingRuleGroup, Signature, Team, Ticket, TicketedEvent, TicketedEventStripePayment
+from apps.root.models import (
+    Membership, PricingRule, PricingRuleGroup, RedemptionAccessKey, Signature, Team, Ticket, TicketedEvent,
+    TicketedEventStripePayment
+)
 
 User = get_user_model()
 
@@ -60,6 +63,11 @@ class TicketedEventAdmin(admin.ModelAdmin):
         "timezone",
     )
     search_fields = ("title", "user__username", "team__name", "location")
+
+
+@admin.register(RedemptionAccessKey)
+class RedemptionAccessKeyAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Ticket)

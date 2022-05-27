@@ -42,7 +42,7 @@ class TicketedEventSerializer(serializers.ModelSerializer):
             "team",
             "title",
             "description",
-            "ticket_options",
+            "requirements",
             "limit_per_person",
             "date",
             "timezone",

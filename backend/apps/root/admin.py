@@ -64,8 +64,8 @@ class TicketedEventAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("ticketed_event", "wallet_address", "image")
-    search_fields = ("ticketed_event__title", "wallet_address", "image")
+    list_display = ("ticketed_event", "signature", "image_location")
+    search_fields = ("ticketed_event__title", "signature", "image_location")
 
 
 @admin.register(PricingRule)

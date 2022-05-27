@@ -211,6 +211,12 @@ class TicketedEvent(DBModel):
         on_delete=models.RESTRICT,  # Forbids pricing rules from being deleted
     )
 
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"{self.team} - {self.title}"
+
     @property
     def has_pending_checkout(self):
         return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
@@ -260,29 +266,28 @@ class Ticket(DBModel):
     List of all the tickets distributed by the respective Ticketed Event.
     """
 
-    filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    embed_code = models.UUIDField(default=uuid.uuid4)
     ticketed_event = models.ForeignKey(
         TicketedEvent, on_delete=models.CASCADE, related_name="tickets"
     )
     signature = models.ForeignKey(
         Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
-    wallet_address = models.CharField(max_length=400)
+    filename = models.UUIDField(default=uuid.uuid4, editable=False)
+    embed_code = models.UUIDField(default=uuid.uuid4)
     requirement = models.JSONField(
         blank=True,
         null=True,
         validators=[JSONSchemaValidator(limit_value=REQUIREMENT_SCHEMA)],
     )
     option = models.JSONField(blank=True, null=True)
-    image = models.ImageField(
-        null=True, blank=True, height_field=None, width_field=None, max_length=255
-    )
-    temporary_download_url = models.TextField(null=True, blank=True)
     redeemed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.ticketed_event.title})"
+
+    @property
+    def image_location(self):
+        return f"{settings.AWS_TICKET_DIRECTORY}{self.filename}.png"
 
 
 class PricingRule(DBModel):

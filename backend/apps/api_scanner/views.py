@@ -6,7 +6,6 @@ from rest_framework import serializers as drf_serializers
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import urllib3
 
 from apps.root.models import RedemptionAccessKey, Ticket
 from apps.services import ticketing_service
@@ -83,7 +82,7 @@ class ScanTicket(APIView, SetAccessKeyAndTicketedEventMixin):
             ticket = ticketing_service.get_ticket_from_embedded_qr_code(embed_code)
         except ticketing_service.InvalidEmbedCodeError:
             return Response(
-                status=404,
+                status=422,
                 data={
                     "code": "embed-code-invalid",
                     "message": "Invalid embedcode format."

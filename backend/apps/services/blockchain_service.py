@@ -1,5 +1,5 @@
 import requests
-from datetime.datetime import utcnow
+from datetime import datetime
 from eth_account.messages import encode_defunct
 from pytz import utc
 from web3.auto import w3
@@ -16,7 +16,7 @@ def validate_signature(
         return False, "Signature message already verified."
 
     # check if expired
-    if signature.expires < (utcnow().replace(tzinfo=utc)):
+    if signature.expires < (datetime.utcnow().replace(tzinfo=utc)):
         return False, f"Signature request expired at {signature.expires}"
 
     # check for id mismatch

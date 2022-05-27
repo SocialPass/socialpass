@@ -14,8 +14,13 @@ urlpatterns = [
         name="ticketedevent-request-access",
     ),
     path(
+        "ticketed-event/verify-access/<str:public_id>",
+        views.TicketedEventVerifyAccess.as_view(),
+        name="ticketedevent-request-access",
+    ),
+    path(
         "ticketed-event/grant-access/<str:public_id>",
-        views.TicketedEventGrantAccess.as_view(),
+        views.TicketedEventIssueTickets.as_view(),
         name="ticketedevent-grant-access",
     ),
 ]

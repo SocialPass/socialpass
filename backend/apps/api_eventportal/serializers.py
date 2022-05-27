@@ -16,6 +16,17 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image"]
 
 
+class SignatureSerializer(serializers.ModelSerializer):
+    """
+    Signature serializer
+    """
+    signing_message = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Signature
+        fields = ["signing_message"]
+
+
 class TicketedEventSerializer(serializers.ModelSerializer):
     """
     Serializes Ticketed events
@@ -23,7 +34,6 @@ class TicketedEventSerializer(serializers.ModelSerializer):
 
     ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
     date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
-
     team = TeamSerializer()
 
     class Meta:
@@ -32,7 +42,7 @@ class TicketedEventSerializer(serializers.ModelSerializer):
             "team",
             "title",
             "description",
-            "requirements",
+            "ticket_options",
             "limit_per_person",
             "date",
             "timezone",
@@ -43,30 +53,9 @@ class TicketedEventSerializer(serializers.ModelSerializer):
 
 
 #
-# CHECKOUT - WEB3 ///////////////////////////////////////////////////////////////////////////////
+# VIEW SERIALIZERS ////////////////////////////////////////////////////////////////////////////////
 #
-class BlockchainRequestAccessInput(serializers.Serializer):
-    """
-    Serializes data for TokenGateRequestBlockchainAccess input
-    - Signature model to be signed
-    - Redeemable assets (if applicable)
-    """
-
-    address = serializers.CharField()
-
-
-class BlockchainRequestAccessOutput(serializers.ModelSerializer):
-    """
-    Serializes data for TokenGateRequestBlockchainAccess output
-    - Signature model to be signed
-    """
-
-    class Meta:
-        model = Signature
-        fields = ["signing_message"]
-
-
-class BlockchainGrantAccessInput(serializers.Serializer):
+class TicketedEventVerifyAccessSerializer(serializers.Serializer):
     """
     Serializes data for TokenGateGrantBlockchainAccess
     - Wallet address
@@ -74,7 +63,6 @@ class BlockchainGrantAccessInput(serializers.Serializer):
     - Signature id
     """
 
-    address = serializers.CharField()
-    signed_message = serializers.CharField()
-    signature_id = serializers.CharField()
-    access_data = serializers.JSONField(required=False, default=[])
+    wallet_address = serializers.CharField(required=True)
+    signed_message = serializers.CharField(required=True)
+    signature_id = serializers.CharField(required=True)

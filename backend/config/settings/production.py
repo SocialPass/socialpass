@@ -76,7 +76,7 @@ ANYMAIL = {
 # STATIC
 # ------------------------------------------------------------------------------
 STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
-STATIC_URL = f"https://{AWS_LOCATION}/static/"
+STATIC_URL = f"https://{AWS_LOCATION}/public/static/"
 
 # LOGGING
 # ------------------------------------------------------------------------------

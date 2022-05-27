@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.gates import Blockchain
+from apps.services import Blockchain
 from apps.root.models import Signature, Ticket, TicketedEvent
 
 from .serializers import BlockchainGrantAccessInput, BlockchainRequestAccessInput, TicketedEventSerializer

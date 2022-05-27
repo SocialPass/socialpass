@@ -17,8 +17,6 @@ from invitations.base_invitation import AbstractBaseInvitation
 from model_utils.models import TimeStampedModel
 from pytz import utc
 
-from apps.gates import Ticketing
-
 from .model_field_choices import STIPE_PAYMENT_STATUSES
 from .model_field_schemas import REQUIREMENT_SCHEMA, REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
@@ -285,35 +283,6 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.ticketed_event.title})"
-
-    def populate_data(self, **kwargs):
-        """
-        method to populate necessary ticketdata on creation
-        """
-        # set signature
-        if not self.signature:
-            self.signature = kwargs["signature"]
-
-        # create ticket image
-        if not self.image:
-            Ticketing.Utilities.create_ticket_store_s3(
-                event_data={
-                    "event_name": self.ticketed_event.title,
-                    "event_date": self.ticketed_event.date.strftime(
-                        "%m/%d/%Y, %H:%M:%S"
-                    ),
-                    "event_location": self.ticketed_event.location,
-                },
-                filename=self.filename,
-                embed=f"{self.embed_code}/{self.filename}",
-                top_banner_text="SocialPass Ticket",
-            )
-            self.image = f"tickets/{str(self.filename)}.png"
-        # set download url (always)
-        self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(
-            ticket=self
-        )
-        self.save()
 
 
 class PricingRule(DBModel):

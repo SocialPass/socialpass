@@ -17,10 +17,10 @@ export function Home() {
     <>
     
       <EventContainer
-        event_name={eventData.event_name}
-        event_attendance={eventData.event_attendance}
-        event_date={eventData.event_date} 
-        event_venue={eventData.event_venue}
+        event_name={"1"}
+        event_attendance={1}
+        event_date={"1"} 
+        event_venue={"1"}
       />
 
     </>

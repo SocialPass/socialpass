@@ -16,16 +16,5 @@ export function EventContainer({ event_name, event_attendance, event_date, event
     navigate(-1);
   }
   return (
-    <header className="d-flex flex-row justify-content-between py-4 px-4">
-      <div className="py-2 ">
-        
-      </div>
-      <div className="d-flex flex-column align-items-center">
-        <h3>{event_name}</h3>
-        <h3>Teste</h3>
-
-      </div>
-      <div></div>
-    </header>
-  );
+    <h3>Teste</h3>  );
 }

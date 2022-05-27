@@ -165,18 +165,10 @@ class Invite(DBModel, AbstractBaseInvitation):
         return f"{self.team.name}-{self.email}"
 
 
-class TicketedEventQuerySet(models.QuerySet):
-
-    def redemeed_tickets(self):
-        return self.tickets.filter(redeemed=True)
-
-
 class TicketedEvent(DBModel):
     """
     Stores data for ticketed event
     """
-
-    objects = TicketedEventQuerySet.as_manager()
 
     def set_scanner_code():
         return secrets.token_urlsafe(256)

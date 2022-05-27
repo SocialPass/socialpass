@@ -17,11 +17,11 @@ class InvalidEmbedCodeError(Exception):
 def get_ticket_from_embedded_qr_code(embed_code: str) -> Ticket:
     """Returns a ticket from the given embed code."""
     try:
-        embed_code, _ = embed_code.split("/")
+        embed_code, filename = embed_code.split("/")
     except ValueError:
         raise InvalidEmbedCodeError("Embed code is invalid.")
 
-    return Ticket.objects.get(embed_code=embed_code)
+    return Ticket.objects.get(embed_code=embed_code, filename=filename)
 
 
 def access_key_can_redeem_ticket(ticket: Ticket, redemption_access_key: RedemptionAccessKey = None) -> bool:

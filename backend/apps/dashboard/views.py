@@ -15,7 +15,7 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
-from apps.root import pricing_service
+from apps.services import pricing_service
 from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.model_field_choices import BLOCKCHAINS, CHAIN_IDS, ASSET_TYPES

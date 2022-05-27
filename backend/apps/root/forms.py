@@ -3,7 +3,7 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm, InviteForm
 
-from apps.root import pricing_service
+from apps.services import pricing_service
 from apps.root.models import Invite, Team, TicketedEvent
 
 

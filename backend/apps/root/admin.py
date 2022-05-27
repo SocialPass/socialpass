@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
-from apps.root import pricing_service
+from apps.services import pricing_service
 from apps.root.models import Membership, PricingRule, PricingRuleGroup, Signature, Team, Ticket, TicketedEvent, TicketedEventStripePayment
 
 User = get_user_model()

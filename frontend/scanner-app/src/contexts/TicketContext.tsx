@@ -8,10 +8,10 @@ const TicketProvider = ({ children }: any) => {
 
   const eventData = [
     {
-      event_name: 'Event Name',
-      event_attendance: '750',
-      event_date: '2022-12-12T22:30:00Z',
-      event_venue: 'The Ritz Carlton - South Beach',
+      name: 'Event Name',
+      attendance: '750',
+      date: '2022-12-12T22:30:00Z',
+      venue: 'The Ritz Carlton - South Beach',
     }
   ];
 

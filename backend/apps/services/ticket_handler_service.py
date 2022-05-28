@@ -3,7 +3,7 @@ import io
 from django.conf import settings
 
 from apps.root.models import Ticket, TicketedEvent
-from apps.services import TicketGenerator
+from apps.services import TicketImageGenerator
 
 # s3 client init
 s3 = boto3.client(
@@ -42,7 +42,7 @@ def create_ticket_store_s3_bucket(
     created_ticket_db = Ticket.objects.create(ticketed_event=ticketed_event)
 
     # Generate ticket image from request data
-    created_ticket_img = TicketGenerator.TicketPartGenerator.generate_ticket(
+    created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
         event_data={
             "event_name": ticketed_event.title,
             "event_date": ticketed_event.date.strftime(

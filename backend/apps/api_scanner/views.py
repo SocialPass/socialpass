@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.root.models import RedemptionAccessKey, Ticket
-from apps.services import ticketing_service
+from apps.services import ticket_scanner_service
 
 from . import serializers
 
@@ -79,8 +79,8 @@ class ScanTicket(APIView, SetAccessKeyAndTicketedEventMixin):
 
         # Retrieve ticket
         try:
-            ticket = ticketing_service.get_ticket_from_embedded_qr_code(embed_code)
-        except ticketing_service.InvalidEmbedCodeError:
+            ticket = ticket_scanner_service.get_ticket_from_embedded_qr_code(embed_code)
+        except ticket_scanner_service.InvalidEmbedCodeError:
             return Response(
                 status=422,
                 data={
@@ -97,15 +97,15 @@ class ScanTicket(APIView, SetAccessKeyAndTicketedEventMixin):
 
         # Redeem ticket
         try:
-            ticketing_service.redeem_ticket(ticket, self.redemption_access_key)
-        except ticketing_service.ForbiddenRedemptionError:
+            ticket_scanner_service.redeem_ticket(ticket, self.redemption_access_key)
+        except ticket_scanner_service.ForbiddenRedemptionError:
             return Response(
                 status=403,
                 data={
                     "code": "redemption-access-key-unauthorized",
                     "message": "Redemption access key has no access to this TicketedEvent."
                 })
-        except ticketing_service.AlreadyRedeemed:
+        except ticket_scanner_service.AlreadyRedeemed:
             return Response(
                 status=409,
                 data={

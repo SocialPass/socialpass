@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.services.ticketing_service import get_ticket_from_embedded_qr_code
+from apps.services.ticket_scanner_service import get_ticket_from_embedded_qr_code
 from apps.root.models import Ticket
 
 

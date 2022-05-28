@@ -168,6 +168,9 @@ class TicketedEvent(DBModel):
     Stores data for ticketed event
     """
 
+    def set_scanner_code():
+        return secrets.token_urlsafe(256)
+
     public_id = models.UUIDField(
         max_length=64, default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
@@ -220,6 +223,17 @@ class TicketedEvent(DBModel):
     @property
     def has_pending_checkout(self):
         return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
+
+
+class RedemptionAccessKey(DBModel):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ticketed_event = models.ForeignKey(
+        TicketedEvent, on_delete=models.CASCADE,
+        related_name="redemption_access_keys"
+    )
+    # TODO in a near future, different ScannerKeyAccess
+    # can give access to scanning diferent type of tickets.
 
 
 class Signature(DBModel):
@@ -281,6 +295,8 @@ class Ticket(DBModel):
     )
     option = models.JSONField(blank=True, null=True)
     redeemed = models.BooleanField(default=False)
+    redeemed_at = models.DateTimeField(null=True, blank=True)
+    redeemed_by = models.ForeignKey(RedemptionAccessKey, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.ticketed_event.title})"
@@ -288,6 +304,38 @@ class Ticket(DBModel):
     @property
     def image_location(self):
         return f"{settings.AWS_TICKET_DIRECTORY}{self.filename}.png"
+
+    def embed(self):
+        return f"{self.embed_code}/{self.filename}"
+
+    def populate_data(self, **kwargs):
+        """
+        method to populate necessary ticketdata on creation
+        """
+        # set signature
+        if not self.signature:
+            self.signature = kwargs["signature"]
+
+        # create ticket image
+        if not self.image:
+            Ticketing.Utilities.create_ticket_store_s3(
+                event_data={
+                    "event_name": self.ticketed_event.title,
+                    "event_date": self.ticketed_event.date.strftime(
+                        "%m/%d/%Y, %H:%M:%S"
+                    ),
+                    "event_location": self.ticketed_event.location,
+                },
+                filename=self.filename,
+                embed=self.embed,
+                top_banner_text="SocialPass Ticket",
+            )
+            self.image = f"tickets/{str(self.filename)}.png"
+        # set download url (always)
+        self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(
+            ticket=self
+        )
+        self.save()
 
 
 class PricingRule(DBModel):

@@ -4,12 +4,12 @@ from . import views
 
 urlpatterns = [
     path(
-        "ticketed-event/<uuid:access_key>",
+        "<uuid:access_key>/scan-landing",
         views.TicketedEventRetrieve.as_view(),
-        name="ticketedevent-retrieve",
+        name="scan-landing",
     ),
     path(
-        "ticketed-event/<uuid:access_key>/scan-ticket",
+        "<uuid:access_key>/scan-ticket",
         views.ScanTicket.as_view(),
         name="scan-ticket",
     ),

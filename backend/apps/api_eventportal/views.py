@@ -22,9 +22,9 @@ class SetTicketedEvent():
             raise Http404
 
 
-class TicketedEventRetrieve(RetrieveAPIView):
+class EventPortalRetrieve(RetrieveAPIView):
     """
-    Returns ticketed_event by `public_id`
+    Returns TicketedEvent associated with event portal
     """
     lookup_field = "public_id"
     queryset = TicketedEvent.objects.all()
@@ -32,15 +32,15 @@ class TicketedEventRetrieve(RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-class TicketedEventRequestAccess(SetTicketedEvent, APIView):
+class EventPortalRequestAccess(SetTicketedEvent, APIView):
     """
-    Creates & returns one-time Signature model for an EVM client to sign.
-    This signature is used as authentication in further views for accessing a Ticketed Event
+    View for handling requesting access into event portal
+    Can be either blockchain
+    or fiat (in the future)
     """
-    pass
 
 
-class TicketedEventVerifyAccess(SetTicketedEvent, APIView):
+class EventPortalVerifyAccess(SetTicketedEvent, APIView):
     """
     Verify Signature.signed_message, originating from TicketedEventRequestAccess,
     and mark Signature.is_verified as true
@@ -52,7 +52,7 @@ class TicketedEventVerifyAccess(SetTicketedEvent, APIView):
     pass
 
 
-class TicketedEventIssueTickets(SetTicketedEvent, APIView):
+class EventPortalIssueTickets(SetTicketedEvent, APIView):
     """
     Issue selected ticket options, originating from TicketedEventVerifyAccess
     A. Success: Create & return selected tickets

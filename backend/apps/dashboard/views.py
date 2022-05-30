@@ -331,7 +331,11 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
             stripe_session = stripe.checkout.Session.retrieve(
                 issued_payment.stripe_checkout_session_id
             )
-            return redirect(stripe_session["url"])
+            if stripe_session['status'] == 'expired' and stripe_session['payment_status'] == 'unpaid':
+                issued_payment.status = 'FAILURE'
+                issued_payment.save()
+            else:
+                return redirect(stripe_session['url'])
 
         # build callback urls
         success_callback = (

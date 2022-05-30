@@ -222,7 +222,11 @@ class TicketedEvent(DBModel):
 
     @property
     def has_pending_checkout(self):
-        return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
+        last_payment = self.payments.last()
+        if last_payment is None:
+            return True
+
+        return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
 
 class RedemptionAccessKey(DBModel):

@@ -9,19 +9,6 @@ from apps.root.models import Signature, Ticket, TicketedEvent
 from . import serializers
 
 
-class SetTicketedEvent():
-    """
-    Custom helper class to set ticketed_event based on url kwargs
-    """
-    ticketed_event = None
-
-    def set_ticketed_event(self, public_id):
-        try:
-            self.ticketed_event = TicketedEvent.objects.get(public_id=public_id)
-        except Exception:
-            raise Http404
-
-
 class EventPortalRetrieve(RetrieveAPIView):
     """
     Returns TicketedEvent associated with event portal
@@ -32,32 +19,22 @@ class EventPortalRetrieve(RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-class EventPortalRequestAccess(SetTicketedEvent, APIView):
+class EventPortalRequestAccess(APIView):
     """
-    View for handling requesting access into event portal
-    Can be either blockchain
-    or fiat (in the future)
-    """
+    Master view for requesting access into event portal
+    Based on 'access' query-string
 
-
-class EventPortalVerifyAccess(SetTicketedEvent, APIView):
-    """
-    Verify Signature.signed_message, originating from TicketedEventRequestAccess,
-    and mark Signature.is_verified as true
-    A. Success: Return available ticket options, based on asset ownership of Signature.wallet_address
-    B. Failure: Return 401 if unable to verify signature, 403 if unable to verify assets
-
-    Note: Uses signature.unique_code as authentication (check for verified & redeemed)
+    Current types of access
+    - Asset Ownership ('blockchain')
     """
     pass
 
-
-class EventPortalIssueTickets(SetTicketedEvent, APIView):
+class EventPortalGrantAccess(APIView):
     """
-    Issue selected ticket options, originating from TicketedEventVerifyAccess
-    A. Success: Create & return selected tickets
-    B. Failure: Return 401 if unable to verify signature.unique_code, 403 if unable to verify ticket selections
+    Master view for verifying access & issuing tickets into event portal
+    Based on 'access' query-string
 
-    Note: Uses signature.unique_code as authentication (check for verified & redeemed)
+    Current types of access
+    - Asset Ownership ('blockchain')
     """
     pass

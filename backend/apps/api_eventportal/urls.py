@@ -15,12 +15,7 @@ urlpatterns = [
     ),
     path(
         "verify-access/<str:public_id>",
-        views.EventPortalVerifyAccess.as_view(),
-        name="eventportal_verify",
-    ),
-    path(
-        "grant-access/<str:public_id>",
-        views.EventPortalIssueTickets.as_view(),
-        name="eventportal_-grant-access",
+        views.EventPortalGrantAccess.as_view(),
+        name="eventportal_grant",
     ),
 ]

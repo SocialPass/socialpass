@@ -1,5 +1,4 @@
 import math
-import secrets
 import uuid
 from datetime import datetime, timedelta
 
@@ -26,18 +25,14 @@ class CustomUserManager(UserManager):
     """
     Prefetch members for user
     """
-
-    def get(self, *args, **kwargs):
-        return super().prefetch_related("membership_set").get(*args, **kwargs)
+    pass
 
 
 class CustomMembershipManager(models.Manager):
     """
     Prefetch teams for members
     """
-
-    def get_queryset(self, *args, **kwargs):
-        return super().get_queryset(*args, **kwargs).prefetch_related("team")
+    pass
 
 
 class DBModel(TimeStampedModel):
@@ -53,9 +48,6 @@ class User(AbstractUser):
     """
     Default custom user model for backend.
     """
-
-    objects = CustomUserManager()
-
 
 class Team(DBModel):
     """
@@ -87,7 +79,6 @@ class Membership(DBModel):
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    objects = CustomMembershipManager()
 
     class Meta:
         unique_together = ("team", "user")
@@ -167,9 +158,6 @@ class TicketedEvent(DBModel):
     """
     Stores data for ticketed event
     """
-
-    def set_scanner_code():
-        return secrets.token_urlsafe(256)
 
     public_id = models.UUIDField(
         max_length=64, default=uuid.uuid4, editable=False, unique=True, db_index=True
@@ -288,12 +276,6 @@ class Ticket(DBModel):
     )
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
     embed_code = models.UUIDField(default=uuid.uuid4)
-    requirement = models.JSONField(
-        blank=True,
-        null=True,
-        validators=[JSONSchemaValidator(limit_value=REQUIREMENT_SCHEMA)],
-    )
-    option = models.JSONField(blank=True, null=True)
     redeemed = models.BooleanField(default=False)
     redeemed_at = models.DateTimeField(null=True, blank=True)
     redeemed_by = models.ForeignKey(RedemptionAccessKey, on_delete=models.SET_NULL, null=True, blank=True)
@@ -305,37 +287,9 @@ class Ticket(DBModel):
     def image_location(self):
         return f"{settings.AWS_TICKET_DIRECTORY}{self.filename}.png"
 
+    @property
     def embed(self):
         return f"{self.embed_code}/{self.filename}"
-
-    def populate_data(self, **kwargs):
-        """
-        method to populate necessary ticketdata on creation
-        """
-        # set signature
-        if not self.signature:
-            self.signature = kwargs["signature"]
-
-        # create ticket image
-        if not self.image:
-            Ticketing.Utilities.create_ticket_store_s3(
-                event_data={
-                    "event_name": self.ticketed_event.title,
-                    "event_date": self.ticketed_event.date.strftime(
-                        "%m/%d/%Y, %H:%M:%S"
-                    ),
-                    "event_location": self.ticketed_event.location,
-                },
-                filename=self.filename,
-                embed=self.embed,
-                top_banner_text="SocialPass Ticket",
-            )
-            self.image = f"tickets/{str(self.filename)}.png"
-        # set download url (always)
-        self.temporary_download_url = Ticketing.Utilities.fetch_ticket_download_url(
-            ticket=self
-        )
-        self.save()
 
 
 class PricingRule(DBModel):
@@ -412,26 +366,3 @@ class TicketedEventStripePayment(DBModel):
     stripe_checkout_session_id = models.CharField(max_length=1024)
     callaback_timestamp = models.DateTimeField(null=True, blank=True)
     acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
-
-
-# https://github.com/jazzband/django-invitations/blob/045dc4d55369be33e9c8711dd1c9d0bc793d64cb/invitations/models.py#L76-L96
-# here for backwards compatibility, historic allauth adapter
-if settings.INVITATIONS_ACCOUNT_ADAPTER == "invitations.models.InvitationsAdapter":
-    from allauth.account.adapter import DefaultAccountAdapter
-    from allauth.account.signals import user_signed_up
-
-    class InvitationsAdapter(DefaultAccountAdapter):
-        def is_open_for_signup(self, request):
-            if hasattr(request, "session") and request.session.get(
-                "account_verified_email",
-            ):
-                return True
-            elif settings.INVITATIONS_INVITATION_ONLY is True:
-                # Site is ONLY open for invites
-                return False
-            else:
-                # Site is open to signup
-                return True
-
-        def get_user_signed_up_signal(self):
-            return user_signed_up

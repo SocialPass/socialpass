@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from apps.root.models import Signature, Team, Ticket, TicketedEvent
 
-
-class TicketedEventSerializer(serializers.ModelSerializer):
+class EventPortalRetrieveSerializer(serializers.ModelSerializer):
+    """
+    Model serializer for TicketedEvent
+    Method fields for grouping together main information
+    """
     team_info = serializers.SerializerMethodField()
     ticket_info = serializers.SerializerMethodField()
     event_info = serializers.SerializerMethodField()
@@ -16,6 +19,7 @@ class TicketedEventSerializer(serializers.ModelSerializer):
         ]
 
     def get_ticket_info(self, obj):
+        # TODO: This method probably belongs in a service in itself.
         current_ticket_count = obj.tickets.count()
         if current_ticket_count + obj.limit_per_person > obj.capacity:
             ticket_limit = obj.capacity - current_ticket_count
@@ -44,3 +48,11 @@ class TicketedEventSerializer(serializers.ModelSerializer):
            "capacity": obj.capacity,
         }
 
+
+class RequestAccessBlockchain(serializers.ModelSerializer):
+    class Meta:
+        model = Signature
+        fields = [
+            "unique_code",
+            "signing_message",
+        ]

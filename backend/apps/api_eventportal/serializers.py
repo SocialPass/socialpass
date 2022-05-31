@@ -6,14 +6,14 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
     Model serializer for TicketedEvent
     Method fields for grouping together main information
     """
-    team_info = serializers.SerializerMethodField()
+    organizer_info = serializers.SerializerMethodField()
     ticket_info = serializers.SerializerMethodField()
     event_info = serializers.SerializerMethodField()
 
     class Meta:
         model = TicketedEvent
         fields = [
-            "team_info",
+            "organizer_info",
             "ticket_info",
             "event_info",
         ]
@@ -27,15 +27,16 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
             ticket_limit = obj.limit_per_person
 
         return {
-            "capacity":obj.capacity,
-            "current_tickets": current_ticket_count,
-            "ticket_limit": ticket_limit,
+            "total_capacity":obj.capacity,
+            "total_tickets_issued": current_ticket_count,
+            "limit_per_person": ticket_limit,
         }
 
-    def get_team_info(self, obj):
+    def get_organizer_info(self, obj):
         return {
             "name": obj.team.name,
-            #"profile_image":  obj.team.image
+            "url": "",
+            "profile_image":  obj.team.image.url if obj.team.image else None
         }
     def get_event_info(self, obj):
         return {
@@ -45,7 +46,6 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
            "date": obj.date,
            "timezone": obj.timezone,
            "location": obj.location,
-           "capacity": obj.capacity,
         }
 
 

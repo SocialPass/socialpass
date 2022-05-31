@@ -17,7 +17,7 @@ from model_utils.models import TimeStampedModel
 from pytz import utc
 
 from .model_field_choices import STIPE_PAYMENT_STATUSES
-from .model_field_schemas import REQUIREMENT_SCHEMA, REQUIREMENTS_SCHEMA
+from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
 
 
@@ -170,7 +170,7 @@ class TicketedEvent(DBModel):
         default=list,
         blank=True,
         null=True,
-        validators=[JSONSchemaValidator(limit_value=REQUIREMENTS_SCHEMA)],
+        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
     limit_per_person = models.IntegerField(
         default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]

@@ -8,7 +8,7 @@
 		<title>{% block title %}SocialPass{% endblock title %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
    	<script src="{% static 'js/jquery.min.js' %}"></script>
-		<link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
 		<!-- Theme font -->
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 		<!-- Soft UI CSS -->
@@ -42,8 +42,10 @@
 			<div class="sidenav-header">
 				<i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
 				<a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'ticketgate_list' current_team.pk %}">
-					<img src="{% static 'images/socialpass-icon.png' %}" class="navbar-brand-img h-100" alt="main_logo">
-					<span class="ms-2 font-weight-bold text-primary fs-5">SocialPass</span>
+					<img src="{% static 'images/SocialPass-Icon.svg' %}" class="navbar-brand-img h-100" alt="main_logo">
+					<span class="ms-2 font-weight-bold fs-5">
+						<span class="text-primary">Social</span><span class="text-info">Pass</span>
+					</span>
 				</a>
 			</div>
 			<hr class="horizontal dark mt-0">
@@ -56,7 +58,7 @@
           </li>
             <li class="nav-item">
               <a class="nav-link {% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' %}active{% endif %}" href="{% url 'ticketgate_list' current_team.pk %}">
-                <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
+                <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-5 me-3">
                   <i class="fa-solid fa-ticket"></i>
                 </div>
                 <span class="nav-link-text">My Events</span>
@@ -69,7 +71,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'team_detail' or url_name == 'team_update' %}active{% endif %}" href="{% url 'team_detail' current_team.pk %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-5 me-3">
                 <i class="fa-solid fa-gears"></i>
               </div>
               <span class="nav-link-text">Team Settings</span>
@@ -77,7 +79,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'team_members' %}active{% endif %}" href="{% url 'team_members' current_team.pk %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-5 me-3">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-5 me-3">
                 <i class="fa-solid fa-ticket"></i>
               </div>
               <span class="nav-link-text">Manage Members</span>
@@ -90,7 +92,7 @@
          </li>
          <li class="nav-item">
            <a class="nav-link {% if url_name == 'user_detail' %}active{% endif %}" href="{% url 'user_detail' %}">
-             <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+             <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                <i class="fa-solid fa-user"></i>
              </div>
              <span class="nav-link-text">User Settings</span>

@@ -1,10 +1,10 @@
 from django.test import TestCase
 
-from apps.services.ticket_scanner_service import get_ticket_from_embedded_qr_code
 from apps.root.models import Ticket
+from apps.services.scanner_service import get_ticket_from_embedded_qr_code
 
 
-class TestTicketingService(TestCase):
+class TestScanningService(TestCase):
 
     # TODO: add ticket fixtures
 
@@ -12,6 +12,8 @@ class TestTicketingService(TestCase):
         ticket = Ticket.objects.last()
         if ticket:
             self.assert_equals(
-                get_ticket_from_embedded_qr_code(f"{ticket.embed_code}/{ticket.filename}").id,
-                ticket.id
+                get_ticket_from_embedded_qr_code(
+                    f"{ticket.embed_code}/{ticket.filename}"
+                ).id,
+                ticket.id,
             )

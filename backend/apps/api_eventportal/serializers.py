@@ -1,11 +1,14 @@
 from rest_framework import serializers
-from apps.root.models import Signature, Team, Ticket, TicketedEvent
+
+from apps.root.models import Signature, TicketedEvent
+
 
 class EventPortalRetrieveSerializer(serializers.ModelSerializer):
     """
     Model serializer for TicketedEvent
     Method fields for grouping together main information
     """
+
     organizer_info = serializers.SerializerMethodField()
     ticket_info = serializers.SerializerMethodField()
     event_info = serializers.SerializerMethodField()
@@ -27,7 +30,7 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
             ticket_limit = obj.limit_per_person
 
         return {
-            "total_capacity":obj.capacity,
+            "total_capacity": obj.capacity,
             "total_tickets_issued": current_ticket_count,
             "limit_per_person": ticket_limit,
         }
@@ -36,16 +39,17 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
         return {
             "name": obj.team.name,
             "url": "",
-            "profile_image":  obj.team.image.url if obj.team.image else None
+            "profile_image": obj.team.image.url if obj.team.image else None,
         }
+
     def get_event_info(self, obj):
         return {
-           "title": obj.title,
-           "description": obj.description,
-           "requirements": obj.requirements,
-           "date": obj.date,
-           "timezone": obj.timezone,
-           "location": obj.location,
+            "title": obj.title,
+            "description": obj.description,
+            "requirements": obj.requirements,
+            "date": obj.date,
+            "timezone": obj.timezone,
+            "location": obj.location,
         }
 
 

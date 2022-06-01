@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.root.models import Ticket, Team, TicketedEvent
+from apps.root.models import Team, Ticket, TicketedEvent
 
 
 #
@@ -48,7 +48,4 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = [
-            "id",
-            "filename"
-        ]
+        fields = ["id", "filename"]

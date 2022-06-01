@@ -1,16 +1,17 @@
-import requests
 from datetime import datetime
+
 from eth_account.messages import encode_defunct
 from pytz import utc
 from web3.auto import w3
 
 from apps.root.models import Signature, TicketedEvent
 
+
 def validate_signature(
     signature: Signature,
     ticketed_event: TicketedEvent,
     signed_message: str,
-    wallet_address:str
+    wallet_address: str,
 ):
     """
     Validate a given signature
@@ -25,8 +26,8 @@ def validate_signature(
         return False, f"Signature request expired at {signature.expires}"
 
     # check for event mismatch
-    if signature.ticketed_event != ticketed_event_id:
-        return False, "Signature x TokenGate ID mismatch."
+    if signature.ticketed_event != ticketed_event:
+        return False, "Signature x TokenGate mismatch."
 
     # check if wallet_address matches recovered wallet_address
     _msg = encode_defunct(text=signature.signing_message)

@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 from django.db.models import Sum
 
 from apps.root.models import PricingRuleGroup, Team, TicketedEvent, TicketedEventStripePayment
@@ -80,7 +81,9 @@ def get_pricing_rule_for_ticket(
 def set_ticketed_event_price(ticketed_event: TicketedEvent):
     """Sets the price of a ticket based on its capacity."""
     ticketed_event.pricing_rule = get_pricing_rule_for_ticket(ticketed_event)
-    ticketed_event.price = ticketed_event.pricing_rule.price_per_ticket * ticketed_event.capacity
+    ticketed_event.price = (
+        ticketed_event.pricing_rule.price_per_ticket * ticketed_event.capacity
+    )
     ticketed_event.save()
 
 
@@ -102,7 +105,9 @@ def get_effective_payments(
     return payments.filter(status="SUCCESS")
 
 
-def get_in_progress_payment(ticketed_event: TicketedEvent) -> TicketedEventStripePayment:
+def get_in_progress_payment(
+    ticketed_event: TicketedEvent,
+) -> TicketedEventStripePayment:
     """Returns the payment of a ticket gate which is either PENDING or PROCESSING."""
     return ticketed_event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 

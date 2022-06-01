@@ -18,7 +18,7 @@ urlpatterns = [
 urlpatterns += [
     # API - Event Portal
     path("api/event-portal/", include("apps.api_eventportal.urls")),
-    path("api/scanner/", include("apps.api_scanner.urls")),    
+    path("api/scanner/", include("apps.api_scanner.urls")),
 ]
 
 # Debug URL's

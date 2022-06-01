@@ -1,4 +1,5 @@
 import logging
+
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
@@ -76,6 +77,7 @@ ANYMAIL = {
 # STATIC
 # ------------------------------------------------------------------------------
 STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
+AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
 STATIC_URL = f"https://{AWS_LOCATION}/public/static/"
 
 # LOGGING
@@ -129,8 +131,8 @@ sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=integrations,
     traces_sample_rate=0,  # Performance not an issue for this admin dashboard.
-    send_default_pii=env.bool('SENTRY_SEND_PII', default=True),
-    environment=env('SENTRY_ENV_NAME', default='unset-env')
+    send_default_pii=env.bool("SENTRY_SEND_PII", default=True),
+    environment=env("SENTRY_ENV_NAME", default="unset-env"),
 )
 
 # Your stuff...

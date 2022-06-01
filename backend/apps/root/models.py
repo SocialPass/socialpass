@@ -2,10 +2,11 @@ import math
 import uuid
 from datetime import datetime, timedelta
 
+import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -20,11 +21,21 @@ from .model_field_choices import STIPE_PAYMENT_STATUSES
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
 
+# s3 client init
+s3_client = boto3.client(
+    "s3",
+    region_name="nyc3",
+    endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+)
+
 
 class CustomUserManager(UserManager):
     """
     Prefetch members for user
     """
+
     pass
 
 
@@ -32,6 +43,7 @@ class CustomMembershipManager(models.Manager):
     """
     Prefetch teams for members
     """
+
     pass
 
 
@@ -48,6 +60,7 @@ class User(AbstractUser):
     """
     Default custom user model for backend.
     """
+
 
 class Team(DBModel):
     """
@@ -94,6 +107,7 @@ class Invite(DBModel, AbstractBaseInvitation):
     """
     Custom invite inherited from django-invitations
     """
+
     email = models.EmailField(
         unique=True,
         verbose_name="e-mail address",
@@ -101,7 +115,9 @@ class Invite(DBModel, AbstractBaseInvitation):
     )
     # custom
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
-    membership = models.ForeignKey(Membership, on_delete=models.CASCADE, blank=True, null=True)
+    membership = models.ForeignKey(
+        Membership, on_delete=models.CASCADE, blank=True, null=True
+    )
     archived_email = models.EmailField(blank=True, null=True)
 
     @classmethod
@@ -120,7 +136,9 @@ class Invite(DBModel, AbstractBaseInvitation):
 
     def send_invitation(self, request, **kwargs):
         current_site = get_current_site(request)
-        invite_url = reverse(settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key])
+        invite_url = reverse(
+            settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key]
+        )
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(
@@ -217,8 +235,7 @@ class RedemptionAccessKey(DBModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     ticketed_event = models.ForeignKey(
-        TicketedEvent, on_delete=models.CASCADE,
-        related_name="redemption_access_keys"
+        TicketedEvent, on_delete=models.CASCADE, related_name="redemption_access_keys"
     )
     # TODO in a near future, different ScannerKeyAccess
     # can give access to scanning diferent type of tickets.
@@ -278,7 +295,9 @@ class Ticket(DBModel):
     embed_code = models.UUIDField(default=uuid.uuid4)
     redeemed = models.BooleanField(default=False)
     redeemed_at = models.DateTimeField(null=True, blank=True)
-    redeemed_by = models.ForeignKey(RedemptionAccessKey, on_delete=models.SET_NULL, null=True, blank=True)
+    redeemed_by = models.ForeignKey(
+        RedemptionAccessKey, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.ticketed_event.title})"
@@ -291,6 +310,18 @@ class Ticket(DBModel):
     def embed(self):
         return f"{self.embed_code}/{self.filename}"
 
+    @property
+    def temporary_download_url(self):
+        # s3 client init
+        return s3_client.generate_presigned_url(
+            ClientMethod="get_object",
+            Params={
+                "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
+                "Key": f"media/tickets/{str(self.filename)}.png",
+            },
+            ExpiresIn=3600,
+        )
+
 
 class PricingRule(DBModel):
     """Maps a capacity to a price per capacity"""
@@ -298,9 +329,7 @@ class PricingRule(DBModel):
     min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
     max_capacity = models.IntegerField(null=True, blank=True)
     price_per_ticket = models.DecimalField(
-        validators=[MinValueValidator(0)],
-        decimal_places=2,
-        max_digits=10
+        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10
     )
     active = models.BooleanField(default=True)
     group = models.ForeignKey(
@@ -356,9 +385,7 @@ class TicketedEventStripePayment(DBModel):
         TicketedEvent, on_delete=models.RESTRICT, related_name="payments"
     )
     value = models.DecimalField(
-        validators=[MinValueValidator(0)],
-        decimal_places=2,
-        max_digits=10
+        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10
     )
     status = models.CharField(
         choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"

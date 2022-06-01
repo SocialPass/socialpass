@@ -3,8 +3,8 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm, InviteForm
 
-from apps.services import pricing_service
 from apps.root.models import Invite, Team, TicketedEvent
+from apps.services import pricing_service
 
 
 class TimeZoneForm(forms.Form):
@@ -65,10 +65,9 @@ class TicketedEventForm(forms.ModelForm):
         if not instance:
             return
 
-        if (
-            pricing_service.get_in_progress_payment(instance)
-            or pricing_service.get_effective_payments(instance.payments)
-        ):
+        if pricing_service.get_in_progress_payment(
+            instance
+        ) or pricing_service.get_effective_payments(instance.payments):
             self.fields["capacity"].disabled = True
 
     def save(self, commit: bool = ...) -> TicketedEvent:

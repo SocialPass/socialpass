@@ -275,7 +275,9 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 15,
 }
 if not DEBUG:
-    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",),
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
+        ("rest_framework.renderers.JSONRenderer",),
+    )
 
 
 # STORAGES
@@ -343,7 +345,7 @@ INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
 INVITATIONS_EMAIL_MAX_LENGTH = 254
 INVITATIONS_INVITATION_EXPIRY = 3
 INVITATIONS_CONFIRMATION_URL_NAME = "invitations:accept-invite"
-ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
+ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 
 # STRIPE
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")

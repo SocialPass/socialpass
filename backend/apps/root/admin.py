@@ -3,11 +3,18 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
-from apps.services import pricing_service
 from apps.root.models import (
-    Membership, PricingRule, PricingRuleGroup, RedemptionAccessKey,
-    Signature, Team, Ticket, TicketedEvent, TicketedEventStripePayment
+    Membership,
+    PricingRule,
+    PricingRuleGroup,
+    RedemptionAccessKey,
+    Signature,
+    Team,
+    Ticket,
+    TicketedEvent,
+    TicketedEventStripePayment,
 )
+from apps.services import pricing_service
 
 User = get_user_model()
 
@@ -120,10 +127,5 @@ def list_as_messages_str(elements: list, title: str):
 
 @admin.register(TicketedEventStripePayment)
 class TicketedEventStripePaymentAdmin(admin.ModelAdmin):
-    list_display = (
-        "ticketed_event",
-        "value",
-        "status"
-    )
+    list_display = ("ticketed_event", "value", "status")
     search_fields = ("ticketed_event", "value", "status")
-

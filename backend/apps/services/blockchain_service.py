@@ -4,10 +4,10 @@ from eth_account.messages import encode_defunct
 from pytz import utc
 from web3.auto import w3
 from web3 import Web3
-from apps.root.models import Signature, Event
+from apps.root.models import BlockchainOwnership, Event
 
 
-def validate_signature(event: Event, signature: Signature, signed_message: str, wallet_address:str):
+def validate_signature(event: Event, blockchain_ownership: BlockchainOwnership, signed_message: str, wallet_address:str):
     """
     Sets a signature as verified after successful verification
     Returns tuple of (verified:bool, verification_msg:str)
@@ -15,20 +15,16 @@ def validate_signature(event: Event, signature: Signature, signed_message: str, 
     verified = False
     verification_msg = None
     if signature.is_verified:
-        verification_msg = "Signature message already verified."
+        verification_msg = "BlockchainOwnership message already verified."
 
-    # check if already validated
-    if signature.is_verified:
-        verification_msg = "Signature already verified"
-        return verified, verification_msg
     # check if expired
     if signature.expires < (datetime.utcnow().replace(tzinfo=utc)):
-        verification_msg = f"Signature request expired at {signature.expires}"
+        verification_msg = f"BlockchainOwnership request expired at {signature.expires}"
         return verified, verification_msg
 
     # check for id mismatch
     if signature.event != event:
-        verification_msg = "Signature x TokenGate ID mismatch."
+        verification_msg = "BlockchainOwnership x TokenGate ID mismatch."
         return verified, verification_msg
 
     # check for valid wallet_address
@@ -41,7 +37,7 @@ def validate_signature(event: Event, signature: Signature, signed_message: str, 
         _msg = encode_defunct(text=signature.signing_message)
         _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
         if _recovered != wallet_address:
-            verification_msg = "Signature x Address mismatch."
+            verification_msg = "BlockchainOwnership x Address mismatch."
             return verified, verification_msg
     except Exception as e:
         verification_msg = "Unable to decode & validate signature, likely a forgery attempt."

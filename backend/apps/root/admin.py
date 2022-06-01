@@ -8,7 +8,7 @@ from apps.root.models import (
     PricingRule,
     PricingRuleGroup,
     RedemptionAccessKey,
-    Signature,
+    BlockchainOwnership,
     Team,
     Ticket,
     Event,
@@ -52,10 +52,10 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-@admin.register(Signature)
-class SignatureAdmin(admin.ModelAdmin):
-    list_display = ("event", "unique_code", "wallet_address", "is_verified")
-    search_fields = ("event__title", "unique_code", "wallet_address")
+@admin.register(BlockchainOwnership)
+class BlockchainOwnershipAdmin(admin.ModelAdmin):
+    list_display = ("event", "id", "wallet_address", "is_verified")
+    search_fields = ("event__title", "id", "wallet_address")
 
 
 @admin.register(Event)
@@ -79,8 +79,8 @@ class RedemptionAccessKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("event", "signature", "image_location")
-    search_fields = ("event__title", "signature", "image_location")
+    list_display = ("event", "blockchain_ownership", "image_location")
+    search_fields = ("event__title", "blockchain_ownership", "image_location")
 
 
 @admin.register(PricingRule)

@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.root.models import Signature, Event
+from apps.root.models import BlockchainOwnership, Event
 from apps.services import blockchain_service
 from . import serializers
 
@@ -63,7 +63,7 @@ class EventPortalRequestCheckout(EventMixin, APIView):
         return super().post(request, *args, **kwargs)
 
     def blockchain_ownership(self, request, *args, **kwargs):
-        signature = Signature.objects.create(event=self.event)
+        signature = BlockchainOwnership.objects.create(event=self.event)
         blockchain_serializer = serializers.RequestAccessBlockchain(signature)
         return Response(blockchain_serializer.data)
 
@@ -85,7 +85,7 @@ class EventPortalProcessCheckout(EventMixin, APIView):
 
         # 2. Get wallet signature
         self.signature = get_object_or_404(
-            Signature,
+            BlockchainOwnership,
             unique_code=blockchain_serializer.data['signature_id'],
             event=self.event
         )

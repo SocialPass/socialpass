@@ -21,32 +21,6 @@ from .model_field_choices import STIPE_PAYMENT_STATUSES
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
 
-# s3 client init
-s3_client = boto3.client(
-    "s3",
-    region_name="nyc3",
-    endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-)
-
-
-class CustomUserManager(UserManager):
-    """
-    Prefetch members for user
-    """
-
-    pass
-
-
-class CustomMembershipManager(models.Manager):
-    """
-    Prefetch teams for members
-    """
-
-    pass
-
-
 class DBModel(TimeStampedModel):
     """
     Abstract base model that provides useful timestamps.
@@ -245,18 +219,16 @@ class RedemptionAccessKey(DBModel):
     # can give access to scanning diferent type of tickets.
 
 
-class Signature(DBModel):
+class BlockchainOwnership(DBModel):
     """
-    Stores details used to verify wallets for tickets
+    Stores details used to verify blockchain ownership in exchange for tickets
     """
 
     def set_expires():
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
-    unique_code = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="signatures"
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     signing_message = models.CharField(max_length=1024)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
@@ -283,7 +255,6 @@ class Signature(DBModel):
         )
         return signing_message
 
-
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
@@ -292,8 +263,8 @@ class Ticket(DBModel):
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="tickets"
     )
-    signature = models.ForeignKey(
-        Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
+    blockchain_ownership = models.ForeignKey(
+        BlockchainOwnership, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
     embed_code = models.UUIDField(default=uuid.uuid4)
@@ -317,6 +288,13 @@ class Ticket(DBModel):
     @property
     def temporary_download_url(self):
         # s3 client init
+        s3_client = boto3.client(
+            "s3",
+            region_name="nyc3",
+            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
         return s3_client.generate_presigned_url(
             ClientMethod="get_object",
             Params={

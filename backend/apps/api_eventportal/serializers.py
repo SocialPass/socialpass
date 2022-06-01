@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.root.models import Signature, Event
+from apps.root.models import BlockchainOwnership, Event
 
 
 class EventPortalRetrieveSerializer(serializers.ModelSerializer):
@@ -55,7 +55,7 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
 
 class RequestAccessBlockchain(serializers.ModelSerializer):
     class Meta:
-        model = Signature
+        model = BlockchainOwnership
         fields = [
             "unique_code",
             "signing_message",

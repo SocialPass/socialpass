@@ -204,11 +204,6 @@ class Event(DBModel):
     def has_pending_checkout(self):
         return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
-    @property
-    def is_ticketing_open(self):
-        return self.tickets.count() != self.capacity
-
-
 class RedemptionAccessKey(DBModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -229,7 +224,6 @@ class BlockchainOwnership(DBModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    signing_message = models.CharField(max_length=1024)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
     expires = models.DateTimeField(default=set_expires)

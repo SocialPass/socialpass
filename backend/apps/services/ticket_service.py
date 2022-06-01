@@ -5,6 +5,26 @@ from django.conf import settings
 from apps.root.models import Ticket, Event, s3_client
 from apps.services import TicketImageGenerator
 
+def get_available_ticket_count(event:Event, tickets_requested:int) -> int:
+    """
+    return how many tickets available for a given event
+    In the future, this method can be extended to ticket types vs singular ticket with an event
+    """
+    ticket_count = event.tickets.count()
+    if ticket_count >= event.capacity:
+        return 0
+
+    # check available tickets
+    if event.limit_per_person + ticket_count > event.capacity:
+        return event.capacity - ticket_count
+
+    # check tickets_requested requested against limt_per_person
+    if tickets_requested > event.limit_per_person:
+        return event.limit_per_person
+
+    # all checks passed
+    # return initial tickets_requested integer
+    return tickets_requested
 
 def create_ticket_store_s3_bucket(
     event: Event,

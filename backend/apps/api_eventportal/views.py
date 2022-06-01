@@ -37,7 +37,7 @@ class EventMixin:
            return Response('"checkout_type" query paramter not provided', status=401)
 
         if checkout_type == "blockchain_ownership":
-           return self.blockchain_ownership(request, *args, **kwargs)
+           return self.blockchain_ownership_checkout(request, *args, **kwargs)
 
 
 class EventPortalRetrieve(EventMixin, APIView):
@@ -62,9 +62,9 @@ class EventPortalRequestCheckout(EventMixin, APIView):
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
-    def blockchain_ownership(self, request, *args, **kwargs):
-        signature = BlockchainOwnership.objects.create(event=self.event)
-        blockchain_serializer = serializers.RequestAccessBlockchain(signature)
+    def blockchain_ownership_checkout(self, request, *args, **kwargs):
+        blockchain_ownership = BlockchainOwnership.objects.create(event=self.event)
+        blockchain_serializer = serializers.RequestAccessBlockchain(blockchain_ownership)
         return Response(blockchain_serializer.data)
 
 
@@ -78,21 +78,21 @@ class EventPortalProcessCheckout(EventMixin, APIView):
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
-    def blockchain_ownership(self, request, *args, **kwargs):
+    def blockchain_ownership_checkout(self, request, *args, **kwargs):
         # 1. Serialize Data
         blockchain_serializer = serializers.BlockchainOwnershipSerializer(data=request.data)
         blockchain_serializer.is_valid(raise_exception=True)
 
-        # 2. Get wallet signature
-        self.signature = get_object_or_404(
+        # 2. Get wallet blockchain_ownership
+        self.blockchain_ownership = get_object_or_404(
             BlockchainOwnership,
-            unique_code=blockchain_serializer.data['signature_id'],
+            id=blockchain_serializer.data['blockchain_ownership_id'],
             event=self.event
         )
 
-        # 3. validate wallet signature
-        validated, response_msg = blockchain_service.validate_signature(
-            signature=self.signature,
+        # 3. validate wallet blockchain_ownership
+        validated, response_msg = blockchain_service.validate_blockchain_ownership(
+            blockchain_ownership=self.blockchain_ownership,
             event=self.event,
             signed_message=blockchain_serializer.data['signed_message'],
             wallet_address=blockchain_serializer.data['wallet_address'],
@@ -100,6 +100,14 @@ class EventPortalProcessCheckout(EventMixin, APIView):
         if not validated:
             return Response(response_msg, status=403)
 
-        # 4. Verify ticket selection valid
-        # 5. Verify ticket against blockchain ownership
-        # 6. Issue Tickets
+        # 4. Get # of tickets available
+        available_ticket_count = ticket_service.get_available_ticket_count(
+            event=self.event,
+            tickets_requested=blockchain_serializer.data['tickets_requested']
+        )
+        if available_ticket_count == 0:
+            return Response("Sold out", status=403)
+
+        # 5. Verify available_ticket_count against blockchain_ownership requirements
+
+        # 6. Create Tickets based on available_ticket_count and blockchain_ownership_checkout

@@ -57,7 +57,7 @@ class RequestAccessBlockchain(serializers.ModelSerializer):
     class Meta:
         model = BlockchainOwnership
         fields = [
-            "unique_code",
+            "id",
             "signing_message",
         ]
 
@@ -65,5 +65,5 @@ class RequestAccessBlockchain(serializers.ModelSerializer):
 class BlockchainOwnershipSerializer(serializers.Serializer):
     wallet_address = serializers.CharField(required=True)
     signed_message = serializers.CharField(required=True)
-    signature_id = serializers.CharField(required=True)
+    blockchain_ownership_id = serializers.CharField(required=True)
 

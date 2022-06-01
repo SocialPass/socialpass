@@ -2,6 +2,22 @@
 BASE HTML
 */
 
+:root {
+  --white-color-hsl: 0, 0%, 100%;
+  --white-color: hsl(var(--white-color-hsl));
+
+  --orange:#EF7C4E;
+  --success: #0FBE0C;
+  --bg-success: #CDFFCC;
+  --bg-denied:#ffcccc;
+  --denied: #F6050B;
+  --gray: #F6F7F9;
+
+  --sp-orange-color: hsl(16, 80%, 60%);
+  --sp-orange-color-light: hsl(16, 80%, 70%);
+  --sp-orange-color-very-light: hsl(16, 80%, 95%);
+}
+
 @font-face {
   font-family: 'rubik';
   src: local('rubik'),
@@ -57,7 +73,7 @@ button {
 
 p {
   font-weight: 300;
-  font-size: 1.01rem;
+  font-size: 1.3rem;
   color: #95959C;
 }
 
@@ -68,11 +84,11 @@ small {
   color: #959191;
 }
 
-header {
+.header {
   position:relative;
   display:flex;
   border-radius: 50px 50px 0 0;
-  min-height:200px;
+  min-height:280px;
   height:35%;
 }
 
@@ -87,15 +103,27 @@ footer {
 .container-fluid {
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
-  min-height:769px;
+  min-height:740px;
   overflow:hidden;
   min-width:333px;
 }
 
+.card{
+  border: none;
+}
+
+@media (min-width: 770px) {
+  .card{
+    left: 50%;
+    border: none;
+  }
+}
+
 .small-header {
+  align-items: center;
   min-height: 188px;
   height: 23.9%;
-  background-size: 100% auto;
+  background-size: auto;
   box-shadow:inset 0 0 0 2000px rgba(0, 0, 0, .5);
   overflow:hidden;
   transition:all 0.69s linear;
@@ -107,17 +135,11 @@ footer {
 /*
 ELEMENTS
 */
-.ticker {
-  position:absolute;
-  display:block;
-  max-width:44%;
-  top:-10px;
-  right:-5px;
-}
 
 .team-info {
   position:absolute;
-  top:75%;
+  top:80%;
+  left: 5%;
 }
 
 .team-info img {
@@ -153,7 +175,7 @@ ELEMENTS
 BOOSTRAP OVERRIDES
 */
 .btn-primary {
-  background: #EF7C4E;
+  background: var(--orange);
   border-radius: 20px;
   color:white;
   border: none;
@@ -167,6 +189,12 @@ BOOSTRAP OVERRIDES
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.btn-primary:hover{
+  background: var(--orange);
+  transition: filter 0.2s;
+  filter: brightness(0.9)
 }
 
 .btn-primary:disabled {
@@ -188,7 +216,108 @@ BOOSTRAP OVERRIDES
 }
 
 .bg-success {
-  background: #CDFFCC !important;
-  color:#0FBE0C;
+  background: var(--bg-success) !important;
+  color:var(--success);
   border-radius: 7px;
+  width: 70%;
+}
+
+.bg-gray{
+  background-color: var(--gray);
+  border-radius: 0px 0px 50px 0px;
+  width: 35%;
+  height: 200%;
+  margin-top: -3.5rem;
+  margin-right: -3.5rem;
+}
+
+.bg-denied {
+  background: var(--bg-denied) !important;
+  color:var(--denied);
+  border-radius: 7px;
+}
+
+.container {
+	width: 40vw;
+	max-width: 100%;
+	padding: 30px;
+	margin: auto;
+}
+
+
+.sp-progress {
+  display: flex;
+  height: 36px;
+  background-color: var(--white-color);
+  box-shadow: inset 0 0 0 2px var(--sp-orange-color);
+  border-radius: 36px;
+}
+
+.sp-progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--sp-orange-color);
+  background-image: linear-gradient(to right, var(--sp-orange-color-light), var(--sp-orange-color));
+  border-radius: 36px;
+}
+
+.sp-progress-bar-animated {
+  position: relative;
+}
+
+.sp-progress-bar-animated::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  animation: sp-progress-bar-shine 2s infinite;
+  border-radius: 36px;
+  background: linear-gradient(to right , transparent, var(--sp-orange-color-very-light));
+}
+
+@keyframes sp-progress-bar-shine {
+  from {
+    transform: translateX(-100%);
+    opacity: 0.5;
+  }
+
+  to {
+    transform: translateX(0);
+      opacity: 0.1;
+    }
+}
+
+.avatar-img{
+  width: 5rem;
+  height: 5rem;
+  border-radius: 30px;
+}
+
+@media (max-width: 450px) {
+  .container {
+    width: 100vw;
+    max-width: 100%;
+    padding: 30px;
+    margin: auto;
+  }
+  .container-fluid {
+    border-radius: 0;
+    min-height:740px;
+    overflow:hidden;
+    min-width:333px;
+    margin: 0 auto;
+    width: 100vw;
+    height: 100%;
+  }
+  .header {
+    border-radius: 0;
+    position:relative;
+    display:flex;
+    min-height:200px;
+    height:35%;
+  }
 }

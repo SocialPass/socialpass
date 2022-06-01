@@ -29,4 +29,7 @@ export interface EventPortalContextInterface {
   // checkout
   web3CheckoutSelection:any
   setWeb3CheckoutSelection:any
+
+  eventStatusCheckout:Boolean,
+  setEventStatusCheckout:any
 }

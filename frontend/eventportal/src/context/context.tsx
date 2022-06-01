@@ -1,10 +1,12 @@
-import React, { createContext, useState } from "react"
-import { EventPortalContextInterface } from '../types';
+import React, { createContext, useState } from "react";
+import { EventPortalContextInterface } from "../types";
 
-export const EventPortalContext = createContext<EventPortalContextInterface>({} as EventPortalContextInterface);
+export const EventPortalContext = createContext<EventPortalContextInterface>(
+  {} as EventPortalContextInterface
+);
 
-export const EventPortalProvider = ({ children }:{children:any}) => {
-  const [id, setID] = useState('');
+export const EventPortalProvider = ({ children }: { children: any }) => {
+  const [id, setID] = useState("");
   const [backButton, setBackButton] = useState(null);
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
@@ -15,34 +17,40 @@ export const EventPortalProvider = ({ children }:{children:any}) => {
   const [grantAccessJson, setGrantAccessJson] = useState(null);
   const [grantAccessError, setGrantAccessError] = useState(null);
 
-  const [web3CheckoutSelection, setWeb3CheckoutSelection ] = useState([]);
+  const [web3CheckoutSelection, setWeb3CheckoutSelection] = useState([]);
+  const [eventStatusCheckout, setEventStatusCheckout] = useState(true);
 
   return (
-	<EventPortalContext.Provider value={{
-    id,
-    setID,
-    backButton,
-    setBackButton,
+    <EventPortalContext.Provider
+      value={{
+        id,
+        setID,
+        backButton,
+        setBackButton,
 
-    web3CheckoutSelection,
-    setWeb3CheckoutSelection,
+        web3CheckoutSelection,
+        setWeb3CheckoutSelection,
 
-    retrieveJson,
-    setRetrieveJson,
-    retrieveError,
-    setRetrieveError,
+        retrieveJson,
+        setRetrieveJson,
+        retrieveError,
+        setRetrieveError,
 
-    requestAccessJson,
-    setRequestAccessJson,
-    setRequestAccessError,
-    requestAccessError,
+        requestAccessJson,
+        setRequestAccessJson,
+        setRequestAccessError,
+        requestAccessError,
 
-    grantAccessJson,
-    setGrantAccessJson,
-    grantAccessError,
-    setGrantAccessError,
-  }}>
-	  {children}
-	</EventPortalContext.Provider>
+        grantAccessJson,
+        setGrantAccessJson,
+        grantAccessError,
+        setGrantAccessError,
+
+        eventStatusCheckout,
+        setEventStatusCheckout,
+      }}
+    >
+      {children}
+    </EventPortalContext.Provider>
   );
 };

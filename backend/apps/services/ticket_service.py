@@ -2,12 +2,12 @@ import io
 
 from django.conf import settings
 
-from apps.root.models import Ticket, TicketedEvent, s3_client
+from apps.root.models import Ticket, Event, s3_client
 from apps.services import TicketImageGenerator
 
 
 def create_ticket_store_s3_bucket(
-    ticketed_event: TicketedEvent,
+    event: Event,
     top_banner_text: str = "SocialPass Ticket",
     scene_img_source: str = None,
 ):
@@ -16,14 +16,14 @@ def create_ticket_store_s3_bucket(
     Returns ticket image as well as s3 storage response
     """
     # create ticket entry in DB
-    created_ticket_db = Ticket.objects.create(ticketed_event=ticketed_event)
+    created_ticket_db = Ticket.objects.create(event=event)
 
     # Generate ticket image from request data
     created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
         event_data={
-            "event_name": ticketed_event.title,
-            "event_date": ticketed_event.date.strftime("%m/%d/%Y, %H:%M:%S"),
-            "event_location": ticketed_event.location,
+            "event_name": event.title,
+            "event_date": event.date.strftime("%m/%d/%Y, %H:%M:%S"),
+            "event_location": event.location,
         },
         embed=f"{created_ticket_db.embed_code}/{created_ticket_db.filename}",
         scene_img_source=scene_img_source,

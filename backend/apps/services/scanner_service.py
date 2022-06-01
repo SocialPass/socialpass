@@ -32,7 +32,7 @@ def access_key_can_redeem_ticket(
     if redemption_access_key is None:
         return True
 
-    return ticket.ticketed_event.id == redemption_access_key.ticketed_event.id
+    return ticket.event.id == redemption_access_key.event.id
 
 
 def redeem_ticket(ticket: Ticket, redemption_access_key: RedemptionAccessKey = None):

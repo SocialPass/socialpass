@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from apps.root.models import Signature, TicketedEvent
+from apps.root.models import Signature, Event
 
 
 class EventPortalRetrieveSerializer(serializers.ModelSerializer):
     """
-    Model serializer for TicketedEvent
+    Model serializer for Event
     Method fields for grouping together main information
     """
 
@@ -14,7 +14,7 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
     event_info = serializers.SerializerMethodField()
 
     class Meta:
-        model = TicketedEvent
+        model = Event
         fields = [
             "organizer_info",
             "ticket_info",

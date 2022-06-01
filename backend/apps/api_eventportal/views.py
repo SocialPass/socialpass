@@ -6,34 +6,34 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.root.models import Signature, TicketedEvent
+from apps.root.models import Signature, Event
 from apps.services import blockchain_service
 from . import serializers
 
 
-class TicketedEventMixin:
+class EventMixin:
     """
     Mixin for eventportal flow
     DISPATCH: Get ticketed event by public ID
     GET: Serialize / Return ticketed event
     POST: Based on 'checkout_type' query string, call respective method:
     """
-    ticketed_event = None
+    event = None
 
     def dispatch(self, request, *args, **kwargs):
         # get ticketed event associated
-        self.ticketed_event = get_object_or_404(TicketedEvent, public_id=self.kwargs['public_id'])
+        self.event = get_object_or_404(Event, public_id=self.kwargs['public_id'])
 
         # check if event is open for ticketing
-        if not self.ticketed_event.is_ticketing_open:
+        if not self.event.is_ticketing_open:
             return Response('Event has sold out! Congratulations (and possibly sorry!)')
 
         # success, proceed with dispatch
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        # return serialized ticketed_event
-        return Response(serializers.EventPortalRetrieveSerializer(self.ticketed_event).data)
+        # return serialized event
+        return Response(serializers.EventPortalRetrieveSerializer(self.event).data)
 
     def post(self, request, *args, **kwargs):
         # get QS and pass to respective method
@@ -46,7 +46,7 @@ class TicketedEventMixin:
         else:
            return Response('"checkout_type" query paramter invalid', status=401)
 
-class EventPortalRetrieve(TicketedEventMixin, APIView):
+class EventPortalRetrieve(EventMixin, APIView):
     """
     GET view for retrieving eventportal
     """
@@ -57,7 +57,7 @@ class EventPortalRetrieve(TicketedEventMixin, APIView):
         raise MethodNotAllowed(method='POST')
 
 
-class EventPortalRequestAccess(TicketedEventMixin, APIView):
+class EventPortalRequestAccess(EventMixin, APIView):
     """
     POST view for requesting access into eventportal
     Based on query string, routed to respective method
@@ -69,12 +69,12 @@ class EventPortalRequestAccess(TicketedEventMixin, APIView):
         return super().post(request, *args, **kwargs)
 
     def blockchain_ownership(self, request, *args, **kwargs):
-        signature = Signature.objects.create(ticketed_event=self.ticketed_event)
+        signature = Signature.objects.create(event=self.event)
         blockchain_serializer = serializers.RequestAccessBlockchain(signature)
         return Response(blockchain_serializer.data)
 
 
-class EventPortalGrantAccess(TicketedEventMixin, APIView):
+class EventPortalGrantAccess(EventMixin, APIView):
     """
     POST view for granting access into eventportal
     """
@@ -93,13 +93,13 @@ class EventPortalGrantAccess(TicketedEventMixin, APIView):
         self.signature = get_object_or_404(
             Signature,
             unique_code=blockchain_serializer.data['signature_id'],
-            ticketed_event=self.ticketed_event
+            event=self.event
         )
 
         # 3. validate wallet signature
         validated, response_msg = blockchain_service.validate_signature(
             signature=self.signature,
-            ticketed_event=self.ticketed_event,
+            event=self.event,
             signed_message=blockchain_serializer.data['signed_message'],
             wallet_address=blockchain_serializer.data['wallet_address'],
         )

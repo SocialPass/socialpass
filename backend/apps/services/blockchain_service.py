@@ -4,10 +4,10 @@ from eth_account.messages import encode_defunct
 from pytz import utc
 from web3.auto import w3
 from web3 import Web3
-from apps.root.models import Signature, TicketedEvent
+from apps.root.models import Signature, Event
 
 
-def validate_signature(ticketed_event: TicketedEvent, signature: Signature, signed_message: str, wallet_address:str):
+def validate_signature(event: Event, signature: Signature, signed_message: str, wallet_address:str):
     """
     Sets a signature as verified after successful verification
     Returns tuple of (verified:bool, verification_msg:str)
@@ -27,7 +27,7 @@ def validate_signature(ticketed_event: TicketedEvent, signature: Signature, sign
         return verified, verification_msg
 
     # check for id mismatch
-    if signature.ticketed_event != ticketed_event:
+    if signature.event != event:
         verification_msg = "Signature x TokenGate ID mismatch."
         return verified, verification_msg
 

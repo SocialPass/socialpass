@@ -172,7 +172,7 @@ class Invite(DBModel, AbstractBaseInvitation):
         return f"{self.team.name}-{self.email}"
 
 
-class TicketedEvent(DBModel):
+class Event(DBModel):
     """
     Stores data for ticketed event
     """
@@ -238,8 +238,8 @@ class TicketedEvent(DBModel):
 class RedemptionAccessKey(DBModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ticketed_event = models.ForeignKey(
-        TicketedEvent, on_delete=models.CASCADE, related_name="redemption_access_keys"
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="redemption_access_keys"
     )
     # TODO in a near future, different ScannerKeyAccess
     # can give access to scanning diferent type of tickets.
@@ -254,8 +254,8 @@ class Signature(DBModel):
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
     unique_code = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ticketed_event = models.ForeignKey(
-        TicketedEvent, on_delete=models.CASCADE, related_name="signatures"
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="signatures"
     )
     signing_message = models.CharField(max_length=1024)
     wallet_address = models.CharField(max_length=400)
@@ -272,8 +272,8 @@ class Signature(DBModel):
     @property
     def signing_message(self):
         signing_message_obj = {
-            "You are accessing": self.ticketed_event.title,
-            "Hosted by": self.ticketed_event.team.name,
+            "You are accessing": self.event.title,
+            "Hosted by": self.event.team.name,
             "One-Time Code": self.unique_code,
             "Valid until": self.expires.ctime(),
             "Version": self.version,
@@ -289,8 +289,8 @@ class Ticket(DBModel):
     List of all the tickets distributed by the respective Ticketed Event.
     """
 
-    ticketed_event = models.ForeignKey(
-        TicketedEvent, on_delete=models.CASCADE, related_name="tickets"
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="tickets"
     )
     signature = models.ForeignKey(
         Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
@@ -304,7 +304,7 @@ class Ticket(DBModel):
     )
 
     def __str__(self):
-        return f"Ticket List (Ticketed Event: {self.ticketed_event.title})"
+        return f"Ticket List (Ticketed Event: {self.event.title})"
 
     @property
     def image_location(self):
@@ -380,13 +380,13 @@ class PricingRuleGroup(DBModel):
         return f"Pricing Rule Group({self.name})"
 
 
-class TicketedEventStripePayment(DBModel):
-    """Registers a payment done for TicketedEvent"""
+class EventStripePayment(DBModel):
+    """Registers a payment done for Event"""
 
-    # TODO: This model could be more abstracted from the TicketedEvent
+    # TODO: This model could be more abstracted from the Event
 
-    ticketed_event = models.ForeignKey(
-        TicketedEvent, on_delete=models.RESTRICT, related_name="payments"
+    event = models.ForeignKey(
+        Event, on_delete=models.RESTRICT, related_name="payments"
     )
     value = models.DecimalField(
         validators=[MinValueValidator(0)], decimal_places=2, max_digits=10

@@ -28,52 +28,52 @@ urlpatterns = [
     # Ticketing
     path(
         "<int:team_pk>/ticketed-events/",
-        views.TicketedEventListView.as_view(),
+        views.EventListView.as_view(),
         name="ticketgate_list",
     ),
     path(
         "<int:team_pk>/ticketed-events/create/",
-        views.TicketedEventCreateView.as_view(),
+        views.EventCreateView.as_view(),
         name="ticketgate_create",
     ),
     path(
         "<int:team_pk>/ticketed-events/<int:pk>/",
-        views.TicketedEventDetailView.as_view(),
+        views.EventDetailView.as_view(),
         name="ticketgate_detail",
     ),
     path(
         "<int:team_pk>/ticketed-events/<int:pk>/update/",
-        views.TicketedEventUpdateView.as_view(),
+        views.EventUpdateView.as_view(),
         name="ticketgate_update",
     ),
     path(
         "<int:team_pk>/ticketed-events/<int:pk>/stats/",
-        views.TicketedEventStatisticsView.as_view(),
+        views.EventStatisticsView.as_view(),
         name="ticketgate_stats",
     ),
     path(
         "<int:team_pk>/ticketed-events/estimate_price/",
-        views.estimate_ticketed_event_price,
+        views.estimate_event_price,
         name="ticketgate_price_estimator",
     ),
     path(
         "<int:team_pk>/ticketed-events/<int:pk>/checkout",
-        views.TicketedEventCheckout.as_view(),
+        views.EventCheckout.as_view(),
         name="ticketgate_checkout",
     ),
     path(
         "<int:team_pk>/ticketed-events/<int:pk>/checkout/success",
-        views.TicketedEventCheckout.success_stripe_callback,
+        views.EventCheckout.success_stripe_callback,
         name="ticketgate_checkout_success_callback",
     ),
     path(
         "<int:team_pk>/ticketed-events/<int:pk>/checkout/failure",
-        views.TicketedEventCheckout.failure_stripe_callback,
+        views.EventCheckout.failure_stripe_callback,
         name="ticketgate_checkout_failure_callback",
     ),
     path(
         "webhooks/stripe",
-        views.TicketedEventCheckout.stripe_webhook,
+        views.EventCheckout.stripe_webhook,
         name="stripe_webhook",
     ),
     # User Accounts

@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path(
         "landing/<uuid:access_key>/",
-        views.TicketedEventRetrieve.as_view(),
+        views.EventRetrieve.as_view(),
         name="scanner_landing",
     ),
     path(

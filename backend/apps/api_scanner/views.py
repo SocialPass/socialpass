@@ -12,24 +12,24 @@ from apps.services import scanner_service
 from . import serializers
 
 
-class SetAccessKeyAndTicketedEventMixin:
+class SetAccessKeyAndEventMixin:
     """
-    Custom helper class to set ticketed_event based on url kwargs
+    Custom helper class to set event based on url kwargs
     """
 
     lookup_field = "redemption_access_key"
 
     redemption_access_key = None
-    ticketed_event = None
+    event = None
 
-    def set_ticketed_event_and_redemption_access_key(
+    def set_event_and_redemption_access_key(
         self, redemption_access_key: uuid.UUID
     ):
         try:
             self.redemption_access_key = RedemptionAccessKey.objects.get(
                 id=redemption_access_key
             )
-            self.ticketed_event = self.redemption_access_key.ticketed_event
+            self.event = self.redemption_access_key.event
         except Exception:
             raise Http404(
                 {
@@ -39,24 +39,24 @@ class SetAccessKeyAndTicketedEventMixin:
             )
 
 
-class TicketedEventRetrieve(APIView, SetAccessKeyAndTicketedEventMixin):
+class EventRetrieve(APIView, SetAccessKeyAndEventMixin):
     """
-    Returns ticketed_event for the given redemption_access_key.
+    Returns event for the given redemption_access_key.
     """
 
     permission_classes = (AllowAny,)
 
     def get(self, request, *args, access_key: uuid.UUID, **kwargs):
-        self.set_ticketed_event_and_redemption_access_key(access_key)
+        self.set_event_and_redemption_access_key(access_key)
         try:
-            serializer = serializers.TicketedEventSerializer(self.ticketed_event)
+            serializer = serializers.EventSerializer(self.event)
         except Http404 as exc:
             return Response(status=404, data=exc.args[0])
 
         return Response(serializer.data)
 
 
-class ScanTicket(APIView, SetAccessKeyAndTicketedEventMixin):
+class ScanTicket(APIView, SetAccessKeyAndEventMixin):
     """
     Redeem a ticket for the given redemption_access_key.
     """
@@ -69,7 +69,7 @@ class ScanTicket(APIView, SetAccessKeyAndTicketedEventMixin):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, access_key: uuid.UUID, **kwargs):
-        self.set_ticketed_event_and_redemption_access_key(access_key)
+        self.set_event_and_redemption_access_key(access_key)
 
         # Parse input to get embed-code
         input_serializer = self.InputSerializer(data=request.data)
@@ -104,7 +104,7 @@ class ScanTicket(APIView, SetAccessKeyAndTicketedEventMixin):
                 status=403,
                 data={
                     "code": "redemption-access-key-unauthorized",
-                    "message": "Redemption access key has no access to this TicketedEvent.",
+                    "message": "Redemption access key has no access to this Event.",
                 },
             )
         except scanner_service.AlreadyRedeemed:

@@ -3,7 +3,7 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm, InviteForm
 
-from apps.root.models import Invite, Team, TicketedEvent
+from apps.root.models import Invite, Team, Event
 from apps.services import pricing_service
 
 
@@ -25,7 +25,7 @@ class TeamForm(forms.ModelForm):
         fields = ["name", "description", "image"]
 
 
-class TicketedEventForm(forms.ModelForm):
+class EventForm(forms.ModelForm):
     """
     Allows ticketed event information to be updated.
 
@@ -37,7 +37,7 @@ class TicketedEventForm(forms.ModelForm):
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
 
     class Meta:
-        model = TicketedEvent
+        model = Event
         fields = [
             "title",
             "description",
@@ -70,12 +70,12 @@ class TicketedEventForm(forms.ModelForm):
         ) or pricing_service.get_effective_payments(instance.payments):
             self.fields["capacity"].disabled = True
 
-    def save(self, commit: bool = ...) -> TicketedEvent:
-        """Sets TicketedEvent price after save"""
+    def save(self, commit: bool = ...) -> Event:
+        """Sets Event price after save"""
         obj = super().save(commit)
 
         if "capacity" in self.changed_data:
-            pricing_service.set_ticketed_event_price(obj)
+            pricing_service.set_event_price(obj)
 
         return obj
 

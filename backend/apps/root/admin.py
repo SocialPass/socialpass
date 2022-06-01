@@ -11,8 +11,8 @@ from apps.root.models import (
     Signature,
     Team,
     Ticket,
-    TicketedEvent,
-    TicketedEventStripePayment,
+    Event,
+    EventStripePayment,
 )
 from apps.services import pricing_service
 
@@ -54,12 +54,12 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(Signature)
 class SignatureAdmin(admin.ModelAdmin):
-    list_display = ("ticketed_event", "unique_code", "wallet_address", "is_verified")
-    search_fields = ("ticketed_event__title", "unique_code", "wallet_address")
+    list_display = ("event", "unique_code", "wallet_address", "is_verified")
+    search_fields = ("event__title", "unique_code", "wallet_address")
 
 
-@admin.register(TicketedEvent)
-class TicketedEventAdmin(admin.ModelAdmin):
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "public_id",
@@ -79,8 +79,8 @@ class RedemptionAccessKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("ticketed_event", "signature", "image_location")
-    search_fields = ("ticketed_event__title", "signature", "image_location")
+    list_display = ("event", "signature", "image_location")
+    search_fields = ("event__title", "signature", "image_location")
 
 
 @admin.register(PricingRule)
@@ -125,7 +125,7 @@ def list_as_messages_str(elements: list, title: str):
     return mark_safe(ul_string)
 
 
-@admin.register(TicketedEventStripePayment)
-class TicketedEventStripePaymentAdmin(admin.ModelAdmin):
-    list_display = ("ticketed_event", "value", "status")
-    search_fields = ("ticketed_event", "value", "status")
+@admin.register(EventStripePayment)
+class EventStripePaymentAdmin(admin.ModelAdmin):
+    list_display = ("event", "value", "status")
+    search_fields = ("event", "value", "status")

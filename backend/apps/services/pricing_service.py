@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.db.models import Sum
 
-from apps.root.models import PricingRuleGroup, Team, TicketedEvent, TicketedEventStripePayment
+from apps.root.models import PricingRuleGroup, Team, Event, EventStripePayment
 
 
 def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:
@@ -52,12 +52,12 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
     raise ValueError("Could not find pricing_rule for capacity")
 
 
-def get_pricing_group_for_ticket(ticketed_event: TicketedEvent) -> PricingRuleGroup:
+def get_pricing_group_for_ticket(event: Event) -> PricingRuleGroup:
     """Returns the pricing group for a given ticket gate."""
-    return ticketed_event.team.pricing_rule_group
+    return event.team.pricing_rule_group
 
 
-def calculate_ticketed_event_price_per_ticket_for_team(
+def calculate_event_price_per_ticket_for_team(
     team: Team, *, capacity: int = None
 ):
     """Returns the estimated price of a ticket gate for a given team.
@@ -71,60 +71,60 @@ def calculate_ticketed_event_price_per_ticket_for_team(
 
 
 def get_pricing_rule_for_ticket(
-    ticketed_event: TicketedEvent,
+    event: Event,
 ) -> float:
     """Gets the pricing rule that applies to the ticket capacity"""
-    pricing_group = get_pricing_group_for_ticket(ticketed_event)
-    return get_pricing_rule_for_capacity(pricing_group, ticketed_event.capacity)
+    pricing_group = get_pricing_group_for_ticket(event)
+    return get_pricing_rule_for_capacity(pricing_group, event.capacity)
 
 
-def set_ticketed_event_price(ticketed_event: TicketedEvent):
+def set_event_price(event: Event):
     """Sets the price of a ticket based on its capacity."""
-    ticketed_event.pricing_rule = get_pricing_rule_for_ticket(ticketed_event)
-    ticketed_event.price = (
-        ticketed_event.pricing_rule.price_per_ticket * ticketed_event.capacity
+    event.pricing_rule = get_pricing_rule_for_ticket(event)
+    event.price = (
+        event.pricing_rule.price_per_ticket * event.capacity
     )
-    ticketed_event.save()
+    event.save()
 
 
-def get_ticketed_event_pending_payment_value(ticketed_event: TicketedEvent):
+def get_event_pending_payment_value(event: Event):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = Decimal(
-        get_effective_payments(ticketed_event.payments).aggregate(Sum("value"))[
+        get_effective_payments(event.payments).aggregate(Sum("value"))[
             "value__sum"
         ]
         or 0
     )
-    return max((ticketed_event.price or 0) - effective_payments_value, 0)
+    return max((event.price or 0) - effective_payments_value, 0)
 
 
 def get_effective_payments(
-    payments: TicketedEventStripePayment.objects,
-) -> TicketedEventStripePayment.objects:
+    payments: EventStripePayment.objects,
+) -> EventStripePayment.objects:
     """Returns all succeded payments for a ticket gate."""
     return payments.filter(status="SUCCESS")
 
 
 def get_in_progress_payment(
-    ticketed_event: TicketedEvent,
-) -> TicketedEventStripePayment:
+    event: Event,
+) -> EventStripePayment:
     """Returns the payment of a ticket gate which is either PENDING or PROCESSING."""
-    return ticketed_event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
+    return event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 
 
 def issue_payment(
-    ticketed_event: TicketedEvent, stripe_checkout_session_id: str
-) -> TicketedEventStripePayment:
+    event: Event, stripe_checkout_session_id: str
+) -> EventStripePayment:
     """
     Issues a payment for a ticket gate.
     Adds validation to ensure that there is only one payment in progress issued per ticket gate.
     """
-    if get_in_progress_payment(ticketed_event):
+    if get_in_progress_payment(event):
         raise ValueError("There is already a pending payment for this ticket gate.")
 
-    payment = TicketedEventStripePayment(
-        ticketed_event=ticketed_event,
-        value=ticketed_event.price,
+    payment = EventStripePayment(
+        event=event,
+        value=event.price,
         stripe_checkout_session_id=stripe_checkout_session_id,
         status="PENDING",
     )
@@ -132,7 +132,7 @@ def issue_payment(
     return payment
 
 
-def fulfill_payment(payment: TicketedEventStripePayment):
+def fulfill_payment(payment: EventStripePayment):
     """Fulfills a payment for a ticket gate."""
     payment.status = "SUCCESS"
     payment.save()

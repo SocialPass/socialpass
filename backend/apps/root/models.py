@@ -213,6 +213,7 @@ class Event(DBModel):
     def has_pending_checkout(self):
         return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
+
 class RedemptionAccessKey(DBModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -266,9 +267,6 @@ class Ticket(DBModel):
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="tickets"
     )
-    blockchain_ownership = models.ForeignKey(
-        BlockchainOwnership, on_delete=models.SET_NULL, related_name="tickets", null=True
-    )
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
     embed_code = models.UUIDField(default=uuid.uuid4)
     redeemed = models.BooleanField(default=False)
@@ -276,13 +274,19 @@ class Ticket(DBModel):
     redeemed_by = models.ForeignKey(
         RedemptionAccessKey, on_delete=models.SET_NULL, null=True, blank=True
     )
+    # checkout info
+    blockchain_ownership = models.ForeignKey(
+        BlockchainOwnership, on_delete=models.SET_NULL, related_name="tickets", null=True
+    )
+    blockchain_asset = models.JSONField(null=True)
+
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
     @property
     def image_location(self):
-        return f"{settings.AWS_TICKET_DIRECTORY}{self.filename}.png"
+        return f"{settings.AWS_TICKET_DIRECTORY}{str(self.filename)}.png"
 
     @property
     def embed(self):
@@ -294,7 +298,7 @@ class Ticket(DBModel):
             ClientMethod="get_object",
             Params={
                 "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                "Key": f"media/tickets/{str(self.filename)}.png",
+                "Key": self.image_location
             },
             ExpiresIn=3600,
         )

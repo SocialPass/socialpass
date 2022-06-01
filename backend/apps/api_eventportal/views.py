@@ -64,7 +64,7 @@ class EventPortalRequestCheckout(EventMixin, APIView):
 
     def checkout_blockchain_ownership(self, request, *args, **kwargs):
         blockchain_ownership = BlockchainOwnership.objects.create(event=self.event)
-        blockchain_serializer = serializers.RequestAccessBlockchain(blockchain_ownership)
+        blockchain_serializer = serializers.BlockchainOwnershipSerializer(blockchain_ownership)
         return Response(blockchain_serializer.data)
 
 
@@ -79,8 +79,11 @@ class EventPortalProcessCheckout(EventMixin, APIView):
         return super().post(request, *args, **kwargs)
 
     def checkout_blockchain_ownership(self, request, *args, **kwargs):
+        self.input_serializer = serializers.VerifyBlockchainOwnershipSerializer
+        self.output_serializer = serializers.TicketSerializer
+
         # 1. Serialize Data
-        blockchain_serializer = serializers.BlockchainOwnershipSerializer(data=request.data)
+        blockchain_serializer = self.input_serializer(data=request.data)
         blockchain_serializer.is_valid(raise_exception=True)
 
         # 2. Get wallet blockchain_ownership
@@ -97,6 +100,7 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             signed_message=blockchain_serializer.data['signed_message'],
             wallet_address=blockchain_serializer.data['wallet_address'],
         )
+        # TODO: should be if NOT wallet_validated, for testing purposes
         if wallet_validated:
             return Response(response_msg, status=403)
 
@@ -109,12 +113,13 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             return Response("Sold out :/", status=403)
 
         # 5. Issue tickets based on blockchain ownership
-        tickets = ticket_service.issue_tickets_blockchain_ownership(
+        tickets, tickets_msg = ticket_service.issue_tickets_with_blockchain_ownership(
             event=self.event,
             blockchain_ownership=blockchain_ownership,
             tickets_to_issue=tickets_to_issue
         )
         if not tickets:
-            return Response("Could not generate tickets based on blockchain asset ownership.", status=403)
+            return Response(tickets_msg, status=403)
 
-        return Response(tickets)
+        # return tickets
+        return Response(self.output_serializer(tickets, many=True).data)

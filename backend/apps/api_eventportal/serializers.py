@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.root.models import BlockchainOwnership, Event
+from apps.root.models import BlockchainOwnership, Event, Ticket
 from apps.services import ticket_service
 
 
@@ -50,7 +50,7 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
         }
 
 
-class RequestAccessBlockchain(serializers.ModelSerializer):
+class BlockchainOwnershipSerializer(serializers.ModelSerializer):
     signing_message = serializers.SerializerMethodField()
 
     class Meta:
@@ -64,8 +64,21 @@ class RequestAccessBlockchain(serializers.ModelSerializer):
         return obj.signing_message
 
 
-class BlockchainOwnershipSerializer(serializers.Serializer):
+class VerifyBlockchainOwnershipSerializer(serializers.Serializer):
     wallet_address = serializers.CharField(required=True)
     signed_message = serializers.CharField(required=True)
     blockchain_ownership_id = serializers.CharField(required=True)
     tickets_requested = serializers.IntegerField(required=True)
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    temporary_download_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Ticket
+        fields = [
+            "temporary_download_url",
+        ]
+
+    def get_temporary_download_url(self, obj):
+        return obj.temporary_download_url

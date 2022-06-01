@@ -3,7 +3,7 @@ import io
 from django.conf import settings
 
 from apps.root.models import Ticket, BlockchainOwnership, Event, s3_client
-from apps.services import TicketImageGenerator
+from apps.services import TicketImageGenerator, blockchain_service
 
 def get_tickets_to_issue(event:Event, tickets_requested:int) -> int:
     """
@@ -26,26 +26,22 @@ def get_tickets_to_issue(event:Event, tickets_requested:int) -> int:
     # return initial tickets_requested integer
     return tickets_requested
 
-def create_ticket_store_s3_bucket(
-    event: Event,
-    top_banner_text: str = "SocialPass Ticket",
-    scene_img_source: str = None,
+def create_ticket_image(
+    event: Event, ticket:Ticket,
+    top_banner_text: str = "SocialPass Ticket", scene_img_source: str = None
 ):
     """
     Use the arguments to generate a ticket image and save into s3-compatible bucket.
     Returns ticket image as well as s3 storage response
     """
-    # create ticket entry in DB
-    created_ticket_db = Ticket.objects.create(event=event)
-
-    # Generate ticket image from request data
+    # Generate ticket image from event data
     created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
         event_data={
             "event_name": event.title,
             "event_date": event.date.strftime("%m/%d/%Y, %H:%M:%S"),
             "event_location": event.location,
         },
-        embed=f"{created_ticket_db.embed_code}/{created_ticket_db.filename}",
+        embed=f"{ticket.embed_code}/{ticket.filename}",
         scene_img_source=scene_img_source,
         top_banner_text=top_banner_text,
     )
@@ -59,7 +55,7 @@ def create_ticket_store_s3_bucket(
     # put image into s3
     response = s3_client.put_object(
         Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-        Key=created_ticket_db.image_location,
+        Key=ticket.image_location,
         Body=buffer,
         ContentType="image/png",
     )
@@ -67,34 +63,65 @@ def create_ticket_store_s3_bucket(
     # return ticket image from pillow and s3 response
     return created_ticket_img, response
 
-def issue_tickets_blockchain_ownership(
+def issue_tickets_with_blockchain_ownership(
     event: Event,
     blockchain_ownership: BlockchainOwnership,
     tickets_to_issue: int,
 ) -> [Ticket]:
     """
-    issue tickets for a given event baesd on blockchain_ownership checkout
+    issue tickets for a given event based on blockchain_ownership checkout
     """
-    # loop against requirements, append eligible asset to assets
+    # vars
     assets = []
-    for requiremenet in event.requirements:
-        # break loop
-        print(requiremenet)
-        if len(assets) == tickets_to_issue:
+    tickets = []
+    tickets_message = ""
+
+    # get blockchain asset ownership
+    asset_ownership = blockchain_service.get_blockchain_asset_ownership(
+        event=event,
+        wallet_address=blockchain_ownership.wallet_address,
+    )
+    if not asset_ownership:
+        return tickets
+
+    # generate tickets based on blockchain assets
+    for blockchain_asset in asset_ownership:
+        # break once ticket issuance length is met
+        if len(tickets) == tickets_to_issue:
             break
 
-        # TODO
-
-
-    # Loop against asset, create Ticket
-    _tickets = []
-    for asset in assets:
-        _tickets.append(
-            Ticket(
-            )
+        # check for existing ticket
+        existing_ticket = Ticket.objects.filter(
+            event=event,
+            blockchain_asset=blockchain_asset
         )
+        # First-time claim
+        if not existing_ticket:
+            new_ticket = Ticket.objects.create(
+                event=event,
+                blockchain_asset=blockchain_asset,
+                blockchain_ownership=blockchain_ownership
+            )
+        # existing asset claim, archive old ticket and create new one
+        # TODO: Delete? Mark as archived?
+        else:
+            existing_ticket.delete()
+            new_ticket = Ticket.objects.create(
+                event=event,
+                blockchain_asset=blockchain_asset,
+                blockchain_ownership=blockchain_ownership
+            )
 
-    # bulk create / return
-    return Ticket.objects.bulk_create(_tickets)
+        # append ticket to list
+        tickets.append(new_ticket)
+
+    # check for tickets array and set error message if not
+    if not tickets:
+        tickets_message = "No assets meeting requirements for this event were found"
+        return tickets, tickets_message
+
+    # return tickets
+    tickets_message = "OK"
+    return tickets, tickets_message
 
 

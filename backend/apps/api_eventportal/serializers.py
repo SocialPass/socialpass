@@ -60,3 +60,10 @@ class RequestAccessBlockchain(serializers.ModelSerializer):
             "unique_code",
             "signing_message",
         ]
+
+
+class BlockchainOwnershipSerializer(serializers.Serializer):
+    wallet_address = serializers.CharField(required=True)
+    signed_message = serializers.CharField(required=True)
+    signature_id = serializers.CharField(required=True)
+

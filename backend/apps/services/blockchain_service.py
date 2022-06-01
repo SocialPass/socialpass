@@ -3,41 +3,53 @@ from datetime import datetime
 from eth_account.messages import encode_defunct
 from pytz import utc
 from web3.auto import w3
-
+from web3 import Web3
 from apps.root.models import Signature, TicketedEvent
 
 
-def validate_signature(
-    signature: Signature,
-    ticketed_event: TicketedEvent,
-    signed_message: str,
-    wallet_address: str,
-):
+def validate_signature(ticketed_event: TicketedEvent, signature: Signature, signed_message: str, wallet_address:str):
     """
-    Validate a given signature
+    Sets a signature as verified after successful verification
+    Returns tuple of (verified:bool, verification_msg:str)
     """
-    # 401 section: User has not provided invalid authentication details
-    # check if already verified
+    verified = False
+    verification_msg = None
     if signature.is_verified:
-        return False, "Signature message already verified."
+        verification_msg = "Signature message already verified."
 
+    # check if already validated
+    if signature.is_verified:
+        verification_msg = "Signature already verified"
+        return verified, verification_msg
     # check if expired
     if signature.expires < (datetime.utcnow().replace(tzinfo=utc)):
-        return False, f"Signature request expired at {signature.expires}"
+        verification_msg = f"Signature request expired at {signature.expires}"
+        return verified, verification_msg
 
-    # check for event mismatch
+    # check for id mismatch
     if signature.ticketed_event != ticketed_event:
-        return False, "Signature x TokenGate mismatch."
+        verification_msg = "Signature x TokenGate ID mismatch."
+        return verified, verification_msg
+
+    # check for valid wallet_address
+    if not Web3.isAddress(wallet_address):
+        verification_msg = "Unrecognized wallet_address format"
+        return verified, verification_msg
 
     # check if wallet_address matches recovered wallet_address
-    _msg = encode_defunct(text=signature.signing_message)
-    _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
-    if _recovered != wallet_address:
-        return False, "Signature x Address mismatch."
+    try:
+        _msg = encode_defunct(text=signature.signing_message)
+        _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
+        if _recovered != wallet_address:
+            verification_msg = "Signature x Address mismatch."
+            return verified, verification_msg
+    except Exception as e:
+        verification_msg = "Unable to decode & validate signature, likely a forgery attempt."
+        return verified, verification_msg
 
     # before success, mark as verified, update wallet_address, and save
     signature.is_verified = True
     signature.wallet_address = _recovered
     signature.save()
-
-    return True, "OK"
+    verification_msg = "OK"
+    return verified, verification_msg

@@ -1,4 +1,6 @@
 from django.http import Http404
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import MethodNotAllowed, NotFound
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -6,58 +8,65 @@ from rest_framework.views import APIView
 
 from apps.root.models import Signature, TicketedEvent
 from apps.services import blockchain_service
-
 from . import serializers
 
 
-class EventPortalRetrieve(RetrieveAPIView):
+class TicketedEventMixin:
     """
-    Returns TicketedEvent associated with event portal
+    Mixin for eventportal flow
+    DISPATCH: Get ticketed event by public ID
+    GET: Serialize / Return ticketed event
+    POST: Based on 'checkout_type' query string, call respective method:
     """
-
-    lookup_field = "public_id"
-    queryset = TicketedEvent.objects.all()
-    serializer_class = serializers.EventPortalRetrieveSerializer
-    permission_classes = [AllowAny]
-
-
-class TicketedEventAccess:
-    """
-    Mixin for Ticketed Event access flow
-    """
-
     ticketed_event = None
 
-    def set_ticketed_event(self, public_id):
-        try:
-            self.ticketed_event = TicketedEvent.objects.get(public_id=public_id)
-        except Exception:
-            raise Http404
+    def dispatch(self, request, *args, **kwargs):
+        # get ticketed event associated
+        self.ticketed_event = get_object_or_404(TicketedEvent, public_id=self.kwargs['public_id'])
 
-    def blockchain_ownership(self, request, *args, **kwargs):
-        return Response("Not yet implemented")
+        # check if event is open for ticketing
+        if not self.ticketed_event.is_ticketing_open:
+            return Response('Event has sold out! Congratulations (and possibly sorry!)')
+
+        # success, proceed with dispatch
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # return serialized ticketed_event
+        return Response(serializers.EventPortalRetrieveSerializer(self.ticketed_event).data)
 
     def post(self, request, *args, **kwargs):
-        # set ticketed event
-        self.set_ticketed_event(public_id=kwargs["public_id"])
-
         # get QS and pass to respective method
-        query_string = request.GET.get("access_type")
+        query_string = request.GET.get("checkout_type")
         if not query_string:
-            return Response('"access_type" query paramter not provided', status=401)
+           return Response('"checkout_type" query paramter not provided', status=401)
 
-        if query_string == "blockchain":
-            return self.blockchain_ownership(request, *args, **kwargs)
+        if query_string == "blockchain_ownership":
+           return self.blockchain_ownership(request, *args, **kwargs)
+        else:
+           return Response('"checkout_type" query paramter invalid', status=401)
 
-
-class EventPortalRequestAccess(TicketedEventAccess, APIView):
+class EventPortalRetrieve(TicketedEventMixin, APIView):
     """
-    Master view for requesting access into event portal
-    Based on 'access' query-string
-
-    Current types of access, corresponding to method type
-    - Asset Ownership ('blockchain')
+    GET view for retrieving eventportal
     """
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        raise MethodNotAllowed(method='POST')
+
+
+class EventPortalRequestAccess(TicketedEventMixin, APIView):
+    """
+    POST view for requesting access into eventportal
+    Based on query string, routed to respective method
+    """
+    def get(self, request, *args, **kwargs):
+        raise MethodNotAllowed(method='GET')
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def blockchain_ownership(self, request, *args, **kwargs):
         signature = Signature.objects.create(ticketed_event=self.ticketed_event)
@@ -65,41 +74,39 @@ class EventPortalRequestAccess(TicketedEventAccess, APIView):
         return Response(blockchain_serializer.data)
 
 
-class EventPortalGrantAccess(TicketedEventAccess, APIView):
+class EventPortalGrantAccess(TicketedEventMixin, APIView):
     """
-    Master view for verifying access & issuing tickets into event portal
-    Based on 'access' query-string
-
-    Current types of access, corresponding to method type
-    - Asset Ownership ('blockchain')
+    POST view for granting access into eventportal
     """
+    def get(self, request, *args, **kwargs):
+        raise MethodNotAllowed(method='GET')
 
-    def blockchain_ownershipp(self, request, *args, **kwargs):
-        """
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def blockchain_ownership(self, request, *args, **kwargs):
         # 1. Serialize Data
         blockchain_serializer = serializers.BlockchainOwnershipSerializer(data=request.data)
         blockchain_serializer.is_valid(raise_exception=True)
-        print(blockchain_serializer)
-        return Response('ok')
 
-        # 2. Verify wallet signature
-        try:
-            self.signature = Signature.objects.get(unique_code='', ticketed_event='')
-        except Exception:
-            raise Http404
+        # 2. Get wallet signature
+        self.signature = get_object_or_404(
+            Signature,
+            unique_code=blockchain_serializer.data['signature_id'],
+            ticketed_event=self.ticketed_event
+        )
 
+        # 3. validate wallet signature
         validated, response_msg = blockchain_service.validate_signature(
             signature=self.signature,
             ticketed_event=self.ticketed_event,
-            signed_message='',
-            address=''
+            signed_message=blockchain_serializer.data['signed_message'],
+            wallet_address=blockchain_serializer.data['wallet_address'],
         )
         if not validated:
             return Response(response_msg, status=403)
 
-        # 3. Verify blockchain ownership
 
-        # 4. Verify tickets
-
-        # 5. Issue Tickets
-        """
+        # 4. Verify ticket selection valid
+        # 5. Verify ticket against blockchain ownership
+        # 6. Issue Tickets

@@ -230,6 +230,10 @@ class TicketedEvent(DBModel):
     def has_pending_checkout(self):
         return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
+    @property
+    def is_ticketing_open(self):
+        return self.tickets.count() != self.capacity
+
 
 class RedemptionAccessKey(DBModel):
 

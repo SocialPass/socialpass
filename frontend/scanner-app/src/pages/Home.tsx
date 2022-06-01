@@ -31,19 +31,18 @@ export function Home() {
     </>
     */
     <>
-    
-    <body  
-    style={{backgroundColor: "#3995B8"}}>
-      {<h2 style={{padding: 50, textAlign: 'center'}}>SocialPass Logo</h2>}
-      <div></div>
-      
-      <EventContainer
-        event_name = {eventData[0].name}
-        event_attendance = {eventData[0].attendance}
-        event_date = {eventData[0].date}
-        event_venue = {eventData[0].venue}
-      />
-    </body>
+  <div className="landing-page-body">
+    <div>      
+        {<h2 style={{textAlign: 'center'}}>SocialPass Logo</h2>}
+        <div></div>
+        <EventContainer
+          event_name = {eventData[0].name}
+          event_attendance = {eventData[0].attendance}
+          event_date = {eventData[0].date}
+          event_venue = {eventData[0].venue}
+        />
+      </div>
+    </div>
   </>
   );
 }

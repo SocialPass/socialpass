@@ -23,11 +23,6 @@ class EventMixin:
     def dispatch(self, request, *args, **kwargs):
         # get ticketed event associated
         self.event = get_object_or_404(Event, public_id=self.kwargs['public_id'])
-
-        # check if event is open for ticketing
-        if not self.event.is_ticketing_open:
-            return Response('Event has sold out! Congratulations (and possibly sorry!)')
-
         # success, proceed with dispatch
         return super().dispatch(request, *args, **kwargs)
 
@@ -37,14 +32,13 @@ class EventMixin:
 
     def post(self, request, *args, **kwargs):
         # get QS and pass to respective method
-        query_string = request.GET.get("checkout_type")
-        if not query_string:
+        checkout_type = request.GET.get("checkout_type")
+        if not checkout_type:
            return Response('"checkout_type" query paramter not provided', status=401)
 
-        if query_string == "blockchain_ownership":
+        if checkout_type == "blockchain_ownership":
            return self.blockchain_ownership(request, *args, **kwargs)
-        else:
-           return Response('"checkout_type" query paramter invalid', status=401)
+
 
 class EventPortalRetrieve(EventMixin, APIView):
     """
@@ -57,7 +51,7 @@ class EventPortalRetrieve(EventMixin, APIView):
         raise MethodNotAllowed(method='POST')
 
 
-class EventPortalRequestAccess(EventMixin, APIView):
+class EventPortalRequestCheckout(EventMixin, APIView):
     """
     POST view for requesting access into eventportal
     Based on query string, routed to respective method
@@ -74,7 +68,7 @@ class EventPortalRequestAccess(EventMixin, APIView):
         return Response(blockchain_serializer.data)
 
 
-class EventPortalGrantAccess(EventMixin, APIView):
+class EventPortalProcessCheckout(EventMixin, APIView):
     """
     POST view for granting access into eventportal
     """
@@ -105,7 +99,6 @@ class EventPortalGrantAccess(EventMixin, APIView):
         )
         if not validated:
             return Response(response_msg, status=403)
-
 
         # 4. Verify ticket selection valid
         # 5. Verify ticket against blockchain ownership

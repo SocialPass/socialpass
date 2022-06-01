@@ -9,13 +9,13 @@ urlpatterns = [
         name="eventportal_retrieve",
     ),
     path(
-        "request-access/<str:public_id>/",
-        views.EventPortalRequestAccess.as_view(),
-        name="eventportal_request",
+        "request-checkout/<str:public_id>/",
+        views.EventPortalRequestCheckout.as_view(),
+        name="eventportal_request_checkout",
     ),
     path(
-        "verify-access/<str:public_id>/",
-        views.EventPortalGrantAccess.as_view(),
-        name="eventportal_grant",
+        "process-checkout/<str:public_id>/",
+        views.EventPortalProcessCheckout.as_view(),
+        name="eventportal_process_checkout",
     ),
 ]

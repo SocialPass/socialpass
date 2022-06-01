@@ -21,6 +21,15 @@ from .model_field_choices import STIPE_PAYMENT_STATUSES
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
 
+# s3 client init
+s3_client = boto3.client(
+    "s3",
+    region_name="nyc3",
+    endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+)
+
 class DBModel(TimeStampedModel):
     """
     Abstract base model that provides useful timestamps.
@@ -233,14 +242,14 @@ class BlockchainOwnership(DBModel):
         """
         return string representation of model
         """
-        return str(self.unique_code)
+        return str(self.wallet_address)
 
     @property
     def signing_message(self):
         signing_message_obj = {
             "You are accessing": self.event.title,
             "Hosted by": self.event.team.name,
-            "One-Time Code": self.unique_code,
+            "One-Time Code": self.id,
             "Valid until": self.expires.ctime(),
             "Version": self.version,
         }
@@ -281,14 +290,6 @@ class Ticket(DBModel):
 
     @property
     def temporary_download_url(self):
-        # s3 client init
-        s3_client = boto3.client(
-            "s3",
-            region_name="nyc3",
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
         return s3_client.generate_presigned_url(
             ClientMethod="get_object",
             Params={

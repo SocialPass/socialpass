@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.root.models import BlockchainOwnership, Event
+from apps.services import ticket_service
 
 
 class EventPortalRetrieveSerializer(serializers.ModelSerializer):
@@ -22,17 +23,13 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
         ]
 
     def get_ticket_info(self, obj):
-        # TODO: This method probably belongs in a service in itself.
-        current_ticket_count = obj.tickets.count()
-        if current_ticket_count + obj.limit_per_person > obj.capacity:
-            ticket_limit = obj.capacity - current_ticket_count
-        else:
-            ticket_limit = obj.limit_per_person
-
         return {
             "total_capacity": obj.capacity,
-            "total_tickets_issued": current_ticket_count,
-            "limit_per_person": ticket_limit,
+            "total_tickets_issued": obj.tickets.count(),
+            "limit_per_person": ticket_service.get_tickets_to_issue(
+                event=obj,
+                tickets_requested=obj.limit_per_person
+            )
         }
 
     def get_organizer_info(self, obj):
@@ -54,6 +51,8 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
 
 
 class RequestAccessBlockchain(serializers.ModelSerializer):
+    signing_message = serializers.SerializerMethodField()
+
     class Meta:
         model = BlockchainOwnership
         fields = [
@@ -61,9 +60,12 @@ class RequestAccessBlockchain(serializers.ModelSerializer):
             "signing_message",
         ]
 
+    def get_signing_message(self, obj):
+        return obj.signing_message
+
 
 class BlockchainOwnershipSerializer(serializers.Serializer):
     wallet_address = serializers.CharField(required=True)
     signed_message = serializers.CharField(required=True)
     blockchain_ownership_id = serializers.CharField(required=True)
-
+    tickets_requested = serializers.IntegerField(required=True)

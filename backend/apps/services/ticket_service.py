@@ -2,10 +2,10 @@ import io
 
 from django.conf import settings
 
-from apps.root.models import Ticket, Event, s3_client
+from apps.root.models import Ticket, BlockchainOwnership, Event, s3_client
 from apps.services import TicketImageGenerator
 
-def get_available_ticket_count(event:Event, tickets_requested:int) -> int:
+def get_tickets_to_issue(event:Event, tickets_requested:int) -> int:
     """
     return how many tickets available for a given event
     In the future, this method can be extended to ticket types vs singular ticket with an event
@@ -66,3 +66,35 @@ def create_ticket_store_s3_bucket(
 
     # return ticket image from pillow and s3 response
     return created_ticket_img, response
+
+def issue_tickets_blockchain_ownership(
+    event: Event,
+    blockchain_ownership: BlockchainOwnership,
+    tickets_to_issue: int,
+) -> [Ticket]:
+    """
+    issue tickets for a given event baesd on blockchain_ownership checkout
+    """
+    # loop against requirements, append eligible asset to assets
+    assets = []
+    for requiremenet in event.requirements:
+        # break loop
+        print(requiremenet)
+        if len(assets) == tickets_to_issue:
+            break
+
+        # TODO
+
+
+    # Loop against asset, create Ticket
+    _tickets = []
+    for asset in assets:
+        _tickets.append(
+            Ticket(
+            )
+        )
+
+    # bulk create / return
+    return Ticket.objects.bulk_create(_tickets)
+
+

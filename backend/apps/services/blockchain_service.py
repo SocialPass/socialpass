@@ -7,7 +7,7 @@ from web3 import Web3
 from apps.root.models import BlockchainOwnership, Event
 
 
-def validate_blockchain_ownership(event: Event, blockchain_ownership: BlockchainOwnership, signed_message: str, wallet_address:str):
+def validate_blockchain_wallet_ownership(event: Event, blockchain_ownership: BlockchainOwnership, signed_message: str, wallet_address:str):
     """
     Sets a blockchain_ownership as verified after successful verification
     Returns tuple of (verified:bool, verification_msg:str)

@@ -100,23 +100,36 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             signed_message=blockchain_serializer.data['signed_message'],
             wallet_address=blockchain_serializer.data['wallet_address'],
         )
-        if not wallet_validated:
+        if wallet_validated:
             return Response(response_msg, status=403)
 
         # 4. Get # of tickets available
-        tickets_to_issue = ticket_service.get_available_tickets(
-            event=self.event,
-            tickets_requested=blockchain_serializer.data['tickets_requested']
-        )
-        if tickets_to_issue == 0:
-            return Response("Sold out :/", status=403)
+        try:
+            tickets_to_issue = ticket_service.get_available_tickets(
+                event=self.event,
+                tickets_requested=blockchain_serializer.data['tickets_requested']
+            )
+        except (
+            ticket_service.TooManyTicketsRequestedError,
+            ticket_service.TooManyTicketsIssuedError,
+            ticket_service.TicketsSoldOutError,
+        ) as e:
+            return Response(str(e), status=403)
 
-        # 5. create & return tickets based on blockchain ownership
-        tickets = ticket_service.create_tickets_blockchain_ownership(
-            event=self.event,
-            blockchain_ownership=blockchain_ownership,
-            tickets_to_issue=tickets_to_issue
-        )
-        if not tickets:
-            return Response(tickets_msg, status=403)
-        return Response(self.output_serializer(tickets, many=True).data)
+        # 5. try to create & return tickets based on blockchain ownership
+        try:
+            tickets = ticket_service.create_tickets_blockchain_ownership(
+                event=self.event,
+                blockchain_ownership=blockchain_ownership,
+                tickets_to_issue=tickets_to_issue
+            )
+            return Response(self.output_serializer(tickets, many=True).data)
+        except (
+            ticket_service.TooManyTicketsRequestedError,
+            ticket_service.TooManyTicketsIssuedError,
+            ticket_service.TicketsSoldOutError,
+            ticket_service.ZeroBlockchainAssetsError,
+            ticket_service.PartialBlockchainAssetError,
+        ) as e:
+           return Response(str(e), status=403)
+

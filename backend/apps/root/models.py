@@ -245,7 +245,6 @@ class BlockchainOwnership(DBModel):
             "Hosted by": self.event.team.name,
             "One-Time Code": self.id,
             "Valid until": self.is_expired.ctime(),
-            "Version": self.version,
         }
         signing_message = "\n".join(
             ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()

@@ -31,8 +31,8 @@ function handleRedirect(){
         </div>  
         <div className="container p-20 d-flex flex-column">
 
-          <button className="btn-start-scanning" onClick={handleRedirect}  >
-            <h5>Start Scanning</h5>
+          <button className="btn-start-scanning" onClick={handleRedirect}>
+           Start Scanning
           </button>
         </div>
       </div>

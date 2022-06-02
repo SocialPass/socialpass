@@ -18,7 +18,7 @@
     background-position-x: right;
     background-position-y: bottom;
     border: solid;
-    border-width: 1px;
+    border-width: 0px;
     border-color: var(--gray-color-dim);
     border-radius: 1.4rem;
     box-shadow: none;
@@ -73,6 +73,9 @@
     border-width: 0rem;
     -webkit-font-smoothing: auto;
     -moz-osx-font-smoothing: auto;
+    font-size: 2.6rem;
+    font-weight: 600;
+    line-height: 2.4;
     text-decoration: none;
     color: var(--white-color);
     background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));

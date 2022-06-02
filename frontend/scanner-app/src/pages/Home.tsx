@@ -16,7 +16,7 @@ export function Home() {
   return (
     <>
   <div className="landing-page-body p-10 py-50">
-    <div className="py-50 d-flex flex-column align-items-center justify-content-around">     
+    <div className="d-flex flex-column align-items-center justify-content-around">     
       <img className="p-30" src={Logo}/>
         <div></div>
         <EventContainer

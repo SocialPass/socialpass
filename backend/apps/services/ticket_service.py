@@ -1,4 +1,5 @@
 import io
+import sentry_sdk
 from apps.root.models import Ticket, BlockchainOwnership, Event
 from apps.services import TicketImageGenerator, blockchain_service
 
@@ -25,11 +26,15 @@ def get_available_tickets(event:Event, tickets_requested:int) -> int:
     """
     ticket_count = event.tickets.count()
     if ticket_count > event.capacity:
-        # TODO: Sentry event
-        raise TooManyTicketsIssuedError("Too many tickets have been issued")
+        # send to sentry
+        error = TooManyTicketsIssuedError("Too many tickets have been issued")
+        sentry_sdk.capture_error(error)
+        raise error
 
     if ticket_count == event.capacity:
-        raise TicketsSoldOutError("Tickets sold out")
+        error = TicketsSoldOutError("Tickets sold out")
+        sentry_sdk.capture_message(error)
+        raise error
 
     # check available tickets
     if event.limit_per_person + ticket_count > event.capacity:

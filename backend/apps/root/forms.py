@@ -5,7 +5,6 @@ from invitations.forms import InvitationAdminAddForm, InviteForm
 
 from apps.services import pricing_service
 from apps.root.models import Invite, Team, TicketedEvent
-from avoid_formview_resubmission.forms import AvoidRessubmissionFormMixin
 
 
 class TimeZoneForm(forms.Form):
@@ -80,10 +79,6 @@ class TicketedEventForm(forms.ModelForm):
             pricing_service.set_ticketed_event_price(obj)
 
         return obj
-
-
-class TicketedEventCreateForm(AvoidRessubmissionFormMixin, TicketedEventForm):
-    pass
 
 
 class CustomInviteForm(InviteForm):

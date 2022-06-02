@@ -1,0 +1,12 @@
+<div>
+    <input name="_afr_uuid" id="_afr_uuid" />
+    <script>
+        // type="hidden" 
+        window.addEventListener("pageshow", () => {
+            if (document.getElementById('_afr_uuid').value == ""){
+                console.log("Generating new UUID");
+                document.getElementById('_afr_uuid').value = "{{afr_uuid_}}" // uuidv4();
+            }
+        });
+    </script>
+</div>

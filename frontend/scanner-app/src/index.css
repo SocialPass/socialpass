@@ -2,6 +2,12 @@
 BASE HTML
 */
 
+:root{
+  --green-success: #0FBE0C;
+  --red-denied: #EF7C4E;
+  --blue-info: #00448C;
+}
+
 @font-face {
   font-family: 'rubik';
   src: local('rubik'),

@@ -16,12 +16,15 @@ from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
 from apps.services import pricing_service
-from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm
+from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm, TicketedEventCreateForm
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.model_field_choices import BLOCKCHAINS, CHAIN_IDS, ASSET_TYPES
 from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEventStripePayment
+from avoid_formview_resubmission.views import AvoidRessubmissionFormViewMixin
+
 
 User = auth.get_user_model()
+
 
 class UserDetailView(TemplateView):
     """
@@ -205,13 +208,13 @@ class TicketedEventDetailView(TeamContextMixin, DetailView):
         return qs
 
 
-class TicketedEventCreateView(TeamContextMixin, CreateView):
+class TicketedEventCreateView(TeamContextMixin, AvoidRessubmissionFormViewMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
 
     model = TicketedEvent
-    form_class = TicketedEventForm
+    form_class = TicketedEventCreateForm
     template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):

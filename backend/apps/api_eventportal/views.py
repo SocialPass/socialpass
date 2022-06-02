@@ -100,7 +100,6 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             signed_message=blockchain_serializer.data['signed_message'],
             wallet_address=blockchain_serializer.data['wallet_address'],
         )
-        # TODO: should be if NOT wallet_validated, for testing purposes
         if not wallet_validated:
             return Response(response_msg, status=403)
 
@@ -112,14 +111,12 @@ class EventPortalProcessCheckout(EventMixin, APIView):
         if tickets_to_issue == 0:
             return Response("Sold out :/", status=403)
 
-        # 5. Issue tickets based on blockchain ownership
-        tickets, tickets_msg = ticket_service.create_tickets_blockchain_ownership(
+        # 5. create & return tickets based on blockchain ownership
+        tickets = ticket_service.create_tickets_blockchain_ownership(
             event=self.event,
             blockchain_ownership=blockchain_ownership,
             tickets_to_issue=tickets_to_issue
         )
         if not tickets:
             return Response(tickets_msg, status=403)
-
-        # return tickets
         return Response(self.output_serializer(tickets, many=True).data)

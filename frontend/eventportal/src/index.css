@@ -263,6 +263,7 @@ BOOSTRAP OVERRIDES
   background: var(--bg-denied) !important;
   color:var(--denied);
   border-radius: 7px;
+  width: 70%;
 }
 
 .btn-secondary{

@@ -28,9 +28,10 @@ export const StatusEventPage = () => {
           <div className="col col-md-10">
             <h1>Congrats</h1>
             <p>You made it! Click the button to download your ticket</p>
-            <div className="bg-success p-5 strong my-15 text-center">
+            <div className="bg-success p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
               <img src={correct} height="16.9" width="16.9" className="me-4" />
               access granted
+              <span></span>
             </div>
             <div className="d-flex flex-row justify-content-around">
               <img
@@ -75,9 +76,10 @@ export const StatusEventPage = () => {
         <div className="col col-md-10">
           <h1>Something Went Wrong</h1>
           <p>We’re sorry, we were not able to redeem this Token Gate</p>
-          <div className="bg-denied p-3 strong my-3">
-            <img src={denied} height="16.9" width="16.9" className="me-4" />
+          <div className="bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
+            <img src={denied} height="16.9" width="16.9" />
             access denied
+            <span></span>
           </div>
           <div className="d-flex flex-row justify-content-around">
             <img

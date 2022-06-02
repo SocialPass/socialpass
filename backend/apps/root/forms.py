@@ -3,7 +3,7 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm, InviteForm
 
-from apps.root import pricing_service
+from apps.services import pricing_service
 from apps.root.models import Invite, Team, TicketedEvent
 
 
@@ -58,21 +58,33 @@ class TicketedEventForm(forms.ModelForm):
             ),
         }
 
+    def can_edit_capacity(self) -> bool:
+        if self.instance is None:
+            return True
+
+        return not (
+            pricing_service.get_in_progress_payment(self.instance)
+            or pricing_service.get_effective_payments(self.instance.payments)
+        )
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        instance = getattr(self, "instance", None)
-        if not instance:
-            return
-
-        if (
-            pricing_service.get_in_progress_payment(instance)
-            or pricing_service.get_effective_payments(instance.payments)
-        ):
+        if not self.can_edit_capacity():
             self.fields["capacity"].disabled = True
 
     def save(self, commit: bool = ...) -> TicketedEvent:
         """Sets TicketedEvent price after save"""
+        if (
+            (not self.can_edit_capacity())
+            and (self.instance.capacity != self.cleaned_data["capacity"])
+        ):
+            # not using field has_changed here since it can lead to a
+            # security failure as it checks if the field is disabled.
+
+            # this will never happend since capacity field is disabled, unless the user tries to hack the form
+            raise RuntimeError("Cannot change capacity")
+
         obj = super().save(commit)
 
         if "capacity" in self.changed_data:

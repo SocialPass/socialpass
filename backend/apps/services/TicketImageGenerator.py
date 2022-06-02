@@ -5,77 +5,12 @@ import os
 import random
 import re
 import urllib.request
-from typing import Optional
 
-import boto3
 import qrcode
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
-from pydantic import BaseModel
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import CircleModuleDrawer
-
-# s3 client init
-s3 = boto3.client(
-    "s3",
-    region_name="nyc3",
-    endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-)
-
-
-# SCHEMAS
-class EventData(BaseModel):
-    event_name: str  # Name of the event
-    event_date: str  # Date (and time) of the event
-    event_location: str  # Where the event will be held
-
-
-# public utilities class
-class Utilities:
-    def fetch_ticket_download_url(ticket=None):
-        """
-        method sets ticket download url
-        assumes .save() will be called after
-        """
-
-        # generate presigned url
-        return s3.generate_presigned_url(
-            ClientMethod="get_object",
-            Params={
-                "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                "Key": f"media/tickets/{str(ticket.filename)}.png",
-            },
-            ExpiresIn=3600,
-        )
-
-    def create_ticket_store_s3(
-        event_data: EventData,
-        filename: str,
-        embed: str,
-        top_banner_text: Optional[str] = "SocialPass Ticket",
-        scene_img_source: Optional[str] = None,
-    ):
-        """
-        Use the request to generate a ticket image and save into s3-compatible bucket.
-        Returns ticket image as well as s3 storage response
-        """
-        # Generate ticket image from request data
-        ticket_img = TicketPartGenerator.generate_ticket(
-            event_data=event_data,
-            embed=embed,
-            scene_img_source=scene_img_source,
-            top_banner_text=top_banner_text,
-        )
-
-        # Store ticket image into bucket
-        response = TicketPartGenerator.store_ticket(
-            ticket_img=ticket_img, filename=filename
-        )
-
-        return ticket_img, response
-
 
 theme_list = [
     # Simple light themes
@@ -882,20 +817,3 @@ class TicketPartGenerator:
         result = overlay_center(ticket_with_bg, full_canvas)
 
         return result
-
-    @staticmethod
-    def store_ticket(ticket_img, filename):
-        # Prepare image for S3
-        buffer = io.BytesIO()
-        ticket_img.save(buffer, "PNG")
-        buffer.seek(0)  # Rewind pointer back to start
-
-        # put image into s3
-        response = s3.put_object(
-            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-            Key=f"{settings.AWS_TICKET_DIRECTORY}{filename}.png",
-            Body=buffer,
-            ContentType="image/png",
-        )
-
-        return response

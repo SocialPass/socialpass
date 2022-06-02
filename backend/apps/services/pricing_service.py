@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.db.models import Sum
 
-from .models import PricingRuleGroup, Team, TicketedEvent, TicketedEventStripePayment
+from apps.root.models import PricingRuleGroup, Team, TicketedEvent, TicketedEventStripePayment
 
 
 def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:

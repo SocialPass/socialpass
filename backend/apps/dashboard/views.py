@@ -15,7 +15,7 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
-from apps.root import pricing_service
+from apps.services import pricing_service
 from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.model_field_choices import BLOCKCHAINS, CHAIN_IDS, ASSET_TYPES
@@ -331,7 +331,11 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
             stripe_session = stripe.checkout.Session.retrieve(
                 issued_payment.stripe_checkout_session_id
             )
-            return redirect(stripe_session["url"])
+            if stripe_session['status'] == 'expired' and stripe_session['payment_status'] == 'unpaid':
+                issued_payment.status = 'FAILURE'
+                issued_payment.save()
+            else:
+                return redirect(stripe_session['url'])
 
         # build callback urls
         success_callback = (

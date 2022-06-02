@@ -17,8 +17,6 @@ from invitations.base_invitation import AbstractBaseInvitation
 from model_utils.models import TimeStampedModel
 from pytz import utc
 
-from apps.gates import Ticketing
-
 from .model_field_choices import STIPE_PAYMENT_STATUSES
 from .model_field_schemas import REQUIREMENT_SCHEMA, REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
@@ -170,6 +168,9 @@ class TicketedEvent(DBModel):
     Stores data for ticketed event
     """
 
+    def set_scanner_code():
+        return secrets.token_urlsafe(256)
+
     public_id = models.UUIDField(
         max_length=64, default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
@@ -213,9 +214,30 @@ class TicketedEvent(DBModel):
         on_delete=models.RESTRICT,  # Forbids pricing rules from being deleted
     )
 
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"{self.team} - {self.title}"
+
     @property
     def has_pending_checkout(self):
-        return self.payments.last().status in [None, "PENDING", "CANCELLED", "FAILURE"]
+        last_payment = self.payments.last()
+        if last_payment is None:
+            return True
+
+        return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
+
+
+class RedemptionAccessKey(DBModel):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ticketed_event = models.ForeignKey(
+        TicketedEvent, on_delete=models.CASCADE,
+        related_name="redemption_access_keys"
+    )
+    # TODO in a near future, different ScannerKeyAccess
+    # can give access to scanning diferent type of tickets.
 
 
 class Signature(DBModel):
@@ -262,29 +284,33 @@ class Ticket(DBModel):
     List of all the tickets distributed by the respective Ticketed Event.
     """
 
-    filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    embed_code = models.UUIDField(default=uuid.uuid4)
     ticketed_event = models.ForeignKey(
         TicketedEvent, on_delete=models.CASCADE, related_name="tickets"
     )
     signature = models.ForeignKey(
         Signature, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
-    wallet_address = models.CharField(max_length=400)
+    filename = models.UUIDField(default=uuid.uuid4, editable=False)
+    embed_code = models.UUIDField(default=uuid.uuid4)
     requirement = models.JSONField(
         blank=True,
         null=True,
         validators=[JSONSchemaValidator(limit_value=REQUIREMENT_SCHEMA)],
     )
     option = models.JSONField(blank=True, null=True)
-    image = models.ImageField(
-        null=True, blank=True, height_field=None, width_field=None, max_length=255
-    )
-    temporary_download_url = models.TextField(null=True, blank=True)
     redeemed = models.BooleanField(default=False)
+    redeemed_at = models.DateTimeField(null=True, blank=True)
+    redeemed_by = models.ForeignKey(RedemptionAccessKey, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.ticketed_event.title})"
+
+    @property
+    def image_location(self):
+        return f"{settings.AWS_TICKET_DIRECTORY}{self.filename}.png"
+
+    def embed(self):
+        return f"{self.embed_code}/{self.filename}"
 
     def populate_data(self, **kwargs):
         """
@@ -305,7 +331,7 @@ class Ticket(DBModel):
                     "event_location": self.ticketed_event.location,
                 },
                 filename=self.filename,
-                embed=f"{self.embed_code}/{self.filename}",
+                embed=self.embed,
                 top_banner_text="SocialPass Ticket",
             )
             self.image = f"tickets/{str(self.filename)}.png"

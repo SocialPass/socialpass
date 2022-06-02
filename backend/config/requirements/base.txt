@@ -1,7 +1,6 @@
 # general
 pip
 wheel
-pydantic
 uvicorn[standard]
 argon2-cffi==21.3.0
 web3==5.29.0

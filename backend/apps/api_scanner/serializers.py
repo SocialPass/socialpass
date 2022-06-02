@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.root.models import Signature, Team, TicketedEvent
+from apps.root.models import Ticket, Team, TicketedEvent
 
 
 #
@@ -14,17 +14,6 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ["name", "image"]
-
-
-class SignatureSerializer(serializers.ModelSerializer):
-    """
-    Signature serializer
-    """
-    signing_message = serializers.CharField(read_only=True)
-
-    class Meta:
-        model = Signature
-        fields = ["signing_message"]
 
 
 class TicketedEventSerializer(serializers.ModelSerializer):
@@ -52,17 +41,14 @@ class TicketedEventSerializer(serializers.ModelSerializer):
         ]
 
 
-#
-# VIEW SERIALIZERS ////////////////////////////////////////////////////////////////////////////////
-#
-class TicketedEventVerifyAccessSerializer(serializers.Serializer):
+class TicketSerializer(serializers.ModelSerializer):
     """
-    Serializes data for TokenGateGrantBlockchainAccess
-    - Wallet address
-    - Signed message (Signature model)
-    - Signature id
+    Serializes Tickets
     """
 
-    wallet_address = serializers.CharField(required=True)
-    signed_message = serializers.CharField(required=True)
-    signature_id = serializers.CharField(required=True)
+    class Meta:
+        model = Ticket
+        fields = [
+            "id",
+            "filename"
+        ]

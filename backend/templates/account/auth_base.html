@@ -7,7 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}SocialPass{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+    <link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
     <!-- Theme font -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Soft UI CSS -->
@@ -30,8 +30,10 @@
       <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'dashboard_redirect' %}">
-          <img src="{% static 'images/socialpass-icon.png' %}" class="navbar-brand-img h-100" alt="main_logo">
-          <span class="ms-2 font-weight-bold text-primary fs-5">SocialPass</span>
+          <img src="{% static 'images/socialpass-icon.svg' %}" class="navbar-brand-img h-100" alt="main_logo">
+          <span class="ms-2 font-weight-bold fs-5">
+            <span class="text-primary">Social</span><span class="text-info">Pass</span>
+          </span>
         </a>
       </div>
       <hr class="horizontal dark mt-0">
@@ -45,7 +47,7 @@
           {% for member in request.user.membership_set.all %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'ticketgate_list' member.team.pk %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                 <i class="fa-solid fa-house-chimney"></i>
               </div>
               <span class="nav-link-text">{{member.team.name}}</span>
@@ -60,7 +62,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'user_detail' %}active{% endif %}" href="{% url 'user_detail' %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                 <i class="fa-solid fa-gear"></i>
               </div>
               <span class="nav-link-text">Update Info</span>
@@ -68,7 +70,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'account_change_password' %}active{% endif %}" href="{% url 'account_change_password' %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                 <i class="fa-solid fa-key"></i>
               </div>
               <span class="nav-link-text">Change Password</span>
@@ -76,7 +78,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'account_email' %}active{% endif %}" href="{% url 'account_email' %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                 <i class="fa-solid fa-envelope"></i>
               </div>
               <span class="nav-link-text">Manage Email</span>
@@ -84,7 +86,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if url_name == 'account_logout' %}active{% endif %}" href="{% url 'account_logout' %}">
-              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-primary text-white fs-6 me-3">
+              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                 <i class="fa-solid fa-sign-out"></i>
               </div>
               <span class="nav-link-text">Logout</span>

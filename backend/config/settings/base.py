@@ -320,11 +320,9 @@ STATICFILES_FINDERS = [
 
 # MEDIA
 # ------------------------------------------------------------------------------
-DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"
 MEDIA_URL = f"https://{AWS_LOCATION}/public/media/"
-# Custom Code
-AWS_TICKET_DIRECTORY = env("DJANGO_AWS_TICKET_DIRECTORY")
-
+DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"
+PRIVATE_TICKET_STORAGE = "config.storages.PrivateTicketStorage"
 
 # Your stuff...
 # ------------------------------------------------------------------------------

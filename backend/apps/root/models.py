@@ -1,4 +1,5 @@
 import math
+import os
 import uuid
 from datetime import datetime, timedelta
 
@@ -17,18 +18,11 @@ from invitations.base_invitation import AbstractBaseInvitation
 from model_utils.models import TimeStampedModel
 from pytz import utc
 
+from config.storages import PrivateTicketStorage
 from .model_field_choices import STIPE_PAYMENT_STATUSES
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
 
-# s3 client init
-s3_client = boto3.client(
-    "s3",
-    region_name="nyc3",
-    endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-)
 
 class DBModel(TimeStampedModel):
     """
@@ -268,6 +262,7 @@ class Ticket(DBModel):
         Event, on_delete=models.CASCADE, related_name="tickets"
     )
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
+    file = models.ImageField(null=True, storage=PrivateTicketStorage())
     embed_code = models.UUIDField(default=uuid.uuid4)
     redeemed = models.BooleanField(default=False)
     redeemed_at = models.DateTimeField(null=True, blank=True)
@@ -285,20 +280,27 @@ class Ticket(DBModel):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
     @property
-    def image_location(self):
-        return f"{settings.AWS_TICKET_DIRECTORY}{str(self.filename)}.png"
-
-    @property
     def embed(self):
         return f"{self.embed_code}/{self.filename}"
 
     @property
+    def filename_key(self):
+        return os.path.join(self.file.storage.location, self.file.name)
+
+    @property
     def temporary_download_url(self):
+        s3_client = boto3.client(
+            "s3",
+            region_name=settings.AWS_S3_REGION_NAME,
+            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
         return s3_client.generate_presigned_url(
             ClientMethod="get_object",
             Params={
                 "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                "Key": self.image_location
+                "Key": self.filename_key
             },
             ExpiresIn=3600,
         )

@@ -1,8 +1,5 @@
 import io
-
-from django.conf import settings
-
-from apps.root.models import Ticket, BlockchainOwnership, Event, s3_client
+from apps.root.models import Ticket, BlockchainOwnership, Event
 from apps.services import TicketImageGenerator, blockchain_service
 
 def get_tickets_to_issue(event:Event, tickets_requested:int) -> int:
@@ -26,8 +23,9 @@ def get_tickets_to_issue(event:Event, tickets_requested:int) -> int:
     # return initial tickets_requested integer
     return tickets_requested
 
+
 def create_ticket_image(
-    event: Event, ticket:Ticket,
+    event: Event, ticket: Ticket,
     top_banner_text: str = "SocialPass Ticket", scene_img_source: str = None
 ):
     """
@@ -48,20 +46,15 @@ def create_ticket_image(
 
     # Store ticket image into bucket
     # Prepare image for S3
-    buffer = io.BytesIO()
-    created_ticket_img.save(buffer, "PNG")
-    buffer.seek(0)  # Rewind pointer back to start
+    _buffer = io.BytesIO()
+    created_ticket_img.save(_buffer, "PNG")
+    _buffer.seek(0)  # Rewind pointer back to start
 
-    # put image into s3
-    response = s3_client.put_object(
-        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-        Key=ticket.image_location,
-        Body=buffer,
-        ContentType="image/png",
-    )
+    # save ticket image
+    # todo: ensure .png format (or whatever format)
+    ticket.image.save(f"{str(ticket.filename)}.png", _buffer)
+    return ticket
 
-    # return ticket image from pillow and s3 response
-    return created_ticket_img, response
 
 def issue_tickets_with_blockchain_ownership(
     event: Event,
@@ -112,6 +105,8 @@ def issue_tickets_with_blockchain_ownership(
                 blockchain_ownership=blockchain_ownership
             )
 
+
+        create_ticket_image(event=event, ticket=new_ticket)
         # append ticket to list
         tickets.append(new_ticket)
 
@@ -123,5 +118,3 @@ def issue_tickets_with_blockchain_ownership(
     # return tickets
     tickets_message = "OK"
     return tickets, tickets_message
-
-

@@ -79,8 +79,8 @@ class RedemptionAccessKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("event", "blockchain_ownership", "image_location")
-    search_fields = ("event__title", "blockchain_ownership", "image_location")
+    list_display = ("event", "blockchain_ownership",)
+    search_fields = ("event__title", "blockchain_ownership",)
 
 
 @admin.register(PricingRule)

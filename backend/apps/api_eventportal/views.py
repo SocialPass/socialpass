@@ -105,7 +105,7 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             return Response(response_msg, status=403)
 
         # 4. Get # of tickets available
-        tickets_to_issue = ticket_service.get_tickets_to_issue(
+        tickets_to_issue = ticket_service.get_available_tickets(
             event=self.event,
             tickets_requested=blockchain_serializer.data['tickets_requested']
         )
@@ -113,7 +113,7 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             return Response("Sold out :/", status=403)
 
         # 5. Issue tickets based on blockchain ownership
-        tickets, tickets_msg = ticket_service.issue_tickets_with_blockchain_ownership(
+        tickets, tickets_msg = ticket_service.create_tickets_blockchain_ownership(
             event=self.event,
             blockchain_ownership=blockchain_ownership,
             tickets_to_issue=tickets_to_issue

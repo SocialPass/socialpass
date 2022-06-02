@@ -2,22 +2,42 @@ import io
 from apps.root.models import Ticket, BlockchainOwnership, Event
 from apps.services import TicketImageGenerator, blockchain_service
 
-def get_tickets_to_issue(event:Event, tickets_requested:int) -> int:
+class TooManyTicketsRequestedError(Exception):
+    pass
+
+class TooManyTicketsIssuedError(Exception):
+    pass
+
+class TicketsSoldOutError(Exception):
+    pass
+
+class ZeroBlockchainAssetsError(Exception):
+    pass
+
+class PartialBlockchainAssetError(Exception):
+    pass
+
+
+def get_available_tickets(event:Event, tickets_requested:int) -> int:
     """
     return how many tickets available for a given event
     In the future, this method can be extended to ticket types vs singular ticket with an event
     """
     ticket_count = event.tickets.count()
-    if ticket_count >= event.capacity:
-        return 0
+    if ticket_count > event.capacity:
+        # TODO: Sentry event
+        raise TooManyTicketsIssuedError("Too many tickets have been issued")
+
+    if ticket_count == event.capacity:
+        raise TicketsSoldOutError("Tickets sold out")
 
     # check available tickets
     if event.limit_per_person + ticket_count > event.capacity:
-        return event.capacity - ticket_count
+        raise TooManyTicketsRequestedError("Tickets requested would bring event over capacity. Please lower requested tickets.")
 
     # check tickets_requested requested against limt_per_person
     if tickets_requested > event.limit_per_person:
-        return event.limit_per_person
+        raise TooManyTicketsRequestedError("Tickets requested are over the limit per person")
 
     # all checks passed
     # return initial tickets_requested integer
@@ -56,16 +76,14 @@ def create_ticket_image(
     return ticket
 
 
-def issue_tickets_with_blockchain_ownership(
-    event: Event,
-    blockchain_ownership: BlockchainOwnership,
+def create_tickets_blockchain_ownership(
+    event: Event, blockchain_ownership: BlockchainOwnership,
     tickets_to_issue: int,
-) -> [Ticket]:
+):
     """
     issue tickets for a given event based on blockchain_ownership checkout
     """
     # vars
-    assets = []
     tickets = []
     tickets_message = ""
 
@@ -75,7 +93,16 @@ def issue_tickets_with_blockchain_ownership(
         wallet_address=blockchain_ownership.wallet_address,
     )
     if not asset_ownership:
-        return tickets
+        raise ZeroBlockchainAssetsError("No blockchain assets found")
+
+    if len(asset_ownership) < tickets_to_issue:
+        raise PartialBlockchainAssetError(
+            "Not enough blockchain assets found",
+            {
+                "expected":tickets_to_issue,
+                "actual":len(asset_ownership) - tickets_to_issue,
+            }
+        )
 
     # generate tickets based on blockchain assets
     for blockchain_asset in asset_ownership:
@@ -110,11 +137,4 @@ def issue_tickets_with_blockchain_ownership(
         # append ticket to list
         tickets.append(new_ticket)
 
-    # check for tickets array and set error message if not
-    if not tickets:
-        tickets_message = "No assets meeting requirements for this event were found"
-        return tickets, tickets_message
-
-    # return tickets
-    tickets_message = "OK"
-    return tickets, tickets_message
+    return tickets

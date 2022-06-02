@@ -11,6 +11,8 @@
 
  .landing-page-body {
     background-color: var(--nftyblue);
+    width: 100vw;
+    height: 100vh;
 }
 
 
@@ -58,6 +60,7 @@
     --small-font-size: 1.4rem;
     --large-font-size: 1.8rem;
     --bold-font-weight: 600;
+
 
     /* Base background colors */
 

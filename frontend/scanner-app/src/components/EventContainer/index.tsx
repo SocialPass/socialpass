@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Scanner } from "../../pages/Scanner"
+import { Link } from "react-router-dom"; 
+
 
 
 
@@ -12,7 +14,10 @@ type EventContainerProps = {
 };
 
 export function EventContainer({ event_name, event_attendance, event_date, event_venue }: EventContainerProps) {
-
+const navigate= useNavigate()
+function handleRedirect(){
+  navigate("/scanner")
+}
   return (
     <div className="container p-10 d-flex flex-column align-items-center">
         <div className="landing-page-event-title">{event_name}</div>
@@ -26,7 +31,7 @@ export function EventContainer({ event_name, event_attendance, event_date, event
         </div>  
         <div className="container p-20 d-flex flex-column">
 
-          <button className="btn-rounded" onClick={Scanner}>
+          <button className="btn-rounded" onClick={handleRedirect}  >
             <h5>Start Scanning</h5>
           </button>
         </div>

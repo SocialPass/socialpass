@@ -70,7 +70,7 @@ export const Web3ConnectWallet = () => {
               <img src={infoButton} />
             </span>
           </div>
-          <div className="d-flex flex-row align-items-center justify-content-between mt-30 gap-15">
+          <div className="col-lg-12 d-flex mt-30 gap-15">
             {connectData.connectors.map((x) => (
               <button
                 className="btn btn-secondary border-color-primary shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"

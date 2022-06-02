@@ -1052,7 +1052,7 @@
 
     --card-text-color: inherit;
     --card-bg-color: var(--base-content-bg-color);
-    --card-bg-image: "../images/bg_image_logo.png";
+    --card-bg-image: url("../images/bg_image_logo.png");
     --card-border-color: var(--border-color-dark);
     --card-box-shadow: none;
 
@@ -5729,6 +5729,9 @@ body,
     color: var(--card-text-color);
     background-color: var(--card-bg-color);
     background-image: var(--card-bg-image);
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-position-y: bottom;
     border: var(--card-border-style);
     border-width: var(--card-border-width);
     border-color: var(--card-border-color);

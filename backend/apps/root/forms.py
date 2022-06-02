@@ -3,8 +3,8 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm, InviteForm
 
+from apps.root.models import Invite, Team, Event
 from apps.services import pricing_service
-from apps.root.models import Invite, Team, TicketedEvent
 
 
 class TimeZoneForm(forms.Form):
@@ -25,7 +25,7 @@ class TeamForm(forms.ModelForm):
         fields = ["name", "description", "image"]
 
 
-class TicketedEventForm(forms.ModelForm):
+class EventForm(forms.ModelForm):
     """
     Allows ticketed event information to be updated.
 
@@ -37,7 +37,7 @@ class TicketedEventForm(forms.ModelForm):
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
 
     class Meta:
-        model = TicketedEvent
+        model = Event
         fields = [
             "title",
             "description",
@@ -85,10 +85,11 @@ class TicketedEventForm(forms.ModelForm):
             # this will never happend since capacity field is disabled, unless the user tries to hack the form
             raise RuntimeError("Cannot change capacity")
 
+
         obj = super().save(commit)
 
         if "capacity" in self.changed_data:
-            pricing_service.set_ticketed_event_price(obj)
+            pricing_service.set_event_price(obj)
 
         return obj
 

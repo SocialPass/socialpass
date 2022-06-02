@@ -65,7 +65,7 @@ REQUIREMENT_SCHEMA = {
     "properties": REQUIREMENT,
 }
 
-REQUIREMENTS_SCHEMA = {
+BLOCKCHAIN_REQUIREMENTS_SCHEMA = {
     "type": "array",
     "title": "Blockchain Requirements",
     "format": "tabs",

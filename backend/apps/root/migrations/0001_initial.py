@@ -131,10 +131,10 @@ class Migration(migrations.Migration):
                 "verbose_name": "user",
                 "verbose_name_plural": "users",
                 "abstract": False,
-            },
-            managers=[
-                ("objects", apps.root.models.CustomUserManager()),
-            ],
+            }
+            #managers=[
+            #    ("objects", apps.root.models.CustomUserManager()),
+            #],
         ),
         migrations.CreateModel(
             name="Membership",
@@ -275,12 +275,12 @@ class Migration(migrations.Migration):
                 ("signing_message", models.CharField(max_length=1024)),
                 ("wallet_address", models.CharField(max_length=400)),
                 ("is_verified", models.BooleanField(default=False)),
-                (
-                    "expires",
-                    models.DateTimeField(
-                        default=apps.root.models.Signature.set_expires
-                    ),
-                ),
+                #(
+                #    "expires",
+                #    models.DateTimeField(
+                #        default=apps.root.models.Signature.set_expires
+                #    ),
+                #),
                 ("version", models.IntegerField(default=1)),
             ],
             options={

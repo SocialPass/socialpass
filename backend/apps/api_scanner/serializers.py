@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.root.models import Ticket, Team, TicketedEvent
+from apps.root.models import Team, Ticket, Event
 
 
 #
@@ -16,7 +16,7 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image"]
 
 
-class TicketedEventSerializer(serializers.ModelSerializer):
+class EventSerializer(serializers.ModelSerializer):
     """
     Serializes Ticketed events
     """
@@ -26,7 +26,7 @@ class TicketedEventSerializer(serializers.ModelSerializer):
     team = TeamSerializer()
 
     class Meta:
-        model = TicketedEvent
+        model = Event
         fields = [
             "team",
             "title",
@@ -48,7 +48,4 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = [
-            "id",
-            "filename"
-        ]
+        fields = ["id", "filename"]

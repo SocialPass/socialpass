@@ -3,11 +3,18 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
-from apps.services import pricing_service
 from apps.root.models import (
-    Membership, PricingRule, PricingRuleGroup, RedemptionAccessKey,
-    Signature, Team, Ticket, TicketedEvent, TicketedEventStripePayment
+    Membership,
+    PricingRule,
+    PricingRuleGroup,
+    RedemptionAccessKey,
+    BlockchainOwnership,
+    Team,
+    Ticket,
+    Event,
+    EventStripePayment,
 )
+from apps.services import pricing_service
 
 User = get_user_model()
 
@@ -45,14 +52,14 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-@admin.register(Signature)
-class SignatureAdmin(admin.ModelAdmin):
-    list_display = ("ticketed_event", "unique_code", "wallet_address", "is_verified")
-    search_fields = ("ticketed_event__title", "unique_code", "wallet_address")
+@admin.register(BlockchainOwnership)
+class BlockchainOwnershipAdmin(admin.ModelAdmin):
+    list_display = ("event", "id", "wallet_address", "is_verified")
+    search_fields = ("event__title", "id", "wallet_address")
 
 
-@admin.register(TicketedEvent)
-class TicketedEventAdmin(admin.ModelAdmin):
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "public_id",
@@ -72,8 +79,8 @@ class RedemptionAccessKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("ticketed_event", "signature", "image_location")
-    search_fields = ("ticketed_event__title", "signature", "image_location")
+    list_display = ("event", "blockchain_ownership",)
+    search_fields = ("event__title", "blockchain_ownership",)
 
 
 @admin.register(PricingRule)
@@ -118,12 +125,7 @@ def list_as_messages_str(elements: list, title: str):
     return mark_safe(ul_string)
 
 
-@admin.register(TicketedEventStripePayment)
-class TicketedEventStripePaymentAdmin(admin.ModelAdmin):
-    list_display = (
-        "ticketed_event",
-        "value",
-        "status"
-    )
-    search_fields = ("ticketed_event", "value", "status")
-
+@admin.register(EventStripePayment)
+class EventStripePaymentAdmin(admin.ModelAdmin):
+    list_display = ("event", "value", "status")
+    search_fields = ("event", "value", "status")

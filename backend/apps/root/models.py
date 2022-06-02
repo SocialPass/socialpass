@@ -223,14 +223,14 @@ class BlockchainOwnership(DBModel):
     Stores details used to verify blockchain ownership in exchange for tickets
     """
 
-    def set_is_expired():
+    def set_expires():
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
-    is_expired = models.DateTimeField(default=set_is_expired)
+    expires = models.DateTimeField(default=set_expires)
 
     def __str__(self):
         """
@@ -239,12 +239,16 @@ class BlockchainOwnership(DBModel):
         return str(self.wallet_address)
 
     @property
+    def is_expired(self):
+        return self.expires < (datetime.utcnow().replace(tzinfo=utc))
+
+    @property
     def signing_message(self):
         signing_message_obj = {
             "You are accessing": self.event.title,
             "Hosted by": self.event.team.name,
             "One-Time Code": self.id,
-            "Valid until": self.is_expired.ctime(),
+            "Valid until": self.expires.ctime(),
         }
         signing_message = "\n".join(
             ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()

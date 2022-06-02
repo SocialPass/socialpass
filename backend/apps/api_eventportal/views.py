@@ -100,7 +100,7 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             signed_message=blockchain_serializer.data['signed_message'],
             wallet_address=blockchain_serializer.data['wallet_address'],
         )
-        if wallet_validated:
+        if not wallet_validated:
             return Response(response_msg, status=403)
 
         # 4. Get # of tickets available

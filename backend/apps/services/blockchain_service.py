@@ -1,8 +1,5 @@
 import requests
-from datetime import datetime
-
 from eth_account.messages import encode_defunct
-from pytz import utc
 from web3.auto import w3
 from web3 import Web3
 from apps.root.models import BlockchainOwnership, Event
@@ -21,9 +18,10 @@ def validate_blockchain_wallet_ownership(
     if blockchain_ownership.is_verified:
         verification_msg = "BlockchainOwnership message already verified."
 
+    print('yoooo', blockchain_ownership.is_expired)
     # check if expired
-    if blockchain_ownership.is_expired < (datetime.utcnow().replace(tzinfo=utc)):
-        verification_msg = f"BlockchainOwnership request expired at {blockchain_ownership.is_expired}"
+    if blockchain_ownership.is_expired:
+        verification_msg = f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
         return verified, verification_msg
 
     # check for id mismatch

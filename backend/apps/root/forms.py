@@ -45,6 +45,7 @@ class TicketedEventForm(forms.ModelForm):
             "timezone",
             "location",
             "capacity",
+            "limit_per_person",
             "requirements",
         ]
         widgets = {

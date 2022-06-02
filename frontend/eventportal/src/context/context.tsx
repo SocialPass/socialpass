@@ -17,6 +17,8 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
   const [grantAccessJson, setGrantAccessJson] = useState(null);
   const [grantAccessError, setGrantAccessError] = useState(null);
 
+  const [generalAdmissionSelect, setGeneralAdmissionSelect] = useState(1);
+
   const [web3CheckoutSelection, setWeb3CheckoutSelection] = useState([]);
   const [eventStatusCheckout, setEventStatusCheckout] = useState(true);
 
@@ -48,6 +50,9 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
 
         eventStatusCheckout,
         setEventStatusCheckout,
+
+        generalAdmissionSelect,
+        setGeneralAdmissionSelect,
       }}
     >
       {children}

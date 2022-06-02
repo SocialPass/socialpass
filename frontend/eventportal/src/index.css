@@ -84,6 +84,10 @@ small {
   color: #959191;
 }
 
+.text-color-primary{
+  color: var(--orange)
+}
+
 .header {
   position:relative;
   display:flex;
@@ -174,14 +178,31 @@ ELEMENTS
 /*
 BOOSTRAP OVERRIDES
 */
+
+.border-color-primary{
+  border: 1.5px solid var(--orange);
+}
+
+.text-edit{
+  color: var(--orange);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.text-edit:hover{
+  color: var(--orange);
+  text-decoration: underline;
+  transition: filter 0.2s;
+  filter: brightness(0.7)
+}
+
 .btn-primary {
   background: var(--orange);
-  border-radius: 20px;
+  border-radius: 9px;
   color:white;
   border: none;
-  min-height:80px;
+  min-height:60px;
   font-weight: 700;
-  font-size: 1.69rem;
   padding:0;
   margin:0;
   width:100%;
@@ -235,6 +256,16 @@ BOOSTRAP OVERRIDES
   background: var(--bg-denied) !important;
   color:var(--denied);
   border-radius: 7px;
+}
+
+.btn-secondary{
+  background-color: var(--gray);
+}
+
+.btn-secondary:hover{
+  background-color: rgba(185, 175, 175, 0.315);
+  transition: filter 2s;
+  filter: brightness(0.99)
 }
 
 .container {

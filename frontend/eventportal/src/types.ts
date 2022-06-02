@@ -31,5 +31,8 @@ export interface EventPortalContextInterface {
   setWeb3CheckoutSelection:any
 
   eventStatusCheckout:Boolean,
-  setEventStatusCheckout:any
+  setEventStatusCheckout:any,
+
+  generalAdmissionSelect:any,
+  setGeneralAdmissionSelect:any
 }

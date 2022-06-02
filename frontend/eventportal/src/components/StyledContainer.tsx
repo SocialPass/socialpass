@@ -15,8 +15,9 @@ export const StyledContainer = ({
 }) => {
   const { backButton, retrieveJson } = useContext(EventPortalContext);
   const location = useLocation();
+
   return (
-    <div className="container-fluid p-0 d-flex flex-column justify-content-center card">
+    <div className="left-30 container-fluid p-0 d-flex flex-column justify-content-center card">
       {location.pathname.includes("checkout") ? (
         <header
           className="small-header"

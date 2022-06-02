@@ -43,7 +43,7 @@ export const Web3ConnectWallet = () => {
 
   if (connectData) {
     return (
-      <div className="d-flex flex-row flex-grow-1 justify-content-between">
+      <div className="responsive-page-selection">
         <div className="d-flex flex-column">
           <div>
             <h3 className="fs-20">Completer Checkout</h3>

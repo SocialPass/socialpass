@@ -26,26 +26,14 @@ class EventMixin:
         # success, proceed with dispatch
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        # return serialized event
-        return Response(serializers.EventPortalRetrieveSerializer(self.event).data)
-
-    def post(self, request, *args, **kwargs):
-        # get QS and pass to respective method
-        checkout_type = request.GET.get("checkout_type")
-        if not checkout_type:
-           return Response('"checkout_type" query paramter not provided', status=401)
-
-        if checkout_type == "blockchain_ownership":
-           return self.checkout_blockchain_ownership(request, *args, **kwargs)
-
 
 class EventPortalRetrieve(EventMixin, APIView):
     """
     GET view for retrieving eventportal
     """
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        # return serialized event
+        return Response(serializers.EventPortalRetrieveSerializer(self.event).data)
 
     def post(self, request, *args, **kwargs):
         raise MethodNotAllowed(method='POST')
@@ -60,7 +48,13 @@ class EventPortalRequestCheckout(EventMixin, APIView):
         raise MethodNotAllowed(method='GET')
 
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        # get QS and pass to respective method
+        checkout_type = request.GET.get("checkout_type")
+        if not checkout_type:
+           return Response('"checkout_type" query paramter not provided', status=401)
+
+        if checkout_type == "blockchain_ownership":
+           return self.checkout_blockchain_ownership(request, *args, **kwargs)
 
     def checkout_blockchain_ownership(self, request, *args, **kwargs):
         blockchain_ownership = BlockchainOwnership.objects.create(event=self.event)
@@ -76,7 +70,13 @@ class EventPortalProcessCheckout(EventMixin, APIView):
         raise MethodNotAllowed(method='GET')
 
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        # get QS and pass to respective method
+        checkout_type = request.GET.get("checkout_type")
+        if not checkout_type:
+           return Response('"checkout_type" query paramter not provided', status=401)
+
+        if checkout_type == "blockchain_ownership":
+           return self.checkout_blockchain_ownership(request, *args, **kwargs)
 
     def checkout_blockchain_ownership(self, request, *args, **kwargs):
         self.input_serializer = serializers.VerifyBlockchainOwnershipSerializer
@@ -101,7 +101,7 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             wallet_address=blockchain_serializer.data['wallet_address'],
         )
         # TODO: should be if NOT wallet_validated, for testing purposes
-        if wallet_validated:
+        if not wallet_validated:
             return Response(response_msg, status=403)
 
         # 4. Get # of tickets available

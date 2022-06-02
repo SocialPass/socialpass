@@ -73,8 +73,8 @@ class EventForm(forms.ModelForm):
         if not self.can_edit_capacity():
             self.fields["capacity"].disabled = True
 
-    def save(self, commit: bool = ...) -> TicketedEvent:
-        """Sets TicketedEvent price after save"""
+    def save(self, commit: bool = ...) -> Event:
+        """Sets Event price after save"""
         if (
             (not self.can_edit_capacity())
             and (self.instance.capacity != self.cleaned_data["capacity"])

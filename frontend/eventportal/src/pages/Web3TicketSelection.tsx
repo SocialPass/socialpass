@@ -35,14 +35,21 @@ export function Web3TicketSelection() {
           <div>
             <div className="d-flex flex-row align-items-center me-15">
               <span className="fs-18 fw-bold me-15">General Admission</span>
-              <span
-                className="fs-20"
-                data-toggle="tooltip"
-                data-placement="top"
-                title="This General Admission ticket is free to all holders of 1 NFT collection: "
-              >
+
+              <div className="tooltip">
                 <img src={infoButton} />
-              </span>
+                <div className="right">
+                  <span className="tooltip-text fs-11">
+                    This General Admission ticket is free to all holders of 1
+                    NFT collection:
+                    <h3>MAYC</h3>
+                    <span className="fs-12">
+                      Contract: <span>0X60..A7C6</span>
+                    </span>
+                    <i></i>
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="d-inline fw-bold">free</div>
             <br />

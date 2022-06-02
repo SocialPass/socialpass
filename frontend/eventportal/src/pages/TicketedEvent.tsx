@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Reward, Loading } from "../components";
+import { Loading } from "../components";
 import { EventPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
@@ -21,14 +21,11 @@ export const TicketedEvent = (): JSX.Element => {
     capacity: 10000,
     ticket_count: 5000,
   };
-  if (grantAccessJson) {
-    return <Reward grantAccessJson={grantAccessJson} />;
-  }
   const back_button = () => {
     navigate(-1);
   };
 
-  // if (retrieveJson){
+  // if (retrieveJson){}
   return (
     <div className="row flex-grow-1 m-0 mt-3 align-items-center">
       <div className="col-md-7 mb-4 d-flex">

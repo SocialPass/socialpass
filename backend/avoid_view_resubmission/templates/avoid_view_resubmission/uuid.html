@@ -1,11 +1,11 @@
 <div>
-    <input name="_afr_uuid" id="_afr_uuid" />
+    <input type="hidden" name="_afr_uuid" id="_afr_uuid" />
     <script>
-        // type="hidden" 
+        // this is event required because if the field is filled, the browser won't overwrite the field with the previous tracking uuid. 
         window.addEventListener("pageshow", () => {
             if (document.getElementById('_afr_uuid').value == ""){
                 console.log("Generating new UUID");
-                document.getElementById('_afr_uuid').value = "{{afr_uuid_}}" // uuidv4();
+                document.getElementById('_afr_uuid').value = "{{afr_uuid_}}"
             }
         });
     </script>

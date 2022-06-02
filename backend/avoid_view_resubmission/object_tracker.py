@@ -7,6 +7,7 @@ from . import data
 
 
 class ModelObjectTracker:
+    """Binds and UUID to a model instance. Uses the data_backend to store this mapping"""
 
     data_backend = data.SessionBasedAFRMetaData
 

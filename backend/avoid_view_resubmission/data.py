@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 
 
 class AFRMetaData(UserDict):
+    """Interface for AFR meta data"""
 
     def __init__(self, request):
         # explicitly block UserDict.__init__

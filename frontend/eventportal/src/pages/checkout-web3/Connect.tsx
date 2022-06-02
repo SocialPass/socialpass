@@ -43,7 +43,7 @@ export const Web3ConnectWallet = () => {
 
   if (connectData) {
     return (
-      <div className="d-flex flex-row flex-grow-1 justify-content-between">
+      <div className="responsive-page-selection">
         <div className="d-flex flex-column">
           <div>
             <h3 className="fs-20">Completer Checkout</h3>
@@ -61,14 +61,17 @@ export const Web3ConnectWallet = () => {
               <div className="fw-bold fs-15">Proof of NFT Ownership</div>
               <span>Select from the crypto wallet options</span>
             </div>
-            <span
-              className="fs-20"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="Proof of ownership is not an NFT trade. We need to prove you own the NFT in order to get the ticket. "
-            >
+
+            <div className="tooltip">
               <img src={infoButton} />
-            </span>
+              <div className="right">
+                <span className="tooltip-text fs-12">
+                  Proof of ownership is not an NFT trade. We need to prove you
+                  own the NFT in order to get the ticket.
+                </span>
+                <i></i>
+              </div>
+            </div>
           </div>
           <div className="col-lg-12 d-flex mt-30 gap-15">
             {connectData.connectors.map((x) => (

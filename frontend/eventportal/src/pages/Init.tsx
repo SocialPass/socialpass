@@ -1,24 +1,22 @@
 import { useEffect, useContext } from "react";
 import { EventPortalContext } from "../context";
 import { TicketedEventRetrieve } from "../api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Loading } from "../components";
 
-// Root Page
-// Fetches & Sets initial JSON, then navigate based on response
 export const Init = () => {
-  // context
-  const { setID, retrieveJson, setRetrieveJson, setRetrieveError } =
+  const { setID, setRetrieveJson, setRetrieveError } =
     useContext(EventPortalContext);
-  // navigation hook
   const navigate = useNavigate();
-  // TODO: get id from path
+  const params = useParams();
   let id = window.location.pathname;
-  id = id.replace("/", "");
+  id = params.publicId;
+  console.log(id);
   useEffect(() => {
     (async function () {
       if (id !== "/") {
         const response = await TicketedEventRetrieve.call({ public_id: id });
+        console.log(response);
         if (response && response.httpStatus) {
           // success
           if (response.httpStatus === 200) {
@@ -29,7 +27,7 @@ export const Init = () => {
           // error
           else {
             setRetrieveError(response);
-            navigate("/ticketed-event");
+            // navigate("/ticketed-event");
           }
         }
       }

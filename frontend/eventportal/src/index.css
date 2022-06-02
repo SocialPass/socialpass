@@ -25,8 +25,6 @@ BASE HTML
 }
 
 html, body {
-  height:100%;
-  width:100%;
   margin: 0;
   padding: 0;
   font-family: 'rubik';
@@ -111,11 +109,14 @@ footer {
 }
 
 .container-fluid {
+  position: relative;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
-  min-height:740px;
   overflow:hidden;
-  min-width:333px;
+}
+
+.left-30{
+  left: 30% !important;
 }
 
 .card{
@@ -336,7 +337,77 @@ BOOSTRAP OVERRIDES
   border-radius: 30px;
 }
 
+.tooltip {
+  display:inline-block;
+  position:relative;
+  text-align: justify;
+}
+
+.tooltip .right {
+  min-width:200px;
+  max-width:80px;
+  top:50%;
+  left:100%;
+  margin-left:20px;
+  transform:translate(0, -50%);
+  padding:10px 20px;
+  color:#000000;
+  background-color:#FFFFFF;
+  font-weight:normal;
+  font-size:13px;
+  border-radius:8px;
+  position:absolute;
+  z-index:99999999;
+  box-sizing:border-box;
+  border:1px solid #FF9966;box-shadow:0 1px 8px rgba(0,0,0,0.5);
+  visibility:hidden; opacity:0; transition:opacity 0.8s;
+}
+
+.tooltip:hover .right {
+  visibility:visible; opacity:1;
+}
+
+.tooltip .right i {
+  position:absolute;
+  top:50%;
+  right:100%;
+  margin-top:-12px;
+  width:12px;
+  height:24px;
+  overflow:hidden;
+}
+
+.tooltip .right i::after {
+  content:'';
+  position:absolute;
+  width:12px;
+  height:12px;
+  left:0;
+  top:50%;
+  transform:translate(50%,-50%) rotate(-45deg);
+  background-color:#FFFFFF;
+  border:1px solid #FF9966;
+  box-shadow:0 1px 8px rgba(0,0,0,0.5);
+}
+.responsive-page-selection{
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  justify-content: space-between;
+}
 @media (max-width: 450px) {
+  .responsive-page-selection{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+  }
+  .bg-gray{
+    background-color: var(--gray);
+    border-radius: 10px;
+    width: 100%;
+    height: 200%;
+    margin-top: 2rem;
+  }
   .container {
     width: 100vw;
     max-width: 100%;
@@ -358,5 +429,8 @@ BOOSTRAP OVERRIDES
     display:flex;
     min-height:200px;
     height:35%;
+  }
+  .left-30{
+    left: 0% !important;
   }
 }

@@ -10,22 +10,12 @@ export function Web3TicketSelection() {
   const back_button = () => {
     navigate(-1);
   };
-  const json = {
-    title: "NFT Holders Party",
-    description:
-      "Come celebrate with the SocialPass Team! All NFT holders are invited, must be 21+ to enter",
-    location: "James L.Knight Center | Miami, FL",
-    date: "Friday, April 15",
-    timezone: "8:00 - 10:30 PM EST",
-    capacity: 10000,
-    ticket_count: 5000,
-  };
 
   function handleSelect(event) {
     setGeneralAdmissionSelect(event.target.value);
   }
   return (
-    <div className="d-flex flex-row flex-grow-1 justify-content-between">
+    <div className="responsive-page-selection">
       <div>
         <div>
           <h3 className="fs-20">Ticket Selection</h3>
@@ -33,16 +23,23 @@ export function Web3TicketSelection() {
         </div>
         <div className="d-flex flex-row align-items-start justify-content-between">
           <div>
-            <div className="d-flex flex-row align-items-center me-15">
+            <div className="d-flex flex-row align-items-center me-12">
               <span className="fs-18 fw-bold me-15">General Admission</span>
-              <span
-                className="fs-20"
-                data-toggle="tooltip"
-                data-placement="top"
-                title="This General Admission ticket is free to all holders of 1 NFT collection: "
-              >
+
+              <div className="tooltip">
                 <img src={infoButton} />
-              </span>
+                <div className="right">
+                  <span className="tooltip-text fs-11">
+                    This General Admission ticket is free to all holders of 1
+                    NFT collection:
+                    <h3>MAYC</h3>
+                    <span className="fs-12">
+                      Contract: <span>0X60..A7C6</span>
+                    </span>
+                    <i></i>
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="d-inline fw-bold">free</div>
             <br />

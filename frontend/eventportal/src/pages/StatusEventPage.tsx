@@ -8,18 +8,8 @@ import correct from "../static/images/icons/correct.svg";
 import denied from "../static/images/icons/denied.svg";
 
 export const StatusEventPage = () => {
-  const { eventStatusCheckout } = useContext(EventPortalContext);
+  const { eventStatusCheckout, retrieveJson } = useContext(EventPortalContext);
   const navigate = useNavigate();
-  const json = {
-    title: "NFT Holders Party",
-    description:
-      "Come celebrate with the SocialPass Team! All NFT holders are invited, must be 21+ to enter",
-    location: "James L.Knight Center | Miami, FL",
-    date: "Friday, April 15",
-    timezone: "8:00 - 10:30 PM EST",
-    capacity: 10000,
-    ticket_count: 5000,
-  };
 
   if (eventStatusCheckout) {
     return (
@@ -39,7 +29,7 @@ export const StatusEventPage = () => {
                 src="https://resultadosdigitais.com.br/files/2015/08/thestocks-imagem.jpg"
               />
               <div>
-                <strong>{json.title}</strong>
+                <strong>{retrieveJson.title}</strong>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
                   <img
                     src={clock}
@@ -48,7 +38,7 @@ export const StatusEventPage = () => {
                     className="me-1"
                     alt="Date & Time"
                   />
-                  {json.date} | {json.timezone}
+                  {retrieveJson.date} | {retrieveJson.timezone}
                 </p>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
                   <img
@@ -58,7 +48,7 @@ export const StatusEventPage = () => {
                     className="me-1"
                     alt="Date & Time"
                   />
-                  {json.location}
+                  {retrieveJson.location}
                 </p>
               </div>
             </div>
@@ -87,7 +77,7 @@ export const StatusEventPage = () => {
               src="https://resultadosdigitais.com.br/files/2015/08/thestocks-imagem.jpg"
             />
             <div>
-              <strong>{json.title}</strong>
+              <strong>{retrieveJson.title}</strong>
               <p className="d-flex align-items-center m-0 mt-1 mb-1">
                 <img
                   src={clock}
@@ -96,7 +86,7 @@ export const StatusEventPage = () => {
                   className="me-1"
                   alt="Date & Time"
                 />
-                {json.date} | {json.timezone}
+                {retrieveJson.date} | {retrieveJson.timezone}
               </p>
               <p className="d-flex align-items-center m-0 mt-1 mb-1">
                 <img
@@ -106,7 +96,7 @@ export const StatusEventPage = () => {
                   className="me-1"
                   alt="Date & Time"
                 />
-                {json.location}
+                {retrieveJson.location}
               </p>
             </div>
           </div>

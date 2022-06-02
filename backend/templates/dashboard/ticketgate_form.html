@@ -1,5 +1,6 @@
 {% extends 'dashboard/base.html' %}
 {% load static i18n get_chain_name crispy_forms_tags %}
+{% load avoid_view_resubmission %}
 
 {% block title %}Ticket Gate Form - SocialPass {% endblock %}
 
@@ -56,6 +57,9 @@
 							<strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
 						</div>
 					</div>
+          {% if url_name == 'ticketgate_create' %}
+            {% afr_uuid %}
+          {% endif %}
         </form>
         <div id="blockchainRequirementsFormTitle" class="py-2 fw-bold">Blockchain Requirements</div>
         <div>

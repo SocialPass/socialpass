@@ -16,6 +16,8 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
+from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
+
 from apps.root.forms import CustomInviteForm, EventForm, TeamForm
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
@@ -232,7 +234,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
         return qs
 
 
-class EventCreateView(TeamContextMixin, CreateView):
+class EventCreateView(TeamContextMixin, AvoidRessubmissionCreateViewMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """

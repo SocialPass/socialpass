@@ -22,8 +22,8 @@ def validate_blockchain_wallet_ownership(
         verification_msg = "BlockchainOwnership message already verified."
 
     # check if expired
-    if blockchain_ownership.expires < (datetime.utcnow().replace(tzinfo=utc)):
-        verification_msg = f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
+    if blockchain_ownership.is_expired < (datetime.utcnow().replace(tzinfo=utc)):
+        verification_msg = f"BlockchainOwnership request expired at {blockchain_ownership.is_expired}"
         return verified, verification_msg
 
     # check for id mismatch

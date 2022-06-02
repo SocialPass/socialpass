@@ -52,7 +52,7 @@ def create_ticket_image(
 
     # save ticket image
     # todo: ensure .png format (or whatever format)
-    ticket.image.save(f"{str(ticket.filename)}.png", _buffer)
+    ticket.file.save(f"{str(ticket.filename)}.png", _buffer)
     return ticket
 
 

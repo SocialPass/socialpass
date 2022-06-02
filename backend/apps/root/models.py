@@ -223,15 +223,14 @@ class BlockchainOwnership(DBModel):
     Stores details used to verify blockchain ownership in exchange for tickets
     """
 
-    def set_expires():
+    def set_is_expired():
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
-    expires = models.DateTimeField(default=set_expires)
-    version = models.IntegerField(default=1)
+    is_expired = models.DateTimeField(default=set_is_expired)
 
     def __str__(self):
         """
@@ -245,7 +244,7 @@ class BlockchainOwnership(DBModel):
             "You are accessing": self.event.title,
             "Hosted by": self.event.team.name,
             "One-Time Code": self.id,
-            "Valid until": self.expires.ctime(),
+            "Valid until": self.is_expired.ctime(),
             "Version": self.version,
         }
         signing_message = "\n".join(
@@ -257,13 +256,16 @@ class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
     """
-
+    # basic info
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="tickets"
     )
+    # ticket file info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
     file = models.ImageField(null=True, storage=PrivateTicketStorage())
     embed_code = models.UUIDField(default=uuid.uuid4)
+    # access info
+    archived = models.BooleanField(default=False)
     redeemed = models.BooleanField(default=False)
     redeemed_at = models.DateTimeField(null=True, blank=True)
     redeemed_by = models.ForeignKey(

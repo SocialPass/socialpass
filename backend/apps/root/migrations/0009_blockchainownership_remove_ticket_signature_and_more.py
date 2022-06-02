@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('wallet_address', models.CharField(max_length=400)),
                 ('is_verified', models.BooleanField(default=False)),
-                ('expires', models.DateTimeField(default=apps.root.models.BlockchainOwnership.set_expires)),
+                #('expires', models.DateTimeField(default=apps.root.models.BlockchainOwnership.set_expires)),
                 ('version', models.IntegerField(default=1)),
                 ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='root.event')),
             ],

@@ -7,60 +7,15 @@
  * ----------------------------------------------------------------------------
  * The above notice must be included in its entirety when this file is used.
  */
- 
 
- .landing-page-body {
-    background-color: var(--nftyblue);
-    width: 100vw;
-    height: 100vh;
-}
-
-
-
- .landing-page-card-text-1 {
-    font-size: var(--heading-6-font-size);
-    line-height: var(--heading-6-line-height);
-    font-family: var(--base-font-family);
-    font-weight: var(--heading-font-weight);
-    color: var(--button-secondary-bg-color);
-    -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
-    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);    
-}
-
-
-.landing-page-card-text-2 {
-    font-size: var(--heading-6-font-size);
-    line-height: var(--very-small-line-height);
-    font-family: var(--base-font-family);
-    font-weight: var(--large-font-size);
-    color: var(--gray-color-very-dim);
-    -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
-    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
-    margin-bottom: var(--heading-margin-bottom);    
-}
-
-.landing-page-event-title {
-    font-size: var(--heading-4-font-size);
-    line-height: var(--very-small-line-height);
-    font-family: var(--bold-font-weight);
-    font-weight: var(--heading-font-weight);
-    color: var(--white-color);
-    -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
-    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
-    margin-bottom: var(--heading-margin-bottom);    
-}
-
-
- 
-:root {
+ :root {
     /* Font related (sizes, weights, family, etc.) */
 
-    --base-font-family: "Rubik", sans-serif;
+    --base-font-family: "Inter", sans-serif;
     --base-font-size: 1.6rem;
     --small-font-size: 1.4rem;
     --large-font-size: 1.8rem;
     --bold-font-weight: 600;
-
 
     /* Base background colors */
 
@@ -94,7 +49,7 @@
 
 :root {
     /* SocialPass blue */
-    --nftyblue: #2e95b8;
+
     --socialpass-blue-color-hue: 195;
     --socialpass-blue-color-saturation: 60%;
     --socialpass-blue-color-lightness: 45%;

@@ -21,17 +21,17 @@ function handleRedirect(){
   return (
     <div className="container p-10 d-flex flex-column align-items-center">
         <div className="landing-page-event-title">{event_name}</div>
-        <div className="card background-image">
+        <div className="landing-page-card background-image">
           <div className="landing-page-card-text-1">Total Attendance:</div>
-          <div className="landing-page-card-text-2">{event_attendance}</div>
+          <div className="landing-page-card-text-2 mb-15">{event_attendance}</div>
           <div className="landing-page-card-text-1">Date:</div>
-          <div className="landing-page-card-text-2">{event_date}</div>
-          <div className="landing-page-card-text-1">Venue</div>
+          <div className="landing-page-card-text-2 mb-15">{event_date}</div>
+          <div className="landing-page-card-text-1">Venue:</div>
           <div className="landing-page-card-text-2">{event_venue}</div>
         </div>  
         <div className="container p-20 d-flex flex-column">
 
-          <button className="btn-rounded" onClick={handleRedirect}  >
+          <button className="btn-start-scanning" onClick={handleRedirect}  >
             <h5>Start Scanning</h5>
           </button>
         </div>

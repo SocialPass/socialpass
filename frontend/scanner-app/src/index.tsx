@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./static/css/halfmoon.css";
 import "./static/css/socialpass-theme.css";
-//create here a index.css with all the alterations. Don't overwrite Tahmid's files
+import "./static/css/index.css";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const root = ReactDOM.createRoot(

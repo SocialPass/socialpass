@@ -1,15 +1,13 @@
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EventPortalContext } from "../context";
 import infoButton from "../static/images/icons/infoButton.svg";
 
-export function Web3TicketSelection() {
+export function TicketSelection() {
   const navigate = useNavigate();
-  const { setBackButton, generalAdmissionSelect, setGeneralAdmissionSelect } =
-    useContext(EventPortalContext);
-  const back_button = () => {
-    navigate(-1);
-  };
+  const params = useParams();
+  const id = params.publicId;
+  const { generalAdmissionSelect, setGeneralAdmissionSelect } = useContext(EventPortalContext);
 
   function handleSelect(event) {
     setGeneralAdmissionSelect(event.target.value);
@@ -79,8 +77,7 @@ export function Web3TicketSelection() {
         <div className="d-flex align-items-center justify-content-center p-30 mt-50">
           <button
             onClick={() => {
-              setBackButton(() => back_button);
-              navigate("/checkout/web3/connect");
+              navigate(`/${id}/checkout/blockchain`);
             }}
             className="btn btn-primary fs-20 text-capitalize rounded-3"
           >

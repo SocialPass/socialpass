@@ -7,7 +7,6 @@ export const EventPortalContext = createContext<EventPortalContextInterface>(
 
 export const EventPortalProvider = ({ children }: { children: any }) => {
   const [id, setID] = useState("");
-  const [backButton, setBackButton] = useState(null);
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
 
@@ -27,8 +26,6 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
       value={{
         id,
         setID,
-        backButton,
-        setBackButton,
 
         web3CheckoutSelection,
         setWeb3CheckoutSelection,

@@ -5,32 +5,28 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Loading } from "../components";
 
 export const Init = () => {
-  const { setID, setRetrieveJson, setRetrieveError } =
-    useContext(EventPortalContext);
+  const { setID, setRetrieveJson, setRetrieveError } = useContext(EventPortalContext);
   const navigate = useNavigate();
   const params = useParams();
-  let id = window.location.pathname;
-  id = params.publicId;
+  const id = params.publicId;
   useEffect(() => {
-    (async function () {
-      if (id !== "/") {
-        const response = await TicketedEventRetrieve.call({ public_id: id });
-        console.log(response);
-        if (response && response.httpStatus) {
-          // success
-          if (response.httpStatus === 200) {
-            setID(id);
-            setRetrieveJson(response);
-            navigate("/ticketed-event");
-          }
-          // error
-          else {
-            setRetrieveError(response);
-            // navigate("/ticketed-event");
-          }
-        }
+  (async function () {
+    if (id !== "/") {
+    setID(id)
+    const response = await TicketedEventRetrieve.call({ public_id: id });
+    if (response && response.httpStatus) {
+      // success
+      if (response.httpStatus === 200) {
+      setRetrieveJson(response);
+      navigate(`event`);
       }
-    })();
+      // error
+      else {
+      setRetrieveError(response);
+      }
+    }
+    }
+  })();
   }, []);
 
   return <Loading loadingText="Fetching event data..." />;

@@ -1,15 +1,11 @@
-import React from "react";
-import { MemoryRouter, Routes, Route, BrowserRouter } from "react-router-dom";
-import { Loading, StyledContainer } from "./components";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import {  StyledContainer } from "./components";
 import { EventPortalProvider } from "./context";
 import Web3ProviderWrapper from "./web3/wrapper";
-import { Init, Web3ConnectWallet, Web3CheckoutConfirmation } from "./pages";
+import { Init, CheckoutWeb3, CheckoutStatus, TicketSelection, Event } from "./pages";
 import "./static/css/socialpass-theme.css";
 import "./static/css/halfmoon.css";
 import "./index.css";
-import { Web3TicketSelection } from "./pages/Web3TicketSelection";
-import { TicketedEvent } from "./pages/TicketedEvent";
-import { StatusEventPage } from "./pages/StatusEventPage";
 
 // Main EventPortal component. Does a couple of things
 // 1. Setup EventPortalProvider (react context)
@@ -25,20 +21,10 @@ const EventPortal = () => {
           <StyledContainer>
             <Routes>
               <Route path="/:publicId" element={<Init />} />
-              <Route
-                path="/"
-                element={<Loading loadingText="Gathering Your Eligible NFTS" />}
-              />
-              <Route path="/ticketed-event" element={<TicketedEvent />} />
-              <Route
-                path="/checkout/web3/select"
-                element={<Web3TicketSelection />}
-              />
-              <Route
-                path="/checkout/web3/connect"
-                element={<Web3ConnectWallet />}
-              />
-              <Route path="/checkout/status" element={<StatusEventPage />} />
+              <Route path="/:publicId/event" element={<Event />} />
+              <Route path="/:publicId/ticket-selection" element={<TicketSelection />} />
+              <Route path="/:publicId/checkout/blockchain" element={<CheckoutWeb3 />} />
+              <Route path="/:publicId/checkout/status" element={<CheckoutStatus />} />
             </Routes>
           </StyledContainer>
         </Web3ProviderWrapper>

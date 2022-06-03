@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loading } from "../components";
 import { EventPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
-// TicketedEvent Component
-export const TicketedEvent = (): JSX.Element => {
+// Event Component
+export const Event = (): JSX.Element => {
   const navigate = useNavigate();
-  const { retrieveError, retrieveJson, grantAccessJson, setBackButton } =
+  const { id, retrieveError, retrieveJson, grantAccessJson } =
     useContext(EventPortalContext);
   // default, return baseGate
   // todo: customize basegate more, perhaps current content as children
@@ -55,8 +54,7 @@ export const TicketedEvent = (): JSX.Element => {
         <button
           className="btn-primary"
           onClick={() => {
-            setBackButton(() => back_button);
-            navigate("/checkout/web3/select");
+            navigate(`/${id}/ticket-selection`);
           }}
         >
           Claim Tickets

@@ -1,2 +1,5 @@
+export { CheckoutStatus } from './CheckoutStatus';
+export { CheckoutWeb3 } from './CheckoutWeb3';
 export { Init } from './Init';
-export { Web3ConnectWallet, Web3CheckoutConfirmation } from './checkout-web3';
+export { Event } from './Event';
+export { TicketSelection } from './TicketSelection';

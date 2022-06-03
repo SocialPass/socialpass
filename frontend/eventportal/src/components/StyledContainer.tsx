@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { EventPortalContext } from "../context";
 import headerImage from "../static/images/header1.svg";
 import FAQImage from "../static/images/FAQ.svg";
@@ -15,20 +15,18 @@ export const StyledContainer = ({
 }) => {
   const { backButton, retrieveJson } = useContext(EventPortalContext);
   const location = useLocation();
-
+  const navigate = useNavigate();
   return (
     <div className="left-30 container-fluid p-0 d-flex flex-column justify-content-center card">
-      {location.pathname.includes("checkout") ? (
+      {location.pathname.length > 45 ? (
         <header
           className="small-header"
           style={{ backgroundImage: `url(${headerImage})` }}
         >
-          {backButton && (
-            <div className="back" onClick={() => backButton()}>
+            <div className="back" onClick={() => navigate(-1)}>
               <img src={_backButton} alt="Back Button" height="24" width="24" />
               <h4 className="ps-5 m-0">Go back</h4>
             </div>
-          )}
           <div className="small-team-info">
             <h4>{retrieveJson && retrieveJson?.event_info.title}</h4>
             <h5>{retrieveJson && retrieveJson?.organizer_info.name}</h5>

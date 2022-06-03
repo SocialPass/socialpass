@@ -1,17 +1,16 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loading } from "../components";
 import { EventPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
 import correct from "../static/images/icons/correct.svg";
 import denied from "../static/images/icons/denied.svg";
 
-export const StatusEventPage = () => {
-  const { eventStatusCheckout, retrieveJson } = useContext(EventPortalContext);
+export const CheckoutStatus = () => {
+  const { grantAccessJson, retrieveJson } = useContext(EventPortalContext);
   const navigate = useNavigate();
 
-  if (eventStatusCheckout) {
+  if (grantAccessJson) {
     return (
       <div className="row flex-grow-1 m-0 mt-3 align-items-center">
         <div className="col-md-7 mb-4 d-flex">
@@ -106,7 +105,7 @@ export const StatusEventPage = () => {
         <button
           className="btn-primary"
           onClick={() => {
-            navigate("/ticketed-event");
+            navigate("/event");
           }}
         >
           Try again

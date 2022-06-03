@@ -4,10 +4,6 @@ export interface EventPortalContextInterface {
   id: string
   setID: any
 
-  // navigation
-  backButton:any
-  setBackButton:any
-
   // retrieve gate
   retrieveJson: any
   setRetrieveJson: any

@@ -1,17 +1,19 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { useConnect, useAccount, useSignMessage } from "wagmi";
 import { useNavigate } from "react-router-dom";
-import { TicketedEventRequestAccess, TicketedEventGrantAccess } from '../../api';
-import { Web3ConnectorImage } from "../../components/Web3ConnectorImage";
-import { EventPortalContext } from "../../context";
-import infoButton from "../../static/images/icons/infoButton.svg";
+import { TicketedEventRequestAccess, TicketedEventGrantAccess } from '../api';
+import { Loading } from "../components/";
+import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
+import { EventPortalContext } from "../context";
+import infoButton from "../static/images/icons/infoButton.svg";
 
 // ConnectorWallets
 // Return UI for wallet connectors
-export const Web3ConnectWallet = () => {
-  const { id, requestAccessJson, setBackButton, generalAdmissionSelect, setRequestAccessJson, setRequestAccessError, setGrantAccessJson, setGrantAccessError } =
+export const CheckoutWeb3 = () => {
+  const { id, requestAccessJson, generalAdmissionSelect, setRequestAccessJson, setRequestAccessError, setGrantAccessJson, setGrantAccessError } =
     useContext(EventPortalContext);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [
     { data: connectData, error: connectError, loading: loadingConnect },
     connect,
@@ -25,16 +27,10 @@ export const Web3ConnectWallet = () => {
     message: requestAccessJson?.signing_message
   });
 
-  // useEffect hook to set back button and its side effects
-  useEffect(() => {
-    const back_button = null;
-    setBackButton(() => back_button);
-  }, []);
 
   // request access handler (based on web3 account data change)
   useEffect(() => {
     (async function() {
-      console.log('hi');
       setRequestAccessJson(null);
       setRequestAccessError(null);
       let response: any;
@@ -58,19 +54,25 @@ export const Web3ConnectWallet = () => {
   useEffect(() => {
     (async function() {
       if (signData){
+      setLoading(true);
       let response;
         response = await TicketedEventGrantAccess.call({
           "public_id":id,
           "checkout_type":'blockchain_ownership',
-          'wallet_address':accountData.address,
+          'wallet_address':accountData?.address,
           'signed_message':signData,
           'blockchain_ownership_id':requestAccessJson.id,
-          'tickets_requested':0,
+          'tickets_requested':generalAdmissionSelect,
         })
+        if (response){
+          setLoading(false);
+        }
         if (response.httpStatus === 200){
           setGrantAccessJson(response);
+          navigate(`/${id}/checkout/status`);
         } else {
           setGrantAccessError(response);
+          navigate(`/${id}/checkout/status`);
         }
       }
     })();
@@ -84,11 +86,10 @@ export const Web3ConnectWallet = () => {
   function handleCheckout() {
     console.log('checkout...');
     signMessage();
-    navigate("/checkout/status");
   }
 
-  if (signLoading){
-    return null
+  if (signLoading || loading){
+    return <Loading loadingText="Verifying NFTs"/>
   }
 
   if (connectData) {

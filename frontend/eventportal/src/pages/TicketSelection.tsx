@@ -8,8 +8,9 @@ export function TicketSelection() {
   const params = useParams();
   const id = params.publicId;
   const { generalAdmissionSelect, setGeneralAdmissionSelect } = useContext(EventPortalContext);
-
-  function handleSelect(event) {
+  const generalAdmissionSelectArray = Array(generalAdmissionSelect).fill().map((x,i)=>i+1)
+  console.log(generalAdmissionSelectArray);
+  function handleSelect(event:any) {
     setGeneralAdmissionSelect(event.target.value);
   }
   return (
@@ -50,18 +51,13 @@ export function TicketSelection() {
               className="btn btn-primary px-20 ms-40"
             >
               select item
-              <option className="bg-white text-color-primary" value={1}>
-                1
-              </option>
-              <option className="bg-white text-color-primary" value={2}>
-                2
-              </option>
-              <option className="bg-white text-color-primary" value={3}>
-                3
-              </option>
-              <option className="bg-white text-color-primary" value={4}>
-                4
-              </option>
+              {generalAdmissionSelectArray.map(function(object){
+                  return (
+                    <option className="bg-white text-color-primary" value={1}>
+                      {object}
+                    </option>
+                  )
+              })}
             </select>
           </div>
         </div>

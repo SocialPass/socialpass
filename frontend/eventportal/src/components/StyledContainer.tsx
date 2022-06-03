@@ -45,7 +45,6 @@ export const StyledContainer = ({
               alt="Team Image"
             />
             <h4>
-              name team
               {retrieveJson && retrieveJson.team && retrieveJson?.team.name}
             </h4>
           </div>

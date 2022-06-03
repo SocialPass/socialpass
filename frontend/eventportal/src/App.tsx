@@ -24,9 +24,9 @@ const EventPortal = () => {
         <Web3ProviderWrapper>
           <StyledContainer>
             <Routes>
-              <Route index element={<Init />} />
+              <Route path="/:publicId" element={<Init />} />
               <Route
-                path="/loading"
+                path="/"
                 element={<Loading loadingText="Gathering Your Eligible NFTS" />}
               />
               <Route path="/ticketed-event" element={<TicketedEvent />} />

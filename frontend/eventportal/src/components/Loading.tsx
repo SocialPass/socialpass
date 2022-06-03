@@ -1,6 +1,3 @@
-import React from "react";
-import { EventPortalContext } from "../context";
-
 // Loading Component
 // todo
 export const Loading = ({ loadingText }) => {

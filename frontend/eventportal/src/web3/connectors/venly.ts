@@ -16,6 +16,7 @@ export class VenlyConnector extends Connector {
   ready = true;
 
   constructor(Venly:any,config:any) {
+  console.log(Venly);
 	super(config)
   }
   getAccount(): any {

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
 import { EventPortalContextInterface } from "../types";
 
 export const EventPortalContext = createContext<EventPortalContextInterface>(

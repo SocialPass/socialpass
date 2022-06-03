@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState } from "react";
 import { useConnect, useAccount, useSignMessage } from "wagmi";
 import { useNavigate } from "react-router-dom";
 import { TicketedEventRequestAccess, TicketedEventGrantAccess } from '../api';
@@ -15,14 +15,11 @@ export const CheckoutWeb3 = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [
-    { data: connectData, error: connectError, loading: loadingConnect },
+    { data: connectData, error: connectError },
     connect,
   ] = useConnect();
-  const [
-    { data: accountData, error: accountError, loading: accountLoading },
-    disconnect,
-  ] = useAccount();
-  const [{data: signData, error: signError,loading: signLoading}, signMessage] =
+  const [{ data: accountData }] = useAccount();
+  const [{data: signData,loading: signLoading}, signMessage] =
   useSignMessage({
     message: requestAccessJson?.signing_message
   });

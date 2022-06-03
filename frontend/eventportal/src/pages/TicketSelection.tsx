@@ -8,8 +8,9 @@ export function TicketSelection() {
   const params = useParams();
   const id = params.publicId;
   const { generalAdmissionSelect, setGeneralAdmissionSelect } = useContext(EventPortalContext);
-  const generalAdmissionSelectArray = Array(generalAdmissionSelect).fill().map((x,i)=>i+1)
-  console.log(generalAdmissionSelectArray);
+  // [1 ... generalAdmissionSelectArray]
+  const generalAdmissionSelectArray = Array.from({length: generalAdmissionSelect}, (_, i) => i + 1)
+
   function handleSelect(event:any) {
     setGeneralAdmissionSelect(event.target.value);
   }

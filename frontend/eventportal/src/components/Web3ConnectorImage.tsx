@@ -1,4 +1,3 @@
-import React from "react";
 import metamask from "../static/images/connectors/metamask.svg";
 import walletconnect from "../static/images/connectors/walletconnect.svg";
 import coinbase from "../static/images/connectors/coinbase-wallet.svg";

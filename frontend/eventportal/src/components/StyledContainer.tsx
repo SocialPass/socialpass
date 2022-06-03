@@ -13,7 +13,7 @@ export const StyledContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { backButton, retrieveJson } = useContext(EventPortalContext);
+  const { retrieveJson } = useContext(EventPortalContext);
   const location = useLocation();
   const navigate = useNavigate();
   return (

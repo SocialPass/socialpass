@@ -7,9 +7,9 @@ import correct from "../static/images/icons/correct.svg";
 import denied from "../static/images/icons/denied.svg";
 
 export const CheckoutStatus = () => {
-  const { grantAccessJson, retrieveJson } = useContext(EventPortalContext);
+  const { id, grantAccessJson, grantAccessError, retrieveJson } = useContext(EventPortalContext);
   const navigate = useNavigate();
-
+  console.log(grantAccessJson, grantAccessError);
   if (grantAccessJson) {
     return (
       <div className="row flex-grow-1 m-0 mt-3 align-items-center">
@@ -105,7 +105,7 @@ export const CheckoutStatus = () => {
         <button
           className="btn-primary"
           onClick={() => {
-            navigate("/event");
+            navigate(`/${id}`);
           }}
         >
           Try again

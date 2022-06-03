@@ -15,13 +15,14 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
-from apps.services import pricing_service
-from apps.root.forms import CustomInviteForm, TeamForm, TicketedEventForm
+from apps.root.forms import CustomInviteForm, TeamForm, EventForm
+from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.model_field_choices import BLOCKCHAINS, CHAIN_IDS, ASSET_TYPES
-from apps.root.models import Membership, Team, Ticket, TicketedEvent, TicketedEventStripePayment
+from apps.root.models import Membership, Team, Ticket, Event, EventStripePayment
+from apps.services import pricing_service
 
 User = auth.get_user_model()
+
 
 class UserDetailView(TemplateView):
     """
@@ -168,18 +169,18 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
 
 
-class TicketedEventListView(TeamContextMixin, ListView):
+class EventListView(TeamContextMixin, ListView):
     """
     Returns a list of Ticket token gates.
     """
 
-    model = TicketedEvent
+    model = Event
     paginate_by = 15
     context_object_name = "tokengates"
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):
-        qs = TicketedEvent.objects.filter(team__id=self.kwargs["team_pk"])
+        qs = Event.objects.filter(team__id=self.kwargs["team_pk"])
         qs = qs.order_by("-modified")
 
         query_title = self.request.GET.get("title", "")
@@ -189,29 +190,29 @@ class TicketedEventListView(TeamContextMixin, ListView):
         return qs
 
 
-class TicketedEventDetailView(TeamContextMixin, DetailView):
+class EventDetailView(TeamContextMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
 
-    model = TicketedEvent
+    model = Event
     context_object_name = "tokengate"
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = TicketedEvent.objects.filter(
+        qs = Event.objects.filter(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         return qs
 
 
-class TicketedEventCreateView(TeamContextMixin, CreateView):
+class EventCreateView(TeamContextMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
 
-    model = TicketedEvent
-    form_class = TicketedEventForm
+    model = Event
+    form_class = EventForm
     template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):
@@ -220,9 +221,9 @@ class TicketedEventCreateView(TeamContextMixin, CreateView):
         """
         context = super().get_context_data(**kwargs)
         context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
-        context['BLOCKHAINS_CHOICES'] = json.dumps(dict(BLOCKCHAINS))
-        context['CHAIN_IDS_CHOICES'] = json.dumps(dict(CHAIN_IDS))
-        context['ASSET_TYPES_CHOICES'] = json.dumps(dict(ASSET_TYPES))
+        context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
+        context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
+        context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
 
         return context
 
@@ -245,13 +246,13 @@ class TicketedEventCreateView(TeamContextMixin, CreateView):
         )
 
 
-class TicketedEventUpdateView(TeamContextMixin, UpdateView):
+class EventUpdateView(TeamContextMixin, UpdateView):
     """
     Updates a Ticket token gate.
     """
 
-    model = TicketedEvent
-    form_class = TicketedEventForm
+    model = Event
+    form_class = EventForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
     template_name = "dashboard/ticketgate_form.html"
@@ -262,16 +263,16 @@ class TicketedEventUpdateView(TeamContextMixin, UpdateView):
         """
         context = super().get_context_data(**kwargs)
         context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
-        context['BLOCKHAINS_CHOICES'] = json.dumps(dict(BLOCKCHAINS))
-        context['CHAIN_IDS_CHOICES'] = json.dumps(dict(CHAIN_IDS))
-        context['ASSET_TYPES_CHOICES'] = json.dumps(dict(ASSET_TYPES))
+        context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
+        context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
+        context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         return context
 
     def get_success_url(self):
         messages.add_message(
             self.request, messages.SUCCESS, "Token gate updated successfully."
         )
-        if pricing_service.get_ticketed_event_pending_payment_value(self.object):
+        if pricing_service.get_event_pending_payment_value(self.object):
             view = "ticketgate_checkout"
         else:
             view = "ticketgate_detail"
@@ -285,9 +286,9 @@ class TicketedEventUpdateView(TeamContextMixin, UpdateView):
         )
 
 
-class TicketedEventCheckout(TeamContextMixin, TemplateView):
+class EventCheckout(TeamContextMixin, TemplateView):
     """
-    Checkout intermediate step for TicketedEvent.
+    Checkout intermediate step for Event.
 
     Handles stripe integration.
     """
@@ -301,7 +302,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
     @lru_cache
     def get_object(self):
-        return TicketedEvent.objects.get(
+        return Event.objects.get(
             pk=self.kwargs["pk"], team__pk=self.kwargs["team_pk"]
         )
 
@@ -310,9 +311,12 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""
-        ticketed_event = self.get_object()
+        event = self.get_object()
 
-        if pricing_service.get_ticketed_event_pending_payment_value(ticketed_event) == 0:
+        if (
+            pricing_service.get_event_pending_payment_value(event)
+            == 0
+        ):
             # Payment was already done.
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
@@ -323,9 +327,9 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
     def post(self, request, *, team_pk=None, pk=None):
         """Issue payment and redirect to stripe checkout"""
-        ticketed_event = self.get_object()
+        event = self.get_object()
 
-        issued_payment = pricing_service.get_in_progress_payment(ticketed_event)
+        issued_payment = pricing_service.get_in_progress_payment(event)
         if issued_payment:
             # There is already a payment in progress, redirect to it
             stripe_session = stripe.checkout.Session.retrieve(
@@ -363,10 +367,10 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
                     "price_data": {
                         "currency": "usd",
                         "product_data": {
-                            "name": ticketed_event.title,
+                            "name": event.title,
                         },
                         "unit_amount": int(
-                            ticketed_event.price * 100
+                            event.price * 100
                         ),  # amount unit is in cent of dollars
                     },
                     "quantity": 1,
@@ -375,7 +379,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
         )
 
         # create payment intent
-        pricing_service.issue_payment(ticketed_event, checkout_session["id"])
+        pricing_service.issue_payment(event, checkout_session["id"])
 
         return redirect(checkout_session["url"])
 
@@ -383,7 +387,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
         # update payment status
         stripe_session_id = request.GET["session_id"]
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
-        payment = TicketedEventStripePayment.objects.get(
+        payment = EventStripePayment.objects.get(
             stripe_checkout_session_id=stripe_session_id
         )
 
@@ -401,7 +405,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
 
     def failure_stripe_callback(request, **kwargs):
         # update payment status
-        payment = TicketedEventStripePayment.objects.get(
+        payment = EventStripePayment.objects.get(
             stripe_checkout_session_id=request.GET["session_id"]
         )
         payment.status = "CANCELLED"
@@ -448,7 +452,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
             session = event["data"]["object"]
 
             # Fulfill the purchase
-            payment = TicketedEventStripePayment.objects.get(
+            payment = EventStripePayment.objects.get(
                 stripe_checkout_session_id=session.id
             )
             payment.status = "SUCCESS"
@@ -458,7 +462,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
             session = event["data"]["object"]
 
             # Send an email to the customer asking them to retry their order
-            payment = TicketedEventStripePayment.objects.get(
+            payment = EventStripePayment.objects.get(
                 stripe_checkout_session_id=session.id
             )
             payment.status = "FAILURE"
@@ -467,7 +471,7 @@ class TicketedEventCheckout(TeamContextMixin, TemplateView):
         return HttpResponse(status=200)
 
 
-class TicketedEventStatisticsView(TeamContextMixin, ListView):
+class EventStatisticsView(TeamContextMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -482,16 +486,16 @@ class TicketedEventStatisticsView(TeamContextMixin, ListView):
         overrode to set json_schema as well as json data
         """
         context = super().get_context_data(**kwargs)
-        context["current_gate"] = TicketedEvent.objects.get(
+        context["current_gate"] = Event.objects.get(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         return context
 
     def get_queryset(self):
         """
-        get queryset of Ticket models from given TicketedEvent
+        get queryset of Ticket models from given Event
         """
-        gate = TicketedEvent.objects.get(
+        gate = Event.objects.get(
             pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
         )
         qs = gate.tickets.all()
@@ -504,7 +508,7 @@ class TicketedEventStatisticsView(TeamContextMixin, ListView):
         return qs
 
 
-def estimate_ticketed_event_price(request, team_pk):
+def estimate_event_price(request, team_pk):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -516,8 +520,10 @@ def estimate_ticketed_event_price(request, team_pk):
     except TypeError:
         return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
-    price_per_ticket = pricing_service.calculate_ticketed_event_price_per_ticket_for_team(
-        team, capacity=capacity
+    price_per_ticket = (
+        pricing_service.calculate_event_price_per_ticket_for_team(
+            team, capacity=capacity
+        )
     )
     return JsonResponse(
         {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}

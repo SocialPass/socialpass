@@ -39,11 +39,6 @@ const EventPortal = () => {
                 element={<Web3ConnectWallet />}
               />
               <Route path="/checkout/status" element={<StatusEventPage />} />
-              {/* ========================================================== */}
-              <Route
-                path="/checkout/web3/checkout"
-                element={<Web3CheckoutConfirmation />}
-              />
             </Routes>
           </StyledContainer>
         </Web3ProviderWrapper>

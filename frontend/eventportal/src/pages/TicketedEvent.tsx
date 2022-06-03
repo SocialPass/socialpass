@@ -20,8 +20,8 @@ export const TicketedEvent = (): JSX.Element => {
     <div className="row flex-grow-1 m-0 mt-3 align-items-center">
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10">
-          <h1>{retrieveJson.title}</h1>
-          <p>{retrieveJson.description}</p>
+          <h1>{retrieveJson.event_info.title}</h1>
+          <p>{retrieveJson.event_info.description}</p>
           <p className="d-flex align-items-center m-0 mt-1 mb-1">
             <img
               src={clock}
@@ -30,7 +30,7 @@ export const TicketedEvent = (): JSX.Element => {
               className="me-1"
               alt="Date & Time"
             />
-            {retrieveJson.date} | {retrieveJson.timezone}
+            {retrieveJson.event_info.date} | {retrieveJson.event_info.timezone}
           </p>
           <p className="d-flex align-items-center m-0 mt-1 mb-1">
             <img
@@ -40,19 +40,14 @@ export const TicketedEvent = (): JSX.Element => {
               className="me-1"
               alt="Date & Time"
             />
-            {retrieveJson.location}
+            {retrieveJson.event_info.location}
           </p>
           <div className="bg-success py-5 strong my-15 text-center">
             <strong className="text-center">
-              {(retrieveJson.capacity - retrieveJson.ticket_count)
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              {retrieveJson.ticket_info.total_capacity -
+                retrieveJson.ticket_info.total_tickets_issued}
             </strong>{" "}
-            out of{" "}
-            {retrieveJson.capacity
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
-            available
+            out of {retrieveJson.ticket_info.total_capacity} available
           </div>
         </div>
       </div>

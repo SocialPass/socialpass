@@ -1,0 +1,94 @@
+/**
+ * ----------------------------------------------------------------------------
+ * Custom version of socialpass-theme.css for the Scanner's Landing Page
+ * ----------------------------------------------------------------------------
+ */
+ 
+ .landing-page-card {
+    position: relative;
+    display: block;
+    -webkit-font-smoothing: var(--card-webkit-font-smoothing);
+    -moz-osx-font-smoothing: var(--card-moz-osx-font-smoothing);
+    padding: 2.5rem;
+    margin: 2.5rem;
+    color: inherit;
+    background-color: var(--white-color);
+    background-image: url("../images/bg_image_logo.png");
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-position-y: bottom;
+    border: solid;
+    border-width: 0px;
+    border-color: var(--gray-color-dim);
+    border-radius: 1.4rem;
+    box-shadow: none;
+}
+
+
+.landing-page-body {
+    background-color: hsl(var(--socialpass-blue-color-hue), var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness));
+    width: 100vw;
+    height: 100vh;
+}
+
+
+
+ .landing-page-card-text-1 {
+    font-size: 2rem;
+    line-height: 1.25;
+    font-family: inherit;
+    font-weight: 600;
+    color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
+    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);    
+}
+
+
+.landing-page-card-text-2 {
+    font-size: 2rem;
+    line-height: 1;
+    font-family: var(--base-font-family);
+    font-weight: 1.6rem;
+    color: var(--gray-color-very-dim);
+    -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
+    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
+}
+
+.landing-page-event-title {
+    font-size: 2.6rem;
+    line-height: 1;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: var(--white-color);
+    -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
+    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
+    margin-bottom: 1.6rem;    
+}
+
+
+
+
+.btn-start-scanning {
+    border-radius: 1.4rem;
+    border-width: 0rem;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-size: 2.6rem;
+    font-weight: 600;
+    line-height: 2.4;
+    text-decoration: none;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+.btn-start-scanning:active {
+    text-decoration: none;
+    color: inherit;
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness-step-down-1));
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
+}

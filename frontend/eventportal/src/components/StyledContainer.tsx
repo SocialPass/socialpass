@@ -30,8 +30,8 @@ export const StyledContainer = ({
             </div>
           )}
           <div className="small-team-info">
-            <h4>{retrieveJson && retrieveJson?.title}</h4>
-            <h5>{retrieveJson && retrieveJson?.team.name}</h5>
+            <h4>{retrieveJson && retrieveJson?.event_info.title}</h4>
+            <h5>{retrieveJson && retrieveJson?.organizer_info.name}</h5>
           </div>
         </header>
       ) : (
@@ -41,11 +41,17 @@ export const StyledContainer = ({
         >
           <div className="team-info mx-3 mx-md-5 ps-2 column">
             <img
-              src={retrieveJson && retrieveJson.team && retrieveJson.team.image}
+              src={
+                retrieveJson &&
+                retrieveJson.organizer_info &&
+                retrieveJson.organizer_info.profile_image
+              }
               alt="Team Image"
             />
             <h4>
-              {retrieveJson && retrieveJson.team && retrieveJson?.team.name}
+              {retrieveJson &&
+                retrieveJson.organizer_info &&
+                retrieveJson?.organizer_info.name}
             </h4>
           </div>
         </header>

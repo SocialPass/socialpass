@@ -16,11 +16,15 @@ def login_membership_callback(request, user, **kwargs):
     If invite exists, create a membership to that team
     """
     # Check for accepted invites without membership
-    invites = Invite.objects.filter(email__iexact=user.email, accepted=True, membership=None)
+    invites = Invite.objects.filter(
+        email__iexact=user.email, accepted=True, membership=None
+    )
 
     # Create membership based on invites witout membership
     for invite in invites:
-        membership, created = Membership.objects.get_or_create(team=invite.team, user=user)
+        membership, created = Membership.objects.get_or_create(
+            team=invite.team, user=user
+        )
 
         # update invite (add membership, archive email address, entire instance could be deleted instead)
         invite.membership = membership

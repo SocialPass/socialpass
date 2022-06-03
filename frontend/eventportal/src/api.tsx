@@ -8,7 +8,7 @@ export class TicketedEventRetrieve {
   // wrapper for backend - TicketedEventRetrieve
   static call = async ({ public_id }) => {
     // set url
-    const url = `${baseURL}/event-portal/ticketed-event/retrieve/${public_id}/`;
+    const url = `${baseURL}/event-portal/retrieve/${public_id}/`;
     // set request options
     var requestOptions = {
       method: "GET",

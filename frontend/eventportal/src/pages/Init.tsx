@@ -11,7 +11,6 @@ export const Init = () => {
   const params = useParams();
   let id = window.location.pathname;
   id = params.publicId;
-  console.log(id);
   useEffect(() => {
     (async function () {
       if (id !== "/") {

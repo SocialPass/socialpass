@@ -1,59 +1,109 @@
-{% extends "account/anon_base.html" %}
+{% extends "account/new/base.html" %}
 
-{% load i18n %}
-{% load account socialaccount %}
-{% load crispy_forms_tags %}
+{% load account %}
 
-{% block head_title %}{% translate "Sign In" %}{% endblock %}
+{% block head_title %}Sign In - SocialPass{% endblock %}
 
 {% block inner %}
-<h3 class="font-weight-bolder text-info text-gradient">{% translate "Welcome back" %}</h3>
-<p class="mb-0">{% translate "Enter your email and password to sign in" %}</p>
-{% get_providers as socialaccount_providers %}
+<h1 class="fsr-1 text-strong fw-700">Sign In</h1>
+<p>
+	Welcome back! Please enter your credentials to sign in.
+</p>
 
-{% if socialaccount_providers %}
-  <p>
-    {% translate "Please sign in with one of your existing third party accounts:" %}
-    {% if ACCOUNT_ALLOW_REGISTRATION %}
-      {% blocktranslate trimmed %}
-        Or, <a href="{{ signup_url }}">sign up</a>
-        for a {{ site_name }} account and sign in below:
-      {% endblocktranslate %}
-    {% endif %}
-  </p>
-
-  <div class="socialaccount_ballot">
-
-    <ul class="socialaccount_providers">
-      {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-    </ul>
-
-    <div class="login-or">{% translate "or" %}</div>
-
-  </div>
-
-  {% include "socialaccount/snippets/login_extra.html" %}
-
-{% else %}
-  {% if ACCOUNT_ALLOW_REGISTRATION %}
-    <p>
-      {% blocktranslate trimmed %}
-        If you have not created an account yet, then please
-        <a href="{{ signup_url }}">sign up</a> first.
-      {% endblocktranslate %}
-    </p>
-  {% endif %}
-{% endif %}
-
+<!-- Form start -->
 <form class="login" method="POST" action="{% url 'account_login' %}">
-  {% csrf_token %}
-  {{ form|crispy }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
-  <button class="btn bg-gradient-primary btn-gradient-alt w-100 mt-4 mb-0" type="submit">{% translate "Sign In" %}</button>
-</form>
+  	{% csrf_token %}
 
+  	{% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            <ul class="invalid-feedback">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error|escape }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+  	{% for input in form.hidden_fields %}
+    	{{ input }}
+    {% endfor %}
+
+  	{% for input in form.visible_fields %}
+  		<div class="form-group">
+  			{% if input.field.widget.input_type == "checkbox" %}
+  				<div class="form-check">
+		            <input
+		            	type="{{ input.field.widget.input_type }}"
+		            	name="{{ input.name }}"
+		            	value="{{ input.value|default_if_none:'' }}"
+		            	{% if input.field.widget.input_type != "hidden" %}
+		            		class="form-check-input"
+		            		id="{{ input.auto_id }}"
+		            	{% endif %}
+                        {% if input.field.required %}
+                            required="required"
+                        {% endif %}
+		            	{% for k,v in input.field.widget.attrs.items %}
+		            		{{ k }}="{{ v }}"
+		            	{% endfor %}
+	            	/>
+	            	<label class="form-check-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+  				</div>
+  			{% else %}
+  				<div class="position-relative">
+  					<input
+		            	type="{{ input.field.widget.input_type }}"
+		            	name="{{ input.name }}"
+		            	value="{{ input.value|default_if_none:'' }}"
+		            	{% if input.field.widget.input_type != "hidden" %}
+		            		class="ps-40 form-control"
+		            		id="{{ input.auto_id }}"
+		            	{% endif %}
+                        {% if input.field.required %}
+                            required="required"
+                        {% endif %}
+		            	{% for k,v in input.field.widget.attrs.items %}
+		            		{{ k }}="{{ v }}"
+		            	{% endfor %}
+	            	/>
+                    <label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25" for="{{ input.id_for_label }}">
+                        {% if input.name == "login" %}
+                            <i class="fa-solid fa-user"></i>
+                            <span class="visually-hidden">Login</span>
+                        {% elif input.name == "password" %}
+                            <i class="fa-solid fa-lock"></i>
+                            <span class="visually-hidden">Password</span>
+                        {% endif %}
+                    </label>
+  				</div>
+            {% endif %}
+
+            {% if input.name == "password" %}
+            	<div class="form-text">
+            		Forgot your password? <a href="{% url 'account_reset_password' %}" class="fw-bold">Reset password</a>
+            	</div>
+            {% endif %}
+
+  			{% if input.errors %}
+  				<ul class="invalid-feedback">
+  					{% for error in input.errors %}
+  						<li>{{ error }}</li>
+  					{% endfor %}
+  				</ul>
+  			{% endif %}
+  		</div>
+  	{% endfor %}
+  	{% if redirect_field_value %}
+  		<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  	{% endif %}
+  	<div class="form-group">
+  		<button class="btn btn-primary btn-block" type="submit">Sign In</button>
+  	</div>
+</form>
+<!-- Form end -->
+
+<p>
+	Don't have an account? <a href="{% url 'account_signup' %}" class="fw-bold">Sign up</a> to create one.
+</p>
 {% endblock %}
 

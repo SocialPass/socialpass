@@ -1,0 +1,210 @@
+{% load static i18n %}
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}" class="">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>{% block head_title %}SocialPass - Hosting the Next Generation of Events{% endblock head_title %}</title>
+
+		<!-- Fav icon -->
+		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
+
+		<!-- Halfmoon CSS -->
+		{% if debug %}
+			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
+		{% else %}
+			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
+		{% endif %}
+
+		<!-- SocialPass CSS theme -->
+		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
+
+		<!-- Inter font -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+		<!-- Font Awesome 6 -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+		<!-- SEO -->
+        <meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
+        <meta name="author" content="SocialPass">
+        <meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket">
+
+        <!-- Open graph -->
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="https://socialpass.io">
+        <meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
+        <meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
+        <meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@socialpass_io">
+
+        <!-- Custom styles -->
+        <style type="text/css">
+        	:root {
+        		--base-body-bg-color: var(--white-color);
+
+        		/* Sidebar */
+
+        		--sidebar-width: 36rem;
+
+        		/* Buttons */
+
+        		--button-vertical-padding: 0.5rem;
+
+        		--small-button-vertical-padding: 0.3rem;
+
+        		--large-button-vertical-padding: 0.7rem;
+
+        		/* Form label */
+
+        		--form-label-font-weight: var(--bold-font-weight);
+
+        		/* Input group text */
+
+        		--input-group-text-border-color: var(--border-color);
+        	}
+
+        	.dark-mode {
+        		--base-body-bg-color: var(--dark-color-very-light);
+        	}
+
+        	@media (min-width: 993px) {
+        		:root {
+        			/* Sidebar */
+
+        			--sidebar-width: 50rem;
+        		}
+        	}
+
+        	@media (min-width: 1201px) {
+        		:root {
+        			/* Sidebar */
+
+        			--sidebar-width: 70rem;
+        		}
+        	}
+
+        	.sidebar {
+        		background-image: url("{% static 'images/auth-sidebar-bg-image-1.svg' %}");
+        		background-repeat: no-repeat;
+        		background-position: 0 0;
+        		background-size: 80%;
+        	}
+
+        	.dark-mode .sidebar {
+        		background-image: url("{% static 'images/auth-sidebar-bg-image-2.svg' %}");
+        	}
+
+        	@media (min-width: 993px) {
+        		.sidebar {
+        			background-size: 50%;
+        		}
+        	}
+        </style>
+
+        {% block extra_head %}{% endblock extra_head %}
+	</head>
+	<body>
+		<!-- Modals start -->
+		{% block modals %}{% endblock modals %}
+		<!-- Modals end -->
+
+		<!-- Page wrapper start -->
+		<div class="page-wrapper with-sidebar" data-hm-sidebar-type="overlayed-md-down">
+
+			<!-- Sidebar start -->
+			<nav class="sidebar d-flex align-items-center justify-content-center">
+				<div class="ws-550 mw-100 px-content">
+					<h2 class="text-on-primary fsr-1 fw-700">Hosting the Next Generation of Events</h2>
+					<p class="fsr-5 mb-40">
+						<strong class="text-on-primary">SocialPass</strong> is the go-to events platform, powered by Web3.
+					</p>
+					<div class="d-flex mt-20">
+						<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+							<i class="fa-solid fa-check"></i>
+							<span class="visually-hidden">Checkmark</span>
+						</div>
+						<div class="ps-20">
+							Handle events of all sizes with an easy-to-use dashboard.
+						</div>
+					</div>
+					<div class="d-flex mt-20">
+						<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+							<i class="fa-solid fa-check"></i>
+							<span class="visually-hidden">Checkmark</span>
+						</div>
+						<div class="ps-20">
+							Use digital assets as tickets for the events you host and manage.
+						</div>
+					</div>
+					<div class="d-flex mt-20">
+						<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+							<i class="fa-solid fa-check"></i>
+							<span class="visually-hidden">Checkmark</span>
+						</div>
+						<div class="ps-20">
+							Very quick and easy to set up and get started. Safe and secure by design.
+						</div>
+					</div>
+					<div class="d-flex mt-20">
+						<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+							<i class="fa-solid fa-check"></i>
+							<span class="visually-hidden">Checkmark</span>
+						</div>
+						<div class="ps-20">
+							Serve your industry of choice - Sports, Music, Film and more!
+						</div>
+					</div>
+				</div>
+				<!-- Copyright start -->
+				<p class="d-none d-md-block text-center fs-base-n2 m-0 position-absolute bottom-0 p-content">
+					&copy; {% now "Y" %}, SPTech Group Inc. All rights reserved
+				</p>
+				<!-- Copyright end -->
+			</nav>
+			<!-- Sidebar end -->
+
+			<!-- Content wrapper start -->
+			<div class="content-wrapper min-vh-100 d-flex align-items-center justify-content-center">
+				<div class="px-content py-30 py-sm-50 w-100">
+					<div class="ws-450 mw-100 mx-auto">
+
+						<!-- Branding start -->
+						<div class="d-flex align-items-center">
+							<div class="ws-75">
+								<img src="{% static 'images/SocialPass-Icon.svg' %}" class="w-100 pe-none" alt="SocialPass Logo">
+							</div>
+							<div class="ps-15 fw-700 fs-base-p8">
+								<span class="text-primary-lm text-primary-light-dm">Social</span><span class="text-secondary-lm text-secondary-light-dm">Pass</span>
+							</div>
+						</div>
+						<!-- Branding end -->
+
+						{% block inner %}{% endblock inner %}
+
+						<!-- Copyright start -->
+						<p class="d-md-none text-end text-muted fs-base-n2 mt-50">
+							&copy; {% now "Y" %}, SPTech Group Inc. All rights reserved
+						</p>
+						<!-- Copyright end -->
+					</div>
+				</div>
+			</div>
+			<!-- Content wrapper end -->
+		</div>
+		<!-- Page wrapper end -->
+
+		<!-- Halfmoon JS -->
+		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
+
+		{% block extra_body %}{% endblock extra_body %}
+	</body>
+</html>

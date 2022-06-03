@@ -35,6 +35,16 @@ class EventForm(forms.ModelForm):
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+    date = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            format ="%Y-%m-%dT%H:%M",
+            attrs={
+                "id": "date",
+                "class": "form-control",
+                "type": "datetime-local"
+            }
+        )
+    )
 
     class Meta:
         model = Event
@@ -45,17 +55,11 @@ class EventForm(forms.ModelForm):
             "timezone",
             "location",
             "capacity",
+            "limit_per_person",
             "requirements",
         ]
         widgets = {
-            "requirements": forms.HiddenInput(),
-            "date": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "id": "date",
-                    "type": "date",
-                }
-            ),
+            "requirements": forms.HiddenInput()
         }
 
     def can_edit_capacity(self) -> bool:

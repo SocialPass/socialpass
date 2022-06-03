@@ -7,7 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}SocialPass{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+    <link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
     <!-- Theme font -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Soft UI CSS -->
@@ -31,9 +31,11 @@
           <nav class="navbar navbar-expand-lg blur blur-rounded top-0 z-index-3 shadow position-absolute my-3 py-2 start-0 end-0 mx-4">
             <div class="container-fluid">
               <a class="navbar-brand m-0 d-flex align-items-center" href="https://socialpass.io">
-                <img src="{% static 'images/socialpass-icon.png' %}" style="max-width: 100%;
+                <img src="{% static 'images/socialpass-icon.svg' %}" style="max-width: 100%;
                 max-height: 2rem;" alt="main_logo">
-                <span class="ms-2 font-weight-bold text-primary fs-5">SocialPass</span>
+                <span class="ms-2 font-weight-bold fs-5">
+                  <span class="text-primary">Social</span><span class="text-info">Pass</span>
+                </span>
               </a>
               <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon mt-2">
@@ -76,18 +78,7 @@
                       Sign In
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link me-2" href="{% url 'account_login' %}">
-                      <i class="fas fa-info opacity-6 text-dark me-1" aria-hidden="true"></i>
-                      Read More
-                    </a>
-                  </li>
                   {% endif %}
-                </ul>
-                <ul class="navbar-nav d-lg-block d-none">
-                  <li class="nav-item">
-                    <a href="https://www.creative-tim.com/product/soft-ui-dashboard" class="btn btn-sm btn-round mb-0 me-1 bg-gradient-dark">Free download</a>
-                  </li>
                 </ul>
               </div>
             </div>
@@ -128,40 +119,19 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 mb-4 mx-auto text-center">
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+            <a href="https://socialpass.io" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
               Company
             </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-              About Us
+            <a href="https://socialpass.io/#features" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+              Features
             </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-              Team
-            </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-              Products
-            </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-              Blog
-            </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+            <a href="https://socialpass.io/#pricing" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
               Pricing
             </a>
           </div>
           <div class="col-lg-8 mx-auto text-center mb-4 mt-2">
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-              <span class="text-lg fab fa-dribbble" aria-hidden="true"></span>
-            </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
+            <a href="https://twitter.com/SocialPass_io" target="_blank" class="text-secondary me-xl-4 me-4">
               <span class="text-lg fab fa-twitter" aria-hidden="true"></span>
-            </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-              <span class="text-lg fab fa-instagram" aria-hidden="true"></span>
-            </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-              <span class="text-lg fab fa-pinterest" aria-hidden="true"></span>
-            </a>
-            <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-              <span class="text-lg fab fa-github" aria-hidden="true"></span>
             </a>
           </div>
         </div>

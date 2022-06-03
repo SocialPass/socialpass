@@ -15,12 +15,7 @@ type EventDataProps = {
 const TicketProvider = ({ children }: any) => {
   const { addToast } = useToast();
   const [scanFlag, setScanFlag] = useState<String>("");
-  const [eventData, setEventData] = useState<EventDataProps>({
-    event_name: "Event Name",
-    event_attendance: "5",
-    event_date: "2022-12-12T22:30:00Z",
-    event_venue: "The Ritz Carlton - South Beach",
-  });
+  const [eventData, setEventData] = useState<EventDataProps>();
   const [statusEvent, setStatusEvent] = useState<String>("");
   const [loading, setLoading] = useState<Boolean>(false);
   const [attendeesAmount, setAttendeesAmount] = useState<number>(() => {

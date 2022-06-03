@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTicket } from "../contexts/TicketContext";
 import { api } from "../services/api";
 
+
 export const Init = () => {
     const navigate = useNavigate();
     const params = useParams();
@@ -11,10 +12,10 @@ export const Init = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await api.get(`api/scanner/${params.id}/scan-landing`);
-                setEventData(response.data)
-                navigate("/home");
-                console.log(response.data)
+                const response = await api.get(`http://localhost:8000/api/scanner/landing/${params.publicId}/`);
+               /* setEventData(response.data)*/
+                console.log(response)
+                
                 
             } catch (error) {
                 console.log(error)                

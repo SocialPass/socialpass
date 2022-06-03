@@ -1,18 +1,18 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React from "react";
 import { useTicket } from "../contexts/TicketContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EventContainer } from "../components/EventContainer"
 import Logo from "../static/images/landingpage_logo.png"
 
 export function Home() {
   const { statusEvent, eventData }: any = useTicket();
   const navigate = useNavigate();
+  const params = useParams();
 
   function handleGoBack() {
     navigate(-1);
   }
-
   return (
     <>
   <div className="landing-page-body p-10 py-50">

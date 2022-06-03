@@ -8,12 +8,14 @@ import {
 import { EventClose } from "../pages/EventClose";
 import { Home } from "../pages/Home";
 import { Scanner } from "../pages/Scanner";
+import { Init } from "../pages/Init";
 
 function Routes() {
   return (
     <BrowserRouter>
       <RoutesRom>
-        <Route path="/" element={<Home />} />
+        <Route path="/:publicId" element={<Init />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/scanner" element={<Scanner />} />
         <Route path="/end-event" element={<EventClose />} />
       </RoutesRom>

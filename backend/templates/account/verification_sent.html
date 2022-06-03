@@ -1,13 +1,15 @@
-{% extends "account/anon_base.html" %}
+{% extends "account/new/base.html" %}
 
-{% load static i18n %}
+{% load account %}
 
-{% load i18n %}
-
-{% block head_title %}{% translate "Verify Your E-mail Address" %}{% endblock %}
+{% block head_title %}Verify Your E-mail Address - SocialPass{% endblock %}
 
 {% block inner %}
-<h3 class="font-weight-bolder text-info text-gradient">{% translate "Verify Your E-mail Address" %}</h3>
-<p>{% blocktranslate %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktranslate %}</p>
+<h1 class="fsr-1 text-strong fw-700">Verify Your E-mail Address</h1>
+<p>
+    We have sent an e-mail to you for verification. Follow the link provided to verify your account. Please contact us if you do not receive it within a few minutes.
+</p>
+<p>
+    <a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-solid fa-arrow-left me-5"></i> Go back to login</a>
+</p>
 {% endblock %}
-

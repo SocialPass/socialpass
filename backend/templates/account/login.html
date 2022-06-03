@@ -42,6 +42,9 @@
 		            		class="form-check-input"
 		            		id="{{ input.auto_id }}"
 		            	{% endif %}
+                        {% if input.field.required %}
+                            required="required"
+                        {% endif %}
 		            	{% for k,v in input.field.widget.attrs.items %}
 		            		{{ k }}="{{ v }}"
 		            	{% endfor %}
@@ -58,6 +61,9 @@
 		            		class="ps-40 form-control"
 		            		id="{{ input.auto_id }}"
 		            	{% endif %}
+                        {% if input.field.required %}
+                            required="required"
+                        {% endif %}
 		            	{% for k,v in input.field.widget.attrs.items %}
 		            		{{ k }}="{{ v }}"
 		            	{% endfor %}

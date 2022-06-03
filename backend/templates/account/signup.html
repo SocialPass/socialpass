@@ -1,23 +1,72 @@
-{% extends "account/anon_base.html" %}
+{% extends "account/new/base.html" %}
 
-{% load i18n %}
-{% load crispy_forms_tags %}
+{% load account %}
 
-{% block head_title %}{% translate "Signup" %}{% endblock %}
+{% block head_title %}Sign Up - SocialPass{% endblock %}
 
 {% block inner %}
-<h3 class="font-weight-bolder text-info text-gradient">{% translate "Sign Up" %}</h3>
+<h1 class="fsr-1 text-strong fw-700">Sign Up</h1>
+<p>
+	Please fill out the following form to create an account.
+</p>
 
-<p>{% blocktranslate %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
+<!-- Form start -->
+<form class="login" method="POST" action="{% url 'account_signup' %}">
+  	{% csrf_token %}
 
-<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-  {% csrf_token %}
-  {{ form|crispy }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <button class="btn btn-gradient-alt" type="submit">{% translate "Sign Up" %} &raquo;</button>
+  	{% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            <ul class="invalid-feedback">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error|escape }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+  	{% for input in form.hidden_fields %}
+    	{{ input }}
+    {% endfor %}
+
+  	{% for input in form.visible_fields %}
+  		<div class="form-group">
+            <label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+            <input
+                type="{{ input.field.widget.input_type }}"
+                name="{{ input.name }}"
+                value="{{ input.value|default_if_none:'' }}"
+                {% if input.field.widget.input_type != "hidden" %}
+                    class="form-control"
+                    id="{{ input.auto_id }}"
+                {% endif %}
+                {% if input.field.required %}
+                    required="required"
+                {% endif %}
+                {% for k,v in input.field.widget.attrs.items %}
+                    {{ k }}="{{ v }}"
+                {% endfor %}
+            />
+
+            {% if input.errors %}
+                <ul class="invalid-feedback">
+                    {% for error in input.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+  	{% endfor %}
+  	{% if redirect_field_value %}
+  		<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  	{% endif %}
+  	<div class="form-group">
+  		<button class="btn btn-primary btn-block" type="submit">Sign Up</button>
+  	</div>
 </form>
+<!-- Form end -->
 
+<p>
+	Already have an account? <a href="{% url 'account_login' %}" class="fw-bold">Sign in</a> instead.
+</p>
 {% endblock %}
 

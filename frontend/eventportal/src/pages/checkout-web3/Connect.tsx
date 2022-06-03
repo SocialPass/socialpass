@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from "react";
-import { useConnect, useAccount } from "wagmi";
+import { useConnect, useAccount, useSignMessage } from "wagmi";
 import { useNavigate } from "react-router-dom";
+import { TicketedEventRequestAccess, TicketedEventGrantAccess } from '../../api';
 import { Web3ConnectorImage } from "../../components/Web3ConnectorImage";
 import { EventPortalContext } from "../../context";
 import infoButton from "../../static/images/icons/infoButton.svg";
@@ -8,7 +9,7 @@ import infoButton from "../../static/images/icons/infoButton.svg";
 // ConnectorWallets
 // Return UI for wallet connectors
 export const Web3ConnectWallet = () => {
-  const { setBackButton, generalAdmissionSelect } =
+  const { id, requestAccessJson, setBackButton, generalAdmissionSelect, setRequestAccessJson, setRequestAccessError, setGrantAccessJson, setGrantAccessError } =
     useContext(EventPortalContext);
   const navigate = useNavigate();
   const [
@@ -19,6 +20,10 @@ export const Web3ConnectWallet = () => {
     { data: accountData, error: accountError, loading: accountLoading },
     disconnect,
   ] = useAccount();
+  const [{data: signData, error: signError,loading: signLoading}, signMessage] =
+  useSignMessage({
+    message: requestAccessJson?.signing_message
+  });
 
   // useEffect hook to set back button and its side effects
   useEffect(() => {
@@ -26,19 +31,64 @@ export const Web3ConnectWallet = () => {
     setBackButton(() => back_button);
   }, []);
 
-  // navigate to checkout once account data i sloaded
+  // request access handler (based on web3 account data change)
   useEffect(() => {
-    if (accountData?.address) {
-      navigate("/checkout/web3/checkout");
-    }
-  }, [accountData?.address]);
+    (async function() {
+      console.log('hi');
+      setRequestAccessJson(null);
+      setRequestAccessError(null);
+      let response: any;
+      // api call
+      response = await TicketedEventRequestAccess.call({
+        "public_id":id,
+        "checkout_type":'blockchain_ownership',
+      });
+      if (response && response.httpStatus){
+        if (response.httpStatus === 200){
+          setRequestAccessJson(response);
+        } else {
+          setRequestAccessError(response);
+        }
+      }
+    })();
+  },[]);
+
+  // checkout handler
+  // handles signing message and posting related data to API
+  useEffect(() => {
+    (async function() {
+      if (signData){
+      let response;
+        response = await TicketedEventGrantAccess.call({
+          "public_id":id,
+          "checkout_type":'blockchain_ownership',
+          'wallet_address':accountData.address,
+          'signed_message':signData,
+          'blockchain_ownership_id':requestAccessJson.id,
+          'tickets_requested':0,
+        })
+        if (response.httpStatus === 200){
+          setGrantAccessJson(response);
+        } else {
+          setGrantAccessError(response);
+        }
+      }
+    })();
+  },[signData]);
+
 
   function handleNavigateBack() {
     navigate(-1);
   }
 
-  function handleCheckTokens() {
+  function handleCheckout() {
+    console.log('checkout...');
+    signMessage();
     navigate("/checkout/status");
+  }
+
+  if (signLoading){
+    return null
   }
 
   if (connectData) {
@@ -108,10 +158,10 @@ export const Web3ConnectWallet = () => {
           </div>
           <div className="d-flex align-items-center justify-content-center p-30 mt-50">
             <button
-              onClick={handleCheckTokens}
+              onClick={() => handleCheckout()}
               className="btn btn-primary fs-20 text-capitalize rounded-3"
             >
-              continue
+              Checkout
             </button>
           </div>
         </div>

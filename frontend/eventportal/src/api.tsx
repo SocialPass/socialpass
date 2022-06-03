@@ -43,19 +43,13 @@ export class TicketedEventRetrieve {
 // Used for requesting access to a TicketedEvent
 export class TicketedEventRequestAccess {
   // wrapper for backend - TicketedEventRequestAccess
-  static call = async ({ public_id, access_type, address }) => {
+  static call = async ({ public_id, checkout_type }) => {
     // set url
-    const url = `${baseURL}/event-portal/ticketed-event/request-access/${public_id}?type=${access_type}`;
-
-    // set body
-    const body = JSON.stringify({
-      address: address,
-    });
+    const url = `${baseURL}/event-portal/request-checkout/${public_id}/?checkout_type=${checkout_type}`;
 
     // set request options
     const requestOptions = {
       method: "POST",
-      body: body,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -93,21 +87,21 @@ export class TicketedEventGrantAccess {
   // wrapper for backend - TicketedEventRequestAccess
   static call = async ({
     public_id,
-    access_type,
-    address,
+    checkout_type,
+    wallet_address,
     signed_message,
-    signature_id,
-    access_data,
+    blockchain_ownership_id,
+    tickets_requested,
   }) => {
     // setup url
-    const url = `${baseURL}/event-portal/ticketed-event/grant-access/${public_id}?type=${access_type}`;
+    const url = `${baseURL}/event-portal/process-checkout/${public_id}/?checkout_type=${checkout_type}`;
 
     // set body
     const body = JSON.stringify({
-      address: address,
+      wallet_address: wallet_address,
       signed_message: signed_message,
-      signature_id: signature_id,
-      access_data: access_data,
+      blockchain_ownership_id: blockchain_ownership_id,
+      tickets_requested: tickets_requested,
     });
 
     // set request options

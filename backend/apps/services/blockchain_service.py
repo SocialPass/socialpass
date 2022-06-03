@@ -18,7 +18,6 @@ def validate_blockchain_wallet_ownership(
     if blockchain_ownership.is_verified:
         verification_msg = "BlockchainOwnership message already verified."
 
-    print('yoooo', blockchain_ownership.is_expired)
     # check if expired
     if blockchain_ownership.is_expired:
         verification_msg = f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
@@ -46,6 +45,7 @@ def validate_blockchain_wallet_ownership(
         return verified, verification_msg
 
     # before success, mark as verified, update wallet_address, and save
+    verified = True
     blockchain_ownership.is_verified = True
     blockchain_ownership.wallet_address = _recovered
     blockchain_ownership.save()

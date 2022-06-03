@@ -2,6 +2,22 @@
 BASE HTML
 */
 
+:root {
+  --white-color-hsl: 0, 0%, 100%;
+  --white-color: hsl(var(--white-color-hsl));
+
+  --orange:#EF7C4E;
+  --success: #0FBE0C;
+  --bg-success: #CDFFCC;
+  --bg-denied:#ffcccc;
+  --denied: #F6050B;
+  --gray: #F6F7F9;
+
+  --sp-orange-color: hsl(16, 80%, 60%);
+  --sp-orange-color-light: hsl(16, 80%, 70%);
+  --sp-orange-color-very-light: hsl(16, 80%, 95%);
+}
+
 @font-face {
   font-family: 'rubik';
   src: local('rubik'),
@@ -9,8 +25,6 @@ BASE HTML
 }
 
 html, body {
-  height:100%;
-  width:100%;
   margin: 0;
   padding: 0;
   font-family: 'rubik';
@@ -57,7 +71,7 @@ button {
 
 p {
   font-weight: 300;
-  font-size: 1.01rem;
+  font-size: 1.3rem;
   color: #95959C;
 }
 
@@ -68,11 +82,15 @@ small {
   color: #959191;
 }
 
-header {
+.text-color-primary{
+  color: var(--orange)
+}
+
+.header {
   position:relative;
   display:flex;
   border-radius: 50px 50px 0 0;
-  min-height:200px;
+  min-height:280px;
   height:35%;
 }
 
@@ -84,18 +102,40 @@ footer {
   margin: 2.25rem 2.25rem 1.5rem 2.25rem;
 }
 
+.center{
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
 .container-fluid {
+  position: relative;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
-  min-height:769px;
   overflow:hidden;
-  min-width:333px;
+}
+
+.left-30{
+  left: 30% !important;
+}
+
+.card{
+  position: relative;
+  border: none;
+}
+
+@media (min-width: 770px) {
+  .card{
+    left: 50%;
+    border: none;
+  }
 }
 
 .small-header {
+  align-items: center;
   min-height: 188px;
   height: 23.9%;
-  background-size: 100% auto;
+  background-size: auto;
   box-shadow:inset 0 0 0 2000px rgba(0, 0, 0, .5);
   overflow:hidden;
   transition:all 0.69s linear;
@@ -107,17 +147,11 @@ footer {
 /*
 ELEMENTS
 */
-.ticker {
-  position:absolute;
-  display:block;
-  max-width:44%;
-  top:-10px;
-  right:-5px;
-}
 
 .team-info {
   position:absolute;
-  top:75%;
+  top:80%;
+  left: 5%;
 }
 
 .team-info img {
@@ -152,14 +186,31 @@ ELEMENTS
 /*
 BOOSTRAP OVERRIDES
 */
+
+.border-color-primary{
+  border: 1.5px solid var(--orange);
+}
+
+.text-edit{
+  color: var(--orange);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.text-edit:hover{
+  color: var(--orange);
+  text-decoration: underline;
+  transition: filter 0.2s;
+  filter: brightness(0.7)
+}
+
 .btn-primary {
-  background: #EF7C4E;
-  border-radius: 20px;
+  background: var(--orange);
+  border-radius: 9px;
   color:white;
   border: none;
-  min-height:80px;
+  min-height:60px;
   font-weight: 700;
-  font-size: 1.69rem;
   padding:0;
   margin:0;
   width:100%;
@@ -167,6 +218,12 @@ BOOSTRAP OVERRIDES
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.btn-primary:hover{
+  background: var(--orange);
+  transition: filter 0.2s;
+  filter: brightness(0.9)
 }
 
 .btn-primary:disabled {
@@ -188,7 +245,192 @@ BOOSTRAP OVERRIDES
 }
 
 .bg-success {
-  background: #CDFFCC !important;
-  color:#0FBE0C;
+  background: var(--bg-success) !important;
+  color:var(--success);
   border-radius: 7px;
+  width: 70%;
+}
+
+.bg-gray{
+  background-color: var(--gray);
+  border-radius: 0px 0px 50px 0px;
+  width: 35%;
+  height: 200%;
+  margin-top: -3.5rem;
+  margin-right: -3.5rem;
+}
+
+.bg-denied {
+  background: var(--bg-denied) !important;
+  color:var(--denied);
+  border-radius: 7px;
+  width: 70%;
+}
+
+.btn-secondary{
+  background-color: var(--gray);
+}
+
+.btn-secondary:hover{
+  background-color: rgba(185, 175, 175, 0.315);
+  transition: filter 2s;
+  filter: brightness(0.99)
+}
+
+.container {
+	width: 40vw;
+	max-width: 100%;
+	padding: 30px;
+	margin: auto;
+}
+
+
+.sp-progress {
+  display: flex;
+  height: 36px;
+  background-color: var(--white-color);
+  box-shadow: inset 0 0 0 2px var(--sp-orange-color);
+  border-radius: 36px;
+}
+
+.sp-progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--sp-orange-color);
+  background-image: linear-gradient(to right, var(--sp-orange-color-light), var(--sp-orange-color));
+  border-radius: 36px;
+}
+
+.sp-progress-bar-animated {
+  position: relative;
+}
+
+.sp-progress-bar-animated::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  animation: sp-progress-bar-shine 2s infinite;
+  border-radius: 36px;
+  background: linear-gradient(to right , transparent, var(--sp-orange-color-very-light));
+}
+
+@keyframes sp-progress-bar-shine {
+  from {
+    transform: translateX(-100%);
+    opacity: 0.5;
+  }
+
+  to {
+    transform: translateX(0);
+      opacity: 0.1;
+    }
+}
+
+.avatar-img{
+  width: 5rem;
+  height: 5rem;
+  border-radius: 30px;
+}
+
+.tooltip {
+  display:inline-block;
+  position:relative;
+  text-align: justify;
+}
+
+.tooltip .right {
+  min-width:200px;
+  max-width:80px;
+  top:50%;
+  left:100%;
+  margin-left:20px;
+  transform:translate(0, -50%);
+  padding:10px 20px;
+  color:#000000;
+  background-color:#FFFFFF;
+  font-weight:normal;
+  font-size:13px;
+  border-radius:8px;
+  position:absolute;
+  z-index:99999999;
+  box-sizing:border-box;
+  border:1px solid #FF9966;box-shadow:0 1px 8px rgba(0,0,0,0.5);
+  visibility:hidden; opacity:0; transition:opacity 0.8s;
+}
+
+.tooltip:hover .right {
+  visibility:visible; opacity:1;
+}
+
+.tooltip .right i {
+  position:absolute;
+  top:50%;
+  right:100%;
+  margin-top:-12px;
+  width:12px;
+  height:24px;
+  overflow:hidden;
+}
+
+.tooltip .right i::after {
+  content:'';
+  position:absolute;
+  width:12px;
+  height:12px;
+  left:0;
+  top:50%;
+  transform:translate(50%,-50%) rotate(-45deg);
+  background-color:#FFFFFF;
+  border:1px solid #FF9966;
+  box-shadow:0 1px 8px rgba(0,0,0,0.5);
+}
+.responsive-page-selection{
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+@media (max-width: 450px) {
+  .responsive-page-selection{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+  }
+  .bg-gray{
+    background-color: var(--gray);
+    border-radius: 10px;
+    width: 100%;
+    height: 200%;
+    margin-top: 2rem;
+  }
+  .container {
+    width: 100vw;
+    max-width: 100%;
+    padding: 30px;
+    margin: auto;
+  }
+  .container-fluid {
+    border-radius: 0;
+    min-height:740px;
+    overflow:hidden;
+    min-width:333px;
+    margin: 0 auto;
+    width: 100vw;
+    height: 100%;
+  }
+  .header {
+    border-radius: 0;
+    position:relative;
+    display:flex;
+    min-height:200px;
+    height:35%;
+  }
+  .left-30{
+    left: 0% !important;
+  }
 }

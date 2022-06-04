@@ -81,11 +81,6 @@ def get_blockchain_asset_ownership(
                 token_address=requirement["asset_address"],
                 token_ids=requirement.get("token_id"),  # optional
             )
-            for i in nft_assets:
-                asset_ownership.append({
-                    "requirement": requirement,
-                    "asset": i
-                })
         # append fetched assets
         for i in fetched_assets:
             asset_ownership.append({

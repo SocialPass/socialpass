@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.root.models import BlockchainOwnership, Event
-from apps.services import blockchain_service, ticket_service
+from apps.services import blockchain_service, event_service, ticket_service
 from . import serializers
 
 
@@ -105,7 +105,7 @@ class EventPortalProcessCheckout(EventMixin, APIView):
 
         # 4. Get # of tickets available
         try:
-            tickets_to_issue = ticket_service.get_available_tickets(
+            tickets_to_issue = event_service.get_available_tickets(
                 event=self.event,
                 tickets_requested=blockchain_serializer.data['tickets_requested']
             )

@@ -1,3 +1,4 @@
+import json
 import requests
 import sentry_sdk
 from requests.adapters import HTTPAdapter, Retry
@@ -135,17 +136,17 @@ def moralis_get_fungible_assets(
         raise SystemExit(e)
 
     # SANITY CHECKS
-    # parse json response, check if balance and other stats are returned
-    json = r.json()
-    if "balance" not in json:
-        sentry_sdk.capture_message(r, json)
-        return json
-
-    # check if asset response total less than required_amount
-    if json["balance"] < required_amount:
+    # parse _json response, check if balance and other stats are returned
+    _json = r.json()
+    if "balance" not in _json:
+        sentry_sdk.capture_message(r, _json)
         return []
 
-    return json
+    # check if asset response total less than required_amount
+    if _json["balance"] < required_amount:
+        return []
+
+    return _json
 
 
 def moralis_get_nonfungible_assets(
@@ -188,19 +189,20 @@ def moralis_get_nonfungible_assets(
         raise SystemExit(e)
 
     # SANITY CHECKS
-    # parse json response, check if total and other stats are returned
-    json = r.json()
-    if "total" not in json:
-        sentry_sdk.capture_message(r, json)
-        return json
+    # parse _json response, check if total and other stats are returned
+    _json = r.json()
+    if "total" not in _json:
+        sentry_sdk.capture_message(r, _json)
+        return _json
 
     # check if asset response total is 0
-    if json["total"] == 0:
+    if _json["total"] == 0:
         return []
 
     # Result parsing
     parsed_data = []
-    for token in json["result"]:
+    parsed_token = {}
+    for token in _json["result"]:
         # check for required_amount
         if int(token["amount"]) < required_amount:
             continue
@@ -210,8 +212,13 @@ def moralis_get_nonfungible_assets(
             continue
 
         # append matching token to parsed_data
-        # TODO: format parsed_data that's needed
-        print(parsed_data)
-        parsed_data.append(token)
+        metadata = json.loads(token['metadata'])
+        parsed_data.append({
+            "token_address": token['token_address'],
+            "token_id": token['token_id'],
+            "token_hash": token['token_hash'],
+            "token_image": metadata.get('image', ''),
+        })
+
 
     return parsed_data

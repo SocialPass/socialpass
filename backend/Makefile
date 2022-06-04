@@ -35,4 +35,7 @@ backend-turtle: ## backend shell plus
 	(source venv/bin/activate; python3 manage.py shell_plus)
 
 backend-lint: ## Lint backend repo
-	(source venv/bin/activate; cd backend; black .; isort .; flake8 .;)
+	(source venv/bin/activate; black .; isort .; flake8 .;)
+
+backend-test: ## Lint backend repo
+	(source venv/bin/activate; python3 manage.py test apps/services)

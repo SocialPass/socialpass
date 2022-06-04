@@ -22,9 +22,7 @@ class SetAccessKeyAndEventMixin:
     redemption_access_key = None
     event = None
 
-    def set_event_and_redemption_access_key(
-        self, redemption_access_key: uuid.UUID
-    ):
+    def set_event_and_redemption_access_key(self, redemption_access_key: uuid.UUID):
         try:
             self.redemption_access_key = RedemptionAccessKey.objects.get(
                 id=redemption_access_key

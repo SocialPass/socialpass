@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.db.models import Sum
 
-from apps.root.models import PricingRuleGroup, Team, Event, EventStripePayment
+from apps.root.models import Event, EventStripePayment, PricingRuleGroup, Team
 
 
 def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:
@@ -57,9 +57,7 @@ def get_pricing_group_for_ticket(event: Event) -> PricingRuleGroup:
     return event.team.pricing_rule_group
 
 
-def calculate_event_price_per_ticket_for_team(
-    team: Team, *, capacity: int = None
-):
+def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = None):
     """Returns the estimated price of a ticket gate for a given team.
 
     The price is calculated by finding the first pricing rule that matches the
@@ -81,18 +79,14 @@ def get_pricing_rule_for_ticket(
 def set_event_price(event: Event):
     """Sets the price of a ticket based on its capacity."""
     event.pricing_rule = get_pricing_rule_for_ticket(event)
-    event.price = (
-        event.pricing_rule.price_per_ticket * event.capacity
-    )
+    event.price = event.pricing_rule.price_per_ticket * event.capacity
     event.save()
 
 
 def get_event_pending_payment_value(event: Event):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = Decimal(
-        get_effective_payments(event.payments).aggregate(Sum("value"))[
-            "value__sum"
-        ]
+        get_effective_payments(event.payments).aggregate(Sum("value"))["value__sum"]
         or 0
     )
     return max((event.price or 0) - effective_payments_value, 0)
@@ -112,9 +106,7 @@ def get_in_progress_payment(
     return event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 
 
-def issue_payment(
-    event: Event, stripe_checkout_session_id: str
-) -> EventStripePayment:
+def issue_payment(event: Event, stripe_checkout_session_id: str) -> EventStripePayment:
     """
     Issues a payment for a ticket gate.
     Adds validation to ensure that there is only one payment in progress issued per ticket gate.

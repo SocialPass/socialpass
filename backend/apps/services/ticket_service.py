@@ -1,18 +1,22 @@
 import io
-import sentry_sdk
+
 from apps.root.models import BlockchainOwnership, Event, Ticket
 from apps.services import TicketImageGenerator, blockchain_service
 
+
 class ZeroBlockchainAssetsError(Exception):
     pass
+
 
 class PartialBlockchainAssetError(Exception):
     pass
 
 
 def create_ticket_image(
-    event: Event, ticket: Ticket,
-    top_banner_text: str = "SocialPass Ticket", scene_img_source: str = None
+    event: Event,
+    ticket: Ticket,
+    top_banner_text: str = "SocialPass Ticket",
+    scene_img_source: str = None,
 ):
     """
     Use the arguments to generate a ticket image and save into s3-compatible bucket.
@@ -43,7 +47,8 @@ def create_ticket_image(
 
 
 def create_tickets_blockchain_ownership(
-    event: Event, blockchain_ownership: BlockchainOwnership,
+    event: Event,
+    blockchain_ownership: BlockchainOwnership,
     tickets_to_issue: int,
 ):
     """
@@ -51,7 +56,6 @@ def create_tickets_blockchain_ownership(
     """
     # vars
     tickets = []
-    tickets_message = ""
 
     # get blockchain asset ownership
     asset_ownership = blockchain_service.get_blockchain_asset_ownership(
@@ -65,9 +69,9 @@ def create_tickets_blockchain_ownership(
         raise PartialBlockchainAssetError(
             "Not enough blockchain assets found",
             {
-                "expected":tickets_to_issue,
-                "actual":len(asset_ownership) - tickets_to_issue,
-            }
+                "expected": tickets_to_issue,
+                "actual": len(asset_ownership) - tickets_to_issue,
+            },
         )
 
     # generate tickets based on blockchain assets
@@ -78,15 +82,14 @@ def create_tickets_blockchain_ownership(
 
         # check for existing ticket
         existing_ticket = Ticket.objects.filter(
-            event=event,
-            blockchain_asset=blockchain_asset
+            event=event, blockchain_asset=blockchain_asset
         )
         # First-time claim
         if not existing_ticket:
             new_ticket = Ticket.objects.create(
                 event=event,
                 blockchain_asset=blockchain_asset,
-                blockchain_ownership=blockchain_ownership
+                blockchain_ownership=blockchain_ownership,
             )
         # existing asset claim, archive old ticket and create new one
         # TODO: Delete? Mark as archived?
@@ -95,9 +98,8 @@ def create_tickets_blockchain_ownership(
             new_ticket = Ticket.objects.create(
                 event=event,
                 blockchain_asset=blockchain_asset,
-                blockchain_ownership=blockchain_ownership
+                blockchain_ownership=blockchain_ownership,
             )
-
 
         create_ticket_image(event=event, ticket=new_ticket)
         # append ticket to list

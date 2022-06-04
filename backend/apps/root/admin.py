@@ -4,15 +4,15 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
 from apps.root.models import (
+    BlockchainOwnership,
+    Event,
+    EventStripePayment,
     Membership,
     PricingRule,
     PricingRuleGroup,
     RedemptionAccessKey,
-    BlockchainOwnership,
     Team,
     Ticket,
-    Event,
-    EventStripePayment,
 )
 from apps.services import pricing_service
 
@@ -79,8 +79,14 @@ class RedemptionAccessKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("event", "blockchain_ownership",)
-    search_fields = ("event__title", "blockchain_ownership",)
+    list_display = (
+        "event",
+        "blockchain_ownership",
+    )
+    search_fields = (
+        "event__title",
+        "blockchain_ownership",
+    )
 
 
 @admin.register(PricingRule)

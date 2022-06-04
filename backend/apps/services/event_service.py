@@ -1,17 +1,21 @@
 import sentry_sdk
+
 from apps.root.models import Event
 
 
 class TooManyTicketsRequestedError(Exception):
     pass
 
+
 class TooManyTicketsIssuedError(Exception):
     pass
+
 
 class TicketsSoldOutError(Exception):
     pass
 
-def get_available_tickets(event:Event, tickets_requested:int) -> int:
+
+def get_available_tickets(event: Event, tickets_requested: int) -> int:
     """
     return how many tickets available for a given event
     In the future, this method can be extended to ticket types vs singular ticket with an event
@@ -36,11 +40,15 @@ def get_available_tickets(event:Event, tickets_requested:int) -> int:
 
     # check available tickets
     if event.limit_per_person + ticket_count > event.capacity:
-        raise TooManyTicketsRequestedError("Tickets requested would bring event over capacity. Please lower requested tickets.")
+        raise TooManyTicketsRequestedError(
+            "Tickets requested would bring event over capacity. Please lower requested tickets."
+        )
 
     # check tickets_requested requested against limt_per_person
     if tickets_requested > event.limit_per_person:
-        raise TooManyTicketsRequestedError("Tickets requested are over the limit per person")
+        raise TooManyTicketsRequestedError(
+            "Tickets requested are over the limit per person"
+        )
 
     # all checks passed
     # return initial tickets_requested integer

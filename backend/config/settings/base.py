@@ -275,7 +275,9 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 15,
 }
 if not DEBUG:
-    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (("rest_framework.renderers.JSONRenderer"),)
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
+        ("rest_framework.renderers.JSONRenderer"),
+    )
 
 
 # STORAGES

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 import boto3
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -19,6 +19,7 @@ from model_utils.models import TimeStampedModel
 from pytz import utc
 
 from config.storages import PrivateTicketStorage
+
 from .model_field_choices import STIPE_PAYMENT_STATUSES
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .validators import JSONSchemaValidator
@@ -259,14 +260,14 @@ class BlockchainOwnership(DBModel):
         )
         return signing_message
 
+
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
     """
+
     # basic info
-    event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="tickets"
-    )
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="tickets")
     # ticket file info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
     file = models.ImageField(null=True, storage=PrivateTicketStorage())
@@ -280,10 +281,12 @@ class Ticket(DBModel):
     )
     # checkout info
     blockchain_ownership = models.ForeignKey(
-        BlockchainOwnership, on_delete=models.SET_NULL, related_name="tickets", null=True
+        BlockchainOwnership,
+        on_delete=models.SET_NULL,
+        related_name="tickets",
+        null=True,
     )
     blockchain_asset = models.JSONField(null=True)
-
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
@@ -309,7 +312,7 @@ class Ticket(DBModel):
             ClientMethod="get_object",
             Params={
                 "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                "Key": self.filename_key
+                "Key": self.filename_key,
             },
             ExpiresIn=3600,
         )
@@ -373,9 +376,7 @@ class EventStripePayment(DBModel):
 
     # TODO: This model could be more abstracted from the Event
 
-    event = models.ForeignKey(
-        Event, on_delete=models.RESTRICT, related_name="payments"
-    )
+    event = models.ForeignKey(Event, on_delete=models.RESTRICT, related_name="payments")
     value = models.DecimalField(
         validators=[MinValueValidator(0)], decimal_places=2, max_digits=10
     )

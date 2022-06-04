@@ -74,24 +74,39 @@ def get_blockchain_asset_ownership(
     """
     asset_ownership = []
     for requirement in event.requirements:
+
         # fungible requirement
         if requirement["asset_type"] == "ERC20":
-            fetched_assets = moralis_get_fungible_assets(
-                chain_id=hex(requirement["chain_id"]),
-                wallet_address=wallet_address,
-                token_addresses=requirement["asset_address"],
-                to_block=requirement["to_block"],
-            )
+            try:
+                fetched_assets = moralis_get_fungible_assets(
+                    chain_id=hex(requirement["chain_id"]),
+                    wallet_address=wallet_address,
+                    token_addresses=requirement["asset_address"],
+                    to_block=requirement["to_block"],
+                )
+            except Exception:
+                # TODO:
+                continue
+
         # non fungible requirement
         if (requirement["asset_type"] == "ERC721") or requirement[
             "asset_type"
         ] == "ERC1155":
-            fetched_assets = moralis_get_nonfungible_assets(
-                chain_id=hex(requirement["chain_id"]),
-                wallet_address=wallet_address,
-                token_address=requirement["asset_address"],
-                token_ids=requirement.get("token_id"),  # optional
-            )
+            try:
+                fetched_assets = moralis_get_nonfungible_assets(
+                    chain_id=hex(requirement["chain_id"]),
+                    wallet_address=wallet_address,
+                    token_address=requirement["asset_address"],
+                    token_ids=requirement.get("token_id"),  # optional
+                )
+            except Exception:
+                # TODO
+                continue
+
+        # check for fetched_assets
+        if not fetched_assets:
+            continue
+
         # append fetched assets
         for i in fetched_assets:
             asset_ownership.append({"requirement": requirement, "asset": i})

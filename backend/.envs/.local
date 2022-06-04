@@ -1,20 +1,28 @@
-# Local
+# DJANGO
 # ------------------------------------------------------------------------------
-DJANGO_SETTINGS_MODULE=config.settings.local
 CORS_ORIGIN_WHITELIST=[]
 DJANGO_DEBUG=True
+DJANGO_SETTINGS_MODULE=config.settings.local
+NFTY_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+
+# AWS (STAGING)
+# ------------------------------------------------------------------------------
 DJANGO_AWS_ACCESS_KEY_ID="SIYS6NWBSJIWYNP2KDHA"
 DJANGO_AWS_S3_REGION_NAME="nyc3"
 DJANGO_AWS_SECRET_ACCESS_KEY="DYwJpv+er/7DmkxDW3RMS+Nz2nzeXbfaPqVwLQ4QfVs"
 DJANGO_AWS_STORAGE_BUCKET_NAME="testing-socialpass-bucket"
 DJANGO_AWS_S3_ENDPOINT_URL="https://fra1.digitaloceanspaces.com"
-NFTY_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
 
 # STRIPE
-# ------------------------------------------------------------------------------
 # TODO: rotate keys and move to secrets manager
+# ------------------------------------------------------------------------------
 STRIPE_PUBLISHABLE_KEY=pk_test_51KvpFEJ8LTYPBcCzm7n9CwVTMZot5OZXRetW0zhxEv3vdw8Rq2AMjInnELpoytzCMnoLDGJ3T2fEArpcPRDb9gHV00sBtRcqcN
 STRIPE_SECRET_KEY=sk_test_51KvpFEJ8LTYPBcCzJ6xTqDNnSXbo6ugNgJRoZCyi51UMgnRUNUulQAqkfJsTIEcczkg4pA204tdCZbslzymFdLbh007N9oEGq0
 
 # SENTRY
+# ------------------------------------------------------------------------------
 SENTRY_ENV_NAME=development
+
+# MORALIS
+# ------------------------------------------------------------------------------
+MORALIS_API_KEY=UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4

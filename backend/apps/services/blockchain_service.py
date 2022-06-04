@@ -1,9 +1,11 @@
 import requests
+import sentry_sdk
+from requests.adapters import HTTPAdapter, Retry
+from django.conf import settings
 from eth_account.messages import encode_defunct
 from web3.auto import w3
 from web3 import Web3
 from apps.root.models import BlockchainOwnership, Event
-
 
 def validate_blockchain_wallet_ownership(
     event: Event, blockchain_ownership: BlockchainOwnership,
@@ -15,6 +17,7 @@ def validate_blockchain_wallet_ownership(
     """
     verified = False
     verification_msg = None
+    # check if already verified
     if blockchain_ownership.is_verified:
         verification_msg = "BlockchainOwnership message already verified."
 
@@ -64,21 +67,15 @@ def get_blockchain_asset_ownership(
     for requirement in event.requirements:
         # fungible requirement
         if requirement["asset_type"] == "ERC20":
-            fungible_assets = moralis_get_fungible_assets(
+            fetched_assets = moralis_get_fungible_assets(
                 chain_id=hex(requirement["chain_id"]),
                 wallet_address=wallet_address,
                 token_addresses=requirement["asset_address"],
                 to_block=requirement["to_block"],
             )
-            for i in fungible_asset:
-                asset_ownership.append({
-                    "requirement": requirement,
-                    "asset": i
-                })
-
         # non fungible requirement
         if (requirement["asset_type"] == "ERC721") or requirement["asset_type"] == "ERC1155":
-            nft_assets = moralis_get_nonfungible_assets(
+            fetched_assets = moralis_get_nonfungible_assets(
                 chain_id=hex(requirement["chain_id"]),
                 wallet_address=wallet_address,
                 token_address=requirement["asset_address"],
@@ -89,6 +86,12 @@ def get_blockchain_asset_ownership(
                     "requirement": requirement,
                     "asset": i
                 })
+        # append fetched assets
+        for i in fetched_assets:
+            asset_ownership.append({
+                "requirement": requirement,
+                "asset": i
+            })
 
     return asset_ownership
 
@@ -111,15 +114,43 @@ def moralis_get_fungible_assets(
         "token_addresses": token_addresses,
     }
     headers = {
-        "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
+        "X-API-Key": settings.MORALIS_API_KEY
     }
-    r = requests.get(url, params=payload, headers=headers)
-    if r.status_code == 200:
-        json = r.json()
-        if json["balance"] > required_amount:
-            return json
 
-    return []
+    # setup retry logic
+    _requests = requests.Session()
+    retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+    _requests.mount('http://', HTTPAdapter(max_retries=retries))
+
+    # requests try catch
+    try:
+        r = _requests.get(url, params=payload, headers=headers)
+    except requests.exceptions.HTTPError as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.Timeout:
+        # Maybe set up for a retry, or continue in a retry loop
+        sentry_sdk.capture_error(e)
+    except requests.exceptions.TooManyRedirects:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.RequestException as e:
+        # catastrophic error. bail.
+        sentry_sdk.capture_error(e)
+        raise SystemExit(e)
+
+    # SANITY CHECKS
+    # parse json response, check if balance and other stats are returned
+    json = r.json()
+    if "balance" not in json:
+        sentry_sdk.capture_message(r, json)
+        return json
+
+    # check if asset response total less than required_amount
+    if json["balance"] < required_amount:
+        return []
+
+    return json
 
 
 def moralis_get_nonfungible_assets(
@@ -136,27 +167,56 @@ def moralis_get_nonfungible_assets(
     url = f"https://deep-index.moralis.io/api/v2/{wallet_address}/nft/{token_address}"
     payload = {"chain": chain_id, "format": "decimal"}
     headers = {
-        "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
+        "X-API-Key": settings.MORALIS_API_KEY
     }
-    r = requests.get(url, params=payload, headers=headers)
-    if r.status_code != 200:
-        return []
 
+    # setup retry logic
+    _requests = requests.Session()
+    retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+    _requests.mount('http://', HTTPAdapter(max_retries=retries))
+
+    # requests try catch
+    try:
+        r = _requests.get(url, params=payload, headers=headers)
+    except requests.exceptions.HTTPError as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.Timeout:
+        # Maybe set up for a retry, or continue in a retry loop
+        sentry_sdk.capture_error(e)
+    except requests.exceptions.TooManyRedirects:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.RequestException as e:
+        # catastrophic error. bail.
+        sentry_sdk.capture_error(e)
+        raise SystemExit(e)
+
+    # SANITY CHECKS
+    # parse json response, check if total and other stats are returned
     json = r.json()
+    if "total" not in json:
+        sentry_sdk.capture_message(r, json)
+        return json
+
+    # check if asset response total is 0
     if json["total"] == 0:
         return []
 
-    data = []
-    for idx, token in enumerate(json["result"]):
+    # Result parsing
+    parsed_data = []
+    for token in json["result"]:
         # check for required_amount
         if int(token["amount"]) < required_amount:
             continue
 
         # check for token_ids (if applicable)
-        if token_ids:
-            if int(token["token_id"]) not in token_ids:
-                continue
-        # append matching data
-        data.append(token)
+        if token_ids and int(token["token_id"]) not in token_ids:
+            continue
 
-    return data
+        # append matching token to parsed_data
+        # TODO: format parsed_data that's needed
+        print(parsed_data)
+        parsed_data.append(token)
+
+    return parsed_data

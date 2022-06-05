@@ -79,6 +79,38 @@
 					<pre class="bg-light p-3 rounded">No Requirements</pre>
 					{% endif %}
 				</div>
+				<div class="my-3 mb-lg-4">
+					<h5 class="fw-bold fs-5">Links</h5>
+					<div class="text-muted text-xs mb-3">
+						Below you can find:
+						<ul>
+							<li><strong>Ticket Store</strong> link to share with your potential attendees;</li>
+							<li><strong>Scanner</strong> link to scan the tickets for this event at the entrance.</li>
+						</ul>
+					</div>
+					<div class="table-responsive p-0">
+						<table class="table align-items-center mb-0">
+							<tbody>
+								<tr>
+									<td class="align-middle fw-bold">
+										Ticket Store
+									</td>
+									<td class="align-middle">
+										<a href="{{tokengate.event_portal_url}}" target="_blank">{{tokengate.event_portal_url}}</a>
+									</td>
+								</tr>
+								<tr>
+									<td class="align-middle fw-bold">
+										Scanner
+									</td>
+									<td class="align-middle">
+										<a href="{{tokengate.redemption_access_keys.first.scanner_url}}" target="_blank">{{tokengate.redemption_access_keys.first.scanner_url}}</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

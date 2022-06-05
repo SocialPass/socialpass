@@ -215,15 +215,30 @@ class Event(DBModel):
 
         return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
+    def save(self, *args, **kwargs):
+        created = self.pk
+        super().save(*args, **kwargs)
+
+        if created:
+            RedemptionAccessKey.objects.get_or_create(event=self)
+
 
 class RedemptionAccessKey(DBModel):
+
+    class Meta:
+        unique_together = ('event', 'name',)
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="redemption_access_keys"
     )
+    name = models.CharField(max_length=255, default="Default")
     # TODO in a near future, different ScannerKeyAccess
     # can give access to scanning diferent type of tickets.
+
+    @property
+    def scanner_url(self):
+        return f"{settings.EVENT_PORTAL_BASE_URL}/{self.id}"
 
 
 class BlockchainOwnership(DBModel):

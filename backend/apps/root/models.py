@@ -259,6 +259,7 @@ class BlockchainOwnership(DBModel):
         )
         return signing_message
 
+
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
@@ -283,7 +284,6 @@ class Ticket(DBModel):
         BlockchainOwnership, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
     blockchain_asset = models.JSONField(null=True)
-
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.root.models import Team, Ticket, Event
+from apps.root.models import Team, Event
 
 
 #
@@ -22,6 +22,7 @@ class EventSerializer(serializers.ModelSerializer):
     """
 
     ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
+    redemeed_count = serializers.SerializerMethodField()
     date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     team = TeamSerializer()
 
@@ -38,14 +39,8 @@ class EventSerializer(serializers.ModelSerializer):
             "location",
             "capacity",
             "ticket_count",
+            "redemeed_count",
         ]
 
-
-class TicketSerializer(serializers.ModelSerializer):
-    """
-    Serializes Tickets
-    """
-
-    class Meta:
-        model = Ticket
-        fields = ["id", "filename"]
+    def get_redemeed_count(self, obj):
+        return obj.tickets.filter(redeemed=True).count()

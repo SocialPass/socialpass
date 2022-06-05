@@ -7,6 +7,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, reverse
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
@@ -508,23 +509,24 @@ class EventStatisticsView(TeamContextMixin, ListView):
         return qs
 
 
-def estimate_event_price(request, team_pk):
-    """
-    Returns a list of ticket stats from ticket tokengates.
-    """
-    team = Team.objects.get(pk=team_pk)
-    try:
-        capacity = int(request.GET.get("capacity"))
-    except KeyError:
-        return JsonResponse({"detail": "capacity is required"}, status=400)
-    except TypeError:
-        return JsonResponse({"detail": "capacity must be an integer"}, status=400)
+class PricingCalculator(TeamContextMixin, View):
 
-    price_per_ticket = (
-        pricing_service.calculate_event_price_per_ticket_for_team(
-            team, capacity=capacity
+    def get(self, request, **kwargs):
+        """
+        Return pricing calculator form
+        """
+        try:
+            capacity = int(request.GET.get("capacity"))
+        except KeyError:
+            return JsonResponse({"detail": "capacity is required"}, status=400)
+        except TypeError:
+            return JsonResponse({"detail": "capacity must be an integer"}, status=400)
+
+        price_per_ticket = (
+            pricing_service.calculate_event_price_per_ticket_for_team(
+                self.team, capacity=capacity
+            )
         )
-    )
-    return JsonResponse(
-        {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
-    )
+        return JsonResponse(
+            {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
+        )

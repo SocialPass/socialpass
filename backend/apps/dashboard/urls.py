@@ -52,8 +52,8 @@ urlpatterns = [
         name="ticketgate_stats",
     ),
     path(
-        "<int:team_pk>/ticketed-events/estimate_price/",
-        views.estimate_event_price,
+        "<int:team_pk>/ticketed-events/estimate-price/",
+        views.PricingCalculator.as_view(),
         name="ticketgate_price_estimator",
     ),
     path(

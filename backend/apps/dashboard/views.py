@@ -81,6 +81,31 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         return context
 
 
+class RequireSuccesfulCheckoutMixin:
+    """
+    Mixin to require successful checkout for view.
+    """
+
+    def pending_checkout_behaviour(self):
+        """
+        Action to take when event has pending payment. Default is redirect to checkout with message.
+        """
+        messages.add_message(
+            self.request, messages.INFO, "Checkout is pending for this event."
+        )
+        return redirect("ticketgate_checkout", **self.kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        event = self.get_object()
+        if not isinstance(event, Event):
+            raise RuntimeError("get_object must return an Event when using RequireSuccesfulCheckoutMixin")
+
+        if pricing_service.get_event_pending_payment_value(event):
+            return self.pending_checkout_behaviour()
+
+        return super().dispatch(request, *args, **kwargs)
+
+
 class RedirectToTeamView(RedirectView):
     """
     Root URL View
@@ -191,7 +216,7 @@ class EventListView(TeamContextMixin, ListView):
         return qs
 
 
-class EventDetailView(TeamContextMixin, DetailView):
+class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
@@ -472,7 +497,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         return HttpResponse(status=200)
 
 
-class EventStatisticsView(TeamContextMixin, ListView):
+class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -492,13 +517,16 @@ class EventStatisticsView(TeamContextMixin, ListView):
         )
         return context
 
+    def get_object(self):
+        return Event.objects.get(
+            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
+        )
+
     def get_queryset(self):
         """
         get queryset of Ticket models from given Event
         """
-        gate = Event.objects.get(
-            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
-        )
+        gate = self.get_object()
         qs = gate.tickets.all()
         qs = qs.order_by("-modified")
 

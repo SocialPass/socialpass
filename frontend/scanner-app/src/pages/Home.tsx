@@ -6,13 +6,11 @@ import { EventContainer } from "../components/EventContainer";
 import Logo from "../static/images/landingpage_logo.png";
 
 export function Home() {
-  const { statusEvent, eventData }: any = useTicket();
-  // const navigate = useNavigate();
+  const { eventData }: any = useTicket();
 
-  // function handleGoBack() {
-  //   navigate(-1);
-  // }
-  console.log(eventData);
+  if (!eventData){
+    return <></>
+  }
 
   return (
     <>

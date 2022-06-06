@@ -9,18 +9,15 @@ export const Init = () => {
   const { setEventData }: any = useTicket();
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await api.get(`scanner/landing/${params.publicId}/`);
-        setEventData(response.data);
-        console.log(response);
-        navigate("/home");
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [navigate, params.publicId, setEventData]);
+    api.get(
+      `scanner/landing/${params.publicId}/`
+    ).then((response) => {
+      setEventData({...response.data, redemption_code: params.publicId});
+      navigate("/home");
+    }).catch((error) => {
+      console.log(error)
+    });
+  }, []);
 
   return <div>Loading</div>;
 };

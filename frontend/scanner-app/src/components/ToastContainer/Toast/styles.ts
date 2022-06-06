@@ -44,7 +44,8 @@ export const Container: any = styled(animated.div)`
 
     p {
       color: #fff;
-      margin-top: 4px;
+      margin-top: 1px;
+      margin-bottom: -5px;
       font-weight: 500;
       font-size: 16px;
       opacity: 0.8;

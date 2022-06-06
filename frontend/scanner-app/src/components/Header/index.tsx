@@ -21,8 +21,8 @@ export function Header({ total, attendees, title }: HeaderProps) {
             <FiArrowLeft onClick={handleGoBack} size={26} />
           </div>
         </div>
-        <div className="d-flex flex-column align-items-center py-10">
-          <div className="scanner-title py-30">{title}</div>
+        <div className="d-flex flex-column align-items-center">
+          <div className="scanner-title">Título do Evento</div>
           <h6 className="scanner-subtitle">
             Attendees{" "}
             {attendees === null || attendees === undefined ? 0 : attendees}/

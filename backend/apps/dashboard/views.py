@@ -7,6 +7,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, reverse
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.base import ContextMixin, RedirectView
@@ -78,6 +79,31 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         context = super().get_context_data(**kwargs)
         context.update(dict(current_team=self.team))
         return context
+
+
+class RequireSuccesfulCheckoutMixin:
+    """
+    Mixin to require successful checkout for view.
+    """
+
+    def pending_checkout_behaviour(self):
+        """
+        Action to take when event has pending payment. Default is redirect to checkout with message.
+        """
+        messages.add_message(
+            self.request, messages.INFO, "Checkout is pending for this event."
+        )
+        return redirect("ticketgate_checkout", **self.kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        event = self.get_object()
+        if not isinstance(event, Event):
+            raise RuntimeError("get_object must return an Event when using RequireSuccesfulCheckoutMixin")
+
+        if pricing_service.get_event_pending_payment_value(event):
+            return self.pending_checkout_behaviour()
+
+        return super().dispatch(request, *args, **kwargs)
 
 
 class RedirectToTeamView(RedirectView):
@@ -190,7 +216,7 @@ class EventListView(TeamContextMixin, ListView):
         return qs
 
 
-class EventDetailView(TeamContextMixin, DetailView):
+class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
@@ -471,7 +497,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         return HttpResponse(status=200)
 
 
-class EventStatisticsView(TeamContextMixin, ListView):
+class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -491,13 +517,16 @@ class EventStatisticsView(TeamContextMixin, ListView):
         )
         return context
 
+    def get_object(self):
+        return Event.objects.get(
+            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
+        )
+
     def get_queryset(self):
         """
         get queryset of Ticket models from given Event
         """
-        gate = Event.objects.get(
-            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
-        )
+        gate = self.get_object()
         qs = gate.tickets.all()
         qs = qs.order_by("-modified")
 
@@ -508,23 +537,24 @@ class EventStatisticsView(TeamContextMixin, ListView):
         return qs
 
 
-def estimate_event_price(request, team_pk):
-    """
-    Returns a list of ticket stats from ticket tokengates.
-    """
-    team = Team.objects.get(pk=team_pk)
-    try:
-        capacity = int(request.GET.get("capacity"))
-    except KeyError:
-        return JsonResponse({"detail": "capacity is required"}, status=400)
-    except TypeError:
-        return JsonResponse({"detail": "capacity must be an integer"}, status=400)
+class PricingCalculator(TeamContextMixin, View):
 
-    price_per_ticket = (
-        pricing_service.calculate_event_price_per_ticket_for_team(
-            team, capacity=capacity
+    def get(self, request, **kwargs):
+        """
+        Return pricing calculator form
+        """
+        try:
+            capacity = int(request.GET.get("capacity"))
+        except KeyError:
+            return JsonResponse({"detail": "capacity is required"}, status=400)
+        except TypeError:
+            return JsonResponse({"detail": "capacity must be an integer"}, status=400)
+
+        price_per_ticket = (
+            pricing_service.calculate_event_price_per_ticket_for_team(
+                self.team, capacity=capacity
+            )
         )
-    )
-    return JsonResponse(
-        {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
-    )
+        return JsonResponse(
+            {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
+        )

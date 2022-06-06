@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 import boto3
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -204,6 +204,10 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     @property
+    def event_portal_url(self):
+        return f"{settings.EVENT_PORTAL_BASE_URL}/{self.public_id}"
+
+    @property
     def has_pending_checkout(self):
         last_payment = self.payments.last()
         if last_payment is None:
@@ -211,15 +215,30 @@ class Event(DBModel):
 
         return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
+    def save(self, *args, **kwargs):
+        created = self.pk
+        super().save(*args, **kwargs)
+
+        if created:
+            RedemptionAccessKey.objects.get_or_create(event=self)
+
 
 class RedemptionAccessKey(DBModel):
+
+    class Meta:
+        unique_together = ('event', 'name',)
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="redemption_access_keys"
     )
+    name = models.CharField(max_length=255, default="Default")
     # TODO in a near future, different ScannerKeyAccess
     # can give access to scanning diferent type of tickets.
+
+    @property
+    def scanner_url(self):
+        return f"{settings.EVENT_PORTAL_BASE_URL}/{self.id}"
 
 
 class BlockchainOwnership(DBModel):
@@ -259,6 +278,7 @@ class BlockchainOwnership(DBModel):
         )
         return signing_message
 
+
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
@@ -283,7 +303,6 @@ class Ticket(DBModel):
         BlockchainOwnership, on_delete=models.SET_NULL, related_name="tickets", null=True
     )
     blockchain_asset = models.JSONField(null=True)
-
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"

@@ -71,13 +71,13 @@
 									{{ tokengate.payments.last.status }}
 									</span>
 								</td>
-								<td class="align-middle">
+								<td class="align-middle px-4">
 									{% if tokengate.has_pending_checkout %}
 										<a href="{% url 'ticketgate_checkout' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 px-0">
 											Checkout
 										</a>
 									{% else %}								
-										<div class="px-4 d-flex flex-row-reverse justify-content-between">									
+										<div class="d-flex flex-row-reverse justify-content-between">									
 											<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 px-0">
 												Edit
 											</a>

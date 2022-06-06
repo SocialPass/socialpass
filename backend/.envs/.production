@@ -52,3 +52,6 @@ STRIPE_SECRET_KEY=sk_live_51KvpFEJ8LTYPBcCzrQLrQgu4Rv3fByTZunUGw3hv3DTLN2gzcKKjb
 # SENTRY
 SENTRY_DSN=https://e558313e48324475890fc637cfc544da@o1251100.ingest.sentry.io/6419223
 SENTRY_ENV_NAME=production
+
+EVENT_PORTAL_BASE_URL=https://tickets.socialpass.io
+SCANNER_BASE_URL=https://scanner.socialpass.io

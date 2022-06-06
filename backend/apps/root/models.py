@@ -241,7 +241,7 @@ class RedemptionAccessKey(DBModel):
 
     @property
     def scanner_url(self):
-        return f"{settings.EVENT_PORTAL_BASE_URL}/{self.id}"
+        return f"{settings.SCANNER_BASE_URL}/{self.id}"
 
 
 class BlockchainOwnership(DBModel):

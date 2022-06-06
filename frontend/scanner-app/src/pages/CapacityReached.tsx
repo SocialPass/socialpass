@@ -28,11 +28,12 @@ export function CapacityReached() {
         <div className="mx-40">
         </div>        
       </header>
-      <div className="d-flex flex-column align-items-center justify-content-center gap-4">
+      <div className="p-50"></div>
+      <div className="d-flex flex-column align-items-center justify-content-center gap-4 p-10">
         <div>
           <img src={CloseCircleIcon} />
         </div>
-        <div className="error-body">
+        <div className="error-body pt-20">
           Event capacity has reached its limit.
         </div>
         <div className="error-body">

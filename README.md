@@ -1,14 +1,22 @@
 # SocialPass
-SocialPass MonoRepo
+SocialPass monorepo. 
 
 ## Development
-Backend & Frontend subfolders have their own related README.
+Refer to README in specific directories
+- `backend/README`
+- `frontend/eventportal/README`
+- `frontend/scanner-app/README`
 
-Additionally, there is a root-level `Makefile` that should jumpstart development across repos. 
-(Please feel free to useful commands are welcome here)
-
-# Main Documentation
-https://www.notion.so/SOCIALPASS-206e973f4e784c7184b1b6834c8a56ee
-
-# Feature CheckList:
-https://www.notion.so/3fba122acb29401b9c64762c4924751a?v=ef80aaf0905042db8691301c64262732
+# Backend Style Guide
+- Install pre-commit hooks for linting
+- Small Views, Medium Models, Large Services
+	- Views should reference services or models
+	- Models should have DB schema and associated properties (@property)
+	- Services should contain all other business logic
+	- This as reference: https://github.com/HackSoftware/Django-Styleguide 
+ 
+# Frontend Style Guide
+- Scaffold new projects with Vite (https://vitejs.dev)
+- react-router-dom for routing
+- Prefer Yarn over NPM
+- Basic CSS over CSS in JS or anything of the like

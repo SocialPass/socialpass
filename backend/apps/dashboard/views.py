@@ -16,10 +16,10 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 from invitations.views import AcceptInvite
 
-from apps.root.forms import CustomInviteForm, TeamForm, EventForm
+from apps.root.forms import CustomInviteForm, EventForm, TeamForm
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Membership, Team, Ticket, Event, EventStripePayment
+from apps.root.models import Event, EventStripePayment, Membership, Team, Ticket
 from apps.services import pricing_service
 
 User = auth.get_user_model()
@@ -98,7 +98,9 @@ class RequireSuccesfulCheckoutMixin:
     def dispatch(self, request, *args, **kwargs):
         event = self.get_object()
         if not isinstance(event, Event):
-            raise RuntimeError("get_object must return an Event when using RequireSuccesfulCheckoutMixin")
+            raise RuntimeError(
+                "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
+            )
 
         if pricing_service.get_event_pending_payment_value(event):
             return self.pending_checkout_behaviour()
@@ -226,9 +228,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = Event.objects.filter(
-            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
-        )
+        qs = Event.objects.filter(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
         return qs
 
 
@@ -328,9 +328,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
     @lru_cache
     def get_object(self):
-        return Event.objects.get(
-            pk=self.kwargs["pk"], team__pk=self.kwargs["team_pk"]
-        )
+        return Event.objects.get(pk=self.kwargs["pk"], team__pk=self.kwargs["team_pk"])
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs, tokengate=self.get_object())
@@ -339,10 +337,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         """Renders checkout page if payment is still pending"""
         event = self.get_object()
 
-        if (
-            pricing_service.get_event_pending_payment_value(event)
-            == 0
-        ):
+        if pricing_service.get_event_pending_payment_value(event) == 0:
             # Payment was already done.
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
@@ -361,11 +356,14 @@ class EventCheckout(TeamContextMixin, TemplateView):
             stripe_session = stripe.checkout.Session.retrieve(
                 issued_payment.stripe_checkout_session_id
             )
-            if stripe_session['status'] == 'expired' and stripe_session['payment_status'] == 'unpaid':
-                issued_payment.status = 'FAILURE'
+            if (
+                stripe_session["status"] == "expired"
+                and stripe_session["payment_status"] == "unpaid"
+            ):
+                issued_payment.status = "FAILURE"
                 issued_payment.save()
             else:
-                return redirect(stripe_session['url'])
+                return redirect(stripe_session["url"])
 
         # build callback urls
         success_callback = (
@@ -518,9 +516,7 @@ class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListV
         return context
 
     def get_object(self):
-        return Event.objects.get(
-            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
-        )
+        return Event.objects.get(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
 
     def get_queryset(self):
         """
@@ -538,7 +534,6 @@ class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListV
 
 
 class PricingCalculator(TeamContextMixin, View):
-
     def get(self, request, **kwargs):
         """
         Return pricing calculator form
@@ -550,10 +545,8 @@ class PricingCalculator(TeamContextMixin, View):
         except TypeError:
             return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
-        price_per_ticket = (
-            pricing_service.calculate_event_price_per_ticket_for_team(
-                self.team, capacity=capacity
-            )
+        price_per_ticket = pricing_service.calculate_event_price_per_ticket_for_team(
+            self.team, capacity=capacity
         )
         return JsonResponse(
             {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}

@@ -21,7 +21,7 @@ Clone Repo
 
 # Local Development
 Details on local development
-
+Additionally, there is a root-level `Makefile` that should jumpstart local non-dockerized development
 ## Requirements
 Python3+ and local Postgres titled 'v3db'
 

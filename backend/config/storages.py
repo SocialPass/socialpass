@@ -15,7 +15,7 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
 
 
 class PrivateTicketStorage(S3Boto3Storage):
-    location = 'private/tickets'
-    default_acl = 'private'
+    location = "private/tickets"
+    default_acl = "private"
     file_overwrite = False
     custom_domain = False

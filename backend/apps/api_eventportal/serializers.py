@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.root.models import BlockchainOwnership, Event, Ticket
-from apps.services import ticket_service
+from apps.services import event_service
 
 
 class EventPortalRetrieveSerializer(serializers.ModelSerializer):
@@ -26,10 +26,7 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
         return {
             "total_capacity": obj.capacity,
             "total_tickets_issued": obj.tickets.count(),
-            "limit_per_person": ticket_service.get_available_tickets(
-                event=obj,
-                tickets_requested=obj.limit_per_person
-            )
+            "limit_per_person": event_service.get_available_tickets(event=obj),
         }
 
     def get_organizer_info(self, obj):

@@ -1,13 +1,21 @@
+import json
+
 import requests
+import sentry_sdk
+from django.conf import settings
 from eth_account.messages import encode_defunct
-from web3.auto import w3
+from requests.adapters import HTTPAdapter, Retry
 from web3 import Web3
+from web3.auto import w3
+
 from apps.root.models import BlockchainOwnership, Event
 
 
 def validate_blockchain_wallet_ownership(
-    event: Event, blockchain_ownership: BlockchainOwnership,
-    signed_message: str, wallet_address:str
+    event: Event,
+    blockchain_ownership: BlockchainOwnership,
+    signed_message: str,
+    wallet_address: str,
 ):
     """
     Sets a blockchain_ownership as verified after successful verification
@@ -15,12 +23,15 @@ def validate_blockchain_wallet_ownership(
     """
     verified = False
     verification_msg = None
+    # check if already verified
     if blockchain_ownership.is_verified:
         verification_msg = "BlockchainOwnership message already verified."
 
     # check if expired
     if blockchain_ownership.is_expired:
-        verification_msg = f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
+        verification_msg = (
+            f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
+        )
         return verified, verification_msg
 
     # check for id mismatch
@@ -41,6 +52,7 @@ def validate_blockchain_wallet_ownership(
             verification_msg = "BlockchainOwnership x Address mismatch."
             return verified, verification_msg
     except Exception as e:
+        sentry_sdk.capture_message(wallet_address, e)
         verification_msg = "Unable to decode & validate blockchain_ownership, likely a forgery attempt."
         return verified, verification_msg
 
@@ -54,41 +66,48 @@ def validate_blockchain_wallet_ownership(
 
 
 def get_blockchain_asset_ownership(
-    event:Event.requirements,
-    wallet_address:BlockchainOwnership.wallet_address,
+    event: Event.requirements,
+    wallet_address: BlockchainOwnership.wallet_address,
 ):
     """
     Return list of blockchain asset verified along with requirement verified against
     """
     asset_ownership = []
     for requirement in event.requirements:
+
         # fungible requirement
         if requirement["asset_type"] == "ERC20":
-            fungible_assets = moralis_get_fungible_assets(
-                chain_id=hex(requirement["chain_id"]),
-                wallet_address=wallet_address,
-                token_addresses=requirement["asset_address"],
-                to_block=requirement["to_block"],
-            )
-            for i in fungible_asset:
-                asset_ownership.append({
-                    "requirement": requirement,
-                    "asset": i
-                })
+            try:
+                fetched_assets = moralis_get_fungible_assets(
+                    chain_id=hex(requirement["chain_id"]),
+                    wallet_address=wallet_address,
+                    token_addresses=requirement["asset_address"],
+                    to_block=requirement["to_block"],
+                )
+            except Exception:
+                continue
 
         # non fungible requirement
-        if (requirement["asset_type"] == "ERC721") or requirement["asset_type"] == "ERC1155":
-            nft_assets = moralis_get_nonfungible_assets(
-                chain_id=hex(requirement["chain_id"]),
-                wallet_address=wallet_address,
-                token_address=requirement["asset_address"],
-                token_ids=requirement.get("token_id"),  # optional
-            )
-            for i in nft_assets:
-                asset_ownership.append({
-                    "requirement": requirement,
-                    "asset": i
-                })
+        if (requirement["asset_type"] == "ERC721") or requirement[
+            "asset_type"
+        ] == "ERC1155":
+            try:
+                fetched_assets = moralis_get_nonfungible_assets(
+                    chain_id=hex(requirement["chain_id"]),
+                    wallet_address=wallet_address,
+                    token_address=requirement["asset_address"],
+                    token_ids=requirement.get("token_id"),  # optional
+                )
+            except Exception:
+                continue
+
+        # check for fetched_assets
+        if not fetched_assets:
+            continue
+
+        # append fetched assets
+        for i in fetched_assets:
+            asset_ownership.append({"requirement": requirement, "asset": i})
 
     return asset_ownership
 
@@ -110,16 +129,42 @@ def moralis_get_fungible_assets(
         "format": "decimal",
         "token_addresses": token_addresses,
     }
-    headers = {
-        "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
-    }
-    r = requests.get(url, params=payload, headers=headers)
-    if r.status_code == 200:
-        json = r.json()
-        if json["balance"] > required_amount:
-            return json
+    headers = {"X-API-Key": settings.MORALIS_API_KEY}
 
-    return []
+    # setup retry logic
+    _requests = requests.Session()
+    retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+    _requests.mount("http://", HTTPAdapter(max_retries=retries))
+
+    # requests try catch
+    try:
+        r = _requests.get(url, params=payload, headers=headers)
+    except requests.exceptions.HTTPError as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.Timeout as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.TooManyRedirects as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.RequestException as e:
+        # catastrophic error. bail.
+        sentry_sdk.capture_error(e)
+        raise e
+
+    # SANITY CHECKS
+    # parse _json response, check if balance and other stats are returned
+    _json = r.json()
+    if "balance" not in _json:
+        sentry_sdk.capture_message(r, _json)
+        return []
+
+    # check if asset response total less than required_amount
+    if _json["balance"] < required_amount:
+        return []
+
+    return _json
 
 
 def moralis_get_nonfungible_assets(
@@ -135,28 +180,61 @@ def moralis_get_nonfungible_assets(
     """
     url = f"https://deep-index.moralis.io/api/v2/{wallet_address}/nft/{token_address}"
     payload = {"chain": chain_id, "format": "decimal"}
-    headers = {
-        "X-API-Key": "UgecTEh53XCmf9sft9ZkcZWH5Bpx0wbglo8TYHfrqb7e0mW2NCtAgjFQ4uEKT6V4"
-    }
-    r = requests.get(url, params=payload, headers=headers)
-    if r.status_code != 200:
+    headers = {"X-API-Key": settings.MORALIS_API_KEY}
+
+    # setup retry logic
+    _requests = requests.Session()
+    retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+    _requests.mount("http://", HTTPAdapter(max_retries=retries))
+
+    # requests try catch
+    try:
+        r = _requests.get(url, params=payload, headers=headers)
+    except requests.exceptions.HTTPError as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.Timeout as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.TooManyRedirects as e:
+        sentry_sdk.capture_error(e)
+        raise e
+    except requests.exceptions.RequestException as e:
+        # catastrophic error. bail.
+        sentry_sdk.capture_error(e)
+        raise SystemExit(e)
+
+    # SANITY CHECKS
+    # parse _json response, check if total and other stats are returned
+    _json = r.json()
+    if "total" not in _json:
+        sentry_sdk.capture_message(r, _json)
+        return _json
+
+    # check if asset response total is 0
+    if _json["total"] == 0:
         return []
 
-    json = r.json()
-    if json["total"] == 0:
-        return []
-
-    data = []
-    for idx, token in enumerate(json["result"]):
+    # Result parsing
+    parsed_data = []
+    for token in _json["result"]:
         # check for required_amount
         if int(token["amount"]) < required_amount:
             continue
 
         # check for token_ids (if applicable)
-        if token_ids:
-            if int(token["token_id"]) not in token_ids:
-                continue
-        # append matching data
-        data.append(token)
+        if token_ids and int(token["token_id"]) not in token_ids:
+            continue
 
-    return data
+        # append matching token to parsed_data
+        metadata = json.loads(token["metadata"])
+        parsed_data.append(
+            {
+                "token_address": token["token_address"],
+                "token_id": token["token_id"],
+                "token_hash": token["token_hash"],
+                "token_image": metadata.get("image", ""),
+            }
+        )
+
+    return parsed_data

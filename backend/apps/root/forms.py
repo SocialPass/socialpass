@@ -3,7 +3,7 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm, InviteForm
 
-from apps.root.models import Invite, Team, Event
+from apps.root.models import Event, Invite, Team
 from apps.services import pricing_service
 
 
@@ -37,12 +37,8 @@ class EventForm(forms.ModelForm):
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
     date = forms.DateTimeField(
         widget=forms.DateTimeInput(
-            format ="%Y-%m-%dT%H:%M",
-            attrs={
-                "id": "date",
-                "class": "form-control",
-                "type": "datetime-local"
-            }
+            format="%Y-%m-%dT%H:%M",
+            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
         )
     )
 
@@ -58,9 +54,7 @@ class EventForm(forms.ModelForm):
             "limit_per_person",
             "requirements",
         ]
-        widgets = {
-            "requirements": forms.HiddenInput()
-        }
+        widgets = {"requirements": forms.HiddenInput()}
 
     def can_edit_capacity(self) -> bool:
         if self.instance is None:
@@ -79,16 +73,14 @@ class EventForm(forms.ModelForm):
 
     def save(self, commit: bool = ...) -> Event:
         """Sets Event price after save"""
-        if (
-            (not self.can_edit_capacity())
-            and (self.instance.capacity != self.cleaned_data["capacity"])
+        if (not self.can_edit_capacity()) and (
+            self.instance.capacity != self.cleaned_data["capacity"]
         ):
             # not using field has_changed here since it can lead to a
             # security failure as it checks if the field is disabled.
 
             # this will never happend since capacity field is disabled, unless the user tries to hack the form
             raise RuntimeError("Cannot change capacity")
-
 
         obj = super().save(commit)
 

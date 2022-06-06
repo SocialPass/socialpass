@@ -226,8 +226,11 @@ def moralis_get_nonfungible_assets(
         if token_ids and int(token["token_id"]) not in token_ids:
             continue
 
-        # append matching token to parsed_data
-        metadata = json.loads(token["metadata"])
+        if token.get("metadata"):
+            # append matching token to parsed_data
+            metadata = json.loads(token["metadata"])
+        else:
+            metadata = {}
         parsed_data.append(
             {
                 "token_address": token["token_address"],

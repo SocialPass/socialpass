@@ -85,7 +85,6 @@ def get_blockchain_asset_ownership(
                     to_block=requirement["to_block"],
                 )
             except Exception:
-                # TODO:
                 continue
 
         # non fungible requirement
@@ -100,7 +99,6 @@ def get_blockchain_asset_ownership(
                     token_ids=requirement.get("token_id"),  # optional
                 )
             except Exception:
-                # TODO
                 continue
 
         # check for fetched_assets
@@ -153,7 +151,7 @@ def moralis_get_fungible_assets(
     except requests.exceptions.RequestException as e:
         # catastrophic error. bail.
         sentry_sdk.capture_error(e)
-        raise SystemExit(e)
+        raise e
 
     # SANITY CHECKS
     # parse _json response, check if balance and other stats are returned

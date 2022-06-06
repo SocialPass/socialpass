@@ -59,7 +59,22 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
     Redeem a ticket for the given redemption_access_key.
     """
 
-    OutputSerializer = serializers.TicketSerializer
+    class OutputSerializer(drf_serializers.ModelSerializer):
+        """
+        Serializes Redemeed Tickets
+        """
+
+        ticket_count = drf_serializers.IntegerField(
+            source="event.tickets.count", read_only=True
+        )
+        redemeed_count = drf_serializers.SerializerMethodField()
+
+        class Meta:
+            model = Ticket
+            fields = ["id", "filename", "ticket_count", "redemeed_count"]
+
+        def get_redemeed_count(self, obj):
+            return obj.event.tickets.filter(redeemed=True).count()
 
     class InputSerializer(drf_serializers.Serializer):
         embed_code = drf_serializers.CharField()

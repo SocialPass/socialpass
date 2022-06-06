@@ -1,88 +1,86 @@
 /* eslint-disable eqeqeq */
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { api } from "../services/api";
 import { useToast } from "./ToastContext";
 
 const TicketContext = createContext({});
 
 type EventDataProps = {
-  event_name: String;
-  event_attendance: String;
-  event_date: String;
-  event_venue: String;
+  title: String;
+  date: String;
+  location: String;
+  capacity: number;
+  ticket_count: number;
+  redemeed_count: number;
+  redemption_code: String;
 };
+
 
 const TicketProvider = ({ children }: any) => {
   const { addToast } = useToast();
   const [scanFlag, setScanFlag] = useState<String>("");
-  const [eventData, setEventData] = useState<EventDataProps>({
-    event_name: "Event Name",
-    event_attendance: "5",
-    event_date: "2022-12-12T22:30:00Z",
-    event_venue: "The Ritz Carlton - South Beach",
-  });
-  const [statusEvent, setStatusEvent] = useState<String>("");
-  const [loading, setLoading] = useState<Boolean>(false);
-  const [attendeesAmount, setAttendeesAmount] = useState<number>(() => {
-    const attendees = localStorage.getItem("@attendeesAmount");
-    if (attendees == null || attendees == undefined) {
-      return 0;
+  const [eventData, setEventData] = useState<EventDataProps>();
+  const [previousScannedCode, setPreviousScannedCode] = useState<String>("");
+
+  useEffect(() => {
+    const storedEventData = window.localStorage.getItem('eventData');
+    if (storedEventData) {
+      setEventData(JSON.parse(storedEventData));
     }
-    return Number(attendees);
-  });
+  }, [])
 
-  function increaseAttendeesAmount() {
-    setAttendeesAmount(
-      (prevAttendeesAmount: number) => prevAttendeesAmount + 1
-    );
+  useEffect(() => {
+    if (eventData) {
+      window.localStorage.setItem(
+        'eventData', JSON.stringify(eventData)
+      )
+    }
+  }, [eventData])
 
-    let value = Number(localStorage.getItem("@attendeesAmount"));
-    localStorage.setItem("@attendeesAmount", (++value).toString());
+  async function bustEventDataCache(){
+    window.localStorage.removeItem('eventData');
+    setEventData(undefined);
   }
 
-  async function fetchTicket(qrcode: any) {
-    try {
-      const response = await api.post("/ticketToken/success", qrcode);
-      setScanFlag(response.data);
-      if (response.data.status == "success") {
-        increaseAttendeesAmount();
-      }
+  async function scanTicket(qrcode: any) {
+    if (!eventData) {
+      return
+    }
+    if (qrcode == previousScannedCode) {
+      return
+    }
+    setPreviousScannedCode(qrcode);
+    api.post(
+      `scanner/scan-ticket/${eventData?.redemption_code}/`, {embed_code: qrcode}
+    ).then((response) => {
+      setEventData({
+        ...eventData,
+        ticket_count: response.data.ticket_count,
+        redemeed_count: response.data.redemeed_count
+      });
       addToast({
         type: "success",
-        title: "scan success",
+        title: "Succesful Scan",
         description: "",
       });
-    } catch (error) {
+    }).catch((error) => {
       addToast({
         type: "error",
-        title: "scan failed",
-        description: "",
+        title: "Scan Failed",
+        description: error?.response.data.message,
       });
-    }
+    });
   }
-
-  // function syncDelay(milliseconds: number) {
-  //   let start = new Date().getTime();
-  //   let end = 0;
-  //   while (end - start < milliseconds) {
-  //     end = new Date().getTime();
-  //   }
-  // }
 
   return (
     <TicketContext.Provider
       value={{
-        fetchTicket,
+        scanTicket,
         scanFlag,
         setScanFlag,
-        statusEvent,
         eventData,
         setEventData,
-        loading,
-        setLoading,
-        setStatusEvent,
-        attendeesAmount,
-        setAttendeesAmount,
+        bustEventDataCache
       }}
     >
       {children}

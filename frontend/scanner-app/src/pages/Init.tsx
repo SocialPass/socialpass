@@ -6,7 +6,7 @@ import { api } from "../services/api";
 export const Init = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const { setEventData }: any = useTicket();
+  const { setEventData, bustEventDataCache }: any = useTicket();
 
   useEffect(() => {
     api.get(
@@ -15,7 +15,8 @@ export const Init = () => {
       setEventData({...response.data, redemption_code: params.publicId});
       navigate("/home");
     }).catch((error) => {
-      console.log(error)
+      bustEventDataCache();
+      navigate("error");
     });
   }, []);
 

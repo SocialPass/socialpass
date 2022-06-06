@@ -37,6 +37,11 @@ const TicketProvider = ({ children }: any) => {
     }
   }, [eventData])
 
+  async function bustEventDataCache(){
+    window.localStorage.removeItem('eventData');
+    setEventData(undefined);
+  }
+
   async function scanTicket(qrcode: any) {
     if (!eventData) {
       return
@@ -75,6 +80,7 @@ const TicketProvider = ({ children }: any) => {
         setScanFlag,
         eventData,
         setEventData,
+        bustEventDataCache
       }}
     >
       {children}

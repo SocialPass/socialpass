@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState } from "react";
 import { useConnect, useAccount, useSignMessage } from "wagmi";
 import { useNavigate } from "react-router-dom";
-import { TicketedEventRequestAccess, TicketedEventGrantAccess } from '../api';
+import { TicketedEventRequestAccess, TicketedEventGrantAccess } from "../api";
 import { Loading } from "../components/";
 import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
 import { EventPortalContext } from "../context";
@@ -10,61 +10,64 @@ import infoButton from "../static/images/icons/infoButton.svg";
 // ConnectorWallets
 // Return UI for wallet connectors
 export const CheckoutWeb3 = () => {
-  const { id, requestAccessJson, generalAdmissionSelect, setRequestAccessJson, setRequestAccessError, setGrantAccessJson, setGrantAccessError } =
-    useContext(EventPortalContext);
+  const {
+    id,
+    requestAccessJson,
+    generalAdmissionSelect,
+    setRequestAccessJson,
+    setRequestAccessError,
+    setGrantAccessJson,
+    setGrantAccessError,
+  } = useContext(EventPortalContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [
-    { data: connectData, error: connectError },
-    connect,
-  ] = useConnect();
+  const [{ data: connectData, error: connectError }, connect] = useConnect();
   const [{ data: accountData }] = useAccount();
-  const [{data: signData,loading: signLoading}, signMessage] =
-  useSignMessage({
-    message: requestAccessJson?.signing_message
-  });
-
+  const [{ data: signData, loading: signLoading }, signMessage] =
+    useSignMessage({
+      message: requestAccessJson?.signing_message,
+    });
 
   // request access handler (based on web3 account data change)
   useEffect(() => {
-    (async function() {
+    (async function () {
       setRequestAccessJson(null);
       setRequestAccessError(null);
       let response: any;
       // api call
       response = await TicketedEventRequestAccess.call({
-        "public_id":id,
-        "checkout_type":'blockchain_ownership',
+        public_id: id,
+        checkout_type: "blockchain_ownership",
       });
-      if (response && response.httpStatus){
-        if (response.httpStatus === 200){
+      if (response && response.httpStatus) {
+        if (response.httpStatus === 200) {
           setRequestAccessJson(response);
         } else {
           setRequestAccessError(response);
         }
       }
     })();
-  },[]);
+  }, []);
 
   // checkout handler
   // handles signing message and posting related data to API
   useEffect(() => {
-    (async function() {
-      if (signData){
-      setLoading(true);
-      let response;
+    (async function () {
+      if (signData) {
+        setLoading(true);
+        let response;
         response = await TicketedEventGrantAccess.call({
-          "public_id":id,
-          "checkout_type":'blockchain_ownership',
-          'wallet_address':accountData?.address,
-          'signed_message':signData,
-          'blockchain_ownership_id':requestAccessJson.id,
-          'tickets_requested':generalAdmissionSelect,
-        })
-        if (response){
+          public_id: id,
+          checkout_type: "blockchain_ownership",
+          wallet_address: accountData?.address,
+          signed_message: signData,
+          blockchain_ownership_id: requestAccessJson.id,
+          tickets_requested: generalAdmissionSelect,
+        });
+        if (response) {
           setLoading(false);
         }
-        if (response.httpStatus === 200){
+        if (response.httpStatus === 200) {
           setGrantAccessJson(response);
           navigate(`/${id}/checkout/status`);
         } else {
@@ -73,20 +76,19 @@ export const CheckoutWeb3 = () => {
         }
       }
     })();
-  },[signData]);
-
+  }, [signData]);
 
   function handleNavigateBack() {
     navigate(-1);
   }
 
   function handleCheckout() {
-    console.log('checkout...');
+    console.log("checkout...");
     signMessage();
   }
 
-  if (signLoading || loading){
-    return <Loading loadingText="Verifying NFTs"/>
+  if (signLoading || loading) {
+    return <Loading loadingText="Verifying NFTs" />;
   }
 
   if (connectData) {
@@ -105,7 +107,7 @@ export const CheckoutWeb3 = () => {
             </div>
           </div>
           <div className="d-flex flex-row justify-content-start align-items-center mt-15 gap-30">
-            <div className="border-color-primary px-30 rounded-3">
+            <div className="border-color-primary px-30 py-10 rounded-3 d-flex align-items-start justify-content-start flex-column">
               <div className="fw-bold fs-15">Proof of NFT Ownership</div>
               <span>Select from the crypto wallet options</span>
             </div>

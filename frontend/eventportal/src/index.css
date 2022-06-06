@@ -12,6 +12,7 @@ BASE HTML
   --bg-denied:#ffcccc;
   --denied: #F6050B;
   --gray: #F6F7F9;
+  --muted-color: #95959C;
 
   --sp-orange-color: hsl(16, 80%, 60%);
   --sp-orange-color-light: hsl(16, 80%, 70%);
@@ -83,15 +84,14 @@ small {
 }
 
 .text-color-primary{
-  color: var(--orange)
+  color: var(--orange);
 }
 
 .header {
+  margin-bottom: 2rem;
   position:relative;
-  display:flex;
   border-radius: 50px 50px 0 0;
   min-height:280px;
-  height:35%;
 }
 
 footer {
@@ -109,25 +109,35 @@ footer {
 }
 
 .container-fluid {
-  position: relative;
+  max-width: 100%;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
   overflow:hidden;
+  left: 20%;
 }
-
-.left-30{
-  left: 30% !important;
-}
-
 .card{
   position: relative;
   border: none;
 }
 
-@media (min-width: 770px) {
+@media (min-width: 1500px) {
   .card{
-    left: 50%;
     border: none;
+    left: 50%;
+  }
+}
+
+@media (max-width: 1000px) {
+  .card{
+    border: none;
+    left: 0%;
+    right: 0%;
+  }
+  .header {
+    margin-bottom: 2rem;
+    position:relative;
+    border-radius: 50px 50px 0 0;
+    min-height:280px;
   }
 }
 
@@ -150,13 +160,22 @@ ELEMENTS
 
 .team-info {
   position:absolute;
-  top:80%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  top: 80%;
   left: 5%;
 }
 
+.team-info h4 {
+  text-align: center;
+  margin-top: 0.3rem;
+  text-align: center;
+}
+
 .team-info img {
-  height:66px;
-  width:66px;
+  height:92px;
+  width:92px;
   border: 7px solid white;
   border-radius:66px;
   background:white;
@@ -204,6 +223,15 @@ BOOSTRAP OVERRIDES
   filter: brightness(0.7)
 }
 
+.ticket-select{
+  border: none;
+  min-height:50px !important;
+  min-width:50px !important;
+  width:100%;
+  height:100%;
+  text-align: start !important;
+}
+
 .btn-primary {
   background: var(--orange);
   border-radius: 9px;
@@ -231,6 +259,10 @@ BOOSTRAP OVERRIDES
   cursor:not-allowed;
 }
 
+.text-muted{
+  color: var(--muted-color);
+}
+
 .btn-secondary {
   height: 164px;
   background: #FFFFFF;
@@ -245,14 +277,14 @@ BOOSTRAP OVERRIDES
 }
 
 .bg-success {
-  background: var(--bg-success) !important;
+  background-color: var(--bg-success) !important;
   color:var(--success);
   border-radius: 7px;
-  width: 70%;
+  width: 60%;
 }
 
 .bg-gray{
-  background-color: var(--gray);
+  background-color: var(--gray) !important;
   border-radius: 0px 0px 50px 0px;
   width: 35%;
   height: 200%;
@@ -268,7 +300,7 @@ BOOSTRAP OVERRIDES
 }
 
 .btn-secondary{
-  background-color: var(--gray);
+  background-color: var(--gray) !important;
 }
 
 .btn-secondary:hover{
@@ -359,7 +391,8 @@ BOOSTRAP OVERRIDES
   position:absolute;
   z-index:99999999;
   box-sizing:border-box;
-  border:1px solid #FF9966;box-shadow:0 1px 8px rgba(0,0,0,0.5);
+  border:1px solid #FF9966;
+  box-shadow:0 1px 8px rgba(0,0,0,0.5);
   visibility:hidden; opacity:0; transition:opacity 0.8s;
 }
 
@@ -395,14 +428,18 @@ BOOSTRAP OVERRIDES
   flex-grow: 1;
   justify-content: space-between;
 }
-@media (max-width: 450px) {
+@media (max-width: 576px) {
+  .card{
+    border: none;
+    left: 0%;
+  }
+
   .responsive-page-selection{
     display: flex;
     flex-grow: 1;
     flex-direction: column;
   }
   .bg-gray{
-    background-color: var(--gray);
     border-radius: 10px;
     width: 100%;
     height: 200%;
@@ -429,8 +466,5 @@ BOOSTRAP OVERRIDES
     display:flex;
     min-height:200px;
     height:35%;
-  }
-  .left-30{
-    left: 0% !important;
   }
 }

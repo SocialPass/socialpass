@@ -1,8 +1,14 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import {  StyledContainer } from "./components";
+import { StyledContainer } from "./components";
 import { EventPortalProvider } from "./context";
 import Web3ProviderWrapper from "./web3/wrapper";
-import { Init, CheckoutWeb3, CheckoutStatus, TicketSelection, Event } from "./pages";
+import {
+  Init,
+  CheckoutWeb3,
+  CheckoutStatus,
+  TicketSelection,
+  Event,
+} from "./pages";
 import "./static/css/socialpass-theme.css";
 import "./static/css/halfmoon.css";
 import "./index.css";
@@ -22,9 +28,18 @@ const EventPortal = () => {
             <Routes>
               <Route path="/:publicId" element={<Init />} />
               <Route path="/:publicId/event" element={<Event />} />
-              <Route path="/:publicId/ticket-selection" element={<TicketSelection />} />
-              <Route path="/:publicId/checkout/blockchain" element={<CheckoutWeb3 />} />
-              <Route path="/:publicId/checkout/status" element={<CheckoutStatus />} />
+              <Route
+                path="/:publicId/ticket-selection"
+                element={<TicketSelection />}
+              />
+              <Route
+                path="/:publicId/checkout/blockchain"
+                element={<CheckoutWeb3 />}
+              />
+              <Route
+                path="/:publicId/checkout/status"
+                element={<CheckoutStatus />}
+              />
             </Routes>
           </StyledContainer>
         </Web3ProviderWrapper>

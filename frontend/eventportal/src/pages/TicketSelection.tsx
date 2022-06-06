@@ -7,19 +7,23 @@ export function TicketSelection() {
   const navigate = useNavigate();
   const params = useParams();
   const id = params.publicId;
-  const { generalAdmissionSelect, setGeneralAdmissionSelect } = useContext(EventPortalContext);
+  const { generalAdmissionSelect, setGeneralAdmissionSelect } =
+    useContext(EventPortalContext);
   // [1 ... generalAdmissionSelectArray]
-  const generalAdmissionSelectArray = Array.from({length: generalAdmissionSelect}, (_, i) => i + 1)
+  const generalAdmissionSelectArray = Array.from(
+    { length: generalAdmissionSelect },
+    (_, i) => i + 1
+  );
 
-  function handleSelect(event:any) {
+  function handleSelect(event: any) {
     setGeneralAdmissionSelect(event.target.value);
   }
   return (
     <div className="responsive-page-selection">
       <div>
-        <div>
-          <h3 className="fs-20">Ticket Selection</h3>
-          <p>Select ticket...</p>
+        <div className="d-flex flex-column align-items-start justify-content-between mb-30 gap-5">
+          <span className="fs-20 fw-700">Ticket Selection</span>
+          <span className="text-muted">Select ticket...</span>
         </div>
         <div className="d-flex flex-row align-items-start justify-content-between">
           <div>
@@ -49,15 +53,19 @@ export function TicketSelection() {
             <select
               defaultValue={generalAdmissionSelect}
               onChange={handleSelect}
-              className="btn btn-primary px-20 ms-40"
+              className="styled-select btn ticket-select btn-primary px-10 ms-40"
             >
               select item
-              {generalAdmissionSelectArray.map(function(object){
-                  return (
-                    <option className="bg-white text-color-primary" value={1}>
-                      {object}
-                    </option>
-                  )
+              {generalAdmissionSelectArray.map(function (object) {
+                return (
+                  <option
+                    key={object}
+                    className="bg-white text-color-primary"
+                    value={1}
+                  >
+                    {object}
+                  </option>
+                );
               })}
             </select>
           </div>

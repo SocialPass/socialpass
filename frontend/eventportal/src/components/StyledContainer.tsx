@@ -17,27 +17,23 @@ export const StyledContainer = ({
   const location = useLocation();
   const navigate = useNavigate();
   return (
-    <div className="left-30 container-fluid p-0 d-flex flex-column justify-content-center card">
+    <div className="left-30 container-fluid p-0 card">
       {location.pathname.length > 45 ? (
         <header
           className="small-header"
           style={{ backgroundImage: `url(${headerImage})` }}
         >
-            <div className="back" onClick={() => navigate(-1)}>
-              <img src={_backButton} alt="Back Button" height="24" width="24" />
-              <h4 className="ps-5 m-0">Go back</h4>
-            </div>
-          <div className="small-team-info">
-            <h4>{retrieveJson && retrieveJson?.event_info.title}</h4>
-            <h5>{retrieveJson && retrieveJson?.organizer_info.name}</h5>
+          <div className="back" onClick={() => navigate(-1)}>
+            <img src={_backButton} alt="Back Button" height="24" width="24" />
+            <h4 className="ps-5 m-0">Go back</h4>
           </div>
         </header>
       ) : (
         <header
-          className="header d-flex align-items-center justify-content-center"
+          className="header d-flex align-items-start justify-content-center"
           style={{ backgroundImage: `url(${headerImage})` }}
         >
-          <div className="team-info mx-3 mx-md-5 ps-2 column">
+          <div className="team-info">
             <img
               src={
                 retrieveJson &&
@@ -57,7 +53,7 @@ export const StyledContainer = ({
       <div className="d-flex mx-3 mx-md-5 mt-5 flex-grow-1 h-100 p-30">
         {children}
       </div>
-      <footer>
+      <footer className="d-flex flex-row justify-content-between align-items-center">
         <img src={FAQImage} alt="image" />
         <small className="d-flex flex-row align-items-center">
           Powered by &nbsp;

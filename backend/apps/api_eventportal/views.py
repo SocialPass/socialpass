@@ -117,9 +117,9 @@ class EventPortalProcessCheckout(EventMixin, APIView):
                 tickets_requested=blockchain_serializer.data["tickets_requested"],
             )
         except (
-            ticket_service.TooManyTicketsRequestedError,
-            ticket_service.TooManyTicketsIssuedError,
-            ticket_service.TicketsSoldOutError,
+            event_service.TooManyTicketsRequestedError,
+            event_service.TooManyTicketsIssuedError,
+            event_service.TicketsSoldOutError,
         ) as e:
             return Response(str(e), status=403)
 
@@ -132,9 +132,9 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             )
             return Response(self.output_serializer(tickets, many=True).data)
         except (
-            ticket_service.TooManyTicketsRequestedError,
-            ticket_service.TooManyTicketsIssuedError,
-            ticket_service.TicketsSoldOutError,
+            event_service.TooManyTicketsRequestedError,
+            event_service.TooManyTicketsIssuedError,
+            event_service.TicketsSoldOutError,
             ticket_service.ZeroBlockchainAssetsError,
             ticket_service.PartialBlockchainAssetError,
         ) as e:

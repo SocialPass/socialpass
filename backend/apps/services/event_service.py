@@ -15,7 +15,7 @@ class TicketsSoldOutError(Exception):
     pass
 
 
-def get_available_tickets(event: Event, tickets_requested: int) -> int:
+def get_available_tickets(event: Event, tickets_requested=None) -> int:
     """
     return how many tickets available for a given event
     In the future, this method can be extended to ticket types vs singular ticket with an event

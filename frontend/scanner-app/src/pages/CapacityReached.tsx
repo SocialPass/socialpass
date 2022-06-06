@@ -2,7 +2,7 @@
 import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import CloseCircleIcon from "../assets/closeIcon.svg";
-import nftyBg from "../assets/nftyBg.png";
+import nftyBg from "../static/images/bg_image_logo.png";
 import { useTicket } from "../contexts/TicketContext";
 import { useNavigate } from "react-router-dom";
 
@@ -14,22 +14,33 @@ export function CapacityReached() {
   }
 
   return (
-    <>
+    <div className="error-footer">
+    
       <header className="d-flex flex-row justify-content-between align-items-start py-4 px-4">
-        <div className="card rounded p-1">
-          <FiArrowLeft onClick={handleGoBack} size={22} />
+      <div className="py-2">
+          <div className="btn-back">
+            <FiArrowLeft onClick={handleGoBack} size={26} />
+          </div>
         </div>
-        <h2>Capacity</h2>
+        <div className="d-flex flex-column align-items-center py-10">
+          <div className="error-title py-30">Capacity</div>
+        </div>
+        <div className="mx-40">
+        </div>        
       </header>
       <div className="d-flex flex-column align-items-center justify-content-center gap-4">
         <div>
           <img src={CloseCircleIcon} />
         </div>
-        <span className="fw-bold fs-6">
-          Event capacity has reached it's limit. All the generated tickets have been scanned.
-        </span>
-        <img src={nftyBg} />
+        <div className="error-body">
+          Event capacity has reached its limit.
+        </div>
+        <div className="error-body">
+          All the generated tickets have been scanned.
+        </div>
+
+     </div>
+      
       </div>
-    </>
   );
 }

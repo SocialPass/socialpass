@@ -40,14 +40,14 @@ export function Scanner() {
   }
 
   return (
-    <>
+    <div className="scanner-body">
       <Header
         total={eventData?.ticket_count}
         attendees={eventData?.redemeed_count}
         title={eventData?.title}
       />
-      <div className="bg-secondary rounded mx-2">
-        <div className="d-flex justify-content-center align-items-center p-2">
+      <div className="bg-body rounded mx-10">
+        <div className="d-flex justify-content-center align-items-center p-5">
           <QrReader
             facingMode={"environment"}
             delay={500}
@@ -57,6 +57,6 @@ export function Scanner() {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 }

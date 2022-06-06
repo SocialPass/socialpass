@@ -16,20 +16,21 @@ export function Header({ total, attendees, title }: HeaderProps) {
   }
   return (
     <header className="d-flex flex-row justify-content-between py-4 px-4">
-      <div className="py-2 ">
-        <div className="card rounded p-1">
-          <FiArrowLeft onClick={handleGoBack} size={22} />
+        <div className="py-2">
+          <div className="btn-back">
+            <FiArrowLeft onClick={handleGoBack} size={26} />
+          </div>
         </div>
-      </div>
-      <div className="d-flex flex-column align-items-center">
-        <h3>{title}</h3>
-        <h6 className="text-secondary">
-          Attendees{" "}
-          {attendees === null || attendees === undefined ? 0 : attendees}/
-          {total}
-        </h6>
-      </div>
-      <div></div>
+        <div className="d-flex flex-column align-items-center py-10">
+          <div className="scanner-title py-30">{title}</div>
+          <h6 className="scanner-subtitle">
+            Attendees{" "}
+            {attendees === null || attendees === undefined ? 0 : attendees}/
+            {total}
+          </h6>
+        </div>
+        <div className="mx-40">
+        </div>
     </header>
   );
 }

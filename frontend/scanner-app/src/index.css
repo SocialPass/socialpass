@@ -73,7 +73,7 @@ small {
   font-size: 12px;
   color: #959191;
 }
-
+/*
 header {
   position:relative;
   display:flex;
@@ -81,7 +81,7 @@ header {
   min-height:200px;
   height:35%;
 }
-
+*/
 footer {
   display: flex;
   flex-wrap: wrap;

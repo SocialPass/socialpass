@@ -46,7 +46,7 @@ export function Scanner() {
         attendees={eventData?.redemeed_count}
         title={eventData?.title}
       />
-      <div className="bg-body rounded mx-10">
+      <div className="bg-body rounded mx-10 ">
         <div className="d-flex justify-content-center align-items-center p-5">
           <QrReader
             facingMode={"environment"}

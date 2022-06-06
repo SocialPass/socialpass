@@ -22,7 +22,7 @@ export function Header({ total, attendees, title }: HeaderProps) {
           </div>
         </div>
         <div className="d-flex flex-column align-items-center py-10">
-          <div className="scanner-title">"Teste do Título"</div>
+          <div className="scanner-title">{title}</div>
           <h6 className="scanner-subtitle">
             Attendees{" "}
             {attendees === null || attendees === undefined ? 0 : attendees}/

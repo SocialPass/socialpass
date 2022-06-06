@@ -54,7 +54,7 @@ export const CheckoutStatus = () => {
           </div>
         </div>
         <div className="col-md-5">
-          <button className="btn-primary">Download Tickets</button>
+          <button onClick={() => window.open(grantAccessJson[0]["temporary_download_url"])}className="btn-primary">Download Tickets</button>
         </div>
       </div>
     );

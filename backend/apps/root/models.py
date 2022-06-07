@@ -147,7 +147,9 @@ class Invite(DBModel, AbstractBaseInvitation):
         """
         return string representation of model
         """
-        return f"{self.team.name}-{self.email}"
+        if self.team:
+            return f"{self.team.name}-{self.email}"
+        return self.email
 
 
 class Event(DBModel):

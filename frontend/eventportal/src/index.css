@@ -225,12 +225,11 @@ BOOSTRAP OVERRIDES
 }
 
 .ticket-select{
-  border: none;
   min-height:50px !important;
   min-width:50px !important;
   width:100%;
   height:100%;
-  text-align: start !important;
+  text-align: left !important;
 }
 
 .btn-primary {
@@ -281,6 +280,7 @@ BOOSTRAP OVERRIDES
   background-color: var(--bg-success) !important;
   color:var(--success);
   border-radius: 7px;
+  width: 60%;
 }
 
 .bg-gray{
@@ -296,7 +296,7 @@ BOOSTRAP OVERRIDES
   background: var(--bg-denied) !important;
   color:var(--denied);
   border-radius: 7px;
-  width: 70%;
+  width: 60%;
 }
 
 .btn-secondary{
@@ -428,6 +428,14 @@ BOOSTRAP OVERRIDES
   flex-grow: 1;
   justify-content: space-between;
 }
+.responsive-ticket-selection{
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: space-between;
+}
+
+
 @media (max-width: 576px) {
   .card{
     border: none;
@@ -438,6 +446,15 @@ BOOSTRAP OVERRIDES
     display: flex;
     flex-grow: 1;
     flex-direction: column;
+  }
+  .responsive-ticket-selection{
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+  }
+  .responsive-ticket-selection select {
+    text-align: left !important;
+    width: 30vw;
   }
   .bg-gray{
     border-radius: 10px;

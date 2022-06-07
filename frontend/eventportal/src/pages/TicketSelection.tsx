@@ -25,7 +25,7 @@ export function TicketSelection() {
           <span className="fs-20 fw-700">Ticket Selection</span>
           <span className="text-muted">Select ticket...</span>
         </div>
-        <div className="d-flex flex-row align-items-start justify-content-between">
+        <div className="responsive-ticket-selection">
           <div>
             <div className="d-flex flex-row align-items-center me-12">
               <span className="fs-18 fw-bold me-15">General Admission</span>
@@ -49,13 +49,12 @@ export function TicketSelection() {
             <br />
             <p>Sale ends on May 31, 2022</p>
           </div>
-          <div>
+          <div className="d-inline">
             <select
               defaultValue={generalAdmissionSelect}
               onChange={handleSelect}
-              className="styled-select btn ticket-select btn-primary px-10 ms-40"
+              className="ticket-select btn-primary px-10 ms-30"
             >
-              select item
               {generalAdmissionSelectArray.map(function (object) {
                 return (
                   <option

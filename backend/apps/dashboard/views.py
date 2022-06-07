@@ -123,6 +123,8 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
                 return reverse("ticketgate_list", args=(membership.team.pk,))
+            else:
+                return reverse("team_create")
         else:
             return reverse("account_login")
 
@@ -569,7 +571,5 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
         )
         return reverse(
             "ticketgate_list",
-            args=(
-                self.object.id,
-            ),
+            args=(self.object.id,),
         )

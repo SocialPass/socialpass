@@ -1,6 +1,7 @@
-{% load static i18n %}
+{% load static i18n get_debug_status %}
 <!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
+{% get_debug_status as debug %}
 <html lang="{{ LANGUAGE_CODE }}" class="">
 	<head>
 		<!-- Meta tags -->
@@ -190,5 +191,33 @@
 		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
 
 		{% block extra_body %}{% endblock extra_body %}
+
+		{% if debug %}
+			<script type="text/javascript">
+				/**
+				 * Handle the keydown event (only on debug mode).
+				 *
+				 * This is used to create the dark mode and sidebar toggle shortcuts. 
+				 * These shortcuts are very useful for testing.
+				 */
+				document.addEventListener("keydown", function (event) {
+					if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+						event = event || window.event;
+
+						if (!(event.ctrlKey || event.metaKey)) {
+							// Toggle dark mode when [shift] + [D] keys are pressed
+							if (event.shiftKey && event.which == 68) {
+								halfmoon.toggleDarkMode();
+							}
+
+							// Toggle sidebar when [shift] + [S] keys are pressed
+							if (event.shiftKey && event.which == 83) {
+								halfmoon.toggleSidebar();
+							}
+						}
+					}
+				});
+			</script>
+		{% endif %}
 	</body>
 </html>

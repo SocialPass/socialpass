@@ -13,9 +13,9 @@ export const Web3ConnectorImage = ({
     case "MetaMask":
       return <img height="72" width="72" src={metamask} alt="image" />;
     case "WalletConnect":
-      return <img src={walletconnect} alt="image" />;
+      return <img height="72" width="72" src={walletconnect} alt="image" />;
     case "Coinbase Wallet":
-      return <img src={coinbase} alt="image" />;
+      return <img height="72" width="72" src={coinbase} alt="image" />;
     default:
       return null;
   }

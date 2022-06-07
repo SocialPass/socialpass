@@ -26,12 +26,13 @@ export function InvalidScanner() {
       <div className="mx-40">
       </div>        
     </header>
-    <div className="d-flex flex-column align-items-center justify-content-center gap-4">
+    <div className="error-padding"></div>
+    <div className="error-body d-flex flex-column align-items-center justify-content-center gap-4">
       <div>
         <img src={CloseCircleIcon} />
       </div>
       <div className="error-body">
-        No event was found.
+        No event was found.       
       </div>
    </div>
     

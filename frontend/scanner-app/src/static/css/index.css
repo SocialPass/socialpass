@@ -186,3 +186,8 @@
     background-position-y: bottom;
     box-shadow: none;
 }
+
+
+.error-padding  {
+    margin-top: 60%;
+}

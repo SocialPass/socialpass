@@ -29,8 +29,10 @@ export function Scanner() {
   }, []);
 
   useEffect(() => {
-    if (eventData && eventData.ticket_count == eventData.redemeed_count){
-      navigate("/capacity-reached");
+    if (eventData && eventData.ticket_count == eventData.redemeed_count) {
+      setTimeout(function () {
+        navigate("/capacity-reached");
+      }, 1000);
     }
     setLoading(false);
   })

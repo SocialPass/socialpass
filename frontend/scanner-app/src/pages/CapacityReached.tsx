@@ -1,10 +1,8 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React from "react";
-import { FiArrowLeft } from "react-icons/fi";
-import CloseCircleIcon from "../assets/closeIcon.svg";
-import nftyBg from "../static/images/bg_image_logo.png";
-import { useTicket } from "../contexts/TicketContext";
 import { useNavigate } from "react-router-dom";
+import ColoredLogo from "../static/images/socialpass-colored-logo.svg";
+
 
 export function CapacityReached() {
   const navigate = useNavigate();
@@ -14,33 +12,19 @@ export function CapacityReached() {
   }
 
   return (
-    <div className="error-footer">
-    
-      <header className="d-flex flex-row justify-content-between align-items-start py-4 px-4">
-      <div className="py-2">
-          <div className="btn-back">
-            <FiArrowLeft onClick={handleGoBack} size={26} />
-          </div>
+    <div className="landing-page-background p-10 py-50">
+    <div className="d-flex flex-column align-items-center justify-content-around">
+      <img className="p-30" src={ColoredLogo} />
+      <div className="d-flex flex-column align-items-center justify-content-center gap-4 p-10">
+        <div className="capacity-reached-title pt-20">
+          Awesome!
         </div>
-        <div className="d-flex flex-column align-items-center py-10">
-          <div className="error-title py-30">Capacity</div>
+        <div className="capacity-reached-body p-20">
+          Every generated ticket has been scanned!
         </div>
-        <div className="mx-40">
-        </div>        
-      </header>
-      <div className="d-flex flex-column align-items-center justify-content-center gap-4">
-        <div>
-          <img src={CloseCircleIcon} />
-        </div>
-        <div className="error-body">
-          Event capacity has reached its limit.
-        </div>
-        <div className="error-body">
-          All the generated tickets have been scanned.
-        </div>
+     </div>
+     </div>
 
      </div>
-      
-      </div>
   );
 }

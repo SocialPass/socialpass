@@ -11,7 +11,7 @@ export const CheckoutStatus = () => {
     useContext(EventPortalContext);
   const navigate = useNavigate();
   console.log(grantAccessJson, grantAccessError);
-  if (!grantAccessJson) {
+  if (grantAccessJson) {
     return (
       <div className="row flex-grow-1 m-0 mt-3 align-items-center">
         <div className="col-md-7 mb-4 d-flex">
@@ -72,7 +72,7 @@ export const CheckoutStatus = () => {
             access denied
             <span></span>
           </div>
-          <div className="d-flex flex-row justify-content-around align-items-center">
+          <div className="d-flex flex-row justify-content-start align-items-center gap-30">
             <img
               className="avatar-img"
               src={retrieveJson.organizer_info.profile_image}

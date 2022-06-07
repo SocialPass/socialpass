@@ -59,7 +59,7 @@ export const Event = (): JSX.Element => {
           </div>
         </div>
       </div>
-      <div className="col-md-5">
+      <div className="col-md-4 offset-md-1">
         <button className="btn-primary fw-700 fs-20" onClick={handleNavigate}>
           Claim Tickets
         </button>

@@ -12,17 +12,26 @@ export function Scanner() {
   }: any = useTicket();
 
   const [loading, setLoading] = useState<Boolean>(true);
+  const [qrCode, setQrcode] = useState(null);
   const navigate = useNavigate();
 
   const handleScan = useCallback(
     async (qrcode: any) => {
       if (qrcode) {
-        scanTicket(qrcode);
+        console.log(qrcode);
+        setQrcode(qrcode);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  useEffect(() => {
+    if(qrCode){
+      console.log(qrCode);
+      scanTicket(qrCode);
+    }
+  }, [qrCode])
 
   const handleError = useCallback((err: any) => {
     console.log(err);

@@ -551,3 +551,25 @@ class PricingCalculator(TeamContextMixin, View):
         return JsonResponse(
             {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
         )
+
+
+class TeamCreateView(LoginRequiredMixin, CreateView):
+    """
+    Creates a new team.
+    """
+
+    model = Team
+    form_class = TeamForm
+    template_name = "account/team_create.html"
+
+    def get_success_url(self):
+        self.object.members.add(self.request.user)
+        messages.add_message(
+            self.request, messages.SUCCESS, "Your team has been created successfully."
+        )
+        return reverse(
+            "ticketgate_list",
+            args=(
+                self.object.id,
+            ),
+        )

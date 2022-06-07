@@ -123,10 +123,10 @@ export const CheckoutWeb3 = () => {
               </div>
             </div>
           </div>
-          <div className="col-lg-12 d-flex mt-30 d-flex gap-10">
+          <div className="col-lg-12 d-flex mt-30 d-flex gap-10 column-display-mobile">
             {connectData.connectors.map((x) => (
               <button
-                className="btn btn-secondary fs-11 border-0 shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                className="btn btn-secondary fs-15 border-0 shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
                 disabled={!x.ready}
                 key={x.id}
                 onClick={() => connect(x)}

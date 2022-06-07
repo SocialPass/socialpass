@@ -5,7 +5,7 @@
 {% block head_title %}Sign In - SocialPass{% endblock %}
 
 {% block inner %}
-<h1 class="fsr-1 text-strong fw-700">Sign In</h1>
+<h1 class="fsr-3 text-strong fw-700">Sign In</h1>
 <p>
 	Welcome back! Please enter your credentials to sign in to your account.
 </p>
@@ -65,6 +65,9 @@
 		            	{% for k,v in input.field.widget.attrs.items %}
 		            		{{ k }}="{{ v }}"
 		            	{% endfor %}
+                        {% if input.name == "login" %}
+                            autofocus="true"
+                        {% endif %}
 	            	/>
                     <label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25" for="{{ input.id_for_label }}">
                         {% if input.name == "login" %}
@@ -102,7 +105,7 @@
 </form>
 <!-- Form end -->
 
-<p>
+<p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
 	Don't have an account? <a href="{% url 'account_signup' %}" class="fw-bold">Sign up</a> to create one.
 </p>
 {% endblock %}

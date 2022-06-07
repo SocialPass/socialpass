@@ -4626,6 +4626,21 @@
     --small-grow-spinner-width-height: var(--small-border-spinner-width-height);
 }
 
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Placeholder - Variables ]
+ * ----------------------------------------------------------------------------
+ */
+
+:root {
+    --placeholder-min-height: 2rem;
+    --placeholder-opacity: 0.5;
+
+    --placeholder-bg-color: currentColor;
+    --placeholder-bg-image: none;
+}
+
 /* END VARIABLES */
 
 
@@ -7640,6 +7655,14 @@ a:hover {
     border-color: var(--unordered-list-item-bullet-border-color);
     border-radius: var(--unordered-list-item-bullet-border-radius);
     box-shadow: var(--unordered-list-item-bullet-box-shadow);
+}
+
+.unordered-list.bulleted > li::before {
+    background-clip: border-box;
+    background-color: currentColor;
+    background-image: none;
+    border-color: currentColor;
+    box-shadow: none;
 }
 
 /* Ordered list */
@@ -14984,6 +15007,89 @@ details * {
 @media (prefers-reduced-motion: reduce) {
     .spinner-grow {
         animation-duration: 1.5s;
+    }
+}
+
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Placeholder ]
+ * ----------------------------------------------------------------------------
+ */
+
+.placeholder {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: wait;
+    min-height: var(--placeholder-min-height);
+    opacity: var(--placeholder-opacity);
+    background-color: var(--placeholder-bg-color);
+    background-image: var(--placeholder-bg-image);
+}
+
+.placeholder.btn::before {
+    display: inline-block;
+    content: "";
+}
+
+/**
+ * Contextual buttons as placeholders
+ *
+ * The following overrides are needed because the default disabled contextual 
+ * buttons are styled without any use of the context colors.
+ *
+ * It is expected that buttons used as placholders will always be disabled.
+ */
+
+.placeholder.btn-primary {
+    background-clip: var(--button-primary-bg-clip);
+    background-color: var(--button-primary-bg-color);
+    background-image: var(--button-primary-bg-image);
+    border-color: var(--button-primary-border-color);
+    box-shadow: var(--button-primary-box-shadow);
+}
+
+.placeholder.btn-secondary {
+    background-clip: var(--button-secondary-bg-clip);
+    background-color: var(--button-secondary-bg-color);
+    background-image: var(--button-secondary-bg-image);
+    border-color: var(--button-secondary-border-color);
+    box-shadow: var(--button-secondary-box-shadow);
+}
+
+.placeholder.btn-success {
+    background-clip: var(--button-success-bg-clip);
+    background-color: var(--button-success-bg-color);
+    background-image: var(--button-success-bg-image);
+    border-color: var(--button-success-border-color);
+    box-shadow: var(--button-success-box-shadow);
+}
+
+.placeholder.btn-warning {
+    background-clip: var(--button-warning-bg-clip);
+    background-color: var(--button-warning-bg-color);
+    background-image: var(--button-warning-bg-image);
+    border-color: var(--button-warning-border-color);
+    box-shadow: var(--button-warning-box-shadow);
+}
+
+.placeholder.btn-danger {
+    background-clip: var(--button-danger-bg-clip);
+    background-color: var(--button-danger-bg-color);
+    background-image: var(--button-danger-bg-image);
+    border-color: var(--button-danger-border-color);
+    box-shadow: var(--button-danger-box-shadow);
+}
+
+/* Placeholder glow */
+
+.placeholder-glow .placeholder {
+    animation: placeholder-glow 2s ease-in-out infinite;
+}
+
+@keyframes placeholder-glow {
+    50% {
+        opacity: 0.2;
     }
 }
 

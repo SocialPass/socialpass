@@ -23,7 +23,7 @@
 
     /* Border related (mostly for utilities) */
 
-    --border-color: hsl(var(--gray-color-hue), var(--gray-color-saturation), 77.5%);
+    --base-border-radius: 0.2rem;
 }
 
 .dark-mode {
@@ -31,10 +31,6 @@
 
     --base-body-bg-color: var(--dark-color);
     --base-content-bg-color: var(--dark-color-very-light);
-
-    /* Border related (mostly for utilities) */
-
-    --border-color: var(--gray-color-very-dim);
 }
 
 .readable-mode {
@@ -167,9 +163,23 @@
     --text-color-on-secondary-color-bg: var(--text-color-on-socialpass-orange-color-bg);
 }
 
+/* Lists */
+
+:root {
+    /* Unordered list */
+
+    --unordered-list-item-bullet-width: 0.6rem;
+}
+
 /* Buttons */
 
 :root {
+    --button-vertical-padding: 0.6rem;
+
+    --small-button-vertical-padding: 0.4rem;
+
+    --large-button-vertical-padding: 0.8rem;
+
     /* Default button */
 
     --button-border-color: var(--border-color);
@@ -201,12 +211,25 @@
     --button-danger-border-color: transparent;
 }
 
-/* Input */
+/* Form */
 
 :root {
     /* Default input */
 
     --input-border-color: var(--border-color);
+
+    /* Form label */
+
+    --form-label-font-weight: var(--bold-font-weight);
+
+    /* Input group text */
+
+    --input-group-text-border-color: var(--border-color);
+
+    /* Checkbox */
+
+    --checkbox-border-color-focus: var(--input-border-color-focus);
+    --checkbox-box-shadow-focus: var(--input-box-shadow-focus);
 }
 
 .dark-mode {

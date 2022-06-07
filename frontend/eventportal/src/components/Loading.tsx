@@ -5,8 +5,8 @@ export const Loading = ({ loadingText }) => {
     <div className="row d-flex align-items-center justify-content-center flex-grow-1">
       <div className="col-12 text-center">
         <div className="d-flex flex-column justify-content-center">
-          <strong className="fs-3">{loadingText}</strong>
-          <p className="fs-5">Please wait, this might take a second</p>
+          <span className="fs-25 fw-600">{loadingText}</span>
+          <p className="fs-15">Please wait, this might take a second</p>
         </div>
         <div className="container">
           <div className="sp-progress">

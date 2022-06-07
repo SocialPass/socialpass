@@ -6,8 +6,20 @@ export const EventPortalContext = createContext<EventPortalContextInterface>(
 );
 
 export const EventPortalProvider = ({ children }: { children: any }) => {
-  const [id, setID] = useState("");
-  const [retrieveJson, setRetrieveJson] = useState(null);
+  const [id, setID] = useState(() => {
+    const data = localStorage.getItem("@eventId");
+    if (data == null) {
+      return "";
+    }
+    return JSON.parse(data);
+  });
+  const [retrieveJson, setRetrieveJson] = useState(() => {
+    const data = localStorage.getItem("@retrieveJson");
+    if (data == null) {
+      return null;
+    }
+    return JSON.parse(data);
+  });
   const [retrieveError, setRetrieveError] = useState(null);
 
   const [requestAccessJson, setRequestAccessJson] = useState(null);

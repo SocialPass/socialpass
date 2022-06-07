@@ -104,7 +104,7 @@ export const CheckoutStatus = () => {
           </div>
         </div>
       </div>
-      <div className="col-md-5">
+      <div className="col-md-5 mt-30">
         <button
           className="btn-primary fw-700 fs-20"
           onClick={() => {

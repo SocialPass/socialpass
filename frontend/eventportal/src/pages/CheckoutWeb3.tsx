@@ -123,7 +123,7 @@ export const CheckoutWeb3 = () => {
               </div>
             </div>
           </div>
-          <div className="col-lg-12 d-flex mt-30 gap-15">
+          <div className="col-lg-12 d-flex mt-30 gap-10">
             {connectData.connectors.map((x) => (
               <button
                 className="btn btn-secondary border-color-primary shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"

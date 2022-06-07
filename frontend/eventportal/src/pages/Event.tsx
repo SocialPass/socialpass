@@ -18,7 +18,7 @@ export const Event = (): JSX.Element => {
   return (
     <div className="row flex-grow-1 m-0 mt-3 align-items-center">
       <div className="col-md-7 mb-4 d-flex">
-        <div className="col col-md-10">
+        <div className="col col-md-10 mb-30">
           <div className="mt-15 mb-15 d-flex flex-column align-items-start justify-content-center">
             <span className="fs-30 fw-bold">
               {retrieveJson.event_info.title}
@@ -59,7 +59,7 @@ export const Event = (): JSX.Element => {
           </span>
         </div>
       </div>
-      <div className="col-md-4 offset-md-1">
+      <div className="col-md-4 offset-sm-1">
         <button className="btn-primary fw-700 fs-20" onClick={handleNavigate}>
           Claim Tickets
         </button>

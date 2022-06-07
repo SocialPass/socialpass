@@ -281,7 +281,6 @@ BOOSTRAP OVERRIDES
   background-color: var(--bg-success) !important;
   color:var(--success);
   border-radius: 7px;
-  width: 60%;
 }
 
 .bg-gray{

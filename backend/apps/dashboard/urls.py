@@ -6,6 +6,11 @@ urlpatterns = [
     # Team
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
     path(
+        "team-create/",
+        views.TeamCreateView.as_view(),
+        name="team_create",
+    ),
+    path(
         "<int:team_pk>/team-detail/",
         views.TeamDetailView.as_view(),
         name="team_detail",

@@ -3,71 +3,79 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Team
+    # General redirect
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
+    # User Accounts
     path(
-        "<int:team_pk>/team-detail/",
+        "accounts/accept-invite/<str:key>/",
+        views.AcceptInviteView.as_view(),
+        name="accept_invite",
+    ),
+    path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
+    # Team
+    path(
+        "team-detail/<uuid:team_pk>/",
         views.TeamDetailView.as_view(),
         name="team_detail",
     ),
     path(
-        "<int:team_pk>/team-update/",
+        "team-update/<uuid:team_pk>/",
         views.TeamUpdateView.as_view(),
         name="team_update",
     ),
     path(
-        "<int:team_pk>/team-members/",
+        "team-members/<uuid:team_pk>/",
         views.TeamMemberManageView.as_view(),
         name="team_members",
     ),
     path(
-        "<int:team_pk>/team-members/<int:member_pk>/",
+        "team-members/<uuid:team_pk>/<int:member_pk>/",
         views.TeamMemberDeleteView.as_view(),
         name="team_member_delete",
     ),
     # Ticketing
     path(
-        "<int:team_pk>/ticketed-events/",
+        "ticketed-events/<uuid:team_pk>/",
         views.EventListView.as_view(),
         name="ticketgate_list",
     ),
     path(
-        "<int:team_pk>/ticketed-events/create/",
+        "ticketed-events/create/<uuid:team_pk>/",
         views.EventCreateView.as_view(),
         name="ticketgate_create",
     ),
     path(
-        "<int:team_pk>/ticketed-events/<int:pk>/",
+        "ticketed-events/<uuid:team_pk>/<int:pk>/",
         views.EventDetailView.as_view(),
         name="ticketgate_detail",
     ),
     path(
-        "<int:team_pk>/ticketed-events/<int:pk>/update/",
+        "ticketed-events/update/<uuid:team_pk>/<int:pk>/",
         views.EventUpdateView.as_view(),
         name="ticketgate_update",
     ),
     path(
-        "<int:team_pk>/ticketed-events/<int:pk>/stats/",
+        "ticketed-events/stats/<uuid:team_pk>/<int:pk>/",
         views.EventStatisticsView.as_view(),
         name="ticketgate_stats",
     ),
     path(
-        "<int:team_pk>/ticketed-events/estimate-price/",
+        "ticketed-events/estimate-price/<uuid:team_pk>/",
         views.PricingCalculator.as_view(),
         name="ticketgate_price_estimator",
     ),
     path(
-        "<int:team_pk>/ticketed-events/<int:pk>/checkout",
+        "ticketed-events/checkout/<uuid:team_pk>/<int:pk>/",
         views.EventCheckout.as_view(),
         name="ticketgate_checkout",
     ),
     path(
-        "<int:team_pk>/ticketed-events/<int:pk>/checkout/success",
+        "ticketed-events/checkout/success/<uuid:team_pk>/<int:pk>/",
         views.EventCheckout.success_stripe_callback,
         name="ticketgate_checkout_success_callback",
     ),
     path(
-        "<int:team_pk>/ticketed-events/<int:pk>/checkout/failure",
+        "ticketed-events/checkout/failure/<uuid:team_pk>/<int:pk>/",
         views.EventCheckout.failure_stripe_callback,
         name="ticketgate_checkout_failure_callback",
     ),
@@ -76,11 +84,4 @@ urlpatterns = [
         views.EventCheckout.stripe_webhook,
         name="stripe_webhook",
     ),
-    # User Accounts
-    path(
-        "accounts/accept-invite/<str:key>/",
-        views.AcceptInviteView.as_view(),
-        name="accept_invite",
-    ),
-    path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
 ]

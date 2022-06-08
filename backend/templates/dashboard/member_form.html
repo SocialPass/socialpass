@@ -47,7 +47,7 @@
                   <tr>
                     <td>{{member.user.email}}</td>
                     <td class="text-success">Confirmed</td>
-                    <td><a href="{% url 'team_member_delete' team_pk=current_team.pk member_pk=member.id %}" class="btn btn-sm btn-outline-danger">Delete Team Member</a></td>
+                    <td><a href="{% url 'team_member_delete' team_pk=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-outline-danger">Delete Team Member</a></td>
                   </tr>
                 {% empty %}
                 {% endfor %}

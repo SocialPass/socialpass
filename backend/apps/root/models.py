@@ -30,6 +30,10 @@ class DBModel(TimeStampedModel):
     Abstract base model that provides useful timestamps.
     """
 
+    public_id = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True
+    )
+
     class Meta:
         abstract = True
 
@@ -155,9 +159,6 @@ class Event(DBModel):
     Stores data for ticketed event
     """
 
-    public_id = models.UUIDField(
-        max_length=64, default=uuid.uuid4, editable=False, unique=True, db_index=True
-    )
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
     title = models.CharField(max_length=255)
@@ -231,7 +232,6 @@ class RedemptionAccessKey(DBModel):
             "name",
         )
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="redemption_access_keys"
     )
@@ -241,7 +241,7 @@ class RedemptionAccessKey(DBModel):
 
     @property
     def scanner_url(self):
-        return f"{settings.SCANNER_BASE_URL}/{self.id}"
+        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
 
 
 class BlockchainOwnership(DBModel):
@@ -252,7 +252,6 @@ class BlockchainOwnership(DBModel):
     def set_expires():
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
@@ -273,7 +272,7 @@ class BlockchainOwnership(DBModel):
         signing_message_obj = {
             "You are accessing": self.event.title,
             "Hosted by": self.event.team.name,
-            "One-Time Code": self.id,
+            "One-Time Code": self.public_id,
             "Valid until": self.expires.ctime(),
         }
         signing_message = "\n".join(

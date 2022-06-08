@@ -45,6 +45,9 @@ class Team(DBModel):
     Umbrella team model for SocialPass customers
     """
 
+    def get_default_pricing_rule_group():
+        return PricingRuleGroup.objects.get(name="Default").pk
+
     # base info
     name = models.CharField(max_length=255)
     image = models.ImageField(
@@ -53,7 +56,8 @@ class Team(DBModel):
     description = models.TextField(blank=True)
     members = models.ManyToManyField(User, through="Membership")
     pricing_rule_group = models.ForeignKey(
-        "PricingRuleGroup", on_delete=models.CASCADE, null=True, blank=True
+        "PricingRuleGroup", on_delete=models.CASCADE,
+        default=get_default_pricing_rule_group
     )
 
     def __str__(self):
@@ -382,6 +386,7 @@ class PricingRule(DBModel):
 
 class PricingRuleGroup(DBModel):
     name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
 
     @property
     def active_rules(self):

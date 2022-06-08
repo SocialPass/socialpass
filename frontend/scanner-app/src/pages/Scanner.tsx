@@ -38,7 +38,7 @@ export function Scanner() {
   }, []);
 
   useEffect(() => {
-    if (eventData && eventData.ticket_count == eventData.redemeed_count) {
+    if (eventData && eventData.ticket_count == eventData.capacity) {
       setTimeout(function () {
         navigate("/capacity-reached");
       }, 1000);
@@ -53,7 +53,7 @@ export function Scanner() {
   return (
     <div className="scanner-body">
       <Header
-        total={eventData?.ticket_count}
+        total={eventData?.capacity}
         attendees={eventData?.redemeed_count}
         title={eventData?.title}
       />

@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import include, path
+from invitations.views import SendInvite
 
 from . import views
 
@@ -81,11 +82,14 @@ urlpatterns = [
         views.EventCheckout.stripe_webhook,
         name="stripe_webhook",
     ),
-    # User Accounts
+    # Customer account management
+    path("accounts/", include("allauth.urls")),
+    path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
+    # Customer invitations
     path(
         "accounts/accept-invite/<str:key>/",
         views.AcceptInviteView.as_view(),
         name="accept_invite",
     ),
-    path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
+    path("accounts/send-invite/", SendInvite.as_view(), name="send_invite"),
 ]

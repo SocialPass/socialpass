@@ -8,10 +8,6 @@ urlpatterns = [
     path("", include("apps.dashboard.urls")),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # Customer account management
-    path("accounts/", include("allauth.urls")),
-    # Customer Invitations
-    path("invitations/", include("invitations.urls", namespace="invitations")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # DRF API URLS

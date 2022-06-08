@@ -342,7 +342,6 @@ INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
 INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
 INVITATIONS_EMAIL_MAX_LENGTH = 254
 INVITATIONS_INVITATION_EXPIRY = 3
-INVITATIONS_CONFIRMATION_URL_NAME = "invitations:accept-invite"
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 
 # INTERNAL

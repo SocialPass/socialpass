@@ -1105,6 +1105,18 @@ var halfmoon = {
 		}
 	},
 
+	/**
+	 * Toast alerts on page load.
+	 *
+	 * @returns {void}
+	 */
+	toastAlertsOnload: function() {
+		var toasts = document.querySelectorAll("[data-hm-onload='toast']");
+		for (var i = 0; i < toasts.length; i++) {
+			halfmoon.toastAlert(toasts[i]);
+		}
+	},
+
 	/* END ALERTS */
 
 
@@ -1891,6 +1903,8 @@ var halfmoon = {
 		document.addEventListener("click", function(event) {
 			halfmoon.onClick(event);
 		});
+
+		halfmoon.toastAlertsOnload();
 
 		halfmoon.scrollTabsToActiveToggle();
 

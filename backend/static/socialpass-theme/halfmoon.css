@@ -7657,7 +7657,7 @@ a:hover {
     box-shadow: var(--unordered-list-item-bullet-box-shadow);
 }
 
-.unordered-list.bulleted > li::before {
+.unordered-list.bullet-reset > li::before {
     background-clip: border-box;
     background-color: currentColor;
     background-image: none;

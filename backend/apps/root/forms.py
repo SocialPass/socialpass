@@ -36,6 +36,9 @@ class TeamForm(forms.ModelForm):
                 }
             )
         }
+        labels = {
+            "image": "Set Team Image"
+        }
 
 
 class EventForm(forms.ModelForm):

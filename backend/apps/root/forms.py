@@ -32,7 +32,7 @@ class TeamForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={
                     "placeholder": "A short description of your team",
-                    "rows": 4
+                    "rows": 3
                 }
             )
         }

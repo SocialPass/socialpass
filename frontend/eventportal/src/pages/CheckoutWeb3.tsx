@@ -131,7 +131,7 @@ export const CheckoutWeb3 = () => {
               </div>
             </div>
           </div>
-          <div className="col-lg-12 d-flex mt-30 d-flex gap-10 column-display-mobile">
+          <div className="col-lg-12 d-flex mt-10 d-flex gap-10 column-display-mobile">
             {connectData.connectors.map((x) => (
               <button
                 className={

@@ -114,7 +114,7 @@ footer {
   justify-content: space-between;
   position: absolute;
   bottom: 0;
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .container-fluid {
@@ -124,7 +124,7 @@ footer {
 }
 
 .card{
-  height: 90%;
+  height: 95%;
   width: 100%;
   left: 25%;
   right: 25%;
@@ -133,6 +133,7 @@ footer {
 
 @media (min-width: 1400px) {
   .card{
+    height: 80%;
     left: 50%;
   }
 }

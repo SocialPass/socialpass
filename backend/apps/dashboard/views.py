@@ -1,4 +1,5 @@
 import json
+import secrets
 from functools import lru_cache
 
 import stripe
@@ -6,7 +7,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, render, reverse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -14,6 +15,7 @@ from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
+from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite
 
 from apps.root.forms import CustomInviteForm, EventForm, TeamForm
@@ -38,19 +40,77 @@ class AcceptInviteView(AcceptInvite):
     Inherited AcceptInvite from beekeeper-invitations
     """
 
+    def accept_invite(self, invitation, request):
+        """
+        Class method for accepting invite
+        """
+        invitation.accepted = True
+        invitation.archived_email = invitation.email
+        invitation.email = f"{secrets.token_urlsafe(12)}{invitation.archived_email}"
+        invitation.save()
+        get_invitations_adapter().stash_verified_email(
+            self.request, invitation.archived_email
+        )
+
+    def get(self, *args, **kwargs):
+        """
+        Override post view for more general-specific accept invite view
+        """
+        # Get object
+        self.object = invitation = self.get_object()
+
+        # Error checks
+        # Error conditions are: no key, expired key or already accepted
+        if not invitation or (invitation and (invitation.key_expired())):
+            return render(self.request, "invitations/invalid.html")
+        if invitation.accepted:
+            return render(self.request, "invitations/already_accepted.html")
+
+        return render(
+            self.request, "invitations/accept.html", {"invitation": invitation}
+        )
+
     def post(self, *args, **kwargs):
         """
-        Override invite view to either redirect to login or signup,
-        depending on if user has account or not
+        Override post view for more general-specific accept invite view
         """
+        # Get object
+        self.object = invitation = self.get_object()
+
+        # Error checks
+        # Error conditions are: no key, expired key or already accepted
+        if not invitation or (invitation and (invitation.key_expired())):
+            return render(self.request, "invitations/invalid.html")
+        if invitation.accepted:
+            return render(self.request, "invitations/already_accepted.html")
+
+        # The invitation is valid.
+        # Mark it as accepted now if ACCEPT_INVITE_AFTER_SIGNUP is False.
+        self.accept_invite(
+            invitation=invitation,
+            request=self.request,
+        )
+
+        # The invitation has been accepted.
+        # Check if user exists for redirect url and membership creation purposes
         try:
-            self.object = self.get_object()
-            user = User.objects.get(email__iexact=self.object.email)
-            if user:
-                super().post(self, *args, **kwargs)
-                return redirect(reverse(settings.LOGIN_URL))
-        except Exception:
-            return super().post(self, *args, **kwargs)
+            user = User.objects.get(email__iexact=invitation.archived_email)
+            self.redirect_url = reverse("account_login")
+        except User.DoesNotExist:
+            user = None
+            self.redirect_url = reverse("account_signup")
+
+        # Everything finalized
+        # Try to create a membership if possible
+        if user and invitation.team:
+            membership, created = Membership.objects.get_or_create(
+                team=invitation.team, user=user
+            )
+            if created:
+                invitation.membership = membership
+                invitation.save()
+
+        return redirect(self.redirect_url)
 
 
 class TeamContextMixin(UserPassesTestMixin, ContextMixin):

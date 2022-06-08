@@ -1,0 +1,20 @@
+{% extends "account/new/base.html" %}
+
+{% load static account %}
+
+{% block head_title %}Invitation Accepted - SocialPass{% endblock %}
+
+{% block inner %}
+<p class="mb-5">
+    <a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-solid fa-arrow-left me-5"></i> Sign In</a>
+</p>
+<h1 class="fsr-3 text-strong fw-700 mt-0">Invitation Accepted</h1>
+<p>
+    The invite you have requested has already been accepted. Login with the associated email to get access!
+</p>
+<div class="hs-200 d-flex align-items-center justify-content-center my-40">
+  <img src="{% static 'images/illustrations/message_sent.svg' %}" alt="message_sent" class="d-block h-100">
+</div>
+{% endblock %}
+
+

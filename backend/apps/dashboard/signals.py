@@ -1,6 +1,6 @@
 import secrets
 
-from allauth.account.signals import user_logged_in
+from allauth.account.signals import user_signed_up
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 
@@ -9,10 +9,11 @@ from apps.root.models import Invite, Membership
 User = get_user_model()
 
 
-@receiver(user_logged_in)
-def login_membership_callback(request, user, **kwargs):
+@receiver(user_signed_up)
+def new_user_invitation_callback(request, user, **kwargs):
     """
-    Upon login, check for a recently-accepted invitation
+    Handle NEW user invitation flow
+    Upon signup, check for a recently-accepted invitation and create memberships
     """
     # Check for accepted invites without membership
     invites = Invite.objects.filter(

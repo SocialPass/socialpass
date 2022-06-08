@@ -48,7 +48,7 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     DATABASES = {
         "default": env.db(
-            "NFTY_DATABASE_URL", default="postgres:///local_socialpass_db"
+            "DJANGO_DATABASE_URL", default="postgres:///local_socialpass_db"
         ),
     }
     DATABASES["default"]["CONN_MAX_AGE"] = env.int(
@@ -212,11 +212,24 @@ EMAIL_BACKEND = env(
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
+# https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
+DEFAULT_FROM_EMAIL = env(
+    "DJANGO_DEFAULT_FROM_EMAIL",
+    default="SocialPass <noreply@socialpass.io>",
+)
+# https://docs.djangoproject.com/en/dev/ref/settings/#server-email
+SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
+EMAIL_SUBJECT_PREFIX = env(
+    "DJANGO_EMAIL_SUBJECT_PREFIX",
+    default="[SocialPass]",
+)
+
 
 # ADMIN
 # ------------------------------------------------------------------------------
-# Django Admin URL.
-ADMIN_URL = "admin/"
+# Django Admin URL regex.
+ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 # LOGGING
 # ------------------------------------------------------------------------------

@@ -11,6 +11,7 @@ import infoButton from "../static/images/icons/infoButton.svg";
 // Return UI for wallet connectors
 export const CheckoutWeb3 = () => {
   const [selectedWallet, setSelectedWallet] = useState<any>();
+  const [statusButton, setStatusButton] = useState<any>(true);
   const {
     id,
     requestAccessJson,
@@ -86,6 +87,7 @@ export const CheckoutWeb3 = () => {
   function handleConnectWallet(x: any) {
     setSelectedWallet(x);
     connect(x);
+    setStatusButton(false);
   }
 
   function handleCheckout() {
@@ -172,6 +174,7 @@ export const CheckoutWeb3 = () => {
           </div>
           <div className="d-flex align-items-center justify-content-center p-30 mt-50">
             <button
+              disabled={statusButton}
               onClick={() => handleCheckout()}
               className="btn btn-primary fs-20 text-capitalize rounded-3"
             >

@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EventPortalContext } from "../context";
-import headerImage from "../static/images/header1.svg";
-import FAQImage from "../static/images/FAQ.svg";
+// import headerImage from "../static/images/header1.svg";
+// import FAQImage from "../static/images/FAQ.svg";
 import logoImage from "../static/images/socialpass.svg";
 import _backButton from "../static/images/back.svg";
 import socialpassLogo from "../static/images/icons/socialpassLogo.svg";

@@ -5,16 +5,21 @@
 {% block head_title %}Sign In - SocialPass{% endblock %}
 
 {% block inner %}
+{% if request.GET.next %}
+<div class="alert alert-primary px-15 py-10" role="alert">
+    Please sign in to your account to continue.
+</div>
+{% endif %}
 <h1 class="fsr-3 text-strong fw-700">Sign In</h1>
 <p>
-	Welcome back! Please enter your credentials to sign in to your account.
+    Welcome back! Please enter your credentials to sign in to your account.
 </p>
 
 <!-- Form start -->
 <form class="login" method="POST" action="{% url 'account_login' %}">
-  	{% csrf_token %}
+    {% csrf_token %}
 
-  	{% if form.non_field_errors %}
+    {% if form.non_field_errors %}
         <div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
             <ul class="unordered-list bulleted m-0">
                 {% for error in form.non_field_errors %}
@@ -24,51 +29,51 @@
         </div>
     {% endif %}
 
-  	{% for input in form.hidden_fields %}
-    	{{ input }}
+    {% for input in form.hidden_fields %}
+        {{ input }}
     {% endfor %}
 
-  	{% for input in form.visible_fields %}
-  		<div class="form-group">
-  			{% if input.field.widget.input_type == "checkbox" %}
-  				<div class="form-check">
-		            <input
-		            	type="{{ input.field.widget.input_type }}"
-		            	name="{{ input.name }}"
-		            	value="{{ input.value|default_if_none:'' }}"
-		            	{% if input.field.widget.input_type != "hidden" %}
-		            		class="form-check-input"
-		            		id="{{ input.auto_id }}"
-		            	{% endif %}
+    {% for input in form.visible_fields %}
+        <div class="form-group">
+            {% if input.field.widget.input_type == "checkbox" %}
+                <div class="form-check">
+                    <input
+                        type="{{ input.field.widget.input_type }}"
+                        name="{{ input.name }}"
+                        value="{{ input.value|default_if_none:'' }}"
+                        {% if input.field.widget.input_type != "hidden" %}
+                            class="form-check-input"
+                            id="{{ input.auto_id }}"
+                        {% endif %}
                         {% if input.field.required %}
                             required="required"
                         {% endif %}
-		            	{% for k,v in input.field.widget.attrs.items %}
-		            		{{ k }}="{{ v }}"
-		            	{% endfor %}
-	            	/>
-	            	<label class="form-check-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
-  				</div>
-  			{% else %}
-  				<div class="position-relative">
-  					<input
-		            	type="{{ input.field.widget.input_type }}"
-		            	name="{{ input.name }}"
-		            	value="{{ input.value|default_if_none:'' }}"
-		            	{% if input.field.widget.input_type != "hidden" %}
-		            		class="ps-40 form-control {% if input.errors %}is-invalid{% endif %}"
-		            		id="{{ input.auto_id }}"
-		            	{% endif %}
+                        {% for k,v in input.field.widget.attrs.items %}
+                            {{ k }}="{{ v }}"
+                        {% endfor %}
+                    />
+                    <label class="form-check-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+                </div>
+            {% else %}
+                <div class="position-relative">
+                    <input
+                        type="{{ input.field.widget.input_type }}"
+                        name="{{ input.name }}"
+                        value="{{ input.value|default_if_none:'' }}"
+                        {% if input.field.widget.input_type != "hidden" %}
+                            class="ps-40 form-control {% if input.errors %}is-invalid{% endif %}"
+                            id="{{ input.auto_id }}"
+                        {% endif %}
                         {% if input.field.required %}
                             required="required"
                         {% endif %}
-		            	{% for k,v in input.field.widget.attrs.items %}
-		            		{{ k }}="{{ v }}"
-		            	{% endfor %}
+                        {% for k,v in input.field.widget.attrs.items %}
+                            {{ k }}="{{ v }}"
+                        {% endfor %}
                         {% if input.name == "login" %}
                             autofocus="true"
                         {% endif %}
-	            	/>
+                    />
                     <label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25" for="{{ input.id_for_label }}">
                         {% if input.name == "login" %}
                             <i class="fa-solid fa-user"></i>
@@ -78,35 +83,34 @@
                             <span class="visually-hidden">Password</span>
                         {% endif %}
                     </label>
-  				</div>
+                </div>
             {% endif %}
 
-  			{% if input.errors %}
+            {% if input.errors %}
                 <ul class="unordered-list bulleted mt-5 text-danger subpixel-antialiased">
                     {% for error in input.errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
-  			{% endif %}
+            {% endif %}
 
             {% if input.name == "password" %}
                 <div class="form-text">
                     Forgot your password? <a href="{% url 'account_reset_password' %}" class="fw-bold">Reset password</a>
                 </div>
             {% endif %}
-  		</div>
-  	{% endfor %}
-  	{% if redirect_field_value %}
-  		<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  	{% endif %}
-  	<div class="form-group">
-  		<button class="btn btn-primary btn-block" type="submit">Sign In</button>
-  	</div>
+        </div>
+    {% endfor %}
+    {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <div class="form-group">
+        <button class="btn btn-primary btn-block" type="submit">Sign In</button>
+    </div>
 </form>
 <!-- Form end -->
 
 <p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
-	Don't have an account? <a href="{% url 'account_signup' %}" class="fw-bold">Sign up</a> to create one.
+    Don't have an account? <a href="{% url 'account_signup' %}" class="fw-bold">Sign up</a> to create one.
 </p>
 {% endblock %}
-

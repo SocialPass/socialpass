@@ -18,7 +18,7 @@
 
     {% if form.non_field_errors %}
         <div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
-            <ul class="unordered-list bulleted m-0">
+            <ul class="unordered-list bullet-reset m-0">
                 {% for error in form.non_field_errors %}
                     <li>{{ error|escape }}</li>
                 {% endfor %}

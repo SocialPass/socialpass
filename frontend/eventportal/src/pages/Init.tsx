@@ -14,8 +14,10 @@ export const Init = () => {
     (async function () {
       if (id !== "/") {
         setID(id);
+        console.log(id);
         localStorage.setItem("@eventId", JSON.stringify(id));
         const response = await TicketedEventRetrieve.call({ public_id: id });
+
         if (response && response.httpStatus) {
           // success
           if (response.httpStatus === 200) {

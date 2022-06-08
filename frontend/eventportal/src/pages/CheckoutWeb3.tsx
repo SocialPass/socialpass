@@ -10,6 +10,7 @@ import infoButton from "../static/images/icons/infoButton.svg";
 // ConnectorWallets
 // Return UI for wallet connectors
 export const CheckoutWeb3 = () => {
+  const [selectedWallet, setSelectedWallet] = useState<any>();
   const {
     id,
     requestAccessJson,
@@ -82,6 +83,11 @@ export const CheckoutWeb3 = () => {
     navigate(-1);
   }
 
+  function handleConnectWallet(x: any) {
+    setSelectedWallet(x);
+    connect(x);
+  }
+
   function handleCheckout() {
     console.log("checkout...");
     signMessage();
@@ -126,12 +132,20 @@ export const CheckoutWeb3 = () => {
           <div className="col-lg-12 d-flex mt-30 d-flex gap-10 column-display-mobile">
             {connectData.connectors.map((x) => (
               <button
-                className="btn btn-secondary fs-15 border-0 shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                className={
+                  selectedWallet === x
+                    ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                    : "btn-secondary fs-12 border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                }
                 disabled={!x.ready}
                 key={x.id}
-                onClick={() => connect(x)}
+                id={x.id}
+                onClick={() => handleConnectWallet(x)}
               >
-                <Web3ConnectorImage connector={x.name} />
+                <Web3ConnectorImage
+                  selectedWallet={selectedWallet}
+                  connector={x.name}
+                />
                 {x.name}
                 {!x.ready && " (unsupported)"}
               </button>

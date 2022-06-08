@@ -21,7 +21,6 @@ export default ({ mode }) => {
     },
     plugins: [react()]
   })
-
 }
 
 

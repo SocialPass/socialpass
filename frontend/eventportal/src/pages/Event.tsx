@@ -14,21 +14,20 @@ export const Event = (): JSX.Element => {
     navigate(`/${id}/ticket-selection`);
   }
 
-  // if (retrieveJson){}
   return (
-    <div className="row flex-grow-1 m-0 mt-3 align-items-center">
+    <div className="row flex-grow-1 m-0 mt-3 align-items-center mt-50">
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10 mb-30">
           <div className="mt-15 mb-15 d-flex flex-column align-items-start justify-content-center">
             <span className="fs-30 fw-bold">
               {retrieveJson.event_info.title}
             </span>
-            <span className="fs-15 fw-light text-muted">
+            <span className="fs-16 fw-light text-muted">
               {retrieveJson.event_info.description}
             </span>
           </div>
           <div className="d-flex flex-column gap-5 mb-15">
-            <p className="d-flex align-items-center m-0 mt-1 mb-1">
+            <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
               <img
                 src={clock}
                 height="16.9"
@@ -39,7 +38,7 @@ export const Event = (): JSX.Element => {
               {retrieveJson.event_info.date} |{" "}
               {retrieveJson.event_info.timezone}
             </p>
-            <p className="d-flex align-items-center m-0 mt-1 mb-1">
+            <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
               <img
                 src={location}
                 height="16.9"
@@ -59,7 +58,7 @@ export const Event = (): JSX.Element => {
           </span>
         </div>
       </div>
-      <div className="col-md-4 offset-sm-1">
+      <div className="col-md-4 offset-md-1">
         <button className="btn-primary fw-700 fs-20" onClick={handleNavigate}>
           Claim Tickets
         </button>

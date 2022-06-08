@@ -29,7 +29,6 @@ export class TicketedEventRetrieve {
         return obj;
       })
       .catch((error) => {
-        console.log(error);
         let e = {
           httpStatus: error.status,
           message: error.json(),

@@ -32,7 +32,6 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
     def get_organizer_info(self, obj):
         return {
             "name": obj.team.name,
-            "url": "",
             "profile_image": obj.team.image.url if obj.team.image else None,
         }
 
@@ -41,7 +40,7 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
             "title": obj.title,
             "description": obj.description,
             "requirements": obj.requirements,
-            "date": obj.date,
+            "date": obj.date.strftime("%A, %B %d | %H:%M%p"),
             "timezone": obj.timezone,
             "location": obj.location,
         }

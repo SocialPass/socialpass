@@ -15,7 +15,7 @@ export const Event = (): JSX.Element => {
   }
 
   return (
-    <div className="row flex-grow-1 m-0 mt-3 align-items-center mt-50">
+    <div className="row flex-grow-1 m-0 mt-3 align-items-center mt-10">
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10 mb-30">
           <div className="mt-15 mb-15 d-flex flex-column align-items-start justify-content-center">

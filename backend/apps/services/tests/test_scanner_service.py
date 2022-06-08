@@ -12,8 +12,6 @@ class TestScanningService(TestCase):
         ticket = Ticket.objects.last()
         if ticket:
             self.assert_equals(
-                get_ticket_from_embedded_qr_code(
-                    f"{ticket.embed_code}/{ticket.filename}"
-                ).id,
+                get_ticket_from_embedded_qr_code(ticket.full_embed).id,
                 ticket.id,
             )

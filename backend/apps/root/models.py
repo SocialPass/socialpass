@@ -313,7 +313,7 @@ class Ticket(DBModel):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
     @property
-    def embed(self):
+    def full_embed(self):
         return f"{self.embed_code}/{self.filename}"
 
     @property

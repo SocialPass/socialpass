@@ -13,11 +13,11 @@ User = get_user_model()
 def new_user_invitation_callback(request, user, **kwargs):
     """
     Handle NEW user invitation flow
-    Upon signup, check for a recently-accepted invitation and create memberships
+    Upon signup, check for recently-accepted invitation(s) and create membership(s)
     """
     # Check for accepted invites without membership
     invites = Invite.objects.filter(
-        email__iexact=user.email, accepted=True, membership=None
+        archived_email__iexact=user.email, accepted=True, membership=None
     )
 
     # Create membership based on invites witout membership
@@ -28,7 +28,5 @@ def new_user_invitation_callback(request, user, **kwargs):
             )
             # update invite membership if created
             invite.membership = membership
-        # update other info
-        invite.archived_email = invite.email
-        invite.email = f"{secrets.token_urlsafe(12)}{invite.archived_email}"
+
         invite.save()

@@ -11,6 +11,9 @@
 <h1 class="fsr-3 text-strong fw-700 mt-0">Accept Invitation</h1>
 <p>
     Confirm the invitation to <strong>{{invitation.email}}</strong>
+    {% if invitation.team %}
+    from <strong>{{invitation.team.name}}</strong>
+    {% endif %}
 </p>
 
 <form method="POST" action="{% url 'accept_invite' request.resolver_match.kwargs.key %}">

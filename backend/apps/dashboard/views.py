@@ -51,6 +51,13 @@ class AcceptInviteView(AcceptInvite):
         get_invitations_adapter().stash_verified_email(
             self.request, invitation.archived_email
         )
+        # If team, add success message
+        if invitation.team:
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                f"Invitation to '{invitation.team.name}' accepted",
+            )
 
     def get(self, *args, **kwargs):
         """

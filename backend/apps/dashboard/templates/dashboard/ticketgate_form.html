@@ -130,7 +130,7 @@
         </li>
       `;
     document.getElementById("nav-requirement").innerHTML = list;
-    
+
     // adds form to tab-content
     tokenIdsCounter.push(0);
     _createRequirementForm(initialData);
@@ -161,7 +161,7 @@
                 aria-label="Close">
           Remove requirement
         </button>
-      </div>        
+      </div>
       <form id="${formId}">
         <div class="form-group">
           <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
@@ -193,7 +193,7 @@
         </div>
         <div class="d-flex flex-row align-items-center gap-3">
           Token IDs
-          <i type="button" onclick="addNewTokenIdToRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-add"></i> | 
+          <i type="button" onclick="addNewTokenIdToRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-add"></i> |
           <i type="button" onclick="popTokenIdFromRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-trash-can"></i>
         </div>
         <div id="tokenIdGroup-${requirementsAbsoluteCounter}" class="d-flex flex-column align-items-start gap-3 mt-2"></div>

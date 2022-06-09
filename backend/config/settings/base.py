@@ -95,7 +95,6 @@ LOCAL_APPS = [
     "apps.root.apps.RootConfig",
     "apps.root.apps.OverrideInvitationsConfig",
     "apps.dashboard",
-    
     "avoid_view_resubmission",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -162,9 +161,11 @@ TEMPLATES = [
     {
         # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
-        "DIRS": [str(ROOT_DIR / "templates")],
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
+        "DIRS": [
+            # Dashboard
+            str(ROOT_DIR / "apps/dashboard/templates")
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors

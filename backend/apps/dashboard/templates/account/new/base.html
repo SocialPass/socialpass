@@ -34,71 +34,71 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 		<!-- SEO -->
-        <meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
-        <meta name="author" content="SocialPass">
-        <meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket">
+		<meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
+		<meta name="author" content="SocialPass">
+		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket">
 
-        <!-- Open graph -->
-        <meta property="og:type" content="article">
-        <meta property="og:url" content="https://socialpass.io">
-        <meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
-        <meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
-        <meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:site" content="@socialpass_io">
+		<!-- Open graph -->
+		<meta property="og:type" content="article">
+		<meta property="og:url" content="https://socialpass.io">
+		<meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
+		<meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
+		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:site" content="@socialpass_io">
 
-        <!-- Custom styles -->
-        <style type="text/css">
-        	:root {
-        		--base-body-bg-color: var(--white-color);
+		<!-- Custom styles -->
+		<style type="text/css">
+			:root {
+				--base-body-bg-color: var(--white-color);
 
-        		/* Sidebar */
+				/* Sidebar */
 
-        		--sidebar-width: 36rem;
-        	}
+				--sidebar-width: 36rem;
+			}
 
-        	.dark-mode {
-        		--base-body-bg-color: var(--dark-color-very-light);
-        	}
+			.dark-mode {
+				--base-body-bg-color: var(--dark-color-very-light);
+			}
 
-        	@media (min-width: 993px) {
-        		:root {
-        			/* Sidebar */
+			@media (min-width: 993px) {
+				:root {
+					/* Sidebar */
 
-        			--sidebar-width: 50rem;
-        		}
-        	}
+					--sidebar-width: 50rem;
+				}
+			}
 
-        	@media (min-width: 1201px) {
-        		:root {
-        			/* Sidebar */
+			@media (min-width: 1201px) {
+				:root {
+					/* Sidebar */
 
-        			--sidebar-width: 70rem;
-        		}
-        	}
+					--sidebar-width: 70rem;
+				}
+			}
 
-        	.sidebar {
-        		background-image: url("{% static 'images/auth-sidebar-bg-image-1.svg' %}");
-        		background-repeat: no-repeat;
-        		background-position: 0 0;
-        		background-size: 80%;
-        	}
+			.sidebar {
+				background-image: url("{% static 'images/auth-sidebar-bg-image-1.svg' %}");
+				background-repeat: no-repeat;
+				background-position: 0 0;
+				background-size: 80%;
+			}
 
-        	.dark-mode .sidebar {
-        		background-image: url("{% static 'images/auth-sidebar-bg-image-2.svg' %}");
-        	}
+			.dark-mode .sidebar {
+				background-image: url("{% static 'images/auth-sidebar-bg-image-2.svg' %}");
+			}
 
-        	@media (min-width: 993px) {
-        		.sidebar {
-        			background-size: 50%;
-        		}
-        	}
-        </style>
+			@media (min-width: 993px) {
+				.sidebar {
+					background-size: 50%;
+				}
+			}
+		</style>
 
-        {% block extra_head %}{% endblock extra_head %}
+		{% block extra_head %}{% endblock extra_head %}
 
-        <!-- Google Tag Manager -->
-        {% if not debug %}
+		<!-- Google Tag Manager -->
+		{% if not debug %}
 			<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=

@@ -523,3 +523,19 @@ BOOSTRAP OVERRIDES
     display: none;
   }
 }
+
+/**
+ * The following is a quick hack to fix the container positioning, and 
+ * basically center it forcefully. Should definitely be re-factored in the 
+ * future because it is really hacky! 
+ */
+
+.container-hack {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  max-width: 100%;
+  margin: 0;
+}

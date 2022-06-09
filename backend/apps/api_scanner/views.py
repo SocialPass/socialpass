@@ -25,7 +25,7 @@ class SetAccessKeyAndEventMixin:
     def set_event_and_redemption_access_key(self, redemption_access_key: uuid.UUID):
         try:
             self.redemption_access_key = RedemptionAccessKey.objects.get(
-                id=redemption_access_key
+                public_id=redemption_access_key
             )
             self.event = self.redemption_access_key.event
         except Exception:

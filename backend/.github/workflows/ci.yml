@@ -49,7 +49,7 @@ jobs:
 
     env:
       # postgres://user:password@host:port/database
-      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres"
+      DJANGO_DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres"
 
     steps:
 

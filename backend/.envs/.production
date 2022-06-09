@@ -1,57 +1,53 @@
-# General Django
+# DJANGO / PYTHON
 # ------------------------------------------------------------------------------
-DJANGO_SETTINGS_MODULE=config.settings.production
-DJANGO_SECRET_KEY='test'
-DJANGO_ADMIN_URL='test'
-DJANGO_ALLOWED_HOSTS='*'
+CORS_ALLOW_ALL_ORIGINS=True
+CORS_URLS_REGEX="r"^/api/.*$""
+DJANGO_ADMIN_URL=""
+DJANGO_ALLOWED_HOSTS=""
+DJANGO_DATABASE_URL=""
 DJANGO_DEBUG=False
+DJANGO_READ_DOT_ENV_FILE=False
+DJANGO_SETTINGS_MODULE=config.settings.production
+DJANGO_SECRET_KEY=""
 PYTHONHASHSEED=random
-DJANGO_SECRET_KEY="random"
-DJANGO_ADMIN_URL="admin"
-NFTY_DATABASE_URL="v3db"
 
-# Gunicorn
+# INTERNAL
+# ------------------------------------------------------------------------------
+EVENT_PORTAL_BASE_URL=""
+SCANNER_BASE_URL=""
+
+# AWS (PRODUCTION)
+# ------------------------------------------------------------------------------
+DJANGO_AWS_ACCESS_KEY_ID=""
+DJANGO_AWS_LOCATION=""
+DJANGO_AWS_S3_REGION_NAME=""
+DJANGO_AWS_SECRET_ACCESS_KEY=""
+DJANGO_AWS_STORAGE_BUCKET_NAME=""
+DJANGO_AWS_S3_ENDPOINT_URL=""
+
+# GUNICORN
 # ------------------------------------------------------------------------------
 WEB_CONCURRENCY=4
 
-
-# Security
+# EMAIL (MAILGUN)
 # ------------------------------------------------------------------------------
-# TIP: better off using DNS, however, redirect is OK too
-DJANGO_SECURE_SSL_REDIRECT=False
+DJANGO_SERVER_EMAIL="
+DJANGO_DEFAULT_FROM_EMAIL=""
+DJANGO_EMAIL_SUBJECT_PREFIX=""
+MAILGUN_API_KEY=""
+MAILGUN_DOMAIN=""
 
-
-# PostgreSQL
+# MORALIS
 # ------------------------------------------------------------------------------
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-POSTGRES_DB=backend
-POSTGRES_USER='test'
-POSTGRES_PASSWORD='test'
-
-
-# Email
-# ------------------------------------------------------------------------------
-DJANGO_SERVER_EMAIL='test'
-MAILGUN_API_KEY='test'
-MAILGUN_DOMAIN='test'
-
-
-# AWS
-# ------------------------------------------------------------------------------
-DJANGO_AWS_ACCESS_KEY_ID='test'
-DJANGO_AWS_SECRET_ACCESS_KEY='test'
-DJANGO_AWS_STORAGE_BUCKET_NAME='test'
+MORALIS_API_KEY=""
 
 # STRIPE
-# ------------------------------------------------------------------------------
 # TODO: rotate keys and move to secrets manager
-STRIPE_PUBLISHABLE_KEY=pk_live_51KvpFEJ8LTYPBcCzf1bhdJLxXw68IpenyXIYGcE20ka3C0Cz0HDNdDlHUtYgrRmGhLfgcq9zWUBDeyLB0k7fYmuK00dP6iYxBl
-STRIPE_SECRET_KEY=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
+# ------------------------------------------------------------------------------
+STRIPE_PUBLISHABLE_KEY=""
+STRIPE_SECRET_KEY=""
 
 # SENTRY
-SENTRY_DSN=https://e558313e48324475890fc637cfc544da@o1251100.ingest.sentry.io/6419223
-SENTRY_ENV_NAME=production
-
-EVENT_PORTAL_BASE_URL=https://tickets.socialpass.io
-SCANNER_BASE_URL=https://scanner.socialpass.io
+# ------------------------------------------------------------------------------
+SENTRY_DSN=""
+SENTRY_ENV_NAME=""

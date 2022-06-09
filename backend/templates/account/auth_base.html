@@ -46,7 +46,7 @@
           </li>
           {% for member in request.user.membership_set.all %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'ticketgate_list' member.team.pk %}">
+            <a class="nav-link" href="{% url 'ticketgate_list' member.team.public_id %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                 <i class="fa-solid fa-house-chimney"></i>
               </div>

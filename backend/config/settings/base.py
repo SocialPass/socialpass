@@ -48,7 +48,7 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     DATABASES = {
         "default": env.db(
-            "NFTY_DATABASE_URL", default="postgres:///local_socialpass_db"
+            "DJANGO_DATABASE_URL", default="postgres:///local_socialpass_db"
         ),
     }
     DATABASES["default"]["CONN_MAX_AGE"] = env.int(
@@ -88,6 +88,7 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "rest_framework",
     "rest_framework.authtoken",
+    "storages",
 ]
 
 LOCAL_APPS = [
@@ -211,15 +212,24 @@ EMAIL_BACKEND = env(
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
+# https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
+DEFAULT_FROM_EMAIL = env(
+    "DJANGO_DEFAULT_FROM_EMAIL",
+    default="SocialPass <noreply@socialpass.io>",
+)
+# https://docs.djangoproject.com/en/dev/ref/settings/#server-email
+SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
+EMAIL_SUBJECT_PREFIX = env(
+    "DJANGO_EMAIL_SUBJECT_PREFIX",
+    default="[SocialPass]",
+)
+
 
 # ADMIN
 # ------------------------------------------------------------------------------
-# Django Admin URL.
-ADMIN_URL = "admin/"
-# https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""kvn""", "kevin@nftylabs.io")]
-# https://docs.djangoproject.com/en/dev/ref/settings/#managers
-MANAGERS = ADMINS
+# Django Admin URL regex.
+ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -255,8 +265,6 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# https://django-allauth.readthedocs.io/en/latest/forms.html
-# ACCOUNT_FORMS = {"signup": "apps.root.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "apps.root.adapters.SocialAccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
@@ -282,8 +290,6 @@ if not DEBUG:
 
 # STORAGES
 # ------------------------------------------------------------------------------
-# https://django-storages.readthedocs.io/en/latest/#installation
-INSTALLED_APPS += ["storages"]  # noqa F405
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
 AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID")
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings

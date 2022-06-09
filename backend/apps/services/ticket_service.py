@@ -29,7 +29,7 @@ def create_ticket_image(
             "event_date": event.date.strftime("%m/%d/%Y, %H:%M:%S"),
             "event_location": event.location,
         },
-        embed=f"{ticket.embed_code}/{ticket.filename}",
+        embed=ticket.full_embed,
         scene_img_source=scene_img_source,
         top_banner_text=top_banner_text,
     )

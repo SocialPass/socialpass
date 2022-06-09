@@ -4,85 +4,9 @@ from invitations.views import SendInvite
 from . import views
 
 urlpatterns = [
-    # Team
+    # General redirect
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
-    path(
-        "team-create/",
-        views.TeamCreateView.as_view(),
-        name="team_create",
-    ),
-    path(
-        "<int:team_pk>/team-detail/",
-        views.TeamDetailView.as_view(),
-        name="team_detail",
-    ),
-    path(
-        "<int:team_pk>/team-update/",
-        views.TeamUpdateView.as_view(),
-        name="team_update",
-    ),
-    path(
-        "<int:team_pk>/team-members/",
-        views.TeamMemberManageView.as_view(),
-        name="team_members",
-    ),
-    path(
-        "<int:team_pk>/team-members/<int:member_pk>/",
-        views.TeamMemberDeleteView.as_view(),
-        name="team_member_delete",
-    ),
-    # Ticketing
-    path(
-        "<int:team_pk>/ticketed-events/",
-        views.EventListView.as_view(),
-        name="ticketgate_list",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/create/",
-        views.EventCreateView.as_view(),
-        name="ticketgate_create",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/<int:pk>/",
-        views.EventDetailView.as_view(),
-        name="ticketgate_detail",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/<int:pk>/update/",
-        views.EventUpdateView.as_view(),
-        name="ticketgate_update",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/<int:pk>/stats/",
-        views.EventStatisticsView.as_view(),
-        name="ticketgate_stats",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/estimate-price/",
-        views.PricingCalculator.as_view(),
-        name="ticketgate_price_estimator",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/<int:pk>/checkout",
-        views.EventCheckout.as_view(),
-        name="ticketgate_checkout",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/<int:pk>/checkout/success",
-        views.EventCheckout.success_stripe_callback,
-        name="ticketgate_checkout_success_callback",
-    ),
-    path(
-        "<int:team_pk>/ticketed-events/<int:pk>/checkout/failure",
-        views.EventCheckout.failure_stripe_callback,
-        name="ticketgate_checkout_failure_callback",
-    ),
-    path(
-        "webhooks/stripe",
-        views.EventCheckout.stripe_webhook,
-        name="stripe_webhook",
-    ),
-    # Customer account management
+    # Customer Accounts
     path("accounts/", include("allauth.urls")),
     path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
     # Customer invitations
@@ -92,4 +16,81 @@ urlpatterns = [
         name="accept_invite",
     ),
     path("accounts/send-invite/", SendInvite.as_view(), name="send_invite"),
+    # Team
+    path(
+        "team-create/",
+        views.TeamCreateView.as_view(),
+        name="team_create",
+    ),
+    path(
+        "team-detail/<uuid:team_pk>/",
+        views.TeamDetailView.as_view(),
+        name="team_detail",
+    ),
+    path(
+        "team-update/<uuid:team_pk>/",
+        views.TeamUpdateView.as_view(),
+        name="team_update",
+    ),
+    path(
+        "team-members/<uuid:team_pk>/",
+        views.TeamMemberManageView.as_view(),
+        name="team_members",
+    ),
+    path(
+        "team-members/<uuid:team_pk>/<int:member_pk>/",
+        views.TeamMemberDeleteView.as_view(),
+        name="team_member_delete",
+    ),
+    # Ticketing
+    path(
+        "ticketed-events/<uuid:team_pk>/",
+        views.EventListView.as_view(),
+        name="ticketgate_list",
+    ),
+    path(
+        "ticketed-events/create/<uuid:team_pk>/",
+        views.EventCreateView.as_view(),
+        name="ticketgate_create",
+    ),
+    path(
+        "ticketed-events/<uuid:team_pk>/<int:pk>/",
+        views.EventDetailView.as_view(),
+        name="ticketgate_detail",
+    ),
+    path(
+        "ticketed-events/update/<uuid:team_pk>/<int:pk>/",
+        views.EventUpdateView.as_view(),
+        name="ticketgate_update",
+    ),
+    path(
+        "ticketed-events/stats/<uuid:team_pk>/<int:pk>/",
+        views.EventStatisticsView.as_view(),
+        name="ticketgate_stats",
+    ),
+    path(
+        "ticketed-events/estimate-price/<uuid:team_pk>/",
+        views.PricingCalculator.as_view(),
+        name="ticketgate_price_estimator",
+    ),
+    path(
+        "ticketed-events/checkout/<uuid:team_pk>/<int:pk>/",
+        views.EventCheckout.as_view(),
+        name="ticketgate_checkout",
+    ),
+    path(
+        "ticketed-events/checkout/success/<uuid:team_pk>/<int:pk>/",
+        views.EventCheckout.success_stripe_callback,
+        name="ticketgate_checkout_success_callback",
+    ),
+    path(
+        "ticketed-events/checkout/failure/<uuid:team_pk>/<int:pk>/",
+        views.EventCheckout.failure_stripe_callback,
+        name="ticketgate_checkout_failure_callback",
+    ),
+    path(
+        "webhooks/stripe",
+        views.EventCheckout.stripe_webhook,
+        name="stripe_webhook",
+    ),
 ]

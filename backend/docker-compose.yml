@@ -22,7 +22,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    
+
 
   web:
     build:
@@ -41,7 +41,7 @@ services:
       - 8888 # django shell_plus
     environment:
       <<: *postgres-common-variables
-      NFTY_DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
+      DJANGO_DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
     links:
       - db
     depends_on:

@@ -2,9 +2,10 @@
 import logging
 from django.db import migrations
 
+
 def create_default_pricing_group(apps, schema_editor):
 
-    PricingRuleGroup = apps.get_model('root', 'PricingRuleGroup')
+    PricingRuleGroup = apps.get_model("root", "PricingRuleGroup")
 
     pricing_rule_group, created = PricingRuleGroup.objects.get_or_create(name="Default")
     if created:
@@ -12,15 +13,15 @@ def create_default_pricing_group(apps, schema_editor):
         pricing_rule_group.save()
 
     if PricingRuleGroup.objects.count() > 1:
-        logging.warning("PricingRuleGroup already exists in database. Default still created. Maybe as a result there are two default pricing rule groups. Please check the database") # noqa
+        logging.warning(
+            "PricingRuleGroup already exists in database. Default still created. Maybe as a result there are two default pricing rule groups. Please check the database"
+        )  # noqa
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0014_pricingrulegroup_description'),
+        ("root", "0002_pricingrulegroup_description"),
     ]
 
-    operations = [
-        migrations.RunPython(create_default_pricing_group)
-    ]
+    operations = [migrations.RunPython(create_default_pricing_group)]

@@ -35,6 +35,26 @@ class UserDetailView(TemplateView):
     template_name = "account/detail.html"
 
 
+class TeamCreateView(LoginRequiredMixin, CreateView):
+    """
+    Creates a new team.
+    """
+
+    model = Team
+    form_class = TeamForm
+    template_name = "account/team_create.html"
+
+    def get_success_url(self):
+        self.object.members.add(self.request.user)
+        messages.add_message(
+            self.request, messages.SUCCESS, "Your team has been created successfully."
+        )
+        return reverse(
+            "ticketgate_list",
+            args=(self.object.public_id,),
+        )
+
+
 class AcceptInviteView(AcceptInvite):
     """
     Inherited AcceptInvite from beekeeper-invitations
@@ -131,7 +151,7 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         user_logged_in = self.request.user.is_authenticated
         try:
             user_membership = Membership.objects.select_related("team").get(
-                team__id=self.kwargs["team_pk"], user__id=self.request.user.id
+                team__public_id=self.kwargs["team_pk"], user__id=self.request.user.id
             )
             self.team = user_membership.team
         except Exception:
@@ -189,7 +209,8 @@ class RedirectToTeamView(RedirectView):
         if self.request.user.is_authenticated:
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
-                return reverse("ticketgate_list", args=(membership.team.pk,))
+
+                return reverse("ticketgate_list", args=(membership.team.public_id,))
             else:
                 return reverse("team_create")
         else:
@@ -277,7 +298,7 @@ class EventListView(TeamContextMixin, ListView):
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):
-        qs = Event.objects.filter(team__id=self.kwargs["team_pk"])
+        qs = Event.objects.filter(team__public_id=self.kwargs["team_pk"])
         qs = qs.order_by("-modified")
 
         query_title = self.request.GET.get("title", "")
@@ -297,7 +318,9 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = Event.objects.filter(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
+        qs = Event.objects.filter(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+        )
         return qs
 
 
@@ -397,7 +420,9 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
     @lru_cache
     def get_object(self):
-        return Event.objects.get(pk=self.kwargs["pk"], team__pk=self.kwargs["team_pk"])
+        return Event.objects.get(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+        )
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs, tokengate=self.get_object())
@@ -580,12 +605,14 @@ class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListV
         """
         context = super().get_context_data(**kwargs)
         context["current_gate"] = Event.objects.get(
-            pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"]
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
         )
         return context
 
     def get_object(self):
-        return Event.objects.get(pk=self.kwargs["pk"], team__id=self.kwargs["team_pk"])
+        return Event.objects.get(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+        )
 
     def get_queryset(self):
         """
@@ -619,24 +646,4 @@ class PricingCalculator(TeamContextMixin, View):
         )
         return JsonResponse(
             {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
-        )
-
-
-class TeamCreateView(LoginRequiredMixin, CreateView):
-    """
-    Creates a new team.
-    """
-
-    model = Team
-    form_class = TeamForm
-    template_name = "account/team_create.html"
-
-    def get_success_url(self):
-        self.object.members.add(self.request.user)
-        messages.add_message(
-            self.request, messages.SUCCESS, "Your team has been created successfully."
-        )
-        return reverse(
-            "ticketgate_list",
-            args=(self.object.id,),
         )

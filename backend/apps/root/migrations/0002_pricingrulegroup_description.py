@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0013_redemptionaccesskey_name_and_more'),
+        ("root", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pricingrulegroup',
-            name='description',
+            model_name="pricingrulegroup",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
     ]

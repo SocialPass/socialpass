@@ -1,7 +1,7 @@
 # DJANGO / PYTHON
 # ------------------------------------------------------------------------------
 CORS_ALLOW_ALL_ORIGINS=True
-CORS_URLS_REGEX="r"^/api/.*$""
+CORS_URLS_REGEX=r"^/api/.*$"
 DJANGO_ADMIN_URL=""
 DJANGO_ALLOWED_HOSTS=""
 DJANGO_DATABASE_URL=""

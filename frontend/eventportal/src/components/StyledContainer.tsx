@@ -18,7 +18,7 @@ export const StyledContainer = ({
   const location = useLocation();
   const navigate = useNavigate();
   return (
-    <div className="left-30 container-fluid p-0 card">
+    <div className="left-30 container-fluid p-0 card container-hack">
       <div>
         {location.pathname.length > 45 ? (
           <header

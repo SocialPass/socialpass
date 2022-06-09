@@ -66,20 +66,22 @@ export const CheckoutStatus = () => {
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10">
           <h1>Something Went Wrong</h1>
-          <p>We’re sorry, we were not able to redeem this Token Gate</p>
+          <p className="fs-15">
+            We’re sorry, we were not able to redeem this Token Gate
+          </p>
           <div className="fw-bold bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
             <img src={denied} height="16.9" width="16.9" />
             access denied
             <span></span>
           </div>
-          <div className="d-flex flex-row justify-content-start align-items-center gap-30">
+          <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
             <img
               className="avatar-img"
               src={retrieveJson.organizer_info.profile_image}
             />
             <div>
-              <strong>{retrieveJson.event_info.title}</strong>
-              <p className="d-flex align-items-center m-0 mt-1 mb-1">
+              <strong className="fs-20">{retrieveJson.event_info.title}</strong>
+              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                 <img
                   src={clock}
                   height="16.9"
@@ -90,7 +92,7 @@ export const CheckoutStatus = () => {
                 {retrieveJson.event_info.date} |{" "}
                 {retrieveJson.event_info.timezone}
               </p>
-              <p className="d-flex align-items-center m-0 mt-1 mb-1">
+              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                 <img
                   src={location}
                   height="16.9"
@@ -106,7 +108,7 @@ export const CheckoutStatus = () => {
       </div>
       <div className="col-md-5 mt-30">
         <button
-          className="btn-primary fw-700 fs-20"
+          className="btn-primary fw-700 fs-22"
           onClick={() => {
             navigate(`/${id}`);
           }}

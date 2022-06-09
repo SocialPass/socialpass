@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EventPortalContext } from "../context";
-import headerImage from "../static/images/header1.svg";
-import FAQImage from "../static/images/FAQ.svg";
+// import headerImage from "../static/images/header1.svg";
+// import FAQImage from "../static/images/FAQ.svg";
 import logoImage from "../static/images/socialpass.svg";
 import _backButton from "../static/images/back.svg";
+import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
 
 // StyledContainer component
 // Display root layout (header, main content, footer)
@@ -22,8 +23,11 @@ export const StyledContainer = ({
         {location.pathname.length > 45 ? (
           <header
             className="small-header"
-            style={{ backgroundImage: `url(${headerImage})` }}
+            // style={{ backgroundImage: `url(${headerImage})` }}
           >
+            <div className="d-flex align-items-center justify-content-center mt-15">
+              <img src={socialpassLogo} alt="Logo" />
+            </div>
             <div className="back" onClick={() => navigate(-1)}>
               <img src={_backButton} alt="Back Button" height="24" width="24" />
               <h4 className="ps-5 m-0">Go back</h4>
@@ -32,8 +36,11 @@ export const StyledContainer = ({
         ) : (
           <header
             className="header d-flex align-items-start justify-content-center"
-            style={{ backgroundImage: `url(${headerImage})` }}
+            // style={{ backgroundImage: `url(${headerImage})` }}
           >
+            <div className="d-flex align-items-center justify-content-center mt-50">
+              <img src={socialpassLogo} alt="Logo" />
+            </div>
             <div className="team-info">
               <img
                 src={
@@ -43,7 +50,7 @@ export const StyledContainer = ({
                 }
                 alt="Team Image"
               />
-              <h4>
+              <h4 className="fs-15 d-block">
                 {retrieveJson &&
                   retrieveJson.organizer_info &&
                   retrieveJson?.organizer_info.name}
@@ -51,11 +58,9 @@ export const StyledContainer = ({
             </div>
           </header>
         )}
-        <div className="d-flex mx-3 mx-md-5 mt-5 flex-grow-1 h-100 p-30">
-          {children}
-        </div>
-        <footer className="d-flex flex-row justify-content-between align-items-center">
-          <img src={FAQImage} alt="image" />
+        <div className="mt-5 p-30">{children}</div>
+        <footer className="me-15 ms-15">
+          {/* <img src={FAQImage} alt="image" /> */}
           <small className="d-flex flex-row align-items-center">
             Powered by &nbsp;
             <img src={logoImage} alt="image" />

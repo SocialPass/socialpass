@@ -2,7 +2,7 @@
 // todo
 export const Loading = ({ loadingText }) => {
   return (
-    <div className="row d-flex align-items-center justify-content-center flex-grow-1">
+    <div className="row d-flex align-items-center justify-content-center mt-30">
       <div className="col-12 text-center">
         <div className="d-flex flex-column justify-content-center">
           <span className="fs-25 fw-600">{loadingText}</span>

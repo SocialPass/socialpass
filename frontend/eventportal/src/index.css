@@ -7,6 +7,8 @@ BASE HTML
   --white-color: hsl(var(--white-color-hsl));
 
   --orange:#EF7C4E;
+  --orange-bg:#ff7b00;
+  --orange-bg-light:#fca555;
   --success: #0FBE0C;
   --bg-success: #CDFFCC;
   --bg-denied:#ffcccc;
@@ -40,7 +42,12 @@ html, body {
   max-width: 956px;
   display: flex;
   align-items: center;
-  justify-self: center;
+}
+
+.center{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 h1 {
@@ -95,7 +102,8 @@ small {
   margin-bottom: 2rem;
   position:relative;
   border-radius: 50px 50px 0 0;
-  min-height:280px;
+  height: 27rem;
+  background: linear-gradient(to left, var(--orange-bg), var(--orange-bg-light));
 }
 
 footer {
@@ -104,44 +112,47 @@ footer {
   flex-direction: row;
   align-items:center;
   justify-content: space-between;
-  margin: 2.25rem 2.5rem 2.25rem 2.5rem;
-}
-
-.center{
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  padding: 1.5rem;
 }
 
 .container-fluid {
-  max-width: 100%;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
   overflow:hidden;
 }
 
 .card{
+  height: 95%;
+  width: 100%;
+  left: 25%;
+  right: 25%;
   border: none;
 }
 
-@media (min-width: 1500px) {
+@media (min-width: 1400px) {
   .card{
-    border: none;
+    height: 80%;
     left: 50%;
-    right: 50%;
   }
 }
 
-@media (max-width: 776px) {
+@media (max-width: 1000px) {
+  .card{
+    width: 100%;
+    left: 1%;
+  }
   .header {
     margin-bottom: 2rem;
     position:relative;
     border-radius: 50px 50px 0 0;
-    min-height:280px;
+    min-height: 22px;
   }
 }
 
 .small-header {
+  background-image: linear-gradient(to right, var(--sp-orange-color-light), var(--sp-orange-color));
   align-items: center;
   min-height: 188px;
   height: 23.9%;
@@ -163,20 +174,18 @@ ELEMENTS
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  top: 80%;
-  left: 5%;
+  top: 83%;
+  left: 3.5%;
 }
 
 .team-info h4 {
-  text-align: center;
   margin-top: 0.3rem;
-  text-align: center;
 }
 
 .team-info img {
   height:92px;
   width:92px;
-  border: 7px solid white;
+  border: 8px solid white;
   border-radius:66px;
   background:white;
 }
@@ -201,6 +210,18 @@ ELEMENTS
   cursor:pointer;
 }
 
+.card-active{
+  border-radius: 10px;
+  padding: 2rem;
+  gap: 2rem;
+  color: #000;
+  border: 1.5px solid var(--orange) !important;
+}
+
+.card-disabled{
+  border-radius: 10px;
+  color: var(--muted-color) !important;
+}
 
 /*
 BOOSTRAP OVERRIDES
@@ -286,7 +307,7 @@ BOOSTRAP OVERRIDES
   background-color: var(--gray) !important;
   border-radius: 0px 0px 50px 0px;
   width: 35%;
-  height: 200%;
+  height: 100vh;
   margin-top: -3.5rem;
   margin-right: -3.5rem;
 }
@@ -442,6 +463,14 @@ BOOSTRAP OVERRIDES
     right: 0%;
   }
 
+  .team-info {
+    position:absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    left: 9%;
+  }
+
   .column-display-mobile{
     display: flex;
     flex-direction: column;
@@ -489,5 +518,8 @@ BOOSTRAP OVERRIDES
     display:flex;
     min-height:200px;
     height:35%;
+  }
+  footer {
+    display: none;
   }
 }

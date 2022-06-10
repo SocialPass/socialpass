@@ -645,9 +645,17 @@ class PricingCalculator(TeamContextMixin, View):
         except TypeError:
             return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
-        price_per_ticket = pricing_service.calculate_event_price_per_ticket_for_team(
-            self.team, capacity=capacity
-        )
+        try:
+            price_per_ticket = (
+                pricing_service.calculate_event_price_per_ticket_for_team(
+                    self.team, capacity=capacity
+                )
+            )
+        except ValueError:
+            return JsonResponse(
+                {"detail": "capacity not recognized as as valid value"}, status=400
+            )
+
         return JsonResponse(
             {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
         )

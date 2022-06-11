@@ -153,7 +153,7 @@
                 {% for member in request.user.membership_set.all %}
                 {% if member.team.public_id != current_team.public_id %}
                 <li>
-                  <a class="dropdown-item border-radius-md" href="{% url 'team_detail' member.team.public_id %}">
+                  <a class="dropdown-item border-radius-md" href="{% url 'ticketgate_list' member.team.public_id %}">
                     {{member.team.name}}
                   </a>
                 </li>

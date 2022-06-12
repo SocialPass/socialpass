@@ -12,43 +12,48 @@ from . import serializers
 class EventMixin:
     """
     Mixin for eventportal flow
-    DISPATCH: Get ticketed event by public ID
-    GET: Serialize / Return ticketed event
-    POST: Based on 'checkout_type' query string, call respective method:
     """
 
     event = None
 
     def dispatch(self, request, *args, **kwargs):
-        # get ticketed event associated
+        """
+        Get Event by public ID path argument
+        """
         self.event = get_object_or_404(Event, public_id=self.kwargs["public_id"])
-        # success, proceed with dispatch
         return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """To be overridden by parent"""
+        raise MethodNotAllowed(method="POST")
+
+    def get(self, request, *args, **kwargs):
+        """To be overridden by parent"""
+        raise MethodNotAllowed(method="GET")
 
 
 class EventPortalRetrieve(EventMixin, APIView):
     """
-    GET view for retrieving eventportal
+    GET view for retrieving Event
     """
 
     def get(self, request, *args, **kwargs):
-        # return serialized event
-        return Response(serializers.EventPortalRetrieveSerializer(self.event).data)
-
-    def post(self, request, *args, **kwargs):
-        raise MethodNotAllowed(method="POST")
+        """
+        Retrieve serialized Event
+        """
+        serialized_data = serializers.EventPortalRetrieveSerializer(self.event).data
+        return Response(serialized_data)
 
 
 class EventPortalRequestCheckout(EventMixin, APIView):
     """
-    POST view for requesting access into eventportal
-    Based on query string, routed to respective method
+    POST view for requesting Event checkout
     """
 
-    def get(self, request, *args, **kwargs):
-        raise MethodNotAllowed(method="GET")
-
     def post(self, request, *args, **kwargs):
+        """
+        Route to method based on QS
+        """
         # get QS and pass to respective method
         checkout_type = request.GET.get("checkout_type")
         if not checkout_type:
@@ -58,23 +63,30 @@ class EventPortalRequestCheckout(EventMixin, APIView):
             return self.checkout_blockchain_ownership(request, *args, **kwargs)
 
     def checkout_blockchain_ownership(self, request, *args, **kwargs):
+        """
+        Request a checkout via blockchain asset ownership
+        Create blockchain_ownership DB record to be signed by client and validated by server
+        """
+        self.input_serializer = None
+        self.output_serializer = serializers.BlockchainOwnershipSerializer
+
+        # Create blockchain ownership record
         blockchain_ownership = BlockchainOwnership.objects.create(event=self.event)
-        blockchain_serializer = serializers.BlockchainOwnershipSerializer(
-            blockchain_ownership
-        )
-        return Response(blockchain_serializer.data)
+
+        # Serialize and return
+        serialized_data = self.output_serializer(blockchain_ownership).data
+        return Response(serialized_data)
 
 
 class EventPortalProcessCheckout(EventMixin, APIView):
     """
-    POST view for granting access into eventportal
+    POST view for processing Event checkout
     """
 
-    def get(self, request, *args, **kwargs):
-        raise MethodNotAllowed(method="GET")
-
     def post(self, request, *args, **kwargs):
-        # get QS and pass to respective method
+        """
+        Route to method based on QS
+        """
         checkout_type = request.GET.get("checkout_type")
         if not checkout_type:
             return Response('"checkout_type" query paramter not provided', status=401)
@@ -83,6 +95,12 @@ class EventPortalProcessCheckout(EventMixin, APIView):
             return self.checkout_blockchain_ownership(request, *args, **kwargs)
 
     def checkout_blockchain_ownership(self, request, *args, **kwargs):
+        """
+        Process a checkout via blockchain asset ownership
+        Validate wallet address blockchain_ownership record
+        Verify ticket selection
+        Issue tickets based on wallet address and related blockchain asset ownership
+        """
         self.input_serializer = serializers.VerifyBlockchainOwnershipSerializer
         self.output_serializer = serializers.TicketSerializer
 

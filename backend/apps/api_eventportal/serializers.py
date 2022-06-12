@@ -25,8 +25,7 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
     def get_ticket_info(self, obj):
         return {
             "total_capacity": obj.capacity,
-            "total_tickets_issued": obj.tickets.count(),
-            "limit_per_person": event_service.get_available_tickets(event=obj),
+            "limit_per_person": obj.limit_per_person,
         }
 
     def get_organizer_info(self, obj):

@@ -24,14 +24,14 @@ class EventPortalRetrieveSerializer(serializers.ModelSerializer):
 
     def get_ticket_info(self, obj):
         return {
-            "total_capacity": obj.capacity,
+            "capacity": obj.capacity,
             "limit_per_person": obj.limit_per_person,
         }
 
     def get_organizer_info(self, obj):
         return {
             "name": obj.team.name,
-            "profile_image": obj.team.image.url if obj.team.image else None,
+            "image": obj.team.image.url if obj.team.image else None,
         }
 
     def get_event_info(self, obj):

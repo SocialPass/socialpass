@@ -46,7 +46,7 @@ export const StyledContainer = ({
                 src={
                   retrieveJson &&
                   retrieveJson.organizer_info &&
-                  retrieveJson.organizer_info.profile_image
+                  retrieveJson.organizer_info.image
                 }
                 alt="Team Image"
               />

@@ -26,7 +26,7 @@ export const CheckoutStatus = () => {
             <div className="d-flex flex-row justify-content-start align-items-center gap-30">
               <img
                 className="avatar-img"
-                src={retrieveJson.organizer_info.profile_image}
+                src={retrieveJson.organizer_info.image}
               />
               <div>
                 <strong>{retrieveJson.event_info.title}</strong>
@@ -77,7 +77,7 @@ export const CheckoutStatus = () => {
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
             <img
               className="avatar-img"
-              src={retrieveJson.organizer_info.profile_image}
+              src={retrieveJson.organizer_info.image}
             />
             <div>
               <strong className="fs-20">{retrieveJson.event_info.title}</strong>

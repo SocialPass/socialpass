@@ -24,7 +24,7 @@ export function TicketSelection() {
       <div>
         <div className="d-flex flex-column align-items-start justify-content-between mb-30 gap-5">
           <span className="fs-20 fw-700">Ticket Selection</span>
-          <span className="text-muted">Select ticket from the options below</span>
+          <span className="text-muted">Select your tickets from the options below</span>
         </div>
         <div className="responsive-ticket-selection">
           <div>

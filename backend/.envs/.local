@@ -14,17 +14,17 @@ SCANNER_BASE_URL=http://localhost:3000
 
 # AWS (STAGING)
 # ------------------------------------------------------------------------------
-DJANGO_AWS_ACCESS_KEY_ID=ROTATE
-DJANGO_AWS_S3_REGION_NAME=ROTATE
-DJANGO_AWS_SECRET_ACCESS_KEY=ROTATE
-DJANGO_AWS_STORAGE_BUCKET_NAME=ROTATE
-DJANGO_AWS_S3_ENDPOINT_URL=ROTATE
+# DJANGO_AWS_ACCESS_KEY_ID=''
+# DJANGO_AWS_S3_REGION_NAME=''
+# DJANGO_AWS_SECRET_ACCESS_KEY=''
+# DJANGO_AWS_STORAGE_BUCKET_NAME=''
+# DJANGO_AWS_S3_ENDPOINT_URL=''
 
 # STRIPE
 # TODO: rotate keys and move to secrets manager
 # ------------------------------------------------------------------------------
-STRIPE_PUBLISHABLE_KEY=ROTATE
-STRIPE_SECRET_KEY=ROTATE
+# STRIPE_PUBLISHABLE_KEY=''
+# STRIPE_SECRET_KEY=''
 
 # SENTRY
 # ------------------------------------------------------------------------------
@@ -32,4 +32,4 @@ SENTRY_ENV_NAME=development
 
 # MORALIS
 # ------------------------------------------------------------------------------
-MORALIS_API_KEY=ROTATE
+# MORALIS_API_KEY=''

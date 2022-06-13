@@ -1,11 +1,23 @@
-{% extends "account/anon_base.html" %}
+{% extends "bases/base_secondary.html" %}
+{% load static %}
 
-{% block title %}Server Error{% endblock %}
+{% block head_title %}Server Error - SocialPass{% endblock %}
+
+{% block sidebar_content %}
+<div class="ws-400 mw-100 d-flex align-items-center justify-content-center mx-auto p-10">
+    <img src="{% static 'images/illustrations/something_went_wrong.svg' %}" alt="something_went_wrong" class="img-fluid">
+</div>
+{% endblock sidebar_content %}
 
 {% block inner %}
-<h1>Ooops!!! 500</h1>
-
-<h3>Looks like something went wrong!</h3>
-
-<p>We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.</p>
+<h1 class="display-1 text-strong fw-700">500</h1>
+<p>
+    <strong>Looks like something went wrong!</strong> We track these errors automatically, so you can try refreshing the page after some time.
+</p>
+<p>
+    <a href="{% url 'dashboard_redirect' %}" class="fw-bold"><i class="fa-solid fa-arrow-left me-5"></i> Go back to dashboard</a>
+</p>
+<p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
+    Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" class="fw-bold" target="_blank">contact us</a> if the error persists.
+</p>
 {% endblock %}

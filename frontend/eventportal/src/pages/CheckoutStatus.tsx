@@ -16,8 +16,8 @@ export const CheckoutStatus = () => {
       <div className="row flex-grow-1 m-0 mt-3 align-items-center">
         <div className="col-md-7 mb-4 d-flex">
           <div className="col col-md-10">
-            <h1>Congrats</h1>
-            <p>You made it! Click the button to download your ticket</p>
+            <h1>Congrats!</h1>
+            <p>You made it. Click the button to download your ticket</p>
             <div className="fw-bold bg-success p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
               <img src={correct} height="16.9" width="16.9" className="me-4" />
               access granted
@@ -65,9 +65,10 @@ export const CheckoutStatus = () => {
     <div className="row flex-grow-1 m-0 mt-3 align-items-center">
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10">
-          <h1>Something Went Wrong</h1>
+          <h1>Access Denied</h1>
           <p className="fs-15">
-            We’re sorry, we were not able to redeem this Token Gate
+            We’re sorry, we were not able to issue any tickets for this event
+            <br/>
           </p>
           <div className="fw-bold bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
             <img src={denied} height="16.9" width="16.9" />

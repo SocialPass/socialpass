@@ -5,8 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Loading } from "../components";
 
 export const Init = () => {
-  const { setID, setRetrieveJson, setRetrieveError } =
-    useContext(EventPortalContext);
+  const { setID, setRetrieveJson, setRetrieveError } = useContext(EventPortalContext);
   const navigate = useNavigate();
   const params = useParams();
   const id = params.publicId;
@@ -21,7 +20,10 @@ export const Init = () => {
           if (response.httpStatus === 200) {
             setRetrieveJson(response);
             localStorage.setItem("@retrieveJson", JSON.stringify(response));
-            navigate(`event`);
+            setTimeout(() => {
+              navigate(`event`);
+            },1000)
+
           }
           // error
           else {

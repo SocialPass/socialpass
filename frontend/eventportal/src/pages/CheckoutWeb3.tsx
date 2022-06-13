@@ -95,9 +95,7 @@ export const CheckoutWeb3 = () => {
     try {
       await connectHook.connectAsync(selectedWallet);
     }
-    catch(err) {
-      console.log(err);
-    }
+    catch(err) {}
     if (accountHook.data?.address){
       setLoadingText(`Awaiting wallet signature`);
       await signHook.signMessageAsync();

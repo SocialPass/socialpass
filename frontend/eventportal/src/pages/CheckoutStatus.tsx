@@ -67,9 +67,9 @@ export const CheckoutStatus = () => {
         <div className="col col-md-10">
           <h1>Access Denied</h1>
           <p className="fs-15">
-            We’re sorry, we were not able to issue any tickets for this event
-            <br/>
+            We are unable to issue any tickets for this event
           </p>
+          <code>Error Code: {grantAccessError.message}</code>
           <div className="fw-bold bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
             <img src={denied} height="16.9" width="16.9" />
             access denied
@@ -78,7 +78,7 @@ export const CheckoutStatus = () => {
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
             <img
               className="avatar-img"
-              src={retrieveJson.image}
+              src={retrieveJson.team.image}
             />
             <div>
               <strong className="fs-20">{retrieveJson.title}</strong>

@@ -1,13 +1,14 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EventPortalContext } from "../context";
+import { truncateAddress } from "../utils";
 import infoButton from "../static/images/icons/infoButton.svg";
 
 export function TicketSelection() {
   const navigate = useNavigate();
   const params = useParams();
   const id = params.publicId;
-  const { generalAdmissionSelect, setGeneralAdmissionSelect } =
+  const { retrieveJson, generalAdmissionSelect, setGeneralAdmissionSelect } =
     useContext(EventPortalContext);
   // [1 ... generalAdmissionSelectArray]
   const generalAdmissionSelectArray = Array.from(
@@ -23,7 +24,7 @@ export function TicketSelection() {
       <div>
         <div className="d-flex flex-column align-items-start justify-content-between mb-30 gap-5">
           <span className="fs-20 fw-700">Ticket Selection</span>
-          <span className="text-muted">Select ticket...</span>
+          <span className="text-muted">Select your tickets from the options below</span>
         </div>
         <div className="responsive-ticket-selection">
           <div>
@@ -36,11 +37,16 @@ export function TicketSelection() {
                   <span className="tooltip-text fs-11">
                     This General Admission ticket is free to all holders of 1
                     NFT collection:
-                    <h3>MAYC</h3>
-                    <span className="fs-12">
-                      Contract: <span>0X60..A7C6</span>
-                    </span>
-                    <i></i>
+                    <hr/>
+                    {retrieveJson.requirements.map((req, i) => (
+                      <div key={i}>
+                      <h3>Option {i+1}</h3>
+                      <span className="fs-12">
+                        Contract: <span>{truncateAddress(req['asset_address'])}</span>
+                      </span>
+                      <hr/>
+                      </div>
+                    ))}
                   </span>
                 </div>
               </div>

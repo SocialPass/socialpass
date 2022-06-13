@@ -16,8 +16,8 @@ export const CheckoutStatus = () => {
       <div className="row flex-grow-1 m-0 mt-3 align-items-center">
         <div className="col-md-7 mb-4 d-flex">
           <div className="col col-md-10">
-            <h1>Congrats</h1>
-            <p>You made it! Click the button to download your ticket</p>
+            <h1>Congrats!</h1>
+            <p>You made it. Click the button to download your ticket</p>
             <div className="fw-bold bg-success p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
               <img src={correct} height="16.9" width="16.9" className="me-4" />
               access granted
@@ -26,10 +26,10 @@ export const CheckoutStatus = () => {
             <div className="d-flex flex-row justify-content-start align-items-center gap-30">
               <img
                 className="avatar-img"
-                src={retrieveJson.organizer_info.profile_image}
+                src={retrieveJson.team.image}
               />
               <div>
-                <strong>{retrieveJson.event_info.title}</strong>
+                <strong>{retrieveJson.title}</strong>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
                   <img
                     src={clock}
@@ -38,8 +38,8 @@ export const CheckoutStatus = () => {
                     className="me-5"
                     alt="Date & Time"
                   />
-                  {retrieveJson.event_info.date} |{" "}
-                  {retrieveJson.event_info.timezone}
+                  {retrieveJson.date} |{" "}
+                  {retrieveJson.timezone}
                 </p>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
                   <img
@@ -49,7 +49,7 @@ export const CheckoutStatus = () => {
                     className="me-5"
                     alt="Date & Time"
                   />
-                  {retrieveJson.event_info.location}
+                  {retrieveJson.location}
                 </p>
               </div>
             </div>
@@ -65,10 +65,11 @@ export const CheckoutStatus = () => {
     <div className="row flex-grow-1 m-0 mt-3 align-items-center">
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10">
-          <h1>Something Went Wrong</h1>
+          <h1>Access Denied</h1>
           <p className="fs-15">
-            We’re sorry, we were not able to redeem this Token Gate
+            We are unable to issue any tickets for this event
           </p>
+          <code>Error Code: {grantAccessError.message}</code>
           <div className="fw-bold bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
             <img src={denied} height="16.9" width="16.9" />
             access denied
@@ -77,10 +78,10 @@ export const CheckoutStatus = () => {
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
             <img
               className="avatar-img"
-              src={retrieveJson.organizer_info.profile_image}
+              src={retrieveJson.team.image}
             />
             <div>
-              <strong className="fs-20">{retrieveJson.event_info.title}</strong>
+              <strong className="fs-20">{retrieveJson.title}</strong>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                 <img
                   src={clock}
@@ -89,8 +90,8 @@ export const CheckoutStatus = () => {
                   className="me-5"
                   alt="Date & Time"
                 />
-                {retrieveJson.event_info.date} |{" "}
-                {retrieveJson.event_info.timezone}
+                {retrieveJson.date} |{" "}
+                {retrieveJson.timezone}
               </p>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                 <img
@@ -100,7 +101,7 @@ export const CheckoutStatus = () => {
                   className="me-5"
                   alt="Date & Time"
                 />
-                {retrieveJson.event_info.location}
+                {retrieveJson.location}
               </p>
             </div>
           </div>

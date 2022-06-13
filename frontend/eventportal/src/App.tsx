@@ -1,7 +1,8 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { StyledContainer } from "./components";
 import { EventPortalProvider } from "./context";
-import Web3ProviderWrapper from "./web3/wrapper";
+import { web3Client } from "./web3/client";
+import { WagmiConfig } from 'wagmi'
 import {
   Init,
   CheckoutWeb3,
@@ -23,7 +24,7 @@ const EventPortal = () => {
       <base href="/" />{" "}
       {/* set static asset to base path for relative imports */}
       <EventPortalProvider>
-        <Web3ProviderWrapper>
+        <WagmiConfig client={web3Client}>
           <StyledContainer>
             <Routes>
               <Route path="/:publicId" element={<Init />} />
@@ -42,7 +43,7 @@ const EventPortal = () => {
               />
             </Routes>
           </StyledContainer>
-        </Web3ProviderWrapper>
+        </WagmiConfig>
       </EventPortalProvider>
     </BrowserRouter>
   );

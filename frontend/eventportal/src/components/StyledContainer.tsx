@@ -45,15 +45,13 @@ export const StyledContainer = ({
               <img
                 src={
                   retrieveJson &&
-                  retrieveJson.organizer_info &&
-                  retrieveJson.organizer_info.profile_image
+                  retrieveJson.team.image
                 }
                 alt="Team Image"
               />
               <h4 className="fs-15 d-block">
                 {retrieveJson &&
-                  retrieveJson.organizer_info &&
-                  retrieveJson?.organizer_info.name}
+                  retrieveJson.team.name}
               </h4>
             </div>
           </header>

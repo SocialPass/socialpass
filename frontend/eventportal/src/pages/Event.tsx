@@ -20,10 +20,10 @@ export const Event = (): JSX.Element => {
         <div className="col col-md-10 mb-30">
           <div className="mt-15 mb-15 d-flex flex-column align-items-start justify-content-center">
             <span className="fs-30 fw-bold">
-              {retrieveJson.event_info.title}
+              {retrieveJson.title}
             </span>
             <span className="fs-16 fw-light text-muted">
-              {retrieveJson.event_info.description}
+              {retrieveJson.description}
             </span>
           </div>
           <div className="d-flex flex-column gap-5 mb-15">
@@ -35,8 +35,8 @@ export const Event = (): JSX.Element => {
                 className="me-5"
                 alt="Date & Time"
               />
-              {retrieveJson.event_info.date} |{" "}
-              {retrieveJson.event_info.timezone}
+              {retrieveJson.date} |{" "}
+              {retrieveJson.timezone}
             </p>
             <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
               <img
@@ -46,15 +46,11 @@ export const Event = (): JSX.Element => {
                 className="me-5"
                 alt="Date & Time"
               />
-              {retrieveJson.event_info.location}
+              {retrieveJson.location}
             </p>
           </div>
           <span className="col-md-7 bg-success py-5 px-30 text-center">
-            <strong>
-              {retrieveJson.ticket_info.total_capacity -
-                retrieveJson.ticket_info.total_tickets_issued}
-            </strong>{" "}
-            out of {retrieveJson.ticket_info.total_capacity} available
+            <strong>{retrieveJson.ticket_count}</strong> out of {retrieveJson.capacity} available
           </span>
         </div>
       </div>

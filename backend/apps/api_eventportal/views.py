@@ -41,7 +41,7 @@ class EventPortalRetrieve(EventMixin, APIView):
         """
         Retrieve serialized Event
         """
-        serialized_data = serializers.EventPortalRetrieveSerializer(self.event).data
+        serialized_data = serializers.EventSerializer(self.event).data
         return Response(serialized_data)
 
 

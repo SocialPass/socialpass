@@ -26,10 +26,10 @@ export const CheckoutStatus = () => {
             <div className="d-flex flex-row justify-content-start align-items-center gap-30">
               <img
                 className="avatar-img"
-                src={retrieveJson.organizer_info.image}
+                src={retrieveJson.team.image}
               />
               <div>
-                <strong>{retrieveJson.event_info.title}</strong>
+                <strong>{retrieveJson.title}</strong>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
                   <img
                     src={clock}
@@ -38,8 +38,8 @@ export const CheckoutStatus = () => {
                     className="me-5"
                     alt="Date & Time"
                   />
-                  {retrieveJson.event_info.date} |{" "}
-                  {retrieveJson.event_info.timezone}
+                  {retrieveJson.date} |{" "}
+                  {retrieveJson.timezone}
                 </p>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
                   <img
@@ -49,7 +49,7 @@ export const CheckoutStatus = () => {
                     className="me-5"
                     alt="Date & Time"
                   />
-                  {retrieveJson.event_info.location}
+                  {retrieveJson.location}
                 </p>
               </div>
             </div>
@@ -78,10 +78,10 @@ export const CheckoutStatus = () => {
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
             <img
               className="avatar-img"
-              src={retrieveJson.organizer_info.image}
+              src={retrieveJson.image}
             />
             <div>
-              <strong className="fs-20">{retrieveJson.event_info.title}</strong>
+              <strong className="fs-20">{retrieveJson.title}</strong>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                 <img
                   src={clock}
@@ -90,8 +90,8 @@ export const CheckoutStatus = () => {
                   className="me-5"
                   alt="Date & Time"
                 />
-                {retrieveJson.event_info.date} |{" "}
-                {retrieveJson.event_info.timezone}
+                {retrieveJson.date} |{" "}
+                {retrieveJson.timezone}
               </p>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                 <img
@@ -101,7 +101,7 @@ export const CheckoutStatus = () => {
                   className="me-5"
                   alt="Date & Time"
                 />
-                {retrieveJson.event_info.location}
+                {retrieveJson.location}
               </p>
             </div>
           </div>

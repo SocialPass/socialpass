@@ -38,7 +38,7 @@ export function TicketSelection() {
                     This General Admission ticket is free to all holders of 1
                     NFT collection:
                     <hr/>
-                    {retrieveJson.event_info.requirements.map((req, i) => (
+                    {retrieveJson.requirements.map((req, i) => (
                       <div key={i}>
                       <h3>Option {i+1}</h3>
                       <span className="fs-12">

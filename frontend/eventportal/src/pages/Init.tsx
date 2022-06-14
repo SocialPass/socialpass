@@ -13,13 +13,11 @@ export const Init = () => {
     (async function () {
       if (id !== "/") {
         setID(id);
-        localStorage.setItem("@eventId", JSON.stringify(id));
         const response = await TicketedEventRetrieve.call({ public_id: id });
 
         if (response && response.httpStatus) {
           if (response.httpStatus === 200) {
             setRetrieveJson(response);
-            localStorage.setItem("@retrieveJson", JSON.stringify(response));
             setTimeout(() => {
               navigate(`event`);
             },1000)

@@ -118,6 +118,13 @@
 		<!-- Page wrapper start -->
 		<div class="page-wrapper with-sidebar" data-hm-sidebar-type="overlayed-md-down">
 
+			<!-- Sticky alerts start -->
+			<div class="sticky-alerts">
+				{% include "bases/toast_messages.html" %}
+				{% block sticky_alerts %}{% endblock sticky_alerts %}
+			</div>
+			<!-- Sticky alerts end -->
+
 			<!-- Sidebar start -->
 			<nav class="sidebar d-flex align-items-center justify-content-center">
 				<!-- Sidebar content start -->

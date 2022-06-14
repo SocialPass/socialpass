@@ -1,0 +1,39 @@
+{% if messages %}
+	{% for message in messages %}
+		{% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+			<div class="alert alert-primary" role="alert" data-hm-onload="toast" data-hm-timer="15000">
+				<button type="button" class="close" data-hm-dismiss="alert" aria-label="Close alert">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message }}
+			</div>
+		{% endif %}
+
+		{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+			<div class="alert alert-danger" role="alert" data-hm-onload="toast" data-hm-timer="15000">
+				<button type="button" class="close" data-hm-dismiss="alert" aria-label="Close alert">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message }}
+			</div>
+		{% endif %}
+
+		{% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+			<div class="alert alert-success" role="alert" data-hm-onload="toast" data-hm-timer="15000">
+				<button type="button" class="close" data-hm-dismiss="alert" aria-label="Close alert">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message }}
+			</div>
+		{% endif %}
+
+		{% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+			<div class="alert alert-warning" role="alert" data-hm-onload="toast" data-hm-timer="15000">
+				<button type="button" class="close" data-hm-dismiss="alert" aria-label="Close alert">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message }}
+			</div>
+		{% endif %}
+	{% endfor %}
+{% endif %}

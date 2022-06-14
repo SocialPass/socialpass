@@ -18,10 +18,23 @@ def create_default_pricing_group(apps, schema_editor):
         )  # noqa
 
 
+def reverse_default_pricing_group(apps, schema_editor):
+    PricingRuleGroup = apps.get_model("root", "PricingRuleGroup")
+    try:
+        pricing_rule_group = PricingRuleGroup.objects.get(name="Default")
+        pricing_rule_group.delete()
+    except Exception:
+        pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
         ("root", "0002_pricingrulegroup_description"),
     ]
 
-    operations = [migrations.RunPython(create_default_pricing_group)]
+    operations = [
+        migrations.RunPython(
+            create_default_pricing_group, reverse_code=reverse_default_pricing_group
+        )
+    ]

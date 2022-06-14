@@ -10,11 +10,11 @@
 </p>
 <h1 class="fsr-3 text-strong fw-700 mt-0">Invitation Accepted</h1>
 <p>
-    The invite you have requested has already been accepted. Login with the associated email to get access!
+    The invite you have requested has already been accepted. <a href="{% url 'account_login' %}" class="fw-bold">Sign in</a> with the associated email to get access!
 </p>
-<div class="hs-200 d-flex align-items-center justify-content-center my-40">
-  <img src="{% static 'images/illustrations/message_sent.svg' %}" alt="message_sent" class="d-block h-100">
-</div>
+<p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
+    Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" class="fw-bold" target="_blank">contact us</a> if you think something is wrong.
+</p>
 {% endblock %}
 
 

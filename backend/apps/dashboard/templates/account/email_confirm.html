@@ -1,32 +1,35 @@
-{% extends "account/anon_base.html" %}
+{% extends "bases/base_secondary.html" %}
 
-{% load i18n %}
 {% load account %}
 
-{% block head_title %}{% translate "Confirm E-mail Address" %}{% endblock %}
-
+{% block head_title %}Confirm E-mail Address - SocialPass{% endblock %}
 
 {% block inner %}
-<h3 class="font-weight-bolder text-info text-gradient">{% translate "Confirm E-mail Address" %}</h3>
-
+<p class="mb-5">
+	<a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Sign In</a>
+</p>
+<h1 class="fsr-3 text-strong fw-700 mt-0">Confirm E-mail Address</h1>
 {% if confirmation %}
-
-{% user_display confirmation.email_address.user as user_display %}
-
-<p>{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user {{ user_display }}.{% endblocktranslate %}</p>
-
-<form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
-{% csrf_token %}
-    <button class="btn btn-gradient-alt" type="submit">{% translate 'Confirm' %}</button>
-</form>
-
+	{% user_display confirmation.email_address.user as user_display %}
+	<p>
+		{% with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}" class="fw-bold">{{ email }}</a> is an e-mail address for the user <strong>{{ user_display }}</strong>.{% endwith %}
+	</p>
+	<form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+		{% csrf_token %}
+		<div class="form-group">
+			<button class="btn btn-primary btn-block" type="submit">
+				<i class="fa-regular fa-check-circle me-5"></i>
+				Confirm
+			</button>
+		</div>
+	</form>
 {% else %}
-
-{% url 'account_email' as email_url %}
-
-<p>{% blocktranslate %}This e-mail confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.{% endblocktranslate %}</p>
-
+	{% url 'account_email' as email_url %}
+	<p>
+		This e-mail confirmation link expired or is invalid. Please <a href="{{ email_url }}" class="fw-bold">issue a new e-mail confirmation request</a>.
+	</p>
 {% endif %}
-
+<p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
+	Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" class="fw-bold" target="_blank">contact us</a> if you think something is wrong.
+</p>
 {% endblock %}
-

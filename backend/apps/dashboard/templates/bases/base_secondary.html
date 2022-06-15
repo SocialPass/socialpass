@@ -58,96 +58,96 @@
 
 <!-- Page wrapper start -->
 <div class="page-wrapper with-sidebar" data-hm-sidebar-type="overlayed-md-down">
-    <!-- Sticky alerts start -->
-    <div class="sticky-alerts">
-        {% include "bases/toast_messages.html" %}
-        {% block sticky_alerts %}{% endblock sticky_alerts %}
-    </div>
-    <!-- Sticky alerts end -->
+	<!-- Sticky alerts start -->
+	<div class="sticky-alerts">
+		{% include "bases/toast_messages.html" %}
+		{% block sticky_alerts %}{% endblock sticky_alerts %}
+	</div>
+	<!-- Sticky alerts end -->
 
-    <!-- Sidebar start -->
-    <nav class="sidebar d-flex align-items-center justify-content-center">
-        <!-- Sidebar content start -->
-        <div class="ws-550 mw-100 px-content">
-            {% block sidebar_content %}
-            <h2 class="text-on-primary fsr-1 fw-700">Hosting the Next Generation of Events</h2>
-            <p class="fsr-5 mb-40">
-                <strong class="text-on-primary">SocialPass</strong> is the go-to events platform, powered by Web3.
-            </p>
-            <div class="d-flex mt-20">
-                <div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
-                    <i class="fa-solid fa-check"></i>
-                    <span class="visually-hidden">Checkmark</span>
-                </div>
-                <div class="ps-20">
-                    Handle events of all sizes with an easy-to-use dashboard.
-                </div>
-            </div>
-            <div class="d-flex mt-20">
-                <div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
-                    <i class="fa-solid fa-check"></i>
-                    <span class="visually-hidden">Checkmark</span>
-                </div>
-                <div class="ps-20">
-                    Use digital assets as tickets for the events you host and manage.
-                </div>
-            </div>
-            <div class="d-flex mt-20">
-                <div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
-                    <i class="fa-solid fa-check"></i>
-                    <span class="visually-hidden">Checkmark</span>
-                </div>
-                <div class="ps-20">
-                    Very quick and easy to set up and get started. Safe and secure by design.
-                </div>
-            </div>
-            <div class="d-flex mt-20">
-                <div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
-                    <i class="fa-solid fa-check"></i>
-                    <span class="visually-hidden">Checkmark</span>
-                </div>
-                <div class="ps-20">
-                    Serve your industry of choice - Sports, Music, Film and more!
-                </div>
-            </div>
-            {% endblock sidebar_content %}
-        </div>
-        <!-- Sidebar content end -->
+	<!-- Sidebar start -->
+	<nav class="sidebar d-flex align-items-center justify-content-center">
+		<!-- Sidebar content start -->
+		<div class="ws-550 mw-100 px-content">
+			{% block sidebar_content %}
+			<h2 class="text-on-primary fsr-1 fw-700">Hosting the Next Generation of Events</h2>
+			<p class="fsr-5 mb-40">
+				<strong class="text-on-primary">SocialPass</strong> is the go-to events platform, powered by Web3.
+			</p>
+			<div class="d-flex mt-20">
+				<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+					<i class="fa-solid fa-check"></i>
+					<span class="visually-hidden">Checkmark</span>
+				</div>
+				<div class="ps-20">
+					Handle events of all sizes with an easy-to-use dashboard.
+				</div>
+			</div>
+			<div class="d-flex mt-20">
+				<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+					<i class="fa-solid fa-check"></i>
+					<span class="visually-hidden">Checkmark</span>
+				</div>
+				<div class="ps-20">
+					Use digital assets as tickets for the events you host and manage.
+				</div>
+			</div>
+			<div class="d-flex mt-20">
+				<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+					<i class="fa-solid fa-check"></i>
+					<span class="visually-hidden">Checkmark</span>
+				</div>
+				<div class="ps-20">
+					Very quick and easy to set up and get started. Safe and secure by design.
+				</div>
+			</div>
+			<div class="d-flex mt-20">
+				<div class="ws-25 hs-25 rounded-circle bg-white text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+					<i class="fa-solid fa-check"></i>
+					<span class="visually-hidden">Checkmark</span>
+				</div>
+				<div class="ps-20">
+					Serve your industry of choice - Sports, Music, Film and more!
+				</div>
+			</div>
+			{% endblock sidebar_content %}
+		</div>
+		<!-- Sidebar content end -->
 
-        <!-- Copyright start -->
-        <p class="d-none d-md-block text-center fs-base-n2 m-0 position-absolute bottom-0 p-content">
-            &copy; {% now "Y" %}, SPTech Group Inc. All rights reserved
-        </p>
-        <!-- Copyright end -->
-    </nav>
-    <!-- Sidebar end -->
+		<!-- Copyright start -->
+		<p class="d-none d-md-block text-center fs-base-n2 m-0 position-absolute bottom-0 p-content">
+			&copy; {% now "Y" %}, SPTech Group Inc. All rights reserved
+		</p>
+		<!-- Copyright end -->
+	</nav>
+	<!-- Sidebar end -->
 
-    <!-- Content wrapper start -->
-    <div class="content-wrapper min-vh-100 d-flex align-items-center justify-content-center">
-        <div class="px-content py-30 py-sm-50 w-100">
-            <div class="ws-400 mw-100 mx-auto">
-                <!-- Branding start -->
-                <div class="d-flex align-items-center">
-                    <div class="ws-75">
-                        <img src="{% static 'images/SocialPass-Icon.svg' %}" class="w-100 pe-none" alt="SocialPass Logo">
-                    </div>
-                    <div class="ps-15 fw-700 fs-base-p8">
-                        <span class="text-primary-lm text-primary-light-dm">Social</span><span class="text-secondary-lm text-secondary-light-dm">Pass</span>
-                    </div>
-                </div>
-                <!-- Branding end -->
+	<!-- Content wrapper start -->
+	<div class="content-wrapper min-vh-100 d-flex align-items-center justify-content-center">
+		<div class="px-content py-30 py-sm-50 w-100">
+			<div class="ws-400 mw-100 mx-auto">
+				<!-- Branding start -->
+				<div class="d-flex align-items-center">
+					<div class="ws-75">
+						<img src="{% static 'images/SocialPass-Icon.svg' %}" class="w-100 pe-none" alt="SocialPass Logo">
+					</div>
+					<div class="ps-15 fw-700 fs-base-p8">
+						<span class="text-primary-lm text-primary-light-dm">Social</span><span class="text-secondary-lm text-secondary-light-dm">Pass</span>
+					</div>
+				</div>
+				<!-- Branding end -->
 
-                {% block inner %}{% endblock inner %}
+				{% block inner %}{% endblock inner %}
 
-                <!-- Copyright start -->
-                <p class="d-md-none text-end text-muted fs-base-n2 mt-50">
-                    &copy; {% now "Y" %}, SPTech Group Inc. All rights reserved
-                </p>
-                <!-- Copyright end -->
-            </div>
-        </div>
-    </div>
-    <!-- Content wrapper end -->
+				<!-- Copyright start -->
+				<p class="d-md-none text-end text-muted fs-base-n2 mt-50">
+					&copy; {% now "Y" %}, SPTech Group Inc. All rights reserved
+				</p>
+				<!-- Copyright end -->
+			</div>
+		</div>
+	</div>
+	<!-- Content wrapper end -->
 </div>
 <!-- Page wrapper end -->
 {% endblock body %}

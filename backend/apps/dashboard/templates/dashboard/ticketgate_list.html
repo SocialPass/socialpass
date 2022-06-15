@@ -1,128 +1,62 @@
-{% extends 'dashboard/base.html' %}
-{% load static i18n get_chain_name %}
+{% extends 'bases/base_primary.html' %}
+{% load static get_chain_name %}
 
-{% block title %}Ticket Gates - SocialPass {% endblock %}
+{% block head_title %}Ticket Gates - SocialPass {% endblock head_title %}
 
-{% block navbar_page_name_1 %}Ticket Gates{% endblock %}
-{% block navbar_page_name_2 %}Ticket Gates{% endblock %}
+{% block navbar_breadcrumb %}Events{% endblock %}
 
 {% block content %}
-<div class="row">
-	<div class="col-12">
-		<div class="card mb-4">
-			<div class="card-header py-0">
-				<div class="d-flex align-items-center py-3">
-					<div class="pe-2">
-						<h6 class="m-0">Ticket Gates</h6>
-						<div class="text-muted text-xs">List of gates created by your team</div>
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="pe-15 align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Events</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">List of events created by your team.</p>
+		</div>
+		<div class="ms-auto align-self-center">
+			<a href="{% url 'ticketgate_create' current_team.public_id %}" class="btn btn-primary">
+				<i class="fa-solid fa-plus"></i>
+				<span class="ms-5 d-none d-sm-inline">Create</span>
+			</a>
+		</div>
+	</div>
+</div>
+<!-- Header end -->
+
+<div class="card rounded-0 border-top-0 border-start-0 border-end-0 m-0 p-0">
+	<div class="px-card py-10 border-bottom d-flex align-items-center fs-base-n2">
+			<div class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 m-0 d-none d-md-block">
+							<h6 class="m-0 fs-base-n2">
+								Total # &mdash;
+								<span class="fw-400">0 event(s)</span>
+							</h6>
+						</div>
+						<div class="w-100 ws-md-250 ws-lg-300 mw-100 position-relative ms-auto">
+							<input type="text" class="form-control rounded-pill ps-15" placeholder="Search events by title" name="">
+							<button class="btn btn-link btn-rounded fw-bold text-primary position-absolute top-50 end-0 translate-y-middle border-0 bg-transparent">
+								<i class="fa-solid fa-search"></i>
+							</button>
+						</div>
 					</div>
-					<a href="{% url 'ticketgate_create' view.kwargs.team_pk %}" class="btn bg-gradient-primary btn-sm ms-auto my-0">Create</a>
+
+	<div class="p-content">
+		<a href="#" class="card card-link m-0 rounded-2 border-dotted border-primary ws-400 mx-auto">
+			<div class="d-flex align-items-center">
+				<div class="ws-50 hs-50 d-flex align-items-center justify-content-center rounded-3 bg-gray-very-light-lm bg-darkgray-very-dim-dm">
+					<i class="fa-duotone fa-lightbulb text-secondary fs-base-p6"></i>
 				</div>
-				<form method="GET" class="d-flex align-items-center">
-					<input type="text" class="form-control form-control-sm" name="title" placeholder="Search by title" value="{{ request.GET.title }}">
-					<button class="btn btn-link btn-sm px-2 ms-3 my-0" type="submit">Search</button>
-				</form>
-			</div>
-			<div class="card-body px-0 py-2">
-				{% if tokengates.count > 0 %}
-				<div class="table-responsive p-0">
-					<table class="table align-items-center mb-0">
-						<thead>
-							<tr>
-								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
-								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
-								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
-								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Capacity</th>
-               					<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Ticketed</th>
-               					<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Payment Status</th>
-								<th class="text-secondary opacity-7"></th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for tokengate in tokengates %}
-							<tr>
-								<td class="align-middle">
-									<div class="ps-3">
-										<h6 class="mb-0">{{ tokengate.title }}</h6>
-									</div>
-								</td>
-								<td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-                                    {{ tokengate.date.date }}
-                                    </span>
-								</td>
-								<td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-                                    {{ tokengate.location }}
-                                    </span>
-								</td>
-								<td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-									{{ tokengate.capacity }}
-									</span>
-								</td>
-                				<td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-									{{ tokengate.tickets.all.count }}
-									</span>
-								</td>
-								<td class="align-middle">
-									<span class="text-secondary text-xs font-weight-bold">
-									{{ tokengate.payments.last.status }}
-									</span>
-								</td>
-								<td class="align-middle px-4">
-									{% if tokengate.has_pending_checkout %}
-										<a href="{% url 'ticketgate_checkout' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 px-0">
-											Checkout
-										</a>
-									{% else %}
-										<div class="d-flex flex-row-reverse justify-content-between">
-											<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 px-0">
-												Edit
-											</a>
-											<a href="{% url 'ticketgate_stats' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
-												Stats
-											</a>
-											<a href="{% url 'ticketgate_detail' view.kwargs.team_pk tokengate.id %}" class="btn btn-link btn-sm m-0 me-3 px-0">
-												Details
-											</a>
-    	              					</div>
-									{% endif %}
-								</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</div>
-				{% else %}
-				<div class="text-center p-5">
-					<img src="{% static 'images/empty-folder.svg' %}" alt="empty" height="80" class="d-block mx-auto">
-					<p class="mt-3 mb-0 text-xs">Nothing found.</p>
-				</div>
-				{% endif %}
-			</div>
-			{% if tokengates.count > 0 %}
-			<div class="card-footer d-flex align-items-center">
-				<div>
-					{% if page_obj.has_previous %}
-					<a class="btn btn-sm btn-link px-0 m-0" href="?page={{ page_obj.previous_page_number }}">Prev</a>
-					{% else %}
-					<button class="btn btn-sm btn-link px-0 m-0" disabled="disabled">Prev</button>
-					{% endif %}
-				</div>
-				<span class="current text-xs ms-auto">
-				Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-				</span>
-				<div class="ms-auto">
-					{% if page_obj.has_next %}
-					<a class="btn btn-sm btn-link px-0 m-0" href="?page={{ page_obj.next_page_number }}">Next</a>
-					{% else %}
-					<button class="btn btn-sm btn-link px-0 m-0" disabled="disabled">Next</button>
-					{% endif %}
+				<div class=" ps-15">
+					<h5 class="card-title fs-base-p2 fw-700 m-0">Tip: Create a New Event</h5>
+					<p class="m-0 text-muted fs-base-n2">For {{ current_team.name }}</p>
 				</div>
 			</div>
-			{% endif %}
+			<p class="mb-0">Your team has not created an event yet. Click here to start creating <strong>your very first event</strong> on SocialPass!</p>
+			<p class="mb-0 pt-10 border-top border-bottom-0 border-start-0 border-end-0 fs-base-n2 text-muted">
+				Creating an event is easy and only takes minutes.
+			</p>
+		</a>
+		<div class="ws-400 mx-auto mt-20 py-10 text-end px-content bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent rounded-3">
+			<a href="#" class="fw-bold">See Guides <i class="fa-regular fa-external-link-alt ms-5"></i></a>
 		</div>
 	</div>
 </div>

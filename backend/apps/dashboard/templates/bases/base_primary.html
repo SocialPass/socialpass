@@ -1,5 +1,5 @@
 {% extends "bases/base.html" %}
-{% load static get_preferred_color_scheme get_user_primary_email get_sidebar_active_status %}
+{% load static get_preferred_color_scheme get_user_primary_email get_other_teams get_sidebar_active_status %}
 
 {% block html_class %}socialpass-dashboard {% get_preferred_color_scheme %}{% endblock html_class %}
 
@@ -120,7 +120,7 @@
 			<div class="dropdown w-100">
 				<a href="#" class="sidebar-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
 					<div class="overflow-hidden">
-						<h6 class="fs-base-p6 m-0 text-truncate">{{ current_team.name }}</h6>
+						<h6 class="fs-base-p6 m-0 text-truncate fw-700">{{ current_team.name }}</h6>
 						<p class="fs-base-n2 m-0 text-truncate">{% get_user_primary_email %}</p>
 					</div>
 					<div class="text-end flex-shrink-0 ws-25 ms-auto">
@@ -139,7 +139,7 @@
 							</div>
 						{% endif %}
 						<div class="ps-20 overflow-hidden">
-							<h6 class="fs-base-p6 m-0 text-truncate">{{ current_team.name }}</h6>
+							<h6 class="fs-base-p2 m-0 text-truncate">{{ current_team.name }}</h6>
 							<p class="text-muted fs-base-n2 m-0 text-truncate">{% get_user_primary_email %}</p>
 						</div>
 					</li>
@@ -166,6 +166,27 @@
 								<i class="fa-regular fa-user-plus"></i>
 							</span>
 							<span class="ms-10">Add Member</span>
+						</a>
+					</li>
+					<li class="dropdown-divider"></li>
+					{% get_other_teams current_team.public_id as other_teams %}
+					{% if other_teams|length > 0 %}
+						<li class="dropdown-header fs-base-n2">
+							<i class="fa-duotone fa-arrows-repeat text-primary me-5"></i>
+							Switch Team
+						</li>
+						{% for team in other_teams %}
+							<li>
+								<a href="{% url 'ticketgate_list' team.public_id %}" class="dropdown-item">
+									{{ team.name }}
+								</a>
+							</li>
+						{% endfor %}
+					{% endif %}
+					<li class="dropdown-content">
+						<a href="{% url 'team_create' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-primary fw-bold">
+							<i class="fa-solid fa-plus"></i>
+							<span class="ms-5">Create Team</span>
 						</a>
 					</li>
 				</ul>
@@ -230,6 +251,14 @@
 	<!-- Content wrapper start -->
 	<div class="content-wrapper">
 		{% block content %}{% endblock content %}
+
+		<!-- Footer start -->
+		<div class="px-content py-15 text-end fs-base-n2">
+			<i class="fa-regular fa-question-circle me-5"></i>
+			Need help?
+			<a href="mailto:support@socialpass.io" target="_blank" class="ms-5 fw-bold">Contact Us</a>
+		</div>
+		<!-- Footer end -->
 	</div>
 	<!-- Content wrapper end -->
 </div>

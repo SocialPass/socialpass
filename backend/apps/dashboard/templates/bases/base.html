@@ -1,7 +1,7 @@
 {% load static get_debug_status %}
 <!DOCTYPE html>
 {% get_debug_status as debug %}
-<html lang="en" class="">
+<html lang="en" class="{% block html_class %}{% endblock %}">
 	<head>
 		<!-- Meta tags -->
 		<meta charset="utf-8" />

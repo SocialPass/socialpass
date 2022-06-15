@@ -1,5 +1,7 @@
 {% extends "bases/base.html" %}
-{% load static get_user_primary_email get_sidebar_active_status %}
+{% load static get_preferred_color_scheme get_user_primary_email get_sidebar_active_status %}
+
+{% block html_class %}socialpass-dashboard {% get_preferred_color_scheme %}{% endblock html_class %}
 
 {% block extra_head %}
 <!-- Custom styles -->

@@ -1,5 +1,5 @@
 {% extends "bases/base.html" %}
-{% load static get_user_primary_email %}
+{% load static get_user_primary_email get_sidebar_active_status %}
 
 {% block extra_head %}
 <!-- Custom styles -->
@@ -20,7 +20,6 @@
 {% endblock extra_head %}
 
 {% block body %}
-{% with request.resolver_match.url_name as url_name %}
 <!-- Modals start -->
 {% block modals %}{% endblock modals %}
 <!-- Modals end -->
@@ -178,15 +177,7 @@
 				Web3 Ticketing
 			</h6>
 			<div class="position-relative">
-				<a
-					href="{% url 'ticketgate_list' current_team.public_id %}" 
-					class="
-						sidebar-link d-flex align-items-center 
-						{% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' or url_name == 'ticketgate_stats' %}
-							active
-						{% endif %}
-					"
-				>
+				<a href="{% url 'ticketgate_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-ticket-simple"></i>
 					</span>
@@ -205,30 +196,14 @@
 			<h6 class="sidebar-title fs-base-n2 text-on-primary">
 				Team
 			</h6>
-			<a
-				href="{% url 'team_detail' current_team.public_id %}" 
-				class="
-					sidebar-link d-flex align-items-center 
-					{% if url_name == 'team_detail' or url_name == 'team_update' %}
-						active
-					{% endif %}
-				"
-			>
+			<a href="{% url 'team_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'team-details' %}">
 				<span class="ws-25 flex-shrink-0">
 					<i class="fa-regular fa-flag"></i>
 				</span>
 				<span class="ms-5">Team Details</span>
 			</a>
 			<div class="position-relative">
-				<a
-					href="{% url 'team_members' current_team.public_id %}" 
-					class="
-						sidebar-link d-flex align-items-center 
-						{% if url_name == 'team_members' or url_name == 'team_member_delete' %}
-							active
-						{% endif %}
-					"
-				>
+				<a href="{% url 'team_members' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-members' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-lock"></i>
 					</span>
@@ -257,5 +232,4 @@
 	<!-- Content wrapper end -->
 </div>
 <!-- Page wrapper end -->
-{% endwith %}
 {% endblock body %}

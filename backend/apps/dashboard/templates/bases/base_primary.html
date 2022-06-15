@@ -1,7 +1,21 @@
 {% extends "bases/base.html" %}
 {% load static %}
 
+{% block extra_head %}
+<!-- Custom styles -->
+<style type="text/css">
+	#team-dropdown-toggle {
+		border-bottom: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+
+	.sidebar-copyright {
+		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+</style>
+{% endblock extra_head %}
+
 {% block body %}
+{% with request.resolver_match.url_name as url_name %}
 <!-- Modals start -->
 {% block modals %}{% endblock modals %}
 <!-- Modals end -->
@@ -95,15 +109,149 @@
 
 	<!-- Sidebar start -->
 	<nav class="sidebar">
+		<!-- Sidebar team dropdown start -->
+		<div class="sidebar-menu mt-0">
+			<div class="sidebar-divider p-0 m-0 bg-transparent-dm"></div>
+			<div class="dropdown w-100">
+				<a href="#" class="sidebar-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+					<div class="text-truncate">
+						<p class="fs-base-n2 mt-0 mb-5">My Team</p>
+						<h6 class="fs-base-p6 m-0">{{ current_team.name }}</h6>
+					</div>
+					<div class="text-end flex-shrink-0 ws-25 ms-auto">
+						<i class="fa-regular fa-angle-down"></i>
+					</div>
+				</a>
+				<ul class="dropdown-menu dropdown-menu-center rounded-3 ws-250 p-10" aria-labelledby="team-dropdown-toggle">
+					<li class="dropdown-content d-flex align-items-center">
+						{% if current_team.image %}
+							<div class="ws-50 hs-50 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
+								<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
+							</div>
+						{% else %}
+							<div class="ws-50 hs-50 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
+								<span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+							</div>
+						{% endif %}
+						<div class="ps-20 text-truncate">
+							<p class="text-muted fs-base-n2 m-0">My Team</p>
+							<h6 class="fs-base-p6 m-0">{{ current_team.name }}</h6>
+						</div>
+					</li>
+					<li class="dropdown-divider"></li>
+					<li>
+						<a href="{% url 'team_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+							<span class="ws-25">
+								<i class="fa-regular fa-flag"></i>
+							</span>
+							<span class="ms-10">Team Details</span>
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'team_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+							<span class="ws-25">
+								<i class="fa-regular fa-lock"></i>
+							</span>
+							<span class="ms-10">Manage Members</span>
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'team_members' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+							<span class="ws-25">
+								<i class="fa-regular fa-user-plus"></i>
+							</span>
+							<span class="ms-10">Add Member</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Sidebar team dropdown end -->
 
+		<!-- Web3 Ticketing start -->
+		<div class="sidebar-menu">
+			<h6 class="sidebar-title fs-base-n2 text-on-primary">
+				Web3 Ticketing
+			</h6>
+			<div class="position-relative">
+				<a
+					href="{% url 'ticketgate_list' current_team.public_id %}" 
+					class="
+						sidebar-link d-flex align-items-center 
+						{% if url_name == 'ticketgate_list' or url_name == 'ticketgate_create' or url_name == 'ticketgate_detail' or url_name == 'ticketgate_update' or url_name == 'ticketgate_stats' %}
+							active
+						{% endif %}
+					"
+				>
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-ticket-simple"></i>
+					</span>
+					<span class="ms-5">Events</span>
+				</a>
+				<a href="{% url 'ticketgate_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
+					<i class="fa-solid fa-plus"></i>
+					<span class="visually-hidden">Create Event</span>
+				</a>
+			</div>
+		</div>
+		<!-- Web3 Ticketing end -->
+
+		<!-- Team start -->
+		<div class="sidebar-menu mt-40">
+			<h6 class="sidebar-title fs-base-n2 text-on-primary">
+				Team
+			</h6>
+			<a
+				href="{% url 'team_detail' current_team.public_id %}" 
+				class="
+					sidebar-link d-flex align-items-center 
+					{% if url_name == 'team_detail' or url_name == 'team_update' %}
+						active
+					{% endif %}
+				"
+			>
+				<span class="ws-25 flex-shrink-0">
+					<i class="fa-regular fa-flag"></i>
+				</span>
+				<span class="ms-5">Team Details</span>
+			</a>
+			<div class="position-relative">
+				<a
+					href="{% url 'team_members' current_team.public_id %}" 
+					class="
+						sidebar-link d-flex align-items-center 
+						{% if url_name == 'team_members' or url_name == 'team_member_delete' %}
+							active
+						{% endif %}
+					"
+				>
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-lock"></i>
+					</span>
+					<span class="ms-5">Manage Members</span>
+				</a>
+				<a href="{% url 'team_members' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
+					<i class="fa-solid fa-plus"></i>
+					<span class="visually-hidden">Add Member</span>
+				</a>
+			</div>
+		</div>
+		<!-- Team end -->
+
+		<!-- Copyright start -->
+		<div class="sidebar-copyright position-absolute bottom-0 start-0 w-100 hs-50 d-flex align-items-center justify-content-center fs-base-n4">
+			&copy; {% now "Y" %}, SP Tech Inc. All rights reserved
+		</div>
+		<!-- Copyright end -->
 	</nav>
 	<!-- Sidebar end -->
 
 	<!-- Content wrapper start -->
 	<div class="content-wrapper">
-
+		{% block content %}{% endblock content %}
 	</div>
 	<!-- Content wrapper end -->
 </div>
 <!-- Page wrapper end -->
+{% endwith %}
 {% endblock body %}

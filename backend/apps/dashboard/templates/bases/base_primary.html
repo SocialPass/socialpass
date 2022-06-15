@@ -5,7 +5,12 @@
 <!-- Custom styles -->
 <style type="text/css">
 	#team-dropdown-toggle {
+		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
 		border-bottom: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+
+	.dark-mode #team-dropdown-toggle {
+		border-top-color: transparent;
 	}
 
 	.sidebar-copyright {
@@ -70,9 +75,9 @@
 						<div class="ws-50 hs-50 rounded-circle d-flex align-items-center justify-content-center bg-secondary text-on-secondary flex-shrink-0">
 							<span class="text-uppercase fs-base-p8 fw-bold">{{ request.user.username|slice:"0:1" }}</span>
 						</div>
-						<div class="ps-20 text-truncate">
-							<p class="text-muted fs-base-n2 m-0">Signed in as</p>
-							<h6 class="fs-base m-0">{{ request.user.username }}</h6>
+						<div class="ps-20 overflow-hidden">
+							<h6 class="fs-base-p2 m-0 text-truncate">{{ request.user.username }}</h6>
+							<p class="text-muted fs-base-n2 m-0 text-truncate">{{ request.user.email }}</p>
 						</div>
 					</li>
 					<li class="dropdown-divider"></li>
@@ -111,12 +116,11 @@
 	<nav class="sidebar">
 		<!-- Sidebar team dropdown start -->
 		<div class="sidebar-menu mt-0">
-			<div class="sidebar-divider p-0 m-0 bg-transparent-dm"></div>
 			<div class="dropdown w-100">
 				<a href="#" class="sidebar-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
-					<div class="text-truncate">
-						<p class="fs-base-n2 mt-0 mb-5">My Team</p>
-						<h6 class="fs-base-p6 m-0">{{ current_team.name }}</h6>
+					<div class="overflow-hidden">
+						<h6 class="fs-base-p6 m-0 text-truncate">{{ current_team.name }}</h6>
+						<p class="fs-base-n2 m-0 text-truncate">{{ request.user.email }}</p>
 					</div>
 					<div class="text-end flex-shrink-0 ws-25 ms-auto">
 						<i class="fa-regular fa-angle-down"></i>
@@ -133,9 +137,9 @@
 								<span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
 							</div>
 						{% endif %}
-						<div class="ps-20 text-truncate">
-							<p class="text-muted fs-base-n2 m-0">My Team</p>
-							<h6 class="fs-base-p6 m-0">{{ current_team.name }}</h6>
+						<div class="ps-20 overflow-hidden">
+							<h6 class="fs-base-p6 m-0 text-truncate">{{ current_team.name }}</h6>
+							<p class="text-muted fs-base-n2 m-0 text-truncate">{{ request.user.email }}</p>
 						</div>
 					</li>
 					<li class="dropdown-divider"></li>

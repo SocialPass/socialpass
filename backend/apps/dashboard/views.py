@@ -18,11 +18,11 @@ from django.views.generic.list import ListView
 from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite
 
-from apps.dashboard.models import Membership
+from apps.dashboard.models import EventStripePayment, Membership, Team
 from apps.root.forms import CustomInviteForm, EventForm, TeamForm
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Event, EventStripePayment, Team, Ticket
+from apps.root.models import Event, Ticket
 from apps.services import pricing_service
 from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 

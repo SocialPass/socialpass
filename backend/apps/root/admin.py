@@ -3,17 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
-from apps.dashboard.models import Membership
-from apps.root.models import (
-    BlockchainOwnership,
-    Event,
-    EventStripePayment,
-    PricingRule,
-    PricingRuleGroup,
-    RedemptionAccessKey,
-    Team,
-    Ticket,
-)
+from apps.dashboard.models import EventStripePayment, Membership, PricingRule, PricingRuleGroup, Team
+from apps.root.models import BlockchainOwnership, Event, RedemptionAccessKey, Ticket
 from apps.services import pricing_service
 
 User = get_user_model()

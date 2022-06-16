@@ -3,7 +3,8 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm, InviteForm
 
-from apps.root.models import Event, Invite, Team
+from apps.dashboard.models import Invite
+from apps.root.models import Event, Team
 from apps.services import pricing_service
 
 
@@ -24,21 +25,12 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ["name", "description", "image"]
         widgets = {
-            "name": forms.TextInput(
-                attrs={
-                    "placeholder": "Name of your team"
-                }
-            ),
+            "name": forms.TextInput(attrs={"placeholder": "Name of your team"}),
             "description": forms.Textarea(
-                attrs={
-                    "placeholder": "A short description of your team",
-                    "rows": 3
-                }
-            )
+                attrs={"placeholder": "A short description of your team", "rows": 3}
+            ),
         }
-        labels = {
-            "image": "Set Team Image"
-        }
+        labels = {"image": "Set Team Image"}
 
 
 class EventForm(forms.ModelForm):

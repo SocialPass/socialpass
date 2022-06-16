@@ -109,31 +109,46 @@
     padding: 8px;
     margin-right: 20px;
     margin-left: 20px;
-    margin-top: 60%;
+    margin-top: 5%;
+    margin-bottom: 10%;
+}
+
+.btn-close {
+    position: left;
+    width: 40px;
+    height: 40px;
+    background: #ccc;
+    border-radius: 10px;
+    padding: 8px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }
 
 
 .scanner-title  {
     font-family: 'Rubik';
     font-style: normal;
-    font-weight: 600;
-    font-size: 30px;
+    font-weight: 500;
+    font-size: 22px;
     line-height: 26px;
-    text-align: center;
+    text-align: left;
     color: #0C0F3C;
     margin-top: 15%;
+    margin-bottom: 5%;
     
 }
 
 .scanner-subtitle   {
     font-family: 'Rubik';
     font-style: normal;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 21px;
-    text-align: center;
-    color: #6C757D;
-    margin-bottom: 50px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: left;
+    color: #0C0F3C;
+    margin-bottom: 20px;
 }
 
 .scanner-body   {
@@ -142,9 +157,74 @@
     width: 100%;
     height: 100%;
     color: inherit;
-    background-color: var(--white-color);
+    background-color: #FAFAFA;
     box-shadow: none;
 }
+
+.live-statistics-btn-blue    {
+    border-radius: 5px;
+    border-width: 0px;
+    margin-right: 5px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 400px;
+    line-height: 18px;
+    text-decoration: none;
+    color: var(--dark-color);
+    background-color: #3995B833;
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+.live-statistics-btn-orange    {
+    border-radius: 5px;
+    border-width: 0px;
+    margin-right: 5px;
+    margin-left: 5px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 400px;
+    line-height: 18px;
+    text-decoration: none;
+    color: var(--dark-color);
+    background-color: #EB734733;
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+
+.btn-statistics {
+    border-radius: 12px;
+    border-width: 0rem;
+    margin-top: 30px;
+    width: 80vw;
+    padding: 16px;
+    position: center;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    text-decoration: none;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+.btn-statistics:active {
+    text-decoration: none;
+    color: inherit;
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness-step-down-1));
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+
 
 
 /* Capacity Reached Components */

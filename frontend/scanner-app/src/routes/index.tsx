@@ -8,6 +8,7 @@ import {
 import { CapacityReached } from "../pages/CapacityReached";
 import { Home } from "../pages/Home";
 import { Scanner } from "../pages/Scanner";
+import { Scanner2 } from "../pages/Scanner2";
 import { Init } from "../pages/Init";
 import { InvalidScanner } from "../pages/InvalidScanner";
 
@@ -20,6 +21,7 @@ function Routes() {
         <Route path="/:publicId/error" element={<InvalidScanner />} />
         <Route path="/home" element={<Home />} />
         <Route path="/scanner" element={<Scanner />} />
+        <Route path="/scanner2" element={<Scanner2 />} />
         <Route path="/capacity-reached" element={<CapacityReached />} />
       </RoutesRom>
     </BrowserRouter>

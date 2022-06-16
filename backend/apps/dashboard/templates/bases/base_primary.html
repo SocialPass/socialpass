@@ -177,7 +177,7 @@
 						</li>
 						{% for team in other_teams %}
 							<li>
-								<a href="{% url 'ticketgate_list' team.public_id %}" class="dropdown-item">
+								<a href="{% url 'ticketgate_list' team.public_id %}" class="dropdown-item text-truncate">
 									{{ team.name }}
 								</a>
 							</li>

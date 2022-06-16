@@ -22,5 +22,11 @@ def get_sidebar_active_status(context, key):
 	elif key == "manage-members":
 		if url_name in ["team_members", "team_member_delete"]:
 			return "active"
+	elif key == "change-password":
+		if url_name == "account_change_password":
+			return "active"
+	elif key == "manage-emails":
+		if url_name == "account_email":
+			return "active"
 
 	return ""

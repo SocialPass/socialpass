@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
 from apps.dashboard.models import EventStripePayment, Membership, PricingRule, PricingRuleGroup, Team
-from apps.root.models import BlockchainOwnership, Event, RedemptionAccessKey, Ticket
+from apps.root.models import BlockchainOwnership, Event, Ticket, TicketRedemptionKey
 from apps.services import pricing_service
 
 User = get_user_model()
@@ -63,8 +63,8 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ("title", "user__username", "team__name", "location")
 
 
-@admin.register(RedemptionAccessKey)
-class RedemptionAccessKeyAdmin(admin.ModelAdmin):
+@admin.register(TicketRedemptionKey)
+class TicketRedemptionKeyAdmin(admin.ModelAdmin):
     pass
 
 

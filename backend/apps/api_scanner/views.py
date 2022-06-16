@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.root.models import RedemptionAccessKey, Ticket
+from apps.root.models import Ticket, TicketRedemptionKey
 from apps.services import scanner_service
 
 from . import serializers
@@ -24,7 +24,7 @@ class SetAccessKeyAndEventMixin:
 
     def set_event_and_redemption_access_key(self, redemption_access_key: uuid.UUID):
         try:
-            self.redemption_access_key = RedemptionAccessKey.objects.get(
+            self.redemption_access_key = TicketRedemptionKey.objects.get(
                 public_id=redemption_access_key
             )
             self.event = self.redemption_access_key.event

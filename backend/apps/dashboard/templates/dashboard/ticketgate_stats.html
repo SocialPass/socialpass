@@ -16,7 +16,7 @@
             <h6 class="m-0">Tickets</h6>
             <div class="text-muted text-xs">List of tickets issued for <strong>{{current_gate.title}}</strong></div>
           </div>
-					<a href="{{ current_gate.event_portal_url }}" target="_blank" class="btn bg-gradient-primary btn-sm ms-auto my-0">Ticket Store</a>
+					<a href="{{ current_gate.checkout_portal_url }}" target="_blank" class="btn bg-gradient-primary btn-sm ms-auto my-0">Ticket Store</a>
         </div>
         <form method="GET" class="d-flex align-items-center">
           <input type="text" class="form-control form-control-sm" name="address" placeholder="Search by address" value="{{ request.GET.address }}">

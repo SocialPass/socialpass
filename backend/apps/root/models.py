@@ -75,8 +75,8 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     @property
-    def event_portal_url(self):
-        return f"{settings.EVENT_PORTAL_BASE_URL}/{self.public_id}"
+    def checkout_portal_url(self):
+        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
     @property
     def has_pending_checkout(self):

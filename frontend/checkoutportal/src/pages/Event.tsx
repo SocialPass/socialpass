@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { EventPortalContext } from "../context";
+import { CheckoutPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
 // Event Component
 export const Event = (): JSX.Element => {
   const navigate = useNavigate();
-  const { id, retrieveJson } = useContext(EventPortalContext);
+  const { id, retrieveJson } = useContext(CheckoutPortalContext);
   // default, return baseGate
   // todo: customize basegate more, perhaps current content as children
 

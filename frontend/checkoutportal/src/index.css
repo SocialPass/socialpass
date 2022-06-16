@@ -525,9 +525,9 @@ BOOSTRAP OVERRIDES
 }
 
 /**
- * The following is a quick hack to fix the container positioning, and 
- * basically center it forcefully. Should definitely be re-factored in the 
- * future because it is really hacky! 
+ * The following is a quick hack to fix the container positioning, and
+ * basically center it forcefully. Should definitely be re-factored in the
+ * future because it is really hacky!
  */
 
 .container-hack {

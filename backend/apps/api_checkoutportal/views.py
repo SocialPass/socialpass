@@ -11,7 +11,7 @@ from . import serializers
 
 class EventMixin:
     """
-    Mixin for eventportal flow
+    Mixin for checkoutportal flow
     """
 
     event = None
@@ -32,7 +32,7 @@ class EventMixin:
         raise MethodNotAllowed(method="GET")
 
 
-class EventPortalRetrieve(EventMixin, APIView):
+class CheckoutPortalRetrieve(EventMixin, APIView):
     """
     GET view for retrieving Event
     """
@@ -45,7 +45,7 @@ class EventPortalRetrieve(EventMixin, APIView):
         return Response(serialized_data)
 
 
-class EventPortalRequestCheckout(EventMixin, APIView):
+class CheckoutPortalRequest(EventMixin, APIView):
     """
     POST view for requesting Event checkout
     """
@@ -78,7 +78,7 @@ class EventPortalRequestCheckout(EventMixin, APIView):
         return Response(serialized_data)
 
 
-class EventPortalProcessCheckout(EventMixin, APIView):
+class CheckoutPortalProcess(EventMixin, APIView):
     """
     POST view for processing Event checkout
     """

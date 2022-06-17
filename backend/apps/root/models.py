@@ -28,20 +28,13 @@ class Event(DBModel):
     Stores data for ticketed event
     """
 
+    # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
-    title = models.CharField(max_length=255)
+
+    # Basic Info
+    title = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
-    requirements = models.JSONField(
-        default=list,
-        blank=True,
-        null=True,
-        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
-    )
-    limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
-    )
-    featured = models.BooleanField(default=False)
     date = models.DateTimeField()
     timezone = models.CharField(
         null=True,
@@ -49,7 +42,22 @@ class Event(DBModel):
         max_length=30,
     )
     location = models.CharField(max_length=1024)
+
+    # Ticket Info
+    # TODO: Move these to TicketType
+    requirements = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
+    )
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
+    limit_per_person = models.IntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+    )
+
+    # Pricing Info
+    # TODO: These will be reworked / removed with event attendee billing
     price = models.DecimalField(
         validators=[MinValueValidator(0)],
         decimal_places=2,
@@ -58,20 +66,15 @@ class Event(DBModel):
         blank=True,
         default=None,
     )
-    # TODO: add constraint so that price and pricing_rule should be set
-    # together. Thus one can't be null if the other is not null.
     pricing_rule = models.ForeignKey(
         PricingRule,
         null=True,
         blank=True,
         default=None,
-        on_delete=models.RESTRICT,  # Forbids pricing rules from being deleted
+        on_delete=models.RESTRICT,
     )
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return f"{self.team} - {self.title}"
 
     @property
@@ -99,20 +102,23 @@ class Ticket(DBModel):
     List of all the tickets distributed by the respective Ticketed Event.
     """
 
-    # basic info
+    # Keys
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="tickets")
-    # ticket file info
+
+    # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
     file = models.ImageField(null=True, storage=PrivateTicketStorage())
     embed_code = models.UUIDField(default=uuid.uuid4)
-    # access info
+
+    # Ticket access info
     archived = models.BooleanField(default=False)
     redeemed = models.BooleanField(default=False)
     redeemed_at = models.DateTimeField(null=True, blank=True)
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
     )
-    # checkout info
+
+    # Checkout Info
     blockchain_ownership = models.ForeignKey(
         "BlockchainOwnership",
         on_delete=models.SET_NULL,
@@ -162,12 +168,13 @@ class TicketRedemptionKey(DBModel):
             "name",
         )
 
+    # Keys
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="ticket_redemption_keys"
     )
+
+    # Basic info
     name = models.CharField(max_length=255, default="Default")
-    # TODO in a near future, different ScannerKeyAccess
-    # can give access to scanning diferent type of tickets.
 
     @property
     def scanner_url(self):
@@ -182,15 +189,15 @@ class BlockchainOwnership(DBModel):
     def set_expires():
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
+    # Keys
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+    # Basic info
     wallet_address = models.CharField(max_length=400)
     is_verified = models.BooleanField(default=False)
     expires = models.DateTimeField(default=set_expires)
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return str(self.wallet_address)
 
     @property

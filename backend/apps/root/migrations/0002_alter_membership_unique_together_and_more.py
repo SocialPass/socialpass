@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("root", "0004_alter_team_pricing_rule_group"),
+        ("root", "0001_initial"),
     ]
 
     database_operations = [

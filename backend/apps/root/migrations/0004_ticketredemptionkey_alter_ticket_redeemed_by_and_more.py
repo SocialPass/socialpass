@@ -10,7 +10,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("root", "0006_remove_pricingrule_group_remove_team_members_and_more"),
+        ("root", "0003_remove_pricingrule_group_remove_team_members_and_more"),
     ]
 
     operations = [

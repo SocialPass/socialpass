@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("root", "0007_ticketredemptionkey_alter_ticket_redeemed_by_and_more"),
+        ("root", "0004_ticketredemptionkey_alter_ticket_redeemed_by_and_more"),
     ]
 
     operations = [

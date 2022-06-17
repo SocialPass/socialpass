@@ -7,11 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        (
-            "dashboard",
-            "0002_pricingrulegroup_team_pricingrule_eventstripepayment_and_more",
-        ),
-        ("root", "0005_alter_membership_unique_together_and_more"),
+        ("root", "0002_alter_membership_unique_together_and_more"),
     ]
 
     database_operations = [

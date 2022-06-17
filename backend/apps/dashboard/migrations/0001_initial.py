@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("root", "0005_alter_membership_unique_together_and_more"),
+        ("root", "0002_alter_membership_unique_together_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

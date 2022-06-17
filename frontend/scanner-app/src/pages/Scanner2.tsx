@@ -73,10 +73,10 @@ export function Scanner2() {
         </div>
       </div>
       <Footer
-        event_name={eventData.title}
-        event_attendance={eventData.capacity}
-        event_date={eventData.date}
-        event_venue={eventData.location}
+        event_name="Título"
+        event_attendance={1}
+        event_date="Data do Evento"
+        event_venue="Local do Evento"
       />
     </div>
   );

@@ -6,6 +6,10 @@
 {% block extra_head %}
 <!-- Custom styles -->
 <style type="text/css">
+	:root {
+		--sidebar-width: 30rem;
+	}
+
 	.sidebar-header-link {
 		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
 		border-bottom: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
@@ -17,6 +21,16 @@
 
 	.sidebar-copyright {
 		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+
+	.ws-280 {
+		width: 28rem !important; 
+	}
+
+	@media (min-width: 993px) {
+		.border-lg-end {
+			border-right: var(--base-border-width) var(--base-border-style) var(--border-color) !important;
+		}
 	}
 </style>
 {% endblock extra_head %}
@@ -122,13 +136,13 @@
 					<a href="#" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
 						<div class="overflow-hidden">
 							<h6 class="fs-base-p6 m-0 text-truncate fw-700">{{ current_team.name }}</h6>
-							<p class="fs-base-n2 m-0 text-truncate">{% get_user_primary_email %}</p>
+							<p class="fs-base-n2 mt-5 mb-0 text-truncate">{% get_user_primary_email %}</p>
 						</div>
 						<div class="text-end flex-shrink-0 ws-25 ms-auto">
 							<i class="fa-regular fa-angle-down"></i>
 						</div>
 					</a>
-					<ul class="dropdown-menu dropdown-menu-center rounded-3 ws-250 p-10" aria-labelledby="team-dropdown-toggle">
+					<ul class="dropdown-menu dropdown-menu-center rounded-3 ws-280 p-10" aria-labelledby="team-dropdown-toggle">
 						<li class="dropdown-content d-flex align-items-center">
 							{% if current_team.image %}
 								<div class="ws-50 hs-50 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
@@ -249,14 +263,14 @@
 					</div>
 					<div class="overflow-hidden">
 						<h6 class="fs-base-p6 m-0 text-truncate fw-700">Events Manager</h6>
-						<p class="fs-base-n2 m-0 text-truncate">Go back to main dashboard</p>
+						<p class="fs-base-n2 mt-5 mb-0 text-truncate">Go back to main dashboard</p>
 					</div>
 				</a>
 			</div>
 			<!-- Sidebar main dashboard link end -->
 
 			<!-- Account start -->
-			<div class="sidebar-menu mt-40">
+			<div class="sidebar-menu">
 				<h6 class="sidebar-title fs-base-n2 text-on-primary">
 					Account
 				</h6>
@@ -285,14 +299,20 @@
 	<!-- Sidebar end -->
 
 	<!-- Content wrapper start -->
-	<div class="content-wrapper">
-		{% block content %}{% endblock content %}
+	<div class="content-wrapper min-vh-100 d-flex flex-column">
+		<!-- Main container start -->
+		<div class="py-content pt-0">
+			{% block content %}{% endblock content %}
+		</div>
+		<!-- Main container end -->
 
 		<!-- Footer start -->
-		<div class="px-content py-15 text-end fs-base-n2">
-			<i class="fa-regular fa-question-circle me-5"></i>
-			Need help?
-			<a href="mailto:support@socialpass.io" target="_blank" class="ms-5 fw-bold">Contact Us</a>
+		<div class="px-content fs-base-n2 mt-auto border-top border-bottom-0 border-start-0 border-end-0 border-dotted hs-50 d-flex align-items-center justify-content-end">
+			<span>
+				<i class="fa-light fa-question-circle me-5"></i>
+				Need help?
+			</span>
+			<a href="https://socialpass.gitbook.io/socialpass" target="_blank" class="ms-10 fw-bold">See Guides <i class="fa-duotone fa-external-link-alt ms-5"></i></a>
 		</div>
 		<!-- Footer end -->
 	</div>

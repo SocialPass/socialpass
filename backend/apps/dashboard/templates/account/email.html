@@ -74,10 +74,10 @@
 							</div>
 						{% endfor %}
 						<div class="form-group text-end">
-					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent fw-bold mt-5" type="submit" name="action_primary">
+					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent text-base fw-bold mt-5" type="submit" name="action_primary">
 					        	<i class="fa-regular fa-check me-5"></i> Make Primary
 					        </button>
-					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent fw-bold mt-5" type="submit" name="action_send">
+					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent text-base fw-bold mt-5" type="submit" name="action_send">
 					        	<i class="fa-regular fa-paper-plane me-5"></i> Verification
 					        </button>
 					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent text-danger fw-bold mt-5" type="submit" name="action_remove" >
@@ -95,7 +95,7 @@
 				<!-- Form start -->
 				<h2 class="card-title fs-base-p4 mt-40 mb-0">Add Email Address</h2>
 				<p class="text-muted fs-base-n2 mt-5">
-					Use the following form to add a new email address.
+					Use the following form to add a new email address. We'll send you a verification email to confirm the address.
 				</p>
 				<form method="POST" action="{% url 'account_email' %}">
 					{% csrf_token %}
@@ -116,7 +116,7 @@
 
 					{% for input in form.visible_fields %}
 						<div class="form-group">
-							<div class="position-relative">
+							<div class="input-group position-relative">
 								<input
 									type="{{ input.field.widget.input_type }}"
 									name="{{ input.name }}"
@@ -132,10 +132,15 @@
 										{{ k }}="{{ v }}"
 									{% endfor %}
 								/>
-								<label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25" for="{{ input.id_for_label }}">
+								<label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25 z-10" for="{{ input.id_for_label }}">
 									<i class="fa-regular fa-envelope"></i>
 									<span class="visually-hidden">Email</span>
 								</label>
+								<button class="btn btn-primary" name="action_add" type="submit">
+									<i class="fa-regular fa-paper-plane"></i>
+									<span class="visually-hidden d-sm-none">Submit</span>
+									<span class="ms-5 d-none d-sm-inline">Submit</span>
+								</button>
 							</div>
 
 							{% if input.errors %}
@@ -147,10 +152,6 @@
 							{% endif %}
 						</div>
 					{% endfor %}
-
-					<div class="form-group text-end">
-						<button class="btn btn-primary" name="action_add" type="submit">Submit</button>
-					</div>
 				</form>
 				<!-- Form end -->
 			</div>
@@ -160,7 +161,7 @@
 		<!-- Illustration start -->
 		<div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center ">
 			<div class="content w-100">
-				<img src="{% static 'images/illustrations/emails.svg' %}" class="img-fluid mx-auto d-block" alt="emails">
+				<img src="{% static 'images/illustrations/emails.svg' %}" class="d-block w-100" alt="emails">
 			</div>
 		</div>
 		<!-- Illustration end -->

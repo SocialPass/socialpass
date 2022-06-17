@@ -1,100 +1,176 @@
-{% extends "account/auth_base.html" %}
-{% block navbar_page_name_1 %}Manage Email{% endblock %}
-{% block navbar_page_name_2 %}Manage Email{% endblock %}
-{% block title %}Manage Email - SocialPass{% endblock %}
+{% extends "bases/base_primary.html" %}
+{% load static get_user_primary_email %}
 
-{% load i18n %}
-{% load crispy_forms_tags %}
+{% block head_title %}Manage Emails - SocialPass{% endblock head_title %}
 
-{% block head_title %}{% translate "Account" %}{% endblock %}
+{% block navbar_breadcrumb %}Manage Emails{% endblock %}
 
-{% block inner %}
-<div class="row">
-<div class="col-sm-10 col-md-8 mx-auto">
-  <div class="card mb-4">
-    <div class="card-header py-0">
-      <div class="d-flex align-items-center py-3">
-        <div class="pe-2">
-          <h6 class="m-0">Manage Emails</h6>
-          <div class="text-muted text-xs mb-3">
-            Manage email for a particular user.
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card-body py-2">
-    <h3 class="font-weight-bolder">{% translate "E-mail Addresses" %}</h3>
-
-    {% if user.emailaddress_set.all %}
-    <p>{% translate 'The following e-mail addresses are associated with your account:' %}</p>
-
-    <form action="{% url 'account_email' %}" class="email_list" method="post">
-    {% csrf_token %}
-    <fieldset class="blockLabels">
-
-      {% for emailaddress in user.emailaddress_set.all %}
-    <div class="radio">
-      <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
-
-        <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
-
-        {{ emailaddress.email }}
-        {% if emailaddress.verified %}
-        <span class="verified">{% translate "Verified" %} </span>
-        {% else %}
-        <span class="unverified">{% translate "Unverified" %}</span>
-        {% endif %}
-        {% if emailaddress.primary %}<span>{% translate "Primary" %}</span>{% endif %}
-      </label>
-    </div>
-      {% endfor %}
-
-    <div class="form-group d-flex gap-3">
-        <button class="secondaryAction btn bg-gradient-primary btn-sm" type="submit" name="action_primary" >{% translate 'Make Primary' %}</button>
-        <button class="secondaryAction btn bg-gradient-primary btn-sm" type="submit" name="action_send" >{% translate 'Re-send Verification' %}</button>
-    </div>
-
-    </fieldset>
-    </form>
-
-    {% else %}
-    <p><strong>{% translate 'Warning:'%}</strong> {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}</p>
-
-    {% endif %}
-
-
-        <h2>{% translate "Add E-mail Address" %}</h2>
-
-        <form method="post" action="{% url 'account_email' %}" class="add_email">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <div class="d-flex flex-row-reverse">
-              <button class="btn bg-gradient-primary btn-sm" name="action_add" type="submit">{% translate "Add E-mail" %}</button>
-            </div>
-        </form>
-
-    {% endblock %}
-
-
-    {% block inline_javascript %}
-    {{ block.super }}
-    <script type="text/javascript">
-    window.addEventListener('DOMContentLoaded',function() {
-      const message = "{% translate 'Do you really want to remove the selected e-mail address?' %}";
-      const actions = document.getElementsByName('action_remove');
-      if (actions.length) {
-        actions[0].addEventListener("click",function(e) {
-          if (!confirm(message)) {
-            e.preventDefault();
-          }
-        });
-      }
-      Array.from(document.getElementsByClassName('form-group')).forEach(x => x.classList.remove('row'));
-    });
-    </script>
-    </div>
-  </div>
+{% block content %}
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Manage Emails</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				Manage the email addresses for your account.
+			</p>
+		</div>
+	</div>
 </div>
-</div>
-{% endblock %}
+<!-- Header end -->
 
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Email Manager
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<div class="row">
+		<!-- Main content start -->
+		<div class="col-lg-6 border-lg-end">
+			<div class="content">
+				<p class="fs-base-n2">
+					You're managing email addresses for...<br />
+					<strong>{{ request.user.username }}</strong> - <a href="mailto:{% get_user_primary_email %}" target="_blank" class="fw-bold">{% get_user_primary_email %}</a>
+				</p>
+
+				<!-- Email addresses start -->
+				<h2 class="card-title fs-base-p4 mt-20 mb-0">Email Addresses</h2>
+				{% if user.emailaddress_set.all %}
+					<p class="text-muted fs-base-n2 mt-5">
+						The following email addresses are associated with your account.
+					</p>
+					<form method="POST" action="{% url 'account_email' %}" class="border-top">
+						{% csrf_token %}
+
+						{% for emailaddress in user.emailaddress_set.all %}
+							<div class="border-bottom py-10 mb-10">
+								<div class="form-check">
+									<input class="form-check-input" id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+									<label class="form-check-label" for="email_radio_{{forloop.counter}}">
+										{{ emailaddress.email }}
+									</label>
+								</div>
+								<div class="mt-10">
+									{% if emailaddress.primary %}
+										<span class="fw-bold me-20">
+											<i class="fa-regular fa-check me-5"></i> Primary
+										</span>
+									{% endif %}
+									{% if emailaddress.verified %}
+										<span class="fw-bold text-success-dim-lm text-success-light-dm">
+											<i class="fa-duotone fa-shield-alt me-5"></i> Verified
+										</span>
+									{% else %}
+										<span class="fw-bold text-danger-dim-lm text-danger-light-dm">
+											<i class="fa-duotone fa-times-circle me-5"></i> Unverified
+										</span>
+									{% endif %}
+								</div>
+							</div>
+						{% endfor %}
+						<div class="form-group text-end">
+					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent fw-bold mt-5" type="submit" name="action_primary">
+					        	<i class="fa-regular fa-check me-5"></i> Make Primary
+					        </button>
+					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent fw-bold mt-5" type="submit" name="action_send">
+					        	<i class="fa-regular fa-paper-plane me-5"></i> Verification
+					        </button>
+					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent text-danger fw-bold mt-5" type="submit" name="action_remove" >
+					        	<i class="fa-regular fa-times me-5"></i> Remove
+					        </button>
+					    </div>
+					</form>
+				{% else %}
+					<p class="text-muted fs-base-n2 mt-5">
+						You currently do not have any email address associated with your account.
+					</p>
+				{% endif %}
+				<!-- Email addresses end -->
+
+				<!-- Form start -->
+				<h2 class="card-title fs-base-p4 mt-40 mb-0">Add Email Address</h2>
+				<p class="text-muted fs-base-n2 mt-5">
+					Use the following form to add a new email address.
+				</p>
+				<form method="POST" action="{% url 'account_email' %}">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="invalid-feedback">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					{% for input in form.visible_fields %}
+						<div class="form-group">
+							<div class="position-relative">
+								<input
+									type="{{ input.field.widget.input_type }}"
+									name="{{ input.name }}"
+									value="{{ input.value|default_if_none:'' }}"
+									{% if input.field.widget.input_type != "hidden" %}
+										class="ps-40 form-control {% if input.errors %}is-invalid{% endif %}"
+										id="{{ input.auto_id }}"
+									{% endif %}
+									{% if input.field.required %}
+										required="required"
+									{% endif %}
+									{% for k,v in input.field.widget.attrs.items %}
+										{{ k }}="{{ v }}"
+									{% endfor %}
+								/>
+								<label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25" for="{{ input.id_for_label }}">
+									<i class="fa-regular fa-envelope"></i>
+									<span class="visually-hidden">Email</span>
+								</label>
+							</div>
+
+							{% if input.errors %}
+								<ul class="invalid-feedback">
+									{% for error in input.errors %}
+										<li>{{ error }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					{% endfor %}
+
+					<div class="form-group text-end">
+						<button class="btn btn-primary" name="action_add" type="submit">Submit</button>
+					</div>
+				</form>
+				<!-- Form end -->
+			</div>
+		</div>
+		<!-- Main content end -->
+
+		<!-- Illustration start -->
+		<div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center ">
+			<div class="content w-100">
+				<img src="{% static 'images/illustrations/emails.svg' %}" class="img-fluid mx-auto d-block" alt="emails">
+			</div>
+		</div>
+		<!-- Illustration end -->
+	</div>
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="mailto:support@socialpass.io" target="_blank" class="fw-bold">contact us</a> and let us know if you have any trouble with your email addresses.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock content %}

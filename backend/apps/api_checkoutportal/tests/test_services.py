@@ -18,3 +18,27 @@ class TestBlockchainService(TestCase):
         )
         # assert assets have been returned
         return self.assertTrue(len(assets) > 1)
+
+
+class TestTicketService(TestCase):
+    def test_create_ticket_image(self):
+        """
+        todo: need method for creating event
+        event = Event.objects.last()
+        ticket = Ticket.objects.create(event=event)
+        updated_ticket = create_ticket_image(
+            event=event,
+            ticket=ticket
+        )
+        """
+        return self.assertTrue(True)
+
+    def test_create_tickets_blockchain_ownership(self):
+        """
+        event = Event.objects.last()
+        tickets = create_tickets_blockchain_ownership(
+            event=Event,
+            blockchain_ownership=BlockchainOwnership,
+            tickets_to_issue=int,
+        )
+        """

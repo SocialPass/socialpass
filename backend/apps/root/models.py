@@ -206,16 +206,9 @@ class BlockchainOwnership(DBModel):
 
     @property
     def signing_message(self):
-        return f"Greetings from SocialPass. Sign this message to prove you have access to this wallet.\nThis IS NOT a trade or transaction.\n\nTimestamp: {self.expires.strftime('%s')}\nOne-Time Code: {str(self.public_id)[0:7]}"
-
-        return "Hello from SocialPass!"
-        signing_message_obj = {
-            "You are accessing": self.event.title,
-            "Hosted by": self.event.team.name,
-            "One-Time Code": self.public_id,
-            "Valid until": self.expires.ctime(),
-        }
-        signing_message = "\n".join(
-            ": ".join((key, str(val))) for (key, val) in signing_message_obj.items()
+        return (
+            "Greetings from SocialPass. Sign this message to prove you have access to this wallet"
+            "\nThis IS NOT a trade or transaction"
+            "\n\nTimestamp: {self.expires.strftime('%s')}"
+            "\nOne-Time Code: {str(self.public_id)[0:7]}"
         )
-        return signing_message

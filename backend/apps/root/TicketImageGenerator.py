@@ -474,7 +474,7 @@ class TicketPartGenerator:
 
         # Resize image to max height (while maintaining aspect ratio)
         hpercent = max_height / float(scene_img.size[1])
-        wsize = int((float(scene_img.size[0]) * float(hpercent)))
+        wsize = int(float(scene_img.size[0]) * float(hpercent))
         scene_img = scene_img.resize((wsize, max_height), Image.ANTIALIAS)
 
         return scene_img

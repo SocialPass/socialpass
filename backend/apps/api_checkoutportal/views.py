@@ -3,10 +3,8 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.api_checkoutportal import serializers, services
 from apps.root.models import BlockchainOwnership, Event
-from apps.services import blockchain_service, event_service, ticket_service
-
-from . import serializers
 
 
 class EventMixin:
@@ -119,7 +117,7 @@ class CheckoutPortalProcess(EventMixin, APIView):
         (
             wallet_validated,
             response_msg,
-        ) = blockchain_service.validate_blockchain_wallet_ownership(
+        ) = services.validate_blockchain_wallet_ownership(
             event=self.event,
             blockchain_ownership=blockchain_ownership,
             signed_message=blockchain_serializer.data["signed_message"],
@@ -130,27 +128,27 @@ class CheckoutPortalProcess(EventMixin, APIView):
 
         # 4. Get # of tickets available
         try:
-            tickets_to_issue = event_service.get_available_tickets(
+            tickets_to_issue = services.get_available_tickets(
                 event=self.event,
                 tickets_requested=blockchain_serializer.data["tickets_requested"],
             )
         except (
-            event_service.TooManyTicketsRequestedError,
-            event_service.TooManyTicketsIssuedError,
-            event_service.TicketsSoldOutError,
+            services.TooManyTicketsRequestedError,
+            services.TooManyTicketsIssuedError,
+            services.TicketsSoldOutError,
         ) as e:
             return Response(str(e), status=403)
 
         # 5. try to create & return tickets based on blockchain ownership
         try:
-            tickets = ticket_service.create_tickets_blockchain_ownership(
+            tickets = services.create_tickets_blockchain_ownership(
                 event=self.event,
                 blockchain_ownership=blockchain_ownership,
                 tickets_to_issue=tickets_to_issue,
             )
             return Response(self.output_serializer(tickets, many=True).data)
         except (
-            ticket_service.ZeroBlockchainAssetsError,
-            ticket_service.PartialBlockchainAssetError,
+            services.ZeroBlockchainAssetsError,
+            services.PartialBlockchainAssetError,
         ) as e:
             return Response(str(e), status=403)

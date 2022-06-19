@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             model_name="team",
             name="members",
             field=models.ManyToManyField(
-                through="dashboard.Membership", to=settings.AUTH_USER_MODEL
+                through=settings.AUTH_USER_MODEL, to=settings.AUTH_USER_MODEL
             ),
         ),
         migrations.DeleteModel(

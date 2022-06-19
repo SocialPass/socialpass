@@ -209,6 +209,6 @@ class BlockchainOwnership(DBModel):
         return (
             "Greetings from SocialPass. Sign this message to prove you have access to this wallet"
             "\nThis IS NOT a trade or transaction"
-            "\n\nTimestamp: {self.expires.strftime('%s')}"
-            "\nOne-Time Code: {str(self.public_id)[0:7]}"
+            f"\n\nTimestamp: {self.expires.strftime('%s')}"
+            f"\nOne-Time Code: {str(self.public_id)[0:7]}"
         )

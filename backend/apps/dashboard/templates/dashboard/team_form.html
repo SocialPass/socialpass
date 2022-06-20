@@ -33,6 +33,11 @@
 		<!-- Main content start -->
 		<div class="col-lg-6 border-lg-end">
 			<div class="content">
+				<p class="fs-base-n2">
+					You're updating your team as...<br />
+					<strong>{{ request.user.username }}</strong> - <a href="mailto:{% get_user_primary_email %}" target="_blank" class="fw-bold">{% get_user_primary_email %}</a>
+				</p>
+
 				<!-- Form start -->
 				<form method="POST" enctype="multipart/form-data">
 					{% csrf_token %}
@@ -106,14 +111,6 @@
 									<label class="form-file-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
 									<label class="form-file-filename fs-base-n2" for="{{ input.id_for_label }}">{% if input.value %}{{ input.value }}{% else %}No file chosen{% endif %}</label>
 								</div>
-								{% if current_team.image %}
-									<div class="d-flex align-items-center bg-gray-very-light-lm bg-darkgray-very-dim-dm px-15 py-5 rounded mt-5 fs-base-n2">
-										<span class="me-10">Currently set:</span>
-										<div class="ws-25 hs-25 d-flex align-items-center justify-content-center rounded overflow-hidden">
-											<img src="{{ current_team.image.url }}" class="d-block w-100" alt="Team image">
-										</div>
-									</div>
-								{% endif %}
 							{% endif %}
 
 							{% if input.errors %}
@@ -127,7 +124,7 @@
 					{% endfor %}
 
 					<div class="form-group text-end">
-						<button class="btn btn-primary" type="submit">Submit</button>
+						<button class="btn btn-primary" type="submit">Update Team</button>
 					</div>
 				</form>
 				<!-- Form end -->

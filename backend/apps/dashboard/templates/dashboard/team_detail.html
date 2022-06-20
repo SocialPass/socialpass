@@ -9,7 +9,7 @@
 <!-- Header start -->
 <div class="border-bottom hs-md-100">
 	<div class="p-content d-flex h-100">
-		<div class="align-self-center">
+		<div class="pe-15 align-self-center">
 			<h1 class="content-title m-0 fs-base-p6">Team Details</h1>
 			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
 				Detailed breakdown of your team's information.
@@ -42,17 +42,17 @@
 				<!-- Team image and name start -->
 				<div class="d-flex align-items-center">
 					{% if current_team.image %}
-						<div class="ws-75 hs-75 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
+						<div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
 							<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
 						</div>
 					{% else %}
-						<div class="ws-75 hs-75 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
-							<span class="text-uppercase fs-base-p16 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+						<div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
+							<span class="text-uppercase fsr-3 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
 						</div>
 					{% endif %}
 					<div class="ps-20 overflow-hidden">
 						<p class="text-muted m-0 mb-5 text-truncate">My Team</p>
-						<h2 class="fs-base-p16 fw-700 m-0 text-truncate">{{ current_team.name }}</h2>
+						<h2 class="fsr-3 fw-700 m-0 text-truncate">{{ current_team.name }}</h2>
 					</div>
 				</div>
 				<!-- Team image and name end -->
@@ -69,15 +69,15 @@
 				<!-- Team description start -->
 				<div>
 					{% if current_team.description %}
-						<p>
+						<p class="mb-0">
 							{{ current_team.description }}
 						</p>
 					{% else %}
-						<p class="text-muted">
+						<p class="mb-0 text-muted">
 							Your team does not have a description.
 						</p>
 					{% endif %}
-					<p class="fs-base-n2">
+					<p class="mt-5 fs-base-n2">
 						<a class="fw-bold" href="{% url 'team_update' current_team.public_id %}">Update Information <i class="fa-regular fa-angle-right ms-5"></i></a>
 					</p>
 				</div>
@@ -85,10 +85,10 @@
 
 				<!-- Team members start -->
 				<h3 class="card-title fs-base-p4 mt-40 mb-0">Team Members</h3>
-				<p>
+				<p class="mb-0">
 					Your team currently has <strong class="fw-700">{{ current_team.members.count }}</strong> member(s).
 				</p>
-				<p class="fs-base-n2">
+				<p class="mt-5 fs-base-n2">
 					<a class="fw-bold" href="{% url 'team_members' current_team.public_id %}">Manage Members <i class="fa-regular fa-angle-right ms-5"></i></a>
 				</p>
 				<!-- Team members end -->

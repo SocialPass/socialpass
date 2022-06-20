@@ -69,20 +69,28 @@
 				<!-- Team description start -->
 				<div>
 					{% if current_team.description %}
-						<p>{{ current_team.description }}</p>
+						<p>
+							{{ current_team.description }}
+						</p>
 					{% else %}
 						<p class="text-muted">
 							Your team does not have a description.
 						</p>
 					{% endif %}
-					<p>
-						<a class="fw-bold" href="{% url 'team_update' current_team.public_id %}">Update Team Information <i class="fa-regular fa-angle-right ms-5"></i></a>
+					<p class="fs-base-n2">
+						<a class="fw-bold" href="{% url 'team_update' current_team.public_id %}">Update Information <i class="fa-regular fa-angle-right ms-5"></i></a>
 					</p>
 				</div>
 				<!-- Team description end -->
 
 				<!-- Team members start -->
-
+				<h3 class="card-title fs-base-p4 mt-40 mb-0">Team Members</h3>
+				<p>
+					Your team currently has <strong class="fw-700">{{ current_team.members.count }}</strong> member(s).
+				</p>
+				<p class="fs-base-n2">
+					<a class="fw-bold" href="{% url 'team_members' current_team.public_id %}">Manage Members <i class="fa-regular fa-angle-right ms-5"></i></a>
+				</p>
 				<!-- Team members end -->
 			</div>
 		</div>
@@ -91,7 +99,7 @@
 		<!-- Illustration start -->
 		<div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center ">
 			<div class="content w-100">
-				<img src="{% static 'images/illustrations/team_update.svg' %}" class="d-block w-100" alt="team_update">
+				<img src="{% static 'images/illustrations/team_details.svg' %}" class="d-block w-100" alt="team_details">
 			</div>
 		</div>
 		<!-- Illustration end -->
@@ -99,7 +107,7 @@
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
-		Please <a href="mailto:support@socialpass.io" target="_blank" class="fw-bold">contact us</a> and let us know if you have any trouble updating your team's information.
+		Please <a href="mailto:support@socialpass.io" target="_blank" class="fw-bold">contact us</a> and let us know if you think something is wrong.
 	</div>
 	<!-- Card footer end -->
 </div>

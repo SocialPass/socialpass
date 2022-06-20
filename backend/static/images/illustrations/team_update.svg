@@ -14,12 +14,12 @@
 <circle opacity="0.03" enable-background="new    " cx="193.327" cy="203.72" r="2.761"/>
 <circle opacity="0.44" fill="#FFFFFF" enable-background="new    " cx="203" cy="203.72" r="2.761"/>
 <circle opacity="0.03" enable-background="new    " cx="212.673" cy="203.72" r="2.761"/>
-<rect x="172.032" y="89.44" opacity="0.1" enable-background="new    " width="61.936" height="52.872"/>
-<rect x="172.032" y="152.502" opacity="0.1" enable-background="new    " width="43.452" height="4.841"/>
+<rect x="172.032" y="89.44" opacity="0.2" enable-background="new    " width="61.936" height="52.872"/>
+<rect x="172.032" y="152.502" opacity="0.2" enable-background="new    " width="43.452" height="4.841"/>
 <rect x="218.418" y="152.502" opacity="0.03" enable-background="new    " width="15.55" height="4.841"/>
-<rect x="172.032" y="167.352" opacity="0.1" enable-background="new    " width="20.3" height="4.842"/>
+<rect x="172.032" y="167.352" opacity="0.2" enable-background="new    " width="20.3" height="4.842"/>
 <rect x="196.646" y="167.352" opacity="0.03" enable-background="new    " width="37.322" height="4.842"/>
-<rect x="172.032" y="182.212" opacity="0.1" enable-background="new    " width="46.903" height="4.841"/>
+<rect x="172.032" y="182.212" opacity="0.2" enable-background="new    " width="46.903" height="4.841"/>
 <path opacity="0.1" enable-background="new    " d="M231.826,239.275c0-1.016-2.152-42.631-0.771-48.822
 	s14.047-36.459,10.708-39.991c-3.339-3.532-15.569,4.506-15.569,4.506s2.232-36.448-3.045-39.047
 	c-5.279-2.598-7.623,7.582-7.623,7.582l-2.812,40.772l-13.925,74.806L231.826,239.275z"/>

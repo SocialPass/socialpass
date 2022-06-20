@@ -5,7 +5,16 @@
 {% block head_title %}Create Team - SocialPass{% endblock %}
 
 {% block inner %}
-<h1 class="fsr-3 text-strong fw-700">Create Team</h1>
+{% with request.user.membership_set.all as memberships %}
+	{% if memberships.count > 0 %}
+		<p class="mb-5">
+			<a href="{% url 'dashboard_redirect' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Back to dashboard</a>
+		</p>
+		<h1 class="fsr-3 text-strong fw-700 mt-0">Create Team</h1>
+	{% else %}
+		<h1 class="fsr-3 text-strong fw-700">Create Team</h1>
+	{% endif %}
+{% endwith %}
 <p>
 	Use the form below to create your very own team and get started with SocialPass.
 </p>

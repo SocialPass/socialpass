@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { EventPortalContext } from "../context";
+import { CheckoutPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
 import correct from "../static/images/icons/correct.svg";
@@ -8,7 +8,7 @@ import denied from "../static/images/icons/denied.svg";
 
 export const CheckoutStatus = () => {
   const { id, grantAccessJson, grantAccessError, retrieveJson } =
-    useContext(EventPortalContext);
+    useContext(CheckoutPortalContext);
   const navigate = useNavigate();
   console.log(grantAccessJson, grantAccessError);
   if (grantAccessJson) {

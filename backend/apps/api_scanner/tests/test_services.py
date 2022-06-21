@@ -1,7 +1,7 @@
 from django.test import TestCase
 
+from apps.api_scanner.services import get_ticket_from_embedded_qr_code
 from apps.root.models import Ticket
-from apps.services.scanner_service import get_ticket_from_embedded_qr_code
 
 
 class TestScanningService(TestCase):

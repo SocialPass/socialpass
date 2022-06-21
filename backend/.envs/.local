@@ -9,7 +9,7 @@ DJANGO_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
 
 # INTERNAL
 # ------------------------------------------------------------------------------
-EVENT_PORTAL_BASE_URL=http://localhost:3000
+CHECKOUT_PORTAL_BASE_URL=http://localhost:3000
 SCANNER_BASE_URL=http://localhost:3000
 
 # AWS (STAGING)

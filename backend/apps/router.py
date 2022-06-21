@@ -12,8 +12,7 @@ urlpatterns = [
 
 # DRF API URLS
 urlpatterns += [
-    # API - Event Portal
-    path("api/event-portal/", include("apps.api_eventportal.urls")),
+    path("api/checkout-portal/", include("apps.api_checkoutportal.urls")),
     path("api/scanner/", include("apps.api_scanner.urls")),
 ]
 

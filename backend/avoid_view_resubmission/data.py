@@ -1,7 +1,6 @@
 from collections import UserDict
 from uuid import UUID, uuid4
 
-
 """Dict like abstraction layer. This module exists in case a project with no SessionMiddleware wants to use AFR"""
 
 
@@ -31,7 +30,9 @@ class AFRMetaData(UserDict):
                 uuid = UUID(uuid)
             except Exception:
                 if not create:
-                    raise ValueError('uuid must be a UUID or a string that can be converted to a UUID')
+                    raise ValueError(
+                        "uuid must be a UUID or a string that can be converted to a UUID"
+                    )
                 uuid = uuid4()
 
         return uuid
@@ -63,10 +64,10 @@ class SessionBasedAFRMetaData(AFRMetaData):
     @property
     def data(self):
         try:
-            return self.request.session['_afr_metadata']
+            return self.request.session["_afr_metadata"]
         except KeyError:
-            self.request.session['_afr_metadata'] = {}
-            return self.request.session['_afr_metadata']
+            self.request.session["_afr_metadata"] = {}
+            return self.request.session["_afr_metadata"]
 
     def __getitem__(self, key: UUID):
         return super().__getitem__(str(key))
@@ -80,13 +81,13 @@ class SessionBasedAFRMetaData(AFRMetaData):
         self.request.session.modified = True
 
     def __contains__(self, key):
-        return str(key) in self.request.session['_afr_metadata']
+        return str(key) in self.request.session["_afr_metadata"]
 
     def __iter__(self):
-        return iter(self.request.session['_afr_metadata'])
+        return iter(self.request.session["_afr_metadata"])
 
     def __len__(self):
-        return len(self.request.session['_afr_metadata'])
+        return len(self.request.session["_afr_metadata"])
 
     def get_or_create(self, key: UUID) -> tuple[dict, UUID, bool]:
         data, uuid, created = super().get_or_create(key)

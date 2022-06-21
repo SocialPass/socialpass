@@ -176,7 +176,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="{% url 'team_members' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+							<a href="{% url 'team_members' current_team.public_id %}#add-member" class="dropdown-item d-flex align-items-center">
 								<span class="ws-25">
 									<i class="fa-regular fa-user-plus"></i>
 								</span>
@@ -247,7 +247,7 @@
 						</span>
 						<span class="ms-5">Manage Members</span>
 					</a>
-					<a href="{% url 'team_members' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
+					<a href="{% url 'team_members' current_team.public_id %}#add-member" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
 						<i class="fa-solid fa-plus"></i>
 						<span class="visually-hidden">Add Member</span>
 					</a>

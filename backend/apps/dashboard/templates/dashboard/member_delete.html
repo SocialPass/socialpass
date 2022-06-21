@@ -41,7 +41,7 @@
 				<!-- Team member deletion form start -->
 				<h2 class="card-title fs-base-p4 mt-20 mb-0">Delete Team Member</h2>
 				<p>
-					You're about to remove <a href="malto:{{ object.user.email }}" class="fw-bold">{{object.user.email}}</a> from <strong>{{object.team.name}}</strong>. Once this action is confirmed, this cannot be undone.
+					You're about to remove <a href="malto:{{ object.user.email }}" class="fw-bold">{{object.user.email}}</a> from <strong>{{object.team.name}}</strong>. Once this action is confirmed, it cannot be undone.
 				</p>
 				<form class="form" method="post">
 					{% csrf_token %}

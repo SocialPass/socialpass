@@ -7,6 +7,7 @@ repos:
     rev: v0.961
     hooks:
     -   id: mypy
+        entry: bash -c 'cd backend && exec mypy .'
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.2.0

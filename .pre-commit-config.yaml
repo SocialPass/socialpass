@@ -1,5 +1,4 @@
-files: ^backend/
-exclude: "docs/|/migrations/|static/|README.md|Dockerfile"
+exclude: "docs/|/migrations/"
 default_stages: [commit]
 
 repos:
@@ -7,7 +6,7 @@ repos:
     rev: v0.961
     hooks:
     -   id: mypy
-        entry: bash -c 'cd backend && exec mypy .'
+        entry: bash -c 'cd backend && mypy .'
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.2.0
@@ -26,16 +25,19 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
+        entry: bash -c 'cd backend && black .'
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
     hooks:
       - id: isort
+        entry: bash -c 'cd backend && isort .'
 
   - repo: https://github.com/PyCQA/flake8
     rev: 4.0.1
     hooks:
       - id: flake8
+        entry: bash -c 'cd backend && flake8 .'
 
 ci:
   autoupdate_schedule: weekly

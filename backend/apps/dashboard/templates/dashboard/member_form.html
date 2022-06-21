@@ -53,7 +53,7 @@
 							<div class="d-flex align-items-center ps-15 ms-auto">
 								{% if member.user != request.user %}
 									<a href="{% url 'team_member_delete' team_pk=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-square text-danger" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-breakpoint="md" data-hm-title="Remove member from your team">
-										<i class="fa-regular fa-times"></i>
+										<i class="fa-solid fa-times"></i>
 										<span class="visually-hidden">Remove</span>
 									</a>
 								{% else %}
@@ -156,7 +156,7 @@
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
-		Please <a href="mailto:support@socialpass.io" target="_blank" class="fw-bold">contact us</a> and let us know if you think something is wrong.
+		Please <a href="mailto:support@socialpass.io" target="_blank" class="fw-bold">contact us</a> and let us know if you need help managing your team members.
 	</div>
 	<!-- Card footer end -->
 </div>

@@ -1,75 +1,115 @@
-{% extends 'dashboard/base.html' %}
-{% load static i18n get_chain_name %}
+{% extends "bases/base_primary.html" %}
+{% load static get_user_primary_email %}
 
-{% block title %}{{ current_team.name }} - SocialPass {% endblock %}
+{% block head_title %}Team Details - SocialPass{% endblock head_title %}
 
-{% block navbar_page_name_1 %}Team Info {% endblock %}
-{% block navbar_page_name_2 %}Team Info{% endblock %}
+{% block navbar_breadcrumb %}Team Details{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-sm-10 col-md-8 mx-auto">
-    <div class="card mb-4">
-      <div class="card-header py-0">
-        <div class="d-flex align-items-center py-3">
-          <div class="pe-2">
-            <h6 class="m-0">Team Detail</h6>
-            <div class="text-muted text-xs mb-3">
-              Details of a particular team.
-            </div>
-          </div>
-          <a href="{% url 'team_update' view.kwargs.team_pk %}" class="btn bg-gradient-primary btn-sm ms-auto my-0">Edit</a>
-        </div>
-      </div>
-      <div class="card-body py-2">
-        <div>
-          <h1 class="fw-bold fs-3">{{ current_team.name }}</h1>
-          <div class="text-muted text-xs mb-3">
-            <div>
-              Created: {{ current_team.created }}
-            </div>
-            <div class="mt-1">
-              Modified: {{ current_team.modified }}
-            </div>
-          </div>
-          {% if current_team.description %}
-          <p class="text-muted">{{ current_team.description }}</p>
-          {% else %}
-          <p class="text-muted">Description not set.</p>
-          {% endif %}
-        </div>
-        <div class="table-responsive p-0">
-          <table class="table align-items-center mb-0">
-            <tbody>
-              <tr>
-                <td class="align-middle fw-bold">
-                  Name
-                </td>
-                <td class="align-middle">
-                  {{ current_team.name }}
-                </td>
-              </tr>
-              <tr>
-                <td class="align-middle fw-bold">
-                  Description
-                </td>
-                <td class="align-middle">
-                  {{ current_team.description }}
-                </td>
-              </tr>
-              <tr>
-                <td class="align-middle fw-bold">
-                  Team Members
-                </td>
-                <td class="align-middle">
-                  {{ current_team.members.count }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="pe-15 align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Team Details</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				Detailed breakdown of your team's information.
+			</p>
+		</div>
+		<div class="ms-auto align-self-center">
+			<a href="{% url 'team_update' current_team.public_id %}" class="btn text-primary fw-bold">
+				<i class="fa-regular fa-edit"></i>
+				<span class="ms-5 d-none d-sm-inline">Update</span>
+			</a>
+		</div>
+	</div>
 </div>
-{% endblock %}
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Team Details
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<div class="row">
+		<!-- Main content start -->
+		<div class="col-lg-6 border-lg-end">
+			<div class="content">
+				<!-- Team image and name start -->
+				<div class="d-flex align-items-center">
+					{% if current_team.image %}
+						<div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
+							<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
+						</div>
+					{% else %}
+						<div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
+							<span class="text-uppercase fsr-3 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+						</div>
+					{% endif %}
+					<div class="ps-20 overflow-hidden">
+						<p class="text-muted m-0 mb-5 text-truncate">My Team</p>
+						<h2 class="fsr-3 fw-700 m-0 text-truncate">{{ current_team.name }}</h2>
+					</div>
+				</div>
+				<!-- Team image and name end -->
+
+				<!-- Team dates start -->
+				<p class="mb-5">
+					<strong>Created: </strong> <span class="text-muted">{{ current_team.created }}</span>
+				</p>
+				<p class="mt-5">
+					<strong>Updated: </strong> <span class="text-muted">{{ current_team.modified }}</span>
+				</p>
+				<!-- Team dates end -->
+
+				<!-- Team description start -->
+				<div>
+					{% if current_team.description %}
+						<p class="mb-0">
+							{{ current_team.description }}
+						</p>
+					{% else %}
+						<p class="mb-0 text-muted">
+							Your team does not have a description.
+						</p>
+					{% endif %}
+					<p class="mt-5 fs-base-n2">
+						<a class="fw-bold" href="{% url 'team_update' current_team.public_id %}">Update Information <i class="fa-regular fa-angle-right ms-5"></i></a>
+					</p>
+				</div>
+				<!-- Team description end -->
+
+				<!-- Team members start -->
+				<h3 class="card-title fs-base-p4 mt-40 mb-0">Team Members</h3>
+				<p class="mb-0">
+					Your team currently has <strong class="fw-700">{{ current_team.members.count }}</strong> member(s).
+				</p>
+				<p class="mt-5 fs-base-n2">
+					<a class="fw-bold" href="{% url 'team_members' current_team.public_id %}">Manage Members <i class="fa-regular fa-angle-right ms-5"></i></a>
+				</p>
+				<!-- Team members end -->
+			</div>
+		</div>
+		<!-- Main content end -->
+
+		<!-- Illustration start -->
+		<div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center ">
+			<div class="content w-100">
+				<img src="{% static 'images/illustrations/team_details.svg' %}" class="d-block w-100" alt="team_details">
+			</div>
+		</div>
+		<!-- Illustration end -->
+	</div>
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="mailto:support@socialpass.io" target="_blank" class="fw-bold">contact us</a> and let us know if you think something is wrong.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock content %}

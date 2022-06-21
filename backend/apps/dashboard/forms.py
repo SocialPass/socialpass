@@ -4,8 +4,8 @@ from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
 
 from apps.dashboard import services
-from apps.dashboard.models import Invite
-from apps.root.models import Event, Team
+from apps.dashboard.models import Invite, Team
+from apps.root.models import Event
 
 
 class TeamForm(forms.ModelForm):

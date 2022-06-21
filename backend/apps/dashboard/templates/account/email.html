@@ -48,7 +48,7 @@
 						{% csrf_token %}
 
 						{% for emailaddress in user.emailaddress_set.all %}
-							<div class="border-bottom py-10 mb-10">
+							<div class="border-bottom py-10">
 								<div class="form-check">
 									<input class="form-check-input" id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
 									<label class="form-check-label" for="email_radio_{{forloop.counter}}">
@@ -73,14 +73,14 @@
 								</div>
 							</div>
 						{% endfor %}
-						<div class="form-group text-end">
-					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent text-base fw-bold mt-5" type="submit" name="action_primary">
+						<div class="form-group text-end mt-10">
+					        <button class="btn btn-sm mt-5" type="submit" name="action_primary">
 					        	<i class="fa-regular fa-check me-5"></i> Make Primary
 					        </button>
-					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent text-base fw-bold mt-5" type="submit" name="action_send">
+					        <button class="btn btn-sm mt-5" type="submit" name="action_send">
 					        	<i class="fa-regular fa-paper-plane me-5"></i> Verification
 					        </button>
-					        <button class="btn btn-sm bg-gray-very-light-lm bg-darkgray-very-dim-dm border-transparent text-danger fw-bold mt-5" type="submit" name="action_remove" >
+					        <button class="btn btn-sm text-danger fw-bold mt-5" type="submit" name="action_remove" >
 					        	<i class="fa-regular fa-times me-5"></i> Remove
 					        </button>
 					    </div>

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { TicketedEventRequestAccess, TicketedEventGrantAccess } from "../api";
 import { Loading } from "../components/";
 import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
-import { EventPortalContext } from "../context";
+import { CheckoutPortalContext } from "../context";
 import infoButton from "../static/images/icons/infoButton.svg";
 
 // ConnectorWallets
@@ -22,7 +22,7 @@ export const CheckoutWeb3 = () => {
     setRequestAccessError,
     setGrantAccessJson,
     setGrantAccessError,
-  } = useContext(EventPortalContext);
+  } = useContext(CheckoutPortalContext);
   const [loading, setLoading] = useState(false);
   const connectHook = useConnect();
   const accountHook = useAccount();

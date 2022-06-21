@@ -18,7 +18,7 @@ class AvoidRessubmissionCreateViewMixin(CreateView):
 
     def post(self, request, *args, **kwargs):
         try:
-            self.afr_uuid = request.POST['_afr_uuid']
+            self.afr_uuid = request.POST["_afr_uuid"]
         except KeyError:
             raise RuntimeError(
                 "_afr_uuid parameter is not being sent on POST request."
@@ -30,7 +30,7 @@ class AvoidRessubmissionCreateViewMixin(CreateView):
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
 
-        if hasattr(self, 'obj_tracker') and self.obj_tracker.has_bound_object():
+        if hasattr(self, "obj_tracker") and self.obj_tracker.has_bound_object():
             form.instance = self.obj_tracker.bound_object
 
         return form
@@ -42,8 +42,5 @@ class AvoidRessubmissionCreateViewMixin(CreateView):
 
     def get_context_data(self, **kwargs):
         return dict(
-            **super().get_context_data(**kwargs),
-            **{
-                'afr_uuid_': self.afr_uuid
-            }
+            **super().get_context_data(**kwargs), **{"afr_uuid_": self.afr_uuid}
         )

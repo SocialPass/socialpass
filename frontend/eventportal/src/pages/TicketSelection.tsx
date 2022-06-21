@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { EventPortalContext } from "../context";
+import { CheckoutPortalContext } from "../context";
 import { truncateAddress } from "../utils";
 import infoButton from "../static/images/icons/infoButton.svg";
 
@@ -9,7 +9,7 @@ export function TicketSelection() {
   const params = useParams();
   const id = params.publicId;
   const { retrieveJson, generalAdmissionSelect, setGeneralAdmissionSelect } =
-    useContext(EventPortalContext);
+    useContext(CheckoutPortalContext);
   // [1 ... generalAdmissionSelectArray]
   const generalAdmissionSelectArray = Array.from(
     { length: generalAdmissionSelect },

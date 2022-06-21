@@ -18,11 +18,12 @@ from django.views.generic.list import ListView
 from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite
 
-from apps.root.forms import CustomInviteForm, EventForm, TeamForm
+from apps.dashboard import services
+from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
+from apps.dashboard.models import EventStripePayment, Membership, Team
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Event, EventStripePayment, Membership, Team, Ticket
-from apps.services import pricing_service
+from apps.root.models import Event, Ticket
 from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 
 User = auth.get_user_model()
@@ -190,7 +191,7 @@ class RequireSuccesfulCheckoutMixin:
                 "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
             )
 
-        if pricing_service.get_event_pending_payment_value(event):
+        if services.get_event_pending_payment_value(event):
             return self.pending_checkout_behaviour()
 
         return super().dispatch(request, *args, **kwargs)
@@ -394,7 +395,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(
             self.request, messages.SUCCESS, "Token gate updated successfully."
         )
-        if pricing_service.get_event_pending_payment_value(self.object):
+        if services.get_event_pending_payment_value(self.object):
             view = "ticketgate_checkout"
         else:
             view = "ticketgate_detail"
@@ -435,7 +436,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         """Renders checkout page if payment is still pending"""
         event = self.get_object()
 
-        if pricing_service.get_event_pending_payment_value(event) == 0:
+        if services.get_event_pending_payment_value(event) == 0:
             # Payment was already done.
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
@@ -448,7 +449,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         """Issue payment and redirect to stripe checkout"""
         event = self.get_object()
 
-        issued_payment = pricing_service.get_in_progress_payment(event)
+        issued_payment = services.get_in_progress_payment(event)
         if issued_payment:
             # There is already a payment in progress, redirect to it
             stripe_session = stripe.checkout.Session.retrieve(
@@ -501,7 +502,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         )
 
         # create payment intent
-        pricing_service.issue_payment(event, checkout_session["id"])
+        services.issue_payment(event, checkout_session["id"])
 
         return redirect(checkout_session["url"])
 
@@ -646,10 +647,8 @@ class PricingCalculator(TeamContextMixin, View):
             return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
         try:
-            price_per_ticket = (
-                pricing_service.calculate_event_price_per_ticket_for_team(
-                    self.team, capacity=capacity
-                )
+            price_per_ticket = services.calculate_event_price_per_ticket_for_team(
+                self.team, capacity=capacity
             )
         except ValueError:
             return JsonResponse(

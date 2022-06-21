@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from apps.root.models import Event, Team
+from apps.dashboard.models import Team
+from apps.root.models import Event
 
 
 #

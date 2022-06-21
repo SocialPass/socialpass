@@ -1,10 +1,33 @@
-# SocialPass - Django
-SocialPass Django application
+# SocialPass - backend
+SocialPass backend monolith, written in python / django.
+Contains core API, business logic, and database schema, subdivided into traditional django 'apps'.
 
-Contains core API, business logic, and database schema
+# Overview
+Below is a breakdown of the current app layout.
+Note: Each app should have its own set of dedicated tests (integration and/or unit, depending on the scenario)
 
-# Documentation
-https://www.notion.so/Backend-Django-54edff9f8bcf4bc49483caa6d46a7d96
+## `root`
+- Core database models
+
+## `dashboard`
+- Event organizer dashboard models
+- Event organizer dashboard views (HTML)
+
+## `api_scanner`
+- No models
+- Ticket scanner views (DRF)
+
+## `api_checkoutportal`
+- No models
+- Checkout portal views (DRF)
+
+# Contribution Notes
+- Install pre-commit hooks for linting
+- Small Views, Medium Models, Large Services
+	- Views should reference services or models
+	- Models should have DB schema and associated properties (@property)
+	- Services should contain all other business logic
+	- This as fallback reference: https://github.com/HackSoftware/Django-Styleguide
 
 # Local Development (Docker)
 

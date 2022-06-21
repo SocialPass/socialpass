@@ -1,98 +1,110 @@
-{% extends 'dashboard/base.html' %}
-{% load static i18n get_chain_name %}
+{% extends "bases/base_primary.html" %}
+{% load static get_user_primary_email format_address %}
 
-{% block title %}Tickets - SocialPass {% endblock %}
+{% block head_title %}Tickets - SocialPass{% endblock head_title %}
 
-{% block navbar_page_name_1 %}Tickets{% endblock %}
-{% block navbar_page_name_2 %}Tickets{% endblock %}
+{% block navbar_breadcrumb %}Tickets{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-10 mx-auto">
-    <div class="card mb-4">
-      <div class="card-header py-0">
-        <div class="d-flex align-items-center py-3">
-          <div class="pe-2">
-            <h6 class="m-0">Tickets</h6>
-            <div class="text-muted text-xs">List of tickets issued for <strong>{{current_gate.title}}</strong></div>
-          </div>
-					<a href="{{ current_gate.checkout_portal_url }}" target="_blank" class="btn bg-gradient-primary btn-sm ms-auto my-0">Ticket Store</a>
-        </div>
-        <form method="GET" class="d-flex align-items-center">
-          <input type="text" class="form-control form-control-sm" name="address" placeholder="Search by address" value="{{ request.GET.address }}">
-          <button class="btn btn-link btn-sm px-2 ms-3 my-0" type="submit">Search</button>
-        </form>
-      </div>
-      <div class="card-body px-0 py-2">
-        {% if tickets.count > 0 %}
-        <div class="table-responsive p-0">
-          <table class="table align-items-center mb-0">
-            <thead>
-              <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Issued At</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Address</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Redeemed</th>
-                <th class="text-secondary opacity-7"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for ticket in tickets %}
-              <tr>
-                <td class="align-middle">
-                  <div class="ps-3">
-                    <h6 class="mb-0">{{ ticket.created }}</h6>
-                  </div>
-                </td>
-                <td class="align-middle">
-                  <span class="text-secondary text-xs font-weight-bold">
-                  {{ ticket.blockchain_ownership.wallet_address }}
-                  </span>
-                </td>
-                <td class="align-middle">
-                  <span class="text-secondary text-xs font-weight-bold">
-                    {% if ticket.redeemed %}
-                    Yes
-                    {% else %}
-                    No
-                    {% endif %}
-                  </span>
-                </td>
-                <td class="align-middle">
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% else %}
-        <div class="text-center p-5">
-          <img src="{% static 'images/empty-folder.svg' %}" alt="empty" height="80" class="d-block mx-auto">
-          <p class="mt-3 mb-0 text-xs">Nothing found.</p>
-        </div>
-        {% endif %}
-      </div>
-      {% if tickets.count > 0 %}
-      <div class="card-footer d-flex align-items-center">
-        <div>
-          {% if page_obj.has_previous %}
-          <a class="btn btn-sm btn-link px-0 m-0" href="?page={{ page_obj.previous_page_number }}">Prev</a>
-          {% else %}
-          <button class="btn btn-sm btn-link px-0 m-0" disabled="disabled">Prev</button>
-          {% endif %}
-        </div>
-        <span class="current text-xs ms-auto">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
-        <div class="ms-auto">
-          {% if page_obj.has_next %}
-          <a class="btn btn-sm btn-link px-0 m-0" href="?page={{ page_obj.next_page_number }}">Next</a>
-          {% else %}
-          <button class="btn btn-sm btn-link px-0 m-0" disabled="disabled">Next</button>
-          {% endif %}
-        </div>
-      </div>
-      {% endif %}
-    </div>
-  </div>
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="pe-15 align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Tickets</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				List of tickets issued for <strong>{{ current_gate.title }}</strong>.
+			</p>
+		</div>
+		<div class="ms-auto align-self-center">
+			<a href="{{ current_gate.event_portal_url }}" target="_blank" class="btn text-primary fw-bold">
+				<i class="fa-regular fa-store"></i>
+				<span class="ms-5 d-none d-sm-inline">Ticket Store</span>
+			</a>
+		</div>
+	</div>
 </div>
-{% endblock %}
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Tickets - # Total {{ tickets.count }}
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<!-- Main content start -->
+	{% if tickets.count > 0 %}
+		<div class="table-responsive scroll-shadow-content-x">
+			<table class="table list-table">
+				<thead>
+					<tr class="fs-base-n2">
+						<th>Address</th>
+						<th>Issued At</th>
+						<th>Redeemed</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for ticket in tickets %}
+						<tr>
+							<td class="fw-bold">{% format_address ticket.blockchain_ownership.wallet_address %}</td>
+							<td class="fs-base-n2">{{ ticket.created }}</td>
+							<td class="fs-base-n2 d-flex align-items-center">
+								{% if ticket.redeemed %}
+									<span class="ws-25">
+										<i class="fa-solid fa-check text-success-dim-lm text-success-light-dm"></i>
+									</span>
+									<span>Yes</span>
+								{% else %}
+									<span class="ws-25">
+										<i class="fa-solid fa-times text-danger"></i>
+									</span>
+									<span>No</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+		<div class="content text-center">
+			<div class="ws-200 mw-100 mx-auto">
+				<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+			</div>
+			<div class="ws-400 mw-100 mx-auto">
+				<h5>Nothing found</h5>
+				<p>
+					Looks like no tickets have been created for the <strong>{{ current_gate.title }}</strong> event yet.
+				</p>
+			</div>
+		</div>
+	{% endif %}
+	<!-- Main content end -->
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
+		<div>
+          	{% if page_obj.has_previous %}
+       			<a class="btn btn-sm text-primary fw-bold" href="?page={{ page_obj.previous_page_number }}">Prev</a>
+          	{% else %}
+          		<button class="btn btn-sm fw-bold" disabled="disabled">Prev</button>
+          	{% endif %}
+        </div>
+        <div class="ms-auto">
+        	Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </div>
+        <div class="ms-auto">
+          	{% if page_obj.has_next %}
+       			<a class="btn btn-sm text-primary fw-bold" href="?page={{ page_obj.next_page_number }}">Next</a>
+          	{% else %}
+          		<button class="btn btn-sm fw-bold" disabled="disabled">Next</button>
+          	{% endif %}
+        </div>
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock content %}

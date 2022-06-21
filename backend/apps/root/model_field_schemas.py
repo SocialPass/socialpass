@@ -2,16 +2,16 @@
 from .model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 
 BLOCKCHAINS_ENUM = []
-for item in BLOCKCHAINS:
-    BLOCKCHAINS_ENUM.append(item[1])
+for blockchain_item in BLOCKCHAINS:
+    BLOCKCHAINS_ENUM.append(blockchain_item[1])
 
 CHAIN_ID_ENUM = []
-for item in CHAIN_IDS:
-    CHAIN_ID_ENUM.append(item[0])
+for chain_item in CHAIN_IDS:
+    CHAIN_ID_ENUM.append(chain_item[0])
 
 ASSET_TYPES_ENUM = []
-for item in ASSET_TYPES:
-    ASSET_TYPES_ENUM.append(item[1])
+for asset_type_item in ASSET_TYPES:
+    ASSET_TYPES_ENUM.append(asset_type_item[1])
 
 REQUIREMENT = {
     "title": "Requirement",

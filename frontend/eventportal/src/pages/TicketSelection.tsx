@@ -24,7 +24,9 @@ export function TicketSelection() {
       <div>
         <div className="d-flex flex-column align-items-start justify-content-between mb-30 gap-5">
           <span className="fs-20 fw-700">Ticket Selection</span>
-          <span className="text-muted">Select your tickets from the options below</span>
+          <span className="text-muted">
+            Select your tickets from the options below
+          </span>
         </div>
         <div className="responsive-ticket-selection">
           <div>
@@ -37,14 +39,15 @@ export function TicketSelection() {
                   <span className="tooltip-text fs-11">
                     This General Admission ticket is free to all holders of 1
                     NFT collection:
-                    <hr/>
-                    {retrieveJson.requirements.map((req, i) => (
+                    <hr />
+                    {retrieveJson?.requirements.map((req, i) => (
                       <div key={i}>
-                      <h3>Option {i+1}</h3>
-                      <span className="fs-12">
-                        Contract: <span>{truncateAddress(req['asset_address'])}</span>
-                      </span>
-                      <hr/>
+                        <h3>Option {i + 1}</h3>
+                        <span className="fs-12">
+                          Contract:{" "}
+                          <span>{truncateAddress(req["asset_address"])}</span>
+                        </span>
+                        <hr />
                       </div>
                     ))}
                   </span>

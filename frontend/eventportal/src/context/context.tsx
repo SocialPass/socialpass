@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { TicketedEventRetrieve } from "../api";
 import { EventPortalContextInterface } from "../types";
 
 export const EventPortalContext = createContext<EventPortalContextInterface>(
@@ -6,7 +7,12 @@ export const EventPortalContext = createContext<EventPortalContextInterface>(
 );
 
 export const EventPortalProvider = ({ children }: { children: any }) => {
-  const [id, setID] = useState('');
+  const [id, setID] = useState(
+    window.location.pathname.split("/")[1]
+      ? window.location.pathname.split("/")[1]
+      : ""
+  );
+
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
 
@@ -20,6 +26,25 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
 
   const [web3CheckoutSelection, setWeb3CheckoutSelection] = useState([]);
   const [eventStatusCheckout, setEventStatusCheckout] = useState(true);
+
+  useEffect(() => {
+    async function fetchEvent() {
+      if (id !== "/") {
+        const response = await TicketedEventRetrieve.call({ public_id: id });
+
+        if (response && response.httpStatus) {
+          if (response.httpStatus === 200) {
+            setRetrieveJson(response);
+          }
+          // error
+          else {
+            setRetrieveError(response);
+          }
+        }
+      }
+    }
+    fetchEvent();
+  }, []);
 
   return (
     <EventPortalContext.Provider

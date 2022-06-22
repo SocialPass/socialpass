@@ -1,8 +1,8 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { StyledContainer } from "./components";
-import { CheckoutPortalProvider } from "./context";
+import { EventPortalProvider } from "./context";
 import { web3Client } from "./web3/client";
-import { WagmiConfig } from 'wagmi'
+import { WagmiConfig } from "wagmi";
 import {
   Init,
   CheckoutWeb3,
@@ -23,7 +23,7 @@ const CheckoutPortal = () => {
     <BrowserRouter>
       <base href="/" />{" "}
       {/* set static asset to base path for relative imports */}
-      <CheckoutPortalProvider>
+      <EventPortalProvider>
         <WagmiConfig client={web3Client}>
           <StyledContainer>
             <Routes>
@@ -44,7 +44,7 @@ const CheckoutPortal = () => {
             </Routes>
           </StyledContainer>
         </WagmiConfig>
-      </CheckoutPortalProvider>
+      </EventPortalProvider>
     </BrowserRouter>
   );
 };

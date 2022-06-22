@@ -37,4 +37,4 @@ lint: ## Lint backend repo
 	(source venv/bin/activate; black .; isort .; flake8 .;)
 
 test: ## Test backend repo
-	(source venv/bin/activate; python3.10 manage.py test apps/services)
+	(source venv/bin/activate; python3.10 manage.py test apps/)

@@ -1,11 +1,11 @@
 import { createContext, useState } from "react";
-import { EventPortalContextInterface } from "../types";
+import { CheckoutPortalContextInterface } from "../types";
 
-export const EventPortalContext = createContext<EventPortalContextInterface>(
-  {} as EventPortalContextInterface
+export const CheckoutPortalContext = createContext<CheckoutPortalContextInterface>(
+  {} as CheckoutPortalContextInterface
 );
 
-export const EventPortalProvider = ({ children }: { children: any }) => {
+export const CheckoutPortalProvider = ({ children }: { children: any }) => {
   const [id, setID] = useState(() => {
     const data = localStorage.getItem("@eventId");
     if (data == null) {
@@ -34,7 +34,7 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
   const [eventStatusCheckout, setEventStatusCheckout] = useState(true);
 
   return (
-    <EventPortalContext.Provider
+    <CheckoutPortalContext.Provider
       value={{
         id,
         setID,
@@ -65,6 +65,6 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
       }}
     >
       {children}
-    </EventPortalContext.Provider>
+    </CheckoutPortalContext.Provider>
   );
 };

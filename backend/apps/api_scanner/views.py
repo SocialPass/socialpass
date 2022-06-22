@@ -6,10 +6,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.root.models import RedemptionAccessKey, Ticket
-from apps.services import scanner_service
+from apps.root.models import Ticket, TicketRedemptionKey
 
-from . import serializers
+from . import serializers, services
 
 
 class SetAccessKeyAndEventMixin:
@@ -24,7 +23,7 @@ class SetAccessKeyAndEventMixin:
 
     def set_event_and_redemption_access_key(self, redemption_access_key: uuid.UUID):
         try:
-            self.redemption_access_key = RedemptionAccessKey.objects.get(
+            self.redemption_access_key = TicketRedemptionKey.objects.get(
                 public_id=redemption_access_key
             )
             self.event = self.redemption_access_key.event
@@ -91,8 +90,8 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
 
         # Retrieve ticket
         try:
-            ticket = scanner_service.get_ticket_from_embedded_qr_code(embed_code)
-        except scanner_service.InvalidEmbedCodeError:
+            ticket = services.get_ticket_from_embedded_qr_code(embed_code)
+        except services.InvalidEmbedCodeError:
             return Response(
                 status=422,
                 data={
@@ -111,8 +110,8 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
 
         # Redeem ticket
         try:
-            scanner_service.redeem_ticket(ticket, self.redemption_access_key)
-        except scanner_service.ForbiddenRedemptionError:
+            services.redeem_ticket(ticket, self.redemption_access_key)
+        except services.ForbiddenRedemptionError:
             return Response(
                 status=403,
                 data={
@@ -120,7 +119,7 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
                     "message": "Redemption access key has no access to this Event.",
                 },
             )
-        except scanner_service.AlreadyRedeemed:
+        except services.AlreadyRedeemed:
             return Response(
                 status=409,
                 data={

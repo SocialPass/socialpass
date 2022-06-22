@@ -1,1 +1,332 @@
-<!-- Work in progress -->
+{% extends "bases/base.html" %}
+{% load static get_preferred_color_scheme get_user_primary_email get_other_teams get_sidebar_active_status %}
+
+{% block html_class %}socialpass-dashboard {% get_preferred_color_scheme %}{% endblock html_class %}
+
+{% block extra_head %}
+<!-- Custom styles -->
+<style type="text/css">
+	:root {
+		--sidebar-width: 28rem;
+	}
+
+	.sidebar-header-link {
+		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+		border-bottom: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+
+	.dark-mode .sidebar-header-link {
+		border-top-color: transparent;
+	}
+
+	.sidebar-copyright {
+		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+
+	.ws-260 {
+		width: 26rem !important; 
+	}
+
+	@media (min-width: 993px) {
+		.border-lg-end {
+			border-right: var(--base-border-width) var(--base-border-style) var(--border-color) !important;
+		}
+	}
+
+	.list-table th:first-child,
+	.list-table td:first-child {
+		padding-left: var(--content-and-card-spacing);
+	}
+
+	.list-table th:last-child,
+	.list-table td:last-child {
+		padding-right: var(--content-and-card-spacing);
+	}
+</style>
+{% endblock extra_head %}
+
+{% block body %}
+<!-- Modals start -->
+{% block modals %}{% endblock modals %}
+<!-- Modals end -->
+
+<!-- Page wrapper start -->
+<div class="page-wrapper with-navbar with-sidebar" data-hm-sidebar-type="overlayed-md-down">
+	<!-- Sticky alerts start -->
+	<div class="sticky-alerts">
+		{% include "bases/toast_messages.html" %}
+		{% block sticky_alerts %}{% endblock sticky_alerts %}
+	</div>
+	<!-- Sticky alerts end -->
+
+	<!-- Navbar start -->
+	<div class="navbar d-flex align-items-center px-15 py-10">
+		<!-- Sidebar toggle start -->
+		<button type="button" class="btn btn-primary btn-sm btn-square bg-primary-lm bg-primary-dim-dm me-20 d-md-none" data-hm-toggle="sidebar">
+			<i class="fa-regular fa-bars"></i>
+			<span class="visually-hidden">Toggle sidebar</span>
+		</button>
+		<!-- Sidebar toggle end -->
+
+		<!-- Branding start -->
+		<img src="{% static 'images/SocialPass-Icon-White.svg' %}" class="h-100 flex-shrink-0 pe-none me-20" alt="SocialPass Logo">
+		<!-- Branding end -->
+
+		<!-- Navbar breadcrumb start -->
+		<div class="text-on-primary flex-shrink-0 d-none d-sm-block">
+			SocialPass
+			<i class="fa-regular fa-angle-right mx-10"></i>
+			{% block navbar_breadcrumb %}{% endblock navbar_breadcrumb %}
+		</div>
+		<!-- Navbar breadcrumb end -->
+
+		<!-- Navbar controls start -->
+		<div class="ms-auto d-flex align-items-center">
+			<!-- Dark mode toggle start -->
+			<button type="button" class="btn btn-primary btn-sm btn-square bg-primary-lm bg-primary-dim-dm me-10" data-hm-toggle="dark-mode">
+				<i class="fa-solid fa-moon"></i>
+				<span class="visually-hidden">Toggle dark mode</span>
+			</button>
+			<!-- Dark mode toggle end -->
+
+			<!-- User dropdown start -->
+			<div class="dropdown with-arrow">
+				<button type="button" class="btn btn-secondary btn-sm btn-square btn-rounded" id="user-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+					<i class="fa-duotone fa-user"></i>
+					<span class="visually-hidden">Toggle user dropdown</span>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end rounded-3 ws-250 p-10" aria-labelledby="user-dropdown-toggle">
+					<li class="dropdown-content d-flex align-items-center">
+						<div class="ws-50 hs-50 rounded-circle d-flex align-items-center justify-content-center bg-secondary text-on-secondary flex-shrink-0">
+							<span class="text-uppercase fs-base-p8 fw-bold">{{ request.user.username|slice:"0:1" }}</span>
+						</div>
+						<div class="ps-20 overflow-hidden">
+							<h6 class="fs-base-p2 m-0 text-truncate">{{ request.user.username }}</h6>
+							<p class="text-muted fs-base-n2 m-0 text-truncate">{% get_user_primary_email %}</p>
+						</div>
+					</li>
+					<li class="dropdown-divider"></li>
+					<li>
+						<a href="{% url 'account_change_password' %}" class="dropdown-item d-flex align-items-center">
+							<span class="ws-25">
+								<i class="fa-regular fa-key"></i>
+							</span>
+							<span class="ms-10">Change Password</span>
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'account_email' %}" class="dropdown-item d-flex align-items-center">
+							<span class="ws-25">
+								<i class="fa-regular fa-envelope"></i>
+							</span>
+							<span class="ms-10">Manage Emails</span>
+						</a>
+					</li>
+					<li class="dropdown-divider"></li>
+					<li class="dropdown-content">
+						<a href="{% url 'account_logout' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-danger fw-bold">
+							<i class="fa-regular fa-sign-out"></i>
+							<span class="ms-5">Sign Out</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!-- User dropdown end -->
+		</div>
+		<!-- Navbar controls end -->
+	</div>
+	<!-- Navbar end -->
+
+	<!-- Sidebar start -->
+	<nav class="sidebar">
+		{% if current_team %}
+			<!-- Sidebar team dropdown start -->
+			<div class="sidebar-menu mt-0">
+				<div class="dropdown w-100">
+					<a href="#" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+						<div class="overflow-hidden">
+							<h6 class="fs-base-p6 m-0 text-truncate fw-700">{{ current_team.name }}</h6>
+							<p class="fs-base-n2 mt-5 mb-0 text-truncate">{% get_user_primary_email %}</p>
+						</div>
+						<div class="text-end flex-shrink-0 ws-25 ms-auto">
+							<i class="fa-regular fa-angle-down"></i>
+						</div>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-center rounded-3 ws-260 p-10" aria-labelledby="team-dropdown-toggle">
+						<li class="dropdown-content d-flex align-items-center">
+							{% if current_team.image %}
+								<div class="ws-50 hs-50 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
+									<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
+								</div>
+							{% else %}
+								<div class="ws-50 hs-50 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
+									<span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+								</div>
+							{% endif %}
+							<div class="ps-20 overflow-hidden">
+								<h6 class="fs-base-p2 m-0 text-truncate">{{ current_team.name }}</h6>
+								<p class="text-muted fs-base-n2 m-0 text-truncate">{% get_user_primary_email %}</p>
+							</div>
+						</li>
+						<li class="dropdown-divider"></li>
+						<li>
+							<a href="{% url 'team_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-flag"></i>
+								</span>
+								<span class="ms-10">Team Details</span>
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'team_members' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-lock"></i>
+								</span>
+								<span class="ms-10">Manage Members</span>
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'team_members' current_team.public_id %}#add-member" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-user-plus"></i>
+								</span>
+								<span class="ms-10">Add Member</span>
+							</a>
+						</li>
+						<li class="dropdown-divider"></li>
+						{% get_other_teams current_team.public_id as other_teams %}
+						{% if other_teams|length > 0 %}
+							<li class="dropdown-header fs-base-n2">
+								<i class="fa-duotone fa-arrows-repeat text-primary me-5"></i>
+								Switch Team
+							</li>
+							{% for team in other_teams %}
+								<li>
+									<a href="{% url 'ticketgate_list' team.public_id %}" class="dropdown-item text-truncate">
+										{{ team.name }}
+									</a>
+								</li>
+							{% endfor %}
+						{% endif %}
+						<li class="dropdown-content">
+							<a href="{% url 'team_create' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-primary fw-bold">
+								<i class="fa-solid fa-plus"></i>
+								<span class="ms-5">Create Team</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- Sidebar team dropdown end -->
+
+			<!-- Web3 Ticketing start -->
+			<div class="sidebar-menu">
+				<h6 class="sidebar-title fs-base-n2 text-on-primary">
+					Web3 Ticketing
+				</h6>
+				<div class="position-relative">
+					<a href="{% url 'ticketgate_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
+						<span class="ws-25 flex-shrink-0">
+							<i class="fa-regular fa-ticket-simple"></i>
+						</span>
+						<span class="ms-5">Events</span>
+					</a>
+					<a href="{% url 'ticketgate_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
+						<i class="fa-solid fa-plus"></i>
+						<span class="visually-hidden">Create Event</span>
+					</a>
+				</div>
+			</div>
+			<!-- Web3 Ticketing end -->
+
+			<!-- Team start -->
+			<div class="sidebar-menu mt-40">
+				<h6 class="sidebar-title fs-base-n2 text-on-primary">
+					Team
+				</h6>
+				<a href="{% url 'team_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'team-details' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-flag"></i>
+					</span>
+					<span class="ms-5">Team Details</span>
+				</a>
+				<div class="position-relative">
+					<a href="{% url 'team_members' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-members' %}">
+						<span class="ws-25 flex-shrink-0">
+							<i class="fa-regular fa-lock"></i>
+						</span>
+						<span class="ms-5">Manage Members</span>
+					</a>
+					<a href="{% url 'team_members' current_team.public_id %}#add-member" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
+						<i class="fa-solid fa-plus"></i>
+						<span class="visually-hidden">Add Member</span>
+					</a>
+				</div>
+			</div>
+			<!-- Team end -->
+		{% else %}
+			<!-- Sidebar main dashboard link start -->
+			<div class="sidebar-menu mt-0">
+				<a href="{% url 'dashboard_redirect' %}" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary">
+					<div class="me-15">
+						<i class="fa-regular fa-angle-left"></i>
+					</div>
+					<div class="overflow-hidden">
+						<h6 class="fs-base-p6 m-0 text-truncate fw-700">Events Manager</h6>
+						<p class="fs-base-n2 mt-5 mb-0 text-truncate">Go back to main dashboard</p>
+					</div>
+				</a>
+			</div>
+			<!-- Sidebar main dashboard link end -->
+
+			<!-- Account start -->
+			<div class="sidebar-menu">
+				<h6 class="sidebar-title fs-base-n2 text-on-primary">
+					Account
+				</h6>
+				<a href="{% url 'account_change_password' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'change-password' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-key"></i>
+					</span>
+					<span class="ms-5">Change Password</span>
+				</a>
+				<a href="{% url 'account_email' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-emails' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-envelope"></i>
+					</span>
+					<span class="ms-5">Manage Emails</span>
+				</a>
+			</div>
+			<!-- Account end -->
+		{% endif %}
+
+		<!-- Copyright start -->
+		<div class="sidebar-copyright position-absolute bottom-0 start-0 w-100 hs-50 d-flex align-items-center justify-content-center fs-base-n4">
+			&copy; {% now "Y" %}, SP Tech Inc. All rights reserved
+		</div>
+		<!-- Copyright end -->
+	</nav>
+	<!-- Sidebar end -->
+
+	<!-- Content wrapper start -->
+	<div class="content-wrapper min-vh-100 d-flex flex-column">
+		<!-- Main container start -->
+		<div class="py-content pt-0">
+			{% block content %}{% endblock content %}
+		</div>
+		<!-- Main container end -->
+
+		<!-- Footer start -->
+		<div class="px-content fs-base-n2 mt-auto border-top border-bottom-0 border-start-0 border-end-0 border-dotted hs-50 d-flex align-items-center justify-content-end">
+			<span>
+				<i class="fa-light fa-question-circle me-5"></i>
+				Need help?
+			</span>
+			<a href="https://socialpass.gitbook.io/socialpass" target="_blank" class="ms-10 fw-bold">See Guides <i class="fa-duotone fa-external-link-alt ms-5"></i></a>
+		</div>
+		<!-- Footer end -->
+	</div>
+	<!-- Content wrapper end -->
+</div>
+<!-- Page wrapper end -->
+{% endblock body %}

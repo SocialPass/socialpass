@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.services.blockchain_service import moralis_get_nonfungible_assets
+from ..services import moralis_get_nonfungible_assets
 
 
 class TestBlockchainService(TestCase):

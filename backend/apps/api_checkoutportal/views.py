@@ -1,9 +1,10 @@
-from apps.api_checkoutportal import serializers, services
-from apps.root.models import BlockchainOwnership, Event
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from apps.api_checkoutportal import serializers, services
+from apps.root.models import BlockchainOwnership, Event
 
 
 class EventMixin:

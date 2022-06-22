@@ -1,10 +1,11 @@
 import pytz
-from apps.dashboard import services
-from apps.dashboard.models import Invite
-from apps.root.models import Event, Team
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
+
+from apps.dashboard import services
+from apps.dashboard.models import Invite
+from apps.root.models import Event, Team
 
 
 class TeamForm(forms.ModelForm):

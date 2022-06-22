@@ -1,8 +1,6 @@
 import math
 from datetime import timedelta
 
-from apps.root.model_field_choices import STIPE_PAYMENT_STATUSES
-from apps.root.model_wrappers import DBModel
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MinValueValidator
@@ -13,6 +11,9 @@ from django.utils.crypto import get_random_string
 from invitations import signals
 from invitations.adapters import get_invitations_adapter
 from invitations.base_invitation import AbstractBaseInvitation
+
+from apps.root.model_field_choices import STIPE_PAYMENT_STATUSES
+from apps.root.model_wrappers import DBModel
 
 
 class Team(DBModel):

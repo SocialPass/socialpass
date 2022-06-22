@@ -3,13 +3,6 @@ import secrets
 from functools import lru_cache
 
 import stripe
-from apps.dashboard import services
-from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
-from apps.dashboard.models import EventStripePayment, Membership, Team
-from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
-from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Event, Ticket
-from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -24,6 +17,14 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite
+
+from apps.dashboard import services
+from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
+from apps.dashboard.models import EventStripePayment, Membership, Team
+from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
+from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
+from apps.root.models import Event, Ticket
+from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 
 User = auth.get_user_model()
 

@@ -1,10 +1,11 @@
-from apps.dashboard import services
-from apps.dashboard.models import EventStripePayment, Membership, PricingRule, PricingRuleGroup, Team
-from apps.root.models import BlockchainOwnership, Event, Ticket, TicketRedemptionKey
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
+
+from apps.dashboard import services
+from apps.dashboard.models import EventStripePayment, Membership, PricingRule, PricingRuleGroup, Team
+from apps.root.models import BlockchainOwnership, Event, Ticket, TicketRedemptionKey
 
 User = get_user_model()
 

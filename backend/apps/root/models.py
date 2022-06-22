@@ -3,13 +3,13 @@ import uuid
 from datetime import datetime, timedelta
 
 import boto3
-from apps.dashboard.models import PricingRule, Team
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
 
+from apps.dashboard.models import PricingRule, Team
 from config.storages import PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA

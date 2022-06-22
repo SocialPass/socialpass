@@ -2,8 +2,6 @@
 
 import uuid
 
-import apps.root.models
-import apps.root.validators
 import django.contrib.auth.models
 import django.contrib.auth.validators
 import django.core.validators
@@ -14,6 +12,8 @@ import model_utils.fields
 from django.conf import settings
 from django.db import migrations, models
 
+import apps.root.models
+import apps.root.validators
 import config.storages
 
 

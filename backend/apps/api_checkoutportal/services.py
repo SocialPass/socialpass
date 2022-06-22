@@ -3,13 +3,14 @@ import json
 
 import requests
 import sentry_sdk
-from apps.root import TicketImageGenerator
-from apps.root.models import BlockchainOwnership, Event, Ticket
 from django.conf import settings
 from eth_account.messages import encode_defunct
 from requests.adapters import HTTPAdapter, Retry
 from web3 import Web3
 from web3.auto import w3
+
+from apps.root import TicketImageGenerator
+from apps.root.models import BlockchainOwnership, Event, Ticket
 
 
 class TooManyTicketsRequestedError(Exception):

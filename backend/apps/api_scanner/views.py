@@ -1,11 +1,12 @@
 import uuid
 
-from apps.root.models import Ticket, TicketRedemptionKey
 from django.http import Http404
 from rest_framework import serializers as drf_serializers
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from apps.root.models import Ticket, TicketRedemptionKey
 
 from . import serializers, services
 

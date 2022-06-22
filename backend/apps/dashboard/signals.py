@@ -1,7 +1,8 @@
 from allauth.account.signals import user_signed_up
-from apps.dashboard.models import Invite, Membership
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
+
+from apps.dashboard.models import Invite, Membership
 
 User = get_user_model()
 

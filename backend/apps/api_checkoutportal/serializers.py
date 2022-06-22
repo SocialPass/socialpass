@@ -1,5 +1,6 @@
-from apps.root.models import BlockchainOwnership, Event, Team, Ticket
 from rest_framework import serializers
+
+from apps.root.models import BlockchainOwnership, Event, Team, Ticket
 
 
 class TeamSerializer(serializers.ModelSerializer):

@@ -1,5 +1,7 @@
-from django.contrib.auth.models import AnonymousUser, get_user_model
-from django.test import RequestFactory, TestCase
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
+from django.test import Client, RequestFactory, TestCase
+from django.urls import reverse
 
 from apps.dashboard import views
 from apps.dashboard.models import Membership, Team
@@ -16,7 +18,7 @@ class DashboardTest(TestCase):
             username="jacob", email="jacob@…", password="top_secret"
         )
         self.team = Team.objects.create(name="Test team")
-        self.membership = None
+        self.membership = Membership.objects.create(team=self.team, user=self.user)
 
     def test_details(self):
         """
@@ -38,3 +40,50 @@ class DashboardTest(TestCase):
         self.assertEqual(response.status_code, 200)
         """
         return
+
+    def test_team_context_mixin(self):
+        return
+
+    def test_require_successful_checkout_mixin(self):
+        return
+
+    def test_dashboard_redirect(self):
+        # Login User
+        self.assertTrue(self.client.login(username="jacob", password="top_secret"))
+
+        # Test logged-in user
+        response = self.client.get(reverse("dashboard_redirect"), follow=True)
+        self.assertRedirects(
+            response,
+            expected_url=reverse(
+                "ticketgate_list", args=(self.membership.team.public_id,)
+            ),
+        )
+
+        # Test logged-out user
+        self.client.logout()
+        response = self.client.get(reverse("dashboard_redirect"), follow=True)
+        self.assertRedirects(response, expected_url=reverse("account_login"))
+
+
+"""
+dashboard_redirect
+user_detail
+accept_invite
+send_invite
+team_create
+team_detail
+team_update
+team_members
+team_member_delete
+ticketgate_list
+ticketgate_create
+ticketgate_detail
+ticketgate_update
+ticketgate_stats
+ticketgate_price_estimator
+ticketgate_checkout
+ticketgate_checkout_success_callback
+ticketgate_checkout_failure_callback
+stripe_webhook
+"""

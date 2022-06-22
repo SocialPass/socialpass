@@ -275,6 +275,8 @@ SOCIALACCOUNT_ADAPTER = "apps.root.adapters.SocialAccountAdapter"
 SOCIALACCOUNT_FORMS = {"signup": "apps.root.forms.UserSocialSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/views.html#logout-account-logout
 ACCOUNT_LOGOUT_ON_GET = True
+# https://django-allauth.readthedocs.io/en/latest/configuration.html?highlight=ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION#configuration
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 # django-rest-framework
 # -------------------------------------------------------------------------------

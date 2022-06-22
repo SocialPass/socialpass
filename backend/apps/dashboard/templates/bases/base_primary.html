@@ -32,6 +32,16 @@
 			border-right: var(--base-border-width) var(--base-border-style) var(--border-color) !important;
 		}
 	}
+
+	.list-table th:first-child,
+	.list-table td:first-child {
+		padding-left: var(--content-and-card-spacing);
+	}
+
+	.list-table th:last-child,
+	.list-table td:last-child {
+		padding-right: var(--content-and-card-spacing);
+	}
 </style>
 {% endblock extra_head %}
 

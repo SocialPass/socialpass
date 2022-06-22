@@ -3,18 +3,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
-from apps.root.models import (
-    BlockchainOwnership,
-    Event,
-    EventStripePayment,
-    Membership,
-    PricingRule,
-    PricingRuleGroup,
-    RedemptionAccessKey,
-    Team,
-    Ticket,
-)
-from apps.services import pricing_service
+from apps.dashboard import services
+from apps.dashboard.models import EventStripePayment, Membership, PricingRule, PricingRuleGroup, Team
+from apps.root.models import BlockchainOwnership, Event, Ticket, TicketRedemptionKey
 
 User = get_user_model()
 
@@ -72,8 +63,8 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ("title", "user__username", "team__name", "location")
 
 
-@admin.register(RedemptionAccessKey)
-class RedemptionAccessKeyAdmin(admin.ModelAdmin):
+@admin.register(TicketRedemptionKey)
+class TicketRedemptionKeyAdmin(admin.ModelAdmin):
     pass
 
 
@@ -105,7 +96,7 @@ class PricingRuleGroupAdmin(admin.ModelAdmin):
 
     def identify_pricing_group_errors(self, request, queryset):
         for pricing_group in queryset:
-            errors = pricing_service.identify_pricing_group_errors(pricing_group)
+            errors = services.identify_pricing_group_errors(pricing_group)
             if errors:
                 messages.warning(
                     request, list_as_messages_str(errors, pricing_group.name)
@@ -114,7 +105,7 @@ class PricingRuleGroupAdmin(admin.ModelAdmin):
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
 
-        errors = pricing_service.identify_pricing_group_errors(form.instance)
+        errors = services.identify_pricing_group_errors(form.instance)
         if errors:
             errors_msg = list_as_messages_str(
                 errors, "Recently edited PricingGroup has the following problems:"

@@ -1,11 +1,11 @@
 import { useEffect, useContext } from "react";
-import { EventPortalContext } from "../context";
+import { CheckoutPortalContext } from "../context";
 import { TicketedEventRetrieve } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loading } from "../components";
 
 export const Init = () => {
-  const { setID, setRetrieveJson, setRetrieveError } = useContext(EventPortalContext);
+  const { setID, setRetrieveJson, setRetrieveError } = useContext(CheckoutPortalContext);
   const navigate = useNavigate();
   const params = useParams();
   const id = params.publicId;
@@ -17,6 +17,7 @@ export const Init = () => {
 
         if (response && response.httpStatus) {
           if (response.httpStatus === 200) {
+            console.log(response);
             setRetrieveJson(response);
             setTimeout(() => {
               navigate(`event`);

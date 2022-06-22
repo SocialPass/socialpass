@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { EventPortalContext } from "../context";
+import { CheckoutPortalContext } from "../context";
 // import headerImage from "../static/images/header1.svg";
 // import FAQImage from "../static/images/FAQ.svg";
 import logoImage from "../static/images/socialpass.svg";
@@ -14,9 +14,10 @@ export const StyledContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { retrieveJson } = useContext(EventPortalContext);
+  const { retrieveJson } = useContext(CheckoutPortalContext);
   const location = useLocation();
   const navigate = useNavigate();
+  console.log(retrieveJson);
   return (
     <div className="left-30 container-fluid p-0 card container-hack">
       <div>
@@ -43,15 +44,11 @@ export const StyledContainer = ({
             </div>
             <div className="team-info">
               <img
-                src={
-                  retrieveJson &&
-                  retrieveJson.team.image
-                }
+                src={retrieveJson && retrieveJson?.team?.image}
                 alt="Team Image"
               />
               <h4 className="fs-15 d-block">
-                {retrieveJson &&
-                  retrieveJson.team.name}
+                {retrieveJson && retrieveJson?.team?.name}
               </h4>
             </div>
           </header>

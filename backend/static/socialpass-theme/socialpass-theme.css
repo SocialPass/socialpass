@@ -318,3 +318,9 @@
     --tooltip-bg-color: var(--black-color);
     --tooltip-box-shadow: none;
 }
+
+/* Sticky alerts */
+
+:root {
+    --sticky-alerts-width: 34rem;
+};

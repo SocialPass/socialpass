@@ -1,6 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { StyledContainer } from "./components";
-import { EventPortalProvider } from "./context";
+import { CheckoutPortalProvider } from "./context";
 import { web3Client } from "./web3/client";
 import { WagmiConfig } from 'wagmi'
 import {
@@ -14,16 +14,16 @@ import "./static/css/socialpass-theme.css";
 import "./static/css/halfmoon.css";
 import "./index.css";
 
-// Main EventPortal component. Does a couple of things
-// 1. Setup EventPortalProvider (react context)
+// Main CheckoutPortal component. Does a couple of things
+// 1. Setup CheckoutPortalProvider (react context)
 // 2. Setup WAGMI web3 provider (need to make optional in future)
 // 3. Setup Routes, which takes over logic handling
-const EventPortal = () => {
+const CheckoutPortal = () => {
   return (
     <BrowserRouter>
       <base href="/" />{" "}
       {/* set static asset to base path for relative imports */}
-      <EventPortalProvider>
+      <CheckoutPortalProvider>
         <WagmiConfig client={web3Client}>
           <StyledContainer>
             <Routes>
@@ -44,9 +44,9 @@ const EventPortal = () => {
             </Routes>
           </StyledContainer>
         </WagmiConfig>
-      </EventPortalProvider>
+      </CheckoutPortalProvider>
     </BrowserRouter>
   );
 };
 
-export default EventPortal;
+export default CheckoutPortal;

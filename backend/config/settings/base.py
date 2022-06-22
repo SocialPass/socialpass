@@ -273,6 +273,10 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 SOCIALACCOUNT_ADAPTER = "apps.root.adapters.SocialAccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 SOCIALACCOUNT_FORMS = {"signup": "apps.root.forms.UserSocialSignupForm"}
+# https://django-allauth.readthedocs.io/en/latest/views.html#logout-account-logout
+ACCOUNT_LOGOUT_ON_GET = True
+# https://django-allauth.readthedocs.io/en/latest/configuration.html?highlight=ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION#configuration
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
@@ -344,9 +348,9 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
 # Django Invitations - https://github.com/jazzband/django-invitations
-INVITATIONS_INVITATION_MODEL = "root.Invite"
+INVITATIONS_INVITATION_MODEL = "dashboard.Invite"
 INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
-INVITATIONS_INVITATION_ONLY = True
+INVITATIONS_INVITATION_ONLY = False
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
 INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
@@ -355,7 +359,7 @@ INVITATIONS_INVITATION_EXPIRY = 3
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 
 # INTERNAL
-EVENT_PORTAL_BASE_URL = env("EVENT_PORTAL_BASE_URL")
+CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")
 SCANNER_BASE_URL = env("SCANNER_BASE_URL")
 
 # STRIPE

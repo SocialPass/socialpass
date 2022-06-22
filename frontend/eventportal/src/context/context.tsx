@@ -1,10 +1,11 @@
 import { createContext, useEffect, useState } from "react";
 import { TicketedEventRetrieve } from "../api";
-import { EventPortalContextInterface } from "../types";
+import { CheckoutPortalContextInterface } from "../types";
 
-export const EventPortalContext = createContext<EventPortalContextInterface>(
-  {} as EventPortalContextInterface
-);
+export const CheckoutPortalContext =
+  createContext<CheckoutPortalContextInterface>(
+    {} as CheckoutPortalContextInterface
+  );
 
 export const EventPortalProvider = ({ children }: { children: any }) => {
   const [id, setID] = useState(
@@ -47,7 +48,7 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
   }, []);
 
   return (
-    <EventPortalContext.Provider
+    <CheckoutPortalContext.Provider
       value={{
         id,
         setID,
@@ -78,6 +79,6 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
       }}
     >
       {children}
-    </EventPortalContext.Provider>
+    </CheckoutPortalContext.Provider>
   );
 };

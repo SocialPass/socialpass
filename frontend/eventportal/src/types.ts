@@ -1,5 +1,5 @@
-// Props for EventPortal component context
-export interface EventPortalContextInterface {
+// Props for CheckoutPortal component context
+export interface CheckoutPortalContextInterface {
   // base
   id: string
   setID: any

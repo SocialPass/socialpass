@@ -51,7 +51,7 @@ class DashboardTest(TestCase):
         self.assertRedirects(response, expected_url=reverse("account_login"))
 
     def test_user_detail(self):
-        return "No tests needed"
+        return "TODO"
 
     def test_team_accept_invite(self):
         return "TODO"
@@ -103,7 +103,6 @@ class DashboardTest(TestCase):
             reverse("team_update", args=(self.team.public_id,)), data=data, follow=True
         )
         self.assertEqual(Team.objects.filter(name="Updated Team Name").count(), 1)
-        return
 
     def test_team_members(self):
         return "TODO"
@@ -129,34 +128,34 @@ class DashboardTest(TestCase):
         """
 
     def test_team_member_delete(self):
-        return
+        return "TODO"
 
     def test_ticketgate_list(self):
-        return
+        return "TODO"
 
     def test_ticketgate_create(self):
-        return
+        return "TODO"
 
     def test_ticketgate_detail(self):
-        return
+        return "TODO"
 
     def test_ticketgate_update(self):
-        return
+        return "TODO"
 
     def test_ticketgate_stats(self):
-        return
+        return "TODO"
 
     def test_ticketgate_price_estimator(self):
-        return
+        return "TODO"
 
     def test_ticketgate_checkout(self):
-        return
+        return "TODO"
 
     def test_ticketgate_checkout_success_callback(self):
-        return
+        return "TODO"
 
     def test_ticketgate_checkout_failure_callback(self):
-        return
+        return "TODO"
 
     def test_stripe_webhook(self):
-        return
+        return "TODO"

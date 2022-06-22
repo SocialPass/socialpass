@@ -15,20 +15,26 @@ class DashboardTest(TestCase):
 
         # TODO: Move this to some sort of factory
         self.username = "jacob"
-        self.password = "top_secret"
+        self.username_two = "jacob2"
         self.email = "jacob@test.local"
+        self.email_two = "jacob2@test.local"
+        self.password = "top_secret"
         self.team_name = "Test Team"
         self.user = User.objects.create_user(
             username=self.username, email=self.email, password=self.password
         )
+        self.user_two = User.objects.create_user(
+            username=self.username_two, email=self.email, password=self.password
+        )
         self.team = Team.objects.create(name=self.team_name)
         self.membership = Membership.objects.create(team=self.team, user=self.user)
+        self.team.members.add(self.user_two)
 
     def test_team_context_mixin(self):
-        return
+        return "TODO"
 
     def test_require_successful_checkout_mixin(self):
-        return
+        return "TODO"
 
     def test_dashboard_redirect(self):
         # Login User
@@ -51,7 +57,13 @@ class DashboardTest(TestCase):
         self.assertRedirects(response, expected_url=reverse("account_login"))
 
     def test_user_detail(self):
-        return "TODO"
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(reverse("user_detail"))
+        self.assertEqual(response.status_code, 200)
 
     def test_team_accept_invite(self):
         return "TODO"
@@ -105,30 +117,44 @@ class DashboardTest(TestCase):
         self.assertEqual(Team.objects.filter(name="Updated Team Name").count(), 1)
 
     def test_team_members(self):
-        return "TODO"
-        """
         # Login User
-        self.assertTrue(self.client.login(username=self.username, password=self.password))
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
 
         # Test GET
         response = self.client.get(reverse("team_members", args=(self.team.public_id,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # TEST POST
         # Create / clean form data
-        data = {
-            'email': 'onetime@test.local'
-        }
+        data = {"email": "onetime@test.local"}
         form_data = forms.CustomInviteForm(data=data)
         self.assertTrue(form_data.is_valid())
 
         # Get response
-        response = self.client.post(reverse("team_members", args=(self.team.public_id,)), data=form_data, follow=True)
-
-        """
+        response = self.client.post(
+            reverse("team_members", args=(self.team.public_id,)), data=data, follow=True
+        )
+        self.assertEqual(Invite.objects.filter(email="onetime@test.local").count(), 1)
 
     def test_team_member_delete(self):
-        return "TODO"
+        # Login User
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(
+            reverse("team_member_delete", args=(self.team.public_id, self.user_two.pk))
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # TEST POST
+        response = self.client.post(
+            reverse("team_member_delete", args=(self.team.public_id, self.user_two.pk))
+        )
+        self.assertEqual(self.team.members.count(), 1)
 
     def test_ticketgate_list(self):
         return "TODO"

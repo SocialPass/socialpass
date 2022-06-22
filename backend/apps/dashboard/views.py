@@ -29,6 +29,61 @@ from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 User = auth.get_user_model()
 
 
+class TeamContextMixin(UserPassesTestMixin, ContextMixin):
+    """
+    Common context used site-wide
+    Used to set current_team from team_pk
+    """
+
+    def test_func(self):
+        # check user authenticated and membership to team PK
+        user_logged_in = self.request.user.is_authenticated
+        try:
+            user_membership = Membership.objects.select_related("team").get(
+                team__public_id=self.kwargs["team_pk"], user__id=self.request.user.id
+            )
+            self.team = user_membership.team
+        except Exception:
+            user_membership = False
+
+        return user_logged_in and user_membership
+
+    def handle_no_permission(self):
+        return LoginRequiredMixin.handle_no_permission(self)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=self.team))
+        return context
+
+
+class RequireSuccesfulCheckoutMixin:
+    """
+    Mixin to require successful checkout for view.
+    """
+
+    def pending_checkout_behaviour(self):
+        """
+        Action to take when event has pending payment. Default is redirect to checkout with message.
+        """
+        messages.add_message(
+            self.request, messages.INFO, "Checkout is pending for this event."
+        )
+        return redirect("ticketgate_checkout", **self.kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        event = self.get_object()
+        if not isinstance(event, Event):
+            raise RuntimeError(
+                "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
+            )
+
+        if services.get_event_pending_payment_value(event):
+            return self.pending_checkout_behaviour()
+
+        return super().dispatch(request, *args, **kwargs)
+
+
 class UserDetailView(TemplateView):
     """
     Returns the details of the logged in user.
@@ -57,7 +112,29 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
         )
 
 
-class AcceptInviteView(AcceptInvite):
+class RedirectToTeamView(RedirectView):
+    """
+    Root URL View
+    Redirects user to first found membership / team.
+
+    If no membership / team found, redirect to socialpass landing page
+    """
+
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            membership = Membership.objects.filter(user=self.request.user).last()
+            if membership:
+
+                return reverse("ticketgate_list", args=(membership.team.public_id,))
+            else:
+                return reverse("team_create")
+        else:
+            return reverse("account_login")
+
+
+class TeamAcceptInviteView(AcceptInvite):
     """
     Inherited AcceptInvite from beekeeper-invitations
     """
@@ -140,83 +217,6 @@ class AcceptInviteView(AcceptInvite):
                 invitation.save()
 
         return redirect(self.redirect_url)
-
-
-class TeamContextMixin(UserPassesTestMixin, ContextMixin):
-    """
-    Common context used site-wide
-    Used to set current_team from team_pk
-    """
-
-    def test_func(self):
-        # check user authenticated and membership to team PK
-        user_logged_in = self.request.user.is_authenticated
-        try:
-            user_membership = Membership.objects.select_related("team").get(
-                team__public_id=self.kwargs["team_pk"], user__id=self.request.user.id
-            )
-            self.team = user_membership.team
-        except Exception:
-            user_membership = False
-
-        return user_logged_in and user_membership
-
-    def handle_no_permission(self):
-        return LoginRequiredMixin.handle_no_permission(self)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(dict(current_team=self.team))
-        return context
-
-
-class RequireSuccesfulCheckoutMixin:
-    """
-    Mixin to require successful checkout for view.
-    """
-
-    def pending_checkout_behaviour(self):
-        """
-        Action to take when event has pending payment. Default is redirect to checkout with message.
-        """
-        messages.add_message(
-            self.request, messages.INFO, "Checkout is pending for this event."
-        )
-        return redirect("ticketgate_checkout", **self.kwargs)
-
-    def dispatch(self, request, *args, **kwargs):
-        event = self.get_object()
-        if not isinstance(event, Event):
-            raise RuntimeError(
-                "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
-            )
-
-        if services.get_event_pending_payment_value(event):
-            return self.pending_checkout_behaviour()
-
-        return super().dispatch(request, *args, **kwargs)
-
-
-class RedirectToTeamView(RedirectView):
-    """
-    Root URL View
-    Redirects user to first found membership / team.
-
-    If no membership / team found, redirect to socialpass landing page
-    """
-
-    permanent = False
-
-    def get_redirect_url(self, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            membership = Membership.objects.filter(user=self.request.user).last()
-            if membership:
-
-                return reverse("ticketgate_list", args=(membership.team.public_id,))
-            else:
-                return reverse("team_create")
-        else:
-            return reverse("account_login")
 
 
 class TeamDetailView(TeamContextMixin, TemplateView):

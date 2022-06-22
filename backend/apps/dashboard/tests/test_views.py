@@ -20,27 +20,6 @@ class DashboardTest(TestCase):
         self.team = Team.objects.create(name="Test team")
         self.membership = Membership.objects.create(team=self.team, user=self.user)
 
-    def test_details(self):
-        """
-        # Create an instance of a GET request.
-        request = self.factory.get("/customer/details")
-
-        # Recall that middleware are not supported. You can simulate a
-        # logged-in user by setting request.user manually.
-        request.user = self.user
-
-        # Or you can simulate an anonymous user by setting request.user to
-        # an AnonymousUser instance.
-        request.user = AnonymousUser()
-
-        # Test my_view() as if it were deployed at /customer/details
-        response = my_view(request)
-        # Use this syntax for class-based views.
-        response = MyView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
-        """
-        return
-
     def test_team_context_mixin(self):
         return
 
@@ -65,25 +44,53 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse("dashboard_redirect"), follow=True)
         self.assertRedirects(response, expected_url=reverse("account_login"))
 
+    def test_user_detail(self):
+        return "No tests needed"
 
-"""
-dashboard_redirect
-user_detail
-accept_invite
-send_invite
-team_create
-team_detail
-team_update
-team_members
-team_member_delete
-ticketgate_list
-ticketgate_create
-ticketgate_detail
-ticketgate_update
-ticketgate_stats
-ticketgate_price_estimator
-ticketgate_checkout
-ticketgate_checkout_success_callback
-ticketgate_checkout_failure_callback
-stripe_webhook
-"""
+    def team_accept_invite(self):
+        return
+
+    def team_create(self):
+        return
+
+    def team_detail(self):
+        return
+
+    def team_update(self):
+        return
+
+    def team_members(self):
+        return
+
+    def team_member_delete(self):
+        return
+
+    def ticketgate_list(self):
+        return
+
+    def ticketgate_create(self):
+        return
+
+    def ticketgate_detail(self):
+        return
+
+    def ticketgate_update(self):
+        return
+
+    def ticketgate_stats(self):
+        return
+
+    def ticketgate_price_estimator(self):
+        return
+
+    def ticketgate_checkout(self):
+        return
+
+    def ticketgate_checkout_success_callback(self):
+        return
+
+    def ticketgate_checkout_failure_callback(self):
+        return
+
+    def stripe_webhook(self):
+        return

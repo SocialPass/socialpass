@@ -15,68 +15,68 @@
 /**
  * Notes on variables
  *
- * Variable names are long, descriptive, and self-explanatory. The only thing 
+ * Variable names are long, descriptive, and self-explanatory. The only thing
  * to understand about them are the states.
  *
- * The {...}-hover variables are used for the :hover state, while {...}-active 
- * variables are used for the :active state. Variables for the :active state 
- * are mainly available for buttons and components that are styled the same as 
- * buttons. On the other hand, variables for the :focus state are mainly  
- * available for input elements. Outline variables are only available when 
+ * The {...}-hover variables are used for the :hover state, while {...}-active
+ * variables are used for the :active state. Variables for the :active state
+ * are mainly available for buttons and components that are styled the same as
+ * buttons. On the other hand, variables for the :focus state are mainly
+ * available for input elements. Outline variables are only available when
  * this :focus state is used.
  *
- * Variables with the {...}-active-{...} format don't actually represent the 
- * :active state, but the .active class instead. So for example, the variable 
- * --breadcrumb-item-active-text-color is used for setting the text color of 
- * breadcrumb items that have the class .active. As mentioned above, the 
- * variables for the :active state have the {...}-active format, with the 
+ * Variables with the {...}-active-{...} format don't actually represent the
+ * :active state, but the .active class instead. So for example, the variable
+ * --breadcrumb-item-active-text-color is used for setting the text color of
+ * breadcrumb items that have the class .active. As mentioned above, the
+ * variables for the :active state have the {...}-active format, with the
  * state at the end of the variable.
  *
- * By default, the browser's :focus-visible effect is preserved. This is ideal 
- * because most modern browsers use an indicator with a high level of contrast 
- * on both light and dark backgrounds. Therefore, navigation with keyboard is 
- * very easy. This also has the added benefit of never showing the indicator 
- * when using a mouse to navigate, which is also ideal, because the indicator 
+ * By default, the browser's :focus-visible effect is preserved. This is ideal
+ * because most modern browsers use an indicator with a high level of contrast
+ * on both light and dark backgrounds. Therefore, navigation with keyboard is
+ * very easy. This also has the added benefit of never showing the indicator
+ * when using a mouse to navigate, which is also ideal, because the indicator
  * can often look visually displeasing due to the high contrast.
  *
- * There is no pattern to what variables are available for what components. 
- * The availability depends entirely on what makes sense for that given 
- * component, and to a lesser extent, what the user may want to override when 
+ * There is no pattern to what variables are available for what components.
+ * The availability depends entirely on what makes sense for that given
+ * component, and to a lesser extent, what the user may want to override when
  * making a theme.
  *
- * It is very important that all components look good on both the body 
- * background color (--base-body-bg-color) and the content background color 
- * (--base-content-bg-color). Ideally, they should also look okay on the very 
+ * It is very important that all components look good on both the body
+ * background color (--base-body-bg-color) and the content background color
+ * (--base-content-bg-color). Ideally, they should also look okay on the very
  * light and very dim variations of each of the context colors.
  *
- * The background clipping variables are available mainly to offset background 
+ * The background clipping variables are available mainly to offset background
  * bleeding when it occurs, by setting the property to padding-box.
  *
- * By default, Halfmoon uses auto-scaling on screens >= 1600px. For this 
- * reason, rem units are used (everything can scale up). The base is adjusted 
+ * By default, Halfmoon uses auto-scaling on screens >= 1600px. For this
+ * reason, rem units are used (everything can scale up). The base is adjusted
  * so that 10px = 1rem.
  *
- * The only time px should be used is when a fixed size is always required, 
- * especially if that fixed size is 1px. For example, border widths, outline 
+ * The only time px should be used is when a fixed size is always required,
+ * especially if that fixed size is 1px. For example, border widths, outline
  * widths, divider heights, etc.
  *
- * Background image variables are available for some components. These are 
- * useful for setting gradients. However, border image variables are not 
+ * Background image variables are available for some components. These are
+ * useful for setting gradients. However, border image variables are not
  * available, because most browsers do not support rounded border images (yet).
  *
- * The full list of font related variables are mainly available for block 
+ * The full list of font related variables are mainly available for block
  * level typographical components, such as headings and blockquotes.
  *
- * Any component that could be a link has text decoration variables available 
+ * Any component that could be a link has text decoration variables available
  * for at least two states (base and :hover).
  *
- * Font smoothing variables are available for nearly every component. This is 
- * very important because applying antialiasing on everything can result in 
- * serious readability issues. Contextual variations of the same component 
+ * Font smoothing variables are available for nearly every component. This is
+ * very important because applying antialiasing on everything can result in
+ * serious readability issues. Contextual variations of the same component
  * have their own variables for font smoothing.
  *
- * The calc() function is used wherever it makes sense to calculate the value 
- * of some variable. Please note, nested calc() functions should generally be 
+ * The calc() function is used wherever it makes sense to calculate the value
+ * of some variable. Please note, nested calc() functions should generally be
  * avoided for maximum browser support.
  */
 
@@ -99,7 +99,7 @@
     --black-color: hsl(var(--black-color-hsl));
 
     /* Gray colors */
-    
+
     --gray-color-hue: 218;
     --gray-color-saturation: 5%;
     --gray-color-lightness: 87%;
@@ -275,7 +275,7 @@
 .dark-mode {
     /* Base text colors */
 
-    --base-text-color: hsl(var(--base-text-color-hue), var(--base-text-color-saturation), 80%); 
+    --base-text-color: hsl(var(--base-text-color-hue), var(--base-text-color-saturation), 80%);
     --base-text-color-soft: hsl(var(--base-text-color-hue), var(--base-text-color-saturation), 65%); /* Slightly softer, used on a few components */
     --muted-text-color: hsl(var(--base-text-color-hue), var(--base-text-color-saturation), 60%);
     --very-muted-text-color: hsl(var(--base-text-color-hue), var(--base-text-color-saturation), 35%);
@@ -311,18 +311,18 @@
  * ----------------------------------------------------------------------------
  * [ System colors - Variables ]
  *
- * Colors available to be used by the system. These are very rarely used 
- * directly in classes and components. Instead, they are extended by the 
+ * Colors available to be used by the system. These are very rarely used
+ * directly in classes and components. Instead, they are extended by the
  * context colors, and used that way.
  *
- * The lightness step (up and down) variables make it easy to set different 
- * shades of each of the colors. By default, only 4 step variables (2 in each 
- * direction) are needed for all of the components. However, more can be 
+ * The lightness step (up and down) variables make it easy to set different
+ * shades of each of the colors. By default, only 4 step variables (2 in each
+ * direction) are needed for all of the components. However, more can be
  * easily created and used if required.
  *
- * For the very light variation of each color, usually 95% lightness is good 
- * for all colors. And for the very dark variations, a saturation of 12.5% and 
- * a lightness of 12.5% is usually ideal. Since these are the same for every 
+ * For the very light variation of each color, usually 95% lightness is good
+ * for all colors. And for the very dark variations, a saturation of 12.5% and
+ * a lightness of 12.5% is usually ideal. Since these are the same for every
  * color, they are not set using variables.
  * ----------------------------------------------------------------------------
  */
@@ -574,13 +574,13 @@
  * ----------------------------------------------------------------------------
  * [ Context colors - Variables ]
  *
- * These are used way more frequently in classes and components when compared 
+ * These are used way more frequently in classes and components when compared
  * to system colors.
  *
- * The {...}-hsl variables allow each shade of color to be used with varying 
- * transparencies using the hsla() function. For example: the 
- * hsla(var(--primary-color-hsl), 0.2) would set the primary color with an 
- * opacity of 20%, thus allowing for a much higher degree of flexibility with 
+ * The {...}-hsl variables allow each shade of color to be used with varying
+ * transparencies using the hsla() function. For example: the
+ * hsla(var(--primary-color-hsl), 0.2) would set the primary color with an
+ * opacity of 20%, thus allowing for a much higher degree of flexibility with
  * only a few shades.
  * ----------------------------------------------------------------------------
  */
@@ -824,7 +824,7 @@
     --display-6-font-size: calc(var(--base-font-size) + 1.5vw);
     --display-6-line-height: var(--small-line-height);
 
-    /** 
+    /**
      * Responsive font sizes
      *
      * Found in [Text format utilities]
@@ -1125,8 +1125,8 @@
     /**
      * Form row
      *
-     * The column vertical margin is halved because there is no margin 
-     * collapse due to flexbox. 
+     * The column vertical margin is halved because there is no margin
+     * collapse due to flexbox.
      */
 
     --form-row-margin-top: 0;
@@ -1141,9 +1141,9 @@
  * ----------------------------------------------------------------------------
  * [ Links - Variables ]
  *
- * The variables for resetting links are meant for links inside text blocks 
- * using any of the .text-{color} classes. See the [ Text color utilities ] 
- * section. This is also why the !important keyword is used, as they need to 
+ * The variables for resetting links are meant for links inside text blocks
+ * using any of the .text-{color} classes. See the [ Text color utilities ]
+ * section. This is also why the !important keyword is used, as they need to
  * be able to reset other utility classes.
  * ----------------------------------------------------------------------------
  */
@@ -1610,7 +1610,7 @@
     --code-box-shadow: none;
 
     /* Preformatted code */
-    
+
     --pre-code-font-family: inherit;
     --pre-code-font-size: inherit;
     --pre-code-webkit-font-smoothing: inherit;
@@ -1671,7 +1671,7 @@
  * ----------------------------------------------------------------------------
  * [ Tables - Variables ]
  *
- * Every part of the table uses the same border color. While limiting, this is 
+ * Every part of the table uses the same border color. While limiting, this is
  * a great way to have a standardized look for the table variations.
  * ----------------------------------------------------------------------------
  */
@@ -1942,7 +1942,7 @@
     /* Form check */
 
     --form-check-inline-margin-end: 1rem;
-    --form-group-form-check-margin-bottom: 0.6rem;   
+    --form-group-form-check-margin-bottom: 0.6rem;
 }
 
 
@@ -1950,7 +1950,7 @@
  * ----------------------------------------------------------------------------
  * [ Input - Variables ]
  *
- * The vertical sizing variables for the inputs are inherited from buttons, to 
+ * The vertical sizing variables for the inputs are inherited from buttons, to
  * ensure that they are always the same size (for greater consistency).
  * ----------------------------------------------------------------------------
  */
@@ -2098,7 +2098,7 @@
     /* Invalid input */
 
     --input-invalid-border-color: var(--danger-color-dim);
-    
+
     --input-invalid-box-shadow-focus: 0 0 0 0.4rem hsla(var(--danger-color-hsl), 0.075);
 
     /* Disabled input */
@@ -2243,7 +2243,7 @@
  * ----------------------------------------------------------------------------
  * [ Radio - Variables ]
  *
- * Most of the variables are directly extended from checkbox variables, except 
+ * Most of the variables are directly extended from checkbox variables, except
  * where overrides are needed (such as background image).
  * ----------------------------------------------------------------------------
  */
@@ -2333,7 +2333,7 @@
  * ----------------------------------------------------------------------------
  * [ Switch - Variables ]
  *
- * Most of the variables are directly extended from checkbox variables, except 
+ * Most of the variables are directly extended from checkbox variables, except
  * where overrides are needed (such as background image).
  * ----------------------------------------------------------------------------
  */
@@ -2475,10 +2475,10 @@
     /**
      * Invalid file input
      *
-     * The bg-clip, border-color, box shadow, and outline variables are 
-     * extended from the corresponding invalid input variables. The exception 
-     * is the :active state because inputs don't have variables for this 
-     * state. So here, the base ones are extended instead. 
+     * The bg-clip, border-color, box shadow, and outline variables are
+     * extended from the corresponding invalid input variables. The exception
+     * is the :active state because inputs don't have variables for this
+     * state. So here, the base ones are extended instead.
      */
 
     --file-input-invalid-webkit-font-smoothing: var(--file-input-webkit-font-smoothing);
@@ -2647,7 +2647,7 @@
  * ----------------------------------------------------------------------------
  * [ Input group - Variables ]
  *
- * The input group heights are needed to fix a weird bug that offsets the 
+ * The input group heights are needed to fix a weird bug that offsets the
  * heights of some elements on Webkit based browsers.
  * ----------------------------------------------------------------------------
  */
@@ -3586,7 +3586,7 @@
     /**
      * Pagination link
      *
-     * Pagination links are styled the same as buttons. Regular is the default 
+     * Pagination links are styled the same as buttons. Regular is the default
      * button, active is primary button, and disabled is disabled button.
      */
 
@@ -3757,7 +3757,7 @@
  * ----------------------------------------------------------------------------
  * [ Tooltips - Variables ]
  *
- * Pseudo-borders (created using box-shadow) are used to get rid of the single 
+ * Pseudo-borders (created using box-shadow) are used to get rid of the single
  * pixel rendering issue that is present in most browsers.
  * ----------------------------------------------------------------------------
  */
@@ -4020,7 +4020,7 @@
  * ----------------------------------------------------------------------------
  * [ List group - Variables ]
  *
- * The {...}-hover and {...}-active variables are only used on the action list 
+ * The {...}-hover and {...}-active variables are only used on the action list
  * group items.
  * ----------------------------------------------------------------------------
  */
@@ -4225,7 +4225,7 @@
     --list-group-item-danger-bg-color-active: hsla(var(--danger-color-hsl), 0.35);
     --list-group-item-danger-bg-image-active: none;
     --list-group-item-danger-border-color-active: var(--list-group-item-danger-border-color);
-    --list-group-item-danger-box-shadow-active: var(--list-group-item-danger-box-shadow);    
+    --list-group-item-danger-box-shadow-active: var(--list-group-item-danger-box-shadow);
 
     /* Disabled list group item */
 
@@ -4271,7 +4271,7 @@
     --list-group-item-primary-bg-color: hsla(var(--primary-color-hsl), 0.1);
 
     --list-group-item-primary-bg-color-hover: hsla(var(--primary-color-hsl), 0.15);
-    
+
     --list-group-item-primary-bg-color-active: hsla(var(--primary-color-hsl), 0.2);
 
     /* Secondary list group item */
@@ -4280,7 +4280,7 @@
     --list-group-item-secondary-bg-color: hsla(var(--secondary-color-hsl), 0.1);
 
     --list-group-item-secondary-bg-color-hover: hsla(var(--secondary-color-hsl), 0.15);
-    
+
     --list-group-item-secondary-bg-color-active: hsla(var(--secondary-color-hsl), 0.2);
 
     /* Success list group item */
@@ -4289,7 +4289,7 @@
     --list-group-item-success-bg-color: hsla(var(--success-color-hsl), 0.1);
 
     --list-group-item-success-bg-color-hover: hsla(var(--success-color-hsl), 0.15);
-    
+
     --list-group-item-success-bg-color-active: hsla(var(--success-color-hsl), 0.2);
 
     /* Warning list group item */
@@ -4298,7 +4298,7 @@
     --list-group-item-warning-bg-color: hsla(var(--warning-color-hsl), 0.1);
 
     --list-group-item-warning-bg-color-hover: hsla(var(--warning-color-hsl), 0.15);
-    
+
     --list-group-item-warning-bg-color-active: hsla(var(--warning-color-hsl), 0.2);
 
     /* Danger list group item */
@@ -4307,7 +4307,7 @@
     --list-group-item-danger-bg-color: hsla(var(--danger-color-hsl), 0.1);
 
     --list-group-item-danger-bg-color-hover: hsla(var(--danger-color-hsl), 0.15);
-    
+
     --list-group-item-danger-bg-color-active: hsla(var(--danger-color-hsl), 0.2);
 }
 
@@ -4316,7 +4316,7 @@
  * ----------------------------------------------------------------------------
  * [ Collapse - Variables ]
  *
- * The background image variables for the collapse header are used to set the 
+ * The background image variables for the collapse header are used to set the
  * arrow.
  * ----------------------------------------------------------------------------
  */
@@ -4491,14 +4491,14 @@
     /**
      * Progress bar
      *
-     * No border for progress bars because having one causes issues when the 
-     * progress value is at 0. Therefore, there are no border variables 
+     * No border for progress bars because having one causes issues when the
+     * progress value is at 0. Therefore, there are no border variables
      * (expect for the radius).
      *
-     * For the above reason, there are also no variables for setting the 
+     * For the above reason, there are also no variables for setting the
      * background clipping.
      *
-     * The font related and text color variables are meant to be used inside 
+     * The font related and text color variables are meant to be used inside
      * labelled progress bars.
      */
 
@@ -4635,11 +4635,11 @@
  *
  * normalize.css | MIT License | github.com/necolas/normalize.css
  *
- * Normalize.css makes browsers render all elements more consistently and in 
- * line with modern standards. It precisely targets only the styles that need 
+ * Normalize.css makes browsers render all elements more consistently and in
+ * line with modern standards. It precisely targets only the styles that need
  * normalizing.
  *
- * This is a slighly customized version of normalize.css 8.0.1, specifically 
+ * This is a slighly customized version of normalize.css 8.0.1, specifically
  * for dealing with Halfmoon CSS.
  *
  * Comments have been removed for the sake of compactness.
@@ -5220,20 +5220,20 @@ mark {
  * ----------------------------------------------------------------------------
  * [ Layout (navbar, sidebar, sticky alerts, dialogs) ]
  *
- * The following section contains the position, width, height, and bg color 
- * related styles of the page-wrapper, sticky-alerts, navbars, sidebar, and 
- * content-wrapper. These are grouped together because reading them all at 
+ * The following section contains the position, width, height, and bg color
+ * related styles of the page-wrapper, sticky-alerts, navbars, sidebar, and
+ * content-wrapper. These are grouped together because reading them all at
  * once in serial makes it quite easy to understand how pages are structured.
  *
- * The styles of the children of the above elements can be found in their own 
+ * The styles of the children of the above elements can be found in their own
  * sections of this stylesheet. These sections are:
  * [ Alerts ]
  * [ Navbar content ]
  * [ Sidebar content ]
  *
- * The page-wrapper can have additional helper classes which automatically 
- * adjusts the children elements. For example, the .with-navbar class will 
- * automatically add a padding to the top of the content wrapper equal to the 
+ * The page-wrapper can have additional helper classes which automatically
+ * adjusts the children elements. For example, the .with-navbar class will
+ * automatically add a padding to the top of the content wrapper equal to the
  * height of the default navbar (fixed top).
  * ----------------------------------------------------------------------------
  */
@@ -5342,7 +5342,7 @@ mark {
 /**
  * Sticky alerts
  *
- * The z-index should be high enough to make sure sticky alerts can be used on 
+ * The z-index should be high enough to make sure sticky alerts can be used on
  * top of modals.
  */
 
@@ -5362,7 +5362,7 @@ mark {
 /**
  * With navbar
  *
- * The scroll-margin-top handles anchor links by making space on top for the 
+ * The scroll-margin-top handles anchor links by making space on top for the
  * navbar. This isn't supported by all browsers, so there is a JS fallback.
  */
 
@@ -5428,13 +5428,13 @@ mark {
 /**
  * Sidebar visibility and types
  *
- * When screen width is > 768px, the sidebar is visible by default, unless the 
- * page wrapper has the data-hm-sidebar-hidden="true" attribute, or the 
- * sidebar type is "overlayed-all". Therefore, the sidebar is hidden only if 
+ * When screen width is > 768px, the sidebar is visible by default, unless the
+ * page wrapper has the data-hm-sidebar-hidden="true" attribute, or the
+ * sidebar type is "overlayed-all". Therefore, the sidebar is hidden only if
  * the page wrapper has the data-hm-sidebar-hidden="true" attribute.
  *
- * When screen width is <= 768px, the sidebar is hidden by default. Therefore, 
- * the sidebar only becomes visible if the page wrapper has the 
+ * When screen width is <= 768px, the sidebar is hidden by default. Therefore,
+ * the sidebar only becomes visible if the page wrapper has the
  * data-hm-sidebar-hidden="false" attribute.
  */
 
@@ -6810,8 +6810,8 @@ body,
 /**
  * Rows with equal spacing
  *
- * Due to flexbox, in some cases, there is no margin collapse. So here, the 
- * half spacing variable is used for the margins. With margin collapse, the 
+ * Due to flexbox, in some cases, there is no margin collapse. So here, the
+ * half spacing variable is used for the margins. With margin collapse, the
  * full spacing variable is used instead.
  */
 
@@ -7570,7 +7570,7 @@ a:hover {
 /**
  * Disabled button
  *
- * The .disabled class is meant to disable links styled as buttons. However, 
+ * The .disabled class is meant to disable links styled as buttons. However,
  * this is usually not recommended because of accessibility concerns.
  */
 
@@ -9059,7 +9059,7 @@ kbd,
 /* Disabled file input */
 
 .form-file-input:disabled ~ .form-file-label,
-.form-file-input:disabled ~ .form-file-label:hover, 
+.form-file-input:disabled ~ .form-file-label:hover,
 .form-file-input:disabled ~ .form-file-label:active {
     cursor: not-allowed;
     -webkit-font-smoothing: var(--file-input-disabled-webkit-font-smoothing);
@@ -9439,7 +9439,7 @@ kbd,
 .input-group > .btn:not(:first-child),
 .input-group > .dropdown:not(:first-child),
 .input-group > .dropup:not(:first-child),
-.input-group > .dropend:not(:first-child), 
+.input-group > .dropend:not(:first-child),
 .input-group > .dropstart:not(:first-child) {
     margin-left: calc((-1) * var(--button-border-width));
 }
@@ -9455,7 +9455,7 @@ kbd,
 .input-group > .btn:not(:first-child),
 .input-group > .dropdown:not(:first-child) > .btn,
 .input-group > .dropup:not(:first-child) > .btn,
-.input-group > .dropend:not(:first-child) > .btn, 
+.input-group > .dropend:not(:first-child) > .btn,
 .input-group > .dropstart:not(:first-child) > .btn,
 .input-group > .input-group-text:not(:first-child) {
     border-top-left-radius: 0;
@@ -9467,7 +9467,7 @@ kbd,
 .input-group > .btn:not(:last-child),
 .input-group > .dropdown:not(:last-child) > .btn,
 .input-group > .dropup:not(:last-child) > .btn,
-.input-group > .dropend:not(:last-child) > .btn, 
+.input-group > .dropend:not(:last-child) > .btn,
 .input-group > .dropstart:not(:last-child) > .btn,
 .input-group > .input-group-text:not(:last-child) {
     border-top-right-radius: 0;
@@ -9744,7 +9744,7 @@ kbd,
     margin-bottom: var(--form-inline-item-vertical-margin);
 }
 
-@media (min-width: 577px) {    
+@media (min-width: 577px) {
     .form-inline-sm,
     .form-inline-sm > .form-group {
         display: flex;
@@ -9846,7 +9846,7 @@ kbd,
     margin-bottom: var(--form-inline-item-vertical-margin);
 }
 
-@media (min-width: 769px) {    
+@media (min-width: 769px) {
     .form-inline-md,
     .form-inline-md > .form-group {
         display: flex;
@@ -9948,7 +9948,7 @@ kbd,
     margin-bottom: var(--form-inline-item-vertical-margin);
 }
 
-@media (min-width: 993px) {    
+@media (min-width: 993px) {
     .form-inline-lg,
     .form-inline-lg > .form-group {
         display: flex;
@@ -10050,7 +10050,7 @@ kbd,
     margin-bottom: var(--form-inline-item-vertical-margin);
 }
 
-@media (min-width: 1201px) {    
+@media (min-width: 1201px) {
     .form-inline-xl,
     .form-inline-xl > .form-group {
         display: flex;
@@ -10152,7 +10152,7 @@ kbd,
     margin-bottom: var(--form-inline-item-vertical-margin);
 }
 
-@media (min-width: 1401px) {    
+@media (min-width: 1401px) {
     .form-inline-xxl,
     .form-inline-xxl > .form-group {
         display: flex;
@@ -10587,7 +10587,7 @@ kbd,
     bottom: var(--dropdown-arrow-vertical-spacing);
 }
 
-@media (min-width: 577px) {    
+@media (min-width: 577px) {
     /* Normal dropdown */
 
     .dropdown > .dropdown-menu-sm-start {
@@ -10765,7 +10765,7 @@ kbd,
     }
 }
 
-@media (min-width: 769px) {    
+@media (min-width: 769px) {
     /* Normal dropdown */
 
     .dropdown > .dropdown-menu-md-start {
@@ -10943,7 +10943,7 @@ kbd,
     }
 }
 
-@media (min-width: 993px) {    
+@media (min-width: 993px) {
     /* Normal dropdown */
 
     .dropdown > .dropdown-menu-lg-start {
@@ -11121,7 +11121,7 @@ kbd,
     }
 }
 
-@media (min-width: 1201px) {    
+@media (min-width: 1201px) {
     /* Normal dropdown */
 
     .dropdown > .dropdown-menu-xl-start {
@@ -11299,7 +11299,7 @@ kbd,
     }
 }
 
-@media (min-width: 1401px) {    
+@media (min-width: 1401px) {
     /* Normal dropdown */
 
     .dropdown > .dropdown-menu-xxl-start {
@@ -12845,8 +12845,8 @@ html:not(.dark-mode) .alert-danger.filled-lm,
 /**
  * Pagination link
  *
- * Pretty much the same styling is also used for list items that contain 
- * ellipsis (to show unknown # of pages in between). Obviously, the different 
+ * Pretty much the same styling is also used for list items that contain
+ * ellipsis (to show unknown # of pages in between). Obviously, the different
  * states (hover and active) are not required for them.
  */
 
@@ -14393,14 +14393,14 @@ details * {
 }
 
 /**
- * On browsers that don't support the <details> and <summary> tags (such as 
- * IE), collapse panels are styled to be always open. This is so that they at 
+ * On browsers that don't support the <details> and <summary> tags (such as
+ * IE), collapse panels are styled to be always open. This is so that they at
  * least look right for the most part.
  */
 
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     /* Collapse header */
-    
+
     .collapse-panel .collapse-header {
         cursor: auto;
     }
@@ -14800,7 +14800,7 @@ details * {
         transform: translateX(-100%);
         opacity: 0.8;
     }
-    
+
     to {
         transform: translateX(0);
         opacity: 0.1;
@@ -18088,7 +18088,7 @@ html:not(.dark-mode) .hidden-lm {
     margin-right: auto !important;
 }
 
-@media (min-width: 577px) { 
+@media (min-width: 577px) {
     .m-sm-0 {
         margin: 0 !important;
     }
@@ -18360,7 +18360,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 769px) { 
+@media (min-width: 769px) {
     .m-md-0 {
         margin: 0 !important;
     }
@@ -18632,7 +18632,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 993px) { 
+@media (min-width: 993px) {
     .m-lg-0 {
         margin: 0 !important;
     }
@@ -18904,7 +18904,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1201px) { 
+@media (min-width: 1201px) {
     .m-xl-0 {
         margin: 0 !important;
     }
@@ -19176,7 +19176,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1401px) { 
+@media (min-width: 1401px) {
     .m-xxl-0 {
         margin: 0 !important;
     }
@@ -19482,7 +19482,7 @@ html:not(.dark-mode) .hidden-lm {
     gap: 5rem !important;
 }
 
-@media (min-width: 577px) { 
+@media (min-width: 577px) {
     .gap-sm-0 {
         gap: 0 !important;
     }
@@ -19516,7 +19516,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 769px) { 
+@media (min-width: 769px) {
     .gap-md-0 {
         gap: 0 !important;
     }
@@ -19550,7 +19550,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 993px) { 
+@media (min-width: 993px) {
     .gap-lg-0 {
         gap: 0 !important;
     }
@@ -19584,7 +19584,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1201px) {    
+@media (min-width: 1201px) {
     .gap-xl-0 {
         gap: 0 !important;
     }
@@ -19618,7 +19618,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1401px) {    
+@media (min-width: 1401px) {
     .gap-xxl-0 {
         gap: 0 !important;
     }
@@ -19749,7 +19749,7 @@ html:not(.dark-mode) .hidden-lm {
     min-width: 100vw !important;
 }
 
-@media (min-width: 577px) {    
+@media (min-width: 577px) {
     .ws-sm-25 {
         width: 2.5rem !important;
     }
@@ -19839,7 +19839,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 769px) {    
+@media (min-width: 769px) {
     .ws-md-25 {
         width: 2.5rem !important;
     }
@@ -19929,7 +19929,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 993px) {    
+@media (min-width: 993px) {
     .ws-lg-25 {
         width: 2.5rem !important;
     }
@@ -20019,7 +20019,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1201px) {    
+@media (min-width: 1201px) {
     .ws-xl-25 {
         width: 2.5rem !important;
     }
@@ -20109,7 +20109,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1401px) {    
+@media (min-width: 1401px) {
     .ws-xxl-25 {
         width: 2.5rem !important;
     }
@@ -20289,7 +20289,7 @@ html:not(.dark-mode) .hidden-lm {
     min-height: 100vh !important;
 }
 
-@media (min-width: 577px) {    
+@media (min-width: 577px) {
     .hs-sm-25 {
         height: 2.5rem !important;
     }
@@ -20379,7 +20379,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 769px) {    
+@media (min-width: 769px) {
     .hs-md-25 {
         height: 2.5rem !important;
     }
@@ -20469,7 +20469,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 993px) {    
+@media (min-width: 993px) {
     .hs-lg-25 {
         height: 2.5rem !important;
     }
@@ -20559,7 +20559,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1201px) {    
+@media (min-width: 1201px) {
     .hs-xl-25 {
         height: 2.5rem !important;
     }
@@ -20649,7 +20649,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1401px) {    
+@media (min-width: 1401px) {
     .hs-xxl-25 {
         height: 2.5rem !important;
     }
@@ -21417,7 +21417,7 @@ html:not(.dark-mode) .hidden-lm {
     overflow-y: scroll !important;
 }
 
-@media (min-width: 577px) {    
+@media (min-width: 577px) {
     .overflow-sm-auto {
         overflow: auto !important;
     }
@@ -21467,7 +21467,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 769px) {    
+@media (min-width: 769px) {
     .overflow-md-auto {
         overflow: auto !important;
     }
@@ -21517,7 +21517,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 993px) {    
+@media (min-width: 993px) {
     .overflow-lg-auto {
         overflow: auto !important;
     }
@@ -21567,7 +21567,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1201px) {    
+@media (min-width: 1201px) {
     .overflow-xl-auto {
         overflow: auto !important;
     }
@@ -21617,7 +21617,7 @@ html:not(.dark-mode) .hidden-lm {
     }
 }
 
-@media (min-width: 1401px) {    
+@media (min-width: 1401px) {
     .overflow-xxl-auto {
         overflow: auto !important;
     }
@@ -21750,7 +21750,7 @@ html:not(.dark-mode) .hidden-lm {
     .float-xxl-end {
         float: right !important;
     }
-    
+
     .float-xxl-none {
         float: none !important;
     }
@@ -21970,7 +21970,7 @@ html:not(.dark-mode) .hidden-lm {
     .z-xxl-50 {
         z-index: 50 !important;
     }
-    
+
     .z-xxl-auto {
         z-index: auto !important;
     }
@@ -23593,9 +23593,9 @@ html[dir="rtl"] .hidden-ltr {
  * ----------------------------------------------------------------------------
  * [ Screen reader utilities ]
  *
- * Even though there is code duplication, the two selectors are kept separate 
- * for maximum browser compatibility. To elaborate, the .visually-hidden class 
- * would not work on browsers that do not support the :focus-within state if 
+ * Even though there is code duplication, the two selectors are kept separate
+ * for maximum browser compatibility. To elaborate, the .visually-hidden class
+ * would not work on browsers that do not support the :focus-within state if
  * it was merged with the .visually-hidden-focusable class.
  * ----------------------------------------------------------------------------
  */

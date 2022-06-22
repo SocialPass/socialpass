@@ -193,7 +193,7 @@ var halfmoon = {
 	},
 
 	/**
-	 * Get the Id from the data-hm-target attribute, making sure to remove any 
+	 * Get the Id from the data-hm-target attribute, making sure to remove any
 	 * leading hashtags if they are present.
 	 *
 	 * @param {string} attr - The value of the attribute from the DOM.
@@ -223,9 +223,9 @@ var halfmoon = {
 	},
 
 	/**
-	 * Get a tiny time value (in integer), which is sometimes needed to make 
+	 * Get a tiny time value (in integer), which is sometimes needed to make
 	 * some animations work.
-	 * 
+	 *
 	 * @returns {number}
 	 */
 	getTinyTimeout: function() {
@@ -246,7 +246,7 @@ var halfmoon = {
 	 * @param {string} name - Name of the cookie.
 	 * @param {string} value - Value of the cookie.
 	 * @param {number} days - Number of days before the cookie expires.
-	 * @returns {void} 
+	 * @returns {void}
 	 */
 	createCookie: function(name, value, days) {
 		var expires;
@@ -265,7 +265,7 @@ var halfmoon = {
 	 * Read a cookie given its name.
 	 *
 	 * @param {string} name - Name of the cookie.
-	 * @returns {string} 
+	 * @returns {string}
 	 */
 	readCookie: function(name) {
 		var nameEQ = name + "=";
@@ -286,7 +286,7 @@ var halfmoon = {
 	 * Erase a cookie given its name.
 	 *
 	 * @param {string} name - Name of the cookie.
-	 * @returns {void} 
+	 * @returns {void}
 	 */
 	eraseCookie: function(name) {
 		halfmoon.createCookie(name, "", -1);
@@ -300,7 +300,7 @@ var halfmoon = {
 	/**
 	 * Toggles dark mode.
 	 *
-	 * @returns {void} 
+	 * @returns {void}
 	 */
 	toggleDarkMode: function() {
 		if (document.documentElement.classList.contains("dark-mode")) {
@@ -319,7 +319,7 @@ var halfmoon = {
 	/**
 	 * Get the preferred color scheme.
 	 *
-	 * @returns {string} 
+	 * @returns {string}
 	 */
 	getPreferredColorScheme: function() {
 		// Saved cookie preference is given first priority
@@ -343,7 +343,7 @@ var halfmoon = {
 	/**
 	 * Autoset the preferred color scheme.
 	 *
-	 * @returns {void} 
+	 * @returns {void}
 	 */
 	autosetPreferredColorScheme: function() {
 		// Get the preferences to autoset from DOM
@@ -371,7 +371,7 @@ var halfmoon = {
 	/**
 	 * Toggles readable mode.
 	 *
-	 * @returns {void} 
+	 * @returns {void}
 	 */
 	toggleReadableMode: function() {
 		if (document.documentElement.classList.contains("readable-mode")) {
@@ -390,20 +390,20 @@ var halfmoon = {
 	/**
 	 * Get the preferred font size.
 	 *
-	 * @returns {string} 
+	 * @returns {string}
 	 */
 	getPreferredFontSize: function() {
 		if (halfmoon.readCookie("halfmoon_preferredFontSize")) {
 			return halfmoon.readCookie("halfmoon_preferredFontSize");
 		}
-		
+
 		return "not-set";
 	},
 
 	/**
 	 * Autoset the preferred font size.
 	 *
-	 * @returns {void} 
+	 * @returns {void}
 	 */
 	autosetPreferredFontSize: function() {
 		// Get the preferences to autoset from DOM
@@ -429,7 +429,7 @@ var halfmoon = {
 	/* START NAVBARS */
 
 	/**
-	 * Query the DOM for the navbars and set the heights. This function should 
+	 * Query the DOM for the navbars and set the heights. This function should
 	 * only be called if the page wrapper exists.
 	 *
 	 * @returns {void}
@@ -511,7 +511,7 @@ var halfmoon = {
 	},
 
 	/**
-	 * Adjust a target's scroll margin (inside the content wrapper), so that 
+	 * Adjust a target's scroll margin (inside the content wrapper), so that
 	 * it does not fall behind the default navbar (fixed top) after scrolling.
 	 *
 	 * @param {HTMLElement} target - The target to scroll to.
@@ -539,7 +539,7 @@ var halfmoon = {
 	/* START SIDEBAR */
 
 	/**
-	 * Query the DOM for the sidebar and set type, transition duration, 
+	 * Query the DOM for the sidebar and set type, transition duration,
 	 * overlay. This function should only be called if the page wrapper exists.
 	 *
 	 * @returns {void}
@@ -554,8 +554,8 @@ var halfmoon = {
 				);
 			}
 
-			// Find the transition duration and convert it to milliseconds 
-			// (default is in seconds), because some operations work only if 
+			// Find the transition duration and convert it to milliseconds
+			// (default is in seconds), because some operations work only if
 			// they are done after the transition
 			var transitionDuration = getComputedStyle(sidebar)[
 				"transition-duration"
@@ -567,7 +567,7 @@ var halfmoon = {
 			);
 			halfmoon.sidebar.transitionDuration = transitionDuration * 1000;
 
-			// If the sidebar overlay does not exist, one is created and added 
+			// If the sidebar overlay does not exist, one is created and added
 			// to the DOM inside the page wrapper
 			var sidebarOverlay = document.querySelector(
 				".page-wrapper > .sidebar-overlay"
@@ -679,7 +679,7 @@ var halfmoon = {
 				}
 			}
 
-			// Focus the sidebar to make it accessible for keyboard users 
+			// Focus the sidebar to make it accessible for keyboard users
 			// (after transition completes)
 			setTimeout(function() {
 				halfmoon.sidebar.obj.tabIndex = -1;
@@ -695,7 +695,7 @@ var halfmoon = {
 	 */
 	toggleSidebar: function() {
 		if (halfmoon.supportsSidebar()) {
-			// If the page wrapper has the "data-hm-sidebar-hidden" attribute, 
+			// If the page wrapper has the "data-hm-sidebar-hidden" attribute,
 			// its value is flipped
 			if (halfmoon.pageWrapper.hasAttribute("data-hm-sidebar-hidden")) {
 				var sidebarHidden = halfmoon.pageWrapper.getAttribute(
@@ -708,7 +708,7 @@ var halfmoon = {
 					halfmoon.closeSidebar();
 				}
 			}
-			// Otherwise, the sidebar is toggled depending on the screen width 
+			// Otherwise, the sidebar is toggled depending on the screen width
 			// and the type of the sidebar used
 			else {
 				if (window.innerWidth > 768) {
@@ -732,8 +732,8 @@ var halfmoon = {
 	/* START DIALOGS (MODALS AND OFFCANVAS) */
 
 	/**
-	 * Get the transition duration for the currently open dialog. This is 
-	 * needed to play the animation during dismissal. For modals, 0 is 
+	 * Get the transition duration for the currently open dialog. This is
+	 * needed to play the animation during dismissal. For modals, 0 is
 	 * returned because not having a closing animation is (subjectively) ideal.
 	 *
 	 * @returns {number}
@@ -765,7 +765,7 @@ var halfmoon = {
 	},
 
 	/**
-	 * Close the active dialog (also works as a reset for everything related 
+	 * Close the active dialog (also works as a reset for everything related
 	 * to dialogs).
 	 *
 	 * @returns {void}
@@ -791,7 +791,7 @@ var halfmoon = {
 				halfmoon.currentDialog.obj.removeAttribute("aria-modal");
 				halfmoon.currentDialog.obj.setAttribute("aria-hidden", "true");
 
-				// Return the focus to the toggle that was used to open the 
+				// Return the focus to the toggle that was used to open the
 				// dialog (if it exists)
 				if (halfmoon.currentDialog.toggle) {
 					halfmoon.currentDialog.toggle.focus();
@@ -825,7 +825,7 @@ var halfmoon = {
 				document.body.classList.add("no-dialog-overlay");
 			}
 
-			// If the dialog overlay does not exist, one is created and added 
+			// If the dialog overlay does not exist, one is created and added
 			// to the DOM inside the body
 			var dialogOverlay = document.querySelector(".dialog-overlay");
 			if (!dialogOverlay) {
@@ -859,7 +859,7 @@ var halfmoon = {
 	},
 
 	/**
-	 * Add a shake animation to the dialog. Used for dialogs with static 
+	 * Add a shake animation to the dialog. Used for dialogs with static
 	 * backdrops and/or [esc] dismissal disabled.
 	 *
 	 * @returns {void}
@@ -867,7 +867,7 @@ var halfmoon = {
 	animateDialogShake: function() {
 		if (halfmoon.currentDialog.obj) {
 			var dialog = halfmoon.currentDialog.obj;
-			
+
 			// Animate the dialog using the .dialog-shake-animate class
 			dialog.classList.add("dialog-shake-animate");
 
@@ -886,14 +886,14 @@ var halfmoon = {
 					dialog
 				)["animation-duration"];
 			}
-			
+
 			// Convert the duration to milliseconds (default is in seconds)
 			animationDuration = Number(
 				animationDuration.substring(0, animationDuration.length - 1)
 			);
 			animationDuration = animationDuration * 1000;
 
-			// Remove the animation class after its duration, so that the  
+			// Remove the animation class after its duration, so that the
 			// animation can be repeated every time the user triggers it
 			setTimeout(function() {
 				dialog.classList.remove("dialog-shake-animate");
@@ -916,7 +916,7 @@ var halfmoon = {
 			// Start fade out animation
 			alert.classList.add("fade-out");
 
-			// Find the transition duration for the fade out animation, and 
+			// Find the transition duration for the fade out animation, and
 			// convert it to milliseconds (default is in seconds)
 			var transitionDuration = getComputedStyle(alert)[
 				"transition-duration"
@@ -941,8 +941,8 @@ var halfmoon = {
 	},
 
 	/**
-	 * Query the DOM to check if the sticky alerts container exists or not. If 
-	 * not, then one is created and added to the DOM inside the page wrapper. 
+	 * Query the DOM to check if the sticky alerts container exists or not. If
+	 * not, then one is created and added to the DOM inside the page wrapper.
 	 * This function should only be called if the page wrapper exists.
 	 *
 	 * @returns {void}
@@ -1048,7 +1048,7 @@ var halfmoon = {
 
 			// Get or create the toast alert element
 			if (toggle.hasAttribute("data-hm-target")) {
-				// If the toggle has an explicit target set, then the DOM is 
+				// If the toggle has an explicit target set, then the DOM is
 				// queried for the pre-made toast alert
 				toast = document.getElementById(
 					halfmoon.getIdFromTargetAttr(
@@ -1057,7 +1057,7 @@ var halfmoon = {
 				);
 			}
 			else {
-				// Otherwise, a toast alert element is created using data from 
+				// Otherwise, a toast alert element is created using data from
 				// the attributes available
 				var toastOpts = {
 					title: toggle.getAttribute("data-hm-title") || "",
@@ -1091,8 +1091,8 @@ var halfmoon = {
 	initToastAlert: function(toastOpts) {
 		if (halfmoon.pageWrapper) {
 			halfmoon.queryStickyAlerts();
-			
-			// Create the toast alert element using the data provided 
+
+			// Create the toast alert element using the data provided
 			var toast = halfmoon.createToastAlert(toastOpts);
 
 			// And it is inserted into the container
@@ -1111,7 +1111,7 @@ var halfmoon = {
 	/* START DROPDOWN */
 
 	/**
-	 * Close the active dropdown (also works as a reset for everything related 
+	 * Close the active dropdown (also works as a reset for everything related
 	 * to dropdowns).
 	 *
 	 * @returns {void}
@@ -1121,7 +1121,7 @@ var halfmoon = {
 			halfmoon.currentDropdown.menu.classList.remove("show");
 			halfmoon.currentDropdown.menu.classList.remove("set-d-block");
 
-			// Return the focus to the toggle that was used to open the 
+			// Return the focus to the toggle that was used to open the
 			// dropdown (if it exists and condition is true), and set attribute
 			if (halfmoon.currentDropdown.toggle) {
 				if (focusToToggle) halfmoon.currentDropdown.toggle.focus();
@@ -1393,7 +1393,7 @@ var halfmoon = {
 
 	/**
 	 * Bind the value of an input to the given target(s).
-	 * 
+	 *
 	 * @param {HTMLElement} input - The input to bind.
 	 * @returns {void}
 	 */
@@ -1419,7 +1419,7 @@ var halfmoon = {
 	},
 
 	/**
-	 * Attach the bind input value function (meant to be called when an event 
+	 * Attach the bind input value function (meant to be called when an event
 	 * listener is attached).
 	 *
 	 * @param {Event} event - The event.
@@ -1430,7 +1430,7 @@ var halfmoon = {
 	},
 
 	/**
-	 * Set the initial values and add the event listeners for binding the 
+	 * Set the initial values and add the event listeners for binding the
 	 * value.
 	 *
 	 * @returns {void}
@@ -1497,11 +1497,11 @@ var halfmoon = {
 				}
 				event.preventDefault();
 			}
-				
+
 			// Hide open sidebar (only if overlayed sidebar is used)
 			else if (halfmoon.supportsSidebar()) {
 				if (
-					halfmoon.sidebar.type.includes("overlayed-all") || 
+					halfmoon.sidebar.type.includes("overlayed-all") ||
 					halfmoon.sidebar.type.includes("overlayed-md-down")
 				) {
 					var sidebarHidden = halfmoon.pageWrapper.getAttribute(
@@ -1523,8 +1523,8 @@ var halfmoon = {
 	 * @returns {void}
 	 */
 	onKeyUp: function(event) {
-		// When the sidebar open, if the focus is shifted to an element that 
-		// is outside of the sidebar using [tab], the sidebar is hidden. This 
+		// When the sidebar open, if the focus is shifted to an element that
+		// is outside of the sidebar using [tab], the sidebar is hidden. This
 		// is done mainly for accessibility reasons
 		if (event.keyCode === 9) {
 			if (halfmoon.supportsSidebar()) {
@@ -1544,7 +1544,7 @@ var halfmoon = {
 				// Or if the sidebar type is "overlayed-all"
 				else {
 					if (
-						halfmoon.sidebar.type.includes("overlayed-all") && 
+						halfmoon.sidebar.type.includes("overlayed-all") &&
 						sidebarHidden === "false"
 					) {
 						if (!halfmoon.sidebar.obj.contains(event.target)) {
@@ -1570,7 +1570,7 @@ var halfmoon = {
 			}
 		}
 
-		// Make sure that focused elements inside the content wrapper are not 
+		// Make sure that focused elements inside the content wrapper are not
 		// hidden behind the fixed navbars (both default and fixed bottom)
 		else if (halfmoon.contentWrapper) {
 			if (halfmoon.contentWrapper.contains(event.target)) {
@@ -1638,7 +1638,7 @@ var halfmoon = {
 		// The scroll-margin-top property does this using CSS, so no JS needed
 		if (!("scroll-margin-top" in document.documentElement.style)) {
 			if (target.matches("a[href]")) {
-				// If the "href" attribute does not match hash, then this is 
+				// If the "href" attribute does not match hash, then this is
 				// handled by the hashchange event listener instead
 				if (target.getAttribute("href") === location.hash) {
 					var hashTarget = document.getElementById(
@@ -1654,7 +1654,7 @@ var halfmoon = {
 
 		// Handle clicks on dark mode toggles
 		if (
-			target.matches("[data-hm-toggle='dark-mode']") || 
+			target.matches("[data-hm-toggle='dark-mode']") ||
 			target.matches("[data-hm-toggle='dark-mode'] *")
 		) {
 			halfmoon.toggleDarkMode();
@@ -1663,7 +1663,7 @@ var halfmoon = {
 
 		// Handle clicks on readable mode toggles
 		if (
-			target.matches("[data-hm-toggle='readable-mode']") || 
+			target.matches("[data-hm-toggle='readable-mode']") ||
 			target.matches("[data-hm-toggle='readable-mode'] *")
 		) {
 			halfmoon.toggleReadableMode();
@@ -1672,7 +1672,7 @@ var halfmoon = {
 
 		// Handle clicks on sidebar toggles
 		if (
-			target.matches("[data-hm-toggle='sidebar']") || 
+			target.matches("[data-hm-toggle='sidebar']") ||
 			target.matches("[data-hm-toggle='sidebar'] *")
 		) {
 			halfmoon.toggleSidebar();
@@ -1687,9 +1687,9 @@ var halfmoon = {
 
 		// Handle clicks on dialog toggles
 		if (
-			target.matches("[data-hm-toggle='modal']") || 
-			target.matches("[data-hm-toggle='modal'] *") || 
-			target.matches("[data-hm-toggle='offcanvas']") || 
+			target.matches("[data-hm-toggle='modal']") ||
+			target.matches("[data-hm-toggle='modal'] *") ||
+			target.matches("[data-hm-toggle='offcanvas']") ||
 			target.matches("[data-hm-toggle='offcanvas'] *")
 		) {
 			if (target.matches("[data-hm-toggle='modal'] *")) {
@@ -1708,9 +1708,9 @@ var halfmoon = {
 
 		// Handle clicks on dialog dismiss buttons
 		if (
-			target.matches("[data-hm-dismiss='modal']") || 
-			target.matches("[data-hm-dismiss='modal'] *") || 
-			target.matches("[data-hm-dismiss='offcanvas']") || 
+			target.matches("[data-hm-dismiss='modal']") ||
+			target.matches("[data-hm-dismiss='modal'] *") ||
+			target.matches("[data-hm-dismiss='offcanvas']") ||
 			target.matches("[data-hm-dismiss='offcanvas'] *")
 		) {
 			halfmoon.closeDialog();
@@ -1721,7 +1721,7 @@ var halfmoon = {
 		// For modals, the click is registered on the dialog
 		// For offcanvas, the click is registered on the overlay
 		if (
-			target.matches(".modal-dialog") || 
+			target.matches(".modal-dialog") ||
 			target.matches(".dialog-overlay")
 		) {
 			var dialog = halfmoon.currentDialog.obj;
@@ -1735,7 +1735,7 @@ var halfmoon = {
 
 		// Handle clicks on alert dismiss buttons
 		if (
-			target.matches("[data-hm-dismiss='alert']") || 
+			target.matches("[data-hm-dismiss='alert']") ||
 			target.matches("[data-hm-dismiss='alert'] *")
 		) {
 			var alert = target.closest(".alert");
@@ -1745,7 +1745,7 @@ var halfmoon = {
 
 		// Handle clicks on toast toggles
 		if (
-			target.matches("[data-hm-toggle='toast']") || 
+			target.matches("[data-hm-toggle='toast']") ||
 			target.matches("[data-hm-toggle='toast'] *")
 		) {
 			if (target.matches("[data-hm-toggle='toast'] *")) {
@@ -1757,7 +1757,7 @@ var halfmoon = {
 
 		// Handle clicks on dropdown toggles
 		if (
-			target.matches("[data-hm-toggle='dropdown']") || 
+			target.matches("[data-hm-toggle='dropdown']") ||
 			target.matches("[data-hm-toggle='dropdown'] *")
 		) {
 			if (target.matches("[data-hm-toggle='dropdown'] *")) {
@@ -1778,7 +1778,7 @@ var halfmoon = {
 
 		// Handle clicks on tab toggles
 		if (
-			target.matches("[data-hm-toggle='tab']") || 
+			target.matches("[data-hm-toggle='tab']") ||
 			target.matches("[data-hm-toggle='tab'] *")
 		) {
 			if (target.matches("[data-hm-toggle='tab'] *")) {
@@ -1796,7 +1796,7 @@ var halfmoon = {
 
 		// Handle clicks on step up toggles
 		if (
-			target.matches("[data-hm-toggle='step-up']") || 
+			target.matches("[data-hm-toggle='step-up']") ||
 			target.matches("[data-hm-toggle='step-up'] *")
 		) {
 			if (target.matches("[data-hm-toggle='step-up'] *")) {
@@ -1812,7 +1812,7 @@ var halfmoon = {
 
 		// Handle clicks on step down toggles
 		if (
-			target.matches("[data-hm-toggle='step-down']") || 
+			target.matches("[data-hm-toggle='step-down']") ||
 			target.matches("[data-hm-toggle='step-down'] *")
 		) {
 			if (target.matches("[data-hm-toggle='step-down'] *")) {
@@ -1828,7 +1828,7 @@ var halfmoon = {
 
 		// Handle clicks on password toggles
 		if (
-			target.matches("[data-hm-toggle='password']") || 
+			target.matches("[data-hm-toggle='password']") ||
 			target.matches("[data-hm-toggle='password'] *")
 		) {
 			if (target.matches("[data-hm-toggle='password'] *")) {
@@ -1851,8 +1851,8 @@ var halfmoon = {
 	onDOMContentLoaded: function() {
 		// Re-init the required elements if not on browser (for virtual DOMs)
 		if (
-			typeof process !== "undefined" && 
-			process.versions != null && 
+			typeof process !== "undefined" &&
+			process.versions != null &&
 			process.versions.node != null
 		) {
 			halfmoon.pageWrapper = halfmoonInitProps.pageWrapper();
@@ -1909,7 +1909,7 @@ var halfmoon = {
 				);
 				if (hashTarget) {
 					// Only adjust if the difference is small (less than 50px)
-					// In most cases, the difference should be 0, but 
+					// In most cases, the difference should be 0, but
 					// sometimes it is a very small number
 					if (Math.abs(hashTarget.offsetTop - window.scrollY) < 50) {
 						halfmoon.adjustContentScrollMargin(hashTarget);

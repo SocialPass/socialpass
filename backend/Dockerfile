@@ -9,7 +9,7 @@ WORKDIR /code/
 COPY config/requirements/local.txt /code/local.txt
 COPY config/requirements/base.txt /code/base.txt
 
-RUN pip install -U setuptools pip \ 
+RUN pip install -U setuptools pip \
     && pip install -r local.txt
 
 # django setup
@@ -21,7 +21,7 @@ COPY . /code
 
 # For example:
 
-# FROM python:3.10.2-alpine # or slim  
+# FROM python:3.10.2-alpine # or slim
 
 # # system installations
 # RUN apk update \

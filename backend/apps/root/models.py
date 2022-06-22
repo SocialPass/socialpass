@@ -5,12 +5,12 @@ from datetime import datetime, timedelta
 import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
 
 from apps.dashboard.models import PricingRule, Team
-from config.storages import PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .model_wrappers import DBModel
@@ -107,7 +107,9 @@ class Ticket(DBModel):
 
     # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(null=True, storage=PrivateTicketStorage())
+    file = models.ImageField(
+        null=True, storage=get_storage_class(settings.PRIVATE_TICKET_STORAGE)
+    )
     embed_code = models.UUIDField(default=uuid.uuid4)
 
     # Ticket access info

@@ -18,7 +18,7 @@ export function EventContainer({
 }: EventContainerProps) {
   const navigate = useNavigate();
   function handleRedirect() {
-    navigate("/scanner");
+    navigate("scanner");
   }
   return (
     <div className="container p-10 d-flex flex-column align-items-center">

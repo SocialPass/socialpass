@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-export function InvalidScanner() {
+export function Error() {
   const navigate = useNavigate();
 
   function handleGoBack() {
@@ -13,7 +13,7 @@ export function InvalidScanner() {
 
   return (
     <div className="error-footer">
-    
+
     <header className="d-flex flex-row justify-content-between align-items-start py-4 px-4">
     <div className="py-2">
         <div className="btn-back">
@@ -24,7 +24,7 @@ export function InvalidScanner() {
         <div className="error-title py-30">Invalid</div>
       </div>
       <div className="mx-40">
-      </div>        
+      </div>
     </header>
     <div className="error-padding"></div>
     <div className="error-body d-flex flex-column align-items-center justify-content-center gap-4">
@@ -32,10 +32,10 @@ export function InvalidScanner() {
         <img src={CloseCircleIcon} />
       </div>
       <div className="error-body">
-        No event was found.       
+        No event was found.
       </div>
    </div>
-    
+
     </div>
   );
 }

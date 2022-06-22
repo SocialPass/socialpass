@@ -1,12 +1,16 @@
 import React from "react";
-import AppProvider from "./contexts";
-import Routes from "./routes";
+import { EventProvider } from "./contexts/EventContext";
+import { ToastProvider } from "./contexts/ToastContext";
+
+import EventRoutes from "./routes/EventRoutes";
 
 function App() {
   return (
-    <AppProvider>
-      <Routes />
-    </AppProvider>
+    <ToastProvider>
+      <EventProvider>
+        <EventRoutes />
+      </EventProvider>
+    </ToastProvider>
   );
 }
 

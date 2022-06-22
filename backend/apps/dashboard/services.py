@@ -44,7 +44,10 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
     pricing_rule_ranges = pricing_rules.order_by("min_capacity")
 
     for rule_range in pricing_rule_ranges:
-        if capacity >= rule_range.min_capacity and capacity <= rule_range.safe_max_capacity:
+        if (
+            capacity >= rule_range.min_capacity
+            and capacity <= rule_range.safe_max_capacity
+        ):
             return rule_range
 
     raise ValueError("Could not find pricing_rule for capacity")

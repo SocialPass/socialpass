@@ -114,7 +114,10 @@ class CheckoutPortalProcess(EventMixin, APIView):
         )
 
         # 3. validate wallet blockchain_ownership
-        (wallet_validated, response_msg,) = services.validate_blockchain_wallet_ownership(
+        (
+            wallet_validated,
+            response_msg,
+        ) = services.validate_blockchain_wallet_ownership(
             event=self.event,
             blockchain_ownership=blockchain_ownership,
             signed_message=blockchain_serializer.data["signed_message"],

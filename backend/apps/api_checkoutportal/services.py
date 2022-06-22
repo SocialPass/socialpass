@@ -64,7 +64,9 @@ def get_available_tickets(event: Event, tickets_requested=None) -> int:
 
     # check tickets_requested requested against limt_per_person
     if tickets_requested > event.limit_per_person:
-        raise TooManyTicketsRequestedError("Tickets requested are over the limit per person")
+        raise TooManyTicketsRequestedError(
+            "Tickets requested are over the limit per person"
+        )
 
     # all checks passed
     # return initial tickets_requested integer
@@ -140,7 +142,9 @@ def create_tickets_blockchain_ownership(
             break
 
         # check for existing ticket
-        existing_ticket = Ticket.objects.filter(event=event, blockchain_asset=blockchain_asset)
+        existing_ticket = Ticket.objects.filter(
+            event=event, blockchain_asset=blockchain_asset
+        )
         # First-time claim
         if not existing_ticket:
             new_ticket = Ticket.objects.create(
@@ -183,7 +187,9 @@ def validate_blockchain_wallet_ownership(
 
     # check if expired
     if blockchain_ownership.is_expired:
-        verification_msg = f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
+        verification_msg = (
+            f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
+        )
         return verified, verification_msg
 
     # check for id mismatch
@@ -205,7 +211,9 @@ def validate_blockchain_wallet_ownership(
             return verified, verification_msg
     except Exception as e:
         sentry_sdk.capture_message(wallet_address, e)
-        verification_msg = "Unable to decode & validate blockchain_ownership, likely a forgery attempt."
+        verification_msg = (
+            "Unable to decode & validate blockchain_ownership, likely a forgery attempt."
+        )
         return verified, verification_msg
 
     # before success, mark as verified, update wallet_address, and save
@@ -240,7 +248,9 @@ def get_blockchain_asset_ownership(
                 continue
 
         # non fungible requirement
-        if (requirement["asset_type"] == "ERC721") or requirement["asset_type"] == "ERC1155":
+        if (requirement["asset_type"] == "ERC721") or requirement[
+            "asset_type"
+        ] == "ERC1155":
             try:
                 fetched_assets = moralis_get_nonfungible_assets(
                     chain_id=hex(requirement["chain_id"]),
@@ -265,7 +275,9 @@ def get_blockchain_asset_ownership(
 #
 # MORALIS FUNCTIONS
 #
-def moralis_get_fungible_assets(chain_id="", wallet_address="", token_addresses=[], to_block=None, required_amount=0):
+def moralis_get_fungible_assets(
+    chain_id="", wallet_address="", token_addresses=[], to_block=None, required_amount=0
+):
     """
     Gets token balances for a specific address
     Gets token owned by the given address, at the given token_addresses, up until to_block
@@ -315,7 +327,9 @@ def moralis_get_fungible_assets(chain_id="", wallet_address="", token_addresses=
     return _json
 
 
-def moralis_get_nonfungible_assets(chain_id="", wallet_address="", token_address="", token_ids=None, required_amount=0):
+def moralis_get_nonfungible_assets(
+    chain_id="", wallet_address="", token_address="", token_ids=None, required_amount=0
+):
     """
     Gets NFTs owned by the given address, at the given token_address
     Use the token_address param to get results for a specific contract only

@@ -14,12 +14,16 @@ def new_user_invitation_callback(request, user, **kwargs):
     Upon signup, check for recently-accepted invitation(s) and create membership(s)
     """
     # Check for accepted invites without membership
-    invites = Invite.objects.filter(archived_email__iexact=user.email, accepted=True, membership=None)
+    invites = Invite.objects.filter(
+        archived_email__iexact=user.email, accepted=True, membership=None
+    )
 
     # Create membership based on invites witout membership
     for invite in invites:
         if invite.team:
-            membership, created = Membership.objects.get_or_create(team=invite.team, user=user)
+            membership, created = Membership.objects.get_or_create(
+                team=invite.team, user=user
+            )
             # update invite membership if created
             invite.membership = membership
 

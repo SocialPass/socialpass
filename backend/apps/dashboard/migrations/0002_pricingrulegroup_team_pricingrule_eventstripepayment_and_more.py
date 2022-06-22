@@ -52,7 +52,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "public_id",
-                    models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
                 ),
                 ("name", models.CharField(max_length=100)),
                 ("description", models.TextField(blank=True, null=True)),
@@ -91,17 +93,23 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "public_id",
-                    models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
                 ),
                 ("name", models.CharField(max_length=255)),
                 (
                     "image",
-                    models.ImageField(blank=True, max_length=255, null=True, upload_to=""),
+                    models.ImageField(
+                        blank=True, max_length=255, null=True, upload_to=""
+                    ),
                 ),
                 ("description", models.TextField(blank=True)),
                 (
                     "members",
-                    models.ManyToManyField(through="dashboard.Membership", to=settings.AUTH_USER_MODEL),
+                    models.ManyToManyField(
+                        through="dashboard.Membership", to=settings.AUTH_USER_MODEL
+                    ),
                 ),
                 (
                     "pricing_rule_group",
@@ -146,11 +154,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "public_id",
-                    models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
                 ),
                 (
                     "min_capacity",
-                    models.IntegerField(validators=[django.core.validators.MinValueValidator(1)]),
+                    models.IntegerField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
                 ),
                 ("max_capacity", models.IntegerField(blank=True, null=True)),
                 (
@@ -202,7 +214,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "public_id",
-                    models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
                 ),
                 (
                     "value",

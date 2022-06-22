@@ -49,7 +49,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "public_id",
-                    models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
                 ),
                 (
                     "team",
@@ -104,7 +106,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "public_id",
-                    models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
                 ),
                 (
                     "accepted",
@@ -117,7 +121,9 @@ class Migration(migrations.Migration):
                 ("sent", models.DateTimeField(null=True, verbose_name="sent")),
                 (
                     "email",
-                    models.EmailField(max_length=254, unique=True, verbose_name="e-mail address"),
+                    models.EmailField(
+                        max_length=254, unique=True, verbose_name="e-mail address"
+                    ),
                 ),
                 (
                     "archived_email",

@@ -23,7 +23,9 @@ class SetAccessKeyAndEventMixin:
 
     def set_event_and_redemption_access_key(self, redemption_access_key: uuid.UUID):
         try:
-            self.redemption_access_key = TicketRedemptionKey.objects.get(public_id=redemption_access_key)
+            self.redemption_access_key = TicketRedemptionKey.objects.get(
+                public_id=redemption_access_key
+            )
             self.event = self.redemption_access_key.event
         except Exception:
             raise Http404(
@@ -61,7 +63,9 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
         Serializes Redemeed Tickets
         """
 
-        ticket_count = drf_serializers.IntegerField(source="event.tickets.count", read_only=True)
+        ticket_count = drf_serializers.IntegerField(
+            source="event.tickets.count", read_only=True
+        )
         redemeed_count = drf_serializers.SerializerMethodField()
 
         class Meta:

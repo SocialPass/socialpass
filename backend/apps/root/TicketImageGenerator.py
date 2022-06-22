@@ -184,7 +184,9 @@ def set_theme(new_theme):
 
 
 # Fonts (and related)
-BASE_FONT_TYPE = os.path.join(settings.ROOT_DIR, "static/fonts/RobotoMono-Bold.ttf")  # Default font
+BASE_FONT_TYPE = os.path.join(
+    settings.ROOT_DIR, "static/fonts/RobotoMono-Bold.ttf"
+)  # Default font
 
 
 def get_base_pil_font(size):
@@ -396,13 +398,17 @@ class TicketPartGenerator:
         return img
 
     @staticmethod
-    def generate_text_section(width, text, color, font, x_start_offset, x_end_offset, v_spacing):
+    def generate_text_section(
+        width, text, color, font, x_start_offset, x_end_offset, v_spacing
+    ):
         """
         Generates an image for a text section.
         """
         # Calculate height using "fake" canvas
         img = Image.new("RGB", (width, 1), color="white")
-        calc_height = fit_text(img, text.upper(), color, font, x_start_offset, x_end_offset, False)
+        calc_height = fit_text(
+            img, text.upper(), color, font, x_start_offset, x_end_offset, False
+        )
 
         # Create real canvas and fit text
         img = Image.new("RGB", (width, calc_height + v_spacing), color="white")
@@ -501,7 +507,11 @@ class TicketPartGenerator:
 
             # Add scene image
             scene_img_w_area = TicketPartGenerator.get_scene_image_w_area(qr_img)
-            scene_img_x_offset = int((2 * DEFAULT_MARGIN) + qr_img.width + (scene_img_w_area - scene_img.width))
+            scene_img_x_offset = int(
+                (2 * DEFAULT_MARGIN)
+                + qr_img.width
+                + (scene_img_w_area - scene_img.width)
+            )
             if scene_img_x_offset < 0:
                 scene_img_x_offset = 0
             img.paste(scene_img, (scene_img_x_offset, v_spacing), scene_img)
@@ -654,7 +664,9 @@ class TicketPartGenerator:
         if scene_img_source:
             # Ticket still gets generated if the scene image source doesn't work
             try:
-                scene_img = TicketPartGenerator.generate_scene_image(scene_img_source, ticket_parts["qr_code"].height)
+                scene_img = TicketPartGenerator.generate_scene_image(
+                    scene_img_source, ticket_parts["qr_code"].height
+                )
             except Exception as e:
                 print("Error getting scene image.", e)
                 scene_img = None
@@ -727,13 +739,21 @@ class TicketPartGenerator:
 
         # Gate limit and event date
         if "gate_limit" in event_data:
-            event_gate_limit_date_img = concat_h(ticket_parts["event_gate_limit"], ticket_parts["event_date"])
-            ticket_img = concat_v(ticket_img, event_gate_limit_date_img, SPACE_AFTER_EVENT_DATA_ITEMS)
+            event_gate_limit_date_img = concat_h(
+                ticket_parts["event_gate_limit"], ticket_parts["event_date"]
+            )
+            ticket_img = concat_v(
+                ticket_img, event_gate_limit_date_img, SPACE_AFTER_EVENT_DATA_ITEMS
+            )
         else:
-            ticket_img = concat_v(ticket_img, ticket_parts["event_date"], SPACE_AFTER_EVENT_DATA_ITEMS)
+            ticket_img = concat_v(
+                ticket_img, ticket_parts["event_date"], SPACE_AFTER_EVENT_DATA_ITEMS
+            )
 
         # Event location
-        ticket_img = concat_v(ticket_img, ticket_parts["event_location"], SPACE_AFTER_EVENT_DATA_ITEMS)
+        ticket_img = concat_v(
+            ticket_img, ticket_parts["event_location"], SPACE_AFTER_EVENT_DATA_ITEMS
+        )
 
         # QR code and scene image
         qr_code_scene_img = TicketPartGenerator.join_qr_code_scene_image(
@@ -742,16 +762,24 @@ class TicketPartGenerator:
         ticket_img = concat_v(ticket_img, qr_code_scene_img, SPACE_AFTER_EVENT_DATA)
 
         # Bottom banner
-        ticket_img = concat_v(ticket_img, ticket_parts["bottom_banner"], SPACE_AFTER_QR_CODE_SCENE_IMAGE)
+        ticket_img = concat_v(
+            ticket_img, ticket_parts["bottom_banner"], SPACE_AFTER_QR_CODE_SCENE_IMAGE
+        )
 
         # Footer
-        theme_text_sections_img = concat_h(ticket_parts["theme_name"], ticket_parts["theme_rarity"])
+        theme_text_sections_img = concat_h(
+            ticket_parts["theme_name"], ticket_parts["theme_rarity"]
+        )
         theme_section_img = make_white_transparent(
-            Image.new("RGB", (DEFAULT_WIDTH - theme_text_sections_img.width, 1), color="white")
+            Image.new(
+                "RGB", (DEFAULT_WIDTH - theme_text_sections_img.width, 1), color="white"
+            )
         )
         theme_section_img = concat_h(theme_section_img, theme_text_sections_img)
         ticket_img = concat_v(ticket_img, theme_section_img, SPACE_AFTER_BOTTOM_BANNER)
-        footer_img = make_white_transparent(Image.new("RGB", (DEFAULT_WIDTH, SPACE_AFTER_THEME_DATA), color="white"))
+        footer_img = make_white_transparent(
+            Image.new("RGB", (DEFAULT_WIDTH, SPACE_AFTER_THEME_DATA), color="white")
+        )
         ticket_img = concat_v(ticket_img, footer_img)
 
         # Create the background image and notch
@@ -768,7 +796,9 @@ class TicketPartGenerator:
         y0 = -notch_radius
         y1 = notch_radius
         draw.ellipse((x0, y0, x1, y1), fill=WORKING_CANVAS_COLOR)
-        ticket_with_bg = ticket_with_bg.resize((bg_width // scale, bg_height // scale), resample=Image.ANTIALIAS)
+        ticket_with_bg = ticket_with_bg.resize(
+            (bg_width // scale, bg_height // scale), resample=Image.ANTIALIAS
+        )
         ticket_with_bg.paste(ticket_img, (0, 0), ticket_img)
 
         # Create the full canvas and result

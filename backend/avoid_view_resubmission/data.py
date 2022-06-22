@@ -27,7 +27,9 @@ class AFRMetaData(UserDict):
                 uuid = UUID(uuid)
             except Exception:
                 if not create:
-                    raise ValueError("uuid must be a UUID or a string that can be converted to a UUID")
+                    raise ValueError(
+                        "uuid must be a UUID or a string that can be converted to a UUID"
+                    )
                 uuid = uuid4()
 
         return uuid

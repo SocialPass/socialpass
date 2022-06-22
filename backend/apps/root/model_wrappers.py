@@ -9,7 +9,9 @@ class DBModel(TimeStampedModel):
     Abstract base model that provides useful timestamps.
     """
 
-    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True)
+    public_id = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True
+    )
 
     class Meta:
         abstract = True

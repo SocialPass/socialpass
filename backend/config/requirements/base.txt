@@ -1,3 +1,7 @@
+# DISCLAIMER!!!
+# If mypy fails to run on pre-commit after a new dependency is added,
+# you may need to add it to the additional_dependencies on the .pre-commig-config.yaml
+
 # general
 pip
 wheel

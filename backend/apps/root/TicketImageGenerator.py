@@ -498,9 +498,7 @@ class TicketPartGenerator:
         another. If scene image is not provided, QR code is centered.
         """
         # Create canvas
-        img = Image.new(
-            "RGB", (DEFAULT_WIDTH, qr_img.height + v_spacing), color="white"
-        )
+        img = Image.new("RGB", (DEFAULT_WIDTH, qr_img.height + v_spacing), color="white")
         img = make_white_transparent(img)
 
         if scene_img:
@@ -565,9 +563,7 @@ class TicketPartGenerator:
             font=BANNER_FONT,
             text=top_banner_text,
         )
-        ticket_parts["top_banner"] = concat_v(
-            ticket_parts["top_banner"], top_banner_img
-        )
+        ticket_parts["top_banner"] = concat_v(ticket_parts["top_banner"], top_banner_img)
 
         # Event name
         ticket_parts["event_name"] = concat_v(

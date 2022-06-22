@@ -18,6 +18,7 @@ class EventMixin:
         """
         Get Event by public ID path argument
         """
+        print("dispatching", self.kwargs["public_id"])
         self.event = get_object_or_404(Event, public_id=self.kwargs["public_id"])
         return super().dispatch(request, *args, **kwargs)
 

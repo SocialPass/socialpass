@@ -25,9 +25,7 @@ def get_ticket_from_embedded_qr_code(embed_code: str) -> Ticket:
     return Ticket.objects.get(embed_code=embed_code, filename=filename)
 
 
-def access_key_can_redeem_ticket(
-    ticket: Ticket, redemption_access_key: TicketRedemptionKey = None
-) -> bool:
+def access_key_can_redeem_ticket(ticket: Ticket, redemption_access_key: TicketRedemptionKey = None) -> bool:
     """Returns a boolean indicating if the access key can reedem the given ticket."""
     if redemption_access_key is None:
         return True

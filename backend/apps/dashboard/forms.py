@@ -1,11 +1,10 @@
 import pytz
-from django import forms
-from invitations.exceptions import AlreadyAccepted, AlreadyInvited
-from invitations.forms import InviteForm
-
 from apps.dashboard import services
 from apps.dashboard.models import Invite
 from apps.root.models import Event, Team
+from django import forms
+from invitations.exceptions import AlreadyAccepted, AlreadyInvited
+from invitations.forms import InviteForm
 
 
 class TeamForm(forms.ModelForm):
@@ -18,9 +17,7 @@ class TeamForm(forms.ModelForm):
         fields = ["name", "description", "image"]
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name of your team"}),
-            "description": forms.Textarea(
-                attrs={"placeholder": "A short description of your team", "rows": 3}
-            ),
+            "description": forms.Textarea(attrs={"placeholder": "A short description of your team", "rows": 3}),
         }
         labels = {"image": "Set Team Image"}
 
@@ -61,8 +58,7 @@ class EventForm(forms.ModelForm):
             return True
 
         return not (
-            services.get_in_progress_payment(self.instance)
-            or services.get_effective_payments(self.instance.payments)
+            services.get_in_progress_payment(self.instance) or services.get_effective_payments(self.instance.payments)
         )
 
     def __init__(self, *args, **kwargs) -> None:
@@ -73,9 +69,7 @@ class EventForm(forms.ModelForm):
 
     def save(self, commit: bool = ...) -> Event:
         """Sets Event price after save"""
-        if (not self.can_edit_capacity()) and (
-            self.instance.capacity != self.cleaned_data["capacity"]
-        ):
+        if (not self.can_edit_capacity()) and (self.instance.capacity != self.cleaned_data["capacity"]):
             # not using field has_changed here since it can lead to a
             # security failure as it checks if the field is disabled.
 

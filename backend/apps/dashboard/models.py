@@ -1,6 +1,8 @@
 import math
 from datetime import timedelta
 
+from apps.root.model_field_choices import STIPE_PAYMENT_STATUSES
+from apps.root.model_wrappers import DBModel
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MinValueValidator
@@ -11,9 +13,6 @@ from django.utils.crypto import get_random_string
 from invitations import signals
 from invitations.adapters import get_invitations_adapter
 from invitations.base_invitation import AbstractBaseInvitation
-
-from apps.root.model_field_choices import STIPE_PAYMENT_STATUSES
-from apps.root.model_wrappers import DBModel
 
 
 class Team(DBModel):
@@ -26,9 +25,7 @@ class Team(DBModel):
 
     # base info
     name = models.CharField(max_length=255)
-    image = models.ImageField(
-        null=True, blank=True, height_field=None, width_field=None, max_length=255
-    )
+    image = models.ImageField(null=True, blank=True, height_field=None, width_field=None, max_length=255)
     description = models.TextField(blank=True)
     members = models.ManyToManyField("root.User", through="dashboard.Membership")
     pricing_rule_group = models.ForeignKey(
@@ -50,9 +47,7 @@ class Membership(DBModel):
     """
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
-    user = models.ForeignKey(
-        "root.User", on_delete=models.CASCADE, blank=True, null=True
-    )
+    user = models.ForeignKey("root.User", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         unique_together = ("team", "user")
@@ -76,17 +71,13 @@ class Invite(DBModel, AbstractBaseInvitation):
     )
     # custom
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
-    membership = models.ForeignKey(
-        Membership, on_delete=models.CASCADE, blank=True, null=True
-    )
+    membership = models.ForeignKey(Membership, on_delete=models.CASCADE, blank=True, null=True)
     archived_email = models.EmailField(blank=True, null=True)
 
     @classmethod
     def create(cls, email, inviter=None, **kwargs):
         key = get_random_string(64).lower()
-        instance = cls._default_manager.create(
-            email=email, key=key, inviter=inviter, **kwargs
-        )
+        instance = cls._default_manager.create(email=email, key=key, inviter=inviter, **kwargs)
         return instance
 
     def key_expired(self):
@@ -97,9 +88,7 @@ class Invite(DBModel, AbstractBaseInvitation):
 
     def send_invitation(self, request, **kwargs):
         current_site = get_current_site(request)
-        invite_url = reverse(
-            settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key]
-        )
+        invite_url = reverse(settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(
@@ -140,9 +129,7 @@ class PricingRule(DBModel):
 
     min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
     max_capacity = models.IntegerField(null=True, blank=True)
-    price_per_ticket = models.DecimalField(
-        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10
-    )
+    price_per_ticket = models.DecimalField(validators=[MinValueValidator(0)], decimal_places=2, max_digits=10)
     active = models.BooleanField(default=True)
     group = models.ForeignKey(
         "PricingRuleGroup",
@@ -156,10 +143,7 @@ class PricingRule(DBModel):
             # greater than min_capacity
             models.CheckConstraint(
                 name="%(app_label)s_%(class)s_max_capacity__gt__min_capacity",
-                check=(
-                    models.Q(max_capacity__isnull=True)
-                    | models.Q(max_capacity__gt=models.F("min_capacity"))
-                ),
+                check=(models.Q(max_capacity__isnull=True) | models.Q(max_capacity__gt=models.F("min_capacity"))),
             )
         ]
 
@@ -194,15 +178,9 @@ class EventStripePayment(DBModel):
 
     # TODO: This model could be more abstracted from the Event
 
-    event = models.ForeignKey(
-        "root.Event", on_delete=models.RESTRICT, related_name="payments"
-    )
-    value = models.DecimalField(
-        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10
-    )
-    status = models.CharField(
-        choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"
-    )
+    event = models.ForeignKey("root.Event", on_delete=models.RESTRICT, related_name="payments")
+    value = models.DecimalField(validators=[MinValueValidator(0)], decimal_places=2, max_digits=10)
+    status = models.CharField(choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING")
     stripe_checkout_session_id = models.CharField(max_length=1024)
     callaback_timestamp = models.DateTimeField(null=True, blank=True)
     acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)

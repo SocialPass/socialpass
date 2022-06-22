@@ -3,6 +3,13 @@ import secrets
 from functools import lru_cache
 
 import stripe
+from apps.dashboard import services
+from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
+from apps.dashboard.models import EventStripePayment, Membership, Team
+from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
+from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
+from apps.root.models import Event, Ticket
+from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -17,14 +24,6 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite
-
-from apps.dashboard import services
-from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
-from apps.dashboard.models import EventStripePayment, Membership, Team
-from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
-from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Event, Ticket
-from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 
 User = auth.get_user_model()
 
@@ -48,9 +47,7 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         self.object.members.add(self.request.user)
-        messages.add_message(
-            self.request, messages.SUCCESS, "Your team has been created successfully."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Your team has been created successfully.")
         return reverse(
             "ticketgate_list",
             args=(self.object.public_id,),
@@ -70,9 +67,7 @@ class AcceptInviteView(AcceptInvite):
         invitation.archived_email = invitation.email
         invitation.email = f"{secrets.token_urlsafe(12)}{invitation.archived_email}"
         invitation.save()
-        get_invitations_adapter().stash_verified_email(
-            self.request, invitation.archived_email
-        )
+        get_invitations_adapter().stash_verified_email(self.request, invitation.archived_email)
         # If team, add success message
         if invitation.team:
             messages.add_message(
@@ -95,9 +90,7 @@ class AcceptInviteView(AcceptInvite):
         if invitation.accepted:
             return render(self.request, "invitations/already_accepted.html")
 
-        return render(
-            self.request, "invitations/accept.html", {"invitation": invitation}
-        )
+        return render(self.request, "invitations/accept.html", {"invitation": invitation})
 
     def post(self, *args, **kwargs):
         """
@@ -132,9 +125,7 @@ class AcceptInviteView(AcceptInvite):
         # Everything finalized
         # Try to create a membership if possible
         if user and invitation.team:
-            membership, created = Membership.objects.get_or_create(
-                team=invitation.team, user=user
-            )
+            membership, created = Membership.objects.get_or_create(team=invitation.team, user=user)
             if created:
                 invitation.membership = membership
                 invitation.save()
@@ -179,17 +170,13 @@ class RequireSuccesfulCheckoutMixin:
         """
         Action to take when event has pending payment. Default is redirect to checkout with message.
         """
-        messages.add_message(
-            self.request, messages.INFO, "Checkout is pending for this event."
-        )
+        messages.add_message(self.request, messages.INFO, "Checkout is pending for this event.")
         return redirect("ticketgate_checkout", **self.kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         event = self.get_object()
         if not isinstance(event, Event):
-            raise RuntimeError(
-                "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
-            )
+            raise RuntimeError("get_object must return an Event when using RequireSuccesfulCheckoutMixin")
 
         if services.get_event_pending_payment_value(event):
             return self.pending_checkout_behaviour()
@@ -250,9 +237,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Team information updated successfully.")
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
 
@@ -266,9 +251,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     template_name = "dashboard/member_delete.html"
 
     def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Team information updated successfully.")
         return reverse("team_members", args=(self.kwargs["team_pk"],))
 
 
@@ -286,9 +269,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         return self.team
 
     def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Team members updated successfully."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Team members updated successfully.")
         return reverse("team_detail", args=(self.kwargs["team_pk"],))
 
 
@@ -323,9 +304,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
-        qs = Event.objects.filter(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
-        )
+        qs = Event.objects.filter(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"])
         return qs
 
 
@@ -392,9 +371,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Token gate updated successfully."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Token gate updated successfully.")
         if services.get_event_pending_payment_value(self.object):
             view = "ticketgate_checkout"
         else:
@@ -425,9 +402,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
     @lru_cache
     def get_object(self):
-        return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
-        )
+        return Event.objects.get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"])
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs, tokengate=self.get_object())
@@ -438,9 +413,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
         if services.get_event_pending_payment_value(event) == 0:
             # Payment was already done.
-            messages.add_message(
-                request, messages.INFO, "The payment has already been processed."
-            )
+            messages.add_message(request, messages.INFO, "The payment has already been processed.")
             return redirect("ticketgate_detail", **kwargs)
 
         return super().get(request, *args, **kwargs)
@@ -452,13 +425,8 @@ class EventCheckout(TeamContextMixin, TemplateView):
         issued_payment = services.get_in_progress_payment(event)
         if issued_payment:
             # There is already a payment in progress, redirect to it
-            stripe_session = stripe.checkout.Session.retrieve(
-                issued_payment.stripe_checkout_session_id
-            )
-            if (
-                stripe_session["status"] == "expired"
-                and stripe_session["payment_status"] == "unpaid"
-            ):
+            stripe_session = stripe.checkout.Session.retrieve(issued_payment.stripe_checkout_session_id)
+            if stripe_session["status"] == "expired" and stripe_session["payment_status"] == "unpaid":
                 issued_payment.status = "FAILURE"
                 issued_payment.save()
             else:
@@ -466,15 +434,11 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
         # build callback urls
         success_callback = (
-            request.build_absolute_uri(
-                reverse("ticketgate_checkout_success_callback", args=(team_pk, pk))
-            )
+            request.build_absolute_uri(reverse("ticketgate_checkout_success_callback", args=(team_pk, pk)))
             + "?session_id={CHECKOUT_SESSION_ID}"
         )
         failure_callback = (
-            request.build_absolute_uri(
-                reverse("ticketgate_checkout_failure_callback", args=(team_pk, pk))
-            )
+            request.build_absolute_uri(reverse("ticketgate_checkout_failure_callback", args=(team_pk, pk)))
             + "?session_id={CHECKOUT_SESSION_ID}"
         )
 
@@ -492,9 +456,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
                         "product_data": {
                             "name": event.title,
                         },
-                        "unit_amount": int(
-                            event.price * 100
-                        ),  # amount unit is in cent of dollars
+                        "unit_amount": int(event.price * 100),  # amount unit is in cent of dollars
                     },
                     "quantity": 1,
                 }
@@ -510,9 +472,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         # update payment status
         stripe_session_id = request.GET["session_id"]
         stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
-        payment = EventStripePayment.objects.get(
-            stripe_checkout_session_id=stripe_session_id
-        )
+        payment = EventStripePayment.objects.get(stripe_checkout_session_id=stripe_session_id)
 
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
@@ -528,9 +488,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
     def failure_stripe_callback(request, **kwargs):
         # update payment status
-        payment = EventStripePayment.objects.get(
-            stripe_checkout_session_id=request.GET["session_id"]
-        )
+        payment = EventStripePayment.objects.get(stripe_checkout_session_id=request.GET["session_id"])
         payment.status = "CANCELLED"
         payment.save()
 
@@ -575,9 +533,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
             session = event["data"]["object"]
 
             # Fulfill the purchase
-            payment = EventStripePayment.objects.get(
-                stripe_checkout_session_id=session.id
-            )
+            payment = EventStripePayment.objects.get(stripe_checkout_session_id=session.id)
             payment.status = "SUCCESS"
             payment.save()
 
@@ -585,9 +541,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
             session = event["data"]["object"]
 
             # Send an email to the customer asking them to retry their order
-            payment = EventStripePayment.objects.get(
-                stripe_checkout_session_id=session.id
-            )
+            payment = EventStripePayment.objects.get(stripe_checkout_session_id=session.id)
             payment.status = "FAILURE"
             payment.save()
 
@@ -609,15 +563,11 @@ class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListV
         overrode to set json_schema as well as json data
         """
         context = super().get_context_data(**kwargs)
-        context["current_gate"] = Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
-        )
+        context["current_gate"] = Event.objects.get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"])
         return context
 
     def get_object(self):
-        return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
-        )
+        return Event.objects.get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"])
 
     def get_queryset(self):
         """
@@ -647,14 +597,8 @@ class PricingCalculator(TeamContextMixin, View):
             return JsonResponse({"detail": "capacity must be an integer"}, status=400)
 
         try:
-            price_per_ticket = services.calculate_event_price_per_ticket_for_team(
-                self.team, capacity=capacity
-            )
+            price_per_ticket = services.calculate_event_price_per_ticket_for_team(self.team, capacity=capacity)
         except ValueError:
-            return JsonResponse(
-                {"detail": "capacity not recognized as as valid value"}, status=400
-            )
+            return JsonResponse({"detail": "capacity not recognized as as valid value"}, status=400)
 
-        return JsonResponse(
-            {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
-        )
+        return JsonResponse({"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity})

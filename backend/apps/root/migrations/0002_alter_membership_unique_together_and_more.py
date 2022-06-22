@@ -31,9 +31,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="team",
             name="members",
-            field=models.ManyToManyField(
-                through=settings.AUTH_USER_MODEL, to=settings.AUTH_USER_MODEL
-            ),
+            field=models.ManyToManyField(through=settings.AUTH_USER_MODEL, to=settings.AUTH_USER_MODEL),
         ),
         migrations.DeleteModel(
             name="Invite",
@@ -44,7 +42,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.SeparateDatabaseAndState(
-            database_operations=database_operations, state_operations=state_operations
-        )
+        migrations.SeparateDatabaseAndState(database_operations=database_operations, state_operations=state_operations)
     ]

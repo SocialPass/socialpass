@@ -3,13 +3,13 @@ import uuid
 from datetime import datetime, timedelta
 
 import boto3
+from apps.dashboard.models import PricingRule, Team
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
 
-from apps.dashboard.models import PricingRule, Team
 from config.storages import PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
@@ -52,9 +52,7 @@ class Event(DBModel):
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
-    )
+    limit_per_person = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     # Pricing Info
     # TODO: These will be reworked / removed with event attendee billing
@@ -114,9 +112,7 @@ class Ticket(DBModel):
     archived = models.BooleanField(default=False)
     redeemed = models.BooleanField(default=False)
     redeemed_at = models.DateTimeField(null=True, blank=True)
-    redeemed_by = models.ForeignKey(
-        "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
-    )
+    redeemed_by = models.ForeignKey("TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True)
 
     # Checkout Info
     blockchain_ownership = models.ForeignKey(
@@ -169,9 +165,7 @@ class TicketRedemptionKey(DBModel):
         )
 
     # Keys
-    event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="ticket_redemption_keys"
-    )
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="ticket_redemption_keys")
 
     # Basic info
     name = models.CharField(max_length=255, default="Default")

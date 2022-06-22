@@ -1,9 +1,8 @@
 from decimal import Decimal
 
-from django.db.models import Sum
-
 from apps.dashboard.models import EventStripePayment, PricingRuleGroup, Team
 from apps.root.models import Event
+from django.db.models import Sum
 
 
 def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:
@@ -44,10 +43,7 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
     pricing_rule_ranges = pricing_rules.order_by("min_capacity")
 
     for rule_range in pricing_rule_ranges:
-        if (
-            capacity >= rule_range.min_capacity
-            and capacity <= rule_range.safe_max_capacity
-        ):
+        if capacity >= rule_range.min_capacity and capacity <= rule_range.safe_max_capacity:
             return rule_range
 
     raise ValueError("Could not find pricing_rule for capacity")
@@ -87,8 +83,7 @@ def set_event_price(event: Event):
 def get_event_pending_payment_value(event: Event):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = Decimal(
-        get_effective_payments(event.payments).aggregate(Sum("value"))["value__sum"]
-        or 0
+        get_effective_payments(event.payments).aggregate(Sum("value"))["value__sum"] or 0
     )
     return max((event.price or 0) - effective_payments_value, 0)
 

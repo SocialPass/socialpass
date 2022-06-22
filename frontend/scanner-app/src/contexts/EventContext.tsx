@@ -26,8 +26,6 @@ const EventProvider = ({ children }: any) => {
   const [eventErrorData, setEventErrorData] = useState<EventErrorProps | null>();
   const [publicId, setPublicId] = useState<String>()
 
-  const params = useParams()
-
   useEffect(() => {
     if  (!(eventData || eventErrorData)){
       // still loading

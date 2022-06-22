@@ -9,7 +9,6 @@ function RequiresEvent({children}: any) {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("sup")
     setPublicId(params.publicId)
   }, [params.publicId])
 

@@ -7,10 +7,6 @@ import ColoredLogo from "../static/images/socialpass-colored-logo.svg";
 export function CapacityReached() {
   const navigate = useNavigate();
 
-  function handleGoBack() {
-    navigate("/home");
-  }
-
   return (
     <div className="landing-page-background p-10 py-50">
     <div className="d-flex flex-column align-items-center justify-content-around">

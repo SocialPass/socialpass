@@ -8,7 +8,7 @@ export function Error() {
   const navigate = useNavigate();
 
   function handleGoBack() {
-    navigate("/home");
+    navigate(-1);
   }
 
   return (

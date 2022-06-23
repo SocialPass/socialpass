@@ -13,12 +13,9 @@ export function Footer({ event_name, event_attendance, event_date, event_venue }
   const navigate = useNavigate();
 
   function handleRedirect() {
-    navigate("/statistics");
+    navigate("../statistics");
   }
 
-  function handleGoBack() {
-    navigate(-1);
-  }
   return (
     <div className="d-flex flex-row py-4 px-4">
       <div className="d-flex flex-column py-10 px-10 justify-content-center">

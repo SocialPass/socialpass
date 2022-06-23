@@ -225,6 +225,65 @@
 }
 
 
+.btn-return-to-scanner {
+    border-radius: 1.4rem;
+    border-width: 0rem;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-size: 2.6rem;
+    font-weight: 600;
+    line-height: 2.4;
+    text-decoration: none;
+    color: black;
+    background-color: white;
+    background-image: none;
+    border-color: black;
+    border-width: 1 px;
+    box-shadow: #000;
+}
+
+.btn-return-to-scanner:active {
+    text-decoration: none;
+    color: black;
+    background-color: white;
+    background-image: none;
+}
+
+
+
+
+
+.statistics-body   {
+    position: absolute;
+    display: block;
+    color: inherit;
+    background-color: #ffffff;
+    box-shadow: none;
+}
+
+
+.statistics-title  {
+    position: absolute;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 26px;
+    text-align: center;
+    color: #0C0F3C;
+    margin-top: 15%;
+    margin-bottom: 5%;
+    
+}
+
+
+
+.statistics-body {
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+}
+
 
 
 /* Capacity Reached Components */
@@ -344,14 +403,18 @@
     text-align: left;
     padding: 8px;
     font-size: 12px;
+    color: rgb(112, 112, 112);
   }
   
   th {
-    background-color: rgb(117, 201, 250);
+    background-color: #ffffff;
+    color: #000
+
+    
   }
   
   td {
-    background-color: rgb(205, 235, 253);
+    background-color: #ffffff;
   }
   
   form {

@@ -12,6 +12,17 @@ export function StatisticsTable() {
   if (isLoading) return <>Loading</>
   if (isError) return <>Oops something went wrong</>
 
+  function ticketCount(data: { hasOwnProperty: (arg0: string) => any; }) {
+    var result = 0;
+    for(var prop in data) {
+      if (data.hasOwnProperty(prop)) {
+      // or Object.prototype.hasOwnProperty.call(obj, prop)
+        result++;
+      }
+    }
+    return console.log("Resultado: ", result);
+  }
+
   return (
     <div className="container p-10 d-flex flex-column align-items-center">
       <table>
@@ -29,7 +40,10 @@ export function StatisticsTable() {
               <td>{ticket.wallet_address}</td>
               <td>{ticket.redeemed_at}</td>
             </tr>
-          ))}
+          ))
+          }
+          {console.log(data)}
+          {ticketCount}
         </tbody>
       </table>
     </div>

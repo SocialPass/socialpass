@@ -65,6 +65,9 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(TicketRedemptionKey)
 class TicketRedemptionKeyAdmin(admin.ModelAdmin):
+    list_display = (
+        "public_id",
+    )
     pass
 
 

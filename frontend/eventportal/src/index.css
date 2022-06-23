@@ -36,19 +36,13 @@ html, body {
   word-break: break-word;
 }
 
-#root {
-  height: 100vh;
+/* #root {
   width: 100vw;
   max-width: 956px;
+  max-height: 95vh;
   display: flex;
   align-items: center;
-}
-
-.center{
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
+} */
 
 h1 {
   font-size: 2.69rem;
@@ -94,18 +88,6 @@ small {
   color: #959191;
 }
 
-.text-color-primary{
-  color: var(--orange);
-}
-
-.header {
-  margin-bottom: 2rem;
-  position:relative;
-  border-radius: 50px 50px 0 0;
-  height: 27rem;
-  background: linear-gradient(to left, var(--orange-bg), var(--orange-bg-light));
-}
-
 footer {
   display: flex;
   flex-wrap: wrap;
@@ -117,38 +99,16 @@ footer {
   padding: 1.5rem;
 }
 
-.container-fluid {
-  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
-  border-radius: 50px;
-  overflow:hidden;
+.text-color-primary{
+  color: var(--orange);
 }
 
-.card{
-  height: 95%;
-  width: 100%;
-  left: 25%;
-  right: 25%;
-  border: none;
-}
-
-@media (min-width: 1400px) {
-  .card{
-    height: 80%;
-    left: 50%;
-  }
-}
-
-@media (max-width: 1000px) {
-  .card{
-    width: 100%;
-    left: 1%;
-  }
-  .header {
-    margin-bottom: 2rem;
-    position:relative;
-    border-radius: 50px 50px 0 0;
-    min-height: 22px;
-  }
+.header {
+  margin-bottom: 2rem;
+  position:relative;
+  border-radius: 50px 50px 0 0;
+  height: 25rem;
+  background: linear-gradient(to left, var(--orange-bg), var(--orange-bg-light));
 }
 
 .small-header {
@@ -162,6 +122,24 @@ footer {
   transition:all 0.69s linear;
   -webkit-transition: all 0.69s linear;
   -webkit-transition:all 0.69s linear;
+}
+
+.container-fluid {
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
+  border-radius: 50px;
+  overflow:hidden;
+}
+
+.card{
+  height: 95%;
+  border: none;
+}
+
+@media (min-width: 1400px) {
+  .card{
+    height: 80%;
+    border: none;
+  }
 }
 
 
@@ -178,10 +156,6 @@ ELEMENTS
   left: 3.5%;
 }
 
-.team-info h4 {
-  margin-top: 0.3rem;
-}
-
 .team-info img {
   height:92px;
   width:92px;
@@ -190,13 +164,8 @@ ELEMENTS
   background:white;
 }
 
-.small-team-info {
-  position: absolute;
-  bottom: 20%;
-  left: 50%;
-  color:white;
-  transform: translateX(-50%);
-  text-align:center;
+.team-info span {
+  margin-top: 0.3rem;
 }
 
 .back {
@@ -308,8 +277,8 @@ BOOSTRAP OVERRIDES
   border-radius: 0px 0px 50px 0px;
   width: 35%;
   height: 100vh;
-  margin-top: -3.5rem;
-  margin-right: -3.5rem;
+  margin-top: -3rem;
+  margin-right: -3rem;
 }
 
 .bg-denied {

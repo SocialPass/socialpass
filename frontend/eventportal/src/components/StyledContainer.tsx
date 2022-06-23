@@ -19,7 +19,7 @@ export const StyledContainer = ({
   const navigate = useNavigate();
   console.log(retrieveJson);
   return (
-    <div className="left-30 container-fluid p-0 card container-hack">
+    <div className="container-fluid card container-hack p-0">
       <div>
         {location.pathname.length > 45 ? (
           <header
@@ -35,10 +35,7 @@ export const StyledContainer = ({
             </div>
           </header>
         ) : (
-          <header
-            className="header d-flex align-items-start justify-content-center"
-            // style={{ backgroundImage: `url(${headerImage})` }}
-          >
+          <header className="header d-flex align-items-start justify-content-center">
             <div className="d-flex align-items-center justify-content-center mt-50">
               <img src={socialpassLogo} alt="Logo" />
             </div>
@@ -47,13 +44,10 @@ export const StyledContainer = ({
                 src={retrieveJson && retrieveJson?.team?.image}
                 alt="Team Image"
               />
-              <h4 className="fs-15 d-block">
-                {retrieveJson && retrieveJson?.team?.name}
-              </h4>
             </div>
           </header>
         )}
-        <div className="mt-5 p-30">{children}</div>
+        <div className="p-30">{children}</div>
         <footer className="me-15 ms-15">
           {/* <img src={FAQImage} alt="image" /> */}
           <small className="d-flex flex-row align-items-center">

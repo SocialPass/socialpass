@@ -15,13 +15,14 @@ export const Event = (): JSX.Element => {
   }
 
   return (
-    <div className="row flex-grow-1 m-0 mt-3 align-items-center mt-10">
+    <div className="row flex-grow-1 m-0 align-items-center">
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10 mb-30">
-          <div className="mt-15 mb-15 d-flex flex-column align-items-start justify-content-center">
-            <span className="fs-30 fw-bold">
-              {retrieveJson.title}
+          <div className="mb-15 d-flex flex-column align-items-start justify-content-center">
+            <span className="fs-16 fw-500">
+              {retrieveJson && retrieveJson?.team?.name}
             </span>
+            <span className="fs-28 fw-bold">{retrieveJson.title}</span>
             <span className="fs-16 fw-light text-muted">
               {retrieveJson.description}
             </span>
@@ -35,8 +36,7 @@ export const Event = (): JSX.Element => {
                 className="me-5"
                 alt="Date & Time"
               />
-              {retrieveJson.date} |{" "}
-              {retrieveJson.timezone}
+              {retrieveJson.date} | {retrieveJson.timezone}
             </p>
             <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
               <img
@@ -50,7 +50,8 @@ export const Event = (): JSX.Element => {
             </p>
           </div>
           <span className="col-md-7 bg-success py-5 px-30 text-center">
-            <strong>{retrieveJson.ticket_count}</strong> out of {retrieveJson.capacity} available
+            <strong>{retrieveJson.ticket_count}</strong> out of{" "}
+            {retrieveJson.capacity} available
           </span>
         </div>
       </div>

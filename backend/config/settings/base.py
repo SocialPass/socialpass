@@ -96,6 +96,7 @@ LOCAL_APPS = [
     "apps.root.apps.RootConfig",
     "apps.root.apps.OverrideInvitationsConfig",
     "apps.dashboard",
+    "apps.event_discovery",
     "avoid_view_resubmission",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

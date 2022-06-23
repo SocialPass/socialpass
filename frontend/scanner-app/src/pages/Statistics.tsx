@@ -19,8 +19,10 @@ export function Statistics() {
           <button className="btn-selected-statistic flex-grow-1">Claimed</button>
           <button className="btn-selected-statistic flex-grow-1">Unclaimed</button>
         </div>
-
+        <div className="statistics-table-card">
+          <div className="py-20"></div>
         <StatisticsTable />
+        </div>
         <div className="container p-20 d-flex flex-column">
           <button
             className="btn-return-to-scanner"

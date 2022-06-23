@@ -25,6 +25,7 @@ export function StatisticsTable() {
 
   return (
     <div className="statistics-table-container d-flex flex-column align-items-center p-10">
+      <div className="statistics-subtitle">Tickets</div>
       <table>
         <thead>
           <tr>

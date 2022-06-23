@@ -6,7 +6,7 @@ import stripe
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -50,7 +50,9 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         if not self.request.user.is_authenticated:
             return LoginRequiredMixin.handle_no_permission(self)
         else:
-            raise Http404
+            # TODO: Should this be 403?
+            # Unsure if that exposes security concern
+            return HttpResponse(status=404)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

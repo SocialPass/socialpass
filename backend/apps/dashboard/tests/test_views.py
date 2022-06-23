@@ -1,12 +1,16 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
+from django.utils import timezone
 from django.views.generic import TemplateView
 
 from apps.dashboard import forms, views
 from apps.dashboard.models import Invite, Membership, Team
+from apps.root.models import Event
 
 User = get_user_model()
 
@@ -16,6 +20,7 @@ class DashboardTest(TestCase):
         self.factory = RequestFactory()
 
         # TODO: Move this to some sort of factory
+        # Setup users
         self.username = "jacob"
         self.username_two = "jacob2"
         self.email = "jacob@test.local"
@@ -28,9 +33,24 @@ class DashboardTest(TestCase):
         self.user_two = User.objects.create_user(
             username=self.username_two, email=self.email, password=self.password
         )
+        # Setup team
         self.team = Team.objects.create(name=self.team_name)
         self.membership = Membership.objects.create(team=self.team, user=self.user)
         self.team.members.add(self.user_two)
+        # Setup event
+        event_data = {
+            "title": "Test Title",
+            "team": self.team,
+            "user": self.user,
+            "description": "Test Description",
+            "date": timezone.now(),
+            "timezone": "US/Eastern",
+            "location": "NYC",
+            "capacity": 100,
+            "limit_per_person": 1,
+            "requirements": [],
+        }
+        self.event = Event.objects.create(**event_data)
 
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):
@@ -49,16 +69,25 @@ class DashboardTest(TestCase):
         request = self.factory.get("/fake-path")
         request.user = self.user_two
         response = TestTeamContextView.as_view()(request, **kwargs)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
         # Test logged-out user
         request = self.factory.get("/fake-path", follow=True)
         request.user = AnonymousUser()
         response = TestTeamContextView.as_view()(request, **kwargs)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_require_successful_checkout_mixin(self):
-        return "TODO"
+        return "Not yet implemented"
+
+    def test_user_detail(self):
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(reverse("user_detail"))
+        self.assertEqual(response.status_code, 200)
 
     def test_dashboard_redirect(self):
         # Login User
@@ -80,17 +109,8 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse("dashboard_redirect"), follow=True)
         self.assertRedirects(response, expected_url=reverse("account_login"))
 
-    def test_user_detail(self):
-        self.assertTrue(
-            self.client.login(username=self.username, password=self.password)
-        )
-
-        # Test GET
-        response = self.client.get(reverse("user_detail"))
-        self.assertEqual(response.status_code, 200)
-
     def test_team_accept_invite(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_team_create(self):
         # Login User

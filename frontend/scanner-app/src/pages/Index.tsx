@@ -2,7 +2,7 @@
 export function Index() {
   return (
     <>
-      Looks like you are lost
+      Looks like you are lost. Ask the event organizer for your access link.
     </>
   );
 }

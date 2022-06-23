@@ -7,6 +7,7 @@ import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../contexts/ToastContext";
 import { fetchScanTicket } from "../services/api";
+import HashLoader from "react-spinners/HashLoader";
 
 export function Scanner() {
   const [waitingForScan, setWaitingForScan] = useState<Boolean>(false);
@@ -16,34 +17,37 @@ export function Scanner() {
   const { addToast } = useToast();
 
   useEffect(() => {
-    if(!qrCode){
-      return
+    if (!qrCode) {
+      return;
     }
 
-    setWaitingForScan(true)
+    setWaitingForScan(true);
     console.log(qrCode);
-    fetchScanTicket(publicId, qrCode).then(() => {
-      addToast({
-        type: "success",
-        title: "Succesful Scan",
-        description: "",
+    fetchScanTicket(publicId, qrCode)
+      .then(() => {
+        addToast({
+          type: "success",
+          title: "Succesful Scan",
+          description: "",
+        });
+      })
+      .catch((err_data: any) => {
+        addToast({
+          type: "error",
+          title: "Scan Failed",
+          description: err_data?.message,
+        });
+      })
+      .finally(() => {
+        setWaitingForScan(false);
       });
-    }).catch((err_data: any) => {
-      addToast({
-        type: "error",
-        title: "Scan Failed",
-        description: err_data?.message,
-      });
-    }).finally(() => {
-      setWaitingForScan(false)
-    });
-  }, [qrCode])
+  }, [qrCode]);
 
-  useEffect(() => {
-    if (waitingForScan){
-      // render fetching animation
-    }
-  }, [waitingForScan])
+  // useEffect(() => {
+  //   if (waitingForScan) {
+  //     // render fetching animation
+  //   }
+  // }, [waitingForScan]);
 
   function handleRedirect() {
     navigate("..");
@@ -53,15 +57,15 @@ export function Scanner() {
     if (qrcode) {
       setQrcode(qrcode);
     }
-  }
+  };
 
   useEffect(() => {
-    let scannerContainer = document.getElementById("qr-scanner-container")
-    if (!scannerContainer){
-      return
+    let scannerContainer = document.getElementById("qr-scanner-container");
+    if (!scannerContainer) {
+      return;
     }
-    scannerContainer.firstChild.firstChild.style.position = ''
-  })
+    scannerContainer.firstChild.firstChild.style.position = "";
+  });
 
   const handleError = useCallback((err: any) => {
     addToast({
@@ -73,9 +77,9 @@ export function Scanner() {
 
   return (
     <div className="scanner-body d-flex flex-column">
-        <div className="btn-close" style={{position: "absolute", "zIndex": 1000}}>
-            <FiX onClick={handleRedirect} size={26} />
-        </div>
+      <div className="btn-close" style={{ position: "absolute", zIndex: 1000 }}>
+        <FiX onClick={handleRedirect} size={26} />
+      </div>
       {/* <button onClick={e => handleScan(e.target.innerText)}>6fc9f02e-fb72-4073-ac03-2109e2ae8ab8</button> */}
       <div id="qr-scanner-container" className="flex-grow-1">
         <QrReader
@@ -83,8 +87,11 @@ export function Scanner() {
           delay={500}
           onError={handleError}
           onScan={handleScan}
-          style={{height: "100%", overflow:"visible", position:"relative"}}
+          style={{ height: "100%", overflow: "visible", position: "relative" }}
         />
+      </div>
+      <div className="d-flex flex-row-reverse align-items-center me-10 mt-10">
+        {waitingForScan && <HashLoader color="#EF7C4E" size={30} />}
       </div>
       <Footer
         event_name={eventData.title}

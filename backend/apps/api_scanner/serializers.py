@@ -56,4 +56,11 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["redeemed", "redeemed_at", "redeemed_by", "wallet_address"]
+        fields = [
+            "public_id",
+            "created",
+            "redeemed",
+            "redeemed_at",
+            "redeemed_by",
+            "wallet_address",
+        ]

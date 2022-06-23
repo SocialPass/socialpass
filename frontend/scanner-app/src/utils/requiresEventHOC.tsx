@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEvent } from "../contexts/EventContext";
 
 function RequiresEvent({children}: any) {
-  const { isLoading, isError, setPublicId, eventData }: any = useEvent();
+  const { status, isLoading, isError, setPublicId, data: eventData }: any = useEvent();
   const params = useParams()
   const navigate = useNavigate()
 
@@ -19,17 +19,15 @@ function RequiresEvent({children}: any) {
   }, [isError])
 
   if (isLoading){
-    console.log("isLoading")
     // TODO: this should be a loading spinner
     return <>Loading</>
   }
 
   if (isError){
-    console.log("isError")
     return null
   }
 
-  console.log("rendering", eventData)
+  if (status !== "success") return null
 
   return (
     <>

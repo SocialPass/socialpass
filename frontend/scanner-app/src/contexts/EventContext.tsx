@@ -1,7 +1,8 @@
 /* eslint-disable eqeqeq */
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { api } from "../services/api";
+import { fetchEvent, fetchScanTicket } from "../services/api";
 import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 
 const EventContext = createContext({});
 
@@ -20,94 +21,26 @@ type EventErrorProps = {
 }
 
 const EventProvider = ({ children }: any) => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>();
-  const [eventData, setEventData] = useState<EventDataProps | null>();
-  const [eventErrorData, setEventErrorData] = useState<EventErrorProps | null>();
   const [publicId, setPublicId] = useState<String>()
-
-  // TODO use ReactQuery instead
+  const { status, isLoading, isError, error, data, refetch } = useQuery(
+    ['fetchEvent', publicId],
+    () => fetchEvent(publicId),
+    {
+      enabled: false
+    }
+  )
 
   useEffect(() => {
-    console.log("eventErrorData updated")
-    if (typeof eventErrorData == undefined){
-      return
+    if (publicId){
+      refetch()
     }
-
-    if (eventErrorData){
-      setIsError(true)
-      setEventData(null)
-    }
-  }, [eventErrorData])
-
-  useEffect(() => {
-    console.log("eventData updated")
-    if (typeof eventData == undefined){
-      return
-    }
-
-    if (eventData){
-      setIsError(false)
-      setEventErrorData(null)
-    }
-  }, [eventData])
-
-  useEffect(() => {
-    if (!publicId){
-      return
-    }
-
-    api.get(
-      `scanner/${publicId}/event`
-    ).then((response) => {
-      setEventData({...response.data});
-    }).catch((err) => {
-      let errorData
-      if (err.response) {
-        errorData = err.response.data
-      } else {
-        errorData = {
-          detail: 'unknown-error',
-          message: err.message
-        }
-      }
-      setEventErrorData(errorData)
-    }).finally(() => {
-      console.log("setIsLoading false")
-      setIsLoading(false)
-    })
   }, [publicId])
-
-  function scanTicket(qrcode: any) {
-    if (!eventData) {
-      return
-    }
-    return api.post(
-      `scanner/${publicId}/claim-ticket`, {embed_code: qrcode}
-    ).then((response) => {
-      setEventData({
-        ...eventData,
-        ticket_count: response.data.ticket_count,
-        redemeed_count: response.data.redemeed_count
-      })
-    }).catch((err) => {
-      if (err.response) {
-        throw err.response.data
-      } else {
-        throw {
-          detail: 'unknown-error',
-          message: err.message
-        }
-      }
-    })
-  }
 
   return (
     <EventContext.Provider
       value={{
-        scanTicket,
-        eventData,
-        setEventData,
+        data,
+        status,
         isLoading,
         isError,
         publicId,

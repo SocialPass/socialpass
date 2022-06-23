@@ -6,13 +6,13 @@ import QrReader from "react-qr-reader";
 import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../contexts/ToastContext";
-import { AxiosError } from "axios";
+import { fetchScanTicket } from "../services/api";
 
 export function Scanner() {
   const [waitingForScan, setWaitingForScan] = useState<Boolean>(false);
   const [qrCode, setQrcode] = useState(null);
   const navigate = useNavigate();
-  const { eventData, scanTicket }: any = useEvent();
+  const { data: eventData, publicId }: any = useEvent();
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -20,8 +20,9 @@ export function Scanner() {
       return
     }
 
+    setWaitingForScan(true)
     console.log(qrCode);
-    scanTicket(qrCode).then(() => {
+    fetchScanTicket(publicId, qrCode).then(() => {
       addToast({
         type: "success",
         title: "Succesful Scan",
@@ -33,12 +34,14 @@ export function Scanner() {
         title: "Scan Failed",
         description: err_data.message,
       });
+    }).finally(() => {
+      setWaitingForScan(false)
     });
   }, [qrCode])
 
   useEffect(() => {
     if (waitingForScan){
-
+      // render fetching animation
     }
   }, [waitingForScan])
 

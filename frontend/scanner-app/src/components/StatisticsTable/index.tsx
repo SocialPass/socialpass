@@ -1,14 +1,20 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import data from "./data.json";
+import { useQuery } from "react-query";
+import { useEvent } from "../../contexts/EventContext";
+import { fetchTickets } from "../../services/api";
 
 export function StatisticsTable() {
-  const navigate = useNavigate();
-  const [tickets, setTickets] = useState(data);
+  const { publicId }: any = useEvent()
+  const { isLoading, isError, error, data } = useQuery(
+    ['fetchTickets', publicId],
+    () => fetchTickets(publicId, true)
+  )
+
+  if (isLoading) return <>Loading</>
+  if (isError) return <>Oops something went wrong</>
 
   return (
     <div className="container p-10 d-flex flex-column align-items-center">
-      <div>
+      <table>
         <thead>
           <tr>
             <th>Issued at</th>
@@ -17,15 +23,15 @@ export function StatisticsTable() {
           </tr>
         </thead>
         <tbody>
-          {tickets.map((tickets) => (
-            <tr>
-              <td>{tickets.issued_at}</td>
-              <td>{tickets.blockchain_ownership}</td>
-              <td>{tickets.redeemed_at}</td>
+          {data.map((ticket: any) => (
+            <tr key={ticket.public_id}>
+              <td>{ticket.created}</td>
+              <td>{ticket.wallet_address}</td>
+              <td>{ticket.redeemed_at}</td>
             </tr>
           ))}
         </tbody>
-      </div>
+      </table>
     </div>
   );
 }

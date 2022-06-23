@@ -4,13 +4,18 @@ from . import views
 
 urlpatterns = [
     path(
-        "landing/<uuid:access_key>/",
+        "<uuid:access_key>/event",
         views.EventRetrieve.as_view(),
-        name="scanner_landing",
+        name="event_scan_info",
     ),
     path(
-        "scan-ticket/<uuid:access_key>/",
+        "<uuid:access_key>/claim-ticket/",
         views.ScanTicket.as_view(),
-        name="scanner_ticket",
+        name="claim_ticket",
+    ),
+    path(
+        "<uuid:access_key>/tickets/",
+        views.TicketsListView.as_view(),
+        name="tickets",
     ),
 ]

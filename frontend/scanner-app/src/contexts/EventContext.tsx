@@ -48,7 +48,7 @@ const EventProvider = ({ children }: any) => {
     }
 
     api.get(
-      `scanner/landing/${publicId}/`
+      `scanner/${publicId}/event`
     ).then((response) => {
       setEventData({...response.data});
     }).catch((err) => {
@@ -68,7 +68,7 @@ const EventProvider = ({ children }: any) => {
       return
     }
     return api.post(
-      `scanner/scan-ticket/${publicId}/`, {embed_code: qrcode}
+      `scanner/${publicId}/claim-ticket`, {embed_code: qrcode}
     ).then((response) => {
       setEventData({
         ...eventData,

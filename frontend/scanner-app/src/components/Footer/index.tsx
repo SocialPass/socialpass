@@ -24,8 +24,8 @@ export function Footer({
   }
 
   return (
-    <div className="card d-flex flex-column py-10 px-20 justify-content-center align-items-center">
-      <div className="d-flex flex-column">
+    <div className="d-flex flex-column py-10 px-30 justify-content-center align-items-center">
+      <div className="d-flex flex-column w-100">
         <div className="scanner-title mt-10">{event_name}</div>
         <div className="scanner-subtitle">
           {event_venue} | {event_date}

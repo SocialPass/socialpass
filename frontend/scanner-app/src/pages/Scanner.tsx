@@ -21,7 +21,7 @@ export function Scanner() {
   const [qrCode, setQrcode] = useState(null);
   const navigate = useNavigate();
   const { data: eventData, publicId }: any = useEvent();
-  const { addToast } = useToast();
+  const { addToast, clearToasts } = useToast();
   const initialScanFailureBlock = {active: false, intervalId: undefined, progress: 0}
   const [scanFailureBlock, setScanFailureBlock] = useState<ScanFailureBlockProps>(
     {active: false, intervalId: undefined, progress: 0}
@@ -43,7 +43,7 @@ export function Scanner() {
     }
 
     setWaitingForScan(true)
-    console.log(qrCode);
+    clearToasts();
     fetchScanTicket(publicId, qrCode).then(() => {
       addToast({
         type: "success",
@@ -147,7 +147,6 @@ export function Scanner() {
         <div className="btn-close" style={{position: "absolute", "zIndex": 1000}}>
             <FiX onClick={handleRedirect} size={26} />
         </div>
-      <button onClick={() => setScanFailureBlock({...scanFailureBlock, active: true})}>show progress</button>
       <button onClick={e => handleScan(e.target.innerText)}>6fc9f02e-fb72-4073-ac03-2109e2ae8ab8</button>
       <div id="qr-scanner-container" className="flex-grow-1">
         <QrReader

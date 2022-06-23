@@ -239,7 +239,8 @@
     background-image: none;
     border-color: black;
     border-width: 1 px;
-    box-shadow: #000;
+    box-shadow: 0px 4px 15px 1px #2C647936;
+
 }
 
 .btn-return-to-scanner:active {
@@ -248,10 +249,6 @@
     background-color: white;
     background-image: none;
 }
-
-
-
-
 
 .statistics-body   {
     position: absolute;
@@ -272,8 +269,53 @@
     text-align: center;
     color: #0C0F3C;
     margin-top: 15%;
-    margin-bottom: 5%;
+    margin-bottom: 10%;
+    background-color: var(--white-color);
+}
 
+.statistics-table-container {
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+    -webkit-font-smoothing: var(--card-webkit-font-smoothing);
+    -moz-osx-font-smoothing: var(--card-moz-osx-font-smoothing);
+    color: inherit;
+    background-color: var(--white-color);
+    border: 1px solid #C0C0C0;
+    border-color: var(--gray-color-dim);
+    border-radius: 1.4rem;
+    box-shadow: 0px 4px 15px 1px rgba(44, 100, 121, 0.21);
+}
+
+
+
+.btn-selected-statistic {
+    border-radius: 12px 12px 0px 0px;
+    border-width: 0rem;
+    margin-top: 30px;
+    width: 35%;
+    padding: 16px;
+    position: relative;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    text-decoration: none;
+    color: #e7e7e7;
+    background-color: rgb(170, 170, 170);
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+.btn-selected-statistic:focus {
+    text-decoration: none;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
 }
 
 
@@ -403,12 +445,17 @@
     text-align: left;
     padding: 8px;
     font-size: 12px;
-    color: rgb(112, 112, 112);
+    color: #737373;
   }
 
   th {
     background-color: #ffffff;
-    color: #000
+    color: #000;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
 
 
   }

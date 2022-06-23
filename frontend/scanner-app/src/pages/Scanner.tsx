@@ -8,6 +8,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../contexts/ToastContext";
 import { fetchScanTicket } from "../services/api";
 import HashLoader from "react-spinners/HashLoader";
+import { ProgressBar } from "react-bootstrap";
+
+type ScanFailureBlockProps = {
+  active: boolean;
+  intervalId: any;
+  progress: number;
+};
 
 export function Scanner() {
   const [waitingForScan, setWaitingForScan] = useState<Boolean>(false);
@@ -15,12 +22,31 @@ export function Scanner() {
   const navigate = useNavigate();
   const { data: eventData, publicId }: any = useEvent();
   const { addToast } = useToast();
+  const initialScanFailureBlock = {
+    active: false,
+    intervalId: undefined,
+    progress: 0,
+  };
+  const [scanFailureBlock, setScanFailureBlock] =
+    useState<ScanFailureBlockProps>({
+      active: false,
+      intervalId: undefined,
+      progress: 0,
+    });
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  const PROGRESS_TIME_IN_MS = 3000;
+  const STEP_TIME_IN_MS = 5;
+  const MAX_PROGRESS = 110;
 
   useEffect(() => {
+    setScanFailureBlock({
+      ...initialScanFailureBlock,
+      active: false,
+    });
     if (!qrCode) {
       return;
     }
-
     setWaitingForScan(true);
     console.log(qrCode);
     fetchScanTicket(publicId, qrCode)
@@ -42,12 +68,6 @@ export function Scanner() {
         setWaitingForScan(false);
       });
   }, [qrCode]);
-
-  // useEffect(() => {
-  //   if (waitingForScan) {
-  //     // render fetching animation
-  //   }
-  // }, [waitingForScan]);
 
   function handleRedirect() {
     navigate("..");
@@ -75,12 +95,64 @@ export function Scanner() {
     });
   }, []);
 
+  useEffect(() => {
+    console.log(scanFailureBlock);
+    if (!scanFailureBlock.active) {
+      console.log("Clear interval");
+      if (scanFailureBlock.intervalId) {
+        clearInterval(scanFailureBlock.intervalId);
+      }
+      setScanFailureBlock(initialScanFailureBlock);
+      setElapsedTime(0);
+      return;
+    }
+    console.log(scanFailureBlock);
+
+    scanFailureBlock.intervalId = setInterval(() => {
+      setElapsedTime((t) => t + STEP_TIME_IN_MS);
+    }, STEP_TIME_IN_MS);
+
+    return () => clearInterval(scanFailureBlock.intervalId);
+  }, [scanFailureBlock.active]);
+
+  useEffect(() => {
+    if (!scanFailureBlock.active) {
+      return;
+    }
+
+    if (elapsedTime < PROGRESS_TIME_IN_MS) {
+      console.log("ticking");
+      setScanFailureBlock({
+        ...scanFailureBlock,
+        progress: (elapsedTime / PROGRESS_TIME_IN_MS) * MAX_PROGRESS,
+      });
+    } else {
+      console.log("reached max progress");
+      setScanFailureBlock({
+        ...initialScanFailureBlock,
+        active: false,
+      });
+      setQrcode(null);
+    }
+  }, [elapsedTime]);
+
+  console.log(scanFailureBlock);
+
   return (
     <div className="scanner-body d-flex flex-column">
       <div className="btn-close" style={{ position: "absolute", zIndex: 1000 }}>
         <FiArrowLeft color="#f1f1f1" onClick={handleRedirect} size={26} />
       </div>
-      {/* <button onClick={e => handleScan(e.target.innerText)}>6fc9f02e-fb72-4073-ac03-2109e2ae8ab8</button> */}
+      <button
+        onClick={() =>
+          setScanFailureBlock({ ...scanFailureBlock, active: true })
+        }
+      >
+        show progress
+      </button>
+      <button onClick={(e) => handleScan(e.target.innerText)}>
+        6fc9f02e-fb72-4073-ac03-2109e2ae8ab8
+      </button>
       <div id="qr-scanner-container" className="flex-grow-1">
         <QrReader
           facingMode={"environment"}
@@ -89,6 +161,14 @@ export function Scanner() {
           onScan={handleScan}
           style={{ height: "100%", overflow: "visible", position: "relative" }}
         />
+        <div style={{ position: "relative", height: "0px" }}>
+          <ProgressBar
+            className={scanFailureBlock.active ? "" : "d-none" + " "}
+            now={scanFailureBlock.progress}
+            variant="danger"
+            style={{ position: "absolute", bottom: "-1px", width: "100%" }}
+          />
+        </div>
       </div>
       <div className="d-flex flex-row-reverse align-items-center me-10 mt-10">
         {waitingForScan && <HashLoader color="#EF7C4E" size={30} />}
@@ -101,4 +181,7 @@ export function Scanner() {
       />
     </div>
   );
+}
+function scanFailureBlock(scanFailureBlock: any) {
+  throw new Error("Function not implemented.");
 }

@@ -164,7 +164,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
         "DIRS": [
             # Dashboard
-            str(ROOT_DIR / "apps/dashboard/templates")
+            str(ROOT_DIR / "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {

@@ -24,7 +24,7 @@ export function StatisticsTable() {
   }
 
   return (
-    <div className="container p-10 d-flex flex-column align-items-center">
+    <div className="statistics-table-container d-flex flex-column align-items-center p-10">
       <table>
         <thead>
           <tr>
@@ -42,8 +42,6 @@ export function StatisticsTable() {
             </tr>
           ))
           }
-          {console.log(data)}
-          {ticketCount}
         </tbody>
       </table>
     </div>

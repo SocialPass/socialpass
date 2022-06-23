@@ -15,7 +15,7 @@ async function fetchApi(axiosPromise: AxiosPromise){
     if (err.response) {
       throw {
         detail: err.response.data?.detail ||  'unknown-error',
-        message: err.response.data?.message || err.response.data
+        message: err.response.data?.message || 'unknown-error'
       }
     } else {
       throw {
@@ -34,7 +34,7 @@ export function fetchEvent(publicId: String) {
 
 export function fetchScanTicket(publicId: String, qrCode: String) {
   return fetchApi(
-    api.post(`scanner/${publicId}/claim-ticket`, {embed_code: qrCode})
+    api.post(`scanner/${publicId}/claim-ticket/`, {embed_code: qrCode})
   )
 }
 

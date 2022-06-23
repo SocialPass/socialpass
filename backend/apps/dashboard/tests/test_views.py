@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView
 
 from apps.dashboard import forms, views
-from apps.dashboard.models import Invite, Membership, Team
+from apps.dashboard.models import Invite, Membership, PricingRule, Team
 from apps.root.models import Event
 
 User = get_user_model()
@@ -37,8 +37,16 @@ class DashboardTest(TestCase):
         self.team = Team.objects.create(name=self.team_name)
         self.membership = Membership.objects.create(team=self.team, user=self.user)
         self.team.members.add(self.user_two)
+        # TODO: Pricing rules should be their own migration
+        PricingRule.objects.create(
+            min_capacity=1,
+            max_capacity=None,
+            price_per_ticket=1.00,
+            active=True,
+            group=self.team.pricing_rule_group,
+        )
         # Setup event
-        event_data = {
+        self.event_data = {
             "title": "Test Title",
             "team": self.team,
             "user": self.user,
@@ -50,7 +58,7 @@ class DashboardTest(TestCase):
             "limit_per_person": 1,
             "requirements": [],
         }
-        self.event = Event.objects.create(**event_data)
+        self.event = Event.objects.create(**self.event_data)
 
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):
@@ -204,19 +212,87 @@ class DashboardTest(TestCase):
         return "Not yet implemented"
 
     def test_ticketgate_create(self):
-        return "Not yet implemented"
+        # Login User
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(
+            reverse("ticketgate_create", args=(self.team.public_id,))
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # TEST POST
+        data = {
+            "title": "Test Title 2",
+            "team": self.team,
+            "user": self.user,
+            "description": "Test Description 2",
+            "date": timezone.now(),
+            "timezone": "US/Eastern",
+            "location": "SF",
+            "capacity": 100,
+            "limit_per_person": 1,
+            "requirements": [],
+        }
+        data["_afr_uuid"] = response.context["afr_uuid_"]
+        response = self.client.post(
+            reverse("ticketgate_create", args=(self.team.public_id,)),
+            data=data,
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Event.objects.filter(title="Test Title 2").count(), 1)
 
     def test_ticketgate_detail(self):
-        return "Not yet implemented"
+        # Login User
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(
+            reverse("ticketgate_detail", args=(self.team.public_id, self.event.pk))
+        )
+        self.assertEqual(response.status_code, 200)
 
     def test_ticketgate_update(self):
-        return "Not yet implemented"
+        # Login User
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(
+            reverse("ticketgate_update", args=(self.team.public_id, self.event.pk))
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # TEST POST
+        self.event_data["title"] = "Updated Title"
+        response = self.client.post(
+            reverse("ticketgate_update", args=(self.team.public_id, self.event.pk)),
+            data=self.event_data,
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Event.objects.filter(title="Updated Title").count(), 1)
 
     def test_ticketgate_stats(self):
         return "Not yet implemented"
 
     def test_ticketgate_price_estimator(self):
-        return "Not yet implemented"
+        # Login User
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        url = reverse("ticketgate_price_estimator", args=(self.team.public_id,))
+        url = f"{url}?capacity=100"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
     def test_ticketgate_checkout(self):
         return "Not yet implemented"

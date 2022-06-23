@@ -19,7 +19,7 @@ class DashboardTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
-        # TODO: Move this to some sort of factory
+        # TODO: Move this setup to some sort of factory
         # Setup users
         self.username = "jacob"
         self.username_two = "jacob2"
@@ -36,8 +36,8 @@ class DashboardTest(TestCase):
         # Setup team
         self.team = Team.objects.create(name=self.team_name)
         self.membership = Membership.objects.create(team=self.team, user=self.user)
-        self.team.members.add(self.user_two)
-        # TODO: Pricing rules should be their own migration
+        # TODO: Pricing rules should be their own migration,
+        # once we have finalized organizer pricing
         PricingRule.objects.create(
             min_capacity=1,
             max_capacity=None,
@@ -89,6 +89,7 @@ class DashboardTest(TestCase):
         return "Not yet implemented"
 
     def test_user_detail(self):
+        # Login user
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
         )
@@ -118,7 +119,13 @@ class DashboardTest(TestCase):
         self.assertRedirects(response, expected_url=reverse("account_login"))
 
     def test_team_accept_invite(self):
-        return "Not yet implemented"
+        # Send invitation to existing user
+        request = self.factory.get("/fake")
+        invite = Invite.create(email=self.email_two, inviter=self.user, team=self.team)
+        invite.send_invitation(request)
+        self.client.post(reverse("team_accept_invite", args=(invite.key,)), follow=True)
+        invite = Invite.objects.get(inviter=self.user)
+        self.assertEqual(invite.accepted, True)
 
     def test_team_create(self):
         # Login User
@@ -191,6 +198,10 @@ class DashboardTest(TestCase):
         self.assertEqual(Invite.objects.filter(email="onetime@test.local").count(), 1)
 
     def test_team_member_delete(self):
+        # add team member for deletion
+        self.team.members.add(self.user_two)
+        member = Membership.objects.filter(team=self.team).last()
+
         # Login User
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
@@ -198,18 +209,27 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("team_member_delete", args=(self.team.public_id, self.user_two.pk))
+            reverse("team_member_delete", args=(self.team.public_id, member.pk))
         )
         self.assertEqual(response.status_code, 200)
 
         # TEST POST
         response = self.client.post(
-            reverse("team_member_delete", args=(self.team.public_id, self.user_two.pk))
+            reverse("team_member_delete", args=(self.team.public_id, member.pk))
         )
         self.assertEqual(self.team.members.count(), 1)
 
     def test_ticketgate_list(self):
-        return "Not yet implemented"
+        # Login User
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(
+            reverse("ticketgate_list", args=(self.team.public_id,))
+        )
+        self.assertEqual(response.status_code, 200)
 
     def test_ticketgate_create(self):
         # Login User
@@ -280,7 +300,16 @@ class DashboardTest(TestCase):
         self.assertEqual(Event.objects.filter(title="Updated Title").count(), 1)
 
     def test_ticketgate_stats(self):
-        return "Not yet implemented"
+        # Login User
+        self.assertTrue(
+            self.client.login(username=self.username, password=self.password)
+        )
+
+        # Test GET
+        response = self.client.get(
+            reverse("ticketgate_stats", args=(self.team.public_id, self.event.pk))
+        )
+        self.assertEqual(response.status_code, 200)
 
     def test_ticketgate_price_estimator(self):
         # Login User

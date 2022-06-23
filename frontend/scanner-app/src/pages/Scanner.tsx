@@ -32,7 +32,7 @@ export function Scanner() {
       addToast({
         type: "error",
         title: "Scan Failed",
-        description: err_data.message,
+        description: err_data?.message,
       });
     }).finally(() => {
       setWaitingForScan(false)
@@ -55,6 +55,14 @@ export function Scanner() {
     }
   }
 
+  useEffect(() => {
+    let scannerContainer = document.getElementById("qr-scanner-container")
+    if (!scannerContainer){
+      return
+    }
+    scannerContainer.firstChild.firstChild.style.position = ''
+  })
+
   const handleError = useCallback((err: any) => {
     addToast({
       type: "error",
@@ -64,20 +72,19 @@ export function Scanner() {
   }, []);
 
   return (
-    <div className="scanner-body">
-      <div className="btn-close">
-          <FiX onClick={handleRedirect} size={26} />
-      </div>
-      <div>
-        <div className="d-flex justify-content-center align-items-center p-10">
-          <QrReader
-            facingMode={"environment"}
-            delay={500}
-            onError={handleError}
-            onScan={handleScan}
-            style={{ width: "100%", height: "100%" }}
-          />
+    <div className="scanner-body d-flex flex-column">
+        <div className="btn-close" style={{position: "absolute", "zIndex": 1000}}>
+            <FiX onClick={handleRedirect} size={26} />
         </div>
+      {/* <button onClick={e => handleScan(e.target.innerText)}>6fc9f02e-fb72-4073-ac03-2109e2ae8ab8</button> */}
+      <div id="qr-scanner-container" className="flex-grow-1">
+        <QrReader
+          facingMode={"environment"}
+          delay={500}
+          onError={handleError}
+          onScan={handleScan}
+          style={{height: "100%", overflow:"visible", position:"relative"}}
+        />
       </div>
       <Footer
         event_name={eventData.title}

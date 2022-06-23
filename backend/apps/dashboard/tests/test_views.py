@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.http import HttpResponse
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
+from django.views.generic import TemplateView
 
 from apps.dashboard import forms, views
 from apps.dashboard.models import Invite, Membership, Team
@@ -31,7 +33,29 @@ class DashboardTest(TestCase):
         self.team.members.add(self.user_two)
 
     def test_team_context_mixin(self):
-        return "TODO"
+        class TestTeamContextView(views.TeamContextMixin, TemplateView):
+            template_name = "account/detail.html"
+
+        # Test logged-in user
+        kwargs = {"team_pk": self.team.public_id}
+        request = self.factory.get("/fake-path")
+        request.user = self.user
+        response = TestTeamContextView.as_view()(request, **kwargs)
+        self.assertEqual(response.status_code, 200)
+        # TODO: check for current_team in context data
+
+        # Test logged-in user without membership
+        self.team.members.remove(self.user_two)
+        request = self.factory.get("/fake-path")
+        request.user = self.user_two
+        response = TestTeamContextView.as_view()(request, **kwargs)
+        self.assertEqual(response.status_code, 200)
+
+        # Test logged-out user
+        request = self.factory.get("/fake-path", follow=True)
+        request.user = AnonymousUser()
+        response = TestTeamContextView.as_view()(request, **kwargs)
+        self.assertEqual(response.status_code, 200)
 
     def test_require_successful_checkout_mixin(self):
         return "TODO"
@@ -157,31 +181,31 @@ class DashboardTest(TestCase):
         self.assertEqual(self.team.members.count(), 1)
 
     def test_ticketgate_list(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_create(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_detail(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_update(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_stats(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_price_estimator(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_checkout(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_checkout_success_callback(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_ticketgate_checkout_failure_callback(self):
-        return "TODO"
+        return "Not yet implemented"
 
     def test_stripe_webhook(self):
-        return "TODO"
+        return "Not yet implemented"

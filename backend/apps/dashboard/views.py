@@ -6,7 +6,7 @@ import stripe
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -36,8 +36,6 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
     """
 
     def test_func(self):
-        # check user authenticated and membership to team PK
-        user_logged_in = self.request.user.is_authenticated
         try:
             user_membership = Membership.objects.select_related("team").get(
                 team__public_id=self.kwargs["team_pk"], user__id=self.request.user.id
@@ -46,10 +44,13 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         except Exception:
             user_membership = False
 
-        return user_logged_in and user_membership
+        return self.request.user.is_authenticated and user_membership
 
     def handle_no_permission(self):
-        return LoginRequiredMixin.handle_no_permission(self)
+        if not self.request.user.is_authenticated:
+            return LoginRequiredMixin.handle_no_permission(self)
+        else:
+            raise Http404
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

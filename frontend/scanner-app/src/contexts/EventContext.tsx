@@ -26,21 +26,31 @@ const EventProvider = ({ children }: any) => {
   const [eventErrorData, setEventErrorData] = useState<EventErrorProps | null>();
   const [publicId, setPublicId] = useState<String>()
 
+  // TODO use ReactQuery instead
+
   useEffect(() => {
-    if  (!(eventData || eventErrorData)){
-      // still loading
+    console.log("eventErrorData updated")
+    if (typeof eventErrorData == undefined){
       return
     }
 
-    if (eventData) {
-      setIsError(false)
-    } else {
+    if (eventErrorData){
       setIsError(true)
+      setEventData(null)
+    }
+  }, [eventErrorData])
+
+  useEffect(() => {
+    console.log("eventData updated")
+    if (typeof eventData == undefined){
+      return
     }
 
-    setIsLoading(false)
-
-  }, [eventData, eventErrorData])
+    if (eventData){
+      setIsError(false)
+      setEventErrorData(null)
+    }
+  }, [eventData])
 
   useEffect(() => {
     if (!publicId){
@@ -52,15 +62,20 @@ const EventProvider = ({ children }: any) => {
     ).then((response) => {
       setEventData({...response.data});
     }).catch((err) => {
+      let errorData
       if (err.response) {
-        setEventErrorData(err.response.data)
+        errorData = err.response.data
       } else {
-        setEventErrorData({
+        errorData = {
           detail: 'unknown-error',
           message: err.message
-        })
+        }
       }
-    });
+      setEventErrorData(errorData)
+    }).finally(() => {
+      console.log("setIsLoading false")
+      setIsLoading(false)
+    })
   }, [publicId])
 
   function scanTicket(qrcode: any) {

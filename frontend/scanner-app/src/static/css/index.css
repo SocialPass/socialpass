@@ -3,7 +3,7 @@
  * Custom version of socialpass-theme.css for the Scanner's Landing Page
  * ----------------------------------------------------------------------------
  */
- 
+
 
 /* Landing Page Components */
 
@@ -43,7 +43,7 @@
     font-weight: 600;
     color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
-    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);    
+    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
 
 
@@ -65,7 +65,7 @@
     color: var(--white-color);
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
     -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
-    margin-bottom: 1.6rem;    
+    margin-bottom: 1.6rem;
 }
 
 
@@ -117,7 +117,7 @@
     position: left;
     width: 40px;
     height: 40px;
-    background: #ccc;
+    background: transparent;
     border-radius: 10px;
     padding: 8px;
     margin-right: 20px;
@@ -137,7 +137,7 @@
     color: #0C0F3C;
     margin-top: 15%;
     margin-bottom: 5%;
-    
+
 }
 
 .scanner-subtitle   {
@@ -268,8 +268,8 @@
     text-align: center;
     color: #0C0F3C;
     margin-top: 15%;
-    margin-bottom: 10%; 
-    background-color: var(--white-color);  
+    margin-bottom: 10%;
+    background-color: var(--white-color);
 }
 
 .statistics-subtitle    {
@@ -375,8 +375,8 @@
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
     -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
     margin-bottom: 1.6rem;
-    margin-top: 30%;  
-    
+    margin-top: 30%;
+
 }
 
 .capacity-reached-body  {
@@ -387,8 +387,8 @@
     text-align: center;
     color: hsl(var(--socialpass-blue-color-hue), var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness));
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
-    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing); 
-    
+    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
+
 }
 
 
@@ -416,7 +416,7 @@
     line-height: 26px;
     text-align: center;
     color: #0C0F3C;
-    
+
 }
 
 .error-body  {
@@ -458,12 +458,12 @@
     gap: 10px;
     padding: 1rem;
   }
-  
+
   table {
     border-collapse: collapse;
     width: 100%;
   }
-  
+
   th,
   td {
     border: 1px solid #ffffff;
@@ -472,7 +472,7 @@
     font-size: 12px;
     color: #737373;
   }
-  
+
   th {
     background-color: #ffffff;
     color: #000;
@@ -482,23 +482,23 @@
     font-size: 14px;
     line-height: 17px;
 
-    
+
   }
-  
+
   td {
     background-color: #ffffff;
   }
-  
+
   form {
     display: flex;
     gap: 5px;
   }
-  
+
   form td:last-child {
     display: flex;
     justify-content: space-evenly;
   }
-  
+
   form * {
     font-size: 10px;
   }

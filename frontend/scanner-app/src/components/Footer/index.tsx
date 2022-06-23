@@ -10,8 +10,13 @@ type FooterProps = {
   event_venue: String;
 };
 
-export function Footer({ event_name, event_attendance, event_date, event_venue }: FooterProps) {
-  const { data: eventData}: any = useEvent();
+export function Footer({
+  event_name,
+  event_attendance,
+  event_date,
+  event_venue,
+}: FooterProps) {
+  const { data: eventData }: any = useEvent();
   const navigate = useNavigate();
 
   function handleRedirect() {
@@ -25,12 +30,19 @@ export function Footer({ event_name, event_attendance, event_date, event_venue }
         <div className="scanner-subtitle">
           {event_venue} | {event_date}
         </div>
-        <div className="d-flex flex-row justify-content-between   ">
-          <div className="live-statistics-btn-blue text-center flex-grow-1">Accepted {eventData.redemeed_count}</div>
-          <div className="live-statistics-btn-orange text-center flex-grow-1">Remaining {eventData.ticket_count - eventData.redemeed_count}</div>
+        <div className="d-flex flex-row justify-content-between">
+          <div className="live-statistics-btn-blue text-center flex-grow-1">
+            Accepted {eventData.redemeed_count}
+          </div>
+          <div className="live-statistics-btn-orange text-center flex-grow-1">
+            Remaining {eventData.ticket_count - eventData.redemeed_count}
+          </div>
         </div>
       </div>
-      <button className="btn-statistics w-100 mb-20 mt-20" onClick={handleRedirect}>
+      <button
+        className="btn-statistics w-100 mb-20 mt-20"
+        onClick={handleRedirect}
+      >
         Statistics
       </button>
     </div>

@@ -30,11 +30,13 @@ export function EventContainer({
         <div className="landing-page-card-text-2">{event_venue}</div>
       </div>
       <div className="container p-20 d-flex flex-column gap-10">
-        <button className="btn-start-scanning" onClick={() => {navigate('scanner')}}>
+        <button
+          className="btn-start-scanning"
+          onClick={() => {
+            navigate("scanner");
+          }}
+        >
           Start Scanning
-        </button>
-        <button className="btn-start-scanning" onClick={() => {navigate('statistics')}}>
-          Event Statistics
         </button>
       </div>
     </div>

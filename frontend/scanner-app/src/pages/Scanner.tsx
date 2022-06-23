@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 import React, { useCallback, useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
-import { FiX } from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
 import QrReader from "react-qr-reader";
 import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -78,7 +78,7 @@ export function Scanner() {
   return (
     <div className="scanner-body d-flex flex-column">
       <div className="btn-close" style={{ position: "absolute", zIndex: 1000 }}>
-        <FiX onClick={handleRedirect} size={26} />
+        <FiArrowLeft color="#f1f1f1" onClick={handleRedirect} size={26} />
       </div>
       {/* <button onClick={e => handleScan(e.target.innerText)}>6fc9f02e-fb72-4073-ac03-2109e2ae8ab8</button> */}
       <div id="qr-scanner-container" className="flex-grow-1">

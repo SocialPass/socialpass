@@ -16,13 +16,14 @@ export function Statistics() {
       <div className="statistics-title py-20 px-10">
         {eventData.title}
         <div className="d-flex flex-row align-items-center px-20">
-          <button className="btn-selected-statistic flex-grow-1">Claimed</button>
-          <button className="btn-selected-statistic flex-grow-1">Unclaimed</button>
+          <button className="btn-selected-statistic flex-grow-1">
+            Claimed
+          </button>
+          <button className="btn-selected-statistic flex-grow-1">
+            Unclaimed
+          </button>
         </div>
-        <div className="statistics-table-card">
-          <div className="py-20"></div>
         <StatisticsTable />
-        </div>
         <div className="container p-20 d-flex flex-column">
           <button
             className="btn-return-to-scanner"

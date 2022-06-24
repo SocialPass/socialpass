@@ -48,27 +48,30 @@ export function Scanner() {
       return;
     }
 
-    setWaitingForScan(true)
+    setWaitingForScan(true);
     clearToasts();
-    fetchScanTicket(publicId, qrCode).then(() => {
-      addToast({
-        type: "success",
-        title: "Succesful Scan",
-        description: "",
-      });
-    }).catch((err_data: any) => {
-      addToast({
-        type: "error",
-        title: "Scan Failed",
-        description: err_data?.message,
-      });
-      setScanFailureBlock({
-        ...initialScanFailureBlock,
-        active: true
+    fetchScanTicket(publicId, qrCode)
+      .then(() => {
+        addToast({
+          type: "success",
+          title: "Succesful Scan",
+          description: "",
+        });
       })
-    }).finally(() => {
-      setWaitingForScan(false);
-    });
+      .catch((err_data: any) => {
+        addToast({
+          type: "error",
+          title: "Scan Failed",
+          description: err_data?.message,
+        });
+        setScanFailureBlock({
+          ...initialScanFailureBlock,
+          active: true,
+        });
+      })
+      .finally(() => {
+        setWaitingForScan(false);
+      });
   }, [qrCode]);
 
   function handleRedirect() {
@@ -163,10 +166,8 @@ export function Scanner() {
           />
         </div>
       </div>
-      <div className="d-flex flex-row-reverse align-items-center me-10 mt-10">
-        {waitingForScan && <HashLoader color="#EF7C4E" size={30} />}
-      </div>
       <Footer
+        waitingForScan={waitingForScan}
         event_name={eventData.title}
         event_attendance={eventData.redemeed_count}
         event_date={eventData.date}

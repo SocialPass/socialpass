@@ -1,6 +1,7 @@
 import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { HashLoader } from "react-spinners";
 import { useEvent } from "../../contexts/EventContext";
 
 type FooterProps = {
@@ -8,6 +9,7 @@ type FooterProps = {
   event_attendance: number;
   event_date: String;
   event_venue: String;
+  waitingForScan?: Boolean;
 };
 
 export function Footer({
@@ -15,6 +17,7 @@ export function Footer({
   event_attendance,
   event_date,
   event_venue,
+  waitingForScan,
 }: FooterProps) {
   const { data: eventData }: any = useEvent();
   const navigate = useNavigate();
@@ -26,7 +29,10 @@ export function Footer({
   return (
     <div className="d-flex flex-column py-10 px-30 justify-content-center align-items-center">
       <div className="d-flex flex-column w-100">
-        <div className="scanner-title mt-10">{event_name}</div>
+        <div className="d-flex flex-row align-items-center justify-content-between">
+          <div className="scanner-title mt-20">{event_name}</div>
+          {waitingForScan && <HashLoader color="#EF7C4E" size={25} />}
+        </div>
         <div className="scanner-subtitle">
           {event_venue} | {event_date}
         </div>

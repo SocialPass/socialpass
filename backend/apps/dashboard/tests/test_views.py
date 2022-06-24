@@ -2,13 +2,14 @@ import uuid
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.messages.middleware import MessageMiddleware
 from django.http import HttpResponse
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import TemplateView
+from django.views.generic import DetailView, TemplateView
 
-from apps.dashboard import forms, views
+from apps.dashboard import forms, services, views
 from apps.dashboard.models import Invite, Membership, PricingRule, Team
 from apps.root.models import Event
 
@@ -60,9 +61,13 @@ class DashboardTest(TestCase):
         }
         self.event = Event.objects.create(**self.event_data)
 
+        # Setup price
+        services.set_event_price(event=self.event)
+        services.issue_payment(event=self.event, stripe_checkout_session_id="12345")
+
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):
-            template_name = "account/detail.html"
+            template_name = "dashboard/ticketgate_detail.html"
 
         # Test logged-in user
         kwargs = {"team_pk": self.team.public_id}
@@ -86,7 +91,26 @@ class DashboardTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_require_successful_checkout_mixin(self):
-        return "Not yet implemented"
+        class TestRequireSuccessView(views.RequireSuccesfulCheckoutMixin, DetailView):
+            model = Event
+            template_name = "dashboard/ticketgate_detail.html"
+
+        # Test logged-in user
+        kwargs = {"team_pk": self.team.public_id, "pk": self.event.pk}
+        request = self.factory.get("/fake-path")
+        request.user = self.user
+
+        # Test GET (pending checkout)
+        # TODO: Add support for django.contrib.messages to test this line
+        # response = TestRequireSuccessView.as_view()(request, **kwargs)
+        # self.assertEqual(response.status_code, 200)
+
+        # Test GET (succesful checkout)
+        payment = self.event.payments.first()
+        payment.status = "SUCCESS"
+        payment.save()
+        response = TestRequireSuccessView.as_view()(request, **kwargs)
+        self.assertEqual(response.status_code, 200)
 
     def test_user_detail(self):
         # Login user
@@ -271,9 +295,18 @@ class DashboardTest(TestCase):
             self.client.login(username=self.username, password=self.password)
         )
 
-        # Test GET
+        # Test GET (pending checkout)
         response = self.client.get(
             reverse("ticketgate_detail", args=(self.team.public_id, self.event.pk))
+        )
+        self.assertEqual(response.status_code, 302)
+
+        # Test GET (succesful checkout)
+        payment = self.event.payments.first()
+        payment.status = "SUCCESS"
+        payment.save()
+        response = self.client.get(
+            reverse("ticketgate_stats", args=(self.team.public_id, self.event.pk))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -305,7 +338,16 @@ class DashboardTest(TestCase):
             self.client.login(username=self.username, password=self.password)
         )
 
-        # Test GET
+        # Test GET (pending checkout)
+        response = self.client.get(
+            reverse("ticketgate_stats", args=(self.team.public_id, self.event.pk))
+        )
+        self.assertEqual(response.status_code, 302)
+
+        # Test GET (succesful checkout)
+        payment = self.event.payments.first()
+        payment.status = "SUCCESS"
+        payment.save()
         response = self.client.get(
             reverse("ticketgate_stats", args=(self.team.public_id, self.event.pk))
         )

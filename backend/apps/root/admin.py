@@ -62,11 +62,14 @@ class EventAdmin(admin.ModelAdmin):
         "public_id",
         "user",
         "team",
-        "location",
         "date",
         "timezone",
     )
-    search_fields = ("title", "user__username", "team__name", "location")
+    search_fields = (
+        "title",
+        "user__username",
+        "team__name",
+    )
 
 
 @admin.register(TicketRedemptionKey)

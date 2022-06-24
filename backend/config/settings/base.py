@@ -90,6 +90,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "storages",
+    "taggit",
 ]
 
 LOCAL_APPS = [
@@ -356,6 +357,10 @@ INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
 INVITATIONS_EMAIL_MAX_LENGTH = 254
 INVITATIONS_INVITATION_EXPIRY = 3
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
+
+
+# Django Invitations - https://github.com/jazzband/django-taggit
+TAGGIT_CASE_INSENSITIVE = True
 
 # INTERNAL
 CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")

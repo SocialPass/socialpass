@@ -49,7 +49,6 @@ class EventForm(forms.ModelForm):
             "description",
             "date",
             "timezone",
-            "location",
             "capacity",
             "limit_per_person",
             "requirements",

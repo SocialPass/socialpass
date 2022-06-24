@@ -8,9 +8,10 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
+from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from config.storages import PrivateTicketStorage
+from config.storages import MediaRootS3Boto3Storage, PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .model_wrappers import DBModel
@@ -35,13 +36,14 @@ class Event(DBModel):
     # Basic Info
     title = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
+    cover_image = models.ImageField(null=True, storage=MediaRootS3Boto3Storage())
+    categories = TaggableManager()
     date = models.DateTimeField()
     timezone = models.CharField(
         null=True,
         verbose_name="time zone",
         max_length=30,
     )
-    location = models.CharField(max_length=1024)
 
     # Ticket Info
     # TODO: Move these to TicketType

@@ -9,6 +9,7 @@ WORKDIR /code/
 COPY config/requirements/local.txt /code/local.txt
 COPY config/requirements/base.txt /code/base.txt
 
+RUN apt-get update && apt-get install -y binutils gdal-bin
 RUN pip install -U setuptools pip \
     && pip install -r local.txt
 

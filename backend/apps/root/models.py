@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.gis.db.models import PointField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
@@ -21,6 +22,28 @@ from .validators import JSONSchemaValidator
 class User(AbstractUser):
     """
     Default custom user model for backend.
+    """
+
+
+class EventLocation(DBModel):
+    # The street/location address (part 1)
+    address_1 = models.CharField(max_length=255)
+    # The street/location address (part 2)
+    address_2 = models.CharField(max_length=255)
+    # The city
+    city = models.CharField(max_length=255)
+    # The ISO 3166-2 2- or 3-character region code for the state, province, region, or district
+    region = models.CharField(max_length=3)
+    # The postal code
+    postal_code = models.IntegerField()
+    # The ISO 3166-1 2-character international code for the country
+    country = models.CharField(max_length=2)
+    # geodjango lat/long
+    point = PointField(geography=True, default="POINT(0.0 0.0)")
+    """
+    localized_address_display #The format of the address display localized to the address country
+    localized_area_display	#The format of the address's area display localized to the address country
+    localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
     """
 
 
@@ -45,6 +68,7 @@ class Event(DBModel):
         verbose_name="time zone",
         max_length=30,
     )
+    # location = models.ForeignKey(EventLocation)
 
     # Ticket Info
     # TODO: Move these to TicketType

@@ -9,7 +9,7 @@ import { api } from "../services/api";
 export function Statistics() {
   const navigate = useNavigate();
   const params = useParams();
-  const { data: eventData }: any = useEvent();
+  const { eventData }: any = useEvent();
 
   return (
     <div className="statistics-body">

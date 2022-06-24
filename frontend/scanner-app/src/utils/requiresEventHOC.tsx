@@ -12,7 +12,7 @@ function RequiresEvent({ children }: any) {
     isLoading,
     isError,
     setPublicId,
-    data: eventData,
+    eventData,
   }: any = useEvent();
   const params = useParams();
   const navigate = useNavigate();
@@ -26,6 +26,10 @@ function RequiresEvent({ children }: any) {
       navigate("../error");
     }
   }, [isError]);
+
+  if (isError) {
+    return null;
+  }
 
   if (isLoading) {
     // TODO: this should be a loading spinner
@@ -44,11 +48,9 @@ function RequiresEvent({ children }: any) {
     );
   }
 
-  if (isError) {
+  if (status !== "success" || (eventData === undefined)){
     return null;
   }
-
-  if (status !== "success") return null;
 
   return <>{children}</>;
 }

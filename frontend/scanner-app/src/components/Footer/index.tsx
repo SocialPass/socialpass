@@ -16,7 +16,7 @@ export function Footer({
   event_date,
   event_venue,
 }: FooterProps) {
-  const { data: eventData }: any = useEvent();
+  const { eventData }: any = useEvent();
   const navigate = useNavigate();
 
   function handleRedirect() {

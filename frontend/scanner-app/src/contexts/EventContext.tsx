@@ -22,6 +22,7 @@ type EventErrorProps = {
 
 const EventProvider = ({ children }: any) => {
   const [publicId, setPublicId] = useState<String>()
+  const [eventData, setEventData] = useState<EventDataProps>()
   const { status, isLoading, isError, error, data, refetch } = useQuery(
     ['fetchEvent', publicId],
     () => fetchEvent(publicId),
@@ -36,15 +37,21 @@ const EventProvider = ({ children }: any) => {
     }
   }, [publicId])
 
+  useEffect(() => {
+    setEventData(data)
+  }, [data])
+
   return (
     <EventContext.Provider
       value={{
-        data,
+        publicId,
+        setPublicId,
         status,
         isLoading,
         isError,
-        publicId,
-        setPublicId
+        eventData,
+        setEventData,
+        error
       }}
     >
       {children}

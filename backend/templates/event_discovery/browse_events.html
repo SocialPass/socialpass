@@ -17,6 +17,7 @@
                     </p>
                 </div>
                 <div class="col-md-6 align-self-center">
+                    <!-- Search form start -->
                     <form class="position-relative mt-20">
                         {% if request.GET.search %}
                             <a href="{{ request.path }}" class="position-absolute top-50 start-0 translate-y-middle btn btn-link btn-lg btn-square btn-rounded bg-transparent text-base">
@@ -30,6 +31,8 @@
                         	<span class="visually-hidden">Search</span>
                         </button>
                     </form>
+                    <!-- Search form end -->
+                    
                     <p class="text-muted fs-base-n2 text-start text-md-end mt-5">
                         Case insensitive. For best results, please include keywords only
                     </p>

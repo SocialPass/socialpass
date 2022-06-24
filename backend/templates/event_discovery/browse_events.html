@@ -17,13 +17,22 @@
                     </p>
                 </div>
                 <div class="col-md-6 align-self-center">
-                    <form class="position-relative mt-20 mt-md-0">
-                        <input type="text" name="search" class="form-control form-control-lg fs-base rounded-pill ps-20 pe-50" placeholder="Search for events by name" value="{{ request.GET.search }}">
+                    <form class="position-relative mt-20">
+                        {% if request.GET.search %}
+                            <a href="{{ request.path }}" class="position-absolute top-50 start-0 translate-y-middle btn btn-link btn-lg btn-square btn-rounded bg-transparent text-base">
+                                <i class="fa-regular fa-times"></i>
+                                <span class="visually-hidden">Reset</span>
+                            </a>
+                        {% endif %}
+                        <input type="text" name="search" class="form-control form-control-lg fs-base rounded-pill {% if request.GET.search %}ps-50{% else %}ps-20{% endif %} pe-50" placeholder="Search for events by name" value="{{ request.GET.search }}">
                         <button type="submit" class="position-absolute top-50 end-0 translate-y-middle btn btn-link btn-lg btn-square btn-rounded bg-transparent">
                         	<i class="fa-regular fa-search"></i>
                         	<span class="visually-hidden">Search</span>
                         </button>
                     </form>
+                    <p class="text-muted fs-base-n2 text-start text-md-end mt-5">
+                        Case insensitive. For best results, please include keywords only
+                    </p>
                 </div>
             </div>
             <p class="mt-30 mb-0">

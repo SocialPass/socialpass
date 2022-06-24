@@ -1,5 +1,7 @@
 {% extends "event_discovery/base.html" %}
 
+{% load static %}
+
 {% block head_title %}Browse Events - SocialPass{% endblock head_title %}
 
 {% block content %}
@@ -32,7 +34,7 @@
                         </button>
                     </form>
                     <!-- Search form end -->
-                    
+
                     <p class="text-muted fs-base-n2 text-start text-md-end mt-5">
                         Case insensitive. For best results, please include keywords only
                     </p>
@@ -44,45 +46,57 @@
         </div>
         <!-- Heading, subtitle, and search bar end -->
 
-        <!-- Event cards start -->
-        <div class="row row-event-cards">
-            {% include "event_discovery/components/event_cards.html" with events=events %}
-        </div>
-        <!-- Event cards end -->
+        {% if events.count > 0 %}
+            <!-- Event cards start -->
+            <div class="row row-event-cards">
+                {% include "event_discovery/components/event_cards.html" with events=events %}
+            </div>
+            <!-- Event cards end -->
 
-        <!-- Pagination start -->
-        <div class="content py-20 my-0 border-top d-flex align-items-center">
-            <div>
-                {% if page_obj.has_previous %}
-	                <a class="btn btn-rounded text-primary fw-bold" href="?page={{ page_obj.previous_page_number }}">
-	                	<i class="fa-regular fa-angle-left me-5"></i>
-	                	Prev
-	                </a>
-                {% else %}
-                	<button class="btn btn-rounded fw-bold" disabled="disabled">
-                		<i class="fa-regular fa-angle-left me-5"></i>
-                		Prev
-                	</button>
-                {% endif %}
+            <!-- Pagination start -->
+            <div class="content py-20 my-0 border-top d-flex align-items-center">
+                <div>
+                    {% if page_obj.has_previous %}
+    	                <a class="btn btn-rounded text-primary fw-bold" href="?page={{ page_obj.previous_page_number }}">
+    	                	<i class="fa-regular fa-angle-left me-5"></i>
+    	                	Prev
+    	                </a>
+                    {% else %}
+                    	<button class="btn btn-rounded fw-bold" disabled="disabled">
+                    		<i class="fa-regular fa-angle-left me-5"></i>
+                    		Prev
+                    	</button>
+                    {% endif %}
+                </div>
+                <div class="ms-auto">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+                <div class="ms-auto">
+                    {% if page_obj.has_next %}
+    	                <a class="btn btn-rounded text-primary fw-bold" href="?page={{ page_obj.next_page_number }}">
+    	                	Next
+    	                	<i class="fa-regular fa-angle-right ms-5"></i>
+    	                </a>
+                    {% else %}
+    	                <button class="btn btn-rounded fw-bold" disabled="disabled">
+    	                	Next
+    	                	<i class="fa-regular fa-angle-right ms-5"></i>
+    	                </button>
+                    {% endif %}
+                </div>
             </div>
-            <div class="ms-auto">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            <!-- Pagination end -->
+        {% else %}
+            <div class="content py-20 my-0">
+                <div class="ws-400 mw-100 mx-auto text-center">
+                    <img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="d-block w-100 h-auto">
+                    <h5 class="fsr-3 text-strong">Nothing Found</h5>
+                    <p>
+                        Sorry, we could not find any event to show you at this moment.{% if request.GET.search %} Try changing up the search query to be more specific.{% endif %}
+                    </p>
+                </div>
             </div>
-            <div class="ms-auto">
-                {% if page_obj.has_next %}
-	                <a class="btn btn-rounded text-primary fw-bold" href="?page={{ page_obj.next_page_number }}">
-	                	Next
-	                	<i class="fa-regular fa-angle-right ms-5"></i>
-	                </a>
-                {% else %}
-	                <button class="btn btn-rounded fw-bold" disabled="disabled">
-	                	Next
-	                	<i class="fa-regular fa-angle-right ms-5"></i>
-	                </button>
-                {% endif %}
-            </div>
-        </div>
-        <!-- Pagination end -->
+        {% endif %}
     </div>
 </section>
 {% endblock content %}

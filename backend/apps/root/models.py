@@ -38,7 +38,8 @@ class Event(DBModel):
     description = models.TextField(blank=True)
     cover_image = models.ImageField(null=True, storage=MediaRootS3Boto3Storage())
     categories = TaggableManager()
-    date = models.DateTimeField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True)
     timezone = models.CharField(
         null=True,
         verbose_name="time zone",

@@ -62,7 +62,7 @@ class EventAdmin(admin.ModelAdmin):
         "public_id",
         "user",
         "team",
-        "date",
+        "start_date",
         "timezone",
     )
     search_fields = (

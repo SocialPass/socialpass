@@ -1,0 +1,76 @@
+{% extends "event_discovery/base.html" %}
+
+{% block head_title %}Browse Events - SocialPass{% endblock head_title %}
+
+{% block content %}
+<section>
+    <div class="container-xl">
+        <!-- Heading, subtitle, and search bar start -->
+        <div class="content my-0">
+            <div class="row">
+                <div class="col-md-6 align-self-center">
+                    <h1 class="display-6 fw-700 text-strong my-0">
+                        Browse Events
+                    </h1>
+                    <p class="text-muted mt-5 mb-0">
+                        Find awesome events on SocialPass
+                    </p>
+                </div>
+                <div class="col-md-6 align-self-center">
+                    <form class="position-relative mt-20 mt-md-0">
+                        <input type="text" name="search" class="form-control form-control-lg fs-base rounded-pill ps-20 pe-50" placeholder="Search by name" value="{{ request.GET.search }}">
+                        <button type="submit" class="position-absolute top-50 end-0 translate-y-middle btn btn-link btn-lg btn-square btn-rounded bg-transparent">
+                        	<i class="fa-regular fa-search"></i>
+                        	<span class="visually-hidden">Search</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <p class="mt-30 mb-0">
+                Found 41 event(s) in total
+            </p>
+        </div>
+        <!-- Heading, subtitle, and search bar end -->
+
+        <!-- Event cards start -->
+        <div class="row row-event-cards">
+            {% include "event_discovery/components/event_cards.html" with events=events %}
+        </div>
+        <!-- Event cards end -->
+
+        <!-- Pagination start -->
+        <div class="content py-20 my-0 border-top d-flex align-items-center">
+            <div>
+                {% if page_obj.has_previous %}
+	                <a class="btn btn-rounded text-primary fw-bold" href="?page={{ page_obj.previous_page_number }}">
+	                	<i class="fa-regular fa-angle-left me-5"></i>
+	                	Prev
+	                </a>
+                {% else %}
+                	<button class="btn btn-rounded fw-bold" disabled="disabled">
+                		<i class="fa-regular fa-angle-left me-5"></i>
+                		Prev
+                	</button>
+                {% endif %}
+            </div>
+            <div class="ms-auto">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+            <div class="ms-auto">
+                {% if page_obj.has_next %}
+	                <a class="btn btn-rounded text-primary fw-bold" href="?page={{ page_obj.next_page_number }}">
+	                	Next
+	                	<i class="fa-regular fa-angle-right ms-5"></i>
+	                </a>
+                {% else %}
+	                <button class="btn btn-rounded fw-bold" disabled="disabled">
+	                	Next
+	                	<i class="fa-regular fa-angle-right ms-5"></i>
+	                </button>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Pagination end -->
+    </div>
+</section>
+{% endblock content %}

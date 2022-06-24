@@ -1,0 +1,417 @@
+{% load static get_debug_status get_preferred_color_scheme %}
+<!DOCTYPE html>
+{% get_debug_status as debug %}
+<html lang="en" class="socialpass-event-discovery {% get_preferred_color_scheme %}" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>{% block head_title %}SocialPass - Hosting the Next Generation of Events{% endblock head_title %}</title>
+
+		<!-- Fav icon -->
+		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
+
+		<!-- Halfmoon CSS -->
+		{% if debug %}
+			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
+		{% else %}
+			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
+		{% endif %}
+
+		<!-- SocialPass CSS theme -->
+		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
+
+		<!-- Inter font -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- SEO -->
+		<meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
+		<meta name="author" content="SocialPass">
+		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket">
+
+		<!-- Open graph -->
+		<meta property="og:type" content="article">
+		<meta property="og:url" content="{{ request.build_absolute_uri }}">
+		<meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
+		<meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
+		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:site" content="@socialpass_io">
+
+		<!-- Google Tag Manager -->
+		{% if not debug %}
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
+			<script>
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+				gtag('config', 'G-FQKKDVZZVX');
+			</script>
+		{% endif %}
+		<!-- End Google Tag Manager -->
+
+		<!-- Custom styles start -->
+		<style type="text/css">
+			:root {
+				/* Base background colors */
+
+				--base-body-bg-color: var(--white-color);
+
+				/* Border related (mostly for utilities) */
+
+				--base-border-radius: 0.4rem;
+			}
+
+			.dark-mode {
+				/* Base background colors */
+
+				--base-body-bg-color: var(--dark-color);
+			}
+
+			/* Event cards */
+
+			.row-event-cards {
+				padding: var(--content-and-card-spacing-half);
+			}
+
+			.row-event-cards > * {
+				padding: var(--content-and-card-spacing-half);
+			}
+
+			.event-card {
+				--card-link-border-color-hover: var(--blue-color-light);
+				--card-link-box-shadow-hover: 0 0 0 0.5rem hsla(var(--blue-color-hsl), 0.15);
+			}
+
+			.dark-mode .event-card {
+				--card-link-border-color-hover: var(--blue-color-dim);
+				--card-link-box-shadow-hover: 0 0 0 0.5rem hsla(var(--blue-color-hsl), 0.1);
+			}
+
+			/* Footer */
+
+			.footer {
+				color: hsla(var(--white-color-hsl), 0.9);
+				background-color: var(--primary-color);
+				border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+				border-bottom: var(--base-border-width) var(--base-border-style) transparent;
+			}
+
+			.dark-mode .footer {
+				background-color: hsl(var(--primary-color-hue), 40%, 15%);
+			}
+
+			.footer-copyright {
+				border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+			}
+		</style>
+		<!-- Custom styles end -->
+
+		{% block extra_head %}{% endblock extra_head %}
+	</head>
+	<body>
+		{% block body %}
+		<!-- Modals start -->
+		{% block modals %}{% endblock modals %}
+		<!-- Modals end -->
+
+		<!-- Page wrapper start -->
+		<div class="page-wrapper">
+			<!-- Sticky alerts start -->
+			<div class="sticky-alerts">
+				{% block sticky_alerts %}{% endblock sticky_alerts %}
+			</div>
+			<!-- Sticky alerts end -->
+
+			<!-- Content wrapper start -->
+			<div class="content-wrapper">
+				<!-- Navbar start -->
+				<nav class="container-xl">
+					<div class="d-flex align-items-center content mt-0 border-bottom">
+						<!-- Branding start -->
+						<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold">
+							<div class="ws-75">
+								<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
+							</div>
+							<div class="text-strong ms-10">
+								<div class="fs-base-p4">
+									SocialPass
+								</div>
+								<div class="fs-base-n4 lh-1 fw-normal">
+									Event Discovery
+								</div>
+							</div>
+						</a>
+						<!-- Branding end -->
+
+						<!-- Dark mode toggle start -->
+						<button type="button" class="btn btn-sm btn-square btn-rounded ms-auto ms-md-20 me-10" data-hm-toggle="dark-mode">
+							<i class="fa-solid fa-moon"></i>
+							<span class="visually-hidden">Toggle dark mode</span>
+						</button>
+						<!-- Dark mode toggle end -->
+
+						<!-- Navbar links (medium and up) start -->
+						<div class="ms-auto d-none d-md-flex align-items-center">
+							<a href="#" class="link-reset text-decoration-none me-30">Browse Events</a>
+
+							<!-- Learn more dropdown start -->
+							<div class="dropdown with-arrow me-30">
+								<a href="#" class="link-reset text-decoration-none" id="learn-more-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+									Learn More
+									<i class="fa-regular fa-angle-down ms-5"></i>
+								</a>
+								<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="learn-more-dropdown-toggle">
+									<li>
+										<a href="#" target="_blank" class="dropdown-item d-flex align-items-center">
+											<span class="ws-25">
+												<i class="fa-regular fa-book"></i>
+											</span>
+											<span>GitBook</span>
+										</a>
+									</li>
+									<li>
+										<a href="#" target="_blank" class="dropdown-item d-flex align-items-center">
+											<span class="ws-25">
+												<i class="fa-regular fa-message-lines"></i>
+											</span>
+											<span>Newsletter</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<!-- Learn more dropdown end -->
+
+							<a href="#" class="btn btn-primary">Dashboard <i class="fa-regular fa-arrow-right ms-5"></i></a>
+						</div>
+						<!-- Navbar links (medium and up) end -->
+
+						<!-- Menu dropdown start -->
+						<div class="d-md-none dropdown with-arrow">
+							<a href="#" class="btn btn-sm" id="menu-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+								<span class="me-5 d-none d-sm-inline">Menu</span>
+								<i class="fa-solid fa-bars"></i>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end ws-200" aria-labelledby="menu-dropdown-toggle">
+								<li>
+									<a href="#" class="dropdown-item">
+										Browse Events
+									</a>
+								</li>
+								<li class="dropdown-divider"></li>
+								<li class="dropdown-header">Learn More</li>
+								<li>
+									<a href="#" target="_blank" class="dropdown-item d-flex align-items-center">
+										<span class="ws-25">
+											<i class="fa-regular fa-book"></i>
+										</span>
+										<span>GitBook</span>
+									</a>
+								</li>
+								<li>
+									<a href="#" target="_blank" class="dropdown-item d-flex align-items-center">
+										<span class="ws-25">
+											<i class="fa-regular fa-message-lines"></i>
+										</span>
+										<span>Newsletter</span>
+									</a>
+								</li>
+								<li class="dropdown-divider"></li>
+								<li class="dropdown-content">
+									<a href="#" class="btn btn-primary btn-block mb-5">
+										Dashboard
+										<i class="fa-regular fa-arrow-right ms-5"></i>
+									</a>
+								</li>
+							</ul>
+						</div>
+						<!-- Menu dropdown end -->
+					</div>
+				</nav>
+				<!-- Navbar end -->
+
+				<!-- Main content start -->
+				{% block content %}{% endblock content %}
+				<!-- Main content end -->
+
+				<!-- Footer start -->
+				<footer class="footer pt-10 mt-30">
+					<div class="container-xl">
+						<div class="row row-eq-spacing-md">
+							<!-- Follow us start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content pt-20 pt-md-0">
+									<h5 class="content-title fw-700 text-on-primary mt-0 mb-20">
+										Follow Us
+									</h5>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
+											<span class="ws-25">
+												<i class="fa-brands fa-facebook"></i>
+											</span>
+											<span>Facebook</span>
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
+											<span class="ws-25">
+												<i class="fa-brands fa-twitter"></i>
+											</span>
+											<span>Twitter</span>
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
+											<span class="ws-25">
+												<i class="fa-brands fa-instagram"></i>
+											</span>
+											<span>Instagram</span>
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
+											<span class="ws-25">
+												<i class="fa-brands fa-linkedin"></i>
+											</span>
+											<span>LinkedIn</span>
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Follow us end -->
+
+
+							<!-- Need help start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content pt-20 pt-md-0">
+									<h5 class="content-title fw-700 text-on-primary mt-0 mb-20">
+										Need Help?
+									</h5>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="link-reset text-decoration-none">
+											Visit Our Contact Page
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="link-reset text-decoration-none">
+											FAQ Page
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Need help end -->
+
+							<div class="v-spacer d-lg-none"></div>
+
+							<!-- Legal start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content pt-20 pt-md-0">
+									<h5 class="content-title fw-700 text-on-primary mt-0 mb-20">
+										Legal
+									</h5>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="link-reset text-decoration-none">
+											Conditions
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="link-reset text-decoration-none">
+											Privacy
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="#" target="_blank" class="link-reset text-decoration-none">
+											Responsible Disclosure
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Legal end -->
+
+							<!-- Misc. start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content pt-20 pt-md-0">
+									<div class="d-flex align-items-center fw-bold pe-none">
+										<div class="ws-75">
+											<img src="{% static 'images/SocialPass-Icon-White.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
+										</div>
+										<div class="text-on-primary ms-10">
+											<div class="fs-base-p4">
+												SocialPass
+											</div>
+											<div class="fs-base-n4 lh-1 fw-normal">
+												Event Discovery
+											</div>
+										</div>
+									</div>
+									<p class="mt-30 mb-15">
+										SocialPass is the go-to events platform, powered by Web3.
+									</p>
+									<div>
+										<a href="#" class="btn btn-rounded px-20 bg-black text-white border-0">
+											Go To Top
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Misc. end -->
+						</div>
+
+						<!-- Copyright start -->
+						<div class="footer-copyright content mt-40 mb-20">
+							<p class="opacity-75 fs-base-n2 mb-0">
+								&copy; {% now "Y" %}, SP Tech Inc. All rights reserved
+							</p>
+						</div>
+						<!-- Copyright end -->
+					</div>
+				</footer>
+				<!-- Footer end -->
+			</div>
+			<!-- Content wrapper end -->
+		</div>
+		<!-- Page wrapper end -->
+		{% endblock body %}
+
+		<!-- Halfmoon JS -->
+		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
+
+		{% if debug %}
+			<script type="text/javascript">
+				/**
+				 * Handle the keydown event (only on debug mode).
+				 *
+				 * This is used to create the dark mode and sidebar toggle shortcuts.
+				 * These shortcuts are very useful for testing.
+				 */
+				document.addEventListener("keydown", function (event) {
+					if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+						event = event || window.event;
+
+						if (!(event.ctrlKey || event.metaKey)) {
+							// Toggle dark mode when [shift] + [D] keys are pressed
+							if (event.shiftKey && event.which == 68) {
+								halfmoon.toggleDarkMode();
+							}
+
+							// Toggle sidebar when [shift] + [S] keys are pressed
+							if (event.shiftKey && event.which == 83) {
+								halfmoon.toggleSidebar();
+							}
+						}
+					}
+				});
+			</script>
+		{% endif %}
+
+		{% block extra_body %}{% endblock extra_body %}
+	</body>
+</html>

@@ -76,15 +76,22 @@
 				--base-body-bg-color: var(--dark-color);
 			}
 
+			/* Gutter */
+
+			.g-content {
+				padding: var(--content-and-card-spacing-half);
+			}
+
+			.g-content > * {
+				padding: var(--content-and-card-spacing-half);
+			}
+
+			.g-content > * > .content,
+			.g-content > * > .card {
+				margin: 0;
+			}
+
 			/* Event cards */
-
-			.row-event-cards {
-				padding: var(--content-and-card-spacing-half);
-			}
-
-			.row-event-cards > * {
-				padding: var(--content-and-card-spacing-half);
-			}
 
 			.event-card {
 				--card-link-border-color-hover: var(--blue-color-light);
@@ -255,10 +262,10 @@
 				<!-- Footer start -->
 				<footer class="footer pt-10 mt-30">
 					<div class="container-xl">
-						<div class="row row-eq-spacing-md">
+						<div class="row g-content">
 							<!-- Follow us start -->
 							<div class="col-md-6 col-lg-3">
-								<div class="content pt-20 pt-md-0">
+								<div class="content">
 									<h5 class="content-title text-on-primary mt-0 mb-20">
 										Follow Us
 									</h5>
@@ -298,11 +305,10 @@
 							</div>
 							<!-- Follow us end -->
 
-
 							<!-- Need help start -->
 							<div class="col-md-6 col-lg-3">
-								<div class="content pt-20 pt-md-0">
-									<h5 class="content-title text-on-primary mt-0 mb-20">
+								<div class="content">
+									<h5 class="content-title text-on-primary mt-20 mt-md-0 mb-20">
 										Need Help?
 									</h5>
 									<div class="mt-10">
@@ -319,12 +325,10 @@
 							</div>
 							<!-- Need help end -->
 
-							<div class="v-spacer d-lg-none"></div>
-
 							<!-- Legal start -->
 							<div class="col-md-6 col-lg-3">
-								<div class="content pt-20 pt-lg-0">
-									<h5 class="content-title text-on-primary mt-0 mb-20">
+								<div class="content">
+									<h5 class="content-title text-on-primary mt-20 mt-lg-0 mb-20">
 										Legal
 									</h5>
 									<div class="mt-10">
@@ -348,8 +352,8 @@
 
 							<!-- Misc. start -->
 							<div class="col-md-6 col-lg-3">
-								<div class="content pt-20 pt-lg-0">
-									<div class="d-flex align-items-center fw-bold pe-none user-select-none">
+								<div class="content">
+									<div class="d-flex align-items-center fw-bold pe-none user-select-none mt-20 mt-lg-0">
 										<div class="ws-75">
 											<img src="{% static 'images/SocialPass-Icon-White.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
 										</div>

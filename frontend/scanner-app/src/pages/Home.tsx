@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 export function Home() {
-  const { data: eventData }: any = useEvent();
+  const { eventData }: any = useEvent();
 
   return (
     <>

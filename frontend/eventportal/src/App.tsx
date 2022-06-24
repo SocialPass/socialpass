@@ -13,38 +13,73 @@ import {
 import "./static/css/socialpass-theme.css";
 import "./static/css/halfmoon.css";
 import "./index.css";
+import RequiresEvent from "./utils/requiresEventHOC";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Error } from "./pages/Error";
 
 // Main CheckoutPortal component. Does a couple of things
 // 1. Setup CheckoutPortalProvider (react context)
 // 2. Setup WAGMI web3 provider (need to make optional in future)
 // 3. Setup Routes, which takes over logic handling
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 0 } },
+});
 const CheckoutPortal = () => {
   return (
     <BrowserRouter>
-      <base href="/" />{" "}
-      {/* set static asset to base path for relative imports */}
-      <EventPortalProvider>
-        <WagmiConfig client={web3Client}>
-          <StyledContainer>
-            <Routes>
-              <Route path="/:publicId" element={<Init />} />
-              <Route path="/:publicId/event" element={<Event />} />
-              <Route
-                path="/:publicId/ticket-selection"
-                element={<TicketSelection />}
-              />
-              <Route
-                path="/:publicId/checkout/blockchain"
-                element={<CheckoutWeb3 />}
-              />
-              <Route
-                path="/:publicId/checkout/status"
-                element={<CheckoutStatus />}
-              />
-            </Routes>
-          </StyledContainer>
-        </WagmiConfig>
-      </EventPortalProvider>
+      <QueryClientProvider client={queryClient}>
+        <EventPortalProvider>
+          <WagmiConfig client={web3Client}>
+            <StyledContainer>
+              <Routes>
+                <Route path="/:publicId">
+                  <Route
+                    path=""
+                    element={
+                      <RequiresEvent>
+                        <Init />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route
+                    path="event"
+                    element={
+                      <RequiresEvent>
+                        <Event />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route
+                    path="ticket-selection"
+                    element={
+                      <RequiresEvent>
+                        <TicketSelection />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route
+                    path="checkout/blockchain"
+                    element={
+                      <RequiresEvent>
+                        <CheckoutWeb3 />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route
+                    path="checkout/status"
+                    element={
+                      <RequiresEvent>
+                        <CheckoutStatus />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route path="error" element={<Error />} />
+                </Route>
+              </Routes>
+            </StyledContainer>
+          </WagmiConfig>
+        </EventPortalProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   );
 };

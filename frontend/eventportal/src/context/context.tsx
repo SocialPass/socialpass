@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { TicketedEventRetrieve } from "../api";
 import { CheckoutPortalContextInterface } from "../types";
+import { useQuery } from "react-query";
 
 export const CheckoutPortalContext =
   createContext<CheckoutPortalContextInterface>(
@@ -8,11 +9,7 @@ export const CheckoutPortalContext =
   );
 
 export const EventPortalProvider = ({ children }: { children: any }) => {
-  const [id, setID] = useState(
-    window.location.pathname.split("/")[1]
-      ? window.location.pathname.split("/")[1]
-      : ""
-  );
+  const [id, setID] = useState<string>("");
 
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
@@ -28,30 +25,37 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
   const [web3CheckoutSelection, setWeb3CheckoutSelection] = useState([]);
   const [eventStatusCheckout, setEventStatusCheckout] = useState(true);
 
-  useEffect(() => {
-    async function fetchEvent() {
-      if (id !== "/") {
-        const response = await TicketedEventRetrieve.call({ public_id: id });
-
-        if (response && response.httpStatus) {
-          if (response.httpStatus === 200) {
-            setRetrieveJson(response);
-          }
-          // error
-          else {
-            setRetrieveError(response);
-          }
-        }
-      }
+  const { status, isLoading, isError, data, refetch } = useQuery(
+    ["fetchEvent", id],
+    () => fetchEvent(id),
+    {
+      enabled: false,
     }
-    fetchEvent();
-  }, []);
+  );
+
+  useEffect(() => {
+    if (id) {
+      refetch();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    setRetrieveJson(data);
+  }, [data]);
+
+  function fetchEvent(publicId: String) {
+    return TicketedEventRetrieve.call({ public_id: publicId });
+  }
 
   return (
     <CheckoutPortalContext.Provider
       value={{
         id,
         setID,
+
+        status,
+        isLoading,
+        isError,
 
         web3CheckoutSelection,
         setWeb3CheckoutSelection,

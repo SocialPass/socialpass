@@ -20,7 +20,7 @@ export function Scanner() {
   const [waitingForScan, setWaitingForScan] = useState<Boolean>(false);
   const [qrCode, setQrcode] = useState(null);
   const navigate = useNavigate();
-  const { data: eventData, publicId }: any = useEvent();
+  const { eventData, setEventData, publicId }: any = useEvent();
   const { addToast, clearToasts } = useToast();
   const initialScanFailureBlock = {
     active: false,
@@ -51,7 +51,12 @@ export function Scanner() {
     setWaitingForScan(true);
     clearToasts();
     fetchScanTicket(publicId, qrCode)
-      .then(() => {
+      .then((data) => {
+        setEventData({
+          ...eventData,
+          ticket_count: data.ticket_count,
+          redeemed_count: data.redeemed_count,
+        });
         addToast({
           type: "success",
           title: "Succesful Scan",
@@ -101,17 +106,15 @@ export function Scanner() {
   }, []);
 
   useEffect(() => {
-    console.log(scanFailureBlock);
     if (!scanFailureBlock.active) {
-      console.log("Clear interval");
       if (scanFailureBlock.intervalId) {
+        console.log("Clear interval");
         clearInterval(scanFailureBlock.intervalId);
       }
       setScanFailureBlock(initialScanFailureBlock);
       setElapsedTime(0);
       return;
     }
-    console.log(scanFailureBlock);
 
     scanFailureBlock.intervalId = setInterval(() => {
       setElapsedTime((t) => t + STEP_TIME_IN_MS);
@@ -126,13 +129,11 @@ export function Scanner() {
     }
 
     if (elapsedTime < PROGRESS_TIME_IN_MS) {
-      console.log("ticking");
       setScanFailureBlock({
         ...scanFailureBlock,
         progress: (elapsedTime / PROGRESS_TIME_IN_MS) * MAX_PROGRESS,
       });
     } else {
-      console.log("reached max progress");
       setScanFailureBlock({
         ...initialScanFailureBlock,
         active: false,
@@ -141,14 +142,12 @@ export function Scanner() {
     }
   }, [elapsedTime]);
 
-  console.log(scanFailureBlock);
-
   return (
     <div className="scanner-body d-flex flex-column">
       <div className="btn-close" style={{ position: "absolute", zIndex: 1000 }}>
         <FiArrowLeft color="#f1f1f1" onClick={handleRedirect} size={26} />
       </div>
-      {/* <button onClick={e => handleScan(e.target.innerText)}>6fc9f02e-fb72-4073-ac03-2109e2ae8ab8</button> */}
+      {/* <button onClick={e => handleScan(e.target.innerText)}>eab2e6e7-9edf-4124-abf4-2c9accbe9dae/7d35e3e3-50d9-483e-908e-245d88e4f843</button> */}
       <div id="qr-scanner-container" className="flex-grow-1">
         <QrReader
           facingMode={"environment"}

@@ -19,7 +19,7 @@ export function Footer({
   event_venue,
   waitingForScan,
 }: FooterProps) {
-  const { data: eventData }: any = useEvent();
+  const { eventData }: any = useEvent();
   const navigate = useNavigate();
 
   function handleRedirect() {

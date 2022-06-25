@@ -100,24 +100,22 @@ class CheckoutPortalProcessTestCase(TestCase):
         cls.blockchain_ownership = create_testing_blockchain_ownership()
         return super().setUpTestData()
 
-    # def test_checkout_portal_process(self):
-    #     """
-    #     Access the event portal process checkout API and asserts Ownership ID.
-    #     """
-    #     event_id = str(self.event.public_id)
-    #     VALID_WALLET_ADDRESS = '0x82fa9d444b39259206d6cbAf24027196534c701E'
-    #     data = {
-    #         "wallet_address": VALID_WALLET_ADDRESS,
-    #         "signed_message": "ok",
-    #         "blockchain_ownership_id": self.blockchain_ownership.id,
-    #         "tickets_requested": "10"
-    #     }
-    #     print('AAAA', self.blockchain_ownership.signing_message)
-    #     content_type = "application/json"
-    #     response = self.client.post(f'/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership',
-    #                                 data=data, content_type=content_type)
-    #     print(response)
-    #     print(response.content)
+    @prevent_warnings
+    def test_checkout_portal_process_403_unable_to_validate(self):
+        """
+        Access the event portal process checkout API and asserts the signing message couldn't be validated by user.
+        """
+        event_id = str(self.event.public_id)
+        data = {
+            "wallet_address": "0x82fa9d444b39259206d6cbAf24027196534c701E",
+            "signed_message": "unused field",
+            "blockchain_ownership_id": self.blockchain_ownership.id,
+            "tickets_requested": "1"
+        }
+        content_type = "application/json"
+        response = self.client.post(f'/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership',
+                                    data=data, content_type=content_type)
+        self.assertContains(response, 'Unable to decode & validate blockchain_ownership', status_code=403)
 
     @prevent_warnings
     def test_checkout_portal_process_401_no_checkout_type(self):
@@ -131,7 +129,7 @@ class CheckoutPortalProcessTestCase(TestCase):
     @prevent_warnings
     def test_checkout_portal_process_403_invalid_wallet_address(self):
         """
-        Access the event portal process checkout API and asserts 40
+        Access the event portal process checkout API and asserts 403 invalid address
         """
         event_id = str(self.event.public_id)
         data = {

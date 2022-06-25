@@ -100,9 +100,7 @@ class Event(AllowDraft, DBModel):
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     # Basic Info
-    title = required_if_not_draft(
-        models.CharField(max_length=255, blank=False, unique=True)
-    )
+    title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = required_if_not_draft(models.CharField(max_length=255))
     description = required_if_not_draft(models.TextField())
     cover_image = models.ImageField(null=True, storage=MediaRootS3Boto3Storage())

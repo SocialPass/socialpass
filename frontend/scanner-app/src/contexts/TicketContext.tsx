@@ -1,5 +1,5 @@
 /* eslint-disable eqeqeq */
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { api } from "../services/api";
 import { useToast } from "./ToastContext";
 
@@ -15,32 +15,11 @@ type EventDataProps = {
   redemption_code: String;
 };
 
-
 const TicketProvider = ({ children }: any) => {
   const { addToast } = useToast();
   const [scanFlag, setScanFlag] = useState<String>("");
   const [eventData, setEventData] = useState<EventDataProps>();
   const [previousScannedCode, setPreviousScannedCode] = useState<String>("");
-
-  useEffect(() => {
-    const storedEventData = window.localStorage.getItem('eventData');
-    if (storedEventData) {
-      setEventData(JSON.parse(storedEventData));
-    }
-  }, [])
-
-  useEffect(() => {
-    if (eventData) {
-      window.localStorage.setItem(
-        'eventData', JSON.stringify(eventData)
-      )
-    }
-  }, [eventData])
-
-  async function bustEventDataCache(){
-    window.localStorage.removeItem('eventData');
-    setEventData(undefined);
-  }
 
   async function scanTicket(qrcode: any) {
     if (!eventData) {

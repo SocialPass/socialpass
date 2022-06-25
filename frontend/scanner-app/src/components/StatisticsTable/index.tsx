@@ -2,6 +2,13 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "react-query";
 import { useEvent } from "../../contexts/EventContext";
 import { fetchTickets } from "../../services/api";
+import { useTable, usePagination } from 'react-table';
+import MOCK_DATA from "./MOCK_DATA.json";
+import { COLUMNS } from "./columns";
+import "./table.css";
+
+
+
 
 export function StatisticsTable() {
   const { publicId }: any = useEvent();
@@ -9,6 +16,21 @@ export function StatisticsTable() {
     ["fetchTickets", publicId],
     () => fetchTickets(publicId, true)
   );
+  const columns = useMemo(() => COLUMNS, []);
+
+
+  const { getTableProps, getTableBodyProps, headerGroups, page, prepareRow } =
+    useTable({
+      columns,
+      data,
+    },
+    usePagination
+    );
+
+  useTable({
+    columns: COLUMNS,
+    data,
+  });
 
   if (isLoading) return <>Loading</>;
   if (isError) return <>Oops something went wrong</>;
@@ -22,10 +44,15 @@ export function StatisticsTable() {
       }
     }
     return console.log("Resultado: ", result);
+
+    
+
+
   }
 
   return (
     <div className="statistics-table-container d-flex flex-column align-items-center p-10">
+      {/*
       <table>
         <thead>
           <tr>
@@ -41,10 +68,37 @@ export function StatisticsTable() {
               <td>{ticket.wallet_address}</td>
               <td>{ticket.redeemed_at}</td>
             </tr>
-          ))}
+          ))
+          }
         </tbody>
       </table>
-      
+      */
+        }
+
+<table {...getTableProps()}>
+      <thead>
+        {headerGroups.map((headerGroup) => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column) => (
+              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+
+      <tbody {...getTableBodyProps()}>
+        {page.map((row) => {
+          prepareRow(row);
+          return (
+            <tr {...row.getRowProps()}>
+              {row.cells.map((cell) => {
+                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
     </div>
   );
 }

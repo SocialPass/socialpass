@@ -1,3 +1,8 @@
+EVENT_VISIBILITY = (
+    ("PUBLIC", "Public"),
+    ("PRIVATE", "Private"),
+)
+
 # Stores choices for model fields
 BLOCKCHAINS = (("EVM", "EVM"),)
 

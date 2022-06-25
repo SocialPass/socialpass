@@ -6,21 +6,19 @@ from . import views
 urlpatterns = [
     # General redirect
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
-    # Customer Accounts
+    # User Accounts
     path("accounts/", include("allauth.urls")),
     path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
-    # Customer invitations
-    path(
-        "accounts/accept-invite/<str:key>/",
-        views.AcceptInviteView.as_view(),
-        name="accept_invite",
-    ),
-    path("accounts/send-invite/", SendInvite.as_view(), name="send_invite"),
     # Team
     path(
         "team-create/",
         views.TeamCreateView.as_view(),
         name="team_create",
+    ),
+    path(
+        "team/accept-invite/<str:key>/",
+        views.TeamAcceptInviteView.as_view(),
+        name="team_accept_invite",
     ),
     path(
         "team-detail/<uuid:team_pk>/",

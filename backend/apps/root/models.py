@@ -1,7 +1,6 @@
 import os
 import typing
 import uuid
-from abc import ABC, abstractproperty
 from datetime import datetime, timedelta
 
 import boto3

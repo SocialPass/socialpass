@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.contrib.gis.db.models import PointField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
@@ -39,7 +38,10 @@ class EventLocation(DBModel):
     # The ISO 3166-1 2-character international code for the country
     country = models.CharField(max_length=2)
     # geodjango lat/long
-    point = PointField(geography=True, default="POINT(0.0 0.0)")
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
+    long = models.DecimalField(max_digits=9, decimal_places=6)
+    # TODO:
+    # point = PointField(geography=True, default="POINT(0.0 0.0)")
     """
     localized_address_display #The format of the address display localized to the address country
     localized_area_display	#The format of the address's area display localized to the address country
@@ -68,7 +70,7 @@ class Event(DBModel):
         verbose_name="time zone",
         max_length=30,
     )
-    # location = models.ForeignKey(EventLocation)
+    location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
     # TODO: Move these to TicketType

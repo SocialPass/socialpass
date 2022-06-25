@@ -41,7 +41,7 @@
 <!-- Hero section end -->
 
 <!-- Featured events section start -->
-{% if featured_events.count > 0 %}
+{% if not featured_events.count > 0 %}
     <section>
         <div class="container-xl">
             <!-- Header start -->
@@ -64,4 +64,174 @@
     </section>
 {% endif %}
 <!-- Featured events section end -->
+
+<!-- Host an event section start -->
+<section>
+    <div class="container-xl">
+        <!-- Header start -->
+        <div class="content d-flex align-items-center border-bottom pb-15 mb-0">
+            <h2 class="fsr-1 fw-700 text-strong lh-base m-0">
+                Host an Event
+            </h2>
+            <a href="{% url 'dashboard_redirect' %}" class="fw-bold ms-auto">
+                Let's Go <i class="fa-regular fa-angle-right ms-5"></i>
+            </a>
+        </div>
+        <!-- Header end -->
+
+        <!-- Row start -->
+        <div class="row g-content mt-40">
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-primary text-on-primary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-ticket"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-primary text-on-primary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-film"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-primary text-on-primary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-party-horn"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-primary text-on-primary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-gift"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+        </div>
+        <!-- Row end -->
+    </div>
+</section>
+<!-- Host an event section end -->
+
+<!-- Attend an event section start -->
+<section>
+    <div class="container-xl">
+        <!-- Header start -->
+        <div class="content d-flex align-items-center border-bottom pb-15 mb-0">
+            <h2 class="fsr-1 fw-700 text-strong lh-base m-0">
+                Attend an Event
+            </h2>
+            <a href="#" class="fw-bold ms-auto">
+                Browse <i class="fa-regular fa-angle-right ms-5"></i>
+            </a>
+        </div>
+        <!-- Header end -->
+
+        <!-- Row start -->
+        <div class="row g-content mt-40">
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-secondary text-on-secondary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-ticket"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-secondary text-on-secondary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-film"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-secondary text-on-secondary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-party-horn"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-3">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-secondary text-on-secondary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-duotone fa-gift"></i>
+                    </div>
+                    <h3 class="fsr-3 fw-700 text-strong mt-40 mb-0">
+                        Lorem Ipsum
+                    </h3>
+                    <p class="fsr-6 mt-10 mb-30">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+        </div>
+        <!-- Row end -->
+    </div>
+</section>
+<!-- Attend an event section end -->
 {% endblock content %}

@@ -55,7 +55,7 @@ class EventLocation(DBModel):
 
 class EventQuerySet(models.QuerySet):
     def drafts(self):
-        return self.filter(publish_date=None)
+        return self.filter(is_draft=True)
 
     def filter_published(self):
         return self.filter(publish_date__lte=datetime.now())
@@ -92,9 +92,7 @@ class Event(AllowDraft, DBModel):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
 
     # Publish info
-    visibility = required_if_not_draft(
-        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
-    )
+    is_draft = models.BooleanField(default=True)
     publish_date = models.TimeField(null=True, blank=True)
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
@@ -102,8 +100,13 @@ class Event(AllowDraft, DBModel):
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = required_if_not_draft(models.CharField(max_length=255))
     description = required_if_not_draft(models.TextField())
-    cover_image = models.ImageField(null=True, storage=MediaRootS3Boto3Storage())
-    categories = TaggableManager()
+    visibility = required_if_not_draft(
+        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
+    )
+    cover_image = models.ImageField(
+        blank=True, null=True, storage=MediaRootS3Boto3Storage()
+    )
+    categories = TaggableManager(blank=True)
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
     timezone = models.CharField(
@@ -154,10 +157,6 @@ class Event(AllowDraft, DBModel):
     @property
     def is_public(self):
         return self.visibility == "PUBLIC"
-
-    @property
-    def is_draft(self):
-        return self.publish_date is None
 
     @property
     def url_path(self):

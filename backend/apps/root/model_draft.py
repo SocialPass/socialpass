@@ -26,6 +26,7 @@ class AllowDraft:
             return
 
         # check for required fields if not draft
+        errors_dict = {}
         for field in self._meta.get_fields():
             if not getattr(field, "_required_if_not_draft", False):
                 continue
@@ -33,11 +34,14 @@ class AllowDraft:
             value = getattr(self, field.name)
 
             if value is None and not field._null_original:
-                raise dj_exceptions.ValidationError(
-                    f"{field.name}: {field.error_messages['null']}", code="null"
+                errors_dict[field.name] = dj_exceptions.ValidationError(
+                    field.error_messages["null"], code="null"
                 )
 
             if not field._blank_original and value in self.empty_values:
-                raise dj_exceptions.ValidationError(
-                    f"{field.name}: {field.error_messages['blank']}", code="blank"
+                errors_dict[field.name] = dj_exceptions.ValidationError(
+                    field.error_messages["blank"], code="blank"
                 )
+
+        if errors_dict:
+            raise dj_exceptions.ValidationError(errors_dict)

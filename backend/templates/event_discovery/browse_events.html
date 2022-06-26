@@ -54,7 +54,7 @@
             <!-- Event cards end -->
 
             <!-- Pagination start -->
-            <div class="content py-20 my-0 border-top d-flex align-items-center">
+            <div class="content py-20 mt-0 mb-30 border-top d-flex align-items-center">
                 <div>
                     {% if page_obj.has_previous %}
     	                <a class="btn btn-rounded text-primary fw-bold" href="?page={{ page_obj.previous_page_number }}">
@@ -87,7 +87,7 @@
             </div>
             <!-- Pagination end -->
         {% else %}
-            <div class="content py-20 my-0">
+            <div class="content py-20 mt-0 mb-30">
                 <div class="ws-400 mw-100 mx-auto text-center">
                     <img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="d-block w-100 h-auto">
                     <h5 class="fsr-3 text-strong">Nothing Found</h5>

@@ -5,9 +5,26 @@ import { fetchTickets } from "../../services/api";
 
 export function StatisticsTable() {
   const { publicId }: any = useEvent();
+  let isRedeemed = true;
+
+  function claimed()  {
+    isRedeemed = true
+    console.log(isRedeemed)
+  }
+  function unclaimed()  {
+    isRedeemed = false
+    console.log(isRedeemed)
+  }
+
+
+
+
+
+
+
   const { isLoading, isError, error, data } = useQuery(
     ["fetchTickets", publicId],
-    () => fetchTickets(publicId, true)
+    () => fetchTickets(publicId, isRedeemed)
   );
 
   if (isLoading) return <>Loading</>;
@@ -22,9 +39,21 @@ export function StatisticsTable() {
       }
     }
     return console.log("Resultado: ", result);
-  }
 
+    
+
+  }
+  
   return (
+    <div>
+    <div className="d-flex flex-row align-items-center px-20">
+          <button className="btn-selected-statistic flex-grow-1" onClick={claimed}>
+            Claimed
+          </button>
+          <button className="btn-selected-statistic flex-grow-1" onClick={unclaimed}>
+            Unclaimed
+          </button>
+        </div>
     <div className="statistics-table-container d-flex flex-column align-items-center p-10">
       <table>
         <thead>
@@ -35,6 +64,7 @@ export function StatisticsTable() {
           </tr>
         </thead>
         <tbody>
+        {console.log("data.map Executed")}
           {data.map((ticket: any) => (
             <tr key={ticket.public_id}>
               <td>{ticket.created}</td>
@@ -44,6 +74,7 @@ export function StatisticsTable() {
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

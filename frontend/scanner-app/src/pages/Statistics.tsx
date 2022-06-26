@@ -15,14 +15,6 @@ export function Statistics() {
     <div className="statistics-body">
       <div className="statistics-title py-20 px-10">
         {eventData.title}
-        <div className="d-flex flex-row align-items-center px-20">
-          <button className="btn-selected-statistic flex-grow-1">
-            Claimed
-          </button>
-          <button className="btn-selected-statistic flex-grow-1">
-            Unclaimed
-          </button>
-        </div>
         <StatisticsTable />
         <div className="container p-20 d-flex flex-column">
           <button

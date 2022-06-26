@@ -1,6 +1,9 @@
 from rest_framework import status
 from django.test import TestCase
 from apps.root.models import Event, Team, User, BlockchainOwnership
+from eth_account.messages import encode_defunct
+from web3.auto import w3
+from hexbytes import HexBytes
 from uuid import uuid4
 import logging
 
@@ -101,6 +104,56 @@ class CheckoutPortalProcessTestCase(TestCase):
         return super().setUpTestData()
 
     @prevent_warnings
+    # In progress, having trouble mocking data since it all comes through Moralis
+    def test_checkout_portal_process_200_ok(self):
+        """
+        Access the event portal process checkout API and asserts the checkout went OK.
+        """
+        event_id = str(self.event.public_id)
+        signing_message = self.blockchain_ownership.signing_message
+        test_wallet_private_key = '93b8a8d84221fff0f40e62107a9dc61ce883a4dc6b6be5a53b3dc5263be25845'
+        test_wallet_address = '0xbD58Ce6Fa4e7867b03568151c1107D22a612Ae12'
+
+        _msg = encode_defunct(text=signing_message)
+        _signed = w3.eth.account.sign_message(_msg, private_key=test_wallet_private_key)
+
+        data = {
+            "wallet_address": test_wallet_address,
+            "signed_message": _signed.signature.hex(),
+            "blockchain_ownership_id": self.blockchain_ownership.id,
+            "tickets_requested": "1"
+        }
+        print(data)
+        content_type = "application/json"
+        response = self.client.post(f'/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership',
+                                    data=data, content_type=content_type)
+        print(response.content)
+
+    @prevent_warnings
+    def test_checkout_portal_process_403_over_ticket_limit(self):
+        """
+        Access the event portal process checkout API and asserts 403 when requesting over the ticket limit.
+        """
+        event_id = str(self.event.public_id)
+        signing_message = self.blockchain_ownership.signing_message
+        test_wallet_private_key = '93b8a8d84221fff0f40e62107a9dc61ce883a4dc6b6be5a53b3dc5263be25845'
+        test_wallet_address = '0xbD58Ce6Fa4e7867b03568151c1107D22a612Ae12'
+
+        _msg = encode_defunct(text=signing_message)
+        _signed = w3.eth.account.sign_message(_msg, private_key=test_wallet_private_key)
+
+        data = {
+            "wallet_address": test_wallet_address,
+            "signed_message": _signed.signature.hex(),
+            "blockchain_ownership_id": self.blockchain_ownership.id,
+            "tickets_requested": self.event.limit_per_person + 1
+        }
+        content_type = "application/json"
+        response = self.client.post(f'/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership',
+                                    data=data, content_type=content_type)
+        self.assertContains(response, 'Tickets requested are over the limit per person', status_code=403)
+
+    @prevent_warnings
     def test_checkout_portal_process_403_unable_to_validate(self):
         """
         Access the event portal process checkout API and asserts the signing message couldn't be validated by user.
@@ -108,7 +161,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         event_id = str(self.event.public_id)
         data = {
             "wallet_address": "0x82fa9d444b39259206d6cbAf24027196534c701E",
-            "signed_message": "unused field",
+            "signed_message": "invalid message",
             "blockchain_ownership_id": self.blockchain_ownership.id,
             "tickets_requested": "1"
         }

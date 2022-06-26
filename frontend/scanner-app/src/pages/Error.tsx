@@ -13,7 +13,7 @@ export function Error() {
     <div className="error-footer">
       <header className="d-flex flex-row justify-content-between align-items-start py-4 px-4">
         <div className="py-2">
-          <div className="btn-back">
+          <div className="btn-back mt-30">
             <FiArrowLeft onClick={handleGoBack} size={26} />
           </div>
         </div>

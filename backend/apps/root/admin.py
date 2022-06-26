@@ -76,6 +76,7 @@ class TicketAdmin(admin.ModelAdmin):
     list_display = (
         "event",
         "blockchain_ownership",
+        "filename"
     )
     search_fields = (
         "event__title",

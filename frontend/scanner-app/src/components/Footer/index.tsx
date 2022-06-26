@@ -49,7 +49,7 @@ export function Footer({
         className="btn-statistics w-100 mb-20 mt-20"
         onClick={handleRedirect}
       >
-        Statistics
+        Statistics (Coming Soon)
       </button>
     </div>
   );

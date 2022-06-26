@@ -9,11 +9,11 @@ export function StatisticsTable() {
 
   function claimed()  {
     isRedeemed = true
-    console.log(isRedeemed)
+    console.log("isRedeemed: ", isRedeemed)
   }
   function unclaimed()  {
     isRedeemed = false
-    console.log(isRedeemed)
+    console.log("isRedeemed: ", isRedeemed)
   }
 
 

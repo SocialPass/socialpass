@@ -322,7 +322,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
     """
 
     model = Event
-    context_object_name = "tokengate"
+    context_object_name = "event"
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):

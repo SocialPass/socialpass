@@ -10,17 +10,14 @@
 <div class="border-bottom">
   <div class="p-content row g-1 justify-content-between">
     <div class="col-12 col-lg-8 align-self-center">
-      <h1 class="content-title m-0 fs-base-p6">Event Checkout: {{event.title}}</h1>
+      <h1 class="content-title m-0 fs-base-p6">Checkout: {{event.title}}</h1>
       <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-        Please, confirm the information of the Ticket Gate before heading to checkout.
+        Please, confirm the information of the Event before heading to checkout.
+        <br/>
         All this information, with exception of the capacity may be edited later.
       </p>
     </div>
     <div class="col-12 col-lg-3 d-flex flex-wrap justify-content-end">
-      <form method="post">
-        {% csrf_token %}
-        <input type="submit" class="btn text-primary m-0" value="Procceed to Checkout" />
-      </form>
       <div class="ms-auto align-self-center">
         <a href="{% url 'ticketgate_update' current_team.public_id event.pk %}" class="btn btn-block text-primary">
         <i class="fa-regular fa-edit"></i>
@@ -139,28 +136,26 @@
   <!-- Main content end -->
 
 
+
   <!-- Event Links start -->
   <div class="col-lg-6">
     <div class="content w-100">
-      <h1 class="content-title m-0 fs-base-p6">Event Links</h1>
+      <h1 class="content-title m-0 fs-base-p6">Checkout Summary</h1>
       <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-      Use these links to get started hosting your event
+      Review your event below before continuing to checkout
       </p>
-      <div class="border-bottom">
-        <h6>Checkout Portal</h6>
-        <p>Lorem ipsum...</p>
-        <a href="{{event.ticket_redemption_keys.first.scanner_url}}" target="_blank">{{event.ticket_redemption_keys.first.scanner_url}}</a>
-      </div>
       <div>
-        <h6>Ticket Scanner</h6>
-        <p>Lorem ipsum...</p>
-        <a href="{{event.checkout_portal_url}}" target="_blank">{{event.checkout_portal_url}}</a>
+        <p class="mb-0">Event Ticketing Costs: <strong>${{event.price}}</strong></p>
+        <small>({{event.capacity}} tickets x ${{event.pricing_rule.price_per_ticket}})</small>
+        <form method="post" class="mt-10">
+          {% csrf_token %}
+          <input type="submit" class="btn btn-lg btn-primary m-0" value="Procceed to Checkout" />
+        </form>
       </div>
       </div>
     </div>
   </div>
   <!-- Event links end -->
-
 
   <!-- Card footer start -->
   <div class="px-card py-10 border-top text-muted fs-base-n2">

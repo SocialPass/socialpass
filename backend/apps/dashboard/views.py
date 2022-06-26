@@ -433,7 +433,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         )
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs, tokengate=self.get_object())
+        return super().get_context_data(**kwargs, event=self.get_object())
 
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""

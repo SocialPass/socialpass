@@ -64,3 +64,10 @@ EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX",
     default="[SocialPass]",
 )
+
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+PRIVATE_TICKET_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+STATIC_ROOT = "local_static/"
+MEDIA_ROOT = "media/"

@@ -74,15 +74,13 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(TicketRedemptionKey)
 class TicketRedemptionKeyAdmin(admin.ModelAdmin):
+    list_display = ("public_id",)
     pass
 
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = (
-        "event",
-        "blockchain_ownership",
-    )
+    list_display = ("event", "blockchain_ownership", "full_embed")
     search_fields = (
         "event__title",
         "blockchain_ownership",

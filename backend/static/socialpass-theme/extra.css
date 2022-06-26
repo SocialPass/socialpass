@@ -1,0 +1,6 @@
+/* Event create */
+
+.navigation-container {
+    position: sticky;
+    top: var(--navbar-height)
+}

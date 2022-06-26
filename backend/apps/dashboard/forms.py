@@ -5,6 +5,7 @@ from invitations.forms import InviteForm
 
 from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.models import Event
 
 
@@ -35,26 +36,46 @@ class EventForm(forms.ModelForm):
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
-    date = forms.DateTimeField(
+    start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             format="%Y-%m-%dT%H:%M",
             attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
-        )
+        ),
+        required=False,
+    )
+    visibility = forms.CharField(
+        label="Visibility",
+        widget=forms.RadioSelect(choices=EVENT_VISIBILITY),
+        required=False,
     )
 
     class Meta:
         model = Event
         fields = [
+            "is_draft",
+            # 1. General info
+            # basic info
             "title",
-            "description",
-            "location",
-            "date",
+            "organizer",
+            # "categories",
+            "visibility",
+            # location
+            # TODO
+            # date and time
+            "start_date",
+            "end_date",
             "timezone",
+            # cover image
+            "cover_image",
+            # description
+            "description",
+            # 2. Requirements
+            "requirements",
+            # 3. Tickets
             "capacity",
             "limit_per_person",
-            "requirements",
         ]
-        widgets = {"requirements": forms.HiddenInput()}
+        widgets = {"is_draft": forms.HiddenInput(), "requirements": forms.HiddenInput()}
 
     def can_edit_capacity(self) -> bool:
         if self.instance is None:

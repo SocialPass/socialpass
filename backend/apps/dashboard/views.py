@@ -332,7 +332,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
         return qs
 
 
-class EventCreateView(TeamContextMixin, AvoidRessubmissionCreateViewMixin, CreateView):
+class EventCreateView(TeamContextMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
@@ -354,6 +354,7 @@ class EventCreateView(TeamContextMixin, AvoidRessubmissionCreateViewMixin, Creat
         return context
 
     def form_valid(self, form, **kwargs):
+        print("sup")
         # set rest of form
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
@@ -363,13 +364,22 @@ class EventCreateView(TeamContextMixin, AvoidRessubmissionCreateViewMixin, Creat
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse(
-            "ticketgate_checkout",
-            args=(
-                self.kwargs["team_pk"],
-                self.object.pk,
-            ),
-        )
+        if self.object.is_draft:
+            return reverse(
+                "ticketgate_update",
+                args=(
+                    self.kwargs["team_pk"],
+                    self.object.pk,
+                ),
+            )
+        else:
+            return reverse(
+                "ticketgate_checkout",
+                args=(
+                    self.kwargs["team_pk"],
+                    self.object.pk,
+                ),
+            )
 
 
 class EventUpdateView(TeamContextMixin, UpdateView):
@@ -395,6 +405,18 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         return context
 
     def get_success_url(self):
+        if self.object.is_draft:
+            messages.add_message(
+                self.request, messages.SUCCESS, "Draft saved successfully."
+            )
+            return reverse(
+                "ticketgate_update",
+                args=(
+                    self.kwargs["team_pk"],
+                    self.object.pk,
+                ),
+            )
+
         messages.add_message(
             self.request, messages.SUCCESS, "Token gate updated successfully."
         )

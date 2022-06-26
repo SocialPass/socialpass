@@ -99,7 +99,7 @@ class Event(AllowDraft, DBModel):
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = required_if_not_draft(models.CharField(max_length=255))
-    description = required_if_not_draft(models.TextField())
+    description = models.TextField()
     visibility = required_if_not_draft(
         models.CharField(max_length=50, choices=EVENT_VISIBILITY)
     )
@@ -114,7 +114,8 @@ class Event(AllowDraft, DBModel):
         verbose_name="time zone",
         max_length=30,
     )
-    location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
+    location = models.CharField(max_length=1024)
+    # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
     # TODO: Move these to TicketType
@@ -124,9 +125,7 @@ class Event(AllowDraft, DBModel):
         null=True,
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
-    capacity = required_if_not_draft(
-        models.IntegerField(validators=[MinValueValidator(1)])
-    )
+    capacity = models.IntegerField(validators=[MinValueValidator(1)])
     limit_per_person = required_if_not_draft(
         models.IntegerField(
             default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]

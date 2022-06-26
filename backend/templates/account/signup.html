@@ -46,7 +46,11 @@
 						{{ k }}="{{ v }}"
 					{% endfor %}
 					{% if input.name == "email" %}
-						{% if input.value %}readonly="readonly"{% endif %}
+						{% if input.value %}
+            readonly="readonly"
+            {% else %}
+            autofocus="true"
+            {% endif %}
 					{% endif %}
 					{% if input.name == "username" %}
 						autofocus="true"

@@ -77,7 +77,7 @@ class TicketRedemptionKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("event", "blockchain_ownership", "filename")
+    list_display = ("event", "blockchain_ownership", "full_embed")
     search_fields = (
         "event__title",
         "blockchain_ownership",

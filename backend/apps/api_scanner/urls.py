@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path(
-        "<uuid:access_key>/event",
+        "<uuid:access_key>/event/",
         views.EventRetrieve.as_view(),
         name="event_scan_info",
     ),

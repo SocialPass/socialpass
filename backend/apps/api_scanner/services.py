@@ -45,7 +45,7 @@ def redeem_ticket(ticket: Ticket, redemption_access_key: TicketRedemptionKey = N
 
     ticket.redeemed = True
     ticket.redeemed_at = datetime.now()
-    ticket.redemption_access_key = redemption_access_key
+    ticket.redeemed_by = redemption_access_key
     ticket.save()
 
     return ticket

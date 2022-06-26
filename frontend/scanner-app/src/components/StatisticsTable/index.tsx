@@ -44,7 +44,6 @@ export function StatisticsTable() {
           ))}
         </tbody>
       </table>
-      
     </div>
   );
 }

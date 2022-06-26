@@ -8,9 +8,7 @@ def get_user_primary_email(context):
     request = context["request"]
     primary_email = "Not set"
 
-    for email in request.user.emailaddress_set.all():
-        if email.primary:
-            primary_email = email
-            continue
+    if request.user.email:
+        primary_email = request.user.email
 
     return primary_email

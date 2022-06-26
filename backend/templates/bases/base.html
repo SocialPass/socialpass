@@ -14,6 +14,10 @@
 		<!-- Fav icon -->
 		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
 
+		<!--This block is here because while the new UX is not ready, some components from bootstrap that are not defined in halfmoon are being used.
+			For the sake of safety, bootstrap will only be imported at ticketgate_form -->
+		{% block wip_event_creation_ux%}{% endblock %}
+
 		<!-- Halfmoon CSS -->
 		{% if debug %}
 			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
@@ -60,6 +64,7 @@
 
 		{% block extra_head %}{% endblock extra_head %}
 	</head>
+	{% with request.resolver_match.url_name as url_name %}
 	<body>
 		{% block body %}{% endblock body %}
 
@@ -96,4 +101,5 @@
 
 		{% block extra_body %}{% endblock extra_body %}
 	</body>
+	{% endwith %}
 </html>

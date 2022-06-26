@@ -1,118 +1,165 @@
-{% extends 'dashboard/base.html' %}
-{% load static i18n get_chain_name %}
+{% extends "bases/base_primary.html" %}
+{% load static get_user_primary_email %}
 
-{% block title %}{{ tokengate.title }} - SocialPass {% endblock %}
+{% block head_title %}Event Details - SocialPass{% endblock head_title %}
 
-{% block navbar_page_name_1 %}Ticket Gate Detail{% endblock %}
-{% block navbar_page_name_2 %}Ticket Gate Detail{% endblock %}
+{% block navbar_breadcrumb %}Event Details{% endblock %}
 
 {% block content %}
-<div class="row">
-	<div class="col-sm-10 col-md-8 mx-auto">
-		<div class="card mb-4">
-			<div class="card-header py-0">
-				<div class="d-flex align-items-center py-3">
-					<div class="pe-2">
-						<h6 class="m-0">Ticket Gate Detail</h6>
-						<div class="text-muted text-xs mb-3">
-							Details of a particular token gate.
-						</div>
-					</div>
-					<a href="{% url 'ticketgate_update' view.kwargs.team_pk tokengate.pk %}" class="btn bg-gradient-primary btn-sm ms-auto my-0">Edit</a>
-				</div>
-			</div>
-			<div class="card-body py-2">
-				<div>
-					<h1 class="fw-bold fs-3">{{ tokengate.title }}</h1>
-					<div class="text-muted text-xs mb-3">
-						<div>
-							Created: {{ tokengate.created }}
-						</div>
-						<div class="mt-1">
-							Modified: {{ tokengate.modified }}
-						</div>
-					</div>
-					{% if tokengate.description %}
-					<p class="text-muted">{{ tokengate.description }}</p>
-					{% else %}
-					<p class="text-muted">Description not set.</p>
-					{% endif %}
-				</div>
-				<div class="table-responsive p-0">
-					<table class="table align-items-center mb-0">
-						<tbody>
-							<tr>
-								<td class="align-middle fw-bold">
-									Date
-								</td>
-								<td class="align-middle">
-									{{ tokengate.date.date }}
-								</td>
-							</tr>
-							<tr>
-								<td class="align-middle fw-bold">
-									Location
-								</td>
-								<td class="align-middle">
-									{{ tokengate.location }}
-								</td>
-							</tr>
-							<tr>
-								<td class="align-middle fw-bold">
-									Capacity
-								</td>
-								<td class="align-middle">
-									{{ tokengate.capacity }}
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="my-3 mb-lg-4">
-					<h5 class="fw-bold fs-5">Requirements</h5>
-					<div class="text-muted text-xs mb-3">
-						The following must be fulfilled in order to access this token gate.
-					</div>
-					{% if tokengate.requirements %}
-					<pre class="bg-light px-4 rounded"><br />{% for item in tokengate.requirements %}Requirement {{ forloop.counter }}<br />-------------<br />{% for k, v in item.items %}<span class="text-primary fw-bold">{{ k }}</span>: {{ v }}<br />{% endfor %}<br />{% endfor %}</pre>
-					{% else %}
-					<pre class="bg-light p-3 rounded">No Requirements</pre>
-					{% endif %}
-				</div>
-				<div class="my-3 mb-lg-4">
-					<h5 class="fw-bold fs-5">Links</h5>
-					<div class="text-muted text-xs mb-3">
-						Below you can find:
-						<ul>
-							<li><strong>Ticket Store</strong> link to share with your potential attendees;</li>
-							<li><strong>Scanner</strong> link to scan the tickets for this event at the entrance.</li>
-						</ul>
-					</div>
-					<div class="table-responsive p-0">
-						<table class="table align-items-center mb-0">
-							<tbody>
-								<tr>
-									<td class="align-middle fw-bold">
-										Checkout Portal
-									</td>
-									<td class="align-middle">
-										<a href="{{tokengate.checkout_portal_url}}" target="_blank">{{tokengate.checkout_portal_url}}</a>
-									</td>
-								</tr>
-								<tr>
-									<td class="align-middle fw-bold">
-										Ticket Scanner
-									</td>
-									<td class="align-middle">
-										<a href="{{tokengate.ticket_redemption_keys.first.scanner_url}}" target="_blank">{{tokengate.ticket_redemption_keys.first.scanner_url}}</a>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+  <div class="p-content d-flex h-100">
+  <div class="pe-15 align-self-center">
+    <h1 class="content-title m-0 fs-base-p6">Event Details</h1>
+    <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+    Detailed breakdown of your team's event
+    </p>
+  </div>
+  <div class="ms-auto align-self-center">
+    <a href="{% url 'ticketgate_update' current_team.public_id event.pk %}" class="btn text-primary ">
+    <i class="fa-regular fa-edit"></i>
+    <span class="ms-5 d-none d-sm-inline">Update Event</span>
+    </a>
+  </div>
+  </div>
 </div>
-{% endblock %}
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+  <!-- Card header start -->
+  <div class="px-card py-10 border-bottom">
+  <span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 ">
+    Event Details
+  </span>
+  </div>
+  <!-- Card header end -->
+
+  <div class="row">
+  <!-- Main content start -->
+  <div class="col-lg-6 border-lg-end">
+    <div class="content">
+    <!-- Event cover_image and name start -->
+    <div class="d-flex align-items-center">
+      {% if event.cover_image %}
+      <div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
+        <img src="{{ event.cover_image.url }}" class="img-fluid" alt="{{ event.title }} cover_image">
+      </div>
+      {% else %}
+      <div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
+        <span class="text-uppercase fsr-3 ">{{ event.title|slice:"0:1" }}</span>
+      </div>
+      {% endif %}
+      <div class="ps-20 overflow-hidden">
+      <p class="text-muted m-0 mb-5 text-truncate">{{ event.team.name }}</p>
+      <h2 class="fsr-3 fw-700 m-0 text-truncate">{{ event.title }}</h2>
+      </div>
+    </div>
+    <!-- Event cover_image and name end -->
+
+    <!-- Event dates start -->
+    <p class="mb-5">
+      <strong>Created: </strong> <span class="text-muted">{{ event.created }}</span>
+    </p>
+    <p class="mt-5">
+      <strong>Updated: </strong> <span class="text-muted">{{ event.modified }}</span>
+    </p>
+    <!-- Event dates end -->
+
+
+    <!-- Event Info table start -->
+    <div class="table-responsive scroll-shadow-content-x">
+      <table class="table list-table">
+        <tbody>
+          <tr>
+            <td class=" ps-0">
+              Start Date
+            </td>
+            <td>
+              {{ event.start_date.date }}
+            </td>
+          </tr>
+          <tr>
+            <td class=" ps-0">
+              End Date
+            </td>
+            <td>
+              {{ event.end_date.date }}
+            </td>
+          </tr>
+          <tr>
+            <td class=" ps-0">
+              Location
+            </td>
+            <td>
+              {{ event.location }}
+            </td>
+          </tr>
+          <tr>
+            <td class=" ps-0">
+              Capacity
+            </td>
+            <td>
+              {{ event.capacity }}
+            </td>
+          </tr>
+          <tr>
+            <td class=" ps-0">
+              Categories
+            </td>
+            <td>
+              {{ event.categories }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <!-- Event Info table end -->
+
+    <!-- Blockchain Requirements start -->
+    <h3 class="card-title fs-base-p4 mt-40 mb-0">Blockchain Requirements</h3>
+    <div class="text-muted text-xs mb-3">
+      The following must be fulfilled in order to access this event.
+    </div>
+    {% if event.requirements %}
+    <pre class="bg-light p-0"><br />{% for item in event.requirements %}Requirement {{ forloop.counter }}<br />-------------<br />{% for k, v in item.items %}<span class="text-primary ">{{ k }}</span>: {{ v }}<br />{% endfor %}<br />{% endfor %}</pre>
+    {% else %}
+    <pre class="bg-light rounded">No Requirements</pre>
+    {% endif %}
+    <!-- Blockchain Requirements end -->
+    </div>
+  </div>
+  <!-- Main content end -->
+
+
+  <!-- Event Links start -->
+  <div class="col-lg-6">
+    <div class="content w-100">
+      <h1 class="content-title m-0 fs-base-p6">Event Links</h1>
+      <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+      Use these links to get started hosting your event
+      </p>
+      <div class="border-bottom">
+        <h6>Checkout Portal</h6>
+        <p>Lorem ipsum...</p>
+        <a href="{{event.ticket_redemption_keys.first.scanner_url}}" target="_blank">{{event.ticket_redemption_keys.first.scanner_url}}</a>
+      </div>
+      <div>
+        <h6>Ticket Scanner</h6>
+        <p>Lorem ipsum...</p>
+        <a href="{{event.checkout_portal_url}}" target="_blank">{{event.checkout_portal_url}}</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <!-- Event links end -->
+
+
+  <!-- Card footer start -->
+  <div class="px-card py-10 border-top text-muted fs-base-n2">
+  Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="">contact us</a> and let us know if you think something is wrong.
+  </div>
+  <!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock content %}

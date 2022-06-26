@@ -47,9 +47,9 @@ class EventForm(forms.ModelForm):
         fields = [
             "title",
             "description",
+            "location",
             "date",
             "timezone",
-            "location",
             "capacity",
             "limit_per_person",
             "requirements",

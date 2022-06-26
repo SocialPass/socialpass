@@ -87,8 +87,7 @@ def set_event_price(event: Event):
 def get_event_pending_payment_value(event: Event):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = Decimal(
-        get_effective_payments(event.payments).aggregate(Sum("value"))["value__sum"]
-        or 0
+        get_effective_payments(event.payments).aggregate(Sum("value"))["value__sum"] or 0
     )
     return max((event.price or 0) - effective_payments_value, 0)
 

@@ -10,7 +10,8 @@ create: ## Create virtual environment
 setup: ## Install backend requirements
 	(source venv/bin/activate; \
 	pip3 install --upgrade pip; \
-	pip3 install -r config/requirements/local.txt; )
+	pip3 install -r config/requirements/local.txt; \
+	pre-commit install;)
 
 collect: ## collectstatic backend
 	(source venv/bin/activate; python3.10 manage.py collectstatic --no-input)

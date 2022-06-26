@@ -1,25 +1,17 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { TicketedEventRetrieve } from "../api";
 import { CheckoutPortalContextInterface } from "../types";
+import { useQuery } from "react-query";
 
-export const CheckoutPortalContext = createContext<CheckoutPortalContextInterface>(
-  {} as CheckoutPortalContextInterface
-);
+export const CheckoutPortalContext =
+  createContext<CheckoutPortalContextInterface>(
+    {} as CheckoutPortalContextInterface
+  );
 
-export const CheckoutPortalProvider = ({ children }: { children: any }) => {
-  const [id, setID] = useState(() => {
-    const data = localStorage.getItem("@eventId");
-    if (data == null) {
-      return "";
-    }
-    return JSON.parse(data);
-  });
-  const [retrieveJson, setRetrieveJson] = useState(() => {
-    const data = localStorage.getItem("@retrieveJson");
-    if (data == null) {
-      return null;
-    }
-    return JSON.parse(data);
-  });
+export const EventPortalProvider = ({ children }: { children: any }) => {
+  const [id, setID] = useState<string>("");
+
+  const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
 
   const [requestAccessJson, setRequestAccessJson] = useState(null);
@@ -33,11 +25,37 @@ export const CheckoutPortalProvider = ({ children }: { children: any }) => {
   const [web3CheckoutSelection, setWeb3CheckoutSelection] = useState([]);
   const [eventStatusCheckout, setEventStatusCheckout] = useState(true);
 
+  const { status, isLoading, isError, data, refetch } = useQuery(
+    ["fetchEvent", id],
+    () => fetchEvent(id),
+    {
+      enabled: false,
+    }
+  );
+
+  useEffect(() => {
+    if (id) {
+      refetch();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    setRetrieveJson(data);
+  }, [data]);
+
+  function fetchEvent(publicId: String) {
+    return TicketedEventRetrieve.call({ public_id: publicId });
+  }
+
   return (
     <CheckoutPortalContext.Provider
       value={{
         id,
         setID,
+
+        status,
+        isLoading,
+        isError,
 
         web3CheckoutSelection,
         setWeb3CheckoutSelection,

@@ -10,10 +10,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name="event",
-            name="location",
-            field=models.CharField(default="", max_length=1024),
-            preserve_default=False,
-        ),
+        # migrations.AlterField(
+        #     model_name="event",
+        #     name="location",
+        #     field=models.CharField(default="", max_length=1024),
+        #     preserve_default=False,
+        # ),
     ]

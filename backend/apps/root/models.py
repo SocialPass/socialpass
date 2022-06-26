@@ -13,7 +13,11 @@ from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from apps.root.model_draft import AllowDraft, required_if_not_draft
+from apps.root.model_draft import (
+    AllowDraft,
+    change_draft_validation_message,
+    required_if_not_draft,
+)
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from config.storages import MediaRootS3Boto3Storage, PrivateTicketStorage
 
@@ -99,7 +103,7 @@ class Event(AllowDraft, DBModel):
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = required_if_not_draft(models.CharField(max_length=255))
-    description = models.TextField()
+    description = required_if_not_draft(models.TextField())
     visibility = required_if_not_draft(
         models.CharField(max_length=50, choices=EVENT_VISIBILITY)
     )
@@ -114,7 +118,7 @@ class Event(AllowDraft, DBModel):
         verbose_name="time zone",
         max_length=30,
     )
-    location = models.CharField(max_length=1024)
+    location = required_if_not_draft(models.CharField(max_length=1024))
     # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
@@ -125,7 +129,9 @@ class Event(AllowDraft, DBModel):
         null=True,
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
-    capacity = models.IntegerField(validators=[MinValueValidator(1)])
+    capacity = required_if_not_draft(
+        models.IntegerField(validators=[MinValueValidator(1)])
+    )
     limit_per_person = required_if_not_draft(
         models.IntegerField(
             default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
@@ -152,6 +158,14 @@ class Event(AllowDraft, DBModel):
 
     def __str__(self):
         return f"{self.team} - {self.title}"
+
+    @property
+    def is_published(self):
+        return self.publish_date is not None
+
+    @property
+    def is_scheduled(self):
+        return self.publish_date > datetime.now()
 
     @property
     def is_public(self):

@@ -35,8 +35,17 @@ class EventForm(forms.ModelForm):
     - price is updated when capacity is changed.
     """
 
-    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+    timezone = forms.ChoiceField(
+        choices=[("", "")] + [(x, x) for x in pytz.common_timezones], required=False
+    )
     start_date = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+        ),
+        required=False,
+    )
+    end_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             format="%Y-%m-%dT%H:%M",
             attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
@@ -57,9 +66,11 @@ class EventForm(forms.ModelForm):
             # basic info
             "title",
             "organizer",
+            "description",
             # "categories",
             "visibility",
             # location
+            "location",
             # TODO
             # date and time
             "start_date",
@@ -67,13 +78,14 @@ class EventForm(forms.ModelForm):
             "timezone",
             # cover image
             "cover_image",
-            # description
-            "description",
             # 2. Requirements
             "requirements",
             # 3. Tickets
             "capacity",
             "limit_per_person",
+            # 4. Publish
+            "publish_date",
+            "custom_url_path",
         ]
         widgets = {"is_draft": forms.HiddenInput(), "requirements": forms.HiddenInput()}
 

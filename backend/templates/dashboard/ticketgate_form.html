@@ -21,16 +21,45 @@
 <div class="row event-form">
   <div class="col col-12 col-sm-4">
     <div class="navigation-container py-30 px-10">
-      sticky content
-      <a href="#bottom">go down</a>
+      Create event
+      {% if form.instance.is_draft %}
+        (Draft)
+      {% elif not form.instance.is_published %}
+        (Staged)
+      {% elif not form.instance.is_scheduled %}
+        (Scheduled)
+      {% else %}
+        (Published)
+      {% endif %}
+      <ol>
+        <li>
+          <a href="#1-general-info">General Info</a>
+          <ul>
+            <li><a href="#1-1-basic-info">Basic Info</a></li>
+            <li><a href="#1-2-location">Location</a></li>
+            <li><a href="#1-3-date-and-time">Date and Time</a></li>
+            <li><a href="#1-4-main-event-image">Cover Image</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#2-blockchain-requirements">Blockchain Requirements</a>
+        </li>
+        <li>
+          <a href="#3-tickets">Tickets Selection</a>
+        </li>
+        <li>
+          <a href="#4-publish" disabled>Publish</a>
+        </li>
+      </ol>
 
-      <button onclick="saveAsDraft()">Save Draft</button>
-      <button onclick="submitForReview()">Submit and Review</button>
+      <button onclick="saveAsDraft()">Save as Draft</button>
+      <button onclick="submitForReview()">Stage for Publication</button>
     </div>
   </div>
   <div class="col col-12 col-sm-8 py-30 px-10">
     <form id="create-event-form" class="form" method="post">
       {% csrf_token %}
+      {{ form.is_draft }}
       <section id="1-general-info">
         <div class="row">
           <span style="line-height: 40px; height: 40px; width: 40px; text-align: center"
@@ -53,10 +82,18 @@
             </div>
           </div>
           <div>
-          <div class="form-group col-md-6 mb-0">
-            {{form.title|as_crispy_field}}
-            {{form.organizer|as_crispy_field}}
-
+            <div class="form-group col-md-6 mb-10">
+              {{form.title|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-6 mb-10">
+              {{form.organizer|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-6 mb-10">
+              {{form.description|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-6 mb-10">
+              {{form.visibility|as_crispy_field}}
+            </div>
           </div>
         </section>
         <hr/>
@@ -69,6 +106,11 @@
               <h2 class="card-title fs-base-p4 mb-0">Location</h2>
               <p class="text-muted mt-0 mb-0 fs-base-n2">Help people in the area discover your event and let
                 attendees know where to show up.</p>
+            </div>
+            <div>
+              TODO!
+              <br>
+              Location field here
             </div>
           </div>
           <div>
@@ -88,8 +130,15 @@
             </div>
           </div>
           <div>
-              forms
-          </div>
+            <div class="form-group col-md-6 mb-10">
+              {{form.start_date|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-6 mb-10">
+              {{form.end_date|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-6 mb-10">
+              {{form.timezone|as_crispy_field}}
+            </div>
         </section>
         <hr/>
         <section id="1-4-main-event-image">
@@ -103,8 +152,8 @@
                 banner image attendees will se when purchasing the tickets.</p>
             </div>
           </div>
-          <div>
-              forms
+          <div class="form-group col-md-6 mb-10">
+            {{form.cover_image|as_crispy_field}}
           </div>
         </section>
       </section>
@@ -119,6 +168,7 @@
         </div>
         <p class="text-muted mt-0 mb-0 fs-base-n2">Please provide the NFT or SocialToken information required to redeeem or purchase a ticket to your event.</p>
         <hr/>
+        {{form.requirements|as_crispy_field}}
       </section>
       <hr/>
       <section id="3-tickets">
@@ -130,9 +180,23 @@
           <h1 style="line-height: 40px" class="col content-title m-0 fs-base-p6">Ticket Selections</h1>
         </div>
         <p class="text-muted mt-0 mb-0 fs-base-n2">Coming soon! Sell different tickets for an event.</p>
+        {{form.capacity|as_crispy_field}}
+        {{form.limit_per_person|as_crispy_field}}
+      </section>
+      <hr/>
+      <section id="4-publish">
+        <div class="row">
+          <span style="line-height: 40px; height: 40px; width: 40px; text-align: center"
+                class="col-1 rounded-circle bg-primary text-on-primary content-title m-0 fs-base-p6 ml-1">
+            4
+          </span>
+          <h1 style="line-height: 40px" class="col content-title m-0 fs-base-p6">Publish</h1>
+        </div>
+        <p class="text-muted mt-0 mb-0 fs-base-n2">Make your event publicly available</p>
+        {{form.publish_date|as_crispy_field}}
+        {{form.custom_url_path|as_crispy_field}}
       </section>
     </form>
   </div>
 </div>
 {% endblock %}
-body > div.page-wrapper.with-navbar.with-sidebar > div.content-wrapper.min-vh-100.d-flex.flex-column > div.py-content.pt-0 > div > div.col.col-12.col-sm-4 > div

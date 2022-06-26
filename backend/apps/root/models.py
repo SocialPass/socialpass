@@ -1,16 +1,20 @@
 import os
+import typing
 import uuid
 from datetime import datetime, timedelta
 
 import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core import exceptions as dj_exceptions
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
+from apps.root.model_draft import AllowDraft, required_if_not_draft
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from config.storages import MediaRootS3Boto3Storage, PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
@@ -49,21 +53,58 @@ class EventLocation(DBModel):
     """
 
 
-class Event(DBModel):
+class EventQuerySet(models.QuerySet):
+    def drafts(self):
+        return self.filter(publish_date=None)
+
+    def filter_published(self):
+        return self.filter(publish_date__lte=datetime.now())
+
+    def filter_scheduled(self):
+        return self.filter(publish_date__gt=datetime.now())
+
+    def filter_public(self):
+        return self.filter(visibility="PUBLIC")
+
+    def get_by_url_identifier(
+        self, public_id_or_custom_url_path: typing.Union[uuid.UUID, str]
+    ):
+        if not public_id_or_custom_url_path:
+            raise dj_exceptions.SuspiciousOperation("forbidden")
+
+        return self.filter(
+            models.Q(public_id=public_id_or_custom_url_path)
+            | models.Q(custom_url_path=public_id_or_custom_url_path)
+        ).first()
+        # first is here in case there are two independent events with colliding
+        # public_id and custom_url_path. This is impossible unless user messes up.
+
+
+class Event(AllowDraft, DBModel):
     """
     Stores data for ticketed event
     """
+
+    objects = EventQuerySet.as_manager()
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
 
+    # Publish info
+    visibility = required_if_not_draft(
+        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
+    )
+    publish_date = models.TimeField(null=True, blank=True)
+    custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
+
     # Basic Info
-    title = models.CharField(max_length=255, unique=True)
-    description = models.TextField(blank=True)
+    title = models.CharField(max_length=255, blank=False, unique=True)
+    organizer = required_if_not_draft(models.CharField(max_length=255))
+    description = required_if_not_draft(models.TextField())
     cover_image = models.ImageField(null=True, storage=MediaRootS3Boto3Storage())
     categories = TaggableManager()
-    start_date = models.DateTimeField()
+    start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
     timezone = models.CharField(
         null=True,
@@ -80,9 +121,13 @@ class Event(DBModel):
         null=True,
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
-    capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+    capacity = required_if_not_draft(
+        models.IntegerField(validators=[MinValueValidator(1)])
+    )
+    limit_per_person = required_if_not_draft(
+        models.IntegerField(
+            default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+        )
     )
 
     # Pricing Info
@@ -107,8 +152,20 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     @property
+    def is_public(self):
+        return self.visibility == "PUBLIC"
+
+    @property
+    def is_draft(self):
+        return self.publish_date is None
+
+    @property
+    def url_path(self):
+        return self.custom_url_path or self.public_id
+
+    @property
     def checkout_portal_url(self):
-        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
+        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.url_path}"
 
     @property
     def has_pending_checkout(self):

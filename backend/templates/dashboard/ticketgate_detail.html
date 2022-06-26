@@ -136,18 +136,18 @@
   <div class="col-lg-6">
     <div class="content w-100">
       <h1 class="content-title m-0 fs-base-p6">Event Links</h1>
-      <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+      <p class="text-muted mt-5 mb-0 fs-base-n2">
       Use these links to get started hosting your event
       </p>
       <div class="border-bottom">
         <h6>Checkout Portal</h6>
-        <p>Lorem ipsum...</p>
-        <a href="{{event.ticket_redemption_keys.first.scanner_url}}" target="_blank">{{event.ticket_redemption_keys.first.scanner_url}}</a>
+        <p>Link to share with your potential attendees</p>
+        <a href="{{event.checkout_portal_url}}" target="_blank">{{event.checkout_portal_url}}</a>
       </div>
       <div>
         <h6>Ticket Scanner</h6>
-        <p>Lorem ipsum...</p>
-        <a href="{{event.checkout_portal_url}}" target="_blank">{{event.checkout_portal_url}}</a>
+        <p>Link to scan the tickets for this event at the entrance</p>
+        <a href="{{event.ticket_redemption_keys.first.scanner_url}}" target="_blank">{{event.ticket_redemption_keys.first.scanner_url}}</a>
       </div>
       </div>
     </div>

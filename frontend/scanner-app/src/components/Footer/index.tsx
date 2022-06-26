@@ -41,7 +41,7 @@ export function Footer({
             Accepted {eventData.redemeed_count}
           </div>
           <div className="live-statistics-btn-orange text-center flex-grow-1">
-            Remaining {eventData.ticket_count - eventData.redemeed_count}
+            Remaining {eventData.capacity}
           </div>
         </div>
       </div>

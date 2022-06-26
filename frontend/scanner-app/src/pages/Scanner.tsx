@@ -169,7 +169,7 @@ export function Scanner() {
         waitingForScan={waitingForScan}
         event_name={eventData.title}
         event_attendance={eventData.redemeed_count}
-        event_date={eventData.date}
+        event_date={eventData.start_date}
         event_venue={eventData.location}
       />
     </div>

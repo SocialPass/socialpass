@@ -302,7 +302,7 @@ class EventListView(TeamContextMixin, ListView):
 
     model = Event
     paginate_by = 15
-    context_object_name = "tokengates"
+    context_object_name = "events"
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):

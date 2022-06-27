@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useContext, useState } from "react";
 import { useConnect, useAccount, useSignMessage, useDisconnect } from "wagmi";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +38,7 @@ export const CheckoutWeb3 = () => {
       return (
         <div className="col-lg-12 mt-10 column-display-mobile">
           <div>{ensName ? `${ensName} (${ accountHook.data.address })` : accountHook.data.address}</div>
-          <div>Connected to {connectHook.activeConnector.name}</div>
+          <div>Connected to {connectHook?.activeConnector?.name}</div>
           <button onClick={() => disconnectHook.disconnect()}>Disconnect</button>
         </div>
       )
@@ -92,7 +91,7 @@ export const CheckoutWeb3 = () => {
   // handles signing message and posting related data to API
   useEffect(() => {
     (async function () {
-      if (signHook.data) {
+      if (signHook.data && accountHook && accountHook.data) {
         setLoading(true);
         setLoadingText('Verifying ownership')
         let response;

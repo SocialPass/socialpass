@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createClient, configureChains, defaultChains } from 'wagmi'
 
 import { infuraProvider } from 'wagmi/providers/infura'

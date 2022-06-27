@@ -35,10 +35,14 @@ class EventForm(forms.ModelForm):
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
-    date = forms.DateTimeField(
+    start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             format="%Y-%m-%dT%H:%M",
-            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+            attrs={
+                "id": "start_date",
+                "class": "form-control",
+                "type": "datetime-local",
+            },
         )
     )
 
@@ -48,7 +52,7 @@ class EventForm(forms.ModelForm):
             "title",
             "description",
             "location",
-            "date",
+            "start_date",
             "timezone",
             "capacity",
             "limit_per_person",

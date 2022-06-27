@@ -52,7 +52,7 @@ def create_testing_event(**kwargs):
     return Event.objects.create(
         title=f"testEvent_{identifier}",
         description=f"testEventDescription_{identifier}",
-        date=kwargs.get("date", "2030-08-21 13:30:00+00"),
+        start_date=kwargs.get("start_date", "2030-08-21 13:30:00+00"),
         timezone=kwargs.get("timezone", "America/Bahia"),
         capacity=kwargs.get("capacity", "1000"),
         team_id=kwargs.get("team_id", Team.objects.last().id),

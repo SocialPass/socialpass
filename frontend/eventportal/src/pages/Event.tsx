@@ -24,7 +24,7 @@ export const Event = (): JSX.Element => {
             </span>
             <span className="fs-28 fw-bold">{retrieveJson.title}</span>
             <span className="fs-16 fw-light text-muted">
-              {retrieveJson.description}
+              {retrieveJson?.description}
             </span>
           </div>
           <div className="d-flex flex-column gap-5 mb-15">
@@ -46,7 +46,7 @@ export const Event = (): JSX.Element => {
                 className="me-5"
                 alt="Date & Time"
               />
-              {retrieveJson.location}
+              {retrieveJson?.location}
             </p>
           </div>
           <span className="col-md-7 bg-success py-5 px-30 text-center">

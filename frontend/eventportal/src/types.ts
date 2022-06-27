@@ -31,4 +31,8 @@ export interface CheckoutPortalContextInterface {
 
   generalAdmissionSelect:any,
   setGeneralAdmissionSelect:any
+
+  status: any,
+  isLoading: boolean,
+  isError: boolean
 }

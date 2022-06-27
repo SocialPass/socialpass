@@ -9,15 +9,12 @@ class AFRMetaData(UserDict):
 
     def __init__(self, request):
         # explicitly block UserDict.__init__
+        self.__data = {}
         self.request = request
 
     @property
     def data(self):
-        try:
-            return self.__data
-        except AttributeError:
-            self.__data = {}
-            return self.__data
+        return self.__data
 
     def set_new_data(self, key: UUID):
         self[key] = {}
@@ -46,9 +43,6 @@ class AFRMetaData(UserDict):
         key = self.safe_cast_to_uuid(key)
         self.set_new_data(key)
         return self[key], key, True
-
-    def update(self, key: UUID, data: dict):
-        self[key].update(data)
 
     def set_keyvalue_pair(self, key: UUID, field: str, value: str):
         self[key][field] = value
@@ -96,10 +90,6 @@ class SessionBasedAFRMetaData(AFRMetaData):
             self.request.session.modified = True
 
         return data, uuid, created
-
-    def update(self, key: UUID, data: dict):
-        super().update(key, data)
-        self.request.modified = True
 
     def set_keyvalue_pair(self, key: UUID, field: str, value: str):
         super().set_keyvalue_pair(key, field, value)

@@ -1,0 +1,177 @@
+{% extends "bases/base_primary.html" %}
+{% load static get_user_primary_email %}
+
+{% block head_title %}Manage Emails - SocialPass{% endblock head_title %}
+
+{% block navbar_breadcrumb %}Manage Emails{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Manage Emails</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				Manage the email addresses for your account.
+			</p>
+		</div>
+	</div>
+</div>
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Email Manager
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<div class="row">
+		<!-- Main content start -->
+		<div class="col-lg-6 border-lg-end">
+			<div class="content">
+				<p class="fs-base-n2">
+					You're managing email addresses for...<br />
+					<strong>{{ request.user.username }}</strong> - <a href="mailto:{% get_user_primary_email %}" target="_blank" class="fw-bold">{% get_user_primary_email %}</a>
+				</p>
+
+				<!-- Email addresses start -->
+				<h2 class="card-title fs-base-p4 mt-20 mb-0">Email Addresses</h2>
+				{% if user.emailaddress_set.all %}
+					<p class="text-muted fs-base-n2 mt-5">
+						The following email addresses are associated with your account.
+					</p>
+					<form method="POST" action="{% url 'account_email' %}" class="border-top">
+						{% csrf_token %}
+
+						{% for emailaddress in user.emailaddress_set.all %}
+							<div class="border-bottom py-10">
+								<div class="form-check">
+									<input class="form-check-input" id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+									<label class="form-check-label" for="email_radio_{{forloop.counter}}">
+										{{ emailaddress.email }}
+									</label>
+								</div>
+								<div class="mt-10">
+									{% if emailaddress.primary %}
+										<span class="fw-bold me-20">
+											<i class="fa-regular fa-check me-5"></i> Primary
+										</span>
+									{% endif %}
+									{% if emailaddress.verified %}
+										<span class="fw-bold text-success-dim-lm text-success-light-dm">
+											<i class="fa-duotone fa-shield-alt me-5"></i> Verified
+										</span>
+									{% else %}
+										<span class="fw-bold text-danger-dim-lm text-danger-light-dm">
+											<i class="fa-duotone fa-times-circle me-5"></i> Unverified
+										</span>
+									{% endif %}
+								</div>
+							</div>
+						{% endfor %}
+						<div class="form-group text-end mt-10">
+					        <button class="btn btn-sm mt-5" type="submit" name="action_primary">
+					        	<i class="fa-regular fa-check me-5"></i> Make Primary
+					        </button>
+					        <button class="btn btn-sm mt-5" type="submit" name="action_send">
+					        	<i class="fa-regular fa-paper-plane me-5"></i> Verification
+					        </button>
+					        <button class="btn btn-sm text-danger fw-bold mt-5" type="submit" name="action_remove" >
+					        	<i class="fa-regular fa-times me-5"></i> Remove
+					        </button>
+					    </div>
+					</form>
+				{% else %}
+					<p class="text-muted fs-base-n2 mt-5">
+						You currently do not have any email address associated with your account.
+					</p>
+				{% endif %}
+				<!-- Email addresses end -->
+
+				<!-- Form start -->
+				<h2 class="card-title fs-base-p4 mt-40 mb-0">Add Email Address</h2>
+				<p class="text-muted fs-base-n2 mt-5">
+					Use the following form to add a new email address. We'll send you a verification email to confirm the address.
+				</p>
+				<form method="POST" action="{% url 'account_email' %}">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="invalid-feedback">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					{% for input in form.visible_fields %}
+						<div class="form-group">
+							<div class="input-group position-relative">
+								<input
+									type="{{ input.field.widget.input_type }}"
+									name="{{ input.name }}"
+									value="{{ input.value|default_if_none:'' }}"
+									{% if input.field.widget.input_type != "hidden" %}
+										class="ps-40 form-control {% if input.errors %}is-invalid{% endif %}"
+										id="{{ input.auto_id }}"
+									{% endif %}
+									{% if input.field.required %}
+										required="required"
+									{% endif %}
+									{% for k,v in input.field.widget.attrs.items %}
+										{{ k }}="{{ v }}"
+									{% endfor %}
+								/>
+								<label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25 z-10" for="{{ input.id_for_label }}">
+									<i class="fa-regular fa-envelope"></i>
+									<span class="visually-hidden">Email</span>
+								</label>
+								<button class="btn btn-primary" name="action_add" type="submit">
+									<i class="fa-regular fa-paper-plane"></i>
+									<span class="visually-hidden d-sm-none">Submit</span>
+									<span class="ms-5 d-none d-sm-inline">Submit</span>
+								</button>
+							</div>
+
+							{% if input.errors %}
+								<ul class="invalid-feedback">
+									{% for error in input.errors %}
+										<li>{{ error }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					{% endfor %}
+				</form>
+				<!-- Form end -->
+			</div>
+		</div>
+		<!-- Main content end -->
+
+		<!-- Illustration start -->
+		<div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center ">
+			<div class="content w-100">
+				<img src="{% static 'images/illustrations/emails.svg' %}" class="d-block w-100" alt="emails">
+			</div>
+		</div>
+		<!-- Illustration end -->
+	</div>
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you have any trouble with your email addresses.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock content %}

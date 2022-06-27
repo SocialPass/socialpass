@@ -49,7 +49,7 @@ def get_available_tickets(event: Event, tickets_requested=None) -> int:
     if ticket_count > event.capacity:
         # send to sentry
         error = TooManyTicketsIssuedError("Too many tickets have been issued")
-        sentry_sdk.capture_error(error)
+        sentry_sdk.capture_exception(error)
         raise error
     if ticket_count == event.capacity:
         error = TicketsSoldOutError("Tickets sold out")
@@ -87,7 +87,7 @@ def create_ticket_image(
     created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
         event_data={
             "event_name": event.title,
-            "event_date": event.date.strftime("%m/%d/%Y, %H:%M:%S"),
+            "event_date": event.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
             "event_location": event.location,
         },
         embed=ticket.full_embed,
@@ -211,7 +211,9 @@ def validate_blockchain_wallet_ownership(
             return verified, verification_msg
     except Exception as e:
         sentry_sdk.capture_message(wallet_address, e)
-        verification_msg = "Unable to decode & validate blockchain_ownership, likely a forgery attempt."
+        verification_msg = (
+            "Unable to decode & validate blockchain_ownership, likely a forgery attempt."
+        )
         return verified, verification_msg
 
     # before success, mark as verified, update wallet_address, and save
@@ -298,17 +300,17 @@ def moralis_get_fungible_assets(
     try:
         r = _requests.get(url, params=payload, headers=headers)
     except requests.exceptions.HTTPError as e:
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise e
     except requests.exceptions.Timeout as e:
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise e
     except requests.exceptions.TooManyRedirects as e:
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise e
     except requests.exceptions.RequestException as e:
         # catastrophic error. bail.
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise e
 
     # SANITY CHECKS
@@ -349,17 +351,17 @@ def moralis_get_nonfungible_assets(
     try:
         r = _requests.get(url, params=payload, headers=headers)
     except requests.exceptions.HTTPError as e:
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise e
     except requests.exceptions.Timeout as e:
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise e
     except requests.exceptions.TooManyRedirects as e:
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise e
     except requests.exceptions.RequestException as e:
         # catastrophic error. bail.
-        sentry_sdk.capture_error(e)
+        sentry_sdk.capture_exception(e)
         raise SystemExit(e)
 
     # SANITY CHECKS

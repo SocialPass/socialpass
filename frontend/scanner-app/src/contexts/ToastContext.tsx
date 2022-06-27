@@ -27,8 +27,12 @@ const ToastProvider = ({ children }: any) => {
     );
   }, []);
 
+  const clearToasts = useCallback(() => {
+    setMessages([]);
+  }, []);
+
   return (
-    <ToastContext.Provider value={{ addToast, removeToast }}>
+    <ToastContext.Provider value={{ addToast, removeToast, clearToasts }}>
       {children}
       <ToastContainer messages={messages} />
     </ToastContext.Provider>

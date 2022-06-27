@@ -41,6 +41,4 @@ class AvoidRessubmissionCreateViewMixin(CreateView):
         return ret
 
     def get_context_data(self, **kwargs):
-        return dict(
-            **super().get_context_data(**kwargs), **{"afr_uuid_": self.afr_uuid}
-        )
+        return dict(**super().get_context_data(**kwargs), **{"afr_uuid_": self.afr_uuid})

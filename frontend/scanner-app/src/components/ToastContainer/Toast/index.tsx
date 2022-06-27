@@ -21,7 +21,7 @@ function Toast({ toast, style }: any) {
   useEffect(() => {
     const timer = setTimeout(() => {
       removeToast(toast.id);
-    }, 1500);
+    }, 7000);
 
     return () => {
       clearTimeout(timer);

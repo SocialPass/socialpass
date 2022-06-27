@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.dashboard.models import Team
-from apps.root.models import Event
+from apps.root.models import Event, Ticket
 
 
 #
@@ -24,7 +24,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
     redemeed_count = serializers.SerializerMethodField()
-    date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     team = TeamSerializer()
 
     class Meta:
@@ -35,7 +35,7 @@ class EventSerializer(serializers.ModelSerializer):
             "description",
             "requirements",
             "limit_per_person",
-            "date",
+            "start_date",
             "timezone",
             "location",
             "capacity",
@@ -45,3 +45,22 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_redemeed_count(self, obj):
         return obj.tickets.filter(redeemed=True).count()
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    """
+    Serializes Ticketed events Tickets
+    """
+
+    wallet_address = serializers.CharField(source="blockchain_ownership.wallet_address")
+
+    class Meta:
+        model = Ticket
+        fields = [
+            "public_id",
+            "created",
+            "redeemed",
+            "redeemed_at",
+            "redeemed_by",
+            "wallet_address",
+        ]

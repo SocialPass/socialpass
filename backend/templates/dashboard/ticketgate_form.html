@@ -1,0 +1,440 @@
+{% extends 'bases/base_primary.html' %}
+{% load static i18n get_chain_name crispy_forms_tags avoid_view_resubmission %}
+
+{% block head_title %}Events - SocialPass{% endblock head_title %}
+{% block navbar_breadcrumb %}{% if url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %} Event{% endblock %}
+
+{% block wip_event_creation_ux %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endblock %}
+
+
+{% block extra_head %}
+  {{ block.super}}
+  <style type="text/css">
+    /* Copied from soft-ui theme to support gradual transition of template for chain requirements */
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 0;
+      margin-bottom: 0;
+      list-style: none;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #2e95b8;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .nav-link {
+        transition: none;
+      }
+    }
+
+    .nav-link:hover,
+    .nav-link:focus {
+      color: #24748f;
+    }
+
+    .nav-link.disabled {
+      color: #6c757d;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .nav-tabs {
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .nav-tabs .nav-link {
+      margin-bottom: -1px;
+      background: none;
+      border: 1px solid transparent;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
+
+    .nav-tabs .nav-link:hover,
+    .nav-tabs .nav-link:focus {
+      border-color: #e9ecef #e9ecef #dee2e6;
+      isolation: isolate;
+    }
+
+    .nav-tabs .nav-link.disabled {
+      color: #6c757d;
+      background-color: transparent;
+      border-color: transparent;
+    }
+
+    .nav-tabs .nav-link.active,
+    .nav-tabs .nav-item.show .nav-link {
+      color: #495057;
+      background-color: #fff;
+      border-color: #dee2e6 #dee2e6 #fff;
+    }
+
+    .nav-tabs .dropdown-menu {
+      margin-top: -1px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<script src="{% static 'js/main.js' %}"></script>
+
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+  <div class="p-content d-flex h-100">
+    <div class="pe-15 align-self-center">
+      {% if url_name == 'ticketgate_create' %}
+        <h1 class="content-title m-0 fs-base-p6">
+          Create New Event
+        </h1>
+        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+          Use the following form to host a new event.
+        </p>
+      {% else %}
+        <h1 class="content-title m-0 fs-base-p6">
+          Update Event: {{event.title}}
+        </h1>
+        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+          Use the following form to update the event's information.
+        </p>
+      {% endif %}
+    </div>
+    <div class="ms-auto align-self-center">
+      <a href="{% url 'ticketgate_list' view.kwargs.team_pk %}" class="btn text-primary fw-bold">
+        <i class="fa-solid fa-angle-left"></i>
+        <span class="ms-5 d-none d-sm-inline">Back</span>
+      </a>
+    </div>
+  </div>
+</div>
+<!-- Header end -->
+
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+  <div class="row">
+    <!-- Main content start -->
+    <div class="col-lg-6 border-lg-end">
+      <div class="content">
+        <h1 class="content-title m-0 fs-base-p6">General Info</h1>
+        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+        General information for your event attendees. Add details that highlight what makes it unique.
+        </p>
+        <hr/>
+        <form id="requirementFormId" class="form" method="post">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div>
+						<div class="text-muted text-xs mb-3">
+							The price of the ticket gate will be calculated based on the capacity. <a href="#" id="understand-pricing">Understand our pricing model.</a>
+						</div>
+						<!-- TODO: form_template would allow us for a cleaner implementation -->
+						<div id="price-placeholder">
+							<span>Inform the capacity to preview the TicketGate price.</span>
+						</div>
+						<div id="price-calc" style="display: none">
+							<strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
+						</div>
+					</div>
+          {% if url_name == 'ticketgate_create' %}
+            {% afr_uuid %}
+          {% endif %}
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="content">
+        <h1 class="content-title m-0 fs-base-p6">Blockchain Requirements</h1>
+        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+          NFT or SocialToken information required to redeeem or purchase a ticket to your event.
+        </p>
+        <hr/>
+        <div id="blockchainRequirementsFormTitle" class="py-2 fw-bold">Blockchain Requirements</div>
+        <div>
+          <nav>
+            <ul id="nav-requirement" class="nav nav-tabs" role="tablist">
+              <div
+                type="button"
+                onclick="addRequirement()"
+                class="nav-link"
+              >
+                Add requirement
+              </div>
+            </ul>
+          </nav>
+        </div>
+        <div class="tab-content" id="tokenRequirementForms">
+          <!-- requirements will be added dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Card footer start -->
+  <div class="px-card py-10 border-top text-muted fs-base-n2 d-flex flex-row-reverse">
+    <button onclick="fillRequirementsAndSubmitForm()" id="submitBtn" value="Submit" class="btn text-primary fw-bold">
+      Submit
+    </button>
+  </div>
+  <!-- Card footer end -->
+</div>
+<script>
+  // Helper functions to manage addition/removal/submission of requirement forms and nav-tabs
+
+  var requirementsAbsoluteCounter = 0; // this counter keeps track of how many requirements were added in total. Absolute counter is never decremented. It is used to avoid equal IDs after deleting middle requirements.
+  var requirementsCounter = 0; // this counter keeps track of how many requirements are in the screen.
+  var tokenIdsCounter = []; // each requirement has its own token_id counter, at its index of the array.
+  var currentFormId = 0;
+
+  window.onload = function(){
+    // adds the requirement forms from the initial data. This data is passed by the server and stored in the form context.
+    let initialRequirementsData = JSON.parse('{{form.requirements.value|safe}}');
+
+    if (initialRequirementsData.length > 0){
+      for (let requirement of initialRequirementsData){
+        addRequirement(requirement)
+      }
+    }else{
+      addRequirement()
+    }
+
+  }
+
+  function addRequirement(initialData = null) {
+    // adds a requirement form to the screen.
+    let list = document.getElementById("nav-requirement").innerHTML;
+    let divId = "requirementDiv-"+requirementsAbsoluteCounter;
+
+    // add nav-item
+    list +=
+      `
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link requirement-nav"
+            id="${divId}-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#${divId}"
+            role="tab"
+          >
+            Requirement ${requirementsAbsoluteCounter + 1}
+          </button>
+        </li>
+      `;
+    document.getElementById("nav-requirement").innerHTML = list;
+
+    // adds form to tab-content
+    tokenIdsCounter.push(0);
+    _createRequirementForm(initialData);
+    requirementsCounter++;
+    requirementsAbsoluteCounter++;
+
+    // show the added tab and hide the rest
+    let triggerEl = document.getElementById(`${divId}-tab`)
+    let tabTrigger = new bootstrap.Tab(triggerEl)
+    tabTrigger.show()
+  }
+
+  function _createRequirementForm(initialData = null){
+    let divId = "requirementDiv-"+requirementsAbsoluteCounter
+    let formId = "requirementForm-"+requirementsAbsoluteCounter
+    let form = document.getElementById("tokenRequirementForms").innerHTML;
+
+    let new_div = document.createElement("div");
+    new_div.id = divId
+    new_div.className = "tab-pane fade py-3"
+    new_div.role = "tabpanel"
+    new_div.innerHTML = `
+       <div class="d-flex align-items-center py-3">
+        <span>Blockchain Requirement ${requirementsAbsoluteCounter + 1}</span>
+        <button class="btn bg-gradient-primary btn-sm ms-auto my-0"
+                onclick="deleteRequirement(${requirementsAbsoluteCounter})"
+                type="button"
+                aria-label="Close">
+          Remove requirement
+        </button>
+      </div>
+      <form id="${formId}">
+        <div class="form-group">
+          <label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
+          <select class="form-control" id="blockChainSelect-${requirementsAbsoluteCounter}">
+
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="networkSelect">Network <span class="asteriskField">*</span></label>
+          <select required class="form-control" id="networkSelect-${requirementsAbsoluteCounter}">
+
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="assetTypeSelect">Asset Type <span class="asteriskField">*</span></label>
+          <select required class="form-control" id="assetTypeSelect-${requirementsAbsoluteCounter}" placeholder="ERC20">
+
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="assetAdressInput">Asset Address <span class="asteriskField">*</span></label>
+          <input required pattern="^(0x|0X).*$" required type="text" class="form-control" id="assetAdressInput-${requirementsAbsoluteCounter}"
+                  oninvalid="this.setCustomValidity('Asset Address must start with 0x')"
+                  oninput="this.setCustomValidity('')">
+        </div>
+        <div class="form-group">
+          <label for="requiredAmountInput">Required Amount <span class="asteriskField">*</span></label>
+          <input required type="number" class="form-control" id="requiredAmountInput-${requirementsAbsoluteCounter}">
+        </div>
+        <div class="d-flex flex-row align-items-center gap-3">
+          Token IDs
+          <i type="button" onclick="addNewTokenIdToRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-add"></i> |
+          <i type="button" onclick="popTokenIdFromRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-trash-can"></i>
+        </div>
+        <div id="tokenIdGroup-${requirementsAbsoluteCounter}" class="d-flex flex-column align-items-start gap-3 mt-2"></div>
+      </form>
+    `;
+    document.getElementById("tokenRequirementForms").appendChild(new_div);
+
+    //fill the options for the selects from the provided choices in the context
+    let requiremtSchema = JSON.parse('{{json_schema|safe}}');
+    let blockchainOptions = JSON.parse('{{BLOCKHAINS_CHOICES|safe}}');
+    let assetTypeOptions = JSON.parse('{{ASSET_TYPES_CHOICES|safe}}');
+    let chainOptions = JSON.parse('{{CHAIN_IDS_CHOICES|safe}}');;
+
+    let select;
+
+    select = document.getElementById(`blockChainSelect-${requirementsAbsoluteCounter}`)
+    for (var [key, value] of Object.entries(blockchainOptions)) {
+      select.innerHTML +=  `<option value="${key}">${value}</option>`;
+    }
+
+    select = document.getElementById(`networkSelect-${requirementsAbsoluteCounter}`)
+    for (var [key, value] of Object.entries(chainOptions)) {
+      select.innerHTML += `<option value="${key}">${value}</option>`;
+    }
+
+    select = document.getElementById(`assetTypeSelect-${requirementsAbsoluteCounter}`)
+    for (var [key, value] of Object.entries(assetTypeOptions)) {
+      select.innerHTML += `<option value="${key}">${value}</option>`;
+    }
+
+    if (initialData){
+      // fill from initial data
+      document.getElementById("blockChainSelect-"+requirementsAbsoluteCounter).value = initialData.blockchain
+      document.getElementById("networkSelect-"+requirementsAbsoluteCounter).value = initialData.chain_id
+      document.getElementById("assetTypeSelect-"+requirementsAbsoluteCounter).value = initialData.asset_type
+      document.getElementById("requiredAmountInput-"+requirementsAbsoluteCounter).value = initialData.amount
+      document.getElementById("assetAdressInput-"+requirementsAbsoluteCounter).value = initialData.asset_address
+
+      for (let token_id of initialData.token_id){
+        addNewTokenIdToRequirement(requirementsAbsoluteCounter, token_id)
+      }
+    }
+  }
+
+  function deleteRequirementForm(requirementIdx) {
+    document.getElementById(`requirementDiv-${requirementIdx}`).remove();
+  }
+
+  function deleteRequirement(requirementIdx) {
+    if (requirementsCounter == 1){
+      // must have at least one requirement.
+      return
+    }
+    document.getElementById(`requirementDiv-${requirementIdx}-tab`).parentNode.remove(); // remove nav-tab
+    deleteRequirementForm(requirementIdx);
+    // requirementsAbsoluteCounter is not decremented
+    requirementsCounter--;
+
+    let triggerEl = document.getElementsByClassName('nav-link requirement-nav')[requirementsCounter - 1]
+    let tabTrigger = new bootstrap.Tab(triggerEl)
+    tabTrigger.show()
+  }
+
+  function popTokenIdFromRequirement(requirementIdx){
+    document.getElementById(`tokenId-${requirementIdx}-${tokenIdsCounter[requirementIdx] - 1}`).remove();
+    tokenIdsCounter[requirementIdx] = tokenIdsCounter[requirementIdx] - 1;
+  }
+
+  function addNewTokenIdToRequirement(requirementIdx, initialData=null){
+    const tokenIdGroupId = 'tokenIdGroup-'+ requirementIdx
+
+    let list = document.getElementById(tokenIdGroupId);
+
+    let new_div = document.createElement('div');
+    new_div.id = `tokenId-${requirementIdx}-${tokenIdsCounter[requirementIdx]}`
+    new_div.className = "d-flex flex-row align-items-center gap-3"
+    new_div.innerHTML =
+        `
+          <label style="width: 100px; margin-bottom:0px;">Token ID ${tokenIdsCounter[requirementIdx]}</label>
+          <input type="text" class="form-control" value="${initialData? initialData : ""}">
+         `;
+    document.getElementById(tokenIdGroupId).appendChild(new_div);
+    tokenIdsCounter[requirementIdx] = tokenIdsCounter[requirementIdx] + 1;
+  }
+
+  function fillRequirementsAndSubmitForm(){
+    let requirementsData = []
+    for (let requirementIdx = 0; requirementIdx < requirementsAbsoluteCounter; requirementIdx++){
+      let requirementForm = document.getElementById(`requirementForm-${requirementIdx}`)
+      if (requirementForm == null){
+        continue
+      }
+
+      if (!requirementForm.checkValidity()){
+        let triggerEl = document.getElementById(`requirementDiv-${requirementIdx}-tab`)
+        let tabTrigger = new bootstrap.Tab(triggerEl)
+        tabTrigger.show()
+        location.hash = "#blockchainRequirementsFormTitle";
+        setTimeout(() => {requirementForm.reportValidity()}, 500) // schedule validation on queue because tab.show() is async
+        return
+      }
+
+      requirementData = {
+        "blockchain": document.getElementById("blockChainSelect-"+requirementIdx).value,
+        "chain_id": parseInt(document.getElementById("networkSelect-"+requirementIdx).value, 10),
+        "asset_type": document.getElementById("assetTypeSelect-"+requirementIdx).value,
+        "amount": parseInt(document.getElementById("requiredAmountInput-"+requirementIdx).value, 10),
+        "asset_address": document.getElementById("assetAdressInput-"+requirementIdx).value,
+        "token_id": []
+      }
+      for (let token_idx = 0; token_idx < tokenIdsCounter[requirementIdx]; token_idx++){
+        requirementData["token_id"].push(
+          parseInt(document.getElementById(`tokenId-${requirementIdx}-${token_idx}`).getElementsByTagName('input')[0].value, 10)
+        )
+      }
+      requirementsData.push(requirementData)
+    }
+    document.getElementById('id_requirements').value = JSON.stringify(requirementsData);
+
+    let form = document.getElementById('requirementFormId');
+    if (form.reportValidity()){
+      form.submit();
+    }
+  }
+
+	const formatter = new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD',
+		minimumFractionDigits: 2
+	})
+
+	document.getElementById('id_capacity').addEventListener('change', function() {
+		var capacity = document.getElementById('id_capacity').value;
+		fetch("{% url 'ticketgate_price_estimator' view.kwargs.team_pk %}?capacity=" + capacity).then(function(response) {
+			return response.json();
+		}).then(function(data) {
+			document.getElementById('price-placeholder').style.display = 'none';
+			document.getElementById('price-calc').style.display = 'block';
+
+			document.getElementById('price-calc-capacity').innerHTML = capacity;
+			document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
+			document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
+
+		});
+	})
+</script>
+{% endblock %}

@@ -17,7 +17,6 @@ export const StyledContainer = ({
   const { retrieveJson } = useContext(CheckoutPortalContext);
   const location = useLocation();
   const navigate = useNavigate();
-  console.log(retrieveJson);
   return (
     <div className="container-fluid card container-hack p-0">
       <div>

@@ -1,0 +1,97 @@
+{% extends "bases/base_secondary.html" %}
+
+{% load account %}
+
+{% block head_title %}Sign Up - SocialPass{% endblock %}
+
+{% block inner %}
+<h1 class="fsr-3 text-strong fw-700">Sign Up</h1>
+<p>
+	Please fill out the following form to sign up and create your account.
+</p>
+
+<!-- Form start -->
+<form class="signup" method="POST" action="{% url 'account_signup' %}">
+	{% csrf_token %}
+
+	{% if form.non_field_errors %}
+		<div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
+			<ul class="unordered-list bullet-reset m-0">
+				{% for error in form.non_field_errors %}
+					<li>{{ error|escape }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	{% endif %}
+
+	{% for input in form.hidden_fields %}
+		{{ input }}
+	{% endfor %}
+
+	{% for input in form.visible_fields %}
+		<div class="form-group">
+			<div class="position-relative">
+				<input
+					type="{{ input.field.widget.input_type }}"
+					name="{{ input.name }}"
+					value="{{ input.value|default_if_none:'' }}"
+					{% if input.field.widget.input_type != "hidden" %}
+						class="ps-40 form-control {% if input.errors %}is-invalid{% endif %}"
+						id="{{ input.auto_id }}"
+					{% endif %}
+					{% if input.field.required %}
+						required="required"
+					{% endif %}
+					{% for k,v in input.field.widget.attrs.items %}
+						{{ k }}="{{ v }}"
+					{% endfor %}
+					{% if input.name == "email" %}
+						{% if input.value %}
+            readonly="readonly"
+            {% else %}
+            autofocus="true"
+            {% endif %}
+					{% endif %}
+					{% if input.name == "username" %}
+						autofocus="true"
+					{% endif %}
+				/>
+				<label class="position-absolute top-50 start-0 translate-y-middle ps-15 opacity-25" for="{{ input.id_for_label }}">
+					{% if input.name == "email" %}
+						<i class="fa-regular fa-envelope"></i>
+						<span class="visually-hidden">Email</span>
+					{% elif input.name == "username" %}
+						<i class="fa-regular fa-user"></i>
+						<span class="visually-hidden">Username</span>
+					{% elif input.name == "password1" %}
+						<i class="fa-regular fa-lock"></i>
+						<span class="visually-hidden">Password</span>
+					{% elif input.name == "password2" %}
+						<i class="fa-regular fa-lock"></i>
+						<span class="visually-hidden">Confirm Password</span>
+					{% endif %}
+				</label>
+			</div>
+
+			{% if input.errors %}
+				<ul class="unordered-list bullet-reset mt-5 text-danger subpixel-antialiased">
+					{% for error in input.errors %}
+						<li>{{ error }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+	{% endfor %}
+	{% if redirect_field_value %}
+		<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+	{% endif %}
+	<div class="form-group">
+		<button class="btn btn-primary btn-block" type="submit">Sign Up</button>
+	</div>
+</form>
+<!-- Form end -->
+
+<p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
+	Already have an account? <a href="{% url 'account_login' %}" class="fw-bold">Sign in</a> instead.
+</p>
+{% endblock %}

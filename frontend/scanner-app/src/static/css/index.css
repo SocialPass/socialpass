@@ -3,7 +3,7 @@
  * Custom version of socialpass-theme.css for the Scanner's Landing Page
  * ----------------------------------------------------------------------------
  */
- 
+
 
 /* Landing Page Components */
 
@@ -43,7 +43,7 @@
     font-weight: 600;
     color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
-    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);    
+    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
 
 
@@ -62,10 +62,11 @@
     line-height: 1;
     font-family: "Inter", sans-serif;
     font-weight: 600;
+    text-align: center;
     color: var(--white-color);
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
     -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
-    margin-bottom: 1.6rem;    
+    margin-bottom: 1.6rem;
 }
 
 
@@ -76,8 +77,10 @@
     border-width: 0rem;
     -webkit-font-smoothing: auto;
     -moz-osx-font-smoothing: auto;
-    font-size: 2.6rem;
-    font-weight: 600;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-size: 2.4rem;
+    font-weight: 500;
     line-height: 2.4;
     text-decoration: none;
     color: var(--white-color);
@@ -109,31 +112,46 @@
     padding: 8px;
     margin-right: 20px;
     margin-left: 20px;
-    margin-top: 60%;
+    margin-top: 5%;
+    margin-bottom: 10%;
+}
+
+.btn-close {
+    position: left;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border-radius: 10px;
+    padding: 8px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }
 
 
 .scanner-title  {
     font-family: 'Rubik';
     font-style: normal;
-    font-weight: 600;
-    font-size: 30px;
+    font-weight: 500;
+    font-size: 22px;
     line-height: 26px;
-    text-align: center;
+    text-align: left;
     color: #0C0F3C;
     margin-top: 15%;
-    
+    margin-bottom: 5%;
+
 }
 
 .scanner-subtitle   {
     font-family: 'Rubik';
     font-style: normal;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 21px;
-    text-align: center;
-    color: #6C757D;
-    margin-bottom: 50px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: left;
+    color: #0C0F3C;
+    margin-bottom: 20px;
 }
 
 .scanner-body   {
@@ -142,9 +160,202 @@
     width: 100%;
     height: 100%;
     color: inherit;
-    background-color: var(--white-color);
+    background-color: #FAFAFA;
     box-shadow: none;
 }
+
+.live-statistics-btn-blue    {
+    border-radius: 5px;
+    border-width: 0px;
+    margin-right: 5px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 400px;
+    line-height: 18px;
+    text-decoration: none;
+    color: var(--dark-color);
+    background-color: #3995B833;
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+.live-statistics-btn-orange    {
+    border-radius: 5px;
+    border-width: 0px;
+    margin-right: 5px;
+    margin-left: 5px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 400px;
+    line-height: 18px;
+    text-decoration: none;
+    color: var(--dark-color);
+    background-color: #EB734733;
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+
+.btn-statistics {
+    border-radius: 12px;
+    border-width: 0rem;
+    margin-top: 30px;
+    width: 80vw;
+    padding: 16px;
+    position: center;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    text-decoration: none;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+.btn-statistics:active {
+    text-decoration: none;
+    color: inherit;
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness-step-down-1));
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+
+.btn-return-to-scanner {
+    border-radius: 1.4rem;
+    border-width: 0rem;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 2.0rem;
+    text-decoration: none;
+    color: black;
+    background-color: white;
+    background-image: none;
+    border-color: black;
+    border-width: 1 px;
+    box-shadow: 0px 4px 15px 1px #2C647936;
+    padding: 15px;
+
+
+}
+
+.statistics-body   {
+    position: absolute;
+    display: block;
+    color: inherit;
+    box-shadow: none;
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+.statistics-title  {
+    position: absolute;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 26px;
+    text-align: center;
+    color: #0C0F3C;
+    margin-top: 15%;
+    margin-bottom: 10%;
+    background-color: var(--white-color);
+}
+
+.statistics-subtitle    {
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #0C0F3C;
+    margin-bottom: 20px;
+    position: absolute;
+    margin-left: -50%;
+}
+
+
+.statistics-table-card {
+    position: relative;
+    display: block;
+    color: inherit;
+    background-color: var(--white-color);
+    border: 1px solid #C0C0C0;
+    border-color: var(--gray-color-dim);
+    box-shadow: 0px 4px 15px 1px rgba(44, 100, 121, 0.21);
+    border-radius: 33px 33px 0px 0px;
+}
+
+
+
+.statistics-table-container {
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+    -webkit-font-smoothing: var(--card-webkit-font-smoothing);
+    -moz-osx-font-smoothing: var(--card-moz-osx-font-smoothing);
+    color: inherit;
+    background-color: var(--white-color);
+    border: 1px solid #C0C0C0;
+    border-color: var(--gray-color-dim);
+    border-radius: 1.4rem;
+    box-shadow: 0px 4px 15px 1px rgba(44, 100, 121, 0.21);
+}
+
+
+
+.btn-selected-statistic {
+    border-radius: 12px 12px 0px 0px;
+    border-width: 0rem;
+    margin-top: 30px;
+    width: 35%;
+    padding: 16px;
+    position: relative;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    text-decoration: none;
+    color: #e7e7e7;
+    background-color: rgb(170, 170, 170);
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+.btn-selected-statistic:focus {
+    text-decoration: none;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+
+
+/* Statistics Table Components */
+
+
+
+
+
 
 
 /* Capacity Reached Components */
@@ -169,8 +380,8 @@
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
     -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
     margin-bottom: 1.6rem;
-    margin-top: 30%;  
-    
+    margin-top: 30%;
+
 }
 
 .capacity-reached-body  {
@@ -181,8 +392,8 @@
     text-align: center;
     color: hsl(var(--socialpass-blue-color-hue), var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness));
     -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
-    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing); 
-    
+    -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
+
 }
 
 
@@ -210,7 +421,7 @@
     line-height: 26px;
     text-align: center;
     color: #0C0F3C;
-    
+
 }
 
 .error-body  {
@@ -243,3 +454,56 @@
 .error-padding  {
     margin-top: 60%;
 }
+
+
+/* Statistics Page Components */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 1rem;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    border: 1px solid #ffffff;
+    text-align: left;
+    padding: 8px;
+    font-size: 12px;
+    color: #737373;
+  }
+
+  th {
+    background-color: #ffffff;
+    color: #000;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+
+
+  }
+
+  td {
+    background-color: #ffffff;
+  }
+
+  form {
+    display: flex;
+    gap: 5px;
+  }
+
+  form td:last-child {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  form * {
+    font-size: 10px;
+  }

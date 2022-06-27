@@ -90,12 +90,14 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "storages",
+    "taggit",
 ]
 
 LOCAL_APPS = [
     "apps.root.apps.RootConfig",
     "apps.root.apps.OverrideInvitationsConfig",
     "apps.dashboard",
+    "apps.event_discovery",
     "avoid_view_resubmission",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -132,9 +134,7 @@ PASSWORD_HASHERS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -165,7 +165,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
         "DIRS": [
             # Dashboard
-            str(ROOT_DIR / "apps/dashboard/templates")
+            str(ROOT_DIR / "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -353,10 +353,14 @@ INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 INVITATIONS_INVITATION_ONLY = False
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
-INVITATIONS_CONFIRMATION_URL_NAME = "accept_invite"
+INVITATIONS_CONFIRMATION_URL_NAME = "team_accept_invite"
 INVITATIONS_EMAIL_MAX_LENGTH = 254
 INVITATIONS_INVITATION_EXPIRY = 3
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
+
+
+# Django Invitations - https://github.com/jazzband/django-taggit
+TAGGIT_CASE_INSENSITIVE = True
 
 # INTERNAL
 CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")

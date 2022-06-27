@@ -39,7 +39,6 @@
   <meta name="twitter:site" content="@socialpass_io">
 
   <!-- Scripts -->
-  <script src="/src/static/js/embedded.js"></script>
   <script>window.global = window;</script>
   <script type="module">
     import process from "process";
@@ -53,15 +52,6 @@
   </head>
   <body>
   <div id="root"></div>
-  <script>
-    const uuid = (window.location.pathname).split("/")[1]
-    console.log(uuid)
-    var frame = new Frame(
-        "https://tickets.socialpass.io",
-        uuid
-    )
-    frame.mount("root")
-</script>
   <script type="module" src="/src/main.tsx"></script>
   <script src="/src/static/js/halfmoon.js"></script>
   </body>

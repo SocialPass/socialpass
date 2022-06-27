@@ -143,6 +143,7 @@
       <p class="text-muted mt-5 mb-0 fs-base-n2">
       Use these links to get started hosting your event
       </p>
+      {% with scanner_url=event.ticket_redemption_keys.first.scanner_url %}
       <div class="border-bottom">
         <h6>Checkout Portal</h6>
         <p>Link to share with your potential attendees</p>
@@ -151,8 +152,11 @@
       <div>
         <h6>Ticket Scanner</h6>
         <p>Link to scan the tickets for this event at the entrance</p>
-        <a href="{{event.ticket_redemption_keys.first.scanner_url}}" target="_blank">{{event.ticket_redemption_keys.first.scanner_url}}</a>
+        <a href="{{scanner_url}}" target="_blank">
+          {{scanner_url}}
+        </a>
       </div>
+      {% endwith %}
       </div>
     </div>
   </div>

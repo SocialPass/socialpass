@@ -47,7 +47,7 @@ export const Event = (): JSX.Element => {
             </p>
           </div>
           <span className="col-md-7 bg-success py-5 px-30 text-center">
-            <strong>{retrieveJson?.ticket_count}</strong> out of{" "}
+            <strong>{retrieveJson?.capacity - retrieveJson?.ticket_count}</strong> out of{" "}
             {retrieveJson?.capacity} available
           </span>
         </div>

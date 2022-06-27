@@ -4,7 +4,6 @@ import { StatisticsTable } from "../components/StatisticsTable/index";
 import { FiArrowLeft } from "react-icons/fi";
 import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { api } from "../services/api";
 
 export function Statistics() {
   const navigate = useNavigate();
@@ -18,15 +17,15 @@ export function Statistics() {
 
 
   if (isStatisticsPageFinished == false) {
-    
-  
+
+
   return (
     <div className="error-footer">
       <div className="position-absolute top-auto bottom-50">
         <div className="d-flex flex-column align-items-center justify-content-center gap-30">
           <span className="error-title fs-20">Coming Soon!</span>
           <span className="error-body px-20">
-            The Statistics page will soon be available for all users. 
+            The Statistics page will soon be available for all users.
           </span>
         </div>
         <div className="p-20">
@@ -38,11 +37,11 @@ export function Statistics() {
     </button>
   </div>
       </div>
-      
+
     </div>
-  
+
   );
-  
+
   }
 
   else  {

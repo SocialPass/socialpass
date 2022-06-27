@@ -94,7 +94,7 @@ export function Scanner() {
     if (!scannerContainer) {
       return;
     }
-    scannerContainer.firstChild.firstChild.style.position = "";
+    (scannerContainer.firstChild.firstChild as any).style.position = "";
   });
 
   const handleError = useCallback((err: any) => {

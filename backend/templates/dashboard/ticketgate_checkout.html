@@ -83,6 +83,7 @@
               {{ event.start_date.date }}
             </td>
           </tr>
+          {% if event.end_date %}
           <tr>
             <td class=" ps-0">
               End Date
@@ -91,6 +92,7 @@
               {{ event.end_date.date }}
             </td>
           </tr>
+          {% endif %}
           <tr>
             <td class=" ps-0">
               Location
@@ -107,6 +109,7 @@
               {{ event.capacity }}
             </td>
           </tr>
+          {% if event.categories.count > 0 %}
           <tr>
             <td class=" ps-0">
               Categories
@@ -115,6 +118,7 @@
               {{ event.categories }}
             </td>
           </tr>
+          {% endif %}
         </tbody>
       </table>
       </div>

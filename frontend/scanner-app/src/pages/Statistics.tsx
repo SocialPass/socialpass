@@ -17,7 +17,7 @@ export function Statistics() {
   }
 
 
-  if (isStatisticsPageFinished == false) {
+  if (isStatisticsPageFinished == true) {
     
   
   return (

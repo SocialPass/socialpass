@@ -5,44 +5,33 @@ import { fetchTickets } from "../../services/api";
 
 export function StatisticsTable() {
   const { publicId }: any = useEvent();
-  let isRedeemed = true;
+  const [isRedeemed, setIsRedeemed]= useState(true);
 
   function claimed()  {
-    isRedeemed = true
+    setIsRedeemed(() => true)
     console.log("isRedeemed: ", isRedeemed)
   }
   function unclaimed()  {
-    isRedeemed = false
+    setIsRedeemed(() => false)
     console.log("isRedeemed: ", isRedeemed)
   }
-
-
-
-
 
 
 
   const { isLoading, isError, error, data } = useQuery(
-    ["fetchTickets", publicId],
+    ["fetchTickets", isRedeemed],
     () => fetchTickets(publicId, isRedeemed)
   );
+  
 
+/*  const { isLoading, isError, error, data } = useQuery(
+    "fetchTickets", () => fetchTickets(publicId, isRedeemed)
+  );
+*/
   if (isLoading) return <>Loading</>;
   if (isError) return <>Oops something went wrong</>;
 
-  function ticketCount(data: { hasOwnProperty: (arg0: string) => any }) {
-    var result = 0;
-    for (var prop in data) {
-      if (data.hasOwnProperty(prop)) {
-        // or Object.prototype.hasOwnProperty.call(obj, prop)
-        result++;
-      }
-    }
-    return console.log("Resultado: ", result);
 
-    
-
-  }
   
   return (
     <div>

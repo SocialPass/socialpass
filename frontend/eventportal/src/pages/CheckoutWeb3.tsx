@@ -40,12 +40,6 @@ export const CheckoutWeb3 = () => {
           <div>{ensName ? `${ensName} (${ accountHook.data.address })` : accountHook.data.address}</div>
           <div>Connected to {connectHook.activeConnector.name}</div>
           <button onClick={() => disconnectHook.disconnect()}>Disconnect</button>
-          {connectHook.error && (
-            <div>{connectHook.error?.message ?? "Failed to connect"}</div>
-          )}
-          {signHook.error && (
-            <div>{signHook.error?.message ?? "Failed to connect"}</div>
-          )}
         </div>
       )
     }
@@ -67,12 +61,6 @@ export const CheckoutWeb3 = () => {
           {!x.ready && " (unsupported)"}
         </button>
       ))}
-      {connectHook.error && (
-        <div>{connectHook.error?.message ?? "Failed to connect"}</div>
-      )}
-      {signHook.error && (
-        <div>{signHook.error?.message ?? "Failed to connect"}</div>
-      )}
     </div>
     )
   }
@@ -186,6 +174,12 @@ export const CheckoutWeb3 = () => {
           </div>
         </div>
         <ConnectWallet/>
+        {connectHook.error && (
+          <div>{connectHook.error?.message ?? "Failed to connect"}</div>
+        )}
+        {signHook.error && (
+          <div>{signHook.error?.message ?? "Failed to connect"}</div>
+        )}
       </div>
       <div className="bg-gray d-flex flex-column justify-start-center">
         <div className="d-flex flex-column align-items-start justify-start-center p-30">

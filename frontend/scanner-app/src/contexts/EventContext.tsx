@@ -8,7 +8,7 @@ const EventContext = createContext({});
 
 type EventDataProps = {
   title: String;
-  date: String;
+  start_date: String;
   location: String;
   capacity: number;
   ticket_count: number;

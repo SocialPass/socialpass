@@ -12,34 +12,34 @@ type EventDataProps = {
   location: String;
   capacity: number;
   ticket_count: number;
-  redemeed_count: number;
+  redeemed_count: number;
 };
 
 type EventErrorProps = {
   detail: String;
-  message: String
-}
+  message: String;
+};
 
 const EventProvider = ({ children }: any) => {
-  const [publicId, setPublicId] = useState<String>()
-  const [eventData, setEventData] = useState<EventDataProps>()
+  const [publicId, setPublicId] = useState<String>();
+  const [eventData, setEventData] = useState<EventDataProps>();
   const { status, isLoading, isError, error, data, refetch } = useQuery(
-    ['fetchEvent', publicId],
+    ["fetchEvent", publicId],
     () => fetchEvent(publicId),
     {
-      enabled: false
+      enabled: false,
     }
-  )
+  );
 
   useEffect(() => {
-    if (publicId){
-      refetch()
+    if (publicId) {
+      refetch();
     }
-  }, [publicId])
+  }, [publicId]);
 
   useEffect(() => {
-    setEventData(data)
-  }, [data])
+    setEventData(data);
+  }, [data]);
 
   return (
     <EventContext.Provider
@@ -51,7 +51,7 @@ const EventProvider = ({ children }: any) => {
         isError,
         eventData,
         setEventData,
-        error
+        error,
       }}
     >
       {children}

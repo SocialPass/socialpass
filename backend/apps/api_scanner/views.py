@@ -62,19 +62,19 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
 
     class OutputSerializer(drf_serializers.ModelSerializer):
         """
-        Serializes Redemeed Tickets
+        Serializes Redeemed Tickets
         """
 
         ticket_count = drf_serializers.IntegerField(
             source="event.tickets.count", read_only=True
         )
-        redemeed_count = drf_serializers.SerializerMethodField()
+        redeemed_count = drf_serializers.SerializerMethodField()
 
         class Meta:
             model = Ticket
-            fields = ["id", "filename", "ticket_count", "redemeed_count"]
+            fields = ["id", "filename", "ticket_count", "redeemed_count"]
 
-        def get_redemeed_count(self, obj):
+        def get_redeemed_count(self, obj):
             return obj.event.tickets.filter(redeemed=True).count()
 
     class InputSerializer(drf_serializers.Serializer):

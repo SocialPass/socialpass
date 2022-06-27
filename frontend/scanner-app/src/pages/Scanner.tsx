@@ -7,7 +7,6 @@ import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../contexts/ToastContext";
 import { fetchScanTicket } from "../services/api";
-import HashLoader from "react-spinners/HashLoader";
 import { ProgressBar } from "react-bootstrap";
 
 type ScanFailureBlockProps = {
@@ -15,6 +14,9 @@ type ScanFailureBlockProps = {
   intervalId: any;
   progress: number;
 };
+
+const CODE =
+  "016a42f0-a6b5-42a7-b33c-aeb048e1d7db/1152c28c-5e72-477d-a6b8-3dc4b290df54";
 
 export function Scanner() {
   const [waitingForScan, setWaitingForScan] = useState<Boolean>(false);
@@ -50,7 +52,7 @@ export function Scanner() {
 
     setWaitingForScan(true);
     clearToasts();
-    fetchScanTicket(publicId, qrCode)
+    fetchScanTicket(publicId, CODE) // qrCode, Not CODE
       .then((data) => {
         setEventData({
           ...eventData,
@@ -108,7 +110,6 @@ export function Scanner() {
   useEffect(() => {
     if (!scanFailureBlock.active) {
       if (scanFailureBlock.intervalId) {
-        console.log("Clear interval");
         clearInterval(scanFailureBlock.intervalId);
       }
       setScanFailureBlock(initialScanFailureBlock);
@@ -165,13 +166,7 @@ export function Scanner() {
           />
         </div>
       </div>
-      <Footer
-        waitingForScan={waitingForScan}
-        event_name={eventData.title}
-        event_attendance={eventData.redemeed_count}
-        event_date={eventData.start_date}
-        event_venue={eventData.location}
-      />
+      <Footer waitingForScan={waitingForScan} />
     </div>
   );
 }

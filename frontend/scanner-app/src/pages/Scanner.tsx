@@ -15,9 +15,6 @@ type ScanFailureBlockProps = {
   progress: number;
 };
 
-const CODE =
-  "016a42f0-a6b5-42a7-b33c-aeb048e1d7db/1152c28c-5e72-477d-a6b8-3dc4b290df54";
-
 export function Scanner() {
   const [waitingForScan, setWaitingForScan] = useState<Boolean>(false);
   const [qrCode, setQrcode] = useState(null);
@@ -52,7 +49,7 @@ export function Scanner() {
 
     setWaitingForScan(true);
     clearToasts();
-    fetchScanTicket(publicId, CODE) // qrCode, Not CODE
+    fetchScanTicket(publicId, qrCode)
       .then((data) => {
         setEventData({
           ...eventData,

@@ -38,7 +38,7 @@ export const CheckoutStatus = () => {
                     className="me-5"
                     alt="Date & Time"
                   />
-                  {retrieveJson.date} |{" "}
+                  {retrieveJson.start_date} |{" "}
                   {retrieveJson.timezone}
                 </p>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
@@ -90,7 +90,7 @@ export const CheckoutStatus = () => {
                   className="me-5"
                   alt="Date & Time"
                 />
-                {retrieveJson.date} |{" "}
+                {retrieveJson.start_date} |{" "}
                 {retrieveJson.timezone}
               </p>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">

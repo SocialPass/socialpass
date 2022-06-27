@@ -79,7 +79,7 @@ export const CheckoutWeb3 = () => {
         }
       }
     })();
-  }, [signHook]);
+  }, [signHook.data]);
 
   function handleNavigateBack() {
     navigate(-1);

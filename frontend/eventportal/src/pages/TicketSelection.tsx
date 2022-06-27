@@ -56,7 +56,6 @@ export function TicketSelection() {
             </div>
             <div className="d-inline fw-bold">free</div>
             <br />
-            <p>Sale ends on May 31, 2022</p>
           </div>
           <div className="d-inline">
             <select

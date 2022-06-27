@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
+import timezone from "../static/images/icons/timezone.svg";
 // Event Component
 export const Event = (): JSX.Element => {
   const navigate = useNavigate();
@@ -36,7 +37,17 @@ export const Event = (): JSX.Element => {
                 className="me-5"
                 alt="Date & Time"
               />
-              {retrieveJson.date} | {retrieveJson.timezone}
+              {retrieveJson.start_date}
+            </p>
+            <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
+              <img
+                src={timezone}
+                height="16.9"
+                width="16.9"
+                className="me-5"
+                alt="Timezone"
+              />
+              {retrieveJson.timezone}
             </p>
             <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
               <img
@@ -44,7 +55,7 @@ export const Event = (): JSX.Element => {
                 height="16.9"
                 width="16.9"
                 className="me-5"
-                alt="Date & Time"
+                alt="Location"
               />
               {retrieveJson?.location}
             </p>

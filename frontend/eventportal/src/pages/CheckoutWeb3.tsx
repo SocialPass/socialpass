@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useContext, useState } from "react";
 import { useConnect, useAccount, useSignMessage, useDisconnect } from "wagmi";
 import { useNavigate } from "react-router-dom";

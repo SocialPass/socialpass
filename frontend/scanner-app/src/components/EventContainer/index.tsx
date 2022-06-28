@@ -17,9 +17,7 @@ export function EventContainer({
   event_venue,
 }: EventContainerProps) {
   const navigate = useNavigate();
-  function handleRedirect() {
-    navigate("/scanner");
-  }
+
   return (
     <div className="container p-10 d-flex flex-column align-items-center">
       <div className="landing-page-event-title">{event_name}</div>
@@ -31,8 +29,13 @@ export function EventContainer({
         <div className="landing-page-card-text-1">Venue:</div>
         <div className="landing-page-card-text-2">{event_venue}</div>
       </div>
-      <div className="container p-20 d-flex flex-column">
-        <button className="btn-start-scanning" onClick={handleRedirect}>
+      <div className="container p-20 d-flex flex-column gap-10">
+        <button
+          className="btn-start-scanning"
+          onClick={() => {
+            navigate("scanner");
+          }}
+        >
           Start Scanning
         </button>
       </div>

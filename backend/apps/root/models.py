@@ -7,6 +7,7 @@ import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core import exceptions as dj_exceptions
+from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
@@ -183,7 +184,11 @@ class Event(AllowDraft, DBModel):
     def has_pending_checkout(self):
         last_payment = self.payments.last()
         if last_payment is None:
-            return True
+            # Handle 0 cost event
+            if self.price == 0:
+                return False
+            else:
+                return True
 
         return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
 

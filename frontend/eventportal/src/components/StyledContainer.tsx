@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
 // import headerImage from "../static/images/header1.svg";
 // import FAQImage from "../static/images/FAQ.svg";
-import logoImage from "../static/images/socialpass.svg";
+// import logoImage from "../static/images/socialpass.svg";
 import _backButton from "../static/images/back.svg";
 import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
 
@@ -53,13 +53,6 @@ export const StyledContainer = ({
           </header>
         )}
         <div className="mt-5 p-30">{children}</div>
-        <footer className="me-15 ms-15">
-          {/* <img src={FAQImage} alt="image" /> */}
-          <small className="d-flex flex-row align-items-center">
-            Powered by &nbsp;
-            <img src={logoImage} alt="image" />
-          </small>
-        </footer>
       </div>
     </div>
   );

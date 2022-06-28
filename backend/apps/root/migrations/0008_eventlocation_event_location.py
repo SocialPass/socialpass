@@ -62,13 +62,13 @@ class Migration(migrations.Migration):
                 "abstract": False,
             },
         ),
-        migrations.AddField(
-            model_name="event",
-            name="location",
-            field=models.ForeignKey(
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                to="root.eventlocation",
-            ),
-        ),
+        # migrations.AddField(
+        #     model_name="event",
+        #     name="location",
+        #     field=models.ForeignKey(
+        #         null=True,
+        #         on_delete=django.db.models.deletion.CASCADE,
+        #         to="root.eventlocation",
+        #     ),
+        # ),
     ]

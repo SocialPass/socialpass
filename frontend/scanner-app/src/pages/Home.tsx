@@ -1,16 +1,12 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React from "react";
-import { useTicket } from "../contexts/TicketContext";
-import { useNavigate } from "react-router-dom";
+import { useEvent } from "../contexts/EventContext";
 import { EventContainer } from "../components/EventContainer";
 import Logo from "../static/images/landingpage_logo.png";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 export function Home() {
-  const { eventData }: any = useTicket();
-
-  if (!eventData){
-    return <></>
-  }
+  const { eventData }: any = useEvent();
 
   return (
     <>
@@ -21,7 +17,7 @@ export function Home() {
           <EventContainer
             event_name={eventData.title}
             event_attendance={eventData.capacity}
-            event_date={eventData.date}
+            event_date={eventData.start_date}
             event_venue={eventData.location}
           />
         </div>

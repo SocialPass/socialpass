@@ -1,0 +1,172 @@
+{% extends "event_discovery/base.html" %}
+
+{% load static %}
+
+{% block head_title %}{{ event.name }} - SocialPass{% endblock head_title %}
+
+{% block modals %}
+<div class="modal" tabindex="-1" id="eventportal-modal" aria-labelledby="eventportal-modal-toggle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-transparent ws-600 hs-600 mw-100 mh-100 p-0">
+            <button type="button" class="close text-base bg-content" aria-label="Close" data-hm-dismiss="modal">&times;</button>
+            <div class="w-100 h-100" id="eventportal-root"></div>
+        </div>
+    </div>
+</div>
+{% endblock modals %}
+
+{% block content %}
+<!-- Hero section start -->
+<section>
+    <div class="container-xl py-lg-20">
+        <div class="row row-eq-spacing-lg">
+            <!-- First column start -->
+            <div class="col-lg-6 offset-lg-1 align-self-center order-lg-last">
+                <div class="content">
+                    <h1 class="display-5 fw-700 text-strong mt-0">
+                        {{ event.name }}
+                    </h1>
+                    <div class="fsr-6 d-flex align-items-center mt-20">
+                        <div class="ws-25 flex-shrink-0">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div class="ms-10 text-truncate">
+                            Tuesday, {{ event.date }}
+                        </div>
+                    </div>
+                    <div class="fsr-6 d-flex align-items-center mt-10">
+                        <div class="ws-25 flex-shrink-0">
+                            <i class="fa-regular fa-location-dot"></i>
+                        </div>
+                        <div class="ms-10 text-truncate">
+                            {{ event.location }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- First column end -->
+
+            <!-- Second column start -->
+            <div class="col-lg-5 align-self-center order-lg-first">
+                <!-- Event cover image start -->
+                <div class="content d-flex align-items-center justify-content-center rounded overflow-hidden pe-none">
+                    {% if event.cover_image.height > event.cover_image.width %}
+                        <!-- Portrait -->
+                        <img src="{{ event.cover_image.url }}" class="w-auto h-100" alt="{{ event.name }} cover image">
+                    {% else %}
+                        <!-- Landscape -->
+                        <img src="{{ event.cover_image.url }}" class="w-100 h-auto" alt="{{ event.name }} cover image">
+                    {% endif %}
+                </div>
+                <!-- Event cover image end -->
+            </div>
+            <!-- Second column end -->
+        </div>
+    </div>
+</section>
+<!-- Hero section end -->
+
+<!-- Tickets header section start -->
+<section>
+    <div class="container-xl">
+        <div class="content d-flex align-items-center border-bottom pb-15 mb-0">
+            <h2 class="fsr-2 fw-700 text-strong lh-base m-0">
+                Tickets
+            </h2>
+            <div class="fsr-6 ms-auto ps-20">
+                <span>10,000</span>
+                <br />
+                <strong>Available</strong>
+            </div>
+            <div class="fsr-6 ps-20">
+                <span>2,582</span>
+                <br />
+                <strong>Claimed</strong>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Tickets header section end -->
+
+<!-- Information section start -->
+<section>
+    <div class="container-xl">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="content">
+                    <h2 class="fsr-4 fw-700 text-strong mb-0">
+                        General Admission
+                    </h2>
+                    <p class="fsr-6 mt-10">
+                        Tuesday, {{ event.date }}
+                    </p>
+                    <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
+                        Available
+                    </h2>
+                    <p class="fsr-6 mt-10">
+                        10,000 Tickets
+                    </p>
+                    <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
+                        Remaining
+                    </h2>
+                    <p class="fsr-6 mt-10">
+                        7,418 Tickets
+                    </p>
+                    <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
+                        Ownership Requirements
+                    </h2>
+                    <p class="fsr-6 mt-10 mb-0">
+                        Must prove ownership of one asset from the following NFT collection with the following contract address:
+                    </p>
+                    <div class="d-lg-inline-block font-monospace text-truncate bg-gray-very-light-lm bg-darkgray-very-dim-dm py-5 px-15 mt-5 rounded">
+                        <strong>0x11d03698d9275a7a450f8cba387EBBF07e301BDf</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-3 offset-lg-1">
+                <div class="p-content position-md-sticky top-0 start-0">
+                    <button type="button" class="btn btn-secondary btn-lg btn-block fsr-6" data-hm-toggle="modal" data-hm-target="eventportal-modal" id="eventportal-modal-toggle">
+                        <strong class="antialiased">Claim Ticket</strong>
+                    </button>
+                    <p class="text-muted fs-base-n2 text-center">
+                        Please note, you're agreeing to our <a href="#" class="fw-bold">Terms & Conditions</a> when claiming a ticket.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Information section end -->
+
+<!-- Marketing section start -->
+<section class="pt-md-30 pb-30">
+    <div class="container-xl">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="content text-center">
+                    <h5 class="display-6 fw-700 text-strong">
+                        {{ event.name }} is powered by SocialPass.
+                    </h5>
+                    <p class="fsr-6 text-muted">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Marketing section end -->
+{% endblock content %}
+
+{% block extra_body %}
+<script src="{% static 'js/public/checkoutportal-embedded.js' %}"></script>
+<script type="text/javascript">
+    const uuid = (window.location.pathname).split("/")[1]
+    console.log(uuid)
+    var frame = new Frame(
+        "https://tickets.socialpass.io",
+        uuid
+    )
+    frame.mount("eventportal-root")
+</script>
+{% endblock extra_body %}

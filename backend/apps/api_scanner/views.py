@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from django.http import Http404
@@ -44,12 +45,13 @@ class EventRetrieve(APIView, SetAccessKeyAndEventMixin):
     permission_classes = (AllowAny,)
 
     def get(self, request, *args, access_key: uuid.UUID, **kwargs):
-        self.set_event_and_redemption_access_key(access_key)
+        print("getting")
         try:
-            serializer = serializers.EventSerializer(self.event)
+            self.set_event_and_redemption_access_key(access_key)
         except Http404 as exc:
             return Response(status=404, data=exc.args[0])
 
+        serializer = serializers.EventSerializer(self.event)
         return Response(serializer.data)
 
 
@@ -60,19 +62,19 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
 
     class OutputSerializer(drf_serializers.ModelSerializer):
         """
-        Serializes Redemeed Tickets
+        Serializes Redeemed Tickets
         """
 
         ticket_count = drf_serializers.IntegerField(
             source="event.tickets.count", read_only=True
         )
-        redemeed_count = drf_serializers.SerializerMethodField()
+        redeemed_count = drf_serializers.SerializerMethodField()
 
         class Meta:
             model = Ticket
-            fields = ["id", "filename", "ticket_count", "redemeed_count"]
+            fields = ["id", "filename", "ticket_count", "redeemed_count"]
 
-        def get_redemeed_count(self, obj):
+        def get_redeemed_count(self, obj):
             return obj.event.tickets.filter(redeemed=True).count()
 
     class InputSerializer(drf_serializers.Serializer):
@@ -129,4 +131,27 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
             )
 
         output_serializer = self.OutputSerializer(ticket)
+        return Response(output_serializer.data)
+
+
+class TicketsListView(APIView, SetAccessKeyAndEventMixin):
+    """
+    Returns event for the given redemption_access_key.
+    """
+
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, access_key: uuid.UUID, **kwargs):
+        self.set_event_and_redemption_access_key(access_key)
+
+        filter_kwargs = {}
+        if "redeemed" in request.GET:
+            try:
+                filter_kwargs["redeemed"] = json.loads(request.GET["redeemed"])
+                assert isinstance(filter_kwargs["redeemed"], bool)
+            except (json.decoder.JSONDecodeError, AssertionError):
+                return Response("redeemed query param must be 'true'|'false'", 400)
+
+        tickets = Ticket.objects.filter(event=self.event, **filter_kwargs)
+        output_serializer = serializers.TicketSerializer(tickets, many=True)
         return Response(output_serializer.data)

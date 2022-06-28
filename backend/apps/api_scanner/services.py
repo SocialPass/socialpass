@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from apps.root.models import Ticket, TicketRedemptionKey
+from apps.root.models import Event, Ticket, TicketRedemptionKey
 
 
 class ForbiddenRedemptionError(Exception):
@@ -45,7 +45,12 @@ def redeem_ticket(ticket: Ticket, redemption_access_key: TicketRedemptionKey = N
 
     ticket.redeemed = True
     ticket.redeemed_at = datetime.now()
-    ticket.redemption_access_key = redemption_access_key
+    ticket.redeemed_by = redemption_access_key
     ticket.save()
 
     return ticket
+
+
+def get_claimed_tickets(event: Event):
+    """Returns all scanned tickets"""
+    return Ticket.objects.filter(redeemed=True, event=event)

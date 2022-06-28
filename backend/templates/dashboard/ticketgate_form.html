@@ -8,11 +8,14 @@
 <script src="{% static 'js/main.js' %}"></script>
 <script>
   function saveAsDraft(){
+    document.getElementById("id_is_draft").checked = true
+    document.getElementById("id_is_draft").value = 'True'
     document.getElementById("create-event-form").submit()
   }
 
   function submitForReview(){
     document.getElementById("id_is_draft").checked = false
+    document.getElementById("id_is_draft").value = 'False'
     document.getElementById("create-event-form").submit()
   }
 

@@ -354,7 +354,6 @@ class EventCreateView(TeamContextMixin, CreateView):
         return context
 
     def form_valid(self, form, **kwargs):
-        print("sup")
         # set rest of form
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
@@ -405,6 +404,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         return context
 
     def get_success_url(self):
+        print(self.request.POST)
         if self.object.is_draft:
             messages.add_message(
                 self.request, messages.SUCCESS, "Draft saved successfully."

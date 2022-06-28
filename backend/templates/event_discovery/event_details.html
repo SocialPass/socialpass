@@ -4,6 +4,17 @@
 
 {% block head_title %}{{ event.name }} - SocialPass{% endblock head_title %}
 
+{% block modals %}
+<div class="modal" tabindex="-1" id="eventportal-modal" aria-labelledby="eventportal-modal-toggle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-transparent ws-600 hs-600 mw-100 mh-100 p-0">
+            <button type="button" class="close text-base bg-content" aria-label="Close">&times;</button>
+            <div class="w-100 h-100" id="eventportal-root"></div>
+        </div>
+    </div>
+</div>
+{% endblock modals %}
+
 {% block content %}
 <!-- Hero section start -->
 <section>
@@ -114,9 +125,9 @@
             </div>
             <div class="col-md-4 col-lg-3 offset-lg-1">
                 <div class="p-content position-md-sticky top-0 start-0">
-                    <a href="#" class="btn btn-secondary btn-lg btn-block fsr-6">
+                    <button type="button" class="btn btn-secondary btn-lg btn-block fsr-6" data-hm-toggle="modal" data-hm-target="eventportal-modal" id="eventportal-modal-toggle">
                         <strong class="antialiased">Claim Ticket</strong>
-                    </a>
+                    </button>
                     <p class="text-muted fs-base-n2 text-center">
                         Please note, you're agreeing to our <a href="#" class="fw-bold">Terms & Conditions</a> when claiming a ticket.
                     </p>
@@ -146,3 +157,16 @@
 </section>
 <!-- Marketing section end -->
 {% endblock content %}
+
+{% block extra_body %}
+<script src="{% static 'js/public/checkoutportal-embedded.js' %}"></script>
+<script type="text/javascript">
+    const uuid = (window.location.pathname).split("/")[1]
+    console.log(uuid)
+    var frame = new Frame(
+        "https://tickets.socialpass.io",
+        uuid
+    )
+    frame.mount("eventportal-root")
+</script>
+{% endblock extra_body %}

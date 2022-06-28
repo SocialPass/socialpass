@@ -6,6 +6,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path("", include("apps.dashboard.urls")),
+    path("events/", include("apps.event_discovery.urls")),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

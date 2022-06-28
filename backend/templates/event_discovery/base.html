@@ -144,7 +144,7 @@
 				<nav class="container-xl">
 					<div class="d-flex align-items-center content mt-0 border-bottom">
 						<!-- Branding start -->
-						<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+						<a href="{% url 'discovery:index' %}" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
 							<div class="ws-75">
 								<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
 							</div>
@@ -168,7 +168,7 @@
 
 						<!-- Navbar links (medium and up) start -->
 						<div class="ms-auto d-none d-md-flex align-items-center">
-							<a href="#" class="link-reset text-decoration-none me-30">Browse Events</a>
+							<a href="{% url 'discovery:browse' %}" class="link-reset text-decoration-none me-30">Browse Events</a>
 
 							<!-- Learn more dropdown start -->
 							<div class="dropdown with-arrow me-30">
@@ -213,7 +213,7 @@
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end ws-200" aria-labelledby="menu-dropdown-toggle">
 								<li>
-									<a href="#" class="dropdown-item">
+									<a href="{% url 'discovery:browse' %}" class="dropdown-item">
 										Browse Events
 									</a>
 								</li>

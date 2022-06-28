@@ -127,17 +127,17 @@ footer {
 .container-fluid {
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .card{
-  height: 95%;
+  height: 90%;
   border: none;
 }
 
-@media (min-width: 1400px) {
+@media (min-height: 1000px) {
   .card{
-    height: 80%;
+    height: 75%;
     border: none;
   }
 }
@@ -191,6 +191,7 @@ ELEMENTS
   border-radius: 10px;
   color: var(--muted-color) !important;
 }
+
 
 /*
 BOOSTRAP OVERRIDES
@@ -298,7 +299,7 @@ BOOSTRAP OVERRIDES
   filter: brightness(0.99)
 }
 
-.container {
+.container-progress-bar {
 	width: 40vw;
 	max-width: 100%;
 	padding: 30px;
@@ -348,8 +349,8 @@ BOOSTRAP OVERRIDES
 
   to {
     transform: translateX(0);
-      opacity: 0.1;
-    }
+    opacity: 0.1;
+  }
 }
 
 .avatar-img{
@@ -424,6 +425,17 @@ BOOSTRAP OVERRIDES
   justify-content: space-between;
 }
 
+.wallets {
+  max-width: 1200px;
+  margin-top: 1rem;
+  margin-right: 4rem;
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+  overflow: visible;
+}
+
+.wallets { grid-template-columns: repeat(3, 1fr); }
 
 @media (max-width: 576px) {
   .card{
@@ -431,6 +443,7 @@ BOOSTRAP OVERRIDES
     left: 0%;
     right: 0%;
   }
+  .wallets { grid-template-columns: repeat(2, 1fr); }
 
   .team-info {
     position:absolute;
@@ -492,7 +505,6 @@ BOOSTRAP OVERRIDES
     display: none;
   }
 }
-
 /**
  * The following is a quick hack to fix the container positioning, and
  * basically center it forcefully. Should definitely be re-factored in the

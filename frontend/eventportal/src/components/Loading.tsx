@@ -8,7 +8,7 @@ export const Loading = ({ loadingText }) => {
           <span className="fs-25 fw-600">{loadingText}</span>
           <p className="fs-15">Please wait, this might take a second</p>
         </div>
-        <div className="container">
+        <div className="container-progress-bar">
           <div className="sp-progress">
             <div
               className="sp-progress-bar sp-progress-bar-animated"

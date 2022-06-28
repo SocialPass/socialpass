@@ -12,7 +12,7 @@ import infoButton from "../static/images/icons/infoButton.svg";
 export const CheckoutWeb3 = () => {
   const navigate = useNavigate();
   const [selectedWallet, setSelectedWallet] = useState<any>();
-  const [loadingText, setLoadingText] = useState<any>('Loading...');
+  const [loadingText, setLoadingText] = useState<any>("Loading...");
   const [statusButton, setStatusButton] = useState<any>(true);
   const {
     id,
@@ -28,7 +28,7 @@ export const CheckoutWeb3 = () => {
   const accountHook = useAccount();
   const signHook = useSignMessage({
     message: requestAccessJson?.signing_message,
-  })
+  });
 
   // request access handler (based on web3 account data change)
   useEffect(() => {
@@ -57,7 +57,7 @@ export const CheckoutWeb3 = () => {
     (async function () {
       if (signHook.data) {
         setLoading(true);
-        setLoadingText('Verifying ownership')
+        setLoadingText("Verifying ownership");
         let response;
         response = await TicketedEventGrantAccess.call({
           public_id: id,
@@ -94,16 +94,20 @@ export const CheckoutWeb3 = () => {
     setLoadingText("Awaiting wallet connection");
     try {
       await connectHook.connectAsync(selectedWallet);
-    }
-    catch(err) {}
-    if (accountHook.data?.address){
+    } catch (err) {}
+    if (accountHook.data?.address) {
       setLoadingText(`Awaiting wallet signature`);
       await signHook.signMessageAsync();
     }
   }
 
-  if (signHook.isLoading || accountHook.isLoading || connectHook.isConnecting || loading) {
-    return <Loading loadingText={loadingText}/>;
+  if (
+    signHook.isLoading ||
+    accountHook.isLoading ||
+    connectHook.isConnecting ||
+    loading
+  ) {
+    return <Loading loadingText={loadingText} />;
   }
 
   return (
@@ -130,33 +134,53 @@ export const CheckoutWeb3 = () => {
             <img src={infoButton} />
             <div className="right">
               <span className="tooltip-text fs-12">
-                Proof of ownership is not an NFT trade. We need to prove you
-                own the NFT in order to get the ticket.
+                Proof of ownership is not an NFT trade. We need to prove you own
+                the NFT in order to get the ticket.
               </span>
               <i></i>
             </div>
           </div>
         </div>
-        <div className="col-lg-12 d-flex mt-10 d-flex gap-10 column-display-mobile">
+        <div className="wallets">
           {connectHook.connectors.map((x) => (
-            <button
-              className={
-                selectedWallet === x
-                  ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                  : "btn-secondary fs-12 border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-              }
-              disabled={!x.ready}
-              key={x.id}
-              id={x.id}
-              onClick={() => handleSelectWallet(x)}
-            >
-              <Web3ConnectorImage
-                selectedWallet={selectedWallet}
-                connector={x.name}
-              />
-              {x.name}
-              {!x.ready && " (unsupported)"}
-            </button>
+            <>
+              <button
+                className={
+                  selectedWallet === x
+                    ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                    : "btn-secondary fs-12 border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                }
+                disabled={!x.ready}
+                key={x.id}
+                id={x.id}
+                onClick={() => handleSelectWallet(x)}
+              >
+                <Web3ConnectorImage
+                  selectedWallet={selectedWallet}
+                  connector={x.name}
+                />
+                {x.name}
+                {!x.ready && " (unsupported)"}
+              </button>
+              <button
+                className={
+                  selectedWallet === x
+                    ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                    : "btn-secondary fs-12 border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                }
+                disabled={!x.ready}
+                key={x.id}
+                id={x.id}
+                onClick={() => handleSelectWallet(x)}
+              >
+                <Web3ConnectorImage
+                  selectedWallet={selectedWallet}
+                  connector={x.name}
+                />
+                {x.name}
+                {!x.ready && " (unsupported)"}
+              </button>
+            </>
           ))}
         </div>
         {connectHook.error && (
@@ -167,12 +191,12 @@ export const CheckoutWeb3 = () => {
         )}
       </div>
       <div className="bg-gray d-flex flex-column justify-start-center">
-        <div className="d-flex flex-column align-items-start justify-start-center p-30">
+        <div className="ms-10 d-flex flex-column align-items-start justify-start-center py-30">
           <div className="d-flex align-items-center justify-conent-center">
             <h3 className="fs-20">Summary</h3>
             <a
               onClick={handleNavigateBack}
-              className="ms-15 mt-5 text-edit fs-15 fw-bold"
+              className="ms-15 text-edit fs-15 fw-bold"
             >
               Edit
             </a>
@@ -193,4 +217,4 @@ export const CheckoutWeb3 = () => {
       </div>
     </div>
   );
-}
+};

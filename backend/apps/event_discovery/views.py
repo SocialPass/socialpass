@@ -16,11 +16,13 @@ class EventDiscoveryBrowse(ListView):
     template_name = "event_discovery/browse_events.html"
 
     def get_queryset(self):
-        qs = Event.objects.filter_published().filter_public()
+        qs = Event.objects.all()
         return qs
 
 
 class EventDiscoveryDetails(DetailView):
     model = Event
+    slug_field = "public_id"
+    slug_url_kwarg = "event_pk"
     context_object_name = "event"
     template_name = "event_discovery/event_details.html"

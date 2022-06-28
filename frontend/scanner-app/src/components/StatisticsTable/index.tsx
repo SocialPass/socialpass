@@ -1,11 +1,13 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useQuery } from "react-query";
 import { useEvent } from "../../contexts/EventContext";
 import { fetchTickets } from "../../services/api";
+import Table from "../Table";
 
 export function StatisticsTable() {
   const { publicId }: any = useEvent();
   const [isRedeemed, setIsRedeemed]= useState(true);
+  const element = document.getElementsByTagName("button");
 
   function claimed()  {
     setIsRedeemed(() => true)
@@ -16,27 +18,33 @@ export function StatisticsTable() {
     console.log("isRedeemed: ", isRedeemed)
   }
 
-
-
   const { isLoading, isError, error, data } = useQuery(
     ["fetchTickets", isRedeemed],
     () => fetchTickets(publicId, isRedeemed)
   );
-  
 
-/*  const { isLoading, isError, error, data } = useQuery(
-    "fetchTickets", () => fetchTickets(publicId, isRedeemed)
-  );
-*/
+
   if (isLoading) return <>Loading</>;
   if (isError) return <>Oops something went wrong</>;
-
 
   
   return (
     <div>
     <div className="d-flex flex-row align-items-center px-20">
-          <button className="btn-selected-statistic flex-grow-1" onClick={()=> setIsRedeemed(() => true)}>
+          <button className="btn-selected-statistic flex-grow-1" id="claimed-button" 
+          onClick={
+            /*function(){         
+              element.innerHTML.remove(
+                'btn-selected-statistic'
+              );
+              button.classList.add(
+                'btn-really-selected-statistic'
+              );
+              }
+                 */
+              ()=> setIsRedeemed(() => true)
+              
+            }>
             Claimed
           </button>
           <button className="btn-selected-statistic flex-grow-1" onClick={()=> setIsRedeemed(() => false)}>
@@ -44,24 +52,7 @@ export function StatisticsTable() {
           </button>
         </div>
     <div className="statistics-table-container d-flex flex-column align-items-center p-10">
-      <table>
-        <thead>
-          <tr>
-            <th>Issued at</th>
-            <th>Wallet Address</th>
-            <th>Redeemed at</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((ticket: any) => (
-            <tr key={ticket.public_id}>
-              <td>{ticket.created}</td>
-              <td>{ticket.wallet_address}</td>
-              <td>{ticket.redeemed_at}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table data={data} rowsPerPage={7} />
     </div>
     </div>
   );

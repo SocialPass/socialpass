@@ -349,6 +349,29 @@
 }
 
 
+.btn-really-selected-statistic {
+    border-radius: 12px 12px 0px 0px;
+    border-width: 0rem;
+    margin-top: 30px;
+    width: 35%;
+    padding: 16px;
+    position: relative;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    text-decoration: none;
+    border-color: none;
+    box-shadow: none;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+}
+
+
 
 /* Statistics Table Components */
 

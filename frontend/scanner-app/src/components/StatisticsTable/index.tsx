@@ -36,10 +36,10 @@ export function StatisticsTable() {
   return (
     <div>
     <div className="d-flex flex-row align-items-center px-20">
-          <button className="btn-selected-statistic flex-grow-1" onClick={claimed}>
+          <button className="btn-selected-statistic flex-grow-1" onClick={()=> setIsRedeemed(() => true)}>
             Claimed
           </button>
-          <button className="btn-selected-statistic flex-grow-1" onClick={unclaimed}>
+          <button className="btn-selected-statistic flex-grow-1" onClick={()=> setIsRedeemed(() => false)}>
             Unclaimed
           </button>
         </div>
@@ -53,7 +53,6 @@ export function StatisticsTable() {
           </tr>
         </thead>
         <tbody>
-        {console.log("data.map Executed")}
           {data.map((ticket: any) => (
             <tr key={ticket.public_id}>
               <td>{ticket.created}</td>

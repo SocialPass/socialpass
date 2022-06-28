@@ -180,15 +180,14 @@ ELEMENTS
 }
 
 .card-active{
-  border-radius: 10px;
-  padding: 2rem;
-  gap: 2rem;
+  height: 12rem;
+  border-radius: 20px;
   color: #000;
   border: 1.5px solid var(--orange) !important;
 }
 
 .card-disabled{
-  border-radius: 10px;
+  border-radius: 20px;
   color: var(--muted-color) !important;
 }
 
@@ -254,15 +253,12 @@ BOOSTRAP OVERRIDES
 }
 
 .btn-secondary {
-  height: 164px;
+  height: 12rem;
   background: #FFFFFF;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   /* Small Button Text */
   color:black;
-  font-weight: 700;
-  font-size: 17px;
+  font-weight: bold;
   text-align: center;
-  border: solid 3px black;
   border-radius: 20px;
 }
 

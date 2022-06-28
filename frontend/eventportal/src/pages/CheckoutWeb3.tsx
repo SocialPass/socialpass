@@ -148,25 +148,7 @@ export const CheckoutWeb3 = () => {
                 className={
                   selectedWallet === x
                     ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                    : "btn-secondary fs-12 border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                }
-                disabled={!x.ready}
-                key={x.id}
-                id={x.id}
-                onClick={() => handleSelectWallet(x)}
-              >
-                <Web3ConnectorImage
-                  selectedWallet={selectedWallet}
-                  connector={x.name}
-                />
-                {x.name}
-                {!x.ready && " (unsupported)"}
-              </button>
-              <button
-                className={
-                  selectedWallet === x
-                    ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                    : "btn-secondary fs-12 border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                    : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
                 }
                 disabled={!x.ready}
                 key={x.id}
@@ -209,9 +191,9 @@ export const CheckoutWeb3 = () => {
           <button
             disabled={statusButton}
             onClick={() => handleCheckout()}
-            className="btn btn-primary fs-20 text-capitalize rounded-3"
+            className="btn btn-primary rounded-3"
           >
-            Checkout
+            <span className="p-5 fs-18 text-capitalize">Checkout</span>
           </button>
         </div>
       </div>

@@ -17,21 +17,21 @@ export const Web3ConnectorImage = ({
   switch (connector) {
     case "MetaMask":
       if (connector === selectedWallet?.name) {
-        return <img height="72" width="72" src={metamaskActive} alt="image" />;
+        return <img height="64" width="64" src={metamaskActive} alt="image" />;
       }
-      return <img height="72" width="72" src={metamask} alt="image" />;
+      return <img height="64" width="64" src={metamask} alt="image" />;
     case "WalletConnect":
       if (connector === selectedWallet?.name) {
         return (
-          <img height="72" width="72" src={walletconnectActive} alt="image" />
+          <img height="64" width="64" src={walletconnectActive} alt="image" />
         );
       }
-      return <img height="72" width="72" src={walletconnect} alt="image" />;
+      return <img height="64" width="64" src={walletconnect} alt="image" />;
     case "Coinbase Wallet":
       if (connector === selectedWallet?.name) {
-        return <img height="72" width="72" src={coinbaseActive} alt="image" />;
+        return <img height="64" width="64" src={coinbaseActive} alt="image" />;
       }
-      return <img height="72" width="72" src={coinbase} alt="image" />;
+      return <img height="64" width="64" src={coinbase} alt="image" />;
     default:
       return null;
   }

@@ -103,25 +103,32 @@ footer {
   color: var(--orange);
 }
 
+/* BEGIN HEADER ELEMENTS */
 .header {
-  margin-bottom: 2rem;
-  position:relative;
+    position:relative;
+  margin-bottom: 3rem;
   border-radius: 50px 50px 0 0;
-  height: 25rem;
+  width: 100%;
+  height: 20rem;
+  min-height: 20rem;
   background: linear-gradient(to left, var(--orange-bg), var(--orange-bg-light));
+
+  transition: all 0.2s ease-in;
+  -webkit-transition: all 0.2s ease-in;
 }
 
 .small-header {
-  background-image: linear-gradient(to right, var(--sp-orange-color-light), var(--sp-orange-color));
+    position: relative;
+  background-image: linear-gradient(to left, var(--sp-orange-color-light), var(--sp-orange-color));
   align-items: center;
   min-height: 188px;
   height: 23.9%;
   background-size: auto;
   box-shadow:inset 0 0 0 2000px rgba(0, 0, 0, .5);
   overflow:hidden;
-  transition:all 0.69s linear;
-  -webkit-transition: all 0.69s linear;
-  -webkit-transition:all 0.69s linear;
+
+    transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
 }
 
 .container-fluid {
@@ -130,53 +137,118 @@ footer {
   overflow: hidden;
 }
 
+.sp-header-logo-img {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 90%;
+}
+
+.sp-footer {
+    position: relative;
+}
+
+.back-button {
+    color: white;
+    position: absolute;
+    display: flex;
+    top: 70%;
+    left: 5%;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.back-button:hover h4 {
+  opacity: 0.7;
+
+  transition: all 0.1s ease-in;
+  -webkit-transition: all 0.1s ease-in;
+}
+
+.team-info-img {
+    position:absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    top: 75%;
+    left: 6%;
+
+    transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+}
+
+.team-info-img img {
+    height:128px;
+    width:128px;
+    border: 8px solid white;
+    border-radius:70px;
+    background:white;
+}
+
+/* END HEADER ELEMENTS */
+/* BEGIN HEADER MEDIA QUERIES */
+/* PORTRAIT MODE PHONES */
+@media (max-width: 576px) and (orientation: portrait) {
+
+    .header {
+        height: 15rem !important;
+        min-height: 15rem !important;
+    }
+
+    .small-header {
+        min-height: 15rem !important;
+        height: 15rem !important;
+    }
+
+    .team-info-img img {
+        height:96px;
+        width:96px;
+        border: 6px solid white;
+        border-radius:70px;
+        background:white;
+    }
+
+
+
+}
+
+/* LANDSCAPE MODE PHONES */
+@media (max-width: 767px) and (orientation: landscape) {
+    .team-info-img img {
+        height:96px;
+        width:96px;
+        border: 8px solid white;
+        border-radius:70px;
+        background:white;
+    }
+}
+/* END HEADER MEDIA QUERIES */
+
+.centered-img{
+    top: 50%;
+    transform: translateY(50%);
+    -ms-transform: translateY(50%);
+    -moz-transform: translateY(50%);
+    -webkit-transform: translateY(13%);
+    -o-transform: translateY(25%);
+}
+
+.container-fluid {
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
+  border-radius: 50px;
+  overflow-y: hidden;
+  -ms-overflow-style: none; /* Hides scrollbar on IE10+ */
+  scrollbar-width: none; /* Hides scrollbar on Firefox */
+}
+
+.container-fluid::-webkit-scrollbar {
+    display: none;  /* Hides scrollbar on Safari and Chrome */
+}
+
 .card{
-  height: 90%;
+  height: 95%;
   border: none;
-}
-
-@media (min-height: 1000px) {
-  .card{
-    height: 75%;
-    border: none;
-  }
-}
-
-
-/*
-ELEMENTS
-*/
-
-.team-info {
-  position:absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  top: 83%;
-  left: 3.5%;
-}
-
-.team-info img {
-  height:92px;
-  width:92px;
-  border: 8px solid white;
-  border-radius:66px;
-  background:white;
-}
-
-.team-info span {
-  margin-top: 0.3rem;
-}
-
-.back {
-  color:white;
-  position:absolute;
-  display:flex;
-  top: 15%;
-  left: 5%;
-  justify-content: center;
-  align-items:center;
-  cursor:pointer;
 }
 
 .card-active{
@@ -273,7 +345,7 @@ BOOSTRAP OVERRIDES
   background-color: var(--gray) !important;
   border-radius: 0px 0px 50px 0px;
   width: 35%;
-  height: 100vh;
+  height: 80vh;
   margin-top: -3rem;
   margin-right: -3rem;
 }
@@ -498,7 +570,8 @@ BOOSTRAP OVERRIDES
     height:35%;
   }
   footer {
-    display: none;
+    display: flex;
+    bottom: 1rem;
   }
 }
 /**

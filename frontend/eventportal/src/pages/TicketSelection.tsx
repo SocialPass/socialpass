@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
-import FAQHoverIcon from "../utils/FAQonHoverHook";
+import GeneralAdmissionFAQHoverIcon from "../utils/GeneralAdmissionFAQHook";
 
 export function TicketSelection() {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export function TicketSelection() {
               <span className="fs-18 fw-bold me-15">General Admission</span>
 
               <div className="tooltip">
-                <FAQHoverIcon locationClass='bottom'></FAQHoverIcon>
+                <GeneralAdmissionFAQHoverIcon locationClass='bottom'></GeneralAdmissionFAQHoverIcon>
               </div>
             </div>
             <div className="d-inline fw-bold">free</div>

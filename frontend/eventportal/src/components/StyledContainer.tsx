@@ -1,12 +1,9 @@
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
-// import headerImage from "../static/images/header1.svg";
-// import FAQImage from "../static/images/FAQ.svg";
 import logoImage from "../static/images/socialpass.svg";
 import _backButton from "../static/images/back.svg";
 import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
-import HoverExample from "../utils/FAQonHoverHook"
 
 // StyledContainer component
 // Display root layout (header, main content, footer)
@@ -67,7 +64,6 @@ export const StyledContainer = ({
 
                 {/* FOOTER */}
                 <footer className="sp-footer me-15 ms-15">
-                    {/* <img src={FAQImage} alt="image" /> */}
                     <small className="d-flex flex-row align-items-center">
                         Powered by &nbsp;
                         <img src={logoImage} alt="image" />

@@ -38,7 +38,7 @@ const HoverText = (props) => {
     );
 };
 
-const FAQHoverIcon = (props) => {
+const GeneralAdmissionFAQHoverIcon = (props) => {
     const [isHovering, setIsHovering] = useState(false);
     const handleMouseOver = () => {
         setIsHovering(true);
@@ -60,4 +60,4 @@ const FAQHoverIcon = (props) => {
     );
 };
 
-export default FAQHoverIcon;
+export default GeneralAdmissionFAQHoverIcon;

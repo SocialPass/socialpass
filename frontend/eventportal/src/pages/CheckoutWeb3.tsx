@@ -6,6 +6,7 @@ import { Loading } from "../components/";
 import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
 import { CheckoutPortalContext } from "../context";
 import infoButton from "../static/images/icons/infoButton.svg";
+import NFTOwnershipFAQHoverIcon from "../utils/NFTOwnershipFAQHook";
 
 // ConnectorWallets
 // Return UI for wallet connectors
@@ -131,14 +132,7 @@ export const CheckoutWeb3 = () => {
           </div>
 
           <div className="tooltip">
-            <img src={infoButton} />
-            <div className="right">
-              <span className="tooltip-text fs-12">
-                Proof of ownership is not an NFT trade. We need to prove you own
-                the NFT in order to get the ticket.
-              </span>
-              <i></i>
-            </div>
+            <NFTOwnershipFAQHoverIcon locationClass='bottom-left'></NFTOwnershipFAQHoverIcon>
           </div>
         </div>
         <div className="wallets">

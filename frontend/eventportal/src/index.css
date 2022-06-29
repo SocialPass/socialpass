@@ -463,6 +463,33 @@ BOOSTRAP OVERRIDES
     visibility:visible; 
     opacity:1;
   }
+
+  .tooltip .bottom-left {
+    min-width:300px;
+    max-width:300px;
+    top: 100%;
+    margin-bottom:20px;
+    transform:translate(-85%, 5%);
+    padding:10px 20px;
+    color:#000000;
+    background-color:#FFFFFF;
+    font-weight:normal;
+    font-size:13px;
+    border-radius:8px;
+    position:absolute;
+    z-index:999;
+    box-sizing:border-box;
+    border:1px solid #FF9966;
+    box-shadow:0 1px 8px rgba(0,0,0,0.5);
+    visibility:hidden;
+    opacity:0; 
+    transition:opacity 0.8s;
+  }
+  
+  .tooltip:hover .bottom-left {
+    visibility:visible; 
+    opacity:1;
+  }
   
 .tooltip .right {
   min-width:200px;
@@ -606,6 +633,11 @@ BOOSTRAP OVERRIDES
   }
 
   .tooltip .bottom {
+    min-width:200px;
+    max-width:200px;
+  }
+
+  .tooltip .bottom-left {
     min-width:200px;
     max-width:200px;
   }

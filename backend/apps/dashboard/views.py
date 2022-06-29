@@ -302,12 +302,13 @@ class EventListView(TeamContextMixin, ListView):
 
     model = Event
     paginate_by = 15
+    ordering = ["-modified"]
     context_object_name = "events"
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):
-        qs = Event.objects.filter(team__public_id=self.kwargs["team_pk"])
-        qs = qs.order_by("-modified")
+        qs = super().get_queryset()
+        qs = qs.filter(team__public_id=self.kwargs["team_pk"])
 
         query_title = self.request.GET.get("title", "")
         if query_title:

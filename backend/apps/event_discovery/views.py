@@ -13,8 +13,8 @@ class EventDiscoveryIndex(TemplateView):
 class EventDiscoveryBrowse(ListView):
     model = Event
     paginate_by = 15
-    context_object_name = "events"
     ordering = ["-modified"]
+    context_object_name = "events"
     template_name = "event_discovery/browse_events.html"
 
     def get_queryset(self):

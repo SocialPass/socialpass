@@ -34,6 +34,10 @@ html, body {
   font-family: 'rubik';
   -ms-word-break: break-word;
   word-break: break-word;
+
+  background-image: url('./static/images/icons/socialpassLogo_gray.svg');
+    background-repeat: repeat; 
+    background-size: 10vw;
 }
 
 /* #root {
@@ -146,6 +150,8 @@ footer {
 
 .sp-footer {
     position: relative;
+    bottom: 0;
+    width: 100%;
 }
 
 .back-button {
@@ -189,27 +195,6 @@ footer {
 /* END HEADER ELEMENTS */
 /* BEGIN HEADER MEDIA QUERIES */
 /* PORTRAIT MODE PHONES */
-@media (max-width: 576px) and (orientation: portrait) {
-
-    .header {
-        height: 15rem !important;
-        min-height: 15rem !important;
-    }
-
-    .small-header {
-        min-height: 15rem !important;
-        height: 15rem !important;
-    }
-
-    .team-info-img img {
-        height:96px;
-        width:96px;
-        border: 6px solid white;
-        border-radius:70px;
-        background:white;
-    }
-
-}
 
 /* LANDSCAPE MODE PHONES */
 @media (max-width: 767px) and (orientation: landscape) {
@@ -561,10 +546,33 @@ BOOSTRAP OVERRIDES
 
 .wallets { grid-template-columns: repeat(3, 1fr); }
 
+/* PORTRAIT MODE ON PHONES */
 @media (max-width: 576px) {
+
+    .header {
+        height: 15rem !important;
+        min-height: 15rem !important;
+    }
+
+    .small-header {
+        min-height: 15rem !important;
+        height: 15rem !important;
+    }
+
+    .team-info-img img {
+        height:96px;
+        width:96px;
+        border: 6px solid white;
+        border-radius:70px;
+        background:white;
+    }
 
   .container-fluid{
       max-width: 100vw;
+  }
+
+  .container-centered{
+    transform: translate(-50%, 0px) !important;
   }
 
   .wallets { grid-template-columns: repeat(2, 1fr); }
@@ -649,10 +657,10 @@ BOOSTRAP OVERRIDES
 
 .container-centered {
   overflow-x: hidden;
-  position: absolute;
+  position: relative;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 1rem);
   width: 800px;
   max-width: 100%;
   margin: 0;

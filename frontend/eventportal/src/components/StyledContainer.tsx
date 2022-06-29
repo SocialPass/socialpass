@@ -15,6 +15,7 @@ export const StyledContainer = ({
   const { retrieveJson } = useContext(CheckoutPortalContext);
   const location = useLocation();
   const navigate = useNavigate();
+
   return (
     <div className="container-fluid card container-centered p-0">
       {/* HEADER */}

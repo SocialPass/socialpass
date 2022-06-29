@@ -13,7 +13,7 @@ export const CheckoutStatus = () => {
   );
   const navigate = useNavigate();
   console.log(grantAccessJson, grantAccessError);
-  if (!grantAccessJson) {
+  if (grantAccessJson) {
     return (
       <div className="row flex-grow-1 m-0 mt-3 align-items-center">
         <div className="col-md-7 mb-4 d-flex">

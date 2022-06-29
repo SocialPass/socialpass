@@ -209,8 +209,6 @@ footer {
         background:white;
     }
 
-
-
 }
 
 /* LANDSCAPE MODE PHONES */
@@ -226,7 +224,7 @@ footer {
 /* END HEADER MEDIA QUERIES */
 
 .main-contents{
-    
+
 }
 
 .centered-img{
@@ -455,12 +453,12 @@ BOOSTRAP OVERRIDES
     border:1px solid #FF9966;
     box-shadow:0 1px 8px rgba(0,0,0,0.5);
     visibility:hidden;
-    opacity:0; 
+    opacity:0;
     transition:opacity 0.8s;
   }
-  
+
   .tooltip:hover .bottom {
-    visibility:visible; 
+    visibility:visible;
     opacity:1;
   }
 
@@ -482,15 +480,15 @@ BOOSTRAP OVERRIDES
     border:1px solid #FF9966;
     box-shadow:0 1px 8px rgba(0,0,0,0.5);
     visibility:hidden;
-    opacity:0; 
+    opacity:0;
     transition:opacity 0.8s;
   }
-  
+
   .tooltip:hover .bottom-left {
-    visibility:visible; 
+    visibility:visible;
     opacity:1;
   }
-  
+
 .tooltip .right {
   min-width:200px;
   max-width:80px;
@@ -565,9 +563,9 @@ BOOSTRAP OVERRIDES
 
 @media (max-width: 576px) {
 
-    .container-fluid{
-        max-width: 100vw;
-    }
+  .container-fluid{
+      max-width: 100vw;
+  }
 
   .wallets { grid-template-columns: repeat(2, 1fr); }
 

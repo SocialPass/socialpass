@@ -24,7 +24,7 @@ export const Event = (): JSX.Element => {
               {retrieveJson && retrieveJson?.team?.name}
             </span>
             <span className="fs-28 fw-bold">{retrieveJson.title}</span>
-            <span className="fs-16 fw-light text-muted">
+            <span className="fs-16 fw-light text-muted text-justify">
               {retrieveJson?.description}
             </span>
           </div>

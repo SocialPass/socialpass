@@ -4,14 +4,16 @@ import { CheckoutPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
 import correct from "../static/images/icons/correct.svg";
+import timezone from "../static/images/icons/timezone.svg";
 import denied from "../static/images/icons/denied.svg";
 
 export const CheckoutStatus = () => {
-  const { id, grantAccessJson, grantAccessError, retrieveJson } =
-    useContext(CheckoutPortalContext);
+  const { id, grantAccessJson, grantAccessError, retrieveJson } = useContext(
+    CheckoutPortalContext
+  );
   const navigate = useNavigate();
   console.log(grantAccessJson, grantAccessError);
-  if (grantAccessJson) {
+  if (!grantAccessJson) {
     return (
       <div className="row flex-grow-1 m-0 mt-3 align-items-center">
         <div className="col-md-7 mb-4 d-flex">
@@ -20,17 +22,18 @@ export const CheckoutStatus = () => {
             <p>You made it. Click the button to download your ticket</p>
             <div className="fw-bold bg-success p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
               <img src={correct} height="16.9" width="16.9" className="me-4" />
-              access granted
-              <span></span>
+              <span className="fs-16">access granted</span>
             </div>
             <div className="d-flex flex-row justify-content-start align-items-center gap-30">
               <img
+                src={"https://picsum.photos/200"}
+                key={"https://picsum.photos/200"}
                 className="avatar-img"
-                src={retrieveJson.team.image}
+                // src={retrieveJson.team.image}
               />
-              <div>
-                <strong>{retrieveJson.title}</strong>
-                <p className="d-flex align-items-center m-0 mt-1 mb-1">
+              <div className="d-flex flex-column gap-5 mb-15">
+                <strong className="fs-22">{retrieveJson.title}</strong>
+                <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                   <img
                     src={clock}
                     height="16.9"
@@ -38,25 +41,41 @@ export const CheckoutStatus = () => {
                     className="me-5"
                     alt="Date & Time"
                   />
-                  {retrieveJson.date} |{" "}
+                  {retrieveJson.start_date}
+                </p>
+                <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
+                  <img
+                    src={timezone}
+                    height="16.9"
+                    width="16.9"
+                    className="me-5"
+                    alt="Timezone"
+                  />
                   {retrieveJson.timezone}
                 </p>
-                <p className="d-flex align-items-center m-0 mt-1 mb-1">
+                <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                   <img
                     src={location}
                     height="16.9"
                     width="16.9"
                     className="me-5"
-                    alt="Date & Time"
+                    alt="Location"
                   />
-                  {retrieveJson.location}
+                  {retrieveJson?.location}
                 </p>
               </div>
             </div>
           </div>
         </div>
         <div className="col-md-5">
-          <button onClick={() => window.open(grantAccessJson[0]["temporary_download_url"])}className="btn-primary">Download Tickets</button>
+          <button
+            onClick={() =>
+              window.open(grantAccessJson[0]["temporary_download_url"])
+            }
+            className="btn-primary fs-22 mt-5"
+          >
+            Download Tickets
+          </button>
         </div>
       </div>
     );
@@ -76,12 +95,9 @@ export const CheckoutStatus = () => {
             <span></span>
           </div>
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
-            <img
-              className="avatar-img"
-              src={retrieveJson.team.image}
-            />
-            <div>
-              <strong className="fs-20">{retrieveJson.title}</strong>
+            <img className="avatar-img" src={retrieveJson.team.image} />
+            <div className="d-flex flex-column gap-5 mb-15">
+              <strong className="fs-22">{retrieveJson.title}</strong>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
                 <img
                   src={clock}
@@ -90,7 +106,16 @@ export const CheckoutStatus = () => {
                   className="me-5"
                   alt="Date & Time"
                 />
-                {retrieveJson.date} |{" "}
+                {retrieveJson.start_date}
+              </p>
+              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
+                <img
+                  src={timezone}
+                  height="16.9"
+                  width="16.9"
+                  className="me-5"
+                  alt="Timezone"
+                />
                 {retrieveJson.timezone}
               </p>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
@@ -99,9 +124,9 @@ export const CheckoutStatus = () => {
                   height="16.9"
                   width="16.9"
                   className="me-5"
-                  alt="Date & Time"
+                  alt="Location"
                 />
-                {retrieveJson.location}
+                {retrieveJson?.location}
               </p>
             </div>
           </div>

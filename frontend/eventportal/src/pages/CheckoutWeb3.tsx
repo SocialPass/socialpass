@@ -132,31 +132,29 @@ export const CheckoutWeb3 = () => {
           </div>
 
           <div className="tooltip">
-            <NFTOwnershipFAQHoverIcon locationClass='bottom-left'></NFTOwnershipFAQHoverIcon>
+            <NFTOwnershipFAQHoverIcon locationClass="bottom-left"></NFTOwnershipFAQHoverIcon>
           </div>
         </div>
         <div className="wallets">
           {connectHook.connectors.map((x) => (
-            <>
-              <button
-                className={
-                  selectedWallet === x
-                    ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                    : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                }
-                disabled={!x.ready}
-                key={x.id}
-                id={x.id}
-                onClick={() => handleSelectWallet(x)}
-              >
-                <Web3ConnectorImage
-                  selectedWallet={selectedWallet}
-                  connector={x.name}
-                />
-                {x.name}
-                {!x.ready && " (unsupported)"}
-              </button>
-            </>
+            <button
+              className={
+                selectedWallet === x
+                  ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                  : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+              }
+              disabled={!x.ready}
+              key={x.id}
+              id={x.id}
+              onClick={() => handleSelectWallet(x)}
+            >
+              <Web3ConnectorImage
+                selectedWallet={selectedWallet}
+                connector={x.name}
+              />
+              {x.name}
+              {!x.ready && " (unsupported)"}
+            </button>
           ))}
         </div>
         {connectHook.error && (

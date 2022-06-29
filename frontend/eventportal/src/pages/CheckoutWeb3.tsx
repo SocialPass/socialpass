@@ -5,7 +5,6 @@ import { TicketedEventRequestAccess, TicketedEventGrantAccess } from "../api";
 import { Loading } from "../components/";
 import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
 import { CheckoutPortalContext } from "../context";
-import infoButton from "../static/images/icons/infoButton.svg";
 import NFTOwnershipFAQHoverIcon from "../utils/NFTOwnershipFAQHook";
 
 // ConnectorWallets
@@ -164,7 +163,7 @@ export const CheckoutWeb3 = () => {
           <div>{signHook.error?.message ?? "Failed to connect"}</div>
         )}
       </div>
-      <div className="bg-gray py-5 d-flex flex-column justify-start-center">
+      <div className="bg-gray d-flex flex-column justify-start-center">
         <div className="ms-10 d-flex flex-column align-items-start justify-start-center py-30">
           <div className="d-flex align-items-center justify-conent-center">
             <h3 className="fs-20">Summary</h3>

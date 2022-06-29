@@ -16,8 +16,8 @@ export const Event = (): JSX.Element => {
   }
 
   return (
-    <div className="row flex-grow-1 m-0 align-items-center">
-      <div className="col-md-7 mb-4 d-flex">
+    <div className="row m-0 align-items-end">
+      <div className="col-md-7 d-flex">
         <div className="col col-md-10 mb-30">
           <div className="mb-15 d-flex flex-column align-items-start justify-content-center">
             <span className="fs-16 fw-500">
@@ -66,8 +66,8 @@ export const Event = (): JSX.Element => {
           </span>
         </div>
       </div>
-      <div className="col-md-4 offset-md-1">
-        <button className="btn-primary fw-700 fs-20" onClick={handleNavigate}>
+      <div className="col-md-4 offset-md-1 ms-5">
+        <button className="btn-primary fs-20" onClick={handleNavigate}>
           Claim Tickets
         </button>
       </div>

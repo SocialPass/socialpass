@@ -19,7 +19,9 @@ export const CheckoutStatus = () => {
         <div className="col-md-7 mb-4 d-flex">
           <div className="col col-md-10">
             <h1>Congrats!</h1>
-            <p>You made it. Click the button to download your ticket</p>
+            <p className="fs-16">
+              You made it. Click the button to download your ticket
+            </p>
             <div className="fw-bold bg-success p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
               <img src={correct} height="16.9" width="16.9" className="me-4" />
               <span className="fs-16">access granted</span>
@@ -67,7 +69,7 @@ export const CheckoutStatus = () => {
             </div>
           </div>
         </div>
-        <div className="col-md-5">
+        <div className="col-md-5 mt-30">
           <button
             onClick={() =>
               window.open(grantAccessJson[0]["temporary_download_url"])
@@ -85,14 +87,13 @@ export const CheckoutStatus = () => {
       <div className="col-md-7 mb-4 d-flex">
         <div className="col col-md-10">
           <h1>Access Denied</h1>
-          <p className="fs-15">
+          <p className="fs-16">
             We are unable to issue any tickets for this event
           </p>
-          <code>Error Code: {grantAccessError.message}</code>
+          <code>Error Code: {grantAccessError?.message}</code>
           <div className="fw-bold bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
             <img src={denied} height="16.9" width="16.9" />
-            access denied
-            <span></span>
+            <span className="fs-16">access denied</span>
           </div>
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
             <img className="avatar-img" src={retrieveJson.team.image} />
@@ -134,7 +135,7 @@ export const CheckoutStatus = () => {
       </div>
       <div className="col-md-5 mt-30">
         <button
-          className="btn-primary fw-700 fs-22"
+          className="btn-primary fs-22"
           onClick={() => {
             navigate(`/${id}`);
           }}

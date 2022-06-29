@@ -12,11 +12,19 @@ class EventDiscoveryIndex(TemplateView):
 
 class EventDiscoveryBrowse(ListView):
     model = Event
+    paginate_by = 15
     context_object_name = "events"
     template_name = "event_discovery/browse_events.html"
 
     def get_queryset(self):
+        # Get public, published event queryset
         qs = Event.objects.all()
+
+        # Filter by available querystings
+        query_title = self.request.GET.get("title", "")
+        if query_title:
+            qs = qs.filter(title__icontains=query_title)
+
         return qs
 
 
@@ -26,3 +34,15 @@ class EventDiscoveryDetails(DetailView):
     slug_url_kwarg = "event_pk"
     context_object_name = "event"
     template_name = "event_discovery/event_details.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        Fetch ticket info
+        """
+        context = super().get_context_data(**kwargs)
+        ticket_count = self.object.tickets.count()
+        tickets_remaining = self.object.capacity - ticket_count
+        context.update(
+            {"ticket_count": ticket_count, "tickets_remaining": tickets_remaining}
+        )
+        return context

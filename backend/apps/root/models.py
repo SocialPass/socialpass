@@ -6,10 +6,12 @@ from datetime import datetime, timedelta
 import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.sites.models import Site
 from django.core import exceptions as dj_exceptions
 from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from pytz import utc
 from taggit.managers import TaggableManager
 
@@ -161,6 +163,10 @@ class Event(AllowDraft, DBModel):
     @property
     def url_path(self):
         return self.custom_url_path or self.public_id
+
+    @property
+    def discovery_url(self):
+        return reverse("discovery:details", args=(self.public_id,))
 
     @property
     def checkout_portal_url(self):

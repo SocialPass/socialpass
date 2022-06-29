@@ -128,3 +128,8 @@ def fulfill_payment(payment: EventStripePayment):
     """Fulfills a payment for a ticket gate."""
     payment.status = "SUCCESS"
     payment.save()
+
+
+def unpublish_event(event: Event):
+    event.publish_date = None
+    event.save()

@@ -6,6 +6,7 @@ import stripe
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core import exceptions
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
 from django.views import View
@@ -24,7 +25,6 @@ from apps.dashboard.models import EventStripePayment, Membership, Team
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.models import Event, Ticket
-from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 
 User = auth.get_user_model()
 
@@ -350,6 +350,7 @@ class EventCreateView(TeamContextMixin, CreateView):
         context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
+        context["event"] = context["form"].instance
 
         return context
 
@@ -401,11 +402,11 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
+        context["event"] = self.get_object()
         return context
 
     def get_success_url(self):
-        print(self.request.POST)
-        if self.object.is_draft:
+        if self.object.status == "Draft":
             messages.add_message(
                 self.request, messages.SUCCESS, "Draft saved successfully."
             )
@@ -418,9 +419,11 @@ class EventUpdateView(TeamContextMixin, UpdateView):
             )
 
         messages.add_message(
-            self.request, messages.SUCCESS, "Token gate updated successfully."
+            self.request, messages.SUCCESS, "Event updated successfully."
         )
-        if services.get_event_pending_payment_value(self.object):
+        if self.object.status == "Staged":
+            view = "ticketgate_update"
+        elif self.object.status == "Pending Checkout":
             view = "ticketgate_checkout"
         else:
             view = "ticketgate_detail"
@@ -432,6 +435,23 @@ class EventUpdateView(TeamContextMixin, UpdateView):
                 self.object.pk,
             ),
         )
+
+    def post(self, *args, **kwargs):
+        action = self.request.GET.get("action", None)
+        if action is None:
+            return super().post(*args, **kwargs)
+        elif action == "unpublish":
+            return self.unpublish(*args, **kwargs)
+
+        raise exceptions.SuspiciousOperation()
+
+    def unpublish(self, *args, **kwargs):
+        event = self.get_object()
+        services.unpublish_event(event)
+        messages.add_message(
+            self.request, messages.SUCCESS, "Event succesfully unpublished"
+        )
+        return redirect("ticketgate_update", **self.kwargs)
 
 
 class EventCheckout(TeamContextMixin, TemplateView):

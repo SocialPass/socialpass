@@ -7,16 +7,36 @@
 {% block content %}
 <script src="{% static 'js/main.js' %}"></script>
 <script>
+
+  window.onload = () => {
+    let first_error = document.getElementsByClassName('invalid-feedback')[0]
+    if (first_error){
+      first_error.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+    }
+  }
+
   function saveAsDraft(){
     document.getElementById("id_is_draft").checked = true
     document.getElementById("id_is_draft").value = 'True'
     document.getElementById("create-event-form").submit()
   }
 
-  function submitForReview(){
+  function stageEvent(){
     document.getElementById("id_is_draft").checked = false
     document.getElementById("id_is_draft").value = 'False'
     document.getElementById("create-event-form").submit()
+  }
+
+  function save(){
+    document.getElementById("create-event-form").submit()
+  }
+
+  function unpublish(){
+    document.getElementById("create-event-form").submit()
+  }
+
+  function displayPublishModal(){
+
   }
 
 </script>
@@ -24,16 +44,7 @@
 <div class="row event-form">
   <div class="col col-12 col-sm-4">
     <div class="navigation-container py-30 px-10">
-      Create event
-      {% if form.instance.is_draft %}
-        (Draft)
-      {% elif not form.instance.is_published %}
-        (Staged)
-      {% elif not form.instance.is_scheduled %}
-        (Scheduled)
-      {% else %}
-        (Published)
-      {% endif %}
+      {% if url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %} Event ({{event.status}})
       <ol>
         <li>
           <a href="#1-general-info">General Info</a>
@@ -54,12 +65,45 @@
           <a href="#4-publish" disabled>Publish</a>
         </li>
       </ol>
-
-      <button onclick="saveAsDraft()">Save as Draft</button>
-      <button onclick="submitForReview()">Stage for Publication</button>
+      <div id="event-form-toolbar">
+        <a href="#checkout_portal_preview_url">Preview Event</a>
+        <br/>
+        {% if event.status == "Draft" %}
+          <button onclick="saveAsDraft()">Save Draft</button>
+          <button onclick="stageEvent()">Stage Event</button>
+        {% elif event.status == "Staged" %}
+          <button onclick="saveAsDraft()">Save as Draft</button>
+          <button onclick="displayPublishModal()">Preview and Publish</button>
+        {% elif event.status == "Scheduled" %}
+          <button onclick="save()">Save</button>
+          <form action="{% url 'ticketgate_update' view.kwargs.team_pk event.pk %}?action=unpublish" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Unschedule"/>
+          </form>
+        {% elif event.status == "Published" %}
+          <button onclick="save()">Save</button>
+          <form action="{% url 'ticketgate_update' view.kwargs.team_pk event.pk %}?action=unpublish" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Unpublish"/>
+          </form>
+        {% endif %}
+      </div>
     </div>
   </div>
   <div class="col col-12 col-sm-8 py-30 px-10">
+    <!--
+    In case we want to show a summary of errors:
+    {% if form.errors %}
+      {% for field in form %}
+        {% if field.errors %}
+          field: {{field.name}}
+          {% for error in field.errors %}
+            {{ error|escape }}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    -->
     <form id="create-event-form" class="form" method="post">
       {% csrf_token %}
       {{ form.is_draft }}
@@ -111,9 +155,7 @@
                 attendees know where to show up.</p>
             </div>
             <div>
-              TODO!
-              <br>
-              Location field here
+              {{form.location|as_crispy_field}}
             </div>
           </div>
           <div>

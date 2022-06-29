@@ -5,7 +5,7 @@ import { TicketedEventRequestAccess, TicketedEventGrantAccess } from "../api";
 import { Loading } from "../components/";
 import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
 import { CheckoutPortalContext } from "../context";
-import NFTOwnershipFAQHoverIcon from "../utils/NFTOwnershipFAQHook";
+import NFTOwnershipFAQHoverIcon from "../components/NFTOwnershipFAQ";
 
 // ConnectorWallets
 // Return UI for wallet connectors

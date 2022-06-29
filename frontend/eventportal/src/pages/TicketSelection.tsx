@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
-import GeneralAdmissionFAQHoverIcon from "../utils/GeneralAdmissionFAQHook";
+import GeneralAdmissionFAQHoverIcon from "../components/GeneralAdmissionFAQ";
 
 export function TicketSelection() {
   const navigate = useNavigate();

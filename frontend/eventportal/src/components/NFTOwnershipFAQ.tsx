@@ -15,7 +15,7 @@ const HoverText = (props) => {
         <div>
             <div className={props.location}>
               <span className="tooltip-text fs-12">
-                Proof of ownership is not an NFT trade. We need to prove you own
+                Proof of ownership is not a NFT trade. We need to prove you own
                 the NFT in order to get the ticket.
               </span>
               <i></i>

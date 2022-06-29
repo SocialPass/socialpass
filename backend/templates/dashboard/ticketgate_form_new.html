@@ -1,0 +1,298 @@
+{% extends 'bases/base_primary.html' %}
+{% load static i18n get_chain_name crispy_forms_tags avoid_view_resubmission %}
+
+{% block head_title %}
+{% if request.resolver_match.url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %} Event - SocialPass
+{% endblock head_title %}
+
+{% block navbar_breadcrumb %}
+{% if url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %} Event
+{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">
+				{% if url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %} Event ({{event.status}})
+			</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				Use the following form to create/update an event.
+			</p>
+		</div>
+	</div>
+</div>
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Event Form
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<div class="row">
+		<!-- Form navigation start -->
+		<div class="col-lg-5 border-lg-end">
+			<div class="p-content position-lg-sticky top-navbar start-0">
+				<div>
+					<a href="#1-general-info" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+						<strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">1</strong>
+						<span class="ms-15">General Information</span>
+					</a>
+				</div>
+				<div class="mt-15">
+					<a href="#2-blockchain-requirements" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+						<strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">2</strong>
+						<span class="ms-15">Blockchain Requirements</span>
+					</a>
+				</div>
+				<div class="mt-15">
+					<a href="#3-tickets" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+						<strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">3</strong>
+						<span class="ms-15">Tickets</span>
+					</a>
+				</div>
+				<div class="mt-20">
+					<a href="#" class="fw-bold">
+						Preview Event <i class="fa-regular fa-external-link-alt ms-5"></i>
+					</a>
+				</div>
+				<div class="mt-20 row">
+					<div class="col-6 pe-5">
+						<button type="button" class="btn btn-block">Save Draft</button>
+					</div>
+					<div class="col-6 ps-5">
+						<button type="button" class="btn btn-primary btn-block">Stage Event</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Form navigation end -->
+
+		<!-- Main content start -->
+		<div class="col-lg-7">
+			<div class="content">
+				<!-- Form start -->
+				<form class="form" method="post" id="create-event-form">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="invalid-feedback">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					<!-- General info start -->
+					<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="1-general-info">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-solid fa-circle-1"></i>
+						</span>
+						General Information
+					</h2>
+					<p class="text-muted fs-base-n2 mt-5">
+						Please fill in some general information about your event.
+					</p>
+
+					<hr />
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-regular fa-ballot-check"></i>
+						</span>
+						Basic Information
+					</h3>
+					<p class="text-muted fs-base-n2 mt-5">
+						Name your event and tell event-goers why they should come. Add details that highlight what makes it unique.
+					</p>
+
+					<!-- Title start -->
+					{% with form.title as input %}
+						<div class="form-group">
+							<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+							<input
+								type="{{ input.field.widget.input_type }}"
+								name="{{ input.name }}"
+								value="{{ input.value|default_if_none:'' }}"
+								{% if input.field.widget.input_type != "hidden" %}
+									class="form-control {% if input.errors %}is-invalid{% endif %}"
+									id="{{ input.auto_id }}"
+								{% endif %}
+								{% if input.field.required %}
+									required="required"
+								{% endif %}
+								{% for k,v in input.field.widget.attrs.items %}
+									{{ k }}="{{ v }}"
+								{% endfor %}
+							/>
+							{% if input.errors %}
+								<ul class="invalid-feedback">
+									{% for error in input.errors %}
+										<li>{{ error }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					{% endwith %}
+					<!-- Title end -->
+
+					<!-- Organizer start -->
+					{% with form.organizer as input %}
+						<div class="form-group">
+							<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+							<input
+								type="{{ input.field.widget.input_type }}"
+								name="{{ input.name }}"
+								value="{{ input.value|default_if_none:'' }}"
+								{% if input.field.widget.input_type != "hidden" %}
+									class="form-control {% if input.errors %}is-invalid{% endif %}"
+									id="{{ input.auto_id }}"
+								{% endif %}
+								{% if input.field.required %}
+									required="required"
+								{% endif %}
+								{% for k,v in input.field.widget.attrs.items %}
+									{{ k }}="{{ v }}"
+								{% endfor %}
+							/>
+							{% if input.errors %}
+								<ul class="invalid-feedback">
+									{% for error in input.errors %}
+										<li>{{ error }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					{% endwith %}
+					<!-- Organizer end -->
+
+					<!-- Description start -->
+					{% with form.description as input %}
+						<div class="form-group">
+							<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+							<textarea
+								name="{{ input.name }}"
+								{% if input.field.widget.input_type != "hidden" %}
+									class="form-control {% if input.errors %}is-invalid{% endif %}"
+									id="{{ input.auto_id }}"
+								{% endif %}
+								{% if input.field.required %}
+									required="required"
+								{% endif %}
+								{% for k,v in input.field.widget.attrs.items %}
+									{{ k }}="{{ v }}"
+								{% endfor %}
+								>{% if input.value %}{{ input.value }}{% endif %}</textarea>
+							{% if input.errors %}
+								<ul class="invalid-feedback">
+									{% for error in input.errors %}
+										<li>{{ error }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					{% endwith %}
+					<!-- Description end -->
+
+					<hr />
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-regular fa-location-dot"></i>
+						</span>
+						Location
+					</h3>
+					<p class="text-muted fs-base-n2 mt-5">
+						Help people in the area discover your event and let attendees know where to show up.
+					</p>
+
+					<!-- Location start -->
+					{% with form.location as input %}
+						<div class="form-group">
+							<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+							<input
+								type="{{ input.field.widget.input_type }}"
+								name="{{ input.name }}"
+								value="{{ input.value|default_if_none:'' }}"
+								{% if input.field.widget.input_type != "hidden" %}
+									class="form-control {% if input.errors %}is-invalid{% endif %}"
+									id="{{ input.auto_id }}"
+								{% endif %}
+								{% if input.field.required %}
+									required="required"
+								{% endif %}
+								{% for k,v in input.field.widget.attrs.items %}
+									{{ k }}="{{ v }}"
+								{% endfor %}
+							/>
+							{% if input.errors %}
+								<ul class="invalid-feedback">
+									{% for error in input.errors %}
+										<li>{{ error }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					{% endwith %}
+					<!-- Location end -->
+
+					<!-- General info end -->
+				</form>
+				<!-- Form end -->
+			</div>
+		</div>
+		<!-- Main content end -->
+	</div>
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help creating/updating an event.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+	window.onload = () => {
+		let first_error = document.getElementsByClassName('invalid-feedback')[0]
+		if (first_error){
+			first_error.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+		}
+	}
+
+	function saveAsDraft(){
+		document.getElementById("id_is_draft").checked = true
+		document.getElementById("id_is_draft").value = 'True'
+		document.getElementById("create-event-form").submit()
+	}
+
+	function stageEvent(){
+		document.getElementById("id_is_draft").checked = false
+		document.getElementById("id_is_draft").value = 'False'
+		document.getElementById("create-event-form").submit()
+	}
+
+	function save(){
+		document.getElementById("create-event-form").submit()
+	}
+
+	function unpublish(){
+		document.getElementById("create-event-form").submit()
+	}
+
+	function displayPublishModal(){
+
+	}
+</script>
+{% endblock %}

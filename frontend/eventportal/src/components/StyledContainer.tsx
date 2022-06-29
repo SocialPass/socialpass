@@ -20,7 +20,7 @@ export const StyledContainer = ({
         
             {/* HEADER */}
 
-            <div>
+            
                 {/* Small header vs header display logic is based on URL length, not ideal. (Lucas?) */}
                 {location.pathname.length > 45 ? (
                     <header className="small-header d-flex align-items-start justify-content-center flex-row">
@@ -69,7 +69,7 @@ export const StyledContainer = ({
                         <img src={logoImage} alt="image" />
                     </small>
                 </footer>
-            </div>
+            
         </div>
     );
 };

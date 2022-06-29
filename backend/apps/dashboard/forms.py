@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
@@ -50,6 +52,14 @@ class EventForm(forms.ModelForm):
             format="%Y-%m-%dT%H:%M",
             attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
         ),
+        required=False,
+    )
+    publish_date = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+        ),
+        initial=datetime.now,
         required=False,
     )
     visibility = forms.CharField(

@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime, timedelta
 
 import boto3
+import pytz
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core import exceptions as dj_exceptions
@@ -19,7 +20,7 @@ from apps.root.model_draft import (
     change_draft_validation_message,
     required_if_not_draft,
 )
-from apps.root.model_field_choices import EVENT_VISIBILITY
+from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
 from config.storages import MediaRootS3Boto3Storage, PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
@@ -98,7 +99,7 @@ class Event(AllowDraft, DBModel):
 
     # Publish info
     is_draft = models.BooleanField(default=True)
-    publish_date = models.TimeField(null=True, blank=True)
+    publish_date = models.DateTimeField(null=True, blank=True)
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     # Basic Info
@@ -114,10 +115,11 @@ class Event(AllowDraft, DBModel):
     categories = TaggableManager(blank=True)
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
-    timezone = models.CharField(
-        null=True,
-        verbose_name="time zone",
-        max_length=30,
+    timezone = required_if_not_draft(
+        models.CharField(
+            verbose_name="time zone",
+            max_length=30,
+        )
     )
     location = required_if_not_draft(models.CharField(max_length=1024))
     # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
@@ -160,13 +162,54 @@ class Event(AllowDraft, DBModel):
     def __str__(self):
         return f"{self.team} - {self.title}"
 
+    def save(self, *args, **kwargs):
+        """
+        Adds the following functionalities:
+        - sets timezones based on timezone field for all datetimefields
+        """
+        if self.is_draft:
+            return super().save(*args, **kwargs)
+
+        TicketRedemptionKey.objects.get_or_create(event=self)
+
+        if self.timezone is not None:
+            timezone_aware_datetime_fields = ["start_date", "end_date", "publish_date"]
+
+            for field in timezone_aware_datetime_fields:
+                val = getattr(self, field)
+                if val is not None:
+                    setattr(
+                        self, field, val.replace(tzinfo=pytz.timezone(self.timezone))
+                    )
+
+        return super().save(*args, **kwargs)
+
+    @property
+    def status(self):
+        if self.is_draft:
+            return EventStatusEnum.DRAFT.value
+        if not self.is_published:
+            return EventStatusEnum.STAGED.value
+        elif self.is_scheduled:
+            return EventStatusEnum.SCHEDULED.value
+        else:
+            return EventStatusEnum.PUBLISHED.value
+
     @property
     def is_published(self):
+        if self.has_pending_checkout:
+            return False
+
         return self.publish_date is not None
 
     @property
     def is_scheduled(self):
-        return self.publish_date > datetime.now()
+        if self.has_pending_checkout:
+            return False
+
+        return self.publish_date is not None and self.publish_date > datetime.now(
+            self.publish_date.tzinfo
+        )
 
     @property
     def is_public(self):
@@ -191,13 +234,6 @@ class Event(AllowDraft, DBModel):
                 return True
 
         return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
-
-    def save(self, *args, **kwargs):
-        created = self.pk
-        super().save(*args, **kwargs)
-
-        if created:
-            TicketRedemptionKey.objects.get_or_create(event=self)
 
 
 class Ticket(DBModel):

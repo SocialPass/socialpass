@@ -26,7 +26,6 @@ class AllowDraft:
         raise NotImplementedError("is_draft")
 
     def clean(self):
-        print("sup", self.is_draft)
         exc = None
         try:
             super().clean()

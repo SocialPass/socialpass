@@ -14,11 +14,12 @@ class EventDiscoveryBrowse(ListView):
     model = Event
     paginate_by = 15
     context_object_name = "events"
+    ordering = ["-modified"]
     template_name = "event_discovery/browse_events.html"
 
     def get_queryset(self):
         # Get public, published event queryset
-        qs = Event.objects.all()
+        qs = super().get_queryset()
 
         # Filter by available querystings
         query_title = self.request.GET.get("title", "")

@@ -1,16 +1,22 @@
 import os
+import typing
 import uuid
 from datetime import datetime, timedelta
 
 import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core import exceptions as dj_exceptions
 from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from pytz import utc
+from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
+from apps.root.model_draft import AllowDraft, required_if_not_draft
+from apps.root.model_field_choices import EVENT_VISIBILITY
+from config.storages import MediaRootS3Boto3Storage, PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .model_wrappers import DBModel
@@ -23,25 +29,94 @@ class User(AbstractUser):
     """
 
 
-class Event(DBModel):
+class EventLocation(DBModel):
+    # The street/location address (part 1)
+    address_1 = models.CharField(max_length=255)
+    # The street/location address (part 2)
+    address_2 = models.CharField(max_length=255)
+    # The city
+    city = models.CharField(max_length=255)
+    # The ISO 3166-2 2- or 3-character region code for the state, province, region, or district
+    region = models.CharField(max_length=3)
+    # The postal code
+    postal_code = models.IntegerField()
+    # The ISO 3166-1 2-character international code for the country
+    country = models.CharField(max_length=2)
+    # geodjango lat/long
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
+    long = models.DecimalField(max_digits=9, decimal_places=6)
+    # TODO:
+    # point = PointField(geography=True, default="POINT(0.0 0.0)")
+    """
+    localized_address_display #The format of the address display localized to the address country
+    localized_area_display	#The format of the address's area display localized to the address country
+    localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
+    """
+
+
+class EventQuerySet(models.QuerySet):
+    def drafts(self):
+        return self.filter(is_draft=True)
+
+    def filter_published(self):
+        return self.filter(publish_date__lte=datetime.now())
+
+    def filter_scheduled(self):
+        return self.filter(publish_date__gt=datetime.now())
+
+    def filter_public(self):
+        return self.filter(visibility="PUBLIC")
+
+    def get_by_url_identifier(
+        self, public_id_or_custom_url_path: typing.Union[uuid.UUID, str]
+    ):
+        if not public_id_or_custom_url_path:
+            raise dj_exceptions.SuspiciousOperation("forbidden")
+
+        return self.filter(
+            models.Q(public_id=public_id_or_custom_url_path)
+            | models.Q(custom_url_path=public_id_or_custom_url_path)
+        ).first()
+        # first is here in case there are two independent events with colliding
+        # public_id and custom_url_path. This is impossible unless user messes up.
+
+
+class Event(AllowDraft, DBModel):
     """
     Stores data for ticketed event
     """
+
+    objects = EventQuerySet.as_manager()
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
 
+    # Publish info
+    is_draft = models.BooleanField(default=True)
+    publish_date = models.TimeField(null=True, blank=True)
+    custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
+
     # Basic Info
-    title = models.CharField(max_length=255, unique=True)
-    description = models.TextField(blank=True)
-    date = models.DateTimeField()
+    title = models.CharField(max_length=255, blank=False, unique=True)
+    organizer = required_if_not_draft(models.CharField(max_length=255))
+    description = models.TextField()
+    visibility = required_if_not_draft(
+        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
+    )
+    cover_image = models.ImageField(
+        blank=True, null=True, storage=MediaRootS3Boto3Storage()
+    )
+    categories = TaggableManager(blank=True)
+    start_date = required_if_not_draft(models.DateTimeField())
+    end_date = models.DateTimeField(blank=True, null=True)
     timezone = models.CharField(
         null=True,
         verbose_name="time zone",
         max_length=30,
     )
     location = models.CharField(max_length=1024)
+    # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
     # TODO: Move these to TicketType
@@ -52,8 +127,10 @@ class Event(DBModel):
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
     capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+    limit_per_person = required_if_not_draft(
+        models.IntegerField(
+            default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+        )
     )
 
     # Pricing Info
@@ -78,14 +155,26 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     @property
+    def is_public(self):
+        return self.visibility == "PUBLIC"
+
+    @property
+    def url_path(self):
+        return self.custom_url_path or self.public_id
+
+    @property
     def checkout_portal_url(self):
-        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
+        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.url_path}"
 
     @property
     def has_pending_checkout(self):
         last_payment = self.payments.last()
         if last_payment is None:
-            return True
+            # Handle 0 cost event
+            if self.price == 0:
+                return False
+            else:
+                return True
 
         return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
@@ -107,9 +196,7 @@ class Ticket(DBModel):
 
     # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(
-        null=True, storage=get_storage_class(settings.PRIVATE_TICKET_STORAGE)
-    )
+    file = models.ImageField(null=True, storage=PrivateTicketStorage())
     embed_code = models.UUIDField(default=uuid.uuid4)
 
     # Ticket access info

@@ -87,7 +87,7 @@ def create_ticket_image(
     created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
         event_data={
             "event_name": event.title,
-            "event_date": event.date.strftime("%m/%d/%Y, %H:%M:%S"),
+            "event_date": event.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
             "event_location": event.location,
         },
         embed=ticket.full_embed,

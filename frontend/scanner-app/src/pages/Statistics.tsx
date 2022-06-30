@@ -4,7 +4,6 @@ import { StatisticsTable } from "../components/StatisticsTable/index";
 import { FiArrowLeft } from "react-icons/fi";
 import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { api } from "../services/api";
 
 export function Statistics() {
   const navigate = useNavigate();

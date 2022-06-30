@@ -23,8 +23,8 @@ class EventSerializer(serializers.ModelSerializer):
     """
 
     ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
-    redemeed_count = serializers.SerializerMethodField()
-    date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    redeemed_count = serializers.SerializerMethodField()
+    start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     team = TeamSerializer()
 
     class Meta:
@@ -35,15 +35,15 @@ class EventSerializer(serializers.ModelSerializer):
             "description",
             "requirements",
             "limit_per_person",
-            "date",
+            "start_date",
             "timezone",
             "location",
             "capacity",
             "ticket_count",
-            "redemeed_count",
+            "redeemed_count",
         ]
 
-    def get_redemeed_count(self, obj):
+    def get_redeemed_count(self, obj):
         return obj.tickets.filter(redeemed=True).count()
 
 

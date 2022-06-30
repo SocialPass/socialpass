@@ -1,0 +1,272 @@
+{% extends "event_discovery/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<!-- Hero section start -->
+<section>
+    <div class="container-xl">
+        <div class="row row-eq-spacing-lg">
+            <!-- First column start -->
+            <div class="col-lg-7 align-self-center">
+                <div class="content">
+                    <h1 class="display-4 fw-700 text-strong mt-0">
+                        Hosting the Next Generation of Events
+                    </h1>
+                    <p class="fsr-5">
+                        SocialPass is the go-to events platform, powered by Web3.
+                    </p>
+                    <div class="mt-20">
+                        <a href="#" class="btn btn-secondary btn-lg fsr-6 py-sm-15 px-sm-20 mt-10 me-5">
+                            <strong class="antialiased">Explore</strong> <i class="fa-regular fa-angle-right ms-5"></i>
+                        </a>
+                        <a href="{% url 'dashboard_redirect' %}" class="btn btn-lg fsr-6 text-primary-dim-lm text-primary-light-dm py-sm-15 px-sm-20 mt-10">
+                            <strong class="antialiased">Host an Event</strong>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- First column end -->
+
+            <!-- Second column start -->
+            <div class="col-lg-5 align-self-center">
+                <div class="content">
+                    <img src="{% static 'images/eventportal.png' %}" class="d-block ws-600 h-auto rounded-5 mw-100 mx-auto my-10 my-sm-20" alt="Hero image">
+                </div>
+            </div>
+            <!-- Second column end -->
+        </div>
+    </div>
+</section>
+<!-- Hero section end -->
+
+<!-- Featured events section start -->
+{% if not featured_events.count > 0 %}
+    <section>
+        <div class="container-xl">
+            <!-- Header start -->
+            <div class="content d-flex align-items-center border-bottom pb-15 mb-0">
+                <h2 class="fsr-1 fw-700 text-strong lh-base m-0">
+                    Featured Events
+                </h2>
+                <a href="#" class="fw-bold ms-auto">
+                    See More <i class="fa-regular fa-angle-right ms-5"></i>
+                </a>
+            </div>
+            <!-- Header end -->
+
+            <!-- Event cards start -->
+            <div class="row g-content">
+                {% include "event_discovery/components/event_cards.html" with events=featured_events from="featured_events" %}
+            </div>
+            <!-- Event cards end -->
+        </div>
+    </section>
+{% endif %}
+<!-- Featured events section end -->
+
+<!-- Host an event section start -->
+<section class="py-50 bg-primary-very-light-lm bg-dark-very-dim-dm mt-40" id="host-an-event">
+    <div class="container-xl">
+        <!-- Header start -->
+        <div class="content mt-0 text-center">
+            <h2 class="display-5 fw-700 text-strong mb-0">
+                Host an Event
+            </h2>
+            <p class="fsr-5 mt-10">
+                A better approach for creating and managing events of all sizes
+            </p>
+        </div>
+        <!-- Header end -->
+
+        <!-- Row start -->
+        <div class="row g-content mt-40">
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-4">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-primary text-on-primary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-solid fa-ticket"></i>
+                    </div>
+                    <h3 class="fsr-4 fw-700 text-strong mt-40 mb-0">
+                        Handle Events of All Sizes
+                    </h3>
+                    <p class="fsr-6 mt-20 mb-30">
+                        From local meetups to a match at your favorite soccer club, SocialPass has you covered
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-4">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-primary text-on-primary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-solid fa-table"></i>
+                    </div>
+                    <h3 class="fsr-4 fw-700 text-strong mt-40 mb-0">
+                        Easy-to-Use Dashboard
+                    </h3>
+                    <p class="fsr-6 mt-20 mb-30">
+                        Create and manage events with a friendly, easy-to-use dashboard, no blockchain expertise required
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 offset-sm-3 col-xl-4 offset-xl-0">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-primary text-on-primary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-solid fa-ballot-check"></i>
+                    </div>
+                    <h3 class="fsr-4 fw-700 text-strong mt-40 mb-0">
+                        Digital Asset Ticketing
+                    </h3>
+                    <p class="fsr-6 mt-20 mb-30">
+                        Enjoy D2C sales, customizable royalties, public IP agreements, and more when using digital assets as event tickets
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+        </div>
+        <!-- Row end -->
+    </div>
+</section>
+<!-- Host an event section end -->
+
+<!-- Attend an event section start -->
+<section class="py-50" id="attend-an-event">
+    <div class="container-xl">
+        <!-- Header start -->
+        <div class="content mt-0 text-center">
+            <h2 class="display-5 fw-700 text-strong mb-0">
+                Attend an Event
+            </h2>
+            <p class="fsr-5 mt-10">
+                Claim tickets and attend events with ease and peace of mind
+            </p>
+        </div>
+        <!-- Header end -->
+
+        <!-- Row start -->
+        <div class="row g-content mt-40">
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-4">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-secondary text-on-secondary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-solid fa-hexagon-vertical-nft-slanted"></i>
+                    </div>
+                    <h3 class="fsr-4 fw-700 text-strong mt-40 mb-0">
+                        Use your NFTs as tickets
+                    </h3>
+                    <p class="fsr-6 mt-20 mb-30">
+                        Use the assets that you own to redeem tickets and attend all the coolest events in the world
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 col-xl-4">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-secondary text-on-secondary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="fsr-4 fw-700 text-strong mt-40 mb-0">
+                        Quick & Simple
+                    </h3>
+                    <p class="fsr-6 mt-20 mb-30">
+                        With SocialPass, users move from start to finish in a fraction of the time of traditional approaches
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-sm-6 offset-sm-3 col-xl-4 offset-xl-0">
+                <div class="content text-center">
+                    <div class="ws-100 hs-100 bg-secondary text-on-secondary mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="fsr-4 fw-700 text-strong mt-40 mb-0">
+                        Safe & Secure
+                    </h3>
+                    <p class="fsr-6 mt-20 mb-30">
+                        All you need to claim tickets is a cryptocurrency wallet - no endless stream of private information required
+                    </p>
+                </div>
+            </div>
+            <!-- Column end -->
+        </div>
+        <!-- Row end -->
+    </div>
+</section>
+<!-- Attend an event section end -->
+
+<!-- Resources section start -->
+<section class="py-50 bg-primary-very-light-lm bg-dark-very-dim-dm" id="resources">
+    <div class="container-xl">
+        <!-- Header start -->
+        <div class="content mt-0 text-center">
+            <h2 class="display-5 fw-700 text-strong mb-0">
+                Resources
+            </h2>
+            <p class="fsr-5 mt-10">
+                Learn what SocialPass is all about
+            </p>
+        </div>
+        <!-- Header end -->
+
+        <!-- Row start -->
+        <div class="row g-content">
+            <!-- Column start -->
+            <div class="col-md-6">
+                <a href="https://socialpass.gitbook.io/socialpass/" target="_blank" class="card card-link h-100">
+                    <div class="d-sm-flex align-items-center">
+                        <div class="ws-75 hs-75 flex-shrink-0 bg-gray-very-light-lm bg-darkgray-very-dim-dm d-flex align-items-center justify-content-center fs-base-p10 rounded-circle">
+                            <i class="fa-regular fa-book"></i>
+                        </div>
+                        <div class="pt-20 pt-sm-0 ps-sm-30">
+                            <h3 class="fsr-4 fw-700 text-strong my-0">
+                                GitBook
+                            </h3>
+                            <p class="fsr-6 mt-10 mb-0">
+                                What is SocialPass? If that's your question, we've got you covered with this detailed write-up!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="position-absolute top-0 end-0 text-muted p-10">
+                        <i class="fa-regular fa-external-link-alt"></i>
+                    </div>
+                </a>
+            </div>
+            <!-- Column end -->
+
+            <!-- Column start -->
+            <div class="col-md-6">
+                <a href="https://www.getrevue.co/profile/socialpass_io" target="_blank" class="card card-link h-100">
+                    <div class="d-sm-flex align-items-center">
+                        <div class="ws-75 hs-75 flex-shrink-0 bg-gray-very-light-lm bg-darkgray-very-dim-dm d-flex align-items-center justify-content-center fs-base-p10 rounded-circle">
+                            <i class="fa-regular fa-message-lines"></i>
+                        </div>
+                        <div class="pt-20 pt-sm-0 ps-sm-30">
+                            <h3 class="fsr-4 fw-700 text-strong my-0">
+                                Newsletter
+                            </h3>
+                            <p class="fsr-6 mt-10 mb-0">
+                                The official SocialPass newsletter. Learn how you can easily create, manage and host events.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="position-absolute top-0 end-0 text-muted p-10">
+                        <i class="fa-regular fa-external-link-alt"></i>
+                    </div>
+                </a>
+            </div>
+            <!-- Column end -->
+        </div>
+        <!-- Row end -->
+    </div>
+</section>
+<!-- Resources section end -->
+{% endblock content %}

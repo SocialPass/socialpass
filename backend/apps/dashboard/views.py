@@ -302,7 +302,7 @@ class EventListView(TeamContextMixin, ListView):
 
     model = Event
     paginate_by = 15
-    context_object_name = "tokengates"
+    context_object_name = "events"
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):
@@ -322,7 +322,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
     """
 
     model = Event
-    context_object_name = "tokengate"
+    context_object_name = "event"
     template_name = "dashboard/ticketgate_detail.html"
 
     def get_queryset(self):
@@ -433,7 +433,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         )
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs, tokengate=self.get_object())
+        return super().get_context_data(**kwargs, event=self.get_object())
 
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""

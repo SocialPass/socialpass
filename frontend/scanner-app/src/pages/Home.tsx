@@ -17,7 +17,7 @@ export function Home() {
           <EventContainer
             event_name={eventData.title}
             event_attendance={eventData.capacity}
-            event_date={eventData.date}
+            event_date={eventData.start_date}
             event_venue={eventData.location}
           />
         </div>

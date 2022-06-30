@@ -20,7 +20,7 @@ export const CheckoutStatus = () => {
             <p>You made it. Click the button to download your ticket</p>
             <div className="fw-bold bg-success p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
               <img src={correct} height="16.9" width="16.9" className="me-4" />
-              access granted
+              Access granted
               <span></span>
             </div>
             <div className="d-flex flex-row justify-content-start align-items-center gap-30">
@@ -38,7 +38,7 @@ export const CheckoutStatus = () => {
                     className="me-5"
                     alt="Date & Time"
                   />
-                  {retrieveJson.date} |{" "}
+                  {retrieveJson.start_date} |{" "}
                   {retrieveJson.timezone}
                 </p>
                 <p className="d-flex align-items-center m-0 mt-1 mb-1">
@@ -72,7 +72,7 @@ export const CheckoutStatus = () => {
           <code>Error Code: {grantAccessError.message}</code>
           <div className="fw-bold bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
             <img src={denied} height="16.9" width="16.9" />
-            access denied
+            Access denied
             <span></span>
           </div>
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
@@ -90,7 +90,7 @@ export const CheckoutStatus = () => {
                   className="me-5"
                   alt="Date & Time"
                 />
-                {retrieveJson.date} |{" "}
+                {retrieveJson.start_date} |{" "}
                 {retrieveJson.timezone}
               </p>
               <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">

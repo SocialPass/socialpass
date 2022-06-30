@@ -9,6 +9,15 @@ from apps.root.models import Event
 class EventDiscoveryIndex(TemplateView):
     template_name = "event_discovery/index.html"
 
+    def get_context_data(self, **kwargs):
+        """
+        featured events
+        """
+        context = super().get_context_data(**kwargs)
+        featured_events = Event.objects.filter_featured()
+        context.update({"featured_events": featured_events})
+        return context
+
 
 class EventDiscoveryBrowse(ListView):
     model = Event

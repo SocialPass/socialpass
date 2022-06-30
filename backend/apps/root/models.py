@@ -69,6 +69,9 @@ class EventQuerySet(models.QuerySet):
     def filter_public(self):
         return self.filter(visibility="PUBLIC")
 
+    def filter_featured(self):
+        return self.filter(is_featured=True)
+
     def get_by_url_identifier(
         self, public_id_or_custom_url_path: typing.Union[uuid.UUID, str]
     ):
@@ -96,6 +99,7 @@ class Event(AllowDraft, DBModel):
 
     # Publish info
     is_draft = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
     publish_date = models.TimeField(null=True, blank=True)
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 

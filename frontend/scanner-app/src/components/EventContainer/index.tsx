@@ -29,7 +29,7 @@ export function EventContainer({
         <div className="landing-page-card-text-1">Venue:</div>
         <div className="landing-page-card-text-2">{event_venue}</div>
       </div>
-      <div className="container p-20 d-flex flex-column gap-10">
+      <div className="container px-20 py-5 d-flex flex-column">
         <button
           className="btn-start-scanning"
           onClick={() => {

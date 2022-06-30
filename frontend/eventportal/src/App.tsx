@@ -45,7 +45,7 @@ const CheckoutPortal = () => {
                     path="event"
                     element={
                       <RequiresEvent>
-                        <Event />
+                        <Event headerType="light" />
                       </RequiresEvent>
                     }
                   />

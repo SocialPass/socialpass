@@ -32,6 +32,9 @@ export interface CheckoutPortalContextInterface {
   generalAdmissionSelect:any,
   setGeneralAdmissionSelect:any
 
+  headerType: string,
+  setHederType: any
+
   status: any,
   isLoading: boolean,
   isError: boolean

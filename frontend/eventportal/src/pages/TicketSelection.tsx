@@ -33,7 +33,7 @@ export function TicketSelection() {
               <span className="fs-18 fw-bold me-15">General Admission</span>
 
               <div className="tooltip">
-                <GeneralAdmissionFAQHoverIcon locationClass='bottom'></GeneralAdmissionFAQHoverIcon>
+                <GeneralAdmissionFAQHoverIcon locationClass="bottom"></GeneralAdmissionFAQHoverIcon>
               </div>
             </div>
             <div className="d-inline fw-bold">free</div>

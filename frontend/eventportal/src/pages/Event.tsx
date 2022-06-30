@@ -5,9 +5,11 @@ import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
 import timezone from "../static/images/icons/timezone.svg";
 // Event Component
-export const Event = (): JSX.Element => {
+export const Event = ({ headerType }): JSX.Element => {
   const navigate = useNavigate();
-  const { id, retrieveJson } = useContext(CheckoutPortalContext);
+  const { id, retrieveJson, setHederType } = useContext(CheckoutPortalContext);
+  setHederType(headerType);
+
   // default, return baseGate
   // todo: customize basegate more, perhaps current content as children
 

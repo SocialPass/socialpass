@@ -3,14 +3,23 @@ class CheckoutPortalWidget{
 
     constructor(uuidEvent){
         this.uuidEvent = uuidEvent;
-        this.domainUrl = "https://tickets.socialpass.io"
+        this.eventPortalHost = "https://tickets.socialpass.io"
+        this.eventPortalUrl = undefined
+    }
+
+    getEventPortalUrl(){
+        if(this.eventPortalUrl){
+            return this.eventPortalUrl
+        }else{
+            return this.eventPortalHost + '/' + this.uuidEvent
+        }
     }
 
     _getIFrameElement(){
         let ifrm = document.createElement('iframe');
         ifrm.setAttribute('class', 'socialpass-checkoutportal-frame');
-        ifrm.setAttribute('style', 'width: 100vw; height:100vh; border: none;');
-        ifrm.setAttribute('src', this.domainUrl + '/' + this.uuidEvent);
+        ifrm.setAttribute('style', 'width: 100%; height:100%; border: none;');
+        ifrm.setAttribute('src', this.getEventPortalUrl());
         return ifrm
     }
 
@@ -20,9 +29,17 @@ class CheckoutPortalWidget{
         return ifrm.outerHTML
     }
 
-    mount(container_tag_id){
+    mount(containerTagId){
+        this.unmount()
         /* Appends the configured iFrame as a child to the given container */
-        const container = document.getElementById(container_tag_id);
-        container.appendChild()
+        this.container = document.getElementById(containerTagId);
+        this.container.appendChild(this._getIFrameElement());
+    }
+
+    unmount(){
+        if(this.container){
+            this.container.innerHTML = '';
+            this.container = undefined
+        }
     }
 }

@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { CheckoutPortalContext } from "../context";
+import { useLocation } from "react-router-dom";
 import logoImage from "../static/images/socialpass.svg";
 import _backButton from "../static/images/back.svg";
-import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
+import Header from "./Header";
+import HeaderCheckout from "./HeaderCheckout";
+import { CheckoutPortalContext } from "../context";
 
 // StyledContainer component
 // Display root layout (header, main content, footer)
@@ -12,51 +13,15 @@ export const StyledContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { retrieveJson } = useContext(CheckoutPortalContext);
+  const { headerType } = useContext(CheckoutPortalContext);
   const location = useLocation();
-  const navigate = useNavigate();
+  console.log(location);
 
   return (
     <div className="container-fluid card container-centered p-0">
       {/* HEADER */}
 
-      {/* Small header vs header display logic is based on URL length, not ideal. (Lucas?) */}
-      {location.pathname.length > 45 ? (
-        <header className="small-header d-flex align-items-start justify-content-center flex-row">
-          {/*IMAGE*/}
-          <div className="sp-header-logo-img d-flex align-items-center justify-content-center">
-            <img src={socialpassLogo} alt="SocialPass Logo" />
-          </div>
-          {/*IMAGE*/}
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <img
-              src={_backButton}
-              alt="Back Button"
-              height="32"
-              width="32"
-              key={_backButton}
-            />
-            <h4 className="ps-5 m-0">Go back</h4>
-          </div>
-        </header>
-      ) : (
-        <header className="header d-flex align-items-start justify-content-center">
-          {/*IMAGE*/}
-          <div className="sp-header-logo-img d-flex align-items-center justify-content-center">
-            <img src={socialpassLogo} alt="SocialPass Logo" />
-          </div>
-          {/*IMAGE*/}
-          <div className="team-info-img">
-            <img
-              src={"https://picsum.photos/200"}
-              alt="Team Image"
-              key={"https://picsum.photos/200"}
-              /* USED TO BE {retrieveJson && retrieveJson?.team?.image} */
-              /* TODO: GO BACK TO USING THE SET IMAGES WHEN BACKEND GETS FIXED */
-            />
-          </div>
-        </header>
-      )}
+      {headerType == "light" ? <Header /> : <HeaderCheckout />}
 
       {/* MAIN CONTENTS */}
       <div className="main-contents">{children}</div>

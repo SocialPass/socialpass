@@ -10,7 +10,6 @@ export const StyledContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-
   return (
     <div className="container-fluid card container-centered p-0">
       <Header/>
@@ -18,7 +17,6 @@ export const StyledContainer = ({
       {/* MAIN CONTENTS */}
       <div className="main-contents">{children}</div>
 
-      {/* FOOTER */}
       <Footer/>
     </div>
   );

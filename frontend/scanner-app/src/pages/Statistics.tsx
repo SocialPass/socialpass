@@ -16,8 +16,6 @@ export function Statistics() {
     navigate("../scanner");
   }
 
-
-
   return (
     <div className="statistics-body">
       <div className="statistics-title py-20 px-10">

@@ -9,17 +9,17 @@ const TableFooter = ({ range, setPage, page, slice }: any) => {
 
   return (
     <div className="tableFooter p-5">
-    {range.map((el: any, index: any) => (
-      <button
-        key={index}
-        onClick={() => setPage(el)}
-        className={`${"button"} ${
-          page === el ? "btn-active" : "btn-inactive"
-        }`}
-      >
-        {el}
-      </button>
-    ))}
+      {range.map((el: any, index: any) => (
+        <button
+          key={index}
+          onClick={() => setPage(el)}
+          className={`${"button"} ${
+            page === el ? "btn-active" : "btn-inactive"
+          }`}
+        >
+          {el}
+        </button>
+      ))}
     </div>
   );
 };

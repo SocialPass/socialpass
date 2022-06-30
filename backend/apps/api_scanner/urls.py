@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 
+app_name = "api_scanner"
 urlpatterns = [
     path(
         "<uuid:access_key>/event/",

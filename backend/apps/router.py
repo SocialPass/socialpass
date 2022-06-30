@@ -12,8 +12,8 @@ urlpatterns = [
 
 # DRF API URLS
 urlpatterns += [
-    path("api/checkout-portal/", include("apps.api_checkoutportal.urls")),
-    path("api/scanner/", include("apps.api_scanner.urls")),
+    path("api/checkout-portal/v1/", include("apps.api_checkoutportal.urls")),
+    path("api/scanner/v1/", include("apps.api_scanner.urls")),
 ]
 
 # Debug URL's

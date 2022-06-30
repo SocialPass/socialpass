@@ -2,20 +2,21 @@ from django.urls import path
 
 from . import views
 
+app_name = "api_checkoutportal"
 urlpatterns = [
     path(
-        "retrieve/<str:public_id>/",
+        "retrieve/<uuid:public_id>/",
         views.CheckoutPortalRetrieve.as_view(),
-        name="checkoutportal_retrieve",
+        name="retrieve",
     ),
     path(
-        "request/<str:public_id>/",
+        "request/<uuid:public_id>/",
         views.CheckoutPortalRequest.as_view(),
-        name="checkoutportal_request",
+        name="request",
     ),
     path(
-        "process/<str:public_id>/",
+        "process/<uuid:public_id>/",
         views.CheckoutPortalProcess.as_view(),
-        name="checkoutportal_process",
+        name="process",
     ),
 ]

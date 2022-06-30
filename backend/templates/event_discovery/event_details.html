@@ -161,12 +161,9 @@
 {% block extra_body %}
 <script src="{% static 'js/public/checkoutportal-embedded.js' %}"></script>
 <script type="text/javascript">
-    const uuid = (window.location.pathname).split("/")[1]
+    const uuid = `{{event.public_id}}`
     console.log(uuid)
-    var frame = new Frame(
-        "https://tickets.socialpass.io",
-        uuid
-    )
+    var frame = new CheckoutPortalWidget(uuid)
     frame.mount("eventportal-root")
 </script>
 {% endblock extra_body %}

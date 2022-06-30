@@ -1,25 +1,10 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
 import timezone from "../static/images/icons/timezone.svg";
-import { AiOutlineClose } from "react-icons/Ai";
-import Modal from "react-modal";
 // Event Component
-
-const customModalStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    width: "600px",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    borderRadius: "20px",
-  },
-};
 
 export const Event = ({ headerType }): JSX.Element => {
   const navigate = useNavigate();
@@ -106,21 +91,6 @@ export const Event = ({ headerType }): JSX.Element => {
       </div>
 
       {/* MODAL */}
-      {/* <div
-        className="modal"
-        tabIndex={-1}
-        id="event-modal"
-        aria-labelledby="event-modal-toggle"
-        aria-hidden="true"
-      >
-        <div className="modal-content d-flex flex-column align-items-end gap-10">
-          <div className="d-flex align-items-center justify-content-center">
-            <span className="fs-16 fw-light text-muted text-justify">
-              {retrieveJson?.description}
-            </span>
-          </div>
-        </div>
-      </div> */}
       <div
         className="modal fade"
         id="event-modal"

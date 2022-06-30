@@ -110,9 +110,7 @@ class Event(AllowDraft, DBModel):
     visibility = required_if_not_draft(
         models.CharField(max_length=50, choices=EVENT_VISIBILITY)
     )
-    cover_image = models.ImageField(
-        blank=True, null=True, storage=MediaRootS3Boto3Storage()
-    )
+    cover_image = models.ImageField(blank=True, null=True)
     categories = TaggableManager(blank=True)
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)

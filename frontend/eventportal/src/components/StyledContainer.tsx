@@ -1,6 +1,6 @@
 import React from "react";
-import logoImage from "../static/images/socialpass.svg";
 import _backButton from "../static/images/back.svg";
+import Footer from "./Footer";
 import Header from "./Header";
 
 // StyledContainer component
@@ -19,12 +19,7 @@ export const StyledContainer = ({
       <div className="main-contents">{children}</div>
 
       {/* FOOTER */}
-      <footer className="sp-footer me-15 ms-15">
-        <small className="d-flex flex-row align-items-center">
-          Powered by &nbsp;
-          <img src={logoImage} alt="image" />
-        </small>
-      </footer>
+      <Footer/>
     </div>
   );
 };

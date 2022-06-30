@@ -22,7 +22,7 @@ export function Statistics() {
         <StatisticsTable />
         <div className="container p-5 d-flex flex-column">
           <button
-            className="btn-return-to-scanner"
+            className="btn-primary"
             onClick={() => {
               navigate(`/${params.publicId}/scanner`);
             }}

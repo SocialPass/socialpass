@@ -13,7 +13,7 @@ const TableFooter = ({ range, setPage, page, slice }: any) => {
         <button
           key={index}
           onClick={() => setPage(el)}
-          className={`${"button"} ${
+          className={`${"btn btn-sm"} ${
             page === el ? "btn-active" : "btn-inactive"
           }`}
         >

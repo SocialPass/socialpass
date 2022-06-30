@@ -53,6 +53,8 @@ class TicketSerializer(serializers.ModelSerializer):
     """
 
     wallet_address = serializers.CharField(source="blockchain_ownership.wallet_address")
+    created = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    redeemed_at = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
 
     class Meta:
         model = Ticket

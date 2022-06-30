@@ -2,6 +2,7 @@ class CheckoutPortalWidget{
     // reference: https://developers.clicksign.com/docs/instalacao-do-widget-embedded
 
     constructor(uuidEvent){
+        this.container = null
         this.uuidEvent = uuidEvent;
         this.eventPortalHost = "https://tickets.socialpass.io"
         this.eventPortalUrl = undefined

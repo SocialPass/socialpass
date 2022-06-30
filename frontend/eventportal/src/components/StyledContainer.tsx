@@ -12,12 +12,12 @@ export const StyledContainer = ({
 }) => {
   return (
     <div className="container-fluid card container-centered p-0">
-      <Header/>
+      <Header />
 
       {/* MAIN CONTENTS */}
       <div className="main-contents">{children}</div>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 };

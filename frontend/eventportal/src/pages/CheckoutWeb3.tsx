@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState } from "react";
-import { useConnect, useAccount, useSignMessage } from "wagmi";
+import { useConnect, useAccount, useSignMessage, useDisconnect } from "wagmi";
 import { useNavigate } from "react-router-dom";
 import { TicketedEventRequestAccess, TicketedEventGrantAccess } from "../api";
 import { Loading } from "../components/";
@@ -25,10 +25,55 @@ export const CheckoutWeb3 = () => {
   } = useContext(CheckoutPortalContext);
   const [loading, setLoading] = useState(false);
   const connectHook = useConnect();
+  const disconnectHook = useDisconnect();
   const accountHook = useAccount();
   const signHook = useSignMessage({
     message: requestAccessJson?.signing_message,
   });
+
+  const ConnectWallet = () => {
+    // todo: ENS resolution
+    const ensName = null;
+    if (accountHook && accountHook.data && accountHook.data.address) {
+      return (
+        <div className="col-lg-12 mt-10 column-display-mobile">
+          <div>
+            {ensName
+              ? `${ensName} (${accountHook.data.address})`
+              : accountHook.data.address}
+          </div>
+          <div>Connected to {connectHook?.activeConnector?.name}</div>
+          <button onClick={() => disconnectHook.disconnect()}>
+            Disconnect
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="wallets">
+        {connectHook.connectors.map((x) => (
+          <button
+            className={
+              selectedWallet === x
+                ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+            }
+            disabled={!x.ready}
+            key={x.id}
+            id={x.id}
+            onClick={() => {
+              connectHook.connect(x);
+              setSelectedWallet(x);
+            }}
+          >
+            <Web3ConnectorImage selectedWallet={x} connector={x.name} />
+            {x.name}
+            {!x.ready && " (unsupported)"}
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   // request access handler (based on web3 account data change)
   useEffect(() => {
@@ -55,14 +100,14 @@ export const CheckoutWeb3 = () => {
   // handles signing message and posting related data to API
   useEffect(() => {
     (async function () {
-      if (signHook.data) {
+      if (signHook.data && accountHook && accountHook.data) {
         setLoading(true);
         setLoadingText("Verifying ownership");
         let response;
         response = await TicketedEventGrantAccess.call({
           public_id: id,
           checkout_type: "blockchain_ownership",
-          wallet_address: accountHook?.data?.address,
+          wallet_address: accountHook.data.address,
           signed_message: signHook.data,
           blockchain_ownership_id: requestAccessJson.id,
           tickets_requested: generalAdmissionSelect,
@@ -79,34 +124,28 @@ export const CheckoutWeb3 = () => {
         }
       }
     })();
-  }, [signHook]);
+  }, [signHook.data]);
+
+  // useeffect hook to flip checkout button status
+  // based on wallet address from accountHook
+  useEffect(() => {
+    if (accountHook && accountHook.data && accountHook.data.address) {
+      setStatusButton(false);
+    } else {
+      setStatusButton(true);
+    }
+  }, [accountHook]);
 
   function handleNavigateBack() {
     navigate(-1);
   }
 
-  function handleSelectWallet(x: any) {
-    setSelectedWallet(x);
-    setStatusButton(false);
-  }
-
   async function handleCheckout() {
-    setLoadingText("Awaiting wallet connection");
-    try {
-      await connectHook.connectAsync(selectedWallet);
-    } catch (err) {}
-    if (accountHook.data?.address) {
-      setLoadingText(`Awaiting wallet signature`);
-      await signHook.signMessageAsync();
-    }
+    setLoadingText(`Awaiting wallet signature`);
+    await signHook.signMessageAsync();
   }
 
-  if (
-    signHook.isLoading ||
-    accountHook.isLoading ||
-    connectHook.isConnecting ||
-    loading
-  ) {
+  if (signHook.isLoading || loading) {
     return <Loading loadingText={loadingText} />;
   }
 
@@ -134,28 +173,7 @@ export const CheckoutWeb3 = () => {
             <NFTOwnershipFAQHoverIcon locationClass="bottom-left"></NFTOwnershipFAQHoverIcon>
           </div>
         </div>
-        <div className="wallets">
-          {connectHook.connectors.map((x) => (
-            <button
-              className={
-                selectedWallet === x
-                  ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                  : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-              }
-              disabled={!x.ready}
-              key={x.id}
-              id={x.id}
-              onClick={() => handleSelectWallet(x)}
-            >
-              <Web3ConnectorImage
-                selectedWallet={selectedWallet}
-                connector={x.name}
-              />
-              {x.name}
-              {!x.ready && " (unsupported)"}
-            </button>
-          ))}
-        </div>
+        <ConnectWallet />
         {connectHook.error && (
           <div>{connectHook.error?.message ?? "Failed to connect"}</div>
         )}

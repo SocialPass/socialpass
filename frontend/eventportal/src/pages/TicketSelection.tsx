@@ -38,7 +38,7 @@ export function TicketSelection() {
             </div>
             <div className="d-inline fw-bold">free</div>
             <br />
-            <p>Sale ends on May 31, 2022</p>
+            <p>Limit {retrieveJson.limit_per_person} Per Person</p>
           </div>
           <div className="d-inline">
             <select

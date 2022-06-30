@@ -45,7 +45,7 @@ export const Event = ({ headerType }): JSX.Element => {
       <div className="row m-0 align-items-end">
         <div className="col-md-7 d-flex">
           <div className="col col-md-10 mb-30">
-            <div className="mb-15 d-flex flex-column align-items-start justify-content-center">
+            <div className="d-flex flex-column align-items-start justify-content-center">
               <span className="fs-16 fw-500">
                 {retrieveJson && retrieveJson?.team?.name}
               </span>
@@ -104,7 +104,7 @@ export const Event = ({ headerType }): JSX.Element => {
             </span>
           </div>
         </div>
-        <div className="col-md-4 offset-md-1 ms-5">
+        <div className="col-md-4 ms-5">
           <button className="btn-primary fs-20" onClick={handleNavigate}>
             Claim Tickets
           </button>

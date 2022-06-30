@@ -7,7 +7,7 @@ register = template.Library()
 def format_address(address):
     formatted = address
     try:
-        formatted = address[:2] + "..." + address[-5:]
+        formatted = address[:5] + "..." + address[-5:]
     except Exception:
         pass
 

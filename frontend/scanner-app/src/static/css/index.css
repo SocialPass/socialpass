@@ -270,7 +270,7 @@
     line-height: 26px;
     text-align: center;
     color: #0C0F3C;
-    margin-top: 15%;
+    margin-top: 5%;
     margin-bottom: 10%;
     background-color: var(--white-color);
 }
@@ -317,7 +317,7 @@
 
 
 
-.btn-selected-statistic {
+.btn-non-selected-statistic {
     border-radius: 12px 12px 0px 0px;
     border-width: 0rem;
     margin-top: 30px;
@@ -339,17 +339,8 @@
     box-shadow: none;
 }
 
-.btn-selected-statistic:focus {
-    text-decoration: none;
-    color: var(--white-color);
-    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
-    background-image: none;
-    border-color: transparent;
-    box-shadow: none;
-}
 
-
-.btn-really-selected-statistic {
+.btn-selected-statistic {
     border-radius: 12px 12px 0px 0px;
     border-width: 0rem;
     margin-top: 30px;
@@ -374,7 +365,23 @@
 
 
 /* Statistics Table Components */
+.btn-active   {
+    border-color: transparent;
+    margin: 2px;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+}
 
+.btn-inactive   {
+    border-color: transparent;
+    margin: 2px;
+    color: #e7e7e7;
+    background-color: rgb(170, 170, 170);
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
 
 
 

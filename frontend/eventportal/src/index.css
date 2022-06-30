@@ -104,6 +104,10 @@ footer {
   padding: 1.5rem;
 }
 
+.cursor-pointer{
+  cursor: pointer;
+}
+
 .text-color-primary {
   color: var(--orange);
 }

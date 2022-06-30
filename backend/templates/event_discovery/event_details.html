@@ -163,8 +163,7 @@
 <script type="text/javascript">
     const uuid = (window.location.pathname).split("/")[1]
     console.log(uuid)
-    var frame = new Frame(
-        "https://tickets.socialpass.io",
+    var frame = new CheckoutPortalWidget(
         uuid
     )
     frame.mount("eventportal-root")

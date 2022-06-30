@@ -104,6 +104,11 @@ footer {
   padding: 1.5rem;
 }
 
+.dialog-overlay{
+  opacity: 0.35 !important;
+  background-color: #fafafa !important;
+}
+
 .cursor-pointer{
   cursor: pointer;
 }

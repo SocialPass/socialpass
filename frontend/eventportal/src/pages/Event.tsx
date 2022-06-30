@@ -24,17 +24,8 @@ const customModalStyles = {
 export const Event = ({ headerType }): JSX.Element => {
   const navigate = useNavigate();
   const { id, retrieveJson, setHeaderType } = useContext(CheckoutPortalContext);
-  const [modalIsOpen, setIsOpen] = useState(false);
 
   setHeaderType(headerType);
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  function closeModal() {
-    setIsOpen(false);
-  }
 
   function handleNavigate() {
     navigate(`/${id}/ticket-selection`);
@@ -59,8 +50,11 @@ export const Event = ({ headerType }): JSX.Element => {
             {retrieveJson.description.length > 200 && (
               <div className="my-10 d-flex align-items-center justify-content-start">
                 <a
+                  type="button"
                   className="text-muted fs-16 cursor-pointer text-decoration-underline"
-                  onClick={openModal}
+                  data-hm-toggle="modal"
+                  data-hm-target="event-modal"
+                  id="event-modal-toggle"
                 >
                   Read more
                 </a>
@@ -110,24 +104,38 @@ export const Event = ({ headerType }): JSX.Element => {
           </button>
         </div>
       </div>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customModalStyles}
+
+      {/* MODAL */}
+      {/* <div
+        className="modal"
+        tabIndex={-1}
+        id="event-modal"
+        aria-labelledby="event-modal-toggle"
+        aria-hidden="true"
       >
-        <div className="d-flex flex-column align-items-end gap-10">
-          <AiOutlineClose
-            fontSize={18}
-            className="cursor-pointer me-5"
-            onClick={closeModal}
-          />
+        <div className="modal-content d-flex flex-column align-items-end gap-10">
           <div className="d-flex align-items-center justify-content-center">
             <span className="fs-16 fw-light text-muted text-justify">
               {retrieveJson?.description}
             </span>
           </div>
         </div>
-      </Modal>
+      </div> */}
+      <div
+        className="modal fade"
+        id="event-modal"
+        aria-labelledby="event-modal-toggle"
+        tabIndex={-1}
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-body text-justify">
+              <span className="fs-16">{retrieveJson.description}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

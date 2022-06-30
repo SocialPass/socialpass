@@ -1,27 +1,40 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
 import _backButton from "../static/images/back.svg";
-import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
+import LargeHeaderContents from "./LargeHeaderContents";
+import SmallHeaderContents from "./SmallHeaderContents";
 
 export default function Header() {
-  const { retrieveJson } = useContext(CheckoutPortalContext);
+  const location = useLocation();
+
+  // Every URL change we rebuild the header if needed
+  useEffect(() => {
+    makeHeader()
+  }, [location]);
+
+  var [headerState, setHeaderState] = useState('header')
+
+  const makeHeader = () => {
+    // We are checking for the string event on the URL to show the full header
+    // And if the string is not found, we display the smaller, darker header
+    if (location.pathname.includes('event')) {
+      setHeaderState('header')
+    }
+    else {
+      setHeaderState('small-header')
+    }
+  }
 
   return (
-    <header className="header d-flex align-items-start justify-content-center">
-      {/*IMAGE*/}
-      <div className="sp-header-logo-img d-flex align-items-center justify-content-center">
-        <img src={socialpassLogo} alt="SocialPass Logo" />
-      </div>
-      {/*IMAGE*/}
-      <div className="team-info-img">
-        <img
-          src={"https://picsum.photos/200"}
-          alt="Team Image"
-          key={"https://picsum.photos/200"}
-          /* USED TO BE {retrieveJson && retrieveJson?.team?.image} */
-          /* TODO: GO BACK TO USING THE SET IMAGES WHEN BACKEND GETS FIXED */
-        />
-      </div>
-    </header>
-  );
+    (headerState === 'header') ? (
+      <header className={`${headerState} d-flex align-items-start justify-content-center`}>
+        <LargeHeaderContents/>
+      </header>
+    ) : (
+      <header className={`${headerState} d-flex align-items-start justify-content-center flex-row`}>
+        <SmallHeaderContents/>
+      </header>
+    )
+  )
 }

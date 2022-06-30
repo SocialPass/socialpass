@@ -7,8 +7,8 @@ import timezone from "../static/images/icons/timezone.svg";
 // Event Component
 export const Event = ({ headerType }): JSX.Element => {
   const navigate = useNavigate();
-  const { id, retrieveJson, setHederType } = useContext(CheckoutPortalContext);
-  setHederType(headerType);
+  const { id, retrieveJson, setHeaderType } = useContext(CheckoutPortalContext);
+  setHeaderType(headerType);
 
   // default, return baseGate
   // todo: customize basegate more, perhaps current content as children

@@ -1,10 +1,7 @@
-import React, { useContext } from "react";
-import { useLocation } from "react-router-dom";
+import React from "react";
 import logoImage from "../static/images/socialpass.svg";
 import _backButton from "../static/images/back.svg";
 import Header from "./Header";
-import HeaderCheckout from "./HeaderCheckout";
-import { CheckoutPortalContext } from "../context";
 
 // StyledContainer component
 // Display root layout (header, main content, footer)
@@ -13,15 +10,10 @@ export const StyledContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { headerType } = useContext(CheckoutPortalContext);
-  const location = useLocation();
-  console.log(location);
 
   return (
     <div className="container-fluid card container-centered p-0">
-      {/* HEADER */}
-
-      {headerType == "light" ? <Header /> : <HeaderCheckout />}
+      <Header/>
 
       {/* MAIN CONTENTS */}
       <div className="main-contents">{children}</div>

@@ -13,7 +13,7 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
   const location = useLocation();
 
   const [id, setID] = useState<string>("");
-  const [headerType, setHederType] = useState<string>("light");
+  const [headerType, setHeaderType] = useState<string>("light");
 
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
@@ -38,7 +38,7 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
   );
 
   useEffect(() => {
-    setHederType("dark");
+    setHeaderType("dark");
   }, [location]);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
         setGeneralAdmissionSelect,
 
         headerType,
-        setHederType,
+        setHeaderType,
       }}
     >
       {children}

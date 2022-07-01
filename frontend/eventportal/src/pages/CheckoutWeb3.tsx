@@ -75,7 +75,6 @@ export const CheckoutWeb3 = () => {
       </div>
     );
   };
->>>>>>> feature/eventportal-redesign
 
   // request access handler (based on web3 account data change)
   useEffect(() => {
@@ -131,41 +130,24 @@ export const CheckoutWeb3 = () => {
   // useeffect hook to flip checkout button status
   // based on wallet address from accountHook
   useEffect(() => {
-<<<<<<< HEAD
-    if (accountHook && accountHook.data && accountHook.data.address){
-=======
     if (accountHook && accountHook.data && accountHook.data.address) {
->>>>>>> feature/eventportal-redesign
       setStatusButton(false);
     } else {
       setStatusButton(true);
     }
-<<<<<<< HEAD
-
-  }, [accountHook])
-=======
   }, [accountHook]);
->>>>>>> feature/eventportal-redesign
 
   function handleNavigateBack() {
     navigate(-1);
   }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/eventportal-redesign
   async function handleCheckout() {
     setLoadingText(`Awaiting wallet signature`);
     await signHook.signMessageAsync();
   }
 
   if (signHook.isLoading || loading) {
-<<<<<<< HEAD
-    return <Loading loadingText={loadingText}/>;
-=======
     return <Loading loadingText={loadingText} />;
->>>>>>> feature/eventportal-redesign
   }
 
   return (

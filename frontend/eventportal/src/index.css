@@ -6,15 +6,15 @@ BASE HTML
   --white-color-hsl: 0, 0%, 100%;
   --white-color: hsl(var(--white-color-hsl));
 
-  --orange: #EF7C4E;
+  --orange: #ef7c4e;
   --orange-bg: #ff7b00;
   --orange-bg-light: #fca555;
-  --success: #0FBE0C;
-  --bg-success: #CDFFCC;
+  --success: #0fbe0c;
+  --bg-success: #cdffcc;
   --bg-denied: #ffcccc;
-  --denied: #F6050B;
-  --gray: #F6F7F9;
-  --muted-color: #95959C;
+  --denied: #f6050b;
+  --gray: #f6f7f9;
+  --muted-color: #95959c;
 
   --sp-orange-color: hsl(16, 80%, 60%);
   --sp-orange-color-light: hsl(16, 80%, 70%);
@@ -22,9 +22,9 @@ BASE HTML
 }
 
 @font-face {
-  font-family: 'rubik';
-  src: local('rubik'),
-    url('./static/fonts/Rubik/Rubik-VariableFont_wght.ttf') format("truetype");
+  font-family: "rubik";
+  src: local("rubik"),
+    url("./static/fonts/Rubik/Rubik-VariableFont_wght.ttf") format("truetype");
 }
 
 html,
@@ -32,11 +32,11 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'rubik';
+  font-family: "rubik";
   -ms-word-break: break-word;
   word-break: break-word;
 
-  background-image: url('./static/images/icons/socialpassLogo_gray.svg');
+  background-image: url("./static/images/icons/socialpassLogo_gray.svg");
   background-repeat: repeat;
   background-size: 200px;
 
@@ -91,7 +91,7 @@ button {
 p {
   font-weight: 300;
   font-size: 1.3rem;
-  color: #95959C;
+  color: #95959c;
 }
 
 small {
@@ -112,11 +112,6 @@ footer {
   padding: 1.5rem;
 }
 
-.dialog-overlay {
-  opacity: 0.35 !important;
-  background-color: #fafafa !important;
-}
-
 .cursor-pointer {
   cursor: pointer;
 }
@@ -133,7 +128,11 @@ footer {
   width: 100%;
   height: 20rem;
   min-height: 20rem;
-  background: linear-gradient(to left, var(--orange-bg), var(--orange-bg-light));
+  background: linear-gradient(
+    to left,
+    var(--orange-bg),
+    var(--orange-bg-light)
+  );
 
   transition: all 0.2s ease-in;
   -webkit-transition: all 0.2s ease-in;
@@ -141,12 +140,16 @@ footer {
 
 .small-header {
   position: relative;
-  background-image: linear-gradient(to left, var(--sp-orange-color-light), var(--sp-orange-color));
+  background-image: linear-gradient(
+    to left,
+    var(--sp-orange-color-light),
+    var(--sp-orange-color)
+  );
   align-items: center;
   min-height: 188px;
   height: 23.9%;
   background-size: auto;
-  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, .5);
+  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 
   transition: all 0.2s ease-in;
@@ -271,7 +274,6 @@ footer {
   color: var(--muted-color) !important;
 }
 
-
 /*
 BOOSTRAP OVERRIDES
 */
@@ -290,7 +292,7 @@ BOOSTRAP OVERRIDES
   color: var(--orange);
   text-decoration: underline;
   transition: filter 0.2s;
-  filter: brightness(0.7)
+  filter: brightness(0.7);
 }
 
 .ticket-select {
@@ -320,11 +322,11 @@ BOOSTRAP OVERRIDES
 .btn-primary:hover {
   background: var(--orange);
   transition: filter 0.2s;
-  filter: brightness(0.9)
+  filter: brightness(0.9);
 }
 
 .btn-primary:disabled {
-  opacity: .5;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -334,7 +336,7 @@ BOOSTRAP OVERRIDES
 
 .btn-secondary {
   height: 12rem;
-  background: #FFFFFF;
+  background: #ffffff;
   /* Small Button Text */
   color: black;
   font-weight: bold;
@@ -373,7 +375,7 @@ BOOSTRAP OVERRIDES
 .btn-secondary:hover {
   background-color: rgba(185, 175, 175, 0.315);
   transition: filter 2s;
-  filter: brightness(0.99)
+  filter: brightness(0.99);
 }
 
 .container-progress-bar {
@@ -382,7 +384,6 @@ BOOSTRAP OVERRIDES
   padding: 30px;
   margin: auto;
 }
-
 
 .sp-progress {
   display: flex;
@@ -398,7 +399,11 @@ BOOSTRAP OVERRIDES
   justify-content: center;
   overflow: hidden;
   background-color: var(--sp-orange-color);
-  background-image: linear-gradient(to right, var(--sp-orange-color-light), var(--sp-orange-color));
+  background-image: linear-gradient(
+    to right,
+    var(--sp-orange-color-light),
+    var(--sp-orange-color)
+  );
   border-radius: 36px;
 }
 
@@ -415,7 +420,11 @@ BOOSTRAP OVERRIDES
   bottom: 0;
   animation: sp-progress-bar-shine 2s infinite;
   border-radius: 36px;
-  background: linear-gradient(to right, transparent, var(--sp-orange-color-very-light));
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--sp-orange-color-very-light)
+  );
 }
 
 @keyframes sp-progress-bar-shine {
@@ -450,14 +459,14 @@ BOOSTRAP OVERRIDES
   transform: translate(-45%, 5%);
   padding: 10px 20px;
   color: #000000;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   font-weight: normal;
   font-size: 13px;
   border-radius: 8px;
   position: absolute;
   z-index: 999;
   box-sizing: border-box;
-  border: 1px solid #FF9966;
+  border: 1px solid #ff9966;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   visibility: hidden;
   opacity: 0;
@@ -477,14 +486,14 @@ BOOSTRAP OVERRIDES
   transform: translate(-85%, 5%);
   padding: 10px 20px;
   color: #000000;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   font-weight: normal;
   font-size: 13px;
   border-radius: 8px;
   position: absolute;
   z-index: 999;
   box-sizing: border-box;
-  border: 1px solid #FF9966;
+  border: 1px solid #ff9966;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   visibility: hidden;
   opacity: 0;
@@ -505,14 +514,14 @@ BOOSTRAP OVERRIDES
   transform: translate(0, -50%);
   padding: 10px 20px;
   color: #000000;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   font-weight: normal;
   font-size: 13px;
   border-radius: 8px;
   position: absolute;
   z-index: 99999999;
   box-sizing: border-box;
-  border: 1px solid #FF9966;
+  border: 1px solid #ff9966;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   visibility: hidden;
   opacity: 0;
@@ -535,15 +544,15 @@ BOOSTRAP OVERRIDES
 }
 
 .tooltip .right i::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 12px;
   height: 12px;
   left: 0;
   top: 50%;
   transform: translate(50%, -50%) rotate(-45deg);
-  background-color: #FFFFFF;
-  border: 1px solid #FF9966;
+  background-color: #ffffff;
+  border: 1px solid #ff9966;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
@@ -577,7 +586,6 @@ BOOSTRAP OVERRIDES
 
 /* PORTRAIT MODE ON PHONES */
 @media (max-width: 576px) {
-
   .header {
     height: 15rem !important;
     min-height: 15rem !important;
@@ -694,14 +702,24 @@ BOOSTRAP OVERRIDES
  can be actually done
  */
 
-.read-more-modal{
- -ms-overflow-style: none !important;
- scrollbar-width: none !important;
+.dialog-overlay {
+  position: sticky;
+  opacity: 0.35 !important;
+  background-color: #fafafa !important;
+}
+
+.modal-body {
+  overflow-y: auto;
+}
+
+.read-more-modal {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
 .read-more-modal::-webkit-scrollbar {
- display: none !important;
- /* Hides scrollbar on Safari and Chrome */
+  display: none !important;
+  /* Hides scrollbar on Safari and Chrome */
 }
 
 .container-centered {

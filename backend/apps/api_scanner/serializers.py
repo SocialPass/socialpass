@@ -23,7 +23,7 @@ class EventSerializer(serializers.ModelSerializer):
     """
 
     ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
-    redemeed_count = serializers.SerializerMethodField()
+    redeemed_count = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     team = TeamSerializer()
 
@@ -40,10 +40,10 @@ class EventSerializer(serializers.ModelSerializer):
             "location",
             "capacity",
             "ticket_count",
-            "redemeed_count",
+            "redeemed_count",
         ]
 
-    def get_redemeed_count(self, obj):
+    def get_redeemed_count(self, obj):
         return obj.tickets.filter(redeemed=True).count()
 
 
@@ -53,6 +53,8 @@ class TicketSerializer(serializers.ModelSerializer):
     """
 
     wallet_address = serializers.CharField(source="blockchain_ownership.wallet_address")
+    created = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    redeemed_at = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
 
     class Meta:
         model = Ticket

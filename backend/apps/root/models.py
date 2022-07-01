@@ -196,9 +196,7 @@ class Ticket(DBModel):
 
     # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(
-        null=True, storage=get_storage_class(settings.PRIVATE_TICKET_STORAGE)
-    )
+    file = models.ImageField(null=True, storage=PrivateTicketStorage())
     embed_code = models.UUIDField(default=uuid.uuid4)
 
     # Ticket access info

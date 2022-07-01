@@ -7,7 +7,6 @@ import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../contexts/ToastContext";
 import { fetchScanTicket } from "../services/api";
-import HashLoader from "react-spinners/HashLoader";
 import { ProgressBar } from "react-bootstrap";
 
 type ScanFailureBlockProps = {
@@ -94,7 +93,7 @@ export function Scanner() {
     if (!scannerContainer) {
       return;
     }
-    scannerContainer.firstChild.firstChild.style.position = "";
+    (scannerContainer.firstChild.firstChild as any).style.position = "";
   });
 
   const handleError = useCallback((err: any) => {
@@ -108,7 +107,6 @@ export function Scanner() {
   useEffect(() => {
     if (!scanFailureBlock.active) {
       if (scanFailureBlock.intervalId) {
-        console.log("Clear interval");
         clearInterval(scanFailureBlock.intervalId);
       }
       setScanFailureBlock(initialScanFailureBlock);
@@ -165,13 +163,7 @@ export function Scanner() {
           />
         </div>
       </div>
-      <Footer
-        waitingForScan={waitingForScan}
-        event_name={eventData.title}
-        event_attendance={eventData.redemeed_count}
-        event_date={eventData.start_date}
-        event_venue={eventData.location}
-      />
+      <Footer waitingForScan={waitingForScan} />
     </div>
   );
 }

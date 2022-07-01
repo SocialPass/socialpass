@@ -71,3 +71,5 @@ PRIVATE_TICKET_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 STATIC_ROOT = "local_static/"
 MEDIA_ROOT = "media/"
+
+MEDIA_URL = "public/media/"

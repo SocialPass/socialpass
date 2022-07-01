@@ -1,5 +1,6 @@
 import json
 import secrets
+from datetime import datetime
 from functools import lru_cache
 
 import stripe
@@ -81,6 +82,7 @@ class RequireSuccesfulCheckoutMixin:
                 "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
             )
 
+        print(services.get_event_pending_payment_value(event))
         if services.get_event_pending_payment_value(event):
             return self.pending_checkout_behaviour()
 
@@ -316,6 +318,16 @@ class EventListView(TeamContextMixin, ListView):
         return qs
 
 
+class PublishedEventsListView(EventListView):
+    def get_queryset(self):
+        return super().get_queryset().exclude_wip()
+
+
+class WIPEventsListView(EventListView):
+    def get_queryset(self):
+        return super().get_queryset().filter_wip()
+
+
 class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
@@ -339,7 +351,7 @@ class EventCreateView(TeamContextMixin, CreateView):
 
     model = Event
     form_class = EventForm
-    template_name = "dashboard/ticketgate_form.html"
+    template_name = "dashboard/ticketgate_form_new.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -354,6 +366,10 @@ class EventCreateView(TeamContextMixin, CreateView):
 
         return context
 
+    def form_invalid(self, form, **kwargs):
+        form.instance.is_draft = True
+        return super().form_invalid(form, **kwargs)
+
     def form_valid(self, form, **kwargs):
         # set rest of form
         context = self.get_context_data(**kwargs)
@@ -364,22 +380,13 @@ class EventCreateView(TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        if self.object.is_draft:
-            return reverse(
-                "ticketgate_update",
-                args=(
-                    self.kwargs["team_pk"],
-                    self.object.pk,
-                ),
-            )
-        else:
-            return reverse(
-                "ticketgate_checkout",
-                args=(
-                    self.kwargs["team_pk"],
-                    self.object.pk,
-                ),
-            )
+        return reverse(
+            "ticketgate_update",
+            args=(
+                self.kwargs["team_pk"],
+                self.object.pk,
+            ),
+        )
 
 
 class EventUpdateView(TeamContextMixin, UpdateView):
@@ -391,7 +398,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
     form_class = EventForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
-    template_name = "dashboard/ticketgate_form.html"
+    template_name = "dashboard/ticketgate_form_new.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -442,8 +449,26 @@ class EventUpdateView(TeamContextMixin, UpdateView):
             return super().post(*args, **kwargs)
         elif action == "unpublish":
             return self.unpublish(*args, **kwargs)
+        elif action == "publish":
+            return self.publish(*args, **kwargs)
 
         raise exceptions.SuspiciousOperation()
+
+    def publish(self, *args, **kwargs):
+        event = self.get_object()
+        form = self.get_form()
+
+        publish_date = form["publish_date"].value()
+        if publish_date:
+            publish_date = datetime.strptime(publish_date, "%Y-%m-%dT%H:%M")
+
+        scheduled = services.publish_event(event, publish_date)
+        if scheduled:
+            success_text = f"Event succesfully scheduled for {event.publish_date}"
+        else:
+            success_text = "Event succesfully published"
+        messages.add_message(self.request, messages.SUCCESS, success_text)
+        return redirect("ticketgate_detail", **self.kwargs)
 
     def unpublish(self, *args, **kwargs):
         event = self.get_object()

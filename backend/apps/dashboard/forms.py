@@ -36,6 +36,7 @@ class EventForm(forms.ModelForm):
     - capacity is disabled if there is a payment in process.
     - price is updated when capacity is changed.
     """
+
     timezone = forms.ChoiceField(
         choices=[("", "")] + [(x, x) for x in pytz.common_timezones], required=False
     )
@@ -58,7 +59,6 @@ class EventForm(forms.ModelForm):
             format="%Y-%m-%dT%H:%M",
             attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
         ),
-        initial=datetime.now,
         required=False,
     )
     visibility = forms.CharField(
@@ -98,12 +98,17 @@ class EventForm(forms.ModelForm):
         ]
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
-            "organizer": forms.TextInput(attrs={"placeholder": "Name of Brand or Community organizing the event"}),
+            "organizer": forms.TextInput(
+                attrs={"placeholder": "Name of Brand or Community organizing the event"}
+            ),
             "description": forms.Textarea(
                 attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
-            "location": forms.TextInput(attrs={"placeholder": "Where the event is taking place"}),
-            "is_draft": forms.HiddenInput(), "requirements": forms.HiddenInput()
+            "location": forms.TextInput(
+                attrs={"placeholder": "Where the event is taking place"}
+            ),
+            "is_draft": forms.HiddenInput(),
+            "requirements": forms.HiddenInput(),
         }
 
     def can_edit_capacity(self) -> bool:

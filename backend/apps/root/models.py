@@ -63,6 +63,12 @@ class EventQuerySet(models.QuerySet):
     def drafts(self):
         return self.filter(is_draft=True)
 
+    def filter_wip(self):
+        return self.filter(publish_date__isnull=True)
+
+    def exclude_wip(self):
+        return self.filter(publish_date__isnull=False)
+
     def filter_published(self):
         return self.filter(publish_date__lte=datetime.now())
 
@@ -109,9 +115,7 @@ class Event(AllowDraft, DBModel):
     visibility = required_if_not_draft(
         models.CharField(max_length=50, choices=EVENT_VISIBILITY)
     )
-    cover_image = models.ImageField(
-        blank=True, null=True, storage=MediaRootS3Boto3Storage()
-    )
+    cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
     categories = TaggableManager(blank=True)
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
@@ -170,8 +174,6 @@ class Event(AllowDraft, DBModel):
         if self.is_draft:
             return super().save(*args, **kwargs)
 
-        TicketRedemptionKey.objects.get_or_create(event=self)
-
         if self.timezone is not None:
             timezone_aware_datetime_fields = ["start_date", "end_date", "publish_date"]
 
@@ -182,7 +184,11 @@ class Event(AllowDraft, DBModel):
                         self, field, val.replace(tzinfo=pytz.timezone(self.timezone))
                     )
 
-        return super().save(*args, **kwargs)
+        ret = super().save(*args, **kwargs)
+
+        TicketRedemptionKey.objects.get_or_create(event=self)
+
+        return ret
 
     @property
     def status(self):
@@ -197,16 +203,10 @@ class Event(AllowDraft, DBModel):
 
     @property
     def is_published(self):
-        if self.has_pending_checkout:
-            return False
-
         return self.publish_date is not None
 
     @property
     def is_scheduled(self):
-        if self.has_pending_checkout:
-            return False
-
         return self.publish_date is not None and self.publish_date > datetime.now(
             self.publish_date.tzinfo
         )

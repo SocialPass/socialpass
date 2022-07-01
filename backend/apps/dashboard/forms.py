@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
@@ -5,6 +7,7 @@ from invitations.forms import InviteForm
 
 from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.models import Event
 
 
@@ -34,31 +37,79 @@ class EventForm(forms.ModelForm):
     - price is updated when capacity is changed.
     """
 
-    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+    timezone = forms.ChoiceField(
+        choices=[("", "")] + [(x, x) for x in pytz.common_timezones], required=False
+    )
     start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             format="%Y-%m-%dT%H:%M",
-            attrs={
-                "id": "start_date",
-                "class": "form-control",
-                "type": "datetime-local",
-            },
-        )
+            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+        ),
+        required=False,
+    )
+    end_date = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+        ),
+        required=False,
+    )
+    publish_date = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+        ),
+        required=False,
+    )
+    visibility = forms.CharField(
+        label="Visibility",
+        widget=forms.RadioSelect(choices=EVENT_VISIBILITY),
+        required=False,
     )
 
     class Meta:
         model = Event
         fields = [
+            "is_draft",
+            # 1. General info
+            # basic info
             "title",
+            "organizer",
             "description",
+            # "categories",
+            "visibility",
+            # location
             "location",
+            # TODO
+            # date and time
             "start_date",
+            "end_date",
             "timezone",
+            # cover image
+            "cover_image",
+            # 2. Requirements
+            "requirements",
+            # 3. Tickets
             "capacity",
             "limit_per_person",
-            "requirements",
+            # 4. Publish
+            "publish_date",
+            "custom_url_path",
         ]
-        widgets = {"requirements": forms.HiddenInput()}
+        widgets = {
+            "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
+            "organizer": forms.TextInput(
+                attrs={"placeholder": "Name of Brand or Community organizing the event"}
+            ),
+            "description": forms.Textarea(
+                attrs={"placeholder": "A short description of your event", "rows": 3}
+            ),
+            "location": forms.TextInput(
+                attrs={"placeholder": "Where the event is taking place"}
+            ),
+            "is_draft": forms.HiddenInput(),
+            "requirements": forms.HiddenInput(),
+        }
 
     def can_edit_capacity(self) -> bool:
         if self.instance is None:

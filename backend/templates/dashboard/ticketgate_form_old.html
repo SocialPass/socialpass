@@ -4,130 +4,41 @@
 {% block head_title %}Events - SocialPass{% endblock head_title %}
 {% block navbar_breadcrumb %}{% if url_name == 'ticketgate_create' %}Create{% else %}Update{% endif %} Event{% endblock %}
 
-{% block wip_event_creation_ux %}
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
-{% endblock %}
-
-
-{% block extra_head %}
-  {{ block.super}}
-  <style type="text/css">
-    /* Copied from soft-ui theme to support gradual transition of template for chain requirements */
-    .nav {
-      display: flex;
-      flex-wrap: wrap;
-      padding-left: 0;
-      margin-bottom: 0;
-      list-style: none;
-    }
-
-    .nav-link {
-      display: block;
-      padding: 0.5rem 1rem;
-      color: #2e95b8;
-      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .nav-link {
-        transition: none;
-      }
-    }
-
-    .nav-link:hover,
-    .nav-link:focus {
-      color: #24748f;
-    }
-
-    .nav-link.disabled {
-      color: #6c757d;
-      pointer-events: none;
-      cursor: default;
-    }
-
-    .nav-tabs {
-      border-bottom: 1px solid #dee2e6;
-    }
-
-    .nav-tabs .nav-link {
-      margin-bottom: -1px;
-      background: none;
-      border: 1px solid transparent;
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
-    }
-
-    .nav-tabs .nav-link:hover,
-    .nav-tabs .nav-link:focus {
-      border-color: #e9ecef #e9ecef #dee2e6;
-      isolation: isolate;
-    }
-
-    .nav-tabs .nav-link.disabled {
-      color: #6c757d;
-      background-color: transparent;
-      border-color: transparent;
-    }
-
-    .nav-tabs .nav-link.active,
-    .nav-tabs .nav-item.show .nav-link {
-      color: #495057;
-      background-color: #fff;
-      border-color: #dee2e6 #dee2e6 #fff;
-    }
-
-    .nav-tabs .dropdown-menu {
-      margin-top: -1px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-  </style>
-{% endblock %}
-
 {% block content %}
 <script src="{% static 'js/main.js' %}"></script>
 
-<!-- Header start -->
-<div class="border-bottom hs-md-100">
-  <div class="p-content d-flex h-100">
-    <div class="pe-15 align-self-center">
-      {% if url_name == 'ticketgate_create' %}
-        <h1 class="content-title m-0 fs-base-p6">
-          Create New Event
-        </h1>
-        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-          Use the following form to host a new event.
-        </p>
-      {% else %}
-        <h1 class="content-title m-0 fs-base-p6">
-          Update Event: {{event.title}}
-        </h1>
-        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-          Use the following form to update the event's information.
-        </p>
-      {% endif %}
-    </div>
-    <div class="ms-auto align-self-center">
-      <a href="{% url 'ticketgate_list' view.kwargs.team_pk %}" class="btn text-primary fw-bold">
-        <i class="fa-solid fa-angle-left"></i>
-        <span class="ms-5 d-none d-sm-inline">Back</span>
-      </a>
-    </div>
-  </div>
-</div>
-<!-- Header end -->
-
-<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
-  <div class="row">
-    <!-- Main content start -->
-    <div class="col-lg-6 border-lg-end">
-      <div class="content">
-        <h1 class="content-title m-0 fs-base-p6">General Info</h1>
-        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-        General information for your event attendees. Add details that highlight what makes it unique.
-        </p>
-        <hr/>
+<div class="row">
+  <div class="col-sm-10 col-md-12 mx-auto">
+    <div class="card mb-4">
+      <div class="card-header py-0">
+        <div class="d-flex align-items-center py-3">
+          {% if url_name == 'ticketgate_create' %}
+          <div class="pe-2">
+            <h6 class="m-0">Ticket Gate Create</h6>
+            <div class="text-muted text-xs mb-3">
+              Use the following form to create an ticket gate.
+            </div>
+          </div>
+          {% else %}
+          <div class="pe-2">
+            <h6 class="m-0">Ticket Gate Update</h6>
+            <div class="text-muted text-xs mb-3">
+              Use the following form to update the ticket gate.
+            </div>
+          </div>
+          {% endif %}
+          <a
+            href="{% url 'ticketgate_list' view.kwargs.team_pk %}"
+            class="btn bg-gradient-secondary btn-sm ms-auto my-0"
+          >
+            <div class="d-flex align-items-center justify-content-center gap-2">
+              <i class="fa-solid fa-angle-left fs-6"></i>
+              <span class="fs-6">Back</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="card-body py-2">
         <form id="requirementFormId" class="form" method="post">
           {% csrf_token %}
           {{ form|crispy }}
@@ -147,42 +58,15 @@
             {% afr_uuid %}
           {% endif %}
         </form>
-      </div>
-    </div>
-    <div class="col-lg-6">
-      <div class="content">
-        <h1 class="content-title m-0 fs-base-p6">Blockchain Requirements</h1>
-        <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-          NFT or SocialToken information required to redeeem or purchase a ticket to your event.
-        </p>
-        <hr/>
-        <div id="blockchainRequirementsFormTitle" class="py-2 fw-bold">Blockchain Requirements</div>
-        <div>
-          <nav>
-            <ul id="nav-requirement" class="nav nav-tabs" role="tablist">
-              <div
-                type="button"
-                onclick="addRequirement()"
-                class="nav-link"
-              >
-                Add requirement
-              </div>
-            </ul>
-          </nav>
-        </div>
-        <div class="tab-content" id="tokenRequirementForms">
-          <!-- requirements will be added dynamically -->
+
+        <div class="d-flex flex-row-reverse px-2">
+          <button onclick="fillRequirementsAndSubmitForm()" id="submitBtn" value="Submit" class="btn bg-gradient-primary btn-sm ms-auto my-0">
+            submit
+          </button>
         </div>
       </div>
     </div>
   </div>
-  <!-- Card footer start -->
-  <div class="px-card py-10 border-top text-muted fs-base-n2 d-flex flex-row-reverse">
-    <button onclick="fillRequirementsAndSubmitForm()" id="submitBtn" value="Submit" class="btn text-primary fw-bold">
-      Submit
-    </button>
-  </div>
-  <!-- Card footer end -->
 </div>
 <script>
   // Helper functions to manage addition/removal/submission of requirement forms and nav-tabs

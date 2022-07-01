@@ -1,6 +1,6 @@
 // Event Portal API
 const prodURL = import.meta.env.VITE_APP_API_URL;
-const devURL = "/api";
+const devURL = "http://localhost:8000/api";
 const baseURL = import.meta.env.PROD ? prodURL : devURL;
 
 // TicketedEventRetrieve API call

@@ -228,28 +228,6 @@
 }
 
 
-.btn-return-to-scanner {
-    border-radius: 1.4rem;
-    border-width: 0rem;
-    -webkit-font-smoothing: auto;
-    -moz-osx-font-smoothing: auto;
-    font-family: 'Rubik';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 2.0rem;
-    text-decoration: none;
-    color: black;
-    background-color: white;
-    background-image: none;
-    border-color: black;
-    border-width: 1 px;
-    box-shadow: 0px 4px 15px 1px #2C647936;
-    padding: 15px;
-
-
-}
-
 .statistics-body   {
     position: absolute;
     display: block;
@@ -262,7 +240,6 @@
 
 
 .statistics-title  {
-    position: absolute;
     font-family: 'Rubik';
     font-style: normal;
     font-weight: 500;
@@ -270,7 +247,7 @@
     line-height: 26px;
     text-align: center;
     color: #0C0F3C;
-    margin-top: 15%;
+    margin-top: 5%;
     margin-bottom: 10%;
     background-color: var(--white-color);
 }
@@ -317,7 +294,7 @@
 
 
 
-.btn-selected-statistic {
+.btn-non-selected-statistic {
     border-radius: 12px 12px 0px 0px;
     border-width: 0rem;
     margin-top: 30px;
@@ -339,19 +316,49 @@
     box-shadow: none;
 }
 
-.btn-selected-statistic:focus {
+
+.btn-selected-statistic {
+    border-radius: 12px 12px 0px 0px;
+    border-width: 0rem;
+    margin-top: 30px;
+    width: 35%;
+    padding: 16px;
+    position: relative;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
     text-decoration: none;
+    border-color: none;
+    box-shadow: none;
     color: var(--white-color);
     background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
     background-image: none;
-    border-color: transparent;
-    box-shadow: none;
 }
 
 
 
 /* Statistics Table Components */
+.btn-active   {
+    border-color: transparent;
+    margin: 2px;
+    color: var(--white-color);
+    background-color: hsl(var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness));
+    background-image: none;
+}
 
+.btn-inactive   {
+    border-color: transparent;
+    margin: 2px;
+    color: #e7e7e7;
+    background-color: rgb(170, 170, 170);
+    background-image: none;
+    border-color: none;
+    box-shadow: none;
+}
 
 
 

@@ -39,6 +39,14 @@ body {
   background-image: url('./static/images/icons/socialpassLogo_gray.svg');
   background-repeat: repeat;
   background-size: 200px;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+  /* Hides scrollbar on Safari and Chrome */
 }
 
 /* #root {
@@ -104,12 +112,12 @@ footer {
   padding: 1.5rem;
 }
 
-.dialog-overlay{
+.dialog-overlay {
   opacity: 0.35 !important;
   background-color: #fafafa !important;
 }
 
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
 }
 
@@ -237,15 +245,13 @@ footer {
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
   overflow-y: scroll;
+
   -ms-overflow-style: none;
-  /* Hides scrollbar on IE10+ */
   scrollbar-width: none;
-  /* Hides scrollbar on Firefox */
 }
 
 .container-fluid::-webkit-scrollbar {
   display: none;
-  /* Hides scrollbar on Safari and Chrome */
 }
 
 .card {
@@ -688,8 +694,18 @@ BOOSTRAP OVERRIDES
  can be actually done
  */
 
+.read-more-modal{
+ -ms-overflow-style: none !important;
+ scrollbar-width: none !important;
+}
+
+.read-more-modal::-webkit-scrollbar {
+ display: none !important;
+ /* Hides scrollbar on Safari and Chrome */
+}
+
 .container-centered {
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
   top: 50%;
   left: 50%;

@@ -1,6 +1,5 @@
 import json
 import secrets
-from datetime import datetime
 from functools import lru_cache
 
 import stripe
@@ -10,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core import exceptions
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
+from django.utils import dateparse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -460,9 +460,10 @@ class EventUpdateView(TeamContextMixin, UpdateView):
 
         publish_date = form["publish_date"].value()
         if publish_date:
-            publish_date = datetime.strptime(publish_date, "%Y-%m-%dT%H:%M")
+            publish_date = dateparse.parse_datetime(publish_date)
 
         scheduled = services.publish_event(event, publish_date)
+
         if scheduled:
             success_text = f"Event succesfully scheduled for {event.publish_date}"
         else:

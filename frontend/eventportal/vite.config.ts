@@ -10,6 +10,7 @@ export default ({ mode }) => {
 
   return defineConfig({
     server: {
+      port: 3000,
       proxy: {
         "/api": {
           target: process.env.VITE_APP_API_URL,

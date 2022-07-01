@@ -19,16 +19,5 @@ RUN pip install -U setuptools pip \
 # django setup
 COPY . /code
 
-
-# This should not be used for production purposes.
-# In case it we want to, then we should explore using a lighter image.
-
-# For example:
-
-# FROM python:3.10.2-alpine # or slim
-
-# # system installations
-# RUN apk update \
-#   && apk add --virtual build-deps build-base gcc python3-dev musl-dev libffi-dev \
-#   && apk add postgresql-dev \
-#   && pip install -U setuptools pip
+# Healthcheck
+HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1

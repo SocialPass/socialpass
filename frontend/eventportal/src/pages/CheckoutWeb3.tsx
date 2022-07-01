@@ -5,13 +5,14 @@ import { TicketedEventRequestAccess, TicketedEventGrantAccess } from "../api";
 import { Loading } from "../components/";
 import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
 import { CheckoutPortalContext } from "../context";
-import infoButton from "../static/images/icons/infoButton.svg";
+import NFTOwnershipFAQHoverIcon from "../components/NFTOwnershipFAQ";
 
 // ConnectorWallets
 // Return UI for wallet connectors
 export const CheckoutWeb3 = () => {
   const navigate = useNavigate();
-  const [loadingText, setLoadingText] = useState<any>('Loading...');
+  const [selectedWallet, setSelectedWallet] = useState<any>();
+  const [loadingText, setLoadingText] = useState<any>("Loading...");
   const [statusButton, setStatusButton] = useState<any>(true);
   const {
     id,
@@ -30,41 +31,51 @@ export const CheckoutWeb3 = () => {
     message: requestAccessJson?.signing_message,
   });
 
-
   const ConnectWallet = () => {
     // todo: ENS resolution
     const ensName = null;
     if (accountHook && accountHook.data && accountHook.data.address) {
       return (
         <div className="col-lg-12 mt-10 column-display-mobile">
-          <div>{ensName ? `${ensName} (${ accountHook.data.address })` : accountHook.data.address}</div>
+
+          <div>
+            {ensName
+              ? `${ensName} (${accountHook.data.address})`
+              : accountHook.data.address}
+          </div>
           <div>Connected to {connectHook?.activeConnector?.name}</div>
-          <button onClick={() => disconnectHook.disconnect()}>Disconnect</button>
+          <button onClick={() => disconnectHook.disconnect()}>
+            Disconnect
+          </button>
         </div>
-      )
+      );
     }
     return (
-    <div className="col-lg-12 d-flex mt-10 d-flex gap-10 column-display-mobile">
-      {connectHook.connectors.map((x) => (
-        <button
-          className="fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-          disabled={!x.ready}
-          key={x.id}
-          id={x.id}
-          onClick={() =>  connectHook.connect(x)}
-        >
-          <Web3ConnectorImage
-            selectedWallet={x}
-            connector={x.name}
-          />
-          {x.name}
-          {!x.ready && " (unsupported)"}
-        </button>
-      ))}
-    </div>
-    )
-  }
-
+      <div className="wallets">
+        {connectHook.connectors.map((x) => (
+          <button
+            className={
+              selectedWallet === x
+                ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+                : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+            }
+            disabled={!x.ready}
+            key={x.id}
+            id={x.id}
+            onClick={() => {
+              connectHook.connect(x);
+              setSelectedWallet(x);
+            }}
+          >
+            <Web3ConnectorImage selectedWallet={x} connector={x.name} />
+            {x.name}
+            {!x.ready && " (unsupported)"}
+          </button>
+        ))}
+      </div>
+    );
+  };
+>>>>>>> feature/eventportal-redesign
 
   // request access handler (based on web3 account data change)
   useEffect(() => {
@@ -93,7 +104,7 @@ export const CheckoutWeb3 = () => {
     (async function () {
       if (signHook.data && accountHook && accountHook.data) {
         setLoading(true);
-        setLoadingText('Verifying ownership')
+        setLoadingText("Verifying ownership");
         let response;
         response = await TicketedEventGrantAccess.call({
           public_id: id,
@@ -120,26 +131,41 @@ export const CheckoutWeb3 = () => {
   // useeffect hook to flip checkout button status
   // based on wallet address from accountHook
   useEffect(() => {
+<<<<<<< HEAD
     if (accountHook && accountHook.data && accountHook.data.address){
+=======
+    if (accountHook && accountHook.data && accountHook.data.address) {
+>>>>>>> feature/eventportal-redesign
       setStatusButton(false);
     } else {
       setStatusButton(true);
     }
+<<<<<<< HEAD
 
   }, [accountHook])
+=======
+  }, [accountHook]);
+>>>>>>> feature/eventportal-redesign
 
   function handleNavigateBack() {
     navigate(-1);
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/eventportal-redesign
   async function handleCheckout() {
     setLoadingText(`Awaiting wallet signature`);
     await signHook.signMessageAsync();
   }
 
   if (signHook.isLoading || loading) {
+<<<<<<< HEAD
     return <Loading loadingText={loadingText}/>;
+=======
+    return <Loading loadingText={loadingText} />;
+>>>>>>> feature/eventportal-redesign
   }
 
   return (
@@ -163,17 +189,10 @@ export const CheckoutWeb3 = () => {
           </div>
 
           <div className="tooltip">
-            <img src={infoButton} />
-            <div className="right">
-              <span className="tooltip-text fs-12">
-                Proof of ownership is not an NFT trade. We need to prove you
-                own the NFT in order to get the ticket.
-              </span>
-              <i></i>
-            </div>
+            <NFTOwnershipFAQHoverIcon locationClass="bottom-left"></NFTOwnershipFAQHoverIcon>
           </div>
         </div>
-        <ConnectWallet/>
+        <ConnectWallet />
         {connectHook.error && (
           <div>{connectHook.error?.message ?? "Failed to connect"}</div>
         )}
@@ -182,12 +201,12 @@ export const CheckoutWeb3 = () => {
         )}
       </div>
       <div className="bg-gray d-flex flex-column justify-start-center">
-        <div className="d-flex flex-column align-items-start justify-start-center p-30">
+        <div className="ms-10 d-flex flex-column align-items-start justify-start-center py-30">
           <div className="d-flex align-items-center justify-conent-center">
             <h3 className="fs-20">Summary</h3>
             <a
               onClick={handleNavigateBack}
-              className="ms-15 mt-5 text-edit fs-15 fw-bold"
+              className="ms-15 text-edit fs-15 fw-bold"
             >
               Edit
             </a>
@@ -200,12 +219,12 @@ export const CheckoutWeb3 = () => {
           <button
             disabled={statusButton}
             onClick={() => handleCheckout()}
-            className="btn btn-primary fs-20 text-capitalize rounded-3"
+            className="btn btn-primary rounded-3"
           >
-            Checkout
+            <span className="p-5 fs-18 text-capitalize">Checkout</span>
           </button>
         </div>
       </div>
     </div>
   );
-}
+};

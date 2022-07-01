@@ -1,8 +1,7 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
-import { truncateAddress } from "../utils";
-import infoButton from "../static/images/icons/infoButton.svg";
+import GeneralAdmissionFAQHoverIcon from "../components/GeneralAdmissionFAQ";
 
 export function TicketSelection() {
   const navigate = useNavigate();
@@ -34,24 +33,7 @@ export function TicketSelection() {
               <span className="fs-18 fw-bold me-15">General Admission</span>
 
               <div className="tooltip">
-                <img src={infoButton} />
-                <div className="right">
-                  <span className="tooltip-text fs-11">
-                    This General Admission ticket is free to all holders of 1
-                    NFT collection:
-                    <hr />
-                    {retrieveJson?.requirements.map((req, i) => (
-                      <div key={i}>
-                        <h3>Option {i + 1}</h3>
-                        <span className="fs-12">
-                          Contract:{" "}
-                          <span>{truncateAddress(req["asset_address"])}</span>
-                        </span>
-                        <hr />
-                      </div>
-                    ))}
-                  </span>
-                </div>
+                <GeneralAdmissionFAQHoverIcon locationClass="bottom"></GeneralAdmissionFAQHoverIcon>
               </div>
             </div>
             <div className="d-inline fw-bold">free</div>

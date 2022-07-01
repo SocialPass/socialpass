@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { TicketedEventRetrieve } from "../api";
 import { CheckoutPortalContextInterface } from "../types";
 import { useQuery } from "react-query";
+import { useLocation } from "react-router-dom";
 
 export const CheckoutPortalContext =
   createContext<CheckoutPortalContextInterface>(
@@ -9,7 +10,10 @@ export const CheckoutPortalContext =
   );
 
 export const EventPortalProvider = ({ children }: { children: any }) => {
+  const location = useLocation();
+
   const [id, setID] = useState<string>("");
+  const [headerType, setHeaderType] = useState<string>("light");
 
   const [retrieveJson, setRetrieveJson] = useState(null);
   const [retrieveError, setRetrieveError] = useState(null);
@@ -32,6 +36,10 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
       enabled: false,
     }
   );
+
+  useEffect(() => {
+    setHeaderType("dark");
+  }, [location]);
 
   useEffect(() => {
     if (id) {
@@ -80,6 +88,9 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
 
         generalAdmissionSelect,
         setGeneralAdmissionSelect,
+
+        headerType,
+        setHeaderType,
       }}
     >
       {children}

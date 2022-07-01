@@ -159,7 +159,7 @@
 {% endblock content %}
 
 {% block extra_body %}
-<script src="{% static 'js/public/checkoutportal-embedded.js' %}"></script>
+<script src="{{CHECKOUT_PORTAL_BASE_URL}}/checkoutportal-embedded.js"></script>
 <script type="text/javascript">
     const uuid = (window.location.pathname).split("/")[1]
     console.log(uuid)

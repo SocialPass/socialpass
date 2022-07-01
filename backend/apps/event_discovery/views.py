@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -53,6 +54,10 @@ class EventDiscoveryDetails(DetailView):
         ticket_count = self.object.tickets.count()
         tickets_remaining = self.object.capacity - ticket_count
         context.update(
-            {"ticket_count": ticket_count, "tickets_remaining": tickets_remaining}
+            {
+                "ticket_count": ticket_count,
+                "tickets_remaining": tickets_remaining,
+                "checkoutportal_base_url": settings.CHECKOUT_PORTAL_BASE_URL,
+            }
         )
         return context

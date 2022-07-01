@@ -4,6 +4,12 @@ SHELL := /bin/bash
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
+build: ## docker build
+	docker-compose build
+
+up: ## docker up
+	docker-compose up
+
 collect: ## collectstatic backend
 	docker-compose run web python backend/manage.py collectstatic --no-input
 
@@ -12,9 +18,6 @@ migration: ## Create backend migrations
 
 migrate: ## Migrate backend migrations
 	docker-compose run web python backend/manage.py migrate
-
-up: ## Create && migrate
-	docker-compose run web python backend/manage.py makemigrations; docker-compose run web python backend/manage.py migrate;
 
 superuser: ## Create backend superuser
 	docker-compose run web python backend/manage.py createsuperuser

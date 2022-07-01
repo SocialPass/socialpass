@@ -24,7 +24,7 @@ export const CheckoutStatus = () => {
             </p>
             <div className="fw-bold bg-success p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
               <img src={correct} height="16.9" width="16.9" className="me-4" />
-              <span className="fs-16">Access Granted</span>
+              <span className="fs-16">access granted</span>
             </div>
             <div className="d-flex flex-row justify-content-start align-items-center gap-30">
               <img
@@ -93,7 +93,7 @@ export const CheckoutStatus = () => {
           <code>Error Code: {grantAccessError?.message}</code>
           <div className="fw-bold bg-denied p-5 strong my-15 text-center d-flex align-items-center justify-content-evenly">
             <img src={denied} height="16.9" width="16.9" />
-            <span className="fs-16">Access Denied</span>
+            <span className="fs-16">access denied</span>
           </div>
           <div className="mt-30 d-flex flex-row justify-content-start align-items-center gap-30">
             <img className="avatar-img" src={retrieveJson.team.image} />

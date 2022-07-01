@@ -36,8 +36,7 @@ export const CheckoutWeb3 = () => {
     const ensName = null;
     if (accountHook && accountHook.data && accountHook.data.address) {
       return (
-        <div className="col-lg-12 mt-10 column-display-mobile">
-
+        <div className="wallets">
           <div>
             {ensName
               ? `${ensName} (${accountHook.data.address})`

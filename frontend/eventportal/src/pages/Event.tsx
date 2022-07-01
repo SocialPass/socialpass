@@ -4,6 +4,7 @@ import { CheckoutPortalContext } from "../context";
 import clock from "../static/images/icons/clock.svg";
 import location from "../static/images/icons/location.svg";
 import timezone from "../static/images/icons/timezone.svg";
+import ReadMoreModal from "../components/ReadMoreModal";
 // Event Component
 
 export const Event = ({ headerType }): JSX.Element => {
@@ -91,21 +92,7 @@ export const Event = ({ headerType }): JSX.Element => {
       </div>
 
       {/* MODAL */}
-      <div
-        className="modal fade"
-        id="event-modal"
-        aria-labelledby="event-modal-toggle"
-        tabIndex={-1}
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-body text-justify">
-              <span className="fs-16">{retrieveJson.description}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ReadMoreModal/>
     </>
   );
 };

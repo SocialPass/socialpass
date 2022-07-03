@@ -20,7 +20,7 @@ class EventSerializer(serializers.ModelSerializer):
     """
 
     ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
-    start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
     team = TeamSerializer()
 
     class Meta:

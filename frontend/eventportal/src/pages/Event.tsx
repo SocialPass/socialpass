@@ -7,11 +7,9 @@ import timezone from "../static/images/icons/timezone.svg";
 import ReadMoreModal from "../components/ReadMoreModal";
 // Event Component
 
-export const Event = ({ headerType }): JSX.Element => {
+export const Event = ({  }): JSX.Element => {
   const navigate = useNavigate();
-  const { id, retrieveJson, setHeaderType } = useContext(CheckoutPortalContext);
-
-  setHeaderType(headerType);
+  const { id, retrieveJson } = useContext(CheckoutPortalContext);
 
   function handleNavigate() {
     navigate(`/${id}/ticket-selection`);
@@ -19,8 +17,8 @@ export const Event = ({ headerType }): JSX.Element => {
 
   return (
     <>
-      <div className="row m-0 align-items-end">
-        <div className="col-md-7 d-flex">
+      <div className="row m-0 justify-content-center">
+        <div className="col-md-8 d-flex">
           <div className="col col-md-10 mb-30">
             <div className="d-flex flex-column align-items-start justify-content-center">
               <span className="fs-16 fw-500">
@@ -42,7 +40,7 @@ export const Event = ({ headerType }): JSX.Element => {
                   data-hm-target="event-modal"
                   id="event-modal-toggle"
                 >
-                  Read more
+                  Read more...
                 </a>
               </div>
             )}
@@ -84,7 +82,7 @@ export const Event = ({ headerType }): JSX.Element => {
             </span>
           </div>
         </div>
-        <div className="col-md-4 ms-5">
+        <div className="col-md-3 ms-5 align-self-center">
           <button className="btn-primary fs-20" onClick={handleNavigate}>
             Claim Tickets
           </button>

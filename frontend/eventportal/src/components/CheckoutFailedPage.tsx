@@ -15,7 +15,7 @@ export default function CheckoutFailedPage() {
   
   return (
     <div className="row flex-grow-1 m-0 mt-3 align-items-center">
-      <div className="col-md-7 mb-4 d-flex">
+      <div className="col-md-8 mb-4 d-flex">
         <div className="col col-md-10">
           <h1>Access Denied</h1>
           <p className="fs-16">
@@ -35,7 +35,7 @@ export default function CheckoutFailedPage() {
             />
             <div className="d-flex flex-column gap-5 mb-15">
               <strong className="fs-22">{retrieveJson.title}</strong>
-              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
+              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-12">
                 <img
                   src={clock}
                   height="16.9"
@@ -45,7 +45,7 @@ export default function CheckoutFailedPage() {
                 />
                 {retrieveJson.start_date}
               </p>
-              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
+              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-12">
                 <img
                   src={timezone}
                   height="16.9"
@@ -55,7 +55,7 @@ export default function CheckoutFailedPage() {
                 />
                 {retrieveJson.timezone}
               </p>
-              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-16">
+              <p className="d-flex align-items-center m-0 mt-1 mb-1 fs-12">
                 <img
                   src={location}
                   height="16.9"
@@ -69,7 +69,7 @@ export default function CheckoutFailedPage() {
           </div>
         </div>
       </div>
-      <div className="col-md-5 mt-30">
+      <div className="col-md-4 mt-30">
         <button
           className="btn-primary fs-22"
           onClick={() => {

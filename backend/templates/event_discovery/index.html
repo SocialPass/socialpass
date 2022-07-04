@@ -17,7 +17,7 @@
                         SocialPass is the go-to events platform, powered by Web3.
                     </p>
                     <div class="mt-20">
-                        <a href="#" class="btn btn-secondary btn-lg fsr-6 py-sm-15 px-sm-20 mt-10 me-5">
+                        <a href="{% url 'discovery:browse' %}" class="btn btn-secondary btn-lg fsr-6 py-sm-15 px-sm-20 mt-10 me-5">
                             <strong class="antialiased">Explore</strong> <i class="fa-regular fa-angle-right ms-5"></i>
                         </a>
                         <a href="{% url 'dashboard_redirect' %}" class="btn btn-lg fsr-6 text-primary-dim-lm text-primary-light-dm py-sm-15 px-sm-20 mt-10">
@@ -41,7 +41,7 @@
 <!-- Hero section end -->
 
 <!-- Featured events section start -->
-{% if not featured_events.count > 0 %}
+{% if featured_events.count > 0 %}
     <section>
         <div class="container-xl">
             <!-- Header start -->
@@ -49,7 +49,7 @@
                 <h2 class="fsr-1 fw-700 text-strong lh-base m-0">
                     Featured Events
                 </h2>
-                <a href="#" class="fw-bold ms-auto">
+                <a href="{% url 'discovery:browse' %}" class="fw-bold ms-auto">
                     See More <i class="fa-regular fa-angle-right ms-5"></i>
                 </a>
             </div>

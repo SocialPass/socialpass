@@ -21,13 +21,13 @@
                 <div class="col-md-6 align-self-center">
                     <!-- Search form start -->
                     <form class="position-relative mt-20">
-                        {% if request.GET.search %}
+                        {% if request.GET.title %}
                             <a href="{{ request.path }}" class="position-absolute top-50 start-0 translate-y-middle btn btn-link btn-lg btn-square btn-rounded bg-transparent text-base">
                                 <i class="fa-regular fa-times"></i>
                                 <span class="visually-hidden">Reset</span>
                             </a>
                         {% endif %}
-                        <input type="text" name="search" class="form-control form-control-lg fs-base rounded-pill {% if request.GET.search %}ps-50{% else %}ps-20{% endif %} pe-50" placeholder="Search for events by name" value="{{ request.GET.search }}">
+                        <input type="text" name="title" class="form-control form-control-lg fs-base rounded-pill {% if request.GET.title %}ps-50{% else %}ps-20{% endif %} pe-50" placeholder="Search for events by name" value="{{ request.GET.title }}">
                         <button type="submit" class="position-absolute top-50 end-0 translate-y-middle btn btn-link btn-lg btn-square btn-rounded bg-transparent">
                         	<i class="fa-regular fa-search"></i>
                         	<span class="visually-hidden">Search</span>
@@ -41,7 +41,7 @@
                 </div>
             </div>
             <p class="mt-30 mb-0">
-                Found 41 event(s) in total
+                Found {{events.count}} event(s) in total
             </p>
         </div>
         <!-- Heading, subtitle, and search bar end -->

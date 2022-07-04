@@ -7,10 +7,12 @@ import boto3
 import pytz
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.sites.models import Site
 from django.core import exceptions as dj_exceptions
 from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from pytz import utc
 from taggit.managers import TaggableManager
 
@@ -78,6 +80,9 @@ class EventQuerySet(models.QuerySet):
     def filter_public(self):
         return self.filter(visibility="PUBLIC")
 
+    def filter_featured(self):
+        return self.filter(is_featured=True)
+
     def get_by_url_identifier(
         self, public_id_or_custom_url_path: typing.Union[uuid.UUID, str]
     ):
@@ -105,6 +110,7 @@ class Event(AllowDraft, DBModel):
 
     # Publish info
     is_draft = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
     publish_date = models.DateTimeField(null=True, blank=True)
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
@@ -218,6 +224,10 @@ class Event(AllowDraft, DBModel):
     @property
     def url_path(self):
         return self.custom_url_path or self.public_id
+
+    @property
+    def discovery_url(self):
+        return reverse("discovery:details", args=(self.public_id,))
 
     @property
     def checkout_portal_url(self):

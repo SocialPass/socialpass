@@ -232,7 +232,10 @@ footer {
 /* END HEADER MEDIA QUERIES */
 
 .main-contents {
-  padding: 3rem;
+  padding-top: 3rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  padding-bottom: 1rem;
 }
 
 .centered-img {
@@ -354,11 +357,19 @@ BOOSTRAP OVERRIDES
 .bg-gray {
   position: relative;
   background-color: var(--gray) !important;
-  border-radius: 0px 0px 50px 0px;
   width: 35%;
   height: 100%;
   margin-top: -3rem;
   margin-right: -3rem;
+}
+
+.bg-gray-extend {
+  position: absolute;
+  background-color: var(--gray) !important;
+  right: 0;
+  bottom: -300px;
+  width: 100%;
+  height: 300px;
 }
 
 .bg-denied {

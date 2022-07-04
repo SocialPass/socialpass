@@ -31,6 +31,16 @@ export const CheckoutWeb3 = () => {
     message: requestAccessJson?.signing_message,
   });
 
+  const [matches, setMatches] = useState(
+    window.matchMedia("(min-width: 768px)").matches
+  )
+
+  useEffect(() => {
+    window
+    .matchMedia("(min-width: 768px)")
+    .addEventListener('change', e => setMatches( e.matches ));
+  }, []);
+
   const ConnectWallet = () => {
     // todo: ENS resolution
     const ensName = null;
@@ -182,6 +192,8 @@ export const CheckoutWeb3 = () => {
         )}
       </div>
       <div className="bg-gray d-flex flex-column justify-start-center">
+        {/* If on desktop mode, append bg-gray-extend to document */}
+        {matches === true ? <div className="bg-gray-extend"></div> : null}
         <div className="ms-10 d-flex flex-column align-items-start justify-start-center py-30">
           <div className="d-flex align-items-center justify-conent-center">
             <h3 className="fs-20">Summary</h3>

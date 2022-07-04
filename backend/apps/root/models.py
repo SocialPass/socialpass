@@ -4,18 +4,25 @@ import uuid
 from datetime import datetime, timedelta
 
 import boto3
+import pytz
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.sites.models import Site
 from django.core import exceptions as dj_exceptions
 from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from apps.root.model_draft import AllowDraft, required_if_not_draft
-from apps.root.model_field_choices import EVENT_VISIBILITY
+from apps.root.model_draft import (
+    AllowDraft,
+    change_draft_validation_message,
+    required_if_not_draft,
+)
+from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
 from config.storages import MediaRootS3Boto3Storage, PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
@@ -58,6 +65,12 @@ class EventQuerySet(models.QuerySet):
     def drafts(self):
         return self.filter(is_draft=True)
 
+    def filter_wip(self):
+        return self.filter(publish_date__isnull=True)
+
+    def exclude_wip(self):
+        return self.filter(publish_date__isnull=False)
+
     def filter_published(self):
         return self.filter(publish_date__lte=datetime.now())
 
@@ -66,6 +79,9 @@ class EventQuerySet(models.QuerySet):
 
     def filter_public(self):
         return self.filter(visibility="PUBLIC")
+
+    def filter_featured(self):
+        return self.filter(is_featured=True)
 
     def get_by_url_identifier(
         self, public_id_or_custom_url_path: typing.Union[uuid.UUID, str]
@@ -94,28 +110,28 @@ class Event(AllowDraft, DBModel):
 
     # Publish info
     is_draft = models.BooleanField(default=True)
-    publish_date = models.TimeField(null=True, blank=True)
+    is_featured = models.BooleanField(default=False)
+    publish_date = models.DateTimeField(null=True, blank=True)
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = required_if_not_draft(models.CharField(max_length=255))
-    description = models.TextField()
+    description = required_if_not_draft(models.TextField())
     visibility = required_if_not_draft(
         models.CharField(max_length=50, choices=EVENT_VISIBILITY)
     )
-    cover_image = models.ImageField(
-        blank=True, null=True, storage=MediaRootS3Boto3Storage()
-    )
+    cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
     categories = TaggableManager(blank=True)
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
-    timezone = models.CharField(
-        null=True,
-        verbose_name="time zone",
-        max_length=30,
+    timezone = required_if_not_draft(
+        models.CharField(
+            verbose_name="time zone",
+            max_length=30,
+        )
     )
-    location = models.CharField(max_length=1024)
+    location = required_if_not_draft(models.CharField(max_length=1024))
     # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
@@ -126,7 +142,9 @@ class Event(AllowDraft, DBModel):
         null=True,
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
-    capacity = models.IntegerField(validators=[MinValueValidator(1)])
+    capacity = required_if_not_draft(
+        models.IntegerField(validators=[MinValueValidator(1)])
+    )
     limit_per_person = required_if_not_draft(
         models.IntegerField(
             default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
@@ -154,6 +172,51 @@ class Event(AllowDraft, DBModel):
     def __str__(self):
         return f"{self.team} - {self.title}"
 
+    def save(self, *args, **kwargs):
+        """
+        Adds the following functionalities:
+        - sets timezones based on timezone field for all datetimefields
+        """
+        if self.is_draft:
+            return super().save(*args, **kwargs)
+
+        if self.timezone is not None:
+            timezone_aware_datetime_fields = ["start_date", "end_date", "publish_date"]
+
+            for field in timezone_aware_datetime_fields:
+                val = getattr(self, field)
+                if val is not None:
+                    setattr(
+                        self, field, val.replace(tzinfo=pytz.timezone(self.timezone))
+                    )
+
+        ret = super().save(*args, **kwargs)
+
+        TicketRedemptionKey.objects.get_or_create(event=self)
+
+        return ret
+
+    @property
+    def status(self):
+        if self.is_draft:
+            return EventStatusEnum.DRAFT.value
+        if not self.is_published:
+            return EventStatusEnum.STAGED.value
+        elif self.is_scheduled:
+            return EventStatusEnum.SCHEDULED.value
+        else:
+            return EventStatusEnum.PUBLISHED.value
+
+    @property
+    def is_published(self):
+        return self.publish_date is not None
+
+    @property
+    def is_scheduled(self):
+        return self.publish_date is not None and self.publish_date > datetime.now(
+            self.publish_date.tzinfo
+        )
+
     @property
     def is_public(self):
         return self.visibility == "PUBLIC"
@@ -161,6 +224,10 @@ class Event(AllowDraft, DBModel):
     @property
     def url_path(self):
         return self.custom_url_path or self.public_id
+
+    @property
+    def discovery_url(self):
+        return reverse("discovery:details", args=(self.public_id,))
 
     @property
     def checkout_portal_url(self):
@@ -177,13 +244,6 @@ class Event(AllowDraft, DBModel):
                 return True
 
         return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
-
-    def save(self, *args, **kwargs):
-        created = self.pk
-        super().save(*args, **kwargs)
-
-        if created:
-            TicketRedemptionKey.objects.get_or_create(event=self)
 
 
 class Ticket(DBModel):

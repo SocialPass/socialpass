@@ -159,7 +159,7 @@
 	<!-- start Publish Modal -->
 	<div class="modal" tabindex="-1" id="publish-modal" aria-labelledby="publish-modal-toggle" aria-hidden="true">
 		<div class="modal-dialog">
-			<div class="modal-content border-transparent ws-600 hs-600 mw-100 mh-100 p-0">
+			<div class="modal-content border-transparent ws-600 mw-100 p-0">
 				<button type="button" class="close text-base bg-content" aria-label="Close" data-hm-dismiss="modal">&times;</button>
 				<div class="w-100 h-100" id="publish-root">
 					<!-- Hero section start -->
@@ -182,7 +182,7 @@
 								<!-- Second column end -->
 								<!-- First column start -->
 								<div class="col-12 align-self-center">
-									<h1 class="display-5 mt-5 fw-700 text-strong mt-0">
+									<h1 class="fsr-1 fw-700 text-strong">
 										{{ form.instance.title }}
 									</h1>
 									<div class="fsr-6 d-flex align-items-center mt-10">
@@ -206,15 +206,18 @@
 								<form class="form" method="post" action="{% url 'ticketgate_update' view.kwargs.team_pk event.pk %}?action=publish" id="publish-event-form">
 									{% csrf_token %}
 									<div class="row g-1 justify-content-between mt-20">
-										<div class="col-md-6">
-											<p class="form-label mb-0">
-												Do you want to schedule publication for later?
+										<div class="col-md-6 pe-md-10">
+											<h6 class="fs-base-p2 mb-0">
+												Schedule for later
+											</h6>
+											<p class="mt-5 fs-base-n2 text-muted">
+												Do you want to schedule this publication for later?
 											</p>
 											<div class="mt-10">
-												<input type="checkbox" onchange="togglePublishDate()"/>
-												<span class="text-muted fs-base-n2 mt-0 mb-10">
-													Schedule for later
-												</span>
+												<div class="form-check mb-10">
+													<input type="checkbox" class="form-check-input" id="schedule-for-later-checkbox" onchange="togglePublishDate()"/>
+													<label for="schedule-for-later-checkbox" class="form-check-label">Yes, schedule for later</label>
+												</div>
 												{{ form.publish_date }}
 												<script>
 													const togglePublishDate = () => {
@@ -230,23 +233,28 @@
 												</script>
 											</div>
 										</div>
-										<div class="col-md-5 d-flex flex-column mt-10 mt-md-0">
-											<p class="form-label">
-												Final tips before you Publish
+										<div class="col-md-6 ps-md-10 d-flex flex-column mt-20 mt-md-0">
+											<h6 class="fs-base-p2 mb-0">
+												Final tips before publication
+											</h6>
+											<p class="mt-5 fs-base-n2 text-muted">
+												A few more tips before you publish:
 											</p>
-											<div class="mt-10 border-md flex-grow-1">
-												<p class="text-muted fs-base-n2 mt-5 mb-0">
-													Customize Your Ticket Portal
-												</p>
-												<p class="text-muted fs-base-n2 mt-5 mb-0">
-													Host the Ticker Portal on Your Site
-												</p>
+											<div>
+												<div class="d-flex align-items-start">
+													<i class="fa-regular fa-check me-10 mt-5"></i>
+													<span>Customize your Ticket Portal</span>
+												</div>
+												<div class="d-flex align-items-start mt-10">
+													<i class="fa-regular fa-check me-10 mt-5"></i>
+													<span>Host the Ticket Portal on your own site</span>
+												</div>
 											</div>
 										</div>
 									</div>
-									<div class="mt-10">
-										<button class="btn btn-secondary float-end" type="submit">
-											Publish <i class="fa-solid fa-party-horn"></i>
+									<div class="mt-20">
+										<button class="btn btn-secondary btn-lg fs-base btn-block" type="submit">
+											<i class="fa-regular fa-party-horn me-5"></i> Publish Event
 										</button>
 									</div>
 								</form>

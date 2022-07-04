@@ -7,6 +7,14 @@ import timezone from "../static/images/icons/timezone.svg";
 import ReadMoreModal from "../components/ReadMoreModal";
 // Event Component
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
+}
+
 export const Event = ({ headerType }): JSX.Element => {
   const navigate = useNavigate();
   const { id, retrieveJson, setHeaderType } = useContext(CheckoutPortalContext);
@@ -17,9 +25,15 @@ export const Event = ({ headerType }): JSX.Element => {
     navigate(`/${id}/ticket-selection`);
   }
 
+  const dimensions = getWindowDimensions();
+
+  function isWideVersion() {
+    return dimensions.width >= 576;
+  }
+
   return (
     <>
-      <div className="row m-0 align-items-end">
+      <div className="row m-0 align-items-center">
         <div className="col-md-7 d-flex">
           <div className="col col-md-10 mb-30">
             <div className="d-flex flex-column align-items-start justify-content-center">
@@ -27,13 +41,19 @@ export const Event = ({ headerType }): JSX.Element => {
                 {retrieveJson && retrieveJson?.team?.name}
               </span>
               <span className="fs-28 fw-bold">{retrieveJson.title}</span>
-              <span className="fs-16 fw-light text-muted text-justify">
-                {retrieveJson?.description.length > 200
-                  ? retrieveJson?.description.slice(0, 180).concat("...")
-                  : retrieveJson?.description}
-              </span>
+              {isWideVersion() ? (
+                <span className="fs-16 fw-light text-muted text-justify">
+                  {retrieveJson?.description.length > 200
+                    ? retrieveJson?.description.slice(0, 180).concat("...")
+                    : retrieveJson?.description}
+                </span>
+              ) : (
+                <span className="fs-16 fw-light text-muted text-justify">
+                  {retrieveJson?.description}
+                </span>
+              )}
             </div>
-            {retrieveJson.description.length > 200 && (
+            {isWideVersion() && retrieveJson.description.length > 200 && (
               <div className="my-10 d-flex align-items-center justify-content-start">
                 <a
                   type="button"
@@ -92,7 +112,7 @@ export const Event = ({ headerType }): JSX.Element => {
       </div>
 
       {/* MODAL */}
-      <ReadMoreModal/>
+      <ReadMoreModal />
     </>
   );
 };

@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("root", "0017_remove_event_publish_date_alter_event_location"),
+        ("root", "0017_alter_event_cover_image"),
     ]
 
     operations = [

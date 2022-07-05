@@ -11,7 +11,13 @@ from apps.dashboard.models import (
     PricingRuleGroup,
     Team,
 )
-from apps.root.models import BlockchainOwnership, Event, Ticket, TicketRedemptionKey
+from apps.root.models import (
+    BlockchainOwnership,
+    Event,
+    EventCategory,
+    Ticket,
+    TicketRedemptionKey,
+)
 
 User = get_user_model()
 
@@ -55,6 +61,11 @@ class BlockchainOwnershipAdmin(admin.ModelAdmin):
     search_fields = ("event__title", "id", "wallet_address")
 
 
+@admin.register(EventCategory)
+class EventCategoryAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = (
@@ -63,7 +74,6 @@ class EventAdmin(admin.ModelAdmin):
         "user",
         "team",
         "start_date",
-        "timezone",
     )
     search_fields = (
         "title",

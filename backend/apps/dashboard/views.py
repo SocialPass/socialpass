@@ -364,6 +364,7 @@ class EventCreateView(TeamContextMixin, CreateView):
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         context["event"] = context["form"].instance
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
 
         return context
 
@@ -411,6 +412,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         context["event"] = self.get_object()
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 
     def get_success_url(self):

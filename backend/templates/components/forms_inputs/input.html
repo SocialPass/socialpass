@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+    <label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}{% if required %}*{% endif %}</label>
     <input
         type="{{ input.field.widget.input_type }}"
         name="{{ input.name }}"

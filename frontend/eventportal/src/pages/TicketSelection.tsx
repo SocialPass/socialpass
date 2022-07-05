@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
 import GeneralAdmissionFAQHoverIcon from "../components/GeneralAdmissionFAQ";
@@ -14,6 +14,16 @@ export function TicketSelection() {
     { length: generalAdmissionSelect },
     (_, i) => i + 1
   );
+
+  const [matches, setMatches] = useState(
+    window.matchMedia("(min-width: 768px)").matches
+  )
+
+  useEffect(() => {
+    window
+    .matchMedia("(min-width: 768px)")
+    .addEventListener('change', e => setMatches( e.matches ));
+  }, []);
 
   function handleSelect(event: any) {
     setGeneralAdmissionSelect(event.target.value);
@@ -62,22 +72,26 @@ export function TicketSelection() {
         </div>
         <hr className="border-top" />
       </div>
-      <div className="bg-gray d-flex flex-column justify-start-center">
-        <div className="d-flex flex-column align-items-start justify-start-center p-30">
-          <h3 className="fs-20">Summary</h3>
-          <div className="d-flex flex-row">
-            <p>{generalAdmissionSelect} X General Admission Ticket</p>
+      <div className="bg-gray">
+        {/* If on desktop mode, append bg-gray-extend to document */}
+        {matches === true ? <div className="bg-gray-extend"></div> : null}
+        <div className="d-flex flex-column justify-start-center">
+          <div className="d-flex flex-column align-items-start justify-start-center p-30">
+            <h3 className="fs-20">Summary</h3>
+            <div className="d-flex flex-row">
+              <p>{generalAdmissionSelect} X General Admission Ticket</p>
+            </div>
           </div>
-        </div>
-        <div className="d-flex align-items-center justify-content-center p-30 mt-50">
-          <button
-            onClick={() => {
-              navigate(`/${id}/checkout/blockchain`);
-            }}
-            className="btn btn-primary fs-20 text-capitalize rounded-3"
-          >
-            continue
-          </button>
+          <div className="d-flex align-items-center justify-content-center p-30 mt-50">
+            <button
+              onClick={() => {
+                navigate(`/${id}/checkout/blockchain`);
+              }}
+              className="btn btn-primary fs-20 text-capitalize rounded-3"
+            >
+              continue
+            </button>
+          </div>
         </div>
       </div>
     </div>

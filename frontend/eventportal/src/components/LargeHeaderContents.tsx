@@ -1,8 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { CheckoutPortalContext } from "../context";
 import _backButton from "../static/images/back.svg";
 import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
 
 export default function LargeHeaderContents() {
+  const { retrieveJson } = useContext(CheckoutPortalContext);
 
   return (
     <div>
@@ -14,8 +16,8 @@ export default function LargeHeaderContents() {
           src={"https://picsum.photos/200"}
           alt="Team Image"
           key={"https://picsum.photos/200"}
-        /* USED TO BE {retrieveJson && retrieveJson?.team?.image} */
-        /* TODO: GO BACK TO USING THE SET IMAGES WHEN BACKEND GETS FIXED */
+          /* USED TO BE {retrieveJson && retrieveJson?.team?.image} */
+          /* TODO: GO BACK TO USING THE SET IMAGES WHEN BACKEND GETS FIXED */
         />
       </div>
     </div>

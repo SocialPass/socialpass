@@ -18,6 +18,7 @@ function getWindowDimensions() {
 export const Event = ({}): JSX.Element => {
   const navigate = useNavigate();
   const { id, retrieveJson } = useContext(CheckoutPortalContext);
+  console.log(retrieveJson);
 
   function handleNavigate() {
     navigate(`/${id}/ticket-selection`);
@@ -35,7 +36,7 @@ export const Event = ({}): JSX.Element => {
         <div className="col-md-8 d-flex">
           <div className="col col-md-10 mb-30">
             <div className="d-flex flex-column align-items-start justify-content-center">
-              <span className="fs-16 fw-500">
+              <span className="fs-16 fw-500 mt-20">
                 {retrieveJson && retrieveJson?.team?.name}
               </span>
               <span className="fs-28 fw-bold">{retrieveJson.title}</span>

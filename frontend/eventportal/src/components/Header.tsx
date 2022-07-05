@@ -1,6 +1,5 @@
-import { useContext, useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { CheckoutPortalContext } from "../context";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import _backButton from "../static/images/back.svg";
 import LargeHeaderContents from "./LargeHeaderContents";
 import SmallHeaderContents from "./SmallHeaderContents";

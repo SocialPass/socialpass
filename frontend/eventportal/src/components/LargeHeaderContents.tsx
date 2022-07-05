@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import _backButton from "../static/images/back.svg";
 import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
 

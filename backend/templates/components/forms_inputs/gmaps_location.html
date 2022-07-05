@@ -116,6 +116,10 @@
         });
         function handlePlaceChange(place){
             marker.setVisible(false);
+            if (!place){
+                place = autocomplete.getPlace();
+            }
+
             if (!place.geometry) {
                 // User entered the name of a Place that was not suggested and
                 // pressed the Enter key, or the Place Details request failed.

@@ -26,7 +26,7 @@ export const Event = ({}): JSX.Element => {
   const dimensions = getWindowDimensions();
 
   function isWideVersion() {
-    return dimensions.width >= 576;
+    return dimensions.width >= 767;
   }
 
   return (

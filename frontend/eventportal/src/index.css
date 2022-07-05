@@ -269,6 +269,7 @@ footer {
 }
 
 .card-disabled {
+  height: 12rem;
   border-radius: 20px;
   color: var(--muted-color) !important;
 }
@@ -588,7 +589,7 @@ BOOSTRAP OVERRIDES
 
 .connected-wallet-container .col-span-2{
   grid-area: 1 / 1 / 2 / 3;
-  
+
 }
 
 .connected-wallet-container .dc-btn {

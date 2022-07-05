@@ -128,11 +128,9 @@ footer {
   width: 100%;
   height: 20rem;
   min-height: 20rem;
-  background: linear-gradient(
-    to left,
-    var(--orange-bg),
-    var(--orange-bg-light)
-  );
+  background: linear-gradient(to left,
+      var(--orange-bg),
+      var(--orange-bg-light));
 
   transition: all 0.2s ease-in;
   -webkit-transition: all 0.2s ease-in;
@@ -140,11 +138,9 @@ footer {
 
 .small-header {
   position: relative;
-  background-image: linear-gradient(
-    to left,
-    var(--sp-orange-color-light),
-    var(--sp-orange-color)
-  );
+  background-image: linear-gradient(to left,
+      var(--sp-orange-color-light),
+      var(--sp-orange-color));
   align-items: center;
   min-height: 188px;
   height: 23.9%;
@@ -410,11 +406,9 @@ BOOSTRAP OVERRIDES
   justify-content: center;
   overflow: hidden;
   background-color: var(--sp-orange-color);
-  background-image: linear-gradient(
-    to right,
-    var(--sp-orange-color-light),
-    var(--sp-orange-color)
-  );
+  background-image: linear-gradient(to right,
+      var(--sp-orange-color-light),
+      var(--sp-orange-color));
   border-radius: 36px;
 }
 
@@ -431,11 +425,9 @@ BOOSTRAP OVERRIDES
   bottom: 0;
   animation: sp-progress-bar-shine 2s infinite;
   border-radius: 36px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--sp-orange-color-very-light)
-  );
+  background: linear-gradient(to right,
+      transparent,
+      var(--sp-orange-color-very-light));
 }
 
 @keyframes sp-progress-bar-shine {
@@ -581,18 +573,44 @@ BOOSTRAP OVERRIDES
   justify-content: space-between;
 }
 
-.wallets {
+.connected-wallet-container{
+  display: grid !important;
+  grid-template-columns: 1fr .5fr !important;
+  align-items: center !important;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-right: 4rem;
+  align-items: center;
+  background-color: var(--gray);
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.connected-wallet-container .col-span-2{
+  grid-area: 1 / 1 / 2 / 3;
+  
+}
+
+.connected-wallet-container .dc-btn {
+  background: var(--orange-bg-light);
+  min-height: 100%;
+  /* Small Button Text */
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 8px;
+  border-width: 0;
+}
+
+.wallets-selection {
   max-width: 1200px;
   margin-top: 1rem;
   margin-right: 4rem;
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
   gap: 1rem;
   overflow: visible;
-}
-
-.wallets {
-  grid-template-columns: repeat(3, 1fr);
 }
 
 /* PORTRAIT MODE ON PHONES */

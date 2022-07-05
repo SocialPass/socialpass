@@ -46,21 +46,21 @@ export const CheckoutWeb3 = () => {
     const ensName = null;
     if (accountHook && accountHook.data && accountHook.data.address) {
       return (
-        <div className="wallets">
-          <div>
+        <div className="connected-wallet-container d-flex fs-12">
+          <div className="col-span-2 fw-bold">
             {ensName
               ? `${ensName} (${accountHook.data.address})`
               : accountHook.data.address}
           </div>
-          <div>Connected to {connectHook?.activeConnector?.name}</div>
-          <button onClick={() => disconnectHook.disconnect()}>
+          <div className="col-span-1"> Connected to {connectHook?.activeConnector?.name}</div>
+          <button className="col-span-1 dc-btn fs-10" onClick={() => disconnectHook.disconnect()}>
             Disconnect
           </button>
         </div>
       );
     }
     return (
-      <div className="wallets">
+      <div className="wallets-selection">
         {connectHook.connectors.map((x) => (
           <button
             className={
@@ -191,15 +191,15 @@ export const CheckoutWeb3 = () => {
           <div>{signHook.error?.message ?? "Failed to connect"}</div>
         )}
       </div>
-      <div className="bg-gray d-flex flex-column justify-start-center">
+      <div className="bg-gray d-flex flex-column justify-start-center p-30">
         {/* If on desktop mode, append bg-gray-extend to document */}
         {matches === true ? <div className="bg-gray-extend"></div> : null}
-        <div className="ms-10 d-flex flex-column align-items-start justify-start-center py-30">
-          <div className="d-flex align-items-center justify-conent-center">
-            <h3 className="fs-20">Summary</h3>
+        <div className="d-flex flex-column align-items-start justify-start-center">
+          <div className="d-flex align-items-center justify-content-center">
+            <h3 className="fs-20">Summary &nbsp;</h3>
             <a
               onClick={handleNavigateBack}
-              className="ms-15 text-edit fs-15 fw-bold"
+              className="text-edit fs-12 fw-bold"
             >
               Edit
             </a>
@@ -208,7 +208,7 @@ export const CheckoutWeb3 = () => {
             <p>{generalAdmissionSelect} X General Admission Ticket</p>
           </div>
         </div>
-        <div className="d-flex align-items-center justify-content-center p-30 mt-50">
+        <div className="d-flex align-items-center justify-content-center mt-50">
           <button
             disabled={statusButton}
             onClick={() => handleCheckout()}

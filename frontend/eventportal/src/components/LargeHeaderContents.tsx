@@ -14,9 +14,9 @@ export default function LargeHeaderContents() {
       </div>
       <div className="team-info-img">
         <img
-          src={"https://picsum.photos/200"}
+          src={retrieveJson && retrieveJson?.team?.image}
           alt="Team Image"
-          key={"https://picsum.photos/200"}
+          key={retrieveJson && retrieveJson?.team?.image}
           /* USED TO BE {retrieveJson && retrieveJson?.team?.image} */
           /* TODO: GO BACK TO USING THE SET IMAGES WHEN BACKEND GETS FIXED */
         />

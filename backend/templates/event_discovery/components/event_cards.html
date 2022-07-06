@@ -5,6 +5,11 @@
 		<a href="{% url 'discovery:details' event.public_id %}" class="event-card card card-link p-0">
 			<!-- Event cover image start -->
 			<div class="d-flex align-items-center justify-content-center w-100 hs-200 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
+        <!-- Backwards compatibility -->
+        {% if not event.cover_image %}
+          <img src="" class="w-auto h-100" alt="{{ event.title }} cover image">
+        {% endif %}
+
 				{% if event.cover_image.height > event.cover_image.width %}
 					<!-- Portrait -->
 					<img src="{{ event.cover_image.url }}" class="w-auto h-100" alt="{{ event.title }} cover image">

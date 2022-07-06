@@ -20,10 +20,6 @@ class Migration(migrations.Migration):
             old_name="categories",
             new_name="tags",
         ),
-        migrations.RemoveField(
-            model_name="event",
-            name="timezone",
-        ),
         migrations.AddField(
             model_name="event",
             name="timezone_offset",

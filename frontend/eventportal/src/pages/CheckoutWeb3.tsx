@@ -69,11 +69,14 @@ export const CheckoutWeb3 = () => {
       <div className="wallets-selection wallets">
         {connectHook.connectors.map((x) => (
           <button
-            className={
-              selectedWallet === x
-                ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-            }
+            // className={
+            //   selectedWallet === x
+            //     ? "fs-12 fw-bold card-active d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+            //     : "fs-12 fw-bold card-disabled d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+            // }
+            className={`fs-12 fw-bold d-flex flex-column align-items-center justify-content-around w-100 mt-3 ${
+              selectedWallet === x ? "card-active" : "card-disabled"
+            }`}
             disabled={!x.ready}
             key={x.id}
             id={x.id}
@@ -82,7 +85,7 @@ export const CheckoutWeb3 = () => {
               setSelectedWallet(x);
             }}
           >
-            <Web3ConnectorImage selectedWallet={x} connector={x.name} />
+            <Web3ConnectorImage connector={x.name} />
             {x.name}
             {!x.ready && " (unsupported)"}
           </button>
@@ -190,12 +193,18 @@ export const CheckoutWeb3 = () => {
           </div>
         </div>
         <ConnectWallet />
-        {connectHook.error && (
-          <div>{connectHook.error?.message ?? "Failed to connect"}</div>
-        )}
-        {signHook.error && (
-          <div>{signHook.error?.message ?? "Failed to connect"}</div>
-        )}
+        <span>
+          {connectHook.error && (
+            <span className="py-5">
+              {connectHook.error?.message ?? "Failed to connect"}
+            </span>
+          )}
+        </span>
+        <span>
+          {signHook.error && (
+            <span>{signHook.error?.message ?? "Failed to connect"}</span>
+          )}
+        </span>
       </div>
       <div className="bg-gray d-flex flex-column justify-start-center p-30">
         {/* If on desktop mode, append bg-gray-extend to document */}

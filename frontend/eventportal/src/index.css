@@ -271,6 +271,7 @@ footer {
 .card-disabled {
   height: 12rem;
   border-radius: 20px;
+  border: none;
   color: var(--muted-color) !important;
 }
 
@@ -610,7 +611,7 @@ BOOSTRAP OVERRIDES
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   overflow: visible;
 }
 

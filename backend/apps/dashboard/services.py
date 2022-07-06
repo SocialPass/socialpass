@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from decimal import Decimal
 
 from django.db.models import Sum
@@ -128,3 +129,21 @@ def fulfill_payment(payment: EventStripePayment):
     """Fulfills a payment for a ticket gate."""
     payment.status = "SUCCESS"
     payment.save()
+
+
+def publish_event(event: Event, publish_date: datetime = None):
+    scheduled = False
+
+    if publish_date:
+        event.publish_date = publish_date
+        scheduled = True
+    else:
+        event.publish_date = datetime.now()
+
+    event.save()
+    return scheduled
+
+
+def unpublish_event(event: Event):
+    event.publish_date = None
+    event.save()

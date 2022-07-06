@@ -9,9 +9,19 @@ class TeamSerializer(serializers.ModelSerializer):
     Team serializer
     """
 
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = Team
         fields = ["name", "image"]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if obj.image:
+            image_url = obj.image.url
+            return request.build_absolute_uri(image_url)
+        else:
+            return None
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -20,7 +30,7 @@ class EventSerializer(serializers.ModelSerializer):
     """
 
     ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
-    start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
     team = TeamSerializer()
 
     class Meta:

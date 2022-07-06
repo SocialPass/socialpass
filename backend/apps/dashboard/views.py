@@ -6,8 +6,10 @@ import stripe
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core import exceptions
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
+from django.utils import dateparse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -24,7 +26,6 @@ from apps.dashboard.models import EventStripePayment, Membership, Team
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.models import Event, Ticket
-from avoid_view_resubmission.views import AvoidRessubmissionCreateViewMixin
 
 User = auth.get_user_model()
 
@@ -81,6 +82,7 @@ class RequireSuccesfulCheckoutMixin:
                 "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
             )
 
+        print(services.get_event_pending_payment_value(event))
         if services.get_event_pending_payment_value(event):
             return self.pending_checkout_behaviour()
 
@@ -302,18 +304,29 @@ class EventListView(TeamContextMixin, ListView):
 
     model = Event
     paginate_by = 15
+    ordering = ["-modified"]
     context_object_name = "events"
     template_name = "dashboard/ticketgate_list.html"
 
     def get_queryset(self):
-        qs = Event.objects.filter(team__public_id=self.kwargs["team_pk"])
-        qs = qs.order_by("-modified")
+        qs = super().get_queryset()
+        qs = qs.filter(team__public_id=self.kwargs["team_pk"])
 
         query_title = self.request.GET.get("title", "")
         if query_title:
             qs = qs.filter(title__icontains=query_title)
 
         return qs
+
+
+class PublishedEventsListView(EventListView):
+    def get_queryset(self):
+        return super().get_queryset().exclude_wip()
+
+
+class WIPEventsListView(EventListView):
+    def get_queryset(self):
+        return super().get_queryset().filter_wip()
 
 
 class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailView):
@@ -332,7 +345,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
         return qs
 
 
-class EventCreateView(TeamContextMixin, AvoidRessubmissionCreateViewMixin, CreateView):
+class EventCreateView(TeamContextMixin, CreateView):
     """
     Creates a new Ticket token gate.
     """
@@ -350,8 +363,14 @@ class EventCreateView(TeamContextMixin, AvoidRessubmissionCreateViewMixin, Creat
         context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
+        context["event"] = context["form"].instance
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
 
         return context
+
+    def form_invalid(self, form, **kwargs):
+        form.instance.is_draft = True
+        return super().form_invalid(form, **kwargs)
 
     def form_valid(self, form, **kwargs):
         # set rest of form
@@ -364,7 +383,7 @@ class EventCreateView(TeamContextMixin, AvoidRessubmissionCreateViewMixin, Creat
 
     def get_success_url(self):
         return reverse(
-            "ticketgate_checkout",
+            "ticketgate_update",
             args=(
                 self.kwargs["team_pk"],
                 self.object.pk,
@@ -392,13 +411,29 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
+        context["event"] = self.get_object()
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 
     def get_success_url(self):
+        if self.object.status == "Draft":
+            messages.add_message(
+                self.request, messages.SUCCESS, "Draft saved successfully."
+            )
+            return reverse(
+                "ticketgate_update",
+                args=(
+                    self.kwargs["team_pk"],
+                    self.object.pk,
+                ),
+            )
+
         messages.add_message(
-            self.request, messages.SUCCESS, "Token gate updated successfully."
+            self.request, messages.SUCCESS, "Event updated successfully."
         )
-        if services.get_event_pending_payment_value(self.object):
+        if self.object.status == "Staged":
+            view = "ticketgate_update"
+        elif self.object.status == "Pending Checkout":
             view = "ticketgate_checkout"
         else:
             view = "ticketgate_detail"
@@ -410,6 +445,42 @@ class EventUpdateView(TeamContextMixin, UpdateView):
                 self.object.pk,
             ),
         )
+
+    def post(self, *args, **kwargs):
+        action = self.request.GET.get("action", None)
+        if action is None:
+            return super().post(*args, **kwargs)
+        elif action == "unpublish":
+            return self.unpublish(*args, **kwargs)
+        elif action == "publish":
+            return self.publish(*args, **kwargs)
+
+        raise exceptions.SuspiciousOperation()
+
+    def publish(self, *args, **kwargs):
+        event = self.get_object()
+        form = self.get_form()
+
+        publish_date = form["publish_date"].value()
+        if publish_date:
+            publish_date = dateparse.parse_datetime(publish_date)
+
+        scheduled = services.publish_event(event, publish_date)
+
+        if scheduled:
+            success_text = f"Event succesfully scheduled for {event.publish_date}"
+        else:
+            success_text = "Event succesfully published"
+        messages.add_message(self.request, messages.SUCCESS, success_text)
+        return redirect("ticketgate_detail", **self.kwargs)
+
+    def unpublish(self, *args, **kwargs):
+        event = self.get_object()
+        services.unpublish_event(event)
+        messages.add_message(
+            self.request, messages.SUCCESS, "Event succesfully unpublished"
+        )
+        return redirect("ticketgate_update", **self.kwargs)
 
 
 class EventCheckout(TeamContextMixin, TemplateView):

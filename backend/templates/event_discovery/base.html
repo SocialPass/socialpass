@@ -33,9 +33,10 @@
 		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
 
 		<!-- SEO -->
-		<meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
+		<meta name="description" content="SocialPass is the go-to events platform, powered by Web3">
 		<meta name="author" content="SocialPass">
-		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket">
+		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting,
+    fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
 
 		<!-- Open graph -->
 		<meta property="og:type" content="article">
@@ -144,7 +145,7 @@
 				<nav class="container-xl">
 					<div class="d-flex align-items-center content mt-0 border-bottom">
 						<!-- Branding start -->
-						<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+						<a href="{% url 'discovery:index' %}" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
 							<div class="ws-75">
 								<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
 							</div>
@@ -160,15 +161,15 @@
 						<!-- Branding end -->
 
 						<!-- Dark mode toggle start -->
-						<button type="button" class="btn btn-sm btn-square btn-rounded ms-auto ms-md-20 me-10" data-hm-toggle="dark-mode">
+						<button type="button" class="btn btn-sm btn-square btn-rounded ms-auto ms-lg-20 me-10" data-hm-toggle="dark-mode">
 							<i class="fa-solid fa-moon"></i>
 							<span class="visually-hidden">Toggle dark mode</span>
 						</button>
 						<!-- Dark mode toggle end -->
 
-						<!-- Navbar links (medium and up) start -->
-						<div class="ms-auto d-none d-md-flex align-items-center">
-							<a href="#" class="link-reset text-decoration-none me-30">Browse Events</a>
+						<!-- Navbar links (large and up) start -->
+						<div class="ms-auto d-none d-lg-flex align-items-center">
+							<a href="{% url 'discovery:browse' %}" class="link-reset text-decoration-none me-30">Browse Events</a>
 
 							<!-- Learn more dropdown start -->
 							<div class="dropdown with-arrow me-30">
@@ -200,20 +201,23 @@
 							{% if request.user.is_authenticated %}
 								<a href="{% url 'dashboard_redirect' %}" class="btn btn-primary">Dashboard <i class="fa-regular fa-arrow-right ms-5"></i></a>
 							{% else %}
-								<a href="{% url 'account_login' %}" class="btn btn-primary">Sign In</a>
+								<a href="{% url 'account_login' %}" class="btn me-10">
+									<strong class="text-primary antialiased">Sign In</strong>
+								</a>
+								<a href="{% url 'account_signup' %}" class="btn btn-primary">Get Started</a>
 							{% endif %}
 						</div>
-						<!-- Navbar links (medium and up) end -->
+						<!-- Navbar links (large and up) end -->
 
 						<!-- Menu dropdown start -->
-						<div class="d-md-none dropdown with-arrow">
+						<div class="d-lg-none dropdown with-arrow">
 							<a href="#" class="btn btn-sm" id="menu-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
 								<span class="me-5 d-none d-sm-inline">Menu</span>
 								<i class="fa-solid fa-bars"></i>
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end ws-200" aria-labelledby="menu-dropdown-toggle">
 								<li>
-									<a href="#" class="dropdown-item">
+									<a href="{% url 'discovery:browse' %}" class="dropdown-item">
 										Browse Events
 									</a>
 								</li>
@@ -243,8 +247,11 @@
 											<i class="fa-regular fa-arrow-right ms-5"></i>
 										</a>
 									{% else %}
-										<a href="{% url 'account_login' %}" class="btn btn-primary btn-block mb-5">
-											Sign In
+										<a href="{% url 'account_login' %}" class="btn btn-block">
+											<strong class="text-primary antialiased">Sign In</strong>
+										</a>
+										<a href="{% url 'account_signup' %}" class="btn btn-primary btn-block mt-10 mb-5">
+											Get Started
 										</a>
 									{% endif %}
 								</li>
@@ -269,14 +276,14 @@
 									<h5 class="content-title text-on-primary mt-0 mb-20">
 										Follow Us
 									</h5>
-									<div class="mt-10">
+									<!--<div class="mt-10">
 										<a href="#" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
 											<span class="ws-25">
 												<i class="fa-brands fa-facebook"></i>
 											</span>
 											<span>Facebook</span>
 										</a>
-									</div>
+									</div>-->
 									<div class="mt-10">
 										<a href="https://twitter.com/SocialPass_io" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
 											<span class="ws-25">
@@ -285,16 +292,16 @@
 											<span>Twitter</span>
 										</a>
 									</div>
-									<div class="mt-10">
+								  <!--<div class="mt-10">
 										<a href="#" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
 											<span class="ws-25">
 												<i class="fa-brands fa-instagram"></i>
 											</span>
 											<span>Instagram</span>
 										</a>
-									</div>
+									</div>-->
 									<div class="mt-10">
-										<a href="#" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
+										<a href="https://www.linkedin.com/company/socialpass-io/" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
 											<span class="ws-25">
 												<i class="fa-brands fa-linkedin"></i>
 											</span>
@@ -312,12 +319,12 @@
 										Need Help?
 									</h5>
 									<div class="mt-10">
-										<a href="#" target="_blank" class="link-reset text-decoration-none">
-											Visit Our Contact Page
+										<a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="link-reset text-decoration-none">
+											Contact Us
 										</a>
 									</div>
 									<div class="mt-10">
-										<a href="#" target="_blank" class="link-reset text-decoration-none">
+										<a href="https://socialpass.gitbook.io/socialpass/#guides-jump-right-in" target="_blank" class="link-reset text-decoration-none">
 											FAQ Page
 										</a>
 									</div>

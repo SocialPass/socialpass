@@ -1,0 +1,25 @@
+<div class="form-group">
+    <label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}{% if required %}*{% endif %}</label>
+    <input
+        type="{{ input.field.widget.input_type }}"
+        name="{{ input.name }}"
+        value="{{ input.value|default_if_none:'' }}"
+        {% if input.field.widget.input_type != "hidden" %}
+            class="form-control {% if input.errors %}is-invalid{% endif %}"
+            id="{{ input.auto_id }}"
+        {% endif %}
+        {% if input.field.required %}
+            required="required"
+        {% endif %}
+        {% for k,v in input.field.widget.attrs.items %}
+            {{ k }}="{{ v }}"
+        {% endfor %}
+    />
+    {% if input.errors %}
+        <ul class="invalid-feedback">
+            {% for error in input.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

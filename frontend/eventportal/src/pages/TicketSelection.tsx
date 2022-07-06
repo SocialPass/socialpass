@@ -1,8 +1,7 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
-import { truncateAddress } from "../utils";
-import infoButton from "../static/images/icons/infoButton.svg";
+import GeneralAdmissionFAQHoverIcon from "../components/GeneralAdmissionFAQ";
 
 export function TicketSelection() {
   const navigate = useNavigate();
@@ -15,6 +14,16 @@ export function TicketSelection() {
     { length: generalAdmissionSelect },
     (_, i) => i + 1
   );
+
+  const [matches, setMatches] = useState(
+    window.matchMedia("(min-width: 768px)").matches
+  )
+
+  useEffect(() => {
+    window
+    .matchMedia("(min-width: 768px)")
+    .addEventListener('change', e => setMatches( e.matches ));
+  }, []);
 
   function handleSelect(event: any) {
     setGeneralAdmissionSelect(event.target.value);
@@ -34,24 +43,7 @@ export function TicketSelection() {
               <span className="fs-18 fw-bold me-15">General Admission</span>
 
               <div className="tooltip">
-                <img src={infoButton} />
-                <div className="right">
-                  <span className="tooltip-text fs-11">
-                    This General Admission ticket is free to all holders of 1
-                    NFT collection:
-                    <hr />
-                    {retrieveJson?.requirements.map((req, i) => (
-                      <div key={i}>
-                        <h3>Option {i + 1}</h3>
-                        <span className="fs-12">
-                          Contract:{" "}
-                          <span>{truncateAddress(req["asset_address"])}</span>
-                        </span>
-                        <hr />
-                      </div>
-                    ))}
-                  </span>
-                </div>
+                <GeneralAdmissionFAQHoverIcon locationClass="bottom"></GeneralAdmissionFAQHoverIcon>
               </div>
             </div>
             <div className="d-inline fw-bold">free</div>
@@ -80,22 +72,26 @@ export function TicketSelection() {
         </div>
         <hr className="border-top" />
       </div>
-      <div className="bg-gray d-flex flex-column justify-start-center">
-        <div className="d-flex flex-column align-items-start justify-start-center p-30">
-          <h3 className="fs-20">Summary</h3>
-          <div className="d-flex flex-row">
-            <p>{generalAdmissionSelect} X General Admission Ticket</p>
+      <div className="bg-gray">
+        {/* If on desktop mode, append bg-gray-extend to document */}
+        {matches === true ? <div className="bg-gray-extend"></div> : null}
+        <div className="d-flex flex-column justify-start-center">
+          <div className="d-flex flex-column align-items-start justify-start-center p-30">
+            <h3 className="fs-20">Summary</h3>
+            <div className="d-flex flex-row">
+              <p>{generalAdmissionSelect} X General Admission Ticket</p>
+            </div>
           </div>
-        </div>
-        <div className="d-flex align-items-center justify-content-center p-30 mt-50">
-          <button
-            onClick={() => {
-              navigate(`/${id}/checkout/blockchain`);
-            }}
-            className="btn btn-primary fs-20 text-capitalize rounded-3"
-          >
-            continue
-          </button>
+          <div className="d-flex align-items-center justify-content-center p-30 mt-50">
+            <button
+              onClick={() => {
+                navigate(`/${id}/checkout/blockchain`);
+              }}
+              className="btn btn-primary fs-20 text-capitalize rounded-3"
+            >
+              continue
+            </button>
+          </div>
         </div>
       </div>
     </div>

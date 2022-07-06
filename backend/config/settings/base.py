@@ -96,8 +96,8 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "apps.root.apps.RootConfig",
     "apps.root.apps.OverrideInvitationsConfig",
-    "apps.dashboard",
-    "apps.event_discovery",
+    "apps.dashboard.apps.DashboardConfig",
+    "apps.event_discovery.apps.EventDiscoveryConfig",
     "avoid_view_resubmission",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -372,3 +372,6 @@ STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 
 # MORALIS
 MORALIS_API_KEY = env("MORALIS_API_KEY")
+
+# GMAPS
+GMAPS_API_KEY = env("GMAPS_API_KEY")

@@ -10,7 +10,7 @@ DJANGO_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
 # INTERNAL
 # ------------------------------------------------------------------------------
 CHECKOUT_PORTAL_BASE_URL=http://localhost:3000
-SCANNER_BASE_URL=http://localhost:3000
+SCANNER_BASE_URL=http://localhost:3001
 
 # AWS (STAGING)
 # ------------------------------------------------------------------------------
@@ -33,3 +33,8 @@ SENTRY_ENV_NAME=development
 # MORALIS
 # ------------------------------------------------------------------------------
 # MORALIS_API_KEY=''
+
+
+# GMAPS
+# ------------------------------------------------------------------------------
+GMAPS_API_KEY=AIzaSyDChv6Fl3rYj_sbx3hEoLbJ1FNO3QAP8Ts

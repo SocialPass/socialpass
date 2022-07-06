@@ -1,17 +1,17 @@
 class CheckoutPortalWidget{
     // reference: https://developers.clicksign.com/docs/instalacao-do-widget-embedded
 
-    constructor(uuidEvent){
+    constructor(uuidEvent, domain){
         this.uuidEvent = uuidEvent;
         this.eventPortalHost = "https://tickets.socialpass.io"
-        this.eventPortalUrl = undefined
+        this.eventPortalUrl = domain;
     }
 
     getEventPortalUrl(){
         if(this.eventPortalUrl){
-            return this.eventPortalUrl
+            return this.eventPortalUrl + '/' + this.uuidEvent;
         }else{
-            return this.eventPortalHost + '/' + this.uuidEvent
+            return this.eventPortalHost + '/' + this.uuidEvent;
         }
     }
 

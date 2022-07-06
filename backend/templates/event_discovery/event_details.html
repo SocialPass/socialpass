@@ -124,7 +124,9 @@
                         Must prove ownership of one asset from the following NFT collection with the following contract address:
                     </p>
                     <div class="d-lg-inline-block font-monospace text-truncate bg-gray-very-light-lm bg-darkgray-very-dim-dm py-5 px-15 mt-5 rounded">
-                        <strong>0x11d03698d9275a7a450f8cba387EBBF07e301BDf</strong>
+                      {% for requirement in event.requirements %}
+                        <strong>{{requirement['token_address']}}</strong>
+                      {% endfor %}
                     </div>
                 </div>
             </div>

@@ -143,6 +143,7 @@ class Event(AllowDraft, DBModel):
     end_date = models.DateTimeField(blank=True, null=True)
     # Timezone kept for backwards compatibility
     timezone = models.CharField(
+        blank=True,
         null=True,
         verbose_name="time zone",
         max_length=30,

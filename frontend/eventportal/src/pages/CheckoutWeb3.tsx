@@ -33,12 +33,12 @@ export const CheckoutWeb3 = () => {
 
   const [matches, setMatches] = useState(
     window.matchMedia("(min-width: 768px)").matches
-  )
+  );
 
   useEffect(() => {
     window
-    .matchMedia("(min-width: 768px)")
-    .addEventListener('change', e => setMatches( e.matches ));
+      .matchMedia("(min-width: 768px)")
+      .addEventListener("change", (e) => setMatches(e.matches));
   }, []);
 
   const ConnectWallet = () => {
@@ -52,15 +52,21 @@ export const CheckoutWeb3 = () => {
               ? `${ensName} (${accountHook.data.address})`
               : accountHook.data.address}
           </div>
-          <div className="col-span-1"> Connected to {connectHook?.activeConnector?.name}</div>
-          <button className="col-span-1 dc-btn fs-10" onClick={() => disconnectHook.disconnect()}>
+          <div className="col-span-1">
+            {" "}
+            Connected to {connectHook?.activeConnector?.name}
+          </div>
+          <button
+            className="col-span-1 dc-btn fs-10"
+            onClick={() => disconnectHook.disconnect()}
+          >
             Disconnect
           </button>
         </div>
       );
     }
     return (
-      <div className="wallets-selection">
+      <div className="wallets-selection wallets">
         {connectHook.connectors.map((x) => (
           <button
             className={
@@ -197,10 +203,7 @@ export const CheckoutWeb3 = () => {
         <div className="d-flex flex-column align-items-start justify-start-center">
           <div className="d-flex align-items-center justify-content-center">
             <h3 className="fs-20">Summary &nbsp;</h3>
-            <a
-              onClick={handleNavigateBack}
-              className="text-edit fs-12 fw-bold"
-            >
+            <a onClick={handleNavigateBack} className="text-edit fs-12 fw-bold">
               Edit
             </a>
           </div>

@@ -352,7 +352,7 @@ class EventCreateView(TeamContextMixin, CreateView):
 
     model = Event
     form_class = EventForm
-    template_name = "dashboard/ticketgate_form_new.html"
+    template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -364,6 +364,7 @@ class EventCreateView(TeamContextMixin, CreateView):
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         context["event"] = context["form"].instance
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
 
         return context
 
@@ -399,7 +400,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
     form_class = EventForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
-    template_name = "dashboard/ticketgate_form_new.html"
+    template_name = "dashboard/ticketgate_form.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -411,6 +412,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         context["event"] = self.get_object()
+        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 
     def get_success_url(self):

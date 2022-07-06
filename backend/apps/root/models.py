@@ -141,6 +141,13 @@ class Event(AllowDraft, DBModel):
     )
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
+    # Timezone kept for backwards compatibility
+    timezone = models.CharField(
+        blank=True,
+        null=True,
+        verbose_name="time zone",
+        max_length=30,
+    )
     timezone_offset = required_if_not_draft(
         models.FloatField(verbose_name="Timezone offset in seconds")
     )

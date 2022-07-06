@@ -28,18 +28,18 @@ async function fetchApi(axiosPromise: AxiosPromise){
 
 export function fetchEvent(publicId: String) {
   return fetchApi(
-    api.get(`scanner/${publicId}/event`)
+    api.get(`scanner/v1/${publicId}/event`)
   )
 }
 
 export function fetchScanTicket(publicId: String, qrCode: String) {
   return fetchApi(
-    api.post(`scanner/${publicId}/claim-ticket/`, {embed_code: qrCode})
+    api.post(`scanner/v1/${publicId}/claim-ticket/`, {embed_code: qrCode})
   )
 }
 
 export function fetchTickets(publicId: String, claimed?: boolean) {
-  let url = `scanner/${publicId}/tickets`
+  let url = `scanner/v1/${publicId}/tickets`
   if (claimed !== undefined){
     url = `${url}?redeemed=${claimed}`
   }

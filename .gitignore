@@ -1,5 +1,6 @@
 *.DS_Store
 .nova/
+media/
 venv/
 
 # docker-volumes

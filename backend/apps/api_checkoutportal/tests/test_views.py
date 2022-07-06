@@ -80,7 +80,7 @@ class GetEventDetailsTestCase(TestCase):
         """
         event_id = str(self.event.public_id)
         # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.get(f"/api/checkout-portal/retrieve/{event_id}/")
+        response = self.client.get(f"/api/checkout-portal/v1/retrieve/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Skipping these asserts for now since Django is doing some magic on the serializers.
         # Add `from . import serializers` at the top then...
@@ -97,7 +97,9 @@ class GetEventDetailsTestCase(TestCase):
         invalid_event_id = (
             uuid4()
         )  # Random UUID string that is not contained in the test DB.
-        response = self.client.get(f"/api/checkout-portal/retrieve/{invalid_event_id}/")
+        response = self.client.get(
+            f"/api/checkout-portal/v1/retrieve/{invalid_event_id}/"
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
@@ -135,7 +137,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         print(data)
         content_type = "application/json"
         response = self.client.post(
-            f"/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership",
+            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -164,7 +166,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership",
+            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -186,7 +188,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership",
+            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -202,7 +204,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         Access the event portal process with a valid Event UUID but without the (checkout_type) parameter.
         """
         event_id = str(self.event.public_id)
-        response = self.client.post(f"/api/checkout-portal/process/{event_id}/")
+        response = self.client.post(f"/api/checkout-portal/v1/process/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     @prevent_warnings
@@ -219,7 +221,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership",
+            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -233,5 +235,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         Access the event portal process checkout API and asserts 404 NOT FOUND for invalid team UUID.
         """
         invalid_event_id = uuid4()
-        response = self.client.post(f"/api/checkout-portal/process/{invalid_event_id}/")
+        response = self.client.post(
+            f"/api/checkout-portal/v1/process/{invalid_event_id}/"
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

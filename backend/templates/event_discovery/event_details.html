@@ -50,12 +50,18 @@
             <div class="col-lg-5 align-self-center order-lg-first">
                 <!-- Event cover image start -->
                 <div class="content d-flex align-items-center justify-content-center rounded overflow-hidden pe-none">
-                    {% if event.cover_image.height > event.cover_image.width %}
+                    <!-- Backwards compatibility -->
+                    {% if not event.cover_image %}
+                      <img src="" class="w-auto h-100" alt="{{ event.title }} cover image">
+                    {% else %}
+
+                      {% if event.cover_image.height > event.cover_image.width %}
                         <!-- Portrait -->
                         <img src="{{ event.cover_image.url }}" class="w-auto h-100" alt="{{ event.title }} cover image">
-                    {% else %}
+                      {% else %}
                         <!-- Landscape -->
                         <img src="{{ event.cover_image.url }}" class="w-100 h-auto" alt="{{ event.title }} cover image">
+                      {% endif %}
                     {% endif %}
                 </div>
                 <!-- Event cover image end -->
@@ -119,7 +125,9 @@
                         Must prove ownership of one asset from the following NFT collection with the following contract address:
                     </p>
                     <div class="d-lg-inline-block font-monospace text-truncate bg-gray-very-light-lm bg-darkgray-very-dim-dm py-5 px-15 mt-5 rounded">
-                        <strong>0x11d03698d9275a7a450f8cba387EBBF07e301BDf</strong>
+                      {% for requirement in event.requirements %}
+                        <strong>{{requirement.asset_address}}</strong>
+                      {% endfor %}
                     </div>
                 </div>
             </div>

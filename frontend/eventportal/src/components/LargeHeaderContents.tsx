@@ -5,6 +5,7 @@ import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
 
 export default function LargeHeaderContents() {
   const { retrieveJson } = useContext(CheckoutPortalContext);
+  console.log(retrieveJson);
 
   return (
     <div>

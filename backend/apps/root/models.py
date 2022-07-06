@@ -5,9 +5,9 @@ from datetime import datetime, timedelta
 
 import boto3
 import pytz
+from dateutil.tz import tzoffset
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.contrib.sites.models import Site
 from django.core import exceptions as dj_exceptions
 from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -17,13 +17,9 @@ from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from apps.root.model_draft import (
-    AllowDraft,
-    change_draft_validation_message,
-    required_if_not_draft,
-)
+from apps.root.model_draft import AllowDraft, required_if_not_draft
 from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
-from config.storages import MediaRootS3Boto3Storage, PrivateTicketStorage
+from config.storages import PrivateTicketStorage
 
 from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from .model_wrappers import DBModel
@@ -97,6 +93,21 @@ class EventQuerySet(models.QuerySet):
         # public_id and custom_url_path. This is impossible unless user messes up.
 
 
+class EventCategory(DBModel):
+
+    parent_category = models.ForeignKey(
+        "EventCategory", on_delete=models.SET_NULL, null=True
+    )
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        if self.parent_category:
+            return f"{self.parent_category} - {self.name}"
+        else:
+            return self.name
+
+
 class Event(AllowDraft, DBModel):
     """
     Stores data for ticketed event
@@ -116,20 +127,22 @@ class Event(AllowDraft, DBModel):
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
-    organizer = required_if_not_draft(models.CharField(max_length=255))
-    description = required_if_not_draft(models.TextField())
+    organizer = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     visibility = required_if_not_draft(
         models.CharField(max_length=50, choices=EVENT_VISIBILITY)
     )
     cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
-    categories = TaggableManager(blank=True)
+    category = models.ForeignKey(
+        EventCategory, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    tags = TaggableManager(
+        blank=True,
+    )
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
-    timezone = required_if_not_draft(
-        models.CharField(
-            verbose_name="time zone",
-            max_length=30,
-        )
+    timezone_offset = required_if_not_draft(
+        models.FloatField(verbose_name="Timezone offset in seconds")
     )
     location = required_if_not_draft(models.CharField(max_length=1024))
     # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
@@ -180,14 +193,16 @@ class Event(AllowDraft, DBModel):
         if self.is_draft:
             return super().save(*args, **kwargs)
 
-        if self.timezone is not None:
+        if self.timezone_offset is not None:
             timezone_aware_datetime_fields = ["start_date", "end_date", "publish_date"]
 
             for field in timezone_aware_datetime_fields:
                 val = getattr(self, field)
                 if val is not None:
                     setattr(
-                        self, field, val.replace(tzinfo=pytz.timezone(self.timezone))
+                        self,
+                        field,
+                        val.replace(tzinfo=tzoffset(None, self.timezone_offset)),
                     )
 
         ret = super().save(*args, **kwargs)

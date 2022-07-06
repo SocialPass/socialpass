@@ -1,9 +1,8 @@
-from datetime import datetime
-
 import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
+from taggit.forms import TagField
 
 from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
@@ -37,9 +36,6 @@ class EventForm(forms.ModelForm):
     - price is updated when capacity is changed.
     """
 
-    timezone = forms.ChoiceField(
-        choices=[("", "")] + [(x, x) for x in pytz.common_timezones], required=False
-    )
     start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             format="%Y-%m-%dT%H:%M",
@@ -76,7 +72,8 @@ class EventForm(forms.ModelForm):
             "title",
             "organizer",
             "description",
-            # "categories",
+            "category",
+            "tags",
             "visibility",
             # location
             "location",
@@ -84,7 +81,7 @@ class EventForm(forms.ModelForm):
             # date and time
             "start_date",
             "end_date",
-            "timezone",
+            "timezone_offset",
             # cover image
             "cover_image",
             # 2. Requirements
@@ -104,11 +101,10 @@ class EventForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
-            "location": forms.TextInput(
-                attrs={"placeholder": "Where the event is taking place"}
-            ),
+            "location": forms.HiddenInput(),
             "is_draft": forms.HiddenInput(),
             "requirements": forms.HiddenInput(),
+            "timezone_offset": forms.HiddenInput(),
         }
 
     def can_edit_capacity(self) -> bool:

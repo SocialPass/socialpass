@@ -9,9 +9,19 @@ class TeamSerializer(serializers.ModelSerializer):
     Team serializer
     """
 
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = Team
         fields = ["name", "image"]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if obj.image:
+            image_url = obj.image.url
+            return request.build_absolute_uri(image_url)
+        else:
+            return None
 
 
 class EventSerializer(serializers.ModelSerializer):

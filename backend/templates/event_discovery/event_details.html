@@ -53,14 +53,15 @@
                     <!-- Backwards compatibility -->
                     {% if not event.cover_image %}
                       <img src="" class="w-auto h-100" alt="{{ event.title }} cover image">
-                    {% endif %}
+                    {% else %}
 
-                    {% if event.cover_image.height > event.cover_image.width %}
+                      {% if event.cover_image.height > event.cover_image.width %}
                         <!-- Portrait -->
                         <img src="{{ event.cover_image.url }}" class="w-auto h-100" alt="{{ event.title }} cover image">
-                    {% else %}
+                      {% else %}
                         <!-- Landscape -->
                         <img src="{{ event.cover_image.url }}" class="w-100 h-auto" alt="{{ event.title }} cover image">
+                      {% endif %}
                     {% endif %}
                 </div>
                 <!-- Event cover image end -->
@@ -125,7 +126,7 @@
                     </p>
                     <div class="d-lg-inline-block font-monospace text-truncate bg-gray-very-light-lm bg-darkgray-very-dim-dm py-5 px-15 mt-5 rounded">
                       {% for requirement in event.requirements %}
-                        <strong>{{requirement['token_address']}}</strong>
+                        <strong>{{requirement.asset_address}}</strong>
                       {% endfor %}
                     </div>
                 </div>

@@ -222,6 +222,8 @@ class Event(AllowDraft, DBModel):
     def status(self):
         if self.is_draft:
             return EventStatusEnum.DRAFT.value
+        elif self.is_pending_checkout:
+            return EventStatusEnum.PENDING_CHECKOUT.value
         if not self.is_published:
             return EventStatusEnum.STAGED.value
         elif self.is_scheduled:
@@ -244,6 +246,19 @@ class Event(AllowDraft, DBModel):
         return self.visibility == "PUBLIC"
 
     @property
+    def is_pending_checkout(self):
+        print("pending checkout")
+        last_payment = self.payments.last()
+        if last_payment is None:
+            # Handle 0 cost event
+            if self.price == 0:
+                return False
+            else:
+                return True
+        print(last_payment, last_payment.status)
+        return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
+
+    @property
     def url_path(self):
         return self.custom_url_path or self.public_id
 
@@ -254,18 +269,6 @@ class Event(AllowDraft, DBModel):
     @property
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.url_path}"
-
-    @property
-    def has_pending_checkout(self):
-        last_payment = self.payments.last()
-        if last_payment is None:
-            # Handle 0 cost event
-            if self.price == 0:
-                return False
-            else:
-                return True
-
-        return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
 
 
 class Ticket(DBModel):

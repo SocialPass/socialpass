@@ -411,7 +411,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
         context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
         context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
-        context["event"] = self.get_object()
+        context["event"] = self.object
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 

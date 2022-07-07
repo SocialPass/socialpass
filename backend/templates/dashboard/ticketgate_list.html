@@ -57,10 +57,8 @@
           <tr class="fs-base-n2">
             <th>Title</th>
             <th>Status</th>
-            <th>Date</th>
+            <th>Start Date</th>
             <th>Location</th>
-            <th>Capacity</th>
-            <th>Tickets</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -71,10 +69,6 @@
               <td class="fw-bold"> <span class="badge bg-info">{{ event.status }} </span></td>
               <td class="fs-base-n2">{{ event.start_date }}</td>
               <td class="fs-base-n2">{{ event.location }}</td>
-              <td class="fs-base-n2">{{ event.capacity }}</td>
-              <td class="align-middle">
-                {{ event.tickets.count }}
-              </td>
               <td class="align-middle px-4">
                 {% if event.status == "Draft" or event.status == "Staged" %}
                   <a class="btn btn-sm btn-primary-outline" href="{% url 'ticketgate_update' current_team.public_id event.pk %}">

@@ -10,7 +10,7 @@ def get_sidebar_active_status(context, key):
     if key == "events":
         if url_name in [
             "ticketgate_list",
-            "ticketgate_create",
+            "ticketgate_drafts" "ticketgate_create",
             "ticketgate_detail",
             "ticketgate_update",
             "ticketgate_stats",
@@ -19,6 +19,9 @@ def get_sidebar_active_status(context, key):
             "ticketgate_checkout_success_callback",
             "ticketgate_checkout_failure_callback",
         ]:
+            return "active"
+    elif key == "drafts":
+        if url_name in ["ticketgate_drafts", "ticketgate_create"]:
             return "active"
     elif key == "team-details":
         if url_name in ["team_detail", "team_update"]:

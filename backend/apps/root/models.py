@@ -156,11 +156,11 @@ class Event(AllowDraft, DBModel):
 
     # Ticket Info
     # TODO: Move these to TicketType
-    requirements = models.JSONField(
-        default=list,
-        blank=True,
-        null=True,
-        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
+    requirements = required_if_not_draft(
+        models.JSONField(
+            default=list,
+            validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
+        )
     )
     capacity = required_if_not_draft(
         models.IntegerField(validators=[MinValueValidator(1)])

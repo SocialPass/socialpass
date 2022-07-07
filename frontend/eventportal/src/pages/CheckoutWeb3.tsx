@@ -195,9 +195,7 @@ export const CheckoutWeb3 = () => {
         <ConnectWallet />
         <span>
           {connectHook.error && (
-            <span className="py-5">
-              {connectHook.error?.message ?? "Failed to connect"}
-            </span>
+            <span>{connectHook.error?.message ?? "Failed to connect"}</span>
           )}
         </span>
         <span>

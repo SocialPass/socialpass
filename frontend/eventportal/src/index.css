@@ -262,17 +262,17 @@ footer {
 }
 
 .card-active {
-  height: 12rem;
+  height: 12rem !important;
   border-radius: 20px;
   color: #000;
   border: 1.5px solid var(--orange) !important;
 }
 
 .card-disabled {
-  height: 12rem;
+  height: 12rem !important;
   border-radius: 20px;
-  border: none;
   color: var(--muted-color) !important;
+  border: none;
 }
 
 /*
@@ -356,7 +356,6 @@ BOOSTRAP OVERRIDES
   position: relative;
   background-color: var(--gray) !important;
   width: 35%;
-  height: 100%;
   margin-top: -3rem;
   margin-right: -3rem;
 }

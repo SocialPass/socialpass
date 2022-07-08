@@ -351,7 +351,7 @@ class EventCreateView(TeamContextMixin, CreateView):
 
     model = Event
     form_class = EventForm
-    template_name = "dashboard/ticketgate_form.html"
+    template_name = "dashboard/event_form.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -399,7 +399,7 @@ class EventUpdateView(TeamContextMixin, UpdateView):
     form_class = EventForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
-    template_name = "dashboard/ticketgate_form.html"
+    template_name = "dashboard/event_form.html"
 
     def get_context_data(self, **kwargs):
         """

@@ -10,6 +10,23 @@ from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.models import Event
 
 
+class CustomInviteForm(InviteForm):
+    """
+    Custom invite form subclassing django-invitations
+    """
+
+    def validate_invitation(self, email):
+        """
+        sub-classed validation to remove check for active user
+        """
+        if Invite.objects.all_valid().filter(email__iexact=email, accepted=False):
+            raise AlreadyInvited
+        elif Invite.objects.filter(email__iexact=email, accepted=True):
+            raise AlreadyAccepted
+        else:
+            return True
+
+
 class TeamForm(forms.ModelForm):
     """
     Allows team information to be updated.
@@ -25,6 +42,40 @@ class TeamForm(forms.ModelForm):
             ),
         }
         labels = {"image": "Set Team Image"}
+
+
+required_fields = [
+    "title",
+    "organizer",
+    "description",
+    "visibility",
+    # location
+    "location",
+    # TODO
+    # date and time
+    "start_date",
+    # cover image
+    "cover_image",
+    # 2. Requirements
+    "requirements",
+    # 3. Tickets
+    "capacity",
+    "limit_per_person",
+    # 4. Publish
+]
+optional_fields = [
+    # 1. General info
+    # basic info
+    "category",
+    "tags",
+    "visibility",
+    "end_date",
+    "timezone_offset",
+    "cover_image",
+    "publish_date",
+    "timezone_offset",
+    "continue_requested",
+]
 
 
 class EventForm(forms.ModelForm):
@@ -62,37 +113,14 @@ class EventForm(forms.ModelForm):
         widget=forms.RadioSelect(choices=EVENT_VISIBILITY),
         required=False,
     )
+    continue_requested = forms.BooleanField(
+        label="...", widget=forms.HiddenInput(), required=False, initial=False
+    )
 
     class Meta:
+        fields = optional_fields + required_fields
         model = Event
-        fields = [
-            "is_draft",
-            # 1. General info
-            # basic info
-            "title",
-            "organizer",
-            "description",
-            "category",
-            "tags",
-            "visibility",
-            # location
-            "location",
-            # TODO
-            # date and time
-            "start_date",
-            "end_date",
-            "timezone_offset",
-            # cover image
-            "cover_image",
-            # 2. Requirements
-            "requirements",
-            # 3. Tickets
-            "capacity",
-            "limit_per_person",
-            # 4. Publish
-            "publish_date",
-            "custom_url_path",
-        ]
+
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
             "organizer": forms.TextInput(
@@ -102,53 +130,30 @@ class EventForm(forms.ModelForm):
                 attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
             "location": forms.HiddenInput(),
-            "is_draft": forms.HiddenInput(),
             "requirements": forms.HiddenInput(),
             "timezone_offset": forms.HiddenInput(),
         }
 
-    def can_edit_capacity(self) -> bool:
-        if self.instance is None:
-            return True
-
-        return not (
-            services.get_in_progress_payment(self.instance)
-            or services.get_effective_payments(self.instance.payments)
-        )
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        if not self.can_edit_capacity():
-            self.fields["capacity"].disabled = True
-
-    def save(self, commit: bool = ...) -> Event:
-        """Sets Event price after save"""
-        if (not self.can_edit_capacity()) and (
-            self.instance.capacity != self.cleaned_data["capacity"]
-        ):
-            # not using field has_changed here since it can lead to a
-            # security failure as it checks if the field is disabled.
-
-            # this will never happend since capacity field is disabled, unless the user tries to hack the form
-            raise RuntimeError("Cannot change capacity")
-
-        obj = super().save(commit)
-
-        if "capacity" in self.changed_data:
-            services.set_event_price(obj)
-
-        return obj
-
-
-class CustomInviteForm(InviteForm):
-    def validate_invitation(self, email):
+    def clean(self):
         """
-        sub-classed validation to remove check for active user
+        Clean method for dynamic form field requirement
         """
-        if Invite.objects.all_valid().filter(email__iexact=email, accepted=False):
-            raise AlreadyInvited
-        elif Invite.objects.filter(email__iexact=email, accepted=True):
-            raise AlreadyAccepted
+        data = super().clean()
+        errors = {}
+
+        # first check for continue_requested
+        # loop over required fields
+        continue_requested = data.get("continue_requested", None)
+        print(continue_requested)
+        if continue_requested:
+            # check field
+            for i in required_fields:
+                field = data.get(i, None)
+                if not field:
+                    errors[i] = "This field is required"
+
+        # check for errors
+        if not errors:
+            return data
         else:
-            return True
+            raise forms.ValidationError(errors)

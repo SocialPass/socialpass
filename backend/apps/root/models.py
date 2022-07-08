@@ -17,7 +17,6 @@ from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from apps.root.model_draft import AllowDraft, required_if_not_draft
 from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
 from config.storages import PrivateTicketStorage
 
@@ -75,9 +74,6 @@ class EventQuerySet(models.QuerySet):
     Event model queryset manager
     """
 
-    def drafts(self):
-        return self.filter(is_draft=True)
-
     def filter_wip(self):
         return self.filter(publish_date__isnull=True)
 
@@ -110,7 +106,7 @@ class EventQuerySet(models.QuerySet):
         # public_id and custom_url_path. This is impossible unless user messes up.
 
 
-class Event(AllowDraft, DBModel):
+class Event(DBModel):
     """
     Stores data for ticketed event
     """
@@ -118,17 +114,17 @@ class Event(AllowDraft, DBModel):
     # Queryset manager
     objects = EventQuerySet.as_manager()
 
+    # state
+    # state = fsm
+
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
 
     # Publish info
-    is_draft = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     publish_date = models.DateTimeField(null=True, blank=True)
-    visibility = required_if_not_draft(
-        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
-    )
+    visibility = models.CharField(max_length=50, choices=EVENT_VISIBILITY)
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     # Basic Info
@@ -142,7 +138,7 @@ class Event(AllowDraft, DBModel):
     tags = TaggableManager(
         blank=True,
     )
-    start_date = required_if_not_draft(models.DateTimeField())
+    start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     timezone = models.CharField(
         blank=True,
@@ -150,27 +146,24 @@ class Event(AllowDraft, DBModel):
         verbose_name="time zone",
         max_length=30,
     )
-    timezone_offset = required_if_not_draft(
-        models.FloatField(verbose_name="Timezone offset in seconds")
+    timezone_offset = models.FloatField(
+        blank=True, null=True, verbose_name="Timezone offset in seconds"
     )
-    location = required_if_not_draft(models.CharField(max_length=1024))
+    location = models.CharField(blank=True, max_length=1024)
     # location_info = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
     # TODO: Move these to TicketType
-    requirements = required_if_not_draft(
-        models.JSONField(
-            default=list,
-            validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
-        )
+    requirements = models.JSONField(
+        blank=True,
+        default=list,
+        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
-    capacity = required_if_not_draft(
-        models.IntegerField(validators=[MinValueValidator(1)])
+    capacity = models.IntegerField(
+        blank=True, default=1, validators=[MinValueValidator(1)]
     )
-    limit_per_person = required_if_not_draft(
-        models.IntegerField(
-            default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
-        )
+    limit_per_person = models.IntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
 
     # Pricing Info
@@ -198,9 +191,6 @@ class Event(AllowDraft, DBModel):
         Adds the following functionalities:
         - sets timezones based on timezone field for all datetimefields
         """
-        if self.is_draft:
-            return super().save(*args, **kwargs)
-
         if self.timezone_offset is not None:
             timezone_aware_datetime_fields = ["start_date", "end_date", "publish_date"]
 
@@ -218,33 +208,6 @@ class Event(AllowDraft, DBModel):
         TicketRedemptionKey.objects.get_or_create(event=self)
 
         return ret
-
-    @property
-    def status(self):
-        if self.is_draft:
-            return EventStatusEnum.DRAFT.value
-        elif self.is_pending_checkout:
-            return EventStatusEnum.PENDING_CHECKOUT.value
-        if not self.is_published:
-            return EventStatusEnum.STAGED.value
-        elif self.is_scheduled:
-            return EventStatusEnum.SCHEDULED.value
-        else:
-            return EventStatusEnum.PUBLISHED.value
-
-    @property
-    def is_published(self):
-        return self.publish_date is not None
-
-    @property
-    def is_scheduled(self):
-        return self.publish_date is not None and self.publish_date > datetime.now(
-            self.publish_date.tzinfo
-        )
-
-    @property
-    def is_public(self):
-        return self.visibility == "PUBLIC"
 
     @property
     def is_pending_checkout(self):

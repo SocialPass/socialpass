@@ -103,12 +103,6 @@
 	const eventStatus = "{{event.status}}"
 	var hasChanges = false
 
-	function disallowPublish(){
-		console.log("form changed")
-		document.getElementById("stage-changes-action").style.display = "block";
-		document.getElementById("preview-and-publish-action").style.display = "none";
-	}
-
 	window.addEventListener('load', () => {
 		let first_error = document.querySelector('.invalid-feedback:not(.persistent)')
 		if (first_error){
@@ -120,15 +114,6 @@
 			frame.eventPortalUrl = "{{event.checkout_portal_url}}"
 			frame.mount("eventportal-root")
 		}
-
-		if (eventStatus == "Staged"){
-			document.getElementById("event-form").addEventListener('change', disallowPublish)
-		}
-
-		document.getElementById("event-form").addEventListener('change', () => {
-			hasChanges = true
-			document.getElementById("form-changes-identifier").innerHTML = "Pending changes";
-		})
 	})
 
 	function saveAsDraft(){
@@ -137,146 +122,10 @@
 		fillRequirementsAndSubmitForm()
 	}
 
-	function stageChanges(){
-		document.getElementById("id_is_draft").checked = false
-		document.getElementById("id_is_draft").value = 'False'
-		fillRequirementsAndSubmitForm()
-	}
-
 	function save(){
 		fillRequirementsAndSubmitForm()
 	}
 </script>
-
-<!-- START MODALS -->
-<section>
-	<!-- start Event Preview Modal -->
-	<div class="modal" tabindex="-1" id="eventportal-modal" aria-labelledby="eventportal-modal-toggle" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content border-transparent ws-600 hs-600 mw-100 mh-100 p-0">
-				<button type="button" class="close text-base bg-content" aria-label="Close" data-hm-dismiss="modal">&times;</button>
-				<div class="w-100 h-100" id="eventportal-root"></div>
-			</div>
-		</div>
-	</div>
-	<!-- end Event Preview Modal -->
-
-	{% if event.id and event.status == 'Staged' %}
-	<!-- start Publish Modal -->
-	<div class="modal" tabindex="-1" id="publish-modal" aria-labelledby="publish-modal-toggle" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content border-transparent ws-600 mw-100 p-0">
-				<button type="button" class="close text-base bg-content" aria-label="Close" data-hm-dismiss="modal">&times;</button>
-				<div class="w-100 h-100" id="publish-root">
-					<!-- Hero section start -->
-					<section>
-						<div class="container-xl">
-							<div class="row content">
-								<!-- Second column start -->
-								<div class="col-12 align-self-center">
-									<!-- form.instance cover image start -->
-									<div class="d-flex align-items-center justify-content-center rounded overflow-hidden pe-none">
-										{% if form.instance.cover_image %}
-											<!-- Landscape -->
-											<img style="height: 130px; width: 100%;" src="{{ form.instance.cover_image.url }}" alt="{{ form.instance.name }} cover image">
-										{% else %}
-											No cover image was selected.
-										{% endif %}
-									</div>
-									<!-- Event cover image end -->
-								</div>
-								<!-- Second column end -->
-								<!-- First column start -->
-								<div class="col-12 align-self-center">
-									<h1 class="fsr-1 fw-700 text-strong">
-										{{ form.instance.title }}
-									</h1>
-									<div class="fsr-6 d-flex align-items-center mt-10">
-										<div class="ws-25 flex-shrink-0">
-											<i class="fa-regular fa-clock"></i>
-										</div>
-										<div class="ms-10 text-truncate">
-											{{ form.instance.start_date }}
-										</div>
-									</div>
-									<div class="fsr-6 d-flex align-items-center mt-10">
-										<div class="ws-25 flex-shrink-0">
-											<i class="fa-regular fa-location-dot"></i>
-										</div>
-										<div class="ms-10 text-truncate">
-											{{ form.instance.location }}
-										</div>
-									</div>
-								</div>
-								<!-- First column end -->
-								<form class="form" method="post" action="{% url 'ticketgate_update' view.kwargs.team_pk event.pk %}?action=publish" id="publish-event-form">
-									{% csrf_token %}
-									<div class="row g-1 justify-content-between mt-20">
-										<div class="col-md-6 pe-md-10">
-											<h6 class="fs-base-p2 mb-0">
-												Schedule for later
-											</h6>
-											<p class="mt-5 fs-base-n2 text-muted">
-												Do you want to schedule this publication for later?
-											</p>
-											<div class="mt-10">
-												<div class="form-check mb-10">
-													<input type="checkbox" class="form-check-input" id="schedule-for-later-checkbox" onchange="togglePublishDate()"/>
-													<label for="schedule-for-later-checkbox" class="form-check-label">Yes, schedule for later</label>
-												</div>
-												{{ form.publish_date }}
-												<script>
-													const togglePublishDate = () => {
-														let el = document.getElementById('date')
-														if (el.disabled){
-															el.disabled = false
-														}else{
-															el.value = ''
-															el.disabled = true
-														}
-													}
-													document.getElementById('date').disabled = true
-												</script>
-											</div>
-										</div>
-										<div class="col-md-6 ps-md-10 d-flex flex-column mt-20 mt-md-0">
-											<h6 class="fs-base-p2 mb-0">
-												Final tips before publication
-											</h6>
-											<p class="mt-5 fs-base-n2 text-muted">
-												A few more tips before you publish:
-											</p>
-											<div>
-												<div class="d-flex align-items-start">
-													<i class="fa-regular fa-check me-10 mt-5"></i>
-													<span>Customize your Ticket Portal</span>
-												</div>
-												<div class="d-flex align-items-start mt-10">
-													<i class="fa-regular fa-check me-10 mt-5"></i>
-													<span>Host the Ticket Portal on your own site</span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="mt-20">
-										<button class="btn btn-secondary btn-lg fs-base btn-block" type="submit">
-											<i class="fa-regular fa-party-horn me-5"></i> Publish Event
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</section>
-					<!-- Hero section end -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end Publish Modal -->
-	{% endif %}
-
-</section>
-<!-- END MODALS -->
 
 <!-- Header start -->
 <div class="border-bottom hs-md-100">
@@ -300,81 +149,10 @@
 		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
 			Event Form
 		</span>
-		<span id="form-changes-identifier" style="margin-left: 20px" class="bg-secondary-very-light-lm bg-secondary-very-dim-dm border-start border-secondary border-2 px-10 py-5 fs-base-n2 fw-bold">
-			No changes to apply
-		</span>
 	</div>
 	<!-- Card header end -->
 
 	<div class="row">
-		<!-- Form navigation start -->
-		<div class="col-lg-5 border-lg-end">
-			<div class="p-content position-lg-sticky top-navbar start-0">
-				<div>
-					<a href="#1-general-info" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-						<strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">1</strong>
-						<span class="ms-15">General Information</span>
-					</a>
-				</div>
-				<div class="mt-15">
-					<a href="#2-blockchain-requirements" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-						<strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">2</strong>
-						<span class="ms-15">Blockchain Requirements</span>
-					</a>
-				</div>
-				<div class="mt-15">
-					<a href="#3-tickets" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-						<strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">3</strong>
-						<span class="ms-15">Tickets</span>
-					</a>
-				</div>
-				{% if event.pk %}
-				<div class="mt-20">
-					<button type="button" class="btn btn-block" data-hm-toggle="modal" data-hm-target="eventportal-modal">Preview Event <i class="fa-regular fa-external-link-alt ms-5"></i></button>
-				</div>
-				{% endif %}
-				<div id="event-actions" class="mt-20 row">
-					{% if event.status == "Draft" %}
-					<div class="col-6 pe-5">
-						<button onclick="saveAsDraft()" class="h-100 btn btn-block">Save Draft</button>
-					</div>
-					<div class="col-6 ps-5">
-						<button id="stage-changes-action" onclick="stageChanges()" class="h-100 btn btn-primary btn-block">Stage Changes</button>
-					</div>
-					{% elif event.status == "Staged" %}
-					<div class="col-6 pe-5">
-						<button onclick="saveAsDraft()" class="h-100 btn btn-block">Save as Draft</button>
-					</div>
-					<div class="col-6 ps-5">
-						<button id="preview-and-publish-action" data-hm-toggle="modal" data-hm-target="publish-modal"  class="h-100 btn btn-primary btn-block">Preview and Publish</button>
-						<button id="stage-changes-action" style="display: none" onclick="stageChanges()" class="h-100 btn btn-primary btn-block">Stage Changes</button>
-					</div>
-					{% elif event.status == "Scheduled" %}
-					<div class="col-6 pe-5">
-						<button onclick="save()" class="h-100 btn btn-block">Save Changes</button>
-					</div>
-					<div class="col-6 ps-5">
-						<form action="{% url 'ticketgate_update' view.kwargs.team_pk event.pk %}?action=unpublish" method="POST">
-							{% csrf_token %}
-							<input class="h-100 btn btn-primary btn-block" type="submit" value="Unschedule"/>
-						</form>
-					</div>
-					{% elif event.status == "Published" %}
-					<div class="col-6 pe-5">
-						<button onclick="save()" class="h-100 btn btn-block">Save Changes</button>
-					</div>
-					<div class="col-6 ps-5">
-						<form action="{% url 'ticketgate_update' view.kwargs.team_pk event.pk %}?action=unpublish" method="POST">
-							{% csrf_token %}
-							<input class="h-100 btn btn-primary btn-block" type="submit" value="Unschedule"/>
-						</form>
-					</div>
-					{% endif %}
-				</div>
-			</div>
-		</div>
-		<!-- Form navigation end -->
-
 		<!-- Main content start -->
 		<div class="col-lg-7">
 			<div class="content">
@@ -599,6 +377,42 @@
 			</div>
 		</div>
 		<!-- Main content end -->
+
+    <!-- Form navigation start -->
+    <div class="col-lg-5 border-lg-end">
+      <div class="p-content position-lg-sticky top-navbar start-0">
+        <div>
+          <a href="#1-general-info" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">1</strong>
+            <span class="ms-15">General Information</span>
+          </a>
+        </div>
+        <div class="mt-15">
+          <a href="#2-blockchain-requirements" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">2</strong>
+            <span class="ms-15">Blockchain Requirements</span>
+          </a>
+        </div>
+        <div class="mt-15">
+          <a href="#3-tickets" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">3</strong>
+            <span class="ms-15">Tickets</span>
+          </a>
+        </div>
+        <div id="event-actions" class="mt-20 row">
+          {% if event.status == "Draft" %}
+          <div class="col-6 pe-5">
+            <button onclick="saveAsDraft()" class="h-100 btn btn-block">Save Draft</button>
+          </div>
+          <div class="col-6 pe-5">
+            <button onclick="save()" class="h-100 btn btn-block btn-primary">Save Draft</button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- Form navigation end -->
+
 	</div>
 
 	<!-- Card footer start -->

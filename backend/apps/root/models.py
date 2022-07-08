@@ -50,14 +50,31 @@ class EventLocation(DBModel):
     long = models.DecimalField(max_digits=9, decimal_places=6)
     # TODO:
     # point = PointField(geography=True, default="POINT(0.0 0.0)")
-    """
-    localized_address_display #The format of the address display localized to the address country
-    localized_area_display	#The format of the address's area display localized to the address country
-    localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
-    """
+    # localized_address_display #The format of the address display localized to the address country
+    # localized_area_display	#The format of the address's area display localized to the address country
+    # localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
+
+
+class EventCategory(DBModel):
+
+    parent_category = models.ForeignKey(
+        "EventCategory", on_delete=models.SET_NULL, null=True
+    )
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        if self.parent_category:
+            return f"{self.parent_category} - {self.name}"
+        else:
+            return self.name
 
 
 class EventQuerySet(models.QuerySet):
+    """
+    Event model queryset manager
+    """
+
     def drafts(self):
         return self.filter(is_draft=True)
 
@@ -93,26 +110,12 @@ class EventQuerySet(models.QuerySet):
         # public_id and custom_url_path. This is impossible unless user messes up.
 
 
-class EventCategory(DBModel):
-
-    parent_category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True
-    )
-    name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        if self.parent_category:
-            return f"{self.parent_category} - {self.name}"
-        else:
-            return self.name
-
-
 class Event(AllowDraft, DBModel):
     """
     Stores data for ticketed event
     """
 
+    # Queryset manager
     objects = EventQuerySet.as_manager()
 
     # Keys
@@ -123,15 +126,15 @@ class Event(AllowDraft, DBModel):
     is_draft = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     publish_date = models.DateTimeField(null=True, blank=True)
+    visibility = required_if_not_draft(
+        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
+    )
     custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    visibility = required_if_not_draft(
-        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
-    )
     cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
     category = models.ForeignKey(
         EventCategory, on_delete=models.SET_NULL, null=True, blank=True
@@ -141,7 +144,6 @@ class Event(AllowDraft, DBModel):
     )
     start_date = required_if_not_draft(models.DateTimeField())
     end_date = models.DateTimeField(blank=True, null=True)
-    # Timezone kept for backwards compatibility
     timezone = models.CharField(
         blank=True,
         null=True,
@@ -152,7 +154,7 @@ class Event(AllowDraft, DBModel):
         models.FloatField(verbose_name="Timezone offset in seconds")
     )
     location = required_if_not_draft(models.CharField(max_length=1024))
-    # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
+    # location_info = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
     # TODO: Move these to TicketType
@@ -172,7 +174,6 @@ class Event(AllowDraft, DBModel):
     )
 
     # Pricing Info
-    # TODO: These will be reworked / removed with event attendee billing
     price = models.DecimalField(
         validators=[MinValueValidator(0)],
         decimal_places=2,

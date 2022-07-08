@@ -82,7 +82,6 @@ class RequireSuccesfulCheckoutMixin:
                 "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
             )
 
-        print(services.get_event_pending_payment_value(event))
         if services.get_event_pending_payment_value(event):
             return self.pending_checkout_behaviour()
 
@@ -597,7 +596,6 @@ class EventCheckout(TeamContextMixin, TemplateView):
         payment.save()
 
         messages.add_message(request, messages.SUCCESS, message)
-        print(kwargs)
         return redirect("ticketgate_detail", **kwargs)
 
     def failure_stripe_callback(request, **kwargs):

@@ -2,6 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from django.db.models import Sum
+from djmoney.money import Money
 
 from apps.dashboard.models import EventStripePayment, PricingRuleGroup, Team
 from apps.root.models import Event
@@ -54,11 +55,6 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
     raise ValueError("Could not find pricing_rule for capacity")
 
 
-def get_pricing_group_for_ticket(event: Event) -> PricingRuleGroup:
-    """Returns the pricing group for a given ticket gate."""
-    return event.team.pricing_rule_group
-
-
 def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = None):
     """Returns the estimated price of a ticket gate for a given team.
 
@@ -74,7 +70,7 @@ def get_pricing_rule_for_ticket(
     event: Event,
 ) -> float:
     """Gets the pricing rule that applies to the ticket capacity"""
-    pricing_group = get_pricing_group_for_ticket(event)
+    pricing_group = event.team.pricing_rule_group
     return get_pricing_rule_for_capacity(pricing_group, event.capacity)
 
 
@@ -87,10 +83,13 @@ def set_event_price(event: Event):
 
 def get_event_pending_payment_value(event: Event):
     """Returns the pending payment value of a ticket gate."""
-    effective_payments_value = Decimal(
-        get_effective_payments(event.payments).aggregate(Sum("value"))["value__sum"] or 0
+    effective_payments_value = get_effective_payments(event.payments).aggregate(
+        Sum("value")
+    )["value__sum"] or Money(0, "USD")
+
+    return max(
+        (event.price or Money(0, "USD")) - effective_payments_value, Money(0, "USD")
     )
-    return max((event.price or 0) - effective_payments_value, 0)
 
 
 def get_effective_payments(
@@ -123,27 +122,3 @@ def issue_payment(event: Event, stripe_checkout_session_id: str) -> EventStripeP
     )
     payment.save()
     return payment
-
-
-def fulfill_payment(payment: EventStripePayment):
-    """Fulfills a payment for a ticket gate."""
-    payment.status = "SUCCESS"
-    payment.save()
-
-
-def publish_event(event: Event, publish_date: datetime = None):
-    scheduled = False
-
-    if publish_date:
-        event.publish_date = publish_date
-        scheduled = True
-    else:
-        event.publish_date = datetime.now()
-
-    event.save()
-    return scheduled
-
-
-def unpublish_event(event: Event):
-    event.publish_date = None
-    event.save()

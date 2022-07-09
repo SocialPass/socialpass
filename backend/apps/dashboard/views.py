@@ -416,7 +416,6 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         form.instance.user = self.request.user
 
         # set success url based on checkout requested
-        print(form.cleaned_data["checkout_requested"])
         if form.cleaned_data["checkout_requested"] is True:
             self._success_url = "ticketgate_checkout"
         else:
@@ -515,13 +514,12 @@ class EventCheckout(TeamContextMixin, TemplateView):
             line_items=[
                 {
                     "price_data": {
-                        "currency": "usd",
+                        "currency": event.price.currency,
                         "product_data": {
                             "name": event.title,
                         },
-                        "unit_amount": int(
-                            event.price * 100
-                        ),  # amount unit is in cent of dollars
+                        # TODO: support multiple currencies
+                        "unit_amount": int(event.price.amount * 100),
                     },
                     "quantity": 1,
                 }

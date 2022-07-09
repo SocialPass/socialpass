@@ -87,6 +87,23 @@ class EventForm(forms.ModelForm):
     - price is updated when capacity is changed.
     """
 
+    class Meta:
+        fields = optional_fields + required_fields
+        model = Event
+
+        widgets = {
+            "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
+            "organizer": forms.TextInput(
+                attrs={"placeholder": "Name of Brand or Community organizing the event"}
+            ),
+            "description": forms.Textarea(
+                attrs={"placeholder": "A short description of your event", "rows": 3}
+            ),
+            "location": forms.HiddenInput(),
+            "requirements": forms.HiddenInput(),
+            "timezone_offset": forms.HiddenInput(),
+        }
+
     start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             format="%Y-%m-%dT%H:%M",
@@ -117,22 +134,13 @@ class EventForm(forms.ModelForm):
         label="...", widget=forms.HiddenInput(), required=False, initial=False
     )
 
-    class Meta:
-        fields = optional_fields + required_fields
-        model = Event
-
-        widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
-            "organizer": forms.TextInput(
-                attrs={"placeholder": "Name of Brand or Community organizing the event"}
-            ),
-            "description": forms.Textarea(
-                attrs={"placeholder": "A short description of your event", "rows": 3}
-            ),
-            "location": forms.HiddenInput(),
-            "requirements": forms.HiddenInput(),
-            "timezone_offset": forms.HiddenInput(),
-        }
+    def save(self, commit: bool = ...) -> Event:
+        """
+        save method sets Event price after save
+        """
+        obj = super().save(commit)
+        services.set_event_price(obj)
+        return obj
 
     def clean(self):
         """

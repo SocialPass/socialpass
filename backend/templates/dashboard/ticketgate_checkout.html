@@ -149,8 +149,8 @@
       Review your event below before continuing to checkout
       </p>
       <div>
-        <p class="mb-0">Event Ticketing Costs: <strong>${{event.price}}</strong></p>
-        <small>({{event.capacity}} tickets x ${{event.pricing_rule.price_per_ticket}})</small>
+        <p class="mb-0">Event Ticketing Costs: <strong>{{event.price}}</strong></p>
+        <small>({{event.capacity}} tickets x {{event.pricing_rule.price_per_ticket}})</small>
         <form method="post" class="mt-10">
           {% csrf_token %}
           <input type="submit" class="btn btn-lg btn-primary m-0" value="Procceed to Checkout" />

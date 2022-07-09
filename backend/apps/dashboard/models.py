@@ -8,6 +8,7 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from djmoney.models.fields import MoneyField
 from invitations import signals
 from invitations.adapters import get_invitations_adapter
 from invitations.base_invitation import AbstractBaseInvitation
@@ -138,8 +139,8 @@ class PricingRule(DBModel):
 
     min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
     max_capacity = models.IntegerField(null=True, blank=True)
-    price_per_ticket = models.DecimalField(
-        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10
+    price_per_ticket = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="USD", null=True
     )
     active = models.BooleanField(default=True)
     group = models.ForeignKey(
@@ -195,8 +196,8 @@ class EventStripePayment(DBModel):
     event = models.ForeignKey(
         "root.Event", on_delete=models.RESTRICT, related_name="payments"
     )
-    value = models.DecimalField(
-        validators=[MinValueValidator(0)], decimal_places=2, max_digits=10
+    value = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="USD", null=True
     )
     status = models.CharField(
         choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"

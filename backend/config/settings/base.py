@@ -91,6 +91,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "storages",
     "taggit",
+    "djmoney",
 ]
 
 LOCAL_APPS = [

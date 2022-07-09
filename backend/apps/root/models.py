@@ -14,6 +14,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django_fsm import FSMField, transition
+from djmoney.models.fields import MoneyField
 from pytz import utc
 from taggit.managers import TaggableManager
 
@@ -168,13 +169,8 @@ class Event(DBModel):
     )
 
     # Pricing Info
-    price = models.DecimalField(
-        validators=[MinValueValidator(0)],
-        decimal_places=2,
-        max_digits=10,
-        null=True,
-        blank=True,
-        default=None,
+    price = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="USD", null=True
     )
     pricing_rule = models.ForeignKey(
         PricingRule,

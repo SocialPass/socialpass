@@ -8,6 +8,8 @@
  * The above notice must be included in its entirety when this file is used.
  */
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
 :root {
     /* Font related (sizes, weights, family, etc.) */
 
@@ -138,7 +140,7 @@
 
     --text-color-on-primary-color-bg: var(--text-color-on-socialpass-blue-color-bg);
 
-    /* Primary colors */
+    /* Secondary colors */
 
     --secondary-color-hue: var(--socialpass-orange-color-hue);
     --secondary-color-saturation: var(--socialpass-orange-color-saturation);
@@ -323,4 +325,4 @@
 
 :root {
     --sticky-alerts-width: 34rem;
-};
+}

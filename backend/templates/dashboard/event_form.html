@@ -132,20 +132,12 @@
 
 					{% if form.non_field_errors %}
 						<div class="alert alert-danger" role="alert">
-							<ul class="invalid-feedback persistent">
-								{% for error in form.non_field_errors %}
-									<li>{{ error|escape }}</li>
-								{% endfor %}
-							</ul>
+							<p class="invalid-feedback persistent">Please complete the form below</p>
 						</div>
 					{% endif %}
 					{% if form.errors %}
 						<div class="alert alert-danger" role="alert">
-							<ul class="invalid-feedback persistent">
-								{% for error in form.errors %}
-									<li>{{ error|escape }}</li>
-								{% endfor %}
-							</ul>
+              <p class="invalid-feedback persistent">Please complete the form below</p>
 						</div>
 					{% endif %}
 
@@ -404,8 +396,8 @@
   }
 
   function saveAndContiue(){
-    document.getElementById("id_continue_requested").checked = true
-    document.getElementById("id_continue_requested").value = 'True'
+    document.getElementById("id_checkout_requested").checked = true
+    document.getElementById("id_checkout_requested").value = 'True'
     fillRequirementsAndSubmitForm();
   }
 </script>

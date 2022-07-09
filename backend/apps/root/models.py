@@ -13,6 +13,7 @@ from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django_fsm import FSMField, transition
 from pytz import utc
 from taggit.managers import TaggableManager
 
@@ -115,7 +116,7 @@ class Event(DBModel):
     objects = EventQuerySet.as_manager()
 
     # state
-    # state = fsm
+    state = FSMField(default=EventStatusEnum.DRAFT.value, protected=True)
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -186,29 +187,6 @@ class Event(DBModel):
     def __str__(self):
         return f"{self.team} - {self.title}"
 
-    def save(self, *args, **kwargs):
-        """
-        Adds the following functionalities:
-        - sets timezones based on timezone field for all datetimefields
-        """
-        if self.timezone_offset is not None:
-            timezone_aware_datetime_fields = ["start_date", "end_date", "publish_date"]
-
-            for field in timezone_aware_datetime_fields:
-                val = getattr(self, field)
-                if val is not None:
-                    setattr(
-                        self,
-                        field,
-                        val.replace(tzinfo=tzoffset(None, self.timezone_offset)),
-                    )
-
-        ret = super().save(*args, **kwargs)
-
-        TicketRedemptionKey.objects.get_or_create(event=self)
-
-        return ret
-
     @property
     def is_pending_checkout(self):
         print("pending checkout")
@@ -233,6 +211,19 @@ class Event(DBModel):
     @property
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.url_path}"
+
+    @transition(
+        field=state,
+        source=EventStatusEnum.DRAFT.value,
+        target=EventStatusEnum.PENDING_CHECKOUT.value,
+    )
+    def draft_to_pending_checkout(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+            - Creating ticket scanner key
+        """
+        TicketRedemptionKey.objects.get_or_create(event=self)
 
 
 class Ticket(DBModel):

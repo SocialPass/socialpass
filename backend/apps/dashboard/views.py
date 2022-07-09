@@ -367,12 +367,20 @@ class EventCreateView(TeamContextMixin, CreateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+
+        # set success url based on checkout requested
+        if form.cleaned_data["checkout_requested"] is True:
+            self._success_url = "ticketgate_checkout"
+        else:
+            messages.add_message(
+                self.request, messages.INFO, "Your draft has been saved"
+            )
+            self._success_url = "ticketgate_update"
         return super().form_valid(form)
 
     def get_success_url(self):
-        messages.add_message(self.request, messages.INFO, "Your draft has been saved")
         return reverse(
-            "ticketgate_update",
+            self._success_url,
             args=(
                 self.kwargs["team_pk"],
                 self.object.pk,
@@ -401,9 +409,26 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 
+    def form_valid(self, form, **kwargs):
+        # set user & team
+        context = self.get_context_data(**kwargs)
+        form.instance.team = context["current_team"]
+        form.instance.user = self.request.user
+
+        # set success url based on checkout requested
+        print(form.cleaned_data["checkout_requested"])
+        if form.cleaned_data["checkout_requested"] is True:
+            self._success_url = "ticketgate_checkout"
+        else:
+            messages.add_message(
+                self.request, messages.INFO, "Your draft has been saved"
+            )
+            self._success_url = "ticketgate_update"
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse(
-            "ticketgate_update",
+            self._success_url,
             args=(
                 self.kwargs["team_pk"],
                 self.object.pk,

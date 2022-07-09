@@ -35,9 +35,7 @@ STIPE_PAYMENT_STATUSES = (
 
 
 class EventStatusEnum(Enum):
-
     DRAFT = "Draft"
-    STAGED = "Staged"
     PENDING_CHECKOUT = "Pending Checkout"
     SCHEDULED = "Scheduled"
     PUBLISHED = "Published"

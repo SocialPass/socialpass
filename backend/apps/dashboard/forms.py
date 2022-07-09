@@ -74,7 +74,7 @@ optional_fields = [
     "cover_image",
     "publish_date",
     "timezone_offset",
-    "continue_requested",
+    "checkout_requested",
 ]
 
 
@@ -113,7 +113,7 @@ class EventForm(forms.ModelForm):
         widget=forms.RadioSelect(choices=EVENT_VISIBILITY),
         required=False,
     )
-    continue_requested = forms.BooleanField(
+    checkout_requested = forms.BooleanField(
         label="...", widget=forms.HiddenInput(), required=False, initial=False
     )
 
@@ -141,11 +141,11 @@ class EventForm(forms.ModelForm):
         data = super().clean()
         errors = {}
 
-        # first check for continue_requested
+        # first check for checkout_requested
         # loop over required fields
-        continue_requested = data.get("continue_requested", None)
-        print(continue_requested)
-        if continue_requested:
+        checkout_requested = data.get("checkout_requested", None)
+        print(checkout_requested)
+        if checkout_requested:
             # check field
             for i in required_fields:
                 field = data.get(i, None)

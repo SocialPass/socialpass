@@ -221,6 +221,18 @@ class Event(DBModel):
         """
         TicketRedemptionKey.objects.get_or_create(event=self)
 
+    @transition(
+        field=state,
+        source=EventStatusEnum.PENDING_CHECKOUT.value,
+        target=EventStatusEnum.DRAFT.value,
+    )
+    def pending_checkout_to_draft(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+        """
+        TicketRedemptionKey.objects.get_or_create(event=self)
+
 
 class Ticket(DBModel):
     """

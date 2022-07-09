@@ -152,7 +152,6 @@ class EventForm(forms.ModelForm):
         # first check for checkout_requested
         # loop over required fields
         checkout_requested = data.get("checkout_requested", None)
-        print(checkout_requested)
         if checkout_requested:
             # check field
             for i in required_fields:

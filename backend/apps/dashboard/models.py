@@ -36,6 +36,7 @@ class Team(DBModel):
         on_delete=models.CASCADE,
         default=get_default_pricing_rule_group,
     )
+    theme = models.JSONField(null=True)
 
     def __str__(self):
         """

@@ -376,14 +376,14 @@
         <div id="event-actions" class="mt-20 row">
           {% if event.state == 'Live' %}
           <div class="col pe-5">
-            <button onclick="saveAndContiue()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
+            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary">Save Changes</button>
           </div>
           {% else %}
           <div class="col pe-5">
-            <button onclick="saveAsDraft()" class="h-100 btn btn-block">Save Draft</button>
+            <button onclick="saveDraft()" class="h-100 btn btn-block">Save Draft</button>
           </div>
           <div class="col pe-5">
-            <button onclick="saveAndContiue()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
+            <button onclick="savePending()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
           </div>
           {% endif %}
         </div>
@@ -411,16 +411,25 @@
 </script>
 <script src="{% static 'js/blockchain_requirements.js' %}"></script>
 <script>
-  function saveAsDraft(){
+  function saveDraft(){
     document.getElementById("id_checkout_requested").checked = false
     document.getElementById("id_checkout_requested").value = 'False'
     fillRequirementsAndSubmitForm()
   }
 
-  function saveAndContiue(){
+  function savePending(){
     document.getElementById("id_checkout_requested").checked = true
     document.getElementById("id_checkout_requested").value = 'True'
     fillRequirementsAndSubmitForm();
+  }
+
+  function saveLive(){
+    let confirmed = confirm("These changes will go live immediately. Are you sure?");
+    if (confirmed){
+      document.getElementById("id_checkout_requested").checked = true
+      document.getElementById("id_checkout_requested").value = 'True'
+      fillRequirementsAndSubmitForm();
+    }
   }
 </script>
 <!-- Content card end -->

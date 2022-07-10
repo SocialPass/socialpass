@@ -6,6 +6,7 @@ import stripe
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core import exceptions
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
@@ -355,7 +356,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
         return qs
 
 
-class EventCreateView(TeamContextMixin, CreateView):
+class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """
     Creates an Event
     """
@@ -379,8 +380,16 @@ class EventCreateView(TeamContextMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+    def get_success_message(self, *args, **kwargs):
+        if self.object.state == EventStatusEnum.DRAFT.value:
+            return "Your draft has been saved"
+        elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:
+            return "Your event is ready for checkout"
+        elif self.object.state == EventStatusEnum.LIVE.value:
+            return "Your changes have been saved"
 
-class EventUpdateView(TeamContextMixin, UpdateView):
+
+class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     """
     Updates an Event
     """
@@ -415,6 +424,15 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+    def get_success_message(self, *args, **kwargs):
+        print("get success message")
+        if self.object.state == EventStatusEnum.DRAFT.value:
+            return "Your draft has been saved"
+        elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:
+            return "Your event is ready for checkout"
+        elif self.object.state == EventStatusEnum.LIVE.value:
+            return "Your event is live"
+
 
 class EventCheckout(TeamContextMixin, TemplateView):
     """
@@ -442,9 +460,6 @@ class EventCheckout(TeamContextMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""
         event = self.get_object()
-        if event.state == EventStatusEnum.PENDING_CHECKOUT.value:
-            messages.add_message(request, messages.INFO, "Event is ready for checkout")
-
         if event.state == EventStatusEnum.LIVE.value:
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
@@ -456,6 +471,13 @@ class EventCheckout(TeamContextMixin, TemplateView):
     def post(self, request, *, team_pk=None, pk=None):
         """Issue payment and redirect to stripe checkout"""
         event = self.get_object()
+        # handle zero-cost event
+        # todo: should be handled at state level, but also be explicit?
+        if int(event.price.amount * 100) == 0:
+            event.transition_live()
+            event.save()
+            messages.add_message(request, messages.SUCCESS, "Your event is live")
+            return redirect(reverse("event_detail", args=(team_pk, pk)))
 
         issued_payment = services.get_in_progress_payment(event)
         if issued_payment:

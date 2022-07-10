@@ -15,13 +15,12 @@ def get_sidebar_active_status(context, key):
             "event_update",
             "event_stats",
             "event_price_estimator",
-            "event_checkout",
             "event_checkout_success_callback",
             "event_checkout_failure_callback",
         ]:
             return "active"
     elif key == "drafts":
-        if url_name in ["event_drafts", "event_create"]:
+        if url_name in ["event_drafts", "event_checkout", "event_create"]:
             return "active"
     elif key == "team-details":
         if url_name in ["team_detail", "team_update"]:

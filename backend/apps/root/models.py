@@ -218,7 +218,11 @@ class Event(DBModel):
         else:
             return self.calculate_pricing_rule() * capacity
 
-    @transition(field=state, target=EventStatusEnum.DRAFT.value)
+    @transition(
+        field=state,
+        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
+        target=EventStatusEnum.DRAFT.value,
+    )
     def transition_draft(self):
         """
         This function handles state transition from draft to awaiting checkout
@@ -226,7 +230,11 @@ class Event(DBModel):
         """
         return
 
-    @transition(field=state, target=EventStatusEnum.PENDING_CHECKOUT.value)
+    @transition(
+        field=state,
+        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
+        target=EventStatusEnum.PENDING_CHECKOUT.value,
+    )
     def transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout

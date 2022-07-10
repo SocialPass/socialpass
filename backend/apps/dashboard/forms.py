@@ -153,6 +153,11 @@ class EventForm(forms.ModelForm):
 
         # check for errors
         if not errors:
+            # handle state transitions based on checkout_requested
+            if checkout_requested:
+                self.instance.transition_pending_checkout()
+            else:
+                self.instance.transition_draft()
             return data
         else:
             raise forms.ValidationError(errors)

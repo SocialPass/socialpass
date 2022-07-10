@@ -187,10 +187,9 @@ class Event(DBModel):
 
     @transition(
         field=state,
-        source=EventStatusEnum.DRAFT.value,
         target=EventStatusEnum.PENDING_CHECKOUT.value,
     )
-    def draft_to_pending_checkout(self):
+    def transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
@@ -200,10 +199,9 @@ class Event(DBModel):
 
     @transition(
         field=state,
-        source=EventStatusEnum.PENDING_CHECKOUT.value,
         target=EventStatusEnum.DRAFT.value,
     )
-    def pending_checkout_to_draft(self):
+    def transition_draft(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include

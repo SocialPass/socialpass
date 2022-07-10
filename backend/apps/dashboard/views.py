@@ -23,7 +23,12 @@ from invitations.views import AcceptInvite
 from apps.dashboard import services
 from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
 from apps.dashboard.models import EventStripePayment, Membership, Team
-from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
+from apps.root.model_field_choices import (
+    ASSET_TYPES,
+    BLOCKCHAINS,
+    CHAIN_IDS,
+    EventStatusEnum,
+)
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.models import Event, Ticket
 
@@ -461,9 +466,10 @@ class EventCheckout(TeamContextMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""
         event = self.get_object()
+        if event.state == EventStatusEnum.PENDING_CHECKOUT.value:
+            messages.add_message(request, messages.INFO, "Event is ready for checkout")
 
-        if services.get_event_pending_payment_value(event) == 0:
-            # Payment was already done.
+        if event.state == EventStatusEnum.LIVE:
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
             )

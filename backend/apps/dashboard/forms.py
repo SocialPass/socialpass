@@ -6,15 +6,11 @@ from taggit.forms import TagField
 
 from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY
+from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
 from apps.root.models import Event
 
 
 class CustomInviteForm(InviteForm):
-    """
-    Custom invite form subclassing django-invitations
-    """
-
     def validate_invitation(self, email):
         """
         sub-classed validation to remove check for active user
@@ -28,10 +24,6 @@ class CustomInviteForm(InviteForm):
 
 
 class TeamForm(forms.ModelForm):
-    """
-    Allows team information to be updated.
-    """
-
     class Meta:
         model = Team
         fields = ["name", "description", "image"]
@@ -73,20 +65,11 @@ optional_fields = [
     "timezone_offset",
     "cover_image",
     "publish_date",
-    "timezone_offset",
     "checkout_requested",
 ]
 
 
 class EventForm(forms.ModelForm):
-    """
-    Allows ticketed event information to be updated.
-
-    Features:
-    - capacity is disabled if there is a payment in process.
-    - price is updated when capacity is changed.
-    """
-
     class Meta:
         fields = optional_fields + required_fields
         model = Event
@@ -134,6 +117,11 @@ class EventForm(forms.ModelForm):
         label="...", widget=forms.HiddenInput(), required=False, initial=False
     )
 
+
+class EventDraftForm(EventForm):
+    class Meta(EventForm.Meta):
+        pass
+
     def clean(self):
         """
         Clean method for dynamic form field requirement
@@ -153,11 +141,47 @@ class EventForm(forms.ModelForm):
 
         # check for errors
         if not errors:
-            # handle state transitions based on checkout_requested
+            # handle state transitions
+            # based on current checkout_requested
             if checkout_requested:
                 self.instance.transition_pending_checkout()
             else:
                 self.instance.transition_draft()
             return data
         else:
-            raise forms.ValidationError(errors)
+            return errors
+
+
+class EventPendingCheckoutForm(EventDraftForm):
+    class Meta(EventDraftForm.Meta):
+        pass
+
+
+class EventLiveForm(EventForm):
+    exclude = ["capacity"]
+
+    class Meta(EventForm.Meta):
+        pass
+
+    def clean(self):
+        """
+        Clean method for dynamic form field requirement
+        """
+        data = super().clean()
+        errors = {}
+
+        # first check for checkout_requested
+        # loop over required fields
+        checkout_requested = data.get("checkout_requested", None)
+        if checkout_requested:
+            # check field
+            for i in required_fields:
+                field = data.get(i, None)
+                if not field and field not in self.exclude:
+                    errors[i] = "This field is required"
+
+        # check for errors
+        if not errors:
+            return data
+        else:
+            return errors

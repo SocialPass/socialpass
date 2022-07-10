@@ -21,7 +21,13 @@ from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite
 
 from apps.dashboard import services
-from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
+from apps.dashboard.forms import (
+    CustomInviteForm,
+    EventDraftForm,
+    EventLiveForm,
+    EventPendingCheckoutForm,
+    TeamForm,
+)
 from apps.dashboard.models import EventStripePayment, Membership, Team
 from apps.root.model_field_choices import (
     ASSET_TYPES,
@@ -355,7 +361,7 @@ class EventCreateView(TeamContextMixin, CreateView):
     """
 
     model = Event
-    form_class = EventForm
+    form_class = EventDraftForm
     template_name = "dashboard/event_form.html"
 
     def get_context_data(self, **kwargs):
@@ -368,29 +374,10 @@ class EventCreateView(TeamContextMixin, CreateView):
         return context
 
     def form_valid(self, form, **kwargs):
-        # set user & team
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
-
-        # set success url based on checkout requested
-        if form.cleaned_data["checkout_requested"] is True:
-            self._success_url = "event_checkout"
-        else:
-            messages.add_message(
-                self.request, messages.INFO, "Your draft has been saved"
-            )
-            self._success_url = "event_update"
         return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse(
-            self._success_url,
-            args=(
-                self.kwargs["team_pk"],
-                self.object.pk,
-            ),
-        )
 
 
 class EventUpdateView(TeamContextMixin, UpdateView):
@@ -399,10 +386,18 @@ class EventUpdateView(TeamContextMixin, UpdateView):
     """
 
     model = Event
-    form_class = EventForm
     slug_field = "pk"
     slug_url_kwarg = "pk"
     template_name = "dashboard/event_form.html"
+
+    def get_form_class(self):
+        """get form class based on event state"""
+        if self.object.state == EventStatusEnum.DRAFT.value:
+            return EventDraftForm
+        elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:
+            return EventPendingCheckoutForm
+        elif self.object.state == EventStatusEnum.LIVE.value:
+            return EventLiveForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -415,29 +410,10 @@ class EventUpdateView(TeamContextMixin, UpdateView):
         return context
 
     def form_valid(self, form, **kwargs):
-        # set user & team
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
-
-        # set success url based on checkout requested
-        if form.cleaned_data["checkout_requested"] is True:
-            self._success_url = "event_checkout"
-        else:
-            messages.add_message(
-                self.request, messages.INFO, "Your draft has been saved"
-            )
-            self._success_url = "event_update"
         return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse(
-            self._success_url,
-            args=(
-                self.kwargs["team_pk"],
-                self.object.pk,
-            ),
-        )
 
 
 class EventCheckout(TeamContextMixin, TemplateView):
@@ -469,7 +445,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         if event.state == EventStatusEnum.PENDING_CHECKOUT.value:
             messages.add_message(request, messages.INFO, "Event is ready for checkout")
 
-        if event.state == EventStatusEnum.LIVE:
+        if event.state == EventStatusEnum.LIVE.value:
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
             )

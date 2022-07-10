@@ -330,9 +330,11 @@
 						<hr />
 
 						<!-- Capacity start -->
+            {% if form.capacity %}
 						{% with input=form.capacity required="required" %}
 							{% include 'components/forms_inputs/input.html' %}
 						{% endwith %}
+            {% endif %}
 						<!-- Capacity end -->
 
 						<!-- Limit Per Person start -->
@@ -372,12 +374,18 @@
           </a>
         </div>
         <div id="event-actions" class="mt-20 row">
-          <div class="col-6 pe-5">
-            <button onclick="saveAsDraft()" class="h-100 btn btn-block">Save Draft</button>
-          </div>
-          <div class="col-6 pe-5">
+          {% if event.state == 'Live' %}
+          <div class="col pe-5">
             <button onclick="saveAndContiue()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
           </div>
+          {% else %}
+          <div class="col pe-5">
+            <button onclick="saveAsDraft()" class="h-100 btn btn-block">Save Draft</button>
+          </div>
+          <div class="col pe-5">
+            <button onclick="saveAndContiue()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>

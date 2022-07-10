@@ -165,25 +165,43 @@ class Event(DBModel):
     def __str__(self):
         return f"{self.team} - {self.title}"
 
-    def calculate_pricing_rule(self):
+    def calculate_pricing_rule(self, capacity=None):
         """
-        Returns calculated pricing rule baesd on capacity
+        Returns calculated pricing rule based on capacity
         """
+        # First check for capacity arg
+        # If one isn't passed, used self.capacity
+        if not capacity:
+            capacity = self.capacity
+
         pricing_group = self.team.pricing_rule_group
         pricing_rules = pricing_group.active_rules.filter(active=True)
         pricing_rule_ranges = pricing_rules.order_by("min_capacity")
         for pricing_rule in pricing_rule_ranges:
             if (
-                self.capacity >= pricing_rule.min_capacity
-                and self.capacity <= pricing_rule.safe_max_capacity
+                capacity >= pricing_rule.min_capacity
+                and capacity <= pricing_rule.safe_max_capacity
             ):
                 return pricing_rule
 
-    def calculate_price(self):
+    def calculate_price(self, capacity=None):
         """
-        Returns calculated pricing rule based on capacity
+        Returns calculated pricing based on capacity
         """
-        return self.pricing_rule.price_per_ticket * self.capacity
+        # First check for capacity arg
+        # If one isn't passed, used self.capacity
+        if not capacity:
+            capacity = self.capacity
+
+        # Pricing rule on event exists
+        # Use this rule
+        if self.pricing_rule:
+            return self.pricing_rule.price_per_ticket * capacity
+
+        # No pricing rule on event yet
+        # Use calculate_pricing_rule
+        else:
+            return self.calculate_pricing_rule() * capacity
 
     @transition(field=state, target=EventStatusEnum.DRAFT.value)
     def transition_draft(self):
@@ -231,7 +249,7 @@ class Event(DBModel):
 
         # Check price matches expected price
         # Update if not
-        expected_price = self.calculate_price()
+        expected_price, pricing_rule = self.calculate_price()
         if expected_price != self._price:
             to_save = True
             self._price = expected_price

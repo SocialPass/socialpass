@@ -688,5 +688,8 @@ class PricingCalculator(TeamContextMixin, View):
             )
 
         return JsonResponse(
-            {"price_per_ticket": price_per_ticket, "price": price_per_ticket * capacity}
+            {
+                "price_per_ticket": price_per_ticket.amount,
+                "price": price_per_ticket.amount * capacity,
+            }
         )

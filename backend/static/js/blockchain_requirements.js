@@ -227,11 +227,30 @@ const formatter = new Intl.NumberFormat('en-US', {
 	minimumFractionDigits: 2
 })
 
-document.getElementById('id_capacity').addEventListener('change', function() {
+window.addEventListener('load', function() {
+	console.log('load');
 	var capacity = document.getElementById('id_capacity').value;
-	fetch("{% url 'event_price_estimator' view.kwargs.team_pk %}?capacity=" + capacity).then(function(response) {
+	fetch(priceEstimatorUrl + capacity).then(function(response) {
 		return response.json();
 	}).then(function(data) {
+		console.log(data);
+		document.getElementById('price-placeholder').style.display = 'none';
+		document.getElementById('price-calc').style.display = 'block';
+
+		document.getElementById('price-calc-capacity').innerHTML = capacity;
+		document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
+		document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
+
+	});
+})
+
+
+document.getElementById('id_capacity').addEventListener('change', function() {
+	var capacity = document.getElementById('id_capacity').value;
+	fetch(priceEstimatorUrl + capacity).then(function(response) {
+		return response.json();
+	}).then(function(data) {
+		console.log(data);
 		document.getElementById('price-placeholder').style.display = 'none';
 		document.getElementById('price-calc').style.display = 'block';
 

@@ -70,27 +70,21 @@
               <td class="fs-base-n2">{{ event.start_date }}</td>
               <td class="fs-base-n2">{{ event.location }}</td>
               <td class="align-middle px-4">
-                {% if event.state == "Draft" or event.state == "Staged" %}
-                  <a class="btn btn-sm btn-primary-outline" href="{% url 'event_update' current_team.public_id event.pk %}">
-                    Edit
-                  </a>
-                {% elif event.state == "Pending Checkout" %}
-                  <a class="btn btn-sm btn-primary" href="{% url 'event_checkout' current_team.public_id event.pk %}">
-                    Checkout
-                  </a>
-                {% else %}
-                <div class="d-flex flex-row-reverse justify-content-between">
-                  <a class="btn btn-sm btn-primary-outline" href="{% url 'event_update' current_team.public_id event.pk %}">
+                <div class="d-flex flex-row justify-content-between">
+                  <a class="btn btn-sm col btn" href="{% url 'event_detail' current_team.public_id event.pk %}">
                   Edit
                   </a>
-                  <a class="btn btn-sm btn-primary" href="{% url 'event_stats' current_team.public_id event.pk %}">
+                  {% if event.state == "Live" %}
+                  <a class="btn btn-sm col btn-primary" href="{% url 'event_stats' current_team.public_id event.pk %}">
                   Stats
                   </a>
-                  <a class="btn btn-sm btn-primary" href="{% url 'event_detail' current_team.public_id event.pk %}">
-                  Details
+                  {% endif %}
+                  {% if event.state == "Ready for Checkout" %}
+                  <a class="btn btn-sm col btn-primary" href="{% url 'event_checkout' current_team.public_id event.pk %}">
+                  Checkout
                   </a>
+                  {% endif %}
                   </div>
-                {% endif %}
               </td>
               </tr>
             </tr>

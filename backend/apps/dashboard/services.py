@@ -66,24 +66,6 @@ def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = Non
     return pricing_rule.price_per_ticket
 
 
-def get_event_pending_payment_value(event: Event):
-    """Returns the pending payment value of a event."""
-    effective_payments_value = get_effective_payments(event.payments).aggregate(
-        Sum("value")
-    )["value__sum"] or Money(0, "USD")
-
-    return max(
-        (event.price or Money(0, "USD")) - effective_payments_value, Money(0, "USD")
-    )
-
-
-def get_effective_payments(
-    payments: EventStripePayment.objects,
-) -> EventStripePayment.objects:
-    """Returns all succeded payments for a event."""
-    return payments.filter(status="SUCCESS")
-
-
 def get_in_progress_payment(
     event: Event,
 ) -> EventStripePayment:

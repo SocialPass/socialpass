@@ -87,7 +87,7 @@ class RequireSuccesfulCheckoutMixin:
                 "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
             )
 
-        if services.get_event_pending_payment_value(event):
+        if event.state == EventStatusEnum.PENDING_CHECKOUT.value:
             return self.pending_checkout_behaviour()
 
         return super().dispatch(request, *args, **kwargs)
@@ -547,6 +547,8 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
+            payment.event.transition_live()
+            payment.event.save()
             message = "Event created and payment succeeded."
         else:
             payment.status = "PROCESSING"

@@ -76,10 +76,10 @@ class EventQuerySet(models.QuerySet):
     """
 
     def filter_inactive(self):
-        return self.filter(~models.Q(state=EventStatusEnum.LIVE))
+        return self.filter(~models.Q(state=EventStatusEnum.LIVE.value))
 
     def filter_active(self):
-        return self.filter(state=EventStatusEnum.LIVE)
+        return self.filter(state=EventStatusEnum.LIVE.value)
 
     def filter_published(self):
         return self.filter(publish_date__lte=datetime.now()).filter_active()
@@ -185,10 +185,15 @@ class Event(DBModel):
         """
         return self.pricing_rule.price_per_ticket * self.capacity
 
-    @transition(
-        field=state,
-        target=EventStatusEnum.PENDING_CHECKOUT.value,
-    )
+    @transition(field=state, target=EventStatusEnum.DRAFT.value)
+    def transition_draft(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+        """
+        return
+
+    @transition(field=state, target=EventStatusEnum.PENDING_CHECKOUT.value)
     def transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout
@@ -196,17 +201,16 @@ class Event(DBModel):
             - Creating ticket scanner key
         """
         TicketRedemptionKey.objects.get_or_create(event=self)
+        return
 
-    @transition(
-        field=state,
-        target=EventStatusEnum.DRAFT.value,
-    )
-    def transition_draft(self):
+    @transition(field=state, target=EventStatusEnum.LIVE.value)
+    def transition_live(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
         """
-        TicketRedemptionKey.objects.get_or_create(event=self)
+        print("transitioning live")
+        return
 
     @property
     def price(self):

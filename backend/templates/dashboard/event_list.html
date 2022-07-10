@@ -71,7 +71,7 @@
               <td class="fs-base-n2">{{ event.location }}</td>
               <td class="align-middle px-4">
                 <div class="d-flex flex-row justify-content-between">
-                  <a class="btn btn-sm col btn" href="{% url 'event_detail' current_team.public_id event.pk %}">
+                  <a class="btn btn-sm col btn" href="{% url 'event_update' current_team.public_id event.pk %}">
                   Edit
                   </a>
                   {% if event.state == "Live" %}

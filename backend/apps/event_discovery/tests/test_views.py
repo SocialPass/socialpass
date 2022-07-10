@@ -66,7 +66,6 @@ class EventDiscoveryTest(TestCase):
         self.event = Event.objects.create(**self.event_data)
 
         # Setup price
-        services.set_event_price(event=self.event)
         services.issue_payment(event=self.event, stripe_checkout_session_id="12345")
 
     def test_discovery_index(self):

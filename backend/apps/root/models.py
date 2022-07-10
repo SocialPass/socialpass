@@ -20,11 +20,10 @@ from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
 from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
+from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
+from apps.root.model_wrappers import DBModel
+from apps.root.validators import JSONSchemaValidator
 from config.storages import PrivateTicketStorage
-
-from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
-from .model_wrappers import DBModel
-from .validators import JSONSchemaValidator
 
 
 class User(AbstractUser):
@@ -169,7 +168,7 @@ class Event(DBModel):
     )
 
     # Pricing Info
-    price = MoneyField(
+    _price = MoneyField(
         max_digits=19, decimal_places=4, default_currency="USD", null=True
     )
     pricing_rule = models.ForeignKey(
@@ -184,17 +183,17 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     @property
-    def is_pending_checkout(self):
-        print("pending checkout")
-        last_payment = self.payments.last()
-        if last_payment is None:
-            # Handle 0 cost event
-            if self.price == 0:
-                return False
-            else:
-                return True
-        print(last_payment, last_payment.status)
-        return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
+    def price(self):
+        return self._price
+
+    @price.getter
+    def price(self):
+        expected_price = self.pricing_rule.price_per_ticket * self.capacity
+        if expected_price != self._price:
+            self._price = expected_price
+            self.save()
+        else:
+            return self._price
 
     @property
     def url_path(self):

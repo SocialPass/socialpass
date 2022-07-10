@@ -134,14 +134,6 @@ class EventForm(forms.ModelForm):
         label="...", widget=forms.HiddenInput(), required=False, initial=False
     )
 
-    def save(self, commit: bool = ...) -> Event:
-        """
-        save method sets Event price after save
-        """
-        obj = super().save(commit)
-        services.set_event_price(obj)
-        return obj
-
     def clean(self):
         """
         Clean method for dynamic form field requirement

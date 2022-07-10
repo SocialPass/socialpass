@@ -74,13 +74,6 @@ def get_pricing_rule_for_ticket(
     return get_pricing_rule_for_capacity(pricing_group, event.capacity)
 
 
-def set_event_price(event: Event):
-    """Sets the price of a ticket based on its capacity."""
-    event.pricing_rule = get_pricing_rule_for_ticket(event)
-    event.price = event.pricing_rule.price_per_ticket * event.capacity
-    event.save()
-
-
 def get_event_pending_payment_value(event: Event):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = get_effective_payments(event.payments).aggregate(

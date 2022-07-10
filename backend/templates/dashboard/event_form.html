@@ -412,6 +412,8 @@
 <script src="{% static 'js/blockchain_requirements.js' %}"></script>
 <script>
   function saveAsDraft(){
+    document.getElementById("id_checkout_requested").checked = false
+    document.getElementById("id_checkout_requested").value = 'False'
     fillRequirementsAndSubmitForm()
   }
 

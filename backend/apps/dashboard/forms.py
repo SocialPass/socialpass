@@ -149,7 +149,7 @@ class EventDraftForm(EventForm):
                 self.instance.transition_draft()
             return data
         else:
-            return errors
+            raise forms.ValidationError(errors)
 
 
 class EventPendingCheckoutForm(EventDraftForm):
@@ -184,4 +184,4 @@ class EventLiveForm(EventForm):
         if not errors:
             return data
         else:
-            return errors
+            raise forms.ValidationError(errors)

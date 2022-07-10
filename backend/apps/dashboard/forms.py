@@ -158,10 +158,8 @@ class EventPendingCheckoutForm(EventDraftForm):
 
 
 class EventLiveForm(EventForm):
-    exclude = ["capacity"]
-
     class Meta(EventForm.Meta):
-        pass
+        exclude = ["capacity"]
 
     def clean(self):
         """
@@ -177,7 +175,7 @@ class EventLiveForm(EventForm):
             # check field
             for i in required_fields:
                 field = data.get(i, None)
-                if not field and field not in self.exclude:
+                if not field and i not in EventLiveForm.Meta.exclude:
                     errors[i] = "This field is required"
 
         # check for errors

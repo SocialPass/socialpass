@@ -431,7 +431,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:
             return "Your event is ready for checkout"
         elif self.object.state == EventStatusEnum.LIVE.value:
-            return "Your event is live"
+            return "Your changes have been saved"
 
 
 class EventCheckout(TeamContextMixin, TemplateView):
@@ -476,7 +476,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         if int(event.price.amount * 100) == 0:
             event.transition_live()
             event.save()
-            messages.add_message(request, messages.SUCCESS, "Your event is live")
+            messages.add_message(request, messages.SUCCESS, "Your event is live!")
             return redirect(reverse("event_detail", args=(team_pk, pk)))
 
         issued_payment = services.get_in_progress_payment(event)

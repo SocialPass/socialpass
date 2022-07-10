@@ -248,7 +248,7 @@
 :root {
     --navbar-height: 4.8rem;
 
-    --navbar-text-color: hsla(var(--white-color-hsl), 0.75);
+    --navbar-text-color: hsla(var(--white-color-hsl), 0.85);
     --navbar-bg-color: var(--primary-color-dim);
     --navbar-border-color: transparent;
 }
@@ -264,7 +264,7 @@
     --sidebar-padding: 0;
     --sidebar-border-width: 0;
 
-    --sidebar-text-color: hsla(var(--white-color-hsl), 0.75);
+    --sidebar-text-color: hsla(var(--white-color-hsl), 0.85);
     --sidebar-bg-color: var(--primary-color);
     --sidebar-border-color: hsla(var(--white-color-hsl), 0.15);
 

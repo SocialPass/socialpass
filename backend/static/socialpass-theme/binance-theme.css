@@ -53,8 +53,8 @@
     --binance-yellow-color-lightness: 50%;
     --binance-yellow-color-lightness-step-up-1: 60%;
     --binance-yellow-color-lightness-step-up-2: 70%;
-    --binance-yellow-color-lightness-step-down-1: 45%;
-    --binance-yellow-color-lightness-step-down-2: 40%;
+    --binance-yellow-color-lightness-step-down-1: 47.5%;
+    --binance-yellow-color-lightness-step-down-2: 45%;
 
     --binance-yellow-color-hsl: var(--binance-yellow-color-hue), var(--binance-yellow-color-saturation), var(--binance-yellow-color-lightness);
     --binance-yellow-color-light-hsl: var(--binance-yellow-color-hue), var(--binance-yellow-color-saturation), var(--binance-yellow-color-lightness-step-up-2);
@@ -206,13 +206,12 @@
 :root {
     --navbar-height: 4.8rem;
 
-    --navbar-text-color: hsla(var(--white-color-hsl), 0.75);
-    --navbar-bg-color: var(--primary-color-dim);
+    --navbar-text-color: hsla(var(--white-color-hsl), 0.85);
+    --navbar-bg-color: var(--darkgray-color-dim);
     --navbar-border-color: transparent;
 }
 
 .dark-mode {
-    --navbar-bg-color: hsl(var(--primary-color-hue), 40%, 10%);
     --navbar-border-color: hsla(var(--white-color-hsl), 0.15);
 }
 
@@ -222,8 +221,8 @@
     --sidebar-padding: 0;
     --sidebar-border-width: 0;
 
-    --sidebar-text-color: hsla(var(--white-color-hsl), 0.75);
-    --sidebar-bg-color: var(--primary-color);
+    --sidebar-text-color: hsla(var(--white-color-hsl), 0.85);
+    --sidebar-bg-color: var(--darkgray-color);
     --sidebar-border-color: hsla(var(--white-color-hsl), 0.15);
 
     --sidebar-content-padding: 0.4rem 2.5rem;
@@ -248,12 +247,6 @@
 
 .dark-mode {
     --sidebar-border-width: var(--base-border-width);
-
-    --sidebar-bg-color: hsl(var(--primary-color-hue), 40%, 15%);
-
-    /* Sidebar link */
-
-    --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.05);
 }
 
 /* Card */
@@ -283,4 +276,14 @@
 
 :root {
     --sticky-alerts-width: 34rem;
+}
+
+/* Links */
+
+:root {
+    --link-text-color: var(--blue-color);
+}
+
+.dark-mode {
+    --link-text-color: hsl(var(--blue-color-hue), var(--blue-color-saturation), var(--blue-color-lightness-step-up-1));
 }

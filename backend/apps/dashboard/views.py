@@ -73,7 +73,7 @@ class RequireSuccesfulCheckoutMixin:
         messages.add_message(
             self.request, messages.INFO, "Checkout is pending for this event."
         )
-        return redirect("ticketgate_checkout", **self.kwargs)
+        return redirect("event_checkout", **self.kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         event = self.get_object()
@@ -111,7 +111,7 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
             self.request, messages.SUCCESS, "Your team has been created successfully."
         )
         return reverse(
-            "ticketgate_list",
+            "event_list",
             args=(self.object.public_id,),
         )
 
@@ -131,7 +131,7 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
 
-                return reverse("ticketgate_list", args=(membership.team.public_id,))
+                return reverse("event_list", args=(membership.team.public_id,))
             else:
                 return reverse("team_create")
         else:
@@ -305,7 +305,7 @@ class EventListView(TeamContextMixin, ListView):
     paginate_by = 15
     ordering = ["-modified"]
     context_object_name = "events"
-    template_name = "dashboard/ticketgate_list.html"
+    template_name = "dashboard/event_list.html"
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -335,7 +335,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
 
     model = Event
     context_object_name = "event"
-    template_name = "dashboard/ticketgate_detail.html"
+    template_name = "dashboard/event_detail.html"
 
     def get_queryset(self):
         qs = Event.objects.filter(
@@ -370,12 +370,12 @@ class EventCreateView(TeamContextMixin, CreateView):
 
         # set success url based on checkout requested
         if form.cleaned_data["checkout_requested"] is True:
-            self._success_url = "ticketgate_checkout"
+            self._success_url = "event_checkout"
         else:
             messages.add_message(
                 self.request, messages.INFO, "Your draft has been saved"
             )
-            self._success_url = "ticketgate_update"
+            self._success_url = "event_update"
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -417,12 +417,12 @@ class EventUpdateView(TeamContextMixin, UpdateView):
 
         # set success url based on checkout requested
         if form.cleaned_data["checkout_requested"] is True:
-            self._success_url = "ticketgate_checkout"
+            self._success_url = "event_checkout"
         else:
             messages.add_message(
                 self.request, messages.INFO, "Your draft has been saved"
             )
-            self._success_url = "ticketgate_update"
+            self._success_url = "event_update"
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -442,7 +442,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
     Handles stripe integration.
     """
 
-    template_name: str = "dashboard/ticketgate_checkout.html"
+    template_name: str = "dashboard/event_checkout.html"
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
     def dispatch(self, request, *args, **kwargs):
@@ -467,7 +467,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
             )
-            return redirect("ticketgate_detail", **kwargs)
+            return redirect("event_detail", **kwargs)
 
         return super().get(request, *args, **kwargs)
 
@@ -493,13 +493,13 @@ class EventCheckout(TeamContextMixin, TemplateView):
         # build callback urls
         success_callback = (
             request.build_absolute_uri(
-                reverse("ticketgate_checkout_success_callback", args=(team_pk, pk))
+                reverse("event_checkout_success_callback", args=(team_pk, pk))
             )
             + "?session_id={CHECKOUT_SESSION_ID}"
         )
         failure_callback = (
             request.build_absolute_uri(
-                reverse("ticketgate_checkout_failure_callback", args=(team_pk, pk))
+                reverse("event_checkout_failure_callback", args=(team_pk, pk))
             )
             + "?session_id={CHECKOUT_SESSION_ID}"
         )
@@ -541,14 +541,14 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
-            message = "Ticket gate created and payment succeeded."
+            message = "Event created and payment succeeded."
         else:
             payment.status = "PROCESSING"
-            message = "Ticket gate created and payment is being processed."
+            message = "Event created and payment is being processed."
         payment.save()
 
         messages.add_message(request, messages.SUCCESS, message)
-        return redirect("ticketgate_detail", **kwargs)
+        return redirect("event_detail", **kwargs)
 
     def failure_stripe_callback(request, **kwargs):
         # update payment status
@@ -562,9 +562,9 @@ class EventCheckout(TeamContextMixin, TemplateView):
         messages.add_message(
             request,
             messages.ERROR,
-            "Ticket gate created but could not process payment.",
+            "Event created but could not process payment.",
         )
-        return redirect("ticketgate_checkout", **kwargs)
+        return redirect("event_checkout", **kwargs)
 
     @csrf_exempt
     def stripe_webhook(request):
@@ -626,7 +626,7 @@ class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListV
     model = Ticket
     paginate_by = 15
     context_object_name = "tickets"
-    template_name = "dashboard/ticketgate_stats.html"
+    template_name = "dashboard/event_stats.html"
 
     def get_context_data(self, **kwargs):
         """

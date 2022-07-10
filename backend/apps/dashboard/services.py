@@ -56,7 +56,7 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
 
 
 def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = None):
-    """Returns the estimated price of a ticket gate for a given team.
+    """Returns the estimated price of a event for a given team.
 
     The price is calculated by finding the first pricing rule that matches the
     capacity.
@@ -67,7 +67,7 @@ def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = Non
 
 
 def get_event_pending_payment_value(event: Event):
-    """Returns the pending payment value of a ticket gate."""
+    """Returns the pending payment value of a event."""
     effective_payments_value = get_effective_payments(event.payments).aggregate(
         Sum("value")
     )["value__sum"] or Money(0, "USD")
@@ -80,24 +80,24 @@ def get_event_pending_payment_value(event: Event):
 def get_effective_payments(
     payments: EventStripePayment.objects,
 ) -> EventStripePayment.objects:
-    """Returns all succeded payments for a ticket gate."""
+    """Returns all succeded payments for a event."""
     return payments.filter(status="SUCCESS")
 
 
 def get_in_progress_payment(
     event: Event,
 ) -> EventStripePayment:
-    """Returns the payment of a ticket gate which is either PENDING or PROCESSING."""
+    """Returns the payment of a event which is either PENDING or PROCESSING."""
     return event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 
 
 def issue_payment(event: Event, stripe_checkout_session_id: str) -> EventStripePayment:
     """
-    Issues a payment for a ticket gate.
-    Adds validation to ensure that there is only one payment in progress issued per ticket gate.
+    Issues a payment for a event.
+    Adds validation to ensure that there is only one payment in progress issued per event.
     """
     if get_in_progress_payment(event):
-        raise ValueError("There is already a pending payment for this ticket gate.")
+        raise ValueError("There is already a pending payment for this event.")
 
     payment = EventStripePayment(
         event=event,

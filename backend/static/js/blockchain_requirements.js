@@ -229,7 +229,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 document.getElementById('id_capacity').addEventListener('change', function() {
 	var capacity = document.getElementById('id_capacity').value;
-	fetch("{% url 'ticketgate_price_estimator' view.kwargs.team_pk %}?capacity=" + capacity).then(function(response) {
+	fetch("{% url 'event_price_estimator' view.kwargs.team_pk %}?capacity=" + capacity).then(function(response) {
 		return response.json();
 	}).then(function(data) {
 		document.getElementById('price-placeholder').style.display = 'none';

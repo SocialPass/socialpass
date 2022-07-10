@@ -66,7 +66,7 @@ class DashboardTest(TestCase):
 
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):
-            template_name = "dashboard/ticketgate_detail.html"
+            template_name = "dashboard/event_detail.html"
 
         # Test logged-in user
         kwargs = {"team_pk": self.team.public_id}
@@ -92,7 +92,7 @@ class DashboardTest(TestCase):
     def test_require_successful_checkout_mixin(self):
         class TestRequireSuccessView(views.RequireSuccesfulCheckoutMixin, DetailView):
             model = Event
-            template_name = "dashboard/ticketgate_detail.html"
+            template_name = "dashboard/event_detail.html"
 
         # Test logged-in user
         kwargs = {"team_pk": self.team.public_id, "pk": self.event.pk}
@@ -131,9 +131,7 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse("dashboard_redirect"), follow=True)
         self.assertRedirects(
             response,
-            expected_url=reverse(
-                "ticketgate_list", args=(self.membership.team.public_id,)
-            ),
+            expected_url=reverse("event_list", args=(self.membership.team.public_id,)),
         )
 
         # Test logged-out user
@@ -242,28 +240,24 @@ class DashboardTest(TestCase):
         )
         self.assertEqual(self.team.members.count(), 1)
 
-    def test_ticketgate_list(self):
+    def test_event_list(self):
         # Login User
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
         )
 
         # Test GET
-        response = self.client.get(
-            reverse("ticketgate_list", args=(self.team.public_id,))
-        )
+        response = self.client.get(reverse("event_list", args=(self.team.public_id,)))
         self.assertEqual(response.status_code, 200)
 
-    def test_ticketgate_create(self):
+    def test_event_create(self):
         # Login User
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
         )
 
         # Test GET
-        response = self.client.get(
-            reverse("ticketgate_create", args=(self.team.public_id,))
-        )
+        response = self.client.get(reverse("event_create", args=(self.team.public_id,)))
         self.assertEqual(response.status_code, 200)
 
         # TEST POST
@@ -281,14 +275,14 @@ class DashboardTest(TestCase):
         }
         data["_afr_uuid"] = response.context["afr_uuid_"]
         response = self.client.post(
-            reverse("ticketgate_create", args=(self.team.public_id,)),
+            reverse("event_create", args=(self.team.public_id,)),
             data=data,
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Event.objects.filter(title="Test Title 2").count(), 1)
 
-    def test_ticketgate_detail(self):
+    def test_event_detail(self):
         # Login User
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
@@ -296,7 +290,7 @@ class DashboardTest(TestCase):
 
         # Test GET (pending checkout)
         response = self.client.get(
-            reverse("ticketgate_detail", args=(self.team.public_id, self.event.pk))
+            reverse("event_detail", args=(self.team.public_id, self.event.pk))
         )
         self.assertEqual(response.status_code, 302)
 
@@ -305,11 +299,11 @@ class DashboardTest(TestCase):
         payment.status = "SUCCESS"
         payment.save()
         response = self.client.get(
-            reverse("ticketgate_stats", args=(self.team.public_id, self.event.pk))
+            reverse("event_stats", args=(self.team.public_id, self.event.pk))
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_ticketgate_update(self):
+    def test_event_update(self):
         # Login User
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
@@ -317,21 +311,21 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("ticketgate_update", args=(self.team.public_id, self.event.pk))
+            reverse("event_update", args=(self.team.public_id, self.event.pk))
         )
         self.assertEqual(response.status_code, 200)
 
         # TEST POST
         self.event_data["title"] = "Updated Title"
         response = self.client.post(
-            reverse("ticketgate_update", args=(self.team.public_id, self.event.pk)),
+            reverse("event_update", args=(self.team.public_id, self.event.pk)),
             data=self.event_data,
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Event.objects.filter(title="Updated Title").count(), 1)
 
-    def test_ticketgate_stats(self):
+    def test_event_stats(self):
         # Login User
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
@@ -339,7 +333,7 @@ class DashboardTest(TestCase):
 
         # Test GET (pending checkout)
         response = self.client.get(
-            reverse("ticketgate_stats", args=(self.team.public_id, self.event.pk))
+            reverse("event_stats", args=(self.team.public_id, self.event.pk))
         )
         self.assertEqual(response.status_code, 302)
 
@@ -348,29 +342,29 @@ class DashboardTest(TestCase):
         payment.status = "SUCCESS"
         payment.save()
         response = self.client.get(
-            reverse("ticketgate_stats", args=(self.team.public_id, self.event.pk))
+            reverse("event_stats", args=(self.team.public_id, self.event.pk))
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_ticketgate_price_estimator(self):
+    def test_event_price_estimator(self):
         # Login User
         self.assertTrue(
             self.client.login(username=self.username, password=self.password)
         )
 
         # Test GET
-        url = reverse("ticketgate_price_estimator", args=(self.team.public_id,))
+        url = reverse("event_price_estimator", args=(self.team.public_id,))
         url = f"{url}?capacity=100"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_ticketgate_checkout(self):
+    def test_event_checkout(self):
         return "Not yet implemented"
 
-    def test_ticketgate_checkout_success_callback(self):
+    def test_event_checkout_success_callback(self):
         return "Not yet implemented"
 
-    def test_ticketgate_checkout_failure_callback(self):
+    def test_event_checkout_failure_callback(self):
         return "Not yet implemented"
 
     def test_stripe_webhook(self):

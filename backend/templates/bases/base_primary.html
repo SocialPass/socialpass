@@ -202,7 +202,7 @@
 							</li>
 							{% for team in other_teams %}
 								<li>
-									<a href="{% url 'ticketgate_list' team.public_id %}" class="dropdown-item text-truncate">
+									<a href="{% url 'event_list' team.public_id %}" class="dropdown-item text-truncate">
 										{{ team.name }}
 									</a>
 								</li>
@@ -223,20 +223,20 @@
 			<div class="sidebar-menu">
 				<div class="position-relative">
 					<h6 class="sidebar-title fs-base-n2 text-on-primary">
-						Web3 Ticketing
+						Web3 Events
 					</h6>
-					<a href="{% url 'ticketgate_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
+					<a href="{% url 'event_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
 						<i class="fa-solid fa-plus"></i>
 						<span class="visually-hidden">Create Event</span>
 					</a>
 				</div>
-				<a href="{% url 'ticketgate_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
+				<a href="{% url 'event_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-ticket"></i>
 					</span>
 					<span class="ms-5">Events</span>
 				</a>
-				<a href="{% url 'ticketgate_drafts' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'drafts' %}">
+				<a href="{% url 'event_drafts' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'drafts' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-ticket-simple"></i>
 					</span>

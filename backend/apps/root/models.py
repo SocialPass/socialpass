@@ -182,18 +182,54 @@ class Event(DBModel):
     def __str__(self):
         return f"{self.team} - {self.title}"
 
+    def calculate_pricing_rule(self):
+        """
+        Returns calculated pricing rule baesd on capacity
+        """
+        pricing_group = self.team.pricing_rule_group
+        pricing_rules = pricing_group.active_rules.filter(active=True)
+        pricing_rule_ranges = pricing_rules.order_by("min_capacity")
+        for pricing_rule in pricing_rule_ranges:
+            if (
+                self.capacity >= pricing_rule.min_capacity
+                and self.capacity <= pricing_rule.safe_max_capacity
+            ):
+                return pricing_rule
+
+    def calculate_price(self):
+        """
+        Returns calculated pricing rule based on capacity
+        """
+        return self.pricing_rule.price_per_ticket * self.capacity
+
     @property
     def price(self):
         return self._price
 
     @price.getter
     def price(self):
-        expected_price = self.pricing_rule.price_per_ticket * self.capacity
+        # Side effects may occur
+        # Set to_save = True when they to do to be saved
+        to_save = False
+
+        # First check for pricing rule
+        # If one does not exist, set one
+        expected_pricing_rule = self.calculate_pricing_rule()
+        if expected_pricing_rule != self.pricing_rule:
+            to_save = True
+            self.pricing_rule = expected_pricing_rule
+
+        # Check price matches expected price
+        # Update if not
+        expected_price = self.calculate_price()
         if expected_price != self._price:
+            to_save = True
             self._price = expected_price
+
+        # Save and/or return
+        if to_save is True:
             self.save()
-        else:
-            return self._price
+        return self._price
 
     @property
     def url_path(self):

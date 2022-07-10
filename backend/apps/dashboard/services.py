@@ -66,14 +66,6 @@ def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = Non
     return pricing_rule.price_per_ticket
 
 
-def get_pricing_rule_for_ticket(
-    event: Event,
-) -> float:
-    """Gets the pricing rule that applies to the ticket capacity"""
-    pricing_group = event.team.pricing_rule_group
-    return get_pricing_rule_for_capacity(pricing_group, event.capacity)
-
-
 def get_event_pending_payment_value(event: Event):
     """Returns the pending payment value of a ticket gate."""
     effective_payments_value = get_effective_payments(event.payments).aggregate(

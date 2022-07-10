@@ -75,36 +75,20 @@ class EventQuerySet(models.QuerySet):
     Event model queryset manager
     """
 
-    def filter_wip(self):
-        return self.filter(publish_date__isnull=True)
+    def filter_inactive(self):
+        return self.filter(~models.Q(state=EventStatusEnum.LIVE))
 
-    def exclude_wip(self):
-        return self.filter(publish_date__isnull=False)
+    def filter_active(self):
+        return self.filter(state=EventStatusEnum.LIVE)
 
     def filter_published(self):
-        return self.filter(publish_date__lte=datetime.now())
+        return self.filter(publish_date__lte=datetime.now()).filter_active()
 
     def filter_scheduled(self):
-        return self.filter(publish_date__gt=datetime.now())
-
-    def filter_public(self):
-        return self.filter(visibility="PUBLIC")
+        return self.filter(publish_date__gt=datetime.now()).filter_active()
 
     def filter_featured(self):
-        return self.filter(is_featured=True)
-
-    def get_by_url_identifier(
-        self, public_id_or_custom_url_path: typing.Union[uuid.UUID, str]
-    ):
-        if not public_id_or_custom_url_path:
-            raise dj_exceptions.SuspiciousOperation("forbidden")
-
-        return self.filter(
-            models.Q(public_id=public_id_or_custom_url_path)
-            | models.Q(custom_url_path=public_id_or_custom_url_path)
-        ).first()
-        # first is here in case there are two independent events with colliding
-        # public_id and custom_url_path. This is impossible unless user messes up.
+        return self.filter(is_featured=True).filter_active()
 
 
 class Event(DBModel):
@@ -124,9 +108,8 @@ class Event(DBModel):
 
     # Publish info
     is_featured = models.BooleanField(default=False)
-    publish_date = models.DateTimeField(null=True, blank=True)
+    publish_date = models.DateTimeField(default=datetime.now, null=True, blank=True)
     visibility = models.CharField(max_length=50, choices=EVENT_VISIBILITY)
-    custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
@@ -202,6 +185,31 @@ class Event(DBModel):
         """
         return self.pricing_rule.price_per_ticket * self.capacity
 
+    @transition(
+        field=state,
+        source=EventStatusEnum.DRAFT.value,
+        target=EventStatusEnum.PENDING_CHECKOUT.value,
+    )
+    def draft_to_pending_checkout(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+            - Creating ticket scanner key
+        """
+        TicketRedemptionKey.objects.get_or_create(event=self)
+
+    @transition(
+        field=state,
+        source=EventStatusEnum.PENDING_CHECKOUT.value,
+        target=EventStatusEnum.DRAFT.value,
+    )
+    def pending_checkout_to_draft(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+        """
+        TicketRedemptionKey.objects.get_or_create(event=self)
+
     @property
     def price(self):
         return self._price
@@ -232,41 +240,12 @@ class Event(DBModel):
         return self._price
 
     @property
-    def url_path(self):
-        return self.custom_url_path or self.public_id
-
-    @property
     def discovery_url(self):
         return reverse("discovery:details", args=(self.public_id,))
 
     @property
     def checkout_portal_url(self):
-        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.url_path}"
-
-    @transition(
-        field=state,
-        source=EventStatusEnum.DRAFT.value,
-        target=EventStatusEnum.PENDING_CHECKOUT.value,
-    )
-    def draft_to_pending_checkout(self):
-        """
-        This function handles state transition from draft to awaiting checkout
-        Side effects include
-            - Creating ticket scanner key
-        """
-        TicketRedemptionKey.objects.get_or_create(event=self)
-
-    @transition(
-        field=state,
-        source=EventStatusEnum.PENDING_CHECKOUT.value,
-        target=EventStatusEnum.DRAFT.value,
-    )
-    def pending_checkout_to_draft(self):
-        """
-        This function handles state transition from draft to awaiting checkout
-        Side effects include
-        """
-        TicketRedemptionKey.objects.get_or_create(event=self)
+        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
 
 class Ticket(DBModel):

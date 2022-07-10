@@ -320,12 +320,12 @@ class EventListView(TeamContextMixin, ListView):
 
 class PublishedEventsListView(EventListView):
     def get_queryset(self):
-        return super().get_queryset().exclude_wip()
+        return super().get_queryset().filter_active()
 
 
 class WIPEventsListView(EventListView):
     def get_queryset(self):
-        return super().get_queryset().filter_wip()
+        return super().get_queryset().filter_inactive()
 
 
 class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailView):

@@ -121,6 +121,30 @@
     --secondary-color-very-dim: var(--binance-yellow-color-very-dim);
 
     --text-color-on-secondary-color-bg: var(--text-color-on-binance-yellow-color-bg);
+
+    /* Warning colors */
+
+    --warning-color-hue: var(--orange-color-hue);
+    --warning-color-saturation: var(--orange-color-saturation);
+    --warning-color-lightness: var(--orange-color-lightness);
+    --warning-color-lightness-step-up-1: var(--orange-color-lightness-step-up-1);
+    --warning-color-lightness-step-up-2: var(--orange-color-lightness-step-up-2);
+    --warning-color-lightness-step-down-1: var(--orange-color-lightness-step-down-1);
+    --warning-color-lightness-step-down-2: var(--orange-color-lightness-step-down-2);
+
+    --warning-color-hsl: var(--orange-color-hsl);
+    --warning-color-light-hsl: var(--orange-color-light-hsl);
+    --warning-color-very-light-hsl: var(--orange-color-very-light-hsl);
+    --warning-color-dim-hsl: var(--orange-color-dim-hsl);
+    --warning-color-very-dim-hsl: var(--orange-color-very-dim-hsl);
+
+    --warning-color: var(--orange-color);
+    --warning-color-light: var(--orange-color-light);
+    --warning-color-very-light: var(--orange-color-very-light);
+    --warning-color-dim: var(--orange-color-dim);
+    --warning-color-very-dim: var(--orange-color-very-dim);
+
+    --text-color-on-warning-color-bg: var(--text-color-on-orange-color-bg);
 }
 
 /* Lists */
@@ -286,4 +310,20 @@
 
 .dark-mode {
     --link-text-color: hsl(var(--blue-color-hue), var(--blue-color-saturation), var(--blue-color-lightness-step-up-1));
+}
+
+/* Form */
+
+:root {
+    /* Checked checkbox */
+
+    --checkbox-checked-bg-image: var(--checkbox-svg-black);
+
+    /* Checked radio */
+
+    --radio-checked-bg-image: var(--radio-svg-black);
+
+    /* Checked switch */
+
+    --switch-checked-bg-image: var(--switch-svg-black);
 }

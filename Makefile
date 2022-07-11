@@ -29,4 +29,4 @@ lint: ## Lint backend repo
 	(source venv/bin/activate; black .; isort .; flake8 .;)
 
 test: ## Test backend repo
-	docker-compose run web python backend/manage.py test
+	docker-compose run web sh -c "cd backend && python manage.py test"

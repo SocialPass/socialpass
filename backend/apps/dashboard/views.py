@@ -425,7 +425,6 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        print("get success message")
         if self.object.state == EventStatusEnum.DRAFT.value:
             return "Your draft has been saved"
         elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:

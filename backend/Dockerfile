@@ -10,11 +10,7 @@ COPY config/requirements/local.txt /code/local.txt
 COPY config/requirements/base.txt /code/base.txt
 
 RUN pip install --upgrade pip
-RUN apt-get update && apt-get install -y \
-    binutils gdal-bin git libproj-dev \
-    postgis postgresql-13-postgis-3
-RUN pip install -U setuptools pip \
-    && pip install -r local.txt
+RUN pip install -r local.txt
 
 # django setup
 COPY . /code

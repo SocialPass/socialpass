@@ -273,7 +273,6 @@ class DashboardTest(TestCase):
             "limit_per_person": 1,
             "requirements": [],
         }
-        data["_afr_uuid"] = response.context["afr_uuid_"]
         response = self.client.post(
             reverse("event_create", args=(self.team.public_id,)),
             data=data,

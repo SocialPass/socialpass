@@ -96,9 +96,9 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.avoid_view_resubmission",
-    "apps.dashboard.apps.DashboardConfig",
     "apps.event_discovery.apps.EventDiscoveryConfig",
     "apps.root.apps.RootConfig",
+    "apps.dashboard.apps.DashboardConfig",
     "apps.root.apps.OverrideInvitationsConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

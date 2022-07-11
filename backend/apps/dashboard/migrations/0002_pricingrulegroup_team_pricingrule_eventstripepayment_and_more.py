@@ -17,7 +17,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("root", "0003_remove_pricingrule_group_remove_team_members_and_more"),
         ("dashboard", "0001_initial"),
     ]
 

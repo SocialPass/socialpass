@@ -1,5 +1,5 @@
 import _backButton from "../static/images/back.svg";
-import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
+//import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
 
 export default function LargeHeaderContents() {
 

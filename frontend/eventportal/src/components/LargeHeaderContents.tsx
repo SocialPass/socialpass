@@ -9,13 +9,7 @@ export default function LargeHeaderContents() {
         {/*<img src={socialpassLogo} alt="SocialPass Logo" />*/}
       </div>
       <div className="team-info-img">
-        <img
-          src={"https://picsum.photos/200"}
-          alt="Team Image"
-          key={"https://picsum.photos/200"}
-        /* USED TO BE {retrieveJson && retrieveJson?.team?.image} */
-        /* TODO: GO BACK TO USING THE SET IMAGES WHEN BACKEND GETS FIXED */
-        />
+
       </div>
     </div>
   );

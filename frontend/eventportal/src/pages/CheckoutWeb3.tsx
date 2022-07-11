@@ -33,12 +33,12 @@ export const CheckoutWeb3 = () => {
 
   const [matches, setMatches] = useState(
     window.matchMedia("(min-width: 768px)").matches
-  )
+  );
 
   useEffect(() => {
     window
-    .matchMedia("(min-width: 768px)")
-    .addEventListener('change', e => setMatches( e.matches ));
+      .matchMedia("(min-width: 768px)")
+      .addEventListener("change", (e) => setMatches(e.matches));
   }, []);
 
   const ConnectWallet = () => {
@@ -52,22 +52,31 @@ export const CheckoutWeb3 = () => {
               ? `${ensName} (${accountHook.data.address})`
               : accountHook.data.address}
           </div>
-          <div className="col-span-1"> Connected to {connectHook?.activeConnector?.name}</div>
-          <button className="col-span-1 dc-btn fs-10" onClick={() => disconnectHook.disconnect()}>
+          <div className="col-span-1">
+            {" "}
+            Connected to {connectHook?.activeConnector?.name}
+          </div>
+          <button
+            className="col-span-1 dc-btn fs-10"
+            onClick={() => disconnectHook.disconnect()}
+          >
             Disconnect
           </button>
         </div>
       );
     }
     return (
-      <div className="wallets-selection">
+      <div className="wallets-selection wallets">
         {connectHook.connectors.map((x) => (
           <button
-            className={
-              selectedWallet === x
-                ? "fs-12 fw-bold card-active shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-                : "fs-12 btn-secondary border-0 card-disabled shadow-none d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-            }
+            // className={
+            //   selectedWallet === x
+            //     ? "fs-12 fw-bold card-active d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+            //     : "fs-12 fw-bold card-disabled d-flex flex-column align-items-center justify-content-around w-100 mt-3"
+            // }
+            className={`fs-12 fw-bold d-flex flex-column align-items-center justify-content-around w-100 mt-3 ${
+              selectedWallet === x ? "card-active" : "card-disabled"
+            }`}
             disabled={!x.ready}
             key={x.id}
             id={x.id}
@@ -76,7 +85,7 @@ export const CheckoutWeb3 = () => {
               setSelectedWallet(x);
             }}
           >
-            <Web3ConnectorImage selectedWallet={x} connector={x.name} />
+            <Web3ConnectorImage connector={x.name} />
             {x.name}
             {!x.ready && " (unsupported)"}
           </button>
@@ -184,12 +193,16 @@ export const CheckoutWeb3 = () => {
           </div>
         </div>
         <ConnectWallet />
-        {connectHook.error && (
-          <div>{connectHook.error?.message ?? "Failed to connect"}</div>
-        )}
-        {signHook.error && (
-          <div>{signHook.error?.message ?? "Failed to connect"}</div>
-        )}
+        <span>
+          {connectHook.error && (
+            <span>{connectHook.error?.message ?? "Failed to connect"}</span>
+          )}
+        </span>
+        <span>
+          {signHook.error && (
+            <span>{signHook.error?.message ?? "Failed to connect"}</span>
+          )}
+        </span>
       </div>
       <div className="bg-gray d-flex flex-column justify-start-center p-30">
         {/* If on desktop mode, append bg-gray-extend to document */}
@@ -197,10 +210,7 @@ export const CheckoutWeb3 = () => {
         <div className="d-flex flex-column align-items-start justify-start-center">
           <div className="d-flex align-items-center justify-content-center">
             <h3 className="fs-20">Summary &nbsp;</h3>
-            <a
-              onClick={handleNavigateBack}
-              className="text-edit fs-12 fw-bold"
-            >
+            <a onClick={handleNavigateBack} className="text-edit fs-12 fw-bold">
               Edit
             </a>
           </div>

@@ -9,31 +9,32 @@ export default function Header() {
 
   // Every URL change we rebuild the header if needed
   useEffect(() => {
-    makeHeader()
+    makeHeader();
   }, [location]);
 
-  var [headerState, setHeaderState] = useState('header')
+  var [headerState, setHeaderState] = useState("header");
 
   const makeHeader = () => {
     // We are checking for the string event on the URL to show the full header
     // And if the string is not found, we display the smaller, darker header
-    if (location.pathname.includes('event')) {
-      setHeaderState('header')
+    if (location.pathname.includes("event")) {
+      setHeaderState("header");
+    } else {
+      setHeaderState("small-header");
     }
-    else {
-      setHeaderState('small-header')
-    }
-  }
+  };
 
-  return (
-    (headerState === 'header') ? (
-      <header className={`${headerState} d-flex align-items-start justify-content-center`}>
-        <LargeHeaderContents/>
-      </header>
-    ) : (
-      <header className={`${headerState} d-flex align-items-start justify-content-center flex-row`}>
-        <SmallHeaderContents/>
-      </header>
-    )
-  )
+  return headerState === "header" ? (
+    <header
+      className={`${headerState} d-flex align-items-start justify-content-center`}
+    >
+      <LargeHeaderContents />
+    </header>
+  ) : (
+    <header
+      className={`${headerState} d-flex align-items-start justify-content-center flex-row`}
+    >
+      <SmallHeaderContents />
+    </header>
+  );
 }

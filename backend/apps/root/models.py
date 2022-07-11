@@ -77,19 +77,29 @@ class EventQuerySet(models.QuerySet):
     """
 
     def filter_inactive(self):
+        """
+        inactive events (not live)
+        """
         return self.filter(~models.Q(state=EventStatusEnum.LIVE.value))
 
     def filter_active(self):
+        """
+        active events (live)
+        """
         return self.filter(state=EventStatusEnum.LIVE.value)
 
-    def filter_published(self):
-        return self.filter(publish_date__lte=datetime.now()).filter_active()
-
-    def filter_scheduled(self):
-        return self.filter(publish_date__gt=datetime.now()).filter_active()
+    def filter_publicly_accessible(self):
+        """
+        public events (filter_active ++ visibility==PUBLIC)
+        In the future, should also check for published_date
+        """
+        return self.filter(visibility="PUBLIC").filter_active()
 
     def filter_featured(self):
-        return self.filter(is_featured=True).filter_active()
+        """
+        public, featured events (filter_publicly_accessible ++ featured=True)
+        """
+        return self.filter(is_featured=True).filter_publicly_accessible()
 
 
 class Event(DBModel):

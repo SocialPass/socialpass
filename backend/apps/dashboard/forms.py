@@ -58,8 +58,8 @@ required_fields = [
 optional_fields = [
     # 1. General info
     # basic info
-    "category",
-    "tags",
+    # "category",
+    # "tags",
     "visibility",
     "end_date",
     "timezone_offset",

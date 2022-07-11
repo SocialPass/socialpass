@@ -242,7 +242,6 @@ class Event(DBModel):
         Side effects include
             - Creating ticket scanner key
         """
-        TicketRedemptionKey.objects.get_or_create(event=self)
         return
 
     @transition(field=state, target=EventStatusEnum.LIVE.value)
@@ -251,7 +250,6 @@ class Event(DBModel):
         This function handles state transition from draft to awaiting checkout
         Side effects include
         """
-        print("transitioning live")
         return
 
     @property

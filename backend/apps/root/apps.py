@@ -7,6 +7,14 @@ class RootConfig(AppConfig):
     name = "apps.root"
     verbose_name = _("Root")
 
+    def ready(self):
+        try:
+            import apps.root.signals
+
+        except ImportError as e:
+            print("error,", e, "\n")
+            pass
+
 
 class OverrideInvitationsConfig(InvitationsConfig):
     default_auto_field = "django.db.models.AutoField"

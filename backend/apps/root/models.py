@@ -115,7 +115,7 @@ class Event(DBModel):
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     # Publish info
     is_featured = models.BooleanField(default=False)

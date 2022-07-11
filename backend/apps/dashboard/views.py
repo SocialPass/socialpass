@@ -434,6 +434,27 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
             return "Your changes have been saved"
 
 
+class EventDeleteView(TeamContextMixin, DeleteView):
+    """
+    Delete a team's event
+    """
+
+    model = Event
+    template_name = "dashboard/event_delete.html"
+
+    def get_object(self):
+        return Event.objects.get(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+        )
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
+        if self.object.state == EventStatusEnum.LIVE.value:
+            return reverse("event_list", args=(self.kwargs["team_pk"],))
+        else:
+            return reverse("event_drafts", args=(self.kwargs["team_pk"],))
+
+
 class EventCheckout(TeamContextMixin, TemplateView):
     """
     Checkout intermediate step for Event.

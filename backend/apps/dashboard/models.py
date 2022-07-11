@@ -194,7 +194,7 @@ class EventStripePayment(DBModel):
     # TODO: This model could be more abstracted from the Event
 
     event = models.ForeignKey(
-        "root.Event", on_delete=models.RESTRICT, related_name="payments"
+        "root.Event", on_delete=models.SET_NULL, null=True, related_name="payments"
     )
     value = MoneyField(
         max_digits=19, decimal_places=4, default_currency="USD", null=True

@@ -42,52 +42,57 @@ urlpatterns = [
     ),
     # Ticketing
     path(
-        "ticketed-events/published/<uuid:team_pk>/",
+        "events/published/<uuid:team_pk>/",
         views.PublishedEventsListView.as_view(),
         name="event_list",
     ),
     path(
-        "ticketed-events/wip/<uuid:team_pk>/",
+        "events/wip/<uuid:team_pk>/",
         views.WIPEventsListView.as_view(),
         name="event_drafts",
     ),
     path(
-        "ticketed-events/create/<uuid:team_pk>/",
+        "events/create/<uuid:team_pk>/",
         views.EventCreateView.as_view(),
         name="event_create",
     ),
     path(
-        "ticketed-events/<uuid:team_pk>/<int:pk>/",
+        "events/<uuid:team_pk>/<int:pk>/",
         views.EventDetailView.as_view(),
         name="event_detail",
     ),
     path(
-        "ticketed-events/update/<uuid:team_pk>/<int:pk>/",
+        "events/update/<uuid:team_pk>/<int:pk>/",
         views.EventUpdateView.as_view(),
         name="event_update",
     ),
     path(
-        "ticketed-events/stats/<uuid:team_pk>/<int:pk>/",
+        "events/delete/<uuid:team_pk>/<int:pk>/",
+        views.EventDeleteView.as_view(),
+        name="event_delete",
+    ),
+    path(
+        "events/stats/<uuid:team_pk>/<int:pk>/",
         views.EventStatisticsView.as_view(),
         name="event_stats",
     ),
     path(
-        "ticketed-events/estimate-price/<uuid:team_pk>/",
+        "events/estimate-price/<uuid:team_pk>/",
         views.PricingCalculator.as_view(),
         name="event_price_estimator",
     ),
     path(
-        "ticketed-events/checkout/<uuid:team_pk>/<int:pk>/",
+        "events/checkout/<uuid:team_pk>/<int:pk>/",
         views.EventCheckout.as_view(),
         name="event_checkout",
     ),
     path(
-        "ticketed-events/checkout/success/<uuid:team_pk>/<int:pk>/",
+        "events/checkout/success/<uuid:team_pk>/<int:pk>/",
         views.EventCheckout.success_stripe_callback,
         name="event_checkout_success_callback",
     ),
     path(
-        "ticketed-events/checkout/failure/<uuid:team_pk>/<int:pk>/",
+        "events/checkout/failure/<uuid:team_pk>/<int:pk>/",
         views.EventCheckout.failure_stripe_callback,
         name="event_checkout_failure_callback",
     ),

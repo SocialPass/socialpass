@@ -73,7 +73,7 @@
 		<!-- Branding end -->
 
 		<!-- Navbar breadcrumb start -->
-		<div class="text-on-primary flex-shrink-0 d-none d-sm-block">
+		<div class="flex-shrink-0 d-none d-sm-block">
 			SocialPass
 			<i class="fa-regular fa-angle-right mx-10"></i>
 			{% block navbar_breadcrumb %}{% endblock navbar_breadcrumb %}
@@ -83,7 +83,7 @@
 		<!-- Navbar controls start -->
 		<div class="ms-auto d-flex align-items-center">
 			<!-- Dark mode toggle start -->
-			<button type="button" class="btn btn-primary btn-sm btn-square bg-primary-lm bg-primary-dim-dm me-10" data-hm-toggle="dark-mode">
+			<button type="button" class="btn btn-primary btn-sm btn-square me-10" data-hm-toggle="dark-mode">
 				<i class="fa-solid fa-moon"></i>
 				<span class="visually-hidden">Toggle dark mode</span>
 			</button>
@@ -92,7 +92,7 @@
 			<!-- User dropdown start -->
 			<div class="dropdown with-arrow">
 				<button type="button" class="btn btn-secondary btn-sm btn-square btn-rounded" id="user-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
-					<i class="fa-duotone fa-user"></i>
+					<i class="fa-solid fa-user"></i>
 					<span class="visually-hidden">Toggle user dropdown</span>
 				</button>
 				<ul class="dropdown-menu dropdown-menu-end rounded-3 ws-250 p-10" aria-labelledby="user-dropdown-toggle">
@@ -143,7 +143,7 @@
 			<!-- Sidebar team dropdown start -->
 			<div class="sidebar-menu mt-0">
 				<div class="dropdown w-100">
-					<a href="#" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+					<a href="#" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
 						<div class="overflow-hidden">
 							<h6 class="fs-base-p6 m-0 text-truncate fw-700">{{ current_team.name }}</h6>
 							<p class="fs-base-n2 mt-5 mb-0 text-truncate">{% get_user_primary_email %}</p>
@@ -222,7 +222,7 @@
 			<!-- Web3 Ticketing start -->
 			<div class="sidebar-menu">
 				<div class="position-relative">
-					<h6 class="sidebar-title fs-base-n2 text-on-primary">
+					<h6 class="sidebar-title fs-base-n2">
 						Web3 Ticketing
 					</h6>
 					<a href="{% url 'ticketgate_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
@@ -247,7 +247,7 @@
 
 			<!-- Team start -->
 			<div class="sidebar-menu mt-40">
-				<h6 class="sidebar-title fs-base-n2 text-on-primary">
+				<h6 class="sidebar-title fs-base-n2">
 					Team
 				</h6>
 				<a href="{% url 'team_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'team-details' %}">
@@ -273,7 +273,7 @@
 		{% else %}
 			<!-- Sidebar main dashboard link start -->
 			<div class="sidebar-menu mt-0">
-				<a href="{% url 'dashboard_redirect' %}" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20 text-on-primary">
+				<a href="{% url 'dashboard_redirect' %}" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20">
 					<div class="me-15">
 						<i class="fa-regular fa-angle-left"></i>
 					</div>
@@ -287,7 +287,7 @@
 
 			<!-- Account start -->
 			<div class="sidebar-menu">
-				<h6 class="sidebar-title fs-base-n2 text-on-primary">
+				<h6 class="sidebar-title fs-base-n2">
 					Account
 				</h6>
 				<a href="{% url 'account_change_password' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'change-password' %}">

@@ -13,6 +13,7 @@ from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django_fsm import FSMField, transition
 from djmoney.models.fields import MoneyField
 from pytz import utc
@@ -108,7 +109,7 @@ class Event(DBModel):
 
     # Publish info
     is_featured = models.BooleanField(default=False)
-    publish_date = models.DateTimeField(default=datetime.now, null=True, blank=True)
+    publish_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     visibility = models.CharField(max_length=50, choices=EVENT_VISIBILITY)
 
     # Basic Info

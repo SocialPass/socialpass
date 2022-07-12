@@ -27,7 +27,7 @@ services:
   web:
     build:
       context: ./backend
-      dockerfile: Dockerfile.local
+      dockerfile: Dockerfile
     image: socialpass-django-backend
     networks:
       - backend
@@ -54,8 +54,9 @@ services:
     command: sh -c "yarn start --host"
     stdin_open: true
     volumes:
-    - ./frontend/eventportal:/eventportal
-    - '/eventportal/node_modules/'
+      - ./frontend/eventportal/src/:/eventportal/src/
+      - ./frontend/eventportal/package.json:/eventportal/package.json
+      - ./frontend/eventportal/package-lock.json:/eventportal/package-lock.json
     build:
       context: ./frontend/eventportal
       dockerfile: Dockerfile
@@ -72,8 +73,9 @@ services:
     command: sh -c "yarn start --host"
     stdin_open: true
     volumes:
-      - ./frontend/scanner-app:/scanner
-      - '/scanner/node_modules/'
+      - ./frontend/scanner-app/src/:/scanner/src/
+      - ./frontend/scanner-app/package.json:/scanner/package.json
+      - ./frontend/scanner-app/package-lock.json:/scanner/package-lock.json
     build:
       context: ./frontend/scanner-app
       dockerfile: Dockerfile

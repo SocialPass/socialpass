@@ -17,8 +17,6 @@ export default function LargeHeaderContents() {
           src={retrieveJson && retrieveJson?.team?.image}
           alt="Team Image"
           key={retrieveJson && retrieveJson?.team?.image}
-          /* USED TO BE {retrieveJson && retrieveJson?.team?.image} */
-          /* TODO: GO BACK TO USING THE SET IMAGES WHEN BACKEND GETS FIXED */
         />
       </div>
     </div>

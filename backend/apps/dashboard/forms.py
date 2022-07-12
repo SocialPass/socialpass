@@ -6,15 +6,24 @@ from taggit.forms import TagField
 
 from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY
+from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
 from apps.root.models import Event
 
 
-class TeamForm(forms.ModelForm):
-    """
-    Allows team information to be updated.
-    """
+class CustomInviteForm(InviteForm):
+    def validate_invitation(self, email):
+        """
+        sub-classed validation to remove check for active user
+        """
+        if Invite.objects.all_valid().filter(email__iexact=email, accepted=False):
+            raise AlreadyInvited
+        elif Invite.objects.filter(email__iexact=email, accepted=True):
+            raise AlreadyAccepted
+        else:
+            return True
 
+
+class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ["name", "description", "image"]
@@ -27,14 +36,56 @@ class TeamForm(forms.ModelForm):
         labels = {"image": "Set Team Image"}
 
 
-class EventForm(forms.ModelForm):
-    """
-    Allows ticketed event information to be updated.
+required_fields = [
+    "title",
+    "organizer",
+    "description",
+    "visibility",
+    # location
+    "location",
+    # TODO
+    # date and time
+    "start_date",
+    # cover image
+    "cover_image",
+    # 2. Requirements
+    "requirements",
+    # 3. Tickets
+    "capacity",
+    "limit_per_person",
+    # 4. Publish
+]
+optional_fields = [
+    # 1. General info
+    # basic info
+    # "category",
+    # "tags",
+    "visibility",
+    "end_date",
+    "timezone_offset",
+    "cover_image",
+    "publish_date",
+    "checkout_requested",
+]
 
-    Features:
-    - capacity is disabled if there is a payment in process.
-    - price is updated when capacity is changed.
-    """
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        fields = optional_fields + required_fields
+        model = Event
+
+        widgets = {
+            "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
+            "organizer": forms.TextInput(
+                attrs={"placeholder": "Name of Brand or Community organizing the event"}
+            ),
+            "description": forms.Textarea(
+                attrs={"placeholder": "A short description of your event", "rows": 3}
+            ),
+            "location": forms.HiddenInput(),
+            "requirements": forms.HiddenInput(),
+            "timezone_offset": forms.HiddenInput(),
+        }
 
     start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
@@ -62,93 +113,73 @@ class EventForm(forms.ModelForm):
         widget=forms.RadioSelect(choices=EVENT_VISIBILITY),
         required=False,
     )
-
-    class Meta:
-        model = Event
-        fields = [
-            "is_draft",
-            # 1. General info
-            # basic info
-            "title",
-            "organizer",
-            "description",
-            "category",
-            "tags",
-            "visibility",
-            # location
-            "location",
-            # TODO
-            # date and time
-            "start_date",
-            "end_date",
-            "timezone_offset",
-            # cover image
-            "cover_image",
-            # 2. Requirements
-            "requirements",
-            # 3. Tickets
-            "capacity",
-            "limit_per_person",
-            # 4. Publish
-            "publish_date",
-            "custom_url_path",
-        ]
-        widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
-            "organizer": forms.TextInput(
-                attrs={"placeholder": "Name of Brand or Community organizing the event"}
-            ),
-            "description": forms.Textarea(
-                attrs={"placeholder": "A short description of your event", "rows": 3}
-            ),
-            "location": forms.HiddenInput(),
-            "is_draft": forms.HiddenInput(),
-            "requirements": forms.HiddenInput(),
-            "timezone_offset": forms.HiddenInput(),
-        }
-
-    def can_edit_capacity(self) -> bool:
-        if self.instance is None:
-            return True
-
-        return not (
-            services.get_in_progress_payment(self.instance)
-            or services.get_effective_payments(self.instance.payments)
-        )
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        if not self.can_edit_capacity():
-            self.fields["capacity"].disabled = True
-
-    def save(self, commit: bool = ...) -> Event:
-        """Sets Event price after save"""
-        if (not self.can_edit_capacity()) and (
-            self.instance.capacity != self.cleaned_data["capacity"]
-        ):
-            # not using field has_changed here since it can lead to a
-            # security failure as it checks if the field is disabled.
-
-            # this will never happend since capacity field is disabled, unless the user tries to hack the form
-            raise RuntimeError("Cannot change capacity")
-
-        obj = super().save(commit)
-
-        if "capacity" in self.changed_data:
-            services.set_event_price(obj)
-
-        return obj
+    checkout_requested = forms.BooleanField(
+        label="...", widget=forms.HiddenInput(), required=False, initial=False
+    )
 
 
-class CustomInviteForm(InviteForm):
-    def validate_invitation(self, email):
+class EventDraftForm(EventForm):
+    class Meta(EventForm.Meta):
+        pass
+
+    def clean(self):
         """
-        sub-classed validation to remove check for active user
+        Clean method for dynamic form field requirement
         """
-        if Invite.objects.all_valid().filter(email__iexact=email, accepted=False):
-            raise AlreadyInvited
-        elif Invite.objects.filter(email__iexact=email, accepted=True):
-            raise AlreadyAccepted
+        data = super().clean()
+        errors = {}
+
+        # first check for checkout_requested
+        # loop over required fields
+        checkout_requested = data.get("checkout_requested", None)
+        if checkout_requested:
+            # check field
+            for i in required_fields:
+                field = data.get(i, None)
+                if not field:
+                    errors[i] = "This field is required"
+
+        # check for errors
+        if not errors:
+            # handle state transitions
+            # based on current checkout_requested
+            if checkout_requested:
+                self.instance.transition_pending_checkout()
+            else:
+                self.instance.transition_draft()
+            return data
         else:
-            return True
+            raise forms.ValidationError(errors)
+
+
+class EventPendingCheckoutForm(EventDraftForm):
+    class Meta(EventDraftForm.Meta):
+        pass
+
+
+class EventLiveForm(EventForm):
+    class Meta(EventForm.Meta):
+        exclude = ["capacity"]
+
+    def clean(self):
+        """
+        Clean method for dynamic form field requirement
+        """
+        data = super().clean()
+        errors = {}
+
+        # first check for checkout_requested
+        # loop over required fields
+        checkout_requested = data.get("checkout_requested", None)
+        if checkout_requested:
+            # check field
+            for i in required_fields:
+                field = data.get(i, None)
+                if not field and i not in EventLiveForm.Meta.exclude:
+                    errors[i] = "This field is required"
+
+        # check for errors
+        if not errors:
+            return data
+        else:
+            raise forms.ValidationError(errors)

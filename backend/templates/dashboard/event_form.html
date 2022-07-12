@@ -1,0 +1,440 @@
+{% extends 'bases/base_primary.html' %}
+{% load static i18n get_chain_name crispy_forms_tags avoid_view_resubmission %}
+
+{% block head_title %}
+{% if request.resolver_match.url_name == 'event_create' %}Create{% else %}Update{% endif %} Event - SocialPass
+{% endblock head_title %}
+
+{% block navbar_breadcrumb %}
+{% if url_name == 'event_create' %}Create{% else %}Update{% endif %} Event
+{% endblock %}
+
+{% block wip_event_creation_ux %}
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endblock %}
+
+
+{% block extra_head %}
+  	{{ block.super}}
+	<style type="text/css">
+		.required-input .form-label::after, label.required-input::after {
+  			content: "*";
+		}
+	</style>
+
+  <style type="text/css">
+    /* Copied from soft-ui theme to support gradual transition of template for chain requirements */
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 0;
+      margin-bottom: 0;
+      list-style: none;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #2e95b8;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .nav-link {
+        transition: none;
+      }
+    }
+
+    .nav-link:hover,
+    .nav-link:focus {
+      color: #24748f;
+    }
+
+    .nav-link.disabled {
+      color: #6c757d;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .nav-tabs {
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .nav-tabs .nav-link {
+      margin-bottom: -1px;
+      background: none;
+      border: 1px solid transparent;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
+
+    .nav-tabs .nav-link:hover,
+    .nav-tabs .nav-link:focus {
+      border-color: #e9ecef #e9ecef #dee2e6;
+      isolation: isolate;
+    }
+
+    .nav-tabs .nav-link.disabled {
+      color: #6c757d;
+      background-color: transparent;
+      border-color: transparent;
+    }
+
+    .nav-tabs .nav-link.active,
+    .nav-tabs .nav-item.show .nav-link {
+      color: #495057;
+      background-color: #fff;
+      border-color: #dee2e6 #dee2e6 #fff;
+    }
+
+    .nav-tabs .dropdown-menu {
+      margin-top: -1px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">
+				{% if url_name == 'event_create' %}Create{% else %}Update '{{event.title}}'{% endif %}
+			</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				Use the following form to {% if url_name == 'event_create' %}create{% else %}update{% endif %} an event.
+			</p>
+		</div>
+	</div>
+</div>
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Event Form
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<div class="row">
+		<!-- Main content start -->
+		<div class="col-lg-7">
+			<div class="content">
+				<!-- Form start -->
+				<form class="form" enctype="multipart/form-data" method="post" id="event-form">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<p class="invalid-feedback persistent">Please complete the form below</p>
+						</div>
+					{% endif %}
+					{% if form.errors %}
+						<div class="alert alert-danger" role="alert">
+              <p class="invalid-feedback persistent">Please complete the form below</p>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+					<div class="d-none" id="hidden-date">
+						{{ form.publish_date }}
+					</div>
+					<!-- General info start -->
+					<section>
+						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="1-general-info">
+							<span class="ws-25 me-10 text-primary">
+								<i class="fa-solid fa-circle-1"></i>
+							</span>
+							General Information
+						</h2>
+						<p class="text-muted fs-base-n2 mt-5">
+							Please fill in some general information about your event.
+						</p>
+
+						<hr />
+						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+							<span class="ws-25 me-10 text-primary">
+								<i class="fa-regular fa-ballot-check"></i>
+							</span>
+							Basic Information
+						</h3>
+						<p class="text-muted fs-base-n2 mt-5">
+							Name your event and tell event-goers why they should come. Add details that highlight what makes it unique.
+						</p>
+
+						<!-- Title start -->
+						<div class="required-input">
+							{% with form.title as input %}
+								{% include 'components/forms_inputs/input.html' %}
+							{% endwith %}
+						</div>
+						<!-- Title end -->
+
+						<!-- Organizer start -->
+						{% with input=form.organizer %}
+							{% include 'components/forms_inputs/input.html' %}
+						{% endwith %}
+						<!-- Organizer end -->
+
+						<!-- Category start -->
+            {% if form.category %}
+						<div class="form-group">
+							{{form.category|as_crispy_field}}
+						</div>
+            {% endif %}
+						<!-- Description end -->
+
+            {% if form.tags %}
+						<div class="form-group">
+							{{form.tags|as_crispy_field}}
+						</div>
+            {% endif %}
+
+						<!-- Description start -->
+						{% with form.description as input %}
+							{% include 'components/forms_inputs/textarea.html' %}
+						{% endwith %}
+						<!-- Description end -->
+
+						<!-- Visibility start -->
+						<div class="form-group required-input">
+							{{form.visibility|as_crispy_field}}
+						</div>
+						<!-- Visibility end -->
+
+						<hr />
+						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+							<span class="ws-25 me-10 text-primary">
+								<i class="fa-regular fa-location-dot"></i>
+							</span>
+							Location
+						</h3>
+						<p class="text-muted fs-base-n2 mt-5">
+							Help people in the area discover your event and let attendees know where to show up.
+						</p>
+
+						<!-- Location start -->
+						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.location %}
+							<script>
+								function onPlaceChangedCallback(place){
+									// set UTC offset
+									document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
+									// WIP - CharField
+									document.getElementById("id_location").value = place.name
+									// TODO: GeoDjango - set latitude and longitude hidden field
+									console.log(place.geometry.location.lat())
+									console.log(place.geometry.location.lng())
+								}
+							</script>
+
+							{% include 'components/forms_inputs/gmaps_location.html' %}
+						{% endwith %}
+						<!-- Location end -->
+
+
+						<!-- Date and Time start -->
+						<hr />
+						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+							<span class="ws-25 me-10 text-primary">
+								<i class="fa-regular fa-calendar-days"></i>
+							</span>
+							Date and Time
+						</h3>
+						<p class="text-muted fs-base-n2 mt-5">
+							Tell event-goers when your event starts and ends so they can make plans to attend.
+						</p>
+						<div class="form-group required-input">
+							{{form.start_date|as_crispy_field}}
+						</div>
+						<div class="form-group">
+							{{form.end_date|as_crispy_field}}
+							<p class="text-muted fs-base-n2 mt-5">
+								Leave empty if there is no end date for the event.
+							</p>
+						</div>
+						<!-- Date and Time end -->
+
+						<!-- Cover Image start -->
+						<hr />
+						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+							<span class="ws-25 me-10 text-primary">
+								<i class="fa-regular fa-calendar-days"></i>
+							</span>
+							Main Event Image
+						</h3>
+						<p class="text-muted fs-base-n2 mt-5">
+							Use this image to showcase your event. This will be the banner image attendees will se when purchasing the tickets.
+						</p>
+						<div class="form-group">
+							{{form.cover_image|as_crispy_field}}
+						</div>
+						<!-- Cover Image end -->
+
+
+					</section>
+					<hr />
+					<!-- General info end -->
+
+					<!-- Blockchain Requirements start -->
+					<section>
+						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="2-blockchain-requirements">
+							<span class="ws-25 me-10 text-primary">
+								<i class="fa-solid fa-circle-2"></i>
+							</span>
+							Blockchain Requirements
+						</h2>
+						<p class="text-muted fs-base-n2 mt-5">
+							Please provide the NFT or SocialToken information required to redeeem or purchase a ticket to your event.
+						</p>
+						<nav>
+							<ul id="nav-requirement" class="nav nav-tabs" role="tablist">
+							<div
+								type="button"
+								onclick="addRequirement()"
+								class="nav-link"
+							>
+								Add requirement
+							</div>
+							</ul>
+						</nav>
+						<div class="tab-content p-10" style="border: 1px solid transparent; border-color: #dee2e6; border-top: 0px;" id="tokenRequirementForms">
+						<!-- requirements will be added dynamically -->
+						</div>
+						<hr />
+					</section>
+					<!-- Blockchain Requirements end -->
+
+					<!-- Tickets start -->
+					<section>
+						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="3-tickets">
+							<span class="ws-25 me-10 text-primary">
+								<i class="fa-solid fa-circle-3"></i>
+							</span>
+							Tickets
+						</h2>
+						<p class="text-muted fs-base-n2 mt-5">
+							Coming soon! Sell different tickets for an event.
+						</p>
+            <!-- Estimator Start -->
+            <div id="price-placeholder">
+              <span></span>
+            </div>
+            <div id="price-calc" style="display: none">
+              <strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
+            </div>
+            <!-- Estimator End -->
+						<hr />
+
+						<!-- Capacity start -->
+            {% if form.capacity %}
+						{% with input=form.capacity required="required" %}
+							{% include 'components/forms_inputs/input.html' %}
+						{% endwith %}
+            {% endif %}
+						<!-- Capacity end -->
+
+						<!-- Limit Per Person start -->
+						{% with input=form.limit_per_person required="required" %}
+							{% include 'components/forms_inputs/input.html' %}
+						{% endwith %}
+						<!-- Limit Per Person end -->
+
+
+					</section>
+					<!-- Tickets end -->
+				</form>
+				<!-- Form end -->
+			</div>
+		</div>
+		<!-- Main content end -->
+
+    <!-- Form navigation start -->
+    <div class="col-lg-5 border-lg-end">
+      <div class="p-content position-lg-sticky top-navbar start-0">
+        <div>
+          <a href="#1-general-info" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">1</strong>
+            <span class="ms-15">General Information</span>
+          </a>
+        </div>
+        <div class="mt-15">
+          <a href="#2-blockchain-requirements" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">2</strong>
+            <span class="ms-15">Blockchain Requirements</span>
+          </a>
+        </div>
+        <div class="mt-15">
+          <a href="#3-tickets" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
+            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">3</strong>
+            <span class="ms-15">Tickets</span>
+          </a>
+        </div>
+        <div id="event-actions" class="mt-20 row">
+          {% if event.state == 'Live' %}
+          <div class="col pe-5">
+            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary">Save Changes</button>
+          </div>
+          {% else %}
+          <div class="col pe-5">
+            <button onclick="saveDraft()" class="h-100 btn btn-block">Save Draft</button>
+          </div>
+          <div class="col pe-5">
+            <button onclick="savePending()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- Form navigation end -->
+
+	</div>
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help creating/updating an event.
+	</div>
+	<!-- Card footer end -->
+</div>
+<script>
+  // Variables for blockchain_requirements script
+  let initialRequirementsData = JSON.parse('{{form.requirements.value|safe}}');
+  let requiremtSchema = JSON.parse('{{json_schema|safe}}');
+  let blockchainOptions = JSON.parse('{{BLOCKHAINS_CHOICES|safe}}');
+  let assetTypeOptions = JSON.parse('{{ASSET_TYPES_CHOICES|safe}}');
+  let chainOptions = JSON.parse('{{CHAIN_IDS_CHOICES|safe}}');
+  let priceEstimatorUrl = "{% url 'event_price_estimator' view.kwargs.team_pk %}?capacity=";
+
+</script>
+<script src="{% static 'js/blockchain_requirements.js' %}"></script>
+<script>
+  function saveDraft(){
+    document.getElementById("id_checkout_requested").checked = false
+    document.getElementById("id_checkout_requested").value = 'False'
+    fillRequirementsAndSubmitForm()
+  }
+
+  function savePending(){
+    document.getElementById("id_checkout_requested").checked = true
+    document.getElementById("id_checkout_requested").value = 'True'
+    fillRequirementsAndSubmitForm();
+  }
+
+  function saveLive(){
+    let confirmed = confirm("These changes will go live immediately. Are you sure?");
+    if (confirmed){
+      document.getElementById("id_checkout_requested").checked = true
+      document.getElementById("id_checkout_requested").value = 'True'
+      fillRequirementsAndSubmitForm();
+    }
+  }
+</script>
+<!-- Content card end -->
+{% endblock%}

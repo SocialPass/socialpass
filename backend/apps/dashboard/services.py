@@ -2,6 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from django.db.models import Sum
+from djmoney.money import Money
 
 from apps.dashboard.models import EventStripePayment, PricingRuleGroup, Team
 from apps.root.models import Event
@@ -54,13 +55,8 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
     raise ValueError("Could not find pricing_rule for capacity")
 
 
-def get_pricing_group_for_ticket(event: Event) -> PricingRuleGroup:
-    """Returns the pricing group for a given ticket gate."""
-    return event.team.pricing_rule_group
-
-
 def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = None):
-    """Returns the estimated price of a ticket gate for a given team.
+    """Returns the estimated price of a event for a given team.
 
     The price is calculated by finding the first pricing rule that matches the
     capacity.
@@ -70,50 +66,20 @@ def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = Non
     return pricing_rule.price_per_ticket
 
 
-def get_pricing_rule_for_ticket(
-    event: Event,
-) -> float:
-    """Gets the pricing rule that applies to the ticket capacity"""
-    pricing_group = get_pricing_group_for_ticket(event)
-    return get_pricing_rule_for_capacity(pricing_group, event.capacity)
-
-
-def set_event_price(event: Event):
-    """Sets the price of a ticket based on its capacity."""
-    event.pricing_rule = get_pricing_rule_for_ticket(event)
-    event.price = event.pricing_rule.price_per_ticket * event.capacity
-    event.save()
-
-
-def get_event_pending_payment_value(event: Event):
-    """Returns the pending payment value of a ticket gate."""
-    effective_payments_value = Decimal(
-        get_effective_payments(event.payments).aggregate(Sum("value"))["value__sum"] or 0
-    )
-    return max((event.price or 0) - effective_payments_value, 0)
-
-
-def get_effective_payments(
-    payments: EventStripePayment.objects,
-) -> EventStripePayment.objects:
-    """Returns all succeded payments for a ticket gate."""
-    return payments.filter(status="SUCCESS")
-
-
 def get_in_progress_payment(
     event: Event,
 ) -> EventStripePayment:
-    """Returns the payment of a ticket gate which is either PENDING or PROCESSING."""
+    """Returns the payment of a event which is either PENDING or PROCESSING."""
     return event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 
 
 def issue_payment(event: Event, stripe_checkout_session_id: str) -> EventStripePayment:
     """
-    Issues a payment for a ticket gate.
-    Adds validation to ensure that there is only one payment in progress issued per ticket gate.
+    Issues a payment for a event.
+    Adds validation to ensure that there is only one payment in progress issued per event.
     """
     if get_in_progress_payment(event):
-        raise ValueError("There is already a pending payment for this ticket gate.")
+        raise ValueError("There is already a pending payment for this event.")
 
     payment = EventStripePayment(
         event=event,
@@ -123,27 +89,3 @@ def issue_payment(event: Event, stripe_checkout_session_id: str) -> EventStripeP
     )
     payment.save()
     return payment
-
-
-def fulfill_payment(payment: EventStripePayment):
-    """Fulfills a payment for a ticket gate."""
-    payment.status = "SUCCESS"
-    payment.save()
-
-
-def publish_event(event: Event, publish_date: datetime = None):
-    scheduled = False
-
-    if publish_date:
-        event.publish_date = publish_date
-        scheduled = True
-    else:
-        event.publish_date = datetime.now()
-
-    event.save()
-    return scheduled
-
-
-def unpublish_event(event: Event):
-    event.publish_date = None
-    event.save()

@@ -28,7 +28,7 @@ async function fetchApi(axiosPromise: AxiosPromise){
 
 export function fetchEvent(publicId: String) {
   return fetchApi(
-    api.get(`scanner/v1/${publicId}/event`)
+    api.get(`scanner/v1/${publicId}/event/`)
   )
 }
 
@@ -39,7 +39,7 @@ export function fetchScanTicket(publicId: String, qrCode: String) {
 }
 
 export function fetchTickets(publicId: String, claimed?: boolean) {
-  let url = `scanner/v1/${publicId}/tickets`
+  let url = `scanner/v1/${publicId}/tickets/`
   if (claimed !== undefined){
     url = `${url}?redeemed=${claimed}`
   }

@@ -18,6 +18,8 @@ djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
 django-allauth==0.50.0  # https://github.com/pennersr/django-allauth
 django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
 django-environ==0.9.0
+django-fsm==2.8.0
+django-money==3.0.0
 django-cors-headers==3.11.0
 django-taggit==3.0.0
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils

@@ -19,7 +19,7 @@
     </div>
     <div class="col-12 col-lg-3 d-flex flex-wrap justify-content-end">
       <div class="ms-auto align-self-center">
-        <a href="{% url 'ticketgate_update' current_team.public_id event.pk %}" class="btn btn-block text-primary">
+        <a href="{% url 'event_update' current_team.public_id event.pk %}" class="btn btn-block text-primary">
         <i class="fa-regular fa-edit"></i>
         <span class="ms-5 d-none d-sm-inline">Update Event</span>
         </a>
@@ -149,11 +149,11 @@
       Review your event below before continuing to checkout
       </p>
       <div>
-        <p class="mb-0">Event Ticketing Costs: <strong>${{event.price}}</strong></p>
-        <small>({{event.capacity}} tickets x ${{event.pricing_rule.price_per_ticket}})</small>
+        <p class="mb-0">Event Ticketing Costs: <strong>{{event.price}}</strong></p>
+        <small>({{event.capacity}} tickets x {{event.pricing_rule.price_per_ticket}})</small>
         <form method="post" class="mt-10">
           {% csrf_token %}
-          <input type="submit" class="btn btn-lg btn-primary m-0" value="Procceed to Checkout" />
+          <input type="submit" class="btn btn-lg btn-primary m-0" value="Launch Event" />
         </form>
       </div>
       </div>

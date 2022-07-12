@@ -16,7 +16,7 @@
       </p>
     </div>
     <div class="ms-auto align-self-center">
-      <a href="{% url 'ticketgate_create' current_team.public_id %}" class="btn text-primary fw-bold">
+      <a href="{% url 'event_create' current_team.public_id %}" class="btn text-primary fw-bold">
         <i class="fa-regular fa-party-bell"></i>
         <span class="ms-5 d-none d-sm-inline">Host an Event</span>
       </a>
@@ -57,10 +57,8 @@
           <tr class="fs-base-n2">
             <th>Title</th>
             <th>Status</th>
-            <th>Date</th>
+            <th>Start Date</th>
             <th>Location</th>
-            <th>Capacity</th>
-            <th>Tickets</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -68,35 +66,43 @@
           {% for event in events %}
             <tr>
               <td class="fw-bold">{{ event.title }}</td>
-              <td class="fw-bold"> <span class="badge bg-info">{{ event.status }} </span></td>
+              <td class="fw-bold"> <span class="badge bg-info">{{ event.state }} </span></td>
               <td class="fs-base-n2">{{ event.start_date }}</td>
               <td class="fs-base-n2">{{ event.location }}</td>
-              <td class="fs-base-n2">{{ event.capacity }}</td>
-              <td class="align-middle">
-                {{ event.tickets.count }}
-              </td>
               <td class="align-middle px-4">
-                {% if event.status == "Draft" or event.status == "Staged" %}
-                  <a class="btn btn-sm btn-primary-outline" href="{% url 'ticketgate_update' current_team.public_id event.pk %}">
+                <div class="d-flex flex-row justify-content-between">
+                  {% if event.state == "Draft" %}
+                    <a class="btn btn-sm btn-primary" href="{% url 'event_update' current_team.public_id event.pk %}">
                     Edit
-                  </a>
-                {% elif event.status == "Pending Checkout" %}
-                  <a class="btn btn-sm btn-primary" href="{% url 'ticketgate_checkout' current_team.public_id event.pk %}">
+                    </a>
+                    <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
+                      Delete
+                    </a>
+                  {% elif event.state == "Ready for Checkout" %}
+                    <a class="btn btn-sm btn-primary" href="{% url 'event_checkout' current_team.public_id event.pk %}">
                     Checkout
-                  </a>
-                {% else %}
-                <div class="d-flex flex-row-reverse justify-content-between">
-                  <a class="btn btn-sm btn-primary-outline" href="{% url 'ticketgate_update' current_team.public_id event.pk %}">
-                  Edit
-                  </a>
-                  <a class="btn btn-sm btn-primary" href="{% url 'ticketgate_stats' current_team.public_id event.pk %}">
-                  Stats
-                  </a>
-                  <a class="btn btn-sm btn-primary" href="{% url 'ticketgate_detail' current_team.public_id event.pk %}">
-                  Details
-                  </a>
+                    </a>
+                    <a class="btn btn-sm" href="{% url 'event_update' current_team.public_id event.pk %}">
+                    Edit
+                    </a>
+                    <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
+                      Delete
+                    </a>
+                  {% elif event.state == "Live" %}
+                    <a class="btn btn-sm btn-primary" href="{% url 'event_detail' current_team.public_id event.pk %}">
+                    Details
+                    </a>
+                    <a class="btn btn-sm btn-primary" href="{% url 'event_stats' current_team.public_id event.pk %}">
+                    Stats
+                    </a>
+                    <a class="btn btn-sm" href="{% url 'event_update' current_team.public_id event.pk %}">
+                    Edit
+                    </a>
+                    <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
+                      Delete
+                    </a>
+                  {% endif %}
                   </div>
-                {% endif %}
               </td>
               </tr>
             </tr>

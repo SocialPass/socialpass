@@ -13,17 +13,18 @@ from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+from django_fsm import FSMField, transition
+from djmoney.models.fields import MoneyField
 from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from apps.root.model_draft import AllowDraft, required_if_not_draft
 from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
+from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
+from apps.root.model_wrappers import DBModel
+from apps.root.validators import JSONSchemaValidator
 from config.storages import PrivateTicketStorage
-
-from .model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
-from .model_wrappers import DBModel
-from .validators import JSONSchemaValidator
 
 
 class User(AbstractUser):
@@ -50,47 +51,9 @@ class EventLocation(DBModel):
     long = models.DecimalField(max_digits=9, decimal_places=6)
     # TODO:
     # point = PointField(geography=True, default="POINT(0.0 0.0)")
-    """
-    localized_address_display #The format of the address display localized to the address country
-    localized_area_display	#The format of the address's area display localized to the address country
-    localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
-    """
-
-
-class EventQuerySet(models.QuerySet):
-    def drafts(self):
-        return self.filter(is_draft=True)
-
-    def filter_wip(self):
-        return self.filter(publish_date__isnull=True)
-
-    def exclude_wip(self):
-        return self.filter(publish_date__isnull=False)
-
-    def filter_published(self):
-        return self.filter(publish_date__lte=datetime.now())
-
-    def filter_scheduled(self):
-        return self.filter(publish_date__gt=datetime.now())
-
-    def filter_public(self):
-        return self.filter(visibility="PUBLIC")
-
-    def filter_featured(self):
-        return self.filter(is_featured=True)
-
-    def get_by_url_identifier(
-        self, public_id_or_custom_url_path: typing.Union[uuid.UUID, str]
-    ):
-        if not public_id_or_custom_url_path:
-            raise dj_exceptions.SuspiciousOperation("forbidden")
-
-        return self.filter(
-            models.Q(public_id=public_id_or_custom_url_path)
-            | models.Q(custom_url_path=public_id_or_custom_url_path)
-        ).first()
-        # first is here in case there are two independent events with colliding
-        # public_id and custom_url_path. This is impossible unless user messes up.
+    # localized_address_display #The format of the address display localized to the address country
+    # localized_area_display	#The format of the address's area display localized to the address country
+    # localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
 
 
 class EventCategory(DBModel):
@@ -108,30 +71,61 @@ class EventCategory(DBModel):
             return self.name
 
 
-class Event(AllowDraft, DBModel):
+class EventQuerySet(models.QuerySet):
+    """
+    Event model queryset manager
+    """
+
+    def filter_inactive(self):
+        """
+        inactive events (not live)
+        """
+        return self.filter(~models.Q(state=EventStatusEnum.LIVE.value))
+
+    def filter_active(self):
+        """
+        active events (live)
+        """
+        return self.filter(state=EventStatusEnum.LIVE.value)
+
+    def filter_publicly_accessible(self):
+        """
+        public events (filter_active ++ visibility==PUBLIC)
+        In the future, should also check for published_date
+        """
+        return self.filter(visibility="PUBLIC").filter_active()
+
+    def filter_featured(self):
+        """
+        public, featured events (filter_publicly_accessible ++ featured=True)
+        """
+        return self.filter(is_featured=True).filter_publicly_accessible()
+
+
+class Event(DBModel):
     """
     Stores data for ticketed event
     """
 
+    # Queryset manager
     objects = EventQuerySet.as_manager()
+
+    # state
+    state = FSMField(default=EventStatusEnum.DRAFT.value, protected=True)
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     # Publish info
-    is_draft = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
-    publish_date = models.DateTimeField(null=True, blank=True)
-    custom_url_path = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    publish_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    visibility = models.CharField(max_length=50, choices=EVENT_VISIBILITY)
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    visibility = required_if_not_draft(
-        models.CharField(max_length=50, choices=EVENT_VISIBILITY)
-    )
     cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
     category = models.ForeignKey(
         EventCategory, on_delete=models.SET_NULL, null=True, blank=True
@@ -139,47 +133,37 @@ class Event(AllowDraft, DBModel):
     tags = TaggableManager(
         blank=True,
     )
-    start_date = required_if_not_draft(models.DateTimeField())
+    start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    # Timezone kept for backwards compatibility
     timezone = models.CharField(
         blank=True,
         null=True,
         verbose_name="time zone",
         max_length=30,
     )
-    timezone_offset = required_if_not_draft(
-        models.FloatField(verbose_name="Timezone offset in seconds")
+    timezone_offset = models.FloatField(
+        blank=True, null=True, verbose_name="Timezone offset in seconds"
     )
-    location = required_if_not_draft(models.CharField(max_length=1024))
-    # location = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
+    location = models.CharField(blank=True, max_length=1024)
+    # location_info = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
     # Ticket Info
     # TODO: Move these to TicketType
-    requirements = required_if_not_draft(
-        models.JSONField(
-            default=list,
-            validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
-        )
+    requirements = models.JSONField(
+        blank=True,
+        default=list,
+        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
-    capacity = required_if_not_draft(
-        models.IntegerField(validators=[MinValueValidator(1)])
+    capacity = models.IntegerField(
+        blank=True, default=1, validators=[MinValueValidator(1)]
     )
-    limit_per_person = required_if_not_draft(
-        models.IntegerField(
-            default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
-        )
+    limit_per_person = models.IntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
 
     # Pricing Info
-    # TODO: These will be reworked / removed with event attendee billing
-    price = models.DecimalField(
-        validators=[MinValueValidator(0)],
-        decimal_places=2,
-        max_digits=10,
-        null=True,
-        blank=True,
-        default=None,
+    _price = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="USD", null=True
     )
     pricing_rule = models.ForeignKey(
         PricingRule,
@@ -192,60 +176,138 @@ class Event(AllowDraft, DBModel):
     def __str__(self):
         return f"{self.team} - {self.title}"
 
-    def save(self, *args, **kwargs):
-        """
-        Adds the following functionalities:
-        - sets timezones based on timezone field for all datetimefields
-        """
-        if self.is_draft:
-            return super().save(*args, **kwargs)
-
-        if self.timezone_offset is not None:
-            timezone_aware_datetime_fields = ["start_date", "end_date", "publish_date"]
-
-            for field in timezone_aware_datetime_fields:
-                val = getattr(self, field)
-                if val is not None:
-                    setattr(
-                        self,
-                        field,
-                        val.replace(tzinfo=tzoffset(None, self.timezone_offset)),
-                    )
-
-        ret = super().save(*args, **kwargs)
-
-        TicketRedemptionKey.objects.get_or_create(event=self)
-
-        return ret
-
-    @property
-    def status(self):
-        if self.is_draft:
-            return EventStatusEnum.DRAFT.value
-        if not self.is_published:
-            return EventStatusEnum.STAGED.value
-        elif self.is_scheduled:
-            return EventStatusEnum.SCHEDULED.value
-        else:
-            return EventStatusEnum.PUBLISHED.value
-
-    @property
-    def is_published(self):
-        return self.publish_date is not None
-
-    @property
-    def is_scheduled(self):
-        return self.publish_date is not None and self.publish_date > datetime.now(
-            self.publish_date.tzinfo
+    def get_absolute_url(self):
+        if self.state == EventStatusEnum.DRAFT.value:
+            _success_url = "event_update"
+        elif self.state == EventStatusEnum.PENDING_CHECKOUT.value:
+            _success_url = "event_checkout"
+        elif self.state == EventStatusEnum.LIVE.value:
+            _success_url = "event_detail"
+        return reverse(
+            _success_url,
+            args=(
+                self.team.public_id,
+                self.pk,
+            ),
         )
 
-    @property
-    def is_public(self):
-        return self.visibility == "PUBLIC"
+    def calculate_pricing_rule(self, capacity=None):
+        """
+        Returns calculated pricing rule based on capacity
+        """
+        # First check for capacity arg
+        # If one isn't passed, used self.capacity
+        if not capacity:
+            capacity = self.capacity
+
+        pricing_group = self.team.pricing_rule_group
+        pricing_rules = pricing_group.active_rules.filter(active=True)
+        pricing_rule_ranges = pricing_rules.order_by("min_capacity")
+        for pricing_rule in pricing_rule_ranges:
+            if (
+                capacity >= pricing_rule.min_capacity
+                and capacity <= pricing_rule.safe_max_capacity
+            ):
+                return pricing_rule
+
+    def calculate_price(self, capacity=None):
+        """
+        Returns calculated pricing based on capacity
+        """
+        # First check for capacity arg
+        # If one isn't passed, used self.capacity
+        if not capacity:
+            capacity = self.capacity
+
+        # Pricing rule on event exists
+        # Use this rule
+        if self.pricing_rule:
+            return self.pricing_rule.price_per_ticket * capacity
+
+        # No pricing rule on event yet
+        # Use calculate_pricing_rule
+        else:
+            return self.calculate_pricing_rule() * capacity
+
+    @transition(
+        field=state,
+        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
+        target=EventStatusEnum.DRAFT.value,
+    )
+    def transition_draft(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+        """
+        print("transition draft")
+        return
+
+    @transition(
+        field=state,
+        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
+        target=EventStatusEnum.PENDING_CHECKOUT.value,
+    )
+    def transition_pending_checkout(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+        """
+        print("transition pending_checkout")
+        return
+
+    @transition(field=state, target=EventStatusEnum.LIVE.value)
+    def transition_live(self):
+        """
+        This function handles state transition from draft to awaiting checkout
+        Side effects include
+        - Create ticket scanner object
+        """
+        print("transition live")
+        # - Create ticket scanner object
+        TicketRedemptionKey.objects.get_or_create(event=self)
 
     @property
-    def url_path(self):
-        return self.custom_url_path or self.public_id
+    def price(self):
+        """
+        price property
+        check @setter and @getter below
+        """
+        return self._price
+
+    @price.setter
+    def price(self, value):
+        raise AttributeError(
+            "Directly setting price is disallowed. Please check the Event @price.getter method"
+        )
+
+    @price.getter
+    def price(self):
+        """
+        custom price.getter to provide calculable DB field (actual field is stored as _price)
+        evaluates calculated vs current value and updates price or pricing_rule when needed
+        """
+        # Side effects may occur
+        # Set to_save = True when they to do to be saved
+        to_save = False
+
+        # First check for pricing rule
+        # If one does not exist, set one
+        expected_pricing_rule = self.calculate_pricing_rule()
+        if expected_pricing_rule != self.pricing_rule:
+            to_save = True
+            self.pricing_rule = expected_pricing_rule
+
+        # Check price matches expected price
+        # Update if not
+        expected_price = self.calculate_price()
+        if expected_price != self._price:
+            to_save = True
+            self._price = expected_price
+
+        # Save and/or return
+        if to_save is True:
+            self.save()
+        return self._price
 
     @property
     def discovery_url(self):
@@ -253,19 +315,7 @@ class Event(AllowDraft, DBModel):
 
     @property
     def checkout_portal_url(self):
-        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.url_path}"
-
-    @property
-    def has_pending_checkout(self):
-        last_payment = self.payments.last()
-        if last_payment is None:
-            # Handle 0 cost event
-            if self.price == 0:
-                return False
-            else:
-                return True
-
-        return last_payment.status in [None, "PENDING", "CANCELLED", "FAILURE"]
+        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
 
 class Ticket(DBModel):

@@ -91,14 +91,15 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "storages",
     "taggit",
+    "djmoney",
 ]
 
 LOCAL_APPS = [
-    "apps.root.apps.RootConfig",
-    "apps.root.apps.OverrideInvitationsConfig",
-    "apps.dashboard.apps.DashboardConfig",
+    "apps.avoid_view_resubmission",
     "apps.event_discovery.apps.EventDiscoveryConfig",
-    "avoid_view_resubmission",
+    "apps.root.apps.RootConfig",
+    "apps.dashboard.apps.DashboardConfig",
+    "apps.root.apps.OverrideInvitationsConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

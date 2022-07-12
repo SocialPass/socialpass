@@ -9,19 +9,18 @@ def get_sidebar_active_status(context, key):
 
     if key == "events":
         if url_name in [
-            "ticketgate_list",
-            "ticketgate_drafts" "ticketgate_create",
-            "ticketgate_detail",
-            "ticketgate_update",
-            "ticketgate_stats",
-            "ticketgate_price_estimator",
-            "ticketgate_checkout",
-            "ticketgate_checkout_success_callback",
-            "ticketgate_checkout_failure_callback",
+            "event_list",
+            "event_drafts" "event_create",
+            "event_detail",
+            "event_update",
+            "event_stats",
+            "event_price_estimator",
+            "event_checkout_success_callback",
+            "event_checkout_failure_callback",
         ]:
             return "active"
     elif key == "drafts":
-        if url_name in ["ticketgate_drafts", "ticketgate_create"]:
+        if url_name in ["event_drafts", "event_checkout", "event_create"]:
             return "active"
     elif key == "team-details":
         if url_name in ["team_detail", "team_update"]:

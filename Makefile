@@ -4,29 +4,32 @@ SHELL := /bin/bash
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-build: ## docker build
+build: ## docker build (docker)
 	docker-compose build
 
-up: ## docker up
+buildclean: ## docker build (docker)
+	docker-compose build --no-cache
+
+up: ## docker up (docker)
 	docker-compose up
 
-collect: ## collectstatic backend
+collect: ## collectstatic backend (docker)
 	docker-compose run web python backend/manage.py collectstatic --no-input
 
-migration: ## Create backend migrations
+migration: ## Create backend migrations (docker)
 	docker-compose run web python backend/manage.py makemigrations
 
-migrate: ## Migrate backend migrations
+migrate: ## Migrate backend migrations (docker)
 	docker-compose run web python backend/manage.py migrate
 
-superuser: ## Create backend superuser
+superuser: ## Create backend superuser (docker)
 	docker-compose run web python backend/manage.py createsuperuser
 
-turtle: ## backend shell plus
+turtle: ## backend shell plus (docker)
 	docker-compose run web python backend/manage.py shell_plus
 
-lint: ## Lint backend repo
-	(source venv/bin/activate; black .; isort .; flake8 .;)
+lint: ## Lint backend repo (backend/venv)
+	(source backend/venv/bin/activate; black .; isort .; flake8 .;)
 
-test: ## Test backend repo
-	docker-compose run web python backend/manage.py test
+test: ## Test backend repo (backend/venv)
+	(source backend/venv/bin/activate; cd backend && python manage.py test)

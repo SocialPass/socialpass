@@ -1,8 +1,5 @@
-import metamask from "../static/images/connectors/metamask.svg";
 import metamaskActive from "../static/images/connectors/metamask-active.svg";
 import walletconnectActive from "../static/images/connectors/walletconnect-active.svg";
-import walletconnect from "../static/images/connectors/walletconnect.svg";
-import coinbase from "../static/images/connectors/coinbase-wallet.svg";
 import coinbaseActive from "../static/images/connectors/coinbase-active.svg";
 
 // ConnectorImage

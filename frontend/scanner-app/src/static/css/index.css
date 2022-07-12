@@ -27,11 +27,7 @@
 }
 
 .landing-page-body {
-  background-color: hsl(
-    var(--socialpass-blue-color-hue),
-    var(--socialpass-blue-color-saturation),
-    var(--socialpass-blue-color-lightness)
-  );
+  background-color: var(--primary-color);
   width: 100vw;
   height: 100vh;
 }
@@ -41,11 +37,7 @@
   line-height: 1.25;
   font-family: inherit;
   font-weight: 600;
-  color: hsl(
-    var(--socialpass-orange-color-hue),
-    var(--socialpass-orange-color-saturation),
-    var(--socialpass-orange-color-lightness)
-  );
+  color: var(--secondary-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
@@ -84,11 +76,7 @@
   line-height: 2.4;
   text-decoration: none;
   color: var(--white-color);
-  background-color: hsl(
-    var(--socialpass-orange-color-hue),
-    var(--socialpass-orange-color-saturation),
-    var(--socialpass-orange-color-lightness)
-  );
+  background-color: var(--secondary-color);
   background-image: none;
   border-color: none;
   box-shadow: none;
@@ -97,11 +85,7 @@
 .btn-start-scanning:active {
   text-decoration: none;
   color: inherit;
-  background-color: hsl(
-    var(--socialpass-orange-color-hue),
-    var(--socialpass-orange-color-saturation),
-    var(--socialpass-orange-color-lightness-step-down-1)
-  );
+  background-color: var(--secondary-color);
   background-image: none;
   border-color: transparent;
   box-shadow: none;
@@ -113,7 +97,6 @@
   position: left;
   width: 40px;
   height: 40px;
-  background: #fafafa;
   border-radius: 10px;
   padding: 8px;
   margin-right: 20px;

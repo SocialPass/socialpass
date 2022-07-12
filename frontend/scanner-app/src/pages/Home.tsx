@@ -2,8 +2,6 @@
 import { useEvent } from "../contexts/EventContext";
 import { EventContainer } from "../components/EventContainer";
 import Logo from "../static/images/landingpage_logo.png";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
 
 export function Home() {
   const { eventData }: any = useEvent();

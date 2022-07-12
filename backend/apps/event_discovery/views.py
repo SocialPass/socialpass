@@ -29,7 +29,7 @@ class EventDiscoveryBrowse(ListView):
 
     def get_queryset(self):
         # Get public, published event queryset
-        qs = super().get_queryset()
+        qs = super().get_queryset().filter_publicly_accessible()
 
         # Filter by available querystings
         query_title = self.request.GET.get("title", "")

@@ -266,8 +266,18 @@ class Event(DBModel):
     def price(self):
         return self._price
 
+    @price.setter
+    def price(self, value):
+        raise AttributeError(
+            "Directly setting price is disallowed. Please check the Event @price.getter method"
+        )
+
     @price.getter
     def price(self):
+        """
+        custom price.getter to provide calculable DB field (actual field is stored as _price)
+        evaluates calculated vs current value and updates price or pricing_rule when needed
+        """
         # Side effects may occur
         # Set to_save = True when they to do to be saved
         to_save = False

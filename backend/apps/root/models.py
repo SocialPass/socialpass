@@ -239,6 +239,7 @@ class Event(DBModel):
         This function handles state transition from draft to awaiting checkout
         Side effects include
         """
+        print("transition draft")
         return
 
     @transition(
@@ -250,8 +251,8 @@ class Event(DBModel):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
-            - Creating ticket scanner key
         """
+        print("transition pending_checkout")
         return
 
     @transition(field=state, target=EventStatusEnum.LIVE.value)
@@ -259,11 +260,18 @@ class Event(DBModel):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
+        - Create ticket scanner object
         """
-        return
+        print("transition live")
+        # - Create ticket scanner object
+        TicketRedemptionKey.objects.get_or_create(event=self)
 
     @property
     def price(self):
+        """
+        price property
+        check @setter and @getter below
+        """
         return self._price
 
     @price.setter

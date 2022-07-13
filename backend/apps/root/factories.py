@@ -2,7 +2,9 @@ import random
 
 import factory
 import factory.django
+import factory.fuzzy
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from apps.dashboard.models import Membership, Team
 from apps.root.models import Event
@@ -15,29 +17,12 @@ class UserFactory(factory.django.DjangoModelFactory):
     Create user
     """
 
-    username = factory.Faker("name")
+    username = factory.Faker("first_name")
     email = factory.Faker("email")
-    password = factory.Faker("password")
+    password = factory.PostGenerationMethodCall("set_password", "password")
 
     class Meta:
         model = User
-
-
-class EventFactory(factory.django.DjangoModelFactory):
-    """
-    Create event
-    """
-
-    title = title = factory.Faker("sentence", nb_words=5, variable_nb_words=True)
-    description = factory.Faker("paragraph")
-    start_date = factory.Faker("date_time")
-    cover_image = factory.django.ImageField(color="blue")
-    capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
-    limit_per_person = 1
-    requirements = []
-
-    class Meta:
-        model = Event
 
 
 class TeamFactory(factory.django.DjangoModelFactory):
@@ -46,7 +31,6 @@ class TeamFactory(factory.django.DjangoModelFactory):
     """
 
     name = factory.Faker("name")
-    event = factory.RelatedFactory(EventFactory, factory_related_name="team")
 
     class Meta:
         model = Team
@@ -75,14 +59,19 @@ class UserWithTeamFactory(UserFactory):
     )
 
 
-class UserWith2TeamsFactory(UserFactory):
+class EventFactory(factory.django.DjangoModelFactory):
     """
-    Create one user with two team memberships
+    Create event
     """
 
-    membership1 = factory.RelatedFactory(
-        MembershipFactory, factory_related_name="user", team__name="Team 1"
-    )
-    membership2 = factory.RelatedFactory(
-        MembershipFactory, factory_related_name="user", team__name="Team 2"
-    )
+    title = factory.Faker("sentence", nb_words=5, variable_nb_words=True)
+    organizer = factory.Faker("name")
+    description = factory.Faker("paragraph")
+    start_date = factory.fuzzy.FuzzyDateTime(timezone.now())
+    cover_image = factory.django.ImageField(color="blue")
+    capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
+    limit_per_person = 1
+    requirements = []
+
+    class Meta:
+        model = Event

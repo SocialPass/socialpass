@@ -115,7 +115,7 @@ class Event(DBModel):
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
 
     # Publish info
     is_featured = models.BooleanField(default=False)
@@ -240,7 +240,6 @@ class Event(DBModel):
         Side effects include
         """
         print("transition draft")
-        return
 
     @transition(
         field=state,
@@ -253,7 +252,6 @@ class Event(DBModel):
         Side effects include
         """
         print("transition pending_checkout")
-        return
 
     @transition(field=state, target=EventStatusEnum.LIVE.value)
     def transition_live(self):
@@ -316,6 +314,40 @@ class Event(DBModel):
     @property
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
+
+    @staticmethod
+    def required_fields():
+        fields = [
+            "title",
+            "organizer",
+            "description",
+            "visibility",
+            # location
+            "location",
+            # TODO
+            # date and time
+            "start_date",
+            # cover image
+            "cover_image",
+            # 2. Requirements
+            "requirements",
+            # 3. Tickets
+            "capacity",
+            "limit_per_person",
+            # 4. Publish
+        ]
+        return fields
+
+    @staticmethod
+    def optional_fields():
+        fields = [
+            "visibility",
+            "end_date",
+            "timezone_offset",
+            "publish_date",
+            "checkout_requested",
+        ]
+        return fields
 
 
 class Ticket(DBModel):

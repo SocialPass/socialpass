@@ -36,42 +36,9 @@ class TeamForm(forms.ModelForm):
         labels = {"image": "Set Team Image"}
 
 
-required_fields = [
-    "title",
-    "organizer",
-    "description",
-    "visibility",
-    # location
-    "location",
-    # TODO
-    # date and time
-    "start_date",
-    # cover image
-    "cover_image",
-    # 2. Requirements
-    "requirements",
-    # 3. Tickets
-    "capacity",
-    "limit_per_person",
-    # 4. Publish
-]
-optional_fields = [
-    # 1. General info
-    # basic info
-    # "category",
-    # "tags",
-    "visibility",
-    "end_date",
-    "timezone_offset",
-    "cover_image",
-    "publish_date",
-    "checkout_requested",
-]
-
-
 class EventForm(forms.ModelForm):
     class Meta:
-        fields = optional_fields + required_fields
+        fields = Event.optional_fields() + Event.required_fields()
         model = Event
 
         widgets = {
@@ -134,7 +101,7 @@ class EventDraftForm(EventForm):
         checkout_requested = data.get("checkout_requested", None)
         if checkout_requested:
             # check field
-            for i in required_fields:
+            for i in Event.required_fields():
                 field = data.get(i, None)
                 if not field:
                     errors[i] = "This field is required"
@@ -173,7 +140,7 @@ class EventLiveForm(EventForm):
         checkout_requested = data.get("checkout_requested", None)
         if checkout_requested:
             # check field
-            for i in required_fields:
+            for i in Event.required_fields():
                 field = data.get(i, None)
                 if not field and i not in EventLiveForm.Meta.exclude:
                     errors[i] = "This field is required"

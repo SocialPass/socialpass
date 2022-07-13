@@ -134,14 +134,12 @@ class CheckoutPortalProcessTestCase(TestCase):
             "blockchain_ownership_id": self.blockchain_ownership.id,
             "tickets_requested": "1",
         }
-        print(data)
         content_type = "application/json"
-        response = self.client.post(
+        self.client.post(
             f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
-        print(response.content)
 
     @prevent_warnings
     def test_checkout_portal_process_403_over_ticket_limit(self):

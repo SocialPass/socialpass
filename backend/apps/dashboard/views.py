@@ -45,13 +45,14 @@ User = auth.get_user_model()
 class TeamContextMixin(UserPassesTestMixin, ContextMixin):
     """
     Common context used site-wide
-    Used to set current_team from team_pk
+    Used to set current_team from team_public_id
     """
 
     def test_func(self):
         try:
             user_membership = Membership.objects.select_related("team").get(
-                team__public_id=self.kwargs["team_pk"], user__id=self.request.user.id
+                team__public_id=self.kwargs["team_public_id"],
+                user__id=self.request.user.id,
             )
             self.team = user_membership.team
         except Exception:
@@ -73,29 +74,24 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         return context
 
 
-class RequireSuccesfulCheckoutMixin:
+class RequireLiveEventMixin:
     """
     Mixin to require successful checkout for view.
     """
-
-    def pending_checkout_behaviour(self):
-        """
-        Action to take when event has pending payment. Default is redirect to checkout with message.
-        """
-        messages.add_message(
-            self.request, messages.INFO, "Checkout is pending for this event."
-        )
-        return redirect("event_checkout", **self.kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         event = self.get_object()
         if not isinstance(event, Event):
             raise RuntimeError(
-                "get_object must return an Event when using RequireSuccesfulCheckoutMixin"
+                "get_object must return an Event when using RequireLiveEventMixin"
             )
-
-        if event.state == EventStatusEnum.PENDING_CHECKOUT.value:
-            return self.pending_checkout_behaviour()
+        if event.state != EventStatusEnum.LIVE.value:
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                "This event is not live yet. Please complete the creation and checkout process.",
+            )
+            return redirect("event_update", **self.kwargs)
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -269,7 +265,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse("team_members", args=(self.kwargs["team_pk"],))
+        return reverse("team_members", args=(self.kwargs["team_public_id"],))
 
 
 class TeamMemberDeleteView(TeamContextMixin, DeleteView):
@@ -285,7 +281,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse("team_members", args=(self.kwargs["team_pk"],))
+        return reverse("team_members", args=(self.kwargs["team_public_id"],))
 
 
 class TeamUpdateView(TeamContextMixin, UpdateView):
@@ -295,7 +291,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
 
     form_class = TeamForm
     model = Team
-    pk_url_kwarg = "team_pk"
+    pk_url_kwarg = "team_public_id"
     template_name = "dashboard/team_form.html"
 
     def get_object(self):
@@ -305,7 +301,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
-        return reverse("team_detail", args=(self.kwargs["team_pk"],))
+        return reverse("team_detail", args=(self.kwargs["team_public_id"],))
 
 
 class EventListView(TeamContextMixin, ListView):
@@ -321,7 +317,7 @@ class EventListView(TeamContextMixin, ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.filter(team__public_id=self.kwargs["team_pk"])
+        qs = qs.filter(team__public_id=self.kwargs["team_public_id"])
 
         query_title = self.request.GET.get("title", "")
         if query_title:
@@ -340,7 +336,7 @@ class WIPEventsListView(EventListView):
         return super().get_queryset().filter_inactive()
 
 
-class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailView):
+class EventDetailView(TeamContextMixin, RequireLiveEventMixin, DetailView):
     """
     Returns the details of an Ticket token gate.
     """
@@ -351,7 +347,7 @@ class EventDetailView(TeamContextMixin, RequireSuccesfulCheckoutMixin, DetailVie
 
     def get_queryset(self):
         qs = Event.objects.filter(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
         )
         return qs
 
@@ -443,15 +439,15 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     def get_object(self):
         return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
         )
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
         if self.object.state == EventStatusEnum.LIVE.value:
-            return reverse("event_list", args=(self.kwargs["team_pk"],))
+            return reverse("event_list", args=(self.kwargs["team_public_id"],))
         else:
-            return reverse("event_drafts", args=(self.kwargs["team_pk"],))
+            return reverse("event_drafts", args=(self.kwargs["team_public_id"],))
 
 
 class EventCheckout(TeamContextMixin, TemplateView):
@@ -471,7 +467,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
     @lru_cache
     def get_object(self):
         return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
         )
 
     def get_context_data(self, **kwargs):
@@ -488,7 +484,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
         return super().get(request, *args, **kwargs)
 
-    def post(self, request, *, team_pk=None, pk=None):
+    def post(self, request, *, team_public_id=None, pk=None):
         """Issue payment and redirect to stripe checkout"""
         event = self.get_object()
         # handle zero-cost event
@@ -497,7 +493,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
             event.transition_live()
             event.save()
             messages.add_message(request, messages.SUCCESS, "Your event is live!")
-            return redirect(reverse("event_detail", args=(team_pk, pk)))
+            return redirect(reverse("event_detail", args=(team_public_id, pk)))
 
         issued_payment = services.get_in_progress_payment(event)
         if issued_payment:
@@ -517,13 +513,13 @@ class EventCheckout(TeamContextMixin, TemplateView):
         # build callback urls
         success_callback = (
             request.build_absolute_uri(
-                reverse("event_checkout_success_callback", args=(team_pk, pk))
+                reverse("event_checkout_success_callback", args=(team_public_id, pk))
             )
             + "?session_id={CHECKOUT_SESSION_ID}"
         )
         failure_callback = (
             request.build_absolute_uri(
-                reverse("event_checkout_failure_callback", args=(team_pk, pk))
+                reverse("event_checkout_failure_callback", args=(team_public_id, pk))
             )
             + "?session_id={CHECKOUT_SESSION_ID}"
         )
@@ -644,7 +640,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
         return HttpResponse(status=200)
 
 
-class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListView):
+class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
     """
@@ -660,13 +656,13 @@ class EventStatisticsView(TeamContextMixin, RequireSuccesfulCheckoutMixin, ListV
         """
         context = super().get_context_data(**kwargs)
         context["current_gate"] = Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
         )
         return context
 
     def get_object(self):
         return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_pk"]
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
         )
 
     def get_queryset(self):

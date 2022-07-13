@@ -32,4 +32,4 @@ lint: ## Lint backend repo (backend/venv)
 	(source backend/venv/bin/activate; black .; isort .; flake8 .;)
 
 test: ## Test backend repo (backend/venv)
-	(source backend/venv/bin/activate; cd backend && python manage.py test)
+	(source backend/venv/bin/activate; cd backend && python manage.py test --failfast)

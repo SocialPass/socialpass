@@ -70,7 +70,6 @@ class EventDiscoveryTest(TestCase):
 
     def test_discovery_index(self):
         # Test GET
-        print("discovery")
         url = reverse("discovery:index")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

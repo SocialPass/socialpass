@@ -107,16 +107,22 @@ class EventDraftForm(EventForm):
                     errors[i] = "This field is required"
 
         # check for errors
-        if not errors:
-            # handle state transitions
-            # based on current checkout_requested
-            if checkout_requested:
-                self.instance.transition_pending_checkout()
-            else:
-                self.instance.transition_draft()
-            return data
-        else:
+        # raise exception
+        if errors:
             raise forms.ValidationError(errors)
+
+        # form is OK, handle state transitions
+        # Only call state transition if in expected state
+        # Note: No need to save, as form will call save
+        if checkout_requested:
+            if self.instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
+                self.instance.transition_pending_checkout()
+        else:
+            if self.instance.state != Event.StateEnum.DRAFT.value:
+                self.instance.transition_draft()
+
+        # return form data
+        return data
 
 
 class EventPendingCheckoutForm(EventDraftForm):

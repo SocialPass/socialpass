@@ -8,7 +8,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core import exceptions
-from django.http import HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
 from django.utils import dateparse
 from django.views import View
@@ -61,7 +61,7 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         else:
             # TODO: Should this be 403?
             # Unsure if that exposes security concern
-            return HttpResponse(status=404)
+            raise Http404
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

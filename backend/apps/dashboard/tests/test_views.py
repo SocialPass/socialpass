@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -53,8 +53,10 @@ class DashboardTest(TestCase):
         self.team_one.members.remove(self.user_two)
         request = self.factory.get("/fake-path")
         request.user = self.user_two
-        response = TestTeamContextView.as_view()(request, **kwargs)
-        self.assertEqual(response.status_code, 404)
+        try:
+            response = TestTeamContextView.as_view()(request, **kwargs)
+        except Exception as e:
+            self.assertEqual(type(e), Http404)
 
         # Test logged-out user
         request = self.factory.get("/fake-path", follow=True)

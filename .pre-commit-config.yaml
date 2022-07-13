@@ -1,7 +1,6 @@
 default_stages: [commit]
 
 repos:
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.2.0
     hooks:
@@ -32,46 +31,7 @@ repos:
     hooks:
       - id: flake8
 
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v0.950
-  #   hooks:
-  #   -   id: mypy
-  #       # entry: bash -c 'cd backend && mypy . --ignore-missing-imports'
-  #       args: [--ignore-missing-imports]
-  #       additional_dependencies: [
-  #         # stubs
-  #         'django-stubs[compatible-mypy]==1.12.0',
-  #         'djangorestframework-stubs[compatible-mypy]==1.6.0',
-
-  #         # EVERYTHING BELOW IS COPIED FROM config/requirements/base.txt
-
-  #         'wheel',
-  #         'uvicorn[standard]',
-  #         'argon2-cffi==21.3.0',
-  #         'web3==5.29.0',
-  #         'boto3==1.21.46',
-  #         'Pillow==9.1.0',
-  #         'qrcode==7.3.1',
-  #         'stripe==3.0.0',
-  #         'sentry-sdk==1.5.12',
-
-  #         'django==4.0.4',
-  #         'djangorestframework==3.13.1',
-  #         'django-allauth==0.50.0',
-  #         'django-storages[boto3]==1.12.3',
-  #         'django-environ',
-  #         'django-cors-headers==3.11.0',
-
-
-  #         'django-model-utils==4.2.0',
-  #         'django-crispy-forms==1.14.0',
-  #         'crispy-bootstrap5==0.6',
-  #         'git+https://github.com/jazzband/django-invitations.git@045dc4d55369be33e9c8711dd1c9d0bc793d64cb',
-
-  #         psycopg2-binary==2.9.3
-  #       ]
-
-ci:
-  autoupdate_schedule: weekly
-  skip: []
-  submodules: false
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v0.961'
+    hooks:
+      - id: mypy

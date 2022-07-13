@@ -198,11 +198,7 @@
   line-height: 16px;
   text-decoration: none;
   color: var(--white-color);
-  background-color: hsl(
-    var(--socialpass-orange-color-hue),
-    var(--socialpass-orange-color-saturation),
-    var(--socialpass-orange-color-lightness)
-  );
+  background-color: var(--secondary-color);
   background-image: none;
   border-color: none;
   box-shadow: none;
@@ -211,11 +207,7 @@
 .btn-statistics:active {
   text-decoration: none;
   color: inherit;
-  background-color: hsl(
-    var(--socialpass-orange-color-hue),
-    var(--socialpass-orange-color-saturation),
-    var(--socialpass-orange-color-lightness-step-down-1)
-  );
+  background-color: var(--secondary-color);
   background-image: none;
   border-color: transparent;
   box-shadow: none;
@@ -238,7 +230,7 @@
   font-size: 22px;
   line-height: 26px;
   text-align: center;
-  color: #0c0f3c;
+  color: var(--dark-color);
   margin-top: 5%;
   margin-bottom: 10%;
   background-color: var(--white-color);
@@ -250,7 +242,7 @@
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: #0c0f3c;
+  color: var(--dark-color);
   margin-bottom: 20px;
   position: absolute;
   margin-left: -50%;
@@ -263,7 +255,7 @@
   background-color: var(--white-color);
   border: 1px solid #c0c0c0;
   border-color: var(--gray-color-dim);
-  box-shadow: 0px 4px 15px 1px rgba(44, 100, 121, 0.21);
+  box-shadow: 0px 4px 15px 1px hsla(var(--primary-color-hsl), 0.21);
   border-radius: 33px 33px 0px 0px;
 }
 
@@ -275,10 +267,9 @@
   -moz-osx-font-smoothing: var(--card-moz-osx-font-smoothing);
   color: inherit;
   background-color: var(--white-color);
-  border: 1px solid #c0c0c0;
-  border-color: var(--gray-color-dim);
+  border: 1px solid var(--gray-color-dim);
   border-radius: 1.4rem;
-  box-shadow: 0px 4px 15px 1px rgba(44, 100, 121, 0.21);
+  box-shadow: 0px 4px 15px 1px hsla(var(--primary-color-hsl), 0.21);
 }
 
 .btn-non-selected-statistic {
@@ -334,19 +325,15 @@
   border-color: transparent;
   margin: 2px;
   color: var(--white-color);
-  background-color: hsl(
-    var(--socialpass-orange-color-hue),
-    var(--socialpass-orange-color-saturation),
-    var(--socialpass-orange-color-lightness)
-  );
+  background-color: var(--secondary-color);
   background-image: none;
 }
 
 .btn-inactive {
   border-color: transparent;
   margin: 2px;
-  color: #e7e7e7;
-  background-color: rgb(170, 170, 170);
+  color: var(--white-color);
+  background-color: var(--gray-color-dim);
   background-image: none;
   border-color: none;
   box-shadow: none;
@@ -369,11 +356,7 @@
   line-height: 1;
   font-family: "Inter", sans-serif;
   font-weight: 600;
-  color: hsl(
-    var(--socialpass-orange-color-hue),
-    var(--socialpass-orange-color-saturation),
-    var(--socialpass-orange-color-lightness)
-  );
+  color: var(--secondary-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
   margin-bottom: 1.6rem;
@@ -386,11 +369,7 @@
   font-family: inherit;
   font-weight: 600;
   text-align: center;
-  color: hsl(
-    var(--socialpass-blue-color-hue),
-    var(--socialpass-blue-color-saturation),
-    var(--socialpass-blue-color-lightness)
-  );
+  color: var(--primary-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }

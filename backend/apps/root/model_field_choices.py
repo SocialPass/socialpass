@@ -1,5 +1,3 @@
-from enum import Enum
-
 EVENT_VISIBILITY = (
     ("PUBLIC", "Public"),
     ("PRIVATE", "Private"),
@@ -32,9 +30,3 @@ STIPE_PAYMENT_STATUSES = (
     ),  # stripe's async aknowledgement of the payment with success
     ("FAILURE", "Failed"),  # stripe's async aknowledgement of the payment with error
 )
-
-
-class EventStatusEnum(Enum):
-    DRAFT = "Draft"
-    PENDING_CHECKOUT = "Ready for Checkout"
-    LIVE = "Live"

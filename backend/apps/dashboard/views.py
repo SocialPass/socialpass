@@ -30,12 +30,7 @@ from apps.dashboard.forms import (
     TeamForm,
 )
 from apps.dashboard.models import EventStripePayment, Membership, Team
-from apps.root.model_field_choices import (
-    ASSET_TYPES,
-    BLOCKCHAINS,
-    CHAIN_IDS,
-    EventStatusEnum,
-)
+from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.models import Event, Ticket
 
@@ -85,7 +80,7 @@ class RequireLiveEventMixin:
             raise RuntimeError(
                 "get_object must return an Event when using RequireLiveEventMixin"
             )
-        if event.state != EventStatusEnum.LIVE.value:
+        if event.state != Event.StateEnum.LIVE.value:
             messages.add_message(
                 self.request,
                 messages.INFO,
@@ -377,11 +372,11 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == EventStatusEnum.DRAFT.value:
+        if self.object.state == Event.StateEnum.DRAFT.value:
             return "Your draft has been saved"
-        elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:
+        elif self.object.state == Event.StateEnum.PENDING_CHECKOUT.value:
             return "Your event is ready for checkout"
-        elif self.object.state == EventStatusEnum.LIVE.value:
+        elif self.object.state == Event.StateEnum.LIVE.value:
             return "Your changes have been saved"
 
 
@@ -397,11 +392,11 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
     def get_form_class(self):
         """get form class based on event state"""
-        if self.object.state == EventStatusEnum.DRAFT.value:
+        if self.object.state == Event.StateEnum.DRAFT.value:
             return EventDraftForm
-        elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:
+        elif self.object.state == Event.StateEnum.PENDING_CHECKOUT.value:
             return EventPendingCheckoutForm
-        elif self.object.state == EventStatusEnum.LIVE.value:
+        elif self.object.state == Event.StateEnum.LIVE.value:
             return EventLiveForm
 
     def get_context_data(self, **kwargs):
@@ -421,11 +416,11 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == EventStatusEnum.DRAFT.value:
+        if self.object.state == Event.StateEnum.DRAFT.value:
             return "Your draft has been saved"
-        elif self.object.state == EventStatusEnum.PENDING_CHECKOUT.value:
+        elif self.object.state == Event.StateEnum.PENDING_CHECKOUT.value:
             return "Your event is ready for checkout"
-        elif self.object.state == EventStatusEnum.LIVE.value:
+        elif self.object.state == Event.StateEnum.LIVE.value:
             return "Your changes have been saved"
 
 
@@ -444,7 +439,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
-        if self.object.state == EventStatusEnum.LIVE.value:
+        if self.object.state == Event.StateEnum.LIVE.value:
             return reverse("event_list", args=(self.kwargs["team_public_id"],))
         else:
             return reverse("event_drafts", args=(self.kwargs["team_public_id"],))
@@ -476,7 +471,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         """Renders checkout page if payment is still pending"""
         event = self.get_object()
-        if event.state == EventStatusEnum.LIVE.value:
+        if event.state == Event.StateEnum.LIVE.value:
             messages.add_message(
                 request, messages.INFO, "The payment has already been processed."
             )

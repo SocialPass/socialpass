@@ -6,7 +6,7 @@ from taggit.forms import TagField
 
 from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.models import Event
 
 

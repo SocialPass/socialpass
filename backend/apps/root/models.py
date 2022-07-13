@@ -2,9 +2,9 @@ import os
 import typing
 import uuid
 from datetime import datetime, timedelta
+from enum import Enum
 
 import boto3
-import pytz
 from dateutil.tz import tzoffset
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -20,7 +20,7 @@ from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.validators import JSONSchemaValidator
@@ -57,6 +57,10 @@ class EventLocation(DBModel):
 
 
 class EventCategory(DBModel):
+    """
+    Category model for Events
+    Contains parent description
+    """
 
     parent_category = models.ForeignKey(
         "EventCategory", on_delete=models.SET_NULL, null=True
@@ -80,13 +84,13 @@ class EventQuerySet(models.QuerySet):
         """
         inactive events (not live)
         """
-        return self.filter(~models.Q(state=EventStatusEnum.LIVE.value))
+        return self.filter(~models.Q(state=Event.StateEnum.LIVE.value))
 
     def filter_active(self):
         """
         active events (live)
         """
-        return self.filter(state=EventStatusEnum.LIVE.value)
+        return self.filter(state=Event.StateEnum.LIVE.value)
 
     def filter_publicly_accessible(self):
         """
@@ -107,11 +111,16 @@ class Event(DBModel):
     Stores data for ticketed event
     """
 
+    class StateEnum(Enum):
+        DRAFT = "Draft"
+        PENDING_CHECKOUT = "Ready for Checkout"
+        LIVE = "Live"
+
     # Queryset manager
     objects = EventQuerySet.as_manager()
 
     # state
-    state = FSMField(default=EventStatusEnum.DRAFT.value, protected=True)
+    state = FSMField(default=StateEnum.DRAFT.value, protected=True)
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -177,11 +186,11 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     def get_absolute_url(self):
-        if self.state == EventStatusEnum.DRAFT.value:
+        if self.state == Event.StateEnum.DRAFT.value:
             _success_url = "event_update"
-        elif self.state == EventStatusEnum.PENDING_CHECKOUT.value:
+        elif self.state == Event.StateEnum.PENDING_CHECKOUT.value:
             _success_url = "event_checkout"
-        elif self.state == EventStatusEnum.LIVE.value:
+        elif self.state == Event.StateEnum.LIVE.value:
             _success_url = "event_detail"
         return reverse(
             _success_url,
@@ -231,8 +240,8 @@ class Event(DBModel):
 
     @transition(
         field=state,
-        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
-        target=EventStatusEnum.DRAFT.value,
+        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
+        target=StateEnum.DRAFT.value,
     )
     def transition_draft(self):
         """
@@ -243,8 +252,8 @@ class Event(DBModel):
 
     @transition(
         field=state,
-        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
-        target=EventStatusEnum.PENDING_CHECKOUT.value,
+        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
+        target=StateEnum.PENDING_CHECKOUT.value,
     )
     def transition_pending_checkout(self):
         """
@@ -253,7 +262,7 @@ class Event(DBModel):
         """
         print("transition pending_checkout")
 
-    @transition(field=state, target=EventStatusEnum.LIVE.value)
+    @transition(field=state, target=StateEnum.LIVE.value)
     def transition_live(self):
         """
         This function handles state transition from draft to awaiting checkout

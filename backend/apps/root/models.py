@@ -129,7 +129,9 @@ class Event(DBModel):
     # Publish info
     is_featured = models.BooleanField(default=False)
     publish_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
-    visibility = models.CharField(max_length=50, choices=EVENT_VISIBILITY)
+    visibility = models.CharField(
+        max_length=50, choices=EVENT_VISIBILITY, default=EVENT_VISIBILITY[0][0]
+    )
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)

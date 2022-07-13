@@ -12,6 +12,7 @@ from django.views.generic import DetailView, TemplateView
 
 from apps.dashboard import forms, services, views
 from apps.dashboard.models import Invite, Membership, PricingRule, Team
+from apps.root.factories import EventFactory, UserWithTeamFactory
 from apps.root.models import Event
 
 User = get_user_model()
@@ -21,52 +22,18 @@ class EventDiscoveryTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
-        # TODO: Move this setup to some sort of factory
         # Setup users
-        self.username = "jacob"
-        self.username_two = "jacob2"
-        self.email = "jacob@test.local"
-        self.email_two = "jacob2@test.local"
-        self.password = "top_secret"
-        self.team_name = "Test Team"
-        self.user = User.objects.create_user(
-            username=self.username, email=self.email, password=self.password
-        )
-        self.user_two = User.objects.create_user(
-            username=self.username_two, email=self.email, password=self.password
-        )
-        # Setup team
-        self.team = Team.objects.create(name=self.team_name)
-        self.membership = Membership.objects.create(team=self.team, user=self.user)
-        # TODO: Pricing rules should be their own migration,
-        # once we have finalized organizer pricing
-        PricingRule.objects.create(
-            min_capacity=1,
-            max_capacity=None,
-            price_per_ticket=1.00,
-            active=True,
-            group=self.team.pricing_rule_group,
-        )
-        # Setup event
-        self.event_data = {
-            "title": "Test Title",
-            "team": self.team,
-            "user": self.user,
-            "description": "Test Description",
-            "start_date": timezone.now(),
-            "timezone": "US/Eastern",
-            "location": "NYC",
-            "capacity": 100,
-            "limit_per_person": 1,
-            "requirements": [],
-            "cover_image": SimpleUploadedFile(
-                name="test_image.jpg", content=b"", content_type="image/jpeg"
-            ),
-        }
-        self.event = Event.objects.create(**self.event_data)
+        self.password = "password"
+        self.user_one = UserWithTeamFactory()
+        self.user_two = UserWithTeamFactory()
 
-        # Setup price
-        services.issue_payment(event=self.event, stripe_checkout_session_id="12345")
+        # setup teams
+        self.team_one = self.user_one.membership_set.first().team
+        self.team_two = self.user_two.membership_set.first().team
+
+        # setup event
+        self.event_one = EventFactory(team=self.team_one, user=self.user_one)
+        self.event_two = EventFactory(team=self.team_two, user=self.user_two)
 
     def test_discovery_index(self):
         # Test GET
@@ -75,15 +42,31 @@ class EventDiscoveryTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_discovery_browse(self):
-        # Test GET
+        # Test GET (No live events)
         url = reverse("discovery:browse")
         response = self.client.get(url)
+        self.assertEqual(response.context_data["events"].count(), 0)
+        self.assertEqual(response.status_code, 200)
 
-        # TODO: Test search / filters
+        # Test GET (2 live events)
+        self.event_one.transition_live()
+        self.event_one.save()
+        self.event_two.transition_live()
+        self.event_two.save()
+        url = reverse("discovery:browse")
+        response = self.client.get(url)
+        self.assertEqual(response.context_data["events"].count(), 2)
         self.assertEqual(response.status_code, 200)
 
     def test_discovery_details(self):
-        # Test GET
-        url = reverse("discovery:details", args=(self.event.public_id,))
+        # Test GET (Not live)
+        url = reverse("discovery:details", args=(self.event_one.public_id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        # Test GET (Live)
+        self.event_one.transition_live()
+        self.event_one.save()
+        url = reverse("discovery:details", args=(self.event_one.public_id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

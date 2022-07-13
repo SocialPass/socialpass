@@ -49,7 +49,7 @@ class EventLocation(DBModel):
     # geodjango lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     long = models.DecimalField(max_digits=9, decimal_places=6)
-    # TODO:
+    # TODO: Setup Lat/Long handling
     # point = PointField(geography=True, default="POINT(0.0 0.0)")
     # localized_address_display #The format of the address display localized to the address country
     # localized_area_display	#The format of the address's area display localized to the address country
@@ -334,19 +334,12 @@ class Event(DBModel):
             "organizer",
             "description",
             "visibility",
-            # location
             "location",
-            # TODO
-            # date and time
             "start_date",
-            # cover image
             "cover_image",
-            # 2. Requirements
             "requirements",
-            # 3. Tickets
             "capacity",
             "limit_per_person",
-            # 4. Publish
         ]
         return fields
 

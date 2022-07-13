@@ -62,7 +62,7 @@ class EventDiscoveryTest(TestCase):
     def test_discovery_details(self):
         # Test GET (Not live)
         # Note: Disable 404 logging first
-        # TODO: This should be some form of decorator for test cases that required variable logging
+        # TODO: This could be some form of decorator for test cases that require variable logging
         logger = logging.getLogger("django.request")
         previous_level = logger.getEffectiveLevel()
         logger.setLevel(logging.ERROR)

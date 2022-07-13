@@ -5,9 +5,6 @@ from apps.root.models import Ticket
 
 
 class TestScanningService(TestCase):
-
-    # TODO: add ticket fixtures
-
     def test_get_ticket_from_embedded_qr_code(self):
         ticket = Ticket.objects.last()
         if ticket:

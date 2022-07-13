@@ -21,7 +21,6 @@ SCANNER_BASE_URL=http://localhost:3001
 # DJANGO_AWS_S3_ENDPOINT_URL=''
 
 # STRIPE
-# TODO: rotate keys and move to secrets manager
 # ------------------------------------------------------------------------------
 # STRIPE_PUBLISHABLE_KEY=''
 # STRIPE_SECRET_KEY=''

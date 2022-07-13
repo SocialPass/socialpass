@@ -102,7 +102,6 @@ def create_ticket_image(
     _buffer.seek(0)  # Rewind pointer back to start
 
     # save ticket image
-    # todo: ensure .png format (or whatever format)
     ticket.file.save(f"{str(ticket.filename)}.png", _buffer)
     return ticket
 

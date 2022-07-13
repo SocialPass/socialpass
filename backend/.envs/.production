@@ -42,7 +42,6 @@ MAILGUN_DOMAIN=""
 MORALIS_API_KEY=""
 
 # STRIPE
-# TODO: rotate keys and move to secrets manager
 # ------------------------------------------------------------------------------
 STRIPE_PUBLISHABLE_KEY=""
 STRIPE_SECRET_KEY=""

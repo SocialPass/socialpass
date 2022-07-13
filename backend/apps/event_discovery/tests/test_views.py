@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from django.contrib.auth import get_user_model
@@ -60,9 +61,16 @@ class EventDiscoveryTest(TestCase):
 
     def test_discovery_details(self):
         # Test GET (Not live)
+        # Note: Disable 404 logging first
+        # TODO: This should be some form of decorator for test cases that required variable logging
+        logger = logging.getLogger("django.request")
+        previous_level = logger.getEffectiveLevel()
+        logger.setLevel(logging.ERROR)
         url = reverse("discovery:details", args=(self.event_one.public_id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+        # Re-enable logging
+        logger.setLevel(previous_level)
 
         # Test GET (Live)
         self.event_one.transition_live()

@@ -7,6 +7,7 @@ from hexbytes import HexBytes
 from rest_framework import status
 from web3.auto import w3
 
+from apps.root.factories import EventFactory, UserWithTeamFactory
 from apps.root.models import BlockchainOwnership, Event, Team, User
 
 # Tests can be run by execing into the container and `python manage.py test`
@@ -35,31 +36,6 @@ def generate_random_identifier():
     return uuid4().hex[:6].upper()
 
 
-def create_testing_user():
-    return User.objects.create(username=f"testUser_{generate_random_identifier()}")
-
-
-def create_testing_team():
-    identifier = generate_random_identifier()
-    return Team.objects.create(
-        name=f"testTeam_{identifier}",
-        description=f"testTeamDescription_{identifier}",
-    )
-
-
-def create_testing_event(**kwargs):
-    identifier = generate_random_identifier()
-    return Event.objects.create(
-        title=f"testEvent_{identifier}",
-        description=f"testEventDescription_{identifier}",
-        start_date=kwargs.get("start_date", "2030-08-21 13:30:00+00"),
-        timezone=kwargs.get("timezone", "America/Bahia"),
-        capacity=kwargs.get("capacity", "1000"),
-        team_id=kwargs.get("team_id", Team.objects.last().id),
-        user_id=kwargs.get("user_id", User.objects.last().id),
-    )
-
-
 def create_testing_blockchain_ownership(**kwargs):
     return BlockchainOwnership.objects.create(
         event_id=kwargs.get("event_id", Event.objects.last().id)
@@ -69,9 +45,11 @@ def create_testing_blockchain_ownership(**kwargs):
 class GetEventDetailsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = create_testing_user()
-        cls.team = create_testing_team()
-        cls.event = create_testing_event()
+        cls.password = "password"
+        cls.user = UserWithTeamFactory()
+        cls.team = cls.user.membership_set.first().team
+        cls.event = EventFactory(team=cls.team, user=cls.user)
+        cls.blockchain_ownership = create_testing_blockchain_ownership()
         return super().setUpTestData()
 
     def test_get_event_details_200(self):
@@ -106,9 +84,10 @@ class GetEventDetailsTestCase(TestCase):
 class CheckoutPortalProcessTestCase(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = create_testing_user()
-        cls.team = create_testing_team()
-        cls.event = create_testing_event()
+        cls.password = "password"
+        cls.user = UserWithTeamFactory()
+        cls.team = cls.user.membership_set.first().team
+        cls.event = EventFactory(team=cls.team, user=cls.user)
         cls.blockchain_ownership = create_testing_blockchain_ownership()
         return super().setUpTestData()
 

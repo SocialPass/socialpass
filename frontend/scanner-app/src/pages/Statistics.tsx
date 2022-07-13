@@ -8,12 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export function Statistics() {
   const navigate = useNavigate();
   const params = useParams();
-  const isStatisticsPageFinished = false;
   const { eventData }: any = useEvent();
-
-  function handleRedirect() {
-    navigate("../scanner");
-  }
 
   return (
     <div className="statistics-body">
@@ -22,7 +17,7 @@ export function Statistics() {
         <StatisticsTable />
         <div className="container p-5 d-flex flex-column">
           <button
-            className="btn-primary"
+            className="btn-primary rounded-4 p-15"
             onClick={() => {
               navigate(`/${params.publicId}/scanner`);
             }}

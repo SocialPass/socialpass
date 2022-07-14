@@ -147,7 +147,7 @@
   width: 100%;
   height: 100%;
   color: inherit;
-  background-color: #fafafa;
+  background-color: var(--base-body-bg-color);
   box-shadow: none;
 }
 

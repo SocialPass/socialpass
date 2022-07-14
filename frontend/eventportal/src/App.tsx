@@ -10,12 +10,10 @@ import {
   TicketSelection,
   Event,
 } from "./pages";
-import "./static/css/socialpass-theme.css";
-import "./static/css/halfmoon.css";
-import "./index.css";
 import RequiresEvent from "./utils/requiresEventHOC";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Error } from "./pages/Error";
+import "./styles/global.css";
 
 // Main CheckoutPortal component. Does a couple of things
 // 1. Setup CheckoutPortalProvider (react context)

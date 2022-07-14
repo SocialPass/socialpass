@@ -12,12 +12,18 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = ROOT_DIR / "apps"
 env = environ.Env()
 
-
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
+# Note: OS environment variables take precedence over variables from .env
 if READ_DOT_ENV_FILE:
-    # OS environment variables take precedence over variables from .env
-    env.read_env(str(ROOT_DIR / ".envs" / ".env.local"))
-    env.read_env(str(ROOT_DIR / ".envs" / ".donotpush"))
+    # Local env vars
+    if env("DJANGO_SETTINGS_MODULE") == "config.settings.local":
+        print("reading config.settings.local")
+        env.read_env(str(ROOT_DIR / ".envs" / ".env.local"))
+        env.read_env(str(ROOT_DIR / ".envs" / ".donotpush"))
+    # Testing env vars
+    if env("DJANGO_SETTINGS_MODULE") == "config.settings.test":
+        print("reading config.settings.test")
+        env.read_env(str(ROOT_DIR / ".envs" / ".env.test"))
 
 # GENERAL
 # ------------------------------------------------------------------------------

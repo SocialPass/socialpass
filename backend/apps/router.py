@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -17,8 +19,13 @@ urlpatterns += [
     path("api/scanner/v1/", include("apps.api_scanner.urls")),
 ]
 
-# Debug URL's
-if settings.DEBUG:
+# Debug URL's (only for local)
+is_local = (
+    settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"
+)
+print("is_local", is_local)
+
+if is_local:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development
     urlpatterns += staticfiles_urlpatterns()
 

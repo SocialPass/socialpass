@@ -1,16 +1,16 @@
-name: Event Portal CI
+name: EventPortal CI
 on:
-pull_request:
-  branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Install modules
+    - uses: actions/checkout@v3
+    - name: Install node_modules
       working-directory: frontend/eventportal
-      run: yarn
+      run: npm install
     - name: Run TypeScript type checks
       working-directory: frontend/eventportal
-      run: yarn tsc
+      run: npm run lint

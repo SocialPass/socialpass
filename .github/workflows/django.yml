@@ -1,8 +1,6 @@
 name: Django CI
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -15,15 +13,32 @@ jobs:
       matrix:
         python-version: [3.10.5]
 
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
+        ports:
+          - 5432:5432
+      # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-    - name: Load .env file
-      uses: xom9ikk/dotenv@v1.0.2
-      with:
-        path: backend/.envs/
-        mode: test
+    # checkout code
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     # Setup python
-    - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -35,7 +50,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r backend/config/requirements/test.txt
 
-    # Run tests
-    - name: Run Tests
+    # Set environment variable && run tets
+    - name: Export .env and run tests
       run: |
-        python backend/manage.py test
+        set -o allexport
+        source backend/.envs/.env.test
+        set +o allexport
+        cd backend && python manage.py test
+
+    # TODO: setup pre-commit config to only touch relevant files
+    # Run precommit hooks
+    # - name: Run pre-commit hooks
+    #  uses: pre-commit/action@v3.0.0

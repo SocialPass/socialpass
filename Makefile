@@ -35,4 +35,4 @@ test: ## Test backend repo (backend/venv)
 	(source backend/venv/bin/activate; cd backend && python manage.py test --failfast)
 
 maction: ## Test github actions (requires `act` to be installed, also has flag for M1)
-	act --container-architecture linux/amd64
+	act pull_request --container-architecture linux/amd64

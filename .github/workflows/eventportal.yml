@@ -1,0 +1,16 @@
+name: Event Portal CI
+on:
+pull_request:
+  branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      working-directory: frontend/eventportal
+      run: yarn
+    - name: Run TypeScript type checks
+      working-directory: frontend/eventportal
+      run: yarn tsc

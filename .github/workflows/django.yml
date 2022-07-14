@@ -20,7 +20,7 @@ jobs:
       uses: xom9ikk/dotenv@v1.0.2
       with:
         path: backend/.envs/
-        mode: testing
+        mode: test
 
     # Setup python
     - uses: actions/checkout@v2

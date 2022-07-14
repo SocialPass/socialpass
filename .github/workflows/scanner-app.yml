@@ -1,0 +1,16 @@
+name: Ticket Scanner CI
+on:
+pull_request:
+  branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      working-directory: ./frontend/scanner-app
+      run: yarn
+    - name: Run TypeScript type checks
+      working-directory: ./frontend/scanner-app
+      run: yarn tsc

@@ -4,9 +4,6 @@ from apps.dashboard.models import Team
 from apps.root.models import Event, Ticket
 
 
-#
-# MODEL SERIALIZERS ////////////////////////////////////////////////////////////////////////////////
-#
 class TeamSerializer(serializers.ModelSerializer):
     """
     Team serializer

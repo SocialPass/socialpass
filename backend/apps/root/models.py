@@ -1,14 +1,11 @@
 import os
-import typing
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 
 import boto3
-from dateutil.tz import tzoffset
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core import exceptions as dj_exceptions
 from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -34,13 +31,17 @@ class User(AbstractUser):
 
 
 class EventLocation(DBModel):
+    """
+    Event location manager
+    """
+
     # The street/location address (part 1)
     address_1 = models.CharField(max_length=255)
     # The street/location address (part 2)
     address_2 = models.CharField(max_length=255)
     # The city
     city = models.CharField(max_length=255)
-    # The ISO 3166-2 2- or 3-character region code for the state, province, region, or district
+    # The ISO 3166-2 2- or 3-character region code
     region = models.CharField(max_length=3)
     # The postal code
     postal_code = models.IntegerField()
@@ -51,9 +52,6 @@ class EventLocation(DBModel):
     long = models.DecimalField(max_digits=9, decimal_places=6)
     # TODO: Setup Lat/Long handling
     # point = PointField(geography=True, default="POINT(0.0 0.0)")
-    # localized_address_display #The format of the address display localized to the address country
-    # localized_area_display	#The format of the address's area display localized to the address country
-    # localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
 
 
 class EventCategory(DBModel):
@@ -287,14 +285,19 @@ class Event(DBModel):
     @price.setter
     def price(self, value):
         raise AttributeError(
-            "Directly setting price is disallowed. Please check the Event @price.getter method"
+            "Directly setting price is disallowed. \
+            Please check the Event @price.getter method"
         )
 
     @price.getter
     def price(self):
         """
-        custom price.getter to provide calculable DB field (actual field is stored as _price)
-        evaluates calculated vs current value and updates price or pricing_rule when needed
+        Custom price.getter to provide calculable DB field
+        Returns up-to-date price of event.
+        Note: DB field is stored as self._price
+
+        This getter evaluates calculated (expected) price vs current price.
+        In case of conflict, this function update _price.
         """
         # Side effects may occur
         # Set to_save = True when they to do to be saved
@@ -465,7 +468,8 @@ class BlockchainOwnership(DBModel):
     @property
     def signing_message(self):
         return (
-            "Greetings from SocialPass. Sign this message to prove you have access to this wallet"
+            "Greetings from SocialPass. \
+            Sign this message to prove you have access to this wallet"
             "\nThis IS NOT a trade or transaction"
             f"\n\nTimestamp: {self.expires.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)[0:7]}"

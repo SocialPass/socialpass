@@ -1,10 +1,7 @@
-import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
-from taggit.forms import TagField
 
-from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.models import Event

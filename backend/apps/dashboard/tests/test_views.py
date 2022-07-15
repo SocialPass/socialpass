@@ -1,16 +1,13 @@
-import uuid
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.messages.middleware import MessageMiddleware
-from django.http import Http404, HttpResponse
-from django.test import Client, RequestFactory, TestCase
+from django.http import Http404
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 
-from apps.dashboard import forms, services, views
-from apps.dashboard.models import Invite, Membership, PricingRule, Team
+from apps.dashboard import forms, views
+from apps.dashboard.models import Invite, Membership, Team
 from apps.root.factories import EventFactory, UserWithTeamFactory
 from apps.root.models import Event
 

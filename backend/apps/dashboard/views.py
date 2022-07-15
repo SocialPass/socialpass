@@ -7,10 +7,8 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core import exceptions
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, reverse
-from django.utils import dateparse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -84,7 +82,8 @@ class RequireLiveEventMixin:
             messages.add_message(
                 self.request,
                 messages.INFO,
-                "This event is not live yet. Please complete the creation and checkout process.",
+                "This event is not live yet. \
+                Please complete the creation and checkout process.",
             )
             return redirect("event_update", **self.kwargs)
 

@@ -1,7 +1,7 @@
 import socket
 
 from .base import *  # noqa
-from .base import ROOT_DIR, env
+from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------

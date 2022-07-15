@@ -1,5 +1,4 @@
 from django.urls import include, path
-from invitations.views import SendInvite
 
 from . import views
 

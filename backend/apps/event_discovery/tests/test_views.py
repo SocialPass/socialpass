@@ -1,20 +1,10 @@
 import logging
-import uuid
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AnonymousUser
-from django.contrib.messages.middleware import MessageMiddleware
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.http import HttpResponse
-from django.test import Client, RequestFactory, TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from django.utils import timezone
-from django.views.generic import DetailView, TemplateView
 
-from apps.dashboard import forms, services, views
-from apps.dashboard.models import Invite, Membership, PricingRule, Team
 from apps.root.factories import EventFactory, UserWithTeamFactory
-from apps.root.models import Event
 
 User = get_user_model()
 
@@ -61,14 +51,19 @@ class EventDiscoveryTest(TestCase):
 
     def test_discovery_details(self):
         # Test GET (Not live)
+
         # Note: Disable 404 logging first
-        # TODO: This could be some form of decorator for test cases that require variable logging
+        # TODO:
+        # This could be some form of decorator,
+        # for test cases that require variable logging
         logger = logging.getLogger("django.request")
         previous_level = logger.getEffectiveLevel()
         logger.setLevel(logging.ERROR)
+
         url = reverse("discovery:details", args=(self.event_one.public_id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
         # Re-enable logging
         logger.setLevel(previous_level)
 

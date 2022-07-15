@@ -22,8 +22,7 @@ class Team(DBModel):
     Umbrella team model for SocialPass customers
     """
 
-    @staticmethod
-    def get_default_pricing_rule_group():
+    def get_default_pricing_rule_group():  # noqa
         return PricingRuleGroup.objects.get(name="Default").pk
 
     # base info

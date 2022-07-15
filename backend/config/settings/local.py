@@ -63,11 +63,3 @@ INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 # Your stuff...
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
-DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-PRIVATE_TICKET_STORAGE = "django.core.files.storage.FileSystemStorage"
-
-STATIC_ROOT = "local_static/"
-MEDIA_ROOT = "media/"
-
-MEDIA_URL = "public/media/"

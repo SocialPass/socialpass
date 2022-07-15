@@ -39,7 +39,7 @@ def create_testing_blockchain_ownership(**kwargs):
     )
 
 
-class GetEventDetailsTestCase(TestCase):
+class TestCaseWrapper(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.password = "password"
@@ -50,13 +50,15 @@ class GetEventDetailsTestCase(TestCase):
         cls.url_base = "/api/checkout-portal/v1/"
         return super().setUpTestData()
 
+
+class GetEventDetailsTestCase(TestCaseWrapper):
     def test_get_event_details_200(self):
         """
         Request the most recently created team's details and asserts response is 200 OK.
         """
         event_id = str(self.event.public_id)
         # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.get(f"self.url_baseretrieve/{event_id}/")
+        response = self.client.get(f"{self.url_base}retrieve/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Skipping these asserts for now,
         # since Django is doing some magic on the serializers.
@@ -71,20 +73,11 @@ class GetEventDetailsTestCase(TestCase):
         invalid_event_id = (
             uuid4()
         )  # Random UUID string that is not contained in the test DB.
-        response = self.client.get(f"self.url_baseretrieve/{invalid_event_id}/")
+        response = self.client.get(f"{self.url_base}retrieve/{invalid_event_id}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class CheckoutPortalProcessTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.password = "password"
-        cls.user = UserWithTeamFactory()
-        cls.team = cls.user.membership_set.first().team
-        cls.event = EventFactory(team=cls.team, user=cls.user)
-        cls.blockchain_ownership = create_testing_blockchain_ownership()
-        return super().setUpTestData()
-
+class CheckoutPortalProcessTestCase(TestCaseWrapper):
     @prevent_warnings
     # In progress, having trouble mocking data since it all comes through Moralis
     def test_checkout_portal_process_200_ok(self):
@@ -109,7 +102,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         self.client.post(
-            f"self.url_baseprocess/{event_id}/?checkout_type=blockchain_ownership",
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -138,7 +131,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"self.url_baseprocess/{event_id}/?checkout_type=blockchain_ownership",
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -161,7 +154,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"self.url_baseprocess/{event_id}/?checkout_type=blockchain_ownership",
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -178,7 +171,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         but without the (checkout_type) parameter.
         """
         event_id = str(self.event.public_id)
-        response = self.client.post(f"self.url_baseprocess/{event_id}/")
+        response = self.client.post(f"{self.url_base}process/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     @prevent_warnings
@@ -195,7 +188,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"self.url_baseprocess/{event_id}/?checkout_type=blockchain_ownership",
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -210,5 +203,5 @@ class CheckoutPortalProcessTestCase(TestCase):
         Asserts 404 NOT FOUND for invalid team UUID.
         """
         invalid_event_id = uuid4()
-        response = self.client.post(f"self.url_baseprocess/{invalid_event_id}/")
+        response = self.client.post(f"{self.url_base}process/{invalid_event_id}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

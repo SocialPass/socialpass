@@ -83,6 +83,7 @@ def create_ticket_image(
     Use the arguments to generate a ticket image and save into s3-compatible bucket.
     Returns ticket image as well as s3 storage response
     """
+    print("creating image...")
     # Generate ticket image from event data
     created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
         event_data={
@@ -97,11 +98,13 @@ def create_ticket_image(
 
     # Store ticket image into bucket
     # Prepare image for S3
+    print("preparing image s3...")
     _buffer = io.BytesIO()
     created_ticket_img.save(_buffer, "PNG")
     _buffer.seek(0)  # Rewind pointer back to start
 
     # save ticket image
+    print("saving image...")
     ticket.file.save(f"{str(ticket.filename)}.png", _buffer)
     return ticket
 

@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from apps.dashboard.models import Team
@@ -82,7 +83,7 @@ class TicketSerializer(serializers.ModelSerializer):
         ]
 
     def get_temporary_download_url(self, obj):
-        return obj.temporary_download_url
+        return obj.file.url
 
 
 class VerifyBlockchainOwnershipSerializer(serializers.Serializer):

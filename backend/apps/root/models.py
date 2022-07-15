@@ -6,7 +6,6 @@ from enum import Enum
 import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -21,7 +20,7 @@ from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.validators import JSONSchemaValidator
-from config.storages import PrivateTicketStorage
+from config.storages import get_private_ticket_storage
 
 
 class User(AbstractUser):
@@ -135,7 +134,7 @@ class Event(DBModel):
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
+    cover_image = models.ImageField(blank=True, null=True)
     category = models.ForeignKey(
         EventCategory, on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -368,7 +367,7 @@ class Ticket(DBModel):
 
     # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(null=True, storage=PrivateTicketStorage())
+    file = models.ImageField(null=True, storage=get_private_ticket_storage)
     embed_code = models.UUIDField(default=uuid.uuid4)
 
     # Ticket access info

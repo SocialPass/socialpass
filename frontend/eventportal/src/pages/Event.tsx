@@ -1,30 +1,28 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckoutPortalContext } from "../context";
-import ReadMoreModal from "../components/ReadMoreModal";
-// Event Component
-
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
 
 export const Event = ({}): JSX.Element => {
   const navigate = useNavigate();
-  const { id, retrieveJson } = useContext(CheckoutPortalContext);
+  const {
+    id,
+    retrieveJson,
+    generalAdmissionSelect,
+    setGeneralAdmissionSelect,
+  } = useContext(CheckoutPortalContext);
   console.log(retrieveJson);
 
+  const generalAdmissionSelectArray = Array.from(
+    { length: generalAdmissionSelect },
+    (_, i) => i + 1
+  );
+
   function handleNavigate() {
-    navigate(`/${id}/ticket-selection`);
+    navigate(`/${id}/checkout/blockchain`);
   }
 
-  const dimensions = getWindowDimensions();
-
-  function isWideVersion() {
-    return dimensions.width >= 767;
+  function handleSelect(event: any) {
+    setGeneralAdmissionSelect(event.target.value);
   }
 
   return (
@@ -191,21 +189,29 @@ export const Event = ({}): JSX.Element => {
           </div>
           <p className="text-muted mt-20">Sale ends on May 31, 2022</p>
           <div className="form-group">
-            <select defaultValue={2} className="form-select">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
+            <select onChange={handleSelect} className="form-select">
+              {generalAdmissionSelectArray.map(function (object) {
+                console.log(object);
+                console.log(object);
+                console.log(object);
+                return (
+                  <option key={object} value={object}>
+                    {object}
+                  </option>
+                );
+              })}
             </select>
           </div>
           <button
             className="btn btn-secondary btn-lg fsr-6 btn-block"
             onClick={handleNavigate}
           >
-            <strong className="antialiased">Get Tickets &times; 2</strong>
+            <strong className="antialiased">
+              Get Tickets &times; {generalAdmissionSelect}
+            </strong>
           </button>
           <p>
-            2 &times; General Admission Ticket
+            {generalAdmissionSelect} &times; General Admission Ticket
             <br />
             <strong>Price &mdash; </strong> Free
           </p>

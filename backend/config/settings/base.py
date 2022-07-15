@@ -17,12 +17,10 @@ READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
     # Local env vars
     if env("DJANGO_SETTINGS_MODULE") == "config.settings.local":
-        print("reading config.settings.local")
         env.read_env(str(ROOT_DIR / ".envs" / ".env.local"))
         env.read_env(str(ROOT_DIR / ".envs" / ".donotpush"))
     # Testing env vars
     if env("DJANGO_SETTINGS_MODULE") == "config.settings.test":
-        print("reading config.settings.test")
         env.read_env(str(ROOT_DIR / ".envs" / ".env.test"))
 
 # GENERAL
@@ -364,7 +362,6 @@ INVITATIONS_CONFIRMATION_URL_NAME = "team_accept_invite"
 INVITATIONS_EMAIL_MAX_LENGTH = 254
 INVITATIONS_INVITATION_EXPIRY = 3
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
-
 
 # Django Invitations - https://github.com/jazzband/django-taggit
 TAGGIT_CASE_INSENSITIVE = True

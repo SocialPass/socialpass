@@ -3,7 +3,6 @@ import socket
 from .base import *  # noqa
 from .base import ROOT_DIR, env
 
-print("config.local")
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug

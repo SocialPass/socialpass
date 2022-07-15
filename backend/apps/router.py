@@ -23,7 +23,6 @@ urlpatterns += [
 is_local = (
     settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"
 )
-print("is_local", is_local)
 
 if is_local:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development

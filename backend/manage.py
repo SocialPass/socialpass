@@ -4,9 +4,7 @@ import sys
 from pathlib import Path
 
 if __name__ == "__main__":
-    print(os.environ.get("DJANGO_SETTINGS_MODULE", None))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
-    print(os.environ["DJANGO_SETTINGS_MODULE"])
 
     try:
         from django.core.management import execute_from_command_line

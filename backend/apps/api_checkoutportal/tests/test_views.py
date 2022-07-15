@@ -62,9 +62,6 @@ class GetEventDetailsTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Skipping these asserts for now since Django is doing some magic on the serializers.
         # Add `from . import serializers` at the top then...
-        # print(response.json())
-        # print(serializers.EventSerializer(self.event).data)
-
         # self.assertEqual(response.json(), ...)
 
     @prevent_warnings

@@ -3,13 +3,7 @@ import { StyledContainer } from "./components";
 import { EventPortalProvider } from "./context";
 import { web3Client } from "./web3/client";
 import { WagmiConfig } from "wagmi";
-import {
-  Init,
-  CheckoutWeb3,
-  CheckoutStatus,
-  TicketSelection,
-  Event,
-} from "./pages";
+import { Init, CheckoutWeb3, CheckoutStatus, Event } from "./pages";
 import RequiresEvent from "./utils/requiresEventHOC";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Error } from "./pages/Error";
@@ -44,14 +38,6 @@ const CheckoutPortal = () => {
                     element={
                       <RequiresEvent>
                         <Event />
-                      </RequiresEvent>
-                    }
-                  />
-                  <Route
-                    path="ticket-selection"
-                    element={
-                      <RequiresEvent>
-                        <TicketSelection />
                       </RequiresEvent>
                     }
                   />

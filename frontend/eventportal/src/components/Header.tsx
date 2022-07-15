@@ -25,16 +25,8 @@ export default function Header() {
   };
 
   return headerState === "header" ? (
-    <header
-      className={`${headerState} d-flex align-items-start justify-content-center`}
-    >
-      <LargeHeaderContents />
-    </header>
+    <LargeHeaderContents />
   ) : (
-    <header
-      className={`${headerState} d-flex align-items-start justify-content-center flex-row`}
-    >
-      <SmallHeaderContents />
-    </header>
+    <SmallHeaderContents />
   );
 }

@@ -24,20 +24,14 @@ As mentioned above, SocialPass is all about events and Web3. If you're not famil
 - url
 - url
 
-
 # Getting Started
 A root-level [Makefile](Makefile) exists to jumpstart local development. The guide below will reference these makefile commands.
 
 Again, any additions here to hasten development are always welcome
 
-Clone repo
-- `git clone git@github.com:nftylabs/socialpass.git`
-- `cd socialpass`
-
-### Setup development environment (if possible)
-- `python3 -m venv venv`
-- `source venv/bin/activate`
-- `pre-commit install`
+### Clone repo
+`git clone git@github.com:nftylabs/socialpass.git`
+`cd socialpass`
 
 ### Build Containers
 `make build`
@@ -48,15 +42,24 @@ Clone repo
 ### Run Containers
 `make up`
 
-# Backend
+# Contributions
+### Workflow
+1. Branches opened for PR with relevant reviewer requested
+2. PR passes all checks
+2. PR reviewed
+3. PR merged into `master`
 
+Once merged, `master`, can be pushed directly to either `staging` or `master`, which will
+trigger CI/CD pipelie for the respective environments.
+
+
+# Backend
 ### Root (`root`)
 ### Organizer Dashboard (`dashboard`)
 ### Event Discovery (`event_discovery`)
 ### Checkout Portal (`api_checkoutportal`)
 ### Scanner (`api_scanner`)
 ### Avoid Form Resubmission (`avoid_form_resubmission`)
-
 
 # Frontend
 ### Event Portal (`eventportal`)

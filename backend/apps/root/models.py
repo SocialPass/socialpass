@@ -468,9 +468,9 @@ class BlockchainOwnership(DBModel):
     @property
     def signing_message(self):
         return (
-            "Greetings from SocialPass. \
-            Sign this message to prove you have access to this wallet"
-            "\nThis IS NOT a trade or transaction"
+            "Greetings from SocialPass."
+            "\nSign this message to prove ownership"
+            "\n\nThis IS NOT a trade or transaction"
             f"\n\nTimestamp: {self.expires.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)[0:7]}"
         )

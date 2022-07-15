@@ -267,9 +267,9 @@
     "@babel/helper-validator-identifier" "^7.18.6"
     to-fast-properties "^2.0.0"
 
-"@coinbase/wallet-sdk@^3.1.0":
+"@coinbase/wallet-sdk@^3.2.0":
   version "3.3.0"
-  resolved "https://registry.npmjs.org/@coinbase/wallet-sdk/-/wallet-sdk-3.3.0.tgz"
+  resolved "https://registry.yarnpkg.com/@coinbase/wallet-sdk/-/wallet-sdk-3.3.0.tgz#e77383bce1388e5367dc35f8309702e73be47503"
   integrity sha512-Prmxs5eYRxe5i+kDSsny97oPG4Pa5PhLmNDx8f7UQrvlPowGy5Tg0gHOqCie6ck2shVMdW8sKJ+RCLIRZ9kIjA==
   dependencies:
     "@metamask/safe-event-emitter" "2.0.0"
@@ -789,9 +789,9 @@
     react-refresh "^0.13.0"
     resolve "^1.22.0"
 
-"@wagmi/core@^0.3.1":
+"@wagmi/core@^0.3.7":
   version "0.3.8"
-  resolved "https://registry.npmjs.org/@wagmi/core/-/core-0.3.8.tgz"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-0.3.8.tgz#7f2d13a25f6d86e5ddcb31ec1d1c9af7efaa4736"
   integrity sha512-9wsd8YGW2ivjFwpkgAETn7cRbKOAddZz91vuh2VmIP2bWGiDuFA6RXy5/KLV/tGpvIIiCyGFO0JXpx+n4hFhgQ==
   dependencies:
     eventemitter3 "^4.0.7"
@@ -2501,17 +2501,6 @@ react-icons@^4.4.0:
   resolved "https://registry.npmjs.org/react-icons/-/react-icons-4.4.0.tgz"
   integrity sha512-fSbvHeVYo/B5/L4VhB7sBA1i2tS8MkT0Hb9t2H1AVPkwGfVHLJCqyr2Py9dKMxsyM63Eng1GkdZfbWj+Fmv8Rg==
 
-react-query@4.0.0-beta.12:
-  version "4.0.0-beta.12"
-  resolved "https://registry.npmjs.org/react-query/-/react-query-4.0.0-beta.12.tgz"
-  integrity sha512-PAeGKj/SlIvxShJVBbyKojUYUK78yK/W9nS9Uw78e40wjhuHiFMqbQWjtAQTBCbliZ5p1VkSHCAtpEVrr5GOvQ==
-  dependencies:
-    "@babel/runtime" "^7.17.9"
-    "@types/use-sync-external-store" "^0.0.3"
-    broadcast-channel "^3.4.1"
-    match-sorter "^6.0.2"
-    use-sync-external-store "^1.1.0"
-
 react-query@^3.39.1:
   version "3.39.1"
   resolved "https://registry.npmjs.org/react-query/-/react-query-3.39.1.tgz"
@@ -2520,6 +2509,17 @@ react-query@^3.39.1:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"
     match-sorter "^6.0.2"
+
+react-query@^4.0.0-beta.19:
+  version "4.0.0-beta.23"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-4.0.0-beta.23.tgz#76713547670ef1f991ae828b3d51df63ec6e035c"
+  integrity sha512-e6mNBVAYGy0M1OwX0mhRB/lCkOedKeqTUrbPjNCqvm8hQGUsJJobqfHVvTv8o6JJaOO2MFcxKF4vZM+PEKbHZA==
+  dependencies:
+    "@babel/runtime" "^7.17.9"
+    "@types/use-sync-external-store" "^0.0.3"
+    broadcast-channel "^3.4.1"
+    match-sorter "^6.0.2"
+    use-sync-external-store "^1.1.0"
 
 react-refresh@^0.13.0:
   version "0.13.0"
@@ -2896,15 +2896,15 @@ vite@2.9.13:
   optionalDependencies:
     fsevents "~2.3.2"
 
-wagmi@0.4.1:
-  version "0.4.1"
-  resolved "https://registry.npmjs.org/wagmi/-/wagmi-0.4.1.tgz"
-  integrity sha512-uFqNKZ2FmQsEcp9q31hdgzLvXQ7YiC7yTCd4zL8lbkagklNErN4gqrfQbBFvSLLii5dMxQ5M0kKo3/v5HI5Lbw==
+wagmi@0.4.8:
+  version "0.4.8"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.4.8.tgz#4fadc14d8947952464fdd8b7f2d3079985e14b1d"
+  integrity sha512-hflZRiO48J5TCXQoKSSOFNNQpYziEA228KkpuDVHAr5C/rfB1hfRmkNjaPKQFF/IP65JJmBR1uWR9U9u/T+BKg==
   dependencies:
-    "@coinbase/wallet-sdk" "^3.1.0"
-    "@wagmi/core" "^0.3.1"
+    "@coinbase/wallet-sdk" "^3.2.0"
+    "@wagmi/core" "^0.3.7"
     "@walletconnect/ethereum-provider" "^1.7.8"
-    react-query "4.0.0-beta.12"
+    react-query "^4.0.0-beta.19"
     use-sync-external-store "^1.1.0"
 
 webidl-conversions@^3.0.0:

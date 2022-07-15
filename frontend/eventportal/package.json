@@ -22,7 +22,7 @@
     "react-query": "^3.39.1",
     "react-router-dom": "^6.3.0",
     "util": "^0.12.4",
-    "wagmi": "0.4.1"
+    "wagmi": "0.4.8"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

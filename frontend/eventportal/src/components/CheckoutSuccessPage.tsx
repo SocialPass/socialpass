@@ -69,7 +69,7 @@ export default function CheckoutSuccessPage() {
       <div className="col-md-4 mt-30">
         <button
           onClick={() =>
-            window.open(grantAccessJson[0]["temporary_download_url"])
+            window.open(grantAccessJson[0]["download_url"])
           }
           className="btn-primary fs-22 mt-5"
         >

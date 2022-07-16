@@ -3,14 +3,7 @@
 </p>
 
 # SocialPass
-
 SocialPass provides end-to-end event organization software aimed at the next generation of events.
-
-This monorepo contains the following pieces of software
-- Organizer Dashboard (`backend/dashboard`)
-- Event Discovery (`backend/dashboard`)
-- Ticket Scanner (`frontend/scanner-app`)
-- Checkout Portal (`frontend/eventportal`)
 
 
 # Before Jumping In
@@ -24,13 +17,16 @@ As mentioned above, SocialPass is all about events and Web3. If you're not famil
 - url
 - url
 
+
 # Getting Started
-A root-level [Makefile](Makefile) exists to jumpstart local development. The guide below will reference these makefile commands.
+A root-level [Makefile](Makefile) exists to jumpstart local development.
+The guide below will reference these makefile commands.
 
 Again, any additions here to hasten development are always welcome
 
 ### Clone repo
 `git clone git@github.com:nftylabs/socialpass.git`
+
 `cd socialpass`
 
 ### Build Containers
@@ -43,24 +39,50 @@ Again, any additions here to hasten development are always welcome
 `make up`
 
 # Contributions
-### Workflow
 1. Branches opened for PR with relevant reviewer requested
 2. PR passes all checks
 2. PR reviewed
 3. PR merged into `master`
 
-Once merged, `master`, can be pushed directly to either `staging` or `master`, which will
-trigger CI/CD pipelie for the respective environments.
+Once merged, `master`, can be pushed directly to either `staging` or `master`.
+This will trigger CI/CD pipelie for the respective environments.
 
+Notes: Branches should be prefixed with the following labels
+- `refactor/*`
+- `fix/*`
+- `feature/*`
 
 # Backend
-### Root (`root`)
-### Organizer Dashboard (`dashboard`)
-### Event Discovery (`event_discovery`)
-### Checkout Portal (`api_checkoutportal`)
-### Scanner (`api_scanner`)
-### Avoid Form Resubmission (`avoid_form_resubmission`)
+## Root
+Located at `backend/apps/root`
+
+
+## Organizer Dashboard
+Located at `backend/apps/dashboard`
+
+
+## Event Discovery
+Located at `backend/apps/event_discovery`
+
+
+## Checkout Portal
+Located at `backend/apps/api_checkoutportal`
+
+
+## Scanner
+Located at `backend/apps/api_scanner`
+
+
+## Avoid Form Resubmission
+Located at `backend/apps/avoid_form_resubmission`
+
 
 # Frontend
-### Event Portal (`eventportal`)
-### Scanner (`scanner-app`)
+## Event Portal
+Located at `frontend/eventportal`
+
+
+## Scanner
+Located at `frontend/scanner-app`
+
+

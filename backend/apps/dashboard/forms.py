@@ -71,10 +71,11 @@ class EventForm(forms.ModelForm):
         ),
         required=False,
     )
-    visibility = forms.CharField(
+    visibility = forms.ChoiceField(
         label="Visibility",
-        widget=forms.RadioSelect(choices=EVENT_VISIBILITY),
-        required=False,
+        initial=EVENT_VISIBILITY[0][0],
+        choices=EVENT_VISIBILITY,
+        widget=forms.RadioSelect,
     )
     checkout_requested = forms.BooleanField(
         label="...", widget=forms.HiddenInput(), required=False, initial=False

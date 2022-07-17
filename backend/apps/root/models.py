@@ -149,9 +149,6 @@ class Event(DBModel):
         verbose_name="time zone",
         max_length=30,
     )
-    timezone_offset = models.FloatField(
-        blank=True, null=True, verbose_name="Timezone offset in seconds"
-    )
     location = models.CharField(blank=True, max_length=1024)
     # location_info = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
 
@@ -350,7 +347,6 @@ class Event(DBModel):
         fields = [
             "visibility",
             "end_date",
-            "timezone_offset",
             "publish_date",
             "checkout_requested",
         ]

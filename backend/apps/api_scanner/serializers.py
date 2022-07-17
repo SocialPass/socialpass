@@ -34,7 +34,6 @@ class EventSerializer(serializers.ModelSerializer):
             "limit_per_person",
             "start_date",
             "timezone",
-            "timezone_offset",
             "location",
             "capacity",
             "ticket_count",

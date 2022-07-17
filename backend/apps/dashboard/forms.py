@@ -48,7 +48,6 @@ class EventForm(forms.ModelForm):
             ),
             "location": forms.HiddenInput(),
             "requirements": forms.HiddenInput(),
-            "timezone_offset": forms.HiddenInput(),
         }
 
     start_date = forms.DateTimeField(

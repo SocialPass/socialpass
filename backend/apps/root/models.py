@@ -345,7 +345,6 @@ class Event(DBModel):
     @staticmethod
     def optional_fields():
         fields = [
-            "visibility",
             "end_date",
             "publish_date",
             "checkout_requested",

@@ -228,12 +228,10 @@ const formatter = new Intl.NumberFormat('en-US', {
 })
 
 window.addEventListener('load', function() {
-	console.log('load');
 	var capacity = document.getElementById('id_capacity').value;
 	fetch(priceEstimatorUrl + capacity).then(function(response) {
 		return response.json();
 	}).then(function(data) {
-		console.log(data);
 		document.getElementById('price-placeholder').style.display = 'none';
 		document.getElementById('price-calc').style.display = 'block';
 
@@ -250,7 +248,6 @@ document.getElementById('id_capacity').addEventListener('change', function() {
 	fetch(priceEstimatorUrl + capacity).then(function(response) {
 		return response.json();
 	}).then(function(data) {
-		console.log(data);
 		document.getElementById('price-placeholder').style.display = 'none';
 		document.getElementById('price-calc').style.display = 'block';
 

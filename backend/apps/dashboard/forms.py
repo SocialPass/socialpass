@@ -8,10 +8,11 @@ from apps.root.models import Event
 
 
 class CustomInviteForm(InviteForm):
+    """
+    sub-classed validation to remove check for active user
+    """
+
     def validate_invitation(self, email):
-        """
-        sub-classed validation to remove check for active user
-        """
         if Invite.objects.all_valid().filter(email__iexact=email, accepted=False):
             raise AlreadyInvited
         elif Invite.objects.filter(email__iexact=email, accepted=True):
@@ -21,6 +22,10 @@ class CustomInviteForm(InviteForm):
 
 
 class TeamForm(forms.ModelForm):
+    """
+    Team Form
+    """
+
     class Meta:
         model = Team
         fields = ["name", "description", "image"]
@@ -34,6 +39,10 @@ class TeamForm(forms.ModelForm):
 
 
 class EventForm(forms.ModelForm):
+    """
+    base Event form
+    """
+
     class Meta:
         fields = Event.optional_fields() + Event.required_fields()
         model = Event
@@ -77,32 +86,25 @@ class EventForm(forms.ModelForm):
         choices=EVENT_VISIBILITY,
         widget=forms.RadioSelect,
     )
-    checkout_requested = forms.BooleanField(
-        label="...", widget=forms.HiddenInput(), required=False, initial=False
+    ready_for_checkout = forms.BooleanField(
+        label="", widget=forms.HiddenInput(), required=False
     )
+    lat = forms.CharField(label="", widget=forms.HiddenInput(), required=False)
+    long = forms.CharField(label="", widget=forms.HiddenInput(), required=False)
 
-
-class EventDraftForm(EventForm):
-    class Meta(EventForm.Meta):
-        pass
-
-    def clean(self):
+    def _ready_for_checkout(self, data):
         """
-        Clean method for dynamic form field requirement
+        method for cleaning against checkout requested
         """
-        data = super().clean()
         errors = {}
-
-        # first check for checkout_requested
-        # loop over required fields
-        checkout_requested = data.get("checkout_requested", None)
-        if checkout_requested:
+        ready_for_checkout = data.get("ready_for_checkout", None)
+        print(ready_for_checkout, "ready_for_checkout")
+        if ready_for_checkout:
             # check field
             for i in Event.required_fields():
                 field = data.get(i, None)
                 if not field:
                     errors[i] = "This field is required"
-
         # check for errors
         # raise exception
         if errors:
@@ -110,46 +112,72 @@ class EventDraftForm(EventForm):
 
         # form is OK, handle state transitions
         # Only call state transition if in expected state
-        # Note: No need to save, as form will call save
-        if checkout_requested:
+        # Note: No need to save, as form will call save method later
+        if ready_for_checkout:
             if self.instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
                 self.instance.transition_pending_checkout()
         else:
             if self.instance.state != Event.StateEnum.DRAFT.value:
                 self.instance.transition_draft()
 
-        # return form data
+    def save_event_location_info(self, instance):
+        """
+        method to save event location_info FK
+        """
+        # check for location info in changed data
+        # if not set simply return
+        if "location" not in self.changed_data:
+            return
+
+        # location form field changed
+        # update location fields
+        instance.lat = self.cleaned_data.get("lat")
+        instance.long = self.cleaned_data.get("long")
+
+        # TODO: other localized fields (address, zip, country, etc.)
+        instance.save()
+
+    def save(self, commit=True):
+        """
+        base save method
+        """
+        instance = super().save(commit=False)
+        self.save_event_location_info(instance=instance)
+        return instance
+
+
+class EventDraftForm(EventForm):
+    """
+    Form for event.state == draft
+    """
+
+    class Meta(EventForm.Meta):
+        pass
+
+    def clean(self):
+        data = super().clean()
+        self._ready_for_checkout(data)
         return data
 
 
 class EventPendingCheckoutForm(EventDraftForm):
+    """
+    Form for event.state == pending checkout
+    """
+
     class Meta(EventDraftForm.Meta):
         pass
 
+    def clean(self):
+        data = super().clean()
+        self._ready_for_checkout(data)
+        return data
+
 
 class EventLiveForm(EventForm):
+    """
+    Form for event.state == live
+    """
+
     class Meta(EventForm.Meta):
         exclude = ["capacity"]
-
-    def clean(self):
-        """
-        Clean method for dynamic form field requirement
-        """
-        data = super().clean()
-        errors = {}
-
-        # first check for checkout_requested
-        # loop over required fields
-        checkout_requested = data.get("checkout_requested", None)
-        if checkout_requested:
-            # check field
-            for i in Event.required_fields():
-                field = data.get(i, None)
-                if not field and i not in EventLiveForm.Meta.exclude:
-                    errors[i] = "This field is required"
-
-        # check for errors
-        if not errors:
-            return data
-        else:
-            raise forms.ValidationError(errors)

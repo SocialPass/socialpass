@@ -225,13 +225,22 @@
 						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.location %}
 							<script>
 								function onPlaceChangedCallback(place){
-									// set UTC offset
+                  // TODO: Use in appromixmating timezone
 									// document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
-									// WIP - CharField
+
 									document.getElementById("id_location").value = place.name
-									// TODO: GeoDjango - set latitude and longitude hidden field
-									console.log(place.geometry.location.lat())
-									console.log(place.geometry.location.lng())
+                  console.log(place);
+                  //document.getElementById();
+                  //address_1
+                  //address_2
+                  //city
+                  //region
+                  //postal_code
+                  //country
+
+									// Set latitude and longitude hidden field
+                  document.getElementById("id_lat").value = place.geometry.location.lat();
+                  document.getElementById("id_long").value = place.geometry.location.lng();
 								}
 							</script>
 
@@ -416,22 +425,22 @@
 <script src="{% static 'js/blockchain_requirements.js' %}"></script>
 <script>
   function saveDraft(){
-    document.getElementById("id_checkout_requested").checked = false
-    document.getElementById("id_checkout_requested").value = 'False'
+    document.getElementById("id_ready_for_checkout").checked = false
+    document.getElementById("id_ready_for_checkout").value = 'False'
     fillRequirementsAndSubmitForm()
   }
 
   function savePending(){
-    document.getElementById("id_checkout_requested").checked = true
-    document.getElementById("id_checkout_requested").value = 'True'
+    document.getElementById("id_ready_for_checkout").checked = true
+    document.getElementById("id_ready_for_checkout").value = 'True'
     fillRequirementsAndSubmitForm();
   }
 
   function saveLive(){
     let confirmed = confirm("These changes will go live immediately. Are you sure?");
     if (confirmed){
-      document.getElementById("id_checkout_requested").checked = true
-      document.getElementById("id_checkout_requested").value = 'True'
+      document.getElementById("id_ready_for_checkout").checked = true
+      document.getElementById("id_ready_for_checkout").value = 'True'
       fillRequirementsAndSubmitForm();
     }
   }

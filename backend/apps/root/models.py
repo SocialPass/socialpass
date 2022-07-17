@@ -29,30 +29,6 @@ class User(AbstractUser):
     """
 
 
-class EventLocation(DBModel):
-    """
-    Event location manager
-    """
-
-    # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255)
-    # The street/location address (part 2)
-    address_2 = models.CharField(max_length=255)
-    # The city
-    city = models.CharField(max_length=255)
-    # The ISO 3166-2 2- or 3-character region code
-    region = models.CharField(max_length=3)
-    # The postal code
-    postal_code = models.IntegerField()
-    # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2)
-    # geodjango lat/long
-    lat = models.DecimalField(max_digits=9, decimal_places=6)
-    long = models.DecimalField(max_digits=9, decimal_places=6)
-    # TODO: Setup Lat/Long handling
-    # point = PointField(geography=True, default="POINT(0.0 0.0)")
-
-
 class EventCategory(DBModel):
     """
     Category model for Events
@@ -143,14 +119,31 @@ class Event(DBModel):
     )
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
+
+    # Location info
+    # tiemzone of event
     timezone = models.CharField(
         blank=True,
         null=True,
         verbose_name="time zone",
         max_length=30,
     )
-    location = models.CharField(blank=True, max_length=1024)
-    # location_info = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
+    location = models.CharField(max_length=1024, blank=True, null=True)
+    # The street/location address (part 1)
+    address_1 = models.CharField(max_length=255, blank=True, null=True)
+    # The street/location address (part 2)
+    address_2 = models.CharField(max_length=255, blank=True, null=True)
+    # The city
+    city = models.CharField(max_length=255, blank=True, null=True)
+    # The ISO 3166-2 2- or 3-character region code
+    region = models.CharField(max_length=3, blank=True, null=True)
+    # The postal code
+    postal_code = models.IntegerField(blank=True, null=True)
+    # The ISO 3166-1 2-character international code for the country
+    country = models.CharField(max_length=2, blank=True, null=True)
+    # geodjango lat/long
+    lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
 
     # Ticket Info
     # TODO: Move these to TicketType
@@ -347,7 +340,7 @@ class Event(DBModel):
         fields = [
             "end_date",
             "publish_date",
-            "checkout_requested",
+            "ready_for_checkout",
         ]
         return fields
 

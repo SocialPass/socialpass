@@ -1,4 +1,4 @@
-import erroImage from "../../../../backend/static/images/illustrations/something_went_wrong.svg";
+import erroImage from "../static/images/something_went_wrong.svg";
 
 export function Error() {
   return (

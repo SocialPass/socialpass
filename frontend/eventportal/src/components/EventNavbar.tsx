@@ -1,4 +1,4 @@
-import socialPassIcon from "../../../../backend/static/images/SocialPass-Icon.svg";
+import socialPassIcon from "../static/images/SocialPass-Icon.svg";
 
 export default function EventNavbar() {
   return (

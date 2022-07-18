@@ -55,12 +55,13 @@ class EventForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
+            "requirements": forms.HiddenInput(),
             "location": forms.HiddenInput(),
             "lat": forms.HiddenInput(),
             "long": forms.HiddenInput(),
             "country": forms.HiddenInput(),
+            "city": forms.HiddenInput(),
             "postal_code": forms.HiddenInput(),
-            "requirements": forms.HiddenInput(),
         }
 
     start_date = forms.DateTimeField(

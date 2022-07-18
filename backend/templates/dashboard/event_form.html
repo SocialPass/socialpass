@@ -230,30 +230,27 @@
 						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.location %}
 							<script>
 								function onPlaceChangedCallback(place){
+                  // TODO: Use in appromixmating timezone
+                  // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
+
                   // Set latitude and longitude hidden field
                   lat = place.geometry.location.lat();
                   long = place.geometry.location.lng();
                   document.getElementById("id_lat").value = lat.toFixed(6)
                   document.getElementById("id_long").value = long.toFixed(6)
 
-                  console.log(document.getElementById("id_lat").value, document.getElementById("id_long").value)
-
-                  // TODO: Use in appromixmating timezone
-                  // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
-
                   // Loop over places object for setting fields
-                  var components = {};
+                  var gmaps = {};
                   for (var i = 0; i < place.address_components.length; i++) {
                     var c = place.address_components[i];
-                    components[c.types[0]] = c;
+                    gmaps[c.types[0]] = c;
                   }
-                  console.log(place);
 
                   // set fields based on available places components
                   document.getElementById("id_location").value = place.name;
-                  document.getElementById("id_country").value = components['country']['short_name'];
-                  document.getElementById("id_postal_code").value = components['postal_code']['long_name'];
-                  //document.getElementById("id_city").value = components['locality']['long_name'];
+                  document.getElementById("id_country").value = gmaps['country']['short_name'];
+                  document.getElementById("id_postal_code").value = gmaps['postal_code']['long_name'];
+                  document.getElementById("id_city").value = gmaps['locality']['long_name'];
                   //document.getElementById("id_address_1").value = place.name;
                   //document.getElementById("id_address_2").value = place.name;
                   //document.getElementById("id_region").value = place.name;

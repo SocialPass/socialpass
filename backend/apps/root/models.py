@@ -145,6 +145,8 @@ class Event(DBModel):
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    localized_address_display = models.CharField(max_length=1024, blank=True, null=True)
+    # TODO localized_multi_line_address_display
 
     # Ticket Info
     # TODO: Move these to TicketType
@@ -349,6 +351,7 @@ class Event(DBModel):
             "country",
             "lat",
             "long",
+            "localized_address_display",
         ]
         return fields
 

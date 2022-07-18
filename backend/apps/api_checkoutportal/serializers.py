@@ -14,7 +14,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ["name", "image"]
+        fields = ["name", "image", "theme"]
 
     def get_image(self, obj):
         request = self.context.get("request")

@@ -24,6 +24,10 @@ export default function Header() {
     }
   };
 
+  if (location.pathname.includes("error")) {
+    return <></>;
+  }
+
   return headerState === "header" ? (
     <LargeHeaderContents />
   ) : (

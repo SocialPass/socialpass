@@ -138,6 +138,11 @@
 					{% if form.errors %}
 						<div class="alert alert-danger" role="alert">
               <p class="invalid-feedback persistent">Please complete the form below</p>
+              {% for key, value in form.errors.items %}
+              {{ key }}
+              {{ value }}
+              {% endfor %}
+
 						</div>
 					{% endif %}
 
@@ -225,22 +230,33 @@
 						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.location %}
 							<script>
 								function onPlaceChangedCallback(place){
+                  // Set latitude and longitude hidden field
+                  lat = place.geometry.location.lat();
+                  long = place.geometry.location.lng();
+                  document.getElementById("id_lat").value = lat.toFixed(6)
+                  document.getElementById("id_long").value = long.toFixed(6)
+
+                  console.log(document.getElementById("id_lat").value, document.getElementById("id_long").value)
+
                   // TODO: Use in appromixmating timezone
-									// document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
+                  // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
 
-									document.getElementById("id_location").value = place.name
+                  // Loop over places object for setting fields
+                  var components = {};
+                  for (var i = 0; i < place.address_components.length; i++) {
+                    var c = place.address_components[i];
+                    components[c.types[0]] = c;
+                  }
                   console.log(place);
-                  //document.getElementById();
-                  //address_1
-                  //address_2
-                  //city
-                  //region
-                  //postal_code
-                  //country
 
-									// Set latitude and longitude hidden field
-                  document.getElementById("id_lat").value = place.geometry.location.lat();
-                  document.getElementById("id_long").value = place.geometry.location.lng();
+                  // set fields based on available places components
+                  document.getElementById("id_location").value = place.name;
+                  document.getElementById("id_country").value = components['country']['short_name'];
+                  document.getElementById("id_postal_code").value = components['postal_code']['long_name'];
+                  //document.getElementById("id_city").value = components['locality']['long_name'];
+                  //document.getElementById("id_address_1").value = place.name;
+                  //document.getElementById("id_address_2").value = place.name;
+                  //document.getElementById("id_region").value = place.name;
 								}
 							</script>
 

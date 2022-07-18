@@ -56,6 +56,10 @@ class EventForm(forms.ModelForm):
                 attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
             "location": forms.HiddenInput(),
+            "lat": forms.HiddenInput(),
+            "long": forms.HiddenInput(),
+            "country": forms.HiddenInput(),
+            "postal_code": forms.HiddenInput(),
             "requirements": forms.HiddenInput(),
         }
 
@@ -89,8 +93,6 @@ class EventForm(forms.ModelForm):
     ready_for_checkout = forms.BooleanField(
         label="", widget=forms.HiddenInput(), required=False
     )
-    lat = forms.CharField(label="", widget=forms.HiddenInput(), required=False)
-    long = forms.CharField(label="", widget=forms.HiddenInput(), required=False)
 
     def _ready_for_checkout(self, data):
         """
@@ -119,31 +121,6 @@ class EventForm(forms.ModelForm):
         else:
             if self.instance.state != Event.StateEnum.DRAFT.value:
                 self.instance.transition_draft()
-
-    def save_event_location_info(self, instance):
-        """
-        method to save event location_info FK
-        """
-        # check for location info in changed data
-        # if not set simply return
-        if "location" not in self.changed_data:
-            return
-
-        # location form field changed
-        # update location fields
-        instance.lat = self.cleaned_data.get("lat")
-        instance.long = self.cleaned_data.get("long")
-
-        # TODO: other localized fields (address, zip, country, etc.)
-        instance.save()
-
-    def save(self, commit=True):
-        """
-        base save method
-        """
-        instance = super().save(commit=False)
-        self.save_event_location_info(instance=instance)
-        return instance
 
 
 class EventDraftForm(EventForm):

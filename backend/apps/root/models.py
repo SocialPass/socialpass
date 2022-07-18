@@ -128,6 +128,7 @@ class Event(DBModel):
         verbose_name="time zone",
         max_length=30,
     )
+    # localized address string (used to populate maps lookup)
     location = models.CharField(max_length=1024, blank=True, null=True)
     # The street/location address (part 1)
     address_1 = models.CharField(max_length=255, blank=True, null=True)
@@ -136,12 +137,12 @@ class Event(DBModel):
     # The city
     city = models.CharField(max_length=255, blank=True, null=True)
     # The ISO 3166-2 2- or 3-character region code
-    region = models.CharField(max_length=3, blank=True, null=True)
+    region = models.CharField(max_length=4, blank=True, null=True)
     # The postal code
-    postal_code = models.IntegerField(blank=True, null=True)
+    postal_code = models.CharField(max_length=12, blank=True, null=True)
     # The ISO 3166-1 2-character international code for the country
     country = models.CharField(max_length=2, blank=True, null=True)
-    # geodjango lat/long
+    # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
 
@@ -340,6 +341,14 @@ class Event(DBModel):
         fields = [
             "end_date",
             "publish_date",
+            "address_1",
+            "address_2",
+            "city",
+            "region",
+            "postal_code",
+            "country",
+            "lat",
+            "long",
         ]
         return fields
 

@@ -52,7 +52,7 @@
 							</p>
 							<div class="d-flex align-items-center ps-15 ms-auto">
 								{% if member.user != request.user %}
-									<a href="{% url 'team_member_delete' team_pk=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-square text-danger" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-breakpoint="md" data-hm-title="Remove member from your team">
+									<a href="{% url 'team_member_delete' team_public_id=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-square text-danger" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-breakpoint="md" data-hm-title="Remove member from your team">
 										<i class="fa-solid fa-times"></i>
 										<span class="visually-hidden">Remove</span>
 									</a>

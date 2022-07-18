@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 
 from . import views
 
@@ -8,7 +8,7 @@ urlpatterns = [
     path("", views.EventDiscoveryIndex.as_view(), name="index"),
     path("events/browse", views.EventDiscoveryBrowse.as_view(), name="browse"),
     path(
-        "events/<uuid:event_pk>",
+        "events/<uuid:event_public_id>",
         views.EventDiscoveryDetails.as_view(),
         name="details",
     ),

@@ -51,7 +51,7 @@ export default function CheckoutSuccessPage() {
           </div>
         </div>
       </div>
-      {/* <!-- Status information end --> */}
+{/* <!-- Status information end --> */}
 
       {/* <!-- CTA section start --> */}
       <div className="col-md-5">

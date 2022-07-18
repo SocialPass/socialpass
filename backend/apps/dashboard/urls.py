@@ -1,5 +1,4 @@
 from django.urls import include, path
-from invitations.views import SendInvite
 
 from . import views
 
@@ -21,78 +20,78 @@ urlpatterns = [
         name="team_accept_invite",
     ),
     path(
-        "team-detail/<uuid:team_pk>/",
+        "team-detail/<uuid:team_public_id>/",
         views.TeamDetailView.as_view(),
         name="team_detail",
     ),
     path(
-        "team-update/<uuid:team_pk>/",
+        "team-update/<uuid:team_public_id>/",
         views.TeamUpdateView.as_view(),
         name="team_update",
     ),
     path(
-        "team-members/<uuid:team_pk>/",
+        "team-members/<uuid:team_public_id>/",
         views.TeamMemberManageView.as_view(),
         name="team_members",
     ),
     path(
-        "team-members/<uuid:team_pk>/<int:member_pk>/",
+        "team-members/<uuid:team_public_id>/<int:member_pk>/",
         views.TeamMemberDeleteView.as_view(),
         name="team_member_delete",
     ),
     # Ticketing
     path(
-        "events/published/<uuid:team_pk>/",
+        "events/published/<uuid:team_public_id>/",
         views.PublishedEventsListView.as_view(),
         name="event_list",
     ),
     path(
-        "events/wip/<uuid:team_pk>/",
+        "events/wip/<uuid:team_public_id>/",
         views.WIPEventsListView.as_view(),
         name="event_drafts",
     ),
     path(
-        "events/create/<uuid:team_pk>/",
+        "events/create/<uuid:team_public_id>/",
         views.EventCreateView.as_view(),
         name="event_create",
     ),
     path(
-        "events/<uuid:team_pk>/<int:pk>/",
+        "events/<uuid:team_public_id>/<int:pk>/",
         views.EventDetailView.as_view(),
         name="event_detail",
     ),
     path(
-        "events/update/<uuid:team_pk>/<int:pk>/",
+        "events/update/<uuid:team_public_id>/<int:pk>/",
         views.EventUpdateView.as_view(),
         name="event_update",
     ),
     path(
-        "events/delete/<uuid:team_pk>/<int:pk>/",
+        "events/delete/<uuid:team_public_id>/<int:pk>/",
         views.EventDeleteView.as_view(),
         name="event_delete",
     ),
     path(
-        "events/stats/<uuid:team_pk>/<int:pk>/",
+        "events/stats/<uuid:team_public_id>/<int:pk>/",
         views.EventStatisticsView.as_view(),
         name="event_stats",
     ),
     path(
-        "events/estimate-price/<uuid:team_pk>/",
+        "events/estimate-price/<uuid:team_public_id>/",
         views.PricingCalculator.as_view(),
         name="event_price_estimator",
     ),
     path(
-        "events/checkout/<uuid:team_pk>/<int:pk>/",
+        "events/checkout/<uuid:team_public_id>/<int:pk>/",
         views.EventCheckout.as_view(),
         name="event_checkout",
     ),
     path(
-        "events/checkout/success/<uuid:team_pk>/<int:pk>/",
+        "events/checkout/success/<uuid:team_public_id>/<int:pk>/",
         views.EventCheckout.success_stripe_callback,
         name="event_checkout_success_callback",
     ),
     path(
-        "events/checkout/failure/<uuid:team_pk>/<int:pk>/",
+        "events/checkout/failure/<uuid:team_public_id>/<int:pk>/",
         views.EventCheckout.failure_stripe_callback,
         name="event_checkout_failure_callback",
     ),

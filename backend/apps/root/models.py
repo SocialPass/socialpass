@@ -1,15 +1,11 @@
 import os
-import typing
 import uuid
 from datetime import datetime, timedelta
+from enum import Enum
 
 import boto3
-import pytz
-from dateutil.tz import tzoffset
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core import exceptions as dj_exceptions
-from django.core.files.storage import get_storage_class
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -20,11 +16,11 @@ from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.dashboard.models import PricingRule, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.validators import JSONSchemaValidator
-from config.storages import PrivateTicketStorage
+from config.storages import get_private_ticket_storage
 
 
 class User(AbstractUser):
@@ -34,13 +30,17 @@ class User(AbstractUser):
 
 
 class EventLocation(DBModel):
+    """
+    Event location manager
+    """
+
     # The street/location address (part 1)
     address_1 = models.CharField(max_length=255)
     # The street/location address (part 2)
     address_2 = models.CharField(max_length=255)
     # The city
     city = models.CharField(max_length=255)
-    # The ISO 3166-2 2- or 3-character region code for the state, province, region, or district
+    # The ISO 3166-2 2- or 3-character region code
     region = models.CharField(max_length=3)
     # The postal code
     postal_code = models.IntegerField()
@@ -49,14 +49,15 @@ class EventLocation(DBModel):
     # geodjango lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     long = models.DecimalField(max_digits=9, decimal_places=6)
-    # TODO:
+    # TODO: Setup Lat/Long handling
     # point = PointField(geography=True, default="POINT(0.0 0.0)")
-    # localized_address_display #The format of the address display localized to the address country
-    # localized_area_display	#The format of the address's area display localized to the address country
-    # localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
 
 
 class EventCategory(DBModel):
+    """
+    Category model for Events
+    Contains parent description
+    """
 
     parent_category = models.ForeignKey(
         "EventCategory", on_delete=models.SET_NULL, null=True
@@ -80,13 +81,13 @@ class EventQuerySet(models.QuerySet):
         """
         inactive events (not live)
         """
-        return self.filter(~models.Q(state=EventStatusEnum.LIVE.value))
+        return self.filter(~models.Q(state=Event.StateEnum.LIVE.value))
 
     def filter_active(self):
         """
         active events (live)
         """
-        return self.filter(state=EventStatusEnum.LIVE.value)
+        return self.filter(state=Event.StateEnum.LIVE.value)
 
     def filter_publicly_accessible(self):
         """
@@ -107,11 +108,16 @@ class Event(DBModel):
     Stores data for ticketed event
     """
 
+    class StateEnum(Enum):
+        DRAFT = "Draft"
+        PENDING_CHECKOUT = "Ready for Checkout"
+        LIVE = "Live"
+
     # Queryset manager
     objects = EventQuerySet.as_manager()
 
     # state
-    state = FSMField(default=EventStatusEnum.DRAFT.value, protected=True)
+    state = FSMField(default=StateEnum.DRAFT.value, protected=True)
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -120,13 +126,15 @@ class Event(DBModel):
     # Publish info
     is_featured = models.BooleanField(default=False)
     publish_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
-    visibility = models.CharField(max_length=50, choices=EVENT_VISIBILITY)
+    visibility = models.CharField(
+        max_length=50, choices=EVENT_VISIBILITY, default=EVENT_VISIBILITY[0][0]
+    )
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
     organizer = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
+    cover_image = models.ImageField(blank=True, null=True)
     category = models.ForeignKey(
         EventCategory, on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -177,11 +185,11 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     def get_absolute_url(self):
-        if self.state == EventStatusEnum.DRAFT.value:
+        if self.state == Event.StateEnum.DRAFT.value:
             _success_url = "event_update"
-        elif self.state == EventStatusEnum.PENDING_CHECKOUT.value:
+        elif self.state == Event.StateEnum.PENDING_CHECKOUT.value:
             _success_url = "event_checkout"
-        elif self.state == EventStatusEnum.LIVE.value:
+        elif self.state == Event.StateEnum.LIVE.value:
             _success_url = "event_detail"
         return reverse(
             _success_url,
@@ -231,38 +239,37 @@ class Event(DBModel):
 
     @transition(
         field=state,
-        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
-        target=EventStatusEnum.DRAFT.value,
+        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
+        target=StateEnum.DRAFT.value,
     )
     def transition_draft(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
+        -
         """
-        print("transition draft")
         return
 
     @transition(
         field=state,
-        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
-        target=EventStatusEnum.PENDING_CHECKOUT.value,
+        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
+        target=StateEnum.PENDING_CHECKOUT.value,
     )
     def transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
+        -
         """
-        print("transition pending_checkout")
         return
 
-    @transition(field=state, target=EventStatusEnum.LIVE.value)
+    @transition(field=state, target=StateEnum.LIVE.value)
     def transition_live(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
         - Create ticket scanner object
         """
-        print("transition live")
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
 
@@ -277,14 +284,19 @@ class Event(DBModel):
     @price.setter
     def price(self, value):
         raise AttributeError(
-            "Directly setting price is disallowed. Please check the Event @price.getter method"
+            "Directly setting price is disallowed. \
+            Please check the Event @price.getter method"
         )
 
     @price.getter
     def price(self):
         """
-        custom price.getter to provide calculable DB field (actual field is stored as _price)
-        evaluates calculated vs current value and updates price or pricing_rule when needed
+        Custom price.getter to provide calculable DB field
+        Returns up-to-date price of event.
+        Note: DB field is stored as self._price
+
+        This getter evaluates calculated (expected) price vs current price.
+        In case of conflict, this function update _price.
         """
         # Side effects may occur
         # Set to_save = True when they to do to be saved
@@ -317,6 +329,33 @@ class Event(DBModel):
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
+    @staticmethod
+    def required_fields():
+        fields = [
+            "title",
+            "organizer",
+            "description",
+            "visibility",
+            "location",
+            "start_date",
+            "cover_image",
+            "requirements",
+            "capacity",
+            "limit_per_person",
+        ]
+        return fields
+
+    @staticmethod
+    def optional_fields():
+        fields = [
+            "visibility",
+            "end_date",
+            "timezone_offset",
+            "publish_date",
+            "checkout_requested",
+        ]
+        return fields
+
 
 class Ticket(DBModel):
     """
@@ -328,7 +367,7 @@ class Ticket(DBModel):
 
     # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(null=True, storage=PrivateTicketStorage())
+    file = models.ImageField(null=True, storage=get_private_ticket_storage)
     embed_code = models.UUIDField(default=uuid.uuid4)
 
     # Ticket access info
@@ -360,22 +399,32 @@ class Ticket(DBModel):
         return os.path.join(self.file.storage.location, self.file.name)
 
     @property
-    def temporary_download_url(self):
-        s3_client = boto3.client(
-            "s3",
-            region_name=settings.AWS_S3_REGION_NAME,
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-        return s3_client.generate_presigned_url(
-            ClientMethod="get_object",
-            Params={
-                "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                "Key": self.filename_key,
-            },
-            ExpiresIn=3600,
-        )
+    def download_url(self):
+        """
+        This property is used for private ticket url
+        On debug, use default image file
+        On production, generate pre-signed s3 url
+        """
+        # Production
+        if not settings.DEBUG:
+            s3_client = boto3.client(
+                "s3",
+                region_name=settings.AWS_S3_REGION_NAME,
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            )
+            return s3_client.generate_presigned_url(
+                ClientMethod="get_object",
+                Params={
+                    "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
+                    "Key": self.filename_key,
+                },
+                ExpiresIn=3600,
+            )
+        # Debug
+        else:
+            return self.file.url
 
 
 class TicketRedemptionKey(DBModel):
@@ -428,8 +477,9 @@ class BlockchainOwnership(DBModel):
     @property
     def signing_message(self):
         return (
-            "Greetings from SocialPass. Sign this message to prove you have access to this wallet"
-            "\nThis IS NOT a trade or transaction"
+            "Greetings from SocialPass."
+            "\nSign this message to prove ownership"
+            "\n\nThis IS NOT a trade or transaction"
             f"\n\nTimestamp: {self.expires.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)[0:7]}"
         )

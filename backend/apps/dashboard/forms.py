@@ -1,12 +1,9 @@
-import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
-from taggit.forms import TagField
 
-from apps.dashboard import services
 from apps.dashboard.models import Invite, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.models import Event
 
 
@@ -36,42 +33,9 @@ class TeamForm(forms.ModelForm):
         labels = {"image": "Set Team Image"}
 
 
-required_fields = [
-    "title",
-    "organizer",
-    "description",
-    "visibility",
-    # location
-    "location",
-    # TODO
-    # date and time
-    "start_date",
-    # cover image
-    "cover_image",
-    # 2. Requirements
-    "requirements",
-    # 3. Tickets
-    "capacity",
-    "limit_per_person",
-    # 4. Publish
-]
-optional_fields = [
-    # 1. General info
-    # basic info
-    # "category",
-    # "tags",
-    "visibility",
-    "end_date",
-    "timezone_offset",
-    "cover_image",
-    "publish_date",
-    "checkout_requested",
-]
-
-
 class EventForm(forms.ModelForm):
     class Meta:
-        fields = optional_fields + required_fields
+        fields = Event.optional_fields() + Event.required_fields()
         model = Event
 
         widgets = {
@@ -134,22 +98,28 @@ class EventDraftForm(EventForm):
         checkout_requested = data.get("checkout_requested", None)
         if checkout_requested:
             # check field
-            for i in required_fields:
+            for i in Event.required_fields():
                 field = data.get(i, None)
                 if not field:
                     errors[i] = "This field is required"
 
         # check for errors
-        if not errors:
-            # handle state transitions
-            # based on current checkout_requested
-            if checkout_requested:
-                self.instance.transition_pending_checkout()
-            else:
-                self.instance.transition_draft()
-            return data
-        else:
+        # raise exception
+        if errors:
             raise forms.ValidationError(errors)
+
+        # form is OK, handle state transitions
+        # Only call state transition if in expected state
+        # Note: No need to save, as form will call save
+        if checkout_requested:
+            if self.instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
+                self.instance.transition_pending_checkout()
+        else:
+            if self.instance.state != Event.StateEnum.DRAFT.value:
+                self.instance.transition_draft()
+
+        # return form data
+        return data
 
 
 class EventPendingCheckoutForm(EventDraftForm):
@@ -173,7 +143,7 @@ class EventLiveForm(EventForm):
         checkout_requested = data.get("checkout_requested", None)
         if checkout_requested:
             # check field
-            for i in required_fields:
+            for i in Event.required_fields():
                 field = data.get(i, None)
                 if not field and i not in EventLiveForm.Meta.exclude:
                     errors[i] = "This field is required"

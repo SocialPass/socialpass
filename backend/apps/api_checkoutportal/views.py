@@ -65,7 +65,7 @@ class CheckoutPortalRequest(EventMixin, APIView):
     def checkout_blockchain_ownership(self, request, *args, **kwargs):
         """
         Request a checkout via blockchain asset ownership
-        Create blockchain_ownership DB record to be signed by client and validated by server
+        Create blockchain_ownership DB record to be signed by client
         """
         self.input_serializer = None
         self.output_serializer = serializers.BlockchainOwnershipSerializer

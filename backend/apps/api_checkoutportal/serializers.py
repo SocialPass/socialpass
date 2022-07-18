@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from apps.dashboard.models import Team
@@ -73,16 +74,16 @@ class TicketSerializer(serializers.ModelSerializer):
     Ticket serializer
     """
 
-    temporary_download_url = serializers.SerializerMethodField()
+    download_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Ticket
         fields = [
-            "temporary_download_url",
+            "download_url",
         ]
 
-    def get_temporary_download_url(self, obj):
-        return obj.temporary_download_url
+    def get_download_url(self, obj):
+        return obj.download_url
 
 
 class VerifyBlockchainOwnershipSerializer(serializers.Serializer):

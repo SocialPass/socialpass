@@ -22,7 +22,7 @@ class Team(DBModel):
     Umbrella team model for SocialPass customers
     """
 
-    def get_default_pricing_rule_group():
+    def get_default_pricing_rule_group():  # noqa
         return PricingRuleGroup.objects.get(name="Default").pk
 
     # base info
@@ -191,8 +191,6 @@ class PricingRuleGroup(DBModel):
 
 class EventStripePayment(DBModel):
     """Registers a payment done for Event"""
-
-    # TODO: This model could be more abstracted from the Event
 
     event = models.ForeignKey(
         "root.Event", on_delete=models.SET_NULL, null=True, related_name="payments"

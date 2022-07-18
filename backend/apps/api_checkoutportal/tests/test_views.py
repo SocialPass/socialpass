@@ -3,19 +3,17 @@ from uuid import uuid4
 
 from django.test import TestCase
 from eth_account.messages import encode_defunct
-from hexbytes import HexBytes
 from rest_framework import status
 from web3.auto import w3
 
-from apps.root.models import BlockchainOwnership, Event, Team, User
-
-# Tests can be run by execing into the container and `python manage.py test`
-# P.S. Django tests are run on a separate DB -> must manually create a test dataset.
+from apps.root.factories import EventFactory, UserWithTeamFactory
+from apps.root.models import BlockchainOwnership, Event
 
 
 def prevent_warnings(func):
     """
-    Decorator for ignoring 400s status codes for test evaluation. Decorate every 400-500s codes tests with this.
+    Decorator for ignoring 400s status codes for test evaluation.
+    Decorate every 400-500s codes tests with this.
     """
 
     def new_func(*args, **kwargs):
@@ -35,58 +33,36 @@ def generate_random_identifier():
     return uuid4().hex[:6].upper()
 
 
-def create_testing_user():
-    return User.objects.create(username=f"testUser_{generate_random_identifier()}")
-
-
-def create_testing_team():
-    identifier = generate_random_identifier()
-    return Team.objects.create(
-        name=f"testTeam_{identifier}",
-        description=f"testTeamDescription_{identifier}",
-    )
-
-
-def create_testing_event(**kwargs):
-    identifier = generate_random_identifier()
-    return Event.objects.create(
-        title=f"testEvent_{identifier}",
-        description=f"testEventDescription_{identifier}",
-        start_date=kwargs.get("start_date", "2030-08-21 13:30:00+00"),
-        timezone=kwargs.get("timezone", "America/Bahia"),
-        capacity=kwargs.get("capacity", "1000"),
-        team_id=kwargs.get("team_id", Team.objects.last().id),
-        user_id=kwargs.get("user_id", User.objects.last().id),
-    )
-
-
 def create_testing_blockchain_ownership(**kwargs):
     return BlockchainOwnership.objects.create(
         event_id=kwargs.get("event_id", Event.objects.last().id)
     )
 
 
-class GetEventDetailsTestCase(TestCase):
+class TestCaseWrapper(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = create_testing_user()
-        cls.team = create_testing_team()
-        cls.event = create_testing_event()
+        cls.password = "password"
+        cls.user = UserWithTeamFactory()
+        cls.team = cls.user.membership_set.first().team
+        cls.event = EventFactory(team=cls.team, user=cls.user)
+        cls.blockchain_ownership = create_testing_blockchain_ownership()
+        cls.url_base = "/api/checkout-portal/v1/"
         return super().setUpTestData()
 
+
+class GetEventDetailsTestCase(TestCaseWrapper):
     def test_get_event_details_200(self):
         """
         Request the most recently created team's details and asserts response is 200 OK.
         """
         event_id = str(self.event.public_id)
         # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.get(f"/api/checkout-portal/v1/retrieve/{event_id}/")
+        response = self.client.get(f"{self.url_base}retrieve/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Skipping these asserts for now since Django is doing some magic on the serializers.
+        # Skipping these asserts for now,
+        # since Django is doing some magic on the serializers.
         # Add `from . import serializers` at the top then...
-        # print(response.json())
-        # print(serializers.EventSerializer(self.event).data)
-
         # self.assertEqual(response.json(), ...)
 
     @prevent_warnings
@@ -97,21 +73,11 @@ class GetEventDetailsTestCase(TestCase):
         invalid_event_id = (
             uuid4()
         )  # Random UUID string that is not contained in the test DB.
-        response = self.client.get(
-            f"/api/checkout-portal/v1/retrieve/{invalid_event_id}/"
-        )
+        response = self.client.get(f"{self.url_base}retrieve/{invalid_event_id}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class CheckoutPortalProcessTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = create_testing_user()
-        cls.team = create_testing_team()
-        cls.event = create_testing_event()
-        cls.blockchain_ownership = create_testing_blockchain_ownership()
-        return super().setUpTestData()
-
+class CheckoutPortalProcessTestCase(TestCaseWrapper):
     @prevent_warnings
     # In progress, having trouble mocking data since it all comes through Moralis
     def test_checkout_portal_process_200_ok(self):
@@ -134,19 +100,18 @@ class CheckoutPortalProcessTestCase(TestCase):
             "blockchain_ownership_id": self.blockchain_ownership.id,
             "tickets_requested": "1",
         }
-        print(data)
         content_type = "application/json"
-        response = self.client.post(
-            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
+        self.client.post(
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
-        print(response.content)
 
     @prevent_warnings
     def test_checkout_portal_process_403_over_ticket_limit(self):
         """
-        Access the event portal process checkout API and asserts 403 when requesting over the ticket limit.
+        Access the event portal process checkout API.
+        Asserts 403 when requesting over the ticket limit.
         """
         event_id = str(self.event.public_id)
         signing_message = self.blockchain_ownership.signing_message
@@ -166,7 +131,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -177,7 +142,8 @@ class CheckoutPortalProcessTestCase(TestCase):
     @prevent_warnings
     def test_checkout_portal_process_403_unable_to_validate(self):
         """
-        Access the event portal process checkout API and asserts the signing message couldn't be validated by user.
+        Access the event portal process checkout API.
+        Asserts the signing message couldn't be validated by user.
         """
         event_id = str(self.event.public_id)
         data = {
@@ -188,7 +154,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -201,10 +167,11 @@ class CheckoutPortalProcessTestCase(TestCase):
     @prevent_warnings
     def test_checkout_portal_process_401_no_checkout_type(self):
         """
-        Access the event portal process with a valid Event UUID but without the (checkout_type) parameter.
+        Access the event portal process with a valid Event UUID.
+        but without the (checkout_type) parameter.
         """
         event_id = str(self.event.public_id)
-        response = self.client.post(f"/api/checkout-portal/v1/process/{event_id}/")
+        response = self.client.post(f"{self.url_base}process/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     @prevent_warnings
@@ -221,7 +188,7 @@ class CheckoutPortalProcessTestCase(TestCase):
         }
         content_type = "application/json"
         response = self.client.post(
-            f"/api/checkout-portal/v1/process/{event_id}/?checkout_type=blockchain_ownership",
+            f"{self.url_base}process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
@@ -232,10 +199,9 @@ class CheckoutPortalProcessTestCase(TestCase):
     @prevent_warnings
     def test_checkout_portal_process_404_invalid_team_UUID(self):
         """
-        Access the event portal process checkout API and asserts 404 NOT FOUND for invalid team UUID.
+        Access the event portal process checkout API.
+        Asserts 404 NOT FOUND for invalid team UUID.
         """
         invalid_event_id = uuid4()
-        response = self.client.post(
-            f"/api/checkout-portal/v1/process/{invalid_event_id}/"
-        )
+        response = self.client.post(f"{self.url_base}process/{invalid_event_id}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

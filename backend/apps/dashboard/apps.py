@@ -8,7 +8,7 @@ class DashboardConfig(AppConfig):
 
     def ready(self):
         try:
-            import apps.dashboard.signals
+            import apps.dashboard.signals  # noqa
 
         except ImportError as e:
             print("error,", e, "\n")

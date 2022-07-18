@@ -349,12 +349,16 @@ def get_image_from_source(source):
         - URL (image is downloaded before embedding)
     """
     url_regex = re.compile(
-        r"^(?:http|ftp)s?://"  # http:// or https://
-        r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # Domain
-        r"localhost|"  # Localhost
-        r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # IP address
-        r"(?::\d+)?"  # Optional port
-        r"(?:/?|[/?]\S+)$",
+        # http:// or https://
+        r"^(?:http|ftp)s?://"
+        # Domain
+        r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # noqa
+        # Localhost
+        r"localhost|"
+        # IP address
+        r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
+        # Optional port
+        r"(?::\d+)?" r"(?:/?|[/?]\S+)$",
         re.IGNORECASE,
     )
 

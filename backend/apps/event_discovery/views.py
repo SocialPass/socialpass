@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
@@ -42,9 +41,13 @@ class EventDiscoveryBrowse(ListView):
 class EventDiscoveryDetails(DetailView):
     model = Event
     slug_field = "public_id"
-    slug_url_kwarg = "event_pk"
+    slug_url_kwarg = "event_public_id"
     context_object_name = "event"
     template_name = "event_discovery/event_details.html"
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter_publicly_accessible()
+        return qs.filter(public_id=self.kwargs["event_public_id"])
 
     def get_context_data(self, **kwargs):
         """

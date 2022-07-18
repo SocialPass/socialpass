@@ -36,7 +36,6 @@ class PartialBlockchainAssetError(Exception):
 def get_available_tickets(event: Event, tickets_requested=None) -> int:
     """
     return how many tickets available for a given event
-    In the future, this method can be extended to ticket types vs singular ticket with an event
     """
     # get ticket count
     ticket_count = event.tickets.count()
@@ -59,7 +58,8 @@ def get_available_tickets(event: Event, tickets_requested=None) -> int:
     # check available tickets
     if event.limit_per_person + ticket_count > event.capacity:
         raise TooManyTicketsRequestedError(
-            "Tickets requested would bring event over capacity. Please lower requested tickets."
+            "Tickets requested would bring event over capacity. \
+            Please lower requested tickets."
         )
 
     # check tickets_requested requested against limt_per_person
@@ -83,6 +83,7 @@ def create_ticket_image(
     Use the arguments to generate a ticket image and save into s3-compatible bucket.
     Returns ticket image as well as s3 storage response
     """
+    print("creating image...")
     # Generate ticket image from event data
     created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
         event_data={
@@ -97,12 +98,13 @@ def create_ticket_image(
 
     # Store ticket image into bucket
     # Prepare image for S3
+    print("preparing image s3...")
     _buffer = io.BytesIO()
     created_ticket_img.save(_buffer, "PNG")
     _buffer.seek(0)  # Rewind pointer back to start
 
     # save ticket image
-    # todo: ensure .png format (or whatever format)
+    print("saving image...")
     ticket.file.save(f"{str(ticket.filename)}.png", _buffer)
     return ticket
 
@@ -211,9 +213,7 @@ def validate_blockchain_wallet_ownership(
             return verified, verification_msg
     except Exception as e:
         sentry_sdk.capture_message(wallet_address, e)
-        verification_msg = (
-            "Unable to decode & validate blockchain_ownership, likely a forgery attempt."
-        )
+        verification_msg = "Unable to decode & validate blockchain_ownership (forgery)"
         return verified, verification_msg
 
     # before success, mark as verified, update wallet_address, and save

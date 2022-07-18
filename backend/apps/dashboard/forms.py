@@ -44,7 +44,7 @@ class EventForm(forms.ModelForm):
     """
 
     class Meta:
-        fields = Event.optional_fields() + Event.required_fields()
+        fields = Event.optional_form_fields() + Event.required_form_fields()
         model = Event
 
         widgets = {
@@ -101,7 +101,7 @@ class EventForm(forms.ModelForm):
         print(ready_for_checkout, "ready_for_checkout")
         if ready_for_checkout:
             # check field
-            for i in Event.required_fields():
+            for i in Event.required_form_fields():
                 field = data.get(i, None)
                 if not field:
                     errors[i] = "This field is required"

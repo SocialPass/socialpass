@@ -297,7 +297,7 @@ class DashboardTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create dictionary based on required fields
-        fields = Event.required_fields()
+        fields = Event.required_form_fields()
         event_data = {
             key: self.event_one.__dict__[key]
             for key in fields

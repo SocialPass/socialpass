@@ -320,7 +320,7 @@ class Event(DBModel):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
     @staticmethod
-    def required_fields():
+    def required_form_fields():
         fields = [
             "title",
             "organizer",
@@ -336,11 +336,10 @@ class Event(DBModel):
         return fields
 
     @staticmethod
-    def optional_fields():
+    def optional_form_fields():
         fields = [
             "end_date",
             "publish_date",
-            "ready_for_checkout",
         ]
         return fields
 

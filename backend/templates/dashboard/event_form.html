@@ -138,6 +138,10 @@
 					{% if form.errors %}
 						<div class="alert alert-danger" role="alert">
               <p class="invalid-feedback persistent">Please complete the form below</p>
+              {% for key, value in form.errors.items %}
+              {{key}}
+              {{value}}
+              {% endfor %}
 						</div>
 					{% endif %}
 
@@ -235,20 +239,28 @@
                   document.getElementById("id_long").value = long.toFixed(6)
 
                   // Loop over places object for setting fields
+                  // set fields based on available places components
                   var gmaps = {};
                   for (var i = 0; i < place.address_components.length; i++) {
                     var c = place.address_components[i];
                     gmaps[c.types[0]] = c;
                   }
-
-                  // set fields based on available places components
                   document.getElementById("id_location").value = place.name;
                   document.getElementById("id_country").value = gmaps['country']['short_name'];
-                  document.getElementById("id_postal_code").value = gmaps['postal_code']['long_name'];
                   document.getElementById("id_city").value = gmaps['locality']['long_name'];
                   //document.getElementById("id_address_1").value = place.name;
                   //document.getElementById("id_address_2").value = place.name;
                   //document.getElementById("id_region").value = place.name;
+                  if (gmaps['postal_code']){
+                    if (gmaps['postal_code_suffix']){
+                      console.log('set postal code1')
+                      document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
+                    }
+                    else {
+                      console.log('set postal code2')
+                      document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
+                    }
+                  }
 								}
 							</script>
 

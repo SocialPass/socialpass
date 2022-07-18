@@ -1,25 +1,33 @@
 import { useNavigate } from "react-router-dom";
 import _backButton from "../static/images/back.svg";
-import socialpassLogo from "../static/images/icons/socialpassLogo.svg";
 
 export default function SmallHeaderContents() {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <div className="sp-header-logo-img d-flex align-items-center justify-content-center">
-        <img src={socialpassLogo} alt="SocialPass Logo" />
+    <>
+      <div className="w-100 hs-150 position-relative">
+        <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
+          <img
+            src="https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            className="w-100 h-auto"
+            alt="Cover image"
+          />
+        </div>
+
+        <div className="position-absolute z-1 bottom-0 start-0 px-content py-20">
+          <a
+            onClick={() => navigate(-1)}
+            href="#"
+            className="btn btn-rounded ps-5 d-flex align-items-center"
+          >
+            <div className="ws-25 hs-25 bg-secondary text-on-secondary rounded-circle d-flex align-items-center justify-content-center">
+              <i className="fa-regular fa-arrow-left"></i>
+            </div>
+            <strong className="text-strong antialiased ms-10">Go Back</strong>
+          </a>
+        </div>
       </div>
-      <div className="back-button" onClick={() => navigate(-1)}>
-        <img
-          src={_backButton}
-          alt="Back Button"
-          height="32"
-          width="32"
-          key={_backButton}
-        />
-        <h4 className="ps-5 m-0">Go back</h4>
-      </div>
-    </div>
+    </>
   );
 }

@@ -5,17 +5,18 @@ import { TicketedEventRequestAccess, TicketedEventGrantAccess } from "../api";
 import { Loading } from "../components/";
 import { Web3ConnectorImage } from "../components/Web3ConnectorImage";
 import { CheckoutPortalContext } from "../context";
-import NFTOwnershipFAQHoverIcon from "../components/NFTOwnershipFAQ";
 
 // ConnectorWallets
 // Return UI for wallet connectors
 export const CheckoutWeb3 = () => {
   const navigate = useNavigate();
   const [selectedWallet, setSelectedWallet] = useState<any>();
+
   const [loadingText, setLoadingText] = useState<any>("Loading...");
   const [statusButton, setStatusButton] = useState<any>(true);
   const {
     id,
+    retrieveJson,
     requestAccessJson,
     generalAdmissionSelect,
     setRequestAccessJson,
@@ -30,16 +31,6 @@ export const CheckoutWeb3 = () => {
   const signHook = useSignMessage({
     message: requestAccessJson?.signing_message,
   });
-
-  const [matches, setMatches] = useState(
-    window.matchMedia("(min-width: 768px)").matches
-  );
-
-  useEffect(() => {
-    window
-      .matchMedia("(min-width: 768px)")
-      .addEventListener("change", (e) => setMatches(e.matches));
-  }, []);
 
   const ConnectWallet = () => {
     // todo: ENS resolution
@@ -66,30 +57,36 @@ export const CheckoutWeb3 = () => {
       );
     }
     return (
-      <div className="wallets-selection wallets">
-        {connectHook.connectors.map((x) => (
-          <button
-            // className={
-            //   selectedWallet === x
-            //     ? "fs-12 fw-bold card-active d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-            //     : "fs-12 fw-bold card-disabled d-flex flex-column align-items-center justify-content-around w-100 mt-3"
-            // }
-            className={`fs-12 fw-bold d-flex flex-column align-items-center justify-content-around w-100 mt-3 ${
-              selectedWallet === x ? "card-active" : "card-disabled"
-            }`}
-            disabled={!x.ready}
-            key={x.id}
-            id={x.id}
-            onClick={() => {
-              connectHook.connect(x);
-              setSelectedWallet(x);
-            }}
-          >
-            <Web3ConnectorImage connector={x.name} />
-            {x.name}
-            {!x.ready && " (unsupported)"}
-          </button>
-        ))}
+      <div className="row">
+        {connectHook.connectors.map((x) => {
+          return (
+            <div className="col-sm-4 pe-sm-10" key={x.id}>
+              <div className="wallet-button">
+                <input
+                  disabled={!x.ready}
+                  onClick={() => {
+                    connectHook.connect(x);
+                    setSelectedWallet(x);
+                  }}
+                  type="radio"
+                  name="wallet"
+                  className="wallet-button-input"
+                  id={x.id}
+                  onChange={() => {}} //browser launch a warning log without this
+                  checked={selectedWallet === x}
+                />
+                <label htmlFor={x.id} className="wallet-button-label">
+                  <div className="ws-75 mw-100 mx-auto">
+                    <Web3ConnectorImage connector={x.name} />
+                  </div>
+                  <div className="fs-base-n2 text-strong fw-700 text-truncate text-center mt-10">
+                    {x.name}
+                  </div>
+                </label>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -155,10 +152,6 @@ export const CheckoutWeb3 = () => {
     }
   }, [accountHook]);
 
-  function handleNavigateBack() {
-    navigate(-1);
-  }
-
   async function handleCheckout() {
     setLoadingText(`Awaiting wallet signature`);
     await signHook.signMessageAsync();
@@ -169,65 +162,101 @@ export const CheckoutWeb3 = () => {
   }
 
   return (
-    <div className="responsive-page-selection">
-      <div className="d-flex flex-column">
-        <div>
-          <h3 className="fs-20">Complete Checkout</h3>
-          <p>Select from one of the checkout options below</p>
-        </div>
-        <div className="d-flex flex-row align-items-start justify-content-between">
-          <div>
-            <div className="d-flex flex-row align-items-center me-15">
-              <span className="fs-18 fw-bold me-15">Checkout option</span>
+    <>
+      <div className="px-content pt-20">
+        <p className="text-muted mt-5 mb-0">By {retrieveJson?.team.name}</p>
+        <h2 className="text-strong fs-base-p2 fw-700 m-0">
+          {retrieveJson?.title}
+        </h2>
+      </div>
+      <div className="row">
+        {/* <!-- Checkout information start --> */}
+        <div className="col-md-7">
+          <div className="content">
+            <h1 className="text-strong fw-700 fsr-4 mt-0 mb-0">
+              Complete Checkout
+            </h1>
+            <p className="mt-10">
+              Select from one of the checkout options below.
+            </p>
+            <h6 className="text-strong fw-700 fsr-6 mt-30">Checkout Options</h6>
+            <div
+              className="alert rounded-3 border-secondary d-flex align-items-center"
+              role="alert"
+            >
+              <div className="text-secondary fs-base-p4">
+                <i className="fa-regular fa-check-circle"></i>
+              </div>
+              <div className="ms-20">
+                <h6 className="alert-heading text-strong fw-700 mb-0">
+                  Proof of NFT Ownership
+                </h6>
+                <p className="my-0">Select from the crypto wallet options.</p>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="d-flex flex-row justify-content-start align-items-center mt-15 gap-30">
-          <div className="border-color-primary px-30 py-10 rounded-3 d-flex align-items-start justify-content-start flex-column">
-            <div className="fw-bold fs-15">Proof of NFT Ownership</div>
-            <span>Select from the crypto wallet options</span>
-          </div>
+            <p className="d-flex align-items-start fs-base-n2">
+              <i className="fa-regular fa-info-circle me-10 mt-5"></i>
+              <span>
+                Proof of NFT ownership is <strong>not</strong> an NFT trade. We
+                only need you to prove that you own the NFT to create the
+                ticket.
+              </span>
+            </p>
 
-          <div className="tooltip">
-            <NFTOwnershipFAQHoverIcon locationClass="bottom-left"></NFTOwnershipFAQHoverIcon>
+            {/* <!-- Wallet radio buttons start --> */}
+            <ConnectWallet />
+            {/* <!-- Wallet radio buttons end --> */}
+
+            {/* Wallet error messages start */}
+            <div className="mt-15">
+              <span>
+                {connectHook.error && (
+                  <span className="text-danger fw-600">
+                    {connectHook.error?.message ?? "Failed to connect"}
+                  </span>
+                )}
+              </span>
+              <span className="text-danger fw-600">
+                {signHook.error && (
+                  <span>{signHook.error?.message ?? "Failed to connect"}</span>
+                )}
+              </span>
+            </div>
+            {/* Wallet error messages end */}
           </div>
         </div>
-        <ConnectWallet />
-        <span>
-          {connectHook.error && (
-            <span>{connectHook.error?.message ?? "Failed to connect"}</span>
-          )}
-        </span>
-        <span>
-          {signHook.error && (
-            <span>{signHook.error?.message ?? "Failed to connect"}</span>
-          )}
-        </span>
+        {/* <!-- Checkout information end --> */}
+
+        {/* <!-- CTA section start --> */}
+        <div className="col-md-5">
+          <div className="p-content position-md-sticky top-0 start-0">
+            <div className="d-flex align-items-center">
+              <h6 className="text-strong fw-700 fsr-6 mt-0 mb-0">Summary</h6>
+
+              {/* <!-- Edit button start --> */}
+              <div className="text-secondary ms-auto">
+                <a onClick={() => navigate(-1)} className="link-reset fw-bold">
+                  Edit
+                </a>
+              </div>
+              {/* <!-- Edit button end --> */}
+            </div>
+            <p className="mt-10">
+              {generalAdmissionSelect} &times; General Admission Ticket
+              <br />
+              <strong>Price &mdash; </strong> Free
+            </p>
+            <button
+              onClick={() => handleCheckout()}
+              className="btn btn-secondary btn-lg fsr-6 btn-block"
+              disabled={statusButton}
+            >
+              <strong className="antialiased">Continue</strong>
+            </button>
+          </div>
+        </div>
+        {/* <!-- CTA section end --> */}
       </div>
-      <div className="bg-gray d-flex flex-column justify-start-center p-30">
-        {/* If on desktop mode, append bg-gray-extend to document */}
-        {matches === true ? <div className="bg-gray-extend"></div> : null}
-        <div className="d-flex flex-column align-items-start justify-start-center">
-          <div className="d-flex align-items-center justify-content-center">
-            <h3 className="fs-20">Summary &nbsp;</h3>
-            <a onClick={handleNavigateBack} className="text-edit fs-12 fw-bold">
-              Edit
-            </a>
-          </div>
-          <div className="d-flex flex-row">
-            <p>{generalAdmissionSelect} X General Admission Ticket</p>
-          </div>
-        </div>
-        <div className="d-flex align-items-center justify-content-center mt-50">
-          <button
-            disabled={statusButton}
-            onClick={() => handleCheckout()}
-            className="btn btn-primary rounded-3"
-          >
-            <span className="p-5 fs-18 text-capitalize">Checkout</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };

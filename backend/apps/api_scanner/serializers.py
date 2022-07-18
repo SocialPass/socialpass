@@ -11,7 +11,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ["name", "image"]
+        fields = ["name", "image", "theme"]
 
 
 class EventSerializer(serializers.ModelSerializer):

@@ -1,21 +1,21 @@
-import { useNavigate } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
+import erroImage from "../static/images/something_went_wrong.svg";
 
 export function Error() {
-  const navigate = useNavigate();
-
-  function handleGoBack() {
-    navigate(-1);
-  }
-
   return (
-    <div className="row d-flex align-items-center justify-content-center">
-      <div>
-        <FiArrowLeft onClick={handleGoBack} size={30} />
-      </div>
-      <div className="d-flex flex-column justify-content-center align-items-center mt-30">
-        <span className="fs-25 fw-600">Error</span>
-        <p className="fs-15">Sorry, no event was found.</p>
+    <div className="content">
+      <div className="ws-500 mw-100 mx-auto text-center">
+        <div className="ws-300 mw-100 mx-auto">
+          <img
+            src={erroImage}
+            className="d-block w-100 h-auto"
+            alt="something_went_wrong"
+          />
+        </div>
+        <h1 className="text-strong fw-700 fsr-1 mb-0">Something went wrong!</h1>
+        <p>
+          Looks like something went wrong. Please try reloading the page, or try
+          again after some time.
+        </p>
       </div>
     </div>
   );

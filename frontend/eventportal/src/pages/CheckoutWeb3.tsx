@@ -16,6 +16,7 @@ export const CheckoutWeb3 = () => {
   const [statusButton, setStatusButton] = useState<any>(true);
   const {
     id,
+    retrieveJson,
     requestAccessJson,
     generalAdmissionSelect,
     setRequestAccessJson,
@@ -160,75 +161,84 @@ export const CheckoutWeb3 = () => {
   }
 
   return (
-    <div className="row">
-      {/* <!-- Checkout information start --> */}
-      <div className="col-md-7">
-        <div className="content">
-          <h1 className="text-strong fw-700 fsr-4 mt-0 mb-0">
-            Complete Checkout
-          </h1>
-          <p className="mt-10">
-            Select from one of the checkout options below.
-          </p>
-          <h6 className="text-strong fw-700 fsr-6 mt-30">Checkout Options</h6>
-          <div
-            className="alert rounded-3 border-secondary d-flex align-items-center"
-            role="alert"
-          >
-            <div className="text-secondary fs-base-p4">
-              <i className="fa-regular fa-check-circle"></i>
-            </div>
-            <div className="ms-20">
-              <h6 className="alert-heading text-strong fw-700 mb-0">
-                Proof of NFT Ownership
-              </h6>
-              <p className="my-0">Select from the crypto wallet options.</p>
-            </div>
-          </div>
-          <p className="d-flex align-items-start fs-base-n2">
-            <i className="fa-regular fa-info-circle me-10 mt-5"></i>
-            <span>
-              Proof of NFT ownership is <strong>not</strong> an NFT trade. We
-              only need you to prove that you own the NFT to create the ticket.
-            </span>
-          </p>
-
-          {/* <!-- Wallet radio buttons start --> */}
-          <ConnectWallet />
-          {/* <!-- Wallet radio buttons end --> */}
-        </div>
+    <>
+      <div className="px-content pt-20">
+        <p className="text-muted mt-5 mb-0">By {retrieveJson?.team.name}</p>
+        <h2 className="text-strong fs-base-p2 fw-700 m-0">
+          {retrieveJson?.title}
+        </h2>
       </div>
-      {/* <!-- Checkout information end --> */}
-
-      {/* <!-- CTA section start --> */}
-      <div className="col-md-5">
-        <div className="p-content position-md-sticky top-0 start-0">
-          <div className="d-flex align-items-center">
-            <h6 className="text-strong fw-700 fsr-6 mt-0 mb-0">Summary</h6>
-
-            {/* <!-- Edit button start --> */}
-            <div className="text-secondary ms-auto">
-              <a onClick={() => navigate(-1)} className="link-reset fw-bold">
-                Edit
-              </a>
+      <div className="row">
+        {/* <!-- Checkout information start --> */}
+        <div className="col-md-7">
+          <div className="content">
+            <h1 className="text-strong fw-700 fsr-4 mt-0 mb-0">
+              Complete Checkout
+            </h1>
+            <p className="mt-10">
+              Select from one of the checkout options below.
+            </p>
+            <h6 className="text-strong fw-700 fsr-6 mt-30">Checkout Options</h6>
+            <div
+              className="alert rounded-3 border-secondary d-flex align-items-center"
+              role="alert"
+            >
+              <div className="text-secondary fs-base-p4">
+                <i className="fa-regular fa-check-circle"></i>
+              </div>
+              <div className="ms-20">
+                <h6 className="alert-heading text-strong fw-700 mb-0">
+                  Proof of NFT Ownership
+                </h6>
+                <p className="my-0">Select from the crypto wallet options.</p>
+              </div>
             </div>
-            {/* <!-- Edit button end --> */}
+            <p className="d-flex align-items-start fs-base-n2">
+              <i className="fa-regular fa-info-circle me-10 mt-5"></i>
+              <span>
+                Proof of NFT ownership is <strong>not</strong> an NFT trade. We
+                only need you to prove that you own the NFT to create the
+                ticket.
+              </span>
+            </p>
+
+            {/* <!-- Wallet radio buttons start --> */}
+            <ConnectWallet />
+            {/* <!-- Wallet radio buttons end --> */}
           </div>
-          <p className="mt-10">
-            {generalAdmissionSelect} &times; General Admission Ticket
-            <br />
-            <strong>Price &mdash; </strong> Free
-          </p>
-          <button
-            onClick={() => handleCheckout()}
-            className="btn btn-secondary btn-lg fsr-6 btn-block"
-            disabled={statusButton}
-          >
-            <strong className="antialiased">Continue</strong>
-          </button>
         </div>
+        {/* <!-- Checkout information end --> */}
+
+        {/* <!-- CTA section start --> */}
+        <div className="col-md-5">
+          <div className="p-content position-md-sticky top-0 start-0">
+            <div className="d-flex align-items-center">
+              <h6 className="text-strong fw-700 fsr-6 mt-0 mb-0">Summary</h6>
+
+              {/* <!-- Edit button start --> */}
+              <div className="text-secondary ms-auto">
+                <a onClick={() => navigate(-1)} className="link-reset fw-bold">
+                  Edit
+                </a>
+              </div>
+              {/* <!-- Edit button end --> */}
+            </div>
+            <p className="mt-10">
+              {generalAdmissionSelect} &times; General Admission Ticket
+              <br />
+              <strong>Price &mdash; </strong> Free
+            </p>
+            <button
+              onClick={() => handleCheckout()}
+              className="btn btn-secondary btn-lg fsr-6 btn-block"
+              disabled={statusButton}
+            >
+              <strong className="antialiased">Continue</strong>
+            </button>
+          </div>
+        </div>
+        {/* <!-- CTA section end --> */}
       </div>
-      {/* <!-- CTA section end --> */}
-    </div>
+    </>
   );
 };

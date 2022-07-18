@@ -4,16 +4,10 @@ import CheckoutSuccessPage from "../components/CheckoutSuccessPage";
 import CheckoutFailedPage from "../components/CheckoutFailedPage";
 
 export const CheckoutStatus = () => {
-  const { grantAccessJson } = useContext(
-    CheckoutPortalContext
-  );
+  const { grantAccessJson } = useContext(CheckoutPortalContext);
 
-  if (grantAccessJson) {
-    return (
-      <CheckoutSuccessPage/>
-    );
+  if (!grantAccessJson) {
+    return <CheckoutSuccessPage />;
   }
-  return (
-    <CheckoutFailedPage/>
-  );
+  return <CheckoutFailedPage />;
 };

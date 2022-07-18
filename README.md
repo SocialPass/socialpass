@@ -17,7 +17,6 @@ As mentioned above, SocialPass is all about events and Web3. If you're not famil
 - url
 - url
 
-
 # Getting Started
 A root-level [Makefile](Makefile) exists to jumpstart local development.
 The guide below will reference these makefile commands.
@@ -47,10 +46,10 @@ Again, any additions here to hasten development are always welcome
 Once merged, `master`, can be pushed directly to either `staging` or `master`.
 This will trigger CI/CD pipelie for the respective environments.
 
-Notes: Branches should be prefixed with the following labels
+Branches should be prefixed matching their corresponding GH label and a brief description of the issue at hand.
+- `minor/*`
+- `major/*`
 - `refactor/*`
-- `fix/*`
-- `feature/*`
 
 # Backend
 ## Root

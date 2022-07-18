@@ -72,6 +72,9 @@ class EventFactory(factory.django.DjangoModelFactory):
     capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
     limit_per_person = 1
     requirements = []
+    location = factory.Faker("address")
+    lat = 41.40338
+    long = 2.17403
 
     class Meta:
         model = Event

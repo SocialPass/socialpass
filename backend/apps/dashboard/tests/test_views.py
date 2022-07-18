@@ -3,7 +3,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 
 from apps.dashboard import forms, views
@@ -244,17 +243,18 @@ class DashboardTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # TEST POST
+        new_event = EventFactory.build(team=self.team_one, user=self.user_one)
         data = {
-            "title": "Test Title 2",
-            "team": self.team_one,
-            "user": self.user_one,
-            "description": "Test Description 2",
-            "start_date": timezone.now(),
-            "timezone": "US/Eastern",
-            "location": "SF",
-            "capacity": 100,
-            "limit_per_person": 1,
-            "requirements": [],
+            "title": "Event One Data with New Title",
+            "team": new_event.team,
+            "user": new_event.user,
+            "description": new_event.description,
+            "start_date": new_event.start_date,
+            "capacity": new_event.capacity,
+            "limit_per_person": new_event.limit_per_person,
+            "requirements": new_event.requirements,
+            "lat": new_event.lat,
+            "long": new_event.long,
         }
         response = self.client.post(
             reverse("event_create", args=(self.team_one.public_id,)),
@@ -262,7 +262,9 @@ class DashboardTest(TestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Event.objects.filter(title="Test Title 2").count(), 1)
+        self.assertEqual(
+            Event.objects.filter(title="Event One Data with New Title").count(), 1
+        )
 
     def test_event_detail(self):
         # Login User
@@ -296,21 +298,22 @@ class DashboardTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        # Create dictionary based on required fields
-        fields = Event.required_form_fields()
-        event_data = {
-            key: self.event_one.__dict__[key]
-            for key in fields
-            if key in self.event_one.__dict__.keys()
+        # update title
+        data = {
+            "title": "Updated Title",
+            "team": self.event_one.team,
+            "user": self.event_one.user,
+            "description": self.event_one.description,
+            "start_date": self.event_one.start_date,
+            "capacity": self.event_one.capacity,
+            "limit_per_person": self.event_one.limit_per_person,
+            "requirements": self.event_one.requirements,
+            "lat": self.event_one.lat,
+            "long": self.event_one.long,
         }
-
-        # Update title
-        event_data["title"] = "Updated Title"
-
-        # TEST POST
         response = self.client.post(
             reverse("event_update", args=(self.team_one.public_id, self.event_one.pk)),
-            data=event_data,
+            data=data,
             follow=True,
         )
         self.assertEqual(response.status_code, 200)

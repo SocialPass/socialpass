@@ -90,18 +90,18 @@ class EventForm(forms.ModelForm):
         initial=EVENT_VISIBILITY[0][0],
         choices=EVENT_VISIBILITY,
         widget=forms.RadioSelect,
+        required=False,
     )
     ready_for_checkout = forms.BooleanField(
         label="", widget=forms.HiddenInput(), required=False
     )
 
-    def _ready_for_checkout(self, data):
+    def ready_for_checkout(self, data):
         """
         method for cleaning against checkout requested
         """
         errors = {}
         ready_for_checkout = data.get("ready_for_checkout", None)
-        print(ready_for_checkout, "ready_for_checkout")
         if ready_for_checkout:
             # check field
             for i in Event.required_form_fields():
@@ -134,7 +134,7 @@ class EventDraftForm(EventForm):
 
     def clean(self):
         data = super().clean()
-        self._ready_for_checkout(data)
+        self.ready_for_checkout(data)
         return data
 
 
@@ -148,7 +148,7 @@ class EventPendingCheckoutForm(EventDraftForm):
 
     def clean(self):
         data = super().clean()
-        self._ready_for_checkout(data)
+        self.ready_for_checkout(data)
         return data
 
 

@@ -72,7 +72,8 @@ export const CheckoutWeb3 = () => {
                   name="wallet"
                   className="wallet-button-input"
                   id={x.id}
-                  checked={x === selectedWallet ? true : false}
+                  onChange={() => {}} //browser launch a warning log without this
+                  checked={selectedWallet === x}
                 />
                 <label htmlFor={x.id} className="wallet-button-label">
                   <div className="ws-75 mw-100 mx-auto">
@@ -205,6 +206,23 @@ export const CheckoutWeb3 = () => {
             {/* <!-- Wallet radio buttons start --> */}
             <ConnectWallet />
             {/* <!-- Wallet radio buttons end --> */}
+
+            {/* Wallet error messages start */}
+            <div className="mt-15">
+              <span>
+                {connectHook.error && (
+                  <span className="text-danger fw-600">
+                    {connectHook.error?.message ?? "Failed to connect"}
+                  </span>
+                )}
+              </span>
+              <span className="text-danger fw-600">
+                {signHook.error && (
+                  <span>{signHook.error?.message ?? "Failed to connect"}</span>
+                )}
+              </span>
+            </div>
+            {/* Wallet error messages end */}
           </div>
         </div>
         {/* <!-- Checkout information end --> */}

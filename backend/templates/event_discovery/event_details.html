@@ -7,8 +7,13 @@
 {% block modals %}
 <div class="modal" tabindex="-1" id="eventportal-modal" aria-labelledby="eventportal-modal-toggle" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content border-transparent ws-600 hs-600 mw-100 mh-100 p-0">
-            <button type="button" class="close text-base bg-content" aria-label="Close" data-hm-dismiss="modal">&times;</button>
+        <div class="modal-content border-transparent ws-800 hs-800 mw-100 mh-100 p-0">
+            <div class="d-flex align-items-center hs-50 px-20 text-strong border-bottom">
+                <strong>Claim Ticket</strong>
+                <a href="#" type="button" class="d-block lh-1 link-reset text-decoration-none ms-auto" aria-label="Close" data-hm-dismiss="modal">
+                    <i class="fa-light fa-times fs-base-p6"></i>
+                </a>
+            </div>
             <div class="w-100 h-100" id="eventportal-root"></div>
         </div>
     </div>

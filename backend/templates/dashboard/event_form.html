@@ -138,10 +138,6 @@
 					{% if form.errors %}
 						<div class="alert alert-danger" role="alert">
               <p class="invalid-feedback persistent">Please complete the form below</p>
-              {% for key, value in form.errors.items %}
-              {{key}}
-              {{value}}
-              {% endfor %}
 						</div>
 					{% endif %}
 

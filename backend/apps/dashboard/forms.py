@@ -55,6 +55,19 @@ class EventForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
+            "start_date": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+            ),
+            "end_date": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+            ),
+            "publish_date": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+            ),
+            "visibility": forms.RadioSelect(),
             "requirements": forms.HiddenInput(),
             "location": forms.HiddenInput(),
             "lat": forms.HiddenInput(),
@@ -64,37 +77,20 @@ class EventForm(forms.ModelForm):
             "postal_code": forms.HiddenInput(),
         }
 
-    start_date = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
-            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
-        ),
-        required=False,
-    )
-    end_date = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
-            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
-        ),
-        required=False,
-    )
-    publish_date = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
-            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
-        ),
-        required=False,
-    )
-    visibility = forms.ChoiceField(
-        label="Visibility",
-        initial=EVENT_VISIBILITY[0][0],
-        choices=EVENT_VISIBILITY,
-        widget=forms.RadioSelect,
-        required=False,
-    )
-    ready_for_checkout = forms.BooleanField(
-        label="", widget=forms.HiddenInput(), required=False
-    )
+
+class EventDraftForm(EventForm):
+    """
+    Form for event.state == draft
+    """
+
+    class Meta(EventForm.Meta):
+        pass
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["ready_for_checkout"] = forms.BooleanField(
+            label="...", widget=forms.HiddenInput(), required=False, initial=False
+        )
 
     def ready_for_checkout(self, data):
         """
@@ -123,15 +119,6 @@ class EventForm(forms.ModelForm):
             if self.instance.state != Event.StateEnum.DRAFT.value:
                 self.instance.transition_draft()
 
-
-class EventDraftForm(EventForm):
-    """
-    Form for event.state == draft
-    """
-
-    class Meta(EventForm.Meta):
-        pass
-
     def clean(self):
         data = super().clean()
         self.ready_for_checkout(data)
@@ -145,11 +132,6 @@ class EventPendingCheckoutForm(EventDraftForm):
 
     class Meta(EventDraftForm.Meta):
         pass
-
-    def clean(self):
-        data = super().clean()
-        self.ready_for_checkout(data)
-        return data
 
 
 class EventLiveForm(EventForm):

@@ -204,13 +204,7 @@
 						{% endwith %}
 						<!-- Description end -->
 
-						<!-- Visibility start -->
-						<div class="form-group required-input">
-							{{form.visibility|as_crispy_field}}
-						</div>
-						<!-- Visibility end -->
-
-						<hr />
+            <!-- Location start -->
 						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
 							<span class="ws-25 me-10 text-primary">
 								<i class="fa-regular fa-location-dot"></i>
@@ -221,7 +215,6 @@
 							Help people in the area discover your event and let attendees know where to show up.
 						</p>
 
-						<!-- Location start -->
 						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.location %}
 							<script>
 								function onPlaceChangedCallback(place){
@@ -385,21 +378,43 @@
     <div class="col-lg-5 border-lg-end">
       <div class="p-content position-lg-sticky top-navbar start-0">
         <div>
-          <a href="#1-general-info" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">1</strong>
-            <span class="ms-15">General Information</span>
+          <a href="#1-general-info" class="d-inline-flex align-items-center link-reset text-decoration-none">
+            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-1"></i>
+              </span>
+              General Information
+            </h2>
           </a>
         </div>
         <div class="mt-15">
-          <a href="#2-blockchain-requirements" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">2</strong>
-            <span class="ms-15">Blockchain Requirements</span>
+          <a href="#2-blockchain-requirements" class="d-inline-flex align-items-center link-reset text-decoration-none">
+            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-2"></i>
+              </span>
+              Blockchain Requirements
+            </h2>
           </a>
         </div>
         <div class="mt-15">
-          <a href="#3-tickets" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">3</strong>
-            <span class="ms-15">Tickets</span>
+          <a href="#3-tickets" class="d-inline-flex align-items-center link-reset text-decoration-none">
+            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-3"></i>
+              </span>
+              Tickets
+            </h2>
+          </a>
+        </div>
+        <div class="mt-15">
+          <a href="#4-publishing" class="d-inline-flex align-items-center link-reset text-decoration-none">
+            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-3"></i>
+              </span>
+              Publishing
+            </h2>
           </a>
         </div>
         <div id="event-actions" class="mt-20 row">

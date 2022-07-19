@@ -58,7 +58,9 @@
         .then(response => response.json())
         .then(data => {
           const theme_name = data.team.theme.css_theme;
-          var link = document.createElement( "link" );
+          const brand_name = data.team.theme.brand_name;
+          let link = document.createElement( "link" );
+          let headerIcon = document.createElement( "img" );
           if(theme_name){
             link.href = `/src/static/${theme_name}`;
           }
@@ -66,11 +68,12 @@
           link.rel = "stylesheet";
           link.media = "screen,print";
 
+          //all the svg logo assets needs to bee added to the folder following the pattern: {brand_name}-icon
+          document.getElementById("SocialPassHeaderIcon").src = `/src/static/images/${brand_name}-icon.svg`
+
           document.getElementsByTagName( "head" )[0].appendChild( link );
+
         })
-
-
-
 
   </script>
   </head>

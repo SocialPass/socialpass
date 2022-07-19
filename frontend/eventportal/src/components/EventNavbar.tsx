@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { CheckoutPortalContext } from "../context";
 import socialPassIcon from "../static/images/SocialPass-Icon.svg";
+import binanceIcon from "../static/images/Binance-Icon.svg";
 
 export default function EventNavbar() {
   const { retrieveJson } = useContext(CheckoutPortalContext);
@@ -14,6 +15,7 @@ export default function EventNavbar() {
         <div className="ws-75">
           <img
             src={socialPassIcon}
+            id="SocialPassHeaderIcon"
             alt={
               retrieveJson?.team.theme.brand_name
                 ? `${retrieveJson?.team.theme.brand_name} Icon`

@@ -59,15 +59,15 @@
         .then(data => {
           const theme_name = data.team.theme.css_theme;
           const brand_name = data.team.theme.brand_name;
+          const logo = data.team.theme.logo;
           let link = document.createElement( "link" );
           let favIcon = document.createElement( "link" );
           if(theme_name){
             link.href = `/src/static/${theme_name}`;
             favIcon.rel = "icon"
-            favIcon.href = `/src/static/images/${brand_name}-icon.svg`
+            favIcon.href = `/src/static/${logo}`
 
-            //all the svg logo assets needs to bee added to the folder following the pattern: {brand_name}-icon
-            document.getElementById("SocialPassHeaderIcon").src = `/src/static/images/${brand_name}-icon.svg`
+            document.getElementById("SocialPassHeaderIcon").src = `/src/static/${logo}`
           }
           link.type = "text/css";
           link.rel = "stylesheet";

@@ -337,7 +337,6 @@ class Event(DBModel):
             "visibility",
             "location",
             "start_date",
-            "cover_image",
             "requirements",
             "capacity",
             "limit_per_person",
@@ -349,6 +348,7 @@ class Event(DBModel):
         fields = [
             "show_ticket_count",
             "show_team_image",
+            "cover_image",
             "end_date",
             "publication_date",
             "address_1",

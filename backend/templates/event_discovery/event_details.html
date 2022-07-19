@@ -78,9 +78,11 @@
 <!-- Hero section end -->
 
 <!-- Tickets header section start -->
+
 <section>
     <div class="container-xl">
         <div class="content d-flex align-items-center border-bottom pb-15 mb-0">
+          {% if event.show_ticket_count %}
             <h2 class="fsr-2 fw-700 text-strong lh-base m-0">
                 Tickets
             </h2>
@@ -94,9 +96,11 @@
                 <br />
                 <strong>Claimed</strong>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
+
 <!-- Tickets header section end -->
 
 <!-- Information section start -->
@@ -111,6 +115,7 @@
                     <p class="fsr-6 mt-10">
                         {{ event.start_date.date }}
                     </p>
+                    {% if event.show_ticket_count %}
                     <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
                         Available
                     </h2>
@@ -123,6 +128,7 @@
                     <p class="fsr-6 mt-10">
                         {{tickets_remaining}} Tickets
                     </p>
+                    {% endif %}
                     <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
                         Ownership Requirements
                     </h2>

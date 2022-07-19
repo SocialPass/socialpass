@@ -62,7 +62,7 @@ export default function CheckoutSuccessPage() {
           </p>
           <button
             onClick={() =>
-              window.open(grantAccessJson[0]["temporary_download_url"])
+              window.open(grantAccessJson[0]["download_url"])
             }
             className="btn btn-secondary btn-lg fsr-6 btn-block"
           >

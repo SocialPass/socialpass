@@ -47,6 +47,9 @@ class EventSerializer(serializers.ModelSerializer):
             "location",
             "capacity",
             "ticket_count",
+            "cover_image",
+            "show_ticket_count",
+            "show_team_image",
         ]
 
 

@@ -24,6 +24,7 @@ export const Event = ({}): JSX.Element => {
   function handleSelect(event: any) {
     setGeneralAdmissionSelect(event.target.value);
   }
+  console.log(retrieveJson)
 
   return (
     <div className="row">
@@ -45,6 +46,7 @@ export const Event = ({}): JSX.Element => {
             </div>
             <div className="text-truncate">{retrieveJson.location}</div>
           </div>
+          {retrieveJson.show_ticket_count &&
           <div
             className="alert alert-success mt-30 text-success-dim-lm px-20 py-10 fw-bold rounded-3"
             role="alert"
@@ -62,6 +64,7 @@ export const Event = ({}): JSX.Element => {
               .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
             available
           </div>
+          }
         </div>
       </div>
 

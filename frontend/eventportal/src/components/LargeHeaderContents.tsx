@@ -4,6 +4,7 @@ import _backButton from "../static/images/back.svg";
 
 export default function LargeHeaderContents() {
   const { retrieveJson } = useContext(CheckoutPortalContext);
+  let coverImage = retrieveJson?.cover_image ? retrieveJson?.cover_image : 'https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
   return (
     <>
@@ -11,7 +12,7 @@ export default function LargeHeaderContents() {
         {/* <!-- Event cover image start --> */}
         <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
           <img
-            src="https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            src={coverImage}
             className="w-100 h-auto"
             alt="Cover image"
           />
@@ -19,6 +20,7 @@ export default function LargeHeaderContents() {
         {/* <!-- Event cover image end --> */}
 
         {/* <!-- Team image start --> */}
+        {retrieveJson?.team.image && retrieveJson.show_team_image &&
         <div className="position-absolute z-1 top-100 start-0 translate-y-middle px-content">
           <div className="ws-100 hs-100 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden">
             <img
@@ -28,6 +30,7 @@ export default function LargeHeaderContents() {
             />
           </div>
         </div>
+        }
         {/* <!-- Team image end --> */}
       </div>
       <div className="px-content pt-50">

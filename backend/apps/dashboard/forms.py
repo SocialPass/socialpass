@@ -72,15 +72,27 @@ class EventForm(forms.ModelForm):
             ),
             "start_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",
-                attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+                attrs={
+                    "id": "start_date",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
             ),
             "end_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",
-                attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+                attrs={
+                    "id": "end_date",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
             ),
             "publication_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",
-                attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
+                attrs={
+                    "id": "publication_date",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
             ),
             "visibility": forms.RadioSelect(),
             "requirements": forms.HiddenInput(),

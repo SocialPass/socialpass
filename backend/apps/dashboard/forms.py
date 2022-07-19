@@ -92,7 +92,7 @@ class EventForm(forms.ModelForm):
             "postal_code": forms.HiddenInput(),
         }
 
-    def check_required_fields(self, data, exclude):
+    def check_required_fields(self, data=None, exclude=[]):
         errors = {}
         # check field
         for i in Event.required_form_fields():

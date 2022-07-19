@@ -13,8 +13,8 @@
   <link rel="icon" href="https://res.cloudinary.com/nfty-labs/image/upload/v1652735850/SocialPass-Icon_eanblz.svg">
 
   <!-- Halfmoon CSS -->
-  <link href="/src/static/css/halfmoon.css" rel="stylesheet" />
-  <link href="/src/static/css/socialpass-theme.css" rel="stylesheet" />
+  <link href="/src/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
+  <link href="/src/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
 
   <!-- Rubik font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,9 +45,33 @@
     import { Buffer } from "buffer";
     import EventEmitter from "events";
 
+    const devURL = "http://localhost:8000/api";
+    const baseURL = import.meta.env.PROD ? prodURL : devURL;
+
     window.process = process;
     window.Buffer = Buffer;
     window.EventEmitter = EventEmitter;
+
+    const public_id = location.pathname.split('/')[1]
+
+    const response = fetch(`${baseURL}/checkout-portal/v1/retrieve/${public_id}/`)
+        .then(response => response.json())
+        .then(data => {
+          const theme_name = data.team.theme.css_theme;
+          var link = document.createElement( "link" );
+          if(theme_name){
+            link.href = `/src/static/${theme_name}`;
+          }
+          link.type = "text/css";
+          link.rel = "stylesheet";
+          link.media = "screen,print";
+
+          document.getElementsByTagName( "head" )[0].appendChild( link );
+        })
+
+
+
+
   </script>
   </head>
   <body>

@@ -10,7 +10,6 @@ export const Event = ({}): JSX.Element => {
     generalAdmissionSelect,
     setGeneralAdmissionSelect,
   } = useContext(CheckoutPortalContext);
-  console.log(retrieveJson);
 
   const generalAdmissionSelectArray = Array.from(
     { length: generalAdmissionSelect },
@@ -109,9 +108,6 @@ export const Event = ({}): JSX.Element => {
           <div className="form-group">
             <select onChange={handleSelect} className="form-select">
               {generalAdmissionSelectArray.map(function (object) {
-                console.log(object);
-                console.log(object);
-                console.log(object);
                 return (
                   <option key={object} value={object}>
                     {object}

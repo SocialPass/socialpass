@@ -43,6 +43,19 @@ class EventForm(forms.ModelForm):
     base Event form
     """
 
+    show_ticket_count = forms.TypedChoiceField(
+        coerce=lambda x: x == "True",
+        choices=((True, "Yes"), (False, "No")),
+        widget=forms.RadioSelect,
+        initial=(True, "Yes"),
+    )
+    show_team_image = forms.TypedChoiceField(
+        coerce=lambda x: x == "True",
+        choices=((True, "Yes"), (False, "No")),
+        widget=forms.RadioSelect,
+        initial=(True, "Yes"),
+    )
+
     class Meta:
         fields = Event.optional_form_fields() + Event.required_form_fields()
         model = Event

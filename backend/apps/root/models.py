@@ -101,10 +101,16 @@ class Event(DBModel):
 
     # Publish info
     is_featured = models.BooleanField(default=False)
-    publication_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    publication_date = models.DateTimeField(
+        default=timezone.now,
+        null=True,
+        blank=True,
+    )
     visibility = models.CharField(
         max_length=50, choices=EVENT_VISIBILITY, default=EVENT_VISIBILITY[0][0]
     )
+    show_ticket_count = models.BooleanField(default=True)
+    show_team_image = models.BooleanField(default=True)
 
     # Basic Info
     title = models.CharField(max_length=255, blank=False, unique=True)
@@ -341,6 +347,8 @@ class Event(DBModel):
     @staticmethod
     def optional_form_fields():
         fields = [
+            "show_ticket_count",
+            "show_team_image",
             "end_date",
             "publication_date",
             "address_1",

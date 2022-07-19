@@ -375,17 +375,29 @@
               Customize how you want your event published
             </p>
 
+            <!-- publication_date start -->
+            <div class="form-group required-input">
+              {{form.publication_date|as_crispy_field}}
+            </div>
+            <!-- publish date end -->
+
             <!-- Visibility start -->
             <div class="form-group required-input">
             {{form.visibility|as_crispy_field}}
             </div>
             <!-- Visibility end -->
 
-            <!-- publication_date start -->
+            <!-- show_ticket_count start -->
             <div class="form-group required-input">
-              {{form.publication_date|as_crispy_field}}
+            {{form.show_ticket_count|as_crispy_field}}
             </div>
-            <!-- publish date end -->
+            <!-- show_ticket_count end -->
+
+            <!-- show_team_image start -->
+            <div class="form-group required-input">
+            {{form.show_team_image|as_crispy_field}}
+            </div>
+            <!-- show_team_image end -->
 
           <!-- Publishing end -->
 

@@ -256,7 +256,6 @@
 
 
 						<!-- Date and Time start -->
-						<hr />
 						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
 							<span class="ws-25 me-10 text-primary">
 								<i class="fa-regular fa-calendar-days"></i>
@@ -275,6 +274,12 @@
 								Leave empty if there is no end date for the event.
 							</p>
 						</div>
+            <div class="form-group">
+              {{form.timezone|as_crispy_field}}
+              <p class="text-muted fs-base-n2 mt-5">
+                Leave empty if there is no end date for the event.
+              </p>
+            </div>
 						<!-- Date and Time end -->
 
 						<!-- Cover Image start -->

@@ -339,6 +339,7 @@ class Event(DBModel):
             "start_date",
             "requirements",
             "capacity",
+            "timezone",
             "limit_per_person",
         ]
         return fields

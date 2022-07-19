@@ -1,3 +1,4 @@
+import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
@@ -55,6 +56,7 @@ class EventForm(forms.ModelForm):
         widget=forms.RadioSelect,
         initial=(True, "Yes"),
     )
+    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
 
     class Meta:
         fields = Event.optional_form_fields() + Event.required_form_fields()

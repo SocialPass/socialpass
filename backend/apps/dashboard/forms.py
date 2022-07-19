@@ -90,6 +90,18 @@ class EventForm(forms.ModelForm):
             "postal_code": forms.HiddenInput(),
         }
 
+    def check_required_fields(self, data, exclude):
+        errors = {}
+        # check field
+        for i in Event.required_form_fields():
+            field = data.get(i, None)
+            if not field and i not in exclude:
+                errors[i] = "This field is required"
+        # check for errors
+        # raise exception
+        if errors:
+            raise forms.ValidationError(errors)
+
 
 class EventDraftForm(EventForm):
     """
@@ -105,22 +117,14 @@ class EventDraftForm(EventForm):
             label="...", widget=forms.HiddenInput(), required=False, initial=False
         )
 
-    def ready_for_checkout(self, data):
+    def check_ready_for_checkout(self, data):
         """
         method for cleaning against checkout requested
         """
-        errors = {}
+        # check required fields if ready for checkout
         ready_for_checkout = data.get("ready_for_checkout", None)
         if ready_for_checkout:
-            # check field
-            for i in Event.required_form_fields():
-                field = data.get(i, None)
-                if not field:
-                    errors[i] = "This field is required"
-        # check for errors
-        # raise exception
-        if errors:
-            raise forms.ValidationError(errors)
+            self.check_required_fields(data=data)
 
         # form is OK, handle state transitions
         # Only call state transition if in expected state
@@ -134,7 +138,7 @@ class EventDraftForm(EventForm):
 
     def clean(self):
         data = super().clean()
-        self.ready_for_checkout(data)
+        self.check_ready_for_checkout(data)
         return data
 
 
@@ -154,3 +158,8 @@ class EventLiveForm(EventForm):
 
     class Meta(EventForm.Meta):
         exclude = ["capacity"]
+
+    def clean(self):
+        data = super().clean()
+        self.check_required_fields(data=data, exclude=EventLiveForm.Meta.exclude)
+        return data

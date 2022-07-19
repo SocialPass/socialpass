@@ -13,6 +13,8 @@ window.onload = function(){
 	for (let requirement of initialRequirementsData){
 	  addRequirement(requirement)
 	}
+  } else {
+	  //document.getElementById("add-req").click();
   }
 }
 

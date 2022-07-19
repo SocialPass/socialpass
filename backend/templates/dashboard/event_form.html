@@ -144,9 +144,6 @@
 					{% for input in form.hidden_fields %}
 						{{ input }}
 					{% endfor %}
-					<div class="d-none" id="hidden-date">
-						{{ form.publish_date }}
-					</div>
 					<!-- General info start -->
 					<section>
 						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="1-general-info">
@@ -317,6 +314,7 @@
 							<div
 								type="button"
 								onclick="addRequirement()"
+                id="add-req"
 								class="nav-link"
 							>
 								Add requirement
@@ -342,14 +340,11 @@
 							Coming soon! Sell different tickets for an event.
 						</p>
             <!-- Estimator Start -->
-            <div id="price-placeholder">
-              <span></span>
-            </div>
+
             <div id="price-calc" style="display: none">
               <strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
             </div>
             <!-- Estimator End -->
-						<hr />
 
 						<!-- Capacity start -->
             {% if form.capacity %}
@@ -364,6 +359,7 @@
 							{% include 'components/forms_inputs/input.html' %}
 						{% endwith %}
 						<!-- Limit Per Person end -->
+            <hr />
 					</section>
 					<!-- Tickets end -->
 
@@ -384,6 +380,12 @@
             {{form.visibility|as_crispy_field}}
             </div>
             <!-- Visibility end -->
+
+            <!-- publication_date start -->
+            <div class="form-group required-input">
+              {{form.publication_date|as_crispy_field}}
+            </div>
+            <!-- publish date end -->
 
           <!-- Publishing end -->
 

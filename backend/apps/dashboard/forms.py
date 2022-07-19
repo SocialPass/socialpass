@@ -63,7 +63,7 @@ class EventForm(forms.ModelForm):
                 format="%Y-%m-%dT%H:%M",
                 attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
             ),
-            "publish_date": forms.DateTimeInput(
+            "publication_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",
                 attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
             ),

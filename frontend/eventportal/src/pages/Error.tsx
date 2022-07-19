@@ -1,4 +1,4 @@
-import erroImage from "../static/images/something_went_wrong.svg";
+import errorImage from "../static/images/something_went_wrong.svg";
 
 export function Error() {
   return (
@@ -6,7 +6,7 @@ export function Error() {
       <div className="ws-500 mw-100 mx-auto text-center">
         <div className="ws-300 mw-100 mx-auto">
           <img
-            src={erroImage}
+            src={errorImage}
             className="d-block w-100 h-auto"
             alt="something_went_wrong"
           />

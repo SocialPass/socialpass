@@ -29,14 +29,13 @@ export class TicketedEventRetrieve {
         return obj;
       })
       .catch((error) => {
-        return error.json()
-        .then((errorJson) => {
-        let e = {
-          httpStatus: error.status,
-          message: errorJson
-        };
-        return e;
-        })
+        return error.json().then((errorJson) => {
+          let e = {
+            httpStatus: error.status,
+            message: errorJson,
+          };
+          return e;
+        });
       });
   };
 }
@@ -74,14 +73,13 @@ export class TicketedEventRequestAccess {
         return obj;
       })
       .catch((error) => {
-        return error.json()
-        .then((errorJson) => {
+        return error.json().then((errorJson) => {
           let e = {
             httpStatus: error.status,
-            message: errorJson
+            message: errorJson,
           };
           return e;
-          })
+        });
       });
   };
 }
@@ -135,14 +133,13 @@ export class TicketedEventGrantAccess {
         return obj;
       })
       .catch((error) => {
-        return error.json()
-        .then((errorJson) => {
-        let e = {
-          httpStatus: error.status,
-          message: errorJson
-        };
-        return e;
-        })
+        return error.json().then((errorJson) => {
+          let e = {
+            httpStatus: error.status,
+            message: errorJson,
+          };
+          return e;
+        });
       });
   };
 }

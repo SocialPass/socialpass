@@ -1,6 +1,9 @@
-import socialPassIcon from "../static/images/SocialPass-Icon.svg";
+import { useContext } from "react";
+import { CheckoutPortalContext } from "../context";
+import socialPassIcon from "../static/brand-logos/SocialPass-Icon.svg";
 
 export default function EventNavbar() {
+  const { retrieveJson } = useContext(CheckoutPortalContext);
   return (
     <nav className="d-flex align-items-center px-20">
       {/* <!-- Branding start --> */}
@@ -11,12 +14,21 @@ export default function EventNavbar() {
         <div className="ws-75">
           <img
             src={socialPassIcon}
-            alt="SocialPass Icon"
+            id="SocialPassHeaderIcon"
+            alt={
+              retrieveJson?.team.theme.brand_name
+                ? `${retrieveJson?.team.theme.brand_name} Icon`
+                : "SocialPass Icon"
+            }
             className="d-block w-100 h-auto"
           />
         </div>
         <div className="text-strong ms-10">
-          <div className="fs-base-p4">SocialPass</div>
+          <div className="fs-base-p4">
+            {retrieveJson?.team.theme.brand_name
+              ? retrieveJson?.team.theme.brand_name
+              : "SocialPass"}
+          </div>
           <div className="fs-base-n4 lh-1 fw-normal">Ticket Portal</div>
         </div>
       </a>

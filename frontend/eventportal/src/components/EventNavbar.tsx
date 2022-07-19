@@ -16,8 +16,8 @@ export default function EventNavbar() {
             src={socialPassIcon}
             id="SocialPassHeaderIcon"
             alt={
-              retrieveJson?.team.theme.brand_name
-                ? `${retrieveJson?.team.theme.brand_name} Icon`
+              retrieveJson?.team.theme?.brand_name
+                ? `${retrieveJson?.team.theme?.brand_name} Icon`
                 : "SocialPass Icon"
             }
             className="d-block w-100 h-auto"
@@ -25,8 +25,8 @@ export default function EventNavbar() {
         </div>
         <div className="text-strong ms-10">
           <div className="fs-base-p4">
-            {retrieveJson?.team.theme.brand_name
-              ? retrieveJson?.team.theme.brand_name
+            {retrieveJson?.team.theme?.brand_name
+              ? retrieveJson?.team.theme?.brand_name
               : "SocialPass"}
           </div>
           <div className="fs-base-n4 lh-1 fw-normal">Ticket Portal</div>

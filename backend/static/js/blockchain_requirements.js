@@ -164,7 +164,7 @@ function popTokenIdFromRequirement(requirementIdx){
   tokenIdsCounter[requirementIdx] = tokenIdsCounter[requirementIdx] - 1;
 }
 
-function addNewTokenIdToRequirement(requirementIdx, initialData=null){
+function addNewTokenIdToRequirement(requirementIdx, initialData=[null]){
   const tokenIdGroupId = 'tokenIdGroup-'+ requirementIdx
 
   let list = document.getElementById(tokenIdGroupId);
@@ -220,40 +220,3 @@ function fillRequirementsAndSubmitForm(){
 	form.submit();
   }
 }
-
-const formatter = new Intl.NumberFormat('en-US', {
-	style: 'currency',
-	currency: 'USD',
-	minimumFractionDigits: 2
-})
-
-window.addEventListener('load', function() {
-	var capacity = document.getElementById('id_capacity').value;
-	fetch(priceEstimatorUrl + capacity).then(function(response) {
-		return response.json();
-	}).then(function(data) {
-		document.getElementById('price-placeholder').style.display = 'none';
-		document.getElementById('price-calc').style.display = 'block';
-
-		document.getElementById('price-calc-capacity').innerHTML = capacity;
-		document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
-		document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
-
-	});
-})
-
-
-document.getElementById('id_capacity').addEventListener('change', function() {
-	var capacity = document.getElementById('id_capacity').value;
-	fetch(priceEstimatorUrl + capacity).then(function(response) {
-		return response.json();
-	}).then(function(data) {
-		document.getElementById('price-placeholder').style.display = 'none';
-		document.getElementById('price-calc').style.display = 'block';
-
-		document.getElementById('price-calc-capacity').innerHTML = capacity;
-		document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
-		document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
-
-	});
-})

@@ -46,6 +46,7 @@
   import EventEmitter from "events";
 
   const devURL = "http://localhost:8000/api";
+  const prodURL = import.meta.env.VITE_APP_API_URL;
   const baseURL = import.meta.env.PROD ? prodURL : devURL;
 
   window.process = process;

@@ -93,17 +93,21 @@ export const Event = ({}): JSX.Element => {
                   This General Admission ticket is free to all holders of 1 NFT
                   of collection:
                 </div>
+                {retrieveJson.requirements.map((requirement, index) => (
+                <div key={index}>
                 <div className="mt-10">
-                  <strong>MAYC</strong>
+                  <strong>Contract {index + 1}</strong>
                 </div>
                 <div className="text-truncate">
-                  Contract:
                   <span className="text-secondary">
                     <a href="#" className="fw-bold link-reset">
-                      0X60...A7C6
+                      {requirement['asset_address']}
                     </a>
                   </span>
                 </div>
+                </div>
+                )
+              )}
               </div>
             </div>
           </div>

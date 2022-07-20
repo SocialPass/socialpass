@@ -464,7 +464,7 @@ class BlockchainOwnership(DBModel):
     Stores details used to verify blockchain ownership in exchange for tickets
     """
 
-    def set_expires():
+    def set_expires():  # type: ignore
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
     # Keys

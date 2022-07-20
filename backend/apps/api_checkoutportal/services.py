@@ -1,5 +1,7 @@
+import datetime
 import io
 import json
+from typing import List
 
 import requests
 import sentry_sdk
@@ -45,14 +47,15 @@ def get_available_tickets(event: Event, tickets_requested=None) -> int:
         tickets_requested = event.limit_per_person
 
     # capacity checks
+    error: Exception
     if ticket_count > event.capacity:
         # send to sentry
         error = TooManyTicketsIssuedError("Too many tickets have been issued")
         sentry_sdk.capture_exception(error)
         raise error
-    if ticket_count == event.capacity:
+    elif ticket_count == event.capacity:
         error = TicketsSoldOutError("Tickets sold out")
-        sentry_sdk.capture_message(error)
+        sentry_sdk.capture_message(str(error))
         raise error
 
     # check available tickets
@@ -76,37 +79,37 @@ def get_available_tickets(event: Event, tickets_requested=None) -> int:
 def create_ticket_image(
     event: Event,
     ticket: Ticket,
-    top_banner_text: str = "SocialPass Ticket",
-    scene_img_source: str = None,
+    top_banner_text="SocialPass Ticket",
+    scene_img_source=None,
 ):
     """
     Use the arguments to generate a ticket image and save into s3-compatible bucket.
     Returns ticket image as well as s3 storage response
     """
-    print("creating image...")
-    # Generate ticket image from event data
-    created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
-        event_data={
-            "event_name": event.title,
-            "event_date": event.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
-            "event_location": event.location,
-        },
-        embed=ticket.full_embed,
-        scene_img_source=scene_img_source,
-        top_banner_text=top_banner_text,
-    )
+    if event.start_date and event.title and event.location:
+        # Generate ticket image from event data
+        created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
+            event_data={
+                "event_name": event.title,
+                "event_date": event.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
+                "event_location": event.location,
+            },
+            embed=ticket.full_embed,
+            scene_img_source=scene_img_source,
+            top_banner_text=top_banner_text,
+        )
 
-    # Store ticket image into bucket
-    # Prepare image for S3
-    print("preparing image s3...")
-    _buffer = io.BytesIO()
-    created_ticket_img.save(_buffer, "PNG")
-    _buffer.seek(0)  # Rewind pointer back to start
+        # Store ticket image into bucket
+        # Prepare image for S3
+        print("preparing image s3...")
+        _buffer = io.BytesIO()
+        created_ticket_img.save(_buffer, "PNG")
+        _buffer.seek(0)  # Rewind pointer back to start
 
-    # save ticket image
-    print("saving image...")
-    ticket.file.save(f"{str(ticket.filename)}.png", _buffer)
-    return ticket
+        # save ticket image
+        print("saving image...")
+        ticket.file.save(f"{str(ticket.filename)}.png", _buffer)
+        return ticket
 
 
 def create_tickets_blockchain_ownership(
@@ -118,7 +121,7 @@ def create_tickets_blockchain_ownership(
     issue tickets for a given event based on blockchain_ownership checkout
     """
     # vars
-    tickets = []
+    tickets: list[Ticket] = []
 
     # get blockchain asset ownership
     asset_ownership = get_blockchain_asset_ownership(
@@ -211,9 +214,9 @@ def validate_blockchain_wallet_ownership(
         if _recovered != wallet_address:
             verification_msg = "BlockchainOwnership x Address mismatch."
             return verified, verification_msg
-    except Exception as e:
-        sentry_sdk.capture_message(wallet_address, e)
-        verification_msg = "Unable to decode & validate blockchain_ownership (forgery)"
+    except Exception:
+        verification_msg = f"Unable to decode & validate blockchain_ownership of {wallet_address} (forgery?)"
+        sentry_sdk.capture_message(verification_msg)
         return verified, verification_msg
 
     # before success, mark as verified, update wallet_address, and save
@@ -225,10 +228,7 @@ def validate_blockchain_wallet_ownership(
     return verified, verification_msg
 
 
-def get_blockchain_asset_ownership(
-    event: Event.requirements,
-    wallet_address: BlockchainOwnership.wallet_address,
-):
+def get_blockchain_asset_ownership(event: Event, wallet_address: str):
     """
     Return list of blockchain asset verified along with requirement verified against
     """
@@ -317,7 +317,7 @@ def moralis_get_fungible_assets(
     # parse _json response, check if balance and other stats are returned
     _json = r.json()
     if "balance" not in _json:
-        sentry_sdk.capture_message(r, _json)
+        sentry_sdk.capture_message(r)
         return []
 
     # check if asset response total less than required_amount
@@ -368,7 +368,7 @@ def moralis_get_nonfungible_assets(
     # parse _json response, check if total and other stats are returned
     _json = r.json()
     if "total" not in _json:
-        sentry_sdk.capture_message(r, _json)
+        sentry_sdk.capture_message(r)
         return _json
 
     # check if asset response total is 0

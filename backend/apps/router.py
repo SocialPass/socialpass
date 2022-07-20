@@ -11,7 +11,9 @@ urlpatterns = [
     path("dashboard/", include("apps.dashboard.urls")),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(
+    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+)  # type: ignore
 
 # DRF API URLS
 urlpatterns += [
@@ -23,10 +25,8 @@ urlpatterns += [
 is_local = (
     settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"
 )
-
 if is_local:
-    # Static file serving when using Gunicorn + Uvicorn for local web socket development
-    urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += staticfiles_urlpatterns()  # type: ignore
 
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar

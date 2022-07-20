@@ -1,6 +1,6 @@
 from django import template
 
-from ..model_field_choices import BLOCKCHAINS
+from apps.root.model_field_choices import BLOCKCHAINS
 
 register = template.Library()
 

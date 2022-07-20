@@ -1,11 +1,14 @@
 import logging
+from typing import Any
 from uuid import uuid4
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from eth_account.messages import encode_defunct
 from rest_framework import status
 from web3.auto import w3
 
+from apps.dashboard.models import Team
 from apps.root.factories import EventFactory, UserWithTeamFactory
 from apps.root.models import BlockchainOwnership, Event
 
@@ -40,6 +43,13 @@ def create_testing_blockchain_ownership(**kwargs):
 
 
 class TestCaseWrapper(TestCase):
+    password: str
+    user: Any
+    team: Team
+    event: Event
+    blockchain_ownership: BlockchainOwnership
+    url_base: str
+
     @classmethod
     def setUpTestData(cls) -> None:
         cls.password = "password"

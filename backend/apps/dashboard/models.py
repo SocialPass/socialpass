@@ -1,11 +1,10 @@
-import math
 from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.shortcuts import reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from djmoney.models.fields import MoneyField
@@ -22,7 +21,7 @@ class Team(DBModel):
     Umbrella team model for SocialPass customers
     """
 
-    def get_default_pricing_rule_group():  # noqa
+    def get_default_pricing_rule_group():  # type: ignore
         return PricingRuleGroup.objects.get(name="Default").pk
 
     # base info
@@ -165,7 +164,8 @@ class PricingRule(DBModel):
 
     @property
     def safe_max_capacity(self) -> int:
-        return math.inf if self.max_capacity is None else self.max_capacity
+        # note: return psql max size integer
+        return 2147483640 if self.max_capacity is None else self.max_capacity
 
     def __str__(self):
         return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})"  # noqa

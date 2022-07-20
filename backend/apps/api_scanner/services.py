@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from apps.root.models import Event, Ticket, TicketRedemptionKey
 
@@ -26,7 +27,7 @@ def get_ticket_from_embedded_qr_code(embed_code: str) -> Ticket:
 
 
 def access_key_can_redeem_ticket(
-    ticket: Ticket, redemption_access_key: TicketRedemptionKey = None
+    ticket: Ticket, redemption_access_key: Optional[TicketRedemptionKey] = None
 ) -> bool:
     """Returns a boolean indicating if the access key can reedem the given ticket."""
     if redemption_access_key is None:
@@ -35,7 +36,9 @@ def access_key_can_redeem_ticket(
     return ticket.event.id == redemption_access_key.event.id
 
 
-def redeem_ticket(ticket: Ticket, redemption_access_key: TicketRedemptionKey = None):
+def redeem_ticket(
+    ticket: Ticket, redemption_access_key: Optional[TicketRedemptionKey] = None
+):
     """Redeems a ticket."""
     if ticket.redeemed:
         raise AlreadyRedeemed("Ticket is already redeemed.")

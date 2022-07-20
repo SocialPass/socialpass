@@ -1,3 +1,5 @@
+from typing import Optional
+
 from apps.dashboard.models import EventStripePayment, PricingRuleGroup, Team
 from apps.root.models import Event
 
@@ -18,10 +20,10 @@ def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:
     for i, rule_range in enumerate(pricing_rule_ranges):
         if i != 0:
             # there is no validation to be done on the first range
-            if last_range.max_capacity > rule_range.min_capacity:
+            if last_range.max_capacity > rule_range.min_capacity:  # type: ignore
                 errors.append(f"Overlap between {last_range} and {rule_range}.")
 
-            elif last_range.max_capacity + 1 != rule_range.min_capacity:
+            elif last_range.max_capacity + 1 != rule_range.min_capacity:  # type: ignore
                 errors.append(f"Gap between {last_range} and {rule_range}.")
 
         if i == pricing_rules_length - 1:
@@ -49,7 +51,7 @@ def get_pricing_rule_for_capacity(pricing_group: PricingRuleGroup, capacity: int
     raise ValueError("Could not find pricing_rule for capacity")
 
 
-def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = None):
+def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int):
     """Returns the estimated price of a event for a given team.
 
     The price is calculated by finding the first pricing rule that matches the
@@ -62,7 +64,7 @@ def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int = Non
 
 def get_in_progress_payment(
     event: Event,
-) -> EventStripePayment:
+) -> Optional[EventStripePayment]:
     """Returns the payment of a event which is either PENDING or PROCESSING."""
     return event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
 

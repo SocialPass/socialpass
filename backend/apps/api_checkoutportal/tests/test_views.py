@@ -1,11 +1,13 @@
 import logging
 from uuid import uuid4
+import json
 
 from django.test import TestCase
 from eth_account.messages import encode_defunct
 from hexbytes import HexBytes
 from rest_framework import status
 from web3.auto import w3
+from .. import serializers
 
 from apps.root.models import BlockchainOwnership, Event, Team, User
 
@@ -76,18 +78,16 @@ class GetEventDetailsTestCase(TestCase):
 
     def test_get_event_details_200(self):
         """
-        Request the most recently created team's details and asserts response is 200 OK.
+        Request the most recently created team's details, asserts response is 200 OK and
+        that the returned JSON is properly formatted.
         """
         event_id = str(self.event.public_id)
         # Not using reverse because we want URL changes to explicitly break tests.
         response = self.client.get(f"/api/checkout-portal/retrieve/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Skipping these asserts for now since Django is doing some magic on the serializers.
-        # Add `from . import serializers` at the top then...
-        # print(response.json())
-        # print(serializers.EventSerializer(self.event).data)
-
-        # self.assertEqual(response.json(), ...)
+        self.assertEqual(response.json()['team']['name'], self.team.name)
+        self.assertEqual(response.json()['description'], self.event.description)
+        self.assertEqual(response.json()['capacity'], int(self.event.capacity))
 
     @prevent_warnings
     def test_get_event_details_404(self):
@@ -132,14 +132,12 @@ class CheckoutPortalProcessTestCase(TestCase):
             "blockchain_ownership_id": self.blockchain_ownership.id,
             "tickets_requested": "1",
         }
-        print(data)
         content_type = "application/json"
         response = self.client.post(
             f"/api/checkout-portal/process/{event_id}/?checkout_type=blockchain_ownership",
             data=data,
             content_type=content_type,
         )
-        print(response.content)
 
     @prevent_warnings
     def test_checkout_portal_process_403_over_ticket_limit(self):

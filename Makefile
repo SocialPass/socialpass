@@ -36,3 +36,6 @@ test: ## Test backend repo (backend/venv)
 
 maction: ## Test github actions (requires `act` to be installed, also has flag for M1)
 	act pull_request --container-architecture linux/amd64
+
+nukedocker: ## BEWARE. THIS WILL DESTROY ALL DOCKER IMAGES AND CONTAINERS ON HOST MACHINE (unix only)
+	docker rmi -f $(docker images -aq) && docker rm -vf $(docker ps -aq)

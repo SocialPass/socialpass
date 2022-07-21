@@ -35,7 +35,10 @@ class AFRMetaData(UserDict):
                     )
                 uuid = uuid4()
 
-        return uuid
+        if isinstance(uuid, UUID):
+            return uuid
+        else:
+            raise ValueError("UUID unable to be created")
 
     def get_or_create(self, key: UUID) -> tuple[dict, UUID, bool]:
         try:

@@ -35,7 +35,7 @@ class ModelObjectTracker:
     @classmethod
     def start_new_tracking(cls, request) -> UUID:
         data = cls.data_backend(request)
-        uuid = cls.new_uuid()
+        uuid: UUID = cls.new_uuid()
         data[uuid] = {}
         return uuid
 

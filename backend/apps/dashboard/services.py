@@ -62,11 +62,11 @@ def calculate_event_price_per_ticket_for_team(team: Team, *, capacity: int):
     return pricing_rule.price_per_ticket
 
 
-def get_in_progress_payment(
-    event: Event,
-) -> Optional[EventStripePayment]:
+def get_in_progress_payment(event: Event) -> Optional[EventStripePayment]:
     """Returns the payment of a event which is either PENDING or PROCESSING."""
-    return event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
+    p: Optional[EventStripePayment]
+    p = event.payments.filter(status__in=["PENDING", "PROCESSING"]).first()
+    return p
 
 
 def issue_payment(event: Event, stripe_checkout_session_id: str) -> EventStripePayment:

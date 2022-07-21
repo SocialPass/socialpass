@@ -1,7 +1,5 @@
-import datetime
 import io
 import json
-from typing import List
 
 import requests
 import sentry_sdk
@@ -73,7 +71,10 @@ def get_available_tickets(event: Event, tickets_requested=None) -> int:
 
     # all checks passed
     # return initial tickets_requested integer
-    return tickets_requested
+    if isinstance(tickets_requested, int):
+        return tickets_requested
+    else:
+        raise ValueError("Unexpected value for tickets requested")
 
 
 def create_ticket_image(

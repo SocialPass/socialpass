@@ -23,6 +23,22 @@ class PrivateTicketStorage(S3Boto3Storage):
     custom_domain = False
 
 
+class CachedS3Boto3Storage(S3Boto3Storage):
+    """
+    S3 storage backend that saves the files locally, too.
+    TODO: change compressor storage to brotli
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.local_storage = get_storage_class(
+            "compressor.storage.CompressorFileStorage")()
+
+    def save(self, name, content):
+        self.local_storage._save(name, content)
+        super().save(name, self.local_storage._open(name))
+        return name
+
+
 def get_private_ticket_storage():
     private_storage_class = get_storage_class(settings.PRIVATE_TICKET_STORAGE)
     return private_storage_class()

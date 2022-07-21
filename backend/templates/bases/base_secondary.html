@@ -1,8 +1,9 @@
 {% extends "bases/base.html" %}
 {% load static %}
-
+{% load compress %}
 {% block extra_head %}
 <!-- Custom styles -->
+{% compress css %}
 <style type="text/css">
 	:root {
 		--base-body-bg-color: var(--white-color);
@@ -49,6 +50,7 @@
 		}
 	}
 </style>
+{% endcompress %}
 {% endblock extra_head %}
 
 {% block body %}

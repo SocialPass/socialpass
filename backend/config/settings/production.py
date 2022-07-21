@@ -76,7 +76,7 @@ AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
 
 # STATIC
 # ------------------------------------------------------------------------------
-STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
+STATICFILES_STORAGE = "config.storages.CachedS3Boto3Storage"
 AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
 STATIC_URL = f"https://{AWS_LOCATION}/public/static/"
 
@@ -141,6 +141,9 @@ sentry_sdk.init(
     send_default_pii=env.bool("SENTRY_SEND_PII", default=True),
     environment=env("SENTRY_ENV_NAME", default="unset-env"),
 )
+
+# DJANGO-COMPRESSOR
+COMPRESS_STORAGE = STATICFILES_STORAGE
 
 # Your stuff...
 # ------------------------------------------------------------------------------

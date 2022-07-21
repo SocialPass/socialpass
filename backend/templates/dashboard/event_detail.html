@@ -148,7 +148,6 @@
       <div>
         <h6>Event Page</h6>
         <p>Share with your potential attendees</p>
-        <!-- <a href="{{event.discovery_url}}" target="_blank">Event Page</a> -->
         <div class="d-flex flex-direction-row align-items-center justify-content-start gap-20">
           <a target="_blank" href="https://twitter.com/share?url=https://socialpass.io{{event.discovery_url}}">
             <i class="fab fa-twitter text-secondary fa-lg"></i>
@@ -156,13 +155,12 @@
           <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://socialpass.io{{event.discovery_url}}">
             <i class="fab fa-facebook text-secondary fa-lg"></i>
           </a>
-          <a href="mailto:lmartins2205@gmail.com?subject=Web3&amp;body=https://socialpass.io{{event.discovery_url}}">
+          <a href="mailto:?body=https://socialpass.io{{event.discovery_url}}">
             <i class="fa fa-envelope text-secondary fa-lg"></i>
           </a>
           <a aria-label="copy link" href="#" type="button" onclick="copyToClipboard('https://socialpass.io{{event.discovery_url}}')">
             <i class="fas fa-copy text-secondary fa-lg"></i>
           </a>
-
         </div>
       </div>
       {% else %}

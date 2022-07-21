@@ -216,7 +216,8 @@ def validate_blockchain_wallet_ownership(
             verification_msg = "BlockchainOwnership x Address mismatch."
             return verified, verification_msg
     except Exception:
-        verification_msg = f"Unable to decode & validate blockchain_ownership of {wallet_address} (forgery?)"
+        # forgery?
+        verification_msg = f"Unable to decode {wallet_address} for {event.public_id}"
         sentry_sdk.capture_message(verification_msg)
         return verified, verification_msg
 

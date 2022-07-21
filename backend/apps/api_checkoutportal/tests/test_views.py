@@ -2,7 +2,6 @@ import logging
 from typing import Any
 from uuid import uuid4
 
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 from eth_account.messages import encode_defunct
 from rest_framework import status

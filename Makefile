@@ -22,6 +22,9 @@ migration: ## Create backend migrations (docker)
 migrate: ## Migrate backend migrations (docker)
 	docker-compose run web python backend/manage.py migrate
 
+compress: ## Compress backend staticfiles (docker)
+	docker-compose run web python backend/manage.py compress --force
+
 superuser: ## Create backend superuser (docker)
 	docker-compose run web python backend/manage.py createsuperuser
 

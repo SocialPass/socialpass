@@ -21,7 +21,7 @@ type EventErrorProps = {
 };
 
 const EventProvider = ({ children }: any) => {
-  const [publicId, setPublicId] = useState<String>();
+  const [publicId, setPublicId] = useState<String>('');
   const [eventData, setEventData] = useState<EventDataProps>();
   const { status, isLoading, isError, error, data, refetch } = useQuery(
     ["fetchEvent", publicId],

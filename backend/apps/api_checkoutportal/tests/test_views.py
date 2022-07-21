@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 from uuid import uuid4
 
 from django.test import TestCase
@@ -6,6 +7,7 @@ from eth_account.messages import encode_defunct
 from rest_framework import status
 from web3.auto import w3
 
+from apps.dashboard.models import Team
 from apps.root.factories import EventFactory, UserWithTeamFactory
 from apps.root.models import BlockchainOwnership, Event
 
@@ -40,6 +42,13 @@ def create_testing_blockchain_ownership(**kwargs):
 
 
 class TestCaseWrapper(TestCase):
+    password: str
+    user: Any
+    team: Team
+    event: Event
+    blockchain_ownership: BlockchainOwnership
+    url_base: str
+
     @classmethod
     def setUpTestData(cls) -> None:
         cls.password = "password"
@@ -158,11 +167,7 @@ class CheckoutPortalProcessTestCase(TestCaseWrapper):
             data=data,
             content_type=content_type,
         )
-        self.assertContains(
-            response,
-            "Unable to decode & validate blockchain_ownership",
-            status_code=403,
-        )
+        self.assertEqual(response.status_code, 403)
 
     @prevent_warnings
     def test_checkout_portal_process_401_no_checkout_type(self):

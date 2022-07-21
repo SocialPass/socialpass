@@ -4,7 +4,6 @@ from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
 
 from apps.dashboard.models import Invite, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.models import Event
 
 

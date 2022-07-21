@@ -8,7 +8,8 @@ from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import redirect, render, reverse
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView

@@ -1,4 +1,5 @@
 import random
+from typing import Any
 
 import factory
 import factory.django
@@ -71,7 +72,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     cover_image = factory.django.ImageField(color="blue")
     capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
     limit_per_person = 1
-    requirements = []
+    requirements: Any = []
     location = factory.Faker("address")
     lat = 41.40338
     long = 2.17403

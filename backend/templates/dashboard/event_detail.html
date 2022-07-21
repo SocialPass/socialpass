@@ -159,6 +159,9 @@
           <a href="mailto:lmartins2205@gmail.com?subject=Web3&amp;body=https://socialpass.io{{event.discovery_url}}">
             <i class="fa fa-envelope text-secondary fa-lg"></i>
           </a>
+          <a aria-label="copy link" href="#" type="button" onclick="copyToClipboard('https://socialpass.io{{event.discovery_url}}')">
+            <i class="fas fa-copy text-secondary fa-lg"></i>
+          </a>
 
         </div>
       </div>
@@ -195,4 +198,10 @@
   <!-- Card footer end -->
 </div>
 <!-- Content card end -->
+<script>
+  function copyToClipboard(text) {
+    /* Copy text into clipboard */
+    navigator.clipboard.writeText(text);
+  }
+</script>
 {% endblock content %}

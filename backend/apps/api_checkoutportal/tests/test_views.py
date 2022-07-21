@@ -167,11 +167,7 @@ class CheckoutPortalProcessTestCase(TestCaseWrapper):
             data=data,
             content_type=content_type,
         )
-        self.assertContains(
-            response,
-            "Unable to decode & validate blockchain_ownership",
-            status_code=403,
-        )
+        self.assertEqual(response.status_code, 403)
 
     @prevent_warnings
     def test_checkout_portal_process_401_no_checkout_type(self):

@@ -1,29 +1,35 @@
-import { createClient, configureChains, defaultChains } from "wagmi";
+import {
+  createClient,
+  defaultChains,
+  configureChains,
+} from 'wagmi'
 
-import { infuraProvider } from "wagmi/providers/infura";
-import { publicProvider } from "wagmi/providers/public";
+import { infuraProvider } from 'wagmi/providers/infura'
+import { publicProvider } from 'wagmi/providers/public'
 
-import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
-// API key for Ethereum node
-// Two popular services are Infura (infura.io) and Alchemy (alchemy.com)
 const infuraId = "461fc5573eaa427f803fa7e3a5de4139";
 
-const { chains } = configureChains(defaultChains, [
+// Configure chains & providers with the Alchemy provider.
+// Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
+const { chains, provider, webSocketProvider } = configureChains(defaultChains, [
   infuraProvider({ infuraId }),
   publicProvider(),
-]);
+])
 
-export const web3Client = createClient({
+// Set up client
+export const client = createClient({
   autoConnect: true,
   connectors: [
     new MetaMaskConnector({ chains }),
     new CoinbaseWalletConnector({
       chains,
       options: {
-        appName: "SocialPass",
+        appName: 'wagmi',
       },
     }),
     new WalletConnectConnector({
@@ -32,5 +38,15 @@ export const web3Client = createClient({
         qrcode: true,
       },
     }),
+    /* TODO:
+    new InjectedConnector({
+      chains,
+      options: {
+        name: 'Injected',
+        shimDisconnect: true,
+      },
+    }),*/
   ],
-});
+  provider,
+  webSocketProvider,
+})

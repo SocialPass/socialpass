@@ -1,8 +1,8 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { StyledContainer } from "./components";
 import { EventPortalProvider } from "./context";
-import { web3Client } from "./web3/client";
 import { WagmiConfig } from "wagmi";
+import { client } from "./web3/client";
 import { Init, CheckoutWeb3, CheckoutStatus, Event } from "./pages";
 import RequiresEvent from "./utils/requiresEventHOC";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -21,7 +21,7 @@ const CheckoutPortal = () => {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <EventPortalProvider>
-          <WagmiConfig client={web3Client}>
+          <WagmiConfig client={client}>
             <StyledContainer>
               <Routes>
                 <Route path="/:publicId">

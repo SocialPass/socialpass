@@ -9,6 +9,3 @@ RUN yarn install
 
 COPY . .
 EXPOSE 3000
-
-# Healthcheck
-HEALTHCHECK CMD curl --fail http://localhost:3000 || exit 1

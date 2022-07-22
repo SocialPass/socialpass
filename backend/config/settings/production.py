@@ -4,8 +4,8 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
-from .base import *  # noqa
-from .base import env
+from .base import *
+from .base import STATIC_ROOT, env  # noqa
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -145,6 +145,7 @@ sentry_sdk.init(
 # DJANGO-COMPRESSOR
 COMPRESS_ENABLED = env.bool("COMPRESS_ENABLED", default=True)
 COMPRESS_STORAGE = STATICFILES_STORAGE
-
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_URL = STATIC_URL
 # Your stuff...
 # ------------------------------------------------------------------------------

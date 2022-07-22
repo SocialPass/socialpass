@@ -147,8 +147,21 @@
       {% if event.visibility == 'PUBLIC' %}
       <div>
         <h6>Event Page</h6>
-        <p>Link to share with your potential attendees</p>
-        <a href="{{event.discovery_url}}" target="_blank">Event Page</a>
+        <p>Share with your potential attendees</p>
+        <div class="d-flex flex-direction-row align-items-center justify-content-start gap-20">
+          <a target="_blank" href="https://twitter.com/share?url={{ request.get_host }}{{event.discovery_url}}">
+            <i class="fab fa-twitter text-secondary fa-lg"></i>
+          </a>
+          <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ request.get_host }}{{event.discovery_url}}">
+            <i class="fab fa-facebook text-secondary fa-lg"></i>
+          </a>
+          <a href="mailto:?body={{ request.get_host }}{{event.discovery_url}}">
+            <i class="fa fa-envelope text-secondary fa-lg"></i>
+          </a>
+          <a aria-label="copy link" id="copy-link" href="#!" type="button" onclick="copyToClipboard('{{ request.get_host }}{{event.discovery_url}}')">
+            <i class="fas fa-copy text-secondary fa-lg"></i>
+          </a>
+        </div>
       </div>
       {% else %}
       <div>
@@ -170,6 +183,7 @@
       </div>
       {% endwith %}
       </div>
+
     </div>
   </div>
   <!-- Event links end -->
@@ -182,4 +196,17 @@
   <!-- Card footer end -->
 </div>
 <!-- Content card end -->
+<script>
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    let href = document.getElementById('copy-link');
+    href.innerHTML = 'Link copied'
+    console.log(href);
+    setTimeout(function(){
+       href.innerHTML = '<i class="fas fa-copy text-secondary fa-lg"></i>'
+    }, 1000);
+    /* Copy text into clipboard */
+
+  }
+</script>
 {% endblock content %}

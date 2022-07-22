@@ -51,7 +51,7 @@ services:
 
   eventportal:
     image: socialpass-eventportal-app
-    command: sh -c "npm start --host"
+    command: sh -c "yarn start --host"
     stdin_open: true
     volumes:
       - ./frontend/eventportal/src/:/eventportal/src/

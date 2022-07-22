@@ -72,7 +72,7 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default=None)
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#cloudfront
 AWS_S3_ENDPOINT_URL = env("DJANGO_AWS_S3_ENDPOINT_URL", default=None)
-AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
+AWS_LOCATION = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}"
 
 # STATIC
 # ------------------------------------------------------------------------------

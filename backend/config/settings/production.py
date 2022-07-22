@@ -78,11 +78,11 @@ AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
 # ------------------------------------------------------------------------------
 STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
 AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
-STATIC_URL = f"https://{AWS_LOCATION}/public/static/"
+STATIC_URL = f"{AWS_LOCATION}/public/static/"
 
 # MEDIA
 # ------------------------------------------------------------------------------
-MEDIA_URL = f"https://{AWS_LOCATION}/public/media/"
+MEDIA_URL = f"{AWS_LOCATION}/public/media/"
 DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"
 PRIVATE_TICKET_STORAGE = "config.storages.PrivateTicketStorage"
 

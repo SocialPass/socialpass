@@ -7,7 +7,7 @@ help:
 build: ## docker build (docker)
 	docker-compose build
 
-buildclean: ## docker build (docker)
+cleanbuild: ## docker build (docker)
 	docker-compose build --no-cache
 
 up: ## docker up (docker)

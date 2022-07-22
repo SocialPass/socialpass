@@ -1,11 +1,11 @@
-#Specify a base image
-FROM node:18-bullseye
+# Specify a base image
+FROM node:16-bullseye
 
-#Setup working directory
+# Setup working directory
 WORKDIR /eventportal
 
+# setup app
 COPY package.json .
-RUN yarn install
-
+RUN npm install
 COPY . .
 EXPOSE 3000

@@ -76,7 +76,7 @@ AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
 
 # STATIC
 # ------------------------------------------------------------------------------
-STATICFILES_STORAGE = "config.storages.CachedS3Boto3Storage"
+STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
 AWS_LOCATION = env("DJANGO_AWS_LOCATION", default=None)
 STATIC_URL = f"https://{AWS_LOCATION}/public/static/"
 

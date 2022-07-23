@@ -4,6 +4,18 @@ SHELL := /bin/bash
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
+test: ## Test backend repo (backend/venv)
+	(source backend/venv/bin/activate; cd backend && python manage.py test --failfast)
+
+lint: ## Lint backend repo (backend/venv)
+		(source backend/venv/bin/activate; black .; isort .; flake8 .;)
+
+maction: ## Test github actions (requires `act` to be installed, also has flag for M1)
+	act pull_request --container-architecture linux/amd64
+
+nukedocker: ## BEWARE. THIS WILL DESTROY ALL DOCKER IMAGES AND CONTAINERS ON HOST MACHINE (unix only)
+	docker rmi -f $(docker images -aq) && docker rm -vf $(docker ps -aq)
+
 build: ## docker build (docker)
 	docker-compose build
 
@@ -30,15 +42,3 @@ superuser: ## Create backend superuser (docker)
 
 turtle: ## backend shell plus (docker)
 	docker-compose run web python backend/manage.py shell_plus
-
-lint: ## Lint backend repo (backend/venv)
-	(source backend/venv/bin/activate; black .; isort .; flake8 .;)
-
-test: ## Test backend repo (backend/venv)
-	(source backend/venv/bin/activate; cd backend && python manage.py test --failfast)
-
-maction: ## Test github actions (requires `act` to be installed, also has flag for M1)
-	act pull_request --container-architecture linux/amd64
-
-nukedocker: ## BEWARE. THIS WILL DESTROY ALL DOCKER IMAGES AND CONTAINERS ON HOST MACHINE (unix only)
-	docker rmi -f $(docker images -aq) && docker rm -vf $(docker ps -aq)

@@ -17,11 +17,27 @@ As mentioned above, SocialPass is all about events and Web3. If you're not famil
 - url
 - url
 
+# Contributions
+1. Branches opened for PR with relevant reviewer requested
+2. PR passes all checks
+2. PR reviewed
+3. PR merged into `master`
+
+Once merged, `master`, can be pushed directly to either `staging` or `master`.
+This will trigger CI/CD pipelie for the respective environments.
+
+Branches should be prefixed matching their corresponding GH label and a brief description of the issue at hand.
+- `minor/*`
+- `major/*`
+- `refactor/*`
+
 # Getting Started
 A root-level [Makefile](Makefile) exists to jumpstart local development.
 The guide below will reference these makefile commands.
 
-Again, any additions here to hasten development are always welcome
+### Prerequisites (Docker)
+- Docker Engine (https://docs.docker.com/engine/install/)
+- Docker Compose (https://docs.docker.com/compose/install/)
 
 ### Clone repo
 `git clone git@github.com:nftylabs/socialpass.git`
@@ -36,20 +52,6 @@ Again, any additions here to hasten development are always welcome
 
 ### Run Containers
 `make up`
-
-# Contributions
-1. Branches opened for PR with relevant reviewer requested
-2. PR passes all checks
-2. PR reviewed
-3. PR merged into `master`
-
-Once merged, `master`, can be pushed directly to either `staging` or `master`.
-This will trigger CI/CD pipelie for the respective environments.
-
-Branches should be prefixed matching their corresponding GH label and a brief description of the issue at hand.
-- `minor/*`
-- `major/*`
-- `refactor/*`
 
 # Backend
 ## Root

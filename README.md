@@ -18,74 +18,7 @@ As mentioned above, SocialPass is all about events and Web3. If you're not famil
 - url
 
 # Getting Started
-A root-level [Makefile](Makefile) exists to jumpstart local development.
-The guide below will reference these makefile commands.
-
-Again, any additions here to hasten development are always welcome
-
-# Clone repo
-```bash
-$ git clone git@github.com:nftylabs/socialpass.git
-$ cd socialpass
-```
-
-# Run with docker and docker-compose
-```bash
-# Build Containers
-$ make build
-
-# Run Migrations (if necessary)
-$ make migrate
-
-# Run Containers
-$ make up
-```
-
-# Run with pyenv
-
-```bash
-# Install python 3.10.5 version
-$ pyenv install 3.10.5
-
-# Make python version local or global
-$ pyenv local 3.10.5
-$ pyenv global 3.10.5
-
-# Verify version
-$ python --version
-
-# Create a virtual enviroment for the application
-$ pyenv virtualenv 3.10.5 socialpass
-$ pyenv activate socialpass
-
-# Install development dependencies
-$ pip install -r backend/config/requirements/local.txt
-
-# Run postgres image 
-$ docker run -d --name database -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data postgres
-
-# Run Migrations (if necessary)
-$ python backend/manage.py migrate
-
-# Compress staticfiles (if necessary)
-$ python backend/manage.py compress --force
-
-# Run application
-$ python backend/manage.py runserver
-```
-
-```bash
-## EXTRA COMMANDS
-# To stop postgres container
-$ docker stop database
-
-# To start postgres container
-$ docker start database
-```
-
-
-
-# Contributions
+## Contributions
 1. Branches opened for PR with relevant reviewer requested
 2. PR passes all checks
 2. PR reviewed
@@ -99,37 +32,61 @@ Branches should be prefixed matching their corresponding GH label and a brief de
 - `major/*`
 - `refactor/*`
 
-# Backend
-## Root
-Located at `backend/apps/root`
+## Clone repo
+```bash
+git clone git@github.com:nftylabs/socialpass.git
+cd socialpass
+```
 
+## Run with docker and docker-compose
+```bash
+# Build Containers
+make build
 
-## Organizer Dashboard
-Located at `backend/apps/dashboard`
+# Run Migrations (if necessary)
+make migrate
 
+# Run Containers
+make up
+```
 
-## Event Discovery
-Located at `backend/apps/event_discovery`
+## Run with pyenv
+```bash
+# Install python 3.10.5 version
+pyenv install 3.10.5
 
+# Make python version local or global
+pyenv local 3.10.5
+pyenv global 3.10.5
 
-## Checkout Portal
-Located at `backend/apps/api_checkoutportal`
+# Verify version
+python --version
 
+# Create a virtual enviroment for the application
+pyenv virtualenv 3.10.5 socialpass
+pyenv activate socialpass
 
-## Scanner
-Located at `backend/apps/api_scanner`
+# Install development dependencies
+pip install -r backend/config/requirements/local.txt
 
+# Run postgres image
+docker run -d --name database -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data postgres
 
-## Avoid Form Resubmission
-Located at `backend/apps/avoid_form_resubmission`
+# Run Migrations (if necessary)
+python backend/manage.py migrate
 
+# Compress staticfiles (if necessary)
+python backend/manage.py compress --force
 
-# Frontend
-## Event Portal
-Located at `frontend/eventportal`
+# Run application
+python backend/manage.py runserver
+```
 
+```bash
+## EXTRA COMMANDS
+# To stop postgres container
+docker stop database
 
-## Scanner
-Located at `frontend/scanner-app`
-
-
+# To start postgres container
+docker start database
+```

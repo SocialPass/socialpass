@@ -239,11 +239,9 @@
                   //document.getElementById("id_region").value = place.name;
                   if (gmaps['postal_code']){
                     if (gmaps['postal_code_suffix']){
-                      console.log('set postal code1')
                       document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
                     }
                     else {
-                      console.log('set postal code2')
                       document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
                     }
                   }

@@ -70,4 +70,8 @@ class Migration(migrations.Migration):
 
     # Note: We are reusing database in new table
     # No need to execute any operations
-    migrations.SeparateDatabaseAndState(state_operations, database_operations)
+    operations = [
+        migrations.SeparateDatabaseAndState(
+            database_operations=database_operations, state_operations=state_operations
+        )
+    ]

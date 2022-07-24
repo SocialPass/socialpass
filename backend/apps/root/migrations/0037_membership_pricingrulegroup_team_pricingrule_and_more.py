@@ -1079,9 +1079,17 @@ class Migration(migrations.Migration):
             name="membership",
             unique_together={("team", "user")},
         ),
+        migrations.AlterModelTable(
+            name="pricingrule",
+            table="dashboard_pricingrule",
+        ),
     ]
     database_operations = []
 
     # Note: We are reusing database in new table
     # No need to execute any operations
-    migrations.SeparateDatabaseAndState(state_operations, database_operations)
+    operations = [
+        migrations.SeparateDatabaseAndState(
+            database_operations=database_operations, state_operations=state_operations
+        )
+    ]

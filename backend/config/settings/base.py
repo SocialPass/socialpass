@@ -336,7 +336,7 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
 # Django Invitations - https://github.com/jazzband/django-invitations
-INVITATIONS_INVITATION_MODEL = "dashboard.Invite"
+INVITATIONS_INVITATION_MODEL = "root.Invite"
 INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 INVITATIONS_INVITATION_ONLY = False
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False

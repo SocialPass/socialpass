@@ -7,8 +7,7 @@ import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.dashboard.models import Membership, Team
-from apps.root.models import Event
+from apps.root.models import Event, Membership, Team
 
 User = get_user_model()
 

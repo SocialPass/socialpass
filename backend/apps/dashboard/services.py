@@ -1,7 +1,6 @@
 from typing import Optional
 
-from apps.dashboard.models import EventStripePayment, PricingRuleGroup, Team
-from apps.root.models import Event
+from apps.root.models import Event, EventStripePayment, PricingRuleGroup, Team
 
 
 def identify_pricing_group_errors(pricing_group: PricingRuleGroup) -> list:

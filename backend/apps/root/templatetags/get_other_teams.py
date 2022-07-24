@@ -1,6 +1,6 @@
 from django import template
 
-from apps.dashboard.models import Membership
+from apps.root.models import Membership
 
 register = template.Library()
 

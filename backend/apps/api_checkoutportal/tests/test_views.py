@@ -7,9 +7,8 @@ from eth_account.messages import encode_defunct
 from rest_framework import status
 from web3.auto import w3
 
-from apps.dashboard.models import Team
 from apps.root.factories import EventFactory, UserWithTeamFactory
-from apps.root.models import BlockchainOwnership, Event
+from apps.root.models import BlockchainOwnership, Event, Team
 
 
 def prevent_warnings(func):

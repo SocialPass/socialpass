@@ -10,7 +10,7 @@ import model_utils.fields
 from django.conf import settings
 from django.db import migrations, models
 
-import apps.dashboard.models
+import apps.root.models
 
 
 class Migration(migrations.Migration):

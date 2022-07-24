@@ -1069,7 +1069,10 @@ class Migration(migrations.Migration):
             constraint=models.CheckConstraint(
                 check=models.Q(
                     ("max_capacity__isnull", True),
-                    ("max_capacity__gt", django.db.models.expressions.F("min_capacity")),
+                    (
+                        "max_capacity__gt",
+                        django.db.models.expressions.F("min_capacity"),
+                    ),
                     _connector="OR",
                 ),
                 name="root_pricingrule_max_capacity__gt__min_capacity",

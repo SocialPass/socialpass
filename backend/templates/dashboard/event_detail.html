@@ -201,7 +201,6 @@
     navigator.clipboard.writeText(text);
     let href = document.getElementById('copy-link');
     href.innerHTML = 'Link copied'
-    console.log(href);
     setTimeout(function(){
        href.innerHTML = '<i class="fas fa-copy text-secondary fa-lg"></i>'
     }, 1000);

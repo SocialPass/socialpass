@@ -38,10 +38,6 @@ class Team(DBModel):
     Umbrella team model for SocialPass customers
     """
 
-    class Meta:
-        # TODO: rename table in future to `root_`
-        db_table = "root_team"
-
     def get_default_pricing_rule_group():  # type: ignore
         return PricingRuleGroup.objects.get(name="Default").pk
 
@@ -73,7 +69,6 @@ class Membership(DBModel):
 
     class Meta:
         # TODO: rename table in future to `root_`
-        db_table = "root_membership"
         unique_together = ("team", "user")
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
@@ -93,10 +88,6 @@ class Invite(DBModel, AbstractBaseInvitation):
     Custom invite inherited from django-invitations
     Used for team invitations
     """
-
-    class Meta:
-        # TODO: rename table in future to `root_`
-        db_table = "root_invite"
 
     email = models.EmailField(
         unique=True,
@@ -503,10 +494,6 @@ class EventStripePayment(DBModel):
     Registers a payment done for Event
     """
 
-    class Meta:
-        # TODO: rename table in future to `root_`
-        db_table = "root_eventstripepayment"
-
     event = models.ForeignKey(
         "Event", on_delete=models.SET_NULL, null=True, related_name="payments"
     )
@@ -656,7 +643,6 @@ class PricingRule(DBModel):
     """
 
     class Meta:
-        db_table = "root_pricingrule"
         constraints = [
             # adds constraint so that max_capacity is necessarily
             # greater than min_capacity
@@ -698,10 +684,6 @@ class PricingRuleGroup(DBModel):
     Represents a group of PricingRule's
     Used to represent full-range of charges per team's event
     """
-
-    class Meta:
-        # TODO: rename table in future to `root_`
-        db_table = "root_pricingrulegroup"
 
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)

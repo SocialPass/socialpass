@@ -317,13 +317,13 @@
 :root {
     /* Checked checkbox */
 
-    --checkbox-checked-bg-image: var(--checkbox-svg-black);
+    --checkbox-checked-bg-image: var(--checkbox-svg-dark);
 
     /* Checked radio */
 
-    --radio-checked-bg-image: var(--radio-svg-black);
+    --radio-checked-bg-image: var(--radio-svg-dark);
 
     /* Checked switch */
 
-    --switch-checked-bg-image: var(--switch-svg-black);
+    --switch-checked-bg-image: var(--switch-svg-dark);
 }

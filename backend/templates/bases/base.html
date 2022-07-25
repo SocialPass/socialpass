@@ -1,4 +1,4 @@
-{% load static get_debug_status %}
+{% load static get_debug_status get_theme_value %}
 {% load compress %}
 <!DOCTYPE html>
 {% get_debug_status as debug %}
@@ -10,10 +10,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 
 		<!-- Title -->
-		<title>{% block head_title %}SocialPass - Hosting the Next Generation of Events{% endblock head_title %}</title>
+		<title>{% block head_title %}{% get_theme_value "brand_name" %} - Hosting the Next Generation of Events{% endblock head_title %}</title>
 
 		<!-- Fav icon -->
-		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
+		<link rel="icon" href="{% get_theme_value 'favicon' %}">
 
 		<!--This block is here because while the new UX is not ready, some components from bootstrap that are not defined in halfmoon are being used.
 			For the sake of safety, bootstrap will only be imported at event_form -->
@@ -30,7 +30,7 @@
 
 		<!-- SocialPass CSS theme -->
 		{% compress css %}
-		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
+		<link href="{% get_theme_value 'css_theme' %}" rel="stylesheet" />
 
 		<link href="{% static 'socialpass-theme/extra.css' %}" rel="stylesheet" />
 		{% endcompress %}

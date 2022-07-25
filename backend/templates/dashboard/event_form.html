@@ -1,8 +1,8 @@
 {% extends 'bases/base_primary.html' %}
-{% load static i18n get_chain_name crispy_forms_tags avoid_view_resubmission %}
+{% load static get_theme_value i18n get_chain_name crispy_forms_tags avoid_view_resubmission %}
 
 {% block head_title %}
-{% if request.resolver_match.url_name == 'event_create' %}Create{% else %}Update{% endif %} Event - SocialPass
+{% if request.resolver_match.url_name == 'event_create' %}Create{% else %}Update{% endif %} Event - {% get_theme_value "brand_name" %}
 {% endblock head_title %}
 
 {% block navbar_breadcrumb %}

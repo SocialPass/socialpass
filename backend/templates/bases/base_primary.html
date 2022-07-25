@@ -1,5 +1,5 @@
 {% extends "bases/base.html" %}
-{% load static get_preferred_color_scheme get_user_primary_email get_other_teams get_sidebar_active_status %}
+{% load static get_preferred_color_scheme get_user_primary_email get_other_teams get_sidebar_active_status get_theme_value %}
 {% load compress %}
 {% block html_class %}socialpass-dashboard {% get_preferred_color_scheme %}{% endblock html_class %}
 
@@ -71,12 +71,12 @@
 		<!-- Sidebar toggle end -->
 
 		<!-- Branding start -->
-		<img src="{% static 'images/SocialPass-Icon-White.svg' %}" class="h-100 flex-shrink-0 pe-none me-20" alt="SocialPass Logo">
+		<img src="{% get_theme_value 'logo' %}" class="h-100 flex-shrink-0 pe-none me-20" alt="Brand Logo">
 		<!-- Branding end -->
 
 		<!-- Navbar breadcrumb start -->
 		<div class="flex-shrink-0 d-none d-sm-block">
-			SocialPass
+			{% get_theme_value "brand_name" %}
 			<i class="fa-regular fa-angle-right mx-10"></i>
 			{% block navbar_breadcrumb %}{% endblock navbar_breadcrumb %}
 		</div>
@@ -211,7 +211,7 @@
 							{% endfor %}
 						{% endif %}
 						<li class="dropdown-content">
-							<a href="{% url 'team_create' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-primary fw-bold">
+							<a href="{% url 'team_create' %}" class="btn btn-primary btn-block">
 								<i class="fa-solid fa-plus"></i>
 								<span class="ms-5">Create Team</span>
 							</a>

@@ -70,6 +70,9 @@ pyenv install 3.10.5
 pyenv local 3.10.5
 pyenv global 3.10.5
 
+# Optional: Depending on your OS, you may need to run the following to activate pyenv
+eval "$(pyenv init -)"
+
 # Verify version
 python --version
 
@@ -81,6 +84,7 @@ pyenv activate socialpass
 pip install -r backend/config/requirements/local.txt
 
 # Run postgres image
+# Alternatively, running a postgres server locally also works
 docker run -d --name database -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data postgres
 
 # Run Migrations (if necessary)

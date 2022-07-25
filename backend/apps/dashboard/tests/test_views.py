@@ -6,9 +6,8 @@ from django.urls import reverse
 from django.views.generic import DetailView, TemplateView
 
 from apps.dashboard import forms, views
-from apps.dashboard.models import Invite, Membership, Team
 from apps.root.factories import EventFactory, UserWithTeamFactory
-from apps.root.models import Event
+from apps.root.models import Event, Invite, Membership, Team
 
 User = get_user_model()
 

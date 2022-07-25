@@ -23,7 +23,6 @@ export const Event = ({}): JSX.Element => {
   function handleSelect(event: any) {
     setGeneralAdmissionSelect(event.target.value);
   }
-  console.log(retrieveJson)
 
   return (
     <div className="row">

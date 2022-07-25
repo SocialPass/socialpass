@@ -8,7 +8,7 @@ test: ## Test backend repo (backend/venv)
 	(source backend/venv/bin/activate; cd backend && python manage.py test --failfast)
 
 lint: ## Lint backend repo (backend/venv)
-		(source backend/venv/bin/activate; black .; isort .; flake8 .;)
+	(source backend/venv/bin/activate; cd backend; black .; isort .; flake8 .; mypy .;)
 
 maction: ## Test github actions (requires `act` to be installed, also has flag for M1)
 	act pull_request --container-architecture linux/amd64

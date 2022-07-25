@@ -10,7 +10,7 @@ import model_utils.fields
 from django.conf import settings
 from django.db import migrations, models
 
-import apps.dashboard.models
+import apps.root.models
 
 
 class Migration(migrations.Migration):
@@ -113,7 +113,7 @@ class Migration(migrations.Migration):
                 (
                     "pricing_rule_group",
                     models.ForeignKey(
-                        default=apps.dashboard.models.Team.get_default_pricing_rule_group,
+                        default=apps.root.models.Team.get_default_pricing_rule_group,
                         on_delete=django.db.models.deletion.CASCADE,
                         to="dashboard.pricingrulegroup",
                     ),

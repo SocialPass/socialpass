@@ -28,10 +28,9 @@ from apps.dashboard.forms import (
     EventPendingCheckoutForm,
     TeamForm,
 )
-from apps.dashboard.models import EventStripePayment, Membership, Team
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Event, Ticket
+from apps.root.models import Event, EventStripePayment, Membership, Team, Ticket
 
 User = auth.get_user_model()
 

@@ -4,17 +4,15 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
 from apps.dashboard import services
-from apps.dashboard.models import (
+from apps.root.models import (
+    BlockchainOwnership,
+    Event,
+    EventCategory,
     EventStripePayment,
     Membership,
     PricingRule,
     PricingRuleGroup,
     Team,
-)
-from apps.root.models import (
-    BlockchainOwnership,
-    Event,
-    EventCategory,
     Ticket,
     TicketRedemptionKey,
 )

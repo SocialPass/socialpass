@@ -3,8 +3,7 @@ from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
 
-from apps.dashboard.models import Invite, Team
-from apps.root.models import Event
+from apps.root.models import Event, Invite, Team
 
 
 class CustomInviteForm(InviteForm):

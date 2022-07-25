@@ -142,6 +142,10 @@
 	<!-- Sidebar start -->
 	<nav class="sidebar">
 		{% if current_team %}
+			<!-- Current team theme start -->
+			<input type="hidden" id="current_team_theme" name="variable" value="{{ current_team.theme }}">
+			<!-- Current team theme end -->
+
 			<!-- Sidebar team dropdown start -->
 			<div class="sidebar-menu mt-0">
 				<div class="dropdown w-100">
@@ -337,4 +341,14 @@
 	<!-- Content wrapper end -->
 </div>
 <!-- Page wrapper end -->
+
+{% if current_team %}
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+	<script type="text/javascript">
+		var currentTeamTheme = JSON.parse(
+			document.getElementById("current_team_theme").value.replace(/'/g, '"')
+		);
+		Cookies.set("whiteLabelTheme", JSON.stringify(currentTeamTheme));
+	</script>
+{% endif %}
 {% endblock body %}

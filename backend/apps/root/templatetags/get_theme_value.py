@@ -1,5 +1,8 @@
+import json
+
 from django import template
 from django.templatetags.static import static
+from urllib import parse
 
 register = template.Library()
 
@@ -9,8 +12,13 @@ def get_theme_value(context, key):
 	if "current_team" in context:
 		theme = context["current_team"].theme
 	else:
-		theme = {}
-		
+		request = context["request"]
+		theme = request.COOKIES.get("whiteLabelTheme", None)
+		if theme:
+			theme = json.loads(parse.unquote(theme))
+		else:
+			theme = {}
+
 	value = None
 
 	if key == "brand_name":

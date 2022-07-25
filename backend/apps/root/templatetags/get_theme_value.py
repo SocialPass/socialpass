@@ -6,7 +6,11 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def get_theme_value(context, key):
-	theme = context["current_team"].theme
+	if "current_team" in context:
+		theme = context["current_team"].theme
+	else:
+		theme = {}
+		
 	value = None
 
 	if key == "brand_name":

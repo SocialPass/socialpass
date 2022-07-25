@@ -33,7 +33,7 @@
   line-height: 1.25;
   font-family: inherit;
   font-weight: 600;
-  color: var(--secondary-color);
+  color: var(--primary-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
@@ -71,8 +71,8 @@
   font-weight: 500;
   line-height: 2.4;
   text-decoration: none;
-  color: var(--text-color-on-secondary-color-bg);
-  background-color: var(--secondary-color);
+  color: var(--text-color-on-primary-color-bg);
+  background-color: var(--primary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -189,8 +189,8 @@
   font-weight: 600;
   line-height: 16px;
   text-decoration: none;
-  color: var(--text-color-on-secondary-color-bg);
-  background-color: var(--secondary-color);
+  color: var(--text-color-on-primary-color-bg);
+  background-color: var(--primary-color);
   border-color: none;
   box-shadow: none;
 }

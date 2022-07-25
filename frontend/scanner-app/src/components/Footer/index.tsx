@@ -26,10 +26,10 @@ export function Footer({ waitingForScan }: FooterProps) {
           {eventData.location} | {eventData.start_date}
         </div>
         <div className="d-flex flex-row justify-content-between">
-          <div className="live-statistics-btn-blue text-center flex-grow-1">
+          <div className="live-statistics-btn-accepted text-center flex-grow-1">
             Accepted {eventData.redeemed_count}
           </div>
-          <div className="live-statistics-btn-orange text-center flex-grow-1">
+          <div className="live-statistics-btn-remaining text-center flex-grow-1">
             Remaining {eventData.capacity - eventData.redeemed_count}
           </div>
         </div>

@@ -7,7 +7,7 @@ import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.root.models import Event, Membership, Team
+from apps.root.models import Event, Membership, Team, Ticket, TicketRedemptionKey, BlockchainOwnership
 
 User = get_user_model()
 
@@ -78,3 +78,38 @@ class EventFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Event
+
+
+class BlockchainOwnershipFactory(factory.django.DjangoModelFactory):
+    """
+    Create blockchain ownership
+    """
+
+    event = factory.SubFactory(EventFactory)
+
+    class Meta:
+        model = BlockchainOwnership
+
+
+class TicketFactory(factory.django.DjangoModelFactory):
+    """
+    Create ticket
+    """
+
+    event = factory.SubFactory(EventFactory)
+    file = factory.django.ImageField(color="red")
+
+    class Meta:
+        model = Ticket
+
+
+class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):
+    """
+    Create ticket
+    """
+
+    name = factory.Faker("name")
+    event = factory.SubFactory(EventFactory)
+
+    class Meta:
+        model = TicketRedemptionKey

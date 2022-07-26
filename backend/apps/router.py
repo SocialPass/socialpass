@@ -14,6 +14,7 @@ urlpatterns = [
     path("dashboard/", include("apps.dashboard.urls")),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
+    path("robots.txt", include("robots.urls")),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )  # type: ignore
@@ -31,16 +32,16 @@ sitemaps = {
 }
 urlpatterns += [
     path(
-        'sitemap.xml',
+        "sitemap.xml",
         sitemap_views.index,
-        {'sitemaps': sitemaps},
-        name='django.contrib.sitemaps.views.sitemap'
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap"
     ),  # type: ignore
     path(
-        'sitemap-<section>.xml',
+        "sitemap-<section>.xml",
         sitemap_views.sitemap,
-        {'sitemaps': sitemaps},
-        name='django.contrib.sitemaps.views.sitemap'
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap"
     ),  # type: ignore
 ]
 

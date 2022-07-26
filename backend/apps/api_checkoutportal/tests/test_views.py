@@ -1,13 +1,11 @@
 import logging
 from typing import Any
 from uuid import uuid4
-import json
 
 from django.test import TestCase
 from eth_account.messages import encode_defunct
 from rest_framework import status
 from web3.auto import w3
-from .. import serializers
 
 from apps.root.factories import EventFactory, UserWithTeamFactory
 from apps.root.models import BlockchainOwnership, Event, Team

@@ -275,6 +275,9 @@
             </div>
             {% with input=form.end_date %}
               {% include 'components/forms_inputs/input.html' %}
+              <div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
+                The end date must come after the start date.
+              </div>
             {% endwith %}
             <div class="form-group">
               {{form.timezone|as_crispy_field}}
@@ -552,6 +555,34 @@
       fillRequirementsAndSubmitForm();
     }
   }
+</script>
+
+<!-- Date Validation Script -->
+<script>
+  var startDateInput = document.getElementById("id_start_date");
+  var endDateInput = document.getElementById("id_end_date");
+  var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
+
+  function dateValidate(e) {
+    var startDateVal = startDateInput.value;
+    var endDateVal = endDateInput.value;
+
+    endDateExtraFeedback.classList.add("d-none");
+    endDateInput.classList.remove("is-invalid");
+
+    if (startDateVal && endDateVal) {
+      var startDate = new Date(startDateVal);
+      var endDate = new Date(endDateVal);
+
+      if (startDate >= endDate) {
+        endDateExtraFeedback.classList.remove("d-none");
+        endDateInput.classList.add("is-invalid");
+      }
+    }
+  }
+
+  startDateInput.addEventListener("change", dateValidate);
+  endDateInput.addEventListener("change", dateValidate);
 </script>
 
 <!-- Content card end -->

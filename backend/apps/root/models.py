@@ -15,6 +15,8 @@ from djmoney.models.fields import MoneyField
 from pytz import utc
 from taggit.managers import TaggableManager
 
+from django.contrib.sites.models import Site
+
 from apps.dashboard.models import PricingRule, Team
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA

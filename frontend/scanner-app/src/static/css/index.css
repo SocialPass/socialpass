@@ -72,7 +72,7 @@
   line-height: 2.4;
   text-decoration: none;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--primary-color);
+  background-color: var(--secondary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -190,7 +190,7 @@
   line-height: 16px;
   text-decoration: none;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--primary-color);
+  background-color: var(--secondary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -291,7 +291,7 @@
 .btn-inactive {
   border-color: transparent;
   margin: 2px;
-  color: var(--text-color-on-primary-color-bg);
+  color: var(--dark-color);
   background-color: var(--primary-color-very-light);
   border-color: none;
   box-shadow: none;

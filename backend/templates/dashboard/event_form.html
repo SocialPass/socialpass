@@ -122,12 +122,12 @@
 	</div>
 	<!-- Card header end -->
 
-	<div class="row">
+	<form class="row form" enctype="multipart/form-data" method="post" id="event-form">
 		<!-- Main content start -->
 		<div class="col-lg-7">
 			<div class="content">
-				<!-- Form start -->
-				<form class="form" enctype="multipart/form-data" method="post" id="event-form">
+				<!-- Form fields start -->
+				<div>
 					{% csrf_token %}
 
 					{% if form.non_field_errors %}
@@ -405,14 +405,14 @@
 
           <!-- Publishing end -->
 
-				</form>
+				</div>
 				<!-- Form end -->
 			</div>
 		</div>
 		<!-- Main content end -->
 
     <!-- Form navigation start -->
-    <div class="col-lg-5 border-lg-end">
+    <div class="col-lg-5">
       <div class="p-content position-lg-sticky top-navbar start-0">
         <div>
           <a href="#1-general-info" class="d-inline-flex align-items-center link-reset text-decoration-none">
@@ -457,14 +457,14 @@
         <div id="event-actions" class="mt-20 row">
           {% if event.state == 'Live' %}
           <div class="col pe-5">
-            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary">Save Changes</button>
+            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary" type="submit">Save Changes</button>
           </div>
           {% else %}
           <div class="col pe-5">
             <button onclick="saveDraft()" class="h-100 btn btn-block">Save Draft</button>
           </div>
           <div class="col pe-5">
-            <button onclick="savePending()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
+            <button onclick="savePending()" class="h-100 btn btn-block btn-primary" type="submit">Save & Continue</button>
           </div>
           {% endif %}
         </div>
@@ -472,7 +472,7 @@
     </div>
     <!-- Form navigation end -->
 
-	</div>
+	</form>
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">

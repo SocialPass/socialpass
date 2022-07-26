@@ -3,8 +3,11 @@ import os
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps import views as sitemap_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
+
+from apps.event_discovery.sitemaps import EventDetailSiteMap, StaticViewEventSitemap
 
 urlpatterns = [
     path("", include("apps.event_discovery.urls")),
@@ -19,6 +22,26 @@ urlpatterns = [
 urlpatterns += [
     path("api/checkout-portal/v1/", include("apps.api_checkoutportal.urls")),
     path("api/scanner/v1/", include("apps.api_scanner.urls")),
+]
+
+# SITEMAPS URLS
+sitemaps = {
+    "discovery": StaticViewEventSitemap,
+    "discovery-events": EventDetailSiteMap
+}
+urlpatterns += [
+    path(
+        'sitemap.xml',
+        sitemap_views.index,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'
+    ),  # type: ignore
+    path(
+        'sitemap-<section>.xml',
+        sitemap_views.sitemap,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'
+    ),  # type: ignore
 ]
 
 # Debug URL's (only for local)

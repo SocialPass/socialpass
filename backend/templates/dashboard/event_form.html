@@ -168,11 +168,11 @@
 						</p>
 
 						<!-- Title start -->
-						<div class="required-input">
-							{% with form.title as input %}
-								{% include 'components/forms_inputs/input.html' %}
-							{% endwith %}
-						</div>
+            <div class="required-input">
+  						{% with form.title as input %}
+  							{% include 'components/forms_inputs/input.html' %}
+  						{% endwith %}
+            </div>
 						<!-- Title end -->
 
 						<!-- Organizer start -->
@@ -249,6 +249,11 @@
 							</script>
 
 							{% include 'components/forms_inputs/gmaps_location.html' %}
+              {% if form.location.help_text %}
+                <div class="form-text">
+                  {{ form.location.help_text }}
+                </div>
+              {% endif %}
 						{% endwith %}
 						<!-- Location end -->
 
@@ -263,20 +268,16 @@
 						<p class="text-muted fs-base-n2 mt-5">
 							Tell event-goers when your event starts and ends so they can make plans to attend.
 						</p>
-						<div class="form-group required-input">
-							{{form.start_date|as_crispy_field}}
-						</div>
-						<div class="form-group">
-							{{form.end_date|as_crispy_field}}
-							<p class="text-muted fs-base-n2 mt-5">
-								Leave empty if there is no end date for the event.
-							</p>
-						</div>
+            <div class="required-input">
+  						{% with input=form.start_date %}
+                {% include 'components/forms_inputs/input.html' %}
+              {% endwith %}
+            </div>
+            {% with input=form.end_date %}
+              {% include 'components/forms_inputs/input.html' %}
+            {% endwith %}
             <div class="form-group">
               {{form.timezone|as_crispy_field}}
-              <p class="text-muted fs-base-n2 mt-5">
-                Leave empty if there is no end date for the event.
-              </p>
             </div>
 						<!-- Date and Time end -->
 

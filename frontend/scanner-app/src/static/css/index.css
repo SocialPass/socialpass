@@ -33,7 +33,7 @@
   line-height: 1.25;
   font-family: inherit;
   font-weight: 600;
-  color: var(--primary-color);
+  color: var(--secondary-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
@@ -72,7 +72,7 @@
   line-height: 2.4;
   text-decoration: none;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -80,7 +80,7 @@
 .btn-start-scanning:active {
   text-decoration: none;
   color: inherit;
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   border-color: transparent;
   box-shadow: none;
 }
@@ -155,7 +155,7 @@
   line-height: 18px;
   text-decoration: none;
   color: var(--dark-color);
-  background-color: var(--primary-color-light);
+  background-color: var(--secondary-color-light);
   border-color: none;
   box-shadow: none;
 }
@@ -190,7 +190,7 @@
   line-height: 16px;
   text-decoration: none;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -285,14 +285,14 @@
   border-color: transparent;
   margin: 2px;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--primary-color);
+  background-color: var(--secondary-color);
 }
 
 .btn-inactive {
   border-color: transparent;
   margin: 2px;
   color: var(--dark-color);
-  background-color: var(--primary-color-very-light);
+  background-color: var(--secondary-color-very-light);
   border-color: none;
   box-shadow: none;
 }

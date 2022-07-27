@@ -1,6 +1,7 @@
 # sitemaps.py
 from django.contrib import sitemaps
 from django.urls import reverse
+
 from apps.root.models import Event
 
 
@@ -24,7 +25,7 @@ class EventDetailSiteMap(sitemaps.Sitemap):
     limit = 50000  # default limit
 
     def items(self):
-        queryset = Event.objects.filter_featured().values("public_id")[0: self.limit]
+        queryset = Event.objects.filter_featured().values("public_id")[0:self.limit]  # noqa: E203
         return queryset
 
     def location(self, item):

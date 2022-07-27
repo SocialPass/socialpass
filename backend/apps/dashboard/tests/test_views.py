@@ -262,6 +262,10 @@ class DashboardTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         """
+        TODO:
+        Fix form creation. Currently response is 200 but with form validation errors.
+        Below assertion thus returns False
+
         self.assertEqual(
             Event.objects.filter(title="Event One Data with New Title").count(), 1
         )
@@ -319,6 +323,10 @@ class DashboardTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         """
+        TODO:
+        Fix form creation. Currently response is 200 but with form validation errors.
+        Below assertion thus returns False
+
         self.assertEqual(Event.objects.filter(title="Updated Title").count(), 1)
         """
 

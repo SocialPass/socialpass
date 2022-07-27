@@ -210,26 +210,50 @@ class Event(DBModel):
         default=timezone.now,
         null=True,
         blank=True,
+        help_text="When your event will be made public."
     )
     visibility = models.CharField(
-        max_length=50, choices=EVENT_VISIBILITY, default=EVENT_VISIBILITY[0][0]
+        max_length=50,
+        choices=EVENT_VISIBILITY,
+        default=EVENT_VISIBILITY[0][0],
+        help_text="Whether or not your event is searchable by the public."
     )
-    show_ticket_count = models.BooleanField(default=True)
-    show_team_image = models.BooleanField(default=True)
+    show_ticket_count = models.BooleanField(
+        default=True,
+        help_text="Whether or not your event displays ticket statistics."
+    )
+    show_team_image = models.BooleanField(
+        default=True,
+        help_text="Whether or not your event displays the team image."
+    )
 
     # Basic Info
-    title = models.CharField(max_length=255, blank=False, unique=True)
-    organizer = models.CharField(max_length=255, null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
-    cover_image = models.ImageField(blank=True, null=True)
+    title = models.CharField(
+        max_length=255, blank=False, unique=True,
+        help_text="Brief name for your event. Must be unique!"
+    )
+    organizer = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="Name or brand or community organizing the event."
+    )
+    description = models.TextField(
+        null=True, blank=True, help_text="A short description of your event."
+    )
+    cover_image = models.ImageField(
+        blank=True, null=True, help_text="A banner image for your event."
+    )
     category = models.ForeignKey(
         "EventCategory", on_delete=models.SET_NULL, null=True, blank=True
     )
     tags = TaggableManager(
         blank=True,
     )
-    start_date = models.DateTimeField(blank=True, null=True)
-    end_date = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateTimeField(
+        blank=True, null=True, help_text="When your event will start."
+    )
+    end_date = models.DateTimeField(
+        blank=True, null=True, help_text="When your event will end (optional)."
+    )
 
     # Location info
     # tiemzone of event
@@ -240,7 +264,10 @@ class Event(DBModel):
         max_length=30,
     )
     # localized address string (used to populate maps lookup)
-    location = models.CharField(max_length=1024, blank=True, null=True)
+    location = models.CharField(
+        max_length=1024, blank=True, null=True,
+        help_text="Where your event will take place."
+    )
     # The street/location address (part 1)
     address_1 = models.CharField(max_length=255, blank=True, null=True)
     # The street/location address (part 2)
@@ -267,10 +294,12 @@ class Event(DBModel):
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
     capacity = models.IntegerField(
-        blank=True, default=1, validators=[MinValueValidator(1)]
+        blank=True, default=1, validators=[MinValueValidator(1)],
+        help_text="Maximum amount of attendees for your event."
     )
     limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)],
+        help_text="Maximum amount of tickets per attendee."
     )
 
     # Pricing Info

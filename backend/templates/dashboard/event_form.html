@@ -122,12 +122,12 @@
 	</div>
 	<!-- Card header end -->
 
-	<div class="row">
+	<form class="row form" enctype="multipart/form-data" method="post" id="event-form">
 		<!-- Main content start -->
 		<div class="col-lg-7">
 			<div class="content">
-				<!-- Form start -->
-				<form class="form" enctype="multipart/form-data" method="post" id="event-form">
+				<!-- Form fields start -->
+				<div>
 					{% csrf_token %}
 
 					{% if form.non_field_errors %}
@@ -168,11 +168,11 @@
 						</p>
 
 						<!-- Title start -->
-						<div class="required-input">
-							{% with form.title as input %}
-								{% include 'components/forms_inputs/input.html' %}
-							{% endwith %}
-						</div>
+            <div class="required-input">
+  						{% with form.title as input %}
+  							{% include 'components/forms_inputs/input.html' %}
+  						{% endwith %}
+            </div>
 						<!-- Title end -->
 
 						<!-- Organizer start -->
@@ -249,6 +249,11 @@
 							</script>
 
 							{% include 'components/forms_inputs/gmaps_location.html' %}
+              {% if form.location.help_text %}
+                <div class="form-text">
+                  {{ form.location.help_text }}
+                </div>
+              {% endif %}
 						{% endwith %}
 						<!-- Location end -->
 
@@ -263,20 +268,19 @@
 						<p class="text-muted fs-base-n2 mt-5">
 							Tell event-goers when your event starts and ends so they can make plans to attend.
 						</p>
-						<div class="form-group required-input">
-							{{form.start_date|as_crispy_field}}
-						</div>
-						<div class="form-group">
-							{{form.end_date|as_crispy_field}}
-							<p class="text-muted fs-base-n2 mt-5">
-								Leave empty if there is no end date for the event.
-							</p>
-						</div>
+            <div class="required-input">
+  						{% with input=form.start_date %}
+                {% include 'components/forms_inputs/input.html' %}
+              {% endwith %}
+            </div>
+            {% with input=form.end_date %}
+              {% include 'components/forms_inputs/input.html' %}
+              <div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
+                The end date must come after the start date.
+              </div>
+            {% endwith %}
             <div class="form-group">
               {{form.timezone|as_crispy_field}}
-              <p class="text-muted fs-base-n2 mt-5">
-                Leave empty if there is no end date for the event.
-              </p>
             </div>
 						<!-- Date and Time end -->
 
@@ -404,14 +408,14 @@
 
           <!-- Publishing end -->
 
-				</form>
+				</div>
 				<!-- Form end -->
 			</div>
 		</div>
 		<!-- Main content end -->
 
     <!-- Form navigation start -->
-    <div class="col-lg-5 border-lg-end">
+    <div class="col-lg-5">
       <div class="p-content position-lg-sticky top-navbar start-0">
         <div>
           <a href="#1-general-info" class="d-inline-flex align-items-center link-reset text-decoration-none">
@@ -456,14 +460,14 @@
         <div id="event-actions" class="mt-20 row">
           {% if event.state == 'Live' %}
           <div class="col pe-5">
-            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary">Save Changes</button>
+            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary" type="submit">Save Changes</button>
           </div>
           {% else %}
           <div class="col pe-5">
             <button onclick="saveDraft()" class="h-100 btn btn-block">Save Draft</button>
           </div>
           <div class="col pe-5">
-            <button onclick="savePending()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
+            <button onclick="savePending()" class="h-100 btn btn-block btn-primary" type="submit">Save & Continue</button>
           </div>
           {% endif %}
         </div>
@@ -471,7 +475,7 @@
     </div>
     <!-- Form navigation end -->
 
-	</div>
+	</form>
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
@@ -551,6 +555,34 @@
       fillRequirementsAndSubmitForm();
     }
   }
+</script>
+
+<!-- Date Validation Script -->
+<script>
+  var startDateInput = document.getElementById("id_start_date");
+  var endDateInput = document.getElementById("id_end_date");
+  var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
+
+  function dateValidate(e) {
+    var startDateVal = startDateInput.value;
+    var endDateVal = endDateInput.value;
+
+    endDateExtraFeedback.classList.add("d-none");
+    endDateInput.classList.remove("is-invalid");
+
+    if (startDateVal && endDateVal) {
+      var startDate = new Date(startDateVal);
+      var endDate = new Date(endDateVal);
+
+      if (startDate >= endDate) {
+        endDateExtraFeedback.classList.remove("d-none");
+        endDateInput.classList.add("is-invalid");
+      }
+    }
+  }
+
+  startDateInput.addEventListener("change", dateValidate);
+  endDateInput.addEventListener("change", dateValidate);
 </script>
 
 <!-- Content card end -->

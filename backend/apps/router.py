@@ -17,10 +17,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     path(
         "robots.txt",
-        TemplateView.as_view(
-            template_name="robots.txt",
-            content_type="text/plain"
-        )
+        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
@@ -33,23 +30,20 @@ urlpatterns += [
 ]
 
 # SITEMAPS URLS
-sitemaps = {
-    "discovery": StaticViewEventSitemap,
-    "events-discovery": EventDetailSiteMap
-}
+sitemaps = {"discovery": StaticViewEventSitemap, "events-discovery": EventDetailSiteMap}
 urlpatterns += [
     path(
         "sitemap.xml",
         sitemap_views.index,
         {"sitemaps": sitemaps},
-        name="django.contrib.sitemaps.views.sitemap"
-    ),  # type: ignore
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
     path(
         "sitemap-<section>.xml",
         sitemap_views.sitemap,
         {"sitemaps": sitemaps},
-        name="django.contrib.sitemaps.views.sitemap"
-    ),  # type: ignore
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
 ]
 
 # Debug URL's (only for local)
@@ -57,9 +51,11 @@ is_local = (
     settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"
 )
 if is_local:
-    urlpatterns += staticfiles_urlpatterns()  # type: ignore
+    urlpatterns += staticfiles_urlpatterns()
 
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar
 
-        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+        urlpatterns = [
+            path("__debug__/", include(debug_toolbar.urls))
+        ] + urlpatterns  # type: ignore

@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.sitemaps import views as sitemap_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
+from django.views.generic import TemplateView
 
 from apps.event_discovery.sitemaps import EventDetailSiteMap, StaticViewEventSitemap
 
@@ -14,7 +15,13 @@ urlpatterns = [
     path("dashboard/", include("apps.dashboard.urls")),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
-    path("robots.txt", include("robots.urls")),
+    path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="robots.txt",
+            content_type="text/plain"
+        )
+    ),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )  # type: ignore

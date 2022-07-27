@@ -99,7 +99,6 @@ THIRD_PARTY_APPS = [
     "taggit",
     "djmoney",
     "compressor",
-    "robots"
 ]
 
 LOCAL_APPS = [

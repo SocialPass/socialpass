@@ -1,5 +1,6 @@
-from datetime import datetime
 from typing import Optional
+
+from django.utils import timezone
 
 from apps.root.models import Event, Ticket, TicketRedemptionKey
 
@@ -47,7 +48,7 @@ def redeem_ticket(
         raise ForbiddenRedemptionError("Ticketed event does not match.")
 
     ticket.redeemed = True
-    ticket.redeemed_at = datetime.now()
+    ticket.redeemed_at = timezone.now()
     ticket.redeemed_by = redemption_access_key
     ticket.save()
 

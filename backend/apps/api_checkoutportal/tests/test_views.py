@@ -62,7 +62,8 @@ class TestCaseWrapper(TestCase):
 class GetEventDetailsTestCase(TestCaseWrapper):
     def test_get_event_details_200(self):
         """
-        Request the most recently created team's details and asserts response is 200 OK.
+        Request the most recently created team's details, asserts response is 200 OK and
+        that the returned JSON is properly formatted.
         """
         event_id = str(self.event.public_id)
         # Not using reverse because we want URL changes to explicitly break tests.
@@ -72,6 +73,9 @@ class GetEventDetailsTestCase(TestCaseWrapper):
         # since Django is doing some magic on the serializers.
         # Add `from . import serializers` at the top then...
         # self.assertEqual(response.json(), ...)
+        self.assertEqual(response.json()['team']['name'], self.team.name)
+        self.assertEqual(response.json()['description'], self.event.description)
+        self.assertEqual(response.json()['capacity'], int(self.event.capacity))
 
     @prevent_warnings
     def test_get_event_details_404(self):

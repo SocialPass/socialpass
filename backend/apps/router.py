@@ -28,7 +28,7 @@ urlpatterns += [
 # SITEMAPS URLS
 sitemaps = {
     "discovery": StaticViewEventSitemap,
-    "discovery-events": EventDetailSiteMap
+    "events-discovery": EventDetailSiteMap
 }
 urlpatterns += [
     path(

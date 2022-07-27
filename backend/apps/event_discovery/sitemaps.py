@@ -6,7 +6,7 @@ from apps.root.models import Event
 
 class StaticViewEventSitemap(sitemaps.Sitemap):
     """
-    class to define static pages on discovery app
+    class to define static pages on event discovery app
     """
     def items(self):
         return ["discovery:browse", "discovery:index"]
@@ -17,14 +17,14 @@ class StaticViewEventSitemap(sitemaps.Sitemap):
 
 class EventDetailSiteMap(sitemaps.Sitemap):
     """
-    class to define events urls on discovery app.
+    class to define events urls on event discovery app.
     By limitation, the sitemaps protocol only fetch 50000 items
     """
     changefreq = "daily"
     limit = 50000  # default limit
 
     def items(self):
-        queryset = Event.objects.all().values("public_id")
+        queryset = Event.objects.filter_featured().values("public_id")[0:self.limit]
         return queryset
 
     def location(self, item):

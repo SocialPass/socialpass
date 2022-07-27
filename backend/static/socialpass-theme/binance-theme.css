@@ -327,3 +327,12 @@
 
     --switch-checked-bg-image: var(--switch-svg-dark);
 }
+
+/**
+ * Scanner specific styles
+ */
+
+.socialpass-scanner .main-bg {
+    color: var(--white-color);
+    background-color: var(--darkgray-color);
+}

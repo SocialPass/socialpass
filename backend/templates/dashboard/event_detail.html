@@ -149,13 +149,14 @@
         <h6>Event Page</h6>
         <p>Share with your potential attendees</p>
         <div class="d-flex flex-direction-row align-items-center justify-content-start gap-20">
-          <a target="_blank" href="https://twitter.com/share?url={{ request.get_host }}{{event.discovery_url}}">
+          <a id="twitter-share-icon" target="_blank" href="#">
             <i class="fab fa-twitter text-secondary fa-lg"></i>
           </a>
-          <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ request.get_host }}{{event.discovery_url}}">
+          <a id="facebook-share-icon" target="_blank" 
+            href="#">
             <i class="fab fa-facebook text-secondary fa-lg"></i>
           </a>
-          <a href="mailto:?body={{ request.get_host }}{{event.discovery_url}}">
+          <a id="email-share-icon" href="#">
             <i class="fa fa-envelope text-secondary fa-lg"></i>
           </a>
           <a aria-label="copy link" id="copy-link" href="#!" type="button" onclick="copyToClipboard('{{ request.get_host }}{{event.discovery_url}}')">
@@ -197,6 +198,13 @@
 </div>
 <!-- Content card end -->
 <script>
+  const socialpassLinkMessage = "Join {{event.organizer}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{{event.discovery_url}}"
+  const twitterShareAnchor = document.getElementById("twitter-share-icon")
+  const facebookShareAnchor = document.getElementById("facebook-share-icon")
+  const emailShareAnchor = document.getElementById("email-share-icon")
+  twitterShareAnchor.href = `https://twitter.com/share?url=${socialpassLinkMessage}`
+  facebookShareAnchor.href = `http://www.facebook.com/sharer/sharer.php?u=${socialpassLinkMessage}`
+  emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
     let href = document.getElementById('copy-link');

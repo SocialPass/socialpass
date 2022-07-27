@@ -25,7 +25,7 @@ class EventDetailSiteMap(sitemaps.Sitemap):
     limit = 50000  # default limit
 
     def items(self):
-        queryset = Event.objects.filter_featured().values("public_id")[0:self.limit]  # noqa: E203
+        queryset = Event.objects.filter_featured().values("public_id")[:self.limit]  # noqa: E203
         return queryset
 
     def location(self, item):

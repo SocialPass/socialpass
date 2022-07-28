@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useEvent } from "../contexts/EventContext";
 import { EventContainer } from "../components/EventContainer";
+import { CopyrightFooter } from "../components/CopyrightFooter";
 import Logo from "../static/images/landingpage_logo.png";
 
 export function Home() {
@@ -19,6 +20,7 @@ export function Home() {
             event_venue={eventData.location}
           />
         </div>
+        <CopyrightFooter/>
       </div>
     </>
   );

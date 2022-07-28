@@ -1,5 +1,6 @@
 import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
+import { CopyrightFooter } from "../CopyrightFooter";
 import { useNavigate } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { useEvent } from "../../contexts/EventContext";
@@ -19,7 +20,7 @@ export function Footer({ waitingForScan }: FooterProps) {
     <div className="d-flex flex-column py-10 px-30 justify-content-center align-items-center">
       <div className="d-flex flex-column w-100">
         <div className="d-flex flex-row align-items-center justify-content-between">
-          <div className="scanner-title mt-20">{eventData.title}</div>
+          <div className="scanner-title mt-10">{eventData.title}</div>
           {waitingForScan && <HashLoader color="#EF7C4E" size={25} />}
         </div>
         <div className="scanner-subtitle">
@@ -40,6 +41,7 @@ export function Footer({ waitingForScan }: FooterProps) {
       >
         Statistics
       </button>
+      <CopyrightFooter/>
     </div>
   );
 }

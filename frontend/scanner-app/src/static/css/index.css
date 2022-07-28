@@ -4,6 +4,20 @@
  * ----------------------------------------------------------------------------
  */
 
+/* General Components */
+
+.copyright-footer {
+  position: fixed;
+  bottom: 0px;
+  text-align: center;
+  color: var(--gray-color-dim);
+  opacity: 75%;
+  font-size: calc(var(--base-font-size) - 0.2rem);
+  padding-top: 5%;
+}
+
+
+
 /* Landing Page Components */
 
 .landing-page-card {
@@ -14,7 +28,7 @@
   padding: 2.5rem;
   margin: 2.5rem;
   color: inherit;
-  background-color: var(--dark-color-very-light);
+  background-color: var(--base-content-bg-color);
   border: solid;
   border-width: 0px;
   border-color: var(--gray-color-dim);
@@ -23,7 +37,7 @@
 }
 
 .landing-page-body {
-  background-color: var(--dark-color);
+  background-color: var(--base-body-bg-color);
   width: 100vw;
   height: 100vh;
 }
@@ -33,7 +47,7 @@
   line-height: 1.25;
   font-family: inherit;
   font-weight: 600;
-  color: var(--secondary-color);
+  color: var(--primary-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
@@ -72,7 +86,7 @@
   line-height: 2.4;
   text-decoration: none;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -80,7 +94,7 @@
 .btn-start-scanning:active {
   text-decoration: none;
   color: inherit;
-  background-color: var(--primary-color);
+  background-color: var(--secondary-color);
   border-color: transparent;
   box-shadow: none;
 }
@@ -120,7 +134,7 @@
   line-height: 26px;
   text-align: left;
   color: #fff;
-  margin-top: 15%;
+  margin-top: 10%;
   margin-bottom: 5%;
 }
 
@@ -141,7 +155,7 @@
   width: 100%;
   height: 100%;
   color: var(--white-color);
-  background-color: var(--dark-color);
+  background-color: var(--base-body-bg-color);
   box-shadow: none;
 }
 
@@ -154,8 +168,8 @@
   font-weight: 400px;
   line-height: 18px;
   text-decoration: none;
-  color: var(--dark-color);
-  background-color: var(--secondary-color-light);
+  color: var(--base-body-bg-color);
+  background-color: var(--primary-color-light);
   border-color: none;
   box-shadow: none;
 }
@@ -170,7 +184,7 @@
   font-weight: 400px;
   line-height: 18px;
   text-decoration: none;
-  color: var(--dark-color);
+  color: var(--base-body-bg-color);
   background-color: var(--secondary-color-very-light);
   border-color: none;
   box-shadow: none;
@@ -190,7 +204,7 @@
   line-height: 16px;
   text-decoration: none;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -208,7 +222,7 @@
   display: block;
   color: inherit;
   box-shadow: none;
-  background-color: var(--dark-color);
+  background-color: var(--base-body-bg-color);
   width: 100vw;
   height: 100vh;
 }
@@ -231,7 +245,7 @@
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: var(--dark-color);
+  color: var(--base-body-bg-color);
   margin-bottom: 20px;
   position: absolute;
   margin-left: -50%;
@@ -241,7 +255,7 @@
   position: relative;
   display: block;
   color: inherit;
-  background-color: var(--dark-color-very-light);
+  background-color: var(--base-content-bg-color);
   border-color: var(--gray-color-dim);
   box-shadow: 0px 4px 15px 1px hsla(var(--primary-color-hsl), 0.21);
   border-radius: 33px 33px 0px 0px;
@@ -254,9 +268,9 @@
   -webkit-font-smoothing: var(--card-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--card-moz-osx-font-smoothing);
   color: inherit;
-  background-color: var(--dark-color-very-light);
+  background-color: var(--base-content-bg-color);
   border-radius: 1.4rem;
-  box-shadow: 0px 4px 15px 1px var(--dark-color-very-light);
+  box-shadow: 0px 4px 15px 1px var(--base-content-bg-color);
 }
 
 
@@ -285,14 +299,14 @@
   border-color: transparent;
   margin: 2px;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
 }
 
 .btn-inactive {
   border-color: transparent;
   margin: 2px;
-  color: var(--dark-color);
-  background-color: var(--secondary-color-very-light);
+  color: var(--text-color-on-primary-color-bg);
+  background-color: var(--primary-color-very-light);
   border-color: none;
   box-shadow: none;
 }
@@ -383,14 +397,14 @@
 }
 
 table {
-  background-color: var(--dark-color-very-light);
+  background-color: var(--base-content-bg-color);
   border-collapse: collapse;
   width: 100%;
 }
 
 th,
 td {
-  border: 1px solid var(--dark-color-very-light);
+  border: 1px solid var(--base-content-bg-color);
   text-align: left;
   padding: 8px;
   font-size: 12px;
@@ -398,8 +412,8 @@ td {
 }
 
 th {
-  background-color: var(--dark-color-very-light);
-  color: var(--secondary-color);
+  background-color: var(--base-content-bg-color);
+  color: var(--primary-color);
   font-family: "Rubik";
   font-style: normal;
   font-weight: 400;
@@ -408,7 +422,7 @@ th {
 }
 
 td {
-  background-color: var(--dark-color-very-light);
+  background-color: var(--base-content-bg-color);
 }
 
 form {

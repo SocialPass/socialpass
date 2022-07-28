@@ -2,7 +2,7 @@ import googleWalletIcon from "../../static/images/icons/gw-icon.svg";
 
 export default function GoogleWalletButton() {
   return (
-    <button className="btn btn-google-wallet d-flex align-items-center justify-content-start gap-5 mt-15">
+    <button className="btn-google-wallet d-flex align-items-center justify-content-start gap-5 mt-15">
       <img
         className="wallet-icon"
         src={googleWalletIcon}

@@ -18,6 +18,9 @@ def get_theme_value(context, key):
             - css_theme
     Note: If a team does not have its own theme, default to SocialPass
     """
+    # Set initial theme to none
+    theme = None
+
     # Team is available in context
     # Use that value
     if "current_team" in context:

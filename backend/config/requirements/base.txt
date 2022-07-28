@@ -28,3 +28,4 @@ django-crispy-forms==1.14.0
 django-compressor==4.0 # https://github.com/django-compressor/django-compressor
 crispy-bootstrap5==0.6
 git+https://github.com/jazzband/django-invitations.git@dfc65d3e0c27fe6e6d66083621348c149c47a725
+sorl-thumbnail==12.8.0 #https://pypi.org/project/sorl-thumbnail/

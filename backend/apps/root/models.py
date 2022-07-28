@@ -18,6 +18,7 @@ from invitations import signals
 from invitations.adapters import get_invitations_adapter
 from invitations.base_invitation import AbstractBaseInvitation
 from pytz import utc
+from sorl.thumbnail import ImageField as SorlImageField
 from taggit.managers import TaggableManager
 
 from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
@@ -43,7 +44,7 @@ class Team(DBModel):
 
     # base info
     name = models.CharField(max_length=255)
-    image = models.ImageField(
+    image = SorlImageField(
         null=True, blank=True, height_field=None, width_field=None, max_length=255
     )
     description = models.TextField(blank=True)
@@ -210,36 +211,38 @@ class Event(DBModel):
         default=timezone.now,
         null=True,
         blank=True,
-        help_text="When your event will be made public."
+        help_text="When your event will be made public.",
     )
     visibility = models.CharField(
         max_length=50,
         choices=EVENT_VISIBILITY,
         default=EVENT_VISIBILITY[0][0],
-        help_text="Whether or not your event is searchable by the public."
+        help_text="Whether or not your event is searchable by the public.",
     )
     show_ticket_count = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays ticket statistics."
+        default=True, help_text="Whether or not your event displays ticket statistics."
     )
     show_team_image = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays the team image."
+        default=True, help_text="Whether or not your event displays the team image."
     )
 
     # Basic Info
     title = models.CharField(
-        max_length=255, blank=False, unique=True,
-        help_text="Brief name for your event. Must be unique!"
+        max_length=255,
+        blank=False,
+        unique=True,
+        help_text="Brief name for your event. Must be unique!",
     )
     organizer = models.CharField(
-        max_length=255, null=True, blank=True,
-        help_text="Name or brand or community organizing the event."
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Name or brand or community organizing the event.",
     )
     description = models.TextField(
         null=True, blank=True, help_text="A short description of your event."
     )
-    cover_image = models.ImageField(
+    cover_image = SorlImageField(
         blank=True, null=True, help_text="A banner image for your event."
     )
     category = models.ForeignKey(
@@ -265,8 +268,10 @@ class Event(DBModel):
     )
     # localized address string (used to populate maps lookup)
     location = models.CharField(
-        max_length=1024, blank=True, null=True,
-        help_text="Where your event will take place."
+        max_length=1024,
+        blank=True,
+        null=True,
+        help_text="Where your event will take place.",
     )
     # The street/location address (part 1)
     address_1 = models.CharField(max_length=255, blank=True, null=True)
@@ -294,12 +299,15 @@ class Event(DBModel):
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
     capacity = models.IntegerField(
-        blank=True, default=1, validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event."
+        blank=True,
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text="Maximum amount of attendees for your event.",
     )
     limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee."
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+        help_text="Maximum amount of tickets per attendee.",
     )
 
     # Pricing Info
@@ -475,6 +483,7 @@ class Event(DBModel):
             "capacity",
             "timezone",
             "limit_per_person",
+            "cover_image",
         ]
         return fields
 
@@ -483,7 +492,6 @@ class Event(DBModel):
         fields = [
             "show_ticket_count",
             "show_team_image",
-            "cover_image",
             "end_date",
             "publication_date",
             "address_1",
@@ -547,7 +555,7 @@ class Ticket(DBModel):
 
     # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(null=True, storage=get_private_ticket_storage)
+    file = SorlImageField(null=True, storage=get_private_ticket_storage)
     embed_code = models.UUIDField(default=uuid.uuid4)
 
     # Ticket access info

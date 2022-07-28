@@ -1,23 +1,21 @@
-{% load static %}
+{% load static thumbnail %}
 
 {% for event in events %}
 	<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-0 col-lg-4 {% if from == 'featured_events' and forloop.counter == 3 %}offset-md-3 offset-lg-0{% endif %}">
 		<a href="{% url 'discovery:details' event.public_id %}" class="event-card card card-link p-0">
 			<!-- Event cover image start -->
 			<div class="d-flex align-items-center justify-content-center w-100 hs-200 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
-        <!-- Backwards compatibility -->
-        {% if not event.cover_image %}
-          <img src="" class="w-auto h-100" alt="{{ event.title }} cover image">
-        {% else %}
-
-				  {% if event.cover_image.height > event.cover_image.width %}
-					  <!-- Portrait -->
-					  <img src="{{ event.cover_image.url }}" class="w-auto h-100" alt="{{ event.title }} cover image">
-				  {% else %}
-					  <!-- Landscape -->
-					  <img src="{{ event.cover_image.url }}" class="w-100 h-auto" alt="{{ event.title }} cover image">
-				  {% endif %}
-        {% endif %}
+			  {% if event.cover_image.height > event.cover_image.width %}
+				  <!-- Portrait -->
+				  {% thumbnail event.cover_image "x200" quality=99 as im %}
+				  <img src="{{ im.url }}" class="w-auto h-100" alt="{{ event.title }} cover image">
+				  {% endthumbnail %}
+			  {% else %}
+				  <!-- Landscape -->
+				  {% thumbnail event.cover_image "500"  quality=99 as im %}
+				  <img src="{{ im.url }}" class="w-100 h-auto" alt="{{ event.title }} cover image">
+				  {% endthumbnail %}
+			  {% endif %}
 			</div>
 			<!-- Event cover image end -->
 

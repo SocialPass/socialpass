@@ -13,6 +13,7 @@ type EventDataProps = {
   capacity: number;
   ticket_count: number;
   redeemed_count: number;
+  team: String;
 };
 
 type EventErrorProps = {

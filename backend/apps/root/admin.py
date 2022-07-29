@@ -80,6 +80,7 @@ class EventAdmin(admin.ModelAdmin):
         "team__name",
     )
     inlines = [StateLogInline]
+    readonly_fields = ["state"]
 
 
 @admin.register(TicketRedemptionKey)

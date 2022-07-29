@@ -16,9 +16,8 @@ export function Footer({ waitingForScan }: FooterProps) {
   function handleRedirect() {
     navigate("../statistics");
   }
-  console.log(eventData.team.theme.css_theme)
   return (
-    
+
     <div className="d-flex flex-column py-10 px-30 justify-content-center align-items-center">
       <div className="d-flex flex-column w-100">
         <div className="d-flex flex-row align-items-center justify-content-between">

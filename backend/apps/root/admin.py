@@ -79,9 +79,7 @@ class EventAdmin(admin.ModelAdmin):
 
     def transition_to_live(modeladmin, request, queryset):
         for i in queryset:
-            print(i.state)
             i.transition_live()
-            print(i.state)
         messages.success(request, "Event(s) have been transitioned live")
 
     list_display = (

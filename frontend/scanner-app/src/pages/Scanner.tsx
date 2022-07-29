@@ -93,10 +93,11 @@ export function Scanner() {
     if (!scannerContainer) {
       return;
     }
-    (scannerContainer.firstChild.firstChild as any).style.position = "";
+    (scannerContainer.firstChild?.firstChild as any).style.position = "";
   });
 
   const handleError = useCallback((err: any) => {
+    console.log(err);
     addToast({
       type: "error",
       title: "QR Reader Error",
@@ -168,5 +169,6 @@ export function Scanner() {
   );
 }
 function scanFailureBlock(scanFailureBlock: any) {
+  console.log(scanFailureBlock);
   throw new Error("Function not implemented.");
 }

@@ -1,12 +1,8 @@
 from rest_framework import serializers
 
-from apps.dashboard.models import Team
-from apps.root.models import Event, Ticket
+from apps.root.models import Event, Team, Ticket
 
 
-#
-# MODEL SERIALIZERS ////////////////////////////////////////////////////////////////////////////////
-#
 class TeamSerializer(serializers.ModelSerializer):
     """
     Team serializer
@@ -14,7 +10,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ["name", "image"]
+        fields = ["name", "image", "theme"]
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -37,7 +33,6 @@ class EventSerializer(serializers.ModelSerializer):
             "limit_per_person",
             "start_date",
             "timezone",
-            "timezone_offset",
             "location",
             "capacity",
             "ticket_count",

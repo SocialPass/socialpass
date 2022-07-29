@@ -5,10 +5,13 @@ from . import object_tracker
 
 class AvoidRessubmissionCreateViewMixin(CreateView):
 
-    """View to avoid form resubmission. Starts a new tracking UUID and binds it to the form instance
-    in case it is saved.
-    If the browser is resubmitting the form, the uuid field's value will map to the previously bound object.
-    Thus, an update is performed instead of a new object creation."""
+    """
+    View to avoid form resubmission.
+    Starts a new tracking UUID and binds it to the form instance in case it is saved.
+    If the browser is resubmitting the form,
+        the uuid field's value will map to the previously bound object.
+    Thus, an update is performed instead of a new object creation.
+    """
 
     tracker_backend = object_tracker.ModelObjectTracker
 

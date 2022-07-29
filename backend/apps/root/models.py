@@ -1,30 +1,30 @@
 import os
-import typing
 import uuid
 from datetime import datetime, timedelta
+from enum import Enum
 
 import boto3
-import pytz
-from dateutil.tz import tzoffset
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core import exceptions as dj_exceptions
-from django.core.files.storage import get_storage_class
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django_fsm import FSMField, transition
 from djmoney.models.fields import MoneyField
+from invitations import signals
+from invitations.adapters import get_invitations_adapter
+from invitations.base_invitation import AbstractBaseInvitation
 from pytz import utc
 from taggit.managers import TaggableManager
 
-from apps.dashboard.models import PricingRule, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
+from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.validators import JSONSchemaValidator
-from config.storages import PrivateTicketStorage
+from config.storages import get_private_ticket_storage
 
 
 class User(AbstractUser):
@@ -33,42 +33,124 @@ class User(AbstractUser):
     """
 
 
-class EventLocation(DBModel):
-    # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255)
-    # The street/location address (part 2)
-    address_2 = models.CharField(max_length=255)
-    # The city
-    city = models.CharField(max_length=255)
-    # The ISO 3166-2 2- or 3-character region code for the state, province, region, or district
-    region = models.CharField(max_length=3)
-    # The postal code
-    postal_code = models.IntegerField()
-    # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2)
-    # geodjango lat/long
-    lat = models.DecimalField(max_digits=9, decimal_places=6)
-    long = models.DecimalField(max_digits=9, decimal_places=6)
-    # TODO:
-    # point = PointField(geography=True, default="POINT(0.0 0.0)")
-    # localized_address_display #The format of the address display localized to the address country
-    # localized_area_display	#The format of the address's area display localized to the address country
-    # localized_multi_line_address_display #The multi-line format order of the address display localized to the address country, where each line is an item in the list
+class Team(DBModel):
+    """
+    Umbrella team model for SocialPass customers
+    """
 
+    def get_default_pricing_rule_group():  # type: ignore
+        return PricingRuleGroup.objects.get(name="Default").pk
 
-class EventCategory(DBModel):
-
-    parent_category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True
-    )
+    # base info
     name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
+    image = models.ImageField(
+        null=True, blank=True, height_field=None, width_field=None, max_length=255
+    )
+    description = models.TextField(blank=True)
+    members = models.ManyToManyField("root.User", through="root.Membership")
+    pricing_rule_group = models.ForeignKey(
+        "PricingRuleGroup",
+        on_delete=models.CASCADE,
+        default=get_default_pricing_rule_group,
+    )
+    theme = models.JSONField(null=True, blank=True)
 
     def __str__(self):
-        if self.parent_category:
-            return f"{self.parent_category} - {self.name}"
-        else:
-            return self.name
+        """
+        return string representation of model
+        """
+        return self.name
+
+
+class Membership(DBModel):
+    """
+    Membership manager for users <> teams
+    """
+
+    class Meta:
+        # TODO: rename table in future to `root_`
+        unique_together = ("team", "user")
+
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(
+        "root.User", on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"{self.team.name}-{self.user.email}"
+
+
+class Invite(DBModel, AbstractBaseInvitation):
+    """
+    Custom invite inherited from django-invitations
+    Used for team invitations
+    """
+
+    email = models.EmailField(
+        unique=True,
+        verbose_name="e-mail address",
+        max_length=settings.INVITATIONS_EMAIL_MAX_LENGTH,
+    )
+    # custom
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    membership = models.ForeignKey(
+        Membership, on_delete=models.CASCADE, blank=True, null=True
+    )
+    archived_email = models.EmailField(blank=True, null=True)
+
+    @classmethod
+    def create(cls, email, inviter=None, **kwargs):
+        key = get_random_string(64).lower()
+        instance = cls._default_manager.create(
+            email=email, key=key, inviter=inviter, **kwargs
+        )
+        return instance
+
+    def key_expired(self):
+        expiration_date = self.sent + timedelta(
+            days=settings.INVITATIONS_INVITATION_EXPIRY,
+        )
+        return expiration_date <= timezone.now()
+
+    def send_invitation(self, request, **kwargs):
+        current_site = get_current_site(request)
+        invite_url = reverse(settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key])
+        invite_url = request.build_absolute_uri(invite_url)
+        ctx = kwargs
+        ctx.update(
+            {
+                "team": self.team,
+                "invite_url": invite_url,
+                "site_name": current_site.name,
+                "email": self.email,
+                "key": self.key,
+                "inviter": self.inviter,
+            },
+        )
+
+        email_template = "invitations/email/email_invite"
+
+        get_invitations_adapter().send_mail(email_template, self.email, ctx)
+        self.sent = timezone.now()
+        self.save()
+
+        signals.invite_url_sent.send(
+            sender=self.__class__,
+            instance=self,
+            invite_url_sent=invite_url,
+            inviter=self.inviter,
+        )
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        if self.team:
+            return f"{self.team.name}-{self.email}"
+        return self.email
 
 
 class EventQuerySet(models.QuerySet):
@@ -80,13 +162,13 @@ class EventQuerySet(models.QuerySet):
         """
         inactive events (not live)
         """
-        return self.filter(~models.Q(state=EventStatusEnum.LIVE.value))
+        return self.filter(~models.Q(state=Event.StateEnum.LIVE.value))
 
     def filter_active(self):
         """
         active events (live)
         """
-        return self.filter(state=EventStatusEnum.LIVE.value)
+        return self.filter(state=Event.StateEnum.LIVE.value)
 
     def filter_publicly_accessible(self):
         """
@@ -107,11 +189,16 @@ class Event(DBModel):
     Stores data for ticketed event
     """
 
+    class StateEnum(Enum):
+        DRAFT = "Draft"
+        PENDING_CHECKOUT = "Ready for Checkout"
+        LIVE = "Live"
+
     # Queryset manager
     objects = EventQuerySet.as_manager()
 
     # state
-    state = FSMField(default=EventStatusEnum.DRAFT.value, protected=True)
+    state = FSMField(default=StateEnum.DRAFT.value, protected=True)
 
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -119,33 +206,85 @@ class Event(DBModel):
 
     # Publish info
     is_featured = models.BooleanField(default=False)
-    publish_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
-    visibility = models.CharField(max_length=50, choices=EVENT_VISIBILITY)
+    publication_date = models.DateTimeField(
+        default=timezone.now,
+        null=True,
+        blank=True,
+        help_text="When your event will be made public."
+    )
+    visibility = models.CharField(
+        max_length=50,
+        choices=EVENT_VISIBILITY,
+        default=EVENT_VISIBILITY[0][0],
+        help_text="Whether or not your event is searchable by the public."
+    )
+    show_ticket_count = models.BooleanField(
+        default=True,
+        help_text="Whether or not your event displays ticket statistics."
+    )
+    show_team_image = models.BooleanField(
+        default=True,
+        help_text="Whether or not your event displays the team image."
+    )
 
     # Basic Info
-    title = models.CharField(max_length=255, blank=False, unique=True)
-    organizer = models.CharField(max_length=255, null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
-    cover_image = models.ImageField(blank=True, null=True, storage=get_storage_class())
+    title = models.CharField(
+        max_length=255, blank=False, unique=True,
+        help_text="Brief name for your event. Must be unique!"
+    )
+    organizer = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="Name or brand or community organizing the event."
+    )
+    description = models.TextField(
+        null=True, blank=True, help_text="A short description of your event."
+    )
+    cover_image = models.ImageField(
+        blank=True, null=True, help_text="A banner image for your event."
+    )
     category = models.ForeignKey(
-        EventCategory, on_delete=models.SET_NULL, null=True, blank=True
+        "EventCategory", on_delete=models.SET_NULL, null=True, blank=True
     )
     tags = TaggableManager(
         blank=True,
     )
-    start_date = models.DateTimeField(blank=True, null=True)
-    end_date = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateTimeField(
+        blank=True, null=True, help_text="When your event will start."
+    )
+    end_date = models.DateTimeField(
+        blank=True, null=True, help_text="When your event will end (optional)."
+    )
+
+    # Location info
+    # tiemzone of event
     timezone = models.CharField(
         blank=True,
         null=True,
         verbose_name="time zone",
         max_length=30,
     )
-    timezone_offset = models.FloatField(
-        blank=True, null=True, verbose_name="Timezone offset in seconds"
+    # localized address string (used to populate maps lookup)
+    location = models.CharField(
+        max_length=1024, blank=True, null=True,
+        help_text="Where your event will take place."
     )
-    location = models.CharField(blank=True, max_length=1024)
-    # location_info = models.ForeignKey(EventLocation, on_delete=models.CASCADE, null=True)
+    # The street/location address (part 1)
+    address_1 = models.CharField(max_length=255, blank=True, null=True)
+    # The street/location address (part 2)
+    address_2 = models.CharField(max_length=255, blank=True, null=True)
+    # The city
+    city = models.CharField(max_length=255, blank=True, null=True)
+    # The ISO 3166-2 2- or 3-character region code
+    region = models.CharField(max_length=4, blank=True, null=True)
+    # The postal code
+    postal_code = models.CharField(max_length=12, blank=True, null=True)
+    # The ISO 3166-1 2-character international code for the country
+    country = models.CharField(max_length=2, blank=True, null=True)
+    # lat/long
+    lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    localized_address_display = models.CharField(max_length=1024, blank=True, null=True)
+    # TODO localized_multi_line_address_display
 
     # Ticket Info
     # TODO: Move these to TicketType
@@ -155,10 +294,12 @@ class Event(DBModel):
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
     capacity = models.IntegerField(
-        blank=True, default=1, validators=[MinValueValidator(1)]
+        blank=True, default=1, validators=[MinValueValidator(1)],
+        help_text="Maximum amount of attendees for your event."
     )
     limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)],
+        help_text="Maximum amount of tickets per attendee."
     )
 
     # Pricing Info
@@ -166,7 +307,7 @@ class Event(DBModel):
         max_digits=19, decimal_places=4, default_currency="USD", null=True
     )
     pricing_rule = models.ForeignKey(
-        PricingRule,
+        "PricingRule",
         null=True,
         blank=True,
         default=None,
@@ -177,11 +318,11 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     def get_absolute_url(self):
-        if self.state == EventStatusEnum.DRAFT.value:
+        if self.state == Event.StateEnum.DRAFT.value:
             _success_url = "event_update"
-        elif self.state == EventStatusEnum.PENDING_CHECKOUT.value:
+        elif self.state == Event.StateEnum.PENDING_CHECKOUT.value:
             _success_url = "event_checkout"
-        elif self.state == EventStatusEnum.LIVE.value:
+        elif self.state == Event.StateEnum.LIVE.value:
             _success_url = "event_detail"
         return reverse(
             _success_url,
@@ -231,38 +372,37 @@ class Event(DBModel):
 
     @transition(
         field=state,
-        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
-        target=EventStatusEnum.DRAFT.value,
+        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
+        target=StateEnum.DRAFT.value,
     )
     def transition_draft(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
+        -
         """
-        print("transition draft")
         return
 
     @transition(
         field=state,
-        source=[EventStatusEnum.DRAFT.value, EventStatusEnum.PENDING_CHECKOUT.value],
-        target=EventStatusEnum.PENDING_CHECKOUT.value,
+        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
+        target=StateEnum.PENDING_CHECKOUT.value,
     )
     def transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
+        -
         """
-        print("transition pending_checkout")
         return
 
-    @transition(field=state, target=EventStatusEnum.LIVE.value)
+    @transition(field=state, target=StateEnum.LIVE.value)
     def transition_live(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
         - Create ticket scanner object
         """
-        print("transition live")
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
 
@@ -277,14 +417,19 @@ class Event(DBModel):
     @price.setter
     def price(self, value):
         raise AttributeError(
-            "Directly setting price is disallowed. Please check the Event @price.getter method"
+            "Directly setting price is disallowed. \
+            Please check the Event @price.getter method"
         )
 
     @price.getter
     def price(self):
         """
-        custom price.getter to provide calculable DB field (actual field is stored as _price)
-        evaluates calculated vs current value and updates price or pricing_rule when needed
+        Custom price.getter to provide calculable DB field
+        Returns up-to-date price of event.
+        Note: DB field is stored as self._price
+
+        This getter evaluates calculated (expected) price vs current price.
+        In case of conflict, this function update _price.
         """
         # Side effects may occur
         # Set to_save = True when they to do to be saved
@@ -317,6 +462,80 @@ class Event(DBModel):
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
+    @staticmethod
+    def required_form_fields():
+        fields = [
+            "title",
+            "organizer",
+            "description",
+            "visibility",
+            "location",
+            "start_date",
+            "requirements",
+            "capacity",
+            "timezone",
+            "limit_per_person",
+        ]
+        return fields
+
+    @staticmethod
+    def optional_form_fields():
+        fields = [
+            "show_ticket_count",
+            "show_team_image",
+            "cover_image",
+            "end_date",
+            "publication_date",
+            "address_1",
+            "address_2",
+            "city",
+            "region",
+            "postal_code",
+            "country",
+            "lat",
+            "long",
+            "localized_address_display",
+        ]
+        return fields
+
+
+class EventCategory(DBModel):
+    """
+    Category model for Events
+    Contains parent description
+    """
+
+    parent_category = models.ForeignKey(
+        "EventCategory", on_delete=models.SET_NULL, null=True
+    )
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        if self.parent_category:
+            return f"{self.parent_category} - {self.name}"
+        else:
+            return self.name
+
+
+class EventStripePayment(DBModel):
+    """
+    Registers a payment done for Event
+    """
+
+    event = models.ForeignKey(
+        "Event", on_delete=models.SET_NULL, null=True, related_name="payments"
+    )
+    value = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="USD", null=True
+    )
+    status = models.CharField(
+        choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"
+    )
+    stripe_checkout_session_id = models.CharField(max_length=1024)
+    callaback_timestamp = models.DateTimeField(null=True, blank=True)
+    acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
+
 
 class Ticket(DBModel):
     """
@@ -328,7 +547,7 @@ class Ticket(DBModel):
 
     # Ticket File Info
     filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(null=True, storage=PrivateTicketStorage())
+    file = models.ImageField(null=True, storage=get_private_ticket_storage)
     embed_code = models.UUIDField(default=uuid.uuid4)
 
     # Ticket access info
@@ -360,22 +579,32 @@ class Ticket(DBModel):
         return os.path.join(self.file.storage.location, self.file.name)
 
     @property
-    def temporary_download_url(self):
-        s3_client = boto3.client(
-            "s3",
-            region_name=settings.AWS_S3_REGION_NAME,
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-        return s3_client.generate_presigned_url(
-            ClientMethod="get_object",
-            Params={
-                "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                "Key": self.filename_key,
-            },
-            ExpiresIn=3600,
-        )
+    def download_url(self):
+        """
+        This property is used for private ticket url
+        On debug, use default image file
+        On production, generate pre-signed s3 url
+        """
+        # Production
+        if not settings.DEBUG:
+            s3_client = boto3.client(
+                "s3",
+                region_name=settings.AWS_S3_REGION_NAME,
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            )
+            return s3_client.generate_presigned_url(
+                ClientMethod="get_object",
+                Params={
+                    "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
+                    "Key": self.filename_key,
+                },
+                ExpiresIn=3600,
+            )
+        # Debug
+        else:
+            return self.file.url
 
 
 class TicketRedemptionKey(DBModel):
@@ -407,7 +636,7 @@ class BlockchainOwnership(DBModel):
     Stores details used to verify blockchain ownership in exchange for tickets
     """
 
-    def set_expires():
+    def set_expires():  # type: ignore
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
     # Keys
@@ -428,8 +657,72 @@ class BlockchainOwnership(DBModel):
     @property
     def signing_message(self):
         return (
-            "Greetings from SocialPass. Sign this message to prove you have access to this wallet"
-            "\nThis IS NOT a trade or transaction"
+            "Greetings from SocialPass."
+            "\nSign this message to prove ownership"
+            "\n\nThis IS NOT a trade or transaction"
             f"\n\nTimestamp: {self.expires.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)[0:7]}"
         )
+
+
+class PricingRule(DBModel):
+    """
+    Maps a capacity to a price per capacity
+    Used to represent specific capacity charge of a team's event
+    """
+
+    class Meta:
+        constraints = [
+            # adds constraint so that max_capacity is necessarily
+            # greater than min_capacity
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_max_capacity__gt__min_capacity",
+                check=(
+                    models.Q(max_capacity__isnull=True)
+                    | models.Q(max_capacity__gt=models.F("min_capacity"))
+                ),
+            )
+        ]
+
+    min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
+    max_capacity = models.IntegerField(null=True, blank=True)
+    price_per_ticket = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="USD", null=True
+    )
+    active = models.BooleanField(default=True)
+    group = models.ForeignKey(
+        "PricingRuleGroup",
+        related_name="pricing_rules",
+        on_delete=models.CASCADE,  # if group is deleted, delete all rules
+    )
+
+    @property
+    def safe_max_capacity(self) -> int:
+        # note: return psql max size integer
+        return 2147483640 if self.max_capacity is None else self.max_capacity
+
+    def __str__(self):
+        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})"  # noqa
+
+    def __repr__(self):
+        return f"PricingRule({self.min_capacity} - {self.max_capacity})"
+
+
+class PricingRuleGroup(DBModel):
+    """
+    Represents a group of PricingRule's
+    Used to represent full-range of charges per team's event
+    """
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+
+    @property
+    def active_rules(self):
+        return self.pricing_rules.filter(active=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def __repr__(self):
+        return f"Pricing Rule Group({self.name})"

@@ -1,7 +1,3 @@
-import metamaskActive from "../static/images/connectors/metamask-active.svg";
-import walletconnectActive from "../static/images/connectors/walletconnect-active.svg";
-import coinbaseActive from "../static/images/connectors/coinbase-active.svg";
-
 // ConnectorImage
 // Return image based on connector props
 export const Web3ConnectorImage = ({
@@ -11,13 +7,29 @@ export const Web3ConnectorImage = ({
 }) => {
   switch (connector) {
     case "MetaMask":
-      return <img height="64" width="64" src={metamaskActive} alt="image" />;
+      return (
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+          className="img-fluid"
+          alt="Metamask"
+        />
+      );
     case "WalletConnect":
       return (
-        <img height="64" width="64" src={walletconnectActive} alt="image" />
+        <img
+          src="https://raw.githubusercontent.com/WalletConnect/walletconnect-assets/492d95c038bbcde1517cab5fb90ed4514690e919/svg/circle/walletconnect-circle-blue.svg"
+          className="img-fluid"
+          alt="WalletConnect"
+        />
       );
     case "Coinbase Wallet":
-      return <img height="64" width="64" src={coinbaseActive} alt="image" />;
+      return (
+        <img
+          src="https://avatars.githubusercontent.com/u/18060234?s=280&v=4"
+          className="img-fluid"
+          alt="Coinbase"
+        />
+      );
     default:
       return null;
   }

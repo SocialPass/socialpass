@@ -13,6 +13,11 @@
             {{ k }}="{{ v }}"
         {% endfor %}
         >{% if input.value %}{{ input.value }}{% endif %}</textarea>
+    {% if input.help_text %}
+        <div class="form-text">
+            {{ input.help_text }}
+        </div>
+    {% endif %}
     {% if input.errors %}
         <ul class="invalid-feedback">
             {% for error in input.errors %}

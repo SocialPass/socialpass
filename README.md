@@ -1,61 +1,107 @@
-# Welcome to SocialPass
-![SocialPass Logo](https://res.cloudinary.com/nfty-labs/image/upload/v1652735850/SocialPass-Icon_eanblz.svg)
-Welcome to SocialPass! If you're reading this, you've found yourself in a great place to be a builder.
+<p align="center">
+<img align="center" width="169" height="169" src="https://res.cloudinary.com/nfty-labs/image/upload/v1652735850/SocialPass-Icon_eanblz.svg"/>
+</p>
 
-SocialPass is all about events and Web3. If you're not familiar with either yet, the resources below are a great way to start:
+# SocialPass
+SocialPass provides end-to-end event organization software aimed at the next generation of events.
 
-## Event Resources
+
+# Before Jumping In
+As mentioned above, SocialPass is all about events and Web3. If you're not familiar with either yet, the resources below are a great way to start:
+
+### Event Resources
 - https://www.eventbrite.com/blog/press/press-releases/eventbrite-acquires-london-based-lanyrd-and-latin-american-events-company-eventioz/
 - https://www.infoworld.com/article/2362947/expert-interview-how-to-scale-django.amp.html
 
-## Web3 Resources
--
+### Web3 Resources
+- url
+- url
 
-Additions are always encouraged here! Staying on top of certain trends, topic, etc. is very important here, and in the blockchain space in general.
+# Contributions
+1. Branches opened for PR with relevant reviewer requested
+2. PR passes all checks
+2. PR reviewed
+3. PR merged into `master`
 
-Now that's out the way, it's safe to get started
+Once merged, `master`, can be pushed directly to either `staging` or `master`.
+This will trigger CI/CD pipelie for the respective environments.
+
+Branches should be prefixed matching their corresponding GH label and a brief description of the issue at hand.
+- `minor/*`
+- `major/*`
+- `refactor/*`
 
 # Getting Started
-A root-level [Makefile](Makefile) exists to jumpstart local development. The guide below will reference these makefile commands.
+## Contributions
+1. Branches opened for PR with relevant reviewer requested
+2. PR passes all checks
+2. PR reviewed
+3. PR merged into `master`
 
-Again, any additions here to hasten development are always welcome
+Branches should be prefixed matching their corresponding GH label and a brief description of the issue at hand.
+- `minor/*`
+- `major/*`
+- `refactor/*`
 
 ## Clone repo
-- `git clone git@github.com:nftylabs/socialpass.git`
-- `cd socialpass`
+```bash
+git clone git@github.com:nftylabs/socialpass.git
+cd socialpass
+```
 
-## Setup development environment (if possible)
-- `python3 -m venv venv`
-- `source venv/bin/activate`
-- `pre-commit install`
+## Run with docker and docker-compose
+```bash
+# Build Containers
+make build
 
-## Build Containers
-`make build`
+# Run Migrations (if necessary)
+make migrate
 
-## Run Migrations (if necessary)
-`make migrate`
+# Run Containers
+make up
+```
 
-## Run Containers
-`make up`
+## Run with pyenv
+```bash
+# Install python 3.10.5 version
+pyenv install 3.10.5
 
-# Backend
-## Backend Style Guide
-- Fat models, thin views & thin forms
-- All views should have accompanying test(s)
--
+# Make python version local or global
+pyenv local 3.10.5
+pyenv global 3.10.5
 
-## API Checkout Portal (`api_checkoutportal`)
-## API Scanner (`api_scanner`)
-## Avoid Form Resubmission (`avoid_form_resubmission`)
-## Organizer Dashboard (`dashboard`)
-## Event Discovery (`event_discovery`)
-## Root (`root`)
+# Optional: Depending on your OS, you may need to run the following to activate pyenv
+eval "$(pyenv init -)"
 
-# Frontend
-## Frontend Style Guide
-- Scaffold new projects with Vite (https://vitejs.dev)
-- Prefer Yarn over NPM
-- Prefer basic CSS over CSS-in-JS or anything of the like (tailwind, etc.)
+# Verify version
+python --version
 
-## Event Portal (eventportal)
-## Scanner (scanner-app)
+# Create a virtual enviroment for the application
+pyenv virtualenv 3.10.5 socialpass
+pyenv activate socialpass
+
+# Install development dependencies
+pip install -r backend/config/requirements/local.txt
+
+# Run postgres image
+# Alternatively, running a postgres server locally also works
+docker run -d --name database -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data postgres
+
+# Run Migrations (if necessary)
+python backend/manage.py migrate
+
+# Compress staticfiles (if necessary)
+python backend/manage.py compress --force
+
+# Run application
+python backend/manage.py runserver
+```
+
+```bash
+## EXTRA COMMANDS
+# To stop postgres container
+docker stop database
+
+# To start postgres container
+docker start database
+```

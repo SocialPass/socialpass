@@ -13,6 +13,8 @@ window.onload = function(){
 	for (let requirement of initialRequirementsData){
 	  addRequirement(requirement)
 	}
+  } else {
+	  //document.getElementById("add-req").click();
   }
 }
 
@@ -73,13 +75,16 @@ function _createRequirementForm(initialData = null){
 	<form id="${formId}" onChange="disallowPublish()">
 	  <div class="form-group">
 		<label for="blockChainSelect">Blockchain <span class="asteriskField">*</span></label>
-		<select class="form-control" id="blockChainSelect-${requirementsAbsoluteCounter}">
+		<select class="form-select" id="blockChainSelect-${requirementsAbsoluteCounter}">
 
 		</select>
+		<div class ="form-text">
+			Blockchain the asset is on.
+		</div>
 	  </div>
 	  <div class="form-group">
 		<label for="networkSelect">Network <span class="asteriskField">*</span></label>
-		<select required class="form-control" id="networkSelect-${requirementsAbsoluteCounter}">
+		<select required class="form-select" id="networkSelect-${requirementsAbsoluteCounter}">
 
 		</select>
 	  </div>
@@ -88,22 +93,34 @@ function _createRequirementForm(initialData = null){
 		<select required class="form-control" id="assetTypeSelect-${requirementsAbsoluteCounter}" placeholder="ERC20">
 
 		</select>
+		<div class ="form-text">
+			Type of asset.
+		</div>
 	  </div>
 	  <div class="form-group">
 		<label for="assetAdressInput">Asset Address <span class="asteriskField">*</span></label>
 		<input required pattern="^(0x|0X).*$" required type="text" class="form-control" id="assetAdressInput-${requirementsAbsoluteCounter}"
 				oninvalid="this.setCustomValidity('Asset Address must start with 0x')"
 				oninput="this.setCustomValidity('')">
+		<div class ="form-text">
+			Contract address of the asset.
+		</div>
 	  </div>
 	  <div class="form-group">
 		<label for="requiredAmountInput">Required Amount <span class="asteriskField">*</span></label>
 		<input required type="number" class="form-control" id="requiredAmountInput-${requirementsAbsoluteCounter}">
+		<div class ="form-text">
+			Required amount a potential attendee must hold of the asset.
+		</div>
 	  </div>
 	  <div>
 		Token IDs
 		<i type="button" onclick="addNewTokenIdToRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-add"></i>
 		|
 		<i type="button" onclick="popTokenIdFromRequirement(${requirementsAbsoluteCounter})" class="fa-regular fa-trash-can"></i>
+	  </div>
+	  <div class="form-text">
+	  	Specific token ID of the asset (optional).
 	  </div>
 	  <hr/>
 	  <div id="tokenIdGroup-${requirementsAbsoluteCounter}" class="d-flex flex-column align-items-start gap-3 mt-2"></div>
@@ -164,7 +181,7 @@ function popTokenIdFromRequirement(requirementIdx){
   tokenIdsCounter[requirementIdx] = tokenIdsCounter[requirementIdx] - 1;
 }
 
-function addNewTokenIdToRequirement(requirementIdx, initialData=null){
+function addNewTokenIdToRequirement(requirementIdx, initialData=[null]){
   const tokenIdGroupId = 'tokenIdGroup-'+ requirementIdx
 
   let list = document.getElementById(tokenIdGroupId);
@@ -220,43 +237,3 @@ function fillRequirementsAndSubmitForm(){
 	form.submit();
   }
 }
-
-const formatter = new Intl.NumberFormat('en-US', {
-	style: 'currency',
-	currency: 'USD',
-	minimumFractionDigits: 2
-})
-
-window.addEventListener('load', function() {
-	console.log('load');
-	var capacity = document.getElementById('id_capacity').value;
-	fetch(priceEstimatorUrl + capacity).then(function(response) {
-		return response.json();
-	}).then(function(data) {
-		console.log(data);
-		document.getElementById('price-placeholder').style.display = 'none';
-		document.getElementById('price-calc').style.display = 'block';
-
-		document.getElementById('price-calc-capacity').innerHTML = capacity;
-		document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
-		document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
-
-	});
-})
-
-
-document.getElementById('id_capacity').addEventListener('change', function() {
-	var capacity = document.getElementById('id_capacity').value;
-	fetch(priceEstimatorUrl + capacity).then(function(response) {
-		return response.json();
-	}).then(function(data) {
-		console.log(data);
-		document.getElementById('price-placeholder').style.display = 'none';
-		document.getElementById('price-calc').style.display = 'block';
-
-		document.getElementById('price-calc-capacity').innerHTML = capacity;
-		document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
-		document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
-
-	});
-})

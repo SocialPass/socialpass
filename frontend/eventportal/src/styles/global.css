@@ -1,0 +1,84 @@
+:root {
+  --base-body-bg-color: var(--gray-color-light);
+}
+
+.dark-mode {
+  --base-body-bg-color: var(--dark-color-very-dim);
+}
+
+/* Content and card */
+
+:root {
+  --content-and-card-spacing: 4rem;
+}
+
+@media (max-width: 576px) {
+  :root {
+    --content-and-card-spacing: 3rem;
+  }
+}
+
+/* Wallet radio buttons */
+
+.wallet-button {
+  position: relative;
+  display: block;
+}
+
+.wallet-button .wallet-button-input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+.wallet-button .wallet-button-label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  padding: 1rem;
+  background-color: var(--gray-color-very-light);
+  border: var(--base-border-width) var(--base-border-style) transparent;
+  border-radius: var(--rounded-3-border-radius);
+  filter: grayscale(1);
+  opacity: 0.75;
+}
+
+.dark-mode .wallet-button .wallet-button-label {
+  background-color: var(--darkgray-color-dim);
+}
+
+.wallet-button .wallet-button-input:checked + .wallet-button-label {
+  background-color: var(--white-color);
+  border-color: var(--secondary-color);
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+.dark-mode .wallet-button .wallet-button-input:checked + .wallet-button-label {
+  background-color: var(--dark-color-very-light);
+}
+
+.wallet-button .wallet-button-input:focus + .wallet-button-label {
+  box-shadow: 0 0 0 0.4rem hsla(var(--secondary-color-hsl), 0.2);
+}
+
+/* Utilities */
+
+.border-blend {
+  border-color: var(--white-color) !important;
+}
+
+.dark-mode .border-blend {
+  border-color: var(--dark-color-very-light) !important;
+}
+
+.ws-860 {
+  width: 86rem !important;
+}
+

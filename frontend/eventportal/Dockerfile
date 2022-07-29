@@ -1,14 +1,11 @@
-#Specify a base image
-FROM node:18-bullseye
+# Specify a base image
+FROM node:16-bullseye
 
-#Setup working directory
+# Setup working directory
 WORKDIR /eventportal
 
+# setup app
 COPY package.json .
 RUN yarn install
-
 COPY . .
 EXPOSE 3000
-
-# Healthcheck
-HEALTHCHECK CMD curl --fail http://localhost:3000 || exit 1

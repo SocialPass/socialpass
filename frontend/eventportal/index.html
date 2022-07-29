@@ -13,8 +13,8 @@
   <link rel="icon" href="https://res.cloudinary.com/nfty-labs/image/upload/v1652735850/SocialPass-Icon_eanblz.svg">
 
   <!-- Halfmoon CSS -->
-  <link href="/src/static/css/halfmoon.css" rel="stylesheet" />
-  <link href="/src/static/css/socialpass-theme.css" rel="stylesheet" />
+  <link href="/src/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
+  <link href="/src/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
 
   <!-- Rubik font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
 
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+  <script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
   <!-- SEO -->
   <meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
   <meta name="author" content="SocialPass">
@@ -41,13 +41,54 @@
   <!-- Scripts -->
   <script>window.global = window;</script>
   <script type="module">
-    import process from "process";
-    import { Buffer } from "buffer";
-    import EventEmitter from "events";
+  import process from "process";
+  import { Buffer } from "buffer";
+  import EventEmitter from "events";
 
-    window.process = process;
-    window.Buffer = Buffer;
-    window.EventEmitter = EventEmitter;
+  const devURL = "http://localhost:8000/api";
+  const prodURL = import.meta.env.VITE_APP_API_URL;
+  const baseURL = import.meta.env.PROD ? prodURL : devURL;
+
+  window.process = process;
+  window.Buffer = Buffer;
+  window.EventEmitter = EventEmitter;
+
+  (function(window, document, undefined){
+
+  // code that should be taken care of right away
+
+  window.onload = init;
+
+    function init(){
+    const public_id = location.pathname.split('/')[1];
+    const response = fetch(`${baseURL}/checkout-portal/v1/retrieve/${public_id}/`)
+      .then(response => response.json())
+      .then(data => {
+        const theme_name = data.team.theme?.css_theme;
+        const brand_name = data.team.theme?.brand_name;
+        const logo = data.team?.theme?.logo;
+        let link = document.createElement( "link" );
+        let favIcon = document.createElement( "link" );
+        if(theme_name){
+        link.href = `${theme_name}`;
+        favIcon.rel = "icon"
+        favIcon.href = `${logo}`
+
+        document.getElementById("SocialPassHeaderIcon").src = `${logo}`;
+        }
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.media = "screen,print";
+
+
+        document.getElementsByTagName( "head" )[0].appendChild( link );
+        document.getElementsByTagName( "head" )[0].appendChild( favIcon );
+
+      })
+    }
+
+  })(window, document, undefined);
+
   </script>
   </head>
   <body>

@@ -1,15 +1,27 @@
+import os
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps import views as sitemap_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
+from django.views.generic import TemplateView
+
+from apps.event_discovery.sitemaps import EventDetailSiteMap, StaticViewEventSitemap
 
 urlpatterns = [
     path("", include("apps.event_discovery.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
     # Django Admin, use {% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path(
+        "robots.txt",
+        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+    ),
+] + static(
+    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+)  # type: ignore
 
 # DRF API URLS
 urlpatterns += [
@@ -17,12 +29,33 @@ urlpatterns += [
     path("api/scanner/v1/", include("apps.api_scanner.urls")),
 ]
 
-# Debug URL's
-if settings.DEBUG:
-    # Static file serving when using Gunicorn + Uvicorn for local web socket development
+# SITEMAPS URLS
+sitemaps = {"discovery": StaticViewEventSitemap, "events-discovery": EventDetailSiteMap}
+urlpatterns += [
+    path(
+        "sitemap.xml",
+        sitemap_views.index,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
+    path(
+        "sitemap-<section>.xml",
+        sitemap_views.sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
+]
+
+# Debug URL's (only for local)
+is_local = (
+    settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"
+)
+if is_local:
     urlpatterns += staticfiles_urlpatterns()
 
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar
 
-        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+        urlpatterns = [
+            path("__debug__/", include(debug_toolbar.urls))
+        ] + urlpatterns  # type: ignore

@@ -1,7 +1,7 @@
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InvitationAdminAddForm
 
-from apps.dashboard.models import Invite
+from apps.root.models import Invite
 
 
 class CustomInvitationAdminAddForm(InvitationAdminAddForm):

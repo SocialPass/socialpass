@@ -1,7 +1,7 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_user_primary_email format_address %}
+{% load static get_theme_value get_user_primary_email format_address %}
 
-{% block head_title %}Tickets - SocialPass{% endblock head_title %}
+{% block head_title %}Tickets - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
 {% block navbar_breadcrumb %}Tickets{% endblock %}
 

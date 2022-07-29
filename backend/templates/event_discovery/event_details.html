@@ -7,8 +7,13 @@
 {% block modals %}
 <div class="modal" tabindex="-1" id="eventportal-modal" aria-labelledby="eventportal-modal-toggle" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content border-transparent ws-600 hs-600 mw-100 mh-100 p-0">
-            <button type="button" class="close text-base bg-content" aria-label="Close" data-hm-dismiss="modal">&times;</button>
+        <div class="modal-content border-transparent ws-800 hs-800 mw-100 mh-100 p-0">
+            <div class="d-flex align-items-center hs-50 px-20 text-strong border-bottom">
+                <strong>Claim Ticket</strong>
+                <a href="#" type="button" class="d-block lh-1 link-reset text-decoration-none ms-auto" aria-label="Close" data-hm-dismiss="modal">
+                    <i class="fa-light fa-times fs-base-p6"></i>
+                </a>
+            </div>
             <div class="w-100 h-100" id="eventportal-root"></div>
         </div>
     </div>
@@ -73,9 +78,11 @@
 <!-- Hero section end -->
 
 <!-- Tickets header section start -->
+
 <section>
     <div class="container-xl">
         <div class="content d-flex align-items-center border-bottom pb-15 mb-0">
+          {% if event.show_ticket_count %}
             <h2 class="fsr-2 fw-700 text-strong lh-base m-0">
                 Tickets
             </h2>
@@ -89,9 +96,11 @@
                 <br />
                 <strong>Claimed</strong>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
+
 <!-- Tickets header section end -->
 
 <!-- Information section start -->
@@ -106,6 +115,7 @@
                     <p class="fsr-6 mt-10">
                         {{ event.start_date.date }}
                     </p>
+                    {% if event.show_ticket_count %}
                     <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
                         Available
                     </h2>
@@ -118,6 +128,7 @@
                     <p class="fsr-6 mt-10">
                         {{tickets_remaining}} Tickets
                     </p>
+                    {% endif %}
                     <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
                         Ownership Requirements
                     </h2>

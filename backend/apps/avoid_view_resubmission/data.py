@@ -1,7 +1,10 @@
 from collections import UserDict
 from uuid import UUID, uuid4
 
-"""Dict like abstraction layer. This module exists in case a project with no SessionMiddleware wants to use AFR"""
+"""
+Dict like abstraction layer.
+This module exists in case a project with no SessionMiddleware wants to use AFR
+"""
 
 
 class AFRMetaData(UserDict):
@@ -32,7 +35,10 @@ class AFRMetaData(UserDict):
                     )
                 uuid = uuid4()
 
-        return uuid
+        if isinstance(uuid, UUID):
+            return uuid
+        else:
+            raise ValueError("UUID unable to be created")
 
     def get_or_create(self, key: UUID) -> tuple[dict, UUID, bool]:
         try:

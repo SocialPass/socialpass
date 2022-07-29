@@ -2,8 +2,6 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEvent } from "../contexts/EventContext";
-import { FiArrowLeft } from "react-icons/fi";
-import CloseCircleIcon from "../assets/closeIcon.svg";
 import { HashLoader } from "react-spinners";
 
 function RequiresEvent({ children }: any) {

@@ -14,6 +14,3 @@ RUN pip install -r local.txt
 
 # django setup
 COPY . /code
-
-# Healthcheck
-HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1

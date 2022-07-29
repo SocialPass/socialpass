@@ -2,19 +2,16 @@ import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
-from taggit.forms import TagField
 
-from apps.dashboard import services
-from apps.dashboard.models import Invite, Team
-from apps.root.model_field_choices import EVENT_VISIBILITY, EventStatusEnum
-from apps.root.models import Event
+from apps.root.models import Event, Invite, Team
 
 
 class CustomInviteForm(InviteForm):
+    """
+    sub-classed validation to remove check for active user
+    """
+
     def validate_invitation(self, email):
-        """
-        sub-classed validation to remove check for active user
-        """
         if Invite.objects.all_valid().filter(email__iexact=email, accepted=False):
             raise AlreadyInvited
         elif Invite.objects.filter(email__iexact=email, accepted=True):
@@ -24,6 +21,10 @@ class CustomInviteForm(InviteForm):
 
 
 class TeamForm(forms.ModelForm):
+    """
+    Team Form
+    """
+
     class Meta:
         model = Team
         fields = ["name", "description", "image"]
@@ -36,42 +37,27 @@ class TeamForm(forms.ModelForm):
         labels = {"image": "Set Team Image"}
 
 
-required_fields = [
-    "title",
-    "organizer",
-    "description",
-    "visibility",
-    # location
-    "location",
-    # TODO
-    # date and time
-    "start_date",
-    # cover image
-    "cover_image",
-    # 2. Requirements
-    "requirements",
-    # 3. Tickets
-    "capacity",
-    "limit_per_person",
-    # 4. Publish
-]
-optional_fields = [
-    # 1. General info
-    # basic info
-    # "category",
-    # "tags",
-    "visibility",
-    "end_date",
-    "timezone_offset",
-    "cover_image",
-    "publish_date",
-    "checkout_requested",
-]
-
-
 class EventForm(forms.ModelForm):
+    """
+    base Event form
+    """
+
+    show_ticket_count = forms.TypedChoiceField(
+        coerce=lambda x: x == "True",
+        choices=((True, "Yes"), (False, "No")),
+        widget=forms.RadioSelect,
+        initial=(True, "Yes"),
+    )
+    show_team_image = forms.TypedChoiceField(
+        coerce=lambda x: x == "True",
+        choices=((True, "Yes"), (False, "No")),
+        widget=forms.RadioSelect,
+        initial=(True, "Yes"),
+    )
+    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+
     class Meta:
-        fields = optional_fields + required_fields
+        fields = Event.optional_form_fields() + Event.required_form_fields()
         model = Event
 
         widgets = {
@@ -82,104 +68,110 @@ class EventForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
-            "location": forms.HiddenInput(),
+            "start_date": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "start_date",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "end_date": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "end_date",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "publication_date": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "publication_date",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "visibility": forms.RadioSelect(),
             "requirements": forms.HiddenInput(),
-            "timezone_offset": forms.HiddenInput(),
+            "location": forms.HiddenInput(),
+            "lat": forms.HiddenInput(),
+            "long": forms.HiddenInput(),
+            "country": forms.HiddenInput(),
+            "city": forms.HiddenInput(),
+            "postal_code": forms.HiddenInput(),
         }
 
-    start_date = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
-            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
-        ),
-        required=False,
-    )
-    end_date = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
-            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
-        ),
-        required=False,
-    )
-    publish_date = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
-            attrs={"id": "date", "class": "form-control", "type": "datetime-local"},
-        ),
-        required=False,
-    )
-    visibility = forms.CharField(
-        label="Visibility",
-        widget=forms.RadioSelect(choices=EVENT_VISIBILITY),
-        required=False,
-    )
-    checkout_requested = forms.BooleanField(
-        label="...", widget=forms.HiddenInput(), required=False, initial=False
-    )
-
-
-class EventDraftForm(EventForm):
-    class Meta(EventForm.Meta):
-        pass
-
-    def clean(self):
-        """
-        Clean method for dynamic form field requirement
-        """
-        data = super().clean()
+    def check_required_fields(self, data=None, exclude=[]):
         errors = {}
-
-        # first check for checkout_requested
-        # loop over required fields
-        checkout_requested = data.get("checkout_requested", None)
-        if checkout_requested:
-            # check field
-            for i in required_fields:
-                field = data.get(i, None)
-                if not field:
-                    errors[i] = "This field is required"
-
+        # check field
+        for i in Event.required_form_fields():
+            field = data.get(i, None)
+            if not field and i not in exclude:
+                errors[i] = "This field is required"
         # check for errors
-        if not errors:
-            # handle state transitions
-            # based on current checkout_requested
-            if checkout_requested:
-                self.instance.transition_pending_checkout()
-            else:
-                self.instance.transition_draft()
-            return data
-        else:
+        # raise exception
+        if errors:
             raise forms.ValidationError(errors)
 
 
+class EventDraftForm(EventForm):
+    """
+    Form for event.state == draft
+    """
+
+    class Meta(EventForm.Meta):
+        pass
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["ready_for_checkout"] = forms.BooleanField(
+            label="...", widget=forms.HiddenInput(), required=False, initial=False
+        )
+
+    def check_ready_for_checkout(self, data):
+        """
+        method for cleaning against checkout requested
+        """
+        # check required fields if ready for checkout
+        ready_for_checkout = data.get("ready_for_checkout", None)
+        if ready_for_checkout:
+            self.check_required_fields(data=data)
+
+        # form is OK, handle state transitions
+        # Only call state transition if in expected state
+        # Note: No need to save, as form will call save method later
+        if ready_for_checkout:
+            if self.instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
+                self.instance.transition_pending_checkout()
+        else:
+            if self.instance.state != Event.StateEnum.DRAFT.value:
+                self.instance.transition_draft()
+
+    def clean(self):
+        data = super().clean()
+        self.check_ready_for_checkout(data)
+        return data
+
+
 class EventPendingCheckoutForm(EventDraftForm):
+    """
+    Form for event.state == pending checkout
+    """
+
     class Meta(EventDraftForm.Meta):
         pass
 
 
 class EventLiveForm(EventForm):
+    """
+    Form for event.state == live
+    """
+
     class Meta(EventForm.Meta):
         exclude = ["capacity"]
 
     def clean(self):
-        """
-        Clean method for dynamic form field requirement
-        """
         data = super().clean()
-        errors = {}
-
-        # first check for checkout_requested
-        # loop over required fields
-        checkout_requested = data.get("checkout_requested", None)
-        if checkout_requested:
-            # check field
-            for i in required_fields:
-                field = data.get(i, None)
-                if not field and i not in EventLiveForm.Meta.exclude:
-                    errors[i] = "This field is required"
-
-        # check for errors
-        if not errors:
-            return data
-        else:
-            raise forms.ValidationError(errors)
+        self.check_required_fields(data=data, exclude=EventLiveForm.Meta.exclude)
+        return data

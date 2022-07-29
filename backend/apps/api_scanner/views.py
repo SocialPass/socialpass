@@ -45,7 +45,6 @@ class EventRetrieve(APIView, SetAccessKeyAndEventMixin):
     permission_classes = (AllowAny,)
 
     def get(self, request, *args, access_key: uuid.UUID, **kwargs):
-        print("getting")
         try:
             self.set_event_and_redemption_access_key(access_key)
         except Http404 as exc:

@@ -1,7 +1,5 @@
 from django.test import TestCase
 
-from apps.api_checkoutportal.services import moralis_get_nonfungible_assets
-
 
 class TestBlockchainService(TestCase):
     def test_moralis_get_nonfungible_assets(self):
@@ -25,7 +23,6 @@ class TestBlockchainService(TestCase):
 class TestTicketService(TestCase):
     def test_create_ticket_image(self):
         """
-        todo: need method for creating event
         event = Event.objects.last()
         ticket = Ticket.objects.create(event=event)
         updated_ticket = create_ticket_image(

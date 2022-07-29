@@ -1,8 +1,8 @@
 {% extends 'bases/base_primary.html' %}
-{% load static i18n get_chain_name crispy_forms_tags avoid_view_resubmission %}
+{% load static get_theme_value i18n get_chain_name crispy_forms_tags avoid_view_resubmission %}
 
 {% block head_title %}
-{% if request.resolver_match.url_name == 'event_create' %}Create{% else %}Update{% endif %} Event - SocialPass
+{% if request.resolver_match.url_name == 'event_create' %}Create{% else %}Update{% endif %} Event - {% get_theme_value "brand_name" %}
 {% endblock head_title %}
 
 {% block navbar_breadcrumb %}
@@ -122,12 +122,12 @@
 	</div>
 	<!-- Card header end -->
 
-	<div class="row">
+	<form class="row form" enctype="multipart/form-data" method="post" id="event-form">
 		<!-- Main content start -->
 		<div class="col-lg-7">
 			<div class="content">
-				<!-- Form start -->
-				<form class="form" enctype="multipart/form-data" method="post" id="event-form">
+				<!-- Form fields start -->
+				<div>
 					{% csrf_token %}
 
 					{% if form.non_field_errors %}
@@ -144,9 +144,6 @@
 					{% for input in form.hidden_fields %}
 						{{ input }}
 					{% endfor %}
-					<div class="d-none" id="hidden-date">
-						{{ form.publish_date }}
-					</div>
 					<!-- General info start -->
 					<section>
 						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="1-general-info">
@@ -171,11 +168,11 @@
 						</p>
 
 						<!-- Title start -->
-						<div class="required-input">
-							{% with form.title as input %}
-								{% include 'components/forms_inputs/input.html' %}
-							{% endwith %}
-						</div>
+            <div class="required-input">
+  						{% with form.title as input %}
+  							{% include 'components/forms_inputs/input.html' %}
+  						{% endwith %}
+            </div>
 						<!-- Title end -->
 
 						<!-- Organizer start -->
@@ -204,13 +201,7 @@
 						{% endwith %}
 						<!-- Description end -->
 
-						<!-- Visibility start -->
-						<div class="form-group required-input">
-							{{form.visibility|as_crispy_field}}
-						</div>
-						<!-- Visibility end -->
-
-						<hr />
+            <!-- Location start -->
 						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
 							<span class="ws-25 me-10 text-primary">
 								<i class="fa-regular fa-location-dot"></i>
@@ -221,27 +212,53 @@
 							Help people in the area discover your event and let attendees know where to show up.
 						</p>
 
-						<!-- Location start -->
 						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.location %}
 							<script>
 								function onPlaceChangedCallback(place){
-									// set UTC offset
-									document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
-									// WIP - CharField
-									document.getElementById("id_location").value = place.name
-									// TODO: GeoDjango - set latitude and longitude hidden field
-									console.log(place.geometry.location.lat())
-									console.log(place.geometry.location.lng())
+                  // TODO: Use in appromixmating timezone
+                  // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
+
+                  // Set latitude and longitude hidden field
+                  lat = place.geometry.location.lat();
+                  long = place.geometry.location.lng();
+                  document.getElementById("id_lat").value = lat.toFixed(6)
+                  document.getElementById("id_long").value = long.toFixed(6)
+
+                  // Loop over places object for setting fields
+                  // set fields based on available places components
+                  var gmaps = {};
+                  for (var i = 0; i < place.address_components.length; i++) {
+                    var c = place.address_components[i];
+                    gmaps[c.types[0]] = c;
+                  }
+                  document.getElementById("id_location").value = place.name;
+                  document.getElementById("id_country").value = gmaps['country']['short_name'];
+                  document.getElementById("id_city").value = gmaps['locality']['long_name'];
+                  //document.getElementById("id_address_1").value = place.name;
+                  //document.getElementById("id_address_2").value = place.name;
+                  //document.getElementById("id_region").value = place.name;
+                  if (gmaps['postal_code']){
+                    if (gmaps['postal_code_suffix']){
+                      document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
+                    }
+                    else {
+                      document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
+                    }
+                  }
 								}
 							</script>
 
 							{% include 'components/forms_inputs/gmaps_location.html' %}
+              {% if form.location.help_text %}
+                <div class="form-text">
+                  {{ form.location.help_text }}
+                </div>
+              {% endif %}
 						{% endwith %}
 						<!-- Location end -->
 
 
 						<!-- Date and Time start -->
-						<hr />
 						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
 							<span class="ws-25 me-10 text-primary">
 								<i class="fa-regular fa-calendar-days"></i>
@@ -251,15 +268,20 @@
 						<p class="text-muted fs-base-n2 mt-5">
 							Tell event-goers when your event starts and ends so they can make plans to attend.
 						</p>
-						<div class="form-group required-input">
-							{{form.start_date|as_crispy_field}}
-						</div>
-						<div class="form-group">
-							{{form.end_date|as_crispy_field}}
-							<p class="text-muted fs-base-n2 mt-5">
-								Leave empty if there is no end date for the event.
-							</p>
-						</div>
+            <div class="required-input">
+  						{% with input=form.start_date %}
+                {% include 'components/forms_inputs/input.html' %}
+              {% endwith %}
+            </div>
+            {% with input=form.end_date %}
+              {% include 'components/forms_inputs/input.html' %}
+              <div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
+                The end date must come after the start date.
+              </div>
+            {% endwith %}
+            <div class="form-group">
+              {{form.timezone|as_crispy_field}}
+            </div>
 						<!-- Date and Time end -->
 
 						<!-- Cover Image start -->
@@ -299,6 +321,7 @@
 							<div
 								type="button"
 								onclick="addRequirement()"
+                id="add-req"
 								class="nav-link"
 							>
 								Add requirement
@@ -324,14 +347,11 @@
 							Coming soon! Sell different tickets for an event.
 						</p>
             <!-- Estimator Start -->
-            <div id="price-placeholder">
-              <span></span>
-            </div>
+
             <div id="price-calc" style="display: none">
               <strong>Estimated price:</strong> <span id="price-calc-capacity"></span> tickets <span>x</span> <span id="price-calc-priceperticket"></span> per ticket = <span id="price-calc-price"></span>
             </div>
             <!-- Estimator End -->
-						<hr />
 
 						<!-- Capacity start -->
             {% if form.capacity %}
@@ -346,48 +366,108 @@
 							{% include 'components/forms_inputs/input.html' %}
 						{% endwith %}
 						<!-- Limit Per Person end -->
-
-
+            <hr />
 					</section>
 					<!-- Tickets end -->
-				</form>
+
+          <!-- Publishing start -->
+          <section>
+            <h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="4-publishing">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-4"></i>
+              </span>
+              Publishing
+            </h2>
+            <p class="text-muted fs-base-n2 mt-5">
+              Customize how you want your event published
+            </p>
+
+            <!-- publication_date start -->
+            <div class="form-group required-input">
+              {{form.publication_date|as_crispy_field}}
+            </div>
+            <!-- publish date end -->
+
+            <!-- Visibility start -->
+            <div class="form-group">
+            {{form.visibility|as_crispy_field}}
+            </div>
+            <!-- Visibility end -->
+
+            <!-- show_ticket_count start -->
+            <div class="form-group">
+            {{form.show_ticket_count|as_crispy_field}}
+            </div>
+            <!-- show_ticket_count end -->
+
+            <!-- show_team_image start -->
+            <div class="form-group">
+            {{form.show_team_image|as_crispy_field}}
+            </div>
+            <!-- show_team_image end -->
+
+          <!-- Publishing end -->
+
+				</div>
 				<!-- Form end -->
 			</div>
 		</div>
 		<!-- Main content end -->
 
     <!-- Form navigation start -->
-    <div class="col-lg-5 border-lg-end">
+    <div class="col-lg-5">
       <div class="p-content position-lg-sticky top-navbar start-0">
         <div>
-          <a href="#1-general-info" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">1</strong>
-            <span class="ms-15">General Information</span>
+          <a href="#1-general-info" class="d-inline-flex align-items-center link-reset text-decoration-none">
+            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-1"></i>
+              </span>
+              General Information
+            </h2>
           </a>
         </div>
         <div class="mt-15">
-          <a href="#2-blockchain-requirements" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">2</strong>
-            <span class="ms-15">Blockchain Requirements</span>
+          <a href="#2-blockchain-requirements" class="d-inline-flex align-items-center link-reset text-decoration-none">
+            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-2"></i>
+              </span>
+              Blockchain Requirements
+            </h2>
           </a>
         </div>
         <div class="mt-15">
-          <a href="#3-tickets" class="d-inline-flex align-items-center fw-bold link-reset text-decoration-none">
-            <strong class="ws-25 hs-25 rounded-circle flex-shrink-0 bg-primary text-white-lm text-dark-dm d-flex align-items-center justify-content-center">3</strong>
-            <span class="ms-15">Tickets</span>
+          <a href="#3-tickets" class="d-inline-flex align-items-center link-reset text-decoration-none">
+            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+              <span class="ws-25 me-10 text-primary">
+                <i class="fa-solid fa-circle-3"></i>
+              </span>
+              Tickets
+            </h2>
+          </a>
+        </div>
+        <div class="mt-15">
+          <a href="#4-publishing" class="d-inline-flex align-items-center link-reset text-decoration-none">
+          <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+            <span class="ws-25 me-10 text-primary">
+            <i class="fa-solid fa-circle-4"></i>
+            </span>
+            Publishing
+          </h2>
           </a>
         </div>
         <div id="event-actions" class="mt-20 row">
           {% if event.state == 'Live' %}
           <div class="col pe-5">
-            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary">Save Changes</button>
+            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary" type="submit">Save Changes</button>
           </div>
           {% else %}
           <div class="col pe-5">
             <button onclick="saveDraft()" class="h-100 btn btn-block">Save Draft</button>
           </div>
           <div class="col pe-5">
-            <button onclick="savePending()" class="h-100 btn btn-block btn-primary">Save & Continue</button>
+            <button onclick="savePending()" class="h-100 btn btn-block btn-primary" type="submit">Save & Continue</button>
           </div>
           {% endif %}
         </div>
@@ -395,7 +475,7 @@
     </div>
     <!-- Form navigation end -->
 
-	</div>
+	</form>
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
@@ -410,31 +490,100 @@
   let blockchainOptions = JSON.parse('{{BLOCKHAINS_CHOICES|safe}}');
   let assetTypeOptions = JSON.parse('{{ASSET_TYPES_CHOICES|safe}}');
   let chainOptions = JSON.parse('{{CHAIN_IDS_CHOICES|safe}}');
-  let priceEstimatorUrl = "{% url 'event_price_estimator' view.kwargs.team_pk %}?capacity=";
+  let priceEstimatorUrl = "{% url 'event_price_estimator' view.kwargs.team_public_id %}?capacity=";
 
 </script>
+
+<!-- Blockchain requirements script -->
 <script src="{% static 'js/blockchain_requirements.js' %}"></script>
+
+<!-- Price script -->
+<script>
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+  })
+
+  window.addEventListener('load', function() {
+    var capacity = document.getElementById('id_capacity').value;
+    fetch(priceEstimatorUrl + capacity).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      document.getElementById('price-placeholder').style.display = 'none';
+      document.getElementById('price-calc').style.display = 'block';
+
+      document.getElementById('price-calc-capacity').innerHTML = capacity;
+      document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
+      document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
+
+    });
+  })
+  document.getElementById('id_capacity').addEventListener('change', function() {
+    var capacity = document.getElementById('id_capacity').value;
+    fetch(priceEstimatorUrl + capacity).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      document.getElementById('price-placeholder').style.display = 'none';
+      document.getElementById('price-calc').style.display = 'block';
+
+      document.getElementById('price-calc-capacity').innerHTML = capacity;
+      document.getElementById('price-calc-priceperticket').innerHTML = formatter.format(data.price_per_ticket);
+      document.getElementById('price-calc-price').innerHTML = formatter.format(data.price);
+
+    });
+  })
+</script>
+
+<!-- Save Event Script -->
 <script>
   function saveDraft(){
-    document.getElementById("id_checkout_requested").checked = false
-    document.getElementById("id_checkout_requested").value = 'False'
+    document.getElementById("id_ready_for_checkout").checked = false
+    document.getElementById("id_ready_for_checkout").value = 'False'
     fillRequirementsAndSubmitForm()
   }
 
   function savePending(){
-    document.getElementById("id_checkout_requested").checked = true
-    document.getElementById("id_checkout_requested").value = 'True'
+    document.getElementById("id_ready_for_checkout").checked = true
+    document.getElementById("id_ready_for_checkout").value = 'True'
     fillRequirementsAndSubmitForm();
   }
 
   function saveLive(){
     let confirmed = confirm("These changes will go live immediately. Are you sure?");
     if (confirmed){
-      document.getElementById("id_checkout_requested").checked = true
-      document.getElementById("id_checkout_requested").value = 'True'
       fillRequirementsAndSubmitForm();
     }
   }
 </script>
+
+<!-- Date Validation Script -->
+<script>
+  var startDateInput = document.getElementById("id_start_date");
+  var endDateInput = document.getElementById("id_end_date");
+  var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
+
+  function dateValidate(e) {
+    var startDateVal = startDateInput.value;
+    var endDateVal = endDateInput.value;
+
+    endDateExtraFeedback.classList.add("d-none");
+    endDateInput.classList.remove("is-invalid");
+
+    if (startDateVal && endDateVal) {
+      var startDate = new Date(startDateVal);
+      var endDate = new Date(endDateVal);
+
+      if (startDate >= endDate) {
+        endDateExtraFeedback.classList.remove("d-none");
+        endDateInput.classList.add("is-invalid");
+      }
+    }
+  }
+
+  startDateInput.addEventListener("change", dateValidate);
+  endDateInput.addEventListener("change", dateValidate);
+</script>
+
 <!-- Content card end -->
 {% endblock%}

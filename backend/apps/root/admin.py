@@ -4,17 +4,15 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
 from apps.dashboard import services
-from apps.dashboard.models import (
+from apps.root.models import (
+    BlockchainOwnership,
+    Event,
+    EventCategory,
     EventStripePayment,
     Membership,
     PricingRule,
     PricingRuleGroup,
     Team,
-)
-from apps.root.models import (
-    BlockchainOwnership,
-    Event,
-    EventCategory,
     Ticket,
     TicketRedemptionKey,
 )
@@ -39,7 +37,7 @@ class MembershipAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
+class CustomUserAdmin(UserAdmin):
     inlines = [
         MembershipInline,
     ]
@@ -129,7 +127,7 @@ class PricingRuleGroupAdmin(admin.ModelAdmin):
             )
             messages.warning(request, errors_msg)
 
-    actions = [identify_pricing_group_errors]
+    actions = [identify_pricing_group_errors]  # type: ignore
 
 
 def list_as_messages_str(elements: list, title: str):

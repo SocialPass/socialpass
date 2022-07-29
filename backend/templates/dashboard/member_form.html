@@ -1,7 +1,7 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_user_primary_email %}
+{% load static get_theme_value get_user_primary_email %}
 
-{% block head_title %}Manage Members - SocialPass{% endblock head_title %}
+{% block head_title %}Manage Members - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
 {% block navbar_breadcrumb %}Manage Members{% endblock %}
 
@@ -52,7 +52,7 @@
 							</p>
 							<div class="d-flex align-items-center ps-15 ms-auto">
 								{% if member.user != request.user %}
-									<a href="{% url 'team_member_delete' team_pk=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-square text-danger" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-breakpoint="md" data-hm-title="Remove member from your team">
+									<a href="{% url 'team_member_delete' team_public_id=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-square text-danger" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-breakpoint="md" data-hm-title="Remove member from your team">
 										<i class="fa-solid fa-times"></i>
 										<span class="visually-hidden">Remove</span>
 									</a>

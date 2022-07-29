@@ -2,17 +2,15 @@
 import { useEvent } from "../contexts/EventContext";
 import { EventContainer } from "../components/EventContainer";
 import { CopyrightFooter } from "../components/CopyrightFooter";
-import Logo from "../static/images/landingpage_logo.png";
 
 export function Home() {
   const { eventData }: any = useEvent();
-
   return (
     <>
       <div className="main-bg">
-      <div className="landing-page-body p-10 py-50">
+      <div className="landing-page-body p-10 py-10">
         <div className="d-flex flex-column align-items-center justify-content-around">
-          <img className="p-30" src={Logo} />
+          <img id="SocialPassHeaderIcon" className="p-30" src={window.icon} style={{maxHeight:"250px"}} />
           <div></div>
           <EventContainer
             event_name={eventData.title}

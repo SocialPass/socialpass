@@ -1,6 +1,7 @@
 /* eslint-disable eqeqeq */
 import React, { useCallback, useEffect, useState } from "react";
 import { StatisticsTable } from "../components/StatisticsTable/index";
+import { CopyrightFooter } from "../components/CopyrightFooter";
 import { FiArrowLeft } from "react-icons/fi";
 import { useEvent } from "../contexts/EventContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,6 +26,7 @@ export function Statistics() {
             Return to Scanner
           </button>
         </div>
+        <CopyrightFooter/>
       </div>
     </div>
   );

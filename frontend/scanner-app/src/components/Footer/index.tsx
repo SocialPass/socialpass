@@ -36,7 +36,7 @@ export function Footer({ waitingForScan }: FooterProps) {
         </div>
       </div>
       <button
-        className="btn-statistics w-100 mb-20 mt-20"
+        className="btn-statistics w-100 mb-30 mt-10"
         onClick={handleRedirect}
       >
         Statistics

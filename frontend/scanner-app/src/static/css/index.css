@@ -37,7 +37,7 @@
 }
 
 .landing-page-body {
-  background-color: var(--base-body-bg-color);
+  color: var(--text-color-on-primary-color-bg);
   width: 100vw;
   height: 100vh;
 }
@@ -57,7 +57,7 @@
   line-height: 1;
   font-family: var(--base-font-family);
   font-weight: 1.6rem;
-  color: var(--white-color);
+  color: var(--text-color-on-base-body-bg-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
@@ -85,8 +85,8 @@
   font-weight: 500;
   line-height: 2.4;
   text-decoration: none;
-  color: var(--text-color-on-primary-color-bg);
-  background-color: var(--primary-color);
+  color: var(--text-color-on-secondary-color-bg);
+  background-color: var(--secondary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -133,7 +133,7 @@
   font-size: 22px;
   line-height: 26px;
   text-align: left;
-  color: #fff;
+  color: var(--text-color-on-base-body-bg-color);
   margin-top: 10%;
   margin-bottom: 5%;
 }
@@ -154,7 +154,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  color: var(--white-color);
+  color: var(--text-color-on-base-body-bg-color);
   background-color: var(--base-body-bg-color);
   box-shadow: none;
 }
@@ -169,7 +169,7 @@
   line-height: 18px;
   text-decoration: none;
   color: var(--base-body-bg-color);
-  background-color: var(--primary-color-light);
+  background-color: var(--secondary-color);
   border-color: none;
   box-shadow: none;
 }
@@ -185,7 +185,7 @@
   line-height: 18px;
   text-decoration: none;
   color: var(--base-body-bg-color);
-  background-color: var(--secondary-color-very-light);
+  background-color: var(--primary-color-light);
   border-color: none;
   box-shadow: none;
 }
@@ -193,15 +193,16 @@
 .btn-statistics {
   border-radius: 12px;
   border-width: 0rem;
-  margin-top: 30px;
   width: 80vw;
-  padding: 16px;
+  padding: 10px;
   position: center;
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 16px;
+  font-family: "Rubik";
+  font-style: normal;
+  font-size: 2.0rem;
+  font-weight: 500;
+  line-height: 24px;
   text-decoration: none;
   color: var(--text-color-on-primary-color-bg);
   background-color: var(--primary-color);
@@ -234,7 +235,7 @@
   font-size: 22px;
   line-height: 26px;
   text-align: center;
-  color: var(--white-color);
+  color: var(--text-color-on-base-body-bg-color);
     margin-top: 5%;
   margin-bottom: 10%;
 }
@@ -291,7 +292,7 @@
   text-decoration: none;
   border-color: none;
   box-shadow: none;
-  color: var(--white-color);
+  color: var(--text-color-on-base-body-bg-color);
 }
 
 /* Statistics Table Components */
@@ -306,7 +307,7 @@
   border-color: transparent;
   margin: 2px;
   color: var(--text-color-on-primary-color-bg);
-  background-color: var(--primary-color-very-light);
+  background-color: var(--primary-color-light);
   border-color: none;
   box-shadow: none;
 }
@@ -408,7 +409,7 @@ td {
   text-align: left;
   padding: 8px;
   font-size: 12px;
-  color: var(--white-color);
+  color: var(--text-color-on-base-body-bg-color);
 }
 
 th {

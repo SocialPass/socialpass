@@ -9,6 +9,7 @@ export function Home() {
 
   return (
     <>
+      <div className="main-bg">
       <div className="landing-page-body p-10 py-50">
         <div className="d-flex flex-column align-items-center justify-content-around">
           <img className="p-30" src={Logo} />
@@ -21,6 +22,7 @@ export function Home() {
           />
         </div>
         <CopyrightFooter/>
+      </div>
       </div>
     </>
   );

@@ -23,6 +23,8 @@
  
      --base-body-bg-color: var(--dark-color);
      --base-content-bg-color: var(--dark-color-very-light);
+     --text-color-on-base-body-bg-color: var(--white-color);
+
       
      /* Border related (mostly for utilities) */
  
@@ -328,3 +330,13 @@
  
      --switch-checked-bg-image: var(--switch-svg-black);
  }
+
+ 
+/**
+ * Scanner specific styles
+ */
+
+.main-bg {
+    color: var(--white-color);
+    background-color: var(--darkgray-color);
+}

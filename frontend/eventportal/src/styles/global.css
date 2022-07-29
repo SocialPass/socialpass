@@ -1,9 +1,13 @@
 :root {
   --base-body-bg-color: var(--gray-color-light);
+  --wallet-bg-color: #000;
+  --wallet-text-color: #fff;
 }
 
 .dark-mode {
   --base-body-bg-color: var(--dark-color-very-dim);
+  --wallet-bg-color: #fff;
+  --wallet-text-color: #000;
 }
 
 /* Content and card */
@@ -82,3 +86,31 @@
   width: 86rem !important;
 }
 
+.btn-google-wallet{
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: var(--wallet-bg-color);
+  color: var(--wallet-text-color);
+  border-radius: 48px;
+  min-height: 48px;
+  padding: 10px 15px 10px 10px;
+}
+
+.btn-apple-wallet{
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: var(--wallet-bg-color);
+  color: var(--wallet-text-color);
+  min-height: 48px;
+  border-radius: 12px;
+  padding: 10px 20px 10px 10px;
+}
+
+.wallet-icon{
+  width: 40px;
+  height: 40px;
+}

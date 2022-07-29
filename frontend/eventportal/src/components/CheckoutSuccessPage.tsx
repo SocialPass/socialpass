@@ -51,7 +51,7 @@ export default function CheckoutSuccessPage() {
           </div>
         </div>
       </div>
-{/* <!-- Status information end --> */}
+      {/* <!-- Status information end --> */}
 
       {/* <!-- CTA section start --> */}
       <div className="col-md-5">
@@ -61,9 +61,7 @@ export default function CheckoutSuccessPage() {
             Click on the following button to download your ticket.
           </p>
           <button
-            onClick={() =>
-              window.open(grantAccessJson[0]["download_url"])
-            }
+            onClick={() => window.open(grantAccessJson[0]["download_url"])}
             className="btn btn-secondary btn-lg fsr-6 btn-block"
           >
             <strong className="antialiased">Download Ticket</strong>

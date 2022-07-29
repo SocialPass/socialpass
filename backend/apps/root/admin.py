@@ -67,6 +67,23 @@ class EventCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
+    def transition_to_draft(modeladmin, request, queryset):
+        for i in queryset:
+            i.transition_draft()
+        messages.success(request, "Event(s) have been transitioned live")
+
+    def transition_to_pending_checkout(modeladmin, request, queryset):
+        for i in queryset:
+            i.transition_pending_checkout()
+        messages.success(request, "Event(s) have been transitioned live")
+
+    def transition_to_live(modeladmin, request, queryset):
+        for i in queryset:
+            print(i.state)
+            i.transition_live()
+            print(i.state)
+        messages.success(request, "Event(s) have been transitioned live")
+
     list_display = (
         "title",
         "public_id",
@@ -81,6 +98,7 @@ class EventAdmin(admin.ModelAdmin):
     )
     inlines = [StateLogInline]
     readonly_fields = ["state"]
+    actions = [transition_to_draft, transition_to_pending_checkout, transition_to_live]
 
 
 @admin.register(TicketRedemptionKey)

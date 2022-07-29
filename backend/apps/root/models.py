@@ -377,38 +377,73 @@ class Event(DBModel):
         else:
             return self.calculate_pricing_rule() * capacity
 
+    def transition_draft(self, save=True):
+        """
+        wrapper around _transition_draft
+        allows for saving after transition
+        """
+        try:
+            self._transition_draft()
+            # Save unless explicilty told not to
+            if save:
+                self.save()
+        except Exception as e:
+            raise e
+
+    def transition_pending_checkout(self, save=True):
+        """
+        wrapper around _transition_pending_checkout
+        allows for saving after transition
+        """
+        try:
+            self._transition_pending_checkout()
+            # Save unless explicilty told not to
+            if save:
+                self.save()
+        except Exception as e:
+            raise e
+
+    def transition_live(self, save=True):
+        """
+        wrapper around _transition_live
+        allows for saving after transition
+        """
+        try:
+            self._transition_live()
+            # Save unless explicilty told not to
+            if save:
+                self.save()
+        except Exception as e:
+            raise e
+
     @transition(
         field=state,
         source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
         target=StateEnum.DRAFT.value,
     )
-    def transition_draft(self, save=True):
+    def _transition_draft(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
         -
         """
-        # Save unless explictly told not to
-        if save:
-            return self.save()
+        pass
 
     @transition(
         field=state,
         source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
         target=StateEnum.PENDING_CHECKOUT.value,
     )
-    def transition_pending_checkout(self, save=True):
+    def _transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
         -
         """
-        # Save unless explictly told not to
-        if save:
-            return self.save()
+        pass
 
     @transition(field=state, target=StateEnum.LIVE.value)
-    def transition_live(self, save=True):
+    def _transition_live(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
@@ -416,10 +451,6 @@ class Event(DBModel):
         """
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
-
-        # Save unless explictly told not to
-        if save:
-            return self.save()
 
     @property
     def price(self):

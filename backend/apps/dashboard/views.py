@@ -485,7 +485,6 @@ class EventCheckout(TeamContextMixin, TemplateView):
         # todo: should be handled at state level, but also be explicit?
         if int(event.price.amount * 100) == 0:
             event.transition_live()
-            event.save()
             messages.add_message(request, messages.SUCCESS, "Your event is live!")
             return redirect(reverse("event_detail", args=(team_public_id, pk)))
 
@@ -555,8 +554,7 @@ class EventCheckout(TeamContextMixin, TemplateView):
 
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
-            payment.event.transition_live()
-            payment.event.save()
+            payment.event.transition_live(save=False)
             message = "Event created and payment succeeded."
         else:
             payment.status = "PROCESSING"

@@ -2,6 +2,7 @@ from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
+from django_fsm_log.admin import StateLogInline
 
 from apps.dashboard import services
 from apps.root.models import (
@@ -78,6 +79,7 @@ class EventAdmin(admin.ModelAdmin):
         "user__username",
         "team__name",
     )
+    inlines = [StateLogInline]
 
 
 @admin.register(TicketRedemptionKey)

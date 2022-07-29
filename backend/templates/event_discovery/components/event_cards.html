@@ -7,12 +7,12 @@
 			<div class="d-flex align-items-center justify-content-center w-100 hs-200 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
 			  {% if event.cover_image.height > event.cover_image.width %}
 				  <!-- Portrait -->
-				  {% thumbnail event.cover_image "x200" quality=99 as im %}
+				  {% thumbnail event.cover_image "x400" as im %}
 				  <img src="{{ im.url }}" class="w-auto h-100" alt="{{ event.title }} cover image">
 				  {% endthumbnail %}
 			  {% else %}
 				  <!-- Landscape -->
-				  {% thumbnail event.cover_image "500"  quality=99 as im %}
+				  {% thumbnail event.cover_image "400" as im %}
 				  <img src="{{ im.url }}" class="w-100 h-auto" alt="{{ event.title }} cover image">
 				  {% endthumbnail %}
 			  {% endif %}

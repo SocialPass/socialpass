@@ -1,5 +1,5 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_theme_value get_user_primary_email %}
+{% load static get_theme_value get_user_primary_email thumbnail %}
 
 {% block head_title %}Event Details - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
@@ -43,7 +43,9 @@
     <div class="d-flex align-items-center">
       {% if event.cover_image %}
       <div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
-        <img src="{{ event.cover_image.url }}" class="img-fluid" alt="{{ event.title }} cover_image">
+        {% thumbnail event.cover_image "x200" as im %}
+        <img src="{{ im.url }}" class="img-fluid" alt="{{ event.title }} cover_image">
+        {% endthumbnail %}
       </div>
       {% else %}
       <div class="ws-50 hs-50 ws-sm-75 hs-sm-75 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
@@ -152,7 +154,7 @@
           <a id="twitter-share-icon" target="_blank" href="#">
             <i class="fab fa-twitter text-secondary fa-lg"></i>
           </a>
-          <a id="facebook-share-icon" target="_blank" 
+          <a id="facebook-share-icon" target="_blank"
             href="#">
             <i class="fab fa-facebook text-secondary fa-lg"></i>
           </a>

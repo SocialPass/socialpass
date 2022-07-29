@@ -96,7 +96,11 @@ class EventAdmin(admin.ModelAdmin):
     )
     inlines = [StateLogInline]
     readonly_fields = ["state"]
-    actions = [transition_to_draft, transition_to_pending_checkout, transition_to_live]  # type: ignore
+    actions = [
+        transition_to_draft,  # type: ignore
+        transition_to_pending_checkout,  # type: ignore
+        transition_to_live,  # type: ignore
+    ]
 
 
 @admin.register(TicketRedemptionKey)

@@ -72,7 +72,6 @@ class DashboardTest(TestCase):
 
         # Test GET (succesful checkout)
         # event = self.event_one.transition_live()
-        # event.save()
         # response = TestRequireSuccessView.as_view()(request, **kwargs)
         # self.assertEqual(response.status_code, 200)
 
@@ -285,7 +284,6 @@ class DashboardTest(TestCase):
 
         # Test GET (succesful checkout)
         self.event_one.transition_live()
-        self.event_one.save()
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
         )
@@ -344,7 +342,6 @@ class DashboardTest(TestCase):
 
         # Test GET (succesful checkout)
         self.event_one.transition_live()
-        self.event_one.save()
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
         )

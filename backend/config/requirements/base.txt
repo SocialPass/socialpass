@@ -20,6 +20,7 @@ django-allauth==0.51.0  # https://github.com/pennersr/django-allauth
 django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
 django-environ==0.9.0
 django-fsm==2.8.0
+django-fsm-log==3.0.0
 django-money==3.0.0
 django-cors-headers==3.13.0
 django-taggit==3.0.0

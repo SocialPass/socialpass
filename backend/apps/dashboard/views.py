@@ -1,6 +1,5 @@
 import json
 import secrets
-from functools import lru_cache
 
 import stripe
 from django.conf import settings
@@ -458,7 +457,6 @@ class EventCheckout(TeamContextMixin, TemplateView):
         self.kwargs = kwargs
         return super().dispatch(request, *args, **kwargs)
 
-    @lru_cache
     def get_object(self):
         return Event.objects.get(
             pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
@@ -485,7 +483,6 @@ class EventCheckout(TeamContextMixin, TemplateView):
         # todo: should be handled at state level, but also be explicit?
         if int(event.price.amount * 100) == 0:
             event.transition_live()
-            event.save()
             messages.add_message(request, messages.SUCCESS, "Your event is live!")
             return redirect(reverse("event_detail", args=(team_public_id, pk)))
 
@@ -556,7 +553,6 @@ class EventCheckout(TeamContextMixin, TemplateView):
         if stripe_session.payment_status == "paid":
             payment.status = "SUCCESS"
             payment.event.transition_live()
-            payment.event.save()
             message = "Event created and payment succeeded."
         else:
             payment.status = "PROCESSING"

@@ -1,3 +1,6 @@
+import copy
+
+from django.templatetags.static import static
 from rest_framework import serializers
 
 from apps.root.models import Event, Team, Ticket
@@ -7,6 +10,28 @@ class TeamSerializer(serializers.ModelSerializer):
     """
     Team serializer
     """
+
+    theme = serializers.SerializerMethodField()
+    def get_theme(self, obj):
+        request = self.context.get("request")
+        theme = copy.deepcopy(obj.theme)
+
+        if "logo" in obj.theme:
+            theme["logo"] = request.build_absolute_uri(
+                static(obj.theme["logo"])
+            )
+
+        if "favicon" in obj.theme:
+            theme["favicon"] = request.build_absolute_uri(
+                static(obj.theme["favicon"])
+            )
+
+        if "css_theme" in obj.theme:
+            theme["css_theme"] = request.build_absolute_uri(
+                static(obj.theme["css_theme"])
+            )
+
+        return theme
 
     class Meta:
         model = Team

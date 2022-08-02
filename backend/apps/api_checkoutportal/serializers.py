@@ -1,3 +1,6 @@
+import copy
+
+from django.templatetags.static import static
 from rest_framework import serializers
 
 from apps.root.models import BlockchainOwnership, Event, Team, Ticket

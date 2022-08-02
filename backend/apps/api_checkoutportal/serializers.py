@@ -9,11 +9,6 @@ class TeamSerializer(serializers.ModelSerializer):
     """
 
     image = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Team
-        fields = ["name", "image", "theme"]
-
     def get_image(self, obj):
         request = self.context.get("request")
         if obj.image:
@@ -21,6 +16,32 @@ class TeamSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(image_url)
         else:
             return None
+
+    theme = serializers.SerializerMethodField()
+    def get_theme(self, obj):
+        request = self.context.get("request")
+        theme = copy.deepcopy(obj.theme)
+
+        if "logo" in obj.theme:
+            theme["logo"] = request.build_absolute_uri(
+                static(obj.theme["logo"])
+            )
+
+        if "favicon" in obj.theme:
+            theme["favicon"] = request.build_absolute_uri(
+                static(obj.theme["favicon"])
+            )
+
+        if "css_theme" in obj.theme:
+            theme["css_theme"] = request.build_absolute_uri(
+                static(obj.theme["css_theme"])
+            )
+
+        return theme
+
+    class Meta:
+        model = Team
+        fields = ["name", "image", "theme"]
 
 
 class EventSerializer(serializers.ModelSerializer):

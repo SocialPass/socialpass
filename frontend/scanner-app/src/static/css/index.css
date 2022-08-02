@@ -37,6 +37,7 @@
 }
 
 .landing-page-body {
+  background-color: var(--scanner-bg-color);
   color: var(--text-color-on-primary-color-bg);
   width: 100vw;
   height: 100vh;

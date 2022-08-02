@@ -40,6 +40,7 @@
   color: var(--text-color-on-primary-color-bg);
   width: 100vw;
   height: 100vh;
+  background-color: inherit;
 }
 
 .landing-page-card-text-1 {

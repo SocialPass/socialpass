@@ -10,7 +10,7 @@ export function Home() {
       <div className="socialpass-scanner-main-bg">
       <div className="landing-page-body p-10 py-10">
         <div className="d-flex flex-column align-items-center justify-content-around">
-          <img id="SocialPassHeaderIcon" className="p-30" src={window.icon} style={{maxHeight:"250px"}} />
+          <img id="SocialPassHeaderIcon" className="p-30" src={window.icon} style={{maxHeight:"200px"}} />
           <div></div>
           <EventContainer
             event_name={eventData.title}

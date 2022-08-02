@@ -334,6 +334,9 @@
 /**
  * Scanner specific styles
  */
+ :root{
+    --scanner-bg-color: var(--white-color);
+}
 
 .socialpass-scanner-main-bg {
     color: var(--white-color);

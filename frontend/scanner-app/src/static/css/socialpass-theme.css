@@ -302,6 +302,9 @@
 /**
  * Scanner specific styles
  */
+ :root{
+  --scanner-bg-color: var(--primary-color);
+ }
 
  .main-bg {
   color: var(--text-color-on-primary-color-bg);

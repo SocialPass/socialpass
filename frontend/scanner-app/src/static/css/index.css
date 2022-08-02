@@ -362,7 +362,7 @@
   font-size: 36px;
   line-height: 26px;
   text-align: center;
-  color: var(--text-color-on-primary-color-bg);
+  color: var(--text-color-on-base-body-bg-color);
 }
 
 .error-body {
@@ -372,7 +372,7 @@
   font-size: 18px;
   line-height: 21px;
   text-align: center;
-  color: var(--text-color-on-primary-color-bg);
+  color: var(--text-color-on-base-body-bg-color);
 }
 
 .error-footer {

@@ -12,19 +12,21 @@ class TeamSerializer(serializers.ModelSerializer):
     """
 
     theme = serializers.SerializerMethodField()
+
     def get_theme(self, obj):
         request = self.context.get("request")
         theme = copy.deepcopy(obj.theme)
 
+        # theme does not exist
+        # return None
+        if not theme:
+            return None
+
         if "logo" in obj.theme:
-            theme["logo"] = request.build_absolute_uri(
-                static(obj.theme["logo"])
-            )
+            theme["logo"] = request.build_absolute_uri(static(obj.theme["logo"]))
 
         if "favicon" in obj.theme:
-            theme["favicon"] = request.build_absolute_uri(
-                static(obj.theme["favicon"])
-            )
+            theme["favicon"] = request.build_absolute_uri(static(obj.theme["favicon"]))
 
         if "css_theme" in obj.theme:
             theme["css_theme"] = request.build_absolute_uri(

@@ -75,7 +75,7 @@ class TicketSerializer(serializers.ModelSerializer):
     Serializes Ticketed events Tickets
     """
 
-    wallet_address = serializers.CharField(source="blockchain_ownership.wallet_address")
+    wallet_address = serializers.SerializerMethodField()
     created = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     redeemed_at = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
 
@@ -89,3 +89,9 @@ class TicketSerializer(serializers.ModelSerializer):
             "redeemed_by",
             "wallet_address",
         ]
+
+    def get_wallet_address(self, obj):
+        if obj.blockchain_ownership:
+            return obj.blockchain_ownership.wallet_address
+        else:
+            return None

@@ -6,7 +6,7 @@ import CheckoutFailedPage from "../components/CheckoutFailedPage";
 export const CheckoutStatus = () => {
   const { grantAccessJson } = useContext(CheckoutPortalContext);
 
-  if (grantAccessJson) {
+  if (!grantAccessJson) {
     return <CheckoutSuccessPage />;
   }
   return <CheckoutFailedPage />;

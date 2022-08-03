@@ -8,6 +8,7 @@ import RequiresEvent from "./utils/requiresEventHOC";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Error } from "./pages/Error";
 import "./styles/global.css";
+import SuccessCheckoutPage from "./components/SuccessCheckoutPage";
 
 // Main CheckoutPortal component. Does a couple of things
 // 1. Setup CheckoutPortalProvider (react context)
@@ -54,6 +55,14 @@ const CheckoutPortal = () => {
                     element={
                       <RequiresEvent>
                         <CheckoutStatus />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route
+                    path="checkout/status/success"
+                    element={
+                      <RequiresEvent>
+                        <SuccessCheckoutPage />
                       </RequiresEvent>
                     }
                   />

@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components';
-import { animated } from 'react-spring';
+import styled, { css } from 'styled-components'
+import { animated } from 'react-spring'
 
 const toastTypes: any = {
   success: css`
@@ -14,7 +14,7 @@ const toastTypes: any = {
     background: var(--blue-info);
     color: #fff;
   `,
-};
+}
 
 export const Container: any = styled(animated.div)`
   width: 280px;
@@ -61,4 +61,4 @@ export const Container: any = styled(animated.div)`
     background: transparent;
     color: inherit;
   }
-`;
+`

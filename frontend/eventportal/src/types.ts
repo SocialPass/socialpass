@@ -23,19 +23,19 @@ export interface CheckoutPortalContextInterface {
   setGrantAccessError: any
 
   // checkout
-  web3CheckoutSelection:any
-  setWeb3CheckoutSelection:any
+  web3CheckoutSelection: any
+  setWeb3CheckoutSelection: any
 
-  eventStatusCheckout:Boolean,
-  setEventStatusCheckout:any,
+  eventStatusCheckout: boolean
+  setEventStatusCheckout: any
 
-  generalAdmissionSelect:any,
-  setGeneralAdmissionSelect:any
+  generalAdmissionSelect: any
+  setGeneralAdmissionSelect: any
 
-  headerType: string,
+  headerType: string
   setHeaderType: any
 
-  status: any,
-  isLoading: boolean,
+  status: any
+  isLoading: boolean
   isError: boolean
 }

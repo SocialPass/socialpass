@@ -1,2 +1,2 @@
-import {EventPortalProvider, CheckoutPortalContext} from "./context";
-export { EventPortalProvider, CheckoutPortalContext };
+import { EventPortalProvider, CheckoutPortalContext } from './context'
+export { EventPortalProvider, CheckoutPortalContext }

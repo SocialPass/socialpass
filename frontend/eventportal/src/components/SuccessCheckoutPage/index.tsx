@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { CheckoutPortalContext } from "../../context";
+import styles from "./styles.module.css";
 
 import CardInfoEvent from "../../components/CardInfoEvent";
 import TicketEvent from "../../components/TicketEvent";
@@ -8,9 +9,17 @@ export function SuccessCheckoutPage() {
   const { grantAccessJson } = useContext(CheckoutPortalContext);
   const [email, setEmail] = useState("");
 
+  const validateEmail = (email) => {
+    return email.match(
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+  };
+
   function handleSubmit(event) {
     event.preventDefault();
-    //logic to sent email here
+    if (validateEmail(email)) {
+      //logic to sent email here
+    }
   }
 
   return (
@@ -61,14 +70,14 @@ export function SuccessCheckoutPage() {
               >
                 <input
                   onChange={(e) => setEmail(e.target.value)}
-                  className="rounded-3 py-5 w-100 input-boder"
+                  className={`rounded-3 py-5 w-100 ${styles.input_boder}`}
                   type="email"
                   name="user-email"
                   id="user-email"
                 />
                 <button
                   type="submit"
-                  className="btn btn-secondary rounded-3 px-15 letter-spacing-button"
+                  className={`btn btn-secondary rounded-3 px-15 ${styles.letter_spacing_button}`}
                 >
                   Send
                 </button>

@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { CheckoutPortalContext } from "../../context";
 import socialPassIcon from "../../static/brand-logos/SocialPass-Icon-gray.svg";
+import styles from "./styles.module.css";
 
 import qrcodeImage from "../../static/images/qrcode.png";
 
@@ -19,7 +20,7 @@ export default function TicketEvent() {
     minute: "2-digit",
   });
   return (
-    <div className={`bg-secondary ticket-event p-10 h-auto`}>
+    <div className={`bg-secondary ${styles.ticketevent} p-10 h-auto`}>
       <div className="d-flex flex-wrap align-items-start justify-content-between">
         <div className="d-flex align-items-center justify-content-start">
           <div className="ws-100 d-inline-flex align-items-center fs-13">

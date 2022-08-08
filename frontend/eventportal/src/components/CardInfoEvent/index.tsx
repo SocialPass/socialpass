@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { CheckoutPortalContext } from "../../context";
+import styles from "./styles.module.css";
 
 export default function CardInfoEvent() {
   const { retrieveJson, generalAdmissionSelect } = useContext(
@@ -8,7 +9,7 @@ export default function CardInfoEvent() {
   const date = retrieveJson.start_date.split("|");
 
   return (
-    <div className="card-info-event px-30 py-15 h-auto">
+    <div className={`${styles.card_info_event} px-30 py-15 h-auto`}>
       <div>
         <span className="d-block fw-bold fs-26">{retrieveJson.title}</span>
         <span className="text-muted">Order #54878641</span>
@@ -18,7 +19,7 @@ export default function CardInfoEvent() {
         {/* icon */}
         <div className="d-flex flex-row align-items-center justify-content-start gap-15">
           <i
-            className="fa fa-ticket text-secondary fs-20 rotate-ticket-icon"
+            className={`fa fa-ticket text-secondary fs-20 ${styles.rotate_ticket_icon}`}
             aria-hidden="true"
           />
           <div>

@@ -3,12 +3,14 @@ import { StyledContainer } from "./components";
 import { EventPortalProvider } from "./context";
 import { WagmiConfig } from "wagmi";
 import { client } from "./web3/client";
-import { Init, CheckoutWeb3, CheckoutStatus, Event } from "./pages";
+import { Init, CheckoutWeb3, Event } from "./pages";
 import RequiresEvent from "./utils/requiresEventHOC";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Error } from "./pages/Error";
 import "./styles/global.css";
 import { SuccessCheckoutPage } from "./components/SuccessCheckoutPage";
+import CheckoutSuccessPage from "./components/CheckoutSuccessPage";
+import CheckoutFailedPage from "./components/CheckoutFailedPage";
 
 // Main CheckoutPortal component. Does a couple of things
 // 1. Setup CheckoutPortalProvider (react context)
@@ -51,13 +53,22 @@ const CheckoutPortal = () => {
                     }
                   />
                   <Route
-                    path="checkout/status"
+                    path="checkout/success"
                     element={
                       <RequiresEvent>
-                        <CheckoutStatus />
+                        <CheckoutSuccessPage />
                       </RequiresEvent>
                     }
                   />
+                  <Route
+                    path="checkout/fail"
+                    element={
+                      <RequiresEvent>
+                        <CheckoutFailedPage />
+                      </RequiresEvent>
+                    }
+                  />
+                  {/* this is the new success page and should replace the checkout/success route */}
                   <Route
                     path="checkout/status/success"
                     element={

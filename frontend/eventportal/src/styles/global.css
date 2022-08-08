@@ -22,6 +22,19 @@
   }
 }
 
+@media (max-width: 278px) {
+  .title-break-text{
+    font-size: 25px;
+  }
+}
+
+@media (min-width: 2556px) {
+  .ticket-event::before{
+    border: 38px solid !important;
+    border-color: var(--white-color) var(--white-color) transparent transparent !important;
+  }
+}
+
 /* Wallet radio buttons */
 
 .wallet-button {
@@ -110,50 +123,60 @@
   padding: 10px 20px 10px 10px;
 }
 
-.wallet-icon{
-  width: 40px;
-  height: 40px;
-}
-
 .ticket-event{
   position: relative;
-  /* filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.25)); */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
 }
 
 .ticket-event::before{
-  content: "";
-  border: 28px solid;
-  border-color: var(--white-color) var(--white-color) transparent transparent;
-  transform: rotate(135deg);
-  position: absolute;
-  border-radius: 50%;
-  left: 0;
-  right: 0;
-  margin: auto;
-  top: -40px;
-  width: 0;
+content: "";
+border: 28px solid;
+border-color: var(--white-color) var(--white-color) transparent transparent;
+transform: rotate(135deg);
+position: absolute;
+border-radius: 50%;
+left: 0;
+right: 0;
+margin: auto;
+top: -40px;
+width: 0;
 }
 
 .dark-mode .ticket-event::before{
-  content: "";
-  border: 28px solid;
-  border-color: var(--dark-color-very-light) var(--dark-color-very-light) transparent transparent;
-  transform: rotate(135deg);
-  position: absolute;
-  border-radius: 50%;
-  left: 0;
-  right: 0;
-  margin: auto;
-  top: -40px;
-  width: 0;
+content: "";
+border: 28px solid;
+border-color: var(--dark-color-very-light) var(--dark-color-very-light) transparent transparent;
+transform: rotate(135deg);
+position: absolute;
+border-radius: 50%;
+left: 0;
+right: 0;
+margin: auto;
+top: -40px;
+width: 0;
+}
+
+.wallet-icon{
+  width: 40px;
+  height: 40px;
 }
 
 .card-info-event{
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.15);
 }
 
-.align-img{
-  transform: rotate(25deg);
-  width: 200px !important;
+.rotate-ticket-icon{
+  transform: rotate(90deg);
+}
+
+.input-boder{
+  border: 3px solid var(--secondary-color);
+}
+
+.input-boder:focus {
+  outline: none;
+}
+
+.letter-spacing-button{
+  letter-spacing: 1px;
 }

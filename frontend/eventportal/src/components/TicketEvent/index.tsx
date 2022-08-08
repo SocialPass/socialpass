@@ -1,23 +1,28 @@
 import { useContext } from "react";
-import { CheckoutPortalContext } from "../context";
-import socialPassIcon from "../static/images/icons/SocialPass-Icon-gray.svg";
+import { CheckoutPortalContext } from "../../context";
+import socialPassIcon from "../../static/brand-logos/SocialPass-Icon-gray.svg";
 
-import qrcodeImage from "../static/images/qrcode.png";
+import qrcodeImage from "../../static/images/qrcode.png";
 
 export default function TicketEvent() {
   const { retrieveJson, generalAdmissionSelect } = useContext(
     CheckoutPortalContext
   );
-  console.log(retrieveJson);
 
-  const date = retrieveJson.start_date.split(",");
-
+  const date = new Date().toLocaleDateString("en-us", {
+    weekday: "short",
+    day: "numeric",
+    month: "long",
+  });
+  const hour = new Date().toLocaleString("en-us", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   return (
-    <div className="bg-secondary ticket-event px-10 py-15 h-auto">
-      <div className="bg-white-lm bg-dark-very-light-dm"></div>
-      <div className="d-flex flex-wrap align-items-center justify-content-between mt-5">
+    <div className={`bg-secondary ticket-event p-10 h-auto`}>
+      <div className="d-flex flex-wrap align-items-start justify-content-between">
         <div className="d-flex align-items-center justify-content-start">
-          <div className="ws-100 d-inline-flex align-items-center fs-14">
+          <div className="ws-100 d-inline-flex align-items-center fs-13">
             <img
               src={socialPassIcon}
               id="SocialPassHeaderIcon"
@@ -31,8 +36,9 @@ export default function TicketEvent() {
             <span className="mx-5 text-white">SocialPass</span>
           </div>
         </div>
-        <div className="d-flex text-white fs-14">
-          {date[0]},{date[1]}
+        <div className="d-flex text-white fs-13 d-flex flex-column align-items-end">
+          <span className="fs-10">{hour}</span>
+          <span>{date}</span>
         </div>
       </div>
       <div className="text-white d-flex flex-column gap-20 mt-30">

@@ -6,6 +6,7 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "tsc": "tsc",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json} --quiet",
     "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx,json}' --quiet",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"

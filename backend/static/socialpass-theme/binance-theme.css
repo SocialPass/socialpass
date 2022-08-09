@@ -332,7 +332,17 @@
  * Scanner specific styles
  */
 
-.socialpass-scanner .main-bg {
-    color: var(--white-color);
-    background-color: var(--darkgray-color);
-}
+ .socialpass-scanner 
+    .home-bg {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+    }
+    .content-bg {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+    }
+    .theme-bg {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+    }
+    

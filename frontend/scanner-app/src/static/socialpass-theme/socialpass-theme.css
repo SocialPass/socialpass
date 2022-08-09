@@ -19,7 +19,7 @@
   
     /* Base background colors */
   
-    --base-body-bg-color: var(--gray-color-very-light);
+    --base-body-bg-color: var(--primary-color);
     --text-color-on-base-body-bg-color: var(--dark-color);
   
   
@@ -303,12 +303,22 @@
    * Scanner specific styles
    */
   
-   .main-bg {
-    color: var(--text-color-on-primary-color-bg);
-    background-color: var(--primary-color);
-  }
-  
-  .dark-mode .main-bg {
-    background-color: hsl(var(--primary-color-hue), 40%, 15%);
-  }
+   .socialpass-scanner 
+    .home-bg {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+    }
+    .content-bg {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+    }
+    .theme-bg {
+        background-color: var(--white-color);
+        color: var(--dark-color);
+    }
+    
+    
+    .dark-mode .main-bg {
+      background-color: hsl(var(--primary-color-hue), 40%, 15%);
+    }
   

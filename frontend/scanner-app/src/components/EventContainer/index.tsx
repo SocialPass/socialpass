@@ -21,7 +21,7 @@ export function EventContainer({
   return (
     <div className="container p-10 d-flex flex-column align-items-center">
       <div className="landing-page-event-title">{event_name}</div>
-      <div className="landing-page-card background-image">
+      <div className="landing-page-card">
         <div className="landing-page-card-text-1">Total Attendance:</div>
         <div className="landing-page-card-text-2 mb-15">{event_attendance}</div>
         <div className="landing-page-card-text-1">Date:</div>

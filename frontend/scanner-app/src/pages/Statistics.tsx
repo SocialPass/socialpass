@@ -12,6 +12,7 @@ export function Statistics() {
   const { eventData }: any = useEvent();
 
   return (
+    <div className="theme-bg">
     <div className="statistics-body">
       <div className="statistics-title py-20 px-10">
         {eventData.title}
@@ -28,6 +29,7 @@ export function Statistics() {
         </div>
         <CopyrightFooter/>
       </div>
+    </div>
     </div>
   );
 }

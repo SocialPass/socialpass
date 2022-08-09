@@ -142,6 +142,7 @@ export function Scanner() {
   }, [elapsedTime]);
 
   return (
+    <div className="theme-bg">
     <div className="scanner-body d-flex flex-column">
       <div className="btn-close" style={{ position: "absolute", zIndex: 1000 }}>
         <FiArrowLeft color="#f1f1f1" onClick={handleRedirect} size={26} />
@@ -165,6 +166,7 @@ export function Scanner() {
         </div>
       </div>
       <Footer waitingForScan={waitingForScan} />
+    </div>
     </div>
   );
 }

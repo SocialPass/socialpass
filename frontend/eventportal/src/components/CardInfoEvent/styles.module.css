@@ -3,5 +3,6 @@
 }
 
 .rotate_ticket_icon{
-  transform: rotate(90deg);
+  transform: translate(-15%, 0%) rotate(0.25turn);
+  margin-right: -10px;
 }

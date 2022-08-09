@@ -22,7 +22,7 @@ export default function CardInfoEvent() {
             className={`fa fa-ticket text-secondary fs-20 ${styles.rotate_ticket_icon}`}
             aria-hidden="true"
           />
-          <div>
+          <div className="ms-10">
             <strong className="fs-18">{generalAdmissionSelect} x Ticket</strong>
             <span className="d-block text-muted fs-15">General Admission</span>
           </div>
@@ -33,7 +33,7 @@ export default function CardInfoEvent() {
             className="fa fa-map-marker text-secondary fs-20"
             aria-hidden="true"
           />
-          <div>
+          <div className="ms-10">
             <strong className="fs-18">{retrieveJson.location}</strong>
             <span className="d-block text-muted fs-15">
               {retrieveJson.location}
@@ -43,7 +43,7 @@ export default function CardInfoEvent() {
 
         <div className="d-flex flex-row align-items-center justify-content-start gap-15">
           <i className="fa-solid fa-alarm-clock text-secondary fs-20" />
-          <div>
+          <div className="ms-5">
             <strong className="fs-18">{date[0]}</strong>
             <span className="d-block text-muted fs-15">
               {date[1]} {retrieveJson.timezone}

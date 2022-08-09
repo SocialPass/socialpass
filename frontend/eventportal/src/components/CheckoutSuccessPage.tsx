@@ -21,7 +21,7 @@ export default function CheckoutSuccessPage() {
               <span className="text-center fw-bold fs-18">
                 How would you like to download?
               </span>
-              {/* <a
+              <a
                 href="#"
                 type="button"
                 className="d-block lh-1 link-reset text-decoration-none ms-auto"
@@ -29,7 +29,7 @@ export default function CheckoutSuccessPage() {
                 data-hm-dismiss="modal"
               >
                 <i className="fa-light fa-times fs-base-p6"></i>
-              </a> */}
+              </a>
             </div>
             <div className="w-100 h-100">
               <div className="d-flex flex-column align-items-center justify-content-between flex-wrap gap-20 py-20 px-20">

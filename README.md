@@ -95,6 +95,13 @@ python backend/manage.py compress --force
 
 # Run application
 python backend/manage.py runserver
+
+# Optional: pre-populate database
+python backend/manage.py pre-populate-db --events 2 --tickets 4
+
+# Optional: reset database
+python backend/manage.py clear-db
+
 ```
 
 ```bash

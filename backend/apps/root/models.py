@@ -210,31 +210,33 @@ class Event(DBModel):
         default=timezone.now,
         null=True,
         blank=True,
-        help_text="When your event will be made public."
+        help_text="When your event will be made public.",
     )
     visibility = models.CharField(
         max_length=50,
         choices=EVENT_VISIBILITY,
         default=EVENT_VISIBILITY[0][0],
-        help_text="Whether or not your event is searchable by the public."
+        help_text="Whether or not your event is searchable by the public.",
     )
     show_ticket_count = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays ticket statistics."
+        default=True, help_text="Whether or not your event displays ticket statistics."
     )
     show_team_image = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays the team image."
+        default=True, help_text="Whether or not your event displays the team image."
     )
 
     # Basic Info
     title = models.CharField(
-        max_length=255, blank=False, unique=True,
-        help_text="Brief name for your event. Must be unique!"
+        max_length=255,
+        blank=False,
+        unique=True,
+        help_text="Brief name for your event. Must be unique!",
     )
     organizer = models.CharField(
-        max_length=255, null=True, blank=True,
-        help_text="Name or brand or community organizing the event."
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Name or brand or community organizing the event.",
     )
     description = models.TextField(
         null=True, blank=True, help_text="A short description of your event."
@@ -265,8 +267,10 @@ class Event(DBModel):
     )
     # localized address string (used to populate maps lookup)
     location = models.CharField(
-        max_length=1024, blank=True, null=True,
-        help_text="Where your event will take place."
+        max_length=1024,
+        blank=True,
+        null=True,
+        help_text="Where your event will take place.",
     )
     # The street/location address (part 1)
     address_1 = models.CharField(max_length=255, blank=True, null=True)
@@ -294,12 +298,15 @@ class Event(DBModel):
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
     )
     capacity = models.IntegerField(
-        blank=True, default=1, validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event."
+        blank=True,
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text="Maximum amount of attendees for your event.",
     )
     limit_per_person = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee."
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+        help_text="Maximum amount of tickets per attendee.",
     )
 
     # Pricing Info
@@ -370,34 +377,73 @@ class Event(DBModel):
         else:
             return self.calculate_pricing_rule() * capacity
 
+    def transition_draft(self, save=True):
+        """
+        wrapper around _transition_draft
+        allows for saving after transition
+        """
+        try:
+            self._transition_draft()
+            # Save unless explicilty told not to
+            if save:
+                self.save()
+        except Exception as e:
+            raise e
+
+    def transition_pending_checkout(self, save=True):
+        """
+        wrapper around _transition_pending_checkout
+        allows for saving after transition
+        """
+        try:
+            self._transition_pending_checkout()
+            # Save unless explicilty told not to
+            if save:
+                self.save()
+        except Exception as e:
+            raise e
+
+    def transition_live(self, save=True):
+        """
+        wrapper around _transition_live
+        allows for saving after transition
+        """
+        try:
+            self._transition_live()
+            # Save unless explicilty told not to
+            if save:
+                self.save()
+        except Exception as e:
+            raise e
+
     @transition(
         field=state,
         source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
         target=StateEnum.DRAFT.value,
     )
-    def transition_draft(self):
+    def _transition_draft(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
         -
         """
-        return
+        pass
 
     @transition(
         field=state,
         source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
         target=StateEnum.PENDING_CHECKOUT.value,
     )
-    def transition_pending_checkout(self):
+    def _transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include
         -
         """
-        return
+        pass
 
     @transition(field=state, target=StateEnum.LIVE.value)
-    def transition_live(self):
+    def _transition_live(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include

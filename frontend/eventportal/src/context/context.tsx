@@ -1,58 +1,57 @@
-import { createContext, useEffect, useState } from "react";
-import { TicketedEventRetrieve } from "../api";
-import { CheckoutPortalContextInterface } from "../types";
-import { useQuery } from "react-query";
-import { useLocation } from "react-router-dom";
+import { createContext, useEffect, useState } from 'react'
+import { TicketedEventRetrieve } from '../api'
+import { CheckoutPortalContextInterface } from '../types'
+import { useQuery } from 'react-query'
+import { useLocation } from 'react-router-dom'
 
-export const CheckoutPortalContext =
-  createContext<CheckoutPortalContextInterface>(
-    {} as CheckoutPortalContextInterface
-  );
+export const CheckoutPortalContext = createContext<CheckoutPortalContextInterface>(
+  {} as CheckoutPortalContextInterface,
+)
 
 export const EventPortalProvider = ({ children }: { children: any }) => {
-  const location = useLocation();
+  const location = useLocation()
 
-  const [id, setID] = useState<string>("");
-  const [headerType, setHeaderType] = useState<string>("light");
+  const [id, setID] = useState<string>('')
+  const [headerType, setHeaderType] = useState<string>('light')
 
-  const [retrieveJson, setRetrieveJson] = useState(null);
-  const [retrieveError, setRetrieveError] = useState(null);
+  const [retrieveJson, setRetrieveJson] = useState(null)
+  const [retrieveError, setRetrieveError] = useState(null)
 
-  const [requestAccessJson, setRequestAccessJson] = useState(null);
-  const [requestAccessError, setRequestAccessError] = useState(null);
+  const [requestAccessJson, setRequestAccessJson] = useState(null)
+  const [requestAccessError, setRequestAccessError] = useState(null)
 
-  const [grantAccessJson, setGrantAccessJson] = useState(null);
-  const [grantAccessError, setGrantAccessError] = useState(null);
+  const [grantAccessJson, setGrantAccessJson] = useState(null)
+  const [grantAccessError, setGrantAccessError] = useState(null)
 
-  const [generalAdmissionSelect, setGeneralAdmissionSelect] = useState(1);
+  const [generalAdmissionSelect, setGeneralAdmissionSelect] = useState(1)
 
-  const [web3CheckoutSelection, setWeb3CheckoutSelection] = useState([]);
-  const [eventStatusCheckout, setEventStatusCheckout] = useState(true);
+  const [web3CheckoutSelection, setWeb3CheckoutSelection] = useState([])
+  const [eventStatusCheckout, setEventStatusCheckout] = useState(true)
 
   const { status, isLoading, isError, data, refetch } = useQuery(
-    ["fetchEvent", id],
+    ['fetchEvent', id],
     () => fetchEvent(id),
     {
       enabled: false,
-    }
-  );
+    },
+  )
 
   useEffect(() => {
-    setHeaderType("dark");
-  }, [location]);
+    setHeaderType('dark')
+  }, [location])
 
   useEffect(() => {
     if (id) {
-      refetch();
+      refetch()
     }
-  }, [id]);
+  }, [id])
 
   useEffect(() => {
-    setRetrieveJson(data);
-  }, [data]);
+    setRetrieveJson(data)
+  }, [data])
 
-  function fetchEvent(publicId: String) {
-    return TicketedEventRetrieve.call({ public_id: publicId });
+  function fetchEvent(publicId: string) {
+    return TicketedEventRetrieve.call({ public_id: publicId })
   }
 
   return (
@@ -95,5 +94,5 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
     >
       {children}
     </CheckoutPortalContext.Provider>
-  );
-};
+  )
+}

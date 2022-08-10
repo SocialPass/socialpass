@@ -50,7 +50,9 @@ class EventRetrieve(APIView, SetAccessKeyAndEventMixin):
         except Http404 as exc:
             return Response(status=404, data=exc.args[0])
 
-        serializer = serializers.EventSerializer(self.event)
+        serializer = serializers.EventSerializer(
+            self.event, context={"request": request}
+        )
         return Response(serializer.data)
 
 

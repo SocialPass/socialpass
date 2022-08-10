@@ -331,11 +331,11 @@
  * Scanner specific styles
  */
 
-.socialpass-scanner .main-bg {
+.socialpass-scanner-main-bg {
     color: var(--text-color-on-primary-color-bg);
     background-color: var(--primary-color);
 }
 
-.socialpass-scanner.dark-mode .main-bg {
+.socialpass-scanner-main-bg.dark-mode {
     background-color: hsl(var(--primary-color-hue), 40%, 15%);
 }

@@ -99,7 +99,7 @@
   width: 86rem !important;
 }
 
-.btn-google-wallet{
+.btn-google-wallet {
   display: inline-block;
   text-align: center;
   vertical-align: middle;
@@ -111,7 +111,7 @@
   padding: 10px 15px 10px 10px;
 }
 
-.btn-apple-wallet{
+.btn-apple-wallet {
   display: inline-block;
   text-align: center;
   vertical-align: middle;
@@ -123,7 +123,7 @@
   padding: 10px 20px 10px 10px;
 }
 
-.wallet-icon{
+.wallet-icon {
   width: 40px;
   height: 40px;
 }

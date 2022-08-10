@@ -99,6 +99,7 @@ THIRD_PARTY_APPS = [
     "taggit",
     "djmoney",
     "compressor",
+    "django_fsm_log",
 ]
 
 LOCAL_APPS = [

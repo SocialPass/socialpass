@@ -1,8 +1,14 @@
 import { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CheckoutPortalContext } from '../context'
 
 export default function CheckoutSuccessPage() {
-  const { retrieveJson, grantAccessJson } = useContext(CheckoutPortalContext)
+  const navigate = useNavigate()
+  const { retrieveJson, grantAccessJson, id } = useContext(CheckoutPortalContext)
+
+  if (!grantAccessJson) {
+    navigate(`/${id}/checkout/fail`)
+  }
 
   return (
     <div className='row'>

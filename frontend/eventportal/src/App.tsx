@@ -56,7 +56,7 @@ const CheckoutPortal = () => {
                     path="checkout/success"
                     element={
                       <RequiresEvent>
-                        <SuccessCheckoutPage />
+                        <CheckoutSuccessPage />
                       </RequiresEvent>
                     }
                   />
@@ -68,12 +68,12 @@ const CheckoutPortal = () => {
                       </RequiresEvent>
                     }
                   />
-                  {/* this is the old success page */}
+                  {/* this is new success page should be replace de old one since backend is ready */}
                   <Route
-                    path="checkout/status/success"
+                    path="new/success/page"
                     element={
                       <RequiresEvent>
-                        <CheckoutSuccessPage />
+                        <SuccessCheckoutPage />
                       </RequiresEvent>
                     }
                   />

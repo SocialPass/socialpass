@@ -332,17 +332,20 @@
  * Scanner specific styles
  */
 
- .socialpass-scanner 
-    .home-bg {
-        background-color: var(--primary-color);
-        color: var(--white-color);
-    }
-    .content-bg {
-        background-color: var(--primary-color);
-        color: var(--white-color);
-    }
-    .theme-bg {
-        background-color: var(--primary-color);
-        color: var(--white-color);
-    }
-    
+
+/**
+   * Scanner specific styles
+   */
+
+.socialpass-scanner {
+    --home-background-color: var(--darkgray-color-dim);
+    --home-text-color: var(--white-color);
+    --card-background-color: var(--dark-color);
+    --card-text-color: var(--white-color);
+    --card-text-highlight-color: var(--primary-color);
+    --body-background-color: var(--darkgray-color-dim);
+    --body-text-color: var(--white-color);
+    --button-primary-background-color: var(--primary-color);
+    --button-secondary-background-color: var(--primary-color-light);
+    --button-text-color: var(--dark-color);
+}

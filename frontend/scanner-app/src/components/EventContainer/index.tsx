@@ -22,12 +22,15 @@ export function EventContainer({
     <div className="container p-10 d-flex flex-column align-items-center">
       <div className="landing-page-event-title">{event_name}</div>
       <div className="landing-page-card">
+            <div className="content-bg">
+
         <div className="landing-page-card-text-1">Total Attendance:</div>
         <div className="landing-page-card-text-2 mb-15">{event_attendance}</div>
         <div className="landing-page-card-text-1">Date:</div>
         <div className="landing-page-card-text-2 mb-15">{event_date}</div>
         <div className="landing-page-card-text-1">Venue:</div>
         <div className="landing-page-card-text-2">{event_venue}</div>
+        </div>
       </div>
       <div className="container px-20 py-5 d-flex flex-column">
         <button

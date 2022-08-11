@@ -305,34 +305,7 @@
 }
 
 
-/**
-   * Scanner specific styles
-   */
-
-.socialpass-scanner .home-bg {
-    background-color: var(--primary-color);
-    color: var(--white-color);
-}
-
-.content-bg {
-    background-color: var(--white-color);
-    color: var(--white-color);
-}
-
-.theme-bg {
-    background-color: var(--gray-color-very-light);
-    color: var(--dark-color);
-}
-
-
-.dark-mode .main-bg {
-    background-color: hsl(var(--primary-color-hue), 40%, 15%);
-}
-
-
-/**
-   * Scanner specific styles
-   */
+/* Scanner specific styles */
 
 .socialpass-scanner {
     --home-background-color: var(--primary-color);

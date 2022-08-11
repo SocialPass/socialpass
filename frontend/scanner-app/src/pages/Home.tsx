@@ -1,10 +1,9 @@
-/* eslint-disable jsx-a11y/alt-text */
-import { useEvent } from "../contexts/EventContext";
-import { EventContainer } from "../components/EventContainer";
-import { CopyrightFooter } from "../components/CopyrightFooter";
+import { useEvent } from '../contexts/EventContext'
+import { EventContainer } from '../components/EventContainer'
+import { CopyrightFooter } from '../components/CopyrightFooter'
 
 export function Home() {
-  const { eventData }: any = useEvent();
+  const { eventData }: any = useEvent()
   return (
     <>
       <div className="landing-page-body p-10 py-10">
@@ -21,5 +20,5 @@ export function Home() {
         <CopyrightFooter/>
       </div>
     </>
-  );
+  )
 }

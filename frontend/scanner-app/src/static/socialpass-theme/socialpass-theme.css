@@ -45,6 +45,7 @@
     --base-font-size: 1.8rem;
     --small-font-size: 1.6rem;
     --large-font-size: 2.0rem;
+
 }
 
 /* System colors */
@@ -115,6 +116,7 @@
     --socialpass-orange-color-lightness-step-up-2: 60%;
     --socialpass-orange-color-lightness-step-down-1: 45%;
     --socialpass-orange-color-lightness-step-down-2: 40%;
+
 }
 
 /* Context colors */
@@ -167,6 +169,7 @@
     --secondary-color-very-dim: var(--socialpass-orange-color-very-dim);
 
     --text-color-on-secondary-color-bg: var(--text-color-on-socialpass-orange-color-bg);
+
 }
 
 /* Buttons */
@@ -218,6 +221,7 @@
 
     --input-border-color-focus: var(--primary-color-dim);
     --input-box-shadow-focus: 0 0 0 0.3rem hsla(var(--primary-color-hsl), 0.15);
+
 }
 
 /* Navbar */
@@ -273,6 +277,7 @@
     /* Sidebar link */
 
     --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.05);
+
 }
 
 /* Card */
@@ -288,6 +293,7 @@
 
     --dropdown-menu-bg-color: var(--base-content-bg-color);
     --dropdown-menu-border-color: var(--border-color);
+
 }
 
 /* Tooltips */
@@ -340,4 +346,5 @@
     --button-secondary-background-color: var(--primary-color-light);
     --button-text-color: var(--white-color);
     --copyright-text-color: var(--dark-color);
+
 }

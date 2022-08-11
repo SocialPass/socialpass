@@ -79,7 +79,7 @@ class Command(BaseCommand):
             password: password
         """
 
-        queryset = User.objects.filter(name="admin", email="admin@admin.com")
+        queryset = User.objects.filter(email="admin@admin.com")
 
         if queryset.exists():
             return queryset.first()

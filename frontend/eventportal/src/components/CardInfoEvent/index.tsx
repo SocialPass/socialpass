@@ -52,11 +52,11 @@ export default function CardInfoEvent() {
         </div>
       </div>
       {/* END ICONS */}
-      <div className="mt-20 ">
+      {/* <div className="mt-20 ">
         <a href="#" className="text-secondary text-underline fw-bold">
           See details <i className="fa-solid fa-angle-down" />
         </a>
-      </div>
+      </div> */}
     </div>
   );
 }

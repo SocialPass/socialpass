@@ -10,7 +10,7 @@
   position: fixed;
   bottom: 0px;
   text-align: center;
-  color: var(--copyright-text-color);
+  color: inherit;
   opacity: 75%;
   font-size: calc(var(--base-font-size) - 0.2rem);
   padding-top: 5%;
@@ -135,7 +135,7 @@
   font-size: 22px;
   line-height: 26px;
   text-align: left;
-  color: var(--text-color-on-base-body-bg-color);
+  color: var(--body-text-color);
   margin-top: 10%;
   margin-bottom: 5%;
 }
@@ -248,7 +248,7 @@
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: var(--base-body-bg-color);
+  color: var(--body-text-color);
   margin-bottom: 20px;
   position: absolute;
   margin-left: -50%;
@@ -380,9 +380,9 @@
   display: block;
   width: 100%;
   height: 100%;
-  color: inherit;
+  background-color: var(--home-background-color);
+  color: var(--home-text-color);
   flex-grow: 1;
-  background-color: var(--base-body-bg-color);
   box-shadow: none;
 }
 
@@ -410,7 +410,7 @@ td {
   text-align: left;
   padding: 8px;
   font-size: 12px;
-  color: var(--text-color-on-base-body-bg-color);
+  color: var(--body-text-color);
 }
 
 th {

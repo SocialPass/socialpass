@@ -341,4 +341,6 @@
     --button-primary-background-color: var(--primary-color);
     --button-secondary-background-color: var(--primary-color-light);
     --button-text-color: var(--dark-color);
+    --copyright-text-color: var(--white-color);
+
 }

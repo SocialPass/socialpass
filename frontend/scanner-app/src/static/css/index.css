@@ -19,6 +19,8 @@
 /* Landing Page Components */
 
 .landing-page-body {
+  display: flex;
+  justify-content: center;
   background-color: var(--home-background-color);
   color: var(--home-text-color);
   width: 100vw;
@@ -158,6 +160,8 @@
 }
 
 .scanner-body {
+  display: flex;
+  justify-content: center;
   position: absolute;
   display: block;
   width: 100%;
@@ -227,8 +231,8 @@
 }
 
 .statistics-body {
-  position: absolute;
-  display: block;
+  display: flex;
+  justify-content: center;
   color: inherit;
   box-shadow: none;
   background-color: var(--body-background-color);

@@ -15,7 +15,6 @@ class Command(BaseCommand):
         """
         Execute clear-db command
         """
-
         self.stdout.write("CLEANING UP DATABASE...")
 
         # reset and migrate

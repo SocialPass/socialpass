@@ -26,7 +26,6 @@ class Command(BaseCommand):
         --events param refer to how many Events will be created
         --tickets params refer to how many Tickets will be created per Event
         """
-
         parser.add_argument(
             "-e",
             "--events",
@@ -42,7 +41,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs) -> None:
         """Execute database population"""
-
         self.stdout.write("POPULATING DATABASE")
 
         # get number of events and tickets
@@ -50,12 +48,11 @@ class Command(BaseCommand):
         num_tickets = kwargs["tickets"] or 1
 
         # creates user, team and Membership
-        user = self.create_super_user()
+        user = self.get_or_create_superuser()
         team = TeamFactory()
         MembershipFactory(user=user, team=team)
 
         for _ in range(num_events):
-
             # create events and BlockchainOwnership
             event = EventFactory(team=team, user=user)
             BlockchainOwnershipFactory(event=event)
@@ -71,15 +68,14 @@ class Command(BaseCommand):
             )
         )
 
-    def create_super_user(self):
+    def get_or_create_superuser(self):
         """
-        create a superuser
+        create a superuser if not exists
             username: admin
             email: admin@admin.com
             password: password
         """
-
-        queryset = User.objects.filter(email="admin@admin.com")
+        queryset = User.objects.filter(username="admin")
 
         if queryset.exists():
             return queryset.first()

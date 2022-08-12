@@ -1,9 +1,22 @@
+// import { Routes, Route, BrowserRouter } from "react-router-dom";
+// import { StyledContainer } from "./components";
+// import { EventPortalProvider } from "./context";
+// import { WagmiConfig } from "wagmi";
+// import { client } from "./web3/client";
+// import { Init, CheckoutWeb3, Event } from "./pages";
+// import RequiresEvent from "./utils/requiresEventHOC";
+// import { QueryClient, QueryClientProvider } from "react-query";
+// import { Error } from "./pages/Error";
+// import "./styles/global.css";
+import { SuccessCheckoutPage } from "./components/SuccessCheckoutPage";
+import CheckoutSuccessPage from "./components/CheckoutSuccessPage";
+import CheckoutFailedPage from "./components/CheckoutFailedPage";
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { StyledContainer } from './components'
 import { EventPortalProvider } from './context'
 import { WagmiConfig } from 'wagmi'
 import { client } from './web3/client'
-import { Init, CheckoutWeb3, CheckoutStatus, Event } from './pages'
+import { Init, CheckoutWeb3, Event } from './pages'
 import RequiresEvent from './utils/requiresEventHOC'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Error } from './pages/Error'
@@ -50,10 +63,27 @@ const CheckoutPortal = () => {
                     }
                   />
                   <Route
-                    path='checkout/status'
+                    path="checkout/success"
                     element={
                       <RequiresEvent>
-                        <CheckoutStatus />
+                        <CheckoutSuccessPage />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route
+                    path="checkout/fail"
+                    element={
+                      <RequiresEvent>
+                        <CheckoutFailedPage />
+                      </RequiresEvent>
+                    }
+                  />
+                  {/* this is new success page should be replace de old one since backend is ready */}
+                  <Route
+                    path="new/success/page"
+                    element={
+                      <RequiresEvent>
+                        <SuccessCheckoutPage />
                       </RequiresEvent>
                     }
                   />

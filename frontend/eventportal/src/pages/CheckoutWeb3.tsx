@@ -128,10 +128,10 @@ export const CheckoutWeb3 = () => {
         }
         if (response.httpStatus === 200) {
           setGrantAccessJson(response)
-          navigate(`/${id}/checkout/status`)
+          navigate(`/${id}/checkout/success`)
         } else {
           setGrantAccessError(response)
-          navigate(`/${id}/checkout/status`)
+          navigate(`/${id}/checkout/fail`)
         }
       }
     })()

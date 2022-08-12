@@ -22,6 +22,19 @@
   }
 }
 
+@media (max-width: 278px) {
+  .title-break-text{
+    font-size: 25px;
+  }
+}
+
+@media (min-width: 2556px) {
+  .ticket-event::before{
+    border: 38px solid !important;
+    border-color: var(--white-color) var(--white-color) transparent transparent !important;
+  }
+}
+
 /* Wallet radio buttons */
 
 .wallet-button {

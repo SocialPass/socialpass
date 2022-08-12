@@ -9,5 +9,6 @@ export const CheckoutStatus = () => {
   if (grantAccessJson) {
     return <CheckoutSuccessPage />
   }
+
   return <CheckoutFailedPage />
 }

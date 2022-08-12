@@ -1,6 +1,6 @@
 /**
  * ----------------------------------------------------------------------------
- * Custom version of socialpass-theme.css for the Scanner's Landing Page
+ * Custom version of socialpass-theme.css for the Scanner Application
  * ----------------------------------------------------------------------------
  */
 
@@ -10,9 +10,9 @@
   position: fixed;
   bottom: 0px;
   text-align: center;
-  color: inherit;
+  color: var(--copyright-text-color);
   opacity: 75%;
-  font-size: calc(var(--base-font-size) - 0.2rem);
+  font-size: calc(var(--base-font-size) - 0.4rem);
   padding-top: 5%;
 }
 
@@ -23,6 +23,13 @@
   color: var(--home-text-color);
   width: 100vw;
   height: 100vh;
+}
+
+.landing-page-logo {
+  max-width: 100%;
+  height: auto;
+  max-height: 100px;
+  padding: 5px;
 }
 
 .landing-page-card {
@@ -71,8 +78,7 @@
   color: var(--white-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
-  margin-bottom: 0.8rem;
-  margin-top: 1.2rem;
+
 }
 
 .btn-start-scanning {
@@ -136,7 +142,7 @@
   line-height: 26px;
   text-align: left;
   color: var(--body-text-color);
-  margin-top: 10%;
+  margin-top: 5%;
   margin-bottom: 5%;
 }
 
@@ -144,11 +150,11 @@
   font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
   text-align: left;
   color: inherit;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .scanner-body {

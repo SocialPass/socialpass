@@ -8,7 +8,7 @@ export function Home() {
     <>
       <div className="landing-page-body p-10 py-10">
         <div className="d-flex flex-column align-items-center justify-content-around">
-          <img id="SocialPassHeaderIcon" className="p-15" src={window.icon} style={{maxHeight:"120px"}} />
+          <img id="SocialPassHeaderIcon" className="landing-page-logo" src={window.icon} />
           <div></div>
           <EventContainer
             event_name={eventData.title}

@@ -1,43 +1,43 @@
 // Event Portal API
-const prodURL = import.meta.env.VITE_APP_API_URL;
-const devURL = "http://localhost:8000/api";
-const baseURL = import.meta.env.PROD ? prodURL : devURL;
+const prodURL = import.meta.env.VITE_APP_API_URL
+const devURL = 'http://localhost:8000/api'
+const baseURL = import.meta.env.PROD ? prodURL : devURL
 
 // TicketedEventRetrieve API call
 export class TicketedEventRetrieve {
   // wrapper for backend - TicketedEventRetrieve
   static call = async ({ public_id }) => {
     // set url
-    const url = `${baseURL}/checkout-portal/v1/retrieve/${public_id}/`;
+    const url = `${baseURL}/checkout-portal/v1/retrieve/${public_id}/`
     // set request options
-    var requestOptions = {
-      method: "GET",
-    };
+    const requestOptions = {
+      method: 'GET',
+    }
 
     return fetch(url, requestOptions)
       .then((response) => {
         if (response.ok) {
-          return response.json();
+          return response.json()
         }
-        throw response;
+        throw response
       })
       .then((json) => {
-        let obj = json;
+        const obj = json
         Object.assign(obj, {
           httpStatus: 200,
-        });
-        return obj;
+        })
+        return obj
       })
       .catch((error) => {
         return error.json().then((errorJson) => {
-          let e = {
+          const e = {
             httpStatus: error.status,
             message: errorJson,
-          };
-          return e;
-        });
-      });
-  };
+          }
+          return e
+        })
+      })
+  }
 }
 
 // TicketedEventRequestAccess class
@@ -46,42 +46,42 @@ export class TicketedEventRequestAccess {
   // wrapper for backend - TicketedEventRequestAccess
   static call = async ({ public_id, checkout_type }) => {
     // set url
-    const url = `${baseURL}/checkout-portal/v1/request/${public_id}/?checkout_type=${checkout_type}`;
+    const url = `${baseURL}/checkout-portal/v1/request/${public_id}/?checkout_type=${checkout_type}`
 
     // set request options
     const requestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-    };
+    }
 
     // fetch
     return fetch(url, requestOptions)
       .then((response) => {
         if (response.ok) {
-          return response.json();
+          return response.json()
         }
-        throw response;
+        throw response
       })
       .then((json) => {
-        let obj = json;
+        const obj = json
         Object.assign(obj, {
           httpStatus: 200,
-        });
-        return obj;
+        })
+        return obj
       })
       .catch((error) => {
         return error.json().then((errorJson) => {
-          let e = {
+          const e = {
             httpStatus: error.status,
             message: errorJson,
-          };
-          return e;
-        });
-      });
-  };
+          }
+          return e
+        })
+      })
+  }
 }
 
 // TicketedEventGrantAccess class
@@ -97,7 +97,7 @@ export class TicketedEventGrantAccess {
     tickets_requested,
   }) => {
     // setup url
-    const url = `${baseURL}/checkout-portal/v1/process/${public_id}/?checkout_type=${checkout_type}`;
+    const url = `${baseURL}/checkout-portal/v1/process/${public_id}/?checkout_type=${checkout_type}`
 
     // set body
     const body = JSON.stringify({
@@ -105,41 +105,41 @@ export class TicketedEventGrantAccess {
       signed_message: signed_message,
       blockchain_ownership_id: blockchain_ownership_id,
       tickets_requested: tickets_requested,
-    });
+    })
 
     // set request options
     const requestOptions = {
-      method: "POST",
+      method: 'POST',
       body: body,
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-    };
+    }
 
     // fetch
     return fetch(url, requestOptions)
       .then((response) => {
         if (response.ok) {
-          return response.json();
+          return response.json()
         }
-        throw response;
+        throw response
       })
       .then((json) => {
-        let obj = json;
+        const obj = json
         Object.assign(obj, {
           httpStatus: 200,
-        });
-        return obj;
+        })
+        return obj
       })
       .catch((error) => {
         return error.json().then((errorJson) => {
-          let e = {
+          const e = {
             httpStatus: error.status,
             message: errorJson,
-          };
-          return e;
-        });
-      });
-  };
+          }
+          return e
+        })
+      })
+  }
 }

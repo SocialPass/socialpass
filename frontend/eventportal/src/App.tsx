@@ -1,13 +1,26 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { StyledContainer } from "./components";
-import { EventPortalProvider } from "./context";
-import { WagmiConfig } from "wagmi";
-import { client } from "./web3/client";
-import { Init, CheckoutWeb3, CheckoutStatus, Event } from "./pages";
-import RequiresEvent from "./utils/requiresEventHOC";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { Error } from "./pages/Error";
-import "./styles/global.css";
+// import { Routes, Route, BrowserRouter } from "react-router-dom";
+// import { StyledContainer } from "./components";
+// import { EventPortalProvider } from "./context";
+// import { WagmiConfig } from "wagmi";
+// import { client } from "./web3/client";
+// import { Init, CheckoutWeb3, Event } from "./pages";
+// import RequiresEvent from "./utils/requiresEventHOC";
+// import { QueryClient, QueryClientProvider } from "react-query";
+// import { Error } from "./pages/Error";
+// import "./styles/global.css";
+import { SuccessCheckoutPage } from "./components/SuccessCheckoutPage";
+import CheckoutSuccessPage from "./components/CheckoutSuccessPage";
+import CheckoutFailedPage from "./components/CheckoutFailedPage";
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import { StyledContainer } from './components'
+import { EventPortalProvider } from './context'
+import { WagmiConfig } from 'wagmi'
+import { client } from './web3/client'
+import { Init, CheckoutWeb3, Event } from './pages'
+import RequiresEvent from './utils/requiresEventHOC'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { Error } from './pages/Error'
+import './styles/global.css'
 
 // Main CheckoutPortal component. Does a couple of things
 // 1. Setup CheckoutPortalProvider (react context)
@@ -15,7 +28,7 @@ import "./styles/global.css";
 // 3. Setup Routes, which takes over logic handling
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 0 } },
-});
+})
 const CheckoutPortal = () => {
   return (
     <BrowserRouter>
@@ -24,9 +37,9 @@ const CheckoutPortal = () => {
           <WagmiConfig client={client}>
             <StyledContainer>
               <Routes>
-                <Route path="/:publicId">
+                <Route path='/:publicId'>
                   <Route
-                    path=""
+                    path=''
                     element={
                       <RequiresEvent>
                         <Init />
@@ -34,7 +47,7 @@ const CheckoutPortal = () => {
                     }
                   />
                   <Route
-                    path="event"
+                    path='event'
                     element={
                       <RequiresEvent>
                         <Event />
@@ -42,7 +55,7 @@ const CheckoutPortal = () => {
                     }
                   />
                   <Route
-                    path="checkout/blockchain"
+                    path='checkout/blockchain'
                     element={
                       <RequiresEvent>
                         <CheckoutWeb3 />
@@ -50,14 +63,31 @@ const CheckoutPortal = () => {
                     }
                   />
                   <Route
-                    path="checkout/status"
+                    path="checkout/success"
                     element={
                       <RequiresEvent>
-                        <CheckoutStatus />
+                        <CheckoutSuccessPage />
                       </RequiresEvent>
                     }
                   />
-                  <Route path="error" element={<Error />} />
+                  <Route
+                    path="checkout/fail"
+                    element={
+                      <RequiresEvent>
+                        <CheckoutFailedPage />
+                      </RequiresEvent>
+                    }
+                  />
+                  {/* this is new success page should be replace de old one since backend is ready */}
+                  <Route
+                    path="new/success/page"
+                    element={
+                      <RequiresEvent>
+                        <SuccessCheckoutPage />
+                      </RequiresEvent>
+                    }
+                  />
+                  <Route path='error' element={<Error />} />
                 </Route>
               </Routes>
             </StyledContainer>
@@ -65,7 +95,7 @@ const CheckoutPortal = () => {
         </EventPortalProvider>
       </QueryClientProvider>
     </BrowserRouter>
-  );
-};
+  )
+}
 
-export default CheckoutPortal;
+export default CheckoutPortal

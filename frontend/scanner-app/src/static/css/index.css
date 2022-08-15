@@ -1,6 +1,6 @@
 /**
  * ----------------------------------------------------------------------------
- * Custom version of socialpass-theme.css for the Scanner's Landing Page
+ * Custom version of socialpass-theme.css for the Scanner Application
  * ----------------------------------------------------------------------------
  */
 
@@ -10,15 +10,29 @@
   position: fixed;
   bottom: 0px;
   text-align: center;
-  color: var(--gray-color-dim);
+  color: var(--copyright-text-color);
   opacity: 75%;
-  font-size: calc(var(--base-font-size) - 0.2rem);
+  font-size: calc(var(--base-font-size) - 0.4rem);
   padding-top: 5%;
 }
 
-
-
 /* Landing Page Components */
+
+.landing-page-body {
+  display: flex;
+  justify-content: center;
+  background-color: var(--home-background-color);
+  color: var(--home-text-color);
+  width: 100vw;
+  height: 100vh;
+}
+
+.landing-page-logo {
+  max-width: 100%;
+  height: auto;
+  max-height: 100px;
+  padding: 5px;
+}
 
 .landing-page-card {
   position: relative;
@@ -28,7 +42,7 @@
   padding: 2.5rem;
   margin: 2.5rem;
   color: inherit;
-  background-color: var(--base-content-bg-color);
+  background-color: var(--card-background-color);
   border: solid;
   border-width: 0px;
   border-color: var(--gray-color-dim);
@@ -36,18 +50,13 @@
   box-shadow: none;
 }
 
-.landing-page-body {
-  color: var(--text-color-on-primary-color-bg);
-  width: 100vw;
-  height: 100vh;
-}
 
 .landing-page-card-text-1 {
   font-size: 2rem;
   line-height: 1.25;
-  font-family: inherit;
+  font-family: var(--base-font-family);
   font-weight: 600;
-  color: var(--primary-color);
+  color: var(--card-text-highlight-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
@@ -57,7 +66,7 @@
   line-height: 1;
   font-family: var(--base-font-family);
   font-weight: 1.6rem;
-  color: var(--text-color-on-base-body-bg-color);
+  color: var(--card-text-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
 }
@@ -65,13 +74,13 @@
 .landing-page-event-title {
   font-size: 2.6rem;
   line-height: 1;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
   text-align: center;
   color: var(--white-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
-  margin-bottom: 1.6rem;
+
 }
 
 .btn-start-scanning {
@@ -79,14 +88,15 @@
   border-width: 0rem;
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
+
   font-style: normal;
   font-size: 2.4rem;
   font-weight: 500;
   line-height: 2.4;
   text-decoration: none;
-  color: var(--text-color-on-secondary-color-bg);
-  background-color: var(--secondary-color);
+  color: var(--button-text-color);
+  background-color: var(--button-primary-background-color);
   border-color: none;
   box-shadow: none;
 }
@@ -127,35 +137,37 @@
 }
 
 .scanner-title {
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 100;
   font-size: 22px;
   line-height: 26px;
   text-align: left;
-  color: var(--text-color-on-base-body-bg-color);
-  margin-top: 10%;
+  color: var(--body-text-color);
+  margin-top: 5%;
   margin-bottom: 5%;
 }
 
 .scanner-subtitle {
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
   text-align: left;
   color: inherit;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .scanner-body {
+  display: flex;
+  justify-content: center;
   position: absolute;
   display: block;
   width: 100%;
   height: 100%;
-  color: var(--text-color-on-base-body-bg-color);
-  background-color: var(--base-body-bg-color);
+  color: var(--body-text-color);
+  background-color: var(--body-background-color);
   box-shadow: none;
 }
 
@@ -168,8 +180,8 @@
   font-weight: 400px;
   line-height: 18px;
   text-decoration: none;
-  color: var(--base-body-bg-color);
-  background-color: var(--secondary-color);
+  color: var(--button-text-color);
+  background-color: var(--button-primary-background-color);
   border-color: none;
   box-shadow: none;
 }
@@ -184,8 +196,8 @@
   font-weight: 400px;
   line-height: 18px;
   text-decoration: none;
-  color: var(--base-body-bg-color);
-  background-color: var(--primary-color-light);
+  color: var(--button-text-color);
+  background-color: var(--button-secondary-background-color);
   border-color: none;
   box-shadow: none;
 }
@@ -198,14 +210,14 @@
   position: center;
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
-  font-size: 2.0rem;
+  font-size: 2rem;
   font-weight: 500;
   line-height: 24px;
   text-decoration: none;
-  color: var(--text-color-on-primary-color-bg);
-  background-color: var(--primary-color);
+  color: var(--button-text-color);
+  background-color: var(--button-primary-background-color);
   border-color: none;
   box-shadow: none;
 }
@@ -219,34 +231,34 @@
 }
 
 .statistics-body {
-  position: absolute;
-  display: block;
+  display: flex;
+  justify-content: center;
   color: inherit;
   box-shadow: none;
-  background-color: var(--base-body-bg-color);
+  background-color: var(--body-background-color);
   width: 100vw;
   height: 100vh;
 }
 
 .statistics-title {
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 500;
   font-size: 22px;
   line-height: 26px;
   text-align: center;
-  color: var(--text-color-on-base-body-bg-color);
-    margin-top: 5%;
+  color: var(--body-text-color);
+  margin-top: 5%;
   margin-bottom: 10%;
 }
 
 .statistics-subtitle {
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: var(--base-body-bg-color);
+  color: var(--body-text-color);
   margin-bottom: 20px;
   position: absolute;
   margin-left: -50%;
@@ -256,7 +268,7 @@
   position: relative;
   display: block;
   color: inherit;
-  background-color: var(--base-content-bg-color);
+  background-color: var(--card-background-color);
   border-color: var(--gray-color-dim);
   box-shadow: 0px 4px 15px 1px hsla(var(--primary-color-hsl), 0.21);
   border-radius: 33px 33px 0px 0px;
@@ -269,11 +281,10 @@
   -webkit-font-smoothing: var(--card-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--card-moz-osx-font-smoothing);
   color: inherit;
-  background-color: var(--base-content-bg-color);
+  background-color: var(--card-background-color);
   border-radius: 1.4rem;
-  box-shadow: 0px 4px 15px 1px var(--base-content-bg-color);
+  box-shadow: 0px 4px 15px 1px var(--card-background-color);
 }
-
 
 .btn-selected-statistic {
   border-radius: 12px 12px 0px 0px;
@@ -284,7 +295,7 @@
   position: relative;
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -292,21 +303,21 @@
   text-decoration: none;
   border-color: none;
   box-shadow: none;
-  color: var(--text-color-on-base-body-bg-color);
+  color: var(--button-text-color);
 }
 
 /* Statistics Table Components */
 .btn-active {
   border-color: transparent;
   margin: 2px;
-  color: var(--text-color-on-primary-color-bg);
+  color: var(--button-text-color);
   background-color: var(--primary-color);
 }
 
 .btn-inactive {
   border-color: transparent;
   margin: 2px;
-  color: var(--text-color-on-primary-color-bg);
+  color: var(--button-text-color);
   background-color: var(--primary-color-light);
   border-color: none;
   box-shadow: none;
@@ -323,7 +334,7 @@
 .capacity-reached-title {
   font-size: 2.6rem;
   line-height: 1;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
   color: var(--secondary-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
@@ -355,7 +366,7 @@
 
 /* Error Pages Components */
 .error-title {
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 700;
   font-size: 36px;
@@ -365,7 +376,7 @@
 }
 
 .error-body {
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 400;
   font-size: 18px;
@@ -379,9 +390,9 @@
   display: block;
   width: 100%;
   height: 100%;
-  color: inherit;
+  background-color: var(--home-background-color);
+  color: var(--home-text-color);
   flex-grow: 1;
-  background-color: var(--base-body-bg-color);
   box-shadow: none;
 }
 
@@ -398,24 +409,24 @@
 }
 
 table {
-  background-color: var(--base-content-bg-color);
+  background-color: var(--card-background-color);
   border-collapse: collapse;
   width: 100%;
 }
 
 th,
 td {
-  border: 1px solid var(--base-content-bg-color);
+  border: 1px solid var(--card-background-color);
   text-align: left;
   padding: 8px;
   font-size: 12px;
-  color: var(--text-color-on-base-body-bg-color);
+  color: var(--body-text-color);
 }
 
 th {
-  background-color: var(--base-content-bg-color);
+  background-color: inherit;
   color: var(--primary-color);
-  font-family: "Rubik";
+  font-family: var(--base-font-family);
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -423,7 +434,7 @@ th {
 }
 
 td {
-  background-color: var(--base-content-bg-color);
+  background-color: inherit;
 }
 
 form {

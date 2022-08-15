@@ -1,14 +1,12 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Scanner } from "../../pages/Scanner";
-import { Link } from "react-router-dom";
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 type EventContainerProps = {
-  event_name: String;
-  event_attendance: number;
-  event_date: String;
-  event_venue: String;
-};
+  event_name: string
+  event_attendance: number
+  event_date: string
+  event_venue: string
+}
 
 export function EventContainer({
   event_name,
@@ -16,29 +14,30 @@ export function EventContainer({
   event_date,
   event_venue,
 }: EventContainerProps) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
-    <div className="container p-10 d-flex flex-column align-items-center">
-      <div className="landing-page-event-title">{event_name}</div>
-      <div className="landing-page-card background-image">
-        <div className="landing-page-card-text-1">Total Attendance:</div>
-        <div className="landing-page-card-text-2 mb-15">{event_attendance}</div>
-        <div className="landing-page-card-text-1">Date:</div>
-        <div className="landing-page-card-text-2 mb-15">{event_date}</div>
-        <div className="landing-page-card-text-1">Venue:</div>
-        <div className="landing-page-card-text-2">{event_venue}</div>
+
+    <div className='container p-10 d-flex flex-column align-items-center'>
+      <div className='landing-page-event-title'>{event_name}</div>
+      <div className='landing-page-card background-image'>
+        <div className='landing-page-card-text-1'>Total Attendance:</div>
+        <div className='landing-page-card-text-2 mb-15'>{event_attendance}</div>
+        <div className='landing-page-card-text-1'>Date:</div>
+        <div className='landing-page-card-text-2 mb-15'>{event_date}</div>
+        <div className='landing-page-card-text-1'>Venue:</div>
+        <div className='landing-page-card-text-2'>{event_venue}</div>
       </div>
-      <div className="container px-20 py-5 d-flex flex-column">
+      <div className='container px-20 py-5 d-flex flex-column'>
         <button
-          className="btn-start-scanning"
+          className='btn-start-scanning'
           onClick={() => {
-            navigate("scanner");
+            navigate('scanner')
           }}
         >
           Start Scanning
         </button>
       </div>
     </div>
-  );
+  )
 }

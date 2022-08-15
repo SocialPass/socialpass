@@ -1,19 +1,14 @@
-/* eslint-disable import/no-cycle */
-import React from "react";
-import { useTransition } from "react-spring";
-import { Container } from "./styles";
-import Toast from "./Toast";
+import React from 'react'
+import { useTransition } from 'react-spring'
+import { Container } from './styles'
+import Toast from './Toast'
 
 function ToastContainer({ messages }: any) {
-  const messagesWithTransitions = useTransition(
-    messages,
-    (message) => message.id,
-    {
-      from: { right: "-120%", opacity: 0 },
-      enter: { right: "0%", opacity: 1 },
-      leave: { right: "-120%", opacity: 0 },
-    }
-  );
+  const messagesWithTransitions = useTransition(messages, (message) => message.id, {
+    from: { right: '-120%', opacity: 0 },
+    enter: { right: '0%', opacity: 1 },
+    leave: { right: '-120%', opacity: 0 },
+  })
 
   return (
     <Container>
@@ -21,7 +16,7 @@ function ToastContainer({ messages }: any) {
         <Toast key={key} style={props} toast={item} />
       ))}
     </Container>
-  );
+  )
 }
 
-export default ToastContainer;
+export default ToastContainer

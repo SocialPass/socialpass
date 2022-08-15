@@ -96,11 +96,6 @@ python backend/manage.py compress --force
 # Run application
 python backend/manage.py runserver
 
-# Optional: pre-populate database
-python backend/manage.py pre-populate-db --events 2 --tickets 4
-
-# Optional: reset database
-python backend/manage.py clear-db
 
 ```
 
@@ -111,4 +106,12 @@ docker stop database
 
 # To start postgres container
 docker start database
+
+# pre-populate database
+python backend/manage.py pre_populate_db --events 1 --tickets 1
+
+# clear database
+python backend/manage.py reset_db
+python backend/manage.py migrate
+
 ```

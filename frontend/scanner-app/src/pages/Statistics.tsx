@@ -24,8 +24,8 @@ export function Statistics() {
             Return to Scanner
           </button>
         </div>
-        <CopyrightFooter />
       </div>
+      <CopyrightFooter />
     </div>
   )
 }

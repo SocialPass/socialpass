@@ -6,25 +6,18 @@ export function Home() {
   const { eventData }: any = useEvent()
   return (
     <>
-      <div className='socialpass-scanner-main-bg'>
-        <div className='landing-page-body p-10 py-10'>
-          <div className='d-flex flex-column align-items-center justify-content-around'>
-            <img
-              id='SocialPassHeaderIcon'
-              className='p-30'
-              src={window.icon}
-              style={{ maxHeight: '250px' }}
-            />
-            <div></div>
-            <EventContainer
-              event_name={eventData.title}
-              event_attendance={eventData.capacity}
-              event_date={eventData.start_date}
-              event_venue={eventData.location}
-            />
-          </div>
-          <CopyrightFooter />
+      <div className="landing-page-body p-10 py-10">
+        <div className="d-flex flex-column align-items-center justify-content-around">
+          <img id="SocialPassHeaderIcon" className="landing-page-logo" src={window.icon} />
+          <div></div>
+          <EventContainer
+            event_name={eventData.title}
+            event_attendance={eventData.capacity}
+            event_date={eventData.start_date}
+            event_venue={eventData.location}
+          />
         </div>
+        <CopyrightFooter/>
       </div>
     </>
   )

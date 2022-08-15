@@ -1,0 +1,335 @@
+/**
+ * ----------------------------------------------------------------------------
+ * SocialPass theme
+ * Version: Beta
+ * Theme for Halfmoon 2.x.x
+ * Copyright 2022 - Present, SP Tech Inc. All rights reserved
+ * ----------------------------------------------------------------------------
+ * The above notice must be included in its entirety when this file is used.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+
+:root {
+    /* Font related (sizes, weights, family, etc.) */
+
+    --base-font-family: "Montserrat", sans-serif;
+    --base-font-size: 1.6rem;
+    --small-font-size: 1.4rem;
+    --large-font-size: 1.8rem;
+    --bold-font-weight: 600;
+
+    /* Base background colors */
+
+    --base-body-bg-color: var(--gray-color-very-light);
+
+    /* Border related (mostly for utilities) */
+
+    --base-border-radius: 0.2rem;
+}
+
+.dark-mode {
+    /* Base background colors */
+
+    --base-body-bg-color: var(--dark-color);
+    --base-content-bg-color: var(--dark-color-very-light);
+}
+
+.readable-mode {
+    /* Font related (sizes, weights, family, etc.) */
+
+    --base-font-size: 1.8rem;
+    --small-font-size: 1.6rem;
+    --large-font-size: 2.0rem;
+}
+
+/* System colors */
+
+:root {
+    /* Rolling Loud teal */
+
+    --rolling-loud-teal-color-hue: 186;
+    --rolling-loud-teal-color-saturation: 75%;
+    --rolling-loud-teal-color-lightness: 55%;
+    --rolling-loud-teal-color-lightness-step-up-1: 60%;
+    --rolling-loud-teal-color-lightness-step-up-2: 65%;
+    --rolling-loud-teal-color-lightness-step-down-1: 50%;
+    --rolling-loud-teal-color-lightness-step-down-2: 45%;
+
+    --rolling-loud-teal-color-hsl: var(--rolling-loud-teal-color-hue), var(--rolling-loud-teal-color-saturation), var(--rolling-loud-teal-color-lightness);
+    --rolling-loud-teal-color-light-hsl: var(--rolling-loud-teal-color-hue), var(--rolling-loud-teal-color-saturation), var(--rolling-loud-teal-color-lightness-step-up-2);
+    --rolling-loud-teal-color-very-light-hsl: var(--rolling-loud-teal-color-hue), var(--rolling-loud-teal-color-saturation), 95%;
+    --rolling-loud-teal-color-dim-hsl: var(--rolling-loud-teal-color-hue), var(--rolling-loud-teal-color-saturation), var(--rolling-loud-teal-color-lightness-step-down-2);
+    --rolling-loud-teal-color-very-dim-hsl: var(--rolling-loud-teal-color-hue), 15%, 15%;
+
+    --rolling-loud-teal-color: hsl(var(--rolling-loud-teal-color-hsl));
+    --rolling-loud-teal-color-light: hsl(var(--rolling-loud-teal-color-light-hsl));
+    --rolling-loud-teal-color-very-light: hsl(var(--rolling-loud-teal-color-very-light-hsl));
+    --rolling-loud-teal-color-dim: hsl(var(--rolling-loud-teal-color-dim-hsl));
+    --rolling-loud-teal-color-very-dim: hsl(var(--rolling-loud-teal-color-very-dim-hsl));
+
+    --text-color-on-rolling-loud-teal-color-bg: var(--dark-text-color);
+
+    /* Rolling Loud pink */
+
+    --rolling-loud-pink-color-hue: 306;
+    --rolling-loud-pink-color-saturation: 77%;
+    --rolling-loud-pink-color-lightness: 60%;
+    --rolling-loud-pink-color-lightness-step-up-1: 65%;
+    --rolling-loud-pink-color-lightness-step-up-2: 70%;
+    --rolling-loud-pink-color-lightness-step-down-1: 55%;
+    --rolling-loud-pink-color-lightness-step-down-2: 50%;
+
+    --rolling-loud-pink-color-hsl: var(--rolling-loud-pink-color-hue), var(--rolling-loud-pink-color-saturation), var(--rolling-loud-pink-color-lightness);
+    --rolling-loud-pink-color-light-hsl: var(--rolling-loud-pink-color-hue), var(--rolling-loud-pink-color-saturation), var(--rolling-loud-pink-color-lightness-step-up-2);
+    --rolling-loud-pink-color-very-light-hsl: var(--rolling-loud-pink-color-hue), var(--rolling-loud-pink-color-saturation), 95%;
+    --rolling-loud-pink-color-dim-hsl: var(--rolling-loud-pink-color-hue), var(--rolling-loud-pink-color-saturation), var(--rolling-loud-pink-color-lightness-step-down-2);
+    --rolling-loud-pink-color-very-dim-hsl: var(--rolling-loud-pink-color-hue), 15%, 15%;
+
+    --rolling-loud-pink-color: hsl(var(--rolling-loud-pink-color-hsl));
+    --rolling-loud-pink-color-light: hsl(var(--rolling-loud-pink-color-light-hsl));
+    --rolling-loud-pink-color-very-light: hsl(var(--rolling-loud-pink-color-very-light-hsl));
+    --rolling-loud-pink-color-dim: hsl(var(--rolling-loud-pink-color-dim-hsl));
+    --rolling-loud-pink-color-very-dim: hsl(var(--rolling-loud-pink-color-very-dim-hsl));
+
+    --text-color-on-rolling-loud-pink-color-bg: var(--white-color);
+}
+
+/* Context colors */
+
+:root {
+    /* Primary colors */
+
+    --primary-color-hue: var(--rolling-loud-teal-color-hue);
+    --primary-color-saturation: var(--rolling-loud-teal-color-saturation);
+    --primary-color-lightness: var(--rolling-loud-teal-color-lightness);
+    --primary-color-lightness-step-up-1: var(--rolling-loud-teal-color-lightness-step-up-1);
+    --primary-color-lightness-step-up-2: var(--rolling-loud-teal-color-lightness-step-up-2);
+    --primary-color-lightness-step-down-1: var(--rolling-loud-teal-color-lightness-step-down-1);
+    --primary-color-lightness-step-down-2: var(--rolling-loud-teal-color-lightness-step-down-2);
+
+    --primary-color-hsl: var(--rolling-loud-teal-color-hsl);
+    --primary-color-light-hsl: var(--rolling-loud-teal-color-light-hsl);
+    --primary-color-very-light-hsl: var(--rolling-loud-teal-color-very-light-hsl);
+    --primary-color-dim-hsl: var(--rolling-loud-teal-color-dim-hsl);
+    --primary-color-very-dim-hsl: var(--rolling-loud-teal-color-very-dim-hsl);
+
+    --primary-color: var(--rolling-loud-teal-color);
+    --primary-color-light: var(--rolling-loud-teal-color-light);
+    --primary-color-very-light: var(--rolling-loud-teal-color-very-light);
+    --primary-color-dim: var(--rolling-loud-teal-color-dim);
+    --primary-color-very-dim: var(--rolling-loud-teal-color-very-dim);
+
+    --text-color-on-primary-color-bg: var(--text-color-on-rolling-loud-teal-color-bg);
+
+    /* Secondary colors */
+
+    --secondary-color-hue: var(--rolling-loud-pink-color-hue);
+    --secondary-color-saturation: var(--rolling-loud-pink-color-saturation);
+    --secondary-color-lightness: var(--rolling-loud-pink-color-lightness);
+    --secondary-color-lightness-step-up-1: var(--rolling-loud-pink-color-lightness-step-up-1);
+    --secondary-color-lightness-step-up-2: var(--rolling-loud-pink-color-lightness-step-up-2);
+    --secondary-color-lightness-step-down-1: var(--rolling-loud-pink-color-lightness-step-down-1);
+    --secondary-color-lightness-step-down-2: var(--rolling-loud-pink-color-lightness-step-down-2);
+
+    --secondary-color-hsl: var(--rolling-loud-pink-color-hsl);
+    --secondary-color-light-hsl: var(--rolling-loud-pink-color-light-hsl);
+    --secondary-color-very-light-hsl: var(--rolling-loud-pink-color-very-light-hsl);
+    --secondary-color-dim-hsl: var(--rolling-loud-pink-color-dim-hsl);
+    --secondary-color-very-dim-hsl: var(--rolling-loud-pink-color-very-dim-hsl);
+
+    --secondary-color: var(--rolling-loud-pink-color);
+    --secondary-color-light: var(--rolling-loud-pink-color-light);
+    --secondary-color-very-light: var(--rolling-loud-pink-color-very-light);
+    --secondary-color-dim: var(--rolling-loud-pink-color-dim);
+    --secondary-color-very-dim: var(--rolling-loud-pink-color-very-dim);
+
+    --text-color-on-secondary-color-bg: var(--text-color-on-rolling-loud-pink-color-bg);
+}
+
+/* Links */
+
+:root {
+    --link-text-color: var(--primary-color-dim);
+}
+
+.dark-mode {
+    --link-text-color: var(--primary-color);
+}
+
+/* Lists */
+
+:root {
+    /* Unordered list */
+
+    --unordered-list-item-bullet-width: 0.6rem;
+}
+
+/* Buttons */
+
+:root {
+    --button-vertical-padding: 0.6rem;
+
+    --small-button-vertical-padding: 0.4rem;
+
+    --large-button-vertical-padding: 0.8rem;
+
+    /* Default button */
+
+    --button-border-color: var(--border-color);
+}
+
+.dark-mode {
+    /* Default button */
+
+    --button-bg-clip: border-box;
+
+    /* Primary button */
+
+    --button-primary-border-color: transparent;
+
+    /* Secondary button */
+
+    --button-secondary-border-color: transparent;
+
+    /* Success button */
+
+    --button-success-border-color: transparent;
+
+    /* Warning button */
+
+    --button-warning-border-color: transparent;
+
+    /* Danger button */
+
+    --button-danger-border-color: transparent;
+}
+
+/* Form */
+
+:root {
+    /* Default input */
+
+    --input-border-color: var(--border-color);
+
+    /* Form label */
+
+    --form-label-font-weight: var(--bold-font-weight);
+
+    /* Input group text */
+
+    --input-group-text-border-color: var(--border-color);
+
+    /* Checkbox */
+
+    --checkbox-border-color-focus: var(--input-border-color-focus);
+    --checkbox-box-shadow-focus: var(--input-box-shadow-focus);
+}
+
+.dark-mode {
+    /* Default input */
+
+    --input-bg-clip: border-box;
+
+    --input-border-color-focus: var(--primary-color-dim);
+    --input-box-shadow-focus: 0 0 0 0.3rem hsla(var(--primary-color-hsl), 0.15);
+}
+
+/* Navbar */
+
+:root {
+    --navbar-height: 4.8rem;
+
+    --navbar-text-color: var(--text-color-on-primary-color-bg);
+    --navbar-bg-color: var(--primary-color-dim);
+    --navbar-border-color: transparent;
+}
+
+.dark-mode {
+    --navbar-text-color: hsla(var(--white-color-hsl), 0.85);
+    --navbar-bg-color: hsl(var(--primary-color-hue), 40%, 10%);
+    --navbar-border-color: hsla(var(--white-color-hsl), 0.15);
+}
+
+/* Sidebar */
+
+:root {
+    --sidebar-padding: 0;
+    --sidebar-border-width: 0;
+
+    --sidebar-text-color: var(--text-color-on-primary-color-bg);
+    --sidebar-bg-color: var(--primary-color-light);
+    --sidebar-border-color: hsla(var(--white-color-hsl), 0.15);
+
+    --sidebar-content-padding: 0.4rem 2.5rem;
+
+    /* Sidebar link */
+
+    --sidebar-link-margin: 0;
+    --sidebar-link-border-radius: 0;
+
+    --sidebar-link-text-color: var(--sidebar-text-color);
+
+    --sidebar-link-text-color-hover: var(--sidebar-link-text-color);
+    --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.1);
+
+    /* Active sidebar link */
+
+    --sidebar-link-active-text-color: var(--text-color-on-secondary-color-bg);
+    --sidebar-link-active-bg-color: var(--secondary-color);
+
+    --sidebar-link-active-text-color-hover: var(--sidebar-link-active-text-color);
+}
+
+.dark-mode {
+    --sidebar-border-width: var(--base-border-width);
+
+    --sidebar-text-color: hsla(var(--white-color-hsl), 0.85);
+    --sidebar-bg-color: hsl(var(--primary-color-hue), 40%, 15%);
+
+    /* Sidebar link */
+
+    --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.05);
+}
+
+/* Card */
+
+:root {
+    --card-border-color: var(--border-color);
+}
+
+/* Dropdown */
+
+:root {
+    /* Dropdown menu */
+
+    --dropdown-menu-bg-color: var(--base-content-bg-color);
+    --dropdown-menu-border-color: var(--border-color);
+}
+
+/* Tooltips */
+
+:root {
+    --tooltip-text-color: var(--white-color);
+    --tooltip-bg-color: var(--black-color);
+    --tooltip-box-shadow: none;
+}
+
+/* Sticky alerts */
+
+:root {
+    --sticky-alerts-width: 34rem;
+}
+
+/**
+ * Scanner specific styles
+ */
+
+.socialpass-scanner-main-bg {
+    color: var(--text-color-on-primary-color-bg);
+    background-color: var(--primary-color);
+}
+
+.socialpass-scanner-main-bg.dark-mode {
+    background-color: hsl(var(--primary-color-hue), 40%, 15%);
+}

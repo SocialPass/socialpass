@@ -7,6 +7,7 @@ from apps.root.factories import (
     TeamFactory,
     TicketFactory,
     TicketRedemptionKeyFactory,
+    UserFactory,
 )
 from apps.root.models import User
 
@@ -47,8 +48,11 @@ class Command(BaseCommand):
         num_events = kwargs["events"] or 1
         num_tickets = kwargs["tickets"] or 1
 
+        # creates superuser
+        self.create_superuser()
+
         # creates user, team and Membership
-        user = self.get_or_create_superuser()
+        user = UserFactory()
         team = TeamFactory()
         MembershipFactory(user=user, team=team)
 
@@ -68,7 +72,7 @@ class Command(BaseCommand):
             )
         )
 
-    def get_or_create_superuser(self):
+    def create_superuser(self) -> None:
         """
         create a superuser if not exists
             username: admin
@@ -77,7 +81,5 @@ class Command(BaseCommand):
         """
         queryset = User.objects.filter(username="admin")
 
-        if queryset.exists():
-            return queryset.first()
-        else:
-            return User.objects.create_superuser("admin", "admin@admin.com", "password")
+        if not queryset.exists():
+            User.objects.create_superuser("admin", "admin@admin.com", "password")

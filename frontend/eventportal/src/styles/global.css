@@ -23,13 +23,13 @@
 }
 
 @media (max-width: 278px) {
-  .title-break-text{
+  .title-break-text {
     font-size: 25px;
   }
 }
 
 @media (min-width: 2556px) {
-  .ticket-event::before{
+  .ticket-event::before {
     border: 38px solid !important;
     border-color: var(--white-color) var(--white-color) transparent transparent !important;
   }

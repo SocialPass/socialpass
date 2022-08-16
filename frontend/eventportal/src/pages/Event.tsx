@@ -7,6 +7,8 @@ export const Event = (): JSX.Element => {
   const { id, retrieveJson, generalAdmissionSelect, setGeneralAdmissionSelect } =
     useContext(CheckoutPortalContext)
 
+  console.log(retrieveJson)
+
   const generalAdmissionSelectArray = Array.from(
     { length: generalAdmissionSelect },
     (_, i) => i + 1,

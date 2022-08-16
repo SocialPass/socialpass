@@ -6,6 +6,16 @@ on:
     branches: [ master ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install node_modules
+      working-directory: ./frontend/scanner-app
+      run: npm install --legacy-peer-deps
+    - name: Run ESlint checks
+      working-directory: ./frontend/scanner-app
+      run: npm run lint;
   build:
     runs-on: ubuntu-latest
     steps:

@@ -30,7 +30,6 @@ from apps.dashboard.forms import (
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.models import Event, EventStripePayment, Membership, Team, Ticket
-from apps.root.utilities.GoogleTicket import GoogleTicket
 
 User = auth.get_user_model()
 
@@ -310,10 +309,6 @@ class EventListView(TeamContextMixin, ListView):
     template_name = "dashboard/event_list.html"
 
     def get_queryset(self):
-        event = Event.objects.get(pk=1)
-        GoogleTicket.insert_ticket_class(event)
-
-
         qs = super().get_queryset()
         qs = qs.filter(team__public_id=self.kwargs["team_public_id"])
 

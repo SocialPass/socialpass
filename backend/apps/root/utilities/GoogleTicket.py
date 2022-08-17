@@ -156,18 +156,11 @@ class GoogleTicket:
 			"id": ticket_id,
 			"classId": class_id,
 			"state": "ACTIVE",
-			#"barcode": {
-			#	"type": "BARCODE_TYPE_UNSPECIFIED",
-			#	"renderEncoding": "RENDER_ENCODING_UNSPECIFIED",
-			#	"value": "My barcode value",
-			#	"alternateText": "My barcode value",
-			#	"showCodeText": {
-			#		"defaultValue": {
-			#			"language": "en-us",
-			#			"value": "Show code text"
-			#		}
-			#	}
-			#}
+			"barcode": {
+				"type": "QR_CODE",
+				"renderEncoding": "RENDER_ENCODING_UNSPECIFIED",
+				"value": str(ticket_obj.embed_code)
+			}
 		}
 		response = http_client.post(url, json=payload)
 

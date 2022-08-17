@@ -69,7 +69,8 @@ class GoogleTicket:
 			address_items_list.append(event_obj.country)
 		address += ", ".join(address_items_list)
 
-		# Create the payload and return it
+
+		# Create the payload
 		payload = {
 			"eventName": {
 				"defaultValue": {
@@ -104,6 +105,16 @@ class GoogleTicket:
 			},
 			"hexBackgroundColor": "#ef7c4e"
 		}
+
+		# Add the latitude and longitude (if available)
+		if event_obj.lat and event_obj.long:
+			payload["locations"] = [
+				{
+					"latitude": float(event_obj.lat),
+					"longitude": float(event_obj.long)
+				}
+			]
+
 		return payload
 
 	@staticmethod

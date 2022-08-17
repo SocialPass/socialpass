@@ -7,8 +7,6 @@ export const Event = (): JSX.Element => {
   const { id, retrieveJson, generalAdmissionSelect, setGeneralAdmissionSelect } =
     useContext(CheckoutPortalContext)
 
-  console.log(retrieveJson)
-
   const generalAdmissionSelectArray = Array.from(
     { length: generalAdmissionSelect },
     (_, i) => i + 1,
@@ -85,7 +83,7 @@ export const Event = (): JSX.Element => {
                 <div>
                   This General Admission ticket is free to all holders of 1 NFT of collection:
                 </div>
-                {retrieveJson.requirements.map((requirement, index) => (
+                {retrieveJson.requirements?.map((requirement, index) => (
                   <div key={index}>
                     <div className='mt-10'>
                       <strong>Contract {index + 1}</strong>

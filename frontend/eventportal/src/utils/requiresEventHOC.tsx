@@ -23,7 +23,6 @@ function RequiresEvent({ children }: any) {
   }
 
   if (isLoading) {
-    // TODO: this should be a loading spinner
     return <Loading loadingText='Loading event' />
   }
 

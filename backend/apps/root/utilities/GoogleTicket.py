@@ -78,7 +78,6 @@ class GoogleTicket:
 					"value": event_obj.title
 				}
 			},
-			"issuerName": "SocialPass",
 			"reviewStatus": "UNDER_REVIEW",
 			"dateTime": {
 				"start": event_obj.start_date.isoformat(),
@@ -97,13 +96,7 @@ class GoogleTicket:
 						"value": address
 					}
 				}
-			},
-			"logo": {
-				"sourceUri": {
-					"uri": "https://res.cloudinary.com/nfty-labs/image/upload/v1660211657/socialpass-ticket-logo_lzcnkm.png"
-				}
-			},
-			"hexBackgroundColor": "#ef7c4e"
+			}
 		}
 
 		# Add the latitude and longitude (if available)
@@ -118,7 +111,13 @@ class GoogleTicket:
 		return payload
 
 	@staticmethod
-	def insert_update_ticket_class(event_obj, is_insert=True):
+	def insert_update_ticket_class(
+			event_obj,
+			is_insert=True,
+			issuer_name="SocialPass",
+			logo_uri="https://res.cloudinary.com/nfty-labs/image/upload/v1660211657/socialpass-ticket-logo_lzcnkm.png",
+			hex_bg_color="#ef7c4e"
+		):
 		"""
 		Insert/update a ticket class. Call post-save when an Event object is 
 		created/updated.
@@ -133,6 +132,15 @@ class GoogleTicket:
 		)
 		url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketClass"
 		payload = GoogleTicket.get_ticket_class_payload(event_obj)
+
+		# Add branding attributes to the payload
+		payload["issuerName"] = issuer_name
+		payload["logo"] = {
+			"sourceUri": {
+				"uri": logo_uri
+			}
+		}
+		payload["hexBackgroundColor"] = hex_bg_color
 
 		# Insert or update the ticket class
 		if is_insert:

@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 // @ts-nocheck
 // / <reference lib="webworker" />
 /* eslint-disable no-restricted-globals */

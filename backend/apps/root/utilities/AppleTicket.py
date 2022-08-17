@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from django.conf import settings
-from passbook.models import (  # type: ignore
+from passbook.models import (
     Alignment,
     Barcode,
     BarcodeFormat,

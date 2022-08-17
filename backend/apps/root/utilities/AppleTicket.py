@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from django.conf import settings
-from passbook.models import (
+from passbook.models import (  # type: ignore
     Alignment,
     Barcode,
     BarcodeFormat,
@@ -11,7 +11,9 @@ from passbook.models import (
     Pass,
 )
 
-from apps.root.models import Ticket
+
+class PassfileDoesNotExists(Exception):
+    pass
 
 
 class AppleWalletPass:
@@ -19,20 +21,32 @@ class AppleWalletPass:
     Class responsible for create Apple Wallet Pass
     """
 
-    SOCIALPASS_RGB = "rgb(239,124,78)"
-    WHITE_RGB = "rgb(255,255,255)"
-    ORG_NAME = "Hashed Inc."
+    def __init__(self, serial_number: str, description: str, org_name: str):
 
-    def __init__(self, ticket: Ticket) -> None:
-        self.ticket = ticket
-        self.event = ticket.event
-        self.ticket_public_id = str(self.ticket.public_id)
-        self.pass_type_id = settings.APPLE_WALLET_PASS_TYPE_ID
-        self.team_id = settings.APPLE_WALLET_TEAM_ID
-        self.password = settings.APPLE_WALLET_PASSWORD
-        self.certificate = self.format_certificate(settings.APPLE_WALLET_CERTIFICATE)
-        self.certificate_key = self.format_certificate(settings.APPLE_WALLET_KEY)
-        self.wwrd_certificate = self.format_certificate(
+        # instantiation values
+        self.org_name = org_name
+        self.description = description
+        self.serial_number = serial_number
+        self.passfile: Optional[Pass] = None
+
+        # optional customization
+        self.label_color: str = "rgb(255,255,255)"
+        self.background_color: str = "rgb(239,124,78)"
+        self.foreground_color: str = "rgb(255,255,255)"
+        self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
+        self.barcode: Optional[Barcode] = None
+        self.location: Optional[List[Location]] = None
+        self.event_info = EventTicket()
+
+        # apple wallet certificate credentials
+        self.team_id: str = settings.APPLE_WALLET_TEAM_ID
+        self.password: str = settings.APPLE_WALLET_PASSWORD
+        self.pass_type_id: str = settings.APPLE_WALLET_PASS_TYPE_ID
+        self.certificate_key: str = self.format_certificate(settings.APPLE_WALLET_KEY)
+        self.certificate: str = self.format_certificate(
+            settings.APPLE_WALLET_CERTIFICATE
+        )
+        self.wwrd_certificate: str = self.format_certificate(
             settings.APPLE_WALLET_WWDR_CERTIFICATE
         )
 
@@ -40,71 +54,99 @@ class AppleWalletPass:
     def format_certificate(value: str) -> str:
         return value.encode("UTF-8").decode("unicode_escape")
 
-    def create_event_ticket_info(self) -> EventTicket:
+    def set_event_ticket_info(
+        self, start_date: str, event_title: str, event_location: str
+    ) -> EventTicket:
         """
-        create EventTicket object with name and location and date
+        set EventTicket infos.
         """
-        event_info = EventTicket()
+        date_field = Field("when", start_date, "", "", Alignment.RIGHT)
+        self.event_info.headerFields.append(date_field)
+        self.event_info.addPrimaryField("name", event_title, "EVENT")
+        self.event_info.addSecondaryField("where", event_location, "WHERE")
 
-        # add event date
-        if self.event.start_date:
-            date = self.event.start_date.strftime("%d %B, %Y")
-            date_field = Field("when", date, "", "", Alignment.RIGHT)
-            event_info.headerFields.append(date_field)
+    def set_barcode(
+        self, link: str, __format: BarcodeFormat = BarcodeFormat.QR
+    ) -> Barcode:
+        """
+        set link and format for pass barcode.
+        """
+        self.barcode = Barcode(message=link, format=__format)
 
-        event_info.addPrimaryField("name", self.event.title, "EVENT")
-        event_info.addSecondaryField("where", self.event.location, "WHERE")
+    def set_location_list(self, lat: float, long: float):
+        """
+        set latitude and longitude for the pass.
+        """
+        self.location = [Location(latitude=lat, longitude=long)]
 
-        return event_info
+    def set_foreground_color(self, color: str):
+        """
+        :param color: RGB string.
+        """
+        self.foreground_color = color
 
-    def create_barcode(self) -> Barcode:
-        return Barcode(message=str(self.ticket.embed_code), format=BarcodeFormat.QR)
+    def set_background_color(self, color: str):
+        """
+        :param color: RGB string.
+        """
+        self.background_color = color
 
-    def create_location_list(self) -> Optional[List[Location]]:
-        if self.event.lat and self.event.long:
-            return [Location(latitude=self.event.lat, longitude=self.event.long)]
-        return None
+    def set_label_color(self, color: str):
+        """
+        :param color: RGB string.
+        """
+        self.label_color = color
 
-    def create_passfile(
-        self, event_info: EventTicket, barcode: Barcode, location: Location
-    ) -> Pass:
-        # passfile object
-        passfile = Pass(
-            passInformation=event_info,
-            barcode=barcode,
-            locations=location,
-            description=self.event.description,
+    def set_icon(self, path):
+        """
+        :param path: path to image.
+        """
+        self.icon = path
+
+    def get_pass(self) -> Pass:
+
+        # creates passfile object
+        self.passfile = Pass(
+            passInformation=self.event_info,
+            barcode=self.barcode,
+            locations=self.location,
+            description=self.description,
             passTypeIdentifier=self.pass_type_id,
             teamIdentifier=self.team_id,
-            serialNumber=self.ticket_public_id,
-            organizationName=self.ORG_NAME,
-            backgroundColor=self.SOCIALPASS_RGB,
-            foregroundColor=self.WHITE_RGB,
-            labelColor=self.WHITE_RGB,
+            serialNumber=self.serial_number,
+            organizationName=self.org_name,
+            backgroundColor=self.background_color,
+            foregroundColor=self.foreground_color,
+            labelColor=self.label_color,
         )
 
         # Including the icon and logo is necessary for the passbook to be valid.
-        icon_path = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
-        passfile.addFile("icon.png", open(icon_path, "rb"))
-        passfile.addFile("logo.png", open(icon_path, "rb"))
+        self.passfile.addFile("icon.png", open(self.icon, "rb"))
+        self.passfile.addFile("logo.png", open(self.icon, "rb"))
 
-        # generate ticket
-        passfile.create(
+        # generate pass in-memory
+        self.passfile.create(
             self.certificate, self.certificate_key, self.wwrd_certificate, self.password
         )
-        return passfile
+        return self.passfile
 
-    def generate_apple_wallet_pass(self):
+    def write_to_file(self, filename: str = "Event.pkpass"):
         """
-        generate passfile in-memory
-            - passfile.read() to read bytes
-            - passfile.writetofile(filename) to save in disk
+        save the `passfile` in disc.
         """
-        event_info = self.create_event_ticket_info()
-        barcode = self.create_barcode()
-        location = self.create_location_list()
-        passfile = self.create_passfile(
-            event_info=event_info, barcode=barcode, location=location
-        )
+        if not self.passfile:
+            raise PassfileDoesNotExists(
+                "The passfile must be created with the `get_pass` method first"
+            )
+        self.passfile.writetofile(filename)
 
-        return passfile
+    def get_bytes(self):
+        """
+        read the passfile bytes.
+        useful for sending via API calls or email.
+        """
+        if not self.passfile:
+            raise PassfileDoesNotExists(
+                "The passfile must be created with the `get_pass` method first"
+            )
+        return self.passfile.read()

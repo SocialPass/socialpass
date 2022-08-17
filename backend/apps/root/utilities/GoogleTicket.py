@@ -158,7 +158,6 @@ class GoogleTicket:
 			"state": "ACTIVE",
 			"barcode": {
 				"type": "QR_CODE",
-				"renderEncoding": "RENDER_ENCODING_UNSPECIFIED",
 				"value": str(ticket_obj.embed_code)
 			}
 		}

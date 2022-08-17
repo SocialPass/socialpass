@@ -174,6 +174,10 @@ class GoogleTicket:
 		}
 		response = http_client.post(url, json=payload)
 
+		# Check if there was an error
+		if not (200 <= response.status_code <= 299):
+			return json.loads(response.text)
+
 		# Get the save to wallet URL
 		object_id = json.loads(response.text).get("id")
 		claims = {

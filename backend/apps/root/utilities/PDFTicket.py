@@ -17,35 +17,46 @@ class PDFTicket:
     def __init__(self, template: str = 'ticket/pdf.html') -> None:
         self.template = get_template(template)
 
-    def set_template(self, template: str):
-        self.template = get_template(template)
-
-    def generate_pdf(
-        self,
-        event_title: str,
-        order_number: str,
-        ticket_quantity: int,
-        ticket_type: str,
-        location_name: str,
-        location_address: str,
-        event_date: str,
-        event_time: str,
-        event_timezone: str,
-        barcode_content: str,
-        team_logo_url: str,
-    ) -> BytesIO:
+    def set_template(self, template_path: str):
         """
-        Generate a PDF from the supplied data
+        Set the PDF template
+        """
+        self.template = get_template(template_path)
+
+    def generate_pdf(self, context: dict = None, barcode_content: str = "") -> BytesIO:
+        """
+        Generate a PDF from the supplied data.
+
+        Barcode will be generated from the barcode_content if supplied,
+        otherwise it won't be displayed.
+
+        Context param is a dict responsible to define the data. If using the default
+        template it must contain the following keys:
+
+        Args:
+            :param dict context: dict of data to be used in the template
+            :param str barcode_content: content to be used to generate the barcode
+
+        Context dict default keys:
+            :key str event_title
+            :key str order_number
+            :key int ticket_quantity
+            :key str ticket_type
+            :key str location_name
+            :key str location_address
+            :key str event_date
+            :key str event_time
+            :key str event_timezone
+            :key str team_logo_url
+
+        :return: BytesIO: A PDF file buffer
+
         """
 
         # Generate the qr code image
-        barcode_image = self._generate_qr_code(barcode_content)
-
-        # Set the template context from the supplied data
-        context = {
-            **locals(),
-            "barcode_image": base64.b64encode(barcode_image.getvalue())
-        }
+        if barcode_content and barcode_content != "":
+            qr_code_image = self._generate_qr_code(barcode_content)
+            context["barcode_image"] = base64.b64encode(qr_code_image.getvalue())
 
         # Render the template with the context
         html = self.template.render(context)

@@ -80,11 +80,13 @@
     <div class="root">
       <table class="tg">
         <thead>
+          {% if team_logo_url %}
           <tr>
             <th class="header" colspan="2">
               <img src="{{ team_logo_url }}" />
             </th>
           </tr>
+          {% endif %}
         </thead>
         <tbody>
           <tr>
@@ -96,36 +98,54 @@
             </th>
           </tr>
           <tr>
+            {% if barcode_image %}
             <td class="qrcode-column" rowspan="4">
               <img
                 src="data:image/png;base64,{{ barcode_image }}"
                 width="250"
               />
             </td>
+            {% endif %}
 
             <td>
+              {% if event_title %}
               <div class="event-title">{{event_title}}</div>
+              {% endif %} {% if order_number %}
               <div class="event-order">Order #{{order_number}}</div>
+              {% endif %}
             </td>
           </tr>
           <tr>
             <td>
+              {% if ticket_quantity %}
               <div class="info ticket-number">{{ticket_quantity}} x Ticket</div>
+              {% endif %} {% if ticket_type %}
+
               <div class="subinfo ticket-type">{{ticket_type}}</div>
+              {% endif %}
             </td>
           </tr>
           <tr>
             <td>
+              {% if location_name %}
+
               <div class="info location-name">{{location_name}}</div>
+              {% endif %} {% if location_address %}
+
               <div class="subinfo location-address">{{location_address}}</div>
+              {% endif %}
             </td>
           </tr>
           <tr>
             <td>
+              {% if event_date %}
               <div class="info event-date">{{event_date}}</div>
+              {% endif %} {% if event_timezone and event_time %}
+
               <div class="subinfo event-time">
                 {{event_time}} ({{event_timezone}})
               </div>
+              {% endif %}
             </td>
           </tr>
         </tbody>

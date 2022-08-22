@@ -138,15 +138,24 @@ class EventDraftForm(EventForm):
         if ready_for_checkout:
             self.check_required_fields(data=data)
 
+    def save_state_transition(self, instance):
+        """
+        method for saving state transition
+        """
         # form is OK, handle state transitions
         # Only call state transition if in expected state
         # Note: No need to save, as form will call save method later
-        if ready_for_checkout:
-            if self.instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
-                self.instance.transition_pending_checkout()
+        if self.cleaned_data.get("ready_for_checkout"):
+            if instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
+                instance.transition_pending_checkout()
         else:
-            if self.instance.state != Event.StateEnum.DRAFT.value:
-                self.instance.transition_draft()
+            if instance.state != Event.StateEnum.DRAFT.value:
+                instance.transition_draft()
+
+    def save(self):
+        instance = super().save()
+        self.save_state_transition(instance)
+        return instance
 
     def clean(self):
         data = super().clean()

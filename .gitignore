@@ -8,3 +8,6 @@ venv/
 
 # pyenv-win
 *.python-version
+
+# vscode
+.vscode/*.log

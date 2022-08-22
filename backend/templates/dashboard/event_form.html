@@ -231,12 +231,7 @@
                     var c = place.address_components[i];
                     gmaps[c.types[0]] = c;
                   }
-                  document.getElementById("id_location").value = place.name;
-                  document.getElementById("id_country").value = gmaps['country']['short_name'];
-                  document.getElementById("id_city").value = gmaps['locality']['long_name'];
-                  //document.getElementById("id_address_1").value = place.name;
-                  //document.getElementById("id_address_2").value = place.name;
-                  //document.getElementById("id_region").value = place.name;
+
                   if (gmaps['postal_code']){
                     if (gmaps['postal_code_suffix']){
                       document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
@@ -245,6 +240,20 @@
                       document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
                     }
                   }
+
+                  let locality = gmaps['locality'] ? gmaps['locality']['long_name'] : gmaps['administrative_area_level_2']['long_name'];
+                  let street_number = gmaps['street_number'] ? `${gmaps['street_number']['short_name']} ` : '';
+                  let address_1 = `${street_number}${gmaps['route']['short_name']}`;
+                  let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
+
+                  document.getElementById("id_location").value = place.name;
+                  document.getElementById("id_city").value = locality;
+                  document.getElementById("id_address_1").value = address_1;
+                  document.getElementById("id_address_2").value = address_2;
+                  document.getElementById("id_localized_address_display").value = place.formatted_address;
+                  document.getElementById("id_country").value = gmaps['country']['short_name'];
+                  document.getElementById("id_region").value = gmaps['administrative_area_level_1']['short_name'];
+                  document.getElementById("id_timezone").value = tzlookup(lat, long);     
 								}
 							</script>
 

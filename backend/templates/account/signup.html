@@ -86,7 +86,15 @@
 		<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
 	{% endif %}
 	<div class="form-group">
-		<button class="btn btn-primary btn-block" type="submit">Sign Up</button>
+		<div class="form-check">
+			<input type="checkbox" id="agree-to-terms" name="agree-to-terms" class="form-check-input">
+			<label for="agree-to-terms" class="form-check-label">
+				I agree to the <a href="https://drive.google.com/file/d/1mulvB8lIEl3AZghIBqlISBI-jdNk25W5/view" target="_blank">Terms & Conditions <i class="fa-solid fa-up-right-from-square ms-5"></i></a>
+			</label>
+		</div>
+	</div>
+	<div class="form-group">
+		<button class="btn btn-primary btn-block" type="submit" disabled="disabled" id="submit-btn">Sign Up</button>
 	</div>
 </form>
 <!-- Form end -->
@@ -94,4 +102,17 @@
 <p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
 	Already have an account? <a href="{% url 'account_login' %}" class="fw-bold">Sign in</a> instead.
 </p>
+
+<script type="text/javascript">
+	const agreeToTerms = document.getElementById("agree-to-terms");
+	const submitBtn = document.getElementById("submit-btn");
+
+	agreeToTerms.addEventListener('change', (event) => {
+		if (event.currentTarget.checked) {
+			submitBtn.removeAttribute("disabled");
+		} else {
+			submitBtn.setAttribute("disabled", "disabled");
+		}
+	});
+</script>
 {% endblock %}

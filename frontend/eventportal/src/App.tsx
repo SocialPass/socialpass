@@ -8,9 +8,9 @@
 // import { QueryClient, QueryClientProvider } from "react-query";
 // import { Error } from "./pages/Error";
 // import "./styles/global.css";
-import { SuccessCheckoutPage } from "./components/SuccessCheckoutPage";
-import CheckoutSuccessPage from "./components/CheckoutSuccessPage";
-import CheckoutFailedPage from "./components/CheckoutFailedPage";
+import { SuccessCheckoutPage } from './components/SuccessCheckoutPage'
+import CheckoutSuccessPage from './components/CheckoutSuccessPage'
+import CheckoutFailedPage from './components/CheckoutFailedPage'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { StyledContainer } from './components'
 import { EventPortalProvider } from './context'
@@ -63,7 +63,7 @@ const CheckoutPortal = () => {
                     }
                   />
                   <Route
-                    path="checkout/success"
+                    path='checkout/success'
                     element={
                       <RequiresEvent>
                         <CheckoutSuccessPage />
@@ -71,7 +71,7 @@ const CheckoutPortal = () => {
                     }
                   />
                   <Route
-                    path="checkout/fail"
+                    path='checkout/fail'
                     element={
                       <RequiresEvent>
                         <CheckoutFailedPage />
@@ -80,7 +80,7 @@ const CheckoutPortal = () => {
                   />
                   {/* this is new success page should be replace de old one since backend is ready */}
                   <Route
-                    path="new/success/page"
+                    path='new/success/page'
                     element={
                       <RequiresEvent>
                         <SuccessCheckoutPage />

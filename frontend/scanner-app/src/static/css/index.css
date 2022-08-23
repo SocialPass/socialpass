@@ -50,7 +50,6 @@
   box-shadow: none;
 }
 
-
 .landing-page-card-text-1 {
   font-size: 2rem;
   line-height: 1.25;
@@ -80,7 +79,6 @@
   color: var(--white-color);
   -webkit-font-smoothing: var(--heading-webkit-font-smoothing);
   -moz-osx-font-smoothing: var(--heading-moz-osx-font-smoothing);
-
 }
 
 .btn-start-scanning {

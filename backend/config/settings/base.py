@@ -103,7 +103,6 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "apps.avoid_view_resubmission",
     "apps.event_discovery.apps.EventDiscoveryConfig",
     "apps.root.apps.RootConfig",
     "apps.dashboard.apps.DashboardConfig",

@@ -164,9 +164,8 @@
             marker.setVisible(true);
         }
 
-
         // Set from initial data
-        let initialPlaceValue = "{{initialPlace}}"
+        let initialPlaceValue = "{{initialPlace|safe}}"
         if (initialPlaceValue){
             let autocompleteService = new google.maps.places.AutocompleteService();
             let request = {input: initialPlaceValue};

@@ -69,7 +69,7 @@ class EventSerializer(serializers.ModelSerializer):
             "limit_per_person",
             "start_date",
             "timezone",
-            "initial_place",
+            "localized_address_display",
             "capacity",
             "ticket_count",
             "cover_image",

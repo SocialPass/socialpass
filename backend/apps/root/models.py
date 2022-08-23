@@ -266,7 +266,7 @@ class Event(DBModel):
         max_length=30,
     )
     # localized address string (used to populate maps lookup)
-    location = models.CharField(
+    initial_place = models.CharField(
         max_length=1024,
         blank=True,
         null=True,
@@ -515,7 +515,7 @@ class Event(DBModel):
             "organizer",
             "description",
             "visibility",
-            "location",
+            "initial_place",
             "start_date",
             "requirements",
             "capacity",

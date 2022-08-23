@@ -212,7 +212,7 @@
 							Help people in the area discover your event and let attendees know where to show up.
 						</p>
 
-						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.location %}
+						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.initial_place %}
 							<script>
 								function onPlaceChangedCallback(place){
                   // TODO: Use in appromixmating timezone
@@ -246,7 +246,7 @@
                   let address_1 = `${street_number}${gmaps['route']['short_name']}`;
                   let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
 
-                  document.getElementById("id_location").value = place.name;
+                  document.getElementById("id_initial_place").value = place.name;
                   document.getElementById("id_city").value = locality;
                   document.getElementById("id_address_1").value = address_1;
                   document.getElementById("id_address_2").value = address_2;
@@ -257,9 +257,9 @@
 							</script>
 
 							{% include 'components/forms_inputs/gmaps_location.html' %}
-              {% if form.location.help_text %}
+              {% if form.initial_place.help_text %}
                 <div class="form-text">
-                  {{ form.location.help_text }}
+                  {{ form.initial_place.help_text }}
                 </div>
               {% endif %}
 						{% endwith %}

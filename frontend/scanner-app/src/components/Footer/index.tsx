@@ -23,7 +23,7 @@ export function Footer({ waitingForScan }: FooterProps) {
           {waitingForScan && <HashLoader color='#EF7C4E' size={25} />}
         </div>
         <div className='scanner-subtitle'>
-          {eventData.location} | {eventData.start_date}
+          {eventData.localized_address_display} | {eventData.start_date}
         </div>
         <div className='d-flex flex-row justify-content-between'>
           <div className='live-statistics-btn-accepted text-center flex-grow-1'>

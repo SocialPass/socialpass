@@ -14,7 +14,7 @@ export function Home() {
             event_name={eventData.title}
             event_attendance={eventData.capacity}
             event_date={eventData.start_date}
-            event_venue={eventData.location}
+            event_venue={eventData.localized_address_display}
           />
         </div>
         <CopyrightFooter />

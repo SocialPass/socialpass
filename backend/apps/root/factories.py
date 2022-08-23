@@ -7,7 +7,14 @@ import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.root.models import Event, Membership, Team, Ticket, TicketRedemptionKey, BlockchainOwnership
+from apps.root.models import (
+    BlockchainOwnership,
+    Event,
+    Membership,
+    Team,
+    Ticket,
+    TicketRedemptionKey,
+)
 
 User = get_user_model()
 

@@ -29,8 +29,7 @@ export default function CardInfoEvent() {
         <div className='d-flex flex-row align-items-center justify-content-start gap-15'>
           <i className='fa fa-map-marker text-secondary fs-20' aria-hidden='true' />
           <div className='ms-10'>
-            <strong className='fs-18'>{retrieveJson.address_1} {retrieveJson.address_2}</strong>
-            <span className='d-block text-muted fs-15'>{retrieveJson.city} {retrieveJson.region} {retrieveJson.country}</span>
+            <span className='d-block text-muted fs-15'>{retrieveJson.localized_address_display}</span>
           </div>
         </div>
 

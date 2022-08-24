@@ -47,7 +47,7 @@ export default function TicketEvent() {
         </div>
         <div>
           <span className='d-block fs-14 fw-500'>WHERE</span>
-          <span className='fw-100'>{retrieveJson.location}</span>
+          <span className='fw-100'>{retrieveJson.localized_address_display}</span>
         </div>
         <div>
           <span className='d-block fs-14 fw-500'>TICKET</span>

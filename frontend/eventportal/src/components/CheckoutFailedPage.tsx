@@ -46,7 +46,7 @@ export default function CheckoutFailedPage() {
             <div className='ws-25 flex-shrink-0'>
               <i className='fa-regular fa-location-dot'></i>
             </div>
-            <div className='text-truncate'>{retrieveJson?.location}</div>
+            <div className='text-truncate'>{retrieveJson?.localized_address_display}</div>
           </div>
         </div>
       </div>

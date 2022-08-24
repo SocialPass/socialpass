@@ -4883,14 +4883,6 @@ html {
     box-sizing: inherit;
 }
 
-/* Scroll behavior */
-
-@media (prefers-reduced-motion: no-preference) {
-    :root {
-        scroll-behavior: smooth;
-    }
-}
-
 /* HTML font size and scaling */
 
 html {
@@ -4899,76 +4891,38 @@ html {
 }
 
 @media (min-width: 1600px) {
-    html {
+    .scale-up-mode {
         font-size: var(--html-font-size-1600);
     }
 }
 
 @media (min-width: 1920px) {
-    html {
+    .scale-up-mode {
         font-size: var(--html-font-size-1920);
     }
 }
 
 @media (min-width: 2560px) {
-    html {
+    .scale-up-mode {
         font-size: var(--html-font-size-2560);
     }
 }
 
 @media (min-width: 3000px) {
-    html {
+    .scale-up-mode {
         font-size: var(--html-font-size-3000);
     }
 }
 
 @media (min-width: 4000px) {
-    html {
+    .scale-up-mode {
         font-size: var(--html-font-size-4000);
     }
 }
 
 @media (min-width: 5120px) {
-    html {
+    .scale-up-mode {
         font-size: var(--html-font-size-5120);
-    }
-}
-
-/* Auto-scaling disabled */
-
-@media (min-width: 1600px) {
-    html.auto-scaling-disabled {
-        font-size: var(--html-font-size);
-    }
-}
-
-@media (min-width: 1920px) {
-    html.auto-scaling-disabled {
-        font-size: var(--html-font-size);
-    }
-}
-
-@media (min-width: 2560px) {
-    html.auto-scaling-disabled {
-        font-size: var(--html-font-size);
-    }
-}
-
-@media (min-width: 3000px) {
-    html.auto-scaling-disabled {
-        font-size: var(--html-font-size);
-    }
-}
-
-@media (min-width: 4000px) {
-    html.auto-scaling-disabled {
-        font-size: var(--html-font-size);
-    }
-}
-
-@media (min-width: 5120px) {
-    html.auto-scaling-disabled {
-        font-size: var(--html-font-size);
     }
 }
 

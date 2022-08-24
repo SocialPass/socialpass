@@ -94,12 +94,16 @@ class EventForm(forms.ModelForm):
             ),
             "visibility": forms.RadioSelect(),
             "requirements": forms.HiddenInput(),
-            "location": forms.HiddenInput(),
+            "initial_place": forms.HiddenInput(),
             "lat": forms.HiddenInput(),
             "long": forms.HiddenInput(),
+            "region": forms.HiddenInput(),
+            "address_1": forms.HiddenInput(),
+            "address_2": forms.HiddenInput(),
             "country": forms.HiddenInput(),
             "city": forms.HiddenInput(),
             "postal_code": forms.HiddenInput(),
+            "localized_address_display": forms.HiddenInput(),
         }
 
     def check_required_fields(self, data=None, exclude=[]):

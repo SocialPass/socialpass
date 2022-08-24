@@ -337,6 +337,7 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
 # Django Invitations - https://github.com/jazzband/django-invitations
+# ------------------------------------------------------------------------------
 INVITATIONS_INVITATION_MODEL = "root.Invite"
 INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 INVITATIONS_INVITATION_ONLY = False
@@ -347,24 +348,36 @@ INVITATIONS_EMAIL_MAX_LENGTH = 254
 INVITATIONS_INVITATION_EXPIRY = 3
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 
-# Django Invitations - https://github.com/jazzband/django-taggit
+# Django Taggit  - https://github.com/jazzband/django-taggit
+# ------------------------------------------------------------------------------
 TAGGIT_CASE_INSENSITIVE = True
 
 # INTERNAL
+# ------------------------------------------------------------------------------
 CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")
 SCANNER_BASE_URL = env("SCANNER_BASE_URL")
 
 # STRIPE
+# ------------------------------------------------------------------------------
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 
 # MORALIS
+# ------------------------------------------------------------------------------
 MORALIS_API_KEY = env("MORALIS_API_KEY")
 
 # GMAPS
+# ------------------------------------------------------------------------------
 GMAPS_API_KEY = env("GMAPS_API_KEY")
 
+# GWALLET
+# ------------------------------------------------------------------------------
+GOOGLE_WALLET_PRIVATE_KEY_ID = env("GOOGLE_WALLET_PRIVATE_KEY_ID")
+GOOGLE_WALLET_PRIVATE_KEY = env("GOOGLE_WALLET_PRIVATE_KEY")
+GOOGLE_WALLET_CLIENT_ID = env("GOOGLE_WALLET_CLIENT_ID")
+
 # APPLE WALLET
+# ------------------------------------------------------------------------------
 APPLE_WALLET_CERTIFICATE = env("APPLE_WALLET_CERTIFICATE")
 APPLE_WALLET_KEY = env("APPLE_WALLET_KEY")
 APPLE_WALLET_WWDR_CERTIFICATE = env("APPLE_WALLET_WWDR_CERTIFICATE")

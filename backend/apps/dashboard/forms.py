@@ -106,6 +106,20 @@ class EventForm(forms.ModelForm):
             "postal_code": forms.HiddenInput(),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Make sure the edit form populates with the start and end dates
+        if self.instance.pk:
+            if self.instance.start_date:
+                self.initial["start_date"] = self.instance.start_date.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.end_date:
+                self.initial["end_date"] = self.instance.end_date.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+
     def check_required_fields(self, data=None, exclude=[]):
         errors = {}
         # check field

@@ -118,6 +118,21 @@ class EventForm(forms.ModelForm):
         if errors:
             raise forms.ValidationError(errors)
 
+    def clean_limit_per_person(self):
+        data = self.cleaned_data["limit_per_person"]
+
+        # Make sure limit per person does not exceed capacity
+        if self.instance.pk:
+            capacity = self.instance.capacity
+        else:
+            capacity = self.cleaned_data["capacity"]
+        if data > capacity:
+            raise forms.ValidationError(
+                f"Limit per person exceeds capacity of {capacity}."
+            )
+
+        return data
+
 
 class EventDraftForm(EventForm):
     """

@@ -1,4 +1,5 @@
 import pytz
+from datetime import date
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
@@ -74,6 +75,7 @@ class EventForm(forms.ModelForm):
                     "id": "start_date",
                     "class": "form-control",
                     "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
                 },
             ),
             "end_date": forms.DateTimeInput(
@@ -82,6 +84,7 @@ class EventForm(forms.ModelForm):
                     "id": "end_date",
                     "class": "form-control",
                     "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
                 },
             ),
             "publication_date": forms.DateTimeInput(
@@ -90,6 +93,7 @@ class EventForm(forms.ModelForm):
                     "id": "publication_date",
                     "class": "form-control",
                     "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
                 },
             ),
             "visibility": forms.RadioSelect(),
@@ -106,6 +110,20 @@ class EventForm(forms.ModelForm):
             "localized_address_display": forms.HiddenInput(),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Make sure the edit form populates with the start and end dates
+        if self.instance.pk:
+            if self.instance.start_date:
+                self.initial["start_date"] = self.instance.start_date.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.end_date:
+                self.initial["end_date"] = self.instance.end_date.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+
     def check_required_fields(self, data=None, exclude=[]):
         errors = {}
         # check field
@@ -117,6 +135,21 @@ class EventForm(forms.ModelForm):
         # raise exception
         if errors:
             raise forms.ValidationError(errors)
+
+    def clean_limit_per_person(self):
+        data = self.cleaned_data["limit_per_person"]
+
+        # Make sure limit per person does not exceed capacity
+        if self.instance.pk:
+            capacity = self.instance.capacity
+        else:
+            capacity = self.cleaned_data["capacity"]
+        if data > capacity:
+            raise forms.ValidationError(
+                f"Limit per person exceeds capacity of {capacity}."
+            )
+
+        return data
 
 
 class EventDraftForm(EventForm):

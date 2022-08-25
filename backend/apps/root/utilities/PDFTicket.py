@@ -1,20 +1,19 @@
 # find the template and render it.
-from io import BytesIO
-import os
 import base64
+import os
+from io import BytesIO
 
+import qrcode
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.template.loader import get_template
-
 from xhtml2pdf import pisa
-import qrcode
 
 from apps.root.models import Ticket
 
 
 class PDFTicket:
-    def __init__(self, template: str = 'ticket/pdf.html') -> None:
+    def __init__(self, template: str = "ticket/pdf.html") -> None:
         self.template = get_template(template)
 
     def set_template(self, template_path: str):
@@ -23,7 +22,7 @@ class PDFTicket:
         """
         self.template = get_template(template_path)
 
-    def generate_pdf(self, context: dict = None, barcode_content: str = "") -> BytesIO:
+    def generate_pdf(self, context: dict = dict, barcode_content: str = "") -> BytesIO:
         """
         Generate a PDF from the supplied data.
 
@@ -38,16 +37,16 @@ class PDFTicket:
             :param str barcode_content: content to be used to generate the barcode
 
         Context dict default keys:
-            :key str event_title
-            :key str order_number
-            :key int ticket_quantity
-            :key str ticket_type
-            :key str location_name
-            :key str location_address
-            :key str event_date
-            :key str event_time
-            :key str event_timezone
-            :key str team_logo_url
+            :key str event_title,
+            :key str order_number,
+            :key int ticket_quantity,
+            :key str ticket_type,
+            :key str location_name,
+            :key str location_address,
+            :key str event_date,
+            :key str event_time,
+            :key str event_timezone,
+            :key str team_logo_url,
 
         :return: BytesIO: A PDF file buffer
 
@@ -99,6 +98,9 @@ class PDFTicket:
         if event.country:
             address_items_list.append(event.country)
 
+        event_date = event.start_date.strftime("%B %d, %Y") if event.start_date else ""
+        event_time = event.start_date.strftime("%I:%M %p") if event.start_date else ""
+
         context = {
             "event_title": event.title,
             "order_number": "54593405723",
@@ -106,14 +108,13 @@ class PDFTicket:
             "ticket_type": "General Admission",
             "location_name": event.location,
             "location_address": ", ".join(address_items_list),
-            "event_date": event.start_date.strftime("%A, %B %d, %Y"),
-            "event_time": event.start_date.strftime("%I:%M %p"),
+            "event_date": event_date,
+            "event_time": event_time,
             "event_timezone": event.timezone,
-            "barcode_content": ticket.embed_code,
-            "team_logo_url": team.image.url
+            "team_logo_url": team.image.url,
         }
 
-        return self.generate_pdf(**context)
+        return self.generate_pdf(context, barcode_content=str(ticket.embed_code))
 
     def _generate_qr_code(self, content) -> BytesIO:
         """
@@ -139,10 +140,10 @@ class PDFTicket:
             result = list(os.path.realpath(path) for path in result)
             path = result[0]
         else:
-            sUrl = settings.STATIC_URL        # Typically /static/
-            sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
-            mUrl = settings.MEDIA_URL         # Typically /media/
-            mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
+            sUrl = settings.STATIC_URL  # Typically /static/
+            sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
+            mUrl = settings.MEDIA_URL  # Typically /media/
+            mRoot = settings.MEDIA_ROOT  # Typically /home/userX/project_static/media/
 
             if uri.startswith(mUrl):
                 path = os.path.join(mRoot, uri.replace(mUrl, ""))
@@ -153,7 +154,5 @@ class PDFTicket:
 
         # make sure that file exists
         if not os.path.isfile(path):
-            raise Exception(
-                'media URI must start with %s or %s' % (sUrl, mUrl)
-            )
+            raise Exception("media URI must start with %s or %s" % (sUrl, mUrl))
         return path

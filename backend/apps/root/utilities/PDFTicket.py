@@ -22,7 +22,7 @@ class PDFTicket:
         """
         self.template = get_template(template_path)
 
-    def generate_pdf(self, context: dict = dict, barcode_content: str = "") -> BytesIO:
+    def generate_pdf(self, context: dict = {}, barcode_content: str = "") -> BytesIO:
         """
         Generate a PDF from the supplied data.
 

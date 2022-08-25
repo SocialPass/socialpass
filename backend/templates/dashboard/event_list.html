@@ -68,7 +68,7 @@
               <td class="fw-bold">{{ event.title }}</td>
               <td class="fw-bold"> <span class="badge bg-info">{{ event.state }} </span></td>
               <td class="fs-base-n2">{{ event.start_date }}</td>
-              <td class="fs-base-n2">{{ event.location }}</td>
+              <td class="fs-base-n2">{{ event.localized_address_display }}</td>
               <td class="align-middle px-4">
                 <div class="d-flex flex-row justify-content-between">
                   {% if event.state == "Draft" %}

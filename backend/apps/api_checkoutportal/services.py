@@ -9,8 +9,8 @@ from requests.adapters import HTTPAdapter, Retry
 from web3 import Web3
 from web3.auto import w3
 
-from apps.root import TicketImageGenerator
 from apps.root.models import BlockchainOwnership, Event, Ticket
+from apps.root.utilities import TicketImageGenerator
 
 
 class TooManyTicketsRequestedError(Exception):
@@ -87,13 +87,13 @@ def create_ticket_image(
     Use the arguments to generate a ticket image and save into s3-compatible bucket.
     Returns ticket image as well as s3 storage response
     """
-    if event.start_date and event.title and event.location:
+    if event.start_date and event.title and event.initial_place:
         # Generate ticket image from event data
         created_ticket_img = TicketImageGenerator.TicketPartGenerator.generate_ticket(
             event_data={
                 "event_name": event.title,
                 "event_date": event.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
-                "event_location": event.location,
+                "event_location": event.initial_place,
             },
             embed=ticket.full_embed,
             scene_img_source=scene_img_source,

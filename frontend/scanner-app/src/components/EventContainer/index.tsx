@@ -17,7 +17,6 @@ export function EventContainer({
   const navigate = useNavigate()
 
   return (
-
     <div className='container p-10 d-flex flex-column align-items-center'>
       <div className='landing-page-event-title'>{event_name}</div>
       <div className='landing-page-card background-image'>

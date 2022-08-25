@@ -28,8 +28,8 @@ export default function Header() {
   //   return <></>;
   // }
 
-  if (location.pathname.includes("error")) {
-    return <></>;
+  if (location.pathname.includes('error')) {
+    return <></>
   }
 
   return headerState === 'header' ? <LargeHeaderContents /> : <SmallHeaderContents />

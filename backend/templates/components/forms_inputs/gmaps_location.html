@@ -69,6 +69,7 @@
         'route': 'long_name',
         'locality': 'long_name',
         'administrative_area_level_1': 'short_name',
+        'administrative_area_level_2': 'short_name',
         'country': 'long_name',
         'postal_code': 'short_name',
     };
@@ -111,7 +112,7 @@
         const marker = new google.maps.Marker({map: map, draggable: false});
         const autocompleteInput = getGmapsFormInputElement('location');
         const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, {
-            fields: ["address_components", "geometry", "name", "utc_offset_minutes"],
+            fields: ["address_components", "formatted_address", "geometry", "name", "utc_offset_minutes"],
             types: ["address"],
         });
         function handlePlaceChange(place){
@@ -137,11 +138,21 @@
         autocomplete.addListener('place_changed', handlePlaceChange);
 
         function fillInAddress(place) {  // optional parameter
+            // location fill
             getGmapsFormInputElement('location').value = getAddressComp(place, 'street_number') + ' '
                     + getAddressComp(place, 'route');
+
+            // locality fill
+            let locality = getAddressComp(place, 'locality');
+            if (locality){
+                getGmapsFormInputElement('locality').value = locality;
+            } else {
+                getGmapsFormInputElement('locality').value = getAddressComp(place, 'administrative_area_level_2');
+            }
+
             for (const component of componentForm) {
-                // Location field is handled separately above as it has different logic.
-                if (component !== 'location') {
+                // Location and locality fields are handled separately above as it has different logic.
+                if (!['location', 'locality'].includes(component)) {
                     getGmapsFormInputElement(component).value = getAddressComp(place, component);
                 }
             }
@@ -153,9 +164,8 @@
             marker.setVisible(true);
         }
 
-
         // Set from initial data
-        let initialPlaceValue = "{{initialPlace}}"
+        let initialPlaceValue = "{{initialPlace|safe}}"
         if (initialPlaceValue){
             let autocompleteService = new google.maps.places.AutocompleteService();
             let request = {input: initialPlaceValue};

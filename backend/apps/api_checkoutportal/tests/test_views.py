@@ -73,9 +73,9 @@ class GetEventDetailsTestCase(TestCaseWrapper):
         # since Django is doing some magic on the serializers.
         # Add `from . import serializers` at the top then...
         # self.assertEqual(response.json(), ...)
-        self.assertEqual(response.json()['team']['name'], self.team.name)
-        self.assertEqual(response.json()['description'], self.event.description)
-        self.assertEqual(response.json()['capacity'], int(self.event.capacity))
+        self.assertEqual(response.json()["team"]["name"], self.team.name)
+        self.assertEqual(response.json()["description"], self.event.description)
+        self.assertEqual(response.json()["capacity"], int(self.event.capacity))
 
     @prevent_warnings
     def test_get_event_details_404(self):

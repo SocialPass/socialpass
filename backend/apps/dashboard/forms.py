@@ -1,4 +1,5 @@
 import pytz
+from datetime import date
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
@@ -74,6 +75,7 @@ class EventForm(forms.ModelForm):
                     "id": "start_date",
                     "class": "form-control",
                     "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
                 },
             ),
             "end_date": forms.DateTimeInput(
@@ -82,6 +84,7 @@ class EventForm(forms.ModelForm):
                     "id": "end_date",
                     "class": "form-control",
                     "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
                 },
             ),
             "publication_date": forms.DateTimeInput(
@@ -90,17 +93,36 @@ class EventForm(forms.ModelForm):
                     "id": "publication_date",
                     "class": "form-control",
                     "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
                 },
             ),
             "visibility": forms.RadioSelect(),
             "requirements": forms.HiddenInput(),
-            "location": forms.HiddenInput(),
+            "initial_place": forms.HiddenInput(),
             "lat": forms.HiddenInput(),
             "long": forms.HiddenInput(),
+            "region": forms.HiddenInput(),
+            "address_1": forms.HiddenInput(),
+            "address_2": forms.HiddenInput(),
             "country": forms.HiddenInput(),
             "city": forms.HiddenInput(),
             "postal_code": forms.HiddenInput(),
+            "localized_address_display": forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Make sure the edit form populates with the start and end dates
+        if self.instance.pk:
+            if self.instance.start_date:
+                self.initial["start_date"] = self.instance.start_date.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.end_date:
+                self.initial["end_date"] = self.instance.end_date.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
 
     def check_required_fields(self, data=None, exclude=[]):
         errors = {}
@@ -113,6 +135,21 @@ class EventForm(forms.ModelForm):
         # raise exception
         if errors:
             raise forms.ValidationError(errors)
+
+    def clean_limit_per_person(self):
+        data = self.cleaned_data["limit_per_person"]
+
+        # Make sure limit per person does not exceed capacity
+        if self.instance.pk:
+            capacity = self.instance.capacity
+        else:
+            capacity = self.cleaned_data["capacity"]
+        if data > capacity:
+            raise forms.ValidationError(
+                f"Limit per person exceeds capacity of {capacity}."
+            )
+
+        return data
 
 
 class EventDraftForm(EventForm):
@@ -138,15 +175,24 @@ class EventDraftForm(EventForm):
         if ready_for_checkout:
             self.check_required_fields(data=data)
 
+    def save_state_transition(self, instance):
+        """
+        method for saving state transition
+        """
         # form is OK, handle state transitions
         # Only call state transition if in expected state
         # Note: No need to save, as form will call save method later
-        if ready_for_checkout:
-            if self.instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
-                self.instance.transition_pending_checkout()
+        if self.cleaned_data.get("ready_for_checkout"):
+            if instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
+                instance.transition_pending_checkout()
         else:
-            if self.instance.state != Event.StateEnum.DRAFT.value:
-                self.instance.transition_draft()
+            if instance.state != Event.StateEnum.DRAFT.value:
+                instance.transition_draft()
+
+    def save(self):
+        instance = super().save()
+        self.save_state_transition(instance)
+        return instance
 
     def clean(self):
         data = super().clean()

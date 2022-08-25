@@ -7,7 +7,14 @@ import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.root.models import Event, Membership, Team, Ticket, TicketRedemptionKey, BlockchainOwnership
+from apps.root.models import (
+    BlockchainOwnership,
+    Event,
+    Membership,
+    Team,
+    Ticket,
+    TicketRedemptionKey,
+)
 
 User = get_user_model()
 
@@ -72,7 +79,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
     limit_per_person = 1
     requirements: Any = []
-    location = factory.Faker("address")
+    initial_place = factory.Faker("address")
     lat = 41.40338
     long = 2.17403
 

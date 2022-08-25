@@ -44,7 +44,9 @@ class TestScannerServices(TestCase):
     def test_get_ticket_from_embedded_qr_code(self):
         invalid_qrcode = "xxxxx-xxxx-xxxx-xxxx-xxxxxxx-xxxxxxx"  # can not split("/")
         invalid_uuid_qrcode = "xxxx-xxxx/xxxx-xxxxxxxx"
-        valid_qrcode = "a85afb2d-c111-404a-8162-8bedeedfa2f1/01d9b4ce-2aa4-4e3c-bb84-f0f711a6514b"
+        valid_qrcode = (
+            "a85afb2d-c111-404a-8162-8bedeedfa2f1/01d9b4ce-2aa4-4e3c-bb84-f0f711a6514b"
+        )
 
         # test valid qr_code
         ticket_from_qr_code = get_ticket_from_embedded_qr_code(self.ticket.full_embed)
@@ -74,10 +76,14 @@ class TestScannerServices(TestCase):
         redemption_access_key = self.ticket_redemption_key
 
         # assert can redeem ticket
-        self.assertEqual(access_key_can_redeem_ticket(ticket, redemption_access_key), True)
+        self.assertEqual(
+            access_key_can_redeem_ticket(ticket, redemption_access_key), True
+        )
 
         # assert can not redeem ticket
-        self.assertEqual(access_key_can_redeem_ticket(__ticket, redemption_access_key), False)
+        self.assertEqual(
+            access_key_can_redeem_ticket(__ticket, redemption_access_key), False
+        )
 
     def test_redeem_ticket(self):
         """

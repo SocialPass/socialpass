@@ -1,156 +1,75 @@
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.api_checkoutportal import serializers, services
-from apps.root.models import BlockchainOwnership, Event
+from apps.root.models import Event
 
 
-class EventMixin:
+class CheckoutMixin:
     """
     Mixin for checkoutportal flow
+    Dipsatch method fetches event based on public_id
     """
 
     event = None
 
     def dispatch(self, request, *args, **kwargs):
-        """
-        Get Event by public ID path argument
-        """
-        self.event = get_object_or_404(Event, public_id=self.kwargs["public_id"])
+        try:
+            self.event = Event.objects.get(public_id=self.kwargs["public_id"])
+        except:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        """To be overridden by parent"""
-        raise MethodNotAllowed(method="POST")
 
-    def get(self, request, *args, **kwargs):
-        """To be overridden by parent"""
-        raise MethodNotAllowed(method="GET")
-
-
-class CheckoutPortalRetrieve(EventMixin, APIView):
+class CheckoutPortalRetrieve(CheckoutMixin, RetrieveAPIView):
     """
     GET view for retrieving Event
+    Overrides get_object to use self.event from CheckoutMixin
+    """
+
+    serializer_class = serializers.EventSerializer
+
+    def get_object(self, *args, **kwargs):
+        return self.event
+
+
+class CheckoutPortalOwnershipRequest(CheckoutMixin, APIView):
+    """
+    POST view for requesting Event entry based on asset ownership
+    - Get or Create Attendee based on wallet address (unverified)
+    - Return record for verifying attendee (message to be signed)
+    """
+
+    def post(self, request, *args, **kwargs):
+        return
+
+
+class CheckoutPortalOwnershipVerify(CheckoutMixin, APIView):
+    """
+    POST view for verifying Event entry based on asset ownership
+    Key Checks:
+    - Is attendee a verified wallet address? (401)
+    - Is ticket selection valid (403)
+    - Has attendee met limit per person? (403)
+    - Does attendee meet ownership criteria? (403)
+    """
+
+    def post(self, request, *args, **kwargs):
+        return
+
+
+class CheckoutPortalConfirmation(CheckoutMixin, APIView):
+    """
+    GET/POST view for checckout portal confirmation
+    On GET, this view will return the confirmation page with accompanying PDF ticket.
+    On POST, this view will offload tasks to celery for ticket creation and SMTP delivery.
     """
 
     def get(self, request, *args, **kwargs):
-        """
-        Retrieve serialized Event
-        """
-        serialized_data = serializers.EventSerializer(
-            self.event, context={"request": request}
-        ).data
-        return Response(serialized_data)
-
-
-class CheckoutPortalRequest(EventMixin, APIView):
-    """
-    POST view for requesting Event checkout
-    """
+        return
 
     def post(self, request, *args, **kwargs):
-        """
-        Route to method based on QS
-        """
-        # get QS and pass to respective method
-        checkout_type = request.GET.get("checkout_type")
-        if not checkout_type:
-            return Response('"checkout_type" query paramter not provided', status=401)
-
-        if checkout_type == "blockchain_ownership":
-            return self.checkout_blockchain_ownership(request, *args, **kwargs)
-
-    def checkout_blockchain_ownership(self, request, *args, **kwargs):
-        """
-        Request a checkout via blockchain asset ownership
-        Create blockchain_ownership DB record to be signed by client
-        """
-        self.input_serializer = None
-        self.output_serializer = serializers.BlockchainOwnershipSerializer
-
-        # Create blockchain ownership record
-        blockchain_ownership = BlockchainOwnership.objects.create(event=self.event)
-
-        # Serialize and return
-        serialized_data = self.output_serializer(blockchain_ownership).data
-        return Response(serialized_data)
-
-
-class CheckoutPortalProcess(EventMixin, APIView):
-    """
-    POST view for processing Event checkout
-    """
-
-    def post(self, request, *args, **kwargs):
-        """
-        Route to method based on QS
-        """
-        checkout_type = request.GET.get("checkout_type")
-        if not checkout_type:
-            return Response('"checkout_type" query paramter not provided', status=401)
-
-        if checkout_type == "blockchain_ownership":
-            return self.checkout_blockchain_ownership(request, *args, **kwargs)
-
-    def checkout_blockchain_ownership(self, request, *args, **kwargs):
-        """
-        Process a checkout via blockchain asset ownership
-        Validate wallet address blockchain_ownership record
-        Verify ticket selection
-        Issue tickets based on wallet address and related blockchain asset ownership
-        """
-        self.input_serializer = serializers.VerifyBlockchainOwnershipSerializer
-        self.output_serializer = serializers.TicketSerializer
-
-        # 1. Serialize Data
-        blockchain_serializer = self.input_serializer(data=request.data)
-        blockchain_serializer.is_valid(raise_exception=True)
-
-        # 2. Get wallet blockchain_ownership
-        blockchain_ownership = get_object_or_404(
-            BlockchainOwnership,
-            id=blockchain_serializer.data["blockchain_ownership_id"],
-            event=self.event,
-        )
-
-        # 3. validate wallet blockchain_ownership
-        (
-            wallet_validated,
-            response_msg,
-        ) = services.validate_blockchain_wallet_ownership(
-            event=self.event,
-            blockchain_ownership=blockchain_ownership,
-            signed_message=blockchain_serializer.data["signed_message"],
-            wallet_address=blockchain_serializer.data["wallet_address"],
-        )
-        if not wallet_validated:
-            return Response(response_msg, status=403)
-
-        # 4. Get # of tickets available
-        try:
-            tickets_to_issue = services.get_available_tickets(
-                event=self.event,
-                tickets_requested=blockchain_serializer.data["tickets_requested"],
-            )
-        except (
-            services.TooManyTicketsRequestedError,
-            services.TooManyTicketsIssuedError,
-            services.TicketsSoldOutError,
-        ) as e:
-            return Response(str(e), status=403)
-
-        # 5. try to create & return tickets based on blockchain ownership
-        try:
-            tickets = services.create_tickets_blockchain_ownership(
-                event=self.event,
-                blockchain_ownership=blockchain_ownership,
-                tickets_to_issue=tickets_to_issue,
-            )
-            return Response(self.output_serializer(tickets, many=True).data)
-        except (
-            services.ZeroBlockchainAssetsError,
-            services.PartialBlockchainAssetError,
-        ) as e:
-            return Response(str(e), status=403)
+        return

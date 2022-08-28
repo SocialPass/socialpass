@@ -63,7 +63,7 @@ class CheckoutPortalOwnershipVerify(CheckoutMixin, APIView):
 
 class CheckoutPortalConfirmation(CheckoutMixin, APIView):
     """
-    GET/POST view for checckout portal confirmation
+    GET/POST view for checkout portal confirmation
     On GET, this view will return the confirmation page with accompanying PDF ticket.
     On POST, this view will offload tasks to celery for ticket creation and SMTP delivery.
     """

@@ -64,3 +64,4 @@ INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
 COMPRESS_ENABLED = True
+INSTALLED_APPS += ["drf_yasg"]

@@ -38,6 +38,8 @@ class CheckoutPortalOwnershipRequest(EventMixin, APIView):
     - Get or Create Attendee based on wallet address (unverified)
     - Return record for verifying attendee (message to be signed)
     """
+    def post(self, request *args, *kwargs):
+        return
 
 
 class CheckoutPortalOwnershipVerify(EventMixin, APIView):
@@ -49,6 +51,8 @@ class CheckoutPortalOwnershipVerify(EventMixin, APIView):
     - Has attendee met limit per person? (403)
     - Does attendee meet ownership criteria? (403)
     """
+    def post(self, request *args, *kwargs):
+        return
 
 
 class CheckoutPortalConfirmation(EventMixin, APIView):
@@ -57,3 +61,8 @@ class CheckoutPortalConfirmation(EventMixin, APIView):
     On GET, this view will return the confirmation page with accompanying PDF ticket.
     On POST, this view will offload tasks to celery for ticket creation and SMTP delivery.
     """
+    def get(self, request *args, *kwargs):
+        return
+
+    def post(self, request *args, *kwargs):
+        return

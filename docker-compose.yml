@@ -41,12 +41,6 @@ services:
     command: "celery -A config:celery_app worker -l info"
     volumes:
       - .:/code/backend
-    environment:
-      <<: *postgres-common-variables
-      CELERY_LOCAL_DEVELOPMENT: 'True'
-      DJANGO_DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
-      CELERY_BROKER_URL: redis://redis:6379
-      CELERY_RESULT_BACKEND: redis://redis:6379
     depends_on:
       - redis
       - db
@@ -71,6 +65,7 @@ services:
       - 8888 # django shell_plus
     environment:
       <<: *postgres-common-variables
+      CELERY_LOCAL_DEVELOPMENT: 'True'
       DJANGO_DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
       CELERY_BROKER_URL: redis://redis:6379
       CELERY_RESULT_BACKEND: redis://redis:6379

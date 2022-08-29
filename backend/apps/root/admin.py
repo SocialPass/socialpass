@@ -8,7 +8,6 @@ from apps.dashboard import services
 from apps.root.models import (
     Attendee,
     Event,
-    EventCategory,
     EventStripePayment,
     Membership,
     PricingRule,
@@ -58,11 +57,6 @@ class TeamAdmin(admin.ModelAdmin):
 class AttendeeAdmin(admin.ModelAdmin):
     list_display = ("event", "id", "wallet_address", "is_verified")
     search_fields = ("event__title", "id", "wallet_address")
-
-
-@admin.register(EventCategory)
-class EventCategoryAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(Event)

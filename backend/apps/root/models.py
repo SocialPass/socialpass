@@ -243,9 +243,6 @@ class Event(DBModel):
     cover_image = models.ImageField(
         blank=True, null=True, help_text="A banner image for your event."
     )
-    category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True, blank=True
-    )
     tags = TaggableManager(
         blank=True,
     )
@@ -548,8 +545,8 @@ class BlockchainRequirements(DBModel):
 
     class ChainIDEnum(models.TextChoices):
         ETH = (1, "Ethereum")
-        ROPSTEN = (2, "Ropsten")  # Soon deprecated
-        RINKEBY = (4, "Rinkeby")  # Soon deprecated
+        ROPSTEN = (2, "Ropsten")  # Chain deprecated post-merge
+        RINKEBY = (4, "Rinkeby")  # Chain deprecated post-merge
         BNB = (56, "BNB Chain")
         AVAX = (43114, "Avalanche")
         MATIC = (137, "Polygon")
@@ -574,25 +571,6 @@ class BlockchainRequirements(DBModel):
         choices=AssetTypeEnum.choices, default=AssetTypeEnum.ERC20, max_length=12
     )
     amount = models.IntegerField()
-
-
-class EventCategory(DBModel):
-    """
-    Category model for Events
-    Contains parent description
-    """
-
-    parent_category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True
-    )
-    name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        if self.parent_category:
-            return f"{self.parent_category} - {self.name}"
-        else:
-            return self.name
 
 
 class EventStripePayment(DBModel):

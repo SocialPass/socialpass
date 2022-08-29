@@ -62,11 +62,19 @@ INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
 # Celery
 # ------------------------------------------------------------------------------
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-always-eager
-CELERY_TASK_ALWAYS_EAGER = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
-CELERY_TASK_EAGER_PROPAGATES = True
-
+# NOTE: CELERY_LOCAL_DEVELOPMENT defaults to false, to avoid requiring celery on basic setup
+# With Docker, this .env can be set to False
+CELERY_LOCAL_DEVELOPMENT = env("CELERY_LOCAL_DEVELOPMENT", default=False)
+if CELERY_LOCAL_DEVELOPMENT:
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-always-eager
+    CELERY_TASK_ALWAYS_EAGER = False
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
+    CELERY_TASK_EAGER_PROPAGATES = False
+else:
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-always-eager
+    CELERY_TASK_ALWAYS_EAGER = True
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
+    CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True

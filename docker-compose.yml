@@ -43,7 +43,7 @@ services:
       - .:/code/backend
     environment:
       <<: *postgres-common-variables
-      CELERY_LOCAL_DEVELOPMENT: True
+      CELERY_LOCAL_DEVELOPMENT: 'True'
       DJANGO_DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
       CELERY_BROKER_URL: redis://redis:6379
       CELERY_RESULT_BACKEND: redis://redis:6379

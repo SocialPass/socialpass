@@ -60,6 +60,13 @@ INTERNAL_IPS = ["127.0.0.1", "10.0.2.2", "0.0.0.0", "localhost"]
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
+# Celery
+# ------------------------------------------------------------------------------
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-always-eager
+CELERY_TASK_ALWAYS_EAGER = True
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
+CELERY_TASK_EAGER_PROPAGATES = True
+
 # Your stuff...
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True

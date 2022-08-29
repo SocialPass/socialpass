@@ -56,7 +56,6 @@ class EventSerializer(serializers.ModelSerializer):
             "team",
             "title",
             "description",
-            "requirements",
             "limit_per_person",
             "start_date",
             "timezone",
@@ -91,7 +90,4 @@ class TicketSerializer(serializers.ModelSerializer):
         ]
 
     def get_wallet_address(self, obj):
-        if obj.blockchain_ownership:
-            return obj.blockchain_ownership.wallet_address
-        else:
-            return None
+        return "TODOTHISPR"

@@ -538,7 +538,7 @@ class Event(DBModel):
         return fields
 
 
-class Requirements(DBModel):
+class BlockchainRequirements(DBModel):
     """
     Stores data for event requirements
     """
@@ -560,9 +560,7 @@ class Requirements(DBModel):
         ERC1155 = "ERC1155"
 
     # Keys
-    event = models.ForeignKey(
-        "Event", on_delete=models.SET_NULL, null=True, related_name="requirements"
-    )
+    event = models.ForeignKey("Event", on_delete=models.SET_NULL, null=True)
 
     # Basic Info
     asset_address = models.CharField(max_length=1024)

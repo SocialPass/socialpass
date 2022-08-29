@@ -62,7 +62,7 @@ class TestMixins(TestCaseWrapper, TestCase):
         """
         Setup request and view.
         """
-        super(TestMixins, self).setUp()
+        super().setUp()
         self.request = RequestFactory().get("/fake-path")
         self.view = self.DummyView()
 
@@ -89,8 +89,8 @@ class TestMixins(TestCaseWrapper, TestCase):
         self.view.set_event_and_redemption_access_key(
             redemption_access_key=self.access_key
         )
-        self.assertEquals(self.view.redemption_access_key, self.ticket_redemption_key)
-        self.assertEquals(self.view.event, self.event)
+        self.assertEqual(self.view.redemption_access_key, self.ticket_redemption_key)
+        self.assertEqual(self.view.event, self.event)
 
     def test_set_event_and_redemption_access_key_function_error(self):
         """
@@ -253,7 +253,7 @@ class TicketsListViewTestCase(TestCaseWrapper):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(ticket_dict["public_id"], str(self.ticket.public_id))
-        self.assertEqual(ticket_dict["wallet_address"], None)
+        self.assertEqual(ticket_dict["wallet_address"], "TODOTHISPR")
 
     @prevent_warnings
     def test_list_tickets_redeemed_200_ok(self):

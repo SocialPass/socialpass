@@ -35,7 +35,7 @@ def generate_random_identifier():
 
 
 def create_testing_blockchain_ownership(**kwargs):
-    return
+    return {}
     """
     TODO
     return lockchainOwnership.objects.create(
@@ -49,7 +49,7 @@ class TestCaseWrapper(TestCase):
     user: Any
     team: Team
     event: Event
-    blockchain_ownership
+    blockchain_ownership: Any
     url_base: str
 
     @classmethod

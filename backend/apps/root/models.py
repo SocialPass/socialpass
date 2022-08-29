@@ -21,7 +21,6 @@ from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
-from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
@@ -292,11 +291,6 @@ class Event(DBModel):
 
     # Ticket Info
     # TODO: Move these to TicketType
-    requirements = models.JSONField(
-        blank=True,
-        default=list,
-        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
-    )
     capacity = models.IntegerField(
         blank=True,
         default=1,
@@ -517,7 +511,6 @@ class Event(DBModel):
             "visibility",
             "initial_place",
             "start_date",
-            "requirements",
             "capacity",
             "timezone",
             "limit_per_person",
@@ -543,6 +536,46 @@ class Event(DBModel):
             "localized_address_display",
         ]
         return fields
+
+
+class Requirements(DBModel):
+    """
+    Stores data for event requirements
+    """
+
+    class BlockchainEnum(models.TextChoices):
+        EVM = "EVM"
+
+    class ChainIDEnum(models.TextChoices):
+        ETH = (1, "Ethereum")
+        ROPSTEN = (2, "Ropsten")  # Soon deprecated
+        RINKEBY = (4, "Rinkeby")  # Soon deprecated
+        BNB = (56, "BNB Chain")
+        AVAX = (43114, "Avalanche")
+        MATIC = (137, "Polygon")
+
+    class AssetTypeEnum(models.TextChoices):
+        ERC20 = "ERC20"
+        ERC721 = "ERC721"
+        ERC1155 = "ERC1155"
+
+    # Keys
+    event = models.ForeignKey(
+        "Event", on_delete=models.SET_NULL, null=True, related_name="requirements"
+    )
+
+    # Basic Info
+    asset_address = models.CharField(max_length=1024)
+    blockchain = models.CharField(
+        choices=BlockchainEnum.choices, default=BlockchainEnum.EVM, max_length=12
+    )
+    chain_id = models.CharField(
+        choices=ChainIDEnum.choices, default=ChainIDEnum.ETH, max_length=12
+    )
+    asset_type = models.CharField(
+        choices=AssetTypeEnum.choices, default=AssetTypeEnum.ERC20, max_length=12
+    )
+    amount = models.IntegerField()
 
 
 class EventCategory(DBModel):

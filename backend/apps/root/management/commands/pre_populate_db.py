@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from apps.root.factories import (
-    BlockchainOwnershipFactory,
+    AttendeeFactory,
     EventFactory,
     MembershipFactory,
     TeamFactory,
@@ -59,7 +59,7 @@ class Command(BaseCommand):
         for _ in range(num_events):
             # create events and BlockchainOwnership
             event = EventFactory(team=team, user=user)
-            BlockchainOwnershipFactory(event=event)
+            AttendeeFactory(event=event)
 
             # create Tickets and TicketRedemptionKeys
             for _ in range(num_tickets):
@@ -67,9 +67,7 @@ class Command(BaseCommand):
                 TicketRedemptionKeyFactory(event=event)
 
         self.stdout.write(
-            self.style.SUCCESS(
-                "THE DATABASE POPULATE HAS BEEN POPULATED WITH FAKE DATA"
-            )
+            self.style.SUCCESS("THE DATABASE POPULATE HAS BEEN POPULATED WITH FAKE DATA")
         )
 
     def create_superuser(self) -> None:

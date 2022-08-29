@@ -9,7 +9,7 @@ from requests.adapters import HTTPAdapter, Retry
 from web3 import Web3
 from web3.auto import w3
 
-from apps.root.models import BlockchainOwnership, Event, Ticket
+from apps.root.models import Event, Ticket
 from apps.root.utilities import TicketImageGenerator
 
 
@@ -115,7 +115,7 @@ def create_ticket_image(
 
 def create_tickets_blockchain_ownership(
     event: Event,
-    blockchain_ownership: BlockchainOwnership,
+    blockchain_ownership,
     tickets_to_issue: int,
 ):
     """
@@ -177,7 +177,7 @@ def create_tickets_blockchain_ownership(
 
 def validate_blockchain_wallet_ownership(
     event: Event,
-    blockchain_ownership: BlockchainOwnership,
+    blockchain_ownership,
     signed_message: str,
     wallet_address: str,
 ):
@@ -189,18 +189,16 @@ def validate_blockchain_wallet_ownership(
     verification_msg = None
     # check if already verified
     if blockchain_ownership.is_verified:
-        verification_msg = "BlockchainOwnership message already verified."
+        verification_msg = "Message already verified."
 
     # check if expired
     if blockchain_ownership.is_expired:
-        verification_msg = (
-            f"BlockchainOwnership request expired at {blockchain_ownership.expires}"
-        )
+        verification_msg = f"Request expired at {blockchain_ownership.expires}"
         return verified, verification_msg
 
     # check for id mismatch
     if blockchain_ownership.event != event:
-        verification_msg = "BlockchainOwnership x TokenGate ID mismatch."
+        verification_msg = "TokenGate ID mismatch."
         return verified, verification_msg
 
     # check for valid wallet_address
@@ -213,7 +211,7 @@ def validate_blockchain_wallet_ownership(
         _msg = encode_defunct(text=blockchain_ownership.signing_message)
         _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
         if _recovered != wallet_address:
-            verification_msg = "BlockchainOwnership x Address mismatch."
+            verification_msg = " Address mismatch."
             return verified, verification_msg
     except Exception:
         # forgery?

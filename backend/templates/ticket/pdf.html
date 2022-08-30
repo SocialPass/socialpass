@@ -1,0 +1,155 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" class="socialpass-event-discovery" spellcheck="false">
+  <head>
+    <style type="text/css">
+      .tg td {
+        border-color: transparent;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+      }
+      .tg th {
+        border-color: transparent;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+      }
+      .header {
+        text-align: center;
+        vertical-align: middle;
+      }
+      .congratulations-message {
+        text-align: center;
+        vertical-align: middle;
+        height: 150px;
+      }
+      .title {
+        margin: 0;
+        padding: 0;
+        font-size: 32px;
+      }
+      .message {
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+      }
+
+      .qrcode-column {
+        width: 300px;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .event-title {
+        margin: 0;
+        padding: 0;
+        font-size: 22px;
+        font-weight: bold;
+        margin-left: 20px;
+      }
+
+      .event-order {
+        margin: 0;
+        padding: 0;
+        font-size: 16px;
+        color: #959191;
+        margin-left: 20px;
+      }
+
+      .info {
+        margin: 0;
+        padding: 0;
+        margin-left: 20px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .subinfo {
+        margin: 0;
+        padding: 0;
+        margin-left: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #959191;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="root">
+      <table class="tg">
+        <thead>
+          {% if team_logo_url %}
+          <tr>
+            <th class="header" colspan="2">
+              <img src="{{ team_logo_url }}" />
+            </th>
+          </tr>
+          {% endif %}
+        </thead>
+        <tbody>
+          <tr>
+            <th class="congratulations-message" colspan="2">
+              <h1 class="title">Congratulations!</h1>
+              <p class="message">
+                We've verified your NFT ownership and generated your ticket!
+              </p>
+            </th>
+          </tr>
+          <tr>
+            {% if barcode_image %}
+            <td class="qrcode-column" rowspan="4">
+              <img
+                src="data:image/png;base64,{{ barcode_image }}"
+                width="250"
+              />
+            </td>
+            {% endif %}
+
+            <td>
+              {% if event_title %}
+              <div class="event-title">{{event_title}}</div>
+              {% endif %} {% if order_number %}
+              <div class="event-order">Order #{{order_number}}</div>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {% if ticket_quantity %}
+              <div class="info ticket-number">{{ticket_quantity}} x Ticket</div>
+              {% endif %} {% if ticket_type %}
+
+              <div class="subinfo ticket-type">{{ticket_type}}</div>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {% if location_name %}
+
+              <div class="info location-name">{{location_name}}</div>
+              {% endif %} {% if location_address %}
+
+              <div class="subinfo location-address">{{location_address}}</div>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {% if event_date %}
+              <div class="info event-date">{{event_date}}</div>
+              {% endif %} {% if event_timezone and event_time %}
+
+              <div class="subinfo event-time">
+                {{event_time}} ({{event_timezone}})
+              </div>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

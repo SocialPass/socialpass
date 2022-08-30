@@ -51,19 +51,18 @@
 
 .wallet-button .wallet-button-label {
   position: relative;
-  display: block;
+  display: flex;
+  align-items: center;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 
-  padding: 1rem;
+  padding: 1rem 1.6rem;
   background-color: var(--gray-color-very-light);
-  border: var(--base-border-width) var(--base-border-style) transparent;
+  border: var(--base-border-width) var(--base-border-style) var(--border-color);
   border-radius: var(--rounded-3-border-radius);
-  filter: grayscale(1);
-  opacity: 0.75;
 }
 
 .dark-mode .wallet-button .wallet-button-label {
@@ -73,8 +72,6 @@
 .wallet-button .wallet-button-input:checked + .wallet-button-label {
   background-color: var(--white-color);
   border-color: var(--secondary-color);
-  filter: grayscale(0);
-  opacity: 1;
 }
 
 .dark-mode .wallet-button .wallet-button-input:checked + .wallet-button-label {

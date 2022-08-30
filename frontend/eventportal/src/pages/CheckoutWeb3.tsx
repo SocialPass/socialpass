@@ -56,9 +56,9 @@ export const CheckoutWeb3 = () => {
       )
     }
     return (
-      <div className='row'>
+      <div>
         {connectHook.connectors.map((connector) => (
-          <div className='col-sm-4 pe-sm-10' key={connector.id}>
+          <div className='mt-10' key={connector.id}>
             <div className='wallet-button'>
               <input
                 disabled={!connector.ready}
@@ -74,11 +74,11 @@ export const CheckoutWeb3 = () => {
                 checked={selectedWallet === connector}
               />
               <label htmlFor={connector.id} className='wallet-button-label'>
-                <div className='ws-75 mw-100 mx-auto'>
-                  <Web3ConnectorImage connector={connector.name} />
-                </div>
-                <div className='fs-base-n2 text-strong fw-700 text-truncate text-center mt-10'>
+                <div className='fs-base-p2 text-strong fw-700 text-truncate'>
                   {connector.name}
+                </div>
+                <div className='ws-25 ms-auto'>
+                  <Web3ConnectorImage connector={connector.name} />
                 </div>
               </label>
             </div>

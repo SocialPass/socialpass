@@ -62,8 +62,9 @@ INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
 # Celery
 # ------------------------------------------------------------------------------
-# NOTE: CELERY_LOCAL_DEVELOPMENT defaults to false, to avoid requiring celery on basic setup
-# With Docker, this .env can be set to False
+# NOTE:
+# CELERY_LOCAL_DEVELOPMENT defaults to false, to avoid requiring celery without docker
+# With Docker, this .env is set to True
 CELERY_LOCAL_DEVELOPMENT = env("CELERY_LOCAL_DEVELOPMENT", default=False)
 if CELERY_LOCAL_DEVELOPMENT:
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-always-eager

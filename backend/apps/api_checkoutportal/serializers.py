@@ -3,7 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import Event, Team, Ticket
+from apps.root.models import Attendee, Event, Team, Ticket
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -74,3 +74,16 @@ class EventSerializer(serializers.ModelSerializer):
             "show_ticket_count",
             "show_team_image",
         ]
+
+
+class AttendeeSerializer(serializers.ModelSerializer):
+    """
+    Attendee serializer
+    """
+
+    wallet_address = serializers.CharField(write_only=True)
+    otp = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Attendee
+        fields = ["wallet_address", "otp"]

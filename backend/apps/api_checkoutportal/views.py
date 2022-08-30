@@ -1,8 +1,7 @@
 from django.http import Http404
 from rest_framework.exceptions import MethodNotAllowed
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from apps.api_checkoutportal import serializers, services
 from apps.root.models import Event
@@ -19,7 +18,7 @@ class CheckoutMixin:
     def dispatch(self, request, *args, **kwargs):
         try:
             self.event = Event.objects.get(public_id=self.kwargs["public_id"])
-        except:
+        except Exception:
             raise Http404
         return super().dispatch(request, *args, **kwargs)
 
@@ -36,18 +35,17 @@ class CheckoutPortalRetrieve(CheckoutMixin, RetrieveAPIView):
         return self.event
 
 
-class CheckoutPortalOwnershipRequest(CheckoutMixin, APIView):
+class CheckoutPortalOwnershipRequest(CheckoutMixin, GenericAPIView):
     """
     POST view for requesting Event entry based on asset ownership
     - Get or Create Attendee based on wallet address (unverified)
     - Return record for verifying attendee (message to be signed)
     """
 
-    def post(self, request, *args, **kwargs):
-        return
+    serializer_class = serializers.AttendeeSerializer
 
 
-class CheckoutPortalOwnershipVerify(CheckoutMixin, APIView):
+class CheckoutPortalOwnershipVerify(CheckoutMixin, GenericAPIView):
     """
     POST view for verifying Event entry based on asset ownership
     Key Checks:
@@ -57,19 +55,14 @@ class CheckoutPortalOwnershipVerify(CheckoutMixin, APIView):
     - Does attendee meet ownership criteria? (403)
     """
 
-    def post(self, request, *args, **kwargs):
-        return
+    pass
 
 
-class CheckoutPortalConfirmation(CheckoutMixin, APIView):
+class CheckoutPortalConfirmation(CheckoutMixin, GenericAPIView):
     """
     GET/POST view for checkout portal confirmation
     On GET, this view will return the confirmation page with accompanying PDF ticket.
     On POST, this view will offload tasks to celery for ticket creation and SMTP delivery.
     """
 
-    def get(self, request, *args, **kwargs):
-        return
-
-    def post(self, request, *args, **kwargs):
-        return
+    pass

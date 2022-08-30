@@ -64,7 +64,6 @@ class EventSerializer(serializers.ModelSerializer):
             "team",
             "title",
             "description",
-            "requirements",
             "limit_per_person",
             "start_date",
             "timezone",

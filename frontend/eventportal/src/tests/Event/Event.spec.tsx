@@ -1,50 +1,85 @@
-import { act, render } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter } from 'react-router-dom'
-import { EventPortalProvider } from '../../context'
+import { CheckoutPortalContext } from '../../context'
 import { Event } from '../../pages'
 import RequiresEvent from '../../utils/requiresEventHOC'
 
-const event = {
-  httpStatus: 200,
-  title: 'event name',
-  description: 'event name',
-}
-
-const mockCall = jest.fn(() => event)
-
-jest.mock('../../api.tsx', () => ({
-  TicketedEventRetrieve: {
-    call: () => mockCall(),
-  },
-}))
+jest.mock('../../api.tsx', () => jest.fn())
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 0 } },
 })
 
 describe('Event component', () => {
-  it('should render correctly', async () => {
-    render(
+  beforeEach(() => {
+    jest.resetAllMocks()
+    jest.restoreAllMocks()
+  })
+  it('should render correctly if status 200', async () => {
+    const { debug } = render(
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <EventPortalProvider>
+          <CheckoutPortalContext.Provider
+            value={{
+              retrieveJson: {
+                httpStatus: 200,
+                title: 'event name',
+                description: 'event description',
+              },
+              id: '123234',
+              status: 'success',
+              isLoading: false,
+              isError: false,
+              setID: jest.fn(),
+              generalAdmissionSelect: 1,
+              setGeneralAdmissionSelect: jest.fn(),
+            }}
+          >
             <RequiresEvent>
               <Event />
             </RequiresEvent>
-          </EventPortalProvider>
+          </CheckoutPortalContext.Provider>
         </QueryClientProvider>
       </BrowserRouter>,
     )
-    await wait(100)
-    expect(mockCall).toHaveBeenCalled()
+
+    // debug()
+
+    expect(screen.getByText('event name')).toBeInTheDocument()
+    expect(screen.getByText('event description')).toBeInTheDocument()
+  })
+
+  it('should render correctly if status 404', async () => {
+    const { debug } = render(
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <CheckoutPortalContext.Provider
+            value={{
+              retrieveJson: {
+                httpStatus: 200,
+              },
+              id: '123234',
+              status: 'success',
+              isLoading: false,
+              isError: true,
+              setID: jest.fn(),
+              generalAdmissionSelect: 1,
+              setGeneralAdmissionSelect: jest.fn(),
+            }}
+          >
+            <RequiresEvent>
+              <Event />
+            </RequiresEvent>
+          </CheckoutPortalContext.Provider>
+        </QueryClientProvider>
+      </BrowserRouter>,
+    )
+
+    debug()
+
+    expect(screen.queryByText('event name')).toBeNull()
+    expect(screen.queryByText('event description')).toBeNull()
   })
 })
 
-async function wait(ms = 0) {
-  await act(() => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms)
-    })
-  })
-}

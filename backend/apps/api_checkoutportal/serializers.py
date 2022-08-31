@@ -16,6 +16,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
+        ref_name = "CheckouPortal Team"
         fields = ["name", "image", "theme"]
 
     def get_image(self, obj):
@@ -60,6 +61,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
+        ref_name = "CheckouPortal Event"
         fields = [
             "team",
             "title",

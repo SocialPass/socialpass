@@ -31,9 +31,9 @@ class CheckoutPortalRetrieve(CheckoutMixin, RetrieveAPIView):
     Overrides get_object to use self.event from CheckoutMixin
     """
 
+    serializer_class = serializers.EventSerializer
     input_serializer = None
-    output_serializer = serializers.EventSerializer
-    serializer_class = output_serializer
+    output_serializer = serializer_class
 
     @swagger_auto_schema(
         request_body=input_serializer, responses={200: output_serializer}
@@ -52,9 +52,9 @@ class CheckoutPortalOwnershipRequest(CheckoutMixin, GenericAPIView):
     - Generate / return OTP message for verifying 'Attendee'
     """
 
-    input_serializer = serializers.AttendeeSerializer
-    output_serializer = serializers.AttendeeSerializer
     serializer_class = serializers.AttendeeSerializer
+    input_serializer = serializer_class
+    output_serializer = serializer_class
 
     @swagger_auto_schema(
         request_body=input_serializer, responses={200: output_serializer}

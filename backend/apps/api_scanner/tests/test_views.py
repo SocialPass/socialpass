@@ -249,7 +249,7 @@ class TicketsListViewTestCase(TestCaseWrapper):
     def test_list_tickets_200_ok(self):
 
         response = self.client.get(f"{self.url_base}{self.access_key}/tickets/")
-        ticket_dict = response.json()[0]
+        ticket_dict = response.json()["results"][0]
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(ticket_dict["public_id"], str(self.ticket.public_id))
@@ -266,7 +266,7 @@ class TicketsListViewTestCase(TestCaseWrapper):
             f"{self.url_base}{self.access_key}/tickets/?redeemed=true"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), [])
+        self.assertEqual(response.json()["results"], [])
 
     @prevent_warnings
     def test_list_tickets_400_bad_request(self):

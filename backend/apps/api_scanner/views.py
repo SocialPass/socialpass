@@ -4,10 +4,9 @@ import uuid
 from django.http import Http404
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from apps.root.models import Ticket, TicketRedemptionKey
 
@@ -47,10 +46,16 @@ class EventRetrieve(SetAccessKeyAndEventMixin, RetrieveAPIView):
 
     permission_classes = (AllowAny,)
     serializer_class = serializers.EventSerializer
+    input_serializer = None
+    output_serializer = serializer_class
 
     def get_object(self, *args, **kwargs):
         return self.event
 
+    @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: output_serializer},
+    )
     def get(self, request, *args, **kwargs):
         try:
             self.set_event_and_redemption_access_key(kwargs["access_key"])
@@ -60,18 +65,19 @@ class EventRetrieve(SetAccessKeyAndEventMixin, RetrieveAPIView):
         return super().get(request, *args, **kwargs)
 
 
-class ScanTicket(APIView, SetAccessKeyAndEventMixin):
+class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
     """
-    Redeem a ticket for the given redemption_access_key.
+    POST view for redeem a ticket for the given redemption_access_key.
     """
 
     permission_classes = (AllowAny,)
+    serializer_class = serializers.ScanTicketOutputSerializer
     input_serializer = serializers.ScanTicketInputSerializer
-    output_serializer = serializers.ScanTicketOutputSerializer
+    output_serializer = serializer_class
 
     @swagger_auto_schema(
-        responses={200: output_serializer},
         request_body=input_serializer,
+        responses={200: output_serializer},
     )
     def post(self, request, *args, access_key: uuid.UUID, **kwargs):
         self.set_event_and_redemption_access_key(access_key)
@@ -121,30 +127,34 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
                 },
             )
 
-        output_serializer = self.output_serializer(ticket)
+        output_serializer = self.get_serializer(ticket)
         return Response(output_serializer.data)
 
 
-class TicketsListView(ListAPIView, SetAccessKeyAndEventMixin):
+class TicketsListView(SetAccessKeyAndEventMixin, ListAPIView):
     """
-    Returns event for the given redemption_access_key.
+    GET view for list tickets for the given redemption_access_key.
     """
 
     permission_classes = (AllowAny,)
     serializer_class = serializers.TicketSerializer
-    queryset = Ticket.objects.all()
+    input_serializer = None
+    output_serializer = serializer_class
+    queryset = Ticket.objects.all().order_by("-id")  # order_by prevent unordeing warning
 
     def get_queryset(self):
         return super().get_queryset().filter(event=self.event, **self.filter_kwargs)
 
     @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: output_serializer},
         manual_parameters=[
             openapi.Parameter(
                 "redeemed",
                 openapi.IN_QUERY,
                 type=openapi.TYPE_BOOLEAN,
             )
-        ]
+        ],
     )
     def get(self, request, *args, **kwargs):
         self.set_event_and_redemption_access_key(kwargs["access_key"])

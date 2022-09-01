@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from apps.root.factories import (
-    AttendeeFactory,
+    BlockchainOwnershipFactory,
     EventFactory,
     MembershipFactory,
     TeamFactory,
@@ -59,7 +59,7 @@ class Command(BaseCommand):
         for _ in range(num_events):
             # create events and BlockchainOwnership
             event = EventFactory(team=team, user=user)
-            AttendeeFactory(event=event)
+            BlockchainOwnershipFactory(event=event)
 
             # create Tickets and TicketRedemptionKeys
             for _ in range(num_tickets):

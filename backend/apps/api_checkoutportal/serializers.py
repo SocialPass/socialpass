@@ -3,7 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import Attendee, Event, Team, Ticket
+from apps.root.models import BlockchainOwnership, Event, Team, Ticket
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -12,12 +12,6 @@ class TeamSerializer(serializers.ModelSerializer):
     """
 
     image = serializers.SerializerMethodField()
-    theme = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Team
-        ref_name = "CheckouPortal Team"
-        fields = ["name", "image", "theme"]
 
     def get_image(self, obj):
         request = self.context.get("request")
@@ -26,6 +20,8 @@ class TeamSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(image_url)
         else:
             return None
+
+    theme = serializers.SerializerMethodField()
 
     def get_theme(self, obj):
         request = self.context.get("request")
@@ -49,6 +45,10 @@ class TeamSerializer(serializers.ModelSerializer):
 
         return theme
 
+    class Meta:
+        model = Team
+        fields = ["name", "image", "theme"]
+
 
 class EventSerializer(serializers.ModelSerializer):
     """
@@ -61,11 +61,11 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        ref_name = "CheckouPortal Event"
         fields = [
             "team",
             "title",
             "description",
+            "requirements",
             "limit_per_person",
             "start_date",
             "timezone",
@@ -78,14 +78,43 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
 
-class AttendeeSerializer(serializers.ModelSerializer):
+class BlockchainOwnershipSerializer(serializers.ModelSerializer):
     """
-    Attendee serializer
+    BlockchainOwnership serializer
     """
 
-    wallet_address = serializers.CharField(write_only=True)
-    otp = serializers.CharField(read_only=True)
+    signing_message = serializers.SerializerMethodField()
 
     class Meta:
-        model = Attendee
-        fields = ["wallet_address", "otp"]
+        model = BlockchainOwnership
+        fields = [
+            "id",
+            "signing_message",
+        ]
+
+    def get_signing_message(self, obj):
+        return obj.signing_message
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    """
+    Ticket serializer
+    """
+
+    download_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Ticket
+        fields = [
+            "download_url",
+        ]
+
+    def get_download_url(self, obj):
+        return obj.download_url
+
+
+class VerifyBlockchainOwnershipSerializer(serializers.Serializer):
+    wallet_address = serializers.CharField(required=True)
+    signed_message = serializers.CharField(required=True)
+    blockchain_ownership_id = serializers.CharField(required=True)
+    tickets_requested = serializers.IntegerField(required=True)

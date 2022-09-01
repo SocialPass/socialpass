@@ -21,6 +21,7 @@ from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
+from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
@@ -243,6 +244,9 @@ class Event(DBModel):
     cover_image = models.ImageField(
         blank=True, null=True, help_text="A banner image for your event."
     )
+    category = models.ForeignKey(
+        "EventCategory", on_delete=models.SET_NULL, null=True, blank=True
+    )
     tags = TaggableManager(
         blank=True,
     )
@@ -288,6 +292,11 @@ class Event(DBModel):
 
     # Ticket Info
     # TODO: Move these to TicketType
+    requirements = models.JSONField(
+        blank=True,
+        default=list,
+        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
+    )
     capacity = models.IntegerField(
         blank=True,
         default=1,
@@ -508,6 +517,7 @@ class Event(DBModel):
             "visibility",
             "initial_place",
             "start_date",
+            "requirements",
             "capacity",
             "timezone",
             "limit_per_person",
@@ -535,42 +545,23 @@ class Event(DBModel):
         return fields
 
 
-class BlockchainRequirements(DBModel):
+class EventCategory(DBModel):
     """
-    Stores data for event requirements
+    Category model for Events
+    Contains parent description
     """
 
-    class BlockchainEnum(models.TextChoices):
-        EVM = "EVM"
-
-    class ChainIDEnum(models.TextChoices):
-        ETH = (1, "Ethereum")
-        ROPSTEN = (2, "Ropsten")  # Chain deprecated post-merge
-        RINKEBY = (4, "Rinkeby")  # Chain deprecated post-merge
-        BNB = (56, "BNB Chain")
-        AVAX = (43114, "Avalanche")
-        MATIC = (137, "Polygon")
-
-    class AssetTypeEnum(models.TextChoices):
-        ERC20 = "ERC20"
-        ERC721 = "ERC721"
-        ERC1155 = "ERC1155"
-
-    # Keys
-    event = models.ForeignKey("Event", on_delete=models.SET_NULL, null=True)
-
-    # Basic Info
-    asset_address = models.CharField(max_length=1024)
-    blockchain = models.CharField(
-        choices=BlockchainEnum.choices, default=BlockchainEnum.EVM, max_length=12
+    parent_category = models.ForeignKey(
+        "EventCategory", on_delete=models.SET_NULL, null=True
     )
-    chain_id = models.CharField(
-        choices=ChainIDEnum.choices, default=ChainIDEnum.ETH, max_length=12
-    )
-    asset_type = models.CharField(
-        choices=AssetTypeEnum.choices, default=AssetTypeEnum.ERC20, max_length=12
-    )
-    amount = models.IntegerField()
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        if self.parent_category:
+            return f"{self.parent_category} - {self.name}"
+        else:
+            return self.name
 
 
 class EventStripePayment(DBModel):
@@ -590,51 +581,6 @@ class EventStripePayment(DBModel):
     stripe_checkout_session_id = models.CharField(max_length=1024)
     callaback_timestamp = models.DateTimeField(null=True, blank=True)
     acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
-
-
-class Attendee(DBModel):
-    """
-    Stores data for an event attendee
-    This model stores fields planned to support two separate checkout flows.
-    1. Asset Ownership: Prove asset ownership to claim tickets
-    2. Point of Sale Payments: Pay in crypto or fiat to purchase tickets
-    """
-
-    # Keys
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-
-    # Basic Info
-    email = models.EmailField()
-
-    # Asset Ownership
-    otp = models.UUIDField(null=True)
-    wallet_address = models.CharField(max_length=400)
-    is_verified = models.BooleanField(default=False)
-    expires = models.DateTimeField(null=True)
-
-    # Point of Sale Payments
-    # Fields TBD
-
-    def generate_asset_ownership_verification(self):
-        """
-        Set new code and expiration
-        Returns a message to be signed by wallet for asset ownership verification
-        """
-        self.expires = datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
-        self.otp = uuid.uuid4()
-        self.save()
-        return (
-            "Greetings from SocialPass."
-            "\nSign this message to prove ownership"
-            "\n\nThis IS NOT a trade or transaction"
-            f"\n\nTimestamp: {self.expires.strftime('%s')}"
-            f"\nOne-Time Code: {str(self.otp)}"
-        )
-
-    @property
-    def is_expired(self):
-        """ """
-        return self.expires < (datetime.utcnow().replace(tzinfo=utc))
 
 
 class Ticket(DBModel):
@@ -657,6 +603,15 @@ class Ticket(DBModel):
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
     )
+
+    # Checkout Info
+    blockchain_ownership = models.ForeignKey(
+        "BlockchainOwnership",
+        on_delete=models.SET_NULL,
+        related_name="tickets",
+        null=True,
+    )
+    blockchain_asset = models.JSONField(null=True)
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
@@ -722,6 +677,40 @@ class TicketRedemptionKey(DBModel):
         return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
 
 
+class BlockchainOwnership(DBModel):
+    """
+    Stores details used to verify blockchain ownership in exchange for tickets
+    """
+
+    def set_expires():  # type: ignore
+        return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
+
+    # Keys
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+    # Basic info
+    wallet_address = models.CharField(max_length=400)
+    is_verified = models.BooleanField(default=False)
+    expires = models.DateTimeField(default=set_expires)
+
+    def __str__(self):
+        return str(self.wallet_address)
+
+    @property
+    def is_expired(self):
+        return self.expires < (datetime.utcnow().replace(tzinfo=utc))
+
+    @property
+    def signing_message(self):
+        return (
+            "Greetings from SocialPass."
+            "\nSign this message to prove ownership"
+            "\n\nThis IS NOT a trade or transaction"
+            f"\n\nTimestamp: {self.expires.strftime('%s')}"
+            f"\nOne-Time Code: {str(self.public_id)[0:7]}"
+        )
+
+
 class PricingRule(DBModel):
     """
     Maps a capacity to a price per capacity
@@ -753,16 +742,16 @@ class PricingRule(DBModel):
         on_delete=models.CASCADE,  # if group is deleted, delete all rules
     )
 
+    @property
+    def safe_max_capacity(self) -> int:
+        # note: return psql max size integer
+        return 2147483640 if self.max_capacity is None else self.max_capacity
+
     def __str__(self):
         return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})"  # noqa
 
     def __repr__(self):
         return f"PricingRule({self.min_capacity} - {self.max_capacity})"
-
-    @property
-    def safe_max_capacity(self) -> int:
-        # note: return psql max size integer
-        return 2147483640 if self.max_capacity is None else self.max_capacity
 
 
 class PricingRuleGroup(DBModel):
@@ -774,12 +763,12 @@ class PricingRuleGroup(DBModel):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
 
+    @property
+    def active_rules(self):
+        return self.pricing_rules.filter(active=True)
+
     def __str__(self):
         return f"{self.name}"
 
     def __repr__(self):
         return f"Pricing Rule Group({self.name})"
-
-    @property
-    def active_rules(self):
-        return self.pricing_rules.filter(active=True)

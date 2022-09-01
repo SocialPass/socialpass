@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.root.models import (
-    Attendee,
+    BlockchainOwnership,
     Event,
     Membership,
     Team,
@@ -78,6 +78,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     cover_image = factory.django.ImageField(color="blue")
     capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
     limit_per_person = 1
+    requirements: Any = []
     initial_place = factory.Faker("address")
     lat = 41.40338
     long = 2.17403
@@ -86,7 +87,7 @@ class EventFactory(factory.django.DjangoModelFactory):
         model = Event
 
 
-class AttendeeFactory(factory.django.DjangoModelFactory):
+class BlockchainOwnershipFactory(factory.django.DjangoModelFactory):
     """
     Create blockchain ownership
     """
@@ -94,7 +95,7 @@ class AttendeeFactory(factory.django.DjangoModelFactory):
     event = factory.SubFactory(EventFactory)
 
     class Meta:
-        model = Attendee
+        model = BlockchainOwnership
 
 
 class TicketFactory(factory.django.DjangoModelFactory):

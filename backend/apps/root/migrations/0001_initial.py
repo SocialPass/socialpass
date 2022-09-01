@@ -178,7 +178,9 @@ class Migration(migrations.Migration):
                 ("is_verified", models.BooleanField(default=False)),
                 (
                     "expires",
-                    models.DateTimeField(),
+                    models.DateTimeField(
+                        default=apps.root.models.BlockchainOwnership.set_expires
+                    ),
                 ),
             ],
             options={

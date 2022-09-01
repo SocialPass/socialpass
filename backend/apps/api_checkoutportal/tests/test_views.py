@@ -8,7 +8,7 @@ from rest_framework import status
 from web3.auto import w3
 
 from apps.root.factories import EventFactory, UserWithTeamFactory
-from apps.root.models import Event, Team
+from apps.root.models import BlockchainOwnership, Event, Team
 
 
 def prevent_warnings(func):
@@ -35,13 +35,9 @@ def generate_random_identifier():
 
 
 def create_testing_blockchain_ownership(**kwargs):
-    return {}
-    """
-    TODO
-    return lockchainOwnership.objects.create(
+    return BlockchainOwnership.objects.create(
         event_id=kwargs.get("event_id", Event.objects.last().id)
     )
-    """
 
 
 class TestCaseWrapper(TestCase):
@@ -49,7 +45,7 @@ class TestCaseWrapper(TestCase):
     user: Any
     team: Team
     event: Event
-    blockchain_ownership: Any
+    blockchain_ownership: BlockchainOwnership
     url_base: str
 
     @classmethod

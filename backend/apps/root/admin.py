@@ -6,8 +6,9 @@ from django_fsm_log.admin import StateLogInline
 
 from apps.dashboard import services
 from apps.root.models import (
-    Attendee,
+    BlockchainOwnership,
     Event,
+    EventCategory,
     EventStripePayment,
     Membership,
     PricingRule,
@@ -53,10 +54,15 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-@admin.register(Attendee)
-class AttendeeAdmin(admin.ModelAdmin):
+@admin.register(BlockchainOwnership)
+class BlockchainOwnershipAdmin(admin.ModelAdmin):
     list_display = ("event", "id", "wallet_address", "is_verified")
     search_fields = ("event__title", "id", "wallet_address")
+
+
+@admin.register(EventCategory)
+class EventCategoryAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Event)
@@ -104,8 +110,11 @@ class TicketRedemptionKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("event", "full_embed")
-    search_fields = ("event__title",)
+    list_display = ("event", "blockchain_ownership", "full_embed")
+    search_fields = (
+        "event__title",
+        "blockchain_ownership",
+    )
 
 
 @admin.register(PricingRule)

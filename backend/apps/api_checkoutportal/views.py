@@ -1,4 +1,5 @@
 from django.http import Http404
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.generics import GenericAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
@@ -29,10 +30,19 @@ class CheckoutPortalRetrieve(CheckoutMixin, RetrieveAPIView):
     Overrides get_object to use self.event from CheckoutMixin
     """
 
-    serializer_class = serializers.EventSerializer
+    input_serializer = None
+    output_serializer = serializers.EventSerializer
+    serializer_class = output_serializer
 
     def get_object(self, *args, **kwargs):
         return self.event
+
+    @swagger_auto_schema(
+        responses={200: output_serializer},
+        request_body=input_serializer,
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class CheckoutPortalOwnershipRequest(CheckoutMixin, GenericAPIView):

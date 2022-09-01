@@ -5,13 +5,14 @@ from rest_framework.generics import GenericAPIView, RetrieveAPIView, UpdateAPIVi
 from rest_framework.response import Response
 
 from apps.api_checkoutportal import serializers, services
-from apps.root.models import Event
+from apps.root.models import Attendee, Event
 
 
 class CheckoutMixin:
     """
-    Mixin for checkoutportal flow
-    Dipsatch method fetches event based on public_id
+    Mixin for Checkout Portal flow
+    - Dispatch method fetches Event based on public_id (always called)
+    - get_object sets Event as object (must be manually called outside generic views)
     """
 
     event = None
@@ -34,25 +35,44 @@ class CheckoutPortalRetrieve(CheckoutMixin, RetrieveAPIView):
     output_serializer = serializers.EventSerializer
     serializer_class = output_serializer
 
-    def get_object(self, *args, **kwargs):
-        return self.event
-
     @swagger_auto_schema(
-        responses={200: output_serializer},
-        request_body=input_serializer,
+        request_body=input_serializer, responses={200: output_serializer}
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+    def get_object(self, *args, **kwargs):
+        return self.event
+
 
 class CheckoutPortalOwnershipRequest(CheckoutMixin, GenericAPIView):
     """
-    POST view for requesting Event entry based on asset ownership
-    - Get or Create Attendee based on wallet address (unverified)
-    - Return record for verifying attendee (message to be signed)
+    PUT view for requesting Event entry based on asset ownership
+    - Get or create UNVERIFIED 'Attendee' based upon wallet address.
+    - Generate / return OTP message for verifying 'Attendee'
     """
 
+    input_serializer = serializers.AttendeeSerializer
+    output_serializer = serializers.AttendeeSerializer
     serializer_class = serializers.AttendeeSerializer
+
+    @swagger_auto_schema(
+        request_body=input_serializer, responses={200: output_serializer}
+    )
+    def put(self, request, *args, **kwargs):
+        # serialized input data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serialized_data = serializer.validated_data
+
+        # get or create UNVERIFIED Attendee entry based upon wallet address.
+        attendee, created = Attendee.objects.get_or_create(
+            event=self.event, wallet_address=serialized_data["wallet_address"]
+        )
+
+        # return attendee OTP message
+        otp_message = attendee.generate_otp_message()
+        return Response(otp_message)
 
 
 class CheckoutPortalOwnershipVerify(CheckoutMixin, GenericAPIView):

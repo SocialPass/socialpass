@@ -615,7 +615,7 @@ class Attendee(DBModel):
     # Point of Sale Payments
     # Fields TBD
 
-    def generate_asset_ownership_verification(self):
+    def generate_otp_message(self):
         """
         Set new code and expiration
         Returns a message to be signed by wallet for asset ownership verification

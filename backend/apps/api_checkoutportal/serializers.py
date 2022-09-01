@@ -82,8 +82,8 @@ class AttendeeSerializer(serializers.ModelSerializer):
     """
 
     wallet_address = serializers.CharField(write_only=True)
-    otp = serializers.CharField(read_only=True)
+    otp_message = serializers.CharField(read_only=True)
 
     class Meta:
         model = Attendee
-        fields = ["wallet_address", "otp"]
+        fields = ["wallet_address", "otp_message"]

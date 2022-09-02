@@ -18,7 +18,7 @@ xhtml2pdf==0.2.8
 
 # Django
 # ------------------------------------------------------------------------------
-django==4.0.6  # https://www.djangoproject.com/
+django==4.0.7  # https://www.djangoproject.com/
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
 django-allauth==0.51.0  # https://github.com/pennersr/django-allauth
 django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
@@ -32,5 +32,6 @@ django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-crispy-forms==1.14.0
 django-compressor==4.0 # https://github.com/django-compressor/django-compressor
 crispy-bootstrap5==0.6
+drf-yasg==1.21.3  # https://github.com/axnsan12/drf-yasg/
 git+https://github.com/jazzband/django-invitations.git@dfc65d3e0c27fe6e6d66083621348c149c47a725
 git+https://github.com/nftylabs/passbook.git

@@ -37,6 +37,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
+        ref_name = "Scanner Event"
         fields = ["name", "image", "theme"]
 
 
@@ -52,11 +53,11 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
+        ref_name = "Scanner Event"
         fields = [
             "team",
             "title",
             "description",
-            "requirements",
             "limit_per_person",
             "start_date",
             "timezone",
@@ -91,7 +92,26 @@ class TicketSerializer(serializers.ModelSerializer):
         ]
 
     def get_wallet_address(self, obj):
-        if obj.blockchain_ownership:
-            return obj.blockchain_ownership.wallet_address
-        else:
-            return None
+        return "TODOTHISPR"
+
+
+class ScanTicketOutputSerializer(serializers.ModelSerializer):
+    """
+    Serializes Redeemed Tickets
+    """
+
+    ticket_count = serializers.IntegerField(
+        source="event.tickets.count", read_only=True
+    )
+    redeemed_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Ticket
+        fields = ["id", "filename", "ticket_count", "redeemed_count"]
+
+    def get_redeemed_count(self, obj):
+        return obj.event.tickets.filter(redeemed=True).count()
+
+
+class ScanTicketInputSerializer(serializers.Serializer):
+    embed_code = serializers.CharField()

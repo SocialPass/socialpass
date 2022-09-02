@@ -2,10 +2,11 @@ import json
 import uuid
 
 from django.http import Http404
-from rest_framework import serializers as drf_serializers
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from apps.root.models import Ticket, TicketRedemptionKey
 
@@ -37,57 +38,52 @@ class SetAccessKeyAndEventMixin:
             )
 
 
-class EventRetrieve(APIView, SetAccessKeyAndEventMixin):
+class EventRetrieve(SetAccessKeyAndEventMixin, RetrieveAPIView):
     """
-    Returns event for the given redemption_access_key.
+    GET view for retrieving Event  for the given redemption_access_key
+    Overrides get_object to use self.event from SetAccessKeyAndEventMixin
     """
 
     permission_classes = (AllowAny,)
+    serializer_class = serializers.EventSerializer
+    input_serializer = None
+    output_serializer = serializer_class
 
-    def get(self, request, *args, access_key: uuid.UUID, **kwargs):
+    def get_object(self, *args, **kwargs):
+        return self.event
+
+    @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: output_serializer},
+    )
+    def get(self, request, *args, **kwargs):
         try:
-            self.set_event_and_redemption_access_key(access_key)
+            self.set_event_and_redemption_access_key(kwargs["access_key"])
         except Http404 as exc:
             return Response(status=404, data=exc.args[0])
 
-        serializer = serializers.EventSerializer(
-            self.event, context={"request": request}
-        )
-        return Response(serializer.data)
+        return super().get(request, *args, **kwargs)
 
 
-class ScanTicket(APIView, SetAccessKeyAndEventMixin):
+class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
     """
-    Redeem a ticket for the given redemption_access_key.
+    POST view for redeem a ticket for the given redemption_access_key.
     """
-
-    class OutputSerializer(drf_serializers.ModelSerializer):
-        """
-        Serializes Redeemed Tickets
-        """
-
-        ticket_count = drf_serializers.IntegerField(
-            source="event.tickets.count", read_only=True
-        )
-        redeemed_count = drf_serializers.SerializerMethodField()
-
-        class Meta:
-            model = Ticket
-            fields = ["id", "filename", "ticket_count", "redeemed_count"]
-
-        def get_redeemed_count(self, obj):
-            return obj.event.tickets.filter(redeemed=True).count()
-
-    class InputSerializer(drf_serializers.Serializer):
-        embed_code = drf_serializers.CharField()
 
     permission_classes = (AllowAny,)
+    serializer_class = serializers.ScanTicketOutputSerializer
+    input_serializer = serializers.ScanTicketInputSerializer
+    output_serializer = serializer_class
 
+    @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: output_serializer},
+    )
     def post(self, request, *args, access_key: uuid.UUID, **kwargs):
         self.set_event_and_redemption_access_key(access_key)
 
         # Parse input to get embed-code
-        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer = self.input_serializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         embed_code = input_serializer.validated_data["embed_code"]
 
@@ -131,28 +127,44 @@ class ScanTicket(APIView, SetAccessKeyAndEventMixin):
                 },
             )
 
-        output_serializer = self.OutputSerializer(ticket)
+        output_serializer = self.get_serializer(ticket)
         return Response(output_serializer.data)
 
 
-class TicketsListView(APIView, SetAccessKeyAndEventMixin):
+class TicketsListView(SetAccessKeyAndEventMixin, ListAPIView):
     """
-    Returns event for the given redemption_access_key.
+    GET view for list tickets for the given redemption_access_key.
     """
 
     permission_classes = (AllowAny,)
+    serializer_class = serializers.TicketSerializer
+    input_serializer = None
+    output_serializer = serializer_class
+    queryset = Ticket.objects.all().order_by("-id")  # order_by prevent unordeing warning
 
-    def get(self, request, *args, access_key: uuid.UUID, **kwargs):
-        self.set_event_and_redemption_access_key(access_key)
+    def get_queryset(self):
+        return super().get_queryset().filter(event=self.event, **self.filter_kwargs)
 
-        filter_kwargs = {}
+    @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: output_serializer},
+        manual_parameters=[
+            openapi.Parameter(
+                "redeemed",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+            )
+        ],
+    )
+    def get(self, request, *args, **kwargs):
+        self.set_event_and_redemption_access_key(kwargs["access_key"])
+
+        self.filter_kwargs = {}
         if "redeemed" in request.GET:
             try:
-                filter_kwargs["redeemed"] = json.loads(request.GET["redeemed"])
-                assert isinstance(filter_kwargs["redeemed"], bool)
+                self.filter_kwargs["redeemed"] = json.loads(request.GET["redeemed"])
+                assert isinstance(self.filter_kwargs["redeemed"], bool)
             except (json.decoder.JSONDecodeError, AssertionError):
                 return Response("redeemed query param must be 'true'|'false'", 400)
 
-        tickets = Ticket.objects.filter(event=self.event, **filter_kwargs)
-        output_serializer = serializers.TicketSerializer(tickets, many=True)
-        return Response(output_serializer.data)
+        return super().get(request, *args, **kwargs)

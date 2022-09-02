@@ -61,7 +61,7 @@
 
     function init(){
     const public_id = location.pathname.split('/')[1];
-    const response = fetch(`${baseURL}/checkout-portal/v1/retrieve/${public_id}/`)
+    const response = fetch(`${baseURL}/checkout/v1/retrieve/${public_id}/`)
       .then(response => response.json())
       .then(data => {
         const theme_name = data.team.theme?.css_theme;

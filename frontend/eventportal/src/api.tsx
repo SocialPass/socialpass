@@ -8,7 +8,7 @@ export class TicketedEventRetrieve {
   // wrapper for backend - TicketedEventRetrieve
   static call = async ({ public_id }) => {
     // set url
-    const url = `${baseURL}/checkout-portal/v1/retrieve/${public_id}/`
+    const url = `${baseURL}/checkout/v1/retrieve/${public_id}/`
     // set request options
     const requestOptions = {
       method: 'GET',
@@ -46,7 +46,7 @@ export class TicketedEventRequestAccess {
   // wrapper for backend - TicketedEventRequestAccess
   static call = async ({ public_id, checkout_type }) => {
     // set url
-    const url = `${baseURL}/checkout-portal/v1/request/${public_id}/?checkout_type=${checkout_type}`
+    const url = `${baseURL}/checkout/v1/request/${public_id}/?checkout_type=${checkout_type}`
 
     // set request options
     const requestOptions = {
@@ -97,7 +97,7 @@ export class TicketedEventGrantAccess {
     tickets_requested,
   }) => {
     // setup url
-    const url = `${baseURL}/checkout-portal/v1/process/${public_id}/?checkout_type=${checkout_type}`
+    const url = `${baseURL}/checkout/v1/process/${public_id}/?checkout_type=${checkout_type}`
 
     // set body
     const body = JSON.stringify({

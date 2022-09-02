@@ -85,6 +85,10 @@ class CheckoutPortalOwnershipVerify(CheckoutMixin, GenericAPIView):
     - Does attendee meet ownership criteria? (403)
     """
 
+    serializer_class = serializers.AttendeeSerializer
+    input_serializer = serializer_class
+    output_serializer = serializer_class
+
     pass
 
 

@@ -89,8 +89,11 @@ class CheckoutPortalOwnershipVerify(CheckoutMixin, GenericAPIView):
 
     serializer_class = serializers.CheckoutPortalOwnershipVerify
     input_serializer = serializer_class
-    output_serializer = None
+    output_serializer = serializer_class
 
+    @swagger_auto_schema(
+        request_body=input_serializer, responses={200: output_serializer}
+    )
     def post(self, request, *args, **kwargs):
         # 1. serialize input data
         serializer = self.get_serializer(data=request.data)

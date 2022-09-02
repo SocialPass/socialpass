@@ -49,14 +49,17 @@ class TeamSerializer(serializers.ModelSerializer):
         return theme
 
 
-class EventSerializer(serializers.ModelSerializer):
+class CheckoutPortalRetrieve(serializers.ModelSerializer):
     """
-    Event serializer
+    CheckoutPortalRetrieve serializer
     """
 
-    ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
+    # model fields
     start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
     team = TeamSerializer()
+
+    # non-model fields
+    ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
 
     class Meta:
         model = Event
@@ -76,14 +79,34 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
 
-class AttendeeSerializer(serializers.ModelSerializer):
+class CheckoutPortalOwnershipRequest(serializers.ModelSerializer):
     """
-    Attendee serializer
+    CheckoutPortalOwnershipRequest serializer
     """
 
+    # model fields
     wallet_address = serializers.CharField(write_only=True)
+    otp = serializers.CharField(read_only=True)
+
+    # non-model fields
     otp_message = serializers.CharField(read_only=True)
 
     class Meta:
         model = Attendee
-        fields = ["wallet_address", "otp_message"]
+        fields = ["wallet_address", "otp", "otp_message"]
+
+
+class CheckoutPortalOwnershipVerify(serializers.ModelSerializer):
+    """
+    CheckoutPortalOwnershipVerify serializer
+    """
+
+    # model fields
+    wallet_address = serializers.CharField(write_only=True)
+
+    # non-model fields
+    signed_otp_message = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Attendee
+        fields = ["wallet_address", "signed_otp_message"]

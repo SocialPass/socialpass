@@ -55,7 +55,7 @@ class TestCaseWrapper(TestCase):
         cls.team = cls.user.membership_set.first().team
         cls.event = EventFactory(team=cls.team, user=cls.user)
         cls.blockchain_ownership = create_testing_blockchain_ownership()
-        cls.url_base = "/api/checkout/v1/"
+        cls.url_base = "/api/checkout-portal/v1/"
         return super().setUpTestData()
 
 

@@ -21,14 +21,6 @@ Apart from the above functional requirements, the app should also adhere to the 
 
 The dashboard has two parts - the event manager and the account manager. In both cases, the main entry point is the sidebar, as this is used for all of the main navigation on the product.
 
-### Account Manager
-
-```mermaid
-flowchart LR
-  A[Sidebar] --> B[Change Password]
-  A --> C[Manage Emails]
-```
-
 ### Event Manager
 
 ```mermaid
@@ -55,8 +47,45 @@ flowchart LR
   G -->|Checkout| N[Event Checkout]
 ```
 
+### Account Manager
+
+```mermaid
+flowchart LR
+  A[Sidebar] --> B[Change Password]
+  A --> C[Manage Emails]
+```
+
+### Navbar
+
+There is another entry point - the navbar, and this mainly leads to pages in the account manager from the user dropdown.
+
+```mermaid
+flowchart LR
+  A[Navbar] --> B[User Dropdown]
+  B --> C[Change Password]
+  B --> D[Manage Emails]
+  B --> E[Sign Out]
+  A -->|Go to Home| F[Event Discovery]
+```
+
 ## Routes
 
 The following routes are available on the app:
 
-Work in progress...
+- `http://127.0.0.1:8000/dashboard/events/published/<team_id>/` - Events List 
+- `http://127.0.0.1:8000/dashboard/events/wip/<team_id>/` - Draft Events List 
+- `http://127.0.0.1:8000/dashboard/events/create/<team_id>/` - Create Event Form
+- `http://127.0.0.1:8000/dashboard/events/<team_id>/<event_id>/` - Event Details 
+- `http://127.0.0.1:8000/dashboard/events/update/<team_id>/<event_id>/` - Edit Event Form 
+- `http://127.0.0.1:8000/dashboard/events/delete/<team_id>/<event_id>/` - Delete Event Confirmation
+- `http://127.0.0.1:8000/dashboard/events/checkout/<team_id>/<event_id>/` - Event Checkout
+- `http://127.0.0.1:8000/dashboard/events/delete/<team_id>/<event_id>/` - Delete Event Confirmation
+- `http://127.0.0.1:8000/dashboard/events/stats/<team_id>/<event_id>/` - Tickets List
+- `http://127.0.0.1:8000/dashboard/team-create/` - Create Team Form
+- `http://127.0.0.1:8000/dashboard/team-detail/<team_id>` - Team Details
+- `http://127.0.0.1:8000/dashboard/team-update/<team_id>` - Update Team Information Form
+- `http://127.0.0.1:8000/dashboard/team-members/<team_id>` - Manage Members & Add Member
+- `http://127.0.0.1:8000/dashboard/team-update/<team_id>` - Update Team Information Form
+- `http://127.0.0.1:8000/dashboard/team-update/<team_id>` - Update Team Information Form
+- `http://127.0.0.1:8000/dashboard/accounts/password/change/` - Change Password
+- `http://127.0.0.1:8000/dashboard/accounts/email/` - Manage Emails

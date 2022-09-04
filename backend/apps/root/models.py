@@ -7,7 +7,7 @@ import boto3
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -22,7 +22,6 @@ from taggit.managers import TaggableManager
 
 from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
 from apps.root.model_wrappers import DBModel
-from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
 
 

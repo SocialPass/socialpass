@@ -1,10 +1,9 @@
 from django.http import Http404
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.exceptions import MethodNotAllowed
-from rest_framework.generics import GenericAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.response import Response
 
-from apps.api_checkoutportal import serializers, services
+from apps.api_checkoutportal import serializers
 from apps.root.models import Attendee, Event
 
 

@@ -3,7 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import Attendee, Event, Team, Ticket
+from apps.root.models import Attendee, Event, Team
 
 
 class TeamSerializer(serializers.ModelSerializer):

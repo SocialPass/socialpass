@@ -6,28 +6,44 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0039_alter_eventstripepayment_table_alter_invite_table_and_more'),
+        ("root", "0039_alter_eventstripepayment_table_alter_invite_table_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='description',
-            field=models.TextField(blank=True, help_text='A short description of your event.', null=True),
+            model_name="event",
+            name="description",
+            field=models.TextField(
+                blank=True, help_text="A short description of your event.", null=True
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='location',
-            field=models.CharField(blank=True, help_text='Where your event will take place.', max_length=1024, null=True),
+            model_name="event",
+            name="location",
+            field=models.CharField(
+                blank=True,
+                help_text="Where your event will take place.",
+                max_length=1024,
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='organizer',
-            field=models.CharField(blank=True, help_text='Name or brand or community organizing the event.', max_length=255, null=True),
+            model_name="event",
+            name="organizer",
+            field=models.CharField(
+                blank=True,
+                help_text="Name or brand or community organizing the event.",
+                max_length=255,
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='title',
-            field=models.CharField(help_text='Brief name for your event. Must be unique!', max_length=255, unique=True),
+            model_name="event",
+            name="title",
+            field=models.CharField(
+                help_text="Brief name for your event. Must be unique!",
+                max_length=255,
+                unique=True,
+            ),
         ),
     ]

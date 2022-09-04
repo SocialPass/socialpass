@@ -67,7 +67,6 @@ class Membership(DBModel):
     """
 
     class Meta:
-        # TODO: rename table in future to `root_`
         unique_together = ("team", "user")
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
@@ -284,21 +283,6 @@ class Event(DBModel):
     lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     localized_address_display = models.CharField(max_length=1024, blank=True, null=True)
-    # TODO localized_multi_line_address_display
-
-    # Ticket Info
-    # TODO: Move these to TicketType
-    capacity = models.IntegerField(
-        blank=True,
-        default=1,
-        validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event.",
-    )
-    limit_per_person = models.IntegerField(
-        default=1,
-        validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee.",
-    )
 
     # Pricing Info
     _price = MoneyField(
@@ -508,9 +492,7 @@ class Event(DBModel):
             "visibility",
             "initial_place",
             "start_date",
-            "capacity",
             "timezone",
-            "limit_per_person",
         ]
         return fields
 
@@ -533,44 +515,6 @@ class Event(DBModel):
             "localized_address_display",
         ]
         return fields
-
-
-class BlockchainRequirements(DBModel):
-    """
-    Stores data for event requirements
-    """
-
-    class BlockchainEnum(models.TextChoices):
-        EVM = "EVM"
-
-    class ChainIDEnum(models.TextChoices):
-        ETH = (1, "Ethereum")
-        ROPSTEN = (2, "Ropsten")  # Chain deprecated post-merge
-        RINKEBY = (4, "Rinkeby")  # Chain deprecated post-merge
-        BNB = (56, "BNB Chain")
-        AVAX = (43114, "Avalanche")
-        MATIC = (137, "Polygon")
-
-    class AssetTypeEnum(models.TextChoices):
-        ERC20 = "ERC20"
-        ERC721 = "ERC721"
-        ERC1155 = "ERC1155"
-
-    # Keys
-    event = models.ForeignKey("Event", on_delete=models.SET_NULL, null=True)
-
-    # Basic Info
-    asset_address = models.CharField(max_length=1024)
-    blockchain = models.CharField(
-        choices=BlockchainEnum.choices, default=BlockchainEnum.EVM, max_length=12
-    )
-    chain_id = models.CharField(
-        choices=ChainIDEnum.choices, default=ChainIDEnum.ETH, max_length=12
-    )
-    asset_type = models.CharField(
-        choices=AssetTypeEnum.choices, default=AssetTypeEnum.ERC20, max_length=12
-    )
-    amount = models.IntegerField()
 
 
 class Attendee(DBModel):
@@ -616,6 +560,77 @@ class Attendee(DBModel):
     def is_expired(self):
         """ """
         return self.expires < (datetime.utcnow().replace(tzinfo=utc))
+
+
+class TicketOption(DBModel):
+    """
+    Stores data for a potential ticket option
+    This model contains the data necessary to support multiple ticket option checkout flows
+    - Asset Ownership
+    - Free (TBA)
+    - Crypto (TBA)
+    - Fiat (TBA)
+    """
+
+    class TicketOptionEnum(models.TextChoices):
+        ASSET_OWNERSHIP = "Asset Ownership"
+
+    class BlockchainEnum(models.TextChoices):
+        EVM = "EVM"
+
+    class ChainIDEnum(models.TextChoices):
+        ETH = (1, "Ethereum")
+        ROPSTEN = (2, "Ropsten")  # Chain deprecated post-merge
+        RINKEBY = (4, "Rinkeby")  # Chain deprecated post-merge
+        BNB = (56, "BNB Chain")
+        AVAX = (43114, "Avalanche")
+        MATIC = (137, "Polygon")
+
+    class AssetTypeEnum(models.TextChoices):
+        ERC20 = "ERC20"
+        ERC721 = "ERC721"
+        ERC1155 = "ERC1155"
+
+    # Keys
+    event = models.ForeignKey("Event", on_delete=models.SET_NULL, null=True)
+
+    # basic info
+    name = models.CharField(max_length=255, default="Default")
+    type = models.CharField(
+        choices=TicketOptionEnum.choices,
+        default=TicketOptionEnum.ASSET_OWNERSHIP,
+        max_length=36,
+    )
+    # Ticket Info
+    capacity = models.IntegerField(
+        blank=True,
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text="Maximum amount of attendees for this ticket type.",
+    )
+    min_quantity = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text="Minimum amount of tickets for this ticket type.",
+    )
+    max_quantity = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text="Maximum amount of tickets for this ticket type.",
+    )
+
+    # asset ownership
+    asset_address = models.CharField(max_length=1024)
+    blockchain = models.CharField(
+        choices=BlockchainEnum.choices, default=BlockchainEnum.EVM, max_length=12
+    )
+    chain_id = models.CharField(
+        choices=ChainIDEnum.choices, default=ChainIDEnum.ETH, max_length=12
+    )
+    asset_type = models.CharField(
+        choices=AssetTypeEnum.choices, default=AssetTypeEnum.ERC20, max_length=12
+    )
+    amount = models.IntegerField()
 
 
 class Ticket(DBModel):

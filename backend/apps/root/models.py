@@ -573,25 +573,6 @@ class BlockchainRequirements(DBModel):
     amount = models.IntegerField()
 
 
-class EventStripePayment(DBModel):
-    """
-    Registers a payment done for Event
-    """
-
-    event = models.ForeignKey(
-        "Event", on_delete=models.SET_NULL, null=True, related_name="payments"
-    )
-    value = MoneyField(
-        max_digits=19, decimal_places=4, default_currency="USD", null=True
-    )
-    status = models.CharField(
-        choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"
-    )
-    stripe_checkout_session_id = models.CharField(max_length=1024)
-    callaback_timestamp = models.DateTimeField(null=True, blank=True)
-    acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
-
-
 class Attendee(DBModel):
     """
     Stores data for an event attendee
@@ -720,6 +701,25 @@ class TicketRedemptionKey(DBModel):
     @property
     def scanner_url(self):
         return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
+
+
+class EventStripePayment(DBModel):
+    """
+    Registers a payment done for Event
+    """
+
+    event = models.ForeignKey(
+        "Event", on_delete=models.SET_NULL, null=True, related_name="payments"
+    )
+    value = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="USD", null=True
+    )
+    status = models.CharField(
+        choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"
+    )
+    stripe_checkout_session_id = models.CharField(max_length=1024)
+    callaback_timestamp = models.DateTimeField(null=True, blank=True)
+    acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
 
 
 class PricingRule(DBModel):

@@ -67,25 +67,3 @@ flowchart LR
   B --> E[Sign Out]
   A -->|Go to Home| F[Event Discovery]
 ```
-
-## Routes
-
-The following routes are available on the app:
-
-- `http://127.0.0.1:8000/dashboard/events/published/<team_id>/` - Events List 
-- `http://127.0.0.1:8000/dashboard/events/wip/<team_id>/` - Draft Events List 
-- `http://127.0.0.1:8000/dashboard/events/create/<team_id>/` - Create Event Form
-- `http://127.0.0.1:8000/dashboard/events/<team_id>/<event_id>/` - Event Details 
-- `http://127.0.0.1:8000/dashboard/events/update/<team_id>/<event_id>/` - Edit Event Form 
-- `http://127.0.0.1:8000/dashboard/events/delete/<team_id>/<event_id>/` - Delete Event Confirmation
-- `http://127.0.0.1:8000/dashboard/events/checkout/<team_id>/<event_id>/` - Event Checkout
-- `http://127.0.0.1:8000/dashboard/events/delete/<team_id>/<event_id>/` - Delete Event Confirmation
-- `http://127.0.0.1:8000/dashboard/events/stats/<team_id>/<event_id>/` - Tickets List
-- `http://127.0.0.1:8000/dashboard/team-create/` - Create Team Form
-- `http://127.0.0.1:8000/dashboard/team-detail/<team_id>` - Team Details
-- `http://127.0.0.1:8000/dashboard/team-update/<team_id>` - Update Team Information Form
-- `http://127.0.0.1:8000/dashboard/team-members/<team_id>` - Manage Members & Add Member
-- `http://127.0.0.1:8000/dashboard/team-update/<team_id>` - Update Team Information Form
-- `http://127.0.0.1:8000/dashboard/team-update/<team_id>` - Update Team Information Form
-- `http://127.0.0.1:8000/dashboard/accounts/password/change/` - Change Password
-- `http://127.0.0.1:8000/dashboard/accounts/email/` - Manage Emails

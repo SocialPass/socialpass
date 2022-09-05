@@ -1,5 +1,5 @@
 ---
-name: Discussion
+name: Refactor
 about: Refactor a chunk of code
 title: ''
 labels: 'refactor'

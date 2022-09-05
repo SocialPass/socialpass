@@ -1,8 +1,8 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Major Feature request
+about: Suggest a major idea for this project
 title: ''
-labels: 'feature'
+labels: 'major'
 assignees: ''
 
 ---
@@ -31,5 +31,5 @@ assignees: ''
 - Add issue key here
 
 ## Additional context
-Add any other context or screenshots about the feature request here.
+Add any other context or screenshots about the major feature request here.
 

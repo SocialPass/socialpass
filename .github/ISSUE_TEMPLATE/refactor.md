@@ -1,8 +1,8 @@
 ---
 name: Discussion
-about: Discuss a topic
+about: Refactor a chunk of code
 title: ''
-labels: 'discussion'
+labels: 'refactor'
 assignees: ''
 
 ---

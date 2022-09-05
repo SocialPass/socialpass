@@ -41,11 +41,3 @@ flowchart LR;
   F --> |Claim Ticket| G[Opens Up Event Portal]
   A --> |Resources| H[Outbound Links]
 ```
-
-## Routes
-
-The following routes are available on the app:
-
-- `http://127.0.0.1:8000/` - Home page
-- `http://127.0.0.1:8000/events/browse` - Event list page
-- `http://127.0.0.1:8000/events/<public_id>` - Event details page

@@ -13,14 +13,13 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django_fsm import FSMField, transition
-from djmoney.models.fields import MoneyField
 from invitations import signals
 from invitations.adapters import get_invitations_adapter
 from invitations.base_invitation import AbstractBaseInvitation
 from pytz import utc
 from taggit.managers import TaggableManager
 
-from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.validators import JSONSchemaValidator

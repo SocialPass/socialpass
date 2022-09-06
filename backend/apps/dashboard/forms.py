@@ -1,5 +1,6 @@
-import pytz
 from datetime import date
+
+import pytz
 from django import forms
 from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from invitations.forms import InviteForm
@@ -75,7 +76,7 @@ class EventForm(forms.ModelForm):
                     "id": "start_date",
                     "class": "form-control",
                     "type": "datetime-local",
-                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
             "end_date": forms.DateTimeInput(
@@ -84,7 +85,7 @@ class EventForm(forms.ModelForm):
                     "id": "end_date",
                     "class": "form-control",
                     "type": "datetime-local",
-                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
             "publication_date": forms.DateTimeInput(
@@ -93,7 +94,7 @@ class EventForm(forms.ModelForm):
                     "id": "publication_date",
                     "class": "form-control",
                     "type": "datetime-local",
-                    "min": date.today().strftime("%Y-%m-%dT%H:%M")
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
             "visibility": forms.RadioSelect(),

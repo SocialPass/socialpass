@@ -346,27 +346,3 @@ class DashboardTest(TestCase):
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
         )
         self.assertEqual(response.status_code, 200)
-
-    def test_event_price_estimator(self):
-        # Login User
-        self.assertTrue(
-            self.client.login(username=self.user_one.username, password=self.password)
-        )
-
-        # Test GET
-        url = reverse("event_price_estimator", args=(self.team_one.public_id,))
-        url = f"{url}?capacity=100"
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-    def test_event_checkout(self):
-        return "Not yet implemented"
-
-    def test_event_checkout_success_callback(self):
-        return "Not yet implemented"
-
-    def test_event_checkout_failure_callback(self):
-        return "Not yet implemented"
-
-    def test_stripe_webhook(self):
-        return "Not yet implemented"

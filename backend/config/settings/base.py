@@ -378,11 +378,6 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60
 CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")
 SCANNER_BASE_URL = env("SCANNER_BASE_URL")
 
-# STRIPE
-# ------------------------------------------------------------------------------
-STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
-STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
-
 # MORALIS
 # ------------------------------------------------------------------------------
 MORALIS_API_KEY = env("MORALIS_API_KEY")

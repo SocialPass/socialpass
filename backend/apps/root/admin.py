@@ -1,18 +1,13 @@
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from django.utils.safestring import mark_safe
 from django_fsm_log.admin import StateLogInline
 
-from apps.dashboard import services
 from apps.root.models import (
     BlockchainOwnership,
     Event,
     EventCategory,
-    EventStripePayment,
     Membership,
-    PricingRule,
-    PricingRuleGroup,
     Team,
     Ticket,
     TicketRedemptionKey,
@@ -115,51 +110,3 @@ class TicketAdmin(admin.ModelAdmin):
         "event__title",
         "blockchain_ownership",
     )
-
-
-@admin.register(PricingRule)
-class PricingRuleAdmin(admin.ModelAdmin):
-    pass
-
-
-class PricingRuleInline(admin.TabularInline):
-    model = PricingRule
-    extra = 0
-
-
-@admin.register(PricingRuleGroup)
-class PricingRuleGroupAdmin(admin.ModelAdmin):
-    inlines = [PricingRuleInline]
-
-    def identify_pricing_group_errors(self, request, queryset):
-        for pricing_group in queryset:
-            errors = services.identify_pricing_group_errors(pricing_group)
-            if errors:
-                messages.warning(
-                    request, list_as_messages_str(errors, pricing_group.name)
-                )
-
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
-
-        errors = services.identify_pricing_group_errors(form.instance)
-        if errors:
-            errors_msg = list_as_messages_str(
-                errors, "Recently edited PricingGroup has the following problems:"
-            )
-            messages.warning(request, errors_msg)
-
-    actions = [identify_pricing_group_errors]  # type: ignore
-
-
-def list_as_messages_str(elements: list, title: str):
-    ul_string = f"<div><h3>{title}</h3>\n"
-    ul_string += "\n".join(["<div>" + str(s) + "</div>" for s in elements])
-    ul_string += "\n</div>"
-    return mark_safe(ul_string)
-
-
-@admin.register(EventStripePayment)
-class EventStripePaymentAdmin(admin.ModelAdmin):
-    list_display = ("event", "value", "status")
-    search_fields = ("event", "value", "status")

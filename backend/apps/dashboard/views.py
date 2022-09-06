@@ -1,7 +1,6 @@
 import json
 import secrets
 
-import stripe
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -19,7 +18,6 @@ from django.views.generic.list import ListView
 from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite
 
-from apps.dashboard import services
 from apps.dashboard.forms import (
     CustomInviteForm,
     EventDraftForm,
@@ -29,7 +27,7 @@ from apps.dashboard.forms import (
 )
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Event, EventStripePayment, Membership, Team, Ticket
+from apps.root.models import Event, Membership, Team, Ticket
 
 User = auth.get_user_model()
 
@@ -443,193 +441,6 @@ class EventDeleteView(TeamContextMixin, DeleteView):
             return reverse("event_drafts", args=(self.kwargs["team_public_id"],))
 
 
-class EventCheckout(TeamContextMixin, TemplateView):
-    """
-    Checkout intermediate step for Event.
-
-    Handles stripe integration.
-    """
-
-    template_name: str = "dashboard/event_checkout.html"
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-
-    def dispatch(self, request, *args, **kwargs):
-        self.kwargs = kwargs
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_object(self):
-        return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
-        )
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs, event=self.get_object())
-
-    def get(self, request, *args, **kwargs):
-        """Renders checkout page if payment is still pending"""
-        event = self.get_object()
-        if event.state == Event.StateEnum.LIVE.value:
-            messages.add_message(
-                request, messages.INFO, "The payment has already been processed."
-            )
-            return redirect("event_detail", **kwargs)
-
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *, team_public_id=None, pk=None):
-        """Issue payment and redirect to stripe checkout"""
-        event = self.get_object()
-        # handle zero-cost event
-        # todo: should be handled at state level, but also be explicit?
-        if int(event.price.amount * 100) == 0:
-            event.transition_live()
-            messages.add_message(request, messages.SUCCESS, "Your event is live!")
-            return redirect(reverse("event_detail", args=(team_public_id, pk)))
-
-        issued_payment = services.get_in_progress_payment(event)
-        if issued_payment:
-            # There is already a payment in progress, redirect to it
-            stripe_session = stripe.checkout.Session.retrieve(
-                issued_payment.stripe_checkout_session_id
-            )
-            if (
-                stripe_session["status"] == "expired"
-                and stripe_session["payment_status"] == "unpaid"
-            ):
-                issued_payment.status = "FAILURE"
-                issued_payment.save()
-            else:
-                return redirect(stripe_session["url"])
-
-        # build callback urls
-        success_callback = (
-            request.build_absolute_uri(
-                reverse("event_checkout_success_callback", args=(team_public_id, pk))
-            )
-            + "?session_id={CHECKOUT_SESSION_ID}"
-        )
-        failure_callback = (
-            request.build_absolute_uri(
-                reverse("event_checkout_failure_callback", args=(team_public_id, pk))
-            )
-            + "?session_id={CHECKOUT_SESSION_ID}"
-        )
-
-        # create checkout session
-        checkout_session = stripe.checkout.Session.create(
-            client_reference_id=request.user.id,
-            success_url=success_callback,
-            cancel_url=failure_callback,
-            payment_method_types=["card"],
-            mode="payment",
-            line_items=[
-                {
-                    "price_data": {
-                        "currency": event.price.currency,
-                        "product_data": {
-                            "name": event.title,
-                        },
-                        # TODO: support multiple currencies
-                        "unit_amount": int(event.price.amount * 100),
-                    },
-                    "quantity": 1,
-                }
-            ],
-        )
-
-        # create payment intent
-        services.issue_payment(event, checkout_session["id"])
-
-        return redirect(checkout_session["url"])
-
-    def success_stripe_callback(request, **kwargs):
-        # update payment status
-        stripe_session_id = request.GET["session_id"]
-        stripe_session = stripe.checkout.Session.retrieve(stripe_session_id)
-        payment = EventStripePayment.objects.get(
-            stripe_checkout_session_id=stripe_session_id
-        )
-
-        if stripe_session.payment_status == "paid":
-            payment.status = "SUCCESS"
-            payment.event.transition_live()
-            message = "Event created and payment succeeded."
-        else:
-            payment.status = "PROCESSING"
-            message = "Event created and payment is being processed."
-        payment.save()
-
-        messages.add_message(request, messages.SUCCESS, message)
-        return redirect("event_detail", **kwargs)
-
-    def failure_stripe_callback(request, **kwargs):
-        # update payment status
-        payment = EventStripePayment.objects.get(
-            stripe_checkout_session_id=request.GET["session_id"]
-        )
-        payment.status = "CANCELLED"
-        payment.save()
-
-        # TODO: add sentry event so that administrator can contact user.
-        messages.add_message(
-            request,
-            messages.ERROR,
-            "Event created but could not process payment.",
-        )
-        return redirect("event_checkout", **kwargs)
-
-    @csrf_exempt
-    def stripe_webhook(request):
-        """
-        !NOT IN USE AT THE MOMENT!
-
-        TODO: Webhook is only required for asynchronous payment processing
-
-        https://stripe.com/docs/payments/payment-methods/overview
-        https://stripe.com/docs/sources
-
-        What payment methods are we going to accept?
-        """
-        endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
-        payload = request.body
-        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-        event = None
-
-        try:
-            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
-        except ValueError:
-            # Invalid payload
-            return HttpResponse(status=400)
-        except stripe.error.SignatureVerificationError:
-            # Invalid signature
-            return HttpResponse(status=400)
-
-        # Event is being handled at success/failure synchronous callback
-        # if event['type'] == 'checkout.session.completed':
-
-        if event["type"] == "checkout.session.async_payment_succeeded":
-            session = event["data"]["object"]
-
-            # Fulfill the purchase
-            payment = EventStripePayment.objects.get(
-                stripe_checkout_session_id=session.id
-            )
-            payment.status = "SUCCESS"
-            payment.save()
-
-        elif event["type"] == "checkout.session.async_payment_failed":
-            session = event["data"]["object"]
-
-            # Send an email to the customer asking them to retry their order
-            payment = EventStripePayment.objects.get(
-                stripe_checkout_session_id=session.id
-            )
-            payment.status = "FAILURE"
-            payment.save()
-
-        return HttpResponse(status=200)
-
-
 class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
     """
     Returns a list of ticket stats from ticket tokengates.
@@ -668,32 +479,3 @@ class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
             qs = qs.filter(wallet_address__icontains=query_address)
 
         return qs
-
-
-class PricingCalculator(TeamContextMixin, View):
-    def get(self, request, **kwargs):
-        """
-        Return pricing calculator form
-        """
-        try:
-            capacity = int(request.GET.get("capacity"))
-        except KeyError:
-            return JsonResponse({"detail": "capacity is required"}, status=400)
-        except TypeError:
-            return JsonResponse({"detail": "capacity must be an integer"}, status=400)
-
-        try:
-            price_per_ticket = services.calculate_event_price_per_ticket_for_team(
-                self.team, capacity=capacity
-            )
-        except ValueError:
-            return JsonResponse(
-                {"detail": "capacity not recognized as as valid value"}, status=400
-            )
-
-        return JsonResponse(
-            {
-                "price_per_ticket": price_per_ticket.amount,
-                "price": price_per_ticket.amount * capacity,
-            }
-        )

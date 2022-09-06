@@ -78,7 +78,7 @@ def issue_payment(event: Event, stripe_checkout_session_id: str) -> EventStripeP
 
     payment = EventStripePayment(
         event=event,
-        value=event.price,
+        value=1,
         stripe_checkout_session_id=stripe_checkout_session_id,
         status="PENDING",
     )

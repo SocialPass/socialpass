@@ -55,7 +55,7 @@ class EventDiscoveryDetails(DetailView):
         """
         context = super().get_context_data(**kwargs)
         ticket_count = self.object.tickets.count()
-        tickets_remaining = self.object.capacity - ticket_count
+        tickets_remaining = None
         context.update(
             {
                 "ticket_count": ticket_count,

@@ -619,7 +619,7 @@ class TicketOption(DBModel):
     )
 
     # asset ownership
-    asset_address = models.CharField(max_length=1024)
+    asset_address = models.CharField(max_length=1024, null=True, blank=True)
     blockchain = models.CharField(
         choices=BlockchainEnum.choices, default=BlockchainEnum.EVM, max_length=12
     )
@@ -629,7 +629,7 @@ class TicketOption(DBModel):
     asset_type = models.CharField(
         choices=AssetTypeEnum.choices, default=AssetTypeEnum.ERC20, max_length=12
     )
-    amount = models.IntegerField()
+    amount = models.IntegerField(null=True, blank=True)
 
 
 class Ticket(DBModel):

@@ -468,9 +468,10 @@ class EventCheckout(TeamContextMixin, TemplateView):
     def post(self, request, *, team_public_id=None, pk=None):
         """Issue payment and redirect to stripe checkout"""
         event = self.get_object()
+        event_cost = 1
         # handle zero-cost event
         # todo: should be handled at state level, but also be explicit?
-        if int(event.price.amount * 100) == 0:
+        if int(event_cost * 100) == 0:
             event.transition_live()
             messages.add_message(request, messages.SUCCESS, "Your event is live!")
             return redirect(reverse("event_detail", args=(team_public_id, pk)))
@@ -514,12 +515,12 @@ class EventCheckout(TeamContextMixin, TemplateView):
             line_items=[
                 {
                     "price_data": {
-                        "currency": event.price.currency,
+                        "currency": "USD",
                         "product_data": {
                             "name": event.title,
                         },
                         # TODO: support multiple currencies
-                        "unit_amount": int(event.price.amount * 100),
+                        "unit_amount": int(event_cost * 100),
                     },
                     "quantity": 1,
                 }

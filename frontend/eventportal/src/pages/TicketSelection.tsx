@@ -42,7 +42,7 @@ export function TicketSelection() {
             </div>
             <div className='d-inline fw-bold'>free</div>
             <br />
-            <p>Limit {retrieveJson.limit_per_person} Per Person</p>
+            <p>Limit ... Per Person</p>
           </div>
           <div className='d-inline'>
             <select

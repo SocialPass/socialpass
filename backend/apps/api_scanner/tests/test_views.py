@@ -6,7 +6,6 @@ from django.test import RequestFactory, TestCase
 from django.views.generic import TemplateView
 from rest_framework import status
 
-from apps.api_checkoutportal.tests.test_views import prevent_warnings
 from apps.api_scanner.services import redeem_ticket
 from apps.api_scanner.views import SetAccessKeyAndEventMixin
 from apps.root.factories import (
@@ -16,6 +15,7 @@ from apps.root.factories import (
     UserWithTeamFactory,
 )
 from apps.root.models import Event, Team, Ticket, TicketRedemptionKey
+from apps.root.utilities.api import prevent_warnings
 
 
 class TestCaseWrapper(TestCase):
@@ -120,7 +120,6 @@ class GetEventDetailsTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["team"]["name"], self.team.name)
         self.assertEqual(response.json()["description"], self.event.description)
-        self.assertEqual(response.json()["capacity"], int(self.event.capacity))
 
     @prevent_warnings
     def test_get_event_details_404(self):

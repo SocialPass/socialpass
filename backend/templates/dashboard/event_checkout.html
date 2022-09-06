@@ -101,24 +101,6 @@
               {{ event.localized_address_display }}
             </td>
           </tr>
-          <tr>
-            <td class=" ps-0">
-              Capacity
-            </td>
-            <td>
-              {{ event.capacity }}
-            </td>
-          </tr>
-          {% if event.categories.count > 0 %}
-          <tr>
-            <td class=" ps-0">
-              Categories
-            </td>
-            <td>
-              {{ event.categories }}
-            </td>
-          </tr>
-          {% endif %}
         </tbody>
       </table>
       </div>
@@ -149,8 +131,7 @@
       Review your event below before continuing to checkout
       </p>
       <div>
-        <p class="mb-0">Event Ticketing Costs: <strong>{{event.price}}</strong></p>
-        <small>({{event.capacity}} tickets x {{event.pricing_rule.price_per_ticket}})</small>
+        <p class="mb-0">Event Ticketing Costs: <strong>$1</strong></p>
         <form method="post" class="mt-10">
           {% csrf_token %}
           <input type="submit" class="btn btn-lg btn-primary m-0" value="Launch Event" />

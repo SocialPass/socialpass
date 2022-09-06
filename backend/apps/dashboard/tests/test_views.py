@@ -248,8 +248,6 @@ class DashboardTest(TestCase):
             "user": new_event.user,
             "description": new_event.description,
             "start_date": new_event.start_date,
-            "capacity": new_event.capacity,
-            "limit_per_person": new_event.limit_per_person,
             "lat": new_event.lat,
             "long": new_event.long,
         }
@@ -307,8 +305,6 @@ class DashboardTest(TestCase):
             "user": self.event_one.user,
             "description": self.event_one.description,
             "start_date": self.event_one.start_date,
-            "capacity": self.event_one.capacity,
-            "limit_per_person": self.event_one.limit_per_person,
             "lat": self.event_one.lat,
             "long": self.event_one.long,
         }

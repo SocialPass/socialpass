@@ -14,6 +14,7 @@ from apps.root.models import (
     PricingRuleGroup,
     Team,
     Ticket,
+    TicketOption,
     TicketRedemptionKey,
 )
 
@@ -53,10 +54,8 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-@admin.register(Attendee)
-class AttendeeAdmin(admin.ModelAdmin):
-    list_display = ("event", "id", "wallet_address", "is_verified")
-    search_fields = ("event__title", "id", "wallet_address")
+class TicketOptionInline(admin.TabularInline):
+    model = TicketOption
 
 
 @admin.register(Event)
@@ -88,13 +87,19 @@ class EventAdmin(admin.ModelAdmin):
         "user__username",
         "team__name",
     )
-    inlines = [StateLogInline]
+    inlines = [StateLogInline, TicketOptionInline]
     readonly_fields = ["state"]
     actions = [
         transition_to_draft,  # type: ignore
         transition_to_pending_checkout,  # type: ignore
         transition_to_live,  # type: ignore
     ]
+
+
+@admin.register(Attendee)
+class AttendeeAdmin(admin.ModelAdmin):
+    list_display = ("event", "id", "wallet_address", "is_verified")
+    search_fields = ("event__title", "id", "wallet_address")
 
 
 @admin.register(TicketRedemptionKey)

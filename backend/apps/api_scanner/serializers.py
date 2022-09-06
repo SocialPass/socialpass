@@ -56,11 +56,9 @@ class EventSerializer(serializers.ModelSerializer):
             "team",
             "title",
             "description",
-            "limit_per_person",
             "start_date",
             "timezone",
             "localized_address_display",
-            "capacity",
             "ticket_count",
             "redeemed_count",
         ]

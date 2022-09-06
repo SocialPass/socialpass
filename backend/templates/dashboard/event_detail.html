@@ -97,24 +97,6 @@
               {{ event.localized_address_display }}
             </td>
           </tr>
-          <tr>
-            <td class=" ps-0">
-              Capacity
-            </td>
-            <td>
-              {{ event.capacity }}
-            </td>
-          </tr>
-          {% if event.categories.count > 0 %}
-          <tr>
-            <td class=" ps-0">
-              Categories
-            </td>
-            <td>
-              {{ event.categories }}
-            </td>
-          </tr>
-          {% endif %}
         </tbody>
       </table>
       </div>
@@ -152,7 +134,7 @@
           <a id="twitter-share-icon" target="_blank" href="#">
             <i class="fab fa-twitter text-secondary fa-lg"></i>
           </a>
-          <a id="facebook-share-icon" target="_blank" 
+          <a id="facebook-share-icon" target="_blank"
             href="#">
             <i class="fab fa-facebook text-secondary fa-lg"></i>
           </a>

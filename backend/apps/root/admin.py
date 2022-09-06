@@ -67,11 +67,6 @@ class EventAdmin(admin.ModelAdmin):
             i.transition_draft()
         messages.success(request, "Event(s) have been transitioned live")
 
-    def transition_to_pending_checkout(modeladmin, request, queryset):
-        for i in queryset:
-            i.transition_pending_checkout()
-        messages.success(request, "Event(s) have been transitioned live")
-
     def transition_to_live(modeladmin, request, queryset):
         for i in queryset:
             i.transition_live()
@@ -93,7 +88,6 @@ class EventAdmin(admin.ModelAdmin):
     readonly_fields = ["state"]
     actions = [
         transition_to_draft,  # type: ignore
-        transition_to_pending_checkout,  # type: ignore
         transition_to_live,  # type: ignore
     ]
 

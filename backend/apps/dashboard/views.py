@@ -20,7 +20,6 @@ from apps.dashboard.forms import (
     CustomInviteForm,
     EventDraftForm,
     EventLiveForm,
-    EventPendingCheckoutForm,
     TeamForm,
 )
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
@@ -64,7 +63,7 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
 
 class RequireLiveEventMixin:
     """
-    Mixin to require successful checkout for view.
+    Mixin to require successful 'LIVE' event
     """
 
     def dispatch(self, request, *args, **kwargs):
@@ -368,8 +367,6 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     def get_success_message(self, *args, **kwargs):
         if self.object.state == Event.StateEnum.DRAFT.value:
             return "Your draft has been saved"
-        elif self.object.state == Event.StateEnum.PENDING_CHECKOUT.value:
-            return "Your event is ready for checkout"
         elif self.object.state == Event.StateEnum.LIVE.value:
             return "Your changes have been saved"
 
@@ -388,8 +385,6 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         """get form class based on event state"""
         if self.object.state == Event.StateEnum.DRAFT.value:
             return EventDraftForm
-        elif self.object.state == Event.StateEnum.PENDING_CHECKOUT.value:
-            return EventPendingCheckoutForm
         elif self.object.state == Event.StateEnum.LIVE.value:
             return EventLiveForm
 
@@ -412,8 +407,6 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     def get_success_message(self, *args, **kwargs):
         if self.object.state == Event.StateEnum.DRAFT.value:
             return "Your draft has been saved"
-        elif self.object.state == Event.StateEnum.PENDING_CHECKOUT.value:
-            return "Your event is ready for checkout"
         elif self.object.state == Event.StateEnum.LIVE.value:
             return "Your changes have been saved"
 

@@ -78,16 +78,6 @@
                     <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
                       Delete
                     </a>
-                  {% elif event.state == "Ready for Checkout" %}
-                    <a class="btn btn-sm btn-primary" href="{% url 'event_checkout' current_team.public_id event.pk %}">
-                    Checkout
-                    </a>
-                    <a class="btn btn-sm" href="{% url 'event_update' current_team.public_id event.pk %}">
-                    Edit
-                    </a>
-                    <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
-                      Delete
-                    </a>
                   {% elif event.state == "Live" %}
                     <a class="btn btn-sm btn-primary" href="{% url 'event_detail' current_team.public_id event.pk %}">
                     Details

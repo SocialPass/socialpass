@@ -201,15 +201,6 @@ class EventDraftForm(EventForm):
         return data
 
 
-class EventPendingCheckoutForm(EventDraftForm):
-    """
-    Form for event.state == pending checkout
-    """
-
-    class Meta(EventDraftForm.Meta):
-        pass
-
-
 class EventLiveForm(EventForm):
     """
     Form for event.state == live

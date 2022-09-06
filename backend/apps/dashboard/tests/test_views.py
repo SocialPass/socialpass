@@ -3,11 +3,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import TemplateView
 
 from apps.dashboard import forms, views
 from apps.root.factories import EventFactory, UserWithTeamFactory
-from apps.root.models import Event, Invite, Membership, Team
+from apps.root.models import Invite, Membership, Team
 
 User = get_user_model()
 
@@ -58,22 +58,6 @@ class DashboardTest(TestCase):
         request.user = AnonymousUser()
         response = TestTeamContextView.as_view()(request, **kwargs)
         self.assertEqual(response.status_code, 302)
-
-    def test_required_live_event_mixin(self):
-        class TestRequireSuccessView(views.RequireLiveEventMixin, DetailView):
-            model = Event
-            template_name = "dashboard/event_detail.html"
-
-        # TODO
-        # Test logged-in user
-        # kwargs = {"team_public_id": self.team_one.public_id, "pk": self.event_one.pk}
-        # request = self.factory.get("/fake-path")
-        # request.user = self.user_one
-
-        # Test GET (succesful checkout)
-        # event = self.event_one.transition_live()
-        # response = TestRequireSuccessView.as_view()(request, **kwargs)
-        # self.assertEqual(response.status_code, 200)
 
     def test_user_detail(self):
         # Login user

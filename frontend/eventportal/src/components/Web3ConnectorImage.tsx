@@ -6,7 +6,7 @@ export const Web3ConnectorImage = ({ connector }: { connector: string | undefine
       return (
         <img
           src='https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg'
-          className='img-fluid'
+          className='d-block w-100'
           alt='Metamask'
         />
       )
@@ -14,7 +14,7 @@ export const Web3ConnectorImage = ({ connector }: { connector: string | undefine
       return (
         <img
           src='https://raw.githubusercontent.com/WalletConnect/walletconnect-assets/492d95c038bbcde1517cab5fb90ed4514690e919/svg/circle/walletconnect-circle-blue.svg'
-          className='img-fluid'
+          className='d-block w-100'
           alt='WalletConnect'
         />
       )
@@ -22,7 +22,7 @@ export const Web3ConnectorImage = ({ connector }: { connector: string | undefine
       return (
         <img
           src='https://avatars.githubusercontent.com/u/18060234?s=280&v=4'
-          className='img-fluid'
+          className='d-block w-100'
           alt='Coinbase'
         />
       )

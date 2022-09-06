@@ -5,7 +5,6 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def get_preferred_color_scheme(context):
-    return ""
     result = None
     request = context.get("request")
     if request:

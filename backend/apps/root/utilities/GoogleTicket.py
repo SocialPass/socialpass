@@ -1,16 +1,24 @@
 import json
-import os
 
 from django.conf import settings
 from google.auth import crypt, jwt
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
+from apps.root.utilities.TicketGeneration import TicketGenerationBase
 
-class GoogleTicket:
+
+class GoogleWalletPassInconsistency(Exception):
+    pass
+
+
+class GoogleTicket(TicketGenerationBase):
     """
     Model for Google Wallet tickets.
     """
+
+    def __init__(self) -> None:
+        self.save_url = None
 
     @staticmethod
     def get_service_account_info():
@@ -47,7 +55,7 @@ class GoogleTicket:
         """
         Get the issuer ID.
         """
-        return os.environ.get("GOOGLE_WALLET_ISSUER_ID")
+        return settings.GOOGLE_WALLET_ISSUER_ID
 
     @staticmethod
     def get_ticket_class_payload(event_obj):
@@ -84,7 +92,10 @@ class GoogleTicket:
             },
             "venue": {
                 "name": {
-                    "defaultValue": {"language": "en-us", "value": event_obj.location}
+                    "defaultValue": {
+                        "language": "en-us",
+                        "value": event_obj.initial_place,
+                    }
                 },
                 "address": {"defaultValue": {"language": "en-us", "value": address}},
             },
@@ -134,31 +145,28 @@ class GoogleTicket:
 
         return json.loads(response.text)
 
-    @staticmethod
-    def generate_ticket(ticket_obj):
+    def generate_pass_from_ticket(self, ticket):
         """
         Generate a Google ticket (pass) create the save to wallet URL and
         return it along with the token.
         """
         # Generate the ticket
-        service_account_info = GoogleTicket.get_service_account_info()
-        http_client = GoogleTicket.authenticate(
+        service_account_info = self.get_service_account_info()
+        http_client = self.authenticate(
             service_account_info=service_account_info,
             scopes=["https://www.googleapis.com/auth/wallet_object.issuer"],
         )
-        ticket_id = "{}.{}".format(
-            GoogleTicket.get_issuer_id(), str(ticket_obj.public_id)
-        )
+        ticket_id = f"{self.get_issuer_id()}.{str(ticket.public_id)}"
         class_id = "{}.{}".format(
-            GoogleTicket.get_issuer_id(),
-            str(ticket_obj.event.public_id),
+            self.get_issuer_id(),
+            str(ticket.event.public_id),
         )
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
         payload = {
             "id": ticket_id,
             "classId": class_id,
             "state": "ACTIVE",
-            "barcode": {"type": "QR_CODE", "value": str(ticket_obj.embed_code)},
+            "barcode": {"type": "QR_CODE", "value": str(ticket.embed_code)},
         }
         response = http_client.post(url, json=payload)
 
@@ -177,6 +185,13 @@ class GoogleTicket:
         }
         signer = crypt.RSASigner.from_service_account_info(service_account_info)
         token = jwt.encode(signer, claims).decode("utf-8")
-        save_url = "https://pay.google.com/gp/v/save/%s" % token
+        self.save_url = "https://pay.google.com/gp/v/save/%s" % token
 
-        return {"token": token, "save_url": save_url}
+        return {"token": token, "save_url": self.save_url}
+
+    def get_pass_url(self):
+        if not self.save_url:
+            raise GoogleWalletPassInconsistency(
+                "The pass url was not generated with `generate_pass_from_ticket` method"
+            )
+        return self.save_url

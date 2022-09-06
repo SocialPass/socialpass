@@ -11,17 +11,21 @@ from passbook.models import (
     Pass,
 )
 
+from apps.root.utilities.TicketGeneration import TicketGenerationBase
+
 
 class PassfileDoesNotExists(Exception):
     pass
 
 
-class AppleWalletPass:
+class AppleTicket(TicketGenerationBase):
     """
     Class responsible for create Apple Wallet Pass
     """
 
-    def __init__(self, serial_number: str, description: str, org_name: str):
+    def __init__(
+        self, serial_number: str = "", description: str = "", org_name: str = ""
+    ):
 
         # instantiation values
         self.org_name = org_name
@@ -35,7 +39,7 @@ class AppleWalletPass:
         self.foreground_color: str = "rgb(255,255,255)"
         self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
         self.barcode: Optional[Barcode] = None
-        self.location: Optional[List[Location]] = None
+        self.location: Optional[list[Location]] = None
         self.event_info = EventTicket()
 
         # apple wallet certificate credentials
@@ -103,7 +107,7 @@ class AppleWalletPass:
         """
         self.icon = path
 
-    def get_pass(self) -> Pass:
+    def generate_pass(self) -> Pass:
 
         # creates passfile object
         self.passfile = Pass(
@@ -129,6 +133,18 @@ class AppleWalletPass:
             self.certificate, self.certificate_key, self.wwrd_certificate, self.password
         )
         return self.passfile
+
+    def generate_pass_from_ticket(self, ticket):
+        event = ticket.event
+        self.org_name = event.team.name
+        self.description = event.title
+        self.serial_number = str(ticket.public_id)
+        self.barcode = self.set_barcode(ticket.full_embed)
+        self.location = self.set_location_list(event.lat, event.long)
+        self.set_event_ticket_info(
+            event.start_date.strftime("%d %B, %Y"), event.title, event.initial_place
+        )
+        self.generate_pass()
 
     def write_to_file(self, filename: str = "Event.pkpass"):
         """

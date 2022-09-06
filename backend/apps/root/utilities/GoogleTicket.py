@@ -29,7 +29,9 @@ class GoogleTicket(TicketGenerationBase):
             "type": "service_account",
             "project_id": "socialpass-358508",
             "private_key_id": settings.GOOGLE_WALLET_PRIVATE_KEY_ID,
-            "private_key": settings.GOOGLE_WALLET_PRIVATE_KEY,  # noqa
+            # NOTE: must replace newline character from .env value
+            # This ensure GOOGLE_WALLET_PRIVATE_KEY is in proper format
+            "private_key": settings.GOOGLE_WALLET_PRIVATE_KEY.replace(r"\n", "\n"),
             "client_email": "wallet-web-client@socialpass-358508.iam.gserviceaccount.com",
             "client_id": settings.GOOGLE_WALLET_CLIENT_ID,
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",

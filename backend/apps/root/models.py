@@ -180,7 +180,6 @@ class Event(DBModel):
 
     class StateEnum(Enum):
         DRAFT = "Draft"
-        PENDING_CHECKOUT = "Ready for Checkout"
         LIVE = "Live"
 
     # Queryset manager
@@ -304,8 +303,6 @@ class Event(DBModel):
     def get_absolute_url(self):
         if self.state == Event.StateEnum.DRAFT.value:
             _success_url = "event_update"
-        elif self.state == Event.StateEnum.PENDING_CHECKOUT.value:
-            _success_url = "event_checkout"
         elif self.state == Event.StateEnum.LIVE.value:
             _success_url = "event_detail"
         return reverse(
@@ -329,19 +326,6 @@ class Event(DBModel):
         except Exception as e:
             raise e
 
-    def transition_pending_checkout(self, save=True):
-        """
-        wrapper around _transition_pending_checkout
-        allows for saving after transition
-        """
-        try:
-            self._transition_pending_checkout()
-            # Save unless explicilty told not to
-            if save:
-                self.save()
-        except Exception as e:
-            raise e
-
     def transition_live(self, save=True):
         """
         wrapper around _transition_live
@@ -355,25 +339,8 @@ class Event(DBModel):
         except Exception as e:
             raise e
 
-    @transition(
-        field=state,
-        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
-        target=StateEnum.DRAFT.value,
-    )
+    @transition(field=state, target=StateEnum.DRAFT.value)
     def _transition_draft(self):
-        """
-        This function handles state transition from draft to awaiting checkout
-        Side effects include
-        -
-        """
-        pass
-
-    @transition(
-        field=state,
-        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
-        target=StateEnum.PENDING_CHECKOUT.value,
-    )
-    def _transition_pending_checkout(self):
         """
         This function handles state transition from draft to awaiting checkout
         Side effects include

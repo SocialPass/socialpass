@@ -184,8 +184,8 @@ class EventDraftForm(EventForm):
         # Only call state transition if in expected state
         # Note: No need to save, as form will call save method later
         if self.cleaned_data.get("ready_for_checkout"):
-            if instance.state != Event.StateEnum.PENDING_CHECKOUT.value:
-                instance.transition_pending_checkout()
+            if instance.state != Event.StateEnum.LIVE.value:
+                instance.transition_live()
         else:
             if instance.state != Event.StateEnum.DRAFT.value:
                 instance.transition_draft()
@@ -199,15 +199,6 @@ class EventDraftForm(EventForm):
         data = super().clean()
         self.check_ready_for_checkout(data)
         return data
-
-
-class EventPendingCheckoutForm(EventDraftForm):
-    """
-    Form for event.state == pending checkout
-    """
-
-    class Meta(EventDraftForm.Meta):
-        pass
 
 
 class EventLiveForm(EventForm):

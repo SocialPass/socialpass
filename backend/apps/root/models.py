@@ -617,6 +617,34 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
+    def get_apple_ticket(self):
+        """
+        create a passfile and get its bytes
+        """
+        _pass = AppleTicket.AppleTicket()
+        _pass.generate_pass_from_ticket(self)
+        return _pass.get_bytes()
+
+    def get_pdf_ticket(self):
+        """
+        create a pdf pass and get its bytes
+        """
+        _pass = PDFTicket.PDFTicket()
+        _pass.generate_pass_from_ticket(self)
+        return _pass.get_bytes()
+
+    def get_google_ticket(self):
+        """
+        create or retrieve pass url from google wallet api
+        TODO: verify if event already has a class_id
+              or create with insert_update_ticket_class(self.event)
+        """
+        _pass = GoogleTicket.GoogleTicket()
+        resp = _pass.generate_pass_from_ticket(self)
+        if resp.get("error"):
+            raise Exception("The event was not registered")
+        return _pass.get_pass_url()
+
     @property
     def full_embed(self):
         return f"{self.embed_code}/{self.filename}"
@@ -652,34 +680,6 @@ class Ticket(DBModel):
         # Debug
         else:
             return self.file.url
-
-    def get_apple_ticket(self):
-        """
-        create a passfile and get its bytes
-        """
-        _pass = AppleTicket.AppleTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
-
-    def get_pdf_ticket(self):
-        """
-        create a pdf pass and get its bytes
-        """
-        _pass = PDFTicket.PDFTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
-
-    def get_google_ticket(self):
-        """
-        create or retrieve pass url from google wallet api
-        """
-        ## TODO: verify if event is already inserted
-        # GoogleTicket.GoogleTicket.insert_update_ticket_class(self.event)
-        _pass = GoogleTicket.GoogleTicket()
-        resp = _pass.generate_pass_from_ticket(self)
-        if resp.get("error"):
-            raise Exception("The event was not registered")
-        return _pass.get_pass_url()
 
 
 class TicketRedemptionKey(DBModel):

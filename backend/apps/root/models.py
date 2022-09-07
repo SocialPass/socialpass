@@ -232,9 +232,6 @@ class Event(DBModel):
     cover_image = models.ImageField(
         blank=True, null=True, help_text="A banner image for your event."
     )
-    category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True, blank=True
-    )
     tags = TaggableManager(
         blank=True,
     )
@@ -342,7 +339,7 @@ class Event(DBModel):
     @transition(field=state, target=StateEnum.DRAFT.value)
     def _transition_draft(self):
         """
-        This function handles state transition from draft to awaiting checkout
+        This function handles state transition to DRAFT
         Side effects include
         -
         """
@@ -351,7 +348,7 @@ class Event(DBModel):
     @transition(field=state, target=StateEnum.LIVE.value)
     def _transition_live(self):
         """
-        This function handles state transition from draft to awaiting checkout
+        This function handles state transition from DRAFT to LIVE
         Side effects include
         - Create ticket scanner object
         """
@@ -402,25 +399,6 @@ class Event(DBModel):
         return fields
 
 
-class EventCategory(DBModel):
-    """
-    Category model for Events
-    Contains parent description
-    """
-
-    parent_category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True
-    )
-    name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        if self.parent_category:
-            return f"{self.parent_category} - {self.name}"
-        else:
-            return self.name
-
-
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
@@ -442,7 +420,7 @@ class Ticket(DBModel):
         "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
     )
 
-    # Checkout Info
+    # blockchain Info
     blockchain_ownership = models.ForeignKey(
         "BlockchainOwnership",
         on_delete=models.SET_NULL,

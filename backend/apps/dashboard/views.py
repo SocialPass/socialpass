@@ -77,7 +77,7 @@ class RequireLiveEventMixin:
                 self.request,
                 messages.INFO,
                 "This event is not live yet. \
-                Please complete the creation and checkout process.",
+                Please complete the creation process.",
             )
             return redirect("event_update", **self.kwargs)
 

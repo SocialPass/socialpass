@@ -260,13 +260,13 @@ class DashboardTest(TestCase):
             self.client.login(username=self.user_one.username, password=self.password)
         )
 
-        # Test GET (pending checkout)
+        # Test GET (draft event)
         response = self.client.get(
             reverse("event_detail", args=(self.team_one.public_id, self.event_one.pk))
         )
         self.assertEqual(response.status_code, 302)
 
-        # Test GET (succesful checkout)
+        # Test GET (live event)
         self.event_one.transition_live()
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
@@ -318,13 +318,13 @@ class DashboardTest(TestCase):
             self.client.login(username=self.user_one.username, password=self.password)
         )
 
-        # Test GET (pending checkout)
+        # Test GET (draft event)
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
         )
         self.assertEqual(response.status_code, 302)
 
-        # Test GET (succesful checkout)
+        # Test GET (live event)
         self.event_one.transition_live()
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))

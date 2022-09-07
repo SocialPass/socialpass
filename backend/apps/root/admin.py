@@ -6,7 +6,6 @@ from django_fsm_log.admin import StateLogInline
 from apps.root.models import (
     BlockchainOwnership,
     Event,
-    EventCategory,
     Membership,
     Team,
     Ticket,
@@ -53,11 +52,6 @@ class TeamAdmin(admin.ModelAdmin):
 class BlockchainOwnershipAdmin(admin.ModelAdmin):
     list_display = ("event", "id", "wallet_address", "is_verified")
     search_fields = ("event__title", "id", "wallet_address")
-
-
-@admin.register(EventCategory)
-class EventCategoryAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(Event)

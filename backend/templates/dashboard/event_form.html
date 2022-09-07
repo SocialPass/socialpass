@@ -181,14 +181,6 @@
 						{% endwith %}
 						<!-- Organizer end -->
 
-						<!-- Category start -->
-            {% if form.category %}
-						<div class="form-group">
-							{{form.category|as_crispy_field}}
-						</div>
-            {% endif %}
-						<!-- Description end -->
-
             {% if form.tags %}
 						<div class="form-group">
 							{{form.tags|as_crispy_field}}

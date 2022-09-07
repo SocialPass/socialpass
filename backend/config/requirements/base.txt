@@ -15,6 +15,7 @@ xhtml2pdf==0.2.8 # https://github.com/xhtml2pdf/xhtml2pdf
 
 # Django
 # ------------------------------------------------------------------------------
+crispy-bootstrap5==0.6 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==4.0.7  # https://www.djangoproject.com/
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
 django-allauth==0.51.0  # https://github.com/pennersr/django-allauth

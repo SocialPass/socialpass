@@ -76,8 +76,9 @@ else:
     CELERY_TASK_ALWAYS_EAGER = True
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
     CELERY_TASK_EAGER_PROPAGATES = True
+
+
 # Your stuff...
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
-COMPRESS_ENABLED = True
 INSTALLED_APPS += ["drf_yasg"]

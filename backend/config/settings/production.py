@@ -76,11 +76,6 @@ AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default=None)
 AWS_S3_ENDPOINT_URL = env("DJANGO_AWS_S3_ENDPOINT_URL", default=None)
 AWS_LOCATION = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}"
 
-# STATIC
-# ------------------------------------------------------------------------------
-STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
-STATIC_URL = f"{AWS_LOCATION}/public/static/"
-
 # MEDIA
 # ------------------------------------------------------------------------------
 MEDIA_URL = f"{AWS_LOCATION}/public/media/"

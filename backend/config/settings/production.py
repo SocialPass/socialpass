@@ -7,7 +7,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 from .base import *  # noqa
-from .base import STATIC_ROOT, env
+from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------

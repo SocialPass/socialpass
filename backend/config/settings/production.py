@@ -148,10 +148,5 @@ sentry_sdk.init(
     environment=env("SENTRY_ENV_NAME", default="unset-env"),
 )
 
-# DJANGO-COMPRESSOR
-COMPRESS_ENABLED = env.bool("COMPRESS_ENABLED", default=True)
-COMPRESS_STORAGE = STATICFILES_STORAGE
-COMPRESS_ROOT = STATIC_ROOT
-COMPRESS_URL = STATIC_URL
 # Your stuff...
 # ------------------------------------------------------------------------------

@@ -375,7 +375,6 @@ class Event(DBModel):
             "visibility",
             "initial_place",
             "start_date",
-            "requirements",
             "capacity",
             "timezone",
             "limit_per_person",

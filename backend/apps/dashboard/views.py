@@ -351,10 +351,6 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
-        context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
-        context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
-        context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 

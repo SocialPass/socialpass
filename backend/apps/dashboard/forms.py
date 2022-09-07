@@ -113,7 +113,6 @@ class EventForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         # Make sure the edit form populates with the start and end dates
         if self.instance.pk:
             if self.instance.start_date:
@@ -139,7 +138,6 @@ class EventForm(forms.ModelForm):
 
     def clean_limit_per_person(self):
         data = self.cleaned_data["limit_per_person"]
-
         # Make sure limit per person does not exceed capacity
         if self.instance.pk:
             capacity = self.instance.capacity
@@ -152,6 +150,22 @@ class EventForm(forms.ModelForm):
 
         return data
 
+    def clean(self):
+        data = super().clean()
+        if "transition_draft" in self.data:
+            pass
+        elif "transition_live" in self.data:
+            self.check_required_fields(data=data, exclude=EventLiveForm.Meta.exclude)
+        return data
+
+    def save(self):
+        instance = super().save()
+        if "transition_draft" in self.data:
+            instance.transition_draft()
+        elif "transition_live" in self.data:
+            instance.transition_live()
+        return instance
+
 
 class EventDraftForm(EventForm):
     """
@@ -161,45 +175,6 @@ class EventDraftForm(EventForm):
     class Meta(EventForm.Meta):
         pass
 
-    def __init__(self, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["ready_for_checkout"] = forms.BooleanField(
-            label="...", widget=forms.HiddenInput(), required=False, initial=False
-        )
-
-    def check_ready_for_checkout(self, data):
-        """
-        method for cleaning against checkout requested
-        """
-        # check required fields if ready for checkout
-        ready_for_checkout = data.get("ready_for_checkout", None)
-        if ready_for_checkout:
-            self.check_required_fields(data=data)
-
-    def save_state_transition(self, instance):
-        """
-        method for saving state transition
-        """
-        # form is OK, handle state transitions
-        # Only call state transition if in expected state
-        # Note: No need to save, as form will call save method later
-        if self.cleaned_data.get("ready_for_checkout"):
-            if instance.state != Event.StateEnum.LIVE.value:
-                instance.transition_live()
-        else:
-            if instance.state != Event.StateEnum.DRAFT.value:
-                instance.transition_draft()
-
-    def save(self):
-        instance = super().save()
-        self.save_state_transition(instance)
-        return instance
-
-    def clean(self):
-        data = super().clean()
-        self.check_ready_for_checkout(data)
-        return data
-
 
 class EventLiveForm(EventForm):
     """
@@ -208,8 +183,3 @@ class EventLiveForm(EventForm):
 
     class Meta(EventForm.Meta):
         exclude = ["capacity"]
-
-    def clean(self):
-        data = super().clean()
-        self.check_required_fields(data=data, exclude=EventLiveForm.Meta.exclude)
-        return data

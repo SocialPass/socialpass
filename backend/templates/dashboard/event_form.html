@@ -313,40 +313,9 @@
 					<hr />
 					<!-- General info end -->
 
-					<!-- Blockchain Requirements start -->
-					<section>
-						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="2-blockchain-requirements">
-							<span class="ws-25 me-10 text-primary">
-								<i class="fa-solid fa-circle-2"></i>
-							</span>
-							Blockchain Requirements
-						</h2>
-						<p class="text-muted fs-base-n2 mt-5">
-							Please provide the NFT or SocialToken information required to redeeem or purchase a ticket to your event.
-						</p>
-						<nav>
-							<ul id="nav-requirement" class="nav nav-tabs border-bottom" role="tablist">
-							<div
-								type="button"
-								onclick="addRequirement()"
-                id="add-req"
-								class="nav-link"
-							>
-                <i class="fa-solid fa-plus me-5"></i>
-								<strong>Add requirement</strong>
-							</div>
-							</ul>
-						</nav>
-						<div class="tab-content p-20 border-start border-end border-bottom" id="tokenRequirementForms">
-						<!-- requirements will be added dynamically -->
-						</div>
-						<hr />
-					</section>
-					<!-- Blockchain Requirements end -->
-
 					<!-- Tickets start -->
 					<section>
-						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="3-tickets">
+						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="2-tickets">
 							<span class="ws-25 me-10 text-primary">
 								<i class="fa-solid fa-circle-3"></i>
 							</span>
@@ -431,17 +400,7 @@
           </a>
         </div>
         <div class="mt-15">
-          <a href="#2-blockchain-requirements" class="d-inline-flex align-items-center link-reset text-decoration-none">
-            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
-              <span class="ws-25 me-10 text-primary">
-                <i class="fa-solid fa-circle-2"></i>
-              </span>
-              Blockchain Requirements
-            </h2>
-          </a>
-        </div>
-        <div class="mt-15">
-          <a href="#3-tickets" class="d-inline-flex align-items-center link-reset text-decoration-none">
+          <a href="#2-tickets" class="d-inline-flex align-items-center link-reset text-decoration-none">
             <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
               <span class="ws-25 me-10 text-primary">
                 <i class="fa-solid fa-circle-3"></i>
@@ -461,16 +420,15 @@
           </a>
         </div>
         <div id="event-actions" class="mt-20 row">
-          {% if event.state == 'Live' %}
           <div class="col pe-5">
-            <button onclick="saveLive()" class="h-100 btn btn-block btn-primary" type="submit">Save Changes</button>
-          </div>
-          {% else %}
-          <div class="col pe-5">
-            <button onclick="saveDraft()" class="h-100 btn btn-block">Save Draft</button>
+            <button type="submit" name="transition_draft" class="h-100 btn btn-block">
+              Save Draft
+            </button>
           </div>
           <div class="col pe-5">
-            <button onclick="savePending()" class="h-100 btn btn-block btn-primary" type="submit">Save & Continue</button>
+            <button type="submit" name="transition_live" class="h-100 btn btn-block btn-primary">
+              Save & Continue
+            </button>
           </div>
           {% endif %}
         </div>
@@ -486,41 +444,6 @@
 	</div>
 	<!-- Card footer end -->
 </div>
-<script>
-  // Variables for blockchain_requirements script
-  let initialRequirementsData = JSON.parse('{{form.requirements.value|safe}}');
-  let requiremtSchema = JSON.parse('{{json_schema|safe}}');
-  let blockchainOptions = JSON.parse('{{BLOCKHAINS_CHOICES|safe}}');
-  let assetTypeOptions = JSON.parse('{{ASSET_TYPES_CHOICES|safe}}');
-  let chainOptions = JSON.parse('{{CHAIN_IDS_CHOICES|safe}}');
-
-</script>
-
-<!-- Blockchain requirements script -->
-<script src="{% static 'js/blockchain_requirements.js' %}"></script>
-
-
-<!-- Save Event Script -->
-<script>
-  function saveDraft(){
-    document.getElementById("id_ready_for_checkout").checked = false
-    document.getElementById("id_ready_for_checkout").value = 'False'
-    fillRequirementsAndSubmitForm()
-  }
-
-  function savePending(){
-    document.getElementById("id_ready_for_checkout").checked = true
-    document.getElementById("id_ready_for_checkout").value = 'True'
-    fillRequirementsAndSubmitForm();
-  }
-
-  function saveLive(){
-    let confirmed = confirm("These changes will go live immediately. Are you sure?");
-    if (confirmed){
-      fillRequirementsAndSubmitForm();
-    }
-  }
-</script>
 
 <!-- Date Validation Script -->
 <script>
@@ -551,4 +474,4 @@
 </script>
 
 <!-- Content card end -->
-{% endblock%}
+{% endblock %}

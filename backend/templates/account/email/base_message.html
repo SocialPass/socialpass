@@ -6,10 +6,9 @@
 	padding: 40px;"
 >
 	<div style="
-		color: #222;
+		color: #333;
 		background-color: #fff;
-		box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-		border-radius: 6px;
+		border-radius: 12px;
 		padding: 20px 30px;
 		width: 420px;
 		max-width: 100%;
@@ -39,6 +38,15 @@
 		{% block content %}{% endblock %}
 		<p>
 			Thank you for using SocialPass!
+		</p>
+		<p style="
+			text-align: right;
+			color: #777;
+			font-size: 14px;
+			border-top: 1px solid #ddd;
+			padding-top: 14px;"
+		>
+			&copy; {% now "Y" %}, SocialPass
 		</p>
 	</div>
 </div>

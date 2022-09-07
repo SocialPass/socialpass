@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from django.conf import settings
 from passbook.models import (
@@ -12,10 +12,6 @@ from passbook.models import (
 )
 
 from apps.root.utilities.TicketGeneration import TicketGenerationBase
-
-
-class PassfileDoesNotExists(Exception):
-    pass
 
 
 class AppleTicket(TicketGenerationBase):
@@ -151,7 +147,7 @@ class AppleTicket(TicketGenerationBase):
         save the `passfile` in disc.
         """
         if not self.passfile:
-            raise PassfileDoesNotExists(
+            raise Exception(
                 "The passfile must be created with the `get_pass` method first"
             )
         self.passfile.writetofile(filename)
@@ -162,7 +158,7 @@ class AppleTicket(TicketGenerationBase):
         useful for sending via API calls or email.
         """
         if not self.passfile:
-            raise PassfileDoesNotExists(
+            raise Exception(
                 "The passfile must be created with the `get_pass` method first"
             )
         return self.passfile.read()

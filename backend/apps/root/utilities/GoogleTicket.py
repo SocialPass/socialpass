@@ -8,10 +8,6 @@ from google.oauth2 import service_account
 from apps.root.utilities.TicketGeneration import TicketGenerationBase
 
 
-class GoogleWalletPassInconsistency(Exception):
-    pass
-
-
 class GoogleTicket(TicketGenerationBase):
     """
     Model for Google Wallet tickets.
@@ -193,7 +189,7 @@ class GoogleTicket(TicketGenerationBase):
 
     def get_pass_url(self):
         if not self.save_url:
-            raise GoogleWalletPassInconsistency(
+            raise Exception(
                 "The pass url was not generated with `generate_pass_from_ticket` method"
             )
         return self.save_url

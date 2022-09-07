@@ -12,10 +12,6 @@ from xhtml2pdf import pisa
 from apps.root.utilities.TicketGeneration import TicketGenerationBase
 
 
-class PDFfileDoesNotExists(Exception):
-    pass
-
-
 class PDFTicket(TicketGenerationBase):
     def __init__(self, template: str = "ticket/pdf.html") -> None:
         self.template = get_template(template)
@@ -122,7 +118,7 @@ class PDFTicket(TicketGenerationBase):
 
     def get_bytes(self):
         if not self.pdfFile:
-            raise PDFfileDoesNotExists(
+            raise Exception(
                 "The pdfFile must be created with the `generate_pdf` methods first"
             )
         return self.pdfFile.getvalue()
@@ -132,7 +128,7 @@ class PDFTicket(TicketGenerationBase):
         save the `passfile` in disc.
         """
         if not self.pdfFile:
-            raise PDFfileDoesNotExists(
+            raise Exception(
                 "The pdfFile must be created with the `generate_pdf` methods first"
             )
         f = open(filename, "wb")

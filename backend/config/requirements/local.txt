@@ -1,19 +1,21 @@
 -r base.txt
-# general
-psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
 
-# Debug
+# General
 # ------------------------------------------------------------------------------
-django-debug-toolbar==3.5.0
-django-extensions==3.2.0
+psycopg2-binary==2.9.3 # https://github.com/psycopg/psycopg2
+
+# Django
+# ------------------------------------------------------------------------------
+django-debug-toolbar==3.6.0 # https://github.com/jazzband/django-debug-toolbar
+django-extensions==3.2.0 # https://github.com/django-extensions/django-extensions
 
 # Code quality
 # ------------------------------------------------------------------------------
-flake8==4.0.1  # https://github.com/PyCQA/flake8
-flake8-isort==4.1.1  # https://github.com/gforcada/flake8-isort
-black==22.6.0  # https://github.com/psf/black
-pylint-django==2.5.3  # https://github.com/PyCQA/pylint-django
-pre-commit==2.20.0  # https://github.com/pre-commit/pre-commit
-mypy==0.950
-django-stubs[compatible-mypy]==1.11.0
-djangorestframework-stubs[compatible-mypy]==1.6.0
+flake8==4.0.1 # https://github.com/PyCQA/flake8
+flake8-isort==4.1.1 # https://github.com/gforcada/flake8-isort
+black==22.6.0 # https://github.com/psf/black
+pylint-django==2.5.3 # https://github.com/PyCQA/pylint-django
+pre-commit==2.20.0 # https://github.com/pre-commit/pre-commit
+mypy==0.950 # https://github.com/python/mypy
+django-stubs[compatible-mypy]==1.11.0 # https://github.com/typeddjango/django-stubs
+djangorestframework-stubs[compatible-mypy]==1.6.0 # https://github.com/typeddjango/djangorestframework-stubs

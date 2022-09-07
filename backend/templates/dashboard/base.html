@@ -1,5 +1,5 @@
 {% load static i18n get_debug_status %}
-{% load compress %}
+
 <!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
 {% get_debug_status as debug %}
@@ -9,20 +9,20 @@
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<title>{% block title %}SocialPass{% endblock title %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-		{% compress js %}
+
    		<script src="{% static 'js/jquery.min.js' %}"></script>
-		{% endcompress %}
+
 		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
 		<!-- Theme font -->
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 		<!-- Soft UI CSS -->
-		{% compress css %}
+
 		<link id="pagestyle" href="{% static 'css/soft-ui-dashboard.css' %}" rel="stylesheet" />
-		{% endcompress %}
+
 		<!-- Font Awesome Icons -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		{% block extra_css %}{% endblock extra_css %}
-		{% compress css %}
+
 		<style type="text/css">
 			.sidebar-icon-container {
 				width: 36px;
@@ -41,11 +41,11 @@
 		        color: #ea0606;
 		    }
 		</style>
-		{% endcompress %}
+
 		<!-- Google Tag Manager -->
     {% if not debug %}
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
-	  {% compress js %}
+
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -53,7 +53,7 @@
 
         gtag('config', 'G-FQKKDVZZVX');
       </script>
-	  {% endcompress %}
+
 		{% endif %}
 		<!-- End Google Tag Manager -->
 	</head>
@@ -198,7 +198,7 @@
 		<!-- End main -->
 
 		<!-- JavaScript -->
-		{% compress js inline %}
+
 		<script src="{% static 'js/popper.min.js' %}"></script>
 		<script src="{% static 'js/perfect-scrollbar.min.js' %}"></script>
 		<script src="{% static 'js/smooth-scrollbar.min.js' %}"></script>
@@ -212,7 +212,7 @@
 			}
 		</script>
 		<script src="{% static 'js/soft-ui-dashboard.js' %}"></script>
-		{% endcompress %}
+
 		{% block extra_js %}{% endblock extra_js %}
 	</body>
 	{% endwith %}

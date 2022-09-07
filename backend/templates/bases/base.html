@@ -1,5 +1,5 @@
 {% load static get_debug_status get_theme_value %}
-{% load compress %}
+
 <!DOCTYPE html>
 {% get_debug_status as debug %}
 <html lang="en" class="{% block html_class %}{% endblock %}" spellcheck="false">
@@ -20,20 +20,18 @@
 		{% block wip_event_creation_ux%}{% endblock %}
 
 		<!-- Halfmoon CSS -->
-		{% compress css %}
 		{% if debug %}
 			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
 		{% else %}
 			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
 		{% endif %}
-		{% endcompress %}
+
 
 		<!-- SocialPass CSS theme -->
-		{% compress css %}
 		<link href="{% get_theme_value 'css_theme' %}" rel="stylesheet" />
 
 		<link href="{% static 'socialpass-theme/extra.css' %}" rel="stylesheet" />
-		{% endcompress %}
+
 
 		<!-- Font Awesome 6 -->
 		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
@@ -55,14 +53,14 @@
 		<!-- Google Tag Manager -->
 		{% if not debug %}
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
-			{% compress js inline %}
+
 			<script>
 				window.dataLayer = window.dataLayer || [];
 				function gtag(){dataLayer.push(arguments);}
 				gtag('js', new Date());
 				gtag('config', 'G-FQKKDVZZVX');
 			</script>
-			{% endcompress %}
+
 		{% endif %}
 		<!-- End Google Tag Manager -->
 
@@ -73,12 +71,12 @@
 		{% block body %}{% endblock body %}
 
 		<!-- Halfmoon JS -->
-		{% compress js inline %}
+
 		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
-		{% endcompress %}
+
 
 		{% if debug %}
-			{% compress js inline %}
+
 			<script type="text/javascript">
 				/**
 				 * Handle the keydown event (only on debug mode).
@@ -104,7 +102,7 @@
 					}
 				});
 			</script>
-			{% endcompress %}
+
 		{% endif %}
 
 		{% block extra_body %}{% endblock extra_body %}

@@ -82,6 +82,10 @@ MEDIA_URL = f"{AWS_LOCATION}/public/media/"
 DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"
 PRIVATE_TICKET_STORAGE = "config.storages.PrivateTicketStorage"
 
+# STATIC
+# ------------------------------------------------------------------------------
+# http://whitenoise.evans.io/en/stable/django.html#add-compression-and-caching-support
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # LOGGING
 # ------------------------------------------------------------------------------

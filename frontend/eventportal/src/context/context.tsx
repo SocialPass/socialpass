@@ -32,7 +32,7 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
     ['fetchEvent', id],
     () => fetchEvent(id),
     {
-      enabled: false,
+      enabled: true,
     },
   )
 
@@ -48,7 +48,7 @@ export const EventPortalProvider = ({ children }: { children: any }) => {
 
   useEffect(() => {
     setRetrieveJson(data)
-  }, [data])
+  }, [data, id])
 
   function fetchEvent(publicId: string) {
     return TicketedEventRetrieve.call({ public_id: publicId })

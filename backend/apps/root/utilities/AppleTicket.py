@@ -11,17 +11,17 @@ from passbook.models import (
     Pass,
 )
 
-
-class PassfileDoesNotExists(Exception):
-    pass
+from apps.root.utilities.TicketGeneration import TicketGenerationBase
 
 
-class AppleWalletPass:
+class AppleTicket(TicketGenerationBase):
     """
     Class responsible for create Apple Wallet Pass
     """
 
-    def __init__(self, serial_number: str, description: str, org_name: str):
+    def __init__(
+        self, serial_number: str = "", description: str = "", org_name: str = ""
+    ):
 
         # instantiation values
         self.org_name = org_name
@@ -103,7 +103,7 @@ class AppleWalletPass:
         """
         self.icon = path
 
-    def get_pass(self) -> Pass:
+    def generate_pass(self) -> Pass:
 
         # creates passfile object
         self.passfile = Pass(
@@ -130,12 +130,24 @@ class AppleWalletPass:
         )
         return self.passfile
 
+    def generate_pass_from_ticket(self, ticket):
+        event = ticket.event
+        self.org_name = event.team.name
+        self.description = event.title
+        self.serial_number = str(ticket.public_id)
+        self.barcode = self.set_barcode(ticket.full_embed)
+        self.location = self.set_location_list(event.lat, event.long)
+        self.set_event_ticket_info(
+            event.start_date.strftime("%d %B, %Y"), event.title, event.initial_place
+        )
+        self.generate_pass()
+
     def write_to_file(self, filename: str = "Event.pkpass"):
         """
         save the `passfile` in disc.
         """
         if not self.passfile:
-            raise PassfileDoesNotExists(
+            raise Exception(
                 "The passfile must be created with the `get_pass` method first"
             )
         self.passfile.writetofile(filename)
@@ -146,7 +158,7 @@ class AppleWalletPass:
         useful for sending via API calls or email.
         """
         if not self.passfile:
-            raise PassfileDoesNotExists(
+            raise Exception(
                 "The passfile must be created with the `get_pass` method first"
             )
         return self.passfile.read()

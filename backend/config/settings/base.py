@@ -105,6 +105,7 @@ LOCAL_APPS = [
     "apps.root.apps.RootConfig",
     "apps.dashboard.apps.DashboardConfig",
     "apps.root.apps.OverrideInvitationsConfig",
+    "templatetags",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -386,6 +387,7 @@ GMAPS_API_KEY = env("GMAPS_API_KEY")
 GOOGLE_WALLET_PRIVATE_KEY_ID = env("GOOGLE_WALLET_PRIVATE_KEY_ID")
 GOOGLE_WALLET_PRIVATE_KEY = env("GOOGLE_WALLET_PRIVATE_KEY")
 GOOGLE_WALLET_CLIENT_ID = env("GOOGLE_WALLET_CLIENT_ID")
+GOOGLE_WALLET_ISSUER_ID = env("GOOGLE_WALLET_ISSUER_ID")
 
 # APPLE WALLET
 # ------------------------------------------------------------------------------

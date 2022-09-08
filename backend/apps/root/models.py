@@ -22,6 +22,7 @@ from taggit.managers import TaggableManager
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
+from apps.root.utilities import AppleTicket, GoogleTicket, PDFTicket
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
 
@@ -431,6 +432,34 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
+
+    def get_apple_ticket(self):
+        """
+        create a passfile and get its bytes
+        """
+        _pass = AppleTicket.AppleTicket()
+        _pass.generate_pass_from_ticket(self)
+        return _pass.get_bytes()
+
+    def get_pdf_ticket(self):
+        """
+        create a pdf pass and get its bytes
+        """
+        _pass = PDFTicket.PDFTicket()
+        _pass.generate_pass_from_ticket(self)
+        return _pass.get_bytes()
+
+    def get_google_ticket(self):
+        """
+        create or retrieve pass url from google wallet api
+        TODO: verify if event already has a class_id
+              or create with insert_update_ticket_class(self.event)
+        """
+        _pass = GoogleTicket.GoogleTicket()
+        resp = _pass.generate_pass_from_ticket(self)
+        if resp.get("error"):
+            raise Exception("The event was not registered")
+        return _pass.get_pass_url()
 
     @property
     def full_embed(self):

@@ -86,7 +86,6 @@ class GoogleTicket(TicketGenerationBase):
             "reviewStatus": "UNDER_REVIEW",
             "dateTime": {
                 "start": event_obj.start_date.isoformat(),
-                "end": event_obj.end_date.isoformat(),
             },
             "venue": {
                 "name": {
@@ -104,6 +103,10 @@ class GoogleTicket(TicketGenerationBase):
             payload["locations"] = [
                 {"latitude": float(event_obj.lat), "longitude": float(event_obj.long)}
             ]
+
+        # Add datetime end (if available)
+        if event_obj.end_date:
+            payload["dateTime"]["end"] = event_obj.end_date.isoformat()
 
         return payload
 

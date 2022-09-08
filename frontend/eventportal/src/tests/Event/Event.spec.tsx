@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter } from 'react-router-dom'
 import { CheckoutPortalContext } from '../../context'
@@ -17,7 +17,7 @@ describe('Event component', () => {
     jest.restoreAllMocks()
   })
   it('should render correctly if status 200', async () => {
-    const { debug } = render(
+    render(
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <CheckoutPortalContext.Provider
@@ -27,13 +27,30 @@ describe('Event component', () => {
                 title: 'event name',
                 description: 'event description',
               },
-              id: '123234',
+              id: '',
               status: 'success',
               isLoading: false,
               isError: false,
               setID: jest.fn(),
               generalAdmissionSelect: 1,
               setGeneralAdmissionSelect: jest.fn(),
+              web3CheckoutSelection: '',
+              setWeb3CheckoutSelection: '',
+              setRetrieveJson: '',
+              retrieveError: '',
+              setRetrieveError: '',
+              requestAccessJson: '',
+              setRequestAccessJson: '',
+              setRequestAccessError: '',
+              requestAccessError: '',
+              grantAccessJson: '',
+              setGrantAccessJson: '',
+              grantAccessError: '',
+              setGrantAccessError: '',
+              eventStatusCheckout: false,
+              setEventStatusCheckout: '',
+              headerType: '',
+              setHeaderType: '',
             }}
           >
             <RequiresEvent>
@@ -44,14 +61,13 @@ describe('Event component', () => {
       </BrowserRouter>,
     )
 
-    // debug()
 
     expect(screen.getByText('event name')).toBeInTheDocument()
     expect(screen.getByText('event description')).toBeInTheDocument()
   })
 
   it('should render correctly if status 404', async () => {
-    const { debug } = render(
+    render(
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <CheckoutPortalContext.Provider
@@ -59,13 +75,30 @@ describe('Event component', () => {
               retrieveJson: {
                 httpStatus: 200,
               },
-              id: '123234',
+              id: '',
               status: 'success',
               isLoading: false,
               isError: true,
               setID: jest.fn(),
               generalAdmissionSelect: 1,
               setGeneralAdmissionSelect: jest.fn(),
+              web3CheckoutSelection: '',
+              setWeb3CheckoutSelection: '',
+              setRetrieveJson: '',
+              retrieveError: '',
+              setRetrieveError: '',
+              requestAccessJson: '',
+              setRequestAccessJson: '',
+              setRequestAccessError: '',
+              requestAccessError: '',
+              grantAccessJson: '',
+              setGrantAccessJson: '',
+              grantAccessError: '',
+              setGrantAccessError: '',
+              eventStatusCheckout: false,
+              setEventStatusCheckout: '',
+              headerType: '',
+              setHeaderType: '',
             }}
           >
             <RequiresEvent>
@@ -75,8 +108,6 @@ describe('Event component', () => {
         </QueryClientProvider>
       </BrowserRouter>,
     )
-
-    debug()
 
     expect(screen.queryByText('event name')).toBeNull()
     expect(screen.queryByText('event description')).toBeNull()

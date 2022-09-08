@@ -43,6 +43,11 @@ EMAIL_SUBJECT_PREFIX = env(
     default="[SocialPass]",
 )
 
+# WhiteNoise
+# ------------------------------------------------------------------------------
+# http://whitenoise.evans.io/en/latest/django.html#using-whitenoise-in-development
+INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS  # noqa F405
+
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
@@ -76,8 +81,9 @@ else:
     CELERY_TASK_ALWAYS_EAGER = True
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
     CELERY_TASK_EAGER_PROPAGATES = True
+
+
 # Your stuff...
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
-COMPRESS_ENABLED = True
 INSTALLED_APPS += ["drf_yasg"]

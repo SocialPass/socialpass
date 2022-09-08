@@ -7,7 +7,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 from .base import *  # noqa
-from .base import STATIC_ROOT, env
+from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -76,17 +76,16 @@ AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default=None)
 AWS_S3_ENDPOINT_URL = env("DJANGO_AWS_S3_ENDPOINT_URL", default=None)
 AWS_LOCATION = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}"
 
-# STATIC
-# ------------------------------------------------------------------------------
-STATICFILES_STORAGE = "config.storages.StaticRootS3Boto3Storage"
-STATIC_URL = f"{AWS_LOCATION}/public/static/"
-
 # MEDIA
 # ------------------------------------------------------------------------------
 MEDIA_URL = f"{AWS_LOCATION}/public/media/"
 DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"
 PRIVATE_TICKET_STORAGE = "config.storages.PrivateTicketStorage"
 
+# STATIC
+# ------------------------------------------------------------------------------
+# http://whitenoise.evans.io/en/stable/django.html#add-compression-and-caching-support
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -148,10 +147,5 @@ sentry_sdk.init(
     environment=env("SENTRY_ENV_NAME", default="unset-env"),
 )
 
-# DJANGO-COMPRESSOR
-COMPRESS_ENABLED = env.bool("COMPRESS_ENABLED", default=True)
-COMPRESS_STORAGE = STATICFILES_STORAGE
-COMPRESS_ROOT = STATIC_ROOT
-COMPRESS_URL = STATIC_URL
 # Your stuff...
 # ------------------------------------------------------------------------------

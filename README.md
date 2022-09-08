@@ -90,9 +90,6 @@ docker run -d --name database -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=pos
 # Run Migrations (if necessary)
 python backend/manage.py migrate
 
-# Compress staticfiles (if necessary)
-python backend/manage.py compress --force
-
 # Run application
 python backend/manage.py runserver
 

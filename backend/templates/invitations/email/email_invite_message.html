@@ -1,0 +1,36 @@
+{% extends "account/email/base_message.html" %}
+
+{% block content %}
+{% if team %}
+	<p>
+		You have been invited to join <em>{{ team }}</em> on SocialPass.
+	</p>
+{% else %}
+	<p>
+		You have been invited to join SocialPass.
+	</p>
+{% endif %}
+<p>
+	If you'd like to join, please go to the following link:
+</p>
+<div style="
+	text-align: center;
+	margin: 16px 0;
+	padding: 16px;
+	background-color: #ecf0f1;
+	border-radius: 6px;"
+>
+	<a href="{{ invite_url }}" style="
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 16px;
+		display: inline-block;
+		padding: 10px 24px;
+		color: #fff;
+		background-color: #3995b8;
+		border-radius: 6px;"
+	>
+		Accept Invitation
+	</a>
+</div>
+{% endblock %}

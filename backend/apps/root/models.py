@@ -621,17 +621,23 @@ class Ticket(DBModel):
         """
         create a passfile and get its bytes
         """
-        _pass = AppleTicket.AppleTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
+        try:
+            _pass = AppleTicket.AppleTicket()
+            _pass.generate_pass_from_ticket(self)
+            return _pass.get_bytes()
+        except Exception as e:
+            raise e
 
     def get_pdf_ticket(self):
         """
         create a pdf pass and get its bytes
         """
-        _pass = PDFTicket.PDFTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
+        try:
+            _pass = PDFTicket.PDFTicket()
+            _pass.generate_pass_from_ticket(self)
+            return _pass.get_bytes()
+        except Exception as e:
+            raise e
 
     def get_google_ticket(self):
         """
@@ -639,11 +645,14 @@ class Ticket(DBModel):
         TODO: verify if event already has a class_id
               or create with insert_update_ticket_class(self.event)
         """
-        _pass = GoogleTicket.GoogleTicket()
-        resp = _pass.generate_pass_from_ticket(self)
-        if resp.get("error"):
-            raise Exception("The event was not registered")
-        return _pass.get_pass_url()
+        try:
+            _pass = GoogleTicket.GoogleTicket()
+            resp = _pass.generate_pass_from_ticket(self)
+            if resp.get("error"):
+                raise Exception("The event was not registered")
+            return _pass.get_pass_url()
+        except Exception as e:
+            raise e
 
     @property
     def full_embed(self):

@@ -13,7 +13,7 @@ dist-ssr
 *.local
 
 # jest coverage reports
-coverage
+coverage/
 
 # Editor directories and files
 .vscode/*

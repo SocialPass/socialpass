@@ -9,10 +9,10 @@ from django.contrib.staticfiles import finders
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-from apps.root.models import Ticket
+from apps.root.utilities.TicketGeneration import TicketGenerationBase
 
 
-class PDFTicket:
+class PDFTicket(TicketGenerationBase):
     def __init__(self, template: str = "ticket/pdf.html") -> None:
         self.template = get_template(template)
 
@@ -61,25 +61,25 @@ class PDFTicket:
         html = self.template.render(context)
 
         # create BytesIO object to store the PDF in memory
-        pdfFile = BytesIO()
+        self.pdfFile = BytesIO()
 
         # create a pdf
         pisa_status = pisa.CreatePDF(
-            html, dest=pdfFile, link_callback=self._link_callback
+            html, dest=self.pdfFile, link_callback=self._link_callback
         )
 
         # if error, raise an exception
         if pisa_status.err:
             raise pisa_status.err
 
-        return pdfFile
+        return self.pdfFile
 
-    def generate_pdf_from_ticket(self, ticket: Ticket):
+    def generate_pass_from_ticket(self, ticket):
         """
         Generate a PDF from the ticket object
         """
         event = ticket.event
-        team = ticket.event.team
+        # team = ticket.event.team
 
         # Create the address from event data
         address = ""
@@ -106,15 +106,34 @@ class PDFTicket:
             "order_number": "54593405723",
             "ticket_quantity": 1,
             "ticket_type": "General Admission",
-            "location_name": event.location,
+            "location_name": event.initial_place,
             "location_address": ", ".join(address_items_list),
             "event_date": event_date,
             "event_time": event_time,
             "event_timezone": event.timezone,
-            "team_logo_url": team.image.url,
+            # "team_logo_url": team.image.url, # TODO: which url to insert?
         }
 
         return self.generate_pdf(context, barcode_content=str(ticket.embed_code))
+
+    def get_bytes(self):
+        if not self.pdfFile:
+            raise Exception(
+                "The pdfFile must be created with the `generate_pdf` methods first"
+            )
+        return self.pdfFile.getvalue()
+
+    def write_to_file(self, filename: str = "Event.pdf"):
+        """
+        save the `passfile` in disc.
+        """
+        if not self.pdfFile:
+            raise Exception(
+                "The pdfFile must be created with the `generate_pdf` methods first"
+            )
+        f = open(filename, "wb")
+        f.write(self.pdfFile.getvalue())
+        f.close()
 
     def _generate_qr_code(self, content) -> BytesIO:
         """
@@ -154,5 +173,5 @@ class PDFTicket:
 
         # make sure that file exists
         if not os.path.isfile(path):
-            raise Exception("media URI must start with %s or %s" % (sUrl, mUrl))
+            raise Exception(f"media URI must start with {sUrl} or {mUrl}")
         return path

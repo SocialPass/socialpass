@@ -309,6 +309,7 @@ class Event(DBModel):
         validators=[MinValueValidator(1), MaxValueValidator(100)],
         help_text="Maximum amount of tickets per attendee.",
     )
+    google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
     # Pricing Info
     _price = MoneyField(
@@ -410,6 +411,9 @@ class Event(DBModel):
         allows for saving after transition
         """
         try:
+            self.google_class_id = (
+                f"{settings.GOOGLE_WALLET_ISSUER_ID}.{str(self.public_id)}"
+            )
             self._transition_live()
             # Save unless explicilty told not to
             if save:
@@ -604,6 +608,7 @@ class Ticket(DBModel):
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
     )
+    google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
     # Checkout Info
     blockchain_ownership = models.ForeignKey(

@@ -1,0 +1,33 @@
+{% extends "account/email/base_message.html" %}
+
+{% load account %}
+
+{% block content %}
+{% user_display user as user_display %}
+<p>
+	You're receiving this e-mail because user <em>{{ user_display }}</em> has given your e-mail address to register an account on SocialPass.
+</p>
+<p>
+	To confirm this is correct, go to the following link:
+</p>
+<div style="
+	text-align: center;
+	margin: 16px 0;
+	padding: 16px;
+	background-color: #ecf0f1;
+	border-radius: 6px;"
+>
+	<a href="{{ activate_url }}" style="
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 16px;
+		display: inline-block;
+		padding: 10px 24px;
+		color: #fff;
+		background-color: #3995b8;
+		border-radius: 6px;"
+	>
+		Confirm Account
+	</a>
+</div>
+{% endblock %}

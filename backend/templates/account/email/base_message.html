@@ -1,0 +1,59 @@
+<div style="
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	font-size: 16px;
+	line-height: 1.5;
+	background-color: #3995b8;
+	padding: 40px 0;
+	text-align: center;
+	box-sizing: border-box;"
+>
+	<div style="
+		display: inline-block;
+		text-align: left;
+		color: #333;
+		background-color: #fff;
+		padding: 20px 30px;
+		width: 460px;
+		max-width: 100%;
+		margin: auto;
+		box-sizing: border-box;"
+	>
+		<table style="
+			margin: auto;
+			margin-bottom: 30px;
+			border: 0;
+			border-collapse: collapse;
+			border-spacing: 0;"
+		>
+			<tr>
+				<td>
+					<img src="https://res.cloudinary.com/nfty-labs/image/upload/v1662534842/SocialPass-Icon_qfiigj.png" height="75" alt="SocialPass Logo">
+				</td>
+				<td>
+					<div style="
+						font-size: 24px;
+						padding-left: 15px;"
+					>
+						<strong style="color: #3995b8;">Social</strong><strong style="color: #eb7347;">Pass</strong>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<p>
+			Hello from <strong>SocialPass</strong>!
+		</p>
+		{% block content %}{% endblock %}
+		<p>
+			Thank you for using SocialPass!
+		</p>
+		<p style="
+			text-align: right;
+			color: #777;
+			font-size: 14px;
+			border-top: 1px solid #ddd;
+			padding-top: 14px;"
+		>
+			&copy; {% now "Y" %}, SocialPass
+		</p>
+	</div>
+</div>

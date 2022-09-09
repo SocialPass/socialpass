@@ -46,7 +46,7 @@ class PDFTicket(TicketGenerationBase):
             :key str event_date,
             :key str event_time,
             :key str event_timezone,
-            :key str team_logo_url,
+            :key str event_logo_url,
 
         :return: BytesIO: A PDF file buffer
 
@@ -79,7 +79,6 @@ class PDFTicket(TicketGenerationBase):
         Generate a PDF from the ticket object
         """
         event = ticket.event
-        # team = ticket.event.team
 
         # Create the address from event data
         address = ""
@@ -111,8 +110,10 @@ class PDFTicket(TicketGenerationBase):
             "event_date": event_date,
             "event_time": event_time,
             "event_timezone": event.timezone,
-            # "team_logo_url": team.image.url, # TODO: which url to insert?
         }
+
+        if event.cover_image:
+            context["event_logo_url"] = event.cover_image.url
 
         return self.generate_pdf(context, barcode_content=str(ticket.embed_code))
 

@@ -23,7 +23,7 @@ from taggit.managers import TaggableManager
 from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
-from apps.root.utilities import AppleTicket, GoogleTicket, PDFTicket
+from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
 

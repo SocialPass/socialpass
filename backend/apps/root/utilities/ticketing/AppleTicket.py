@@ -11,7 +11,7 @@ from passbook.models import (
     Pass,
 )
 
-from apps.root.utilities.TicketGeneration import TicketGenerationBase
+from apps.root.utilities.ticketing.TicketGeneration import TicketGenerationBase
 
 
 class AppleTicket(TicketGenerationBase):

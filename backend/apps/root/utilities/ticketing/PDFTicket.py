@@ -9,7 +9,7 @@ from django.contrib.staticfiles import finders
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-from apps.root.utilities.TicketGeneration import TicketGenerationBase
+from apps.root.utilities.ticketing.TicketGeneration import TicketGenerationBase
 
 
 class PDFTicket(TicketGenerationBase):

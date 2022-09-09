@@ -5,7 +5,7 @@ from google.auth import crypt, jwt
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from apps.root.utilities.TicketGeneration import TicketGenerationBase
+from apps.root.utilities.ticketing.TicketGeneration import TicketGenerationBase
 
 
 class GoogleTicket(TicketGenerationBase):

@@ -152,9 +152,7 @@ class EventForm(forms.ModelForm):
 
     def clean(self):
         data = super().clean()
-        if "transition_draft" in self.data:
-            pass
-        elif "transition_live" in self.data:
+        if "transition_live" in self.data:
             self.check_required_fields(data=data, exclude=EventLiveForm.Meta.exclude)
         return data
 

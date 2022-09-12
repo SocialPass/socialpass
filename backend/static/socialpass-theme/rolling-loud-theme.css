@@ -325,11 +325,32 @@
  * Scanner specific styles
  */
 
-.socialpass-scanner-main-bg {
+.socialpass-scanner {
+    --base-body-bg-color: var(--gray-color-light);
+}
+
+.socialpass-scanner.dark-mode {
+    --base-body-bg-color: var(--dark-color-very-dim);
+}
+
+.socialpass-scanner .content-wrapper {
     color: var(--text-color-on-primary-color-bg);
     background-color: var(--primary-color);
 }
 
-.socialpass-scanner-main-bg.dark-mode {
+.socialpass-scanner.dark-mode .content-wrapper {
+    color: var(--white-color);
     background-color: hsl(var(--primary-color-hue), 40%, 15%);
+}
+
+/* Content and card */
+
+.socialpass-scanner {
+    --content-and-card-spacing: 4rem;
+}
+
+@media (max-width: 576px) {
+    .socialpass-scanner {
+        --content-and-card-spacing: 3rem;
+    }
 }

@@ -56,7 +56,7 @@ class AppleTicket(TicketGenerationBase):
 
     def set_event_ticket_info(
         self, start_date: str, event_title: str, event_location: str
-    ) -> EventTicket:
+    ):
         """
         set EventTicket infos.
         """
@@ -65,13 +65,11 @@ class AppleTicket(TicketGenerationBase):
         self.event_info.addPrimaryField("name", event_title, "EVENT")
         self.event_info.addSecondaryField("where", event_location, "WHERE")
 
-    def set_barcode(
-        self, link: str, __format: BarcodeFormat = BarcodeFormat.QR
-    ) -> Barcode:
+    def set_barcode(self, link: str, _format: BarcodeFormat = BarcodeFormat.QR):
         """
         set link and format for pass barcode.
         """
-        self.barcode = Barcode(message=link, format=__format)
+        self.barcode = Barcode(message=link, format=_format)
 
     def set_location_list(self, lat: float, long: float):
         """
@@ -132,6 +130,15 @@ class AppleTicket(TicketGenerationBase):
 
     def generate_pass_from_ticket(self, ticket):
         event = ticket.event
+
+        if not event.lat or not event.long:
+            raise Exception(
+                "The event object does not have latitude or longitude cordinates"
+            )
+
+        if not event.initial_place:
+            raise Exception("The event object does not have an initial_place")
+
         self.org_name = event.team.name
         self.description = event.title
         self.serial_number = str(ticket.public_id)

@@ -75,29 +75,4 @@ urlpatterns = [
         views.EventStatisticsView.as_view(),
         name="event_stats",
     ),
-    path(
-        "events/estimate-price/<uuid:team_public_id>/",
-        views.PricingCalculator.as_view(),
-        name="event_price_estimator",
-    ),
-    path(
-        "events/checkout/<uuid:team_public_id>/<int:pk>/",
-        views.EventCheckout.as_view(),
-        name="event_checkout",
-    ),
-    path(
-        "events/checkout/success/<uuid:team_public_id>/<int:pk>/",
-        views.EventCheckout.success_stripe_callback,
-        name="event_checkout_success_callback",
-    ),
-    path(
-        "events/checkout/failure/<uuid:team_public_id>/<int:pk>/",
-        views.EventCheckout.failure_stripe_callback,
-        name="event_checkout_failure_callback",
-    ),
-    path(
-        "webhooks/stripe",
-        views.EventCheckout.stripe_webhook,
-        name="stripe_webhook",
-    ),
 ]

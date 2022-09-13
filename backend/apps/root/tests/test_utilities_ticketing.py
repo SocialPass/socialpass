@@ -261,3 +261,72 @@ class TestPDFTicket(TestCaseWrapper):
 
     def test_set_template(self):
         return "Not yet implemented"
+
+
+class TestGoogleTicket(TestCaseWrapper):
+    ticket_pass: GoogleTicket.GoogleTicket
+
+    def setUp(self) -> None:
+        self.ticket_pass = GoogleTicket.GoogleTicket()
+
+    def test_get_ticket_class_payload(self):
+        """
+        test if payload is being set properly
+        """
+
+        payload = self.ticket_pass.get_ticket_class_payload(self.event)
+        self.assertEqual(payload["locations"][0]["latitude"], self.event.lat)
+        self.assertEqual(payload["locations"][0]["longitude"], self.event.long)
+        self.assertEqual(payload["reviewStatus"], "UNDER_REVIEW")
+        self.assertEqual(payload["eventName"]["defaultValue"]["value"], self.event.title)
+        self.assertEqual(payload["dateTime"]["start"], self.event.start_date.isoformat())
+
+    def test_get_service_account_info(self):
+        """
+        test if `get_service_account_info` is returning dictionary
+        """
+
+        self.assertIsInstance(self.ticket_pass.get_service_account_info(), dict)
+
+    def test_insert_update_ticket_class(self):
+        ...
+
+    def test_generate_pass_from_ticket(self):
+        ...
+
+    def test_get_pass_url(self):
+        ...
+
+    def test_authenticate(self):
+        return "Not implemented"
+
+
+class TestTicketUtilitiesMethods(TestCaseWrapper):
+    def test_get_apple_ticket(self):
+        """
+        test generate apple pkpass bytes
+        """
+
+        # generate pass bytes
+        self.assertIsInstance(self.ticket.get_apple_ticket(), bytes)
+
+        # raise exception if event has no initial_place
+        self.event.initial_place = None
+        with self.assertRaises(Exception):
+            self.ticket.get_apple_ticket()
+
+        # raise exception if event has no lat or long cordinates
+        self.event.initial_place = "West Alba, KY 50295"
+        self.event.lat = None
+        with self.assertRaises(Exception):
+            self.ticket.get_apple_ticket()
+
+    def test_get_pdf_ticket(self):
+        """
+        test generate pass pdf bytes
+        """
+
+        self.assertIsInstance(self.ticket.get_pdf_ticket(), bytes)
+
+    def test_get_google_ticket(self):
+        return "Not yet implemented"

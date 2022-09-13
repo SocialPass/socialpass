@@ -1,10 +1,12 @@
 import os
 from io import BytesIO
+from re import search
 from typing import Any
 
 from django.conf import settings
 from django.test import TestCase
 from passbook.models import BarcodeFormat, Location
+from PyPDF2 import PdfReader
 
 from apps.root.factories import EventFactory, TicketFactory, UserWithTeamFactory
 from apps.root.models import Event, Team, Ticket
@@ -226,20 +228,58 @@ class TestPDFTicket(TestCaseWrapper):
             "event_time": "1:33PM",
             "event_timezone": "America/SaoPaulo",
         }
-        self.assertIsInstance(
-            self.ticket_pass.generate_pdf(
-                context=context, barcode_content="www.test.com"
-            ),
-            BytesIO,
+        _pass = self.ticket_pass.generate_pdf(
+            context=context, barcode_content="www.test.com"
         )
+        # test in memory pdf creation
+        self.assertIsInstance(_pass, BytesIO)
+
+        # test pdf number pages
+        reader = PdfReader(_pass)
+        self.assertEqual(reader.numPages, 1)
+
+        # test pdf content
+        pdf_text = reader.pages[0].extract_text()
+        self.assertIsInstance(pdf_text, str)
+        self.assertTrue(
+            search(
+                "We've verified your NFT ownership and generated your ticket!", pdf_text
+            )
+        )
+        self.assertTrue(search("Congratulations!", pdf_text))
+        self.assertTrue(search("General Admission", pdf_text))
+        self.assertTrue(search(context["event_title"], pdf_text))
+        self.assertTrue(search(context["location_name"], pdf_text))
+        self.assertTrue(search(context["event_date"], pdf_text))
+        self.assertTrue(search(context["event_time"], pdf_text))
+        self.assertTrue(search(context["event_timezone"], pdf_text))
 
     def test_generate_pass_from_ticket(self):
         """
         test generate pass from ticket method
         """
 
-        self.ticket_pass.generate_pass_from_ticket(ticket=self.ticket)
+        _pass = self.ticket_pass.generate_pass_from_ticket(ticket=self.ticket)
         self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
+
+        # test pdf number pages
+        reader = PdfReader(_pass)
+        self.assertEqual(reader.numPages, 1)
+
+        # test pdf content
+        pdf_text = reader.pages[0].extract_text()
+        self.assertIsInstance(pdf_text, str)
+        self.assertTrue(
+            search(
+                "We've verified your NFT ownership and generated your ticket!", pdf_text
+            )
+        )
+        self.assertTrue(search("Congratulations!", pdf_text))
+        self.assertTrue(search("General Admission", pdf_text))
+        self.assertTrue(search(self.ticket.event.title, pdf_text))
+        self.assertTrue(
+            search(self.ticket.event.start_date.strftime("%B %d, %Y"), pdf_text)
+        )
 
     def test_get_bytes(self):
         """
@@ -254,7 +294,23 @@ class TestPDFTicket(TestCaseWrapper):
         # test get bytes
         context = {"event_title": "test pdf"}
         self.ticket_pass.generate_pdf(context=context)
-        self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
+        pass_bytes = self.ticket_pass.get_bytes()
+        self.assertIsInstance(pass_bytes, bytes)
+
+        # test pdf number pages
+        reader = PdfReader(BytesIO(pass_bytes))
+        self.assertEqual(reader.numPages, 1)
+
+        # test pdf content
+        pdf_text = reader.pages[0].extract_text()
+        self.assertIsInstance(pdf_text, str)
+        self.assertTrue(
+            search(
+                "We've verified your NFT ownership and generated your ticket!", pdf_text
+            )
+        )
+        self.assertTrue(search("Congratulations!", pdf_text))
+        self.assertTrue(search(context["event_title"], pdf_text))
 
     def test_write_to_file(self):
         return "Not yet implemented"

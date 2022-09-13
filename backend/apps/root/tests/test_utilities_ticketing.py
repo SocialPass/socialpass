@@ -1,5 +1,5 @@
 import os
-from tkinter import W
+from io import BytesIO
 from typing import Any
 
 from django.conf import settings
@@ -182,4 +182,82 @@ class TestAppleTicket(TestCaseWrapper):
         self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
 
     def test_write_to_file(self):
+        return "Not yet implemented"
+
+
+class TestPDFTicket(TestCaseWrapper):
+    ticket_pass: PDFTicket.PDFTicket
+
+    def setUp(self) -> None:
+        self.ticket_pass = PDFTicket.PDFTicket()
+
+    def test__generate_qr_code(self):
+        """
+        test if `_generate_qr_code` is generating an image bytes
+        """
+        self.assertIsInstance(self.ticket_pass._generate_qr_code("").getvalue(), bytes)
+
+    def test__link_callback(self):
+        """
+        test if _link_callback converts relative URLs to absolute system paths
+        """
+
+        # test if is acceptable uri
+        path = self.ticket_pass._link_callback(uri=self.event.cover_image.url, rel="")
+        self.assertTrue(os.path.isfile(path))
+
+        # test if random string is not acceptable uri
+        path = self.ticket_pass._link_callback(uri="random/string", rel="")
+        self.assertFalse(os.path.isfile(path))
+
+    def test_generate_pdf(self):
+        """
+        ...
+        """
+
+        context = {
+            "event_title": "test pdf",
+            "order_number": "54593405723",
+            "ticket_quantity": 1,
+            "ticket_type": "General Admission",
+            "location_name": "West Linda, KY 50295",
+            "location_address": "West Linda, KY 50295",
+            "event_date": "Jun 1 2005",
+            "event_time": "1:33PM",
+            "event_timezone": "America/SaoPaulo",
+        }
+        self.assertIsInstance(
+            self.ticket_pass.generate_pdf(
+                context=context, barcode_content="www.test.com"
+            ),
+            BytesIO,
+        )
+
+    def test_generate_pass_from_ticket(self):
+        """
+        test generate pass from ticket method
+        """
+
+        self.ticket_pass.generate_pass_from_ticket(ticket=self.ticket)
+        self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
+
+    def test_get_bytes(self):
+        """
+        test `get_bytes` method
+        get_bytes returns .pkpass file bytes
+        """
+
+        # test raise excpetion if not created pdfFile
+        with self.assertRaises(Exception):
+            self.ticket_pass.get_bytes()
+
+        # test get bytes
+        context = {"event_title": "test pdf"}
+        self.ticket_pass.generate_pdf(context=context)
+        self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
+
+    def test_write_to_file(self):
+        return "Not yet implemented"
+
+    def test_set_template(self):
         return "Not yet implemented"

@@ -11,7 +11,6 @@
 import { SuccessCheckoutPage } from './components/SuccessCheckoutPage'
 import CheckoutSuccessPage from './components/CheckoutSuccessPage'
 import CheckoutFailedPage from './components/CheckoutFailedPage'
-import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { StyledContainer } from './components'
 import { EventPortalProvider } from './context'
 import { WagmiConfig } from 'wagmi'

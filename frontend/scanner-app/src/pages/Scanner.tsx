@@ -140,11 +140,10 @@ export function Scanner() {
   }, [elapsedTime])
 
   return (
-    <div className='scanner-body d-flex flex-column'>
-      <div className='btn-close' style={{ position: 'absolute', zIndex: 1000 }}>
+    <div className='scanner-body d-flex flex-column' >
+      <div className='btn-close' style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
         <FiArrowLeft color='#f1f1f1' onClick={handleRedirect} size={26} />
       </div>
-      {/* <button onClick={e => handleScan(e.target.innerText)}>eab2e6e7-9edf-4124-abf4-2c9accbe9dae/7d35e3e3-50d9-483e-908e-245d88e4f843</button> */}
       <div id='qr-scanner-container' className='flex-grow-1'>
         <QrReader
           facingMode={'environment'}

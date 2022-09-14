@@ -1,5 +1,5 @@
 # SocialPass - Checkout Portal API
-The `api_checkoutportal` app contains the API for the SocialPass Checkout Portal. The related frontend is contained in `socialpass/frontend/eventportal`.
+The `api_checkoutportal` app contains the API for the SocialPass Checkout Portal. The related frontend is contained in `socialpass/frontend/checkout-app`.
 
 On a high level, the goal of this API is to connect potential attendees with tickets in a straightforward and simple manner.  This API is currently designed to support two separate checkout flows.
 1. Asset Ownership: Prove asset ownership to claim tickets

@@ -17,6 +17,19 @@ As mentioned above, SocialPass is all about events and Web3. If you're not famil
 - url
 - url
 
+# System Architecture
+
+![NFTY Labs - System Architecture](https://user-images.githubusercontent.com/5043263/190167231-c711b042-05bf-4fe6-8ca3-308ab73163d3.jpg)
+
+# Database ERD
+
+![NFTY - Social Pass (1)](https://user-images.githubusercontent.com/5043263/190185065-8f8eab59-72f4-4ea7-b27c-31ca8df0bd5e.png)
+[DBdiagram.io](https://dbdiagram.io/d/630cf1010911f91ba5ec1101)
+
+# Infrastructure
+
+![NFTY Labs - Infrastructure diagram](https://user-images.githubusercontent.com/5043263/190197935-aaa70a42-cb6d-46fa-b8a6-c06d07c89576.jpg)
+
 # Contributions
 1. Branches opened for PR with relevant reviewer requested
 2. PR passes all checks

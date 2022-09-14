@@ -351,6 +351,6 @@
 
 @media (max-width: 576px) {
     .socialpass-scanner {
-        --content-and-card-spacing: 3rem;
+        --content-and-card-spacing: 2rem;
     }
 }

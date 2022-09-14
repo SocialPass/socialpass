@@ -28,7 +28,7 @@ As mentioned above, SocialPass is all about events and Web3. If you're not famil
 
 # Infrastructure
 
-![NFTY Labs - Infrastructure diagram](https://user-images.githubusercontent.com/5043263/190197935-aaa70a42-cb6d-46fa-b8a6-c06d07c89576.jpg)
+![NFTY Labs - Infrastructure diagram (1)](https://user-images.githubusercontent.com/5043263/190232728-6f39d60b-b8e0-4c74-9d94-2e38a41ad8e3.jpg)
 
 # Contributions
 1. Branches opened for PR with relevant reviewer requested

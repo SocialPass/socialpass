@@ -2,8 +2,11 @@ import os
 from io import BytesIO
 from re import search
 from typing import Any
+from unittest import mock
+from unittest.mock import patch
 
 from django.conf import settings
+from django.core.validators import URLValidator
 from django.test import TestCase
 from passbook.models import BarcodeFormat, Location
 from PyPDF2 import PdfReader
@@ -214,7 +217,8 @@ class TestPDFTicket(TestCaseWrapper):
 
     def test_generate_pdf(self):
         """
-        ...
+        test `generate_pdf` method by matching the pdf text with
+        the context text
         """
 
         context = {
@@ -274,11 +278,14 @@ class TestPDFTicket(TestCaseWrapper):
                 "We've verified your NFT ownership and generated your ticket!", pdf_text
             )
         )
-        self.assertTrue(search("Congratulations!", pdf_text))
-        self.assertTrue(search("General Admission", pdf_text))
-        self.assertTrue(search(self.ticket.event.title, pdf_text))
+        singleline_pdf_text = " ".join(line.strip() for line in pdf_text.splitlines())
+        self.assertTrue(search("Congratulations!", singleline_pdf_text))
+        self.assertTrue(search("General Admission", singleline_pdf_text))
+        self.assertTrue(search(self.ticket.event.title, singleline_pdf_text))
         self.assertTrue(
-            search(self.ticket.event.start_date.strftime("%B %d, %Y"), pdf_text)
+            search(
+                self.ticket.event.start_date.strftime("%B %d, %Y"), singleline_pdf_text
+            )
         )
 
     def test_get_bytes(self):
@@ -337,21 +344,79 @@ class TestGoogleTicket(TestCaseWrapper):
         self.assertEqual(payload["eventName"]["defaultValue"]["value"], self.event.title)
         self.assertEqual(payload["dateTime"]["start"], self.event.start_date.isoformat())
 
+        # test raise exception in not address field
+        self.event.city = None
+        with self.assertRaises(Exception):
+            self.ticket_pass.get_ticket_class_payload(self.event)
+
     def test_get_service_account_info(self):
         """
-        test if `get_service_account_info` is returning dictionary
+        test if `get_service_account_info` is returning dictionary with necessary keys
         """
 
-        self.assertIsInstance(self.ticket_pass.get_service_account_info(), dict)
+        service_account_info = self.ticket_pass.get_service_account_info()
+        self.assertIsInstance(service_account_info, dict)
+        self.assertIn("type", service_account_info)
+        self.assertIn("project_id", service_account_info)
+        self.assertIn("private_key_id", service_account_info)
+        self.assertIn("private_key", service_account_info)
+        self.assertIn("client_email", service_account_info)
+        self.assertIn("client_id", service_account_info)
+        self.assertIn("auth_uri", service_account_info)
+        self.assertIn("token_uri", service_account_info)
+        self.assertIn("auth_provider_x509_cert_url", service_account_info)
+        self.assertIn("client_x509_cert_url", service_account_info)
+
+    @patch.object(GoogleTicket.GoogleTicket, "request_creation_ticket")
+    def test_generate_pass_from_ticket(self, mock_post):
+        """
+        test if `generate_pass_from_ticket` method generates
+        dictionary with save_url and token keys
+           - the request_creation_ticket method is mocked.
+        """
+
+        # Define response data from Google API
+        mock_response = mock.Mock()
+        mock_response.status_code = 200
+        issuer = settings.GOOGLE_WALLET_ISSUER_ID
+        mock_response.text = f"""{{"id": "{issuer}.{self.ticket.public_id}", "classId": "{issuer}.{self.event.public_id}"}}"""  # noqa
+        # Define response for the fake API
+        mock_post.return_value = mock_response
+
+        # Call the function
+        result = self.ticket_pass.generate_pass_from_ticket(self.ticket)
+        # test if returns dict with save_url and token keys
+        self.assertIn("save_url", result)
+        self.assertIn("token", result)
+        self.assertTrue(
+            result["save_url"].startswith("https://pay.google.com/gp/v/save/")
+        )
+
+    @patch.object(GoogleTicket.GoogleTicket, "request_creation_ticket")
+    def test_get_pass_url(self, mock_post):
+        """
+        test if `get_pass_url` method generates a properly url
+           - the request_creation_ticket method is mocked.
+        """
+
+        # Define response data from Google API
+        mock_response = mock.Mock()
+        mock_response.status_code = 200
+        issuer = settings.GOOGLE_WALLET_ISSUER_ID
+        mock_response.text = f"""{{"id": "{issuer}.{self.ticket.public_id}", "classId": "{issuer}.{self.event.public_id}"}}"""  # noqa
+        # Define response for the fake API
+        mock_post.return_value = mock_response
+
+        # Call the function
+        self.ticket_pass.generate_pass_from_ticket(self.ticket)
+        validator = URLValidator()
+        # test if generated a url, if not will raise an exception
+        save_url = self.ticket_pass.get_pass_url()
+        self.assertIsNone(validator(save_url))
+        self.assertTrue(save_url.startswith("https://pay.google.com/gp/v/save/"))
 
     def test_insert_update_ticket_class(self):
-        ...
-
-    def test_generate_pass_from_ticket(self):
-        ...
-
-    def test_get_pass_url(self):
-        ...
+        return "Not yet implemented"
 
     def test_authenticate(self):
         return "Not implemented"
@@ -382,7 +447,48 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         test generate pass pdf bytes
         """
 
-        self.assertIsInstance(self.ticket.get_pdf_ticket(), bytes)
+        _pass = self.ticket.get_pdf_ticket()
+        self.assertIsInstance(_pass, bytes)
 
-    def test_get_google_ticket(self):
-        return "Not yet implemented"
+        # test pdf number pages
+        reader = PdfReader(BytesIO(_pass))
+        self.assertEqual(reader.numPages, 1)
+
+        # test pdf content
+        pdf_text = reader.pages[0].extract_text()
+        self.assertIsInstance(pdf_text, str)
+        self.assertTrue(
+            search(
+                "We've verified your NFT ownership and generated your ticket!", pdf_text
+            )
+        )
+        singleline_pdf_text = " ".join(line.strip() for line in pdf_text.splitlines())
+        self.assertTrue(search("Congratulations!", singleline_pdf_text))
+        self.assertTrue(search("General Admission", singleline_pdf_text))
+        self.assertTrue(search(self.ticket.event.title, singleline_pdf_text))
+        self.assertTrue(
+            search(
+                self.ticket.event.start_date.strftime("%B %d, %Y"), singleline_pdf_text
+            )
+        )
+
+    @patch.object(GoogleTicket.GoogleTicket, "request_creation_ticket")
+    def test_get_google_ticket(self, mock_post):
+        """
+        test `get_google_ticket` method. check if it is returning a properly url
+            - the request_creation_ticket method is mocked.
+        """
+
+        # Define response data from Google API
+        mock_response = mock.Mock()
+        mock_response.status_code = 200
+        issuer = settings.GOOGLE_WALLET_ISSUER_ID
+        mock_response.text = f"""{{"id": "{issuer}.{self.ticket.public_id}", "classId": "{issuer}.{self.event.public_id}"}}"""  # noqa
+        # Define response for the fake API
+        mock_post.return_value = mock_response
+
+        # test if generated a url, if not will raise an exception
+        save_url = self.ticket.get_google_ticket()
+        validator = URLValidator()
+        self.assertIsNone(validator(save_url))
+        self.assertTrue(save_url.startswith("https://pay.google.com/gp/v/save/"))

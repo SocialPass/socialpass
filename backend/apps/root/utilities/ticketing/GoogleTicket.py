@@ -78,6 +78,9 @@ class GoogleTicket(TicketGenerationBase):
             address_items_list.append(event_obj.country)
         address += ", ".join(address_items_list)
 
+        if not address:
+            raise Exception("Address can not be empty")
+
         # Create the payload
         payload = {
             "eventName": {
@@ -146,6 +149,10 @@ class GoogleTicket(TicketGenerationBase):
 
         return json.loads(response.text)
 
+    @staticmethod
+    def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):
+        return http_client.post(url, json=payload)
+
     def generate_pass_from_ticket(self, ticket):
         """
         Generate a Google ticket (pass) create the save to wallet URL and
@@ -169,7 +176,7 @@ class GoogleTicket(TicketGenerationBase):
             "state": "ACTIVE",
             "barcode": {"type": "QR_CODE", "value": str(ticket.embed_code)},
         }
-        response = http_client.post(url, json=payload)
+        response = self.request_creation_ticket(http_client, url, payload)
 
         # Check if there was an error
         if not (200 <= response.status_code <= 299):

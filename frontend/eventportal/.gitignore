@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# jest coverage reports
+coverage/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

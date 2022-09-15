@@ -3,11 +3,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import TemplateView
 
 from apps.dashboard import forms, views
 from apps.root.factories import EventFactory, UserWithTeamFactory
-from apps.root.models import Event, Invite, Membership, Team
+from apps.root.models import Invite, Membership, Team
 
 User = get_user_model()
 
@@ -58,22 +58,6 @@ class DashboardTest(TestCase):
         request.user = AnonymousUser()
         response = TestTeamContextView.as_view()(request, **kwargs)
         self.assertEqual(response.status_code, 302)
-
-    def test_required_live_event_mixin(self):
-        class TestRequireSuccessView(views.RequireLiveEventMixin, DetailView):
-            model = Event
-            template_name = "dashboard/event_detail.html"
-
-        # TODO
-        # Test logged-in user
-        # kwargs = {"team_public_id": self.team_one.public_id, "pk": self.event_one.pk}
-        # request = self.factory.get("/fake-path")
-        # request.user = self.user_one
-
-        # Test GET (succesful checkout)
-        # event = self.event_one.transition_live()
-        # response = TestRequireSuccessView.as_view()(request, **kwargs)
-        # self.assertEqual(response.status_code, 200)
 
     def test_user_detail(self):
         # Login user
@@ -276,13 +260,13 @@ class DashboardTest(TestCase):
             self.client.login(username=self.user_one.username, password=self.password)
         )
 
-        # Test GET (pending checkout)
+        # Test GET (draft event)
         response = self.client.get(
             reverse("event_detail", args=(self.team_one.public_id, self.event_one.pk))
         )
         self.assertEqual(response.status_code, 302)
 
-        # Test GET (succesful checkout)
+        # Test GET (live event)
         self.event_one.transition_live()
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
@@ -334,39 +318,15 @@ class DashboardTest(TestCase):
             self.client.login(username=self.user_one.username, password=self.password)
         )
 
-        # Test GET (pending checkout)
+        # Test GET (draft event)
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
         )
         self.assertEqual(response.status_code, 302)
 
-        # Test GET (succesful checkout)
+        # Test GET (live event)
         self.event_one.transition_live()
         response = self.client.get(
             reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
         )
         self.assertEqual(response.status_code, 200)
-
-    def test_event_price_estimator(self):
-        # Login User
-        self.assertTrue(
-            self.client.login(username=self.user_one.username, password=self.password)
-        )
-
-        # Test GET
-        url = reverse("event_price_estimator", args=(self.team_one.public_id,))
-        url = f"{url}?capacity=100"
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-    def test_event_checkout(self):
-        return "Not yet implemented"
-
-    def test_event_checkout_success_callback(self):
-        return "Not yet implemented"
-
-    def test_event_checkout_failure_callback(self):
-        return "Not yet implemented"
-
-    def test_stripe_webhook(self):
-        return "Not yet implemented"

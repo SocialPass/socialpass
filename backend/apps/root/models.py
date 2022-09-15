@@ -13,14 +13,13 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django_fsm import FSMField, transition
-from djmoney.models.fields import MoneyField
 from invitations import signals
 from invitations.adapters import get_invitations_adapter
 from invitations.base_invitation import AbstractBaseInvitation
 from pytz import utc
 from taggit.managers import TaggableManager
 
-from apps.root.model_field_choices import EVENT_VISIBILITY, STIPE_PAYMENT_STATUSES
+from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
@@ -39,21 +38,15 @@ class Team(DBModel):
     Umbrella team model for SocialPass customers
     """
 
-    def get_default_pricing_rule_group():  # type: ignore
-        return PricingRuleGroup.objects.get(name="Default").pk
+    # keys
+    members = models.ManyToManyField("root.User", through="root.Membership")
 
-    # base info
+    # basic info
     name = models.CharField(max_length=255)
     image = models.ImageField(
         null=True, blank=True, height_field=None, width_field=None, max_length=255
     )
     description = models.TextField(blank=True)
-    members = models.ManyToManyField("root.User", through="root.Membership")
-    pricing_rule_group = models.ForeignKey(
-        "PricingRuleGroup",
-        on_delete=models.CASCADE,
-        default=get_default_pricing_rule_group,
-    )
     theme = models.JSONField(null=True, blank=True)
 
     def __str__(self):
@@ -69,7 +62,6 @@ class Membership(DBModel):
     """
 
     class Meta:
-        # TODO: rename table in future to `root_`
         unique_together = ("team", "user")
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
@@ -78,9 +70,6 @@ class Membership(DBModel):
     )
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return f"{self.team.name}-{self.user.email}"
 
 
@@ -192,7 +181,6 @@ class Event(DBModel):
 
     class StateEnum(Enum):
         DRAFT = "Draft"
-        PENDING_CHECKOUT = "Ready for Checkout"
         LIVE = "Live"
 
     # Queryset manager
@@ -244,9 +232,6 @@ class Event(DBModel):
     )
     cover_image = models.ImageField(
         blank=True, null=True, help_text="A banner image for your event."
-    )
-    category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True, blank=True
     )
     tags = TaggableManager(
         blank=True,
@@ -311,26 +296,12 @@ class Event(DBModel):
     )
     google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
-    # Pricing Info
-    _price = MoneyField(
-        max_digits=19, decimal_places=4, default_currency="USD", null=True
-    )
-    pricing_rule = models.ForeignKey(
-        "PricingRule",
-        null=True,
-        blank=True,
-        default=None,
-        on_delete=models.RESTRICT,
-    )
-
     def __str__(self):
         return f"{self.team} - {self.title}"
 
     def get_absolute_url(self):
         if self.state == Event.StateEnum.DRAFT.value:
             _success_url = "event_update"
-        elif self.state == Event.StateEnum.PENDING_CHECKOUT.value:
-            _success_url = "event_checkout"
         elif self.state == Event.StateEnum.LIVE.value:
             _success_url = "event_detail"
         return reverse(
@@ -341,44 +312,6 @@ class Event(DBModel):
             ),
         )
 
-    def calculate_pricing_rule(self, capacity=None):
-        """
-        Returns calculated pricing rule based on capacity
-        """
-        # First check for capacity arg
-        # If one isn't passed, used self.capacity
-        if not capacity:
-            capacity = self.capacity
-
-        pricing_group = self.team.pricing_rule_group
-        pricing_rules = pricing_group.active_rules.filter(active=True)
-        pricing_rule_ranges = pricing_rules.order_by("min_capacity")
-        for pricing_rule in pricing_rule_ranges:
-            if (
-                capacity >= pricing_rule.min_capacity
-                and capacity <= pricing_rule.safe_max_capacity
-            ):
-                return pricing_rule
-
-    def calculate_price(self, capacity=None):
-        """
-        Returns calculated pricing based on capacity
-        """
-        # First check for capacity arg
-        # If one isn't passed, used self.capacity
-        if not capacity:
-            capacity = self.capacity
-
-        # Pricing rule on event exists
-        # Use this rule
-        if self.pricing_rule:
-            return self.pricing_rule.price_per_ticket * capacity
-
-        # No pricing rule on event yet
-        # Use calculate_pricing_rule
-        else:
-            return self.calculate_pricing_rule() * capacity
-
     def transition_draft(self, save=True):
         """
         wrapper around _transition_draft
@@ -386,19 +319,6 @@ class Event(DBModel):
         """
         try:
             self._transition_draft()
-            # Save unless explicilty told not to
-            if save:
-                self.save()
-        except Exception as e:
-            raise e
-
-    def transition_pending_checkout(self, save=True):
-        """
-        wrapper around _transition_pending_checkout
-        allows for saving after transition
-        """
-        try:
-            self._transition_pending_checkout()
             # Save unless explicilty told not to
             if save:
                 self.save()
@@ -421,27 +341,10 @@ class Event(DBModel):
         except Exception as e:
             raise e
 
-    @transition(
-        field=state,
-        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
-        target=StateEnum.DRAFT.value,
-    )
+    @transition(field=state, target=StateEnum.DRAFT.value)
     def _transition_draft(self):
         """
-        This function handles state transition from draft to awaiting checkout
-        Side effects include
-        -
-        """
-        pass
-
-    @transition(
-        field=state,
-        source=[StateEnum.DRAFT.value, StateEnum.PENDING_CHECKOUT.value],
-        target=StateEnum.PENDING_CHECKOUT.value,
-    )
-    def _transition_pending_checkout(self):
-        """
-        This function handles state transition from draft to awaiting checkout
+        This function handles state transition to DRAFT
         Side effects include
         -
         """
@@ -450,60 +353,12 @@ class Event(DBModel):
     @transition(field=state, target=StateEnum.LIVE.value)
     def _transition_live(self):
         """
-        This function handles state transition from draft to awaiting checkout
+        This function handles state transition from DRAFT to LIVE
         Side effects include
         - Create ticket scanner object
         """
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
-
-    @property
-    def price(self):
-        """
-        price property
-        check @setter and @getter below
-        """
-        return self._price
-
-    @price.setter
-    def price(self, value):
-        raise AttributeError(
-            "Directly setting price is disallowed. \
-            Please check the Event @price.getter method"
-        )
-
-    @price.getter
-    def price(self):
-        """
-        Custom price.getter to provide calculable DB field
-        Returns up-to-date price of event.
-        Note: DB field is stored as self._price
-
-        This getter evaluates calculated (expected) price vs current price.
-        In case of conflict, this function update _price.
-        """
-        # Side effects may occur
-        # Set to_save = True when they to do to be saved
-        to_save = False
-
-        # First check for pricing rule
-        # If one does not exist, set one
-        expected_pricing_rule = self.calculate_pricing_rule()
-        if expected_pricing_rule != self.pricing_rule:
-            to_save = True
-            self.pricing_rule = expected_pricing_rule
-
-        # Check price matches expected price
-        # Update if not
-        expected_price = self.calculate_price()
-        if expected_price != self._price:
-            to_save = True
-            self._price = expected_price
-
-        # Save and/or return
-        if to_save is True:
-            self.save()
-        return self._price
 
     @property
     def discovery_url(self):
@@ -522,7 +377,6 @@ class Event(DBModel):
             "visibility",
             "initial_place",
             "start_date",
-            "requirements",
             "capacity",
             "timezone",
             "limit_per_person",
@@ -550,44 +404,6 @@ class Event(DBModel):
         return fields
 
 
-class EventCategory(DBModel):
-    """
-    Category model for Events
-    Contains parent description
-    """
-
-    parent_category = models.ForeignKey(
-        "EventCategory", on_delete=models.SET_NULL, null=True
-    )
-    name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        if self.parent_category:
-            return f"{self.parent_category} - {self.name}"
-        else:
-            return self.name
-
-
-class EventStripePayment(DBModel):
-    """
-    Registers a payment done for Event
-    """
-
-    event = models.ForeignKey(
-        "Event", on_delete=models.SET_NULL, null=True, related_name="payments"
-    )
-    value = MoneyField(
-        max_digits=19, decimal_places=4, default_currency="USD", null=True
-    )
-    status = models.CharField(
-        choices=STIPE_PAYMENT_STATUSES, max_length=30, default="PENDING"
-    )
-    stripe_checkout_session_id = models.CharField(max_length=1024)
-    callaback_timestamp = models.DateTimeField(null=True, blank=True)
-    acknowledgement_timestamp = models.DateTimeField(null=True, blank=True)
-
-
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
@@ -610,7 +426,7 @@ class Ticket(DBModel):
     )
     google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
-    # Checkout Info
+    # blockchain Info
     blockchain_ownership = models.ForeignKey(
         "BlockchainOwnership",
         on_delete=models.SET_NULL,
@@ -747,66 +563,3 @@ class BlockchainOwnership(DBModel):
             f"\n\nTimestamp: {self.expires.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)[0:7]}"
         )
-
-
-class PricingRule(DBModel):
-    """
-    Maps a capacity to a price per capacity
-    Used to represent specific capacity charge of a team's event
-    """
-
-    class Meta:
-        constraints = [
-            # adds constraint so that max_capacity is necessarily
-            # greater than min_capacity
-            models.CheckConstraint(
-                name="%(app_label)s_%(class)s_max_capacity__gt__min_capacity",
-                check=(
-                    models.Q(max_capacity__isnull=True)
-                    | models.Q(max_capacity__gt=models.F("min_capacity"))
-                ),
-            )
-        ]
-
-    min_capacity = models.IntegerField(validators=[MinValueValidator(1)])
-    max_capacity = models.IntegerField(null=True, blank=True)
-    price_per_ticket = MoneyField(
-        max_digits=19, decimal_places=4, default_currency="USD", null=True
-    )
-    active = models.BooleanField(default=True)
-    group = models.ForeignKey(
-        "PricingRuleGroup",
-        related_name="pricing_rules",
-        on_delete=models.CASCADE,  # if group is deleted, delete all rules
-    )
-
-    @property
-    def safe_max_capacity(self) -> int:
-        # note: return psql max size integer
-        return 2147483640 if self.max_capacity is None else self.max_capacity
-
-    def __str__(self):
-        return f"{self.group.name} ({self.min_capacity} - {self.max_capacity} | $ {self.price_per_ticket})"  # noqa
-
-    def __repr__(self):
-        return f"PricingRule({self.min_capacity} - {self.max_capacity})"
-
-
-class PricingRuleGroup(DBModel):
-    """
-    Represents a group of PricingRule's
-    Used to represent full-range of charges per team's event
-    """
-
-    name = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-
-    @property
-    def active_rules(self):
-        return self.pricing_rules.filter(active=True)
-
-    def __str__(self):
-        return f"{self.name}"
-
-    def __repr__(self):
-        return f"Pricing Rule Group({self.name})"

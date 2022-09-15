@@ -113,7 +113,7 @@ class Migration(migrations.Migration):
                 (
                     "pricing_rule_group",
                     models.ForeignKey(
-                        default=apps.root.models.Team.get_default_pricing_rule_group,
+                        default=None,
                         on_delete=django.db.models.deletion.CASCADE,
                         to="dashboard.pricingrulegroup",
                     ),

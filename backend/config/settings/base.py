@@ -97,7 +97,6 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "storages",
     "taggit",
-    "djmoney",
     "django_fsm_log",
 ]
 
@@ -224,10 +223,6 @@ MEDIA_URL = "http://localhost:8000/media/"
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 PRIVATE_TICKET_STORAGE = "django.core.files.storage.FileSystemStorage"
 
-# FIXTURES
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#fixture-dirs
-FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 
 # SECURITY
 # ------------------------------------------------------------------------------
@@ -378,11 +373,6 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60
 # ------------------------------------------------------------------------------
 CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")
 SCANNER_BASE_URL = env("SCANNER_BASE_URL")
-
-# STRIPE
-# ------------------------------------------------------------------------------
-STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
-STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 
 # MORALIS
 # ------------------------------------------------------------------------------

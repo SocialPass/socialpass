@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0040_alter_event_description_alter_event_location_and_more'),
+        ("root", "0040_alter_event_description_alter_event_location_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='end_date',
-            field=models.DateTimeField(blank=True, help_text='When your event will end (optional).', null=True),
+            model_name="event",
+            name="end_date",
+            field=models.DateTimeField(
+                blank=True, help_text="When your event will end (optional).", null=True
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='start_date',
-            field=models.DateTimeField(blank=True, help_text='When your event will start.', null=True),
+            model_name="event",
+            name="start_date",
+            field=models.DateTimeField(
+                blank=True, help_text="When your event will start.", null=True
+            ),
         ),
     ]

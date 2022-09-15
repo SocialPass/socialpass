@@ -6,7 +6,7 @@ export default function Base() {
 		<div className="page-wrapper">
 
 			{/* Content wrapper start */}
-			<div className="content-wrapper ws-860 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
+			<div className="content-wrapper mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column" style={{ width: "860px" }}>
 
 				{/* Render Child Route Start */}
 				<Outlet/>

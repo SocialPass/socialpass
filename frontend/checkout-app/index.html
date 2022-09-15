@@ -38,6 +38,43 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@socialpass_io">
 
+  <!-- Custom styles -->
+  <style type="text/css">
+    :root {
+      --base-body-bg-color: var(--gray-color-light);
+    }
+
+    .dark-mode {
+      --base-body-bg-color: var(--dark-color-very-dim);
+    }
+
+    /* Content and card */
+
+    :root {
+      --content-and-card-spacing: 4rem;
+    }
+
+    @media (max-width: 576px) {
+      :root {
+        --content-and-card-spacing: 3rem;
+      }
+    }
+
+    /* Utilities */
+
+    .border-blend {
+      border-color: var(--white-color) !important;
+    }
+
+    .dark-mode .border-blend {
+      border-color: var(--dark-color-very-light) !important;
+    }
+
+    .ws-860 {
+      width: 86rem !important;
+    }
+  </style>
+
   <!-- Scripts -->
   <script>window.global = window;</script>
   <script type="module">

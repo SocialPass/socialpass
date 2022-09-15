@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Footer } from '../components/Footer'
 import { FiArrowLeft } from 'react-icons/fi'
-import QrReader from 'react-qr-reader'
+import { Html5QrcodePlugin  } from '../components/Html5QrcodeScannerPlugin'
 import { useEvent } from '../contexts/EventContext'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '../contexts/ToastContext'
@@ -145,13 +145,21 @@ export function Scanner() {
         <FiArrowLeft color='#f1f1f1' onClick={handleRedirect} size={26} />
       </div>
       <div id='qr-scanner-container' className='flex-grow-1'>
-        <QrReader
+        {/* <QrReader
           facingMode={'environment'}
           delay={500}
           onError={handleError}
           onScan={handleScan}
           style={{ height: '100%', overflow: 'visible', position: 'relative' }}
-        />
+        /> */}
+        {
+          <Html5QrcodePlugin 
+          fps={10}
+          qrbox={250}
+          disableFlip={false}
+          // qrCodeSuccessCallback={this.onNewScanResult}
+          />
+        }
         <div style={{ position: 'relative', height: '0px' }}>
           <ProgressBar
             className={scanFailureBlock.active ? '' : 'd-none' + ' '}

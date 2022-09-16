@@ -1,4 +1,5 @@
 import React from 'react'
+import SocialPassIcon from '../static/socialpass-theme/SocialPass-Icon.svg'
 
 export default function WalletCheckout() {
 	return (
@@ -8,7 +9,7 @@ export default function WalletCheckout() {
 				{/* Branding start */}
 				<a href="#" className="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
 					<div className="ws-75">
-						<img src="images/SocialPass-Icon.svg" alt="SocialPass Icon" className="d-block w-100 h-auto" />
+						<img src={SocialPassIcon} alt="SocialPass Icon" className="d-block w-100 h-auto" />
 					</div>
 					<div className="text-strong ms-10">
 						<div className="fs-base-p4">

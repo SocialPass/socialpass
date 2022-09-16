@@ -1,4 +1,6 @@
 import React from 'react'
+import SocialPassIcon from '../static/socialpass-theme/SocialPass-Icon.svg'
+import SomethingWentWrong from '../static/images/something_went_wrong.svg'
 
 export default function Error() {
 	return (
@@ -8,7 +10,7 @@ export default function Error() {
 				{/* Branding start */}
 				<a href="#" className="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
 					<div className="ws-75">
-						<img src="images/SocialPass-Icon.svg" alt="SocialPass Icon" className="d-block w-100 h-auto"/>
+						<img src={SocialPassIcon} alt="SocialPass Icon" className="d-block w-100 h-auto"/>
 					</div>
 					<div className="text-strong ms-10">
 						<div className="fs-base-p4">
@@ -33,7 +35,7 @@ export default function Error() {
 			<div className="content">
 				<div className="ws-500 mw-100 mx-auto text-center">
 					<div className="ws-300 mw-100 mx-auto">
-						<img src="images/illustrations/something_went_wrong.svg" className="d-block w-100 h-auto" alt="something_went_wrong"/>
+						<img src={SomethingWentWrong} className="d-block w-100 h-auto" alt="something_went_wrong"/>
 					</div>
 					<h1 className="text-strong fw-700 fsr-1 mb-0">
 						Something went wrong!

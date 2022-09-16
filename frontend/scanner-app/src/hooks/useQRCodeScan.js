@@ -1,5 +1,8 @@
-function useQRCodeScan({
-  qrcodeMountNodeID = "",
+import { Html5Qrcode } from 'html5-qrcode';
+import { useState, useEffect, useRef } from 'react';
+
+export function useQRCodeScan({
+  qrcodeMountNodeID = '',
   closeAfterScan = true,
   getQrBoxDimension,
 }) {
@@ -8,9 +11,9 @@ function useQRCodeScan({
     isScanSuccess: false,
     isScanFailure: false,
     data: null,
-    error: "",
+    error: '',
   });
-  const html5QrCodeScannerRef = React.useRef(null);
+  const html5QrCodeScannerRef = useRef(null);
 
   // unmount logic
   useEffect(() => {
@@ -20,11 +23,11 @@ function useQRCodeScan({
           ?.stop()
           ?.then((ignore) => {
             // QR Code scanning is stopped
-            console.log("stopped after successful scan");
+            // console.log('stopped after successful scan');
           })
           ?.catch((err) => {
             // Stop failed, handle it.
-            console.log("fails to stop after successfull scan result ");
+            // console.log('fails to stop after successfull scan result ');
           });
       }
     };
@@ -36,21 +39,24 @@ function useQRCodeScan({
         ?.stop()
         ?.then((ignore) => {
           // QR Code scanning is stopped
-          console.log("stopped after successful scan");
+          //   console.log('stopped after successful scan');
+          if (html5QrCodeScannerRef.current) {
+            setDecodedQrData({
+              ...decodedQRData,
+              isScanning: false,
+              data: null,
+              error: '',
+            });
+          }
         })
         ?.catch((err) => {
           // Stop failed, handle it.
-          console.log("fails to stop after successfull scan result ");
+          //   console.log('fails to stop after successfull scan result ');
         });
     }
   }
   function startQrCode() {
     try {
-      setDecodedQrData({
-        ...decodedQRData,
-        isScanning: true,
-        data: null,
-      });
       // eslint-disable-next-line
       const html5qrCodeScanner = new Html5Qrcode(qrcodeMountNodeID);
 
@@ -61,22 +67,28 @@ function useQRCodeScan({
         qrbox = getQrBoxDimension();
       }
 
+      setDecodedQrData({
+        ...decodedQRData,
+        isScanning: true,
+        data: null,
+      });
+
       html5qrCodeScanner
         .start(
-          // { deviceId: { exact: cameraId } },
-          { facingMode: "environment" },
+          //   { deviceId: { exact: cameraId } },
+          { facingMode: 'environment' },
 
-          { fps: 100, qrbox, aspectRatio: 1.777778 },
+          { fps: 100, qrbox, aspectRatio: 1 },
           (qrCodeMessage) => {
             // do something when code is read
             // console.log('scanned qr code', qrCodeMessage);
 
-            setDecoderQrData({
+            setDecodedQrData({
               ...decodedQRData,
               isScanSuccess: true,
               isScanning: false,
               data: qrCodeMessage,
-              error: "",
+              error: '',
             });
 
             if (closeAfterScan) {
@@ -85,34 +97,34 @@ function useQRCodeScan({
                 .then((ignore) => {
                   // QR Code scanning is stopped.
                   // setIsOpenCamera(false);
-                  console.log("stopped after successful scan");
+                  //   console.log('stopped after successful scan');
                 })
                 .catch((err) => {
                   // Stop failed, handle it.
-                  console.log("fails to stop after succesfull scan result ");
+                  //   console.log('fails to stop after succesfull scan result ');
                 });
             }
           },
           (errorMessage) => {}
         )
         .catch((err) => {
-          setDecoderQrData({
+          setDecodedQrData({
             ...decodedQRData,
             isScanSuccess: false,
             isScanning: false,
             isScanFailure: true,
             data: null,
-            error: err || "QR Code parsing failed",
+            error: err || 'QR Code parsing failed',
           });
         });
     } catch (e) {
-      setDecoderQrData({
+      setDecodedQrData({
         ...decodedQRData,
         isScanSuccess: false,
         isScanning: false,
         isScanFailure: true,
         data: null,
-        error: e || "QR Code parsing failed",
+        error: e || 'QR Code parsing failed',
       });
     }
   }
@@ -123,3 +135,4 @@ function useQRCodeScan({
     stopQrCode,
   };
 }
+export default useQRCodeScan

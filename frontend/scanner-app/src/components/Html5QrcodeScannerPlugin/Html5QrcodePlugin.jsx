@@ -26,9 +26,9 @@ const Html5QrcodePlugin = (props) => {
         // when component mounts
         const config = createConfig(props);
         const verbose = props.verbose === true;
-        if (!(props.qrCodeSuccessCallback)) {
-            throw "qrCodeSuccessCallback is required callback.";
-        }
+        // if (!(props.qrCodeSuccessCallback)) {
+        //     throw "qrCodeSuccessCallback is required callback.";
+        // }
         const html5QrcodeScanner = new Html5QrcodeScanner(qrcodeRegionId, config, verbose);
         html5QrcodeScanner.render(props.qrCodeSuccessCallback, props.qrCodeErrorCallback);
 

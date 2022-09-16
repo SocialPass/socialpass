@@ -320,6 +320,7 @@ class Event(DBModel):
         try:
             self._transition_draft()
             # Save unless explicilty told not to
+            # This implies the caller will handle saving post-transition
             if save:
                 self.save()
         except Exception as e:
@@ -331,11 +332,9 @@ class Event(DBModel):
         allows for saving after transition
         """
         try:
-            self.google_class_id = (
-                f"{settings.GOOGLE_WALLET_ISSUER_ID}.{str(self.public_id)}"
-            )
             self._transition_live()
             # Save unless explicilty told not to
+            # This implies the caller will handle saving post-transition
             if save:
                 self.save()
         except Exception as e:
@@ -356,9 +355,14 @@ class Event(DBModel):
         This function handles state transition from DRAFT to LIVE
         Side effects include
         - Create ticket scanner object
+        - Set google_class_id
         """
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
+        # - Set google_class_id
+        self.google_class_id = (
+            f"{settings.GOOGLE_WALLET_ISSUER_ID}.{str(self.public_id)}"
+        )
 
     @property
     def discovery_url(self):

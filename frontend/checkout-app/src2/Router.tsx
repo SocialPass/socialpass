@@ -12,10 +12,10 @@ export default function Router(){
 		<Routes>
 			<Route path="/" element={<Base />} >
 				<Route index element={<Home />} />
-				<Route path="error" element={<Error />} />
 				<Route path="success" element={<Success />} />
 				<Route path="checkout/wallet" element={<WalletCheckout />} />
 			</Route>
+			<Route path="error" element={<Error />} />
 		</Routes>
 	</BrowserRouter>
 	)

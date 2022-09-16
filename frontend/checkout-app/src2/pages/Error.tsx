@@ -3,20 +3,42 @@ import SomethingWentWrong from '../static/images/something_went_wrong.svg'
 
 export default function Error() {
 	return (
-		<div>
-			<div className="content">
-				<div className="ws-500 mw-100 mx-auto text-center">
-					<div className="ws-300 mw-100 mx-auto">
-						<img src={SomethingWentWrong} className="d-block w-100 h-auto" alt="something_went_wrong"/>
+		<div className="page-wrapper">
+			{/* Content wrapper start */}
+			<div className="content-wrapper ws-860 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
+				{/* Main content start */}
+				<div className="content">
+					<div className="ws-500 mw-100 mx-auto text-center">
+						<div className="ws-300 mw-100 mx-auto">
+							<img src={SomethingWentWrong} className="d-block w-100 h-auto" alt="something_went_wrong"/>
+						</div>
+						<h1 className="text-strong fw-700 fsr-1 mb-0">
+							Something went wrong!
+						</h1>
+						<p>
+							Looks like something went wrong. Please try reloading the page, or try again after some time.
+						</p>
+						<p className="border-top pt-10 mt-10 text-muted fs-base-n4">
+							If this problem persists, please consider <a href="https://nftylabs.typeform.com/to/A70KW4vo" className="fw-bold" target="_blank">contacting us</a> and letting us know.
+						</p>
 					</div>
-					<h1 className="text-strong fw-700 fsr-1 mb-0">
-						Something went wrong!
-					</h1>
-					<p>
-						Looks like something went wrong. Please try reloading the page, or try again after some time.
-					</p>
 				</div>
+				{/* Main content end */}
+
+				{/* Footer start */}
+				<div className="content d-flex align-items-center mt-auto">
+					<a href="https://socialpass.gitbook.io/socialpass/" target="_blank" className="text-secondary text-decoration-none fs-base-p4">
+						<i className="fa-regular fa-question-circle"></i>
+						<span className="visually-hidden">Help</span>
+					</a>
+					<span className="ms-auto text-muted">
+						&copy; 2022, SP Tech Inc.<span className="d-none d-sm-inline"> All rights reserved</span>
+					</span>
+				</div>
+				{/* Footer end */}
+
 			</div>
+			{/* Content wrapper end */}
 		</div>
 	)
 }

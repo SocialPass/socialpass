@@ -1,16 +1,10 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import useSWR from 'swr'
 import SocialPassIcon from '../static/socialpass-theme/SocialPass-Icon.svg'
 
 export default function Base() {
-	const fetcher = (url:string) => fetch(url).then(r => r.json())
-	const public_id = '1234234';
-	const { data, error } = useSWR(`http://localhost:8000/api/checkout/v1/retrieve/${public_id}/`, fetcher)
-	console.log(data, error);
 	return (
 		<div className="page-wrapper">
-
 			{/* Content wrapper start */}
 			<div className="content-wrapper ws-860 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
 				{/* Navbar start */}

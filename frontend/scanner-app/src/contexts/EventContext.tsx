@@ -1,51 +1,37 @@
-/* eslint-disable eqeqeq */
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { fetchEvent } from '../services/api'
-import { useQuery } from 'react-query'
+import { createContext, useContext, useState } from 'react'
+import { RedemptionApi } from '@/services/api'
+import { Event, EventError } from '@/types/Event'
 
 const EventContext = createContext({})
 
-type EventDataProps = {
-  title: string
-  start_date: string
-  localized_address_display: string
-  capacity: number
-  ticket_count: number
-  redeemed_count: number
-  team: string
-}
-
 const EventProvider = ({ children }: any) => {
-  const [publicId, setPublicId] = useState<string>('')
-  const [eventData, setEventData] = useState<EventDataProps>()
-  const { status, isLoading, isError, error, data, refetch } = useQuery(
-    ['fetchEvent', publicId],
-    () => fetchEvent(publicId),
-    {
-      enabled: false,
-    },
-  )
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [event, setEvent] = useState<Event>()
+  const [error, setError] = useState<EventError>()
 
-  useEffect(() => {
-    if (publicId) {
-      refetch()
-    }
-  }, [publicId])
+  const getEvent = (eventPublicId: string) =>
+    new Promise((resolve, reject) => {
+      setIsLoading(true)
 
-  useEffect(() => {
-    setEventData(data)
-  }, [data])
+      RedemptionApi.get(eventPublicId)
+        .then((response) => {
+          setEvent(response.data)
+          setIsLoading(false)
+          resolve(response.data)
+        })
+        .catch((err) => {
+          setError(err)
+          setIsLoading(false)
+          reject(err)
+        })
+    })
 
   return (
     <EventContext.Provider
       value={{
-        publicId,
-        setPublicId,
-        status,
+        event,
+        getEvent,
         isLoading,
-        isError,
-        eventData,
-        setEventData,
         error,
       }}
     >

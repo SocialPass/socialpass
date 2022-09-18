@@ -22,6 +22,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5437:5432"
 
   redis:
     image: redis:6-alpine

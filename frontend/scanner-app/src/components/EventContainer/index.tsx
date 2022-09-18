@@ -1,42 +1,23 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import propTypes from 'prop-types'
 
-type EventContainerProps = {
-  event_name: string
-  event_attendance: number
-  event_date: string
-  event_venue: string
-}
-
-export function EventContainer({
-  event_name,
-  event_attendance,
-  event_date,
-  event_venue,
-}: EventContainerProps) {
-  const navigate = useNavigate()
+export function EventContainer(props) {
+  const { event } = props
 
   return (
     <div className='container p-10 d-flex flex-column align-items-center'>
-      <div className='landing-page-event-title'>{event_name}</div>
+      <div className='landing-page-event-title'>{event.title}</div>
       <div className='landing-page-card background-image'>
         <div className='landing-page-card-text-1'>Total Attendance:</div>
-        <div className='landing-page-card-text-2 mb-15'>{event_attendance}</div>
+        <div className='landing-page-card-text-2 mb-15'>{event.capacity}</div>
         <div className='landing-page-card-text-1'>Date:</div>
-        <div className='landing-page-card-text-2 mb-15'>{event_date}</div>
+        <div className='landing-page-card-text-2 mb-15'>{event.start_date}</div>
         <div className='landing-page-card-text-1'>Venue:</div>
-        <div className='landing-page-card-text-2'>{event_venue}</div>
-      </div>
-      <div className='container px-20 py-5 d-flex flex-column'>
-        <button
-          className='btn-start-scanning'
-          onClick={() => {
-            navigate('scanner')
-          }}
-        >
-          Start Scanning
-        </button>
+        <div className='landing-page-card-text-2'>{event.localized_address_display}</div>
       </div>
     </div>
   )
+}
+
+EventContainer.propTypes = {
+  event: propTypes.object,
 }

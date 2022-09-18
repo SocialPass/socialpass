@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Footer } from '../components/Footer'
 import { FiArrowLeft } from 'react-icons/fi'
-import Html5QrcodePlugin from '../components/Html5QrcodeScannerPlugin/Html5QrcodePlugin'
-import useQRCodeScan from '../hooks/useQRCodeScan'
-import { useEvent } from '../contexts/EventContext'
+import Html5QrcodePlugin from '@/components/Html5QrcodeScannerPlugin/Html5QrcodePlugin'
+import useQRCodeScan from '@/hooks/useQRCodeScan'
+import { useEvent } from '@/contexts/EventContext'
 import { useNavigate } from 'react-router-dom'
-import { useToast } from '../contexts/ToastContext'
-import { fetchScanTicket } from '../services/api'
+import { TicketApi } from '@/services/api'
 import { ProgressBar } from 'react-bootstrap'
 
 type ScanFailureBlockProps = {
@@ -20,7 +18,7 @@ export function Scanner() {
   const [qrCode, setQrcode] = useState(null)
   const navigate = useNavigate()
   const { eventData, setEventData, publicId }: any = useEvent()
-  const { addToast, clearToasts } = useToast()
+  // const { addToast, clearToasts } = useToast()
   const initialScanFailureBlock = {
     active: false,
     intervalId: undefined,
@@ -47,26 +45,26 @@ export function Scanner() {
     }
 
     setWaitingForScan(true)
-    clearToasts()
-    fetchScanTicket(publicId, qrCode)
+    // clearToasts()
+    TicketApi.claim(publicId, qrCode)
       .then((data) => {
         setEventData({
           ...eventData,
           ticket_count: data.ticket_count,
           redeemed_count: data.redeemed_count,
         })
-        addToast({
-          type: 'success',
-          title: 'Succesful Scan',
-          description: '',
-        })
+        // addToast({
+        //   type: 'success',
+        //   title: 'Succesful Scan',
+        //   description: '',
+        // })
       })
       .catch((err_data: any) => {
-        addToast({
-          type: 'error',
-          title: 'Scan Failed',
-          description: err_data?.message,
-        })
+        // addToast({
+        //   type: 'error',
+        //   title: 'Scan Failed',
+        //   description: err_data?.message,
+        // })
         setScanFailureBlock({
           ...initialScanFailureBlock,
           active: true,
@@ -97,11 +95,11 @@ export function Scanner() {
 
   const handleError = useCallback((err: any) => {
     console.log(err)
-    addToast({
-      type: 'error',
-      title: 'QR Reader Error',
-      description: '...',
-    })
+    // addToast({
+    //   type: 'error',
+    //   title: 'QR Reader Error',
+    //   description: '...',
+    // })
   }, [])
 
   useEffect(() => {
@@ -141,22 +139,23 @@ export function Scanner() {
   }, [elapsedTime])
 
   const { startQrCode, decodedQRData } = useQRCodeScan({
-    qrcodeMountNodeID: "qrcodemountnode",
-  });
+    qrcodeMountNodeID: 'qrcodemountnode',
+  })
 
   useEffect(() => {
     // Add logic to add the camera and scan it
-    startQrCode();
-  }, []);
-
+    startQrCode()
+  }, [])
 
   return (
-    <div className='scanner-body d-flex flex-column' >
-      <div className='btn-close' style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
+    <div className='scanner-body d-flex flex-column'>
+      <div
+        className='btn-close'
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}
+      >
         <FiArrowLeft color='#f1f1f1' onClick={handleRedirect} size={26} />
       </div>
       <div className='flex-grow-1'>
-
         {/* <QrReader
           facingMode={'environment'}
           delay={500}
@@ -164,14 +163,9 @@ export function Scanner() {
           onScan={handleScan}
           style={{ height: '100%', overflow: 'visible', position: 'relative' }}
         /> */}
-        
-          { <Html5QrcodePlugin 
-          fps={10}
-          qrbox={250}
-          disableFlip={false}
-          //qrCodeSuccessCallback={this.onNewScanResult}
-          /> }
-        
+
+        <Html5QrcodePlugin fps={10} qrbox={250} disableFlip={false} />
+
         <div style={{ position: 'relative', height: '0px' }}>
           <ProgressBar
             className={scanFailureBlock.active ? '' : 'd-none' + ' '}
@@ -181,7 +175,6 @@ export function Scanner() {
           />
         </div>
       </div>
-      <Footer waitingForScan={waitingForScan} />
     </div>
   )
 }

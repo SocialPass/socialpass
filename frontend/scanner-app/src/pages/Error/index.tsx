@@ -1,6 +1,6 @@
-import { FiArrowLeft } from 'react-icons/fi'
-import CloseCircleIcon from '../assets/closeIcon.svg'
 import { useNavigate } from 'react-router-dom'
+import { FiArrowLeft } from 'react-icons/fi'
+import CloseCircleIcon from '../../assets/closeIcon.svg'
 
 export function Error() {
   const navigate = useNavigate()

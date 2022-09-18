@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import { useQuery } from 'react-query'
-import { useEvent } from '../../contexts/EventContext'
-import { fetchTickets } from '../../services/api'
+import { useEvent } from '@/contexts/EventContext'
+import { TicketApi } from '@/services/api'
 import Table from '../Table'
-import useWindowDimensions from '../../hooks/useWindowDimensions'
+import useWindowDimensions from '@/hooks/useWindowDimensions'
 
 export function StatisticsTable() {
   const { publicId }: any = useEvent()
   const [isRedeemed, setIsRedeemed] = useState(true)
 
   const { isLoading, isError, data } = useQuery(['fetchTickets', isRedeemed], () =>
-    fetchTickets(publicId, isRedeemed),
+    TicketApi.getAll(publicId, isRedeemed),
   )
 
   const { height } = useWindowDimensions()

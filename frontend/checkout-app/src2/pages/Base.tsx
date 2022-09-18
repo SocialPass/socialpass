@@ -6,7 +6,7 @@ import SocialPassIcon from '../static/socialpass-theme/SocialPass-Icon.svg'
 export default function Base() {
 	const fetcher = (url:string) => fetch(url).then(r => r.json())
 	const public_id = '1234234';
-	const { data, error } = useSWR(`http://localhost:8000/api/checkout-portal/v1/retrieve/${public_id}/`, fetcher)
+	const { data, error } = useSWR(`http://localhost:8000/api/checkout/v1/retrieve/${public_id}/`, fetcher)
 	console.log(data, error);
 	return (
 		<div className="page-wrapper">

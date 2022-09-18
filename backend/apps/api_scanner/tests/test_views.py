@@ -6,7 +6,7 @@ from django.test import RequestFactory, TestCase
 from django.views.generic import TemplateView
 from rest_framework import status
 
-from apps.api_checkoutportal.tests.test_views import prevent_warnings
+from apps.api_checkout.tests.test_views import prevent_warnings
 from apps.api_scanner.services import redeem_ticket
 from apps.api_scanner.views import SetAccessKeyAndEventMixin
 from apps.root.factories import (

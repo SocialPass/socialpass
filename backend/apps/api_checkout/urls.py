@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import views
 
-app_name = "api_checkoutportal"
+app_name = "api_checkout"
 urlpatterns = [
     path(
         "retrieve/<uuid:public_id>/",

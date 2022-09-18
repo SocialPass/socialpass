@@ -76,57 +76,15 @@
     }
   </style>
 
-  <!-- Scripts -->
+  <!-- Script Tag for WAGMI -->
   <script>window.global = window;</script>
   <script type="module">
-  import process from "process";
-  import { Buffer } from "buffer";
-  import EventEmitter from "events";
-
-  const devURL = "http://localhost:8000/api";
-  const prodURL = import.meta.env.VITE_APP_API_URL;
-  const baseURL = import.meta.env.PROD ? prodURL : devURL;
-
-  window.process = process;
-  window.Buffer = Buffer;
-  window.EventEmitter = EventEmitter;
-
-  (function(window, document, undefined){
-
-  // code that should be taken care of right away
-
-  window.onload = init;
-
-    function init(){
-    const public_id = location.pathname.split('/')[1];
-    const response = fetch(`${baseURL}/checkout-portal/v1/retrieve/${public_id}/`)
-      .then(response => response.json())
-      .then(data => {
-        const theme_name = data.team.theme?.css_theme;
-        const brand_name = data.team.theme?.brand_name;
-        const logo = data.team?.theme?.logo;
-        let link = document.createElement( "link" );
-        let favIcon = document.createElement( "link" );
-        if(theme_name){
-        link.href = `${theme_name}`;
-        favIcon.rel = "icon"
-        favIcon.href = `${logo}`
-
-        document.getElementById("SocialPassHeaderIcon").src = `${logo}`;
-        }
-        link.type = "text/css";
-        link.rel = "stylesheet";
-        link.media = "screen,print";
-
-
-        document.getElementsByTagName( "head" )[0].appendChild( link );
-        document.getElementsByTagName( "head" )[0].appendChild( favIcon );
-
-      })
-    }
-
-  })(window, document, undefined);
-
+    import process from "process";
+    import { Buffer } from "buffer";
+    import EventEmitter from "events";
+    window.process = process;
+    window.Buffer = Buffer;
+    window.EventEmitter = EventEmitter;
   </script>
   </head>
   <body>

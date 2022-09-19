@@ -5,7 +5,7 @@ from google.auth import crypt, jwt
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from apps.root.utilities.TicketGeneration import TicketGenerationBase
+from apps.root.utilities.ticketing.TicketGeneration import TicketGenerationBase
 
 
 class GoogleTicket(TicketGenerationBase):
@@ -78,6 +78,9 @@ class GoogleTicket(TicketGenerationBase):
             address_items_list.append(event_obj.country)
         address += ", ".join(address_items_list)
 
+        if not address:
+            raise Exception("Address can not be empty")
+
         # Create the payload
         payload = {
             "eventName": {
@@ -86,7 +89,6 @@ class GoogleTicket(TicketGenerationBase):
             "reviewStatus": "UNDER_REVIEW",
             "dateTime": {
                 "start": event_obj.start_date.isoformat(),
-                "end": event_obj.end_date.isoformat(),
             },
             "venue": {
                 "name": {
@@ -104,6 +106,10 @@ class GoogleTicket(TicketGenerationBase):
             payload["locations"] = [
                 {"latitude": float(event_obj.lat), "longitude": float(event_obj.long)}
             ]
+
+        # Add datetime end (if available)
+        if event_obj.end_date:
+            payload["dateTime"]["end"] = event_obj.end_date.isoformat()
 
         return payload
 
@@ -143,6 +149,10 @@ class GoogleTicket(TicketGenerationBase):
 
         return json.loads(response.text)
 
+    @staticmethod
+    def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):
+        return http_client.post(url, json=payload)
+
     def generate_pass_from_ticket(self, ticket):
         """
         Generate a Google ticket (pass) create the save to wallet URL and
@@ -166,7 +176,7 @@ class GoogleTicket(TicketGenerationBase):
             "state": "ACTIVE",
             "barcode": {"type": "QR_CODE", "value": str(ticket.embed_code)},
         }
-        response = http_client.post(url, json=payload)
+        response = self.request_creation_ticket(http_client, url, payload)
 
         # Check if there was an error
         if not (200 <= response.status_code <= 299):

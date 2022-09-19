@@ -468,10 +468,14 @@ class Ticket(DBModel):
         """
         create or retrieve pass url from google wallet api
         """
+        if not self.class_id:
+            raise Exception("The event was not registered")
+
         _pass = GoogleTicket.GoogleTicket()
         resp = _pass.generate_pass_from_ticket(self)
         if resp.get("error"):
-            raise Exception("The event was not registered")
+            raise Exception("The event was not registered properly")
+
         return _pass.get_pass_url()
 
     @property

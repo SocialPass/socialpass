@@ -87,3 +87,5 @@ else:
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
 INSTALLED_APPS += ["drf_yasg"]
+BASE_URL = env("BASE_URL")
+MEDIA_URL = BASE_URL + "/media/"

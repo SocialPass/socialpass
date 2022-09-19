@@ -487,7 +487,12 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         # Define response for the fake API
         mock_post.return_value = mock_response
 
+        # test raise exception if not class_id
+        with self.assertRaises(Exception):
+            self.ticket.get_google_ticket()
+
         # test if generated a url, if not will raise an exception
+        self.ticket.class_id = "random_class"
         save_url = self.ticket.get_google_ticket()
         validator = URLValidator()
         self.assertIsNone(validator(save_url))

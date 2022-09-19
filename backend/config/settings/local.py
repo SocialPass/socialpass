@@ -82,10 +82,14 @@ else:
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
     CELERY_TASK_EAGER_PROPAGATES = True
 
+# Media
+# ------------------------------------------------------------------------------
+# NOTE: This is only for local or development testing.
+BASE_URL = env("BASE_URL")
+MEDIA_URL = BASE_URL + "/media/"
+
 
 # Your stuff...
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
 INSTALLED_APPS += ["drf_yasg"]
-BASE_URL = env("BASE_URL")
-MEDIA_URL = BASE_URL + "/media/"

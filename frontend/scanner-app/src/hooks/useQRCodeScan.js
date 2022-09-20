@@ -62,7 +62,7 @@ export function useQRCodeScan({
 
       html5QrCodeScannerRef.current = html5qrCodeScanner;
 
-      let qrbox = 250;
+      let qrbox = {width: 250, height: 250};
       if (getQrBoxDimension) {
         qrbox = getQrBoxDimension();
       }
@@ -78,7 +78,7 @@ export function useQRCodeScan({
           //   { deviceId: { exact: cameraId } },
           { facingMode: 'environment' },
 
-          { fps: 100, qrbox, aspectRatio: 1 },
+          { fps: 60, qrbox, aspectRatio: 1 },
           (qrCodeMessage) => {
             // do something when code is read
             // console.log('scanned qr code', qrCodeMessage);

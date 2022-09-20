@@ -5,19 +5,32 @@ export type Event = {
   capacity: number
   ticket_count: number
   redeemed_count: number
-  team: string
+  team: Team
 }
 
-type GetEvent = (eventPublicId: string) => Promise<Event>
+export type Team = {
+  image: string | null
+  name: string
+  theme: Theme
+}
+
+export type Theme = {
+  brand_name: string
+  css_theme: string
+  favicon: string
+  logo: string
+}
+
+type GetEvent = (eventPublicId: string) => Promise<Event | unknown>
 
 export type EventError = {
   detail: string
   message: string
 }
 
-export type EventContext = {
-  event: Event
-  getEvent: GetEvent
+export type EventContextType = {
+  event: Event | null
+  getEvent: GetEvent | null
   isLoading: boolean
-  error: EventError
+  error: EventError | null
 }

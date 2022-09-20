@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Html5QrcodePlugin from '@/components/Html5QrcodeScannerPlugin/Html5QrcodePlugin'
 import useQRCodeScan from '@/hooks/useQRCodeScan'
-import { useEvent } from '@/contexts/EventContext'
+import useEvent from '@/hooks/useEvent'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TicketApi } from '@/services/api'
 import Button from '@/components/Button'
@@ -151,12 +151,12 @@ const Scanner = () => {
     <>
       <div className='position-relative d-flex align-items-center justify-content-center border hs-400'>
         <span className='text-center'>
-          Insert Camera Here
-          {/* {<Html5QrcodePlugin fps={30} qrbox={{ width: 250, height: 250 }} />} */}
+          {<Html5QrcodePlugin fps={30} qrbox={{ width: '100%', height: '250%' }} />}
         </span>
         <button
           type='button'
           className='btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10'
+          onClick={() => handleRedirect()}
         >
           <i className='fa-solid fa-arrow-left'></i>
           <span className='visually-hidden'>Go Back</span>

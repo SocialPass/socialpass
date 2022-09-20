@@ -1,4 +1,4 @@
-import { useEvent } from '@/contexts/EventContext'
+import useEvent from '@/hooks/useEvent'
 
 const NavBar = () => {
   const { event }: any = useEvent()

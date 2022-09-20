@@ -1,13 +1,18 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useState } from 'react'
 import { RedemptionApi } from '@/services/api'
-import { Event, EventError } from '@/types/Event'
+import { Event, EventError, EventContextType } from '@/types/Event'
 
-const EventContext = createContext({})
+export const EventContext = createContext<EventContextType>({
+  event: null,
+  getEvent: () => new Promise(() => null),
+  isLoading: false,
+  error: null,
+})
 
-const EventProvider = ({ children }: any) => {
+export const EventProvider = ({ children }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [event, setEvent] = useState<Event>()
-  const [error, setError] = useState<EventError>()
+  const [event, setEvent] = useState<Event | null>(null)
+  const [error, setError] = useState<EventError | null>(null)
 
   const getEvent = (eventPublicId: string) =>
     new Promise((resolve, reject) => {
@@ -40,14 +45,4 @@ const EventProvider = ({ children }: any) => {
   )
 }
 
-function useEvent() {
-  const context = useContext(EventContext)
-
-  if (!context) {
-    throw new Error('useEvent must be used within a EventProvider')
-  }
-
-  return context
-}
-
-export { EventProvider, useEvent }
+export default EventProvider

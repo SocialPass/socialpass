@@ -1,6 +1,6 @@
 import axios, { AxiosPromise } from 'axios'
 const prodURL = import.meta.env.VITE_APP_API_URL
-const devURL = '192.168.0.10:8000/api'
+const devURL = 'http://localhost:8000/api'
 const BASEURL = import.meta.env.PROD ? prodURL : devURL
 
 const api = axios.create({

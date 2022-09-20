@@ -25,7 +25,7 @@ const Html5QrcodePlugin = (props) => {
     useEffect(() => {
         // when component mounts
         const config = createConfig(props);
-        const verbose = props.verbose === true;
+        const verbose = props.verbose === false;
         // if (!(props.qrCodeSuccessCallback)) {
         //     throw "qrCodeSuccessCallback is required callback.";
         // }

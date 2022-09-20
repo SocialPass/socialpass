@@ -52,7 +52,7 @@
   <!-- OnLoad script for setting whitelabeling -->
   <script type="module">
   import defaultLogo from './src/static/images/landingpage_logo.png';
-  const devURL = "192.168.0.10:8000/api";
+  const devURL = "http://localhost:8000/api";
   const prodURL = import.meta.env.VITE_APP_API_URL;
   const baseURL = import.meta.env.PROD ? prodURL : devURL;
 

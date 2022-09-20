@@ -2,7 +2,7 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 
 
-class InvitationsAdapter(DefaultAccountAdapter):
+class InviteAdapter(DefaultAccountAdapter):
     """custom adapter to set site as only open for invites by now"""
 
     def is_open_for_signup(self, request):

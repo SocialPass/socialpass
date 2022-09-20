@@ -17,12 +17,6 @@ class AlreadyAccepted(Exception):
     pass
 
 
-class UserRegisteredEmail(Exception):
-    """This email is already registered by a site user"""
-
-    pass
-
-
 class CleanEmailMixin:
     def validate_invitation(self, email):
         """
@@ -44,7 +38,6 @@ class CleanEmailMixin:
             "already_accepted": _(
                 "This e-mail address has already" " accepted an invite.",
             ),
-            "email_in_use": _("An active user is using this e-mail address"),
         }
         try:
             self.validate_invitation(email)
@@ -52,12 +45,10 @@ class CleanEmailMixin:
             raise forms.ValidationError(errors["already_invited"])
         except (AlreadyAccepted):
             raise forms.ValidationError(errors["already_accepted"])
-        except (UserRegisteredEmail):
-            raise forms.ValidationError(errors["email_in_use"])
         return email
 
 
-class CustomInvitationAdminAddForm(forms.ModelForm, CleanEmailMixin):
+class InviteAdminAddForm(forms.ModelForm, CleanEmailMixin):
 
     email = forms.EmailField(
         label=_("E-mail"),
@@ -83,7 +74,7 @@ class CustomInvitationAdminAddForm(forms.ModelForm, CleanEmailMixin):
             return instance
 
 
-class InvitationAdminChangeForm(forms.ModelForm):
+class InviteAdminChangeForm(forms.ModelForm):
     class Meta:
         model = Invite
         fields = "__all__"

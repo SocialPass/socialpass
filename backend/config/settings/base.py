@@ -331,14 +331,14 @@ CORS_ALLOWED_ORIGINS = env.list(
 CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
-# Django Invitations - https://github.com/jazzband/django-invitations
+# Invites. Based on https://github.com/jazzband/django-invitations
 # ------------------------------------------------------------------------------
-INVITATIONS_INVITATION_ONLY = False  #
-INVITATIONS_CONFIRMATION_URL_NAME = "team_accept_invite"  #
-INVITATIONS_EMAIL_MAX_LENGTH = 254  #
-INVITATIONS_INVITATION_EXPIRY = 3  #
-ACCOUNT_ADAPTER = "apps.root.adapters.InvitationsAdapter"  #
-INVITATIONS_SIGNUP_REDIRECT = "account_signup"  # added
+ACCOUNT_ADAPTER = "apps.root.adapters.InviteAdapter"
+INVITATIONS_INVITATION_ONLY = False
+INVITATIONS_CONFIRMATION_URL_NAME = "team_accept_invite"
+INVITATIONS_EMAIL_MAX_LENGTH = 254
+INVITATIONS_INVITATION_EXPIRY = 3
+INVITATIONS_SIGNUP_REDIRECT = "account_signup"
 
 # Django Taggit  - https://github.com/jazzband/django-taggit
 # ------------------------------------------------------------------------------

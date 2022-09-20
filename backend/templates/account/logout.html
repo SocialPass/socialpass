@@ -15,7 +15,7 @@
       <div class="card-body py-2">
         <h3 class="font-weight-bolder">{% translate "Sign Out" %}</h3>
         <p>{% translate 'Are you sure you want to sign out?' %}</p>
-        <form method="post" action="{% url 'dashboard:account_logout' %}">
+        <form method="post" action="{% url 'account_logout' %}">
           {% csrf_token %}
           {% if redirect_field_value %}
           <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>

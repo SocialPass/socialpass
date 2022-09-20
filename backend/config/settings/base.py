@@ -127,7 +127,7 @@ AUTH_USER_MODEL = "root.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = "dashboard:dashboard_redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
-LOGIN_URL = "dashboard:account_login"
+LOGIN_URL = "account_login"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------

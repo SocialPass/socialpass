@@ -87,7 +87,7 @@ class DashboardTest(TestCase):
         # Test logged-out user
         self.client.logout()
         response = self.client.get(reverse("dashboard:dashboard_redirect"), follow=True)
-        self.assertRedirects(response, expected_url=reverse("dashboard:account_login"))
+        self.assertRedirects(response, expected_url=reverse("account_login"))
 
     # def test_team_accept_invite(self):
     #     # Send invitation to existing user

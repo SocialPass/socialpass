@@ -11,7 +11,7 @@
 </p>
 
 <!-- Form start -->
-<form class="signup" method="POST" action="{% url 'dashboard:account_signup' %}">
+<form class="signup" method="POST" action="{% url 'account_signup' %}">
 	{% csrf_token %}
 
 	{% if form.non_field_errors %}
@@ -100,7 +100,7 @@
 <!-- Form end -->
 
 <p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
-	Already have an account? <a href="{% url 'dashboard:account_login' %}" class="fw-bold">Sign in</a> instead.
+	Already have an account? <a href="{% url 'account_login' %}" class="fw-bold">Sign in</a> instead.
 </p>
 
 <script type="text/javascript">

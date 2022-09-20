@@ -8,7 +8,6 @@ urlpatterns = [
     # General redirect
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
     # User Accounts
-    path("accounts/", include("allauth.urls")),
     path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
     # Team
     path(

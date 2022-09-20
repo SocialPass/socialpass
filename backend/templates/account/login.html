@@ -17,7 +17,7 @@
 </p>
 
 <!-- Form start -->
-<form class="login" method="POST" action="{% url 'dashboard:account_login' %}">
+<form class="login" method="POST" action="{% url 'account_login' %}">
 	{% csrf_token %}
 
 	{% if form.non_field_errors %}
@@ -112,6 +112,6 @@
 <!-- Form end -->
 
 <p class="text-muted fs-base-n2 pt-10 border-top border-dotted border-bottom-0 border-start-0 border-end-0">
-	Don't have an account? <a href="{% url 'dashboard:account_signup' %}" class="fw-bold">Sign up</a> to create one.
+	Don't have an account? <a href="{% url 'account_signup' %}" class="fw-bold">Sign up</a> to create one.
 </p>
 {% endblock %}

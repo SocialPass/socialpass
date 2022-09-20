@@ -80,20 +80,20 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link me-2" href="{% url 'dashboard:account_logout' %}">
+                    <a class="nav-link me-2" href="{% url 'account_logout' %}">
                       <i class="fa fa-user opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Logout
                     </a>
                   </li>
                   {% else %}
                   <li class="nav-item">
-                    <a class="nav-link me-2" href="{% url 'dashboard:account_signup' %}">
+                    <a class="nav-link me-2" href="{% url 'account_signup' %}">
                       <i class="fas fa-user-circle opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Sign Up
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link me-2" href="{% url 'dashboard:account_login' %}">
+                    <a class="nav-link me-2" href="{% url 'account_login' %}">
                       <i class="fas fa-key opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Sign In
                     </a>

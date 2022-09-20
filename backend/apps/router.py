@@ -12,26 +12,26 @@ from drf_yasg.views import get_schema_view
 
 from apps.event_discovery.sitemaps import EventDetailSiteMap, StaticViewEventSitemap
 
+# Django Template URLs
 urlpatterns = [
+    # Event Discovery
     path("", include("apps.event_discovery.urls")),
+    # Dashboard
     path("dashboard/", include("apps.dashboard.urls")),
+    path("dashboard/accounts/", include("allauth.urls")),
     # Django Admin, use {% url "admin:index" %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
-    path(
-        "robots.txt",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
-    ),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )  # type: ignore
 
-# DRF API URLS
+# DRF API URLs
 urlpatterns += [
     path("api/checkout-portal/v1/", include("apps.api_checkoutportal.urls")),
     path("api/scanner/v1/", include("apps.api_scanner.urls")),
 ]
 
-# SITEMAPS URLS
+# SITEMAPS URLs
 sitemaps = {"discovery": StaticViewEventSitemap, "events-discovery": EventDetailSiteMap}
 urlpatterns += [
     path(
@@ -46,25 +46,21 @@ urlpatterns += [
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
+    path(
+        "robots.txt",
+        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+    ),
 ]
 
-# Debug URL"s (only for local)
+# Local URLs
 is_local = (
     settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"
 )
 if is_local:
-    # local debug toolbar
-    if "debug_toolbar" in settings.INSTALLED_APPS:
-        import debug_toolbar
-
-        urlpatterns = [
-            path("__debug__/", include(debug_toolbar.urls))
-        ] + urlpatterns  # type: ignore
-
-    # local static files
+    # Static files
     urlpatterns += staticfiles_urlpatterns()
 
-    # local schema
+    # OpenAPI Schema
     schema_view = get_schema_view(
         openapi.Info(
             title="SocialPass API",
@@ -76,6 +72,8 @@ if is_local:
         ),
         public=True,
     )
+
+    # SwaggerUI
     urlpatterns += [
         path(
             "swagger/",
@@ -86,3 +84,11 @@ if is_local:
             "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
         ),
     ]
+
+    # Django Debug Toolbar
+    if "debug_toolbar" in settings.INSTALLED_APPS:
+        import debug_toolbar
+
+        urlpatterns = [
+            path("__debug__/", include(debug_toolbar.urls))
+        ] + urlpatterns  # type: ignore

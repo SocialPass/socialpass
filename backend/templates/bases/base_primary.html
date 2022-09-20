@@ -120,7 +120,7 @@
 					</li>
 					<li class="dropdown-divider"></li>
 					<li>
-						<a href="{% url 'dashboard:account_change_password' %}" class="dropdown-item d-flex align-items-center">
+						<a href="{% url 'account_change_password' %}" class="dropdown-item d-flex align-items-center">
 							<span class="ws-25">
 								<i class="fa-regular fa-key"></i>
 							</span>
@@ -128,7 +128,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="{% url 'dashboard:account_email' %}" class="dropdown-item d-flex align-items-center">
+						<a href="{% url 'account_email' %}" class="dropdown-item d-flex align-items-center">
 							<span class="ws-25">
 								<i class="fa-regular fa-envelope"></i>
 							</span>
@@ -137,7 +137,7 @@
 					</li>
 					<li class="dropdown-divider"></li>
 					<li class="dropdown-content">
-						<a href="{% url 'dashboard:account_logout' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-danger fw-bold">
+						<a href="{% url 'account_logout' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-danger fw-bold">
 							<i class="fa-regular fa-sign-out"></i>
 							<span class="ms-5">Sign Out</span>
 						</a>
@@ -307,13 +307,13 @@
 				<h6 class="sidebar-title fs-base-n2">
 					Account
 				</h6>
-				<a href="{% url 'dashboard:account_change_password' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'change-password' %}">
+				<a href="{% url 'account_change_password' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'change-password' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-key"></i>
 					</span>
 					<span class="ms-5">Change Password</span>
 				</a>
-				<a href="{% url 'dashboard:account_email' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-emails' %}">
+				<a href="{% url 'account_email' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-emails' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-envelope"></i>
 					</span>

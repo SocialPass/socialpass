@@ -131,7 +131,7 @@ class RedirectToTeamView(RedirectView):
             else:
                 return reverse("dashboard:team_create")
         else:
-            return reverse("dashboard:account_login")
+            return reverse("account_login")
 
 
 class TeamAcceptInviteView(AcceptInvite):
@@ -201,10 +201,10 @@ class TeamAcceptInviteView(AcceptInvite):
         # Check if user exists for redirect url and membership creation purposes
         try:
             user = User.objects.get(email__iexact=invitation.archived_email)
-            self.redirect_url = reverse("dashboard:account_login")
+            self.redirect_url = reverse("account_login")
         except User.DoesNotExist:
             user = None
-            self.redirect_url = reverse("dashboard:account_signup")
+            self.redirect_url = reverse("account_signup")
 
         # Everything finalized
         # Try to create a membership if possible

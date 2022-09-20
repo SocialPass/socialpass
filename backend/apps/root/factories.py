@@ -82,6 +82,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     initial_place = factory.Faker("address")
     lat = 41.40338
     long = 2.17403
+    city = factory.Faker("city")
 
     class Meta:
         model = Event

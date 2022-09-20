@@ -22,7 +22,7 @@ from taggit.managers import TaggableManager
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
-from apps.root.utilities import AppleTicket, GoogleTicket, PDFTicket
+from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
 
@@ -294,6 +294,7 @@ class Event(DBModel):
         validators=[MinValueValidator(1), MaxValueValidator(100)],
         help_text="Maximum amount of tickets per attendee.",
     )
+    google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -319,6 +320,7 @@ class Event(DBModel):
         try:
             self._transition_draft()
             # Save unless explicilty told not to
+            # This implies the caller will handle saving post-transition
             if save:
                 self.save()
         except Exception as e:
@@ -332,6 +334,7 @@ class Event(DBModel):
         try:
             self._transition_live()
             # Save unless explicilty told not to
+            # This implies the caller will handle saving post-transition
             if save:
                 self.save()
         except Exception as e:
@@ -352,9 +355,14 @@ class Event(DBModel):
         This function handles state transition from DRAFT to LIVE
         Side effects include
         - Create ticket scanner object
+        - Set google_class_id
         """
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
+        # - Set google_class_id
+        self.google_class_id = (
+            f"{settings.GOOGLE_WALLET_ISSUER_ID}.{str(self.public_id)}"
+        )
 
     @property
     def discovery_url(self):
@@ -420,6 +428,7 @@ class Ticket(DBModel):
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
     )
+    google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
     # blockchain Info
     blockchain_ownership = models.ForeignKey(
@@ -437,28 +446,36 @@ class Ticket(DBModel):
         """
         create a passfile and get its bytes
         """
-        _pass = AppleTicket.AppleTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
+        try:
+            _pass = AppleTicket.AppleTicket()
+            _pass.generate_pass_from_ticket(self)
+            return _pass.get_bytes()
+        except Exception as e:
+            raise e
 
     def get_pdf_ticket(self):
         """
         create a pdf pass and get its bytes
         """
-        _pass = PDFTicket.PDFTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
+        try:
+            _pass = PDFTicket.PDFTicket()
+            _pass.generate_pass_from_ticket(self)
+            return _pass.get_bytes()
+        except Exception as e:
+            raise e
 
     def get_google_ticket(self):
         """
         create or retrieve pass url from google wallet api
-        TODO: verify if event already has a class_id
-              or create with insert_update_ticket_class(self.event)
         """
+        if not self.class_id:
+            raise Exception("The event was not registered")
+
         _pass = GoogleTicket.GoogleTicket()
         resp = _pass.generate_pass_from_ticket(self)
         if resp.get("error"):
-            raise Exception("The event was not registered")
+            raise Exception("The event was not registered properly")
+
         return _pass.get_pass_url()
 
     @property

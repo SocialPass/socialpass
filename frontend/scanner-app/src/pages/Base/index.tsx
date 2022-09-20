@@ -28,7 +28,6 @@ const Base = () => {
       ) : !error && event ? (
         <div className='page-wrapper'>
           <div className='content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column'>
-            <NavBar />
 
             <Outlet />
 

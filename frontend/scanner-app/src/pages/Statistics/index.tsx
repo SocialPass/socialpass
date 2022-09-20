@@ -1,32 +1,96 @@
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { useEvent } from '@/contexts/EventContext'
+import { TicketApi } from '@/services/api'
 
-import { StatisticsTable } from '@/components/StatisticsTable'
-import { Footer } from '@/components/Footer'
+import { TicketList } from '@/components/TicketList'
+import Button from '@/components/Button'
+
+type MyParams = {
+  redemptionPublicId: string
+}
 
 export function Statistics() {
   const navigate = useNavigate()
-  const params = useParams()
+
+  const { redemptionPublicId } = useParams<keyof MyParams>() as MyParams
+
   const { event }: any = useEvent()
+  const [isRedeemed, setIsRedeemed] = useState(true)
+  const [tickets, setTickets] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    TicketApi.getAll(redemptionPublicId)
+      .then((res) => {
+        setIsLoading(false)
+        setTickets(res.data.results)
+      })
+      .catch(() => {
+        setIsLoading(false)
+        setIsError(true)
+      })
+  }, [])
+
+  const ticketsFiltered = tickets.filter((ticket: any) => ticket.redeemed === isRedeemed)
 
   return (
-    <div className='statistics-body'>
-      <div className='statistics-title py-20 px-10'>
-        {event.title}
-        <StatisticsTable />
+    <div className='mt-auto'>
+      <div className='card text-base rounded-4 shadow-lg border-transparent'>
+        <h1 className='fw-700 text-center fs-base-p6 mt-0'>Statistics &mdash; {event.title}</h1>
+
+        <div className='row'>
+          <div className='col-6 pe-5'>
+            <button
+              type='button'
+              className={`btn  btn-link  px-10 btn-block h-100 rounded-3 ${
+                isRedeemed ? 'btn-primary' : ''
+              }`}
+              onClick={() => {
+                setIsRedeemed(true)
+              }}
+            >
+              <strong className='antialiased'>Claimed</strong>
+            </button>
+          </div>
+          <div className='col-6 ps-5'>
+            <button
+              type='button'
+              className={`btn  btn-link  px-10 btn-block h-100 rounded-3 ${
+                !isRedeemed ? 'btn-primary' : ''
+              }`}
+              onClick={() => {
+                setIsRedeemed(false)
+              }}
+            >
+              <strong className='antialiased'>Unclaimed</strong>
+            </button>
+          </div>
+        </div>
+
+        <div className='mt-15'>
+          <strong>Total:</strong> {ticketsFiltered.length} tickets{' '}
+          {isRedeemed ? 'claimed' : 'unclaimed'}
+        </div>
+
+        <TicketList tickets={ticketsFiltered} />
+
         <div className='container p-5 d-flex flex-column'>
-          <button
-            className='btn-start-scanning'
+          <Button
+            className='py-15 fs-base-p4'
             onClick={() => {
-              navigate(`/${params.publicId}/scanner`)
+              navigate(`/${redemptionPublicId}/scanner`)
             }}
           >
-            Return to Scanner
-          </button>
+            <i className='fa-regular fa-arrow-left me-5'></i>
+
+            <strong className='antialiased'>Return to Scanner</strong>
+          </Button>
         </div>
       </div>
-      <Footer />
     </div>
   )
 }

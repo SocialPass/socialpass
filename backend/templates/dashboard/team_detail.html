@@ -89,7 +89,7 @@
 					Your team currently has <strong class="fw-700">{{ current_team.members.count }}</strong> member(s).
 				</p>
 				<p class="mt-5 fs-base-n2">
-					<a class="fw-bold" href="{% url 'team_members' current_team.public_id %}">Manage Members <i class="fa-regular fa-angle-right ms-5"></i></a>
+					<a class="fw-bold" href="{% url 'dashboard:team_members' current_team.public_id %}">Manage Members <i class="fa-regular fa-angle-right ms-5"></i></a>
 				</p>
 				<!-- Team members end -->
 			</div>

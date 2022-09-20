@@ -68,7 +68,7 @@
                 <ul class="navbar-nav mx-auto">
                   {% if request.user.is_authenticated %}
                   <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center me-2 active" aria-current="page" href="{% url 'dashboard_redirect' %}">
+                    <a class="nav-link d-flex align-items-center me-2 active" aria-current="page" href="{% url 'dashboard:dashboard_redirect' %}">
                       <i class="fa fa-chart-pie opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Dashboard
                     </a>
@@ -80,20 +80,20 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link me-2" href="{% url 'account_logout' %}">
+                    <a class="nav-link me-2" href="{% url 'dashboard:account_logout' %}">
                       <i class="fa fa-user opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Logout
                     </a>
                   </li>
                   {% else %}
                   <li class="nav-item">
-                    <a class="nav-link me-2" href="{% url 'account_signup' %}">
+                    <a class="nav-link me-2" href="{% url 'dashboard:account_signup' %}">
                       <i class="fas fa-user-circle opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Sign Up
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link me-2" href="{% url 'account_login' %}">
+                    <a class="nav-link me-2" href="{% url 'dashboard:account_login' %}">
                       <i class="fas fa-key opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Sign In
                     </a>

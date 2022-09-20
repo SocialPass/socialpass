@@ -2,6 +2,8 @@ from django.urls import include, path
 
 from . import views
 
+app_name = "dashboard"
+
 urlpatterns = [
     # General redirect
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),

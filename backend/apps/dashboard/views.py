@@ -107,7 +107,7 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
             self.request, messages.SUCCESS, "Your team has been created successfully."
         )
         return reverse(
-            "event_list",
+            "dashboard:event_list",
             args=(self.object.public_id,),
         )
 
@@ -127,11 +127,11 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
 
-                return reverse("event_list", args=(membership.team.public_id,))
+                return reverse("dashboard:event_list", args=(membership.team.public_id,))
             else:
-                return reverse("team_create")
+                return reverse("dashboard:team_create")
         else:
-            return reverse("account_login")
+            return reverse("dashboard:account_login")
 
 
 class TeamAcceptInviteView(AcceptInvite):
@@ -201,10 +201,10 @@ class TeamAcceptInviteView(AcceptInvite):
         # Check if user exists for redirect url and membership creation purposes
         try:
             user = User.objects.get(email__iexact=invitation.archived_email)
-            self.redirect_url = reverse("account_login")
+            self.redirect_url = reverse("dashboard:account_login")
         except User.DoesNotExist:
             user = None
-            self.redirect_url = reverse("account_signup")
+            self.redirect_url = reverse("dashboard:account_signup")
 
         # Everything finalized
         # Try to create a membership if possible
@@ -253,7 +253,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse("team_members", args=(self.kwargs["team_public_id"],))
+        return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
 
 class TeamMemberDeleteView(TeamContextMixin, DeleteView):
@@ -269,7 +269,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse("team_members", args=(self.kwargs["team_public_id"],))
+        return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
 
 class TeamUpdateView(TeamContextMixin, UpdateView):
@@ -289,7 +289,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
-        return reverse("team_detail", args=(self.kwargs["team_public_id"],))
+        return reverse("dashboard:team_detail", args=(self.kwargs["team_public_id"],))
 
 
 class EventListView(TeamContextMixin, ListView):
@@ -423,9 +423,11 @@ class EventDeleteView(TeamContextMixin, DeleteView):
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
         if self.object.state == Event.StateEnum.LIVE.value:
-            return reverse("event_list", args=(self.kwargs["team_public_id"],))
+            return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
         else:
-            return reverse("event_drafts", args=(self.kwargs["team_public_id"],))
+            return reverse(
+                "dashboard:event_drafts", args=(self.kwargs["team_public_id"],)
+            )
 
 
 class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):

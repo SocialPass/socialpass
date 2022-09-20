@@ -120,7 +120,7 @@
 					</li>
 					<li class="dropdown-divider"></li>
 					<li>
-						<a href="{% url 'account_change_password' %}" class="dropdown-item d-flex align-items-center">
+						<a href="{% url 'dashboard:account_change_password' %}" class="dropdown-item d-flex align-items-center">
 							<span class="ws-25">
 								<i class="fa-regular fa-key"></i>
 							</span>
@@ -128,7 +128,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="{% url 'account_email' %}" class="dropdown-item d-flex align-items-center">
+						<a href="{% url 'dashboard:account_email' %}" class="dropdown-item d-flex align-items-center">
 							<span class="ws-25">
 								<i class="fa-regular fa-envelope"></i>
 							</span>
@@ -137,7 +137,7 @@
 					</li>
 					<li class="dropdown-divider"></li>
 					<li class="dropdown-content">
-						<a href="{% url 'account_logout' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-danger fw-bold">
+						<a href="{% url 'dashboard:account_logout' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-danger fw-bold">
 							<i class="fa-regular fa-sign-out"></i>
 							<span class="ms-5">Sign Out</span>
 						</a>
@@ -187,7 +187,7 @@
 						</li>
 						<li class="dropdown-divider"></li>
 						<li>
-							<a href="{% url 'team_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+							<a href="{% url 'dashboard:team_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
 								<span class="ws-25">
 									<i class="fa-regular fa-flag"></i>
 								</span>
@@ -195,7 +195,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="{% url 'team_members' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+							<a href="{% url 'dashboard:team_members' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
 								<span class="ws-25">
 									<i class="fa-regular fa-lock"></i>
 								</span>
@@ -203,7 +203,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="{% url 'team_members' current_team.public_id %}#add-member" class="dropdown-item d-flex align-items-center">
+							<a href="{% url 'dashboard:team_members' current_team.public_id %}#add-member" class="dropdown-item d-flex align-items-center">
 								<span class="ws-25">
 									<i class="fa-regular fa-user-plus"></i>
 								</span>
@@ -219,14 +219,14 @@
 							</li>
 							{% for team in other_teams %}
 								<li>
-									<a href="{% url 'event_list' team.public_id %}" class="dropdown-item text-truncate">
+									<a href="{% url 'dashboard:event_list' team.public_id %}" class="dropdown-item text-truncate">
 										{{ team.name }}
 									</a>
 								</li>
 							{% endfor %}
 						{% endif %}
 						<li class="dropdown-content">
-							<a href="{% url 'team_create' %}" class="btn btn-primary btn-block">
+							<a href="{% url 'dashboard:team_create' %}" class="btn btn-primary btn-block">
 								<i class="fa-solid fa-plus"></i>
 								<span class="ms-5">Create Team</span>
 							</a>
@@ -242,18 +242,18 @@
 					<h6 class="sidebar-title fs-base-n2">
 						Web3 Events
 					</h6>
-					<a href="{% url 'event_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
+					<a href="{% url 'dashboard:event_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
 						<i class="fa-solid fa-plus"></i>
 						<span class="visually-hidden">Create Event</span>
 					</a>
 				</div>
-				<a href="{% url 'event_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
+				<a href="{% url 'dashboard:event_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-ticket"></i>
 					</span>
 					<span class="ms-5">Events</span>
 				</a>
-				<a href="{% url 'event_drafts' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'drafts' %}">
+				<a href="{% url 'dashboard:event_drafts' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'drafts' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-ticket-simple"></i>
 					</span>
@@ -267,20 +267,20 @@
 				<h6 class="sidebar-title fs-base-n2">
 					Team
 				</h6>
-				<a href="{% url 'team_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'team-details' %}">
+				<a href="{% url 'dashboard:team_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'team-details' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-flag"></i>
 					</span>
 					<span class="ms-5">Team Details</span>
 				</a>
 				<div class="position-relative">
-					<a href="{% url 'team_members' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-members' %}">
+					<a href="{% url 'dashboard:team_members' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-members' %}">
 						<span class="ws-25 flex-shrink-0">
 							<i class="fa-regular fa-lock"></i>
 						</span>
 						<span class="ms-5">Manage Members</span>
 					</a>
-					<a href="{% url 'team_members' current_team.public_id %}#add-member" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
+					<a href="{% url 'dashboard:team_members' current_team.public_id %}#add-member" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
 						<i class="fa-solid fa-plus"></i>
 						<span class="visually-hidden">Add Member</span>
 					</a>
@@ -290,7 +290,7 @@
 		{% else %}
 			<!-- Sidebar main dashboard link start -->
 			<div class="sidebar-menu mt-0">
-				<a href="{% url 'dashboard_redirect' %}" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20">
+				<a href="{% url 'dashboard:dashboard_redirect' %}" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20">
 					<div class="me-15">
 						<i class="fa-regular fa-angle-left"></i>
 					</div>
@@ -307,13 +307,13 @@
 				<h6 class="sidebar-title fs-base-n2">
 					Account
 				</h6>
-				<a href="{% url 'account_change_password' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'change-password' %}">
+				<a href="{% url 'dashboard:account_change_password' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'change-password' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-key"></i>
 					</span>
 					<span class="ms-5">Change Password</span>
 				</a>
-				<a href="{% url 'account_email' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-emails' %}">
+				<a href="{% url 'dashboard:account_email' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-emails' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-envelope"></i>
 					</span>

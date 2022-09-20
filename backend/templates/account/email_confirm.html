@@ -6,7 +6,7 @@
 
 {% block inner %}
 <p class="mb-5">
-	<a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Sign In</a>
+	<a href="{% url 'dashboard:account_login' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Sign In</a>
 </p>
 <h1 class="fsr-3 text-strong fw-700 mt-0">Confirm E-mail Address</h1>
 {% if confirmation %}
@@ -24,7 +24,7 @@
 		</div>
 	</form>
 {% else %}
-	{% url 'account_email' as email_url %}
+	{% url 'dashboard:account_email' as email_url %}
 	<p>
 		This e-mail confirmation link expired or is invalid. Please <a href="{{ email_url }}" class="fw-bold">issue a new e-mail confirmation request</a>.
 	</p>

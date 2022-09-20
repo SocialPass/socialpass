@@ -166,7 +166,7 @@ export function Scanner() {
         /> */}
         
           { <Html5QrcodePlugin 
-          fps={10}
+          fps={60}
           qrbox={250}
           disableFlip={false}
           //qrCodeSuccessCallback={this.onNewScanResult}

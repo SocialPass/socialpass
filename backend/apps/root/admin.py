@@ -3,9 +3,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django_fsm_log.admin import StateLogInline
 
+from apps.root.forms import CustomInvitationAdminAddForm, InvitationAdminChangeForm
 from apps.root.models import (
     BlockchainOwnership,
     Event,
+    Invite,
     Membership,
     Team,
     Ticket,
@@ -98,3 +100,18 @@ class TicketAdmin(admin.ModelAdmin):
         "event__title",
         "blockchain_ownership",
     )
+
+
+@admin.register(Invite)
+class InvitationAdmin(admin.ModelAdmin):
+    list_display = ("email", "sent", "accepted")
+    raw_id_fields = ("inviter",)
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj:
+            kwargs["form"] = InvitationAdminChangeForm
+        else:
+            kwargs["form"] = CustomInvitationAdminAddForm
+            kwargs["form"].user = request.user
+            kwargs["form"].request = request
+        return super().get_form(request, obj, **kwargs)

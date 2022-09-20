@@ -4,18 +4,18 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 import boto3
+from allauth.account.adapter import get_adapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
-from invitations import signals
-from invitations.adapters import get_invitations_adapter
-from invitations.base_invitation import AbstractBaseInvitation
 from pytz import utc
 from taggit.managers import TaggableManager
 
@@ -73,11 +73,56 @@ class Membership(DBModel):
         return f"{self.team.name}-{self.user.email}"
 
 
-class Invite(DBModel, AbstractBaseInvitation):
+class InviteQuerySet(models.QuerySet):
+    """
+    Invite model queryset manager
+    """
+
+    def all_expired(self):
+        """
+        expired invites
+        """
+        return self.filter(self.expired_q())
+
+    def all_valid(self):
+        """
+        invites sent and not expired
+        """
+        return self.exclude(self.expired_q())
+
+    def expired_q(self):
+        sent_threshold = timezone.now() - timedelta(
+            days=settings.INVITATIONS_INVITATION_EXPIRY
+        )
+        q = Q(accepted=True) | Q(sent__lt=sent_threshold)
+        return q
+
+    def delete_expired_confirmations(self):
+        """
+        delete all expired invites
+        """
+        self.all_expired().delete()
+
+
+class Invite(DBModel):
     """
     Custom invite inherited from django-invitations
     Used for team invitations
     """
+
+    # Queryset manager
+    objects = InviteQuerySet.as_manager()
+
+    # invitation fields
+    accepted = models.BooleanField(verbose_name=_("accepted"), default=False)
+    key = models.CharField(verbose_name=_("key"), max_length=64, unique=True)
+    sent = models.DateTimeField(verbose_name=_("sent"), null=True)
+    inviter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
 
     email = models.EmailField(
         unique=True,
@@ -123,16 +168,11 @@ class Invite(DBModel, AbstractBaseInvitation):
 
         email_template = "invitations/email/email_invite"
 
-        get_invitations_adapter().send_mail(email_template, self.email, ctx)
+        get_adapter().send_mail(email_template, self.email, ctx)
         self.sent = timezone.now()
         self.save()
 
-        signals.invite_url_sent.send(
-            sender=self.__class__,
-            instance=self,
-            invite_url_sent=invite_url,
-            inviter=self.inviter,
-        )
+        # Makes sense call a signal by now?
 
     def __str__(self):
         """

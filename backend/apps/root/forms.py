@@ -1,4 +1,3 @@
-# from invitations.exceptions import AlreadyAccepted, AlreadyInvited
 from allauth.account.adapter import get_adapter
 from django import forms
 from django.utils.translation import gettext_lazy as _

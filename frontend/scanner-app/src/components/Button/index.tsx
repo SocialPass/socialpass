@@ -1,21 +1,4 @@
-import propTypes from 'prop-types'
+import Button from './Button'
 
-export function Button(props) {
-  const { onClick, children } = props
-
-  return (
-    <button
-      className='btn-start-scanning'
-      onClick={() => {
-        onClick()
-      }}
-    >
-      {children}
-    </button>
-  )
-}
-
-Button.propTypes = {
-  onClick: propTypes.func,
-  children: propTypes.node,
-}
+export { Button }
+export default Button

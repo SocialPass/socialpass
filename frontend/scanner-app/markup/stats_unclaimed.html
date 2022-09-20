@@ -1,184 +1,190 @@
 <!DOCTYPE html>
 <html lang="en" spellcheck="false" class="socialpass-scanner">
-	<head>
-		<!-- Meta tags -->
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <head>
+    <!-- Meta tags -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
 
-		<!-- Title -->
-		<title>SocialPass - Ticket Scanner</title>
+    <!-- Title -->
+    <title>SocialPass - Ticket Scanner</title>
 
-		<!-- Halfmoon CSS -->
-		<link href="../../../backend/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
+    <!-- Halfmoon CSS -->
+    <link
+      href="../../../backend/deprecated_static/socialpass-theme/halfmoon.css"
+      rel="stylesheet"
+    />
 
-		<!-- SocialPass CSS theme -->
-		<link href="../../../backend/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
+    <!-- SocialPass CSS theme -->
+    <link
+      href="../../../backend/deprecated_static/socialpass-theme/socialpass-theme.css"
+      rel="stylesheet"
+    />
 
-		<!-- Font Awesome 6 -->
-		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
-	</head>
-	<body>
-		<!-- Page wrapper start -->
-		<div class="page-wrapper">
-			<!-- Content wrapper start -->
-			<div class="content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column">
-				<!-- Navbar start -->
-				<nav class="d-flex align-items-center px-20 py-5 m-10 bg-content rounded-3 shadow-lg">
-					<!-- Branding start -->
-					<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
-						<div class="ws-75">
-							<img src="../../../backend/static/brand-logos/SocialPass-Icon.svg" alt="SocialPass Icon" class="d-block w-100 h-auto">
-						</div>
-						<div class="text-strong ms-10">
-							<div class="fs-base-p4">
-								SocialPass
-							</div>
-							<div class="fs-base-n4 lh-1 fw-normal">
-								Ticket Scanner
-							</div>
-						</div>
-					</a>
-					<!-- Branding end -->
+    <!-- Font Awesome 6 -->
+    <script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <!-- Page wrapper start -->
+    <div class="page-wrapper">
+      <!-- Content wrapper start -->
+      <div class="content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column">
+        <!-- Navbar start -->
+        <nav class="d-flex align-items-center px-20 py-5 m-10 bg-content rounded-3 shadow-lg">
+          <!-- Branding start -->
+          <a
+            href="#"
+            class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none"
+          >
+            <div class="ws-75">
+              <img
+                src="../../../backend/deprecated_static/brand-logos/SocialPass-Icon.svg"
+                alt="SocialPass Icon"
+                class="d-block w-100 h-auto"
+              />
+            </div>
+            <div class="text-strong ms-10">
+              <div class="fs-base-p4">SocialPass</div>
+              <div class="fs-base-n4 lh-1 fw-normal">Ticket Scanner</div>
+            </div>
+          </a>
+          <!-- Branding end -->
 
-					<!-- Dark mode toggle start -->
-					<button type="button" class="btn btn-sm btn-square btn-rounded ms-auto" data-hm-toggle="dark-mode">
-						<i class="fa-solid fa-moon"></i>
-						<span class="visually-hidden">Toggle dark mode</span>
-					</button>
-					<!-- Dark mode toggle end -->
-				</nav>
-				<!-- Navbar end -->
+          <!-- Dark mode toggle start -->
+          <button
+            type="button"
+            class="btn btn-sm btn-square btn-rounded ms-auto"
+            data-hm-toggle="dark-mode"
+          >
+            <i class="fa-solid fa-moon"></i>
+            <span class="visually-hidden">Toggle dark mode</span>
+          </button>
+          <!-- Dark mode toggle end -->
+        </nav>
+        <!-- Navbar end -->
 
-				<!-- Main content start -->
-				<div class="mt-auto">
-					<div class="card text-base rounded-4 shadow-lg border-transparent">
-						<h1 class="fw-700 text-center fs-base-p6 mt-0">
-							Statistics &mdash; My NFT Launch Party 2022
-						</h1>
-						<div class="row">
-							<div class="col-6 pe-5">
-								<button type="button" class="btn btn-link px-10 btn-block h-100 rounded-3">
-									<strong class="antialiased">Claimed</strong>
-								</button>
-							</div>
-							<div class="col-6 ps-5">
-								<button type="button" class="btn btn-primary px-10 btn-block h-100 rounded-3">
-									<strong class="antialiased">Unclaimed</strong>
-								</button>
-							</div>
-						</div>
-						<div class="mt-15">
-							<strong>Total:</strong> 10 unclaimed tickets
-						</div>
+        <!-- Main content start -->
+        <div class="mt-auto">
+          <div class="card text-base rounded-4 shadow-lg border-transparent">
+            <h1 class="fw-700 text-center fs-base-p6 mt-0">
+              Statistics &mdash; My NFT Launch Party 2022
+            </h1>
+            <div class="row">
+              <div class="col-6 pe-5">
+                <button type="button" class="btn btn-link px-10 btn-block h-100 rounded-3">
+                  <strong class="antialiased">Claimed</strong>
+                </button>
+              </div>
+              <div class="col-6 ps-5">
+                <button type="button" class="btn btn-primary px-10 btn-block h-100 rounded-3">
+                  <strong class="antialiased">Unclaimed</strong>
+                </button>
+              </div>
+            </div>
+            <div class="mt-15"><strong>Total:</strong> 10 unclaimed tickets</div>
 
-						<!-- Ticket list start -->
-						<div class="fs-base-n2 mt-15">
-							<!-- Ticket item start -->
-							<div class="py-10 border-top">
-								<div>
-									<strong>Wallet: </strong> 0xaa...0xaa
-								</div>
-								<div class="fw-700 text-primary mt-5">
-									Issued:
-								</div>
-								<div>
-									Tuesday, Aug 23, 20:15 PM
-								</div>
-							</div>
-							<!-- Ticket item end -->
+            <!-- Ticket list start -->
+            <div class="fs-base-n2 mt-15">
+              <!-- Ticket item start -->
+              <div class="py-10 border-top">
+                <div><strong>Wallet: </strong> 0xaa...0xaa</div>
+                <div class="fw-700 text-primary mt-5">Issued:</div>
+                <div>Tuesday, Aug 23, 20:15 PM</div>
+              </div>
+              <!-- Ticket item end -->
 
-							<!-- Ticket item start -->
-							<div class="py-10 border-top">
-								<div>
-									<strong>Wallet: </strong> 0xaa...0xaa
-								</div>
-								<div class="fw-700 text-primary mt-5">
-									Issued:
-								</div>
-								<div>
-									Tuesday, Aug 23, 20:15 PM
-								</div>
-							</div>
-							<!-- Ticket item end -->
-						</div>
-						<!-- Ticket list end -->
+              <!-- Ticket item start -->
+              <div class="py-10 border-top">
+                <div><strong>Wallet: </strong> 0xaa...0xaa</div>
+                <div class="fw-700 text-primary mt-5">Issued:</div>
+                <div>Tuesday, Aug 23, 20:15 PM</div>
+              </div>
+              <!-- Ticket item end -->
+            </div>
+            <!-- Ticket list end -->
 
-						<!-- Pagination start -->
-						<div class="d-flex align-content-center border-top pt-20">
-							<div>
-								<button class="btn btn-sm btn-square btn-rounded">
-									<i class="fa-regular fa-arrow-left"></i>
-									<span class="visually-hidden">Previous</span>
-								</button>
-							</div>
+            <!-- Pagination start -->
+            <div class="d-flex align-content-center border-top pt-20">
+              <div>
+                <button class="btn btn-sm btn-square btn-rounded">
+                  <i class="fa-regular fa-arrow-left"></i>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+              </div>
 
-							<!-- Page nav start (Please only show 3 relevant links for all pages - current, +1, -1) -->
-							<ul class="pagination pagination-sm pagination-rounded my-0 ms-auto">
-								<li class="page-item">
-									<a href="#" class="page-link">1</a>
-								</li>
-								<li class="page-item active">
-									<a href="#" class="page-link" tabindex="-1">2</a>
-								</li>
-								<li class="page-item">
-									<a href="#" class="page-link">3</a>
-								</li>
-							</ul>
-							<!-- Page nav end -->
-							
-							<div class="ms-auto">
-								<button class="btn btn-sm btn-square btn-rounded">
-									<i class="fa-regular fa-arrow-right"></i>
-									<span class="visually-hidden">Next</span>
-								</button>
-							</div>
-						</div>
-						<!-- Pagination end -->
-					</div>
-					<div class="content">
-						<a href="#" class="btn btn-secondary btn-block rounded-3 py-15 fs-base-p4 shadow">
-							<i class="fa-regular fa-arrow-left me-5"></i>
-							<strong class="antialiased">Return to Scanner</strong>
-						</a>
-					</div>
-				</div>
-				<!-- Main content end -->
+              <!-- Page nav start (Please only show 3 relevant links for all pages - current, +1, -1) -->
+              <ul class="pagination pagination-sm pagination-rounded my-0 ms-auto">
+                <li class="page-item">
+                  <a href="#" class="page-link">1</a>
+                </li>
+                <li class="page-item active">
+                  <a href="#" class="page-link" tabindex="-1">2</a>
+                </li>
+                <li class="page-item">
+                  <a href="#" class="page-link">3</a>
+                </li>
+              </ul>
+              <!-- Page nav end -->
 
-				<!-- Footer start -->
-				<div class="content text-center mt-auto mb-10">
-					<span class="fs-base-n2 opacity-75">
-						&copy; 2022, SP Tech Inc. All rights reserved
-					</span>
-				</div>
-				<!-- Footer end -->
-			</div>
-			<!-- Content wrapper end -->
-		</div>
-		<!-- Page wrapper end -->
+              <div class="ms-auto">
+                <button class="btn btn-sm btn-square btn-rounded">
+                  <i class="fa-regular fa-arrow-right"></i>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+            </div>
+            <!-- Pagination end -->
+          </div>
+          <div class="content">
+            <a href="#" class="btn btn-secondary btn-block rounded-3 py-15 fs-base-p4 shadow">
+              <i class="fa-regular fa-arrow-left me-5"></i>
+              <strong class="antialiased">Return to Scanner</strong>
+            </a>
+          </div>
+        </div>
+        <!-- Main content end -->
 
-		<!-- Halfmoon JS -->
-		<script src="../../../backend/static/socialpass-theme/halfmoon.js"></script>
+        <!-- Footer start -->
+        <div class="content text-center mt-auto mb-10">
+          <span class="fs-base-n2 opacity-75"> &copy; 2022, SP Tech Inc. All rights reserved </span>
+        </div>
+        <!-- Footer end -->
+      </div>
+      <!-- Content wrapper end -->
+    </div>
+    <!-- Page wrapper end -->
 
-		<script type="text/javascript">
-			/**
-			 * Handle the keydown event (only on debug mode).
-			 *
-			 * This is used to create the dark mode and sidebar toggle shortcuts.
-			 * These shortcuts are very useful for testing.
-			 */
-			document.addEventListener("keydown", function (event) {
-				if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
-					event = event || window.event;
+    <!-- Halfmoon JS -->
+    <script src="../../../backend/deprecated_static/socialpass-theme/halfmoon.js"></script>
 
-					if (!(event.ctrlKey || event.metaKey)) {
-						// Toggle dark mode when [shift] + [D] keys are pressed
-						if (event.shiftKey && event.which == 68) {
-							halfmoon.toggleDarkMode();
-						}
-					}
-				}
-			});
-		</script>
-	</body>
+    <script type="text/javascript">
+      /**
+       * Handle the keydown event (only on debug mode).
+       *
+       * This is used to create the dark mode and sidebar toggle shortcuts.
+       * These shortcuts are very useful for testing.
+       */
+      document.addEventListener('keydown', function (event) {
+        if (
+          !(
+            document.querySelector('input:focus') ||
+            document.querySelector('textarea:focus') ||
+            document.querySelector('select:focus')
+          )
+        ) {
+          event = event || window.event
+
+          if (!(event.ctrlKey || event.metaKey)) {
+            // Toggle dark mode when [shift] + [D] keys are pressed
+            if (event.shiftKey && event.which == 68) {
+              halfmoon.toggleDarkMode()
+            }
+          }
+        }
+      })
+    </script>
+  </body>
 </html>

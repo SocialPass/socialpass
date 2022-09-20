@@ -5,7 +5,8 @@ import EventLoading from '@/components/EventLoading'
 
 import { useEvent } from '@/contexts/EventContext'
 
-import { CopyrightFooter } from '@/components/CopyrightFooter'
+import { Footer } from '@/components/Footer'
+import { NavBar } from '@/components/NavBar'
 
 const Base = () => {
   const navigate = useNavigate()
@@ -25,10 +26,15 @@ const Base = () => {
       {isLoading ? (
         <EventLoading />
       ) : !error && event ? (
-        <>
-          <Outlet />
-          <CopyrightFooter />
-        </>
+        <div className='page-wrapper'>
+          <div className='content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column'>
+            <NavBar />
+
+            <Outlet />
+
+            <Footer />
+          </div>
+        </div>
       ) : null}
     </div>
   )

@@ -9,22 +9,17 @@ export function EventInfo() {
 
   return (
     <>
-      <div className='landing-page-body p-10 py-10'>
-        <div className='d-flex flex-column align-items-center justify-content-around'>
-          <img id='SocialPassHeaderIcon' className='landing-page-logo' src={window.icon} />
+      <EventContainer event={event} />
 
-          <EventContainer event={event} />
-
-          <div className='container px-20 py-5 d-flex flex-column'>
-            <Button
-              onClick={() => {
-                navigate('scanner')
-              }}
-            >
-              Start Scanning
-            </Button>
-          </div>
-        </div>
+      <div className='content'>
+        <Button
+          className='btn-lg py-15 fs-base-p4'
+          onClick={() => {
+            navigate('scanner')
+          }}
+        >
+          <strong className='antialiased'>Start Scanning</strong>
+        </Button>
       </div>
     </>
   )

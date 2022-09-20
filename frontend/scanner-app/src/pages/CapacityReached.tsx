@@ -1,5 +1,5 @@
 import React from 'react'
-import ColoredLogo from '../static/images/socialpass-colored-logo.svg'
+import ColoredLogo from '../deprecated_static/images/socialpass-colored-logo.svg'
 
 export function CapacityReached() {
   return (

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useEvent } from '@/contexts/EventContext'
 
 import { StatisticsTable } from '@/components/StatisticsTable'
-import { CopyrightFooter } from '@/components/CopyrightFooter'
+import { Footer } from '@/components/Footer'
 
 export function Statistics() {
   const navigate = useNavigate()
@@ -26,7 +26,7 @@ export function Statistics() {
           </button>
         </div>
       </div>
-      <CopyrightFooter />
+      <Footer />
     </div>
   )
 }

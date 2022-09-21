@@ -301,9 +301,9 @@ class Event(DBModel):
 
     def get_absolute_url(self):
         if self.state == Event.StateEnum.DRAFT.value:
-            _success_url = "event_update"
+            _success_url = "dashboard:event_update"
         elif self.state == Event.StateEnum.LIVE.value:
-            _success_url = "event_detail"
+            _success_url = "dashboard:event_detail"
         return reverse(
             _success_url,
             args=(

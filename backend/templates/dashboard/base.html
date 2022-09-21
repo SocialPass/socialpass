@@ -58,12 +58,6 @@
 		<!-- End Google Tag Manager -->
 	</head>
 	{% with request.resolver_match.url_name as url_name %}
-
-	<script>
-		console.log("aq joao victor")
-		console.log(url_name)
-		console.log("aq joao victor")
-	</script>
 	<body class="g-sidenav-show bg-gray-100">
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 
@@ -87,7 +81,7 @@
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Main</h6>
           </li>
             <li class="nav-item">
-              <a class="nav-link {% if url_name == 'dashboard:event_list' or url_name == 'dashboard:event_create' or url_name == 'dashboard:event_detail' or url_name == 'dashboard:event_update' %}active{% endif %}" href="{% url 'dashboard:event_list' current_team.public_id %}">
+              <a class="nav-link {% if url_name == 'event_list' or url_name == 'event_create' or url_name == 'event_detail' or url_name == 'event_update' %}active{% endif %}" href="{% url 'dashboard:event_list' current_team.public_id %}">
                 <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-5 me-3">
                   <i class="fa-solid fa-ticket"></i>
                 </div>
@@ -100,7 +94,7 @@
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Team</h6>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if url_name == 'dashboard:team_detail' or url_name == 'team_update' %}active{% endif %}" href="{% url 'dashboard:team_detail' current_team.public_id %}">
+            <a class="nav-link {% if url_name == 'team_detail' or url_name == 'team_update' %}active{% endif %}" href="{% url 'dashboard:team_detail' current_team.public_id %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-5 me-3">
                 <i class="fa-solid fa-gears"></i>
               </div>
@@ -108,7 +102,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if url_name == 'dashboard:team_members' %}active{% endif %}" href="{% url 'dashboard:team_members' current_team.public_id %}">
+            <a class="nav-link {% if url_name == 'team_members' %}active{% endif %}" href="{% url 'dashboard:team_members' current_team.public_id %}">
               <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-5 me-3">
                 <i class="fa-solid fa-ticket"></i>
               </div>
@@ -121,7 +115,7 @@
            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">User</h6>
          </li>
          <li class="nav-item">
-           <a class="nav-link {% if url_name == 'dashboard:user_detail' %}active{% endif %}" href="{% url 'dashboard:user_detail' %}">
+           <a class="nav-link {% if url_name == 'user_detail' %}active{% endif %}" href="{% url 'dashboard:user_detail' %}">
              <div class="sidebar-icon-container d-flex align-items-center justify-content-center rounded-3 bg-gradient-info text-white fs-6 me-3">
                <i class="fa-solid fa-user"></i>
              </div>

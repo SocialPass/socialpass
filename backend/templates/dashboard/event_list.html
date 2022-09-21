@@ -72,20 +72,20 @@
               <td class="align-middle px-4">
                 <div class="d-flex flex-row justify-content-between">
                   {% if event.state == "Draft" %}
-                    <a class="btn btn-sm btn-primary" href="{% url 'event_update' current_team.public_id event.pk %}">
+                    <a class="btn btn-sm btn-primary" href="{% url 'dashboard:event_update' current_team.public_id event.pk %}">
                     Edit
                     </a>
                     <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
                       Delete
                     </a>
                   {% elif event.state == "Live" %}
-                    <a class="btn btn-sm btn-primary" href="{% url 'event_detail' current_team.public_id event.pk %}">
+                    <a class="btn btn-sm btn-primary" href="{% url 'dashboard:event_detail' current_team.public_id event.pk %}">
                     Details
                     </a>
-                    <a class="btn btn-sm btn-primary" href="{% url 'event_stats' current_team.public_id event.pk %}">
+                    <a class="btn btn-sm btn-primary" href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}">
                     Stats
                     </a>
-                    <a class="btn btn-sm" href="{% url 'event_update' current_team.public_id event.pk %}">
+                    <a class="btn btn-sm" href="{% url 'dashboard:event_update' current_team.public_id event.pk %}">
                     Edit
                     </a>
                     <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">

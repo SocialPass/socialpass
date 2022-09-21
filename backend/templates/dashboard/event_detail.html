@@ -16,7 +16,7 @@
     </p>
   </div>
   <div class="ms-auto align-self-center">
-    <a href="{% url 'event_update' current_team.public_id event.pk %}" class="btn text-primary ">
+    <a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="btn text-primary ">
     <i class="fa-regular fa-edit"></i>
     <span class="ms-5 d-none d-sm-inline">Update Event</span>
     </a>
@@ -152,7 +152,7 @@
           <a id="twitter-share-icon" target="_blank" href="#">
             <i class="fab fa-twitter text-secondary fa-lg"></i>
           </a>
-          <a id="facebook-share-icon" target="_blank" 
+          <a id="facebook-share-icon" target="_blank"
             href="#">
             <i class="fab fa-facebook text-secondary fa-lg"></i>
           </a>

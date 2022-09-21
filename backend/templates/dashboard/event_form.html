@@ -2,11 +2,11 @@
 {% load static get_theme_value i18n get_chain_name crispy_forms_tags %}
 
 {% block head_title %}
-{% if request.resolver_match.url_name == 'dashboard:event_create' %}Create{% else %}Update{% endif %} Event - {% get_theme_value "brand_name" %}
+{% if request.resolver_match.url_name == 'event_create' %}Create{% else %}Update{% endif %} Event - {% get_theme_value "brand_name" %}
 {% endblock head_title %}
 
 {% block navbar_breadcrumb %}
-{% if url_name == 'dashboard:event_create' %}Create{% else %}Update{% endif %} Event
+{% if url_name == 'event_create' %}Create{% else %}Update{% endif %} Event
 {% endblock %}
 
 {% block wip_event_creation_ux %}
@@ -102,10 +102,10 @@
 	<div class="p-content d-flex h-100">
 		<div class="align-self-center">
 			<h1 class="content-title m-0 fs-base-p6">
-				{% if url_name == 'dashboard:event_create' %}Create{% else %}Update '{{event.title}}'{% endif %}
+				{% if url_name == 'event_create' %}Create{% else %}Update '{{event.title}}'{% endif %}
 			</h1>
 			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-				Use the following form to {% if url_name == 'dashboard:event_create' %}create{% else %}update{% endif %} an event.
+				Use the following form to {% if url_name == 'event_create' %}create{% else %}update{% endif %} an event.
 			</p>
 		</div>
 	</div>

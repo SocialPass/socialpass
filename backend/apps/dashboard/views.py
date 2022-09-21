@@ -79,7 +79,7 @@ class RequireLiveEventMixin:
                 "This event is not live yet. \
                 Please complete the creation process.",
             )
-            return redirect("event_update", **self.kwargs)
+            return redirect("dashboard:event_update", **self.kwargs)
 
         return super().dispatch(request, *args, **kwargs)
 

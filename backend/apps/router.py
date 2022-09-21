@@ -39,17 +39,17 @@ urlpatterns += [
         sitemap_views.index,
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
-    ),
+    ),  # type: ignore
     path(
         "sitemap-<section>.xml",
         sitemap_views.sitemap,
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
-    ),
+    ),  # type: ignore
     path(
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
-    ),
+    ),  # type: ignore
 ]
 
 # Local URLs
@@ -58,7 +58,7 @@ is_local = (
 )
 if is_local:
     # Static files
-    urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += staticfiles_urlpatterns()  # type: ignore
 
     # OpenAPI Schema
     schema_view = get_schema_view(

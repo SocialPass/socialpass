@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import useEvent from '@/hooks/useEvent'
-import { EventContainer } from '@/components/EventContainer'
+import { EventContainer } from './EventContainer'
 import { Button } from '@/components/Button'
 import NavBar from '@/components/NavBar'
 

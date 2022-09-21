@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 
 import { EventContext } from './EventContext'
+import { Theme as ThemeType } from '@/types/Event'
 
 export const ThemeContext = createContext({})
 
@@ -16,7 +17,7 @@ const getDefaultLogo = () =>
 
 export const ThemeProvider = ({ children }: any) => {
   const { event } = useContext(EventContext)
-  const [theme, setTheme] = useState(null)
+  const [theme, setTheme] = useState<ThemeType | null>(null)
   const [isReady, setIsReady] = useState(false)
 
   const createCSS = (href, type, rel, media) => {
@@ -39,26 +40,26 @@ export const ThemeProvider = ({ children }: any) => {
 
   useEffect(() => {
     const newTheme = {
-      brandName: 'SocialPass',
+      brand_name: 'SocialPass',
       favicon: getDefaultLogo(),
       logo: getDefaultLogo(),
-      cssTheme: getDefaultCss(),
+      css_theme: getDefaultCss(),
     }
 
     if (event) {
       if (event?.team?.theme?.css_theme) {
-        newTheme.brandName = event.team.theme?.brand_name
+        newTheme.brand_name = event.team.theme?.brand_name
         newTheme.favicon = event.team?.theme?.logo
         newTheme.logo = event.team?.theme?.logo
-        newTheme.cssTheme = event.team?.theme?.css_theme
-
-        const link = createCSS(newTheme.cssTheme, 'text/css', 'stylesheet', 'screen,print')
-        const favIcon = createFavicon(newTheme.favicon, 'icon')
-        window.icon = newTheme.favicon
-
-        document.getElementsByTagName('head')[0].appendChild(link)
-        document.getElementsByTagName('head')[0].appendChild(favIcon)
+        newTheme.css_theme = event.team?.theme?.css_theme
       }
+
+      const link = createCSS(newTheme.css_theme, 'text/css', 'stylesheet', 'screen,print')
+      const favIcon = createFavicon(newTheme.favicon, 'icon')
+      window.icon = newTheme.favicon
+
+      document.getElementsByTagName('head')[0].appendChild(link)
+      document.getElementsByTagName('head')[0].appendChild(favIcon)
 
       setTheme(newTheme)
       setIsReady(true)

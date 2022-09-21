@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Html5QrcodeScanner } from '@/components/Html5QrcodeScanner'
+import { Html5QrcodeScanner } from './Html5QrcodeScanner'
+import toast from 'react-hot-toast'
 
 import useEvent from '@/hooks/useEvent'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -10,41 +10,24 @@ const Scanner = () => {
   const { redemptionPublicId } = useParams()
   const navigate = useNavigate()
   const { event, setEvent }: any = useEvent()
-  // const { addToast, clearToasts } = useToast()
 
   const handleRedirect = () => {
     navigate('..')
   }
 
   const handleScan = (qrcode: any) => {
-    console.log(qrcode)
-    // TicketApi.claim(event.publicId, qrCode)
-    //   .then((data) => {
-    //     setEvent({
-    //       ...event,
-    //       ticket_count: data.ticket_count,
-    //       redeemed_count: data.redeemed_count,
-    //     })
-    //     // addToast({
-    //     //   type: 'success',
-    //     //   title: 'Succesful Scan',
-    //     //   description: '',
-    //     // })
-    //   })
-    //   .catch((err_data: any) => {
-    //     // addToast({
-    //     //   type: 'error',
-    //     //   title: 'Scan Failed',
-    //     //   description: err_data?.message,
-    //     // })
-    //     setScanFailureBlock({
-    //       ...initialScanFailureBlock,
-    //       active: true,
-    //     })
-    //   })
-    //   .finally(() => {
-    //     setWaitingForScan(false)
-    //   })
+    TicketApi.claim(event.publicId, qrcode)
+      .then((data) => {
+        setEvent({
+          ...event,
+          ticket_count: data.ticket_count,
+          redeemed_count: data.redeemed_count,
+        })
+        toast.success('Succesful Scan')
+      })
+      .catch((err_data: any) => {
+        toast.error('Scan Failed')
+      })
   }
 
   return (

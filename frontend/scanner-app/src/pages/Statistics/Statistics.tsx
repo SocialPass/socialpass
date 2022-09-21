@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useEvent from '@/hooks/useEvent'
 import { TicketApi } from '@/services/api'
 
-import { TicketList } from '@/components/TicketList'
+import { TicketList } from './TicketList'
 import Button from '@/components/Button'
 import NavBar from '@/components/NavBar'
 

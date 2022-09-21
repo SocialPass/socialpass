@@ -89,6 +89,4 @@ if is_local:
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar
 
-        urlpatterns = [
-            path("__debug__/", include(debug_toolbar.urls))
-        ] + urlpatterns  # type: ignore
+        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns

@@ -10,7 +10,7 @@ export default function Router(){
 	return (
 	<BrowserRouter>
 		<Routes>
-			<Route path="/" element={<Base />} >
+			<Route path="/:public_id" element={<Base />} >
 				<Route index element={<Home />} />
 				<Route path="success" element={<Success />} />
 				<Route path="checkout/wallet" element={<WalletCheckout />} />

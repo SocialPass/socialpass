@@ -18,7 +18,7 @@ const { chains, provider, webSocketProvider } = configureChains(defaultChains, [
 ])
 
 // Set up client
-export const client = createClient({
+export const Web3Provider = createClient({
   autoConnect: true,
   connectors: [
 	new MetaMaskConnector({ chains }),

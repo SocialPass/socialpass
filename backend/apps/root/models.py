@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 import boto3
-from allauth.account.adapter import get_adapter
+from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
@@ -91,9 +91,7 @@ class InviteQuerySet(models.QuerySet):
         return self.exclude(self.expired_q())
 
     def expired_q(self):
-        sent_threshold = timezone.now() - timedelta(
-            days=settings.INVITATIONS_INVITATION_EXPIRY
-        )
+        sent_threshold = timezone.now() - timedelta(days=3)
         q = Q(accepted=True) | Q(sent__lt=sent_threshold)
         return q
 
@@ -106,8 +104,7 @@ class InviteQuerySet(models.QuerySet):
 
 class Invite(DBModel):
     """
-    Custom invite inherited from django-invitations
-    Used for team invitations
+    Invite model used for team invitations
     """
 
     # Queryset manager
@@ -127,7 +124,7 @@ class Invite(DBModel):
     email = models.EmailField(
         unique=True,
         verbose_name="e-mail address",
-        max_length=settings.INVITATIONS_EMAIL_MAX_LENGTH,
+        max_length=254,
     )
     # custom
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
@@ -146,13 +143,13 @@ class Invite(DBModel):
 
     def key_expired(self):
         expiration_date = self.sent + timedelta(
-            days=settings.INVITATIONS_INVITATION_EXPIRY,
+            days=3,
         )
         return expiration_date <= timezone.now()
 
     def send_invitation(self, request, **kwargs):
         current_site = get_current_site(request)
-        invite_url = reverse(settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key])
+        invite_url = reverse("team_accept_invite", args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(
@@ -168,7 +165,7 @@ class Invite(DBModel):
 
         email_template = "invitations/email/email_invite"
 
-        get_adapter().send_mail(email_template, self.email, ctx)
+        DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
         self.sent = timezone.now()
         self.save()
 

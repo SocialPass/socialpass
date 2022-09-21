@@ -1,7 +1,7 @@
 import json
 import secrets
 
-from allauth.account.adapter import get_adapter
+from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -142,7 +142,7 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         return Invite.objects.all()
 
     def get_signup_redirect(self):
-        return settings.INVITATIONS_SIGNUP_REDIRECT
+        return "account_signup"
 
     def get_object(self, queryset=None):
         if queryset is None:
@@ -160,7 +160,9 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         invitation.archived_email = invitation.email
         invitation.email = f"{secrets.token_urlsafe(12)}{invitation.archived_email}"
         invitation.save()
-        get_adapter().stash_verified_email(self.request, invitation.archived_email)
+        DefaultAccountAdapter().stash_verified_email(
+            self.request, invitation.archived_email
+        )
         # If team, add success message
         if invitation.team:
             messages.add_message(

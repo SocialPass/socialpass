@@ -1,4 +1,3 @@
-from allauth.account.adapter import get_adapter
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
@@ -31,7 +30,6 @@ class CleanEmailMixin:
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        email = get_adapter().clean_email(email)
 
         errors = {
             "already_invited": _("This e-mail address has already been" " invited."),

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="socialpass-scanner">
+<html lang="en" class="socialpass-scanner" data-hm-autoset-preferences="color-scheme">
   <head>
     <!-- Meta tags -->
     <meta charset="utf-8" />
@@ -12,15 +12,8 @@
     <!-- Title -->
     <title>SocialPass - Hosting the Next Generation of Events</title>
 
-    <!-- Fav icon -->
-    <link
-      rel="icon"
-      href="https://res.cloudinary.com/nfty-labs/image/upload/v1652735850/SocialPass-Icon_eanblz.svg"
-    />
-
     <!-- Halfmoon CSS -->
     <link href="/src/deprecated_static/socialpass-theme/halfmoon.css" rel="stylesheet" />
-    <link href="/src/deprecated_static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
     <script>
       window.global = window
     </script>
@@ -67,44 +60,5 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script src="/src/deprecated_static/js/halfmoon.js"></script>
-
-    <!-- OnLoad script for setting whitelabeling -->
-    <script type="module">
-      // import defaultLogo from './src/deprecated_static/images/landingpage_logo.png';
-      // const devURL = "http://localhost:8000/api";
-      // const prodURL = import.meta.env.VITE_APP_API_URL;
-      // const baseURL = import.meta.env.PROD ? prodURL : devURL;
-
-      // (function(window, document, undefined){
-      //   window.onload = init;
-      //   function init(){
-      //   const public_id = location.pathname.split('/')[1];
-      //   const response = fetch(`${baseURL}/scanner/v1/${public_id}/event/`)
-      //     .then(response => response.json())
-      //     .then(data => {
-      //       const theme_name = data.team.theme?.css_theme;
-      //       // Theme exists, set variables
-      //       if(theme_name){
-      //         const brand_name = data.team.theme?.brand_name;
-      //         const logo = data.team?.theme?.logo;
-      //         let link = document.createElement( "link" );
-      //         let favIcon = document.createElement( "link" );
-      //         link.href = `${theme_name}`;
-      //         favIcon.rel = "icon"
-      //         favIcon.href = `${logo}`
-      //         window.icon = `${logo}`;
-      //         link.type = "text/css";
-      //         link.rel = "stylesheet";
-      //         link.media = "screen,print";
-      //         document.getElementsByTagName( "head" )[0].appendChild( link );
-      //         document.getElementsByTagName( "head" )[0].appendChild( favIcon );
-      //       } else {
-      //         window.icon = defaultLogo
-      //       }
-      //     })
-      //   }
-
-      // })(window, document, undefined);
-    </script>
   </body>
 </html>

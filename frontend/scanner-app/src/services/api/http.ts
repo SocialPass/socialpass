@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export let baseURL = 'http://localhost:8000/api'
+export let baseURL = 'http://localhost:8000'
 
 if (import.meta.env.VITE_APP_API_URL) {
   baseURL = import.meta.env.VITE_APP_API_URL

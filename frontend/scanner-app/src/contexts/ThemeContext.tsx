@@ -2,15 +2,24 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 import { EventContext } from './EventContext'
 
-import defaultLogo from '@/deprecated_static/images/landingpage_logo.png'
-
 export const ThemeContext = createContext({})
+
+const getDefaultCss = () =>
+  `${
+    import.meta.env.VITE_APP_API_URL || 'http://localhost:8000'
+  }/static/socialpass-theme/socialpass-theme.css`
+
+const getDefaultLogo = () =>
+  `${
+    import.meta.env.VITE_APP_API_URL || 'http://localhost:8000'
+  }/static/brand-logos/SocialPass-Icon.svg`
 
 export const ThemeProvider = ({ children }: any) => {
   const { event } = useContext(EventContext)
-  const [theme, setTheme] = useState({})
+  const [theme, setTheme] = useState(null)
+  const [isReady, setIsReady] = useState(false)
 
-  const createLink = (href, type, rel, media) => {
+  const createCSS = (href, type, rel, media) => {
     const el = document.createElement('link')
     el.href = href
     el.type = type
@@ -20,37 +29,39 @@ export const ThemeProvider = ({ children }: any) => {
     return el
   }
 
+  const createFavicon = (href, rel) => {
+    const el = document.createElement('link')
+    el.href = href
+    el.rel = rel
+
+    return el
+  }
+
   useEffect(() => {
+    const newTheme = {
+      brandName: 'SocialPass',
+      favicon: getDefaultLogo(),
+      logo: getDefaultLogo(),
+      cssTheme: getDefaultCss(),
+    }
+
     if (event) {
-      const css_theme = event.team.theme?.css_theme
+      if (event?.team?.theme?.css_theme) {
+        newTheme.brandName = event.team.theme?.brand_name
+        newTheme.favicon = event.team?.theme?.logo
+        newTheme.logo = event.team?.theme?.logo
+        newTheme.cssTheme = event.team?.theme?.css_theme
 
-      if (css_theme) {
-        const brand_name = event.team.theme?.brand_name
-        const logo = event.team?.theme?.logo
-
-        const link = createLink(css_theme, 'text/css', 'stylesheet', 'screen,print')
-        const favIcon = createLink(logo, 'image/x-icon', 'icon', null)
-        window.icon = logo
+        const link = createCSS(newTheme.cssTheme, 'text/css', 'stylesheet', 'screen,print')
+        const favIcon = createFavicon(newTheme.favicon, 'icon')
+        window.icon = newTheme.favicon
 
         document.getElementsByTagName('head')[0].appendChild(link)
         document.getElementsByTagName('head')[0].appendChild(favIcon)
-
-        setTheme({
-          brand_name: brand_name,
-          logo: logo,
-          css_theme: css_theme,
-        })
-      } else {
-        window.icon = defaultLogo
-
-        setTheme({
-          logo: defaultLogo,
-        })
       }
 
-      setTheme({
-        brand_name: event.team.theme?.brand_name,
-      })
+      setTheme(newTheme)
+      setIsReady(true)
     }
   }, [event])
 
@@ -59,6 +70,7 @@ export const ThemeProvider = ({ children }: any) => {
       value={{
         theme,
         setTheme,
+        isReady,
       }}
     >
       {children}

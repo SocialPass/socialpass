@@ -4,6 +4,7 @@ import { Outlet, useParams, useNavigate } from 'react-router-dom'
 import EventLoading from '@/components/EventLoading'
 
 import useEvent from '@/hooks/useEvent'
+import useTheme from '@/hooks/useTheme'
 
 import { Footer } from '@/components/Footer'
 
@@ -11,6 +12,7 @@ const Base = () => {
   const navigate = useNavigate()
   const { redemptionPublicId } = useParams()
   const { event, getEvent, isLoading, error }: any = useEvent()
+  const { isReady }: any = useTheme()
 
   useEffect(() => {
     if (!event || event.publicId !== redemptionPublicId) {
@@ -22,7 +24,7 @@ const Base = () => {
 
   return (
     <div className='content'>
-      {isLoading ? (
+      {isLoading || !isReady ? (
         <EventLoading />
       ) : !error && event ? (
         <div className='page-wrapper'>

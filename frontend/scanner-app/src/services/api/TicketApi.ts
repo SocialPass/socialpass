@@ -3,7 +3,7 @@ import axios from './http'
 export default {
   getAll(redemptionPublicId: string, claimed?: boolean) {
     return axios
-      .get(`scanner/v1/${redemptionPublicId}/tickets/`, { params: { claimed } })
+      .get(`/api/scanner/v1/${redemptionPublicId}/tickets/`, { params: { claimed } })
       .then((response) => Promise.resolve(response))
       .catch((error) =>
         Promise.reject({
@@ -15,7 +15,7 @@ export default {
 
   claim(publicId: string, qrCode: string) {
     return axios
-      .post(`scanner/v1/${publicId}/claim-ticket/`, { embed_code: qrCode })
+      .post(`/api/scanner/v1/${publicId}/claim-ticket/`, { embed_code: qrCode })
       .then((response) => Promise.resolve(response.data))
       .catch((error) =>
         Promise.reject({

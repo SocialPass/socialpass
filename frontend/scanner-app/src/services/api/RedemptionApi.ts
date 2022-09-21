@@ -4,7 +4,7 @@ export default {
 
   get(redemptionPublicId: string) {
     return axios
-      .get(`scanner/v1/${redemptionPublicId}/event/`, {})
+      .get(`/api/scanner/v1/${redemptionPublicId}/event/`, {})
       .then((response) => Promise.resolve(response))
       .catch((error) =>
         Promise.reject({

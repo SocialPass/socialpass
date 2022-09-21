@@ -1,7 +1,5 @@
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { useEffect } from 'react';
-
-const qrcodeRegionId = "html5qr-code-full-region";
+import { Html5Qrcode } from 'html5-qrcode';
+import { useEffect, useRef } from 'react';
 
 const createConfig = (props) => {
     let config = {};
@@ -21,28 +19,32 @@ const createConfig = (props) => {
 };
 
 const Html5QrcodePlugin = (props) => {
+    const previewRef = useRef(null);
+    const { onScan, onError } = props;
 
     useEffect(() => {
-        // when component mounts
+        if (!previewRef.current)   {
+        return
+    }
         const config = createConfig(props);
-        const verbose = props.verbose === false;
-        // if (!(props.qrCodeSuccessCallback)) {
-        //     throw "qrCodeSuccessCallback is required callback.";
-        // }
-        const html5QrcodeScanner = new Html5QrcodeScanner(qrcodeRegionId, config, verbose);
-        html5QrcodeScanner.render(props.qrCodeSuccessCallback, props.qrCodeErrorCallback);
+        const verbose = props.verbose === true;
+  
+        const html5Qrcode = new Html5Qrcode(previewRef.current.id);
+        const didStart = html5Qrcode.start({ facingMode: "environment" }, config, onScan, onError).then(()=>true);
 
-        // cleanup function when component will unmount
         return () => {
-            html5QrcodeScanner.clear().catch(error => {
-                console.error("Failed to clear html5QrcodeScanner. ", error);
+            didStart.then(()=>html5Qrcode.stop())
+            .catch(error => {
+                console.error("Scanner stopped", error);
             });
         };
     }, []);
 
     return (
-        <div id={qrcodeRegionId} />
+        <div ref={previewRef} id={'preview'} style={{ overflow: 'visible', position: 'relative' }} />
     );
 };
 
 export default Html5QrcodePlugin;
+
+

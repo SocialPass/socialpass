@@ -8,323 +8,331 @@
  * The above notice must be included in its entirety when this file is used.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 :root {
-    /* Font related (sizes, weights, family, etc.) */
+  /* Font related (sizes, weights, family, etc.) */
 
-    --base-font-family: "Inter", sans-serif;
-    --base-font-size: 1.6rem;
-    --small-font-size: 1.4rem;
-    --large-font-size: 1.8rem;
-    --bold-font-weight: 600;
+  --base-font-family: 'Inter', sans-serif;
+  --base-font-size: 1.6rem;
+  --small-font-size: 1.4rem;
+  --large-font-size: 1.8rem;
+  --bold-font-weight: 600;
 
-    /* Base background colors */
+  /* Base background colors */
 
-    --base-body-bg-color: var(--gray-color-very-light);
+  --base-body-bg-color: var(--gray-color-very-light);
 
-    /* Border related (mostly for utilities) */
+  /* Border related (mostly for utilities) */
 
-    --base-border-radius: 0.2rem;
+  --base-border-radius: 0.2rem;
 }
 
 .dark-mode {
-    /* Base background colors */
+  /* Base background colors */
 
-    --base-body-bg-color: var(--dark-color);
-    --base-content-bg-color: var(--dark-color-very-light);
+  --base-body-bg-color: var(--dark-color);
+  --base-content-bg-color: var(--dark-color-very-light);
 }
 
 .readable-mode {
-    /* Font related (sizes, weights, family, etc.) */
+  /* Font related (sizes, weights, family, etc.) */
 
-    --base-font-size: 1.8rem;
-    --small-font-size: 1.6rem;
-    --large-font-size: 2.0rem;
+  --base-font-size: 1.8rem;
+  --small-font-size: 1.6rem;
+  --large-font-size: 2rem;
 }
 
 /* System colors */
 
 :root {
-    /* SocialPass blue */
+  /* SocialPass blue */
 
-    --socialpass-blue-color-hue: 195;
-    --socialpass-blue-color-saturation: 60%;
-    --socialpass-blue-color-lightness: 45%;
-    --socialpass-blue-color-lightness-step-up-1: 50%;
-    --socialpass-blue-color-lightness-step-up-2: 55%;
-    --socialpass-blue-color-lightness-step-down-1: 40%;
-    --socialpass-blue-color-lightness-step-down-2: 35%;
+  --socialpass-blue-color-hue: 195;
+  --socialpass-blue-color-saturation: 60%;
+  --socialpass-blue-color-lightness: 45%;
+  --socialpass-blue-color-lightness-step-up-1: 50%;
+  --socialpass-blue-color-lightness-step-up-2: 55%;
+  --socialpass-blue-color-lightness-step-down-1: 40%;
+  --socialpass-blue-color-lightness-step-down-2: 35%;
 
-    --socialpass-blue-color-hsl: var(--socialpass-blue-color-hue), var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness);
-    --socialpass-blue-color-light-hsl: var(--socialpass-blue-color-hue), var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness-step-up-2);
-    --socialpass-blue-color-very-light-hsl: var(--socialpass-blue-color-hue), var(--socialpass-blue-color-saturation), 95%;
-    --socialpass-blue-color-dim-hsl: var(--socialpass-blue-color-hue), var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness-step-down-2);
-    --socialpass-blue-color-very-dim-hsl: var(--socialpass-blue-color-hue), 15%, 15%;
+  --socialpass-blue-color-hsl: var(--socialpass-blue-color-hue),
+    var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness);
+  --socialpass-blue-color-light-hsl: var(--socialpass-blue-color-hue),
+    var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness-step-up-2);
+  --socialpass-blue-color-very-light-hsl: var(--socialpass-blue-color-hue),
+    var(--socialpass-blue-color-saturation), 95%;
+  --socialpass-blue-color-dim-hsl: var(--socialpass-blue-color-hue),
+    var(--socialpass-blue-color-saturation), var(--socialpass-blue-color-lightness-step-down-2);
+  --socialpass-blue-color-very-dim-hsl: var(--socialpass-blue-color-hue), 15%, 15%;
 
-    --socialpass-blue-color: hsl(var(--socialpass-blue-color-hsl));
-    --socialpass-blue-color-light: hsl(var(--socialpass-blue-color-light-hsl));
-    --socialpass-blue-color-very-light: hsl(var(--socialpass-blue-color-very-light-hsl));
-    --socialpass-blue-color-dim: hsl(var(--socialpass-blue-color-dim-hsl));
-    --socialpass-blue-color-very-dim: hsl(var(--socialpass-blue-color-very-dim-hsl));
+  --socialpass-blue-color: hsl(var(--socialpass-blue-color-hsl));
+  --socialpass-blue-color-light: hsl(var(--socialpass-blue-color-light-hsl));
+  --socialpass-blue-color-very-light: hsl(var(--socialpass-blue-color-very-light-hsl));
+  --socialpass-blue-color-dim: hsl(var(--socialpass-blue-color-dim-hsl));
+  --socialpass-blue-color-very-dim: hsl(var(--socialpass-blue-color-very-dim-hsl));
 
-    --text-color-on-socialpass-blue-color-bg: var(--white-color);
+  --text-color-on-socialpass-blue-color-bg: var(--white-color);
 
-    /* SocialPass orange */
+  /* SocialPass orange */
 
-    --socialpass-orange-color-hue: 16;
-    --socialpass-orange-color-saturation: 80%;
-    --socialpass-orange-color-lightness: 60%;
-    --socialpass-orange-color-lightness-step-up-1: 65%;
-    --socialpass-orange-color-lightness-step-up-2: 70%;
-    --socialpass-orange-color-lightness-step-down-1: 55%;
-    --socialpass-orange-color-lightness-step-down-2: 50%;
+  --socialpass-orange-color-hue: 16;
+  --socialpass-orange-color-saturation: 80%;
+  --socialpass-orange-color-lightness: 60%;
+  --socialpass-orange-color-lightness-step-up-1: 65%;
+  --socialpass-orange-color-lightness-step-up-2: 70%;
+  --socialpass-orange-color-lightness-step-down-1: 55%;
+  --socialpass-orange-color-lightness-step-down-2: 50%;
 
-    --socialpass-orange-color-hsl: var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness);
-    --socialpass-orange-color-light-hsl: var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness-step-up-2);
-    --socialpass-orange-color-very-light-hsl: var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), 95%;
-    --socialpass-orange-color-dim-hsl: var(--socialpass-orange-color-hue), var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness-step-down-2);
-    --socialpass-orange-color-very-dim-hsl: var(--socialpass-orange-color-hue), 15%, 15%;
+  --socialpass-orange-color-hsl: var(--socialpass-orange-color-hue),
+    var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness);
+  --socialpass-orange-color-light-hsl: var(--socialpass-orange-color-hue),
+    var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness-step-up-2);
+  --socialpass-orange-color-very-light-hsl: var(--socialpass-orange-color-hue),
+    var(--socialpass-orange-color-saturation), 95%;
+  --socialpass-orange-color-dim-hsl: var(--socialpass-orange-color-hue),
+    var(--socialpass-orange-color-saturation), var(--socialpass-orange-color-lightness-step-down-2);
+  --socialpass-orange-color-very-dim-hsl: var(--socialpass-orange-color-hue), 15%, 15%;
 
-    --socialpass-orange-color: hsl(var(--socialpass-orange-color-hsl));
-    --socialpass-orange-color-light: hsl(var(--socialpass-orange-color-light-hsl));
-    --socialpass-orange-color-very-light: hsl(var(--socialpass-orange-color-very-light-hsl));
-    --socialpass-orange-color-dim: hsl(var(--socialpass-orange-color-dim-hsl));
-    --socialpass-orange-color-very-dim: hsl(var(--socialpass-orange-color-very-dim-hsl));
+  --socialpass-orange-color: hsl(var(--socialpass-orange-color-hsl));
+  --socialpass-orange-color-light: hsl(var(--socialpass-orange-color-light-hsl));
+  --socialpass-orange-color-very-light: hsl(var(--socialpass-orange-color-very-light-hsl));
+  --socialpass-orange-color-dim: hsl(var(--socialpass-orange-color-dim-hsl));
+  --socialpass-orange-color-very-dim: hsl(var(--socialpass-orange-color-very-dim-hsl));
 
-    --text-color-on-socialpass-orange-color-bg: var(--white-color);
+  --text-color-on-socialpass-orange-color-bg: var(--white-color);
 }
 
 .dark-mode {
-    /* SocialPass blue */
+  /* SocialPass blue */
 
-    --socialpass-blue-color-lightness: 40%;
-    --socialpass-blue-color-lightness-step-up-1: 45%;
-    --socialpass-blue-color-lightness-step-up-2: 50%;
-    --socialpass-blue-color-lightness-step-down-1: 35%;
-    --socialpass-blue-color-lightness-step-down-2: 30%;
+  --socialpass-blue-color-lightness: 40%;
+  --socialpass-blue-color-lightness-step-up-1: 45%;
+  --socialpass-blue-color-lightness-step-up-2: 50%;
+  --socialpass-blue-color-lightness-step-down-1: 35%;
+  --socialpass-blue-color-lightness-step-down-2: 30%;
 
-    /* SocialPass orange */
+  /* SocialPass orange */
 
-    --socialpass-orange-color-lightness: 50%;
-    --socialpass-orange-color-lightness-step-up-1: 55%;
-    --socialpass-orange-color-lightness-step-up-2: 60%;
-    --socialpass-orange-color-lightness-step-down-1: 45%;
-    --socialpass-orange-color-lightness-step-down-2: 40%;
+  --socialpass-orange-color-lightness: 50%;
+  --socialpass-orange-color-lightness-step-up-1: 55%;
+  --socialpass-orange-color-lightness-step-up-2: 60%;
+  --socialpass-orange-color-lightness-step-down-1: 45%;
+  --socialpass-orange-color-lightness-step-down-2: 40%;
 }
 
 /* Context colors */
 
 :root {
-    /* Primary colors */
+  /* Primary colors */
 
-    --primary-color-hue: var(--socialpass-blue-color-hue);
-    --primary-color-saturation: var(--socialpass-blue-color-saturation);
-    --primary-color-lightness: var(--socialpass-blue-color-lightness);
-    --primary-color-lightness-step-up-1: var(--socialpass-blue-color-lightness-step-up-1);
-    --primary-color-lightness-step-up-2: var(--socialpass-blue-color-lightness-step-up-2);
-    --primary-color-lightness-step-down-1: var(--socialpass-blue-color-lightness-step-down-1);
-    --primary-color-lightness-step-down-2: var(--socialpass-blue-color-lightness-step-down-2);
+  --primary-color-hue: var(--socialpass-blue-color-hue);
+  --primary-color-saturation: var(--socialpass-blue-color-saturation);
+  --primary-color-lightness: var(--socialpass-blue-color-lightness);
+  --primary-color-lightness-step-up-1: var(--socialpass-blue-color-lightness-step-up-1);
+  --primary-color-lightness-step-up-2: var(--socialpass-blue-color-lightness-step-up-2);
+  --primary-color-lightness-step-down-1: var(--socialpass-blue-color-lightness-step-down-1);
+  --primary-color-lightness-step-down-2: var(--socialpass-blue-color-lightness-step-down-2);
 
-    --primary-color-hsl: var(--socialpass-blue-color-hsl);
-    --primary-color-light-hsl: var(--socialpass-blue-color-light-hsl);
-    --primary-color-very-light-hsl: var(--socialpass-blue-color-very-light-hsl);
-    --primary-color-dim-hsl: var(--socialpass-blue-color-dim-hsl);
-    --primary-color-very-dim-hsl: var(--socialpass-blue-color-very-dim-hsl);
+  --primary-color-hsl: var(--socialpass-blue-color-hsl);
+  --primary-color-light-hsl: var(--socialpass-blue-color-light-hsl);
+  --primary-color-very-light-hsl: var(--socialpass-blue-color-very-light-hsl);
+  --primary-color-dim-hsl: var(--socialpass-blue-color-dim-hsl);
+  --primary-color-very-dim-hsl: var(--socialpass-blue-color-very-dim-hsl);
 
-    --primary-color: var(--socialpass-blue-color);
-    --primary-color-light: var(--socialpass-blue-color-light);
-    --primary-color-very-light: var(--socialpass-blue-color-very-light);
-    --primary-color-dim: var(--socialpass-blue-color-dim);
-    --primary-color-very-dim: var(--socialpass-blue-color-very-dim);
+  --primary-color: var(--socialpass-blue-color);
+  --primary-color-light: var(--socialpass-blue-color-light);
+  --primary-color-very-light: var(--socialpass-blue-color-very-light);
+  --primary-color-dim: var(--socialpass-blue-color-dim);
+  --primary-color-very-dim: var(--socialpass-blue-color-very-dim);
 
-    --text-color-on-primary-color-bg: var(--text-color-on-socialpass-blue-color-bg);
+  --text-color-on-primary-color-bg: var(--text-color-on-socialpass-blue-color-bg);
 
-    /* Secondary colors */
+  /* Secondary colors */
 
-    --secondary-color-hue: var(--socialpass-orange-color-hue);
-    --secondary-color-saturation: var(--socialpass-orange-color-saturation);
-    --secondary-color-lightness: var(--socialpass-orange-color-lightness);
-    --secondary-color-lightness-step-up-1: var(--socialpass-orange-color-lightness-step-up-1);
-    --secondary-color-lightness-step-up-2: var(--socialpass-orange-color-lightness-step-up-2);
-    --secondary-color-lightness-step-down-1: var(--socialpass-orange-color-lightness-step-down-1);
-    --secondary-color-lightness-step-down-2: var(--socialpass-orange-color-lightness-step-down-2);
+  --secondary-color-hue: var(--socialpass-orange-color-hue);
+  --secondary-color-saturation: var(--socialpass-orange-color-saturation);
+  --secondary-color-lightness: var(--socialpass-orange-color-lightness);
+  --secondary-color-lightness-step-up-1: var(--socialpass-orange-color-lightness-step-up-1);
+  --secondary-color-lightness-step-up-2: var(--socialpass-orange-color-lightness-step-up-2);
+  --secondary-color-lightness-step-down-1: var(--socialpass-orange-color-lightness-step-down-1);
+  --secondary-color-lightness-step-down-2: var(--socialpass-orange-color-lightness-step-down-2);
 
-    --secondary-color-hsl: var(--socialpass-orange-color-hsl);
-    --secondary-color-light-hsl: var(--socialpass-orange-color-light-hsl);
-    --secondary-color-very-light-hsl: var(--socialpass-orange-color-very-light-hsl);
-    --secondary-color-dim-hsl: var(--socialpass-orange-color-dim-hsl);
-    --secondary-color-very-dim-hsl: var(--socialpass-orange-color-very-dim-hsl);
+  --secondary-color-hsl: var(--socialpass-orange-color-hsl);
+  --secondary-color-light-hsl: var(--socialpass-orange-color-light-hsl);
+  --secondary-color-very-light-hsl: var(--socialpass-orange-color-very-light-hsl);
+  --secondary-color-dim-hsl: var(--socialpass-orange-color-dim-hsl);
+  --secondary-color-very-dim-hsl: var(--socialpass-orange-color-very-dim-hsl);
 
-    --secondary-color: var(--socialpass-orange-color);
-    --secondary-color-light: var(--socialpass-orange-color-light);
-    --secondary-color-very-light: var(--socialpass-orange-color-very-light);
-    --secondary-color-dim: var(--socialpass-orange-color-dim);
-    --secondary-color-very-dim: var(--socialpass-orange-color-very-dim);
+  --secondary-color: var(--socialpass-orange-color);
+  --secondary-color-light: var(--socialpass-orange-color-light);
+  --secondary-color-very-light: var(--socialpass-orange-color-very-light);
+  --secondary-color-dim: var(--socialpass-orange-color-dim);
+  --secondary-color-very-dim: var(--socialpass-orange-color-very-dim);
 
-    --text-color-on-secondary-color-bg: var(--text-color-on-socialpass-orange-color-bg);
+  --text-color-on-secondary-color-bg: var(--text-color-on-socialpass-orange-color-bg);
 }
 
 /* Lists */
 
 :root {
-    /* Unordered list */
+  /* Unordered list */
 
-    --unordered-list-item-bullet-width: 0.6rem;
+  --unordered-list-item-bullet-width: 0.6rem;
 }
 
 /* Buttons */
 
 :root {
-    --button-vertical-padding: 0.6rem;
+  --button-vertical-padding: 0.6rem;
 
-    --small-button-vertical-padding: 0.4rem;
+  --small-button-vertical-padding: 0.4rem;
 
-    --large-button-vertical-padding: 0.8rem;
+  --large-button-vertical-padding: 0.8rem;
 
-    /* Default button */
+  /* Default button */
 
-    --button-border-color: var(--border-color);
+  --button-border-color: var(--border-color);
 }
 
 .dark-mode {
-    /* Default button */
+  /* Default button */
 
-    --button-bg-clip: border-box;
+  --button-bg-clip: border-box;
 
-    /* Primary button */
+  /* Primary button */
 
-    --button-primary-border-color: transparent;
+  --button-primary-border-color: transparent;
 
-    /* Secondary button */
+  /* Secondary button */
 
-    --button-secondary-border-color: transparent;
+  --button-secondary-border-color: transparent;
 
-    /* Success button */
+  /* Success button */
 
-    --button-success-border-color: transparent;
+  --button-success-border-color: transparent;
 
-    /* Warning button */
+  /* Warning button */
 
-    --button-warning-border-color: transparent;
+  --button-warning-border-color: transparent;
 
-    /* Danger button */
+  /* Danger button */
 
-    --button-danger-border-color: transparent;
+  --button-danger-border-color: transparent;
 }
 
 /* Form */
 
 :root {
-    /* Default input */
+  /* Default input */
 
-    --input-border-color: var(--border-color);
+  --input-border-color: var(--border-color);
 
-    /* Form label */
+  /* Form label */
 
-    --form-label-font-weight: var(--bold-font-weight);
+  --form-label-font-weight: var(--bold-font-weight);
 
-    /* Input group text */
+  /* Input group text */
 
-    --input-group-text-border-color: var(--border-color);
+  --input-group-text-border-color: var(--border-color);
 
-    /* Checkbox */
+  /* Checkbox */
 
-    --checkbox-border-color-focus: var(--input-border-color-focus);
-    --checkbox-box-shadow-focus: var(--input-box-shadow-focus);
+  --checkbox-border-color-focus: var(--input-border-color-focus);
+  --checkbox-box-shadow-focus: var(--input-box-shadow-focus);
 }
 
 .dark-mode {
-    /* Default input */
+  /* Default input */
 
-    --input-bg-clip: border-box;
+  --input-bg-clip: border-box;
 
-    --input-border-color-focus: var(--primary-color-dim);
-    --input-box-shadow-focus: 0 0 0 0.3rem hsla(var(--primary-color-hsl), 0.15);
+  --input-border-color-focus: var(--primary-color-dim);
+  --input-box-shadow-focus: 0 0 0 0.3rem hsla(var(--primary-color-hsl), 0.15);
 }
 
 /* Navbar */
 
 :root {
-    --navbar-height: 4.8rem;
+  --navbar-height: 4.8rem;
 
-    --navbar-text-color: hsla(var(--white-color-hsl), 0.85);
-    --navbar-bg-color: var(--primary-color-dim);
-    --navbar-border-color: transparent;
+  --navbar-text-color: hsla(var(--white-color-hsl), 0.85);
+  --navbar-bg-color: var(--primary-color-dim);
+  --navbar-border-color: transparent;
 }
 
 .dark-mode {
-    --navbar-bg-color: hsl(var(--primary-color-hue), 40%, 10%);
-    --navbar-border-color: hsla(var(--white-color-hsl), 0.15);
+  --navbar-bg-color: hsl(var(--primary-color-hue), 40%, 10%);
+  --navbar-border-color: hsla(var(--white-color-hsl), 0.15);
 }
 
 /* Sidebar */
 
 :root {
-    --sidebar-padding: 0;
-    --sidebar-border-width: 0;
+  --sidebar-padding: 0;
+  --sidebar-border-width: 0;
 
-    --sidebar-text-color: hsla(var(--white-color-hsl), 0.85);
-    --sidebar-bg-color: var(--primary-color);
-    --sidebar-border-color: hsla(var(--white-color-hsl), 0.15);
+  --sidebar-text-color: hsla(var(--white-color-hsl), 0.85);
+  --sidebar-bg-color: var(--primary-color);
+  --sidebar-border-color: hsla(var(--white-color-hsl), 0.15);
 
-    --sidebar-content-padding: 0.4rem 2.5rem;
+  --sidebar-content-padding: 0.4rem 2.5rem;
 
-    /* Sidebar link */
+  /* Sidebar link */
 
-    --sidebar-link-margin: 0;
-    --sidebar-link-border-radius: 0;
+  --sidebar-link-margin: 0;
+  --sidebar-link-border-radius: 0;
 
-    --sidebar-link-text-color: var(--sidebar-text-color);
+  --sidebar-link-text-color: var(--sidebar-text-color);
 
-    --sidebar-link-text-color-hover: var(--sidebar-link-text-color);
-    --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.1);
+  --sidebar-link-text-color-hover: var(--sidebar-link-text-color);
+  --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.1);
 
-    /* Active sidebar link */
+  /* Active sidebar link */
 
-    --sidebar-link-active-text-color: var(--text-color-on-secondary-color-bg);
-    --sidebar-link-active-bg-color: var(--secondary-color);
+  --sidebar-link-active-text-color: var(--text-color-on-secondary-color-bg);
+  --sidebar-link-active-bg-color: var(--secondary-color);
 
-    --sidebar-link-active-text-color-hover: var(--sidebar-link-active-text-color);
+  --sidebar-link-active-text-color-hover: var(--sidebar-link-active-text-color);
 }
 
 .dark-mode {
-    --sidebar-border-width: var(--base-border-width);
+  --sidebar-border-width: var(--base-border-width);
 
-    --sidebar-bg-color: hsl(var(--primary-color-hue), 40%, 15%);
+  --sidebar-bg-color: hsl(var(--primary-color-hue), 40%, 15%);
 
-    /* Sidebar link */
+  /* Sidebar link */
 
-    --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.05);
+  --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.05);
 }
 
 /* Card */
 
 :root {
-    --card-border-color: var(--border-color);
+  --card-border-color: var(--border-color);
 }
 
 /* Dropdown */
 
 :root {
-    /* Dropdown menu */
+  /* Dropdown menu */
 
-    --dropdown-menu-bg-color: var(--base-content-bg-color);
-    --dropdown-menu-border-color: var(--border-color);
+  --dropdown-menu-bg-color: var(--base-content-bg-color);
+  --dropdown-menu-border-color: var(--border-color);
 }
 
 /* Tooltips */
 
 :root {
-    --tooltip-text-color: var(--white-color);
-    --tooltip-bg-color: var(--black-color);
-    --tooltip-box-shadow: none;
+  --tooltip-text-color: var(--white-color);
+  --tooltip-bg-color: var(--black-color);
+  --tooltip-box-shadow: none;
 }
 
 /* Sticky alerts */
 
 :root {
-    --sticky-alerts-width: 34rem;
+  --sticky-alerts-width: 34rem;
 }
 
 /**
@@ -332,30 +340,30 @@
  */
 
 .socialpass-scanner {
-    --base-body-bg-color: var(--gray-color-light);
+  --base-body-bg-color: var(--gray-color-light);
 }
 
 .socialpass-scanner.dark-mode {
-    --base-body-bg-color: var(--dark-color-very-dim);
+  --base-body-bg-color: var(--dark-color-very-dim);
 }
 
 .socialpass-scanner .content-wrapper {
-    color: var(--text-color-on-primary-color-bg);
-    background-color: var(--primary-color);
+  color: var(--text-color-on-primary-color-bg);
+  background-color: var(--primary-color);
 }
 
 .socialpass-scanner.dark-mode .content-wrapper {
-    background-color: hsl(var(--primary-color-hue), 40%, 15%);
+  background-color: hsl(var(--primary-color-hue), 40%, 15%);
 }
 
 /* Content and card */
 
 .socialpass-scanner {
-    --content-and-card-spacing: 4rem;
+  --content-and-card-spacing: 4rem;
 }
 
 @media (max-width: 576px) {
-    .socialpass-scanner {
-        --content-and-card-spacing: 2rem;
-    }
+  .socialpass-scanner {
+    --content-and-card-spacing: 2rem;
+  }
 }

@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Html5QrcodeScanner } from './Html5QrcodeScanner'
 import toast from 'react-hot-toast'
 
@@ -10,38 +11,41 @@ const Scanner = () => {
   const { redemptionPublicId } = useParams()
   const navigate = useNavigate()
   const { event, setEvent }: any = useEvent()
+  const lastQR = useRef()
 
   const handleRedirect = () => {
     navigate('..')
   }
 
   const handleScan = (qrcode: any) => {
-    TicketApi.claim(event.publicId, qrcode)
-      .then((data) => {
-        setEvent({
-          ...event,
-          ticket_count: data.ticket_count,
-          redeemed_count: data.redeemed_count,
+    if (qrcode && qrcode !== lastQR.current) {
+      lastQR.current = qrcode
+
+      TicketApi.claim(event.publicId, qrcode)
+        .then((data) => {
+          setEvent({
+            ...event,
+            ticket_count: data.ticket_count,
+            redeemed_count: data.redeemed_count,
+          })
+          toast.success('Succesful Scan')
         })
-        toast.success('Succesful Scan')
-      })
-      .catch((err_data: any) => {
-        toast.error('Scan Failed')
-      })
+        .catch(() => {
+          toast.error('Scan Failed')
+        })
+    }
   }
 
   return (
     <>
-      <div className='position-relative d-flex align-items-center justify-content-center border hs-400'>
+      <div className='position-relative d-flex align-items-center justify-content-center border hs-400 overflow-hidden'>
         <span className='text-center'>
-          {
-            <Html5QrcodeScanner
-              fps={1}
-              qrbox={{ width: 200, height: 200 }}
-              facingMode='environment'
-              onScan={(result) => handleScan(result)}
-            />
-          }
+          <Html5QrcodeScanner
+            fps={1}
+            qrbox={{ width: 250, height: 250 }}
+            facingMode='environment'
+            onScan={(result) => handleScan(result)}
+          />
         </span>
         <button
           type='button'

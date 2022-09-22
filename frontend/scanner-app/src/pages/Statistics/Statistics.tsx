@@ -46,41 +46,49 @@ const Statistics = () => {
         <div className='card text-base rounded-4 shadow-lg border-transparent'>
           <h1 className='fw-700 text-center fs-base-p6 mt-0'>Statistics &mdash; {event.title}</h1>
 
-          <div className='row'>
-            <div className='col-6 pe-5'>
-              <button
-                type='button'
-                className={`btn  btn-link  px-10 btn-block h-100 rounded-3 ${
-                  isRedeemed ? 'btn-primary' : ''
-                }`}
-                onClick={() => {
-                  setIsRedeemed(true)
-                }}
-              >
-                <strong className='antialiased'>Claimed</strong>
-              </button>
-            </div>
-            <div className='col-6 ps-5'>
-              <button
-                type='button'
-                className={`btn  btn-link  px-10 btn-block h-100 rounded-3 ${
-                  !isRedeemed ? 'btn-primary' : ''
-                }`}
-                onClick={() => {
-                  setIsRedeemed(false)
-                }}
-              >
-                <strong className='antialiased'>Unclaimed</strong>
-              </button>
-            </div>
-          </div>
+          {isLoading ? (
+            <div className='text-center mb-20'>Loading...</div>
+          ) : isError ? (
+            <div className='text-center mb-20'>Error getting Statistics data</div>
+          ) : (
+            <>
+              <div className='row'>
+                <div className='col-6 pe-5'>
+                  <button
+                    type='button'
+                    className={`btn  btn-link  px-10 btn-block h-100 rounded-3 ${
+                      isRedeemed ? 'btn-primary' : ''
+                    }`}
+                    onClick={() => {
+                      setIsRedeemed(true)
+                    }}
+                  >
+                    <strong className='antialiased'>Claimed</strong>
+                  </button>
+                </div>
+                <div className='col-6 ps-5'>
+                  <button
+                    type='button'
+                    className={`btn  btn-link  px-10 btn-block h-100 rounded-3 ${
+                      !isRedeemed ? 'btn-primary' : ''
+                    }`}
+                    onClick={() => {
+                      setIsRedeemed(false)
+                    }}
+                  >
+                    <strong className='antialiased'>Unclaimed</strong>
+                  </button>
+                </div>
+              </div>
 
-          <div className='mt-15'>
-            <strong>Total:</strong> {ticketsFiltered.length} tickets{' '}
-            {isRedeemed ? 'claimed' : 'unclaimed'}
-          </div>
+              <div className='mt-15'>
+                <strong>Total:</strong> {ticketsFiltered.length} tickets{' '}
+                {isRedeemed ? 'claimed' : 'unclaimed'}
+              </div>
 
-          <TicketList tickets={ticketsFiltered} />
+              <TicketList tickets={ticketsFiltered} />
+            </>
+          )}
 
           <div className='container p-5 d-flex flex-column'>
             <Button

@@ -1,4 +1,4 @@
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast'
 
 import { EventProvider } from './contexts/EventContext'
 import { ThemeProvider } from './contexts/ThemeContext'

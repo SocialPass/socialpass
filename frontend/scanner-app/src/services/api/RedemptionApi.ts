@@ -1,7 +1,6 @@
 import axios from './http'
 
 export default {
-
   get(redemptionPublicId: string) {
     return axios
       .get(`/api/scanner/v1/${redemptionPublicId}/event/`, {})

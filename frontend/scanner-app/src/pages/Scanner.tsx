@@ -16,6 +16,18 @@ export function Scanner() {
 
   const previousQrCodeReadRef = useRef();
 
+  let qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
+    let minEdgePercentage = 0.8;
+    let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+    let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+    return {
+        width: qrboxSize,
+        height: qrboxSize
+    };
+  }
+  console.log(qrboxFunction)
+
+
   function handleRedirect() {
     navigate('..')
   }
@@ -48,15 +60,15 @@ export function Scanner() {
   }
 
   return (
-    <div className='scanner-body d-flex flex-row' >
+    <div className='scanner-body d-flex flex-row' style={{ background: 'red' }}>
       <div className='btn-close' style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
         <FiArrowLeft color='#f1f1f1' onClick={handleRedirect} size={26} />
       </div>
       <div>
-        <div className='reader-wrapper'>
+        <div className='reader-wrapper' style={{background: 'green'}}>
           <Html5QrcodePlugin
             fps={1}
-            qrbox={250}
+            qrbox={qrboxFunction}
             disableFlip={true}
             onScan={handleScan}
           />

@@ -18,6 +18,7 @@ const createConfig = (props) => {
     return config;
 };
 
+
 const Html5QrcodePlugin = (props) => {
     const previewRef = useRef(null);
     const { onScan, onError } = props;
@@ -41,7 +42,7 @@ const Html5QrcodePlugin = (props) => {
     }, []);
 
     return (
-        <div ref={previewRef} id={'preview'} style={{ overflow: 'visible', position: 'relative' }} />
+        <div ref={previewRef} id={'preview'} style={{ overflow: 'visible', position: 'relative', width: 'auto' }} />
     );
 };
 

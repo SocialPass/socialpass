@@ -16,7 +16,7 @@ export function Footer({ waitingForScan }: FooterProps) {
     navigate('../statistics')
   }
   return (
-    <div className='d-flex flex-column py-10 px-30 justify-content-center align-items-center'>
+    <div className='d-flex flex-column px-30 justify-content-center align-items-center' style={{background: 'blue', position: 'fixed', top: '60%', left: 0, right: 0}}>
       <div className='d-flex flex-column w-100'>
         <div className='d-flex flex-row align-items-center justify-content-between'>
           <div className='scanner-title'>{eventData.title}</div>

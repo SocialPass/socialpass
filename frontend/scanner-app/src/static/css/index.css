@@ -169,6 +169,11 @@
   box-shadow: none;
 }
 
+
+.reader-wrapper  {
+  width: 95%;
+}
+
 .live-statistics-btn-accepted {
   border-radius: 5px;
   border-width: 0px;

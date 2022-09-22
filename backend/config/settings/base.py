@@ -104,7 +104,6 @@ LOCAL_APPS = [
     "apps.event_discovery.apps.EventDiscoveryConfig",
     "apps.root.apps.RootConfig",
     "apps.dashboard.apps.DashboardConfig",
-    "apps.root.apps.OverrideInvitationsConfig",
     "templatetags",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -331,17 +330,6 @@ CORS_ALLOWED_ORIGINS = env.list(
 CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
-# Django Invitations - https://github.com/jazzband/django-invitations
-# ------------------------------------------------------------------------------
-INVITATIONS_INVITATION_MODEL = "root.Invite"
-INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
-INVITATIONS_INVITATION_ONLY = False
-INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
-INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
-INVITATIONS_CONFIRMATION_URL_NAME = "dashboard:team_accept_invite"
-INVITATIONS_EMAIL_MAX_LENGTH = 254
-INVITATIONS_INVITATION_EXPIRY = 3
-ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 
 # Django Taggit  - https://github.com/jazzband/django-taggit
 # ------------------------------------------------------------------------------

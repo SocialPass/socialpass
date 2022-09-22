@@ -1,12 +1,13 @@
-from django.urls import include, path
+from django.urls import path
 
 from . import views
+
+app_name = "dashboard"
 
 urlpatterns = [
     # General redirect
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
     # User Accounts
-    path("accounts/", include("allauth.urls")),
     path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
     # Team
     path(

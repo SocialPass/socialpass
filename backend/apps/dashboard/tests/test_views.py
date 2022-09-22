@@ -66,7 +66,7 @@ class DashboardTest(TestCase):
         )
 
         # Test GET
-        response = self.client.get(reverse("user_detail"))
+        response = self.client.get(reverse("dashboard:user_detail"))
         self.assertEqual(response.status_code, 200)
 
     def test_dashboard_redirect(self):
@@ -76,15 +76,17 @@ class DashboardTest(TestCase):
         )
 
         # Test logged-in user
-        response = self.client.get(reverse("dashboard_redirect"), follow=True)
+        response = self.client.get(reverse("dashboard:dashboard_redirect"), follow=True)
         self.assertRedirects(
             response,
-            expected_url=reverse("event_list", args=(self.team_one.public_id,)),
+            expected_url=reverse(
+                "dashboard:event_list", args=(self.team_one.public_id,)
+            ),
         )
 
         # Test logged-out user
         self.client.logout()
-        response = self.client.get(reverse("dashboard_redirect"), follow=True)
+        response = self.client.get(reverse("dashboard:dashboard_redirect"), follow=True)
         self.assertRedirects(response, expected_url=reverse("account_login"))
 
     def test_team_accept_invite(self):
@@ -94,7 +96,9 @@ class DashboardTest(TestCase):
             email="test@test.local", inviter=self.user_one, team=self.team_one
         )
         invite.send_invitation(request)
-        self.client.post(reverse("team_accept_invite", args=(invite.key,)), follow=True)
+        self.client.post(
+            reverse("dashboard:team_accept_invite", args=(invite.key,)), follow=True
+        )
         invite = Invite.objects.get(inviter=self.user_one)
         self.assertEqual(invite.accepted, True)
 
@@ -105,7 +109,7 @@ class DashboardTest(TestCase):
         )
 
         # Test GET
-        response = self.client.get(reverse("team_create"))
+        response = self.client.get(reverse("dashboard:team_create"))
         self.assertEqual(response.status_code, 200)
 
         # TEST POST
@@ -113,7 +117,9 @@ class DashboardTest(TestCase):
             "name": "OneTime Team",
             "description": "OneTime Team Descripton",
         }
-        response = self.client.post(reverse("team_create"), data=data, follow=True)
+        response = self.client.post(
+            reverse("dashboard:team_create"), data=data, follow=True
+        )
         self.assertEqual(Team.objects.filter(name="OneTime Team").count(), 1)
 
     def test_team_detail(self):
@@ -124,7 +130,7 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("team_detail", args=(self.team_one.public_id,))
+            reverse("dashboard:team_detail", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -136,7 +142,7 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("team_update", args=(self.team_one.public_id,))
+            reverse("dashboard:team_update", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -146,7 +152,7 @@ class DashboardTest(TestCase):
             "description": "Updated Team Descripton",
         }
         response = self.client.post(
-            reverse("team_update", args=(self.team_one.public_id,)),
+            reverse("dashboard:team_update", args=(self.team_one.public_id,)),
             data=data,
             follow=True,
         )
@@ -160,7 +166,7 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("team_members", args=(self.team_one.public_id,))
+            reverse("dashboard:team_members", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -172,7 +178,7 @@ class DashboardTest(TestCase):
 
         # Get response
         response = self.client.post(
-            reverse("team_members", args=(self.team_one.public_id,)),
+            reverse("dashboard:team_members", args=(self.team_one.public_id,)),
             data=data,
             follow=True,
         )
@@ -190,13 +196,17 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("team_member_delete", args=(self.team_one.public_id, member.pk))
+            reverse(
+                "dashboard:team_member_delete", args=(self.team_one.public_id, member.pk)
+            )
         )
         self.assertEqual(response.status_code, 200)
 
         # TEST POST
         response = self.client.post(
-            reverse("team_member_delete", args=(self.team_one.public_id, member.pk))
+            reverse(
+                "dashboard:team_member_delete", args=(self.team_one.public_id, member.pk)
+            )
         )
         self.assertEqual(self.team_one.members.count(), 1)
 
@@ -208,7 +218,7 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("event_list", args=(self.team_one.public_id,))
+            reverse("dashboard:event_list", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -220,7 +230,7 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("event_create", args=(self.team_one.public_id,))
+            reverse("dashboard:event_create", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -239,7 +249,7 @@ class DashboardTest(TestCase):
             "long": new_event.long,
         }
         response = self.client.post(
-            reverse("event_create", args=(self.team_one.public_id,)),
+            reverse("dashboard:event_create", args=(self.team_one.public_id,)),
             data=data,
             follow=True,
         )
@@ -262,14 +272,20 @@ class DashboardTest(TestCase):
 
         # Test GET (draft event)
         response = self.client.get(
-            reverse("event_detail", args=(self.team_one.public_id, self.event_one.pk))
+            reverse(
+                "dashboard:event_detail",
+                args=(self.team_one.public_id, self.event_one.pk),
+            )
         )
         self.assertEqual(response.status_code, 302)
 
         # Test GET (live event)
         self.event_one.transition_live()
         response = self.client.get(
-            reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
+            reverse(
+                "dashboard:event_stats",
+                args=(self.team_one.public_id, self.event_one.pk),
+            )
         )
         self.assertEqual(response.status_code, 200)
 
@@ -281,7 +297,10 @@ class DashboardTest(TestCase):
 
         # Test GET
         response = self.client.get(
-            reverse("event_update", args=(self.team_one.public_id, self.event_one.pk))
+            reverse(
+                "dashboard:event_update",
+                args=(self.team_one.public_id, self.event_one.pk),
+            )
         )
         self.assertEqual(response.status_code, 200)
 
@@ -299,7 +318,10 @@ class DashboardTest(TestCase):
             "long": self.event_one.long,
         }
         response = self.client.post(
-            reverse("event_update", args=(self.team_one.public_id, self.event_one.pk)),
+            reverse(
+                "dashboard:event_update",
+                args=(self.team_one.public_id, self.event_one.pk),
+            ),
             data=data,
             follow=True,
         )
@@ -320,13 +342,19 @@ class DashboardTest(TestCase):
 
         # Test GET (draft event)
         response = self.client.get(
-            reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
+            reverse(
+                "dashboard:event_stats",
+                args=(self.team_one.public_id, self.event_one.pk),
+            )
         )
         self.assertEqual(response.status_code, 302)
 
         # Test GET (live event)
         self.event_one.transition_live()
         response = self.client.get(
-            reverse("event_stats", args=(self.team_one.public_id, self.event_one.pk))
+            reverse(
+                "dashboard:event_stats",
+                args=(self.team_one.public_id, self.event_one.pk),
+            )
         )
         self.assertEqual(response.status_code, 200)

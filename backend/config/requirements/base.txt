@@ -28,5 +28,4 @@ django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-crispy-forms==1.14.0 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 drf-yasg==1.21.3  # https://github.com/axnsan12/drf-yasg/
 whitenoise==6.2.0 # https://github.com/evansd/whitenoise/
-git+https://github.com/jazzband/django-invitations.git@dfc65d3e0c27fe6e6d66083621348c149c47a725
 git+https://github.com/nftylabs/passbook.git

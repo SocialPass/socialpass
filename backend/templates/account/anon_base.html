@@ -68,7 +68,7 @@
                 <ul class="navbar-nav mx-auto">
                   {% if request.user.is_authenticated %}
                   <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center me-2 active" aria-current="page" href="{% url 'dashboard_redirect' %}">
+                    <a class="nav-link d-flex align-items-center me-2 active" aria-current="page" href="{% url 'dashboard:dashboard_redirect' %}">
                       <i class="fa fa-chart-pie opacity-6 text-dark me-1" aria-hidden="true"></i>
                       Dashboard
                     </a>

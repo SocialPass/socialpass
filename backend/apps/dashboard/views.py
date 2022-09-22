@@ -1,6 +1,7 @@
 import json
 import secrets
 
+from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -8,13 +9,11 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
-from django.views.generic.detail import DetailView
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
-from invitations.adapters import get_invitations_adapter
-from invitations.views import AcceptInvite
 
 from apps.dashboard.forms import (
     CustomInviteForm,
@@ -24,7 +23,7 @@ from apps.dashboard.forms import (
 )
 from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
 from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
-from apps.root.models import Event, Membership, Team, Ticket
+from apps.root.models import Event, Invite, Membership, Team, Ticket
 
 User = auth.get_user_model()
 
@@ -79,7 +78,7 @@ class RequireLiveEventMixin:
                 "This event is not live yet. \
                 Please complete the creation process.",
             )
-            return redirect("event_update", **self.kwargs)
+            return redirect("dashboard:event_update", **self.kwargs)
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -107,7 +106,7 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
             self.request, messages.SUCCESS, "Your team has been created successfully."
         )
         return reverse(
-            "event_list",
+            "dashboard:event_list",
             args=(self.object.public_id,),
         )
 
@@ -127,17 +126,31 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
 
-                return reverse("event_list", args=(membership.team.public_id,))
+                return reverse("dashboard:event_list", args=(membership.team.public_id,))
             else:
-                return reverse("team_create")
+                return reverse("dashboard:team_create")
         else:
             return reverse("account_login")
 
 
-class TeamAcceptInviteView(AcceptInvite):
+class TeamAcceptInviteView(SingleObjectMixin, View):
     """
     Inherited AcceptInvite from beekeeper-invitations
     """
+
+    def get_queryset(self):
+        return Invite.objects.all()
+
+    def get_signup_redirect(self):
+        return "account_signup"
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        try:
+            return queryset.get(key=self.kwargs["key"].lower())
+        except Invite.DoesNotExist:
+            return None
 
     def accept_invite(self, invitation, request):
         """
@@ -147,7 +160,7 @@ class TeamAcceptInviteView(AcceptInvite):
         invitation.archived_email = invitation.email
         invitation.email = f"{secrets.token_urlsafe(12)}{invitation.archived_email}"
         invitation.save()
-        get_invitations_adapter().stash_verified_email(
+        DefaultAccountAdapter().stash_verified_email(
             self.request, invitation.archived_email
         )
         # If team, add success message
@@ -253,7 +266,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse("team_members", args=(self.kwargs["team_public_id"],))
+        return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
 
 class TeamMemberDeleteView(TeamContextMixin, DeleteView):
@@ -269,7 +282,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse("team_members", args=(self.kwargs["team_public_id"],))
+        return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
 
 class TeamUpdateView(TeamContextMixin, UpdateView):
@@ -289,7 +302,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
-        return reverse("team_detail", args=(self.kwargs["team_public_id"],))
+        return reverse("dashboard:team_detail", args=(self.kwargs["team_public_id"],))
 
 
 class EventListView(TeamContextMixin, ListView):
@@ -423,9 +436,11 @@ class EventDeleteView(TeamContextMixin, DeleteView):
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
         if self.object.state == Event.StateEnum.LIVE.value:
-            return reverse("event_list", args=(self.kwargs["team_public_id"],))
+            return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
         else:
-            return reverse("event_drafts", args=(self.kwargs["team_public_id"],))
+            return reverse(
+                "dashboard:event_drafts", args=(self.kwargs["team_public_id"],)
+            )
 
 
 class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):

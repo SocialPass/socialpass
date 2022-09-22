@@ -47,9 +47,13 @@ const Statistics = () => {
           <h1 className='fw-700 text-center fs-base-p6 mt-0'>Statistics &mdash; {event.title}</h1>
 
           {isLoading ? (
-            <div className='text-center mb-20'>Loading...</div>
+            <div className='text-center mb-20'>
+              <div className='spinner-border text-primary text-center' role='status'>
+                <span className='visually-hidden'>Loading...</span>
+              </div>
+            </div>
           ) : isError ? (
-            <div className='text-center mb-20'>Error getting Statistics data</div>
+            <div className='text-center text-danger mb-20'>Error getting Statistics data</div>
           ) : (
             <>
               <div className='row'>

@@ -3,7 +3,7 @@ import propTypes from 'prop-types'
 
 import { Html5Qrcode } from 'html5-qrcode'
 
-import styles from './Html5QrcodeScanner.module.css';
+import styles from './Html5QrcodeScanner.module.css'
 
 const Html5QrcodeScanner = (props) => {
   const { onScan, onError, facingMode, fps, qrbox, aspectRatio, disableFlip, className, style } =
@@ -35,7 +35,14 @@ const Html5QrcodeScanner = (props) => {
     }
   }, [])
 
-  return <div ref={previewRef} id={'preview'} className={`${styles.preview} ${className}`} style={style} />
+  return (
+    <div
+      ref={previewRef}
+      id={'preview'}
+      className={`${styles.preview} ${className}`}
+      style={style}
+    />
+  )
 }
 
 export default Html5QrcodeScanner

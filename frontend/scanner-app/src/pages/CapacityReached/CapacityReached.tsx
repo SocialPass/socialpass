@@ -1,11 +1,12 @@
-import React from 'react'
-import ColoredLogo from '../deprecated_static/images/socialpass-colored-logo.svg'
+import useTheme from '@/hooks/useTheme'
 
-export function CapacityReached() {
+const CapacityReached = () => {
+  const { theme }: any = useTheme()
+
   return (
     <div className='landing-page-background p-10 py-50'>
       <div className='d-flex flex-column align-items-center justify-content-around'>
-        <img className='p-30' src={ColoredLogo} />
+        <img className='p-30' src={theme?.logo} />
         <div className='d-flex flex-column align-items-center justify-content-center gap-4 p-10'>
           <div className='capacity-reached-title pt-20'>Awesome!</div>
           <div className='capacity-reached-body p-20'>Every generated ticket has been scanned!</div>
@@ -14,3 +15,5 @@ export function CapacityReached() {
     </div>
   )
 }
+
+export default CapacityReached

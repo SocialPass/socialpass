@@ -2,7 +2,7 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
 import Base from '@/pages/Base'
 import { EventInfo } from '@/pages/EventInfo'
-import { Index } from '@/pages/Index'
+import Error404 from '@/pages/Error404'
 import { Error } from '@/pages/Error'
 import { CapacityReached } from '@/pages/CapacityReached'
 import { Scanner } from '@/pages/Scanner'
@@ -12,7 +12,7 @@ function EventRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='' element={<Index />} />
+        <Route path='' element={<Error404 />} />
         <Route path='/:redemptionPublicId' element={<Base />}>
           <Route path='' element={<EventInfo />} />
           <Route path='scanner' element={<Scanner />} />

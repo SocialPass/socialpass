@@ -26,7 +26,7 @@ describe('Event component', () => {
   it('should render correctly if status 200', async () => {
     render(
       <BrowserRouter>
-        <QueryClientProvider client={queryClient}>          
+        <QueryClientProvider client={queryClient}>
           <CheckoutPortalContext.Provider
           // Mocked parameters below
             value={{
@@ -73,7 +73,7 @@ describe('Event component', () => {
 // From Jest, we utilize "expect" which enables us to utilize a range of matchers to validate things
 // From React Test Library we utilize "getByText" to look into a div with a certain content...
 // ...and also utilize "toBeInTheDocument" to assert if the described element is on the body of a document or not.
-// In that specific case we are mocking a 200 HTTP call so 
+// In that specific case we are mocking a 200 HTTP call so
 // the two elements ("event name" and "event description") need to be present.
     expect(screen.getByText('event name')).toBeInTheDocument()
     expect(screen.getByText('event description')).toBeInTheDocument()
@@ -128,7 +128,7 @@ describe('Event component', () => {
       </BrowserRouter>,
     )
 
-// In the case below we are mocking a 404 HTTP call so 
+// In the case below we are mocking a 404 HTTP call so
 // the two elements ("event name" and "event description") should not be found on the document.
     expect(screen.queryByText('event name')).toBeNull()
     expect(screen.queryByText('event description')).toBeNull()

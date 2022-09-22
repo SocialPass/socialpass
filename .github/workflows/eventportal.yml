@@ -11,18 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install node_modules
-      working-directory: frontend/eventportal
+      working-directory: frontend/checkout-app
       run: npm install
     - name: Run ESlint checks
-      working-directory: frontend/eventportal
+      working-directory: frontend/checkout-app
       run: npm run lint;
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Install node_modules
-      working-directory: frontend/eventportal
+      working-directory: frontend/checkout-app
       run: npm install
     - name: Run TypeScript type checks
-      working-directory: frontend/eventportal
+      working-directory: frontend/checkout-app
       run: npm run tsc;

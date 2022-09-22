@@ -236,7 +236,7 @@
               <!-- Learn more dropdown end -->
 
               {% if request.user.is_authenticated %}
-                <a href="{% url 'dashboard_redirect' %}" class="btn btn-primary">Dashboard <i class="fa-regular fa-arrow-right ms-5"></i></a>
+                <a href="{% url 'dashboard:dashboard_redirect' %}" class="btn btn-primary">Dashboard <i class="fa-regular fa-arrow-right ms-5"></i></a>
               {% else %}
                 <a href="{% url 'account_login' %}" class="btn me-10">
                   <strong class="text-primary antialiased">Sign In</strong>
@@ -279,7 +279,7 @@
                 <li class="dropdown-divider"></li>
                 <li class="dropdown-content">
                   {% if request.user.is_authenticated %}
-                    <a href="{% url 'dashboard_redirect' %}" class="btn btn-primary btn-block mb-5">
+                    <a href="{% url 'dashboard:dashboard_redirect' %}" class="btn btn-primary btn-block mb-5">
                       Dashboard
                       <i class="fa-regular fa-arrow-right ms-5"></i>
                     </a>

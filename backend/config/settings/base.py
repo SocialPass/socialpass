@@ -125,7 +125,7 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "root.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "dashboard_redirect"
+LOGIN_REDIRECT_URL = "dashboard:dashboard_redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
@@ -338,7 +338,7 @@ INVITATIONS_ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"
 INVITATIONS_INVITATION_ONLY = False
 INVITATIONS_ACCEPT_INVITE_AFTER_SIGNUP = False
 INVITATIONS_ADMIN_ADD_FORM = "apps.root.forms.CustomInvitationAdminAddForm"
-INVITATIONS_CONFIRMATION_URL_NAME = "team_accept_invite"
+INVITATIONS_CONFIRMATION_URL_NAME = "dashboard:team_accept_invite"
 INVITATIONS_EMAIL_MAX_LENGTH = 254
 INVITATIONS_INVITATION_EXPIRY = 3
 ACCOUNT_ADAPTER = "invitations.models.InvitationsAdapter"

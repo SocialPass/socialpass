@@ -149,7 +149,7 @@ class Invite(DBModel):
 
     def send_invitation(self, request, **kwargs):
         current_site = get_current_site(request)
-        invite_url = reverse("team_accept_invite", args=[self.key])
+        invite_url = reverse("dashboard:team_accept_invite", args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(

@@ -8,7 +8,7 @@ import { CapacityReached } from '@/pages/CapacityReached'
 import { Scanner } from '@/pages/Scanner'
 import { Statistics } from '@/pages/Statistics'
 
-function EventRoutes() {
+function Router() {
   return (
     <BrowserRouter>
       <Routes>
@@ -25,4 +25,4 @@ function EventRoutes() {
   )
 }
 
-export default EventRoutes
+export default Router

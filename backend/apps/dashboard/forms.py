@@ -2,24 +2,26 @@ from datetime import date
 
 import pytz
 from django import forms
-from invitations.exceptions import AlreadyAccepted, AlreadyInvited
-from invitations.forms import InviteForm
+from django.utils.translation import gettext_lazy as _
 
+from apps.root.forms import CleanEmailMixin
 from apps.root.models import Event, Invite, Team
 
 
-class CustomInviteForm(InviteForm):
+class CustomInviteForm(forms.Form, CleanEmailMixin):
     """
     sub-classed validation to remove check for active user
     """
 
-    def validate_invitation(self, email):
-        if Invite.objects.all_valid().filter(email__iexact=email, accepted=False):
-            raise AlreadyInvited
-        elif Invite.objects.filter(email__iexact=email, accepted=True):
-            raise AlreadyAccepted
-        else:
-            return True
+    email = forms.EmailField(
+        label=_("E-mail"),
+        required=True,
+        widget=forms.TextInput(attrs={"type": "email", "size": "30"}),
+        initial="",
+    )
+
+    def save(self, email):
+        return Invite.create(email=email)
 
 
 class TeamForm(forms.ModelForm):

@@ -10,10 +10,10 @@
 		<title>SocialPass - Ticket Scanner</title>
 
 		<!-- Halfmoon CSS -->
-		<link href="../src/static/css/halfmoon.css" rel="stylesheet" />
+		<link href="../../../backend/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
 
 		<!-- SocialPass CSS theme -->
-		<link href="../src/static/css/socialpass-theme.css" rel="stylesheet" />
+		<link href="../../../backend/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
 
 		<!-- Font Awesome 6 -->
 		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
@@ -23,61 +23,40 @@
 		<div class="page-wrapper">
 			<!-- Content wrapper start -->
 			<div class="content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column">
-				<!-- Navbar start -->
-				<nav class="d-flex align-items-center px-20 py-5 m-10 bg-content rounded-3 shadow-lg">
-					<!-- Branding start -->
-					<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
-						<div class="ws-75">
-							<img src="../src/static/images/SocialPass-Icon.svg" alt="SocialPass Icon" class="d-block w-100 h-auto">
-						</div>
-						<div class="text-strong ms-10">
-							<div class="fs-base-p4">
-								SocialPass
-							</div>
-							<div class="fs-base-n4 lh-1 fw-normal">
-								Ticket Scanner
-							</div>
-						</div>
-					</a>
-					<!-- Branding end -->
-
-					<!-- Dark mode toggle start -->
-					<button type="button" class="btn btn-sm btn-square btn-rounded ms-auto" data-hm-toggle="dark-mode">
-						<i class="fa-solid fa-moon"></i>
-						<span class="visually-hidden">Toggle dark mode</span>
+				<!-- Camera start -->
+				<div class="position-relative d-flex align-items-center justify-content-center border hs-400">
+					<span class="text-center">&times;<br />Insert Camera Here</span>
+					<button type="button" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10">
+						<i class="fa-solid fa-arrow-left"></i>
+						<span class="visually-hidden">Go Back</span>
 					</button>
-					<!-- Dark mode toggle end -->
-				</nav>
-				<!-- Navbar end -->
+				</div>
+				<!-- Camera end -->
 
 				<!-- Main content start -->
 				<div class="mt-auto">
-					<div class="card text-base rounded-4 shadow-lg border-transparent fs-base-p2">
-						<h1 class="fw-700 text-center fs-base-p10 mt-0">
+					<div class="content">
+						<h1 class="fw-700 fs-base-p6 mt-0">
 							My NFT Launch Party 2022
 						</h1>
-						<div class="fw-700 text-primary mt-30">
-							<i class="fa-regular fa-user me-5"></i> Total Attendance:
-						</div>
-						<div>
-							100
-						</div>
-						<div class="fw-700 text-primary mt-15">
-							<i class="fa-regular fa-clock me-5"></i> Date:
-						</div>
-						<div>
+						<div class="mt-15">
+							<i class="fa-regular fa-clock me-5"></i>
 							Tuesday, Aug 23, 20:15 PM
 						</div>
-						<div class="fw-700 text-primary mt-15">
-							<i class="fa-regular fa-location-dot me-5"></i> Venue:
+						<div class="row mt-15">
+							<div class="col-6 pe-5">
+								<div class="bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100">
+									<strong class="antialiased">Accepted: 0</strong>
+								</div>
+							</div>
+							<div class="col-6 ps-5">
+								<div class="bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100">
+									<strong class="antialiased">Remaining: 100</strong>
+								</div>
+							</div>
 						</div>
-						<div>
-							Maddison Square Garden
-						</div>
-					</div>
-					<div class="content">
-						<button type="button" class="btn btn-secondary btn-block btn-lg rounded-3 py-15 fs-base-p4 shadow">
-							<strong class="antialiased">Start Scanning</strong>
+						<button type="button" class="btn btn-block btn-lg border-transparent rounded-3 shadow mt-30">
+							<strong class="antialiased">Statistics</strong>
 						</button>
 					</div>
 				</div>
@@ -96,7 +75,7 @@
 		<!-- Page wrapper end -->
 
 		<!-- Halfmoon JS -->
-		<script src="../src/static/js/halfmoon.js"></script>
+		<script src="../../../backend/static/socialpass-theme/halfmoon.js"></script>
 
 		<script type="text/javascript">
 			/**

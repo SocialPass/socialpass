@@ -4,25 +4,25 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 import boto3
+from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
-from invitations import signals
-from invitations.adapters import get_invitations_adapter
-from invitations.base_invitation import AbstractBaseInvitation
 from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
-from apps.root.utilities import AppleTicket, GoogleTicket, PDFTicket
+from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
 
@@ -73,16 +73,58 @@ class Membership(DBModel):
         return f"{self.team.name}-{self.user.email}"
 
 
-class Invite(DBModel, AbstractBaseInvitation):
+class InviteQuerySet(models.QuerySet):
     """
-    Custom invite inherited from django-invitations
-    Used for team invitations
+    Invite model queryset manager
     """
+
+    def all_expired(self):
+        """
+        expired invites
+        """
+        return self.filter(self.expired_q())
+
+    def all_valid(self):
+        """
+        invites sent and not expired
+        """
+        return self.exclude(self.expired_q())
+
+    def expired_q(self):
+        sent_threshold = timezone.now() - timedelta(days=3)
+        q = Q(accepted=True) | Q(sent__lt=sent_threshold)
+        return q
+
+    def delete_expired_confirmations(self):
+        """
+        delete all expired invites
+        """
+        self.all_expired().delete()
+
+
+class Invite(DBModel):
+    """
+    Invite model used for team invitations
+    """
+
+    # Queryset manager
+    objects = InviteQuerySet.as_manager()
+
+    # invitation fields
+    accepted = models.BooleanField(verbose_name=_("accepted"), default=False)
+    key = models.CharField(verbose_name=_("key"), max_length=64, unique=True)
+    sent = models.DateTimeField(verbose_name=_("sent"), null=True)
+    inviter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
 
     email = models.EmailField(
         unique=True,
         verbose_name="e-mail address",
-        max_length=settings.INVITATIONS_EMAIL_MAX_LENGTH,
+        max_length=254,
     )
     # custom
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
@@ -101,13 +143,13 @@ class Invite(DBModel, AbstractBaseInvitation):
 
     def key_expired(self):
         expiration_date = self.sent + timedelta(
-            days=settings.INVITATIONS_INVITATION_EXPIRY,
+            days=3,
         )
         return expiration_date <= timezone.now()
 
     def send_invitation(self, request, **kwargs):
         current_site = get_current_site(request)
-        invite_url = reverse(settings.INVITATIONS_CONFIRMATION_URL_NAME, args=[self.key])
+        invite_url = reverse("dashboard:team_accept_invite", args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(
@@ -123,16 +165,11 @@ class Invite(DBModel, AbstractBaseInvitation):
 
         email_template = "invitations/email/email_invite"
 
-        get_invitations_adapter().send_mail(email_template, self.email, ctx)
+        DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
         self.sent = timezone.now()
         self.save()
 
-        signals.invite_url_sent.send(
-            sender=self.__class__,
-            instance=self,
-            invite_url_sent=invite_url,
-            inviter=self.inviter,
-        )
+        # Makes sense call a signal by now?
 
     def __str__(self):
         """
@@ -294,15 +331,16 @@ class Event(DBModel):
         validators=[MinValueValidator(1), MaxValueValidator(100)],
         help_text="Maximum amount of tickets per attendee.",
     )
+    google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.team} - {self.title}"
 
     def get_absolute_url(self):
         if self.state == Event.StateEnum.DRAFT.value:
-            _success_url = "event_update"
+            _success_url = "dashboard:event_update"
         elif self.state == Event.StateEnum.LIVE.value:
-            _success_url = "event_detail"
+            _success_url = "dashboard:event_detail"
         return reverse(
             _success_url,
             args=(
@@ -319,6 +357,7 @@ class Event(DBModel):
         try:
             self._transition_draft()
             # Save unless explicilty told not to
+            # This implies the caller will handle saving post-transition
             if save:
                 self.save()
         except Exception as e:
@@ -332,6 +371,7 @@ class Event(DBModel):
         try:
             self._transition_live()
             # Save unless explicilty told not to
+            # This implies the caller will handle saving post-transition
             if save:
                 self.save()
         except Exception as e:
@@ -352,9 +392,14 @@ class Event(DBModel):
         This function handles state transition from DRAFT to LIVE
         Side effects include
         - Create ticket scanner object
+        - Set google_class_id
         """
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
+        # - Set google_class_id
+        self.google_class_id = (
+            f"{settings.GOOGLE_WALLET_ISSUER_ID}.{str(self.public_id)}"
+        )
 
     @property
     def discovery_url(self):
@@ -420,6 +465,7 @@ class Ticket(DBModel):
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
     )
+    google_class_id = models.CharField(max_length=255, blank=True, null=True)
 
     # blockchain Info
     blockchain_ownership = models.ForeignKey(
@@ -437,28 +483,36 @@ class Ticket(DBModel):
         """
         create a passfile and get its bytes
         """
-        _pass = AppleTicket.AppleTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
+        try:
+            _pass = AppleTicket.AppleTicket()
+            _pass.generate_pass_from_ticket(self)
+            return _pass.get_bytes()
+        except Exception as e:
+            raise e
 
     def get_pdf_ticket(self):
         """
         create a pdf pass and get its bytes
         """
-        _pass = PDFTicket.PDFTicket()
-        _pass.generate_pass_from_ticket(self)
-        return _pass.get_bytes()
+        try:
+            _pass = PDFTicket.PDFTicket()
+            _pass.generate_pass_from_ticket(self)
+            return _pass.get_bytes()
+        except Exception as e:
+            raise e
 
     def get_google_ticket(self):
         """
         create or retrieve pass url from google wallet api
-        TODO: verify if event already has a class_id
-              or create with insert_update_ticket_class(self.event)
         """
+        if not self.class_id:
+            raise Exception("The event was not registered")
+
         _pass = GoogleTicket.GoogleTicket()
         resp = _pass.generate_pass_from_ticket(self)
         if resp.get("error"):
-            raise Exception("The event was not registered")
+            raise Exception("The event was not registered properly")
+
         return _pass.get_pass_url()
 
     @property

@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("root", "0044_remove_pricingrule_group_remove_event__price_and_more"),
+        ("root", "0044_event_google_class_id_ticket_google_class_id"),
     ]
 
     operations = [

@@ -2,7 +2,7 @@
 FROM node:16-bullseye
 
 # Setup working directory
-WORKDIR /eventportal
+WORKDIR /checkout-app
 
 # setup app
 COPY package.json .

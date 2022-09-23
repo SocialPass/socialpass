@@ -87,16 +87,16 @@ services:
     networks:
       - backend
 
-  eventportal:
-    image: socialpass-eventportal-app
+  checkout-app:
+    image: socialpass-checkout-app-app
     command: sh -c "yarn start --host"
     stdin_open: true
     volumes:
-      - ./frontend/eventportal/src/:/eventportal/src/
-      - ./frontend/eventportal/package.json:/eventportal/package.json
-      - ./frontend/eventportal/package-lock.json:/eventportal/package-lock.json
+      - ./frontend/checkout-app/src/:/checkout-app/src/
+      - ./frontend/checkout-app/package.json:/checkout-app/package.json
+      - ./frontend/checkout-app/package-lock.json:/checkout-app/package-lock.json
     build:
-      context: ./frontend/eventportal
+      context: ./frontend/checkout-app
       dockerfile: Dockerfile
     ports:
       - "3000:3000"

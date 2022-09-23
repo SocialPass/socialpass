@@ -18,8 +18,8 @@ function Router() {
           <Route path='scanner' element={<Scanner />} />
           <Route path='statistics' element={<Statistics />} />
           <Route path="capacity-reached'" element={<CapacityReached />} />
+          <Route path='error' element={<Error />} />
         </Route>
-        <Route path='error' element={<Error />} />
       </Routes>
     </BrowserRouter>
   )

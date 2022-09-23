@@ -17,6 +17,8 @@ export const EventProvider = ({ children }: any) => {
   const getEvent = (eventPublicId: string) =>
     new Promise((resolve, reject) => {
       setIsLoading(true)
+      setError(null)
+      setEvent(null)
 
       RedemptionApi.get(eventPublicId)
         .then((response) => {

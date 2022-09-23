@@ -16,17 +16,23 @@ const Base = () => {
 
   useEffect(() => {
     if (!event || event.publicId !== redemptionPublicId) {
-      getEvent(redemptionPublicId).catch(() => {
-        navigate('/error')
-      })
+      getEvent(redemptionPublicId)
     }
   }, [redemptionPublicId])
 
+  useEffect(() => {
+    if (error) {
+      navigate(`/${redemptionPublicId}/error`)
+    }
+  }, [error])
+
   return (
     <div className='content'>
-      {isLoading || !isReady ? (
+      {error ? (
+        <Outlet />
+      ) : isLoading || !isReady ? (
         <EventLoading />
-      ) : !error && event ? (
+      ) : event ? (
         <div className='page-wrapper'>
           <div className='content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column'>
             <Outlet />

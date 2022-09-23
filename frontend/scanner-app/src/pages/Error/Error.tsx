@@ -1,12 +1,16 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { FiArrowLeft } from 'react-icons/fi'
 import CloseCircleIcon from '../../assets/closeIcon.svg'
+import useEvent from '@/hooks/useEvent'
 
 const Error = () => {
   const navigate = useNavigate()
+  const { redemptionPublicId } = useParams()
+  const { getEvent }: any = useEvent()
 
   function handleGoBack() {
-    navigate(-1)
+    getEvent(redemptionPublicId)
+    navigate(`/${redemptionPublicId}`)
   }
 
   return (
@@ -17,16 +21,16 @@ const Error = () => {
             <FiArrowLeft onClick={handleGoBack} size={26} />
           </div>
         </div>
-        <div className='d-flex flex-column align-items-center py-10'>
-          <div className='error-title py-30'>Invalid</div>
-        </div>
         <div className='mx-40'></div>
       </header>
-      <div className='error-padding'></div>
+
       <div className='error-body d-flex flex-column align-items-center justify-content-center gap-4'>
-        <div>
+        <div className='error-title'>Invalid</div>
+
+        <div className='error-subtitle py-10'>
           <img src={CloseCircleIcon} />
         </div>
+
         <div className='error-body'>No event was found.</div>
       </div>
     </div>

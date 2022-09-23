@@ -1,7 +1,7 @@
 import React from 'react'
 import { WagmiConfig } from 'wagmi'
-import { Web3Provider } from './providers/Web3Provider'
-import Router from './Router'
+import { Web3Provider } from './contexts/Web3Provider'
+import Router from './routes/index'
 
 export default function App() {
 	return (

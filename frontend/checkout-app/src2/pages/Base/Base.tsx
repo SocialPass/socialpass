@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import SocialPassIcon from '../static/socialpass-theme/SocialPass-Icon.svg'
+import SocialPassIcon from '../../static/socialpass-theme/SocialPass-Icon.svg'
 
 export default function Base() {
 	return (

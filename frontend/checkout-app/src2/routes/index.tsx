@@ -1,9 +1,9 @@
 import React from 'react'
-import Base from './pages/Base';
-import Home from './pages/Home';
-import Success from './pages/Success';
-import Error from './pages/Error';
-import WalletCheckout from './pages/WalletCheckout'
+import Base from '../pages/Base';
+import Home from '../pages/Home';
+import Success from '../pages/Success';
+import Error from '../pages/Error';
+import WalletCheckout from '../pages/WalletCheckout'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
 export default function Router(){
@@ -15,7 +15,7 @@ export default function Router(){
 				<Route path="success" element={<Success />} />
 				<Route path="checkout/wallet" element={<WalletCheckout />} />
 			</Route>
-			<Route path="error" element={<Error />} />
+			<Route path="/:public_id/error" element={<Error />} />
 		</Routes>
 	</BrowserRouter>
 	)

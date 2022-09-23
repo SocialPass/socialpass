@@ -1,7 +1,7 @@
 import React from 'react'
-import SomethingWentWrong from '../static/images/something_went_wrong.svg'
+import SomethingWentWrong from '../../assets/something_went_wrong.svg'
 
-export default function Error() {
+const Error = () => {
 	return (
 		<div className="page-wrapper">
 			{/* Content wrapper start */}
@@ -42,3 +42,5 @@ export default function Error() {
 		</div>
 	)
 }
+
+export default Error;

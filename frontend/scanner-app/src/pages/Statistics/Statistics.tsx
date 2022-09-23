@@ -93,19 +93,19 @@ const Statistics = () => {
               <TicketList tickets={ticketsFiltered} />
             </>
           )}
+        </div>
 
-          <div className='container p-5 d-flex flex-column'>
-            <Button
-              className='py-15 fs-base-p4'
-              onClick={() => {
-                navigate(`/${redemptionPublicId}/scanner`)
-              }}
-            >
-              <i className='fa-regular fa-arrow-left me-5'></i>
+        <div className='content'>
+          <Button
+            className='py-15 fs-base-p4'
+            onClick={() => {
+              navigate(`/${redemptionPublicId}/scanner`)
+            }}
+          >
+            <i className='fa-regular fa-arrow-left me-5'></i>
 
-              <strong className='antialiased'>Return to Scanner</strong>
-            </Button>
-          </div>
+            <strong className='antialiased'>Return to Scanner</strong>
+          </Button>
         </div>
       </div>
     </>

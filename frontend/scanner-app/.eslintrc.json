@@ -19,7 +19,7 @@
     "sourceType": "module"
   },
   "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
-  "ignorePatterns": ["static", "deprecated_static"],
+  "ignorePatterns": ["static"],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "camelcase": "off",

@@ -1,91 +1,61 @@
 <!DOCTYPE html>
-<html lang="en" class="socialpass-scanner">
+<html lang="en" class="socialpass-scanner" data-hm-autoset-preferences="color-scheme">
   <head>
-  <!-- Meta tags -->
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <!-- Meta tags -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
 
-  <!-- Title -->
-  <title>SocialPass - Hosting the Next Generation of Events</title>
+    <!-- Title -->
+    <title>SocialPass - Hosting the Next Generation of Events</title>
 
-  <!-- Fav icon -->
-  <link rel="icon" href="https://res.cloudinary.com/nfty-labs/image/upload/v1652735850/SocialPass-Icon_eanblz.svg">
+    <!-- Halfmoon CSS -->
+    <link href="/src/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
+    <script>
+      window.global = window
+    </script>
 
-  <!-- Halfmoon CSS -->
-  <link href="/src/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
-  <link href="/src/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
-  <script>window.global = window;</script>
+    <!-- Rubik font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Halfmoon CSS -->
-  <link href="/src/static/css/index.css" rel="stylesheet" />
+    <!-- Font Awesome 6 -->
+    <script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
 
-  <!-- Rubik font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community."
+    />
+    <meta name="author" content="SocialPass" />
+    <meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket" />
 
-  <!-- Font Awesome 6 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- SEO -->
-  <meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
-  <meta name="author" content="SocialPass">
-  <meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket">
-
-  <!-- Open graph -->
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://socialpass.io">
-  <meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
-  <meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
-  <meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@socialpass_io">
-
+    <!-- Open graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://socialpass.io" />
+    <meta property="og:title" content="SocialPass - Hosting the Next Generation of Events" />
+    <meta
+      property="og:description"
+      content="SocialPass is the go-to events platform, powered by Web3"
+    />
+    <meta
+      property="og:image"
+      content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@socialpass_io" />
   </head>
   <body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-  <script src="/src/static/js/halfmoon.js"></script>
-
-  <!-- OnLoad script for setting whitelabeling -->
-  <script type="module">
-  import defaultLogo from './src/static/images/landingpage_logo.png';
-  const devURL = "http://localhost:8000/api";
-  const prodURL = import.meta.env.VITE_APP_API_URL;
-  const baseURL = import.meta.env.PROD ? prodURL : devURL;
-
-  (function(window, document, undefined){
-    window.onload = init;
-    function init(){
-    const public_id = location.pathname.split('/')[1];
-    const response = fetch(`${baseURL}/scanner/v1/${public_id}/event/`)
-      .then(response => response.json())
-      .then(data => {
-        const theme_name = data.team.theme?.css_theme;
-        // Theme exists, set variables
-        if(theme_name){
-          const brand_name = data.team.theme?.brand_name;
-          const logo = data.team?.theme?.logo;
-          let link = document.createElement( "link" );
-          let favIcon = document.createElement( "link" );
-          link.href = `${theme_name}`;
-          favIcon.rel = "icon"
-          favIcon.href = `${logo}`
-          window.icon = `${logo}`;
-          link.type = "text/css";
-          link.rel = "stylesheet";
-          link.media = "screen,print";
-          document.getElementsByTagName( "head" )[0].appendChild( link );
-          document.getElementsByTagName( "head" )[0].appendChild( favIcon );
-        } else {
-          window.icon = defaultLogo
-        }
-      })
-    }
-
-  })(window, document, undefined);
-  </script>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script src="/src/static/js/halfmoon.js"></script>
   </body>
 </html>

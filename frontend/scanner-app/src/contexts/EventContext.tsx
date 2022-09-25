@@ -1,51 +1,44 @@
-/* eslint-disable eqeqeq */
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { fetchEvent } from '../services/api'
-import { useQuery } from 'react-query'
+import { createContext, useState } from 'react'
+import { RedemptionApi } from '@/services/api'
+import { Event, EventError, EventContextType } from '@/types/Event'
 
-const EventContext = createContext({})
+export const EventContext = createContext<EventContextType>({
+  event: null,
+  getEvent: () => new Promise(() => null),
+  isLoading: false,
+  error: null,
+})
 
-type EventDataProps = {
-  title: string
-  start_date: string
-  localized_address_display: string
-  capacity: number
-  ticket_count: number
-  redeemed_count: number
-  team: string
-}
+export const EventProvider = ({ children }: any) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [event, setEvent] = useState<Event | null>(null)
+  const [error, setError] = useState<EventError | null>(null)
 
-const EventProvider = ({ children }: any) => {
-  const [publicId, setPublicId] = useState<string>('')
-  const [eventData, setEventData] = useState<EventDataProps>()
-  const { status, isLoading, isError, error, data, refetch } = useQuery(
-    ['fetchEvent', publicId],
-    () => fetchEvent(publicId),
-    {
-      enabled: false,
-    },
-  )
+  const getEvent = (eventPublicId: string) =>
+    new Promise((resolve, reject) => {
+      setIsLoading(true)
+      setError(null)
+      setEvent(null)
 
-  useEffect(() => {
-    if (publicId) {
-      refetch()
-    }
-  }, [publicId])
-
-  useEffect(() => {
-    setEventData(data)
-  }, [data])
+      RedemptionApi.get(eventPublicId)
+        .then((response) => {
+          setEvent(response.data)
+          setIsLoading(false)
+          resolve(response.data)
+        })
+        .catch((err) => {
+          setError(err)
+          setIsLoading(false)
+          reject(err)
+        })
+    })
 
   return (
     <EventContext.Provider
       value={{
-        publicId,
-        setPublicId,
-        status,
+        event,
+        getEvent,
         isLoading,
-        isError,
-        eventData,
-        setEventData,
         error,
       }}
     >
@@ -54,14 +47,4 @@ const EventProvider = ({ children }: any) => {
   )
 }
 
-function useEvent() {
-  const context = useContext(EventContext)
-
-  if (!context) {
-    throw new Error('useEvent must be used within a EventProvider')
-  }
-
-  return context
-}
-
-export { EventProvider, useEvent }
+export default EventProvider

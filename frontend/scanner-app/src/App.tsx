@@ -1,23 +1,18 @@
-import React from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { Toaster } from 'react-hot-toast'
+
 import { EventProvider } from './contexts/EventContext'
-import { ToastProvider } from './contexts/ToastContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 
-import EventRoutes from './routes/EventRoutes'
+import Router from './routes'
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 0 } },
-})
-
-function App() {
+const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <EventProvider>
-          <EventRoutes />
-        </EventProvider>
-      </ToastProvider>
-    </QueryClientProvider>
+    <EventProvider>
+      <ThemeProvider>
+        <Router />
+        <Toaster />
+      </ThemeProvider>
+    </EventProvider>
   )
 }
 

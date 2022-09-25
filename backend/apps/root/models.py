@@ -39,15 +39,15 @@ class Team(DBModel):
     """
 
     # keys
-    members = models.ManyToManyField("root.User", through="root.Membership")
+    members = models.ManyToManyField("root.User", through="root.Membership", blank=False)
 
     # basic info
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=False)
     image = models.ImageField(
-        null=True, blank=True, height_field=None, width_field=None, max_length=255
+        height_field=None, width_field=None, max_length=255, blank=True, null=True
     )
-    description = models.TextField(blank=True)
-    theme = models.JSONField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
+    theme = models.JSONField(blank=True, null=True)
 
     def __str__(self):
         """
@@ -111,20 +111,26 @@ class Invite(DBModel):
     objects = InviteQuerySet.as_manager()
 
     # invitation fields
-    accepted = models.BooleanField(verbose_name=_("accepted"), default=False)
-    key = models.CharField(verbose_name=_("key"), max_length=64, unique=True)
-    sent = models.DateTimeField(verbose_name=_("sent"), null=True)
+    accepted = models.BooleanField(
+        verbose_name=_("accepted"), default=False, blank=False, null=False
+    )
+    key = models.CharField(
+        verbose_name=_("key"), max_length=64, unique=True, blank=False
+    )
+    sent = models.DateTimeField(verbose_name=_("sent"), blank=False, null=True)
     inviter = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     email = models.EmailField(
         unique=True,
         verbose_name="e-mail address",
         max_length=254,
+        blank=False,
+        null=False,
     )
     # custom
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
@@ -224,114 +230,133 @@ class Event(DBModel):
     objects = EventQuerySet.as_manager()
 
     # state
-    state = FSMField(default=StateEnum.DRAFT.value, protected=True)
+    state = FSMField(
+        default=StateEnum.DRAFT.value, protected=True, blank=False, null=False
+    )
 
     # Keys
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=False, null=False)
 
     # Publish info
-    is_featured = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False, blank=False, null=False)
     publication_date = models.DateTimeField(
         default=timezone.now,
-        null=True,
-        blank=True,
         help_text="When your event will be made public.",
+        blank=True,
+        null=True,
     )
     visibility = models.CharField(
         max_length=50,
         choices=EVENT_VISIBILITY,
         default=EVENT_VISIBILITY[0][0],
         help_text="Whether or not your event is searchable by the public.",
+        blank=False,
     )
     show_ticket_count = models.BooleanField(
-        default=True, help_text="Whether or not your event displays ticket statistics."
+        default=True,
+        help_text="Whether or not your event displays ticket statistics.",
+        blank=False,
+        null=False,
     )
     show_team_image = models.BooleanField(
-        default=True, help_text="Whether or not your event displays the team image."
+        default=True,
+        help_text="Whether or not your event displays the team image.",
+        blank=False,
+        null=False,
     )
 
     # Basic Info
     title = models.CharField(
         max_length=255,
-        blank=False,
         unique=True,
         help_text="Brief name for your event. Must be unique!",
+        blank=False,
     )
     organizer = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
         help_text="Name or brand or community organizing the event.",
+        blank=True,
+        default="",
     )
     description = models.TextField(
-        null=True, blank=True, help_text="A short description of your event."
+        help_text="A short description of your event.",
+        blank=True,
+        default="",
     )
     cover_image = models.ImageField(
-        blank=True, null=True, help_text="A banner image for your event."
+        help_text="A banner image for your event.", blank=True, null=True
     )
     tags = TaggableManager(
         blank=True,
     )
     start_date = models.DateTimeField(
-        blank=True, null=True, help_text="When your event will start."
+        help_text="When your event will start.",
+        blank=True,
+        null=True,
     )
     end_date = models.DateTimeField(
-        blank=True, null=True, help_text="When your event will end (optional)."
+        help_text="When your event will end (optional).",
+        blank=True,
+        null=True,
     )
 
     # Location info
-    # tiemzone of event
+    # timezone of event
     timezone = models.CharField(
-        blank=True,
-        null=True,
         verbose_name="time zone",
         max_length=30,
+        blank=True,
+        default="",
     )
     # localized address string (used to populate maps lookup)
     initial_place = models.CharField(
         max_length=1024,
-        blank=True,
-        null=True,
         help_text="Where your event will take place.",
+        blank=True,
+        default="",
     )
     # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=True, null=True)
+    address_1 = models.CharField(max_length=255, blank=True, default="")
     # The street/location address (part 2)
-    address_2 = models.CharField(max_length=255, blank=True, null=True)
+    address_2 = models.CharField(max_length=255, blank=True, default="")
     # The city
-    city = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, default="")
     # The ISO 3166-2 2- or 3-character region code
-    region = models.CharField(max_length=4, blank=True, null=True)
+    region = models.CharField(max_length=4, blank=True, default="")
     # The postal code
-    postal_code = models.CharField(max_length=12, blank=True, null=True)
+    postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=True, null=True)
+    country = models.CharField(max_length=2, blank=True, default="")
     # lat/long
-    lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    localized_address_display = models.CharField(max_length=1024, blank=True, null=True)
+    lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
+    long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
+    localized_address_display = models.CharField(max_length=1024, blank=True, default="")
     # TODO localized_multi_line_address_display
 
     # Ticket Info
     # TODO: Move these to TicketType
     requirements = models.JSONField(
-        blank=True,
         default=list,
         validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
+        blank=True,
+        null=False,
     )
     capacity = models.IntegerField(
-        blank=True,
         default=1,
         validators=[MinValueValidator(1)],
         help_text="Maximum amount of attendees for your event.",
+        blank=True,
+        null=False,
     )
     limit_per_person = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
         help_text="Maximum amount of tickets per attendee.",
+        blank=False,
+        null=False,
     )
-    google_class_id = models.CharField(max_length=255, blank=True, null=True)
+    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -451,30 +476,35 @@ class Ticket(DBModel):
     """
 
     # Keys
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="tickets")
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="tickets", blank=False, null=False
+    )
 
     # Ticket File Info
-    filename = models.UUIDField(default=uuid.uuid4, editable=False)
-    file = models.ImageField(null=True, storage=get_private_ticket_storage)
-    embed_code = models.UUIDField(default=uuid.uuid4)
+    filename = models.UUIDField(
+        default=uuid.uuid4, editable=False, blank=False, null=False
+    )
+    file = models.ImageField(storage=get_private_ticket_storage, blank=False, null=True)
+    embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
 
     # Ticket access info
-    archived = models.BooleanField(default=False)
-    redeemed = models.BooleanField(default=False)
-    redeemed_at = models.DateTimeField(null=True, blank=True)
+    archived = models.BooleanField(default=False, blank=False, null=False)
+    redeemed = models.BooleanField(default=False, blank=False, null=False)
+    redeemed_at = models.DateTimeField(blank=True, null=True)
     redeemed_by = models.ForeignKey(
-        "TicketRedemptionKey", on_delete=models.SET_NULL, null=True, blank=True
+        "TicketRedemptionKey", on_delete=models.SET_NULL, blank=True, null=True
     )
-    google_class_id = models.CharField(max_length=255, blank=True, null=True)
+    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     # blockchain Info
     blockchain_ownership = models.ForeignKey(
         "BlockchainOwnership",
         on_delete=models.SET_NULL,
         related_name="tickets",
+        blank=False,
         null=True,
     )
-    blockchain_asset = models.JSONField(null=True)
+    blockchain_asset = models.JSONField(blank=False, null=True)
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
@@ -565,11 +595,15 @@ class TicketRedemptionKey(DBModel):
 
     # Keys
     event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="ticket_redemption_keys"
+        Event,
+        on_delete=models.CASCADE,
+        related_name="ticket_redemption_keys",
+        blank=False,
+        null=False,
     )
 
     # Basic info
-    name = models.CharField(max_length=255, default="Default")
+    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
 
     @property
     def scanner_url(self):
@@ -585,12 +619,12 @@ class BlockchainOwnership(DBModel):
         return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
 
     # Keys
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=False, null=False)
 
     # Basic info
-    wallet_address = models.CharField(max_length=400)
-    is_verified = models.BooleanField(default=False)
-    expires = models.DateTimeField(default=set_expires)
+    wallet_address = models.CharField(max_length=400, blank=False, null=False)
+    is_verified = models.BooleanField(default=False, blank=False, null=False)
+    expires = models.DateTimeField(default=set_expires, blank=False, null=False)
 
     def __str__(self):
         return str(self.wallet_address)

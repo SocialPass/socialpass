@@ -5,7 +5,7 @@
 {% block head_title %}{{ event.title }} - SocialPass{% endblock head_title %}
 
 {% block modals %}
-<div class="modal" tabindex="-1" id="eventportal-modal" aria-labelledby="eventportal-modal-toggle" aria-hidden="true">
+<div class="modal" tabindex="-1" id="checkout-app-modal" aria-labelledby="checkout-app-modal-toggle" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content border-transparent ws-800 hs-800 mw-100 mh-100 p-0">
             <div class="d-flex align-items-center hs-50 px-20 text-strong border-bottom">
@@ -14,7 +14,7 @@
                     <i class="fa-light fa-times fs-base-p6"></i>
                 </a>
             </div>
-            <div class="w-100 h-100" id="eventportal-root"></div>
+            <div class="w-100 h-100" id="checkout-app-root"></div>
         </div>
     </div>
 </div>
@@ -144,7 +144,7 @@
             </div>
             <div class="col-md-4 col-lg-3 offset-lg-1">
                 <div class="p-content position-md-sticky top-0 start-0">
-                    <button type="button" class="btn btn-secondary btn-lg btn-block fsr-6" data-hm-toggle="modal" data-hm-target="eventportal-modal" id="eventportal-modal-toggle">
+                    <button type="button" class="btn btn-secondary btn-lg btn-block fsr-6" data-hm-toggle="modal" data-hm-target="checkout-app-modal" id="checkout-app-modal-toggle">
                         <strong class="antialiased">Claim Ticket</strong>
                     </button>
                     <p class="text-muted fs-base-n2 text-center">
@@ -187,6 +187,6 @@
       uuid,
       domain
     )
-    frame.mount("eventportal-root")
+    frame.mount("checkout-app-root")
 </script>
 {% endblock extra_body %}

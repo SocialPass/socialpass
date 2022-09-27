@@ -8,3 +8,23 @@ class AlreadyRedeemed(Exception):
 
 class InvalidEmbedCodeError(Exception):
     pass
+
+
+class TooManyTicketsRequestedError(Exception):
+    pass
+
+
+class TooManyTicketsIssuedError(Exception):
+    pass
+
+
+class TicketsSoldOutError(Exception):
+    pass
+
+
+class ZeroBlockchainAssetsError(Exception):
+    pass
+
+
+class PartialBlockchainAssetError(Exception):
+    pass

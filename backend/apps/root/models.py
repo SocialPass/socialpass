@@ -1,3 +1,4 @@
+import io
 import os
 import uuid
 from datetime import datetime, timedelta
@@ -5,6 +6,7 @@ from enum import Enum
 from typing import Optional
 
 import boto3
+import sentry_sdk
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -17,17 +19,30 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
+from eth_account.messages import encode_defunct
 from pytz import utc
 from taggit.managers import TaggableManager
+from web3 import Web3
+from web3.auto import w3
 
+from apps.api_checkoutportal.services import (
+    moralis_get_fungible_assets,
+    moralis_get_nonfungible_assets,
+)
 from apps.root.exceptions import (
     AlreadyRedeemed,
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
+    PartialBlockchainAssetError,
+    TicketsSoldOutError,
+    TooManyTicketsIssuedError,
+    TooManyTicketsRequestedError,
+    ZeroBlockchainAssetsError,
 )
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
+from apps.root.utilities import TicketImageGenerator
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
@@ -380,6 +395,92 @@ class Event(DBModel):
             ),
         )
 
+    def get_available_tickets(self, tickets_requested=None) -> int:
+        """
+        return how many tickets available for a given event
+        """
+        # get ticket count
+        ticket_count = self.tickets.count()
+
+        # if no tickets_requested, set to limit_per_person
+        if not tickets_requested:
+            tickets_requested = self.limit_per_person
+
+        # capacity checks
+        error: Exception
+        if ticket_count > self.capacity:
+            # send to sentry
+            error = TooManyTicketsIssuedError("Too many tickets have been issued")
+            sentry_sdk.capture_exception(error)
+            raise error
+        elif ticket_count == self.capacity:
+            error = TicketsSoldOutError("Tickets sold out")
+            sentry_sdk.capture_message(str(error))
+            raise error
+
+        # check available tickets
+        if self.limit_per_person + ticket_count > self.capacity:
+            raise TooManyTicketsRequestedError(
+                "Tickets requested would bring event over capacity. \
+                Please lower requested tickets."
+            )
+
+        # check tickets_requested requested against limt_per_person
+        if tickets_requested > self.limit_per_person:
+            raise TooManyTicketsRequestedError(
+                "Tickets requested are over the limit per person"
+            )
+
+        # all checks passed
+        # return initial tickets_requested integer
+        if isinstance(tickets_requested, int):
+            return tickets_requested
+        else:
+            raise ValueError("Unexpected value for tickets requested")
+
+    def get_blockchain_asset_ownership(self, wallet_address: str):
+        """
+        Return list of blockchain asset verified along with requirement verified against
+        """
+        asset_ownership = []
+        for requirement in self.requirements:
+
+            # fungible requirement
+            if requirement["asset_type"] == "ERC20":
+                try:
+                    fetched_assets = moralis_get_fungible_assets(
+                        chain_id=hex(requirement["chain_id"]),
+                        wallet_address=wallet_address,
+                        token_addresses=requirement["asset_address"],
+                        to_block=requirement["to_block"],
+                    )
+                except Exception:
+                    continue
+
+            # non fungible requirement
+            if (requirement["asset_type"] == "ERC721") or requirement[
+                "asset_type"
+            ] == "ERC1155":
+                try:
+                    fetched_assets = moralis_get_nonfungible_assets(
+                        chain_id=hex(requirement["chain_id"]),
+                        wallet_address=wallet_address,
+                        token_address=requirement["asset_address"],
+                        token_ids=requirement.get("token_id"),  # optional
+                    )
+                except Exception:
+                    continue
+
+            # check for fetched_assets
+            if not fetched_assets:
+                continue
+
+            # append fetched assets
+            for i in fetched_assets:
+                asset_ownership.append({"requirement": requirement, "asset": i})
+
+        return asset_ownership
+
     def transition_draft(self, save=True):
         """
         wrapper around _transition_draft
@@ -567,6 +668,44 @@ class Ticket(DBModel):
 
         return self
 
+    def create_ticket_image(
+        self,
+        top_banner_text="SocialPass Ticket",
+        scene_img_source=None,
+    ):
+        """
+        Use the arguments to generate a ticket image and save into s3-compatible bucket.
+        Returns ticket image as well as s3 storage response
+        """
+        if self.event.start_date and self.event.title and self.event.initial_place:
+            # Generate ticket image from event data
+            created_ticket_img = (
+                TicketImageGenerator.TicketPartGenerator.generate_ticket(
+                    event_data={
+                        "event_name": self.event.title,
+                        "event_date": self.event.start_date.strftime(
+                            "%m/%d/%Y, %H:%M:%S"
+                        ),
+                        "event_location": self.event.initial_place,
+                    },
+                    embed=self.full_embed,
+                    scene_img_source=scene_img_source,
+                    top_banner_text=top_banner_text,
+                )
+            )
+
+            # Store ticket image into bucket
+            # Prepare image for S3
+            print("preparing image s3...")
+            _buffer = io.BytesIO()
+            created_ticket_img.save(_buffer, "PNG")
+            _buffer.seek(0)  # Rewind pointer back to start
+
+            # save ticket image
+            print("saving image...")
+            self.file.save(f"{str(self.filename)}.png", _buffer)
+            return self
+
     def get_apple_ticket(self):
         """
         create a passfile and get its bytes
@@ -673,6 +812,117 @@ class BlockchainOwnership(DBModel):
 
     def __str__(self):
         return str(self.wallet_address)
+
+    def validate_blockchain_wallet_ownership(
+        self,
+        event: Event,
+        signed_message: str,
+        wallet_address: str,
+    ):
+        """
+        Sets a blockchain_ownership as verified after successful verification
+        Returns tuple of (verified:bool, verification_msg:str)
+        """
+        verified = False
+        verification_msg = None
+        # check if already verified
+        if self.is_verified:
+            verification_msg = "BlockchainOwnership message already verified."
+
+        # check if expired
+        if self.is_expired:
+            verification_msg = f"BlockchainOwnership request expired at {self.expires}"
+            return verified, verification_msg
+
+        # check for id mismatch
+        if self.event != event:
+            verification_msg = "BlockchainOwnership x TokenGate ID mismatch."
+            return verified, verification_msg
+
+        # check for valid wallet_address
+        if not Web3.isAddress(wallet_address):
+            verification_msg = "Unrecognized wallet_address format"
+            return verified, verification_msg
+
+        # check if wallet_address matches recovered wallet_address
+        try:
+            _msg = encode_defunct(text=self.signing_message)
+            _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
+            if _recovered != wallet_address:
+                verification_msg = "BlockchainOwnership x Address mismatch."
+                return verified, verification_msg
+        except Exception:
+            # forgery?
+            verification_msg = f"Unable to decode {wallet_address} for {event.public_id}"
+            sentry_sdk.capture_message(verification_msg)
+            return verified, verification_msg
+
+        # before success, mark as verified, update wallet_address, and save
+        verified = True
+        self.is_verified = True
+        self.wallet_address = _recovered
+        self.save()
+        verification_msg = "OK"
+        return verified, verification_msg
+
+    def create_tickets_blockchain_ownership(
+        self,
+        tickets_to_issue: int,
+    ):
+        """
+        issue tickets for a given event based on blockchain_ownership checkout
+        """
+        # vars
+        tickets: list[Ticket] = []
+
+        # get blockchain asset ownership
+        asset_ownership = self.event.get_blockchain_asset_ownership(
+            wallet_address=self.wallet_address,
+        )
+        if not asset_ownership:
+            raise ZeroBlockchainAssetsError("No blockchain assets found")
+
+        if len(asset_ownership) < tickets_to_issue:
+            raise PartialBlockchainAssetError(
+                "Not enough blockchain assets found",
+                {
+                    "expected": tickets_to_issue,
+                    "actual": len(asset_ownership) - tickets_to_issue,
+                },
+            )
+
+        # generate tickets based on blockchain assets
+        for blockchain_asset in asset_ownership:
+            # break once ticket issuance length is met
+            if len(tickets) == tickets_to_issue:
+                break
+
+            # check for existing ticket
+            existing_ticket = Ticket.objects.filter(
+                event=self.event, blockchain_asset=blockchain_asset
+            )
+            # First-time claim
+            if not existing_ticket:
+                new_ticket = Ticket.objects.create(
+                    event=self.event,
+                    blockchain_asset=blockchain_asset,
+                    blockchain_ownership=self,
+                )
+            # existing asset claim, archive old ticket and create new one
+            # TODO: Delete? Mark as archived?
+            else:
+                existing_ticket.delete()
+                new_ticket = Ticket.objects.create(
+                    event=self.event,
+                    blockchain_asset=blockchain_asset,
+                    blockchain_ownership=self,
+                )
+
+            new_ticket.create_ticket_image()
+            # append ticket to list
+            tickets.append(new_ticket)
+
+        return tickets
 
     @property
     def is_expired(self):

@@ -20,7 +20,10 @@ export default ({ mode }) => {
         },
       },
     },
-    plugins: [react()]
+    plugins: [react()],
+    resolve: {
+       alias: [{ find: '@', replacement: '/src' }],
+    },
   })
 }
 

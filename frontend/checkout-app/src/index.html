@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-hm-autoset-preferences="color-scheme">
+<html lang="en">
   <head>
   <!-- Meta tags -->
   <meta charset="utf-8" />
@@ -13,9 +13,8 @@
   <link rel="icon" href="https://res.cloudinary.com/nfty-labs/image/upload/v1652735850/SocialPass-Icon_eanblz.svg">
 
   <!-- Halfmoon CSS -->
-  <!-- TODO: Switch to socialpass.io domain -->
-  <link href="https://demo-socialpass.nftytesting.com/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
-  <link href="https://demo-socialpass.nftytesting.com/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
+  <link href="/src/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
+  <link href="/src/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
 
   <!-- Rubik font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,60 +38,62 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@socialpass_io">
 
-  <!-- Custom styles -->
-  <style type="text/css">
-    :root {
-      --base-body-bg-color: var(--gray-color-light);
-    }
-
-    .dark-mode {
-      --base-body-bg-color: var(--dark-color-very-dim);
-    }
-
-    /* Content and card */
-
-    :root {
-      --content-and-card-spacing: 4rem;
-    }
-
-    @media (max-width: 576px) {
-      :root {
-        --content-and-card-spacing: 3rem;
-      }
-    }
-
-    /* Utilities */
-
-    .border-blend {
-      border-color: var(--white-color) !important;
-    }
-
-    .dark-mode .border-blend {
-      border-color: var(--dark-color-very-light) !important;
-    }
-
-    .ws-860 {
-      width: 86rem !important;
-    }
-  </style>
-
-  <!-- Script Tag for WAGMI -->
+  <!-- Scripts -->
   <script>window.global = window;</script>
   <script type="module">
-    import process from "process";
-    import { Buffer } from "buffer";
-    import EventEmitter from "events";
-    window.process = process;
-    window.Buffer = Buffer;
-    window.EventEmitter = EventEmitter;
+  import process from "process";
+  import { Buffer } from "buffer";
+  import EventEmitter from "events";
+
+  const devURL = "http://localhost:8000/api";
+  const prodURL = import.meta.env.VITE_APP_API_URL;
+  const baseURL = import.meta.env.PROD ? prodURL : devURL;
+
+  window.process = process;
+  window.Buffer = Buffer;
+  window.EventEmitter = EventEmitter;
+
+  (function(window, document, undefined){
+
+  // code that should be taken care of right away
+
+  window.onload = init;
+
+    function init(){
+    const public_id = location.pathname.split('/')[1];
+    const response = fetch(`${baseURL}/checkout-portal/v1/retrieve/${public_id}/`)
+      .then(response => response.json())
+      .then(data => {
+        const theme_name = data.team.theme?.css_theme;
+        const brand_name = data.team.theme?.brand_name;
+        const logo = data.team?.theme?.logo;
+        let link = document.createElement( "link" );
+        let favIcon = document.createElement( "link" );
+        if(theme_name){
+        link.href = `${theme_name}`;
+        favIcon.rel = "icon"
+        favIcon.href = `${logo}`
+
+        document.getElementById("SocialPassHeaderIcon").src = `${logo}`;
+        }
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.media = "screen,print";
+
+
+        document.getElementsByTagName( "head" )[0].appendChild( link );
+        document.getElementsByTagName( "head" )[0].appendChild( favIcon );
+
+      })
+    }
+
+  })(window, document, undefined);
+
   </script>
   </head>
   <body>
   <div id="root"></div>
-  <script type="module" src="/src2/main.tsx"></script>
-
-  <!-- TODO: Switch to socialpass.io domain -->
-  <script src="https://demo-socialpass.nftytesting.com/static/socialpass-theme/halfmoon.js">
-  </script>
+  <script type="module" src="/src/main.tsx"></script>
+  <script src="/src/static/js/halfmoon.js"></script>
   </body>
 </html>

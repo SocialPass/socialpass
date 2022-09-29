@@ -19,7 +19,12 @@ from django_fsm import FSMField, transition
 from pytz import utc
 from taggit.managers import TaggableManager
 
-from apps.root.model_field_choices import EVENT_VISIBILITY
+from apps.root.model_field_choices import (
+    CHECKOUT_SESSION_STATUS,
+    EVENT_VISIBILITY,
+    PAYMENT_TYPES,
+    TICKET_TYPES,
+)
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
@@ -642,3 +647,226 @@ class BlockchainOwnership(DBModel):
             f"\n\nTimestamp: {self.expires.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)[0:7]}"
         )
+
+
+class TicketTier(DBModel):
+
+    # specific fields
+    ticket_type = models.CharField(
+        max_length=50,
+        choices=TICKET_TYPES,
+        default=TICKET_TYPES[0][0],
+        blank=False,
+    )
+    price = models.DecimalField(
+        max_digits=9,
+        validators=[MinValueValidator(0)],
+        decimal_places=9,
+        blank=False,
+        null=True,
+    )
+    capacity = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text="Maximum amount of attendees for your event.",
+        blank=True,
+        null=False,
+    )  # MIGRATE FROM EVENT
+    quantity_sold = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=False,
+    )
+    max_per_person = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+        help_text="Maximum amount of tickets per attendee.",
+        blank=False,
+        null=False,
+    )  # MIGRATE FROM EVENT (limit_per_person)
+
+    # keys
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="ticket_tiers",
+        blank=False,
+        null=False,
+    )  # MIGRATE FROM TICKET
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"TicketTier {self.ticket_type}-{self.public_id}"
+
+
+class TicketTierPaymentType(DBModel):
+
+    # specific fields
+    payment_type = models.CharField(
+        max_length=50,
+        choices=PAYMENT_TYPES,
+        default=PAYMENT_TYPES[0][0],
+        help_text="The payment method",
+        blank=False,
+    )
+
+    # keys
+    ticket_tier = models.ForeignKey(
+        TicketTier,
+        on_delete=models.CASCADE,
+        related_name="tier_payment_types",
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"TicketTierPaymentType {self.payment_type}-{self.public_id}"
+
+
+class CheckoutSession(DBModel):
+
+    # specific fields
+    expiration = models.DateTimeField(help_text="...", blank=True, null=True)
+    name = models.CharField(max_length=255, blank=False)
+    email = models.CharField(max_length=255, blank=False)
+    cost = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=False,
+    )
+    status = models.CharField(
+        max_length=50,
+        choices=CHECKOUT_SESSION_STATUS,
+        default=CHECKOUT_SESSION_STATUS[0][0],
+        blank=False,
+    )
+
+    # keys
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="checkout_sessions",
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return self.name
+
+
+class CheckoutItem(DBModel):
+
+    # specific fields
+    quantity = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=False,
+    )
+
+    # keys
+    ticket_tier = models.ForeignKey(
+        TicketTier,
+        on_delete=models.CASCADE,
+        related_name="checkout_items",
+        blank=False,
+        null=False,
+    )
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="checkout_items",
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"CheckoutItem {self.public_id}"
+
+
+class FiatTx(DBModel):
+
+    # keys
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="fiat_transactions",
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self) -> str:
+        """
+        return string representation of model
+        """
+        return f"FiatTx {self.public_id}"
+
+
+class BlockchainTx(DBModel):
+
+    # keys
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="blockchain_transactions",
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self) -> str:
+        """
+        return string representation of model
+        """
+        return f"BlockchainTx {self.public_id}"
+
+
+class AssetOwnershipTx(DBModel):
+
+    # keys
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="assetownership_transactions",
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self) -> str:
+        """
+        return string representation of model
+        """
+        return f"AssetOwnershipTx {self.public_id}"

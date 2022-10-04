@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>SocialPass - Event Portal</title>
+
+		<!-- Halfmoon CSS -->
+		<link href="../../../backend/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
+
+		<!-- SocialPass CSS theme -->
+		<link href="../../../backend/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- Custom styles -->
+		<style type="text/css">
+			:root {
+				--base-body-bg-color: var(--gray-color-light);
+				--base-border-radius: 0.4rem;
+			}
+
+			.dark-mode {
+				--base-body-bg-color: var(--dark-color-very-dim);
+			}
+
+			/* Ticket tier (checkbox or radio) */
+
+			.ticket-tier {
+				position: relative;
+				display: block;
+			}
+
+			.ticket-tier-input {
+				position: absolute;
+				opacity: 0;
+				height: 0;
+				width: 0;
+			}
+
+			.ticket-tier-label {
+				position: relative;
+				display: block;
+				height: 100%;
+				cursor: pointer;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+
+				padding: 1rem 2rem;
+				background-color: var(--base-content-bg-color);
+				border: var(--base-border-width) var(--base-border-style) var(--border-color);
+				border-radius: var(--rounded-2-border-radius);
+			}
+
+			@media (max-width: 576px) {
+				.ticket-tier-label {
+					padding: 1rem;
+				}
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label {
+				background-color: var(--primary-color-very-light);
+				border-color: var(--primary-color);
+				z-index: 1;
+			}
+
+			.dark-mode .ticket-tier-input:checked + .ticket-tier-label {
+				background-color: var(--primary-color-very-dim);
+				border-color: var(--primary-color-dim);
+			}
+
+			.ticket-tier-check {
+				display: none;
+				margin-right: 0.5rem;
+				color: var(--primary-color);
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-check {
+				display: inline;
+			}
+
+			.ticket-tier-uncheck {
+				margin-right: 0.5rem;
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-uncheck {
+				display: none;
+			}
+
+			.ticket-tier-input:focus + .ticket-tier-label {
+				box-shadow: 0 0 0 0.4rem hsla(var(--primary-color-hsl), 0.2);
+				z-index: 2;
+			}
+
+			.ticket-tier-input:disabled + .ticket-tier-label {
+				background-color: var(--base-body-bg-color);
+				border-color: hsla(var(--black-color-hsl), 0.35);
+				cursor: not-allowed;
+				opacity: 0.75;
+			}
+
+			.ticket-tier-input:disabled + .ticket-tier-label .ticket-tier-controls {
+				display: none;
+			}
+
+			/* Ticket tier group */
+
+			.ticket-tier-group {
+				display: flex;
+				vertical-align: middle;
+			}
+
+			.ticket-tier-group > .ticket-tier {
+				flex: 1 1 auto;
+			}
+
+			.ticket-tier-group > .ticket-tier:not(:first-child) > .ticket-tier-label {
+				margin-left: -1px;
+				border-top-left-radius: 0;
+				border-bottom-left-radius: 0;
+			}
+
+			.ticket-tier-group > .ticket-tier:not(:last-child) > .ticket-tier-label {
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			/* Input group */
+
+			.input-group-pill > *:first-child {
+				border-top-left-radius: var(--rounded-pill-border-radius);
+				border-bottom-left-radius: var(--rounded-pill-border-radius);
+			}
+
+			.input-group-pill > *:last-child {
+				border-top-right-radius: var(--rounded-pill-border-radius);
+				border-bottom-right-radius: var(--rounded-pill-border-radius);
+			}
+
+			/* Utilities and related */
+
+			.border-blend {
+				border-color: var(--white-color) !important;
+			}
+
+			.dark-mode .border-blend {
+				border-color: var(--dark-color-very-light) !important;
+			}
+
+			@media (max-width: 576px) {
+				.fs-base-n4-sm-down {
+					font-size: calc(var(--base-font-size) - 0.4rem) !important;
+				}
+			}
+
+			.ws-820 {
+				width: 82rem !important;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Page wrapper start -->
+		<div class="page-wrapper">
+			<!-- Content wrapper start -->
+			<div class="content-wrapper ws-820 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
+				<!-- Main content start -->
+				<div>
+					<!-- Navbar start -->
+					<nav class="d-flex align-items-center px-20">
+						<!-- Branding start -->
+						<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+							<div class="ws-75">
+								<img src="../../../backend/static/images/SocialPass-Icon.svg" alt="SocialPass Icon" class="d-block w-100 h-auto">
+							</div>
+							<div class="text-strong ms-10">
+								<div class="fs-base-p4">
+									SocialPass
+								</div>
+								<div class="fs-base-n4 lh-1 fw-normal">
+									Ticket Portal
+								</div>
+							</div>
+						</a>
+						<!-- Branding end -->
+
+						<!-- Dark mode toggle start -->
+						<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
+							<i class="fa-solid fa-moon"></i>
+							<span class="visually-hidden">Toggle dark mode</span>
+						</button>
+						<!-- Dark mode toggle end -->
+					</nav>
+					<!-- Navbar end -->
+
+					<!-- Header start -->
+					<div class="w-100 hs-200 position-relative">
+						<!-- Event cover image start -->
+						<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
+							<img src="https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="w-100 h-auto" alt="Cover image">
+						</div>
+						<!-- Event cover image end -->
+
+						<!-- Team image start -->
+						<div class="position-absolute z-1 top-100 start-50 translate-middle px-content">
+							<div class="ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden">
+								<img src="https://www.gitbook.com/cdn-cgi/image/width=100,height=100,fit=contain,dpr=1,format=auto/https%3A%2F%2F2919503366-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FoAjCVAKyaqd3D8vQvqdq%252Ficon%252FSxoMd2us80sdMcUcQ36e%252FSocialPass%2520Logo.jpeg%3Falt%3Dmedia%26token%3D0e6830d3-362b-4383-b36b-ea0ddb6195be" class="d-block w-100 h-auto" alt="Team image">
+							</div>
+						</div>
+						<!-- Team image end -->
+					</div>
+					<!-- Header end -->
+
+					<!-- Team name start -->
+					<div class="px-content pt-40 text-center">
+						<p class="text-muted mt-5 mb-0">
+							Hosted By
+						</p>
+						<h6 class="text-strong fs-base fw-700 m-0">
+							SocialPass
+						</h6>
+					</div>
+					<!-- Team name end -->
+
+					<!-- Event content start -->
+					<div class="row">
+						<!-- Hero section start -->
+						<div class="col-md-7">
+							<div class="content mt-20 mb-0">
+								<h1 class="text-strong fw-700 display-6 m-0">
+									NFT Holders Party
+								</h1>
+								<p class="mt-20 fsr-6">
+									Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure you're 21+ to enter.
+								</p>
+							</div>
+						</div>
+						<!-- Hero section end -->
+
+						<!-- Event details start -->
+						<div class="col-md-5">
+							<div class="content mt-0 mt-md-30 mb-0">
+								<!-- Event date & time start -->
+								<div class="d-flex align-items-center">
+									<div class="ws-25 flex-shrink-0">
+										<i class="fa-regular fa-clock"></i>
+									</div>
+									<div class="fw-bold">
+										Date & Time
+									</div>
+								</div>
+								<p class="text-muted mt-5 mb-0">
+									Friday, May 15, 8:00 - 10:30 PM EST
+								</p>
+								<!-- Event date & time end -->
+
+								<!-- Event location start -->
+								<div class="d-flex align-items-center mt-15">
+									<div class="ws-25 flex-shrink-0">
+										<i class="fa-regular fa-location-dot"></i>
+									</div>
+									<div class="fw-bold">
+										Location
+									</div>
+								</div>
+								<p class="text-muted mt-5 mb-0">
+									James L. Knight Center,
+									<br />
+									Miami, Florida, USA
+								</p>
+								<!-- Event location end -->
+							</div>
+						</div>
+						<!-- Event details end -->
+
+						<!-- Ticket status start -->
+						<div class="col-12">
+							<div class="content mt-20 mb-0">
+								<!-- { if tickets are available } -->
+								<div class="alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
+									<i class="fa-regular fa-check me-15"></i>
+									<p class="m-0">
+										Tickets available! Please select the payment type and tickets you want to purchase.
+									</p>
+								</div>
+								<!-- { else show the following } -->
+								<!--
+								<div class="alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
+									<i class="fa-regular fa-times me-15"></i>
+									<p class="m-0">
+										Sorry! Tickets are not available for this event.
+									</p>
+								</div>
+								-->
+							</div>
+						</div>
+						<!-- Ticket status end -->
+					</div>
+					<!-- Event content end -->
+
+					<!-- Ticket tier payment types start -->
+					<div class="content mb-0">
+						<div class="ticket-tier-group">
+							<!-- Fiat start -->
+							<div class="ticket-tier">
+								<input type="radio" class="ticket-tier-input" name="payment-type" id="fiat" checked="checked">
+								<label for="fiat" class="ticket-tier-label">
+									<h6 class="fw-700 m-0 fs-base">
+										<i class="fa-light fa-money-check-dollar-pen text-primary me-5"></i>
+										Fiat
+									</h6>
+								</label>
+							</div>
+							<!-- Fiat end -->
+
+							<!-- Crypto start -->
+							<div class="ticket-tier">
+								<input type="radio" class="ticket-tier-input" name="payment-type" id="crypto">
+								<label for="crypto" class="ticket-tier-label">
+									<h6 class="fw-700 m-0 fs-base">
+										<i class="fa-light fa-wallet text-primary me-5"></i>
+										Crypto
+									</h6>
+								</label>
+							</div>
+							<!-- Crypto end -->
+
+							<!-- NFTs start -->
+							<div class="ticket-tier">
+								<input type="radio" class="ticket-tier-input" name="payment-type" id="nfts">
+								<label for="nfts" class="ticket-tier-label">
+									<h6 class="fw-700 m-0 fs-base">
+										<i class="fa-light fa-hexagon-image text-primary me-5"></i>
+										NFTs
+									</h6>
+								</label>
+							</div>
+							<!-- NFTs end -->
+						</div>
+					</div>
+					<!-- Ticket tier payment types end -->
+
+					<!-- Ticket tiers and CTA start -->
+					<div class="row">
+						<!-- Ticket tiers start -->
+						<div class="col-md-7">
+							<div class="content me-md-0">
+								<!-- Ticket tier start -->
+								<div class="ticket-tier mb-20">
+									<input type="checkbox" class="ticket-tier-input" id="c1" checked="checked">
+									<label for="c1" class="ticket-tier-label">
+										<div class="d-sm-flex align-items-center">
+											<div class="pe-sm-15">
+												<h6 class="fw-700 m-0 fs-base">
+													<span class="ticket-tier-uncheck">
+														<i class="fa-light fa-square"></i>
+													</span>
+													<span class="ticket-tier-check">
+														<i class="fa-light fa-check-square"></i>
+													</span>
+													General Admission
+												</h6>
+												<p class="m-0 fs-base-n2">
+													45 available
+												</p>
+											</div>
+											<div class="ticket-tier-controls ms-auto mt-10 mt-sm-0">
+												<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
+													<button class="btn ws-25 px-0">&minus;</button>
+													<input type="number" min="1" max="10" step="1" value="1" class="form-control form-number text-center">
+													<button class="btn ws-25 px-0">&plus;</button>
+												</div>
+												<div class="text-center fs-base-n2 mt-5">
+													<strong>Price &times; 1</strong>
+													&mdash; $9.99
+												</div>
+											</div>
+										</div>
+									</label>
+								</div>
+								<!-- Ticket tier end -->
+
+								<!-- Ticket tier start -->
+								<div class="ticket-tier mb-20">
+									<input type="checkbox" class="ticket-tier-input" id="c2">
+									<label for="c2" class="ticket-tier-label">
+										<div class="d-sm-flex align-items-center">
+											<div class="pe-sm-15">
+												<h6 class="fw-700 m-0 fs-base">
+													<span class="ticket-tier-uncheck">
+														<i class="fa-light fa-square"></i>
+													</span>
+													<span class="ticket-tier-check">
+														<i class="fa-light fa-check-square"></i>
+													</span>
+													Deluxe Admission
+												</h6>
+												<p class="m-0 fs-base-n2">
+													124 available
+												</p>
+											</div>
+											<div class="ticket-tier-controls ms-auto mt-10 mt-sm-0">
+												<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
+													<button class="btn ws-25 px-0">&minus;</button>
+													<input type="number" min="1" max="10" step="1" value="1" class="form-control form-number text-center">
+													<button class="btn ws-25 px-0">&plus;</button>
+												</div>
+												<div class="text-center fs-base-n2 mt-5">
+													<strong>Price &times; 1</strong>
+													&mdash; $24.99
+												</div>
+											</div>
+										</div>
+									</label>
+								</div>
+								<!-- Ticket tier end -->
+
+								<!-- Ticket tier start -->
+								<div class="ticket-tier mb-20">
+									<input type="checkbox" class="ticket-tier-input" id="c3">
+									<label for="c3" class="ticket-tier-label">
+										<div class="d-sm-flex align-items-center">
+											<div class="pe-sm-15">
+												<h6 class="fw-700 m-0 fs-base">
+													<span class="ticket-tier-uncheck">
+														<i class="fa-light fa-square"></i>
+													</span>
+													<span class="ticket-tier-check">
+														<i class="fa-light fa-check-square"></i>
+													</span>
+													VIP Admission
+												</h6>
+												<p class="m-0 fs-base-n2">
+													4 available
+												</p>
+											</div>
+											<div class="ticket-tier-controls ms-auto mt-10 mt-sm-0">
+												<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
+													<button class="btn ws-25 px-0">&minus;</button>
+													<input type="number" min="1" max="10" step="1" value="1" class="form-control form-number text-center">
+													<button class="btn ws-25 px-0">&plus;</button>
+												</div>
+												<div class="text-center fs-base-n2 mt-5">
+													<strong>Price &times; 1</strong>
+													&mdash; $99.99
+												</div>
+											</div>
+										</div>
+									</label>
+								</div>
+								<!-- Ticket tier end -->
+							</div>
+							<!-- Ticket tiers end -->
+						</div>
+						<!-- Ticket tiers start -->
+
+						<!-- CTA section start -->
+						<div class="col-md-5">
+							<div class="px-content pt-md-30 position-md-sticky top-0 start-0">
+								<button class="btn btn-secondary btn-lg fsr-6 btn-block">
+									<strong class="antialiased">Get Tickets</strong>
+								</button>
+								<p>
+									<strong>Total Price</strong>
+									&mdash;
+									$9.99
+								</p>
+								<hr />
+								<p class="text-muted fs-base-n2">
+									By clicking on the above button, you're agreeing to our <a href="#" class="fw-bold">Terms & Conditions</a>.
+								</p>
+							</div>
+						</div>
+						<!-- CTA section end -->
+					</div>
+					<!-- Ticket tiers and CTA end -->
+				</div>
+				<!-- Main content end -->
+
+				<!-- Footer start -->
+				<div class="content text-end border-top pt-10">
+					<span class="ms-auto text-muted fs-base-n2">
+						&copy; 2022, SP Tech Inc. All rights reserved
+					</span>
+				</div>
+				<!-- Footer end -->
+			</div>
+			<!-- Content wrapper end -->
+		</div>
+		<!-- Page wrapper end -->
+
+		<!-- Halfmoon JS -->
+		<script src="../../../backend/static/socialpass-theme/halfmoon.js"></script>
+
+		<script type="text/javascript">
+			/**
+			 * Handle the keydown event (only on debug mode).
+			 *
+			 * This is used to create the dark mode and sidebar toggle shortcuts.
+			 * These shortcuts are very useful for testing.
+			 */
+			document.addEventListener("keydown", function (event) {
+				if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+					event = event || window.event;
+
+					if (!(event.ctrlKey || event.metaKey)) {
+						// Toggle dark mode when [shift] + [D] keys are pressed
+						if (event.shiftKey && event.which == 68) {
+							halfmoon.toggleDarkMode();
+						}
+
+						// Toggle sidebar when [shift] + [S] keys are pressed
+						if (event.shiftKey && event.which == 83) {
+							halfmoon.toggleSidebar();
+						}
+					}
+				}
+			});
+		</script>
+	</body>
+</html>

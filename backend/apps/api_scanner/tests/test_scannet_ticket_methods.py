@@ -3,14 +3,10 @@ from typing import Any
 from django.core import exceptions
 from django.test import TestCase
 
-from apps.api_scanner.services import (
+from apps.root.exceptions import (
     AlreadyRedeemed,
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
-    access_key_can_redeem_ticket,
-    get_claimed_tickets,
-    get_ticket_from_embedded_qr_code,
-    redeem_ticket,
 )
 from apps.root.factories import (
     EventFactory,
@@ -21,7 +17,7 @@ from apps.root.factories import (
 from apps.root.models import Event, Team, Ticket, TicketRedemptionKey
 
 
-class TestScannerServices(TestCase):
+class TestScannerTicketMethods(TestCase):
     user: Any
     team: Team
     event: Event
@@ -49,21 +45,23 @@ class TestScannerServices(TestCase):
         )
 
         # test valid qr_code
-        ticket_from_qr_code = get_ticket_from_embedded_qr_code(self.ticket.full_embed)
+        ticket_from_qr_code = Ticket.get_ticket_from_embedded_qr_code(
+            self.ticket.full_embed
+        )
         self.assertEqual(ticket_from_qr_code, self.ticket)
 
         # test invalid qr_code (can not split into embed_code and filename)
         with self.assertRaises(InvalidEmbedCodeError):
-            get_ticket_from_embedded_qr_code(invalid_qrcode)
+            Ticket.get_ticket_from_embedded_qr_code(invalid_qrcode)
 
         # test invalid UUID qr_code (do not match with UUID pattern)
         # djando UUID field raise ValidationError for invalid UUID string
         with self.assertRaises(exceptions.ValidationError):
-            get_ticket_from_embedded_qr_code(invalid_uuid_qrcode)
+            Ticket.get_ticket_from_embedded_qr_code(invalid_uuid_qrcode)
 
         # test no ticket from qr_code (random qrcode)
         with self.assertRaises(Ticket.DoesNotExist):
-            get_ticket_from_embedded_qr_code(valid_qrcode)
+            Ticket.get_ticket_from_embedded_qr_code(valid_qrcode)
 
     def test_access_key_can_redeem_ticket(self):
         """
@@ -77,12 +75,12 @@ class TestScannerServices(TestCase):
 
         # assert can redeem ticket
         self.assertEqual(
-            access_key_can_redeem_ticket(ticket, redemption_access_key), True
+            ticket.access_key_can_redeem_ticket(redemption_access_key), True
         )
 
         # assert can not redeem ticket
         self.assertEqual(
-            access_key_can_redeem_ticket(__ticket, redemption_access_key), False
+            __ticket.access_key_can_redeem_ticket(redemption_access_key), False
         )
 
     def test_redeem_ticket(self):
@@ -96,21 +94,21 @@ class TestScannerServices(TestCase):
         redemption_access_key = self.ticket_redemption_key
 
         # test ticket redeemed
-        redeemed_ticket = redeem_ticket(ticket, redemption_access_key)
+        redeemed_ticket = ticket.redeem_ticket(redemption_access_key)
         self.assertEqual(redeemed_ticket.redeemed, True)
 
         # test already redeemed
         with self.assertRaises(AlreadyRedeemed):
-            redeem_ticket(redeemed_ticket)
+            redeemed_ticket.redeem_ticket()
 
         # test forbidden redemption
         __ticket = self.__ticket
         with self.assertRaises(ForbiddenRedemptionError):
-            redeem_ticket(__ticket, redemption_access_key)
+            __ticket.redeem_ticket(redemption_access_key)
 
     def test_get_claimed_tickets(self):
         """
-        tests if services get_claimed_tickets service is returning redeemed tickets
+        tests if Ticket get_claimed_tickets method is returning redeemed tickets
             from event
         - if an event has no redeemed tickets must return an empty queryset
         """
@@ -118,8 +116,8 @@ class TestScannerServices(TestCase):
         redemption_access_key = self.ticket_redemption_key
 
         # assert empty queryset
-        self.assertFalse(get_claimed_tickets(ticket.event).exists())
+        self.assertFalse(Ticket.get_claimed_tickets(ticket.event).exists())
 
         # assert queryset
-        redeem_ticket(ticket, redemption_access_key)
-        self.assertTrue(get_claimed_tickets(ticket.event).exists())
+        ticket.redeem_ticket(redemption_access_key)
+        self.assertTrue(Ticket.get_claimed_tickets(ticket.event).exists())

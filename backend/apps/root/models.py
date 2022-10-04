@@ -1,4 +1,3 @@
-import io
 import os
 import uuid
 from datetime import datetime, timedelta
@@ -29,7 +28,6 @@ from apps.root.exceptions import (
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
-from apps.root.utilities import TicketImageGenerator
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
@@ -566,46 +564,7 @@ class Ticket(DBModel):
         self.redeemed_at = timezone.now()
         self.redeemed_by = redemption_access_key
         self.save()
-
         return self
-
-    def create_ticket_image(
-        self,
-        top_banner_text="SocialPass Ticket",
-        scene_img_source=None,
-    ):
-        """
-        Use the arguments to generate a ticket image and save into s3-compatible bucket.
-        Returns ticket image as well as s3 storage response
-        """
-        if self.event.start_date and self.event.title and self.event.initial_place:
-            # Generate ticket image from event data
-            created_ticket_img = (
-                TicketImageGenerator.TicketPartGenerator.generate_ticket(
-                    event_data={
-                        "event_name": self.event.title,
-                        "event_date": self.event.start_date.strftime(
-                            "%m/%d/%Y, %H:%M:%S"
-                        ),
-                        "event_location": self.event.initial_place,
-                    },
-                    embed=self.full_embed,
-                    scene_img_source=scene_img_source,
-                    top_banner_text=top_banner_text,
-                )
-            )
-
-            # Store ticket image into bucket
-            # Prepare image for S3
-            print("preparing image s3...")
-            _buffer = io.BytesIO()
-            created_ticket_img.save(_buffer, "PNG")
-            _buffer.seek(0)  # Rewind pointer back to start
-
-            # save ticket image
-            print("saving image...")
-            self.file.save(f"{str(self.filename)}.png", _buffer)
-            return self
 
     def get_apple_ticket(self):
         """

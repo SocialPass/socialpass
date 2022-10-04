@@ -18,7 +18,6 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
-from eth_account.messages import encode_defunct
 from pytz import utc
 from taggit.managers import TaggableManager
 
@@ -26,11 +25,6 @@ from apps.root.exceptions import (
     AlreadyRedeemed,
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
-    PartialBlockchainAssetError,
-    TicketsSoldOutError,
-    TooManyTicketsIssuedError,
-    TooManyTicketsRequestedError,
-    ZeroBlockchainAssetsError,
 )
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA

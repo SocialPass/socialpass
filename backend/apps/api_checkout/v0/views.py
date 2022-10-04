@@ -3,7 +3,7 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.api_checkoutportal import serializers
+from apps.api_checkout.v0 import serializers
 from apps.root import exceptions
 from apps.root.models import BlockchainOwnership, Event
 

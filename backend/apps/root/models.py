@@ -25,10 +25,6 @@ from taggit.managers import TaggableManager
 from web3 import Web3
 from web3.auto import w3
 
-from apps.api_checkoutportal.services import (
-    moralis_get_fungible_assets,
-    moralis_get_nonfungible_assets,
-)
 from apps.root.exceptions import (
     AlreadyRedeemed,
     ForbiddenRedemptionError,
@@ -437,49 +433,6 @@ class Event(DBModel):
             return tickets_requested
         else:
             raise ValueError("Unexpected value for tickets requested")
-
-    def get_blockchain_asset_ownership(self, wallet_address: str):
-        """
-        Return list of blockchain asset verified along with requirement verified against
-        """
-        asset_ownership = []
-        for requirement in self.requirements:
-
-            # fungible requirement
-            if requirement["asset_type"] == "ERC20":
-                try:
-                    fetched_assets = moralis_get_fungible_assets(
-                        chain_id=hex(requirement["chain_id"]),
-                        wallet_address=wallet_address,
-                        token_addresses=requirement["asset_address"],
-                        to_block=requirement["to_block"],
-                    )
-                except Exception:
-                    continue
-
-            # non fungible requirement
-            if (requirement["asset_type"] == "ERC721") or requirement[
-                "asset_type"
-            ] == "ERC1155":
-                try:
-                    fetched_assets = moralis_get_nonfungible_assets(
-                        chain_id=hex(requirement["chain_id"]),
-                        wallet_address=wallet_address,
-                        token_address=requirement["asset_address"],
-                        token_ids=requirement.get("token_id"),  # optional
-                    )
-                except Exception:
-                    continue
-
-            # check for fetched_assets
-            if not fetched_assets:
-                continue
-
-            # append fetched assets
-            for i in fetched_assets:
-                asset_ownership.append({"requirement": requirement, "asset": i})
-
-        return asset_ownership
 
     def transition_draft(self, save=True):
         """

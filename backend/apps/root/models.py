@@ -22,8 +22,6 @@ from django_fsm import FSMField, transition
 from eth_account.messages import encode_defunct
 from pytz import utc
 from taggit.managers import TaggableManager
-from web3 import Web3
-from web3.auto import w3
 
 from apps.root.exceptions import (
     AlreadyRedeemed,
@@ -765,117 +763,6 @@ class BlockchainOwnership(DBModel):
 
     def __str__(self):
         return str(self.wallet_address)
-
-    def validate_blockchain_wallet_ownership(
-        self,
-        event: Event,
-        signed_message: str,
-        wallet_address: str,
-    ):
-        """
-        Sets a blockchain_ownership as verified after successful verification
-        Returns tuple of (verified:bool, verification_msg:str)
-        """
-        verified = False
-        verification_msg = None
-        # check if already verified
-        if self.is_verified:
-            verification_msg = "BlockchainOwnership message already verified."
-
-        # check if expired
-        if self.is_expired:
-            verification_msg = f"BlockchainOwnership request expired at {self.expires}"
-            return verified, verification_msg
-
-        # check for id mismatch
-        if self.event != event:
-            verification_msg = "BlockchainOwnership x TokenGate ID mismatch."
-            return verified, verification_msg
-
-        # check for valid wallet_address
-        if not Web3.isAddress(wallet_address):
-            verification_msg = "Unrecognized wallet_address format"
-            return verified, verification_msg
-
-        # check if wallet_address matches recovered wallet_address
-        try:
-            _msg = encode_defunct(text=self.signing_message)
-            _recovered = w3.eth.account.recover_message(_msg, signature=signed_message)
-            if _recovered != wallet_address:
-                verification_msg = "BlockchainOwnership x Address mismatch."
-                return verified, verification_msg
-        except Exception:
-            # forgery?
-            verification_msg = f"Unable to decode {wallet_address} for {event.public_id}"
-            sentry_sdk.capture_message(verification_msg)
-            return verified, verification_msg
-
-        # before success, mark as verified, update wallet_address, and save
-        verified = True
-        self.is_verified = True
-        self.wallet_address = _recovered
-        self.save()
-        verification_msg = "OK"
-        return verified, verification_msg
-
-    def create_tickets_blockchain_ownership(
-        self,
-        tickets_to_issue: int,
-    ):
-        """
-        issue tickets for a given event based on blockchain_ownership checkout
-        """
-        # vars
-        tickets: list[Ticket] = []
-
-        # get blockchain asset ownership
-        asset_ownership = self.event.get_blockchain_asset_ownership(
-            wallet_address=self.wallet_address,
-        )
-        if not asset_ownership:
-            raise ZeroBlockchainAssetsError("No blockchain assets found")
-
-        if len(asset_ownership) < tickets_to_issue:
-            raise PartialBlockchainAssetError(
-                "Not enough blockchain assets found",
-                {
-                    "expected": tickets_to_issue,
-                    "actual": len(asset_ownership) - tickets_to_issue,
-                },
-            )
-
-        # generate tickets based on blockchain assets
-        for blockchain_asset in asset_ownership:
-            # break once ticket issuance length is met
-            if len(tickets) == tickets_to_issue:
-                break
-
-            # check for existing ticket
-            existing_ticket = Ticket.objects.filter(
-                event=self.event, blockchain_asset=blockchain_asset
-            )
-            # First-time claim
-            if not existing_ticket:
-                new_ticket = Ticket.objects.create(
-                    event=self.event,
-                    blockchain_asset=blockchain_asset,
-                    blockchain_ownership=self,
-                )
-            # existing asset claim, archive old ticket and create new one
-            # TODO: Delete? Mark as archived?
-            else:
-                existing_ticket.delete()
-                new_ticket = Ticket.objects.create(
-                    event=self.event,
-                    blockchain_asset=blockchain_asset,
-                    blockchain_ownership=self,
-                )
-
-            new_ticket.create_ticket_image()
-            # append ticket to list
-            tickets.append(new_ticket)
-
-        return tickets
 
     @property
     def is_expired(self):

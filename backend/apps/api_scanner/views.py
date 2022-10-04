@@ -8,9 +8,10 @@ from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from apps.root import exceptions
 from apps.root.models import Ticket, TicketRedemptionKey
 
-from . import serializers, services
+from . import serializers
 
 
 class SetAccessKeyAndEventMixin:
@@ -89,8 +90,8 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
 
         # Retrieve ticket
         try:
-            ticket = services.get_ticket_from_embedded_qr_code(embed_code)
-        except services.InvalidEmbedCodeError:
+            ticket = Ticket.get_ticket_from_embedded_qr_code(embed_code)
+        except exceptions.InvalidEmbedCodeError:
             return Response(
                 status=422,
                 data={
@@ -109,8 +110,8 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
 
         # Redeem ticket
         try:
-            services.redeem_ticket(ticket, self.redemption_access_key)
-        except services.ForbiddenRedemptionError:
+            ticket.redeem_ticket(self.redemption_access_key)
+        except exceptions.ForbiddenRedemptionError:
             return Response(
                 status=403,
                 data={
@@ -118,7 +119,7 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
                     "message": "Redemption access key has no access to this Event.",
                 },
             )
-        except services.AlreadyRedeemed:
+        except exceptions.AlreadyRedeemed:
             return Response(
                 status=409,
                 data={

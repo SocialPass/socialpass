@@ -6,7 +6,6 @@ from django.test import RequestFactory, TestCase
 from django.views.generic import TemplateView
 from rest_framework import status
 
-from apps.api_checkout.tests.test_views import prevent_warnings
 from apps.api_scanner.views import SetAccessKeyAndEventMixin
 from apps.root.factories import (
     EventFactory,
@@ -15,6 +14,7 @@ from apps.root.factories import (
     UserWithTeamFactory,
 )
 from apps.root.models import Event, Team, Ticket, TicketRedemptionKey
+from apps.root.utilities.main import prevent_warnings
 
 
 class TestCaseWrapper(TestCase):

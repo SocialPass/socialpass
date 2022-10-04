@@ -6,7 +6,6 @@ from enum import Enum
 from typing import Optional
 
 import boto3
-import sentry_sdk
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -388,49 +387,6 @@ class Event(DBModel):
                 self.pk,
             ),
         )
-
-    def get_available_tickets(self, tickets_requested=None) -> int:
-        """
-        return how many tickets available for a given event
-        """
-        # get ticket count
-        ticket_count = self.tickets.count()
-
-        # if no tickets_requested, set to limit_per_person
-        if not tickets_requested:
-            tickets_requested = self.limit_per_person
-
-        # capacity checks
-        error: Exception
-        if ticket_count > self.capacity:
-            # send to sentry
-            error = TooManyTicketsIssuedError("Too many tickets have been issued")
-            sentry_sdk.capture_exception(error)
-            raise error
-        elif ticket_count == self.capacity:
-            error = TicketsSoldOutError("Tickets sold out")
-            sentry_sdk.capture_message(str(error))
-            raise error
-
-        # check available tickets
-        if self.limit_per_person + ticket_count > self.capacity:
-            raise TooManyTicketsRequestedError(
-                "Tickets requested would bring event over capacity. \
-                Please lower requested tickets."
-            )
-
-        # check tickets_requested requested against limt_per_person
-        if tickets_requested > self.limit_per_person:
-            raise TooManyTicketsRequestedError(
-                "Tickets requested are over the limit per person"
-            )
-
-        # all checks passed
-        # return initial tickets_requested integer
-        if isinstance(tickets_requested, int):
-            return tickets_requested
-        else:
-            raise ValueError("Unexpected value for tickets requested")
 
     def transition_draft(self, save=True):
         """

@@ -90,7 +90,7 @@ services:
       - backend
 
   checkout-app:
-    image: socialpass-checkout-app-app
+    image: socialpass-checkout-app
     command: sh -c "yarn start --host"
     stdin_open: true
     volumes:

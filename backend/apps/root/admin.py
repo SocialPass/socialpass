@@ -5,13 +5,20 @@ from django_fsm_log.admin import StateLogInline
 
 from apps.root.forms import InviteAdminAddForm, InviteAdminChangeForm
 from apps.root.models import (
+    AssetOwnershipTx,
     BlockchainOwnership,
+    BlockchainTx,
+    CheckoutItem,
+    CheckoutSession,
     Event,
+    FiatTx,
     Invite,
     Membership,
     Team,
     Ticket,
     TicketRedemptionKey,
+    TicketTier,
+    TicketTierPaymentType,
 )
 
 User = get_user_model()
@@ -112,3 +119,56 @@ class InviteAdmin(admin.ModelAdmin):
             kwargs["form"].user = request.user
             kwargs["form"].request = request
         return super().get_form(request, obj, **kwargs)
+
+
+@admin.register(TicketTier)
+class TicketTierAdmin(admin.ModelAdmin):
+    list_display = (
+        "ticket_type",
+        "event",
+        "price",
+        "capacity",
+        "quantity_sold",
+        "max_per_person",
+    )
+    search_fields = ("event__title",)
+
+
+@admin.register(TicketTierPaymentType)
+class TicketTierPaymentTypeAdmin(admin.ModelAdmin):
+    list_display = ("payment_type", "ticket_tier")
+    search_fields = ("ticket_tier",)
+
+
+@admin.register(CheckoutSession)
+class CheckoutSessionAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "email",
+        "expiration",
+    )
+    search_fields = ("event__title",)
+
+
+@admin.register(CheckoutItem)
+class CheckoutItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "quantity",
+        "ticket_tier",
+    )
+    search_fields = ("checkout_session__name",)
+
+
+@admin.register(FiatTx)
+class FiatTxAdmin(admin.ModelAdmin):
+    list_display = ("checkout_session",)
+
+
+@admin.register(BlockchainTx)
+class BlockchainTxAdmin(admin.ModelAdmin):
+    list_display = ("checkout_session",)
+
+
+@admin.register(AssetOwnershipTx)
+class AssetOwnershipTxAdmin(admin.ModelAdmin):
+    list_display = ("checkout_session",)

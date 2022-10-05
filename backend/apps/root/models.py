@@ -685,8 +685,11 @@ class BlockchainOwnership(DBModel):
 
 
 class TicketTier(DBModel):
+    """
+    Stores the tiers for events
+    """
 
-    # specific fields
+    # basic info
     ticket_type = models.CharField(
         max_length=255,
         blank=False,
@@ -704,7 +707,7 @@ class TicketTier(DBModel):
         help_text="Maximum amount of attendees for your event.",
         blank=True,
         null=False,
-    )  # MIGRATE FROM EVENT
+    )
     quantity_sold = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)],
@@ -717,7 +720,7 @@ class TicketTier(DBModel):
         help_text="Maximum amount of tickets per attendee.",
         blank=False,
         null=False,
-    )  # MIGRATE FROM EVENT (limit_per_person)
+    )
 
     # keys
     event = models.ForeignKey(
@@ -726,18 +729,18 @@ class TicketTier(DBModel):
         related_name="ticket_tiers",
         blank=False,
         null=False,
-    )  # MIGRATE FROM TICKET
+    )
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return f"TicketTier {self.ticket_type}-{self.public_id}"
 
 
 class TicketTierPaymentType(DBModel):
+    """
+    Payment Type for Ticket Tiers
+    """
 
-    # specific fields
+    # basic info
     payment_type = models.CharField(
         max_length=50,
         choices=PAYMENT_TYPES,
@@ -756,18 +759,18 @@ class TicketTierPaymentType(DBModel):
     )
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return f"TicketTierPaymentType {self.payment_type}-{self.public_id}"
 
 
 class CheckoutSession(DBModel):
+    """
+    Stores checkout sessions for events
+    """
 
-    # specific fields
+    # basic info
     expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
-    email = models.CharField(max_length=255, blank=False)
+    email = models.EmailField(max_length=255, blank=False, null=False)
     cost = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)],
@@ -791,15 +794,15 @@ class CheckoutSession(DBModel):
     )
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return self.name
 
 
 class CheckoutItem(DBModel):
+    """
+    Checkout item for a tiers and checkout sessions
+    """
 
-    # specific fields
+    # basic info
     quantity = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)],
@@ -824,13 +827,13 @@ class CheckoutItem(DBModel):
     )
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return f"CheckoutItem {self.public_id}"
 
 
 class FiatTx(DBModel):
+    """
+    Stores fiat transactions
+    """
 
     # keys
     checkout_session = models.ForeignKey(
@@ -842,13 +845,13 @@ class FiatTx(DBModel):
     )
 
     def __str__(self) -> str:
-        """
-        return string representation of model
-        """
         return f"FiatTx {self.public_id}"
 
 
 class BlockchainTx(DBModel):
+    """
+    Stores blockchain transactions
+    """
 
     # keys
     checkout_session = models.ForeignKey(
@@ -860,13 +863,13 @@ class BlockchainTx(DBModel):
     )
 
     def __str__(self) -> str:
-        """
-        return string representation of model
-        """
         return f"BlockchainTx {self.public_id}"
 
 
 class AssetOwnershipTx(DBModel):
+    """
+    Stores asset ownership transactions
+    """
 
     # keys
     checkout_session = models.ForeignKey(
@@ -878,7 +881,4 @@ class AssetOwnershipTx(DBModel):
     )
 
     def __str__(self) -> str:
-        """
-        return string representation of model
-        """
         return f"AssetOwnershipTx {self.public_id}"

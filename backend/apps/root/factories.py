@@ -7,7 +7,6 @@ import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.root.model_field_choices import PAYMENT_TYPES
 from apps.root.models import (
     AssetOwnershipTx,
     BlockchainOwnership,

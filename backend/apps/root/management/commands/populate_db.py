@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
     def create_user_and_team(self, default: bool):
         """
-        create a user if not exists
+        create a user and a team `default team` if not exists
             username: Dummy User
             email: user@dummy.com
             password: password

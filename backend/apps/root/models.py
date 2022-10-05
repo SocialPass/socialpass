@@ -11,7 +11,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -29,7 +29,6 @@ from apps.root.model_field_choices import (
     CHECKOUT_SESSION_STATUS,
     EVENT_VISIBILITY,
     PAYMENT_TYPES,
-    TICKET_TYPES,
 )
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
@@ -353,20 +352,6 @@ class Event(DBModel):
         blank=True,
         null=False,
     )
-    capacity = models.IntegerField(
-        default=1,
-        validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event.",
-        blank=True,
-        null=False,
-    )
-    limit_per_person = models.IntegerField(
-        default=1,
-        validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee.",
-        blank=False,
-        null=False,
-    )
     google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
@@ -445,6 +430,10 @@ class Event(DBModel):
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
+    @property
+    def capacity(self):
+        return self.ticket_tiers.aggregate(Sum("capacity"))["capacity__sum"]
+
     @staticmethod
     def required_form_fields():
         fields = [
@@ -454,9 +443,7 @@ class Event(DBModel):
             "visibility",
             "initial_place",
             "start_date",
-            "capacity",
             "timezone",
-            "limit_per_person",
         ]
         return fields
 
@@ -515,8 +502,12 @@ class Ticket(DBModel):
     """
 
     # Keys
-    event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="tickets", blank=False, null=False
+    checkout_item = models.ForeignKey(
+        "CheckoutItem",
+        on_delete=models.CASCADE,
+        related_name="tickets",
+        blank=False,
+        null=False,
     )
 
     # Ticket File Info
@@ -555,7 +546,7 @@ class Ticket(DBModel):
         if redemption_access_key is None:
             return True
 
-        return self.event.id == redemption_access_key.event.id
+        return self.checkout_item.ticket_tier.event.id == redemption_access_key.event.id
 
     def redeem_ticket(self, redemption_access_key: Optional[TicketRedemptionKey] = None):
         """Redeems a ticket."""
@@ -656,7 +647,7 @@ class Ticket(DBModel):
     @classmethod
     def get_claimed_tickets(cls, event: Event):
         """Returns all scanned tickets"""
-        return cls.objects.filter(redeemed=True, event=event)
+        return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
 
 
 class BlockchainOwnership(DBModel):
@@ -697,15 +688,13 @@ class TicketTier(DBModel):
 
     # specific fields
     ticket_type = models.CharField(
-        max_length=50,
-        choices=TICKET_TYPES,
-        default=TICKET_TYPES[0][0],
+        max_length=255,
         blank=False,
     )
     price = models.DecimalField(
         max_digits=9,
         validators=[MinValueValidator(0)],
-        decimal_places=9,
+        decimal_places=6,
         blank=False,
         null=True,
     )
@@ -739,9 +728,6 @@ class TicketTier(DBModel):
         null=False,
     )  # MIGRATE FROM TICKET
 
-    class Meta:
-        abstract = True
-
     def __str__(self):
         """
         return string representation of model
@@ -769,9 +755,6 @@ class TicketTierPaymentType(DBModel):
         null=False,
     )
 
-    class Meta:
-        abstract = True
-
     def __str__(self):
         """
         return string representation of model
@@ -782,7 +765,7 @@ class TicketTierPaymentType(DBModel):
 class CheckoutSession(DBModel):
 
     # specific fields
-    expiration = models.DateTimeField(help_text="...", blank=True, null=True)
+    expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
     email = models.CharField(max_length=255, blank=False)
     cost = models.IntegerField(
@@ -806,9 +789,6 @@ class CheckoutSession(DBModel):
         blank=False,
         null=False,
     )
-
-    class Meta:
-        abstract = True
 
     def __str__(self):
         """
@@ -843,9 +823,6 @@ class CheckoutItem(DBModel):
         null=False,
     )
 
-    class Meta:
-        abstract = True
-
     def __str__(self):
         """
         return string representation of model
@@ -863,9 +840,6 @@ class FiatTx(DBModel):
         blank=False,
         null=False,
     )
-
-    class Meta:
-        abstract = True
 
     def __str__(self) -> str:
         """
@@ -885,9 +859,6 @@ class BlockchainTx(DBModel):
         null=False,
     )
 
-    class Meta:
-        abstract = True
-
     def __str__(self) -> str:
         """
         return string representation of model
@@ -905,9 +876,6 @@ class AssetOwnershipTx(DBModel):
         blank=False,
         null=False,
     )
-
-    class Meta:
-        abstract = True
 
     def __str__(self) -> str:
         """

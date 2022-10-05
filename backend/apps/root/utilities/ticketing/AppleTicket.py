@@ -129,7 +129,7 @@ class AppleTicket(TicketGenerationBase):
         return self.passfile
 
     def generate_pass_from_ticket(self, ticket):
-        event = ticket.event
+        event = ticket.checkout_item.ticket_tier.event
 
         if not event.lat or not event.long:
             raise Exception(

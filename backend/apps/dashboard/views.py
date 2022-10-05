@@ -473,7 +473,7 @@ class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
         get queryset of Ticket models from given Event
         """
         gate = self.get_object()
-        qs = gate.tickets.all()
+        qs = Ticket.objects.filter(checkout_item__ticket_tier__event=gate)
         qs = qs.order_by("-modified")
 
         query_address = self.request.GET.get("address", "")

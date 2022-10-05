@@ -7,13 +7,21 @@ import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from apps.root.model_field_choices import PAYMENT_TYPES
 from apps.root.models import (
+    AssetOwnershipTx,
     BlockchainOwnership,
+    BlockchainTx,
+    CheckoutItem,
+    CheckoutSession,
     Event,
+    FiatTx,
     Membership,
     Team,
     Ticket,
     TicketRedemptionKey,
+    TicketTier,
+    TicketTierPaymentType,
 )
 
 User = get_user_model()
@@ -76,8 +84,6 @@ class EventFactory(factory.django.DjangoModelFactory):
     description = factory.Faker("paragraph")
     start_date = factory.fuzzy.FuzzyDateTime(timezone.now())
     cover_image = factory.django.ImageField(color="blue")
-    capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
-    limit_per_person = 1
     requirements: Any = []
     initial_place = factory.Faker("address")
     lat = 41.40338
@@ -99,18 +105,6 @@ class BlockchainOwnershipFactory(factory.django.DjangoModelFactory):
         model = BlockchainOwnership
 
 
-class TicketFactory(factory.django.DjangoModelFactory):
-    """
-    Create ticket
-    """
-
-    event = factory.SubFactory(EventFactory)
-    file = factory.django.ImageField(color="red")
-
-    class Meta:
-        model = Ticket
-
-
 class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):
     """
     Create ticket
@@ -121,3 +115,104 @@ class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = TicketRedemptionKey
+
+
+class TicketTierFactory(factory.django.DjangoModelFactory):
+    """
+    Create ticket_tier
+    """
+
+    ticket_type = "test"
+    price = 1.00000000
+    capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
+    quantity_sold = 0
+    max_per_person = 1
+    event = factory.SubFactory(EventFactory)
+
+    class Meta:
+        model = TicketTier
+
+
+class TicketTierPaymentTypeFactory(factory.django.DjangoModelFactory):
+    """
+    Create ticket_tier_payment_type
+    """
+
+    ticket_tier = factory.SubFactory(TicketTierFactory)
+
+    class Meta:
+        model = TicketTierPaymentType
+
+
+class CheckoutSessionFactory(factory.django.DjangoModelFactory):
+    """
+    Create checkout session
+    """
+
+    expiration = factory.fuzzy.FuzzyDateTime(timezone.now())
+    name = factory.Faker("name")
+    email = factory.Faker("email")
+    cost = 1
+    event = factory.SubFactory(EventFactory)
+
+    class Meta:
+        model = CheckoutSession
+
+
+class CheckoutItemFactory(factory.django.DjangoModelFactory):
+    """
+    Create checkout item with ticket tier and checkout session
+    """
+
+    quantity = factory.LazyAttribute(lambda x: random.randrange(0, 100))
+    ticket_tier = factory.SubFactory(TicketTierFactory)
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+    class Meta:
+        model = CheckoutItem
+
+
+class FiatTxFactory(factory.django.DjangoModelFactory):
+    """
+    Create fiat transaction
+    """
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+    class Meta:
+        model = FiatTx
+
+
+class BlockchainTxFactory(factory.django.DjangoModelFactory):
+    """
+    Create blockchain transaction
+    """
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+    class Meta:
+        model = BlockchainTx
+
+
+class AssetOwnershipTxFactory(factory.django.DjangoModelFactory):
+    """
+    Create asset_ownership transaction
+    """
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+    class Meta:
+        model = AssetOwnershipTx
+
+
+class TicketFactory(factory.django.DjangoModelFactory):
+    """
+    Create ticket
+    """
+
+    # event = factory.SubFactory(EventFactory)
+    checkout_item = factory.SubFactory(CheckoutItemFactory)
+    file = factory.django.ImageField(color="red")
+
+    class Meta:
+        model = Ticket

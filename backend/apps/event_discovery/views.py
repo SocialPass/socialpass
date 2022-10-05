@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from apps.root.models import Event
+from apps.root.models import Event, Ticket
 
 
 class EventDiscoveryIndex(TemplateView):
@@ -54,7 +54,10 @@ class EventDiscoveryDetails(DetailView):
         Fetch ticket info
         """
         context = super().get_context_data(**kwargs)
-        ticket_count = self.object.tickets.count()
+        # TODO: should we change the count ticket_count to quantity_sold?
+        ticket_count = Ticket.objects.filter(
+            checkout_item__ticket_tier__event=self.object
+        ).count()
         tickets_remaining = self.object.capacity - ticket_count
         context.update(
             {

@@ -317,7 +317,7 @@
 							Coming soon! Sell different tickets for an event.
 						</p>
 
-						<!-- Capacity start -->
+						{% comment %} <!-- Capacity start -->
             {% if form.capacity %}
 						{% with input=form.capacity required="required" %}
 							{% include 'components/forms_inputs/input.html' %}
@@ -329,7 +329,7 @@
 						{% with input=form.limit_per_person required="required" %}
 							{% include 'components/forms_inputs/input.html' %}
 						{% endwith %}
-						<!-- Limit Per Person end -->
+						<!-- Limit Per Person end --> {% endcomment %}
             <hr />
 					</section>
 					<!-- Tickets end -->

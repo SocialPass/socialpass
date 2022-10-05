@@ -20,10 +20,15 @@ CHAIN_IDS = (
 ASSET_TYPES = (("ERC20", "ERC20"), ("ERC721", "ERC721"), ("ERC1155", "ERC1155"))
 
 
-TICKET_TYPES = (("TEST", "Test"),)
+PAYMENT_TYPES = (
+    ("FREE", "Free"),
+    ("FIAT", "Fiat"),
+    ("CRYPTO", "Crypto"),
+    ("ASSETOWNERSHIP", "Asset Ownership"),
+)
 
 
-PAYMENT_TYPES = (("TEST", "Test"),)
-
-
-CHECKOUT_SESSION_STATUS = (("TEST", "Test"),)
+CHECKOUT_SESSION_STATUS = (
+    ("EXPIRED", "Expired"),
+    ("COMPLETED", "Completed"),
+)

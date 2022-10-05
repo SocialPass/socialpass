@@ -36,7 +36,7 @@ export default function Home() {
 						{/*<!-- Header start -->*/}
 						<div className="w-100 hs-200 position-relative">
 							{/*<!-- Event cover image start -->*/}
-							<div className="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
+							<div className="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
 								<img src="https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="w-100 h-auto" alt="Cover image"></img>
 							</div>
 							{/*<!-- Event cover image end -->*/}
@@ -147,7 +147,12 @@ export default function Home() {
 									<input type="radio" className="ticket-tier-input" name="payment-type" id="fiat" checked></input>
 									<label htmlFor="fiat" className="ticket-tier-label">
 										<h6 className="fw-700 m-0 fs-base">
-											<i className="fa-light fa-money-check-dollar-pen text-primary me-5"></i>
+											<span className="ticket-tier-uncheck">
+												<i className="fa-light fa-money-check-dollar-pen"></i>
+											</span>
+											<span className="ticket-tier-check">
+												<i className="fa-light fa-money-check-dollar-pen"></i>
+											</span>
 											Fiat
 										</h6>
 									</label>
@@ -159,7 +164,12 @@ export default function Home() {
 									<input type="radio" className="ticket-tier-input" name="payment-type" id="crypto"></input>
 									<label htmlFor="crypto" className="ticket-tier-label">
 										<h6 className="fw-700 m-0 fs-base">
-											<i className="fa-light fa-wallet text-primary me-5"></i>
+											<span className="ticket-tier-uncheck">
+												<i className="fa-light fa-wallet"></i>
+											</span>
+											<span className="ticket-tier-check">
+												<i className="fa-light fa-wallet"></i>
+											</span>
 											Crypto
 										</h6>
 									</label>
@@ -171,7 +181,12 @@ export default function Home() {
 									<input type="radio" className="ticket-tier-input" name="payment-type" id="nfts"></input>
 									<label htmlFor="nfts" className="ticket-tier-label">
 										<h6 className="fw-700 m-0 fs-base">
-											<i className="fa-light fa-hexagon-image text-primary me-5"></i>
+											<span className="ticket-tier-uncheck">
+												<i className="fa-light fa-hexagon-image"></i>
+											</span>
+											<span className="ticket-tier-check">
+												<i className="fa-light fa-hexagon-image"></i>
+											</span>
 											NFTs
 										</h6>
 									</label>
@@ -298,17 +313,23 @@ export default function Home() {
 							{/*<!-- CTA section start -->*/}
 							<div className="col-md-5">
 								<div className="px-content pt-md-30 position-md-sticky top-0 start-0">
-									<button className="btn btn-secondary btn-lg fsr-6 btn-block">
-										<strong className="antialiased">Get Tickets</strong>
-									</button>
+									<p className="fs-base-n2 mt-0">
+										Your ticket(s) will be sent to your email address, so please make sure you enter the correct one! <a href="#" className="fw-bold" target="_blank">Learn more <i className="fa-regular fa-external-link"></i></a>
+									</p>
+									<form>
+										<input type="text" name="email" className="form-control" placeholder="Email Address"></input>
+										<button className="btn btn-secondary btn-lg fsr-6 btn-block mt-15" type="submit">
+											<strong className="antialiased">Get Tickets</strong>
+										</button>
+									</form>
 									<p>
 										<strong>Total Price</strong>
 										&mdash;
 										$9.99
 									</p>
 									<hr />
-									<p className="text-muted fs-base-n2">
-										By clicking on the above button, you're agreeing to our <a href="#" className="fw-bold">Terms & Conditions</a>.
+									<p className="text-muted fs-base-n4">
+										You're also agreeing to our <a href="#" className="fw-bold" target="_blank">Terms & Conditions <i className="fa-regular fa-external-link"></i></a> by clicking on the above button.
 									</p>
 								</div>
 							</div>

@@ -118,7 +118,8 @@ docker stop database
 docker start database
 
 # pre-populate database
-python backend/manage.py pre_populate_db --events 1 --tickets 1
+# possible prefixes = --events (number of events), --tickets (number of tickets) and --user-default (create or not dummy user)
+python backend/manage.py populate_db --events 1 --tickets 1
 
 # clear database
 python backend/manage.py reset_db

@@ -116,7 +116,7 @@ class Command(BaseCommand):
         if default:
             user_qs = User.objects.filter(username="Dummy User")
             if not user_qs.exists():
-                user = UserFactory(username="Dummy User", email="user@dummy.com")
+                user = UserFactory(username="dummy_user", email="user@dummy.com")
                 team = TeamFactory(name="Default Team")
             else:
                 user = user_qs.first()

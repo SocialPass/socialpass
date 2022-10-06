@@ -2,14 +2,13 @@ from typing import Any
 from uuid import uuid4
 
 from django.test import TestCase
+from eth_account.messages import encode_defunct
+from rest_framework import status
+from web3.auto import w3
 
 from apps.root.factories import EventFactory, UserWithTeamFactory
 from apps.root.models import BlockchainOwnership, Event, Team
 from apps.root.utilities.main import prevent_warnings
-
-# from eth_account.messages import encode_defunct
-# from rest_framework import status
-# from web3.auto import w3
 
 
 def generate_random_identifier():
@@ -46,7 +45,7 @@ class GetEventDetailsTestCase(TestCaseWrapper):
         """
         Request the most recently created team's details, asserts response is 200 OK and
         that the returned JSON is properly formatted.
-
+        """
         event_id = str(self.event.public_id)
         # Not using reverse because we want URL changes to explicitly break tests.
         response = self.client.get(f"{self.url_base}retrieve/{event_id}/")
@@ -58,21 +57,17 @@ class GetEventDetailsTestCase(TestCaseWrapper):
         self.assertEqual(response.json()["team"]["name"], self.team.name)
         self.assertEqual(response.json()["description"], self.event.description)
         self.assertEqual(response.json()["capacity"], int(self.event.capacity))
-        """
-        return "Deprecated"
 
     @prevent_warnings
     def test_get_event_details_404(self):
         """
         Request a team's details and asserts 404 NOT FOUND for invalid team UUID.
-
+        """
         invalid_event_id = (
             uuid4()
         )  # Random UUID string that is not contained in the test DB.
         response = self.client.get(f"{self.url_base}retrieve/{invalid_event_id}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        """
-        return "Deprecated"
 
 
 class CheckoutPortalProcessTestCase(TestCaseWrapper):
@@ -81,7 +76,7 @@ class CheckoutPortalProcessTestCase(TestCaseWrapper):
     def test_checkout_portal_process_200_ok(self):
         """
         Access the event portal process checkout API and asserts the checkout went OK.
-
+        """
         event_id = str(self.event.public_id)
         signing_message = self.blockchain_ownership.signing_message
         test_wallet_private_key = (
@@ -104,15 +99,13 @@ class CheckoutPortalProcessTestCase(TestCaseWrapper):
             data=data,
             content_type=content_type,
         )
-        """
-        return "Deprecated"
 
     @prevent_warnings
     def test_checkout_portal_process_403_over_ticket_limit(self):
         """
         Access the event portal process checkout API.
         Asserts 403 when requesting over the ticket limit.
-
+        """
         event_id = str(self.event.public_id)
         signing_message = self.blockchain_ownership.signing_message
         test_wallet_private_key = (
@@ -138,15 +131,13 @@ class CheckoutPortalProcessTestCase(TestCaseWrapper):
         self.assertContains(
             response, "Tickets requested are over the limit per person", status_code=403
         )
-        """
-        return "Deprecated"
 
     @prevent_warnings
     def test_checkout_portal_process_403_unable_to_validate(self):
         """
         Access the event portal process checkout API.
         Asserts the signing message couldn't be validated by user.
-
+        """
         event_id = str(self.event.public_id)
         data = {
             "wallet_address": "0x82fa9d444b39259206d6cbAf24027196534c701E",
@@ -161,26 +152,22 @@ class CheckoutPortalProcessTestCase(TestCaseWrapper):
             content_type=content_type,
         )
         self.assertEqual(response.status_code, 403)
-        """
-        return "Deprecated"
 
     @prevent_warnings
     def test_checkout_portal_process_401_no_checkout_type(self):
         """
         Access the event portal process with a valid Event UUID.
         but without the (checkout_type) parameter.
-
+        """
         event_id = str(self.event.public_id)
         response = self.client.post(f"{self.url_base}process/{event_id}/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        """
-        return "Deprecated"
 
     @prevent_warnings
     def test_checkout_portal_process_403_invalid_wallet_address(self):
         """
         Access the event portal process checkout API and asserts 403 invalid address
-
+        """
         event_id = str(self.event.public_id)
         data = {
             "wallet_address": "0xI4M1NV4L1D",
@@ -197,17 +184,13 @@ class CheckoutPortalProcessTestCase(TestCaseWrapper):
         self.assertContains(
             response, "Unrecognized wallet_address format", status_code=403
         )
-        """
-        return "Deprecated"
 
     @prevent_warnings
     def test_checkout_portal_process_404_invalid_team_UUID(self):
         """
         Access the event portal process checkout API.
         Asserts 404 NOT FOUND for invalid team UUID.
-
+        """
         invalid_event_id = uuid4()
         response = self.client.post(f"{self.url_base}process/{invalid_event_id}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        """
-        return "Deprecated"

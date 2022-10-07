@@ -8,19 +8,19 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.root.models import (
-    AssetOwnershipTx,
     BlockchainOwnership,
-    BlockchainTx,
     CheckoutItem,
     CheckoutSession,
     Event,
-    FiatTx,
     Membership,
     Team,
     Ticket,
     TicketRedemptionKey,
     TicketTier,
     TicketTierPaymentType,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 User = get_user_model()
@@ -170,7 +170,7 @@ class CheckoutItemFactory(factory.django.DjangoModelFactory):
         model = CheckoutItem
 
 
-class FiatTxFactory(factory.django.DjangoModelFactory):
+class TxFiatFactory(factory.django.DjangoModelFactory):
     """
     Create fiat transaction
     """
@@ -178,10 +178,10 @@ class FiatTxFactory(factory.django.DjangoModelFactory):
     checkout_session = factory.SubFactory(CheckoutSessionFactory)
 
     class Meta:
-        model = FiatTx
+        model = TxFiat
 
 
-class BlockchainTxFactory(factory.django.DjangoModelFactory):
+class TxBlockchainFactory(factory.django.DjangoModelFactory):
     """
     Create blockchain transaction
     """
@@ -189,10 +189,10 @@ class BlockchainTxFactory(factory.django.DjangoModelFactory):
     checkout_session = factory.SubFactory(CheckoutSessionFactory)
 
     class Meta:
-        model = BlockchainTx
+        model = TxBlockchain
 
 
-class AssetOwnershipTxFactory(factory.django.DjangoModelFactory):
+class TxAssetOwnershipFactory(factory.django.DjangoModelFactory):
     """
     Create asset_ownership transaction
     """
@@ -200,7 +200,7 @@ class AssetOwnershipTxFactory(factory.django.DjangoModelFactory):
     checkout_session = factory.SubFactory(CheckoutSessionFactory)
 
     class Meta:
-        model = AssetOwnershipTx
+        model = TxAssetOwnership
 
 
 class TicketFactory(factory.django.DjangoModelFactory):

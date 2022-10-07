@@ -5,13 +5,10 @@ from django_fsm_log.admin import StateLogInline
 
 from apps.root.forms import InviteAdminAddForm, InviteAdminChangeForm
 from apps.root.models import (
-    AssetOwnershipTx,
     BlockchainOwnership,
-    BlockchainTx,
     CheckoutItem,
     CheckoutSession,
     Event,
-    FiatTx,
     Invite,
     Membership,
     Team,
@@ -19,6 +16,9 @@ from apps.root.models import (
     TicketRedemptionKey,
     TicketTier,
     TicketTierPaymentType,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 User = get_user_model()
@@ -158,16 +158,16 @@ class CheckoutItemAdmin(admin.ModelAdmin):
     search_fields = ("checkout_session__name",)
 
 
-@admin.register(FiatTx)
-class FiatTxAdmin(admin.ModelAdmin):
+@admin.register(TxFiat)
+class TxFiatAdmin(admin.ModelAdmin):
     list_display = ("checkout_session",)
 
 
-@admin.register(BlockchainTx)
-class BlockchainTxAdmin(admin.ModelAdmin):
+@admin.register(TxBlockchain)
+class TxBlockchainAdmin(admin.ModelAdmin):
     list_display = ("checkout_session",)
 
 
-@admin.register(AssetOwnershipTx)
-class AssetOwnershipTxAdmin(admin.ModelAdmin):
+@admin.register(TxAssetOwnership)
+class TXAssetOwnershipAdmin(admin.ModelAdmin):
     list_display = ("checkout_session",)

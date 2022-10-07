@@ -822,7 +822,7 @@ class CheckoutItem(DBModel):
         return f"CheckoutItem {self.public_id}"
 
 
-class FiatTx(DBModel):
+class TxFiat(DBModel):
     """
     Stores fiat transactions
     """
@@ -837,10 +837,10 @@ class FiatTx(DBModel):
     )
 
     def __str__(self) -> str:
-        return f"FiatTx {self.public_id}"
+        return f"TxFiat {self.public_id}"
 
 
-class BlockchainTx(DBModel):
+class TxBlockchain(DBModel):
     """
     Stores blockchain transactions
     """
@@ -855,10 +855,10 @@ class BlockchainTx(DBModel):
     )
 
     def __str__(self) -> str:
-        return f"BlockchainTx {self.public_id}"
+        return f"TxBlockchain {self.public_id}"
 
 
-class AssetOwnershipTx(DBModel):
+class TxAssetOwnership(DBModel):
     """
     Stores asset ownership transactions
     """
@@ -873,4 +873,4 @@ class AssetOwnershipTx(DBModel):
     )
 
     def __str__(self) -> str:
-        return f"AssetOwnershipTx {self.public_id}"
+        return f"TxAssetOwnership {self.public_id}"

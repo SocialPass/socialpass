@@ -21,8 +21,6 @@ from apps.dashboard.forms import (
     EventLiveForm,
     TeamForm,
 )
-from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
-from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.models import Event, Invite, Membership, Team, Ticket
 
 User = auth.get_user_model()
@@ -399,10 +397,6 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
-        context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
-        context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
-        context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         context["event"] = self.object
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context

@@ -1,7 +1,6 @@
 import os
 import uuid
 from datetime import datetime, timedelta
-from enum import Enum
 from typing import Optional
 
 import boto3
@@ -24,11 +23,6 @@ from apps.root.exceptions import (
     AlreadyRedeemed,
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
-)
-from apps.root.model_field_choices import (
-    CHECKOUT_SESSION_STATUS,
-    EVENT_VISIBILITY,
-    PAYMENT_TYPES,
 )
 from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
@@ -204,13 +198,13 @@ class EventQuerySet(models.QuerySet):
         """
         inactive events (not live)
         """
-        return self.filter(~models.Q(state=Event.StateEnum.LIVE.value))
+        return self.filter(~models.Q(state=Event.StateStatus.LIVE))
 
     def filter_active(self):
         """
         active events (live)
         """
-        return self.filter(state=Event.StateEnum.LIVE.value)
+        return self.filter(state=Event.StateStatus.LIVE)
 
     def filter_publicly_accessible(self):
         """
@@ -231,16 +225,24 @@ class Event(DBModel):
     Stores data for ticketed event
     """
 
-    class StateEnum(Enum):
+    class StateStatus(models.TextChoices):
         DRAFT = "Draft"
         LIVE = "Live"
+
+    class VisibilityStatus(models.TextChoices):
+        PUBLIC = "PUBLIC", _("Public")
+        PRIVATE = "PRIVATE", _("Private")
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
 
     # state
     state = FSMField(
-        default=StateEnum.DRAFT.value, protected=True, blank=False, null=False
+        choices=StateStatus.choices,
+        default=StateStatus.DRAFT,
+        protected=True,
+        blank=False,
+        null=False,
     )
 
     # Keys
@@ -258,8 +260,8 @@ class Event(DBModel):
     )
     visibility = models.CharField(
         max_length=50,
-        choices=EVENT_VISIBILITY,
-        default=EVENT_VISIBILITY[0][0],
+        choices=VisibilityStatus.choices,
+        default=VisibilityStatus.PUBLIC,
         help_text="Whether or not your event is searchable by the public.",
         blank=False,
     )
@@ -347,9 +349,9 @@ class Event(DBModel):
         return f"{self.team} - {self.title}"
 
     def get_absolute_url(self):
-        if self.state == Event.StateEnum.DRAFT.value:
+        if self.state == Event.StateStatus.DRAFT:
             _success_url = "dashboard:event_update"
-        elif self.state == Event.StateEnum.LIVE.value:
+        elif self.state == Event.StateStatus.LIVE:
             _success_url = "dashboard:event_detail"
         return reverse(
             _success_url,
@@ -387,7 +389,7 @@ class Event(DBModel):
         except Exception as e:
             raise e
 
-    @transition(field=state, target=StateEnum.DRAFT.value)
+    @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):
         """
         This function handles state transition to DRAFT
@@ -396,7 +398,7 @@ class Event(DBModel):
         """
         pass
 
-    @transition(field=state, target=StateEnum.LIVE.value)
+    @transition(field=state, target=StateStatus.LIVE)
     def _transition_live(self):
         """
         This function handles state transition from DRAFT to LIVE
@@ -719,11 +721,17 @@ class TicketTierPaymentType(DBModel):
     Payment Type for Ticket Tiers
     """
 
+    class PaymentType(models.TextChoices):
+        FREE = "FREE", _("Free")
+        FIAT = "FIAT", _("Fiat")
+        CRYPTO = "CRYPTO", _("Crypto")
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
+
     # basic info
     payment_type = models.CharField(
         max_length=50,
-        choices=PAYMENT_TYPES,
-        default=PAYMENT_TYPES[0][0],
+        choices=PaymentType.choices,
+        default=PaymentType.FREE,
         help_text="The payment method",
         blank=False,
     )
@@ -746,6 +754,11 @@ class CheckoutSession(DBModel):
     Stores checkout sessions for events
     """
 
+    class CheckoutSessionStatus(models.TextChoices):
+        VALID = "VALID", _("Valid")
+        EXPIRED = "EXPIRED", _("Expired")
+        COMPLETED = "COMPLETED", _("Completed")
+
     # basic info
     expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
@@ -758,8 +771,8 @@ class CheckoutSession(DBModel):
     )
     status = models.CharField(
         max_length=50,
-        choices=CHECKOUT_SESSION_STATUS,
-        default=CHECKOUT_SESSION_STATUS[0][0],
+        choices=CheckoutSessionStatus.choices,
+        default=CheckoutSessionStatus.VALID,
         blank=False,
     )
 

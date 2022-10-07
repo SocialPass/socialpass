@@ -1,4 +1,3 @@
-import json
 import secrets
 
 from allauth.account.adapter import DefaultAccountAdapter

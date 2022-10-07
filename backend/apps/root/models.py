@@ -1,6 +1,6 @@
 import os
 import uuid
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Optional
 
 import boto3
@@ -16,7 +16,6 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
-from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.root.exceptions import (
@@ -26,7 +25,6 @@ from apps.root.exceptions import (
 )
 from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
-from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
 
 

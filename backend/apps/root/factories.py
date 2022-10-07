@@ -1,5 +1,4 @@
 import random
-from typing import Any
 
 import factory
 import factory.django

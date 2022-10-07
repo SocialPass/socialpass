@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CheckoutPortalContext } from '../../../src/context'
 import './index.css'
@@ -24,6 +24,117 @@ export default function Home() {
 	function handleSelect(event: any) {
 		setGeneralAdmissionSelect(event.target.value)
 	}
+
+
+	const [addTicket, removeTicket] = useState(true)
+	var  ticketAmount = 0;
+
+	/*	START OF THE EVENT SCHEMA	*/
+	/*		EVENT - If I had the API connection it would receive an object following the below schema	*/
+	const mockedEvent = ({
+		"team": {
+			"name": "SocialPass",				//string
+			"image": "https://www.gitbook.com/cdn-cgi/image/width=100,height=100,fit=contain,dpr=1,format=auto/https%3A%2F%2F2919503366-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FoAjCVAKyaqd3D8vQvqdq%252Ficon%252FSxoMd2us80sdMcUcQ36e%252FSocialPass%2520Logo.jpeg%3Falt%3Dmedia%26token%3D0e6830d3-362b-4383-b36b-ea0ddb6195be",				//string URL
+			"theme": {
+				"logo": "../../../backend/static/images/SocialPass-Icon.svg",			//string path
+				"favicon": "../../../backend/static/images/SocialPass-Icon.svg",		//string path
+				"css_theme": "",	//string
+			}
+		},
+		"title": "NFT Holders Party",							//string
+		"description": "Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure you're 21+ to enter.",				//string
+		"requirements": "requirements",			//string
+		"limit_per_person": 5,					//number
+		"start_date": "%A, %B %d, %Y | %H:%M%p",	//string formatted: %A, %B %d, %Y | %H:%M%p
+		"timezone": "EST",						//string
+		"localized_address_display": "James L. Knight Center, Miami, Florida, USA",	//string
+		"capacity": 100,							//number
+		"ticket_count": 10,						//number
+		"cover_image": "https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",				//string URL
+		"show_ticket_count": true,				//boolean
+		"show_team_image": true,		//boolean
+	})
+	/*	END OF THE EVENT SCHEMA	*/
+
+	/*	START OF THE TICKET TIERS SCHEMA	*/
+	/*		TICKET TIERS AND TIERS PAYMENT TYPE - If I had the API connection it would receive an object following the below schema	*/
+
+	const mockedTiers =
+	{
+		tier1: {
+			// root_ticket_tier
+			"id": "1",     //number
+			"created": "2017-03-31 9:30:20",     //date
+			"modified": "2017-03-31 9:30:20",     //date
+			"public_id": "3f22a1db-7bf0-4444-a13b-25347c174df7",     //uuid
+			"event_id": "1",     //number
+			"ticket_type": "General Admission",     //varchar
+			"price": "10000",     //number
+			"capacity": 10,     //number
+			"max_per_person": "2",     //number
+			"payment_types": [
+				{
+					//root_ticket_tier_payment_type
+					"id": "id",      //number
+					"created": "2017-03-31 9:30:20",      //date
+					"modified": "2017-03-31 9:30:20",      //date
+					"public_id": "public_id",      //number
+					"payment_type": "payment_type",      //number
+					"ticket_tier_id": "1",      //number
+				}
+			]
+		},
+		tier2: {
+			// root_ticket_tier
+			"id": "2",     //number
+			"created": "2017-03-31 9:30:20",     //date
+			"modified": "2017-03-31 9:30:20",     //date
+			"public_id": "1",     //number
+			"event_id": "3f22a1db-7bf0-4444-a13b-25347c174df7",     //uuid
+			"ticket_type": "Deluxe Admission",     //varchar
+			"price": "2",     //number
+			"capacity": 11,     //number
+			"max_per_person": "max_per_person",     //number
+			"payment_types": [
+				{
+					//root_ticket_tier_payment_type
+					"id": "id",      //number
+					"created": "2017-03-31 9:30:20",      //date
+					"modified": "2017-03-31 9:30:20",      //date
+					"public_id": "public_id",      //number
+					"payment_type": "payment_type",      //number
+					"ticket_tier_id": "2",      //number
+				}
+			]
+		},
+		tier3: {
+			// root_ticket_tier
+			"id": "3",     //number
+			"created": "2017-03-31 9:30:20",     //date
+			"modified": "2017-03-31 9:30:20",     //date
+			"public_id": "3f22a1db-7bf0-4444-a13b-25347c174df7",     //uuid
+			"event_id": "1",     //number
+			"ticket_type": "VIP Admission",     //varchar
+			"price": "3",     //number
+			"capacity": 13,     //number
+			"max_per_person": "max_per_person",     //number
+			"payment_types": [
+				{
+					//root_ticket_tier_payment_type
+					"id": "id",      //number
+					"created": "2017-03-31 9:30:20",      //date
+					"modified": "2017-03-31 9:30:20",      //date
+					"public_id": "public_id",      //number
+					"payment_type": "payment_type",      //number
+					"ticket_tier_id": "3",      //number
+				}
+			]
+		}
+	}
+
+
+	/*	END OF THE TICKET TIERS SCHEMA	*/
+
 
 	return (
 		<div>
@@ -57,7 +168,7 @@ export default function Home() {
 								Hosted By
 							</p>
 							<h6 className="text-strong fs-base fw-700 m-0">
-								SocialPass
+								{mockedEvent.team.name}
 							</h6>
 						</div>
 						{/*<!-- Team name end -->*/}
@@ -68,10 +179,10 @@ export default function Home() {
 							<div className="col-md-7">
 								<div className="content mt-20 mb-0">
 									<h1 className="text-strong fw-700 display-6 m-0">
-										NFT Holders Party
+										{mockedEvent.title}
 									</h1>
 									<p className="mt-20 fsr-6">
-										Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure you're 21+ to enter.
+										{mockedEvent.description}
 									</p>
 								</div>
 							</div>
@@ -90,7 +201,7 @@ export default function Home() {
 										</div>
 									</div>
 									<p className="text-muted mt-5 mb-0">
-										Friday, May 15, 8:00 - 10:30 PM EST
+										{mockedEvent.start_date}
 									</p>
 									{/*<!-- Event date & time end -->*/}
 
@@ -104,9 +215,7 @@ export default function Home() {
 										</div>
 									</div>
 									<p className="text-muted mt-5 mb-0">
-										James L. Knight Center,
-										<br />
-										Miami, Florida, USA
+										{mockedEvent.localized_address_display}
 									</p>
 									{/*<!-- Event location end -->*/}
 								</div>
@@ -214,17 +323,26 @@ export default function Home() {
 														<span className="ticket-tier-check">
 															<i className="fa-light fa-check-square"></i>
 														</span>
-														General Admission
+														{mockedTiers.tier1.ticket_type}
 													</h6>
 													<p className="m-0 fs-base-n2">
-														45 available
+													{mockedTiers.tier1.capacity} available
 													</p>
 												</div>
 												<div className="ticket-tier-controls ms-auto mt-10 mt-sm-0">
 													<div className="input-group input-group-sm input-group-pill ws-100 mx-auto">
-														<button className="btn ws-25 px-0">-</button>
-														<input type="number" min="1" max="10" step="1" value="1" className="form-control form-number text-center"></input>
-														<button className="btn ws-25 px-0">+</button>
+														<button className="btn ws-25 px-0"
+														onClick={() => {
+															ticketAmount--
+														  }}
+														>-
+														
+														</button>
+														<input type="number" min="1" max="10" step="1" className="form-control form-number text-center"></input>
+														<button className="btn ws-25 px-0"
+														onClick={() => {
+															ticketAmount++
+														  }}>+</button>
 													</div>
 													<div className="text-center fs-base-n2 mt-5">
 														<strong>Price &times; 1</strong>
@@ -235,7 +353,6 @@ export default function Home() {
 										</label>
 									</div>
 									{/*<!-- Ticket tier end -->*/}
-
 									{/*<!-- Ticket tier start -->*/}
 									<div className="ticket-tier mb-20">
 										<input type="checkbox" className="ticket-tier-input" id="c2"></input>
@@ -249,10 +366,10 @@ export default function Home() {
 														<span className="ticket-tier-check">
 															<i className="fa-light fa-check-square"></i>
 														</span>
-														Deluxe Admission
+														{mockedTiers.tier2.ticket_type}
 													</h6>
 													<p className="m-0 fs-base-n2">
-														124 available
+													{mockedTiers.tier2.capacity} available
 													</p>
 												</div>
 												<div className="ticket-tier-controls ms-auto mt-10 mt-sm-0">
@@ -284,10 +401,10 @@ export default function Home() {
 														<span className="ticket-tier-check">
 															<i className="fa-light fa-check-square"></i>
 														</span>
-														VIP Admission
+														{mockedTiers.tier2.ticket_type}
 													</h6>
 													<p className="m-0 fs-base-n2">
-														4 available
+														{mockedTiers.tier3.capacity} available
 													</p>
 												</div>
 												<div className="ticket-tier-controls ms-auto mt-10 mt-sm-0">

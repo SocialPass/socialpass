@@ -30,7 +30,6 @@ from apps.root.model_field_choices import (
     EVENT_VISIBILITY,
     PAYMENT_TYPES,
 )
-from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from apps.root.validators import JSONSchemaValidator
@@ -247,6 +246,7 @@ class Event(DBModel):
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=False, null=False)
+    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     # Publish info
     is_featured = models.BooleanField(default=False, blank=False, null=False)
@@ -342,17 +342,6 @@ class Event(DBModel):
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     localized_address_display = models.CharField(max_length=1024, blank=True, default="")
-    # TODO localized_multi_line_address_display
-
-    # Ticket Info
-    # TODO: Move these to TicketType
-    requirements = models.JSONField(
-        default=list,
-        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
-        blank=True,
-        null=False,
-    )
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -525,16 +514,6 @@ class Ticket(DBModel):
         "TicketRedemptionKey", on_delete=models.SET_NULL, blank=True, null=True
     )
     google_class_id = models.CharField(max_length=255, blank=True, default="")
-
-    # blockchain Info
-    blockchain_ownership = models.ForeignKey(
-        "BlockchainOwnership",
-        on_delete=models.SET_NULL,
-        related_name="tickets",
-        blank=False,
-        null=True,
-    )
-    blockchain_asset = models.JSONField(blank=False, null=True)
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"

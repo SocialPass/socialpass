@@ -202,7 +202,7 @@
 					<!-- Header start -->
 					<div class="w-100 hs-200 position-relative">
 						<!-- Event cover image start -->
-						<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
+						<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
 							<img src="https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="w-100 h-auto" alt="Cover image">
 						</div>
 						<!-- Event cover image end -->
@@ -309,10 +309,15 @@
 						<div class="ticket-tier-group">
 							<!-- Fiat start -->
 							<div class="ticket-tier">
-								<input type="radio" class="ticket-tier-input" name="payment-type" id="fiat" checked="checked">
+								<input type="radio" class="ticket-tier-input" name="payment-type" id="fiat">
 								<label for="fiat" class="ticket-tier-label">
 									<h6 class="fw-700 m-0 fs-base">
-										<i class="fa-light fa-money-check-dollar-pen text-primary me-5"></i>
+										<span class="ticket-tier-uncheck">
+											<i class="fa-light fa-money-check-dollar-pen"></i>
+										</span>
+										<span class="ticket-tier-check">
+											<i class="fa-light fa-money-check-dollar-pen"></i>
+										</span>
 										Fiat
 									</h6>
 								</label>
@@ -321,10 +326,15 @@
 
 							<!-- Crypto start -->
 							<div class="ticket-tier">
-								<input type="radio" class="ticket-tier-input" name="payment-type" id="crypto">
+								<input type="radio" class="ticket-tier-input" name="payment-type" id="crypto" checked="checked">
 								<label for="crypto" class="ticket-tier-label">
 									<h6 class="fw-700 m-0 fs-base">
-										<i class="fa-light fa-wallet text-primary me-5"></i>
+										<span class="ticket-tier-uncheck">
+											<i class="fa-light fa-wallet"></i>
+										</span>
+										<span class="ticket-tier-check">
+											<i class="fa-light fa-wallet"></i>
+										</span>
 										Crypto
 									</h6>
 								</label>
@@ -336,7 +346,12 @@
 								<input type="radio" class="ticket-tier-input" name="payment-type" id="nfts">
 								<label for="nfts" class="ticket-tier-label">
 									<h6 class="fw-700 m-0 fs-base">
-										<i class="fa-light fa-hexagon-image text-primary me-5"></i>
+										<span class="ticket-tier-uncheck">
+											<i class="fa-light fa-hexagon-image"></i>
+										</span>
+										<span class="ticket-tier-check">
+											<i class="fa-light fa-hexagon-image"></i>
+										</span>
 										NFTs
 									</h6>
 								</label>
@@ -378,7 +393,7 @@
 												</div>
 												<div class="text-center fs-base-n2 mt-5">
 													<strong>Price &times; 1</strong>
-													&mdash; $9.99
+													&mdash; 0.05 ETH
 												</div>
 											</div>
 										</div>
@@ -413,7 +428,7 @@
 												</div>
 												<div class="text-center fs-base-n2 mt-5">
 													<strong>Price &times; 1</strong>
-													&mdash; $24.99
+													&mdash; 0.075 ETH
 												</div>
 											</div>
 										</div>
@@ -448,7 +463,7 @@
 												</div>
 												<div class="text-center fs-base-n2 mt-5">
 													<strong>Price &times; 1</strong>
-													&mdash; $99.99
+													&mdash; 0.25 ETH
 												</div>
 											</div>
 										</div>
@@ -463,17 +478,23 @@
 						<!-- CTA section start -->
 						<div class="col-md-5">
 							<div class="px-content pt-md-30 position-md-sticky top-0 start-0">
-								<button class="btn btn-secondary btn-lg fsr-6 btn-block">
-									<strong class="antialiased">Get Tickets</strong>
-								</button>
+								<p class="fs-base-n2 mt-0">
+									Your ticket(s) will be sent to your email address, so please make sure you enter the correct one! <a href="#" class="fw-bold" target="_blank">Learn more <i class="fa-regular fa-external-link"></i></a>
+								</p>
+								<form>
+									<input type="text" name="email" class="form-control" placeholder="Email Address">
+									<button class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" type="submit">
+										<strong class="antialiased">Get Tickets</strong>
+									</button>
+								</form>
 								<p>
 									<strong>Total Price</strong>
 									&mdash;
-									$9.99
+									0.05 ETH
 								</p>
 								<hr />
-								<p class="text-muted fs-base-n2">
-									By clicking on the above button, you're agreeing to our <a href="#" class="fw-bold">Terms & Conditions</a>.
+								<p class="text-muted fs-base-n4">
+									You're also agreeing to our <a href="#" class="fw-bold" target="_blank">Terms & Conditions <i class="fa-regular fa-external-link"></i></a> by clicking on the above button.
 								</p>
 							</div>
 						</div>

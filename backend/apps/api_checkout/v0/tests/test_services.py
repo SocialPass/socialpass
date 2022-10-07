@@ -25,19 +25,14 @@ class TestTicketService(TestCase):
         """
         event = Event.objects.last()
         ticket = Ticket.objects.create(event=event)
-        updated_ticket = create_ticket_image(
-            event=event,
-            ticket=ticket
-        )
+        updated_ticket = ticket.create_ticket_image()
         """
         return "Not yet implemented"
 
     def test_create_tickets_blockchain_ownership(self):
         """
         event = Event.objects.last()
-        tickets = create_tickets_blockchain_ownership(
-            event=Event,
-            blockchain_ownership=BlockchainOwnership,
+        tickets = BlockchainOwnership.create_tickets_blockchain_ownership(
             tickets_to_issue=int,
         )
         """

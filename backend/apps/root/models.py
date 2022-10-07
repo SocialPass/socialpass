@@ -2,6 +2,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Optional
 
 import boto3
 from allauth.account.adapter import DefaultAccountAdapter
@@ -19,6 +20,11 @@ from django_fsm import FSMField, transition
 from pytz import utc
 from taggit.managers import TaggableManager
 
+from apps.root.exceptions import (
+    AlreadyRedeemed,
+    ForbiddenRedemptionError,
+    InvalidEmbedCodeError,
+)
 from apps.root.model_field_choices import EVENT_VISIBILITY
 from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
@@ -470,6 +476,34 @@ class Event(DBModel):
         return fields
 
 
+class TicketRedemptionKey(DBModel):
+    """
+    Stores authentication details used by ticket scanners
+    """
+
+    class Meta:
+        unique_together = (
+            "event",
+            "name",
+        )
+
+    # Keys
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="ticket_redemption_keys",
+        blank=False,
+        null=False,
+    )
+
+    # Basic info
+    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
+
+    @property
+    def scanner_url(self):
+        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
+
+
 class Ticket(DBModel):
     """
     List of all the tickets distributed by the respective Ticketed Event.
@@ -508,6 +542,29 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
+
+    def access_key_can_redeem_ticket(
+        self, redemption_access_key: Optional[TicketRedemptionKey] = None
+    ) -> bool:
+        """Returns a boolean indicating if the access key can reedem the given ticket."""
+        if redemption_access_key is None:
+            return True
+
+        return self.event.id == redemption_access_key.event.id
+
+    def redeem_ticket(self, redemption_access_key: Optional[TicketRedemptionKey] = None):
+        """Redeems a ticket."""
+        if self.redeemed:
+            raise AlreadyRedeemed("Ticket is already redeemed.")
+
+        if not self.access_key_can_redeem_ticket(redemption_access_key):
+            raise ForbiddenRedemptionError("Ticketed event does not match.")
+
+        self.redeemed = True
+        self.redeemed_at = timezone.now()
+        self.redeemed_by = redemption_access_key
+        self.save()
+        return self
 
     def get_apple_ticket(self):
         """
@@ -581,33 +638,20 @@ class Ticket(DBModel):
         else:
             return self.file.url
 
+    @classmethod
+    def get_ticket_from_embedded_qr_code(cls, embed_code: str):
+        """Returns a ticket from the given embed code."""
+        try:
+            embed_code, filename = embed_code.split("/")
+        except ValueError:
+            raise InvalidEmbedCodeError("Embed code is invalid.")
 
-class TicketRedemptionKey(DBModel):
-    """
-    Stores authentication details used by ticket scanners
-    """
+        return cls.objects.get(embed_code=embed_code, filename=filename)
 
-    class Meta:
-        unique_together = (
-            "event",
-            "name",
-        )
-
-    # Keys
-    event = models.ForeignKey(
-        Event,
-        on_delete=models.CASCADE,
-        related_name="ticket_redemption_keys",
-        blank=False,
-        null=False,
-    )
-
-    # Basic info
-    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
-
-    @property
-    def scanner_url(self):
-        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
+    @classmethod
+    def get_claimed_tickets(cls, event: Event):
+        """Returns all scanned tickets"""
+        return cls.objects.filter(redeemed=True, event=event)
 
 
 class BlockchainOwnership(DBModel):

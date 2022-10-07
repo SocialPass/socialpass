@@ -6,8 +6,6 @@ from django.test import RequestFactory, TestCase
 from django.views.generic import TemplateView
 from rest_framework import status
 
-from apps.api_checkout.tests.test_views import prevent_warnings
-from apps.api_scanner.services import redeem_ticket
 from apps.api_scanner.views import SetAccessKeyAndEventMixin
 from apps.root.factories import (
     EventFactory,
@@ -16,6 +14,7 @@ from apps.root.factories import (
     UserWithTeamFactory,
 )
 from apps.root.models import Event, Team, Ticket, TicketRedemptionKey
+from apps.root.utilities.main import prevent_warnings
 
 
 class TestCaseWrapper(TestCase):
@@ -198,7 +197,7 @@ class ScanTicketTestCase(TestCaseWrapper):
         # TEST 409 CONFLICT
         ticket = self.ticket
         redemption_access_key = self.ticket_redemption_key
-        redeemed_ticket = redeem_ticket(ticket, redemption_access_key)
+        redeemed_ticket = ticket.redeem_ticket(redemption_access_key)
         embed_code = (
             str(redeemed_ticket.embed_code) + "/" + str(redeemed_ticket.filename)
         )

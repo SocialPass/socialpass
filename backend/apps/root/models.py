@@ -631,40 +631,6 @@ class Ticket(DBModel):
         return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
 
 
-class BlockchainOwnership(DBModel):
-    """
-    Stores details used to verify blockchain ownership in exchange for tickets
-    """
-
-    def set_expires():  # type: ignore
-        return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
-
-    # Keys
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=False, null=False)
-
-    # Basic info
-    wallet_address = models.CharField(max_length=400, blank=False, null=False)
-    is_verified = models.BooleanField(default=False, blank=False, null=False)
-    expires = models.DateTimeField(default=set_expires, blank=False, null=False)
-
-    def __str__(self):
-        return str(self.wallet_address)
-
-    @property
-    def is_expired(self):
-        return self.expires < (datetime.utcnow().replace(tzinfo=utc))
-
-    @property
-    def signing_message(self):
-        return (
-            "Greetings from SocialPass."
-            "\nSign this message to prove ownership"
-            "\n\nThis IS NOT a trade or transaction"
-            f"\n\nTimestamp: {self.expires.strftime('%s')}"
-            f"\nOne-Time Code: {str(self.public_id)[0:7]}"
-        )
-
-
 class TicketTier(DBModel):
     """
     Stores the tiers for events

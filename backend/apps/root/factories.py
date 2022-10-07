@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.root.models import (
-    BlockchainOwnership,
     CheckoutItem,
     CheckoutSession,
     Event,
@@ -90,17 +89,6 @@ class EventFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Event
-
-
-class BlockchainOwnershipFactory(factory.django.DjangoModelFactory):
-    """
-    Create blockchain ownership
-    """
-
-    event = factory.SubFactory(EventFactory)
-
-    class Meta:
-        model = BlockchainOwnership
 
 
 class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):

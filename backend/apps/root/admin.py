@@ -5,7 +5,6 @@ from django_fsm_log.admin import StateLogInline
 
 from apps.root.forms import InviteAdminAddForm, InviteAdminChangeForm
 from apps.root.models import (
-    BlockchainOwnership,
     CheckoutItem,
     CheckoutSession,
     Event,
@@ -55,12 +54,6 @@ class TeamAdmin(admin.ModelAdmin):
     exclude = ("members",)
     list_display = ("name",)
     search_fields = ("name",)
-
-
-@admin.register(BlockchainOwnership)
-class BlockchainOwnershipAdmin(admin.ModelAdmin):
-    list_display = ("event", "id", "wallet_address", "is_verified")
-    search_fields = ("event__title", "id", "wallet_address")
 
 
 @admin.register(Event)

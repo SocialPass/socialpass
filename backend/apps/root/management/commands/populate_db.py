@@ -3,7 +3,6 @@ from typing import Optional
 from django.core.management.base import BaseCommand
 
 from apps.root.factories import (
-    BlockchainOwnershipFactory,
     CheckoutItemFactory,
     CheckoutSessionFactory,
     EventFactory,
@@ -73,9 +72,8 @@ class Command(BaseCommand):
             self.stdout.write("SKIPPING MEMBERSGIP CREATION")
 
         for _ in range(num_events):
-            # create events, BlockchainOwnership, tier, checkout session and item
+            # create events, tier, checkout session and item
             event = EventFactory(team=team, user=user)
-            BlockchainOwnershipFactory(event=event)
             ticket_tier = TicketTierFactory(event=event)
             checkout_session = CheckoutSessionFactory(event=event)
             checkout_item = CheckoutItemFactory(

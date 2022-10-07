@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from apps.api_checkout import serializers
-from apps.root.models import Event, TicketTier
+from apps.root.models import Event
 
 
 class EventView(ReadOnlyModelViewSet):
@@ -36,7 +36,6 @@ class EventView(ReadOnlyModelViewSet):
         """
         list ticket tiers from event
         """
-        obj = self.get_object()
-        queryset = TicketTier.objects.filter(event=obj)
-        serializer = self.get_serializer(queryset, many=True)
+        ticket_tiers_qs = self.get_object().ticket_tiers.all()
+        serializer = self.get_serializer(ticket_tiers_qs, many=True)
         return Response(serializer.data)

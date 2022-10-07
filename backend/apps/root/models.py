@@ -432,7 +432,6 @@ class Event(DBModel):
             "organizer",
             "description",
             "visibility",
-            "initial_place",
             "start_date",
             "timezone",
         ]
@@ -446,6 +445,7 @@ class Event(DBModel):
             "cover_image",
             "end_date",
             "publication_date",
+            "initial_place",
             "address_1",
             "address_2",
             "city",

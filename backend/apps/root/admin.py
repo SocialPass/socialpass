@@ -102,8 +102,7 @@ class TicketRedemptionKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("checkout_item", "blockchain_ownership", "full_embed")
-    search_fields = ("blockchain_ownership",)
+    list_display = ("checkout_item", "full_embed")
 
 
 @admin.register(Invite)

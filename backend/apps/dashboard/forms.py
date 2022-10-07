@@ -100,7 +100,6 @@ class EventForm(forms.ModelForm):
                 },
             ),
             "visibility": forms.RadioSelect(),
-            "requirements": forms.HiddenInput(),
             "initial_place": forms.HiddenInput(),
             "lat": forms.HiddenInput(),
             "long": forms.HiddenInput(),

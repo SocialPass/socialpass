@@ -83,7 +83,6 @@ class EventFactory(factory.django.DjangoModelFactory):
     description = factory.Faker("paragraph")
     start_date = factory.fuzzy.FuzzyDateTime(timezone.now())
     cover_image = factory.django.ImageField(color="blue")
-    requirements: Any = []
     initial_place = factory.Faker("address")
     lat = 41.40338
     long = 2.17403

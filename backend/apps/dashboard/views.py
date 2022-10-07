@@ -69,7 +69,7 @@ class RequireLiveEventMixin:
             raise RuntimeError(
                 "get_object must return an Event when using RequireLiveEventMixin"
             )
-        if event.state != Event.StateEnum.LIVE.value:
+        if event.state != Event.StateStatus.LIVE:
             messages.add_message(
                 self.request,
                 messages.INFO,
@@ -372,9 +372,9 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateEnum.DRAFT.value:
+        if self.object.state == Event.StateStatus.DRAFT:
             return "Your draft has been saved"
-        elif self.object.state == Event.StateEnum.LIVE.value:
+        elif self.object.state == Event.StateStatus.LIVE:
             return "Your changes have been saved"
 
 
@@ -390,9 +390,9 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
     def get_form_class(self):
         """get form class based on event state"""
-        if self.object.state == Event.StateEnum.DRAFT.value:
+        if self.object.state == Event.StateStatus.DRAFT:
             return EventDraftForm
-        elif self.object.state == Event.StateEnum.LIVE.value:
+        elif self.object.state == Event.StateStatus.LIVE:
             return EventLiveForm
 
     def get_context_data(self, **kwargs):
@@ -408,9 +408,9 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateEnum.DRAFT.value:
+        if self.object.state == Event.StateStatus.DRAFT:
             return "Your draft has been saved"
-        elif self.object.state == Event.StateEnum.LIVE.value:
+        elif self.object.state == Event.StateStatus.LIVE:
             return "Your changes have been saved"
 
 
@@ -429,7 +429,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
-        if self.object.state == Event.StateEnum.LIVE.value:
+        if self.object.state == Event.StateStatus.LIVE:
             return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
         else:
             return reverse(

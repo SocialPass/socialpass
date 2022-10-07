@@ -11,7 +11,7 @@ import './index.css'
 export default function Home() {
   const navigate = useNavigate()
   const [ticketTiers, setTicketTiers] = useState([])
-  const [addTicket, removeTicket] = useState(true)
+  const [ticketAmount, setTicketAmount] = useState(0)
 
   const { event }: any = useEvent()
 
@@ -236,7 +236,7 @@ export default function Home() {
                         <button
                           className='btn ws-25 px-0'
                           onClick={() => {
-                            // ticketAmount--
+														setTicketAmount(ticketAmount - 1);
                           }}
                         >
                           -
@@ -247,11 +247,12 @@ export default function Home() {
                           max='10'
                           step='1'
                           className='form-control form-number text-center'
+													value={ticketAmount}
                         ></input>
                         <button
                           className='btn ws-25 px-0'
                           onClick={() => {
-                            // ticketAmount++
+														setTicketAmount(ticketAmount + 1);
                           }}
                         >
                           +
@@ -259,7 +260,7 @@ export default function Home() {
                       </div>
                       <div className='text-center fs-base-n2 mt-5'>
                         <strong>Price &times; 1</strong>
-                        &mdash; $9.99
+                        &mdash; $ {tier.price}
                       </div>
                     </div>
                   </div>

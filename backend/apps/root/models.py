@@ -1,9 +1,7 @@
-import os
 import uuid
 from datetime import timedelta
 from typing import Optional
 
-import boto3
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser

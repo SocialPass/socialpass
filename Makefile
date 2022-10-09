@@ -41,4 +41,4 @@ turtle: ## backend shell plus (docker)
 	docker-compose run web python backend/manage.py shell_plus
 
 prepopulate:
-	docker-compose run web python backend/manage.py pre_populate_db
+	docker-compose run web python backend/manage.py populate_db

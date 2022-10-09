@@ -159,6 +159,7 @@ class GoogleTicket(TicketGenerationBase):
         return it along with the token.
         """
         # Generate the ticket
+        event = ticket.checkout_item.ticket_tier.event
         service_account_info = self.get_service_account_info()
         http_client = self.authenticate(
             service_account_info=service_account_info,
@@ -167,7 +168,7 @@ class GoogleTicket(TicketGenerationBase):
         ticket_id = f"{self.get_issuer_id()}.{str(ticket.public_id)}"
         class_id = "{}.{}".format(
             self.get_issuer_id(),
-            str(ticket.event.public_id),
+            str(event.public_id),
         )
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
         payload = {

@@ -119,19 +119,6 @@
       </table>
       </div>
       <!-- Event Info table end -->
-
-    <!-- Blockchain Requirements start -->
-    <h3 class="card-title fs-base-p4 mt-40 mb-0">Blockchain Requirements</h3>
-    <div class="text-muted text-xs mb-3">
-      The following must be fulfilled in order to access this event.
-    </div>
-    {% if event.requirements %}
-    <pre class="bg-light p-0"><br />{% for item in event.requirements %}Requirement {{ forloop.counter }}<br />-------------<br />{% for k, v in item.items %}<span class="text-primary ">{{ k }}</span>: {{ v }}<br />{% endfor %}<br />{% endfor %}</pre>
-    {% else %}
-    <pre class="bg-light rounded">No Requirements</pre>
-    {% endif %}
-    <!-- Blockchain Requirements end -->
-    </div>
   </div>
   <!-- Main content end -->
 

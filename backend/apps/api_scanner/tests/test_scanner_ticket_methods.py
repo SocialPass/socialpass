@@ -9,33 +9,60 @@ from apps.root.exceptions import (
     InvalidEmbedCodeError,
 )
 from apps.root.factories import (
+    CheckoutItemFactory,
+    CheckoutSessionFactory,
     EventFactory,
     TicketFactory,
     TicketRedemptionKeyFactory,
+    TicketTierFactory,
     UserWithTeamFactory,
 )
-from apps.root.models import Event, Team, Ticket, TicketRedemptionKey
+from apps.root.models import (
+    CheckoutItem,
+    CheckoutSession,
+    Event,
+    Team,
+    Ticket,
+    TicketRedemptionKey,
+    TicketTier,
+)
 
 
 class TestScannerTicketMethods(TestCase):
     user: Any
     team: Team
     event: Event
+    ticket_tier: TicketTier
     ticket: Ticket
+    checkout_item: CheckoutItem
+    checkout_session: CheckoutSession
     ticket_redemption_key: TicketRedemptionKey
     __event: Event
+    __ticket_tier: TicketTier
     __ticket: Ticket
+    __checkout_item: CheckoutItem
+    __checkout_session: CheckoutSession
 
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user = UserWithTeamFactory()
         cls.team = cls.user.membership_set.first().team
         cls.event = EventFactory(team=cls.team, user=cls.user)
-        cls.ticket = TicketFactory(event=cls.event)
+        cls.ticket_tier = TicketTierFactory(event=cls.event)
+        cls.checkout_session = CheckoutSessionFactory(event=cls.event)
+        cls.checkout_item = CheckoutItemFactory(
+            ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
+        )
+        cls.ticket = TicketFactory(checkout_item=cls.checkout_item)
         cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
         # for raising errors
         cls.__event = EventFactory(team=cls.team, user=cls.user)
-        cls.__ticket = TicketFactory(event=cls.__event)
+        cls.__ticket_tier = TicketTierFactory(event=cls.__event)
+        cls.__checkout_session = CheckoutSessionFactory(event=cls.__event)
+        cls.__checkout_item = CheckoutItemFactory(
+            ticket_tier=cls.__ticket_tier, checkout_session=cls.__checkout_session
+        )
+        cls.__ticket = TicketFactory(checkout_item=cls.__checkout_item)
 
     def test_get_ticket_from_embedded_qr_code(self):
         invalid_qrcode = "xxxxx-xxxx-xxxx-xxxx-xxxxxxx-xxxxxxx"  # can not split("/")
@@ -116,8 +143,8 @@ class TestScannerTicketMethods(TestCase):
         redemption_access_key = self.ticket_redemption_key
 
         # assert empty queryset
-        self.assertFalse(Ticket.get_claimed_tickets(ticket.event).exists())
+        self.assertFalse(Ticket.get_claimed_tickets(self.event).exists())
 
         # assert queryset
         ticket.redeem_ticket(redemption_access_key)
-        self.assertTrue(Ticket.get_claimed_tickets(ticket.event).exists())
+        self.assertTrue(Ticket.get_claimed_tickets(self.event).exists())

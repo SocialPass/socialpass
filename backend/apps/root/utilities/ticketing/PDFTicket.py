@@ -78,7 +78,7 @@ class PDFTicket(TicketGenerationBase):
         """
         Generate a PDF from the ticket object
         """
-        event = ticket.event
+        event = ticket.checkout_item.ticket_tier.event
 
         # Create the address from event data
         address = ""

@@ -8,12 +8,23 @@ from rest_framework import status
 
 from apps.api_scanner.views import SetAccessKeyAndEventMixin
 from apps.root.factories import (
+    CheckoutItemFactory,
+    CheckoutSessionFactory,
     EventFactory,
     TicketFactory,
     TicketRedemptionKeyFactory,
+    TicketTierFactory,
     UserWithTeamFactory,
 )
-from apps.root.models import Event, Team, Ticket, TicketRedemptionKey
+from apps.root.models import (
+    CheckoutItem,
+    CheckoutSession,
+    Event,
+    Team,
+    Ticket,
+    TicketRedemptionKey,
+    TicketTier,
+)
 from apps.root.utilities.main import prevent_warnings
 
 
@@ -23,10 +34,16 @@ class TestCaseWrapper(TestCase):
     team: Team
     event: Event
     ticket: Ticket
-    ticket_redemption_key: TicketRedemptionKey
+    ticket_tier: TicketTier
     url_base: str
     access_key: str
-    event__: Event
+    checkout_item: CheckoutItem
+    checkout_session: CheckoutSession
+    ticket_redemption_key: TicketRedemptionKey
+    __event: Event
+    __ticket_tier: TicketTier
+    __checkout_item: CheckoutItem
+    __checkout_session: CheckoutSession
     ticket__: Ticket
 
     @classmethod
@@ -35,13 +52,23 @@ class TestCaseWrapper(TestCase):
         cls.user = UserWithTeamFactory()
         cls.team = cls.user.membership_set.first().team
         cls.event = EventFactory(team=cls.team, user=cls.user)
-        cls.ticket = TicketFactory(event=cls.event)
+        cls.ticket_tier = TicketTierFactory(event=cls.event)
+        cls.checkout_session = CheckoutSessionFactory(event=cls.event)
+        cls.checkout_item = CheckoutItemFactory(
+            ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
+        )
+        cls.ticket = TicketFactory(checkout_item=cls.checkout_item)
         cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
         cls.url_base = "/api/scanner/v1/"
         cls.access_key = cls.ticket_redemption_key.public_id
         # for raising errors
-        cls.event__ = EventFactory(team=cls.team, user=cls.user)
-        cls.ticket__ = TicketFactory(event=cls.event__)
+        cls.__event = EventFactory(team=cls.team, user=cls.user)
+        cls.__ticket_tier = TicketTierFactory(event=cls.__event)
+        cls.__checkout_session = CheckoutSessionFactory(event=cls.__event)
+        cls.__checkout_item = CheckoutItemFactory(
+            ticket_tier=cls.__ticket_tier, checkout_session=cls.__checkout_session
+        )
+        cls.ticket__ = TicketFactory(checkout_item=cls.__checkout_item)
         return super().setUpTestData()
 
 

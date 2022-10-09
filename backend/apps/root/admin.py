@@ -5,13 +5,19 @@ from django_fsm_log.admin import StateLogInline
 
 from apps.root.forms import InviteAdminAddForm, InviteAdminChangeForm
 from apps.root.models import (
-    BlockchainOwnership,
+    CheckoutItem,
+    CheckoutSession,
     Event,
     Invite,
     Membership,
     Team,
     Ticket,
     TicketRedemptionKey,
+    TicketTier,
+    TicketTierPaymentType,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 User = get_user_model()
@@ -48,12 +54,6 @@ class TeamAdmin(admin.ModelAdmin):
     exclude = ("members",)
     list_display = ("name",)
     search_fields = ("name",)
-
-
-@admin.register(BlockchainOwnership)
-class BlockchainOwnershipAdmin(admin.ModelAdmin):
-    list_display = ("event", "id", "wallet_address", "is_verified")
-    search_fields = ("event__title", "id", "wallet_address")
 
 
 @admin.register(Event)
@@ -95,11 +95,7 @@ class TicketRedemptionKeyAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("event", "blockchain_ownership", "full_embed")
-    search_fields = (
-        "event__title",
-        "blockchain_ownership",
-    )
+    list_display = ("checkout_item", "full_embed")
 
 
 @admin.register(Invite)
@@ -115,3 +111,56 @@ class InviteAdmin(admin.ModelAdmin):
             kwargs["form"].user = request.user
             kwargs["form"].request = request
         return super().get_form(request, obj, **kwargs)
+
+
+@admin.register(TicketTier)
+class TicketTierAdmin(admin.ModelAdmin):
+    list_display = (
+        "ticket_type",
+        "event",
+        "price",
+        "capacity",
+        "quantity_sold",
+        "max_per_person",
+    )
+    search_fields = ("event__title",)
+
+
+@admin.register(TicketTierPaymentType)
+class TicketTierPaymentTypeAdmin(admin.ModelAdmin):
+    list_display = ("payment_type", "ticket_tier")
+    search_fields = ("ticket_tier",)
+
+
+@admin.register(CheckoutSession)
+class CheckoutSessionAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "email",
+        "expiration",
+    )
+    search_fields = ("event__title",)
+
+
+@admin.register(CheckoutItem)
+class CheckoutItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "quantity",
+        "ticket_tier",
+    )
+    search_fields = ("checkout_session__name",)
+
+
+@admin.register(TxFiat)
+class TxFiatAdmin(admin.ModelAdmin):
+    list_display = ("checkout_session",)
+
+
+@admin.register(TxBlockchain)
+class TxBlockchainAdmin(admin.ModelAdmin):
+    list_display = ("checkout_session",)
+
+
+@admin.register(TxAssetOwnership)
+class TXAssetOwnershipAdmin(admin.ModelAdmin):
+    list_display = ("checkout_session",)

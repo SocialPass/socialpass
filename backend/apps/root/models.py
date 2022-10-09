@@ -1,7 +1,6 @@
 import os
 import uuid
-from datetime import datetime, timedelta
-from enum import Enum
+from datetime import timedelta
 from typing import Optional
 
 import boto3
@@ -11,13 +10,12 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
-from pytz import utc
 from taggit.managers import TaggableManager
 
 from apps.root.exceptions import (
@@ -25,11 +23,8 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
 )
-from apps.root.model_field_choices import EVENT_VISIBILITY
-from apps.root.model_field_schemas import BLOCKCHAIN_REQUIREMENTS_SCHEMA
 from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
-from apps.root.validators import JSONSchemaValidator
 from config.storages import get_private_ticket_storage
 
 
@@ -70,6 +65,7 @@ class Membership(DBModel):
     class Meta:
         unique_together = ("team", "user")
 
+    # keys
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(
         "root.User", on_delete=models.CASCADE, blank=True, null=True
@@ -79,44 +75,55 @@ class Membership(DBModel):
         return f"{self.team.name}-{self.user.email}"
 
 
-class InviteQuerySet(models.QuerySet):
-    """
-    Invite model queryset manager
-    """
-
-    def all_expired(self):
-        """
-        expired invites
-        """
-        return self.filter(self.expired_q())
-
-    def all_valid(self):
-        """
-        invites sent and not expired
-        """
-        return self.exclude(self.expired_q())
-
-    def expired_q(self):
-        sent_threshold = timezone.now() - timedelta(days=3)
-        q = Q(accepted=True) | Q(sent__lt=sent_threshold)
-        return q
-
-    def delete_expired_confirmations(self):
-        """
-        delete all expired invites
-        """
-        self.all_expired().delete()
-
-
 class Invite(DBModel):
     """
     Invite model used for team invitations
     """
 
+    class InviteQuerySet(models.QuerySet):
+        """
+        Invite model queryset manager
+        """
+
+        def all_expired(self):
+            """
+            expired invites
+            """
+            return self.filter(self.expired_q())
+
+        def all_valid(self):
+            """
+            invites sent and not expired
+            """
+            return self.exclude(self.expired_q())
+
+        def expired_q(self):
+            sent_threshold = timezone.now() - timedelta(days=3)
+            q = Q(accepted=True) | Q(sent__lt=sent_threshold)
+            return q
+
+        def delete_expired_confirmations(self):
+            """
+            delete all expired invites
+            """
+            self.all_expired().delete()
+
     # Queryset manager
     objects = InviteQuerySet.as_manager()
 
-    # invitation fields
+    # Keys
+    inviter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    membership = models.ForeignKey(
+        Membership, on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    # basic info
     accepted = models.BooleanField(
         verbose_name=_("accepted"), default=False, blank=False, null=False
     )
@@ -124,24 +131,12 @@ class Invite(DBModel):
         verbose_name=_("key"), max_length=64, unique=True, blank=False
     )
     sent = models.DateTimeField(verbose_name=_("sent"), blank=False, null=True)
-    inviter = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-
     email = models.EmailField(
         unique=True,
         verbose_name="e-mail address",
         max_length=254,
         blank=False,
         null=False,
-    )
-    # custom
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
-    membership = models.ForeignKey(
-        Membership, on_delete=models.CASCADE, blank=True, null=True
     )
     archived_email = models.EmailField(blank=True, null=True)
 
@@ -192,57 +187,65 @@ class Invite(DBModel):
         return self.email
 
 
-class EventQuerySet(models.QuerySet):
-    """
-    Event model queryset manager
-    """
-
-    def filter_inactive(self):
-        """
-        inactive events (not live)
-        """
-        return self.filter(~models.Q(state=Event.StateEnum.LIVE.value))
-
-    def filter_active(self):
-        """
-        active events (live)
-        """
-        return self.filter(state=Event.StateEnum.LIVE.value)
-
-    def filter_publicly_accessible(self):
-        """
-        public events (filter_active ++ visibility==PUBLIC)
-        In the future, should also check for published_date
-        """
-        return self.filter(visibility="PUBLIC").filter_active()
-
-    def filter_featured(self):
-        """
-        public, featured events (filter_publicly_accessible ++ featured=True)
-        """
-        return self.filter(is_featured=True).filter_publicly_accessible()
-
-
 class Event(DBModel):
     """
     Stores data for ticketed event
     """
 
-    class StateEnum(Enum):
+    class EventQuerySet(models.QuerySet):
+        """
+        Event model queryset manager
+        """
+
+        def filter_inactive(self):
+            """
+            inactive events (not live)
+            """
+            return self.filter(~models.Q(state=Event.StateStatus.LIVE))
+
+        def filter_active(self):
+            """
+            active events (live)
+            """
+            return self.filter(state=Event.StateStatus.LIVE)
+
+        def filter_publicly_accessible(self):
+            """
+            public events (filter_active ++ visibility==PUBLIC)
+            In the future, should also check for published_date
+            """
+            return self.filter(visibility="PUBLIC").filter_active()
+
+        def filter_featured(self):
+            """
+            public, featured events (filter_publicly_accessible ++ featured=True)
+            """
+            return self.filter(is_featured=True).filter_publicly_accessible()
+
+    class StateStatus(models.TextChoices):
         DRAFT = "Draft"
         LIVE = "Live"
+
+    class VisibilityStatus(models.TextChoices):
+        PUBLIC = "PUBLIC", _("Public")
+        PRIVATE = "PRIVATE", _("Private")
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
 
-    # state
-    state = FSMField(
-        default=StateEnum.DRAFT.value, protected=True, blank=False, null=False
-    )
-
     # Keys
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=False, null=False)
+    google_class_id = models.CharField(max_length=255, blank=True, default="")
+
+    # state
+    state = FSMField(
+        choices=StateStatus.choices,
+        default=StateStatus.DRAFT,
+        protected=True,
+        blank=False,
+        null=False,
+    )
 
     # Publish info
     is_featured = models.BooleanField(default=False, blank=False, null=False)
@@ -254,8 +257,8 @@ class Event(DBModel):
     )
     visibility = models.CharField(
         max_length=50,
-        choices=EVENT_VISIBILITY,
-        default=EVENT_VISIBILITY[0][0],
+        choices=VisibilityStatus.choices,
+        default=VisibilityStatus.PUBLIC,
         help_text="Whether or not your event is searchable by the public.",
         blank=False,
     )
@@ -338,39 +341,14 @@ class Event(DBModel):
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     localized_address_display = models.CharField(max_length=1024, blank=True, default="")
-    # TODO localized_multi_line_address_display
-
-    # Ticket Info
-    # TODO: Move these to TicketType
-    requirements = models.JSONField(
-        default=list,
-        validators=[JSONSchemaValidator(limit_value=BLOCKCHAIN_REQUIREMENTS_SCHEMA)],
-        blank=True,
-        null=False,
-    )
-    capacity = models.IntegerField(
-        default=1,
-        validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event.",
-        blank=True,
-        null=False,
-    )
-    limit_per_person = models.IntegerField(
-        default=1,
-        validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee.",
-        blank=False,
-        null=False,
-    )
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return f"{self.team} - {self.title}"
 
     def get_absolute_url(self):
-        if self.state == Event.StateEnum.DRAFT.value:
+        if self.state == Event.StateStatus.DRAFT:
             _success_url = "dashboard:event_update"
-        elif self.state == Event.StateEnum.LIVE.value:
+        elif self.state == Event.StateStatus.LIVE:
             _success_url = "dashboard:event_detail"
         return reverse(
             _success_url,
@@ -408,7 +386,7 @@ class Event(DBModel):
         except Exception as e:
             raise e
 
-    @transition(field=state, target=StateEnum.DRAFT.value)
+    @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):
         """
         This function handles state transition to DRAFT
@@ -417,7 +395,7 @@ class Event(DBModel):
         """
         pass
 
-    @transition(field=state, target=StateEnum.LIVE.value)
+    @transition(field=state, target=StateStatus.LIVE)
     def _transition_live(self):
         """
         This function handles state transition from DRAFT to LIVE
@@ -440,6 +418,10 @@ class Event(DBModel):
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
+    @property
+    def capacity(self):
+        return self.ticket_tiers.aggregate(Sum("capacity"))["capacity__sum"]
+
     @staticmethod
     def required_form_fields():
         fields = [
@@ -447,11 +429,8 @@ class Event(DBModel):
             "organizer",
             "description",
             "visibility",
-            "initial_place",
             "start_date",
-            "capacity",
             "timezone",
-            "limit_per_person",
         ]
         return fields
 
@@ -463,6 +442,7 @@ class Event(DBModel):
             "cover_image",
             "end_date",
             "publication_date",
+            "initial_place",
             "address_1",
             "address_2",
             "city",
@@ -510,8 +490,12 @@ class Ticket(DBModel):
     """
 
     # Keys
-    event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="tickets", blank=False, null=False
+    checkout_item = models.ForeignKey(
+        "CheckoutItem",
+        on_delete=models.CASCADE,
+        related_name="tickets",
+        blank=False,
+        null=False,
     )
 
     # Ticket File Info
@@ -530,16 +514,6 @@ class Ticket(DBModel):
     )
     google_class_id = models.CharField(max_length=255, blank=True, default="")
 
-    # blockchain Info
-    blockchain_ownership = models.ForeignKey(
-        "BlockchainOwnership",
-        on_delete=models.SET_NULL,
-        related_name="tickets",
-        blank=False,
-        null=True,
-    )
-    blockchain_asset = models.JSONField(blank=False, null=True)
-
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
@@ -550,7 +524,7 @@ class Ticket(DBModel):
         if redemption_access_key is None:
             return True
 
-        return self.event.id == redemption_access_key.event.id
+        return self.checkout_item.ticket_tier.event.id == redemption_access_key.event.id
 
     def redeem_ticket(self, redemption_access_key: Optional[TicketRedemptionKey] = None):
         """Redeems a ticket."""
@@ -651,38 +625,215 @@ class Ticket(DBModel):
     @classmethod
     def get_claimed_tickets(cls, event: Event):
         """Returns all scanned tickets"""
-        return cls.objects.filter(redeemed=True, event=event)
+        return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
 
 
-class BlockchainOwnership(DBModel):
+class TicketTier(DBModel):
     """
-    Stores details used to verify blockchain ownership in exchange for tickets
+    Stores the tiers for events
     """
 
-    def set_expires():  # type: ignore
-        return datetime.utcnow().replace(tzinfo=utc) + timedelta(minutes=30)
+    # keys
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="ticket_tiers",
+        blank=False,
+        null=False,
+    )
 
-    # Keys
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=False, null=False)
-
-    # Basic info
-    wallet_address = models.CharField(max_length=400, blank=False, null=False)
-    is_verified = models.BooleanField(default=False, blank=False, null=False)
-    expires = models.DateTimeField(default=set_expires, blank=False, null=False)
+    # basic info
+    ticket_type = models.CharField(
+        max_length=255,
+        blank=False,
+    )
+    price = models.DecimalField(
+        max_digits=9,
+        validators=[MinValueValidator(0)],
+        decimal_places=6,
+        blank=False,
+        null=True,
+    )
+    capacity = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text="Maximum amount of attendees for your event.",
+        blank=True,
+        null=False,
+    )
+    quantity_sold = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=False,
+    )
+    max_per_person = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+        help_text="Maximum amount of tickets per attendee.",
+        blank=False,
+        null=False,
+    )
 
     def __str__(self):
-        return str(self.wallet_address)
+        return f"TicketTier {self.ticket_type}-{self.public_id}"
 
-    @property
-    def is_expired(self):
-        return self.expires < (datetime.utcnow().replace(tzinfo=utc))
 
-    @property
-    def signing_message(self):
-        return (
-            "Greetings from SocialPass."
-            "\nSign this message to prove ownership"
-            "\n\nThis IS NOT a trade or transaction"
-            f"\n\nTimestamp: {self.expires.strftime('%s')}"
-            f"\nOne-Time Code: {str(self.public_id)[0:7]}"
-        )
+class TicketTierPaymentType(DBModel):
+    """
+    Payment Type for Ticket Tiers
+    """
+
+    class PaymentType(models.TextChoices):
+        FREE = "FREE", _("Free")
+        FIAT = "FIAT", _("Fiat")
+        CRYPTO = "CRYPTO", _("Crypto")
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
+
+    # keys
+    ticket_tier = models.ForeignKey(
+        TicketTier,
+        on_delete=models.CASCADE,
+        related_name="tier_payment_types",
+        blank=False,
+        null=False,
+    )
+
+    # basic info
+    payment_type = models.CharField(
+        max_length=50,
+        choices=PaymentType.choices,
+        default=PaymentType.FREE,
+        help_text="The payment method",
+        blank=False,
+    )
+
+    def __str__(self):
+        return f"TicketTierPaymentType {self.payment_type}-{self.public_id}"
+
+
+class CheckoutSession(DBModel):
+    """
+    Stores checkout sessions for events
+    """
+
+    class CheckoutSessionStatus(models.TextChoices):
+        VALID = "VALID", _("Valid")
+        EXPIRED = "EXPIRED", _("Expired")
+        COMPLETED = "COMPLETED", _("Completed")
+
+    # keys
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="checkout_sessions",
+        blank=False,
+        null=False,
+    )
+
+    # basic info
+    expiration = models.DateTimeField(blank=True, null=True)
+    name = models.CharField(max_length=255, blank=False)
+    email = models.EmailField(max_length=255, blank=False, null=False)
+    cost = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=False,
+    )
+    status = models.CharField(
+        max_length=50,
+        choices=CheckoutSessionStatus.choices,
+        default=CheckoutSessionStatus.VALID,
+        blank=False,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class CheckoutItem(DBModel):
+    """
+    Checkout item for a tiers and checkout sessions
+    """
+
+    # keys
+    ticket_tier = models.ForeignKey(
+        TicketTier,
+        on_delete=models.CASCADE,
+        related_name="checkout_items",
+        blank=False,
+        null=False,
+    )
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="checkout_items",
+        blank=False,
+        null=False,
+    )
+
+    # basic info
+    quantity = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=False,
+    )
+
+    def __str__(self):
+        return f"CheckoutItem {self.public_id}"
+
+
+class TxFiat(DBModel):
+    """
+    Stores fiat transactions
+    """
+
+    # keys
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="fiat_transactions",
+        blank=False,
+        null=False,
+    )
+
+    def __str__(self) -> str:
+        return f"TxFiat {self.public_id}"
+
+
+class TxBlockchain(DBModel):
+    """
+    Stores blockchain transactions
+    """
+
+    # keys
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="blockchain_transactions",
+        blank=False,
+        null=False,
+    )
+
+    def __str__(self) -> str:
+        return f"TxBlockchain {self.public_id}"
+
+
+class TxAssetOwnership(DBModel):
+    """
+    Stores asset ownership transactions
+    """
+
+    # keys
+    checkout_session = models.ForeignKey(
+        CheckoutSession,
+        on_delete=models.CASCADE,
+        related_name="asset_ownership_transactions",
+        blank=False,
+        null=False,
+    )
+
+    def __str__(self) -> str:
+        return f"TxAssetOwnership {self.public_id}"

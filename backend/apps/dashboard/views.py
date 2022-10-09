@@ -1,4 +1,3 @@
-import json
 import secrets
 
 from allauth.account.adapter import DefaultAccountAdapter
@@ -21,8 +20,6 @@ from apps.dashboard.forms import (
     EventLiveForm,
     TeamForm,
 )
-from apps.root.model_field_choices import ASSET_TYPES, BLOCKCHAINS, CHAIN_IDS
-from apps.root.model_field_schemas import REQUIREMENT_SCHEMA
 from apps.root.models import Event, Invite, Membership, Team, Ticket
 
 User = auth.get_user_model()
@@ -71,7 +68,7 @@ class RequireLiveEventMixin:
             raise RuntimeError(
                 "get_object must return an Event when using RequireLiveEventMixin"
             )
-        if event.state != Event.StateEnum.LIVE.value:
+        if event.state != Event.StateStatus.LIVE:
             messages.add_message(
                 self.request,
                 messages.INFO,
@@ -374,9 +371,9 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateEnum.DRAFT.value:
+        if self.object.state == Event.StateStatus.DRAFT:
             return "Your draft has been saved"
-        elif self.object.state == Event.StateEnum.LIVE.value:
+        elif self.object.state == Event.StateStatus.LIVE:
             return "Your changes have been saved"
 
 
@@ -392,17 +389,13 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
     def get_form_class(self):
         """get form class based on event state"""
-        if self.object.state == Event.StateEnum.DRAFT.value:
+        if self.object.state == Event.StateStatus.DRAFT:
             return EventDraftForm
-        elif self.object.state == Event.StateEnum.LIVE.value:
+        elif self.object.state == Event.StateStatus.LIVE:
             return EventLiveForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["json_schema"] = json.dumps(REQUIREMENT_SCHEMA)
-        context["BLOCKHAINS_CHOICES"] = json.dumps(dict(BLOCKCHAINS))
-        context["CHAIN_IDS_CHOICES"] = json.dumps(dict(CHAIN_IDS))
-        context["ASSET_TYPES_CHOICES"] = json.dumps(dict(ASSET_TYPES))
         context["event"] = self.object
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
@@ -414,9 +407,9 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateEnum.DRAFT.value:
+        if self.object.state == Event.StateStatus.DRAFT:
             return "Your draft has been saved"
-        elif self.object.state == Event.StateEnum.LIVE.value:
+        elif self.object.state == Event.StateStatus.LIVE:
             return "Your changes have been saved"
 
 
@@ -435,7 +428,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
-        if self.object.state == Event.StateEnum.LIVE.value:
+        if self.object.state == Event.StateStatus.LIVE:
             return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
         else:
             return reverse(
@@ -473,7 +466,7 @@ class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
         get queryset of Ticket models from given Event
         """
         gate = self.get_object()
-        qs = gate.tickets.all()
+        qs = Ticket.objects.filter(checkout_item__ticket_tier__event=gate)
         qs = qs.order_by("-modified")
 
         query_address = self.request.GET.get("address", "")

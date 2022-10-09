@@ -1,15 +1,19 @@
+from typing import Optional
+
 from django.core.management.base import BaseCommand
 
 from apps.root.factories import (
-    BlockchainOwnershipFactory,
+    CheckoutItemFactory,
+    CheckoutSessionFactory,
     EventFactory,
     MembershipFactory,
     TeamFactory,
     TicketFactory,
     TicketRedemptionKeyFactory,
+    TicketTierFactory,
     UserFactory,
 )
-from apps.root.models import User
+from apps.root.models import Team, User
 
 
 class Command(BaseCommand):
@@ -39,31 +43,46 @@ class Command(BaseCommand):
             type=int,
             help="Number of Tickets per Event to be created",
         )
+        parser.add_argument(
+            "-u",
+            "--user-default",
+            type=bool,
+            help="If true, create a user with email user@dummy.com",
+        )
 
     def handle(self, *args, **kwargs) -> None:
         """Execute database population"""
         self.stdout.write("POPULATING DATABASE")
 
         # get number of events and tickets
+
         num_events = kwargs["events"] or 1
         num_tickets = kwargs["tickets"] or 1
+        user_default = kwargs["user_default"]
 
         # creates superuser
         self.create_superuser()
 
         # creates user, team and Membership
-        user = UserFactory()
-        team = TeamFactory()
-        MembershipFactory(user=user, team=team)
+        user, team = self.create_user_and_team(user_default)
+
+        try:
+            MembershipFactory(user=user, team=team)
+        except Exception as e:  # noqa
+            self.stdout.write("SKIPPING MEMBERSGIP CREATION")
 
         for _ in range(num_events):
-            # create events and BlockchainOwnership
+            # create events, tier, checkout session and item
             event = EventFactory(team=team, user=user)
-            BlockchainOwnershipFactory(event=event)
+            ticket_tier = TicketTierFactory(event=event)
+            checkout_session = CheckoutSessionFactory(event=event)
+            checkout_item = CheckoutItemFactory(
+                ticket_tier=ticket_tier, checkout_session=checkout_session
+            )
 
             # create Tickets and TicketRedemptionKeys
             for _ in range(num_tickets):
-                TicketFactory(event=event)
+                TicketFactory(checkout_item=checkout_item)
                 TicketRedemptionKeyFactory(event=event)
 
         self.stdout.write(
@@ -81,3 +100,27 @@ class Command(BaseCommand):
 
         if not queryset.exists():
             User.objects.create_superuser("admin", "admin@admin.com", "password")
+
+    def create_user_and_team(self, default: bool):
+        """
+        create a user and a team `default team` if not exists
+            username: Dummy User
+            email: user@dummy.com
+            password: password
+        """
+        user: Optional[User]
+        team: Optional[Team]
+
+        if default:
+            user_qs = User.objects.filter(username="Dummy User")
+            if not user_qs.exists():
+                user = UserFactory(username="dummy_user", email="user@dummy.com")
+                team = TeamFactory(name="Default Team")
+            else:
+                user = user_qs.first()
+                team = Team.objects.filter(name="Default Team").first()
+        else:
+            user = UserFactory()
+            team = TeamFactory()
+
+        return user, team

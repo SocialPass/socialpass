@@ -75,39 +75,38 @@ class Membership(DBModel):
         return f"{self.team.name}-{self.user.email}"
 
 
-class InviteQuerySet(models.QuerySet):
-    """
-    Invite model queryset manager
-    """
-
-    def all_expired(self):
-        """
-        expired invites
-        """
-        return self.filter(self.expired_q())
-
-    def all_valid(self):
-        """
-        invites sent and not expired
-        """
-        return self.exclude(self.expired_q())
-
-    def expired_q(self):
-        sent_threshold = timezone.now() - timedelta(days=3)
-        q = Q(accepted=True) | Q(sent__lt=sent_threshold)
-        return q
-
-    def delete_expired_confirmations(self):
-        """
-        delete all expired invites
-        """
-        self.all_expired().delete()
-
-
 class Invite(DBModel):
     """
     Invite model used for team invitations
     """
+
+    class InviteQuerySet(models.QuerySet):
+        """
+        Invite model queryset manager
+        """
+
+        def all_expired(self):
+            """
+            expired invites
+            """
+            return self.filter(self.expired_q())
+
+        def all_valid(self):
+            """
+            invites sent and not expired
+            """
+            return self.exclude(self.expired_q())
+
+        def expired_q(self):
+            sent_threshold = timezone.now() - timedelta(days=3)
+            q = Q(accepted=True) | Q(sent__lt=sent_threshold)
+            return q
+
+        def delete_expired_confirmations(self):
+            """
+            delete all expired invites
+            """
+            self.all_expired().delete()
 
     # Queryset manager
     objects = InviteQuerySet.as_manager()
@@ -188,41 +187,40 @@ class Invite(DBModel):
         return self.email
 
 
-class EventQuerySet(models.QuerySet):
-    """
-    Event model queryset manager
-    """
-
-    def filter_inactive(self):
-        """
-        inactive events (not live)
-        """
-        return self.filter(~models.Q(state=Event.StateStatus.LIVE))
-
-    def filter_active(self):
-        """
-        active events (live)
-        """
-        return self.filter(state=Event.StateStatus.LIVE)
-
-    def filter_publicly_accessible(self):
-        """
-        public events (filter_active ++ visibility==PUBLIC)
-        In the future, should also check for published_date
-        """
-        return self.filter(visibility="PUBLIC").filter_active()
-
-    def filter_featured(self):
-        """
-        public, featured events (filter_publicly_accessible ++ featured=True)
-        """
-        return self.filter(is_featured=True).filter_publicly_accessible()
-
-
 class Event(DBModel):
     """
     Stores data for ticketed event
     """
+
+    class EventQuerySet(models.QuerySet):
+        """
+        Event model queryset manager
+        """
+
+        def filter_inactive(self):
+            """
+            inactive events (not live)
+            """
+            return self.filter(~models.Q(state=Event.StateStatus.LIVE))
+
+        def filter_active(self):
+            """
+            active events (live)
+            """
+            return self.filter(state=Event.StateStatus.LIVE)
+
+        def filter_publicly_accessible(self):
+            """
+            public events (filter_active ++ visibility==PUBLIC)
+            In the future, should also check for published_date
+            """
+            return self.filter(visibility="PUBLIC").filter_active()
+
+        def filter_featured(self):
+            """
+            public, featured events (filter_publicly_accessible ++ featured=True)
+            """
+            return self.filter(is_featured=True).filter_publicly_accessible()
 
     class StateStatus(models.TextChoices):
         DRAFT = "Draft"

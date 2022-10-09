@@ -65,6 +65,7 @@ class Membership(DBModel):
     class Meta:
         unique_together = ("team", "user")
 
+    # keys
     team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(
         "root.User", on_delete=models.CASCADE, blank=True, null=True
@@ -111,7 +112,19 @@ class Invite(DBModel):
     # Queryset manager
     objects = InviteQuerySet.as_manager()
 
-    # invitation fields
+    # Keys
+    inviter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    membership = models.ForeignKey(
+        Membership, on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    # basic info
     accepted = models.BooleanField(
         verbose_name=_("accepted"), default=False, blank=False, null=False
     )
@@ -119,24 +132,12 @@ class Invite(DBModel):
         verbose_name=_("key"), max_length=64, unique=True, blank=False
     )
     sent = models.DateTimeField(verbose_name=_("sent"), blank=False, null=True)
-    inviter = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-
     email = models.EmailField(
         unique=True,
         verbose_name="e-mail address",
         max_length=254,
         blank=False,
         null=False,
-    )
-    # custom
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
-    membership = models.ForeignKey(
-        Membership, on_delete=models.CASCADE, blank=True, null=True
     )
     archived_email = models.EmailField(blank=True, null=True)
 
@@ -234,6 +235,11 @@ class Event(DBModel):
     # Queryset manager
     objects = EventQuerySet.as_manager()
 
+    # Keys
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=False, null=False)
+    google_class_id = models.CharField(max_length=255, blank=True, default="")
+
     # state
     state = FSMField(
         choices=StateStatus.choices,
@@ -242,11 +248,6 @@ class Event(DBModel):
         blank=False,
         null=False,
     )
-
-    # Keys
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=False, null=False)
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     # Publish info
     is_featured = models.BooleanField(default=False, blank=False, null=False)
@@ -634,6 +635,15 @@ class TicketTier(DBModel):
     Stores the tiers for events
     """
 
+    # keys
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="ticket_tiers",
+        blank=False,
+        null=False,
+    )
+
     # basic info
     ticket_type = models.CharField(
         max_length=255,
@@ -667,15 +677,6 @@ class TicketTier(DBModel):
         null=False,
     )
 
-    # keys
-    event = models.ForeignKey(
-        Event,
-        on_delete=models.CASCADE,
-        related_name="ticket_tiers",
-        blank=False,
-        null=False,
-    )
-
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
 
@@ -691,15 +692,6 @@ class TicketTierPaymentType(DBModel):
         CRYPTO = "CRYPTO", _("Crypto")
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
 
-    # basic info
-    payment_type = models.CharField(
-        max_length=50,
-        choices=PaymentType.choices,
-        default=PaymentType.FREE,
-        help_text="The payment method",
-        blank=False,
-    )
-
     # keys
     ticket_tier = models.ForeignKey(
         TicketTier,
@@ -707,6 +699,15 @@ class TicketTierPaymentType(DBModel):
         related_name="tier_payment_types",
         blank=False,
         null=False,
+    )
+
+    # basic info
+    payment_type = models.CharField(
+        max_length=50,
+        choices=PaymentType.choices,
+        default=PaymentType.FREE,
+        help_text="The payment method",
+        blank=False,
     )
 
     def __str__(self):
@@ -722,6 +723,15 @@ class CheckoutSession(DBModel):
         VALID = "VALID", _("Valid")
         EXPIRED = "EXPIRED", _("Expired")
         COMPLETED = "COMPLETED", _("Completed")
+
+    # keys
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="checkout_sessions",
+        blank=False,
+        null=False,
+    )
 
     # basic info
     expiration = models.DateTimeField(blank=True, null=True)
@@ -740,15 +750,6 @@ class CheckoutSession(DBModel):
         blank=False,
     )
 
-    # keys
-    event = models.ForeignKey(
-        Event,
-        on_delete=models.CASCADE,
-        related_name="checkout_sessions",
-        blank=False,
-        null=False,
-    )
-
     def __str__(self):
         return self.name
 
@@ -757,14 +758,6 @@ class CheckoutItem(DBModel):
     """
     Checkout item for a tiers and checkout sessions
     """
-
-    # basic info
-    quantity = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        blank=True,
-        null=False,
-    )
 
     # keys
     ticket_tier = models.ForeignKey(
@@ -779,6 +772,14 @@ class CheckoutItem(DBModel):
         on_delete=models.CASCADE,
         related_name="checkout_items",
         blank=False,
+        null=False,
+    )
+
+    # basic info
+    quantity = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        blank=True,
         null=False,
     )
 
@@ -831,7 +832,7 @@ class TxAssetOwnership(DBModel):
     checkout_session = models.ForeignKey(
         CheckoutSession,
         on_delete=models.CASCADE,
-        related_name="assetownership_transactions",
+        related_name="asset_ownership_transactions",
         blank=False,
         null=False,
     )

@@ -580,38 +580,6 @@ class Ticket(DBModel):
     def full_embed(self):
         return f"{self.embed_code}/{self.filename}"
 
-    @property
-    def filename_key(self):
-        return os.path.join(self.file.storage.location, self.file.name)
-
-    @property
-    def download_url(self):
-        """
-        This property is used for private ticket url
-        On debug, use default image file
-        On production, generate pre-signed s3 url
-        """
-        # Production
-        if not settings.DEBUG:
-            s3_client = boto3.client(
-                "s3",
-                region_name=settings.AWS_S3_REGION_NAME,
-                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-            return s3_client.generate_presigned_url(
-                ClientMethod="get_object",
-                Params={
-                    "Bucket": f"{settings.AWS_STORAGE_BUCKET_NAME}",
-                    "Key": self.filename_key,
-                },
-                ExpiresIn=3600,
-            )
-        # Debug
-        else:
-            return self.file.url
-
     @classmethod
     def get_ticket_from_embedded_qr_code(cls, embed_code: str):
         """Returns a ticket from the given embed code."""

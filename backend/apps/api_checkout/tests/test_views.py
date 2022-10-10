@@ -44,6 +44,7 @@ class GetEventTestCase(TestCaseWrapper):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        # assert objects values with json returned
         event_dict = response.json()
         self.assertEqual(event_dict["public_id"], str(self.event.public_id))
         self.assertEqual(event_dict["title"], self.event.title)
@@ -79,6 +80,7 @@ class GetEventTestCase(TestCaseWrapper):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        # assert objects values with json returned
         event_dict = response.json()["results"][0]
         self.assertEqual(event_dict["public_id"], str(self.event.public_id))
         self.assertEqual(event_dict["title"], self.event.title)
@@ -95,6 +97,9 @@ class GetEventTestCase(TestCaseWrapper):
 
     @prevent_warnings
     def test_events_list_pagination(self):
+        """
+        test if events view is being paginated
+        """
 
         response = self.client.get(f"{self.url_base}event/")
 
@@ -117,7 +122,7 @@ class GetEventTestCase(TestCaseWrapper):
 
         self.assertEqual(
             len(resonse_json["results"]), 15
-        )  # how can we not hardcoded all these urls and paginated value?
+        )  # how can we not hardcoded all these test urls and paginated value?
         self.assertEqual(resonse_json["count"], Event.objects.count())
         self.assertEqual(
             resonse_json["next"], f"http://testserver{self.url_base}event/?page=3"

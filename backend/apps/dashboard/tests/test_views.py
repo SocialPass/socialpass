@@ -197,7 +197,8 @@ class DashboardTest(TestCase):
         # Test GET
         response = self.client.get(
             reverse(
-                "dashboard:team_member_delete", args=(self.team_one.public_id, member.pk)
+                "dashboard:team_member_delete",
+                args=(self.team_one.public_id, member.pk),
             )
         )
         self.assertEqual(response.status_code, 200)
@@ -205,7 +206,8 @@ class DashboardTest(TestCase):
         # TEST POST
         response = self.client.post(
             reverse(
-                "dashboard:team_member_delete", args=(self.team_one.public_id, member.pk)
+                "dashboard:team_member_delete",
+                args=(self.team_one.public_id, member.pk),
             )
         )
         self.assertEqual(self.team_one.members.count(), 1)

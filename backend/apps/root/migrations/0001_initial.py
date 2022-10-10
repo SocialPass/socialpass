@@ -396,10 +396,16 @@ class Migration(migrations.Migration):
                 ("address_2", models.CharField(blank=True, default="", max_length=255)),
                 ("city", models.CharField(blank=True, default="", max_length=255)),
                 ("region", models.CharField(blank=True, default="", max_length=4)),
-                ("postal_code", models.CharField(blank=True, default="", max_length=12)),
+                (
+                    "postal_code",
+                    models.CharField(blank=True, default="", max_length=12),
+                ),
                 ("country", models.CharField(blank=True, default="", max_length=2)),
                 ("lat", models.DecimalField(decimal_places=6, max_digits=9, null=True)),
-                ("long", models.DecimalField(decimal_places=6, max_digits=9, null=True)),
+                (
+                    "long",
+                    models.DecimalField(decimal_places=6, max_digits=9, null=True),
+                ),
                 (
                     "localized_address_display",
                     models.CharField(blank=True, default="", max_length=1024),

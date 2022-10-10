@@ -261,7 +261,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
+            self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
@@ -277,7 +277,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
+            self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
@@ -297,7 +297,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "Team members updated successfully."
+            self.request, messages.SUCCESS, "Team information updated successfully."
         )
         return reverse("dashboard:team_detail", args=(self.kwargs["team_public_id"],))
 

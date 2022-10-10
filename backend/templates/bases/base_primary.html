@@ -264,27 +264,27 @@
 
 			<!-- Team start -->
 			<div class="sidebar-menu mt-40">
-				<h6 class="sidebar-title fs-base-n2">
-					Team
-				</h6>
+				<div class="position-relative">
+					<h6 class="sidebar-title fs-base-n2">
+						Team
+					</h6>
+					<a href="{% url 'dashboard:team_members' current_team.public_id %}#add-member" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
+						<i class="fa-solid fa-plus"></i>
+						<span class="visually-hidden">Add Member</span>
+					</a>
+				</div>
 				<a href="{% url 'dashboard:team_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'team-details' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-flag"></i>
 					</span>
 					<span class="ms-5">Team Details</span>
 				</a>
-				<div class="position-relative">
-					<a href="{% url 'dashboard:team_members' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-members' %}">
-						<span class="ws-25 flex-shrink-0">
-							<i class="fa-regular fa-lock"></i>
-						</span>
-						<span class="ms-5">Manage Members</span>
-					</a>
-					<a href="{% url 'dashboard:team_members' current_team.public_id %}#add-member" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
-						<i class="fa-solid fa-plus"></i>
-						<span class="visually-hidden">Add Member</span>
-					</a>
-				</div>
+				<a href="{% url 'dashboard:team_members' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-members' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-lock"></i>
+					</span>
+					<span class="ms-5">Manage Members</span>
+				</a>
 			</div>
 			<!-- Team end -->
 		{% else %}

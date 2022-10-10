@@ -43,7 +43,7 @@ urlpatterns = [
     # Ticketing
     path(
         "events/published/<uuid:team_public_id>/",
-        views.PublishedEventsListView.as_view(),
+        views.EventListView.as_view(),
         name="event_list",
     ),
     path(

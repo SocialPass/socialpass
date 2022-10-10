@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>SocialPass - Event Portal</title>
+
+		<!-- Halfmoon CSS -->
+		<link href="../../../backend/static/socialpass-theme/halfmoon.css" rel="stylesheet" />
+
+		<!-- SocialPass CSS theme -->
+		<link href="../../../backend/static/socialpass-theme/socialpass-theme.css" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- Custom styles -->
+		<style type="text/css">
+			:root {
+				--base-body-bg-color: var(--gray-color-light);
+				--base-border-radius: 0.4rem;
+			}
+
+			.dark-mode {
+				--base-body-bg-color: var(--dark-color-very-dim);
+			}
+
+			/* Ticket tier (checkbox or radio) */
+
+			.ticket-tier {
+				position: relative;
+				display: block;
+			}
+
+			.ticket-tier-input {
+				position: absolute;
+				opacity: 0;
+				height: 0;
+				width: 0;
+			}
+
+			.ticket-tier-label {
+				position: relative;
+				display: block;
+				height: 100%;
+				cursor: pointer;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+
+				padding: 1rem 2rem;
+				background-color: var(--base-content-bg-color);
+				border: var(--base-border-width) var(--base-border-style) var(--border-color);
+				border-radius: var(--rounded-2-border-radius);
+			}
+
+			@media (max-width: 576px) {
+				.ticket-tier-label {
+					padding: 1rem;
+				}
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label {
+				background-color: var(--primary-color-very-light);
+				border-color: var(--primary-color);
+				z-index: 1;
+			}
+
+			.dark-mode .ticket-tier-input:checked + .ticket-tier-label {
+				background-color: var(--primary-color-very-dim);
+				border-color: var(--primary-color-dim);
+			}
+
+			.ticket-tier-check {
+				display: none;
+				margin-right: 0.5rem;
+				color: var(--primary-color);
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-check {
+				display: inline;
+			}
+
+			.ticket-tier-uncheck {
+				margin-right: 0.5rem;
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-uncheck {
+				display: none;
+			}
+
+			.ticket-tier-input:focus + .ticket-tier-label {
+				box-shadow: 0 0 0 0.4rem hsla(var(--primary-color-hsl), 0.2);
+				z-index: 2;
+			}
+
+			.ticket-tier-input:disabled + .ticket-tier-label {
+				background-color: var(--base-body-bg-color);
+				border-color: hsla(var(--black-color-hsl), 0.35);
+				cursor: not-allowed;
+				opacity: 0.75;
+			}
+
+			.ticket-tier-input:disabled + .ticket-tier-label .ticket-tier-controls {
+				display: none;
+			}
+
+			/* Ticket tier group */
+
+			.ticket-tier-group {
+				display: flex;
+				vertical-align: middle;
+			}
+
+			.ticket-tier-group > .ticket-tier {
+				flex: 1 1 auto;
+			}
+
+			.ticket-tier-group > .ticket-tier:not(:first-child) > .ticket-tier-label {
+				margin-left: -1px;
+				border-top-left-radius: 0;
+				border-bottom-left-radius: 0;
+			}
+
+			.ticket-tier-group > .ticket-tier:not(:last-child) > .ticket-tier-label {
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			/* Input group */
+
+			.input-group-pill > *:first-child {
+				border-top-left-radius: var(--rounded-pill-border-radius);
+				border-bottom-left-radius: var(--rounded-pill-border-radius);
+			}
+
+			.input-group-pill > *:last-child {
+				border-top-right-radius: var(--rounded-pill-border-radius);
+				border-bottom-right-radius: var(--rounded-pill-border-radius);
+			}
+
+			/* Utilities and related */
+
+			.border-blend {
+				border-color: var(--white-color) !important;
+			}
+
+			.dark-mode .border-blend {
+				border-color: var(--dark-color-very-light) !important;
+			}
+
+			@media (max-width: 576px) {
+				.fs-base-n4-sm-down {
+					font-size: calc(var(--base-font-size) - 0.4rem) !important;
+				}
+			}
+
+			.ws-820 {
+				width: 82rem !important;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Page wrapper start -->
+		<div class="page-wrapper">
+			<!-- Content wrapper start -->
+			<div class="content-wrapper ws-820 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
+				<!-- Main content start -->
+				<div>
+					<!-- Navbar start -->
+					<nav class="d-flex align-items-center px-20">
+						<!-- Branding start -->
+						<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+							<div class="ws-75">
+								<img src="../../../backend/static/images/SocialPass-Icon.svg" alt="SocialPass Icon" class="d-block w-100 h-auto">
+							</div>
+							<div class="text-strong ms-10">
+								<div class="fs-base-p4">
+									SocialPass
+								</div>
+								<div class="fs-base-n4 lh-1 fw-normal">
+									Ticket Portal
+								</div>
+							</div>
+						</a>
+						<!-- Branding end -->
+
+						<!-- Dark mode toggle start -->
+						<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
+							<i class="fa-solid fa-moon"></i>
+							<span class="visually-hidden">Toggle dark mode</span>
+						</button>
+						<!-- Dark mode toggle end -->
+					</nav>
+					<!-- Navbar end -->
+
+					<!-- Header start -->
+					<div class="w-100 hs-150 position-relative">
+						<!-- Event cover image start -->
+						<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
+							<img src="https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="w-100 h-auto" alt="Cover image">
+						</div>
+						<!-- Event cover image end -->
+
+						<!-- Back button start -->
+						<div class="position-absolute z-1 bottom-0 start-0 px-content py-20">
+							<a href="#" class="btn btn-rounded ps-5 d-flex align-items-center">
+								<div class="ws-25 hs-25 bg-secondary text-on-secondary rounded-circle d-flex align-items-center justify-content-center">
+									<i class="fa-regular fa-arrow-left"></i>
+								</div>
+								<strong class="text-strong antialiased ms-10">Go Back</strong>
+							</a>
+						</div>
+						<!-- Back button end -->
+					</div>
+					<!-- Header end -->
+
+					<!-- Event and team name start -->
+					<div class="px-content pt-20">
+						<p class="text-muted mt-5 mb-0">
+							By SocialPass
+						</p>
+						<h2 class="text-strong fs-base-p2 fw-700 m-0">
+							NFT Holders Party
+						</h2>
+					</div>
+					<!-- Event and team name end -->
+
+					<!-- Payment content start -->
+					<div class="row">
+						<!-- Hero section start -->
+						<div class="col-md-7">
+							<div class="content mt-20 mb-0 me-md-0">
+								<h1 class="text-strong fw-700 fsr-4 m-0">
+									Complete Checkout
+								</h1>
+								<p class="mt-10">
+									Please select from one of the checkout options below.
+								</p>
+								<h6 class="fw-700 fsr-6 mt-20">
+									Checkout Options
+								</h6>
+								<div class="alert alert-primary text-base pe-none user-select-none" role="alert">
+									<h6 class="alert-heading fw-700 m-0">
+										<i class="fa-light fa-check-square text-primary me-5"></i>
+										Proof of NFT ownership
+									</h6>
+									<p class="mt-5 mb-0">
+										Select from the Crypto wallet options below.
+									</p>
+								</div>
+
+								<!-- Payment option start -->
+								<button class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-20">
+									<div>
+										<div class="fw-700 antialiased">Metamask</div>
+										<div class="fs-base-n2 text-muted">Connect wallet</div>
+									</div>
+									<div class="ws-25 hs-25 ms-auto">
+										<img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="Logo" class="w-auto h-100">
+									</div>
+								</button>
+								<!-- Payment option end -->
+
+								<!-- Payment option start -->
+								<button class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-20">
+									<div>
+										<div class="fw-700 antialiased">Coinbase</div>
+										<div class="fs-base-n2 text-muted">Connect wallet</div>
+									</div>
+									<div class="ws-25 hs-25 ms-auto">
+										<img src="https://www.svgrepo.com/show/331345/coinbase-v2.svg" alt="Logo" class="w-auto h-100">
+									</div>
+								</button>
+								<!-- Payment option end -->
+
+								<!-- Payment option start -->
+								<button class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-20">
+									<div>
+										<div class="fw-700 antialiased">Binance</div>
+										<div class="fs-base-n2 text-muted">Connect wallet</div>
+									</div>
+									<div class="ws-25 hs-25 ms-auto">
+										<img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg" alt="Logo" class="w-auto h-100">
+									</div>
+								</button>
+								<!-- Payment option end -->
+
+								<p class="d-flex align-items-start fs-base-n2">
+									<i class="fa-regular fa-info-circle me-10 mt-5"></i>
+									<span>
+										Proof of NFT ownership is <strong>not</strong> an NFT trade. We only need you to prove that you own the NFT to create the ticket.
+									</span>
+								</p>
+							</div>
+						</div>
+						<!-- Hero section end -->
+
+						<!-- Order summary start -->
+						<div class="col-md-5">
+							<div class="px-content pt-md-20 position-md-sticky top-0 start-0">
+								<div class="d-flex align-items-center mb-10">
+									<h6 class="fw-700 fsr-6 m-0">
+										Summary
+									</h6>
+
+									<!-- Edit button start -->
+									<div class="text-secondary ms-auto">
+										<a href="#" class="link-reset fw-bold">Edit</a>
+									</div>
+									<!-- Edit button end -->
+								</div>
+
+								<!-- Order item start -->
+								<div class="py-10 border-top">
+									<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
+										<span>General Admission</span>
+										<span class="ms-auto ps-10 fw-normal">
+											&times; 2
+										</span>
+									</h6>
+									<div class="fs-base-n2 mt-5">
+										<strong>Price</strong>
+										&mdash; N/A
+									</div>
+								</div>
+								<!-- Order item end -->
+
+								<!-- Order item start -->
+								<div class="py-10 border-top">
+									<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
+										<span>Deluxe Admission</span>
+										<span class="ms-auto ps-10 fw-normal">
+											&times; 1
+										</span>
+									</h6>
+									<div class="fs-base-n2 mt-5">
+										<strong>Price</strong>
+										&mdash; N/A
+									</div>
+								</div>
+								<!-- Order item end -->
+
+								<!-- CTA section start -->
+								<form class="mt-20">
+									<input type="text" name="email" class="form-control" placeholder="Email Address" value="tahmid@nftylabs.io" readonly="readonly">
+									<button class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" type="submit">
+										<strong class="antialiased">Continue</strong>
+									</button>
+								</form>
+								<p>
+									<strong>Total Price</strong>
+									&mdash;
+									N/A
+								</p>
+								<hr />
+								<p class="text-muted fs-base-n2">
+									If you need help placing your order, please <a href="#" class="fw-bold" target="_blank">contact us <i class="fa-regular fa-external-link"></i></a> and let us know
+								</p>
+								<!-- CTA section end -->
+							</div>
+						</div>
+						<!-- Order summary end -->
+					</div>
+					<!-- Payment content end -->
+				</div>
+				<!-- Main content end -->
+
+				<!-- Footer start -->
+				<div class="content text-end border-top pt-10">
+					<span class="ms-auto text-muted fs-base-n2">
+						&copy; 2022, SP Tech Inc. All rights reserved
+					</span>
+				</div>
+				<!-- Footer end -->
+			</div>
+			<!-- Content wrapper end -->
+		</div>
+		<!-- Page wrapper end -->
+
+		<!-- Halfmoon JS -->
+		<script src="../../../backend/static/socialpass-theme/halfmoon.js"></script>
+
+		<script type="text/javascript">
+			/**
+			 * Handle the keydown event (only on debug mode).
+			 *
+			 * This is used to create the dark mode and sidebar toggle shortcuts.
+			 * These shortcuts are very useful for testing.
+			 */
+			document.addEventListener("keydown", function (event) {
+				if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+					event = event || window.event;
+
+					if (!(event.ctrlKey || event.metaKey)) {
+						// Toggle dark mode when [shift] + [D] keys are pressed
+						if (event.shiftKey && event.which == 68) {
+							halfmoon.toggleDarkMode();
+						}
+
+						// Toggle sidebar when [shift] + [S] keys are pressed
+						if (event.shiftKey && event.which == 83) {
+							halfmoon.toggleSidebar();
+						}
+					}
+				}
+			});
+		</script>
+	</body>
+</html>

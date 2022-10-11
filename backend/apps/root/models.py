@@ -472,13 +472,13 @@ class Ticket(DBModel):
         "Event",
         on_delete=models.CASCADE,
         blank=False,
-        null=True,
+        null=False,
     )
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
         blank=False,
-        null=True,
+        null=False,
     )
     checkout_item = models.ForeignKey(
         "CheckoutItem",
@@ -490,7 +490,7 @@ class Ticket(DBModel):
         "CheckoutSession",
         on_delete=models.CASCADE,
         blank=False,
-        null=True,
+        null=False,
     )
 
     # Ticket File Info

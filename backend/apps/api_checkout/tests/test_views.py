@@ -6,7 +6,7 @@ from rest_framework import status
 
 from apps.root.factories import EventFactory, TicketTierFactory, UserWithTeamFactory
 from apps.root.models import Event, Team, TicketTier
-from apps.root.utilities.main import prevent_warnings
+from apps.root.utilities.misc import prevent_warnings
 
 
 class TestCaseWrapper(TestCase):

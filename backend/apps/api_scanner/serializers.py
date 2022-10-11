@@ -111,15 +111,11 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
         fields = ["id", "filename", "ticket_count", "redeemed_count"]
 
     def get_redeemed_count(self, obj):
-        return Ticket.get_claimed_tickets(
-            event=obj.checkout_item.ticket_tier.event
-        ).count()
+        return Ticket.get_claimed_tickets(event=obj.event).count()
 
     def get_ticket_count(self, obj):
         # TODO: should change to ticket_tier quantity_sold sum
-        return Ticket.objects.filter(
-            checkout_item__ticket_tier__event=obj.checkout_item.ticket_tier.event
-        ).count()
+        return Ticket.objects.filter(checkout_item__ticket_tier__event=obj.event).count()
 
 
 class ScanTicketInputSerializer(serializers.Serializer):

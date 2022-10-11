@@ -53,7 +53,9 @@ class TestScannerTicketMethods(TestCase):
         cls.checkout_item = CheckoutItemFactory(
             ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
         )
-        cls.ticket = TicketFactory(checkout_item=cls.checkout_item)
+        cls.ticket = TicketFactory(
+            checkout_item=cls.checkout_item, event=cls.event, ticket_tier=cls.ticket_tier
+        )
         cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
         # for raising errors
         cls.__event = EventFactory(team=cls.team, user=cls.user)
@@ -62,7 +64,11 @@ class TestScannerTicketMethods(TestCase):
         cls.__checkout_item = CheckoutItemFactory(
             ticket_tier=cls.__ticket_tier, checkout_session=cls.__checkout_session
         )
-        cls.__ticket = TicketFactory(checkout_item=cls.__checkout_item)
+        cls.__ticket = TicketFactory(
+            checkout_item=cls.__checkout_item,
+            event=cls.__event,
+            ticket_tier=cls.__ticket_tier,
+        )
 
     def test_get_ticket_from_embedded_qr_code(self):
         invalid_qrcode = "xxxxx-xxxx-xxxx-xxxx-xxxxxxx-xxxxxxx"  # can not split("/")

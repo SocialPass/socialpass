@@ -51,7 +51,8 @@ class GetEventTestCase(TestCaseWrapper):
         self.assertEqual(event_dict["description"], self.event.description)
         self.assertEqual(event_dict["timezone"], self.event.timezone)
         self.assertEqual(
-            event_dict["localized_address_display"], self.event.localized_address_display
+            event_dict["localized_address_display"],
+            self.event.localized_address_display,
         )
         self.assertEqual(event_dict["capacity"], self.event.capacity)
         self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)
@@ -87,7 +88,8 @@ class GetEventTestCase(TestCaseWrapper):
         self.assertEqual(event_dict["description"], self.event.description)
         self.assertEqual(event_dict["timezone"], self.event.timezone)
         self.assertEqual(
-            event_dict["localized_address_display"], self.event.localized_address_display
+            event_dict["localized_address_display"],
+            self.event.localized_address_display,
         )
         self.assertEqual(event_dict["capacity"], self.event.capacity)
         self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)

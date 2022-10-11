@@ -9,10 +9,10 @@ export default {
             name: 'main team',
             image: null,
             theme: {
-              logo: 'http://localhost:8000/static/brand-logos/binance.svg',
-              favicon: 'http://localhost:8000/static/brand-logos/binance.svg',
-              css_theme: 'http://localhost:8000/static/socialpass-theme/binance-theme.css',
-              brand_name: 'Binance',
+              logo: 'http://localhost:8000/static/brand-logos/SocialPass-Icon.svg',
+              favicon: 'http://localhost:8000/static/brand-logos/SocialPass-Icon.svg',
+              css_theme: 'http://localhost:8000/static/socialpass-theme/socialpass-theme.css',
+              brand_name: 'SocialPass',
             },
           },
           title: 'NFT Holders Party',
@@ -94,7 +94,7 @@ export default {
             event_id: '1',
             ticket_type: 'VIP Admission',
             price: '3',
-            capacity: 13,
+            capacity: 14,
             max_per_person: 'max_per_person',
             payment_types: [
               {

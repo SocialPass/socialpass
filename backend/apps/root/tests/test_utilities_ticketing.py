@@ -49,7 +49,9 @@ class TestCaseWrapper(TestCase):
         cls.checkout_item = CheckoutItemFactory(
             ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
         )
-        cls.ticket = TicketFactory(checkout_item=cls.checkout_item)
+        cls.ticket = TicketFactory(
+            checkout_item=cls.checkout_item, event=cls.event, ticket_tier=cls.ticket_tier
+        )
         return super().setUpTestData()
 
 
@@ -185,7 +187,7 @@ class TestAppleTicket(TestCaseWrapper):
         self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
 
         # raise exception if event has no initial_place
-        self.event.initial_place = None
+        self.event.initial_place = ""
         with self.assertRaises(Exception):
             self.ticket_pass.generate_pass_from_ticket(self.ticket)
 
@@ -452,7 +454,7 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         self.assertIsInstance(self.ticket.get_apple_ticket(), bytes)
 
         # raise exception if event has no initial_place
-        self.event.initial_place = None
+        self.event.initial_place = ""
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()
 

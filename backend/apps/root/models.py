@@ -28,7 +28,7 @@ from config.storages import get_private_ticket_storage
 
 class DBModel(TimeStampedModel):
     """
-    Abstract base model that provides useful fields such as timestamps, UUID's fields, and more.
+    Abstract base model that provides useful fields such as timestamps, UUID's, and more.
     This field is inherited by every model
     """
 
@@ -594,7 +594,7 @@ class Ticket(DBModel):
 class TicketTier(DBModel):
     """
     Represents a ticker tier for a respective ticket.
-    This tier contains details for the ticket, as well as pricing and payment method information.
+    This tier contains details for a ticket, ++ pricing and payment method information.
     """
 
     # keys

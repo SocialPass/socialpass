@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from django.conf import settings
 from passbook.models import (

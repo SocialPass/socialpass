@@ -639,19 +639,19 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
-    fiat = models.ForeignKey(
+    tier_fiat = models.ForeignKey(
         "TierFiat",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    blockchain = models.ForeignKey(
+    tier_blockchain = models.ForeignKey(
         "TierBlockchain",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    asset_ownership = models.ForeignKey(
+    tier_asset_ownership = models.ForeignKey(
         "TierAssetOwnership",
         on_delete=models.CASCADE,
         blank=True,
@@ -710,19 +710,19 @@ class CheckoutSession(DBModel):
         blank=False,
         null=False,
     )
-    fiat = models.ForeignKey(
+    tx_fiat = models.ForeignKey(
         "TxFiat",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    blockchain = models.ForeignKey(
+    tx_blockchain = models.ForeignKey(
         "TxBlockchain",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    asset_ownership = models.ForeignKey(
+    tx_asset_ownership = models.ForeignKey(
         "TxAssetOwnership",
         on_delete=models.CASCADE,
         blank=True,

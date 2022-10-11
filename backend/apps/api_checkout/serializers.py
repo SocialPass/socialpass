@@ -97,4 +97,7 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "price",
             "capacity",
             "max_per_person",
+            "tier_fiat",
+            "tier_blockchain",
+            "tier_asset_ownership",
         ]

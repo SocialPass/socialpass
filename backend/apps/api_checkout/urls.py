@@ -14,4 +14,16 @@ urlpatterns = [
         views.EventView.as_view({"get": "ticket_tiers"}),
         name="event_ticket_tiers",
     ),
+    path(
+        "item/",
+        views.CheckoutItemView.as_view({"post": "create"}),
+        name="item_create",
+    ),
+    path(
+        "item/<uuid:public_id>/",
+        views.CheckoutItemView.as_view(
+            {"get": "retrieve", "put": "update", "delete": "destroy"}
+        ),
+        name="item_details",
+    ),
 ]

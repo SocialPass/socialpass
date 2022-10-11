@@ -401,7 +401,7 @@ class Event(DBModel):
 
     @property
     def capacity(self):
-        return self.ticket_tier_set.all().aggregate(Sum("capacity"))["capacity__sum"]
+        return self.tickettier_set.all().aggregate(Sum("capacity"))["capacity__sum"]
 
     @staticmethod
     def required_form_fields():

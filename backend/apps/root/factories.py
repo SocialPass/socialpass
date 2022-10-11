@@ -76,6 +76,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     Create event
     """
 
+    team = factory.SubFactory(TeamFactory)
     title = factory.Faker("sentence", nb_words=5, variable_nb_words=True)
     organizer = factory.Faker("name")
     description = factory.Faker("paragraph")

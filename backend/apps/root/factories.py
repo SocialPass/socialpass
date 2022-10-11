@@ -15,7 +15,6 @@ from apps.root.models import (
     Ticket,
     TicketRedemptionKey,
     TicketTier,
-    TicketTierPaymentType,
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
@@ -117,17 +116,6 @@ class TicketTierFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = TicketTier
-
-
-class TicketTierPaymentTypeFactory(factory.django.DjangoModelFactory):
-    """
-    Create ticket_tier_payment_type
-    """
-
-    ticket_tier = factory.SubFactory(TicketTierFactory)
-
-    class Meta:
-        model = TicketTierPaymentType
 
 
 class CheckoutSessionFactory(factory.django.DjangoModelFactory):

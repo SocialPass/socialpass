@@ -637,41 +637,57 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
+    fiat = models.ForeignKey(
+        "TierFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    blockchain = models.ForeignKey(
+        "TierBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    asset_ownership = models.ForeignKey(
+        "TierAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
 
 
-class TicketTierPaymentType(DBModel):
+class TierFiat(DBModel):
     """
-    Payment Type for Ticket Tiers
+    Represents a fiat-based tier for an event ticket
+    Holds payment processing fields specific to a fiat payment
     """
 
-    class PaymentType(models.TextChoices):
-        FREE = "FREE", _("Free")
-        FIAT = "FIAT", _("Fiat")
-        CRYPTO = "CRYPTO", _("Crypto")
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
+    def __str__(self) -> str:
+        return f"TierFiat {self.public_id}"
 
-    # keys
-    ticket_tier = models.ForeignKey(
-        TicketTier,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
 
-    # basic info
-    payment_type = models.CharField(
-        max_length=50,
-        choices=PaymentType.choices,
-        default=PaymentType.FREE,
-        help_text="The payment method",
-        blank=False,
-    )
+class TierBlockchain(DBModel):
+    """
+    Represents a blockchain-based tier for an event ticket
+    Holds payment processing fields specific to a blockchain payment
+    """
 
-    def __str__(self):
-        return f"TicketTierPaymentType {self.payment_type}-{self.public_id}"
+    def __str__(self) -> str:
+        return f"TierBlockchain {self.public_id}"
+
+
+class TierAssetOwnership(DBModel):
+    """
+    Represents a asset ownership based tier for an event ticket
+    Holds details specific to an asset ownership verification
+    """
+
+    def __str__(self) -> str:
+        return f"TierAssetOwnership {self.public_id}"
 
 
 class CheckoutSession(DBModel):
@@ -691,6 +707,24 @@ class CheckoutSession(DBModel):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
+    )
+    fiat = models.ForeignKey(
+        "TxFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    blockchain = models.ForeignKey(
+        "TxBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    asset_ownership = models.ForeignKey(
+        "TxAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     # basic info
@@ -751,14 +785,6 @@ class TxFiat(DBModel):
     Represents a checkout transaction via fiat payment
     """
 
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"
 
@@ -768,14 +794,6 @@ class TxBlockchain(DBModel):
     Represents a checkout transaction via blockchain payment
     """
 
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-
     def __str__(self) -> str:
         return f"TxBlockchain {self.public_id}"
 
@@ -784,14 +802,6 @@ class TxAssetOwnership(DBModel):
     """
     Represents a checkout transaction via asset ownership
     """
-
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"

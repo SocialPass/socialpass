@@ -14,7 +14,6 @@ from apps.root.models import (
     Ticket,
     TicketRedemptionKey,
     TicketTier,
-    TicketTierPaymentType,
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
@@ -124,12 +123,6 @@ class TicketTierAdmin(admin.ModelAdmin):
         "max_per_person",
     )
     search_fields = ("event__title",)
-
-
-@admin.register(TicketTierPaymentType)
-class TicketTierPaymentTypeAdmin(admin.ModelAdmin):
-    list_display = ("payment_type", "ticket_tier")
-    search_fields = ("ticket_tier",)
 
 
 @admin.register(CheckoutSession)

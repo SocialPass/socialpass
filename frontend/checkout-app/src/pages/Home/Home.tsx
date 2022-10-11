@@ -30,6 +30,7 @@ export default function Home() {
     if (counterValueFromCurrentRender > 0) {
       queueRerenderWithNewCounterValue(counterValueFromCurrentRender - 1);
     }
+  }
 
 
   // Ticket Tier Selector Component constants
@@ -60,6 +61,7 @@ export default function Home() {
   useEffect(() => {
     getTicketTiers(event.public_id)
   }, [event])
+
 
   return (
     <>

@@ -25,7 +25,7 @@ from apps.root.models import (
     TicketRedemptionKey,
     TicketTier,
 )
-from apps.root.utilities.main import prevent_warnings
+from apps.root.utilities.misc import prevent_warnings
 
 
 class TestCaseWrapper(TestCase):

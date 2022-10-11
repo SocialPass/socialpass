@@ -14,6 +14,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
+from model_utils.models import TimeStampedModel
 from taggit.managers import TaggableManager
 
 from apps.root.exceptions import (
@@ -21,20 +22,35 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
 )
-from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from config.storages import get_private_ticket_storage
 
 
+class DBModel(TimeStampedModel):
+    """
+    Abstract base model that provides useful fields such as timestamps, UUID's fields, and more.
+    This field is inherited by every model
+    """
+
+    public_id = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True
+    )
+
+    class Meta:
+        abstract = True
+
+
 class User(AbstractUser):
     """
-    Default custom user model for backend.
+    Django User model inherited from AbstractUser
+    Currently blank but allows for easier migration in the future
     """
 
 
 class Team(DBModel):
     """
-    Umbrella team model for SocialPass customers
+    Represents the 'umbrella' model for event organization
+    Each user belongs to one or more teams, and each event belongs to a single team.
     """
 
     # keys
@@ -57,7 +73,8 @@ class Team(DBModel):
 
 class Membership(DBModel):
     """
-    Membership manager for users <> teams
+    Represents the relationship between a `Team` and a `User`.
+    This model also allows a `User` having multiple `Team`
     """
 
     class Meta:
@@ -75,7 +92,8 @@ class Membership(DBModel):
 
 class Invite(DBModel):
     """
-    Invite model used for team invitations
+    Represents an invite to join a respective team.
+    This invite can be sent to an existing user, or a new user.
     """
 
     class InviteQuerySet(models.QuerySet):
@@ -187,7 +205,8 @@ class Invite(DBModel):
 
 class Event(DBModel):
     """
-    Stores data for ticketed event
+    Represents an event on SocialPass
+    This event supports multiple states as well as multiple ticker tiers.
     """
 
     class EventQuerySet(models.QuerySet):
@@ -456,7 +475,8 @@ class Event(DBModel):
 
 class TicketRedemptionKey(DBModel):
     """
-    Stores authentication details used by ticket scanners
+    Represents a unique ID for ticket scanning purposes
+    This model allows for multiple scanner ID's to be issued, as well as ID revocation
     """
 
     class Meta:
@@ -484,7 +504,8 @@ class TicketRedemptionKey(DBModel):
 
 class Ticket(DBModel):
     """
-    List of all the tickets distributed by the respective Ticketed Event.
+    Represents a ticket to an event
+    This model supports multiple forms of tickets (PDF, Apple, Google)
     """
 
     # Keys
@@ -596,7 +617,8 @@ class Ticket(DBModel):
 
 class TicketTier(DBModel):
     """
-    Stores the tiers for events
+    Represents a ticker tier for a respective ticket.
+    This tier contains details for the ticket, as well as pricing and payment method information.
     """
 
     # keys
@@ -680,7 +702,8 @@ class TicketTierPaymentType(DBModel):
 
 class CheckoutSession(DBModel):
     """
-    Stores checkout sessions for events
+    Represents a time-limited checkout session (aka 'cart') for an event organizer
+    This model holds the relations to cart items for checkout purposes
     """
 
     class CheckoutSessionStatus(models.TextChoices):
@@ -720,7 +743,8 @@ class CheckoutSession(DBModel):
 
 class CheckoutItem(DBModel):
     """
-    Checkout item for a tiers and checkout sessions
+    Represents items selected for checkout (aka 'cart items') by an event attendee
+    This model is mapped to a specific ticket tier, as well as a specific ticket
     """
 
     # keys
@@ -753,7 +777,7 @@ class CheckoutItem(DBModel):
 
 class TxFiat(DBModel):
     """
-    Stores fiat transactions
+    Represents a checkout transaction via fiat payment
     """
 
     # keys
@@ -771,7 +795,7 @@ class TxFiat(DBModel):
 
 class TxBlockchain(DBModel):
     """
-    Stores blockchain transactions
+    Represents a checkout transaction via crypto payment
     """
 
     # keys
@@ -789,7 +813,7 @@ class TxBlockchain(DBModel):
 
 class TxAssetOwnership(DBModel):
     """
-    Stores asset ownership transactions
+    Represents a checkout transaction via asset ownership
     """
 
     # keys

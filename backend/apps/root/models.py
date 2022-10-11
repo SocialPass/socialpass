@@ -437,7 +437,7 @@ class Event(DBModel):
 
     @property
     def capacity(self):
-        return self.ticket_tiers.aggregate(Sum("capacity"))["capacity__sum"]
+        return self.ticket_tier_set.all().aggregate(Sum("capacity"))["capacity__sum"]
 
     @staticmethod
     def required_form_fields():
@@ -489,7 +489,6 @@ class TicketRedemptionKey(DBModel):
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
-        related_name="ticket_redemption_keys",
         blank=False,
         null=False,
     )
@@ -524,7 +523,6 @@ class Ticket(DBModel):
     checkout_item = models.ForeignKey(
         "CheckoutItem",
         on_delete=models.CASCADE,
-        related_name="tickets",
         blank=False,
         null=False,
     )
@@ -643,7 +641,6 @@ class TicketTier(DBModel):
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
-        related_name="ticket_tiers",
         blank=False,
         null=False,
     )
@@ -700,7 +697,6 @@ class TicketTierPaymentType(DBModel):
     ticket_tier = models.ForeignKey(
         TicketTier,
         on_delete=models.CASCADE,
-        related_name="tier_payment_types",
         blank=False,
         null=False,
     )
@@ -733,7 +729,6 @@ class CheckoutSession(DBModel):
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
-        related_name="checkout_sessions",
         blank=False,
         null=False,
     )
@@ -769,14 +764,12 @@ class CheckoutItem(DBModel):
     ticket_tier = models.ForeignKey(
         TicketTier,
         on_delete=models.CASCADE,
-        related_name="checkout_items",
         blank=False,
         null=False,
     )
     checkout_session = models.ForeignKey(
         CheckoutSession,
         on_delete=models.CASCADE,
-        related_name="checkout_items",
         blank=False,
         null=False,
     )
@@ -802,7 +795,6 @@ class TxFiat(DBModel):
     checkout_session = models.ForeignKey(
         CheckoutSession,
         on_delete=models.CASCADE,
-        related_name="fiat_transactions",
         blank=False,
         null=False,
     )
@@ -820,7 +812,6 @@ class TxBlockchain(DBModel):
     checkout_session = models.ForeignKey(
         CheckoutSession,
         on_delete=models.CASCADE,
-        related_name="blockchain_transactions",
         blank=False,
         null=False,
     )
@@ -838,7 +829,6 @@ class TxAssetOwnership(DBModel):
     checkout_session = models.ForeignKey(
         CheckoutSession,
         on_delete=models.CASCADE,
-        related_name="asset_ownership_transactions",
         blank=False,
         null=False,
     )

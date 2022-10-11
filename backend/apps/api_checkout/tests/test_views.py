@@ -72,68 +72,6 @@ class GetEventTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @prevent_warnings
-    def test_get_events_200(self):
-        """
-        test list paginated events
-        """
-
-        response = self.client.get(f"{self.url_base}event/")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # assert objects values with json returned
-        event_dict = response.json()["results"][0]
-        self.assertEqual(event_dict["public_id"], str(self.event.public_id))
-        self.assertEqual(event_dict["title"], self.event.title)
-        self.assertEqual(event_dict["description"], self.event.description)
-        self.assertEqual(event_dict["timezone"], self.event.timezone)
-        self.assertEqual(
-            event_dict["localized_address_display"],
-            self.event.localized_address_display,
-        )
-        self.assertEqual(event_dict["capacity"], self.event.capacity)
-        self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)
-        self.assertEqual(event_dict["show_ticket_count"], 1)
-        self.assertEqual(event_dict["show_team_image"], self.event.show_team_image)
-        self.assertEqual(event_dict["team"]["name"], self.team.name)
-
-    @prevent_warnings
-    def test_events_list_pagination(self):
-        """
-        test if events view is being paginated
-        """
-
-        response = self.client.get(f"{self.url_base}event/")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # test less than 15 objects return
-        resonse_json = response.json()
-        self.assertEqual(resonse_json["count"], Event.objects.count())
-        self.assertEqual(resonse_json["next"], None)
-        self.assertEqual(resonse_json["previous"], None)
-
-        # test paginated objects
-        for _ in range(45):
-            EventFactory(team=self.team, user=self.user)
-
-        response = self.client.get(f"{self.url_base}event/?page=2")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        resonse_json = response.json()
-
-        self.assertEqual(
-            len(resonse_json["results"]), 15
-        )  # how can we not hardcoded all these test urls and paginated value?
-        self.assertEqual(resonse_json["count"], Event.objects.count())
-        self.assertEqual(
-            resonse_json["next"], f"http://testserver{self.url_base}event/?page=3"
-        )
-        self.assertEqual(
-            resonse_json["previous"], f"http://testserver{self.url_base}event/"
-        )
-
-    @prevent_warnings
     def test_get_tickettiers_from_event_200(self):
         """
         test list ticket_tiers from event
@@ -162,7 +100,7 @@ class GetEventTestCase(TestCaseWrapper):
         If the method is implemented then need to implement the test
         """
 
-        url = f"{self.url_base}event/"
+        url = f"{self.url_base}event/{self.event.public_id}/"
 
         # test post method
         response = self.client.post(url)

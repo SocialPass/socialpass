@@ -10,7 +10,7 @@ import './index.css'
 
 export default function Home() {
   const navigate = useNavigate()
-  const [ticketTiers, setTicketTiers] = useState([])
+  const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [ticketAmount, setTicketAmount] = useState(0)
 
   const { event }: any = useEvent()

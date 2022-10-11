@@ -11,6 +11,7 @@ export const CheckoutContext = createContext<CheckoutContextType>({
 
 export const CheckoutProvider = ({ children }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoadingCheckoutItems, setIsLoadingCheckoutItems] = useState<boolean>(false)
   const [checkout, setCheckout] = useState<Checkout | null>(null)
   const [checkoutItems, setCheckoutItems] = useState([])
   const [paymentType, setPaymentType] = useState(null)
@@ -31,6 +32,25 @@ export const CheckoutProvider = ({ children }: any) => {
         .catch((err) => {
           setError(err)
           setIsLoading(false)
+          reject(err)
+        })
+    })
+
+    const getCheckoutItems = (checkoutPublicId: string) =>
+    new Promise((resolve, reject) => {
+      setIsLoadingCheckoutItems(true)
+      setError(null)
+      setCheckoutItems([])
+
+      CheckoutApi.getItems(checkoutPublicId)
+        .then((response) => {
+          setCheckoutItems(response.data)
+          setIsLoadingCheckoutItems(false)
+          resolve(response.data)
+        })
+        .catch((err) => {
+          setError(err)
+          setIsLoadingCheckoutItems(false)
           reject(err)
         })
     })
@@ -66,6 +86,7 @@ export const CheckoutProvider = ({ children }: any) => {
         checkoutItems,
         paymentType,
         getCheckout,
+        getCheckoutItems,
         setPaymentType,
         setCheckoutItems,
         saveCheckout,

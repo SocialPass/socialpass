@@ -1,31 +1,59 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
 import { useNavigate } from 'react-router-dom'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
-import { EventApi } from '@/services/api'
-
 export default function Home() {
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
-  const { checkout }: any = useCheckout()
+  const {
+    checkout,
+    checkoutItems,
+    getCheckout,
+    getCheckoutItems,
+    isLoading,
+    isLoadingCheckoutItems,
+  }: any = useCheckout()
+
+  const getTotalPrice = () => {
+    return checkoutItems.reduce((acc, item) => {
+      return acc + item.ticket_tier.price
+    }, 0)
+  }
+
+  const handleBackClick = () => {
+    navigate(`/${event.public_id}`)
+  }
+
+  const handleEditClick = () => {
+    navigate(`/${event.public_id}`)
+  }
+
+  const handleContinueClick = () => {}
+
+  useEffect(() => {
+    getCheckout()
+    getCheckoutItems()
+  }, [])
 
   return (
     <>
       <div className='w-100 hs-150 position-relative'>
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
-          <img
-            src='https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-            className='w-100 h-auto'
-            alt='Cover image'
-          />
+          <img src={event.cover_image} className='w-100 h-auto' alt='Cover image' />
         </div>
 
         <div className='position-absolute z-1 bottom-0 start-0 px-content py-20'>
-          <a href='#' className='btn btn-rounded ps-5 d-flex align-items-center'>
+          <a
+            href='#'
+            className='btn btn-rounded ps-5 d-flex align-items-center'
+            onClick={() => {
+              handleBackClick()
+            }}
+          >
             <div className='ws-25 hs-25 bg-secondary text-on-secondary rounded-circle d-flex align-items-center justify-content-center'>
               <i className='fa-regular fa-arrow-left'></i>
             </div>
@@ -35,8 +63,8 @@ export default function Home() {
       </div>
 
       <div className='px-content pt-20'>
-        <p className='text-muted mt-5 mb-0'>By SocialPass</p>
-        <h2 className='text-strong fs-base-p2 fw-700 m-0'>NFT Holders Party</h2>
+        <p className='text-muted mt-5 mb-0'>By {event.team.theme.brand_name}</p>
+        <h2 className='text-strong fs-base-p2 fw-700 m-0'>{event.title}</h2>
       </div>
 
       <div className='row'>
@@ -97,33 +125,24 @@ export default function Home() {
               <h6 className='fw-700 fsr-6 m-0'>Summary</h6>
 
               <div className='text-secondary ms-auto'>
-                <a href='#' className='link-reset fw-bold'>
+                <a href='#' className='link-reset fw-bold' onClick={() => handleEditClick()}>
                   Edit
                 </a>
               </div>
             </div>
 
-            <div className='py-10 border-top'>
-              <h6 className='fw-700 m-0 fs-base d-flex align-items-center'>
-                <span>General Admission</span>
-                <span className='ms-auto ps-10 fw-normal'>&times; 2</span>
-              </h6>
-              <div className='fs-base-n2 mt-5'>
-                <strong>Price</strong>
-                &mdash; 0.05 ETH
+            {checkoutItems.map((item: any) => (
+              <div className='py-10 border-top' key={`checkout-item-${item.public_id}`}>
+                <h6 className='fw-700 m-0 fs-base d-flex align-items-center'>
+                  <span>{item.ticket_tier.ticket_type}</span>
+                  <span className='ms-auto ps-10 fw-normal'>&times; {item.quantity}</span>
+                </h6>
+                <div className='fs-base-n2 mt-5'>
+                  <strong>Price</strong>
+                  &mdash; {item.ticket_tier.price} ETH
+                </div>
               </div>
-            </div>
-
-            <div className='py-10 border-top'>
-              <h6 className='fw-700 m-0 fs-base d-flex align-items-center'>
-                <span>Deluxe Admission</span>
-                <span className='ms-auto ps-10 fw-normal'>&times; 1</span>
-              </h6>
-              <div className='fs-base-n2 mt-5'>
-                <strong>Price</strong>
-                &mdash; 0.075 ETH
-              </div>
-            </div>
+            ))}
 
             <form className='mt-20'>
               <input
@@ -131,7 +150,7 @@ export default function Home() {
                 name='email'
                 className='form-control'
                 placeholder='Email Address'
-                value='tahmid@nftylabs.io'
+                value={checkout?.email}
                 readOnly
               />
               <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit'>
@@ -140,7 +159,7 @@ export default function Home() {
             </form>
             <p>
               <strong>Total Price</strong>
-              &mdash; 0.125 ETH
+              &mdash; {getTotalPrice()} ETH
             </p>
             <hr />
             <p className='text-muted fs-base-n2'>

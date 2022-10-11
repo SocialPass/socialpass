@@ -14,6 +14,9 @@ from apps.root.models import (
     Ticket,
     TicketRedemptionKey,
     TicketTier,
+    TierAssetOwnership,
+    TierBlockchain,
+    TierFiat,
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
@@ -21,23 +24,17 @@ from apps.root.models import (
 
 User = get_user_model()
 
-
 # Set up admin site titles
 admin.site.site_title = "SocialPass Admin"
 admin.site.site_header = "SocialPass Admin"
 admin.site.index_title = "SocialPass Admin"
 
-
-# Admin registrations
+# Inlines
 class MembershipInline(admin.TabularInline):
     model = Team.members.through
 
 
-@admin.register(Membership)
-class MembershipAdmin(admin.ModelAdmin):
-    list_display = ("user", "team")
-
-
+# Admin registrations
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     inlines = [
@@ -53,6 +50,26 @@ class TeamAdmin(admin.ModelAdmin):
     exclude = ("members",)
     list_display = ("name",)
     search_fields = ("name",)
+
+
+@admin.register(Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    list_display = ("user", "team")
+
+
+@admin.register(Invite)
+class InviteAdmin(admin.ModelAdmin):
+    list_display = ("email", "sent", "accepted")
+    raw_id_fields = ("inviter",)
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj:
+            kwargs["form"] = InviteAdminChangeForm
+        else:
+            kwargs["form"] = InviteAdminAddForm
+            kwargs["form"].user = request.user
+            kwargs["form"].request = request
+        return super().get_form(request, obj, **kwargs)
 
 
 @admin.register(Event)
@@ -87,29 +104,14 @@ class EventAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(TicketRedemptionKey)
-class TicketRedemptionKeyAdmin(admin.ModelAdmin):
-    list_display = ("public_id",)
-
-
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
     list_display = ("checkout_item", "full_embed")
 
 
-@admin.register(Invite)
-class InviteAdmin(admin.ModelAdmin):
-    list_display = ("email", "sent", "accepted")
-    raw_id_fields = ("inviter",)
-
-    def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            kwargs["form"] = InviteAdminChangeForm
-        else:
-            kwargs["form"] = InviteAdminAddForm
-            kwargs["form"].user = request.user
-            kwargs["form"].request = request
-        return super().get_form(request, obj, **kwargs)
+@admin.register(TicketRedemptionKey)
+class TicketRedemptionKeyAdmin(admin.ModelAdmin):
+    list_display = ("public_id",)
 
 
 @admin.register(TicketTier)
@@ -123,6 +125,21 @@ class TicketTierAdmin(admin.ModelAdmin):
         "max_per_person",
     )
     search_fields = ("event__title",)
+
+
+@admin.register(TierFiat)
+class TierFiatAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(TierBlockchain)
+class TierBlockchainAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(TierAssetOwnership)
+class TierAssetOwnershipAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(CheckoutSession)
@@ -146,14 +163,14 @@ class CheckoutItemAdmin(admin.ModelAdmin):
 
 @admin.register(TxFiat)
 class TxFiatAdmin(admin.ModelAdmin):
-    list_display = ("checkout_session",)
+    pass
 
 
 @admin.register(TxBlockchain)
 class TxBlockchainAdmin(admin.ModelAdmin):
-    list_display = ("checkout_session",)
+    pass
 
 
 @admin.register(TxAssetOwnership)
-class TXAssetOwnershipAdmin(admin.ModelAdmin):
-    list_display = ("checkout_session",)
+class TxAssetOwnershipAdmin(admin.ModelAdmin):
+    pass

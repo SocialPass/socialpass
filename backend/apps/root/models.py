@@ -433,34 +433,6 @@ class Event(DBModel):
         return fields
 
 
-class TicketRedemptionKey(DBModel):
-    """
-    Represents a unique ID for ticket scanning purposes
-    This model allows for multiple scanner ID's to be issued, as well as ID revocation
-    """
-
-    class Meta:
-        unique_together = (
-            "event",
-            "name",
-        )
-
-    # Keys
-    event = models.ForeignKey(
-        Event,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-
-    # Basic info
-    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
-
-    @property
-    def scanner_url(self):
-        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
-
-
 class Ticket(DBModel):
     """
     Represents a ticket to an event
@@ -513,7 +485,7 @@ class Ticket(DBModel):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
     def access_key_can_redeem_ticket(
-        self, redemption_access_key: Optional[TicketRedemptionKey] = None
+        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
     ) -> bool:
         """Returns a boolean indicating if the access key can reedem the given ticket."""
         if redemption_access_key is None:
@@ -521,7 +493,9 @@ class Ticket(DBModel):
 
         return self.event.id == redemption_access_key.event.id
 
-    def redeem_ticket(self, redemption_access_key: Optional[TicketRedemptionKey] = None):
+    def redeem_ticket(
+        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
+    ):
         """Redeems a ticket."""
         if self.redeemed:
             raise AlreadyRedeemed("Ticket is already redeemed.")
@@ -589,6 +563,34 @@ class Ticket(DBModel):
     def get_claimed_tickets(cls, event: Event):
         """Returns all scanned tickets"""
         return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
+
+
+class TicketRedemptionKey(DBModel):
+    """
+    Represents a unique ID for ticket scanning purposes
+    This model allows for multiple scanner ID's to be issued, as well as ID revocation
+    """
+
+    class Meta:
+        unique_together = (
+            "event",
+            "name",
+        )
+
+    # Keys
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+
+    # Basic info
+    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
+
+    @property
+    def scanner_url(self):
+        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
 
 
 class TicketTier(DBModel):

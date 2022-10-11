@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -11,6 +12,8 @@ class EventView(ReadOnlyModelViewSet):
 
     queryset = Event.objects.all().order_by("-created")
     serializer_class = serializers.EventSerializer
+    input_serializer = None
+    output_serializer = serializer_class
     lookup_field = "public_id"
     paginate_by = 15
 
@@ -19,18 +22,30 @@ class EventView(ReadOnlyModelViewSet):
             return serializers.TicketTierSerializer
         return super().get_serializer_class()
 
+    @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: output_serializer},
+    )
     def retrieve(self, request, *args, **kwargs):
         """
         retrieve an event
         """
         return super().retrieve(request, *args, **kwargs)
 
+    @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: output_serializer},
+    )
     def list(self, request):
         """
         list paginated events
         """
         return super().list(request)
 
+    @swagger_auto_schema(
+        request_body=input_serializer,
+        responses={200: serializers.TicketTierSerializer},
+    )
     @action(methods=["get"], detail=True)
     def ticket_tiers(self, request, *args, **kwargs):
         """

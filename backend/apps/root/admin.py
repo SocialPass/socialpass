@@ -29,6 +29,7 @@ admin.site.site_title = "SocialPass Admin"
 admin.site.site_header = "SocialPass Admin"
 admin.site.index_title = "SocialPass Admin"
 
+
 # Inlines
 class MembershipInline(admin.TabularInline):
     model = Team.members.through

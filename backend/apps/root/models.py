@@ -226,26 +226,15 @@ class Event(DBModel):
             """
             return self.filter(state=Event.StateStatus.LIVE)
 
-        def filter_publicly_accessible(self):
-            """
-            public events (filter_active ++ visibility==PUBLIC)
-            In the future, should also check for published_date
-            """
-            return self.filter(visibility="PUBLIC").filter_active()
-
         def filter_featured(self):
             """
-            public, featured events (filter_publicly_accessible ++ featured=True)
+            public, featured events (filter_active ++ featured=True)
             """
-            return self.filter(is_featured=True).filter_publicly_accessible()
+            return self.filter(is_featured=True).filter_active()
 
     class StateStatus(models.TextChoices):
         DRAFT = "Draft"
         LIVE = "Live"
-
-    class VisibilityStatus(models.TextChoices):
-        PUBLIC = "PUBLIC", _("Public")
-        PRIVATE = "PRIVATE", _("Private")
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
@@ -266,31 +255,6 @@ class Event(DBModel):
 
     # Publish info
     is_featured = models.BooleanField(default=False, blank=False, null=False)
-    publication_date = models.DateTimeField(
-        default=timezone.now,
-        help_text="When your event will be made public.",
-        blank=True,
-        null=True,
-    )
-    visibility = models.CharField(
-        max_length=50,
-        choices=VisibilityStatus.choices,
-        default=VisibilityStatus.PUBLIC,
-        help_text="Whether or not your event is searchable by the public.",
-        blank=False,
-    )
-    show_ticket_count = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays ticket statistics.",
-        blank=False,
-        null=False,
-    )
-    show_team_image = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays the team image.",
-        blank=False,
-        null=False,
-    )
 
     # Basic Info
     title = models.CharField(
@@ -445,7 +409,6 @@ class Event(DBModel):
             "title",
             "organizer",
             "description",
-            "visibility",
             "start_date",
             "timezone",
         ]
@@ -454,11 +417,8 @@ class Event(DBModel):
     @staticmethod
     def optional_form_fields():
         fields = [
-            "show_ticket_count",
-            "show_team_image",
             "cover_image",
             "end_date",
-            "publication_date",
             "initial_place",
             "address_1",
             "address_2",

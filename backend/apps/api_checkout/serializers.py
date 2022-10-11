@@ -97,5 +97,4 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "price",
             "capacity",
             "max_per_person",
-            "payment_types",
         ]

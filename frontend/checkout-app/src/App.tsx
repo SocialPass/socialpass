@@ -1,101 +1,22 @@
-// import { Routes, Route, BrowserRouter } from "react-router-dom";
-// import { StyledContainer } from "./components";
-// import { EventPortalProvider } from "./context";
-// import { WagmiConfig } from "wagmi";
-// import { client } from "./web3/client";
-// import { Init, CheckoutWeb3, Event } from "./pages";
-// import RequiresEvent from "./utils/requiresEventHOC";
-// import { QueryClient, QueryClientProvider } from "react-query";
-// import { Error } from "./pages/Error";
-// import "./styles/global.css";
-import { SuccessCheckoutPage } from './components/SuccessCheckoutPage'
-import CheckoutSuccessPage from './components/CheckoutSuccessPage'
-import CheckoutFailedPage from './components/CheckoutFailedPage'
-import { Routes, Route, BrowserRouter } from 'react-router-dom'
-import { StyledContainer } from './components'
-import { EventPortalProvider } from './context'
 import { WagmiConfig } from 'wagmi'
-import { client } from './web3/client'
-import { Init, CheckoutWeb3, Event } from './pages'
-import RequiresEvent from './utils/requiresEventHOC'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { Error } from './pages/Error'
-import './styles/global.css'
+import { Web3Provider } from './contexts/Web3Provider'
 
-// Main CheckoutPortal component. Does a couple of things
-// 1. Setup CheckoutPortalProvider (react context)
-// 2. Setup WAGMI web3 provider (need to make optional in future)
-// 3. Setup Routes, which takes over logic handling
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 0 } },
-})
-const CheckoutPortal = () => {
+import { EventProvider } from './contexts/EventContext'
+import { ThemeProvider } from './contexts/ThemeContext'
+import { CheckoutProvider } from './contexts/CheckoutContext'
+
+import Router from './routes'
+
+export default function App() {
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <EventPortalProvider>
-          <WagmiConfig client={client}>
-            <StyledContainer>
-              <Routes>
-                <Route path='/:publicId'>
-                  <Route
-                    path=''
-                    element={
-                      <RequiresEvent>
-                        <Init />
-                      </RequiresEvent>
-                    }
-                  />
-                  <Route
-                    path='event'
-                    element={
-                      <RequiresEvent>
-                        <Event />
-                      </RequiresEvent>
-                    }
-                  />
-                  <Route
-                    path='checkout/blockchain'
-                    element={
-                      <RequiresEvent>
-                        <CheckoutWeb3 />
-                      </RequiresEvent>
-                    }
-                  />
-                  <Route
-                    path='checkout/success'
-                    element={
-                      <RequiresEvent>
-                        <CheckoutSuccessPage />
-                      </RequiresEvent>
-                    }
-                  />
-                  <Route
-                    path='checkout/fail'
-                    element={
-                      <RequiresEvent>
-                        <CheckoutFailedPage />
-                      </RequiresEvent>
-                    }
-                  />
-                  {/* this is new success page should be replace de old one since backend is ready */}
-                  <Route
-                    path='new/success/page'
-                    element={
-                      <RequiresEvent>
-                        <SuccessCheckoutPage />
-                      </RequiresEvent>
-                    }
-                  />
-                  <Route path='error' element={<Error />} />
-                </Route>
-              </Routes>
-            </StyledContainer>
-          </WagmiConfig>
-        </EventPortalProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+    <WagmiConfig client={Web3Provider}>
+      <EventProvider>
+        <ThemeProvider>
+          <CheckoutProvider>
+            <Router />
+          </CheckoutProvider>
+        </ThemeProvider>
+      </EventProvider>
+    </WagmiConfig>
   )
 }
-
-export default CheckoutPortal

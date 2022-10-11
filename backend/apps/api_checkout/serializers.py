@@ -3,7 +3,14 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import Event, Team, Ticket, TicketTier, TicketTierPaymentType
+from apps.root.models import (
+    CheckoutItem,
+    Event,
+    Team,
+    Ticket,
+    TicketTier,
+    TicketTierPaymentType,
+)
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -116,4 +123,54 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "capacity",
             "max_per_person",
             "payment_types",
+        ]
+
+
+class CheckoutItemReadSerializer(serializers.ModelSerializer):
+
+    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
+    checkout_session = serializers.UUIDField(source="checkout_session.public_id")
+
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+            "checkout_session",
+        ]
+        read_only_fields = ["created", "modified", "public_id"]
+
+
+class CheckoutItemCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+            "checkout_session",
+        ]
+
+
+class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
+
+    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
+    checkout_session = serializers.UUIDField(
+        source="checkout_session.public_id", read_only=True
+    )
+
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+            "checkout_session",
         ]

@@ -805,7 +805,7 @@ class TxFiat(DBModel):
 
 class TxBlockchain(DBModel):
     """
-    Represents a checkout transaction via crypto payment
+    Represents a checkout transaction via blockchain payment
     """
 
     # keys

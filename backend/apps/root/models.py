@@ -509,12 +509,30 @@ class Ticket(DBModel):
     """
 
     # Keys
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=True,
+    )
+    ticket_tier = models.ForeignKey(
+        "TicketTier",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=True,
+    )
     checkout_item = models.ForeignKey(
         "CheckoutItem",
         on_delete=models.CASCADE,
         related_name="tickets",
         blank=False,
         null=False,
+    )
+    checkout_session = models.ForeignKey(
+        "CheckoutSession",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=True,
     )
 
     # Ticket File Info
@@ -543,7 +561,7 @@ class Ticket(DBModel):
         if redemption_access_key is None:
             return True
 
-        return self.checkout_item.ticket_tier.event.id == redemption_access_key.event.id
+        return self.event.id == redemption_access_key.event.id
 
     def redeem_ticket(self, redemption_access_key: Optional[TicketRedemptionKey] = None):
         """Redeems a ticket."""

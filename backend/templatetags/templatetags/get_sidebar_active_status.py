@@ -13,6 +13,7 @@ def get_sidebar_active_status(context, key):
             "event_create",
             "event_detail",
             "event_update",
+            "event_delete",
             "event_stats",
         ]:
             return "active"

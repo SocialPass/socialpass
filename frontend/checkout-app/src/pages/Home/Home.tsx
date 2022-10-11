@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react'
-
 import { useNavigate } from 'react-router-dom'
-
 import useEvent from '@/hooks/useEvent'
-
 import { EventApi } from '@/services/api'
-
 import './index.css'
 
 export default function Home() {
@@ -20,6 +16,31 @@ export default function Home() {
       setTicketTiers(res.data)
     })
   }
+
+
+  // Counter Component constants
+  const [counterValueFromCurrentRender, queueRerenderWithNewCounterValue] =
+  useState(0);
+
+  const handleAddOne = () => {
+    queueRerenderWithNewCounterValue(counterValueFromCurrentRender + 1);
+  };
+
+  const handleSubtractOne = () => {
+    if (counterValueFromCurrentRender > 0) {
+      queueRerenderWithNewCounterValue(counterValueFromCurrentRender - 1);
+    }
+
+
+  // Ticket Tier Selector Component constants
+  const [isSelected, setIsSelected] =
+      useState(false);
+
+
+
+  // Payment Type Selector Component constants
+
+
 
   // const generalAdmissionSelectArray = Array.from(
   //   { length: generalAdmissionSelect },

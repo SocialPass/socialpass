@@ -2,15 +2,23 @@
 {% load static get_theme_value i18n crispy_forms_tags %}
 
 {% block head_title %}
-{% if request.resolver_match.url_name == 'event_create' %}Create{% else %}Update{% endif %} Event - {% get_theme_value "brand_name" %}
+{% if request.resolver_match.url_name == 'event_create' %}
+	Create Event
+{% else %}
+	{{ event.title }}
+{% endif %} - {% get_theme_value "brand_name" %}
 {% endblock head_title %}
 
 {% block navbar_breadcrumb %}
-{% if url_name == 'event_create' %}Create{% else %}Update{% endif %} Event
+{% if url_name == 'event_create' %}
+	Create Event
+{% else %}
+	Event Details
+{% endif %}
 {% endblock %}
 
 {% block wip_event_creation_ux %}
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
 {% endblock %}
 
 
@@ -20,12 +28,28 @@
 	<div class="p-content d-flex h-100">
 		<div class="align-self-center">
 			<h1 class="content-title m-0 fs-base-p6">
-				{% if url_name == 'event_create' %}Create{% else %}Update '{{event.title}}'{% endif %}
+				{% if url_name == 'event_create' %}
+					Create Event
+				{% else %}
+					{{ event.title }}
+				{% endif %}
 			</h1>
 			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-				Use the following form to {% if url_name == 'event_create' %}create{% else %}update{% endif %} an event.
+				{% if url_name == 'event_create' %}
+					Use the following form to create an event.
+				{% else %}
+					View details or edit your event's information.
+				{% endif %}
 			</p>
 		</div>
+		{% if url_name != 'event_create' %}
+			<div class="ps-15 ms-auto align-self-center">
+				<a href="{% url 'dashboard:event_delete' current_team.public_id event.pk %}" class="btn btn-danger">
+					<i class="fa-solid fa-trash-can"></i>
+					<span class="ms-5 d-none d-sm-inline">Delete</span>
+				</a>
+			</div>
+		{% endif %}
 	</div>
 </div>
 <!-- Header end -->
@@ -33,10 +57,54 @@
 <!-- Content card start -->
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
 	<!-- Card header start -->
-	<div class="px-card py-10 border-bottom">
-		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
-			Event Form
-		</span>
+	<div class="px-content pt-10 border-bottom">
+		<ul class="tabs tabs-justified border-0 m-0">
+			{% if url_name == 'event_create' %}
+				<li class="tab-item">
+					<a href="{% url 'dashboard:event_create' current_team.public_id %}" class="tab-link px-5 active">
+						<i class="fa-regular fa-circle-1 text-primary me-5"></i>
+						<strong>
+							<span class="d-none d-sm-inline">Information</span>
+							<span class="d-sm-none">Info.</span>
+						</strong>
+					</a>
+				</li>
+				<li class="tab-item">
+					<a href="#" class="tab-link px-5 disabled" tabindex="-1">
+						<i class="fa-regular fa-circle-2 me-5"></i>
+						<strong>Tickets</strong>
+					</a>
+				</li>
+				<li class="tab-item">
+					<a href="#" class="tab-link px-5 disabled" tabindex="-1">
+						<i class="fa-regular fa-circle-3 me-5"></i>
+						<strong>Go Live</strong>
+					</a>
+				</li>
+			{% else %}
+				<li class="tab-item">
+					<a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_update' %}active{% endif %}">
+						<i class="fa-regular fa-circle-1 text-primary me-5"></i>
+						<strong>
+							<span class="d-none d-sm-inline">Information</span>
+							<span class="d-sm-none">Info.</span>
+						</strong>
+					</a>
+				</li>
+				<li class="tab-item">
+					<a href="#" class="tab-link px-5">
+						<i class="fa-regular fa-circle-2 text-primary me-5"></i>
+						<strong>Tickets</strong>
+					</a>
+				</li>
+				<li class="tab-item">
+					<a href="#" class="tab-link px-5">
+						<i class="fa-regular fa-circle-3 text-primary me-5"></i>
+						<strong>Go Live</strong>
+					</a>
+				</li>
+			{% endif %}
+		</ul>
 	</div>
 	<!-- Card header end -->
 
@@ -55,7 +123,7 @@
 					{% endif %}
 					{% if form.errors %}
 						<div class="alert alert-danger" role="alert">
-              <p class="invalid-feedback persistent">Please complete the form below</p>
+			  <p class="invalid-feedback persistent">Please complete the form below</p>
 						</div>
 					{% endif %}
 
@@ -86,11 +154,11 @@
 						</p>
 
 						<!-- Title start -->
-            <div class="required-input">
-  						{% with form.title as input %}
-  							{% include 'components/forms_inputs/input.html' %}
-  						{% endwith %}
-            </div>
+			<div class="required-input">
+						{% with form.title as input %}
+							{% include 'components/forms_inputs/input.html' %}
+						{% endwith %}
+			</div>
 						<!-- Title end -->
 
 						<!-- Organizer start -->
@@ -99,11 +167,11 @@
 						{% endwith %}
 						<!-- Organizer end -->
 
-            {% if form.tags %}
+			{% if form.tags %}
 						<div class="form-group">
 							{{form.tags|as_crispy_field}}
 						</div>
-            {% endif %}
+			{% endif %}
 
 						<!-- Description start -->
 						{% with form.description as input %}
@@ -111,7 +179,7 @@
 						{% endwith %}
 						<!-- Description end -->
 
-            <!-- Location start -->
+			<!-- Location start -->
 						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
 							<span class="ws-25 me-10 text-primary">
 								<i class="fa-regular fa-location-dot"></i>
@@ -125,53 +193,53 @@
 						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.initial_place %}
 							<script>
 								function onPlaceChangedCallback(place){
-                  // TODO: Use in appromixmating timezone
-                  // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
+				  // TODO: Use in appromixmating timezone
+				  // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
 
-                  // Set latitude and longitude hidden field
-                  lat = place.geometry.location.lat();
-                  long = place.geometry.location.lng();
-                  document.getElementById("id_lat").value = lat.toFixed(6)
-                  document.getElementById("id_long").value = long.toFixed(6)
+				  // Set latitude and longitude hidden field
+				  lat = place.geometry.location.lat();
+				  long = place.geometry.location.lng();
+				  document.getElementById("id_lat").value = lat.toFixed(6)
+				  document.getElementById("id_long").value = long.toFixed(6)
 
-                  // Loop over places object for setting fields
-                  // set fields based on available places components
-                  var gmaps = {};
-                  for (var i = 0; i < place.address_components.length; i++) {
-                    var c = place.address_components[i];
-                    gmaps[c.types[0]] = c;
-                  }
+				  // Loop over places object for setting fields
+				  // set fields based on available places components
+				  var gmaps = {};
+				  for (var i = 0; i < place.address_components.length; i++) {
+					var c = place.address_components[i];
+					gmaps[c.types[0]] = c;
+				  }
 
-                  if (gmaps['postal_code']){
-                    if (gmaps['postal_code_suffix']){
-                      document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
-                    }
-                    else {
-                      document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
-                    }
-                  }
+				  if (gmaps['postal_code']){
+					if (gmaps['postal_code_suffix']){
+					  document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
+					}
+					else {
+					  document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
+					}
+				  }
 
-                  let locality = gmaps['locality'] ? gmaps['locality']['long_name'] : gmaps['administrative_area_level_2']['long_name'];
-                  let street_number = gmaps['street_number'] ? `${gmaps['street_number']['short_name']} ` : '';
-                  let address_1 = `${street_number}${gmaps['route']['short_name']}`;
-                  let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
+				  let locality = gmaps['locality'] ? gmaps['locality']['long_name'] : gmaps['administrative_area_level_2']['long_name'];
+				  let street_number = gmaps['street_number'] ? `${gmaps['street_number']['short_name']} ` : '';
+				  let address_1 = `${street_number}${gmaps['route']['short_name']}`;
+				  let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
 
-                  document.getElementById("id_initial_place").value = place.name;
-                  document.getElementById("id_city").value = locality;
-                  document.getElementById("id_address_1").value = address_1;
-                  document.getElementById("id_address_2").value = address_2;
-                  document.getElementById("id_localized_address_display").value = place.formatted_address;
-                  document.getElementById("id_country").value = gmaps['country']['short_name'];
-                  document.getElementById("id_region").value = gmaps['administrative_area_level_1']['short_name'];
+				  document.getElementById("id_initial_place").value = place.name;
+				  document.getElementById("id_city").value = locality;
+				  document.getElementById("id_address_1").value = address_1;
+				  document.getElementById("id_address_2").value = address_2;
+				  document.getElementById("id_localized_address_display").value = place.formatted_address;
+				  document.getElementById("id_country").value = gmaps['country']['short_name'];
+				  document.getElementById("id_region").value = gmaps['administrative_area_level_1']['short_name'];
 								}
 							</script>
 
 							{% include 'components/forms_inputs/gmaps_location.html' %}
-              {% if form.initial_place.help_text %}
-                <div class="form-text">
-                  {{ form.initial_place.help_text }}
-                </div>
-              {% endif %}
+			  {% if form.initial_place.help_text %}
+				<div class="form-text">
+				  {{ form.initial_place.help_text }}
+				</div>
+			  {% endif %}
 						{% endwith %}
 						<!-- Location end -->
 
@@ -186,20 +254,20 @@
 						<p class="text-muted fs-base-n2 mt-5">
 							Tell event-goers when your event starts and ends so they can make plans to attend.
 						</p>
-            <div class="required-input">
-  						{% with input=form.start_date %}
-                {% include 'components/forms_inputs/input.html' %}
-              {% endwith %}
-            </div>
-            {% with input=form.end_date %}
-              {% include 'components/forms_inputs/input.html' %}
-              <div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
-                The end date must come after the start date.
-              </div>
-            {% endwith %}
-            <div class="form-group">
-              {{form.timezone|as_crispy_field}}
-            </div>
+			<div class="required-input">
+						{% with input=form.start_date %}
+				{% include 'components/forms_inputs/input.html' %}
+			  {% endwith %}
+			</div>
+			{% with input=form.end_date %}
+			  {% include 'components/forms_inputs/input.html' %}
+			  <div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
+				The end date must come after the start date.
+			  </div>
+			{% endwith %}
+			<div class="form-group">
+			  {{form.timezone|as_crispy_field}}
+			</div>
 						<!-- Date and Time end -->
 
 						<!-- Cover Image start -->
@@ -236,11 +304,11 @@
 						</p>
 
 						{% comment %} <!-- Capacity start -->
-            {% if form.capacity %}
+			{% if form.capacity %}
 						{% with input=form.capacity required="required" %}
 							{% include 'components/forms_inputs/input.html' %}
 						{% endwith %}
-            {% endif %}
+			{% endif %}
 						<!-- Capacity end -->
 
 						<!-- Limit Per Person start -->
@@ -248,47 +316,47 @@
 							{% include 'components/forms_inputs/input.html' %}
 						{% endwith %}
 						<!-- Limit Per Person end --> {% endcomment %}
-            <hr />
+			<hr />
 					</section>
 					<!-- Tickets end -->
 
-          <!-- Publishing start -->
-          <section>
-            <h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="4-publishing">
-              <span class="ws-25 me-10 text-primary">
-                <i class="fa-solid fa-circle-4"></i>
-              </span>
-              Publishing
-            </h2>
-            <p class="text-muted fs-base-n2 mt-5">
-              Customize how you want your event published
-            </p>
+		  <!-- Publishing start -->
+		  <section>
+			<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="4-publishing">
+			  <span class="ws-25 me-10 text-primary">
+				<i class="fa-solid fa-circle-4"></i>
+			  </span>
+			  Publishing
+			</h2>
+			<p class="text-muted fs-base-n2 mt-5">
+			  Customize how you want your event published
+			</p>
 
-            <!-- publication_date start -->
-            <div class="form-group required-input">
-              {{form.publication_date|as_crispy_field}}
-            </div>
-            <!-- publish date end -->
+			<!-- publication_date start -->
+			<div class="form-group required-input">
+			  {{form.publication_date|as_crispy_field}}
+			</div>
+			<!-- publish date end -->
 
-            <!-- Visibility start -->
-            <div class="form-group">
-            {{form.visibility|as_crispy_field}}
-            </div>
-            <!-- Visibility end -->
+			<!-- Visibility start -->
+			<div class="form-group">
+			{{form.visibility|as_crispy_field}}
+			</div>
+			<!-- Visibility end -->
 
-            <!-- show_ticket_count start -->
-            <div class="form-group">
-            {{form.show_ticket_count|as_crispy_field}}
-            </div>
-            <!-- show_ticket_count end -->
+			<!-- show_ticket_count start -->
+			<div class="form-group">
+			{{form.show_ticket_count|as_crispy_field}}
+			</div>
+			<!-- show_ticket_count end -->
 
-            <!-- show_team_image start -->
-            <div class="form-group">
-            {{form.show_team_image|as_crispy_field}}
-            </div>
-            <!-- show_team_image end -->
+			<!-- show_team_image start -->
+			<div class="form-group">
+			{{form.show_team_image|as_crispy_field}}
+			</div>
+			<!-- show_team_image end -->
 
-          <!-- Publishing end -->
+		  <!-- Publishing end -->
 
 				</div>
 				<!-- Form end -->
@@ -296,54 +364,54 @@
 		</div>
 		<!-- Main content end -->
 
-    <!-- Form navigation start -->
-    <div class="col-lg-5">
-      <div class="p-content position-lg-sticky top-navbar start-0">
-        <div>
-          <a href="#1-general-info" class="d-inline-flex align-items-center link-reset text-decoration-none">
-            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
-              <span class="ws-25 me-10 text-primary">
-                <i class="fa-solid fa-circle-1"></i>
-              </span>
-              General Information
-            </h2>
-          </a>
-        </div>
-        <div class="mt-15">
-          <a href="#2-tickets" class="d-inline-flex align-items-center link-reset text-decoration-none">
-            <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
-              <span class="ws-25 me-10 text-primary">
-                <i class="fa-solid fa-circle-3"></i>
-              </span>
-              Tickets
-            </h2>
-          </a>
-        </div>
-        <div class="mt-15">
-          <a href="#4-publishing" class="d-inline-flex align-items-center link-reset text-decoration-none">
-          <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
-            <span class="ws-25 me-10 text-primary">
-            <i class="fa-solid fa-circle-4"></i>
-            </span>
-            Publishing
-          </h2>
-          </a>
-        </div>
-        <div id="event-actions" class="mt-20 row">
-          <div class="col pe-5">
-            <button type="submit" name="transition_draft" class="h-100 btn btn-block">
-              Save Draft
-            </button>
-          </div>
-          <div class="col pe-5">
-            <button type="submit" name="transition_live" class="h-100 btn btn-block btn-primary">
-              Save & Continue
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Form navigation end -->
+	<!-- Form navigation start -->
+	<div class="col-lg-5">
+	  <div class="p-content position-lg-sticky top-navbar start-0">
+		<div>
+		  <a href="#1-general-info" class="d-inline-flex align-items-center link-reset text-decoration-none">
+			<h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+			  <span class="ws-25 me-10 text-primary">
+				<i class="fa-solid fa-circle-1"></i>
+			  </span>
+			  General Information
+			</h2>
+		  </a>
+		</div>
+		<div class="mt-15">
+		  <a href="#2-tickets" class="d-inline-flex align-items-center link-reset text-decoration-none">
+			<h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+			  <span class="ws-25 me-10 text-primary">
+				<i class="fa-solid fa-circle-3"></i>
+			  </span>
+			  Tickets
+			</h2>
+		  </a>
+		</div>
+		<div class="mt-15">
+		  <a href="#4-publishing" class="d-inline-flex align-items-center link-reset text-decoration-none">
+		  <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
+			<span class="ws-25 me-10 text-primary">
+			<i class="fa-solid fa-circle-4"></i>
+			</span>
+			Publishing
+		  </h2>
+		  </a>
+		</div>
+		<div id="event-actions" class="mt-20 row">
+		  <div class="col pe-5">
+			<button type="submit" name="transition_draft" class="h-100 btn btn-block">
+			  Save Draft
+			</button>
+		  </div>
+		  <div class="col pe-5">
+			<button type="submit" name="transition_live" class="h-100 btn btn-block btn-primary">
+			  Save & Continue
+			</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- Form navigation end -->
 
 	</form>
 
@@ -361,21 +429,21 @@
   var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
 
   function dateValidate(e) {
-    var startDateVal = startDateInput.value;
-    var endDateVal = endDateInput.value;
+	var startDateVal = startDateInput.value;
+	var endDateVal = endDateInput.value;
 
-    endDateExtraFeedback.classList.add("d-none");
-    endDateInput.classList.remove("is-invalid");
+	endDateExtraFeedback.classList.add("d-none");
+	endDateInput.classList.remove("is-invalid");
 
-    if (startDateVal && endDateVal) {
-      var startDate = new Date(startDateVal);
-      var endDate = new Date(endDateVal);
+	if (startDateVal && endDateVal) {
+	  var startDate = new Date(startDateVal);
+	  var endDate = new Date(endDateVal);
 
-      if (startDate >= endDate) {
-        endDateExtraFeedback.classList.remove("d-none");
-        endDateInput.classList.add("is-invalid");
-      }
-    }
+	  if (startDate >= endDate) {
+		endDateExtraFeedback.classList.remove("d-none");
+		endDateInput.classList.add("is-invalid");
+	  }
+	}
   }
 
   startDateInput.addEventListener("change", dateValidate);

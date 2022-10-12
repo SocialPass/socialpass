@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useEvent from '@/hooks/useEvent'
 import { EventApi } from '@/services/api'
+import TicketCounter from '@/components/TicketCounter'
 import './index.css'
 
 export default function Home() {
@@ -13,14 +14,14 @@ export default function Home() {
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId).then((res) => {
-      setTicketTiers(res.data)
+      setTicketTiers(res.data);
     })
   }
 
 
   // Counter Component constants
   const [counterValueFromCurrentRender, queueRerenderWithNewCounterValue] =
-  useState(0);
+    useState(0);
 
   const handleAddOne = () => {
     queueRerenderWithNewCounterValue(counterValueFromCurrentRender + 1);
@@ -32,10 +33,9 @@ export default function Home() {
     }
   }
 
-
   // Ticket Tier Selector Component constants
   const [isSelected, setIsSelected] =
-      useState(false);
+    useState(false);
 
 
 
@@ -62,6 +62,8 @@ export default function Home() {
     getTicketTiers(event.public_id)
   }, [event])
 
+  console.log("tiers: ", ticketTiers[0]);
+  
 
   return (
     <>
@@ -209,7 +211,6 @@ export default function Home() {
             </label>
           </div>
           {/* <!-- Crypto end --> */}
-
           {/* <!-- NFTs start --> */}
           <div className='ticket-tier'>
             <input type='radio' className='ticket-tier-input' name='payment-type' id='nfts'></input>
@@ -254,38 +255,7 @@ export default function Home() {
                       </h6>
                       <p className='m-0 fs-base-n2'>{tier.capacity} available</p>
                     </div>
-                    <div className='ticket-tier-controls ms-auto mt-10 mt-sm-0'>
-                      <div className='input-group input-group-sm input-group-pill ws-100 mx-auto'>
-                        <button
-                          className='btn ws-25 px-0'
-                          onClick={() => {
-														setTicketAmount(ticketAmount - 1);
-                          }}
-                        >
-                          -
-                        </button>
-                        <input
-                          type='number'
-                          min='1'
-                          max='10'
-                          step='1'
-                          className='form-control form-number text-center'
-													value={ticketAmount}
-                        ></input>
-                        <button
-                          className='btn ws-25 px-0'
-                          onClick={() => {
-														setTicketAmount(ticketAmount + 1);
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                      <div className='text-center fs-base-n2 mt-5'>
-                        <strong>Price &times; 1</strong>
-                        &mdash; $ {tier.price}
-                      </div>
-                    </div>
+                    <TicketCounter price={ticketTiers[index].price}/>
                   </div>
                 </label>
               </div>
@@ -294,7 +264,6 @@ export default function Home() {
           </div>
           {/* <!-- Ticket tiers end --> */}
         </div>
-
         {/* <!-- CTA section start --> */}
         <div className='col-md-5'>
           <div className='px-content pt-md-30 position-md-sticky top-0 start-0'>

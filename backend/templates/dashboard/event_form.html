@@ -254,12 +254,37 @@
 				<p class="text-muted fs-base-n2 mt-5">
 					Use this image to showcase your event. This will be the banner image attendees will se when purchasing the tickets.
 				</p>
-				<div class="form-group">
-					{{ form.cover_image|as_crispy_field }}
-				</div>
+				{% with input=form.cover_image %}
+					<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+					<div class="form-file">
+						<input
+							type="{{ input.field.widget.input_type }}"
+							name="{{ input.name }}"
+							{% if input.field.widget.input_type != "hidden" %}
+								class="form-file-input {% if input.errors %}is-invalid{% endif %}"
+								id="{{ input.auto_id }}"
+							{% endif %}
+							{% if input.field.required %}
+								required="required"
+							{% endif %}
+							{% for k,v in input.field.widget.attrs.items %}
+								{{ k }}="{{ v }}"
+							{% endfor %}
+						/>
+						<label class="form-file-label d-flex align-items-center justify-content-center ws-150 hs-150 p-0 border-dashed border-primary" for="{{ input.id_for_label }}">
+							<div>
+								<i class="fa-light fa-image text-primary me-5"></i>
+								<br />
+								Click to Upload Image
+							</div>
+						</label>
+						<label class="form-file-filename" for="{{ input.id_for_label }}">{% if input.value %}<strong>Currently:</strong> {{ input.value }}{% else %}No file chosen{% endif %}</label>
+					</div>
+				{% endwith %}
 				<!-- Main event image end -->
 
 				<!-- Submit button start -->
+				<br />
 				<div class="form-group text-end">
 					<button type="submit" class="btn btn-primary">Save Event</button>
 				</div>

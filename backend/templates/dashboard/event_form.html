@@ -57,7 +57,7 @@
 <!-- Content card start -->
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
 	<!-- Card header start -->
-	<div class="px-content pt-10 border-bottom">
+	<div class="px-content pt-5 border-bottom">
 		<ul class="tabs tabs-justified border-0 m-0">
 			{% if url_name == 'event_create' %}
 				<li class="tab-item">
@@ -108,312 +108,206 @@
 	</div>
 	<!-- Card header end -->
 
-	<form class="row form" enctype="multipart/form-data" method="post" id="event-form">
+	<!-- Main form start -->
+	<form class="row" enctype="multipart/form-data" method="post" id="event-form">
+		{% csrf_token %}
 		<!-- Main content start -->
-		<div class="col-lg-7">
+		<div class="col-lg-8 border-lg-end">
 			<div class="content">
-				<!-- Form fields start -->
-				<div>
-					{% csrf_token %}
+				{% if form.non_field_errors %}
+					<div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
+						<ul class="unordered-list bullet-reset m-0">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
 
-					{% if form.non_field_errors %}
-						<div class="alert alert-danger" role="alert">
-							<p class="invalid-feedback persistent">Please complete the form below</p>
+				{% if form.errors %}
+					<div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
+						Please comple the form below.
+					</div>
+				{% endif %}
+
+				{% for input in form.hidden_fields %}
+					{{ input }}
+				{% endfor %}
+
+				<!-- Basic information start -->
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="basic-information">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-ballot-check"></i>
+					</span>
+					Basic Information
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Name your event and tell event-goers why they should come. Add details that highlight what makes it unique.
+				</p>
+				{% with form.title as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with input=form.organizer %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with form.description as input %}
+					{% include 'components/forms_inputs/textarea.html' %}
+				{% endwith %}
+				<!-- Basic information end -->
+
+				<!-- Location start -->
+				<br />
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="location">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-location-dot"></i>
+					</span>
+					Location
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Help people in the area discover your event and let attendees know where to show up.
+				</p>
+				{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.initial_place %}
+					<script>
+					    function onPlaceChangedCallback(place){
+					    // TODO: Use in appromixmating timezone
+					    // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
+					    
+					    // Set latitude and longitude hidden field
+					    lat = place.geometry.location.lat();
+					    long = place.geometry.location.lng();
+					    document.getElementById("id_lat").value = lat.toFixed(6)
+					    document.getElementById("id_long").value = long.toFixed(6)
+					    
+					    // Loop over places object for setting fields
+					    // set fields based on available places components
+					    var gmaps = {};
+					    for (var i = 0; i < place.address_components.length; i++) {
+					    var c = place.address_components[i];
+					    gmaps[c.types[0]] = c;
+					    }
+					    
+					    if (gmaps['postal_code']){
+					    if (gmaps['postal_code_suffix']){
+					    document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
+					    }
+					    else {
+					    document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
+					    }
+					    }
+					    
+					    let locality = gmaps['locality'] ? gmaps['locality']['long_name'] : gmaps['administrative_area_level_2']['long_name'];
+					    let street_number = gmaps['street_number'] ? `${gmaps['street_number']['short_name']} ` : '';
+					    let address_1 = `${street_number}${gmaps['route']['short_name']}`;
+					    let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
+					    
+					    document.getElementById("id_initial_place").value = place.name;
+					    document.getElementById("id_city").value = locality;
+					    document.getElementById("id_address_1").value = address_1;
+					    document.getElementById("id_address_2").value = address_2;
+					    document.getElementById("id_localized_address_display").value = place.formatted_address;
+					    document.getElementById("id_country").value = gmaps['country']['short_name'];
+					    document.getElementById("id_region").value = gmaps['administrative_area_level_1']['short_name'];
+					    }
+					</script>
+					{% include 'components/forms_inputs/gmaps_location.html' %}
+					{% if form.initial_place.help_text %}
+						<div class="form-text">
+						    {{ form.initial_place.help_text }}
 						</div>
 					{% endif %}
-					{% if form.errors %}
-						<div class="alert alert-danger" role="alert">
-			  <p class="invalid-feedback persistent">Please complete the form below</p>
-						</div>
-					{% endif %}
+				{% endwith %}
+				<!-- Location end -->
 
-					{% for input in form.hidden_fields %}
-						{{ input }}
-					{% endfor %}
-					<!-- General info start -->
-					<section>
-						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="1-general-info">
-							<span class="ws-25 me-10 text-primary">
-								<i class="fa-solid fa-circle-1"></i>
-							</span>
-							General Information
-						</h2>
-						<p class="text-muted fs-base-n2 mt-5">
-							Please fill in some general information about your event.
-						</p>
-
-						<hr />
-						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
-							<span class="ws-25 me-10 text-primary">
-								<i class="fa-regular fa-ballot-check"></i>
-							</span>
-							Basic Information
-						</h3>
-						<p class="text-muted fs-base-n2 mt-5">
-							Name your event and tell event-goers why they should come. Add details that highlight what makes it unique.
-						</p>
-
-						<!-- Title start -->
-			<div class="required-input">
-						{% with form.title as input %}
-							{% include 'components/forms_inputs/input.html' %}
-						{% endwith %}
-			</div>
-						<!-- Title end -->
-
-						<!-- Organizer start -->
-						{% with input=form.organizer %}
-							{% include 'components/forms_inputs/input.html' %}
-						{% endwith %}
-						<!-- Organizer end -->
-
-			{% if form.tags %}
-						<div class="form-group">
-							{{form.tags|as_crispy_field}}
-						</div>
-			{% endif %}
-
-						<!-- Description start -->
-						{% with form.description as input %}
-							{% include 'components/forms_inputs/textarea.html' %}
-						{% endwith %}
-						<!-- Description end -->
-
-			<!-- Location start -->
-						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
-							<span class="ws-25 me-10 text-primary">
-								<i class="fa-regular fa-location-dot"></i>
-							</span>
-							Location
-						</h3>
-						<p class="text-muted fs-base-n2 mt-5">
-							Help people in the area discover your event and let attendees know where to show up.
-						</p>
-
-						{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.initial_place %}
-							<script>
-								function onPlaceChangedCallback(place){
-				  // TODO: Use in appromixmating timezone
-				  // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
-
-				  // Set latitude and longitude hidden field
-				  lat = place.geometry.location.lat();
-				  long = place.geometry.location.lng();
-				  document.getElementById("id_lat").value = lat.toFixed(6)
-				  document.getElementById("id_long").value = long.toFixed(6)
-
-				  // Loop over places object for setting fields
-				  // set fields based on available places components
-				  var gmaps = {};
-				  for (var i = 0; i < place.address_components.length; i++) {
-					var c = place.address_components[i];
-					gmaps[c.types[0]] = c;
-				  }
-
-				  if (gmaps['postal_code']){
-					if (gmaps['postal_code_suffix']){
-					  document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
-					}
-					else {
-					  document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
-					}
-				  }
-
-				  let locality = gmaps['locality'] ? gmaps['locality']['long_name'] : gmaps['administrative_area_level_2']['long_name'];
-				  let street_number = gmaps['street_number'] ? `${gmaps['street_number']['short_name']} ` : '';
-				  let address_1 = `${street_number}${gmaps['route']['short_name']}`;
-				  let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
-
-				  document.getElementById("id_initial_place").value = place.name;
-				  document.getElementById("id_city").value = locality;
-				  document.getElementById("id_address_1").value = address_1;
-				  document.getElementById("id_address_2").value = address_2;
-				  document.getElementById("id_localized_address_display").value = place.formatted_address;
-				  document.getElementById("id_country").value = gmaps['country']['short_name'];
-				  document.getElementById("id_region").value = gmaps['administrative_area_level_1']['short_name'];
-								}
-							</script>
-
-							{% include 'components/forms_inputs/gmaps_location.html' %}
-			  {% if form.initial_place.help_text %}
-				<div class="form-text">
-				  {{ form.initial_place.help_text }}
+				<!-- Date and time start -->
+				<br />
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="data-and-time">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-clock"></i>
+					</span>
+					Date and Time
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Tell event-goers when your event starts and ends so they can make plans to attend.
+				</p>
+				{% with input=form.start_date %}
+					{% include 'components/forms_inputs/input.html' %}
+			  	{% endwith %}
+				{% with input=form.end_date %}
+			  		{% include 'components/forms_inputs/input.html' %}
+			  		<div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
+						The end date must come after the start date.
+			  		</div>
+				{% endwith %}
+				<div class="form-group">
+			  		{{ form.timezone|as_crispy_field }}
 				</div>
-			  {% endif %}
-						{% endwith %}
-						<!-- Location end -->
+				<!-- Date and time end -->
 
-
-						<!-- Date and Time start -->
-						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
-							<span class="ws-25 me-10 text-primary">
-								<i class="fa-regular fa-calendar-days"></i>
-							</span>
-							Date and Time
-						</h3>
-						<p class="text-muted fs-base-n2 mt-5">
-							Tell event-goers when your event starts and ends so they can make plans to attend.
-						</p>
-			<div class="required-input">
-						{% with input=form.start_date %}
-				{% include 'components/forms_inputs/input.html' %}
-			  {% endwith %}
-			</div>
-			{% with input=form.end_date %}
-			  {% include 'components/forms_inputs/input.html' %}
-			  <div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
-				The end date must come after the start date.
-			  </div>
-			{% endwith %}
-			<div class="form-group">
-			  {{form.timezone|as_crispy_field}}
-			</div>
-						<!-- Date and Time end -->
-
-						<!-- Cover Image start -->
-						<hr />
-						<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
-							<span class="ws-25 me-10 text-primary">
-								<i class="fa-regular fa-calendar-days"></i>
-							</span>
-							Main Event Image
-						</h3>
-						<p class="text-muted fs-base-n2 mt-5">
-							Use this image to showcase your event. This will be the banner image attendees will se when purchasing the tickets.
-						</p>
-						<div class="form-group">
-							{{form.cover_image|as_crispy_field}}
-						</div>
-						<!-- Cover Image end -->
-
-
-					</section>
-					<hr />
-					<!-- General info end -->
-
-					<!-- Tickets start -->
-					<section>
-						<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="2-tickets">
-							<span class="ws-25 me-10 text-primary">
-								<i class="fa-solid fa-circle-3"></i>
-							</span>
-							Tickets
-						</h2>
-						<p class="text-muted fs-base-n2 mt-5">
-							Coming soon! Sell different tickets for an event.
-						</p>
-
-						{% comment %} <!-- Capacity start -->
-			{% if form.capacity %}
-						{% with input=form.capacity required="required" %}
-							{% include 'components/forms_inputs/input.html' %}
-						{% endwith %}
-			{% endif %}
-						<!-- Capacity end -->
-
-						<!-- Limit Per Person start -->
-						{% with input=form.limit_per_person required="required" %}
-							{% include 'components/forms_inputs/input.html' %}
-						{% endwith %}
-						<!-- Limit Per Person end --> {% endcomment %}
-			<hr />
-					</section>
-					<!-- Tickets end -->
-
-		  <!-- Publishing start -->
-		  <section>
-			<h2 class="fs-base-p6 mb-0 d-flex align-items-center" id="4-publishing">
-			  <span class="ws-25 me-10 text-primary">
-				<i class="fa-solid fa-circle-4"></i>
-			  </span>
-			  Publishing
-			</h2>
-			<p class="text-muted fs-base-n2 mt-5">
-			  Customize how you want your event published
-			</p>
-
-			<!-- publication_date start -->
-			<div class="form-group required-input">
-			  {{form.publication_date|as_crispy_field}}
-			</div>
-			<!-- publish date end -->
-
-			<!-- Visibility start -->
-			<div class="form-group">
-			{{form.visibility|as_crispy_field}}
-			</div>
-			<!-- Visibility end -->
-
-			<!-- show_ticket_count start -->
-			<div class="form-group">
-			{{form.show_ticket_count|as_crispy_field}}
-			</div>
-			<!-- show_ticket_count end -->
-
-			<!-- show_team_image start -->
-			<div class="form-group">
-			{{form.show_team_image|as_crispy_field}}
-			</div>
-			<!-- show_team_image end -->
-
-		  <!-- Publishing end -->
-
+				<!-- Main event image start -->
+				<br />
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="main-event-image">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-image"></i>
+					</span>
+					Main Event Image
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Use this image to showcase your event. This will be the banner image attendees will se when purchasing the tickets.
+				</p>
+				<div class="form-group">
+					{{ form.cover_image|as_crispy_field }}
 				</div>
-				<!-- Form end -->
+				<!-- Main event image end -->
+
+				<!-- Submit button start -->
+				<div class="form-group text-end">
+					<button type="submit" class="btn btn-primary">Save Event</button>
+				</div>
+				<!-- Submit button end -->
 			</div>
 		</div>
 		<!-- Main content end -->
 
-	<!-- Form navigation start -->
-	<div class="col-lg-5">
-	  <div class="p-content position-lg-sticky top-navbar start-0">
-		<div>
-		  <a href="#1-general-info" class="d-inline-flex align-items-center link-reset text-decoration-none">
-			<h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
-			  <span class="ws-25 me-10 text-primary">
-				<i class="fa-solid fa-circle-1"></i>
-			  </span>
-			  General Information
-			</h2>
-		  </a>
+		<!-- Form navigation start -->
+		<div class="col-lg-4 d-none d-lg-block">
+	  		<div class="p-content position-lg-sticky top-navbar start-0">
+				<h3 class="fs-base-p4 m-0">
+					On this page
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Use the following links to quickly jump to a section in the form.
+				</p>
+				<div class="text-base">
+					<a class="fw-bold d-flex align-items-center link-reset text-decoration-none mt-10" href="#basic-information">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-ballot-check"></i>
+						</span>
+						Basic Information
+					</a>
+					<a class="fw-bold d-flex align-items-center link-reset text-decoration-none mt-10" href="#location">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-location-dot"></i>
+						</span>
+						Location
+					</a>
+					<a class="fw-bold d-flex align-items-center link-reset text-decoration-none mt-10" href="#data-and-time">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-clock"></i>
+						</span>
+						Date and Time
+					</a>
+					<a class="fw-bold d-flex align-items-center link-reset text-decoration-none mt-10" href="#main-event-image">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-image"></i>
+						</span>
+						Main Event Image
+					</a>
+				</div>
+	  		</div>
 		</div>
-		<div class="mt-15">
-		  <a href="#2-tickets" class="d-inline-flex align-items-center link-reset text-decoration-none">
-			<h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
-			  <span class="ws-25 me-10 text-primary">
-				<i class="fa-solid fa-circle-3"></i>
-			  </span>
-			  Tickets
-			</h2>
-		  </a>
-		</div>
-		<div class="mt-15">
-		  <a href="#4-publishing" class="d-inline-flex align-items-center link-reset text-decoration-none">
-		  <h2 class="fs-base-p6 mt-0 d-flex align-items-center" id="1-general-info">
-			<span class="ws-25 me-10 text-primary">
-			<i class="fa-solid fa-circle-4"></i>
-			</span>
-			Publishing
-		  </h2>
-		  </a>
-		</div>
-		<div id="event-actions" class="mt-20 row">
-		  <div class="col pe-5">
-			<button type="submit" name="transition_draft" class="h-100 btn btn-block">
-			  Save Draft
-			</button>
-		  </div>
-		  <div class="col pe-5">
-			<button type="submit" name="transition_live" class="h-100 btn btn-block btn-primary">
-			  Save & Continue
-			</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-	<!-- Form navigation end -->
-
+		<!-- Form navigation end -->
 	</form>
+	<!-- Main form end -->
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
@@ -424,30 +318,30 @@
 
 <!-- Date Validation Script -->
 <script>
-  var startDateInput = document.getElementById("id_start_date");
-  var endDateInput = document.getElementById("id_end_date");
-  var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
+	var startDateInput = document.getElementById("id_start_date");
+	var endDateInput = document.getElementById("id_end_date");
+	var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
 
-  function dateValidate(e) {
-	var startDateVal = startDateInput.value;
-	var endDateVal = endDateInput.value;
+	function dateValidate(e) {
+		var startDateVal = startDateInput.value;
+		var endDateVal = endDateInput.value;
 
-	endDateExtraFeedback.classList.add("d-none");
-	endDateInput.classList.remove("is-invalid");
+		endDateExtraFeedback.classList.add("d-none");
+		endDateInput.classList.remove("is-invalid");
 
-	if (startDateVal && endDateVal) {
-	  var startDate = new Date(startDateVal);
-	  var endDate = new Date(endDateVal);
+		if (startDateVal && endDateVal) {
+			var startDate = new Date(startDateVal);
+			var endDate = new Date(endDateVal);
 
-	  if (startDate >= endDate) {
-		endDateExtraFeedback.classList.remove("d-none");
-		endDateInput.classList.add("is-invalid");
-	  }
+			if (startDate >= endDate) {
+				endDateExtraFeedback.classList.remove("d-none");
+				endDateInput.classList.add("is-invalid");
+			}
+		}
 	}
-  }
 
-  startDateInput.addEventListener("change", dateValidate);
-  endDateInput.addEventListener("change", dateValidate);
+	startDateInput.addEventListener("change", dateValidate);
+	endDateInput.addEventListener("change", dateValidate);
 </script>
 
 <!-- Content card end -->

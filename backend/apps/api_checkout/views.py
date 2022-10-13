@@ -16,7 +16,10 @@ from apps.root.models import CheckoutItem, CheckoutSession, Event, TicketTier
 
 
 class EventView(GenericViewSet, RetrieveModelMixin):
-    """list and retrieve Event view"""
+    """
+    Generic Viewset for the Event API.
+    Responsible for retrieving event & its ticket tiers
+    """
 
     queryset = Event.objects.all().order_by("-created")
     serializer_class = serializers.EventSerializer
@@ -52,7 +55,8 @@ class CheckoutItemView(
     RetrieveModelMixin,
 ):
     """
-    create and retrieve CheckoutItem view
+    Generic Viewset for the CheckoutItem API
+    Responsible for CRUD operations on this object
     """
 
     queryset = CheckoutItem.objects.all().order_by("-created")
@@ -68,12 +72,6 @@ class CheckoutItemView(
         elif self.action in ("create",):
             return serializers.CheckoutItemCreateSerializer
         return super().get_serializer_class()
-
-    def perform_create(self, serializer):
-        """
-        performs create and return the object created
-        """
-        return serializer.save()
 
     def retrieve(self, request, *args, **kwargs):
         """

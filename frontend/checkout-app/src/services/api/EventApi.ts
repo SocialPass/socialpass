@@ -17,7 +17,7 @@ export default {
           },
           title: 'NFT Holders Party',
           description:
-            'Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure you&lsquo;re 21+ to enter.',
+            'Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure youre 21+ to enter.',
           requirements: 'requirements',
           limit_per_person: 5,
           start_date: '%A, %B %d, %Y | %H:%M%p',
@@ -58,75 +58,63 @@ export default {
             price: '10000',
             capacity: 10,
             max_per_person: '2',
-            tier_fiat:{
-              id:'1',
-              price:'1',
+            tier_cryptocurrency: {
+              id: '1',
+              price: 6,
             },
-            tier_cryptocurrency:{
-              id:'1',
-              price:'1',
-            },
-            tier_asset_ownership:{
-              id:'1',
-              price:'1',
+            tier_asset_ownership: {
+              id: '1',
+              price: 5,
             },
           },
           {
             created: '2017-03-31 9:30:20',
             modified: '2017-03-31 9:30:20',
-            public_id: '1',
-            event_id: '3f22a1db-7bf0-4444-a13b-25347c174df7',
+            public_id: '3f22a1db-7bf0-4444-a13b-25347c174df8',
+            event_id: '3f22a1db-7bf0-4444-a13b-25347c174df8',
             ticket_type: 'Deluxe Admission',
             price: '2',
             capacity: 11,
             max_per_person: 'max_per_person',
-            tier_cryptocurrency:{
-              id:'1',
-              price:'1',
+            tier_cryptocurrency: {
+              id: '1',
+              price: 2,
             },
-            tier_asset_ownership:{
-              id:'1',
-              price:'1',
+            tier_asset_ownership: {
+              id: '1',
+              price: 3,
             },
           },
           {
             created: '2017-03-31 9:30:20',
             modified: '2017-03-31 9:30:20',
-            public_id: '1',
-            event_id: '3f22a1db-7bf0-4444-a13b-25347c174df7',
+            public_id: '3f22a1db-7bf0-4444-a13b-25347c174df9',
+            event_id: '3f22a1db-7bf0-4444-a13b-25347c174df9',
             ticket_type: 'Deluxe Admission',
             price: '2',
             capacity: 11,
             max_per_person: 'max_per_person',
-            tier_cryptocurrency:{
-              id:'1',
-              price:'1',
+            tier_cryptocurrency: {
+              id: '1',
+              price: 1,
             },
-            tier_asset_ownership:{
-              id:'1',
-              price:'1',
+            tier_asset_ownership: {
+              id: '1',
+              price: 1,
             },
           },
           {
             created: '2017-03-31 9:30:20',
             modified: '2017-03-31 9:30:20',
-            public_id: '3f22a1db-7bf0-4444-a13b-25347c174df7',
+            public_id: '3f22a1db-7bf0-4444-a13b-25347c174de1',
             event_id: '1',
             ticket_type: 'VIP Admission',
             price: '3',
             capacity: 14,
             max_per_person: 'max_per_person',
-            tier_fiat:{
-              id:'1',
-              price:'3',
-            },
-            tier_cryptocurrency:{
-              id:'2',
-              price:'4',
-            },
-            tier_asset_ownership:{
-              id:'3',
-              price:'5',
+            tier_cryptocurrency: {
+              id: '2',
+              price: 4,
             },
           },
         ],

@@ -16,35 +16,15 @@ export default function Home() {
   const { event }: any = useEvent()
   const {
     checkout,
-    checkoutItems,
     getCheckout,
     getCheckoutItems,
     isLoading,
     isLoadingCheckoutItems,
   }: any = useCheckout()
 
-  const getTotalPrice = () => {
-    return checkoutItems.reduce((acc, item) => {
-      return acc + item.ticket_tier[checkout.tx_type].price * item.quantity
-    }, 0)
-  }
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
-  }
-
-  const handleContinueClick = () => {
-    navigate('success')
-  }
-
-  const getPriceWithCurrencySymbol = (value) => {
-    if (checkout?.tx_type === 'tier_fiat') {
-      return `$${value}`
-    } else if (checkout?.tx_type === 'tier_cryptocurrency') {
-      return `${value} ETH`
-    }
-
-    return 'N/A'
   }
 
   useEffect(() => {
@@ -98,39 +78,7 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
-          <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
-            <Summary />
-
-            <form className='mt-20'>
-              <input
-                type='text'
-                name='email'
-                className='form-control'
-                placeholder='Email Address'
-                value={checkout?.email}
-                readOnly
-              />
-              <button
-                className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
-                onClick={() => {
-                  handleContinueClick()
-                }}
-              >
-                <strong className='antialiased'>Continue</strong>
-              </button>
-            </form>
-            <p>
-              <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
-            </p>
-            <hr />
-            <p className='text-muted fs-base-n2'>
-              If you need help placing your order, please{' '}
-              <a href='#' className='fw-bold' target='_blank'>
-                contact us <i className='fa-regular fa-external-link'></i>
-              </a>{' '}
-              and let us know
-            </p>
-          </div>
+          <Summary />
         </div>
       </div>
     </>

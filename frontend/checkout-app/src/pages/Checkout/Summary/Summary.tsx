@@ -13,6 +13,12 @@ export default function Summary() {
     navigate(`/${event.public_id}`)
   }
 
+  const getTotalPrice = () => {
+    return checkoutItems.reduce((acc, item) => {
+      return acc + item.ticket_tier[checkout.tx_type].price * item.quantity
+    }, 0)
+  }
+
   const getPriceWithCurrencySymbol = (value) => {
     if (checkout?.tx_type === 'tier_fiat') {
       return `$${value}`
@@ -23,8 +29,12 @@ export default function Summary() {
     return 'N/A'
   }
 
+  const handleContinueClick = () => {
+    navigate('success')
+  }
+
   return (
-    <>
+    <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
       <div className='d-flex align-items-center mb-10'>
         <h6 className='fw-700 fsr-6 m-0'>Summary</h6>
 
@@ -47,6 +57,36 @@ export default function Summary() {
           </div>
         </div>
       ))}
-    </>
+
+      <form className='mt-20'>
+        <input
+          type='text'
+          name='email'
+          className='form-control'
+          placeholder='Email Address'
+          value={checkout?.email}
+          readOnly
+        />
+        <button
+          className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
+          onClick={() => {
+            handleContinueClick()
+          }}
+        >
+          <strong className='antialiased'>Continue</strong>
+        </button>
+      </form>
+      <p>
+        <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
+      </p>
+      <hr />
+      <p className='text-muted fs-base-n2'>
+        If you need help placing your order, please{' '}
+        <a href='#' className='fw-bold' target='_blank'>
+          contact us <i className='fa-regular fa-external-link'></i>
+        </a>{' '}
+        and let us know
+      </p>
+    </div>
   )
 }

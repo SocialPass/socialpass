@@ -76,6 +76,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     Create event
     """
 
+    team = factory.SubFactory(TeamFactory)
     title = factory.Faker("sentence", nb_words=5, variable_nb_words=True)
     organizer = factory.Faker("name")
     description = factory.Faker("paragraph")
@@ -195,8 +196,10 @@ class TicketFactory(factory.django.DjangoModelFactory):
     Create ticket
     """
 
-    # event = factory.SubFactory(EventFactory)
+    event = factory.SubFactory(EventFactory)
+    ticket_tier = factory.SubFactory(TicketTierFactory)
     checkout_item = factory.SubFactory(CheckoutItemFactory)
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
     file = factory.django.ImageField(color="red")
 
     class Meta:

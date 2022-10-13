@@ -159,7 +159,7 @@ class GoogleTicket(TicketGenerationBase):
         return it along with the token.
         """
         # Generate the ticket
-        event = ticket.checkout_item.ticket_tier.event
+        event = ticket.event
         service_account_info = self.get_service_account_info()
         http_client = self.authenticate(
             service_account_info=service_account_info,

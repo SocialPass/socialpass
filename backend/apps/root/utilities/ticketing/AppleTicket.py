@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from django.conf import settings
 from passbook.models import (
@@ -35,7 +35,7 @@ class AppleTicket(TicketGenerationBase):
         self.foreground_color: str = "rgb(255,255,255)"
         self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
         self.barcode: Optional[Barcode] = None
-        self.location: Optional[List[Location]] = None
+        self.location: Optional[list[Location]] = None
         self.event_info = EventTicket()
 
         # apple wallet certificate credentials
@@ -129,7 +129,7 @@ class AppleTicket(TicketGenerationBase):
         return self.passfile
 
     def generate_pass_from_ticket(self, ticket):
-        event = ticket.checkout_item.ticket_tier.event
+        event = ticket.event
 
         if not event.lat or not event.long:
             raise Exception(

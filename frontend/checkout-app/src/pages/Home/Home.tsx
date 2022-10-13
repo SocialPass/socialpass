@@ -10,8 +10,8 @@ export default function Home() {
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [ticketAmount, setTicketAmount] = useState(0)
   const [isSelected, setIsSelected] = useState(false)
-  const [selectedPaymentType, setSelectedPaymentType] = useState("tier_cryptocurrency")
-  const [eventHasTickets, setEventHasTickets] = useState(false) //TODO: Verify ticket availability automatically
+  const [selectedPaymentType, setSelectedPaymentType] = useState("tier_fiat")
+  const [eventHasTickets, setEventHasTickets] = useState(true) //TODO: Verify ticket availability automatically
 
   const { event }: any = useEvent()
 
@@ -58,24 +58,6 @@ export default function Home() {
     }
     return []
   }
-
-
-
-
-  // Counter Component constants
-  const [counterValueFromCurrentRender, queueRerenderWithNewCounterValue] =
-    useState(0);
-
-  const handleAddOne = () => {
-    queueRerenderWithNewCounterValue(counterValueFromCurrentRender + 1);
-  };
-
-  const handleSubtractOne = () => {
-    if (counterValueFromCurrentRender > 0) {
-      queueRerenderWithNewCounterValue(counterValueFromCurrentRender - 1);
-    }
-  }
-
 
   // Payment Type Selector Component constants
 
@@ -314,7 +296,7 @@ export default function Home() {
                       </h6>
                       <p className='m-0 fs-base-n2'>{tier.capacity} available</p>
                     </div>
-                    <TicketCounter price={tier[selectedPaymentType]?.price} />
+                    <TicketCounter price={tier[selectedPaymentType].price} selectedTickets/>
                   </div>
                 </label>
               </div>

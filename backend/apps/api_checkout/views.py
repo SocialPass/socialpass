@@ -22,13 +22,20 @@ class EventView(GenericViewSet, RetrieveModelMixin):
     """
 
     queryset = Event.objects.all().order_by("-created")
-    serializer_class = serializers.EventSerializer
     lookup_field = "public_id"
     lookup_url_kwarg = "event_public_id"
 
     def get_serializer_class(self):
-        if self.action in ("ticket_tiers",):
-            return serializers.TicketTierSerializer
+        """
+        get serializer class
+        """
+        match self.action:
+            case "retrieve":
+                return serializers.EventSerializer
+            case "ticket_tiers":
+                return serializers.TicketTierSerializer
+            case _:
+                return serializers.EventSerializer
         return super().get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
@@ -54,24 +61,67 @@ class CheckoutItemView(
     DestroyModelMixin,
     RetrieveModelMixin,
 ):
-    """
-    Generic Viewset for the CheckoutItem API
-    Responsible for CRUD operations on this object
-    """
-
     queryset = CheckoutItem.objects.all().order_by("-created")
-    serializer_class = serializers.CheckoutItemReadSerializer
-    input_serializer = serializer_class
-    output_serializer = serializer_class
     lookup_field = "public_id"
     lookup_url_kwarg = "checkoutitem_public_id"
 
     def get_serializer_class(self):
-        if self.action in ("update",):
-            return serializers.CheckoutItemUpdateSerializer
-        elif self.action in ("create",):
-            return serializers.CheckoutItemCreateSerializer
+        """
+        get serializer class
+        """
+        match self.action:
+            case "create":
+                return serializers.CheckoutItemCreateSerializer
+            case "update":
+                return serializers.CheckoutItemUpdateSerializer
+            case _:
+                return serializers.CheckoutItemReadSerializer
         return super().get_serializer_class()
+
+    def create(self, request, *args, **kwargs):
+        """
+        creates a new item.
+        """
+        # get `ticket_tier` and `checkout_session` objects.
+        # if either one does not exist, returns 404
+        try:
+            ticket_tier = TicketTier.objects.get(public_id=request.data["ticket_tier"])
+            checkout_session = CheckoutSession.objects.get(
+                public_id=request.data["checkout_session"]
+            )
+        except (TicketTier.DoesNotExist, CheckoutSession.DoesNotExist):
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+                data={
+                    "code": "public-id-not-found",
+                    "message": "The ticket_tier or checkout_session does not exist.",
+                },
+            )
+
+        # update the request.data with tier and session ids
+        # validate request
+        request.data["ticket_tier"] = ticket_tier.pk
+        request.data["checkout_session"] = checkout_session.pk
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # perform create
+        # if quantity > quantity available, returns 409
+        try:
+            checkout_item = self.perform_create(serializer)
+        except TooManyTicketsRequestedError:
+            return Response(
+                status=status.HTTP_409_CONFLICT,
+                data={
+                    "code": "item-quantity-exceed",
+                    "message": "This Item quantity is not available.",
+                },
+            )
+
+        # return
+        headers = self.get_success_headers(serializer.data)
+        result = serializers.CheckoutItemReadSerializer(checkout_item)
+        return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -100,52 +150,3 @@ class CheckoutItemView(
         delete an item
         """
         return super().destroy(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        request_body=input_serializer,
-        responses={200: output_serializer},
-    )
-    def create(self, request, *args, **kwargs):
-        """
-        creates a new item.
-        the body contains `ticket_tier` and `checkout_session` public ids
-        steps:
-            1. get `ticket_tier` and `checkout_session` objects.
-                if either one does not exist, returns 404
-            2. update the request.data with tier and session ids
-            3. perform create
-                if quantity > quantity available, returns 409
-        """
-        try:
-            ticket_tier = TicketTier.objects.get(public_id=request.data["ticket_tier"])
-            checkout_session = CheckoutSession.objects.get(
-                public_id=request.data["checkout_session"]
-            )
-        except (TicketTier.DoesNotExist, CheckoutSession.DoesNotExist):
-            return Response(
-                status=status.HTTP_404_NOT_FOUND,
-                data={
-                    "code": "public-id-not-found",
-                    "message": "The ticket_tier or checkout_session does not exist.",
-                },
-            )
-
-        request.data["ticket_tier"] = ticket_tier.pk
-        request.data["checkout_session"] = checkout_session.pk
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        try:
-            checkout_item = self.perform_create(serializer)
-        except TooManyTicketsRequestedError:
-            return Response(
-                status=status.HTTP_409_CONFLICT,
-                data={
-                    "code": "item-quantity-exceed",
-                    "message": "This Item quantity is not available.",
-                },
-            )
-
-        headers = self.get_success_headers(serializer.data)
-        result = serializers.CheckoutItemReadSerializer(checkout_item)
-        return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)

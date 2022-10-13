@@ -39,7 +39,7 @@
                 </a>
             </li>
             <li class="tab-item">
-                <a href="#" class="tab-link px-5">
+                <a href="{% url 'dashboard:event_go_live' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_go_live' %}active{% endif %}">
                     <i class="fa-regular fa-circle-3 text-primary me-5"></i>
                     <strong>Go Live</strong>
                 </a>

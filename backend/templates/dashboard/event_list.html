@@ -117,7 +117,7 @@
 							<strong class="antialiased">Stats</strong>
 						</a>
 					{% else %}
-						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="#">
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_go_live' current_team.public_id event.pk %}">
 							<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
 							<strong class="antialiased">Go Live</strong>
 						</a>

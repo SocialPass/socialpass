@@ -67,6 +67,11 @@ urlpatterns = [
         name="event_update",
     ),
     path(
+        "events/go-live/<uuid:team_public_id>/<int:pk>/",
+        views.EventGoLiveView.as_view(),
+        name="event_go_live",
+    ),
+    path(
         "events/delete/<uuid:team_public_id>/<int:pk>/",
         views.EventDeleteView.as_view(),
         name="event_delete",

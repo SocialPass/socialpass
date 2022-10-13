@@ -413,6 +413,31 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
             return "Your changes have been saved"
 
 
+class EventGoLiveView(TeamContextMixin, DetailView):
+    """
+    Show controls to make a team's event go live
+    """
+
+    model = Event
+    template_name = "dashboard/event_go_live.html"
+
+    def get_object(self):
+        return Event.objects.get(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+
+    def post(self, *args, **kwargs):
+        event = self.get_object()
+        if event.state != "Live":
+            event.transition_live()
+            messages.add_message(
+                self.request, messages.SUCCESS, "Event has been made live!"
+            )
+        return redirect(
+            "dashboard:event_go_live", self.kwargs["team_public_id"], event.pk
+        )
+
+
 class EventDeleteView(TeamContextMixin, DeleteView):
     """
     Delete a team's event

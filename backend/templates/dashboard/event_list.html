@@ -69,7 +69,10 @@
 						<div class="position-absolute w-100 top-0 start-0 text-center fw-bold fs-base-n4 bg-gray-light-lm bg-darkgray-dim-dm d-flex align-items-center px-5 text-uppercase">
 							{% if event.has_ended %}
 								<i class="fa-solid fa-circle-small text-danger me-5"></i>
-								<span class="ms-auto">Ended</span>
+								{% if event.state != "Live" %}
+									<i class="fa-regular fa-pencil text-muted me-5"></i>
+								{% endif %}
+								<span class="ms-auto">End</span>
 							{% else %}
 								{% if event.state == "Live" %}
 									<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>

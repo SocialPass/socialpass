@@ -2,25 +2,69 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useEvent from '@/hooks/useEvent'
 import { EventApi } from '@/services/api'
+import TicketCounter from '@/components/TicketCounter'
 import './index.css'
 
 export default function Home() {
   const navigate = useNavigate()
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [ticketAmount, setTicketAmount] = useState(0)
+  const [isSelected, setIsSelected] = useState(false)
+  const [selectedPaymentType, setSelectedPaymentType] = useState("tier_cryptocurrency")
+  const [eventHasTickets, setEventHasTickets] = useState(false) //TODO: Verify ticket availability automatically
 
   const { event }: any = useEvent()
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId).then((res) => {
-      setTicketTiers(res.data)
+      setTicketTiers(res.data);
     })
   }
+
+  const getFiatTicketTiers = () => {
+    return ticketTiers.filter(ticket =>
+      "tier_fiat" in ticket
+    )
+  }
+
+  const getCryptocurrencyTicketTiers = () => {
+    return ticketTiers.map(ticket => {
+      if (ticket.tier_cryptocurrency) {
+        return ticket
+      }
+    })
+  }
+
+  const getAssetOwnershipTicketTiers = () => {
+    return ticketTiers.map(ticket => {
+      if (ticket.tier_asset_ownership) {
+        return ticket
+      }
+    })
+  }
+
+  const getPaymentTypeTicketTiers = () => {
+    if (selectedPaymentType == "tier_fiat") {
+      console.log("GetFiat: ", getFiatTicketTiers())
+      return getFiatTicketTiers()
+    }
+    if (selectedPaymentType == "tier_cryptocurrency") {
+      console.log("GetCrypto: ", getCryptocurrencyTicketTiers())
+      return getCryptocurrencyTicketTiers()
+    }
+    if (selectedPaymentType == "tier_asset_ownership") {
+      console.log("GetNFTs: ", getAssetOwnershipTicketTiers())
+      return getAssetOwnershipTicketTiers()
+    }
+    return []
+  }
+
+
 
 
   // Counter Component constants
   const [counterValueFromCurrentRender, queueRerenderWithNewCounterValue] =
-  useState(0);
+    useState(0);
 
   const handleAddOne = () => {
     queueRerenderWithNewCounterValue(counterValueFromCurrentRender + 1);
@@ -31,12 +75,6 @@ export default function Home() {
       queueRerenderWithNewCounterValue(counterValueFromCurrentRender - 1);
     }
   }
-
-
-  // Ticket Tier Selector Component constants
-  const [isSelected, setIsSelected] =
-      useState(false);
-
 
 
   // Payment Type Selector Component constants
@@ -61,6 +99,7 @@ export default function Home() {
   useEffect(() => {
     getTicketTiers(event.public_id)
   }, [event])
+
 
 
   return (
@@ -134,39 +173,54 @@ export default function Home() {
           </div>
         </div>
         {/* <!-- Event details end --> */}
-
         {/* <!-- Ticket status start --> */}
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
-            {/* <!-- { if tickets are available } --> */}
-            <div
-              className='alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
-              role='alert'
-            >
-              <i className='fa-regular fa-check me-15'></i>
-              <p className='m-0'>
-                Tickets available! Please select the payment type and tickets you want to purchase.
-              </p>
-            </div>
-            {/* <!-- { else show the following } --> */}
+            {/* <!-- { Checks if tickets are available and displays content accordingly} --> */}
+            {console.log("eventHasTickets: ", eventHasTickets)}
+            {eventHasTickets ?
+              <>
+                <div>
+                  <div
+                    className='alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+                    role='alert'
+                  >
+                    <i className='fa-regular fa-check me-15'></i>
+                    <p className='m-0'>
+                      Tickets available! Please select the payment type and tickets you want to purchase.
+                    </p>
+                  </div>
+                </div>
+              </>
+              :
+              <>
+                <div>
+                  <div className="alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
+                    <i className="fa-regular fa-times me-15"></i>
+                    <p className="m-0">
+                      Sorry! Tickets are not available for this event.
+                    </p>
+                  </div>
+                </div>
+              </>}
 
-            {/* <div className="alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
-										<i className="fa-regular fa-times me-15"></i>
-										<p className="m-0">
-											Sorry! Tickets are not available for this event.
-										</p>
-									</div> */}
           </div>
         </div>
         {/* <!-- Ticket status end --> */}
       </div>
       {/* <!-- Event content end --> */}
-
+      {eventHasTickets ? 
+      <>
       {/* <!-- Ticket tier payment types start --> */}
       <div className='content mb-0'>
         <div className='ticket-tier-group'>
           {/* <!-- Fiat start --> */}
-          <div className='ticket-tier'>
+          <div className={`${!isSelected ? 'ticket-tier' : ''
+            }`}
+            onClick={() => {
+              setIsSelected(true)
+            }}
+          >
             <input
               type='radio'
               className='ticket-tier-input'
@@ -187,45 +241,51 @@ export default function Home() {
             </label>
           </div>
           {/* <!-- Fiat end --> */}
-
           {/* <!-- Crypto start --> */}
           <div className='ticket-tier'>
             <input
               type='radio'
               className='ticket-tier-input'
               name='payment-type'
-              id='crypto'
+              id='fiat'
+              checked
             ></input>
-            <label htmlFor='crypto' className='ticket-tier-label'>
+            <label htmlFor='fiat' className='ticket-tier-label'>
               <h6 className='fw-700 m-0 fs-base'>
                 <span className='ticket-tier-uncheck'>
-                  <i className='fa-light fa-wallet'></i>
+                  <i className='fa-light fa-money-check-dollar-pen'></i>
                 </span>
                 <span className='ticket-tier-check'>
-                  <i className='fa-light fa-wallet'></i>
+                  <i className='fa-light fa-money-check-dollar-pen'></i>
                 </span>
                 Crypto
               </h6>
             </label>
           </div>
           {/* <!-- Crypto end --> */}
-
           {/* <!-- NFTs start --> */}
           <div className='ticket-tier'>
-            <input type='radio' className='ticket-tier-input' name='payment-type' id='nfts'></input>
-            <label htmlFor='nfts' className='ticket-tier-label'>
+            <input
+              type='radio'
+              className='ticket-tier-input'
+              name='payment-type'
+              id='fiat'
+              checked
+            ></input>
+            <label htmlFor='fiat' className='ticket-tier-label'>
               <h6 className='fw-700 m-0 fs-base'>
                 <span className='ticket-tier-uncheck'>
-                  <i className='fa-light fa-hexagon-image'></i>
+                  <i className='fa-light fa-money-check-dollar-pen'></i>
                 </span>
                 <span className='ticket-tier-check'>
-                  <i className='fa-light fa-hexagon-image'></i>
+                  <i className='fa-light fa-money-check-dollar-pen'></i>
                 </span>
                 NFTs
               </h6>
             </label>
           </div>
           {/* <!-- NFTs end --> */}
+
         </div>
       </div>
       {/* <!-- Ticket tier payment types end --> */}
@@ -237,7 +297,7 @@ export default function Home() {
           <div className='content me-md-0'>
             {/* <!-- Ticket tier start --> */}
 
-            {ticketTiers.map((tier, index) => (
+            {getPaymentTypeTicketTiers().map((tier, index) => (
               <div className='ticket-tier mb-20' key={`ticket-tier-index-${index}`}>
                 <input type='checkbox' className='ticket-tier-input' id='c1' checked></input>
                 <label htmlFor='c1' className='ticket-tier-label'>
@@ -254,38 +314,7 @@ export default function Home() {
                       </h6>
                       <p className='m-0 fs-base-n2'>{tier.capacity} available</p>
                     </div>
-                    <div className='ticket-tier-controls ms-auto mt-10 mt-sm-0'>
-                      <div className='input-group input-group-sm input-group-pill ws-100 mx-auto'>
-                        <button
-                          className='btn ws-25 px-0'
-                          onClick={() => {
-														setTicketAmount(ticketAmount - 1);
-                          }}
-                        >
-                          -
-                        </button>
-                        <input
-                          type='number'
-                          min='1'
-                          max='10'
-                          step='1'
-                          className='form-control form-number text-center'
-													value={ticketAmount}
-                        ></input>
-                        <button
-                          className='btn ws-25 px-0'
-                          onClick={() => {
-														setTicketAmount(ticketAmount + 1);
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                      <div className='text-center fs-base-n2 mt-5'>
-                        <strong>Price &times; 1</strong>
-                        &mdash; $ {tier.price}
-                      </div>
-                    </div>
+                    <TicketCounter price={tier[selectedPaymentType]?.price} />
                   </div>
                 </label>
               </div>
@@ -294,7 +323,6 @@ export default function Home() {
           </div>
           {/* <!-- Ticket tiers end --> */}
         </div>
-
         {/* <!-- CTA section start --> */}
         <div className='col-md-5'>
           <div className='px-content pt-md-30 position-md-sticky top-0 start-0'>
@@ -332,6 +360,11 @@ export default function Home() {
         </div>
         {/* <!-- CTA section end --> */}
       </div>
+      </> 
+      : 
+      <>
+        <div className='py-20'></div>
+      </>}
       {/* <!-- Ticket tiers and CTA end --> */}
     </>
   )

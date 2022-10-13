@@ -58,13 +58,25 @@
 							<p>
 								Your event is currently a draft. You can make it go live by clicking on the following button.
 							</p>
-							<form method="post">
-								{% csrf_token %}
-								<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased">
-									<i class="fa-solid fa-circle-small fa-beat-fade me-5"></i>
-									Go Live!
-								</button>
-							</form>
+							{% if event.ticket_tiers.count < 1 %}
+								<div>
+									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased" disabled="disabled">
+										<i class="fa-solid fa-circle-small me-5"></i>
+										Go Live!
+									</button>
+								</div>
+								<div class="alert alert-primary mb-0" role="alert">
+									Before going live, your event must have at least one ticket tier. Go to <a href="#" class="alert-link">tickets</a> to create one now.
+								</div>
+							{% else %}
+								<form method="post">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased">
+										<i class="fa-solid fa-circle-small fa-beat-fade me-5"></i>
+										Go Live!
+									</button>
+								</form>
+							{% endif %}
 						{% endif %}
 					{% endif %}
 				</div>

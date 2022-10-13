@@ -79,8 +79,6 @@ class EventSerializer(serializers.ModelSerializer):
             "capacity",
             "ticket_count",
             "cover_image",
-            "show_ticket_count",
-            "show_team_image",
         ]
 
     def get_ticket_count(self, obj):

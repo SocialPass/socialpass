@@ -1,5 +1,5 @@
 import uuid
-from datetime import timedelta
+from datetime import timedelta, date
 from typing import Optional
 
 from allauth.account.adapter import DefaultAccountAdapter
@@ -419,6 +419,14 @@ class Event(DBModel):
     @property
     def capacity(self):
         return self.ticket_tiers.aggregate(Sum("capacity"))["capacity__sum"]
+
+    @property
+    def has_ended(self):
+        if self.end_date:
+            return date.today() > self.end_date.date()
+        else:
+            return False
+    
 
     @staticmethod
     def required_form_fields():

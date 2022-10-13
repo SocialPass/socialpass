@@ -61,14 +61,13 @@
 		</div>
 		<!-- Event list header end -->
 		{% for event in events %}
-			{% now "Y-m-d" as todays_date %}
 			<!-- Event item start -->
 			<div class="d-sm-flex align-items-center px-content py-10 {% if not forloop.last %}border-bottom{% endif %}">
 				<!-- Status indicator start -->
 				<div class="ws-sm-100 me-sm-20 flex-shrink-0">
 					<div class="ws-75 hs-75 rounded-2 overflow-hidden d-flex flex-column align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm position-relative pt-20 mx-auto mx-sm-0">
 						<div class="position-absolute w-100 top-0 start-0 text-center fw-bold fs-base-n4 bg-gray-light-lm bg-darkgray-dim-dm d-flex align-items-center px-5 text-uppercase">
-							{% if todays_date > event.end_date|date:"Y-m-d" %}
+							{% if event.has_ended %}
 								<i class="fa-solid fa-circle-small text-danger me-5"></i>
 								<span class="ms-auto">Ended</span>
 							{% else %}
@@ -109,7 +108,7 @@
 						<i class="fa-solid fa-edit me-5"></i>
 						Edit
 					</a>
-					{% if todays_date > event.end_date|date:"Y-m-d" or event.state == "Live" %}
+					{% if event.has_ended or event.state == "Live" %}
 						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}">
 							<i class="fa-regular fa-sack-dollar me-5"></i>
 							<strong class="antialiased">Stats</strong>

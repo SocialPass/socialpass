@@ -58,7 +58,7 @@
 							<p>
 								Your event is currently a draft. You can make it go live by clicking on the following button.
 							</p>
-							{% if event.ticket_tiers.count < 1 %}
+							{% if event.tickettier_set.count < 1 %}
 								<div>
 									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased" disabled="disabled">
 										<i class="fa-solid fa-circle-small me-5"></i>

@@ -422,7 +422,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
     template_name = "dashboard/event_go_live.html"
 
     def get_object(self):
-        return Event.objects.prefetch_related('ticket_tiers').get(
+        return Event.objects.prefetch_related("tickettier_set").get(
             pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
         )
 

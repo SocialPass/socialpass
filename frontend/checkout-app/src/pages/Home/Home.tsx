@@ -10,7 +10,7 @@ export default function Home() {
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [ticketAmount, setTicketAmount] = useState(0)
   const [isSelected, setIsSelected] = useState(false)
-  const [selectedPaymentType, setSelectedPaymentType] = useState("tier_fiat")
+  const [selectedPaymentType, setSelectedPaymentType] = useState("")
   const [eventHasTickets, setEventHasTickets] = useState(true) //TODO: Verify ticket availability automatically
 
   const { event }: any = useEvent()
@@ -201,8 +201,10 @@ export default function Home() {
             }`}
             onClick={() => {
               setIsSelected(true)
+              setSelectedPaymentType("tier_fiat")
             }}
           >
+            {console.log("selectedPaymentType: ", selectedPaymentType)}
             <input
               type='radio'
               className='ticket-tier-input'
@@ -224,7 +226,14 @@ export default function Home() {
           </div>
           {/* <!-- Fiat end --> */}
           {/* <!-- Crypto start --> */}
-          <div className='ticket-tier'>
+          <div className={`${!isSelected ? 'ticket-tier' : ''
+            }`}
+            onClick={() => {
+              setIsSelected(true)
+              setSelectedPaymentType("tier_cryptocurrency")
+            }}
+          >
+            {console.log("selectedPaymentType: ", selectedPaymentType)}
             <input
               type='radio'
               className='ticket-tier-input'
@@ -246,7 +255,15 @@ export default function Home() {
           </div>
           {/* <!-- Crypto end --> */}
           {/* <!-- NFTs start --> */}
-          <div className='ticket-tier'>
+          <div className={`${!isSelected ? 'ticket-tier' : 'ticket-tier'
+            }`}
+            onClick={() => {
+              setIsSelected(true)
+              setSelectedPaymentType("tier_asset_ownership")
+            }}
+          >
+          {console.log("selectedPaymentType: ", selectedPaymentType)}
+
             <input
               type='radio'
               className='ticket-tier-input'

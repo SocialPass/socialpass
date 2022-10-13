@@ -80,7 +80,6 @@ export default {
             price: '2',
             capacity: 11,
             max_per_person: 'max_per_person',
-           
             tier_cryptocurrency:{
               id:'1',
               price:'1',
@@ -119,15 +118,15 @@ export default {
             max_per_person: 'max_per_person',
             tier_fiat:{
               id:'1',
-              price:'1',
+              price:'3',
             },
             tier_cryptocurrency:{
-              id:'1',
-              price:'1',
+              id:'2',
+              price:'4',
             },
             tier_asset_ownership:{
-              id:'1',
-              price:'1',
+              id:'3',
+              price:'5',
             },
           },
         ],

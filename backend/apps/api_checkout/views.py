@@ -67,7 +67,7 @@ class CheckoutItemView(
             return serializers.CheckoutItemCreateSerializer
         return super().get_serializer_class()
 
-    def perform_create(self, serializer) -> None:
+    def perform_create(self, serializer):
         """
         performs create and return the object created
         """

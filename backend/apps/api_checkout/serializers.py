@@ -3,14 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import (
-    CheckoutItem,
-    Event,
-    Team,
-    Ticket,
-    TicketTier,
-    TicketTierPaymentType,
-)
+from apps.root.models import CheckoutItem, Event, Team, Ticket, TicketTier
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -86,27 +79,11 @@ class EventSerializer(serializers.ModelSerializer):
         return Ticket.objects.filter(checkout_item__ticket_tier__event=obj).count()
 
 
-class PaymentTypeSerializer(serializers.ModelSerializer):
-    """
-    Ticket Tier Payment Type serializer
-    """
-
-    class Meta:
-        model = TicketTierPaymentType
-        fields = [
-            "created",
-            "modified",
-            "public_id",
-            "payment_type",
-        ]
-
-
 class TicketTierSerializer(serializers.ModelSerializer):
     """
     TicketTier model serializer
     """
 
-    payment_types = PaymentTypeSerializer(many=True, allow_empty=True, allow_null=True)
     event_public_id = serializers.UUIDField(source="event.public_id")
 
     class Meta:
@@ -120,7 +97,9 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "price",
             "capacity",
             "max_per_person",
-            "payment_types",
+            "tier_fiat",
+            "tier_blockchain",
+            "tier_asset_ownership",
         ]
 
 

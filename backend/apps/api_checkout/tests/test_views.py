@@ -105,7 +105,6 @@ class GetEventTestCase(TestCaseWrapper):
         self.assertEqual(
             ticket_tier_dict["max_per_person"], self.ticket_tier.max_per_person
         )
-        self.assertEqual(ticket_tier_dict["payment_types"], None)
 
     @prevent_warnings
     def test_not_implemented_methods(self):

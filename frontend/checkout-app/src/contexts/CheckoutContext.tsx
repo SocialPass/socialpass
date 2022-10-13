@@ -14,7 +14,6 @@ export const CheckoutProvider = ({ children }: any) => {
   const [isLoadingCheckoutItems, setIsLoadingCheckoutItems] = useState<boolean>(false)
   const [checkout, setCheckout] = useState<Checkout | null>(null)
   const [checkoutItems, setCheckoutItems] = useState([])
-  const [paymentType, setPaymentType] = useState(null)
   const [error, setError] = useState<CheckoutError | null>(null)
 
   const getCheckout = (checkoutPublicId: string) =>
@@ -36,7 +35,7 @@ export const CheckoutProvider = ({ children }: any) => {
         })
     })
 
-    const getCheckoutItems = (checkoutPublicId: string) =>
+  const getCheckoutItems = (checkoutPublicId: string) =>
     new Promise((resolve, reject) => {
       setIsLoadingCheckoutItems(true)
       setError(null)
@@ -84,13 +83,12 @@ export const CheckoutProvider = ({ children }: any) => {
       value={{
         checkout,
         checkoutItems,
-        paymentType,
         getCheckout,
         getCheckoutItems,
-        setPaymentType,
         setCheckoutItems,
         saveCheckout,
         isLoading,
+        isLoadingCheckoutItems,
         error,
       }}
     >

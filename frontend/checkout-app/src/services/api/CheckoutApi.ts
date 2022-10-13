@@ -14,6 +14,7 @@ export default {
           email: 'test@test.com',
           cost: 100,
           status: 'paid',
+          tx_type: 'tier_fiat',
         },
       })
     })
@@ -52,7 +53,18 @@ export default {
             ticket_tier: {
               public_id: 1,
               ticket_type: 'General Admission',
-              price: 10000,
+              tier_fiat: {
+                id: 1,
+                price: 1,
+              },
+              tier_cryptocurrency: {
+                id: 1,
+                price: 1,
+              },
+              tier_asset_ownership: {
+                id: 1,
+                price: 1,
+              },
             },
             quantity: 1,
           },
@@ -63,7 +75,18 @@ export default {
             ticket_tier: {
               public_id: 2,
               ticket_type: 'General Admission 2',
-              price: 200,
+              tier_fiat: {
+                id: 1,
+                price: 1,
+              },
+              tier_cryptocurrency: {
+                id: 1,
+                price: 1,
+              },
+              tier_asset_ownership: {
+                id: 1,
+                price: 1,
+              },
             },
             quantity: 2,
           },

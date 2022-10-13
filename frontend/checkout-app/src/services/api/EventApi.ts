@@ -5,6 +5,7 @@ export default {
     return new Promise((resolve) => {
       resolve({
         data: {
+          public_id: '123456789',
           team: {
             name: 'main team',
             image: null,
@@ -58,35 +59,17 @@ export default {
             price: '10000',
             capacity: 10,
             max_per_person: '2',
-            tier_fiat:{
-              id:'1',
-              price:'1',
+            tier_fiat: {
+              id: '1',
+              price: '1',
             },
-            tier_cryptocurrency:{
-              id:'1',
-              price:'1',
+            tier_cryptocurrency: {
+              id: '1',
+              price: '1',
             },
-            tier_asset_ownership:{
-              id:'1',
-              price:'1',
-            },
-          },
-          {
-            created: '2017-03-31 9:30:20',
-            modified: '2017-03-31 9:30:20',
-            public_id: '1',
-            event_id: '3f22a1db-7bf0-4444-a13b-25347c174df7',
-            ticket_type: 'Deluxe Admission',
-            price: '2',
-            capacity: 11,
-            max_per_person: 'max_per_person',
-            tier_cryptocurrency:{
-              id:'1',
-              price:'1',
-            },
-            tier_asset_ownership:{
-              id:'1',
-              price:'1',
+            tier_asset_ownership: {
+              id: '1',
+              price: '1',
             },
           },
           {
@@ -98,13 +81,31 @@ export default {
             price: '2',
             capacity: 11,
             max_per_person: 'max_per_person',
-            tier_cryptocurrency:{
-              id:'1',
-              price:'1',
+            tier_cryptocurrency: {
+              id: '1',
+              price: '1',
             },
-            tier_asset_ownership:{
-              id:'1',
-              price:'1',
+            tier_asset_ownership: {
+              id: '1',
+              price: '1',
+            },
+          },
+          {
+            created: '2017-03-31 9:30:20',
+            modified: '2017-03-31 9:30:20',
+            public_id: '1',
+            event_id: '3f22a1db-7bf0-4444-a13b-25347c174df7',
+            ticket_type: 'Deluxe Admission',
+            price: '2',
+            capacity: 11,
+            max_per_person: 'max_per_person',
+            tier_cryptocurrency: {
+              id: '1',
+              price: '1',
+            },
+            tier_asset_ownership: {
+              id: '1',
+              price: '1',
             },
           },
           {
@@ -116,17 +117,17 @@ export default {
             price: '3',
             capacity: 14,
             max_per_person: 'max_per_person',
-            tier_fiat:{
-              id:'1',
-              price:'3',
+            tier_fiat: {
+              id: '1',
+              price: '3',
             },
-            tier_cryptocurrency:{
-              id:'2',
-              price:'4',
+            tier_cryptocurrency: {
+              id: '2',
+              price: '4',
             },
-            tier_asset_ownership:{
-              id:'3',
-              price:'5',
+            tier_asset_ownership: {
+              id: '3',
+              price: '5',
             },
           },
         ],

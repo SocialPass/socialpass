@@ -21,6 +21,7 @@ class EventView(GenericViewSet, RetrieveModelMixin):
     queryset = Event.objects.all().order_by("-created")
     serializer_class = serializers.EventSerializer
     lookup_field = "public_id"
+    lookup_url_kwarg = "event_public_id"
 
     def get_serializer_class(self):
         if self.action in ("ticket_tiers",):
@@ -59,6 +60,7 @@ class CheckoutItemView(
     input_serializer = serializer_class
     output_serializer = serializer_class
     lookup_field = "public_id"
+    lookup_url_kwarg = "checkoutitem_public_id"
 
     def get_serializer_class(self):
         if self.action in ("update",):

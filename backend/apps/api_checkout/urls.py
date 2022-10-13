@@ -5,12 +5,12 @@ from . import views
 app_name = "api_checkout"
 urlpatterns = [
     path(
-        "event/<uuid:public_id>/",
+        "event/<uuid:event_public_id>/",
         views.EventView.as_view({"get": "retrieve"}),
         name="event_retrieve",
     ),
     path(
-        "event/<uuid:public_id>/ticket_tiers/",
+        "event/<uuid:event_public_id>/ticket_tiers/",
         views.EventView.as_view({"get": "ticket_tiers"}),
         name="event_ticket_tiers",
     ),
@@ -20,7 +20,7 @@ urlpatterns = [
         name="item_create",
     ),
     path(
-        "item/<uuid:public_id>/",
+        "item/<uuid:checkoutitem_public_id>/",
         views.CheckoutItemView.as_view(
             {"get": "retrieve", "put": "update", "delete": "destroy"}
         ),

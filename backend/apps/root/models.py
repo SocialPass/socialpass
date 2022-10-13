@@ -698,10 +698,15 @@ class CheckoutSession(DBModel):
     This model holds the relations to cart items for checkout purposes
     """
 
-    class CheckoutSessionStatus(models.TextChoices):
+    class OrderStatus(models.TextChoices):
         VALID = "VALID", _("Valid")
         EXPIRED = "EXPIRED", _("Expired")
         COMPLETED = "COMPLETED", _("Completed")
+
+    class TransactionType(models.TextChoices):
+        FIAT = "FIAT", _("Fiat")
+        BLOCKCHAIN = "BLOCKCHAIN", _("Blockchain")
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
 
     # keys
     event = models.ForeignKey(
@@ -730,6 +735,12 @@ class CheckoutSession(DBModel):
     )
 
     # basic info
+    tx_type = models.CharField(
+        max_length=50,
+        choices=TransactionType.choices,
+        default=TransactionType.FIAT,
+        blank=False,
+    )
     expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
@@ -741,8 +752,8 @@ class CheckoutSession(DBModel):
     )
     status = models.CharField(
         max_length=50,
-        choices=CheckoutSessionStatus.choices,
-        default=CheckoutSessionStatus.VALID,
+        choices=OrderStatus.choices,
+        default=OrderStatus.VALID,
         blank=False,
     )
 

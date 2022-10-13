@@ -11,7 +11,7 @@ export default function Home() {
   const [ticketAmount, setTicketAmount] = useState(0)
   const [isSelected, setIsSelected] = useState(false)
   const [selectedPaymentType, setSelectedPaymentType] = useState("tier_cryptocurrency")
-  const [eventHasTickets, setEventHasTickets] = useState(true)
+  const [eventHasTickets, setEventHasTickets] = useState(false) //TODO: Verify ticket availability automatically
 
   const { event }: any = useEvent()
 
@@ -209,6 +209,8 @@ export default function Home() {
         {/* <!-- Ticket status end --> */}
       </div>
       {/* <!-- Event content end --> */}
+      {eventHasTickets ? 
+      <>
       {/* <!-- Ticket tier payment types start --> */}
       <div className='content mb-0'>
         <div className='ticket-tier-group'>
@@ -319,9 +321,6 @@ export default function Home() {
             ))}
             {/* <!-- Ticket tier end --> */}
           </div>
-          {ticketTiers.map((tier, index) => console.log(ticketTiers[index]))}
-
-
           {/* <!-- Ticket tiers end --> */}
         </div>
         {/* <!-- CTA section start --> */}
@@ -361,6 +360,11 @@ export default function Home() {
         </div>
         {/* <!-- CTA section end --> */}
       </div>
+      </> 
+      : 
+      <>
+        <div className='py-20'></div>
+      </>}
       {/* <!-- Ticket tiers and CTA end --> */}
     </>
   )

@@ -131,7 +131,6 @@
       Use these links to get started hosting your event
       </p>
 
-      {% if event.visibility == 'PUBLIC' %}
       <div>
         <h6>Event Page</h6>
         <p>Share with your potential attendees</p>
@@ -161,7 +160,7 @@
 
       <hr>
 
-      {% with scanner_url=event.ticket_redemption_keys.first.scanner_url %}
+      {% with scanner_url=event.ticket_redemption_key_set.first.scanner_url %}
       <div>
         <h6>Ticket Scanner</h6>
         <p>Link to scan the tickets for this event at the entrance</p>

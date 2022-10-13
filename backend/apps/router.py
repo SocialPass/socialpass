@@ -28,6 +28,7 @@ urlpatterns = [
 # DRF API URLs
 urlpatterns += [
     path("api/scanner/v1/", include("apps.api_scanner.urls")),
+    path("api/checkout/v1/", include("apps.api_checkout.urls")),
 ]
 
 # SITEMAPS URLs

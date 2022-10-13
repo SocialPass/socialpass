@@ -28,7 +28,7 @@ class EventDiscoveryBrowse(ListView):
 
     def get_queryset(self):
         # Get public, published event queryset
-        qs = super().get_queryset().filter_publicly_accessible()
+        qs = super().get_queryset().filter_active()
 
         # Filter by available querystings
         query_title = self.request.GET.get("title", "")
@@ -46,7 +46,7 @@ class EventDiscoveryDetails(DetailView):
     template_name = "event_discovery/event_details.html"
 
     def get_queryset(self):
-        qs = super().get_queryset().filter_publicly_accessible()
+        qs = super().get_queryset().filter_active()
         return qs.filter(public_id=self.kwargs["event_public_id"])
 
     def get_context_data(self, **kwargs):

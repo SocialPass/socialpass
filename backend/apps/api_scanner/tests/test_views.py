@@ -25,7 +25,7 @@ from apps.root.models import (
     TicketRedemptionKey,
     TicketTier,
 )
-from apps.root.utilities.main import prevent_warnings
+from apps.root.utilities.misc import prevent_warnings
 
 
 class TestCaseWrapper(TestCase):
@@ -57,7 +57,9 @@ class TestCaseWrapper(TestCase):
         cls.checkout_item = CheckoutItemFactory(
             ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
         )
-        cls.ticket = TicketFactory(checkout_item=cls.checkout_item)
+        cls.ticket = TicketFactory(
+            checkout_item=cls.checkout_item, event=cls.event, ticket_tier=cls.ticket_tier
+        )
         cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
         cls.url_base = "/api/scanner/v1/"
         cls.access_key = cls.ticket_redemption_key.public_id
@@ -68,7 +70,11 @@ class TestCaseWrapper(TestCase):
         cls.__checkout_item = CheckoutItemFactory(
             ticket_tier=cls.__ticket_tier, checkout_session=cls.__checkout_session
         )
-        cls.ticket__ = TicketFactory(checkout_item=cls.__checkout_item)
+        cls.ticket__ = TicketFactory(
+            checkout_item=cls.__checkout_item,
+            event=cls.__event,
+            ticket_tier=cls.__ticket_tier,
+        )
         return super().setUpTestData()
 
 

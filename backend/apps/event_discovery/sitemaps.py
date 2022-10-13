@@ -28,7 +28,7 @@ class EventDetailSiteMap(sitemaps.Sitemap):
 
     def items(self):
         queryset = (
-            Event.objects.filter_publicly_accessible()
+            Event.objects.filter_active()
             .order_by("-created")
             .values("public_id")[: self.limit]
         )  # noqa: E203

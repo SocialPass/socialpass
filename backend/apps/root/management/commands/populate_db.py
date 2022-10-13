@@ -69,7 +69,7 @@ class Command(BaseCommand):
         try:
             MembershipFactory(user=user, team=team)
         except Exception as e:  # noqa
-            self.stdout.write("SKIPPING MEMBERSGIP CREATION")
+            self.stdout.write("SKIPPING MEMBERSHIP CREATION")
 
         for _ in range(num_events):
             # create events, tier, checkout session and item
@@ -82,7 +82,9 @@ class Command(BaseCommand):
 
             # create Tickets and TicketRedemptionKeys
             for _ in range(num_tickets):
-                TicketFactory(checkout_item=checkout_item)
+                TicketFactory(
+                    checkout_item=checkout_item, ticket_tier=ticket_tier, event=event
+                )
                 TicketRedemptionKeyFactory(event=event)
 
         self.stdout.write(
@@ -112,7 +114,7 @@ class Command(BaseCommand):
         team: Optional[Team]
 
         if default:
-            user_qs = User.objects.filter(username="Dummy User")
+            user_qs = User.objects.filter(username="dummy_user")
             if not user_qs.exists():
                 user = UserFactory(username="dummy_user", email="user@dummy.com")
                 team = TeamFactory(name="Default Team")

@@ -1,5 +1,5 @@
 import uuid
-from datetime import timedelta, date
+from datetime import date, timedelta
 from typing import Optional
 
 from allauth.account.adapter import DefaultAccountAdapter
@@ -14,6 +14,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
+from model_utils.models import TimeStampedModel
 from taggit.managers import TaggableManager
 
 from apps.root.exceptions import (
@@ -21,20 +22,35 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
 )
-from apps.root.model_wrappers import DBModel
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from config.storages import get_private_ticket_storage
 
 
+class DBModel(TimeStampedModel):
+    """
+    Abstract base model that provides useful fields such as timestamps, UUID's, and more.
+    This field is inherited by every model
+    """
+
+    public_id = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True
+    )
+
+    class Meta:
+        abstract = True
+
+
 class User(AbstractUser):
     """
-    Default custom user model for backend.
+    Django User model inherited from AbstractUser
+    Currently blank but allows for easier migration in the future
     """
 
 
 class Team(DBModel):
     """
-    Umbrella team model for SocialPass customers
+    Represents the 'umbrella' model for event organization
+    Each user belongs to one or more teams, and each event belongs to a single team.
     """
 
     # keys
@@ -57,7 +73,8 @@ class Team(DBModel):
 
 class Membership(DBModel):
     """
-    Membership manager for users <> teams
+    Represents the relationship between a `Team` and a `User`.
+    This model also allows a `User` having multiple `Team`
     """
 
     class Meta:
@@ -75,7 +92,8 @@ class Membership(DBModel):
 
 class Invite(DBModel):
     """
-    Invite model used for team invitations
+    Represents an invite to join a respective team.
+    This invite can be sent to an existing user, or a new user.
     """
 
     class InviteQuerySet(models.QuerySet):
@@ -187,7 +205,8 @@ class Invite(DBModel):
 
 class Event(DBModel):
     """
-    Stores data for ticketed event
+    Represents an event on SocialPass
+    This event supports multiple states as well as multiple ticker tiers.
     """
 
     class EventQuerySet(models.QuerySet):
@@ -207,26 +226,15 @@ class Event(DBModel):
             """
             return self.filter(state=Event.StateStatus.LIVE)
 
-        def filter_publicly_accessible(self):
-            """
-            public events (filter_active ++ visibility==PUBLIC)
-            In the future, should also check for published_date
-            """
-            return self.filter(visibility="PUBLIC").filter_active()
-
         def filter_featured(self):
             """
-            public, featured events (filter_publicly_accessible ++ featured=True)
+            public, featured events (filter_active ++ featured=True)
             """
-            return self.filter(is_featured=True).filter_publicly_accessible()
+            return self.filter(is_featured=True).filter_active()
 
     class StateStatus(models.TextChoices):
         DRAFT = "Draft"
         LIVE = "Live"
-
-    class VisibilityStatus(models.TextChoices):
-        PUBLIC = "PUBLIC", _("Public")
-        PRIVATE = "PRIVATE", _("Private")
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
@@ -247,31 +255,6 @@ class Event(DBModel):
 
     # Publish info
     is_featured = models.BooleanField(default=False, blank=False, null=False)
-    publication_date = models.DateTimeField(
-        default=timezone.now,
-        help_text="When your event will be made public.",
-        blank=True,
-        null=True,
-    )
-    visibility = models.CharField(
-        max_length=50,
-        choices=VisibilityStatus.choices,
-        default=VisibilityStatus.PUBLIC,
-        help_text="Whether or not your event is searchable by the public.",
-        blank=False,
-    )
-    show_ticket_count = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays ticket statistics.",
-        blank=False,
-        null=False,
-    )
-    show_team_image = models.BooleanField(
-        default=True,
-        help_text="Whether or not your event displays the team image.",
-        blank=False,
-        null=False,
-    )
 
     # Basic Info
     title = models.CharField(
@@ -418,7 +401,7 @@ class Event(DBModel):
 
     @property
     def capacity(self):
-        return self.ticket_tiers.aggregate(Sum("capacity"))["capacity__sum"]
+        return self.tickettier_set.all().aggregate(Sum("capacity"))["capacity__sum"]
 
     @property
     def has_ended(self):
@@ -426,7 +409,6 @@ class Event(DBModel):
             return date.today() > self.end_date.date()
         else:
             return False
-    
 
     @staticmethod
     def required_form_fields():
@@ -434,7 +416,6 @@ class Event(DBModel):
             "title",
             "organizer",
             "description",
-            "visibility",
             "start_date",
             "timezone",
         ]
@@ -443,11 +424,8 @@ class Event(DBModel):
     @staticmethod
     def optional_form_fields():
         fields = [
-            "show_ticket_count",
-            "show_team_image",
             "cover_image",
             "end_date",
-            "publication_date",
             "initial_place",
             "address_1",
             "address_2",
@@ -462,44 +440,34 @@ class Event(DBModel):
         return fields
 
 
-class TicketRedemptionKey(DBModel):
+class Ticket(DBModel):
     """
-    Stores authentication details used by ticket scanners
+    Represents a ticket to an event
+    This model supports multiple forms of tickets (PDF, Apple, Google)
     """
-
-    class Meta:
-        unique_together = (
-            "event",
-            "name",
-        )
 
     # Keys
     event = models.ForeignKey(
-        Event,
+        "Event",
         on_delete=models.CASCADE,
-        related_name="ticket_redemption_keys",
         blank=False,
         null=False,
     )
-
-    # Basic info
-    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
-
-    @property
-    def scanner_url(self):
-        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
-
-
-class Ticket(DBModel):
-    """
-    List of all the tickets distributed by the respective Ticketed Event.
-    """
-
-    # Keys
+    ticket_tier = models.ForeignKey(
+        "TicketTier",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
     checkout_item = models.ForeignKey(
         "CheckoutItem",
         on_delete=models.CASCADE,
-        related_name="tickets",
+        blank=False,
+        null=False,
+    )
+    checkout_session = models.ForeignKey(
+        "CheckoutSession",
+        on_delete=models.CASCADE,
         blank=False,
         null=False,
     )
@@ -524,15 +492,17 @@ class Ticket(DBModel):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
     def access_key_can_redeem_ticket(
-        self, redemption_access_key: Optional[TicketRedemptionKey] = None
+        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
     ) -> bool:
         """Returns a boolean indicating if the access key can reedem the given ticket."""
         if redemption_access_key is None:
             return True
 
-        return self.checkout_item.ticket_tier.event.id == redemption_access_key.event.id
+        return self.event.id == redemption_access_key.event.id
 
-    def redeem_ticket(self, redemption_access_key: Optional[TicketRedemptionKey] = None):
+    def redeem_ticket(
+        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
+    ):
         """Redeems a ticket."""
         if self.redeemed:
             raise AlreadyRedeemed("Ticket is already redeemed.")
@@ -602,16 +572,44 @@ class Ticket(DBModel):
         return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
 
 
+class TicketRedemptionKey(DBModel):
+    """
+    Represents a unique ID for ticket scanning purposes
+    This model allows for multiple scanner ID's to be issued, as well as ID revocation
+    """
+
+    class Meta:
+        unique_together = (
+            "event",
+            "name",
+        )
+
+    # Keys
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+
+    # Basic info
+    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
+
+    @property
+    def scanner_url(self):
+        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
+
+
 class TicketTier(DBModel):
     """
-    Stores the tiers for events
+    Represents a ticker tier for a respective ticket.
+    This tier contains details for a ticket, ++ pricing and payment method information.
     """
 
     # keys
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
-        related_name="ticket_tiers",
         blank=False,
         null=False,
     )
@@ -648,64 +646,108 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
+    tier_fiat = models.ForeignKey(
+        "TierFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_blockchain = models.ForeignKey(
+        "TierBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_asset_ownership = models.ForeignKey(
+        "TierAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
 
 
-class TicketTierPaymentType(DBModel):
+class TierFiat(DBModel):
     """
-    Payment Type for Ticket Tiers
+    Represents a fiat-based tier for an event ticket
+    Holds payment processing fields specific to a fiat payment
     """
 
-    class PaymentType(models.TextChoices):
-        FREE = "FREE", _("Free")
-        FIAT = "FIAT", _("Fiat")
-        CRYPTO = "CRYPTO", _("Crypto")
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
+    def __str__(self) -> str:
+        return f"TierFiat {self.public_id}"
 
-    # keys
-    ticket_tier = models.ForeignKey(
-        TicketTier,
-        on_delete=models.CASCADE,
-        related_name="tier_payment_types",
-        blank=False,
-        null=False,
-    )
 
-    # basic info
-    payment_type = models.CharField(
-        max_length=50,
-        choices=PaymentType.choices,
-        default=PaymentType.FREE,
-        help_text="The payment method",
-        blank=False,
-    )
+class TierBlockchain(DBModel):
+    """
+    Represents a blockchain-based tier for an event ticket
+    Holds payment processing fields specific to a blockchain payment
+    """
 
-    def __str__(self):
-        return f"TicketTierPaymentType {self.payment_type}-{self.public_id}"
+    def __str__(self) -> str:
+        return f"TierBlockchain {self.public_id}"
+
+
+class TierAssetOwnership(DBModel):
+    """
+    Represents a asset ownership based tier for an event ticket
+    Holds details specific to an asset ownership verification
+    """
+
+    def __str__(self) -> str:
+        return f"TierAssetOwnership {self.public_id}"
 
 
 class CheckoutSession(DBModel):
     """
-    Stores checkout sessions for events
+    Represents a time-limited checkout session (aka 'cart') for an event organizer
+    This model holds the relations to cart items for checkout purposes
     """
 
-    class CheckoutSessionStatus(models.TextChoices):
+    class OrderStatus(models.TextChoices):
         VALID = "VALID", _("Valid")
         EXPIRED = "EXPIRED", _("Expired")
         COMPLETED = "COMPLETED", _("Completed")
+
+    class TransactionType(models.TextChoices):
+        FIAT = "FIAT", _("Fiat")
+        BLOCKCHAIN = "BLOCKCHAIN", _("Blockchain")
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
 
     # keys
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
-        related_name="checkout_sessions",
         blank=False,
         null=False,
     )
+    tx_fiat = models.ForeignKey(
+        "TxFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tx_blockchain = models.ForeignKey(
+        "TxBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tx_asset_ownership = models.ForeignKey(
+        "TxAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     # basic info
+    tx_type = models.CharField(
+        max_length=50,
+        choices=TransactionType.choices,
+        default=TransactionType.FIAT,
+        blank=False,
+    )
     expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
@@ -717,8 +759,8 @@ class CheckoutSession(DBModel):
     )
     status = models.CharField(
         max_length=50,
-        choices=CheckoutSessionStatus.choices,
-        default=CheckoutSessionStatus.VALID,
+        choices=OrderStatus.choices,
+        default=OrderStatus.VALID,
         blank=False,
     )
 
@@ -728,21 +770,20 @@ class CheckoutSession(DBModel):
 
 class CheckoutItem(DBModel):
     """
-    Checkout item for a tiers and checkout sessions
+    Represents items selected for checkout (aka 'cart items') by an event attendee
+    This model is mapped to a specific ticket tier, as well as a specific ticket
     """
 
     # keys
     ticket_tier = models.ForeignKey(
         TicketTier,
         on_delete=models.CASCADE,
-        related_name="checkout_items",
         blank=False,
         null=False,
     )
     checkout_session = models.ForeignKey(
         CheckoutSession,
         on_delete=models.CASCADE,
-        related_name="checkout_items",
         blank=False,
         null=False,
     )
@@ -761,17 +802,8 @@ class CheckoutItem(DBModel):
 
 class TxFiat(DBModel):
     """
-    Stores fiat transactions
+    Represents a checkout transaction via fiat payment
     """
-
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        related_name="fiat_transactions",
-        blank=False,
-        null=False,
-    )
 
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"
@@ -779,17 +811,8 @@ class TxFiat(DBModel):
 
 class TxBlockchain(DBModel):
     """
-    Stores blockchain transactions
+    Represents a checkout transaction via blockchain payment
     """
-
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        related_name="blockchain_transactions",
-        blank=False,
-        null=False,
-    )
 
     def __str__(self) -> str:
         return f"TxBlockchain {self.public_id}"
@@ -797,17 +820,8 @@ class TxBlockchain(DBModel):
 
 class TxAssetOwnership(DBModel):
     """
-    Stores asset ownership transactions
+    Represents a checkout transaction via asset ownership
     """
-
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        related_name="asset_ownership_transactions",
-        blank=False,
-        null=False,
-    )
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"

@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers
+from apps.root.exceptions import TooManyTicketsRequestedError
 from apps.root.models import CheckoutItem, CheckoutSession, Event, TicketTier
 
 
@@ -58,7 +59,6 @@ class CheckoutItemView(
     input_serializer = serializer_class
     output_serializer = serializer_class
     lookup_field = "public_id"
-    paginate_by = 15
 
     def get_serializer_class(self):
         if self.action in ("update",):
@@ -68,15 +68,37 @@ class CheckoutItemView(
         return super().get_serializer_class()
 
     def perform_create(self, serializer) -> None:
+        """
+        performs create and return the object created
+        """
         return serializer.save()
 
     def retrieve(self, request, *args, **kwargs):
+        """
+        retrieve an event
+        """
         return super().retrieve(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        """
+        update an item.
+        if quantity > quantity available, returns 409
+        """
+        try:
+            return super().update(request, *args, **kwargs)
+        except TooManyTicketsRequestedError:
+            return Response(
+                status=status.HTTP_409_CONFLICT,
+                data={
+                    "code": "item-quantity-exceed",
+                    "message": "This Item quantity is not available.",
+                },
+            )
 
     def destroy(self, request, *args, **kwargs):
+        """
+        delete an item
+        """
         return super().destroy(request, *args, **kwargs)
 
     @swagger_auto_schema(
@@ -84,16 +106,26 @@ class CheckoutItemView(
         responses={200: output_serializer},
     )
     def create(self, request, *args, **kwargs):
+        """
+        creates a new item.
+        the body contains `ticket_tier` and `checkout_session` public ids
+        steps:
+            1. get `ticket_tier` and `checkout_session` objects.
+                if either one does not exist, returns 404
+            2. update the request.data with tier and session ids
+            3. perform create
+                if quantity > quantity available, returns 409
+        """
         try:
             ticket_tier = TicketTier.objects.get(public_id=request.data["ticket_tier"])
             checkout_session = CheckoutSession.objects.get(
                 public_id=request.data["checkout_session"]
             )
-        except (TicketTier.DoesNotExist, CheckoutSession.DoesNotExist) as e:  # noqa
+        except (TicketTier.DoesNotExist, CheckoutSession.DoesNotExist):
             return Response(
                 status=status.HTTP_404_NOT_FOUND,
                 data={
-                    "code": "public-id-invalid-not-found",
+                    "code": "public-id-not-found",
                     "message": "The ticket_tier or checkout_session does not exist.",
                 },
             )
@@ -102,7 +134,18 @@ class CheckoutItemView(
         request.data["checkout_session"] = checkout_session.pk
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        checkout_item = self.perform_create(serializer)
+
+        try:
+            checkout_item = self.perform_create(serializer)
+        except TooManyTicketsRequestedError:
+            return Response(
+                status=status.HTTP_409_CONFLICT,
+                data={
+                    "code": "item-quantity-exceed",
+                    "message": "This Item quantity is not available.",
+                },
+            )
+
         headers = self.get_success_headers(serializer.data)
         result = serializers.CheckoutItemReadSerializer(checkout_item)
         return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)

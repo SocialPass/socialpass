@@ -51,13 +51,51 @@
 								Event is live!
 							</h5>
 							<p>
-								Your event is currently live. You can find more useful information on the <a href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}" class="fw-bold antialiased">stats page</a>.
+								Your event is currently live. Given below is a summary of the event.
 							</p>
+							<table class="table my-20 fs-base-n2">
+								<tbody>
+									<tr>
+										<th>Name</th>
+										<td>{{ event.title }}</td>
+									</tr>
+									<tr>
+										<th>Date</th>
+										<td>{{ event.start_date }}</td>
+									</tr>
+									<tr>
+										<th>Location</th>
+										<td>{{ event.localized_address_display }}</td>
+									</tr>
+								</tbody>
+							</table>
+							<div>
+								<a href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}" class="btn btn-lg text-base fs-base fw-bold">
+									<i class="fa-regular fa-sack-dollar me-5"></i>
+									See Stats
+								</a>
+							</div>
 						{% else %}
 							<h5>Let's go live with this event!</h5>
 							<p>
 								Your event is currently a draft. You can make it go live by clicking on the following button.
 							</p>
+							<table class="table my-20 fs-base-n2">
+								<tbody>
+									<tr>
+										<th>Name</th>
+										<td>{{ event.title }}</td>
+									</tr>
+									<tr>
+										<th>Date</th>
+										<td>{{ event.start_date }}</td>
+									</tr>
+									<tr>
+										<th>Location</th>
+										<td>{{ event.localized_address_display }}</td>
+									</tr>
+								</tbody>
+							</table>
 							{% if event.tickettier_set.count < 1 %}
 								<div>
 									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased" disabled="disabled">

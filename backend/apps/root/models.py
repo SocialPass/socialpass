@@ -433,34 +433,6 @@ class Event(DBModel):
         return fields
 
 
-class TicketRedemptionKey(DBModel):
-    """
-    Represents a unique ID for ticket scanning purposes
-    This model allows for multiple scanner ID's to be issued, as well as ID revocation
-    """
-
-    class Meta:
-        unique_together = (
-            "event",
-            "name",
-        )
-
-    # Keys
-    event = models.ForeignKey(
-        Event,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-
-    # Basic info
-    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
-
-    @property
-    def scanner_url(self):
-        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
-
-
 class Ticket(DBModel):
     """
     Represents a ticket to an event
@@ -513,7 +485,7 @@ class Ticket(DBModel):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
     def access_key_can_redeem_ticket(
-        self, redemption_access_key: Optional[TicketRedemptionKey] = None
+        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
     ) -> bool:
         """Returns a boolean indicating if the access key can reedem the given ticket."""
         if redemption_access_key is None:
@@ -521,7 +493,9 @@ class Ticket(DBModel):
 
         return self.event.id == redemption_access_key.event.id
 
-    def redeem_ticket(self, redemption_access_key: Optional[TicketRedemptionKey] = None):
+    def redeem_ticket(
+        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
+    ):
         """Redeems a ticket."""
         if self.redeemed:
             raise AlreadyRedeemed("Ticket is already redeemed.")
@@ -591,6 +565,34 @@ class Ticket(DBModel):
         return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
 
 
+class TicketRedemptionKey(DBModel):
+    """
+    Represents a unique ID for ticket scanning purposes
+    This model allows for multiple scanner ID's to be issued, as well as ID revocation
+    """
+
+    class Meta:
+        unique_together = (
+            "event",
+            "name",
+        )
+
+    # Keys
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+
+    # Basic info
+    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
+
+    @property
+    def scanner_url(self):
+        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
+
+
 class TicketTier(DBModel):
     """
     Represents a ticker tier for a respective ticket.
@@ -637,41 +639,57 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
+    tier_fiat = models.ForeignKey(
+        "TierFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_blockchain = models.ForeignKey(
+        "TierBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_asset_ownership = models.ForeignKey(
+        "TierAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
 
 
-class TicketTierPaymentType(DBModel):
+class TierFiat(DBModel):
     """
-    Payment Type for Ticket Tiers
+    Represents a fiat-based tier for an event ticket
+    Holds payment processing fields specific to a fiat payment
     """
 
-    class PaymentType(models.TextChoices):
-        FREE = "FREE", _("Free")
-        FIAT = "FIAT", _("Fiat")
-        CRYPTO = "CRYPTO", _("Crypto")
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
+    def __str__(self) -> str:
+        return f"TierFiat {self.public_id}"
 
-    # keys
-    ticket_tier = models.ForeignKey(
-        TicketTier,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
 
-    # basic info
-    payment_type = models.CharField(
-        max_length=50,
-        choices=PaymentType.choices,
-        default=PaymentType.FREE,
-        help_text="The payment method",
-        blank=False,
-    )
+class TierBlockchain(DBModel):
+    """
+    Represents a blockchain-based tier for an event ticket
+    Holds payment processing fields specific to a blockchain payment
+    """
 
-    def __str__(self):
-        return f"TicketTierPaymentType {self.payment_type}-{self.public_id}"
+    def __str__(self) -> str:
+        return f"TierBlockchain {self.public_id}"
+
+
+class TierAssetOwnership(DBModel):
+    """
+    Represents a asset ownership based tier for an event ticket
+    Holds details specific to an asset ownership verification
+    """
+
+    def __str__(self) -> str:
+        return f"TierAssetOwnership {self.public_id}"
 
 
 class CheckoutSession(DBModel):
@@ -680,10 +698,15 @@ class CheckoutSession(DBModel):
     This model holds the relations to cart items for checkout purposes
     """
 
-    class CheckoutSessionStatus(models.TextChoices):
+    class OrderStatus(models.TextChoices):
         VALID = "VALID", _("Valid")
         EXPIRED = "EXPIRED", _("Expired")
         COMPLETED = "COMPLETED", _("Completed")
+
+    class TransactionType(models.TextChoices):
+        FIAT = "FIAT", _("Fiat")
+        BLOCKCHAIN = "BLOCKCHAIN", _("Blockchain")
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
 
     # keys
     event = models.ForeignKey(
@@ -692,8 +715,32 @@ class CheckoutSession(DBModel):
         blank=False,
         null=False,
     )
+    tx_fiat = models.ForeignKey(
+        "TxFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tx_blockchain = models.ForeignKey(
+        "TxBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tx_asset_ownership = models.ForeignKey(
+        "TxAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     # basic info
+    tx_type = models.CharField(
+        max_length=50,
+        choices=TransactionType.choices,
+        default=TransactionType.FIAT,
+        blank=False,
+    )
     expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
@@ -705,8 +752,8 @@ class CheckoutSession(DBModel):
     )
     status = models.CharField(
         max_length=50,
-        choices=CheckoutSessionStatus.choices,
-        default=CheckoutSessionStatus.VALID,
+        choices=OrderStatus.choices,
+        default=OrderStatus.VALID,
         blank=False,
     )
 
@@ -751,14 +798,6 @@ class TxFiat(DBModel):
     Represents a checkout transaction via fiat payment
     """
 
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"
 
@@ -768,14 +807,6 @@ class TxBlockchain(DBModel):
     Represents a checkout transaction via blockchain payment
     """
 
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-
     def __str__(self) -> str:
         return f"TxBlockchain {self.public_id}"
 
@@ -784,14 +815,6 @@ class TxAssetOwnership(DBModel):
     """
     Represents a checkout transaction via asset ownership
     """
-
-    # keys
-    checkout_session = models.ForeignKey(
-        CheckoutSession,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"

@@ -56,8 +56,6 @@ class GetEventTestCase(TestCaseWrapper):
         )
         self.assertEqual(event_dict["capacity"], self.event.capacity)
         self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)
-        self.assertEqual(event_dict["show_ticket_count"], 1)
-        self.assertEqual(event_dict["show_team_image"], self.event.show_team_image)
         self.assertEqual(event_dict["team"]["name"], self.team.name)
 
     @prevent_warnings
@@ -91,7 +89,6 @@ class GetEventTestCase(TestCaseWrapper):
         self.assertEqual(
             ticket_tier_dict["max_per_person"], self.ticket_tier.max_per_person
         )
-        self.assertEqual(ticket_tier_dict["payment_types"], None)
 
     @prevent_warnings
     def test_not_implemented_methods(self):

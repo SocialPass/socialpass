@@ -147,6 +147,7 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
         """
         custom validate method
         """
+        quantity = attrs["quantity"]
         ticket_tier = TicketTier.objects.get(public_id=attrs["ticket_tier"])
         checkout_session = CheckoutSession.objects.get(
             public_id=attrs["checkout_session"]
@@ -154,7 +155,7 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
 
         # instantiates the model with the given values
         instance = CheckoutItem(
-            quantity=attrs["quantity"],
+            quantity=quantity,
             ticket_tier=ticket_tier,
             checkout_session=checkout_session,
         )

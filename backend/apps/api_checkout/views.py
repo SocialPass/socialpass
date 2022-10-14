@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
@@ -10,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers
+from apps.root import exceptions
 from apps.root.models import CheckoutItem, CheckoutSession, Event, TicketTier
 
 
@@ -74,9 +76,22 @@ class CheckoutItemView(
             case _:
                 return serializers.CheckoutItemReadSerializer
 
+    def perform_update(self, serializer, *args, **kwargs):
+        """
+        perform_update method. used for saving then cleaning a model
+        utilized in CheckoutItemView.create() and CheckoutItemView.update()
+        """
+        checkout_item = serializer.save(**kwargs)
+        try:
+            checkout_item.clean()
+        except exceptions.TooManyTicketsRequestedError as e:
+            raise ValidationError(code="item-quantity-exceed", detail=e)
+
+        return checkout_item
+
     def create(self, request, *args, **kwargs):
         """
-        creates a new item.
+        create a CheckoutItem.
         """
         # get `ticket_tier` and `checkout_session` objects.
         # if either one does not exist, returns 404
@@ -102,15 +117,16 @@ class CheckoutItemView(
                 },
             )
 
-        # serialize data
-        # raise exceptions on is_valid
-        # throw exception on quantity error
+        # serialize and update data
+        # raise exceptions on errors
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # save serialized data
-        checkout_item = serializer.save(
-            ticket_tier=ticket_tier, checkout_session=checkout_session
+        checkout_item = self.perform_update(
+            serializer=serializer,
+            ticket_tier=ticket_tier,
+            checkout_session=checkout_session,
         )
+
         # return serialized checkout item
         headers = self.get_success_headers(serializer.data)
         result = serializers.CheckoutItemReadSerializer(checkout_item)
@@ -118,19 +134,19 @@ class CheckoutItemView(
 
     def retrieve(self, request, *args, **kwargs):
         """
-        retrieve an event
+        retrieve a CheckoutItem
         """
         return super().retrieve(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         """
-        update an item.
+        update a CheckoutItem
         if quantity > quantity available, returns 409
         """
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         """
-        delete an item
+        delete a CheckoutItem
         """
         return super().destroy(request, *args, **kwargs)

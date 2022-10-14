@@ -3,7 +3,6 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.exceptions import TooManyTicketsRequestedError
 from apps.root.models import (
     CheckoutItem,
     CheckoutSession,
@@ -143,31 +142,6 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
             "checkout_session",
         ]
 
-    def validate(self, attrs):
-        """
-        custom validate method
-        """
-        quantity = attrs["quantity"]
-        ticket_tier = TicketTier.objects.get(public_id=attrs["ticket_tier"])
-        checkout_session = CheckoutSession.objects.get(
-            public_id=attrs["checkout_session"]
-        )
-
-        # instantiates the model with the given values
-        instance = CheckoutItem(
-            quantity=quantity,
-            ticket_tier=ticket_tier,
-            checkout_session=checkout_session,
-        )
-
-        # call the clean model method and catches possible exceptions
-        try:
-            instance.clean()
-        except TooManyTicketsRequestedError as e:
-            raise serializers.ValidationError(e)
-
-        return attrs
-
 
 class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
     ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
@@ -185,18 +159,3 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
             "ticket_tier",
             "checkout_session",
         ]
-
-    def validate(self, attrs):
-        """
-        custom validate method
-        """
-        # update the quantity value with the given value
-        self.instance.quantity = attrs["quantity"]
-
-        # call the clean model method and catches possible exceptions
-        try:
-            self.instance.clean()
-        except TooManyTicketsRequestedError as e:
-            raise serializers.ValidationError(e)
-
-        return attrs

@@ -223,6 +223,7 @@
 	</div>
 	<!-- Card footer end -->
 </div>
+<!-- Content card end -->
 
 <!-- Date Validation Script -->
 <script>
@@ -251,5 +252,17 @@
 	startDateInput.addEventListener("change", dateValidate);
 	endDateInput.addEventListener("change", dateValidate);
 </script>
-<!-- Content card end -->
+
+{% if url_name == 'event_create' %}
+	<!-- Set Default Timezone Script -->
+	<script>
+		try {
+			document.getElementById(
+				"id_timezone"
+			).value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		} catch (error) {
+			console.log(error);
+		}
+	</script>
+{% endif %}
 {% endblock %}

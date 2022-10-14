@@ -42,7 +42,7 @@ urlpatterns = [
     ),
     # Ticketing
     path(
-        "events/published/<uuid:team_public_id>/",
+        "events/<uuid:team_public_id>/",
         views.EventListView.as_view(),
         name="event_list",
     ),

@@ -58,7 +58,7 @@ export default {
             capacity: 10,
             max_per_person: 2,
             quantity_sold: 0,
-            quantity_available: 10,
+            quantity_available: 4,
             tier_cryptocurrency: {
               id: '1',
               price: 6,
@@ -76,7 +76,9 @@ export default {
             event_id: '3f22a1db-7bf0-4444-a13b-25347c174df8',
             ticket_type: 'Deluxe Admission',
             capacity: 11,
-            max_per_person: 'max_per_person',
+            max_per_person: 2,
+            quantity_sold: 0,
+            quantity_available: 3,
             tier_cryptocurrency: {
               id: '1',
               price: 2,
@@ -96,7 +98,7 @@ export default {
             capacity: 11,
             max_per_person: 2,
             quantity_sold: 0,
-            quantity_available: 10,
+            quantity_available: 1,
             tier_cryptocurrency: {
               id: '1',
               price: 1,
@@ -114,8 +116,8 @@ export default {
             event_id: '1',
             ticket_type: 'VIP Admission',
             capacity: 14,
-            max_per_person: 2,
-            quantity_sold: 0,
+            max_per_person: 10,
+            quantity_sold: 4,
             quantity_available: 10,
             tier_cryptocurrency: {
               id: '2',

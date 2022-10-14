@@ -9,7 +9,7 @@ export default function Home() {
   const navigate = useNavigate()
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [selectedPaymentType, setSelectedPaymentType] = useState('')
-  const [eventHasTickets, setEventHasTickets] = useState(true) // TODO: Verify ticket availability automatically
+  const [eventHasTickets, setEventHasTickets] = useState(true)
 
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
   const [email, setEmail] = useState('')
@@ -92,15 +92,11 @@ export default function Home() {
 
   return (
     <>
-      {/* <!-- Header start --> */}
       <div className='w-100 hs-200 position-relative'>
-        {/* <!-- Event cover image start --> */}
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
           <img src={event.cover_image} className='w-100 h-auto' alt='Cover image'></img>
         </div>
-        {/* <!-- Event cover image end --> */}
 
-        {/* <!-- Team image start --> */}
         <div className='position-absolute z-1 top-100 start-50 translate-middle px-content'>
           <div className='ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden bg-white'>
             <img
@@ -110,32 +106,23 @@ export default function Home() {
             ></img>
           </div>
         </div>
-        {/* <!-- Team image end --> */}
       </div>
-      {/* <!-- Header end --> */}
 
-      {/* <!-- Team name start --> */}
       <div className='px-content pt-40 text-center'>
         <p className='text-muted mt-5 mb-0'>Hosted By</p>
         <h6 className='text-strong fs-base fw-700 m-0'>{event.team.name}</h6>
       </div>
-      {/* <!-- Team name end --> */}
 
-      {/* <!-- Event content start --> */}
       <div className='row'>
-        {/* <!-- Hero section start --> */}
         <div className='col-md-7'>
           <div className='content mt-20 mb-0'>
             <h1 className='text-strong fw-700 display-6 m-0'>{event.title}</h1>
             <p className='mt-20 fsr-6'>{event.description}</p>
           </div>
         </div>
-        {/* <!-- Hero section end --> */}
 
-        {/* <!-- Event details start --> */}
         <div className='col-md-5'>
           <div className='content mt-0 mt-md-30 mb-0'>
-            {/* <!-- Event date & time start --> */}
             <div className='d-flex align-items-center'>
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-clock'></i>
@@ -143,9 +130,7 @@ export default function Home() {
               <div className='fw-bold'>Date & Time</div>
             </div>
             <p className='text-muted mt-5 mb-0'>{event.start_date}</p>
-            {/* <!-- Event date & time end --> */}
 
-            {/* <!-- Event location start --> */}
             <div className='d-flex align-items-center mt-15'>
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-location-dot'></i>
@@ -153,14 +138,11 @@ export default function Home() {
               <div className='fw-bold'>Location</div>
             </div>
             <p className='text-muted mt-5 mb-0'>{event.localized_address_display}</p>
-            {/* <!-- Event location end --> */}
           </div>
         </div>
-        {/* <!-- Event details end --> */}
-        {/* <!-- Ticket status start --> */}
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
-            {/* <!-- { Checks if tickets are available and displays content accordingly} --> */}
+          
             {eventHasTickets ? (
               <>
                 <div>
@@ -191,15 +173,11 @@ export default function Home() {
             )}
           </div>
         </div>
-        {/* <!-- Ticket status end --> */}
       </div>
-      {/* <!-- Event content end --> */}
       {eventHasTickets ? (
         <>
-          {/* <!-- Ticket tier payment types start --> */}
           <div className='content mb-0'>
             <div className='ticket-tier-group'>
-              {/* <!-- Fiat start --> */}
               <div
                 className={'ticket-tier'}
                 onClick={() => {
@@ -229,8 +207,6 @@ export default function Home() {
                   </h6>
                 </label>
               </div>
-              {/* <!-- Fiat end --> */}
-              {/* <!-- Crypto start --> */}
               <div
                 className={'ticket-tier'}
                 onClick={() => {
@@ -260,8 +236,6 @@ export default function Home() {
                   </h6>
                 </label>
               </div>
-              {/* <!-- Crypto end --> */}
-              {/* <!-- NFTs start --> */}
               <div
                 className={'ticket-tier'}
                 onClick={() => {
@@ -291,17 +265,12 @@ export default function Home() {
                   </h6>
                 </label>
               </div>
-              {/* <!-- NFTs end --> */}
             </div>
           </div>
-          {/* <!-- Ticket tier payment types end --> */}
 
-          {/* <!-- Ticket tiers and CTA start --> */}
           <div className='row'>
-            {/* <!-- Ticket tiers start --> */}
             <div className='col-md-7'>
               <div className='content me-md-0'>
-                {/* <!-- Ticket tier start --> */}
 
                 {getPaymentTypeTicketTiers().map((tier, index) => (
                   <TicketCounter
@@ -313,11 +282,8 @@ export default function Home() {
                     isChecked={tier?.public_id in selectedTicketTiers && selectedTicketTiers[tier?.public_id] > 0}
                   />
                 ))}
-                {/* <!-- Ticket tier end --> */}
               </div>
-              {/* <!-- Ticket tiers end --> */}
             </div>
-            {/* <!-- CTA section start --> */}
             <div className='col-md-5'>
               <div className='px-content pt-md-30 position-md-sticky top-0 start-0'>
                 <p className='fs-base-n2 mt-0'>
@@ -336,7 +302,7 @@ export default function Home() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   ></input>
-                  <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit' disabled={!validateEmail(email) || !getTotalPrice()}>
+                  <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit' disabled={!validateEmail() || !getTotalPrice()}>
                     <strong className='antialiased' >Get Tickets</strong>
                   </button>
                 </form>
@@ -353,7 +319,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            {/* <!-- CTA section end --> */}
           </div>
         </>
       ) : (
@@ -361,7 +326,6 @@ export default function Home() {
           <div className='py-20'></div>
         </>
       )}
-      {/* <!-- Ticket tiers and CTA end --> */}
     </>
   )
 }

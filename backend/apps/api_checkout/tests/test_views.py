@@ -193,11 +193,11 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         self.assertEqual(item_dict["quantity"], data["quantity"])
 
     @prevent_warnings
-    def test_update_higher_than_available_item_409_conflict(self):
+    def test_update_higher_than_available_item_400_bad_request(self):
         """
         request PUT update item with quantity > available
             available = tier.capacity (100) - tier.quantity_sold (50) = 50
-            try to update quantity to be 51 and getting 409 conflict
+            try to update quantity to be 51 and getting 400 bad request
         """
 
         event = EventFactory(team=self.team, user=self.user)
@@ -216,8 +216,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             content_type="application/json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual(response.json()["code"], "item-quantity-exceed")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
     def test_create_item_201_created(self):
@@ -285,13 +284,11 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         self.assertEqual(response.json()["code"], "public-id-not-found")
 
     @prevent_warnings
-    def test_create_higher_than_available_item_409_conflict(self):
+    def test_create_higher_than_available_item_400_bad_request(self):
         """
         request POST create a new item with quantity > quantity available
-        available = (
-            capacity (100) - quantity_sold (50) - sum of session items not expired (15)
-        ) = 35
-        asserts 409 conflict
+        available = capacity (100) - quantity_sold (50) = 50
+        asserts 400 bad request
         """
 
         event = EventFactory(team=self.team, user=self.user)
@@ -299,14 +296,8 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         checkout_session = CheckoutSessionFactory(
             event=event, expiration=timezone.now() + timedelta(days=3)
         )
-        CheckoutItemFactory(
-            ticket_tier=ticket_tier, checkout_session=checkout_session, quantity=5
-        )
-        CheckoutItemFactory(
-            ticket_tier=ticket_tier, checkout_session=checkout_session, quantity=10
-        )
         data = {
-            "quantity": 36,
+            "quantity": 51,
             "ticket_tier": str(ticket_tier.public_id),
             "checkout_session": str(checkout_session.public_id),
         }
@@ -317,8 +308,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             content_type="application/json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual(response.json()["code"], "item-quantity-exceed")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
     def test_delete_item_204_no_content(self):

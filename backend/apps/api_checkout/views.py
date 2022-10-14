@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers
-from apps.root.exceptions import TooManyTicketsRequestedError
 from apps.root.models import CheckoutItem, CheckoutSession, Event, TicketTier
 
 
@@ -105,24 +104,13 @@ class CheckoutItemView(
 
         # serialize data
         # raise exceptions on is_valid
+        # throw exception on quantity error
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         # save serialized data
-        # throw exception on quantity error
-        try:
-            checkout_item = serializer.save(
-                ticket_tier=ticket_tier, checkout_session=checkout_session
-            )
-        except TooManyTicketsRequestedError:
-            return Response(
-                status=status.HTTP_409_CONFLICT,
-                data={
-                    "code": "item-quantity-exceed",
-                    "message": "This Item quantity is not available.",
-                },
-            )
-
+        checkout_item = serializer.save(
+            ticket_tier=ticket_tier, checkout_session=checkout_session
+        )
         # return serialized checkout item
         headers = self.get_success_headers(serializer.data)
         result = serializers.CheckoutItemReadSerializer(checkout_item)
@@ -139,16 +127,7 @@ class CheckoutItemView(
         update an item.
         if quantity > quantity available, returns 409
         """
-        try:
-            return super().update(request, *args, **kwargs)
-        except TooManyTicketsRequestedError:
-            return Response(
-                status=status.HTTP_409_CONFLICT,
-                data={
-                    "code": "item-quantity-exceed",
-                    "message": "This Item quantity is not available.",
-                },
-            )
+        return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         """

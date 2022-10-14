@@ -14,6 +14,11 @@ export default function Home() {
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
   const [email, setEmail] = useState('')
 
+  function validateEmail(email) {
+    var regex = /\S+@\S+\.\S+/;
+    return regex.test(email);
+  }  
+
   const { event }: any = useEvent()
 
   const getTicketTiers = (eventPublicId: string) => {
@@ -329,9 +334,9 @@ export default function Home() {
                     className='form-control'
                     placeholder='Email Address'
                     value={email}
-                    onChange={(e) => setEmail(e.target.amount)}
+                    onChange={(e) => setEmail(e.target.value)}
                   ></input>
-                  <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit' disabled={!getTotalPrice()>0}>
+                  <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit' disabled={!validateEmail(email) || !getTotalPrice()}>
                     <strong className='antialiased' >Get Tickets</strong>
                   </button>
                 </form>

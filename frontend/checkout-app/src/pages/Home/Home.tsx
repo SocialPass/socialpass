@@ -14,11 +14,6 @@ export default function Home() {
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
   const [email, setEmail] = useState('')
 
-  function validateEmail(email) {
-    var regex = /\S+@\S+\.\S+/;
-    return regex.test(email);
-  }  
-
   const { event }: any = useEvent()
 
   const getTicketTiers = (eventPublicId: string) => {
@@ -75,6 +70,11 @@ export default function Home() {
 
     return 'N/A'
   }
+
+  const validateEmail = ()=> {
+    var regex = /\S+@\S+\.\S+/;
+    return regex.test(email);
+  }  
 
   useEffect(() => {
     if (getFiatTicketTiers().length) {

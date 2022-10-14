@@ -8,7 +8,7 @@ import './index.css'
 export default function Home() {
   const navigate = useNavigate()
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
-  const [selectedPaymentType, setSelectedPaymentType] = useState('tier_fiat')
+  const [selectedPaymentType, setSelectedPaymentType] = useState('')
   const [eventHasTickets, setEventHasTickets] = useState(true) // TODO: Verify ticket availability automatically
 
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
@@ -328,11 +328,11 @@ export default function Home() {
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
-                    amount={email}
+                    value={email}
                     onChange={(e) => setEmail(e.target.amount)}
                   ></input>
-                  <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit'>
-                    <strong className='antialiased'>Get Tickets</strong>
+                  <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit' disabled={!getTotalPrice()>0}>
+                    <strong className='antialiased' >Get Tickets</strong>
                   </button>
                 </form>
                 <p>

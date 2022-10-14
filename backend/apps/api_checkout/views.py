@@ -76,9 +76,22 @@ class CheckoutItemView(
             case _:
                 return serializers.CheckoutItemReadSerializer
 
+    def perform_create(self, serializer, *args, **kwargs):
+        """
+        perform_create method. used for creating a model
+        utilized in CheckoutItemView.create() and CheckoutItemView.update()
+        """
+        checkout_item = serializer.save(**kwargs)
+        try:
+            checkout_item.clean()
+        except exceptions.TooManyTicketsRequestedError as e:
+            raise ValidationError(code="item-quantity-exceed", detail=e)
+
+        return checkout_item
+
     def perform_update(self, serializer, *args, **kwargs):
         """
-        perform_update method. used for saving then cleaning a model
+        perform_update method. used for updating a model
         utilized in CheckoutItemView.create() and CheckoutItemView.update()
         """
         checkout_item = serializer.save(**kwargs)
@@ -121,7 +134,7 @@ class CheckoutItemView(
         # raise exceptions on errors
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        checkout_item = self.perform_update(
+        checkout_item = self.perform_create(
             serializer=serializer,
             ticket_tier=ticket_tier,
             checkout_session=checkout_session,

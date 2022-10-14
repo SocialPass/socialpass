@@ -1,25 +1,25 @@
 import propTypes from 'prop-types'
 
 function TicketCounter(props): JSX.Element {
-  const { ticketTier, paymentType, value, onChange, isChecked } = props
+  const { ticketTier, paymentType, amount, onChange, isChecked } = props
 
   const handleAddOne = () => {
-    if (value < ticketTier?.capacity) {
-      onChange(value + 1, ticketTier)
+    if (amount < ticketTier?.capacity && amount < ticketTier?.max_per_person ) {
+      onChange(amount + 1, ticketTier)
     }
   }
 
   const handleSubtractOne = () => {
-    if (value > 0) {
-      onChange(value - 1, ticketTier)
+    if (amount > 0) {
+      onChange(amount - 1, ticketTier)
     }
   }
 
-  const getPriceWithCurrencySymbol = (value) => {
+  const getPriceWithCurrencySymbol = (amount) => {
     if (paymentType === 'tier_fiat') {
-      return `$${value}`
+      return `$${amount}`
     } else if (paymentType === 'tier_cryptocurrency') {
-      return `${value} ETH`
+      return `${amount} ETH`
     }
 
     return 'N/A'
@@ -50,7 +50,7 @@ function TicketCounter(props): JSX.Element {
               <button className='btn ws-25 px-0' onClick={handleSubtractOne}>
                 -
               </button>
-              <div className='form-control form-number text-center'>{value}</div>
+              <div className='form-control form-number text-center'>{amount}</div>
               <button className='btn ws-25 px-0' onClick={handleAddOne}>
                 +
               </button>
@@ -58,8 +58,8 @@ function TicketCounter(props): JSX.Element {
 
             {paymentType !== 'tier_asset_ownership' ? (
               <div className='text-center fs-base-n2 mt-5'>
-                <strong>Price &times; {value}</strong> &mdash;{' '}
-                {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price * value)}
+                <strong>Price &times; {amount}</strong> &mdash;{' '}
+                {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price * amount)}
               </div>
             ) : null}
           </div>
@@ -82,7 +82,7 @@ function TicketCounter(props): JSX.Element {
 export default TicketCounter
 
 TicketCounter.propTypes = {
-  value: propTypes.number,
+  amount: propTypes.number,
   ticketTier: propTypes.object,
   paymentType: propTypes.string,
   onChange: propTypes.func,

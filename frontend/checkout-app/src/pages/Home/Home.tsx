@@ -44,10 +44,10 @@ export default function Home() {
     return []
   }
 
-  const setTicketTierSelectedAmount = (value, ticketTier) => {
+  const setTicketTierSelectedAmount = (amount, ticketTier) => {
     const new_selected = {
       ...selectedTicketTiers,
-      [ticketTier.public_id]: value,
+      [ticketTier.public_id]: amount,
     }
 
     setSelectedTicketTiers(new_selected)
@@ -61,11 +61,11 @@ export default function Home() {
       )
     }, 0)
 
-  const getPriceWithCurrencySymbol = (value) => {
+  const getPriceWithCurrencySymbol = (amount) => {
     if (selectedPaymentType === 'tier_fiat') {
-      return `$${value}`
+      return `$${amount}`
     } else if (selectedPaymentType === 'tier_cryptocurrency') {
-      return `${value} ETH`
+      return `${amount} ETH`
     }
 
     return 'N/A'
@@ -300,8 +300,8 @@ export default function Home() {
 
                 {getPaymentTypeTicketTiers().map((tier, index) => (
                   <TicketCounter
-                    value={selectedTicketTiers[tier?.public_id] || 0}
-                    onChange={(value, ticketTier) => setTicketTierSelectedAmount(value, ticketTier)}
+                    amount={selectedTicketTiers[tier?.public_id] || 0}
+                    onChange={(amount, ticketTier) => setTicketTierSelectedAmount(amount, ticketTier)}
                     paymentType={selectedPaymentType}
                     ticketTier={tier}
                     key={`ticket-tier-${index}`}
@@ -328,8 +328,8 @@ export default function Home() {
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    amount={email}
+                    onChange={(e) => setEmail(e.target.amount)}
                   ></input>
                   <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit'>
                     <strong className='antialiased'>Get Tickets</strong>

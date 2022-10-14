@@ -89,12 +89,20 @@ class CheckoutItemView(
             checkout_session = CheckoutSession.objects.get(
                 public_id=request.data["checkout_session"]
             )
-        except (TicketTier.DoesNotExist, CheckoutSession.DoesNotExist):
+        except TicketTier.DoesNotExist:
             return Response(
                 status=status.HTTP_404_NOT_FOUND,
                 data={
                     "code": "public-id-not-found",
-                    "message": "The ticket_tier or checkout_session does not exist.",
+                    "message": "The ticket_tier does not exist.",
+                },
+            )
+        except CheckoutSession.DoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+                data={
+                    "code": "public-id-not-found",
+                    "message": "The checkout_session does not exist.",
                 },
             )
 

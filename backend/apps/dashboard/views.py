@@ -16,8 +16,7 @@ from django.views.generic.list import ListView
 
 from apps.dashboard.forms import (
     CustomInviteForm,
-    EventDraftForm,
-    EventLiveForm,
+    EventForm,
     TeamForm,
 )
 from apps.root.models import Event, Invite, Membership, Team, Ticket
@@ -356,7 +355,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """
 
     model = Event
-    form_class = EventDraftForm
+    form_class = EventForm
     template_name = "dashboard/event_form.html"
 
     def get_context_data(self, **kwargs):
@@ -371,10 +370,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateStatus.DRAFT:
-            return "Your draft has been saved"
-        elif self.object.state == Event.StateStatus.LIVE:
-            return "Your changes have been saved"
+        return "Your event has been created successfully!"
 
 
 class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
@@ -385,14 +381,8 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     model = Event
     slug_field = "pk"
     slug_url_kwarg = "pk"
+    form_class = EventForm
     template_name = "dashboard/event_form.html"
-
-    def get_form_class(self):
-        """get form class based on event state"""
-        if self.object.state == Event.StateStatus.DRAFT:
-            return EventDraftForm
-        elif self.object.state == Event.StateStatus.LIVE:
-            return EventLiveForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -407,10 +397,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateStatus.DRAFT:
-            return "Your draft has been saved"
-        elif self.object.state == Event.StateStatus.LIVE:
-            return "Your changes have been saved"
+        return "Your event has been updated successfully."
 
 
 class EventGoLiveView(TeamContextMixin, DetailView):

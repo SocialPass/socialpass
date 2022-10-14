@@ -17,11 +17,6 @@
 {% endif %}
 {% endblock %}
 
-{% block wip_event_creation_ux %}
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-{% endblock %}
-
-
 {% block content %}
 <!-- Header start -->
 {% include 'components/event_details_page_header.html' %}
@@ -51,7 +46,7 @@
 
 				{% if form.errors %}
 					<div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
-						Please comple the form below.
+						Please complete the form below.
 					</div>
 				{% endif %}
 
@@ -189,8 +184,10 @@
 								class="form-file-input {% if input.errors %}is-invalid{% endif %}"
 								id="{{ input.auto_id }}"
 							{% endif %}
-							{% if input.field.required %}
-								required="required"
+							{% if url_name == "event_create" %}
+								{% if input.field.required %}
+									required="required"
+								{% endif %}
 							{% endif %}
 							{% for k,v in input.field.widget.attrs.items %}
 								{{ k }}="{{ v }}"

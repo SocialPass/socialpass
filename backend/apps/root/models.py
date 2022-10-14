@@ -266,24 +266,24 @@ class Event(DBModel):
     organizer = models.CharField(
         max_length=255,
         help_text="Name or brand or community organizing the event.",
-        blank=True,
+        blank=False,
         default="",
     )
     description = models.TextField(
         help_text="A short description of your event.",
-        blank=True,
+        blank=False,
         default="",
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event.", blank=True, null=True
+        help_text="A banner image for your event.", blank=False, null=False
     )
     tags = TaggableManager(
         blank=True,
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
     end_date = models.DateTimeField(
         help_text="When your event will end (optional).",
@@ -296,7 +296,7 @@ class Event(DBModel):
     timezone = models.CharField(
         verbose_name="time zone",
         max_length=30,
-        blank=True,
+        blank=False,
         default="",
     )
     # localized address string (used to populate maps lookup)
@@ -409,35 +409,6 @@ class Event(DBModel):
             return date.today() > self.end_date.date()
         else:
             return False
-
-    @staticmethod
-    def required_form_fields():
-        fields = [
-            "title",
-            "organizer",
-            "description",
-            "start_date",
-            "timezone",
-        ]
-        return fields
-
-    @staticmethod
-    def optional_form_fields():
-        fields = [
-            "cover_image",
-            "end_date",
-            "initial_place",
-            "address_1",
-            "address_2",
-            "city",
-            "region",
-            "postal_code",
-            "country",
-            "lat",
-            "long",
-            "localized_address_display",
-        ]
-        return fields
 
 
 class Ticket(DBModel):

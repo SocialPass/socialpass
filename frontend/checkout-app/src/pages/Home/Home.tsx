@@ -91,7 +91,7 @@ export default function Home() {
 
     const selected = selectedTicketTiers.map((tier) => ({
       ticket_tier: ticketTiers.find((t) => t.public_id === tier.public_id),
-      quantiy: tier.quantity,
+      quantity: tier.quantity,
     }))
 
     setCheckoutItems(selected)

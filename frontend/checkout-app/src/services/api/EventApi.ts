@@ -55,9 +55,10 @@ export default {
             public_id: '3f22a1db-7bf0-4444-a13b-25347c174df7',
             event_id: '1',
             ticket_type: 'General Admission',
-            price: '10000',
             capacity: 10,
-            max_per_person: '2',
+            max_per_person: 2,
+            quantity_sold: 0,
+            quantity_available: 10,
             tier_cryptocurrency: {
               id: '1',
               price: 6,
@@ -65,6 +66,7 @@ export default {
             tier_asset_ownership: {
               id: '1',
               price: 5,
+              contract_address: '0X18...B9D1',
             },
           },
           {
@@ -73,7 +75,6 @@ export default {
             public_id: '3f22a1db-7bf0-4444-a13b-25347c174df8',
             event_id: '3f22a1db-7bf0-4444-a13b-25347c174df8',
             ticket_type: 'Deluxe Admission',
-            price: '2',
             capacity: 11,
             max_per_person: 'max_per_person',
             tier_cryptocurrency: {
@@ -83,6 +84,7 @@ export default {
             tier_asset_ownership: {
               id: '1',
               price: 3,
+              contract_address: '0X18...B9D1',
             },
           },
           {
@@ -91,9 +93,10 @@ export default {
             public_id: '3f22a1db-7bf0-4444-a13b-25347c174df9',
             event_id: '3f22a1db-7bf0-4444-a13b-25347c174df9',
             ticket_type: 'Deluxe Admission',
-            price: '2',
             capacity: 11,
-            max_per_person: 'max_per_person',
+            max_per_person: 2,
+            quantity_sold: 0,
+            quantity_available: 10,
             tier_cryptocurrency: {
               id: '1',
               price: 1,
@@ -101,6 +104,7 @@ export default {
             tier_asset_ownership: {
               id: '1',
               price: 1,
+              contract_address: '0X18...B9D1',
             },
           },
           {
@@ -109,9 +113,10 @@ export default {
             public_id: '3f22a1db-7bf0-4444-a13b-25347c174de1',
             event_id: '1',
             ticket_type: 'VIP Admission',
-            price: '3',
             capacity: 14,
-            max_per_person: 'max_per_person',
+            max_per_person: 2,
+            quantity_sold: 0,
+            quantity_available: 10,
             tier_cryptocurrency: {
               id: '2',
               price: 4,

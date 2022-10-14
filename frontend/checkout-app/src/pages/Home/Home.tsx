@@ -9,9 +9,10 @@ export default function Home() {
   const navigate = useNavigate()
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [selectedPaymentType, setSelectedPaymentType] = useState('tier_fiat')
-  const [eventHasTickets, setEventHasTickets] = useState(true) //TODO: Verify ticket availability automatically
+  const [eventHasTickets, setEventHasTickets] = useState(true) // TODO: Verify ticket availability automatically
 
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
+  const [email, setEmail] = useState('')
 
   const { event }: any = useEvent()
 
@@ -21,33 +22,23 @@ export default function Home() {
     })
   }
 
-  const getFiatTicketTiers = () => {
-    return ticketTiers.filter((ticket) => 'tier_fiat' in ticket && ticket.tier_fiat)
-  }
+  const getFiatTicketTiers = () =>
+    ticketTiers.filter((ticket) => 'tier_fiat' in ticket && ticket.tier_fiat)
 
-  const getCryptocurrencyTicketTiers = () => {
-    return ticketTiers.filter(
-      (ticket) => 'tier_cryptocurrency' in ticket && ticket.tier_cryptocurrency,
-    )
-  }
+  const getCryptocurrencyTicketTiers = () =>
+    ticketTiers.filter((ticket) => 'tier_cryptocurrency' in ticket && ticket.tier_cryptocurrency)
 
-  const getAssetOwnershipTicketTiers = () => {
-    return ticketTiers.filter(
-      (ticket) => 'tier_asset_ownership' in ticket && ticket.tier_asset_ownership,
-    )
-  }
+  const getAssetOwnershipTicketTiers = () =>
+    ticketTiers.filter((ticket) => 'tier_asset_ownership' in ticket && ticket.tier_asset_ownership)
 
   const getPaymentTypeTicketTiers = () => {
     if (selectedPaymentType == 'tier_fiat') {
-      console.log('GetFiat: ', getFiatTicketTiers())
       return getFiatTicketTiers()
     }
     if (selectedPaymentType == 'tier_cryptocurrency') {
-      console.log('GetCrypto: ', getCryptocurrencyTicketTiers())
       return getCryptocurrencyTicketTiers()
     }
     if (selectedPaymentType == 'tier_asset_ownership') {
-      console.log('GetNFTs: ', getAssetOwnershipTicketTiers())
       return getAssetOwnershipTicketTiers()
     }
     return []
@@ -62,13 +53,22 @@ export default function Home() {
     setSelectedTicketTiers(new_selected)
   }
 
-  const getTotalPrice = () => {
+  const getTotalPrice = () =>
     ticketTiers.reduce((acc, ticketTier) => {
       return (
         acc +
         ticketTier[selectedPaymentType]?.price * (selectedTicketTiers[ticketTier?.public_id] || 0)
       )
     }, 0)
+
+  const getPriceWithCurrencySymbol = (value) => {
+    if (selectedPaymentType === 'tier_fiat') {
+      return `$${value}`
+    } else if (selectedPaymentType === 'tier_cryptocurrency') {
+      return `${value} ETH`
+    }
+
+    return 'N/A'
   }
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function Home() {
 
         {/* <!-- Team image start --> */}
         <div className='position-absolute z-1 top-100 start-50 translate-middle px-content'>
-          <div className='ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden'>
+          <div className='ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden bg-white'>
             <img
               src={event.team.theme.logo}
               className='d-block w-100 h-auto'
@@ -299,34 +299,14 @@ export default function Home() {
                 {/* <!-- Ticket tier start --> */}
 
                 {getPaymentTypeTicketTiers().map((tier, index) => (
-                  <div className='ticket-tier mb-20' key={`ticket-tier-index-${index}`}>
-                    <input type='checkbox' className='ticket-tier-input' id='c1' checked></input>
-                    <label htmlFor='c1' className='ticket-tier-label'>
-                      <div className='d-sm-flex align-items-center'>
-                        <div className='pe-sm-15'>
-                          <h6 className='fw-700 m-0 fs-base'>
-                            <span className='ticket-tier-uncheck'>
-                              <i className='fa-light fa-square'></i>
-                            </span>
-                            <span className='ticket-tier-check'>
-                              <i className='fa-light fa-check-square'></i>
-                            </span>
-                            {tier?.ticket_type}
-                          </h6>
-                          <p className='m-0 fs-base-n2'>{tier?.capacity} available</p>
-                        </div>
-
-                        <TicketCounter
-                          value={selectedTicketTiers[tier?.public_id] || 0}
-                          onChange={(value, ticketTier) =>
-                            setTicketTierSelectedAmount(value, ticketTier)
-                          }
-                          paymentType={selectedPaymentType}
-                          ticketTier={tier}
-                        />
-                      </div>
-                    </label>
-                  </div>
+                  <TicketCounter
+                    value={selectedTicketTiers[tier?.public_id] || 0}
+                    onChange={(value, ticketTier) => setTicketTierSelectedAmount(value, ticketTier)}
+                    paymentType={selectedPaymentType}
+                    ticketTier={tier}
+                    key={`ticket-tier-${index}`}
+                    isChecked={tier?.public_id in selectedTicketTiers && selectedTicketTiers[tier?.public_id] > 0}
+                  />
                 ))}
                 {/* <!-- Ticket tier end --> */}
               </div>
@@ -348,14 +328,15 @@ export default function Home() {
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   ></input>
                   <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit'>
                     <strong className='antialiased'>Get Tickets</strong>
                   </button>
                 </form>
                 <p>
-                  <strong>Total Price</strong>
-                  &mdash; ${getTotalPrice()}
+                  <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
                 </p>
                 <hr />
                 <p className='text-muted fs-base-n4'>

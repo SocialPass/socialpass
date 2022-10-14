@@ -3,14 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import (
-    CheckoutItem,
-    CheckoutSession,
-    Event,
-    Team,
-    Ticket,
-    TicketTier,
-)
+from apps.root.models import CheckoutItem, Event, Team, Ticket, TicketTier
 
 
 class TeamSerializer(serializers.ModelSerializer):

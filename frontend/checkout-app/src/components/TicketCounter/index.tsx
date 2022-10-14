@@ -4,7 +4,11 @@ function TicketCounter(props): JSX.Element {
   const { ticketTier, paymentType, amount, onChange, isChecked } = props
 
   const handleAddOne = () => {
-    if (amount < ticketTier?.capacity && amount < ticketTier?.max_per_person && amount < ticketTier?.quantity_available ) {
+    if (
+      amount < ticketTier?.capacity &&
+      amount < ticketTier?.max_per_person &&
+      amount < ticketTier?.capacity - ticketTier?.quantity_sold
+    ) {
       onChange(amount + 1, ticketTier)
     }
   }

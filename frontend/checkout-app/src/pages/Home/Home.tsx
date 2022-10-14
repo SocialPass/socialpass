@@ -54,12 +54,13 @@ export default function Home() {
   }
 
   const getTotalPrice = () =>
-    ticketTiers.reduce((acc, ticketTier) => {
-      return (
+    ticketTiers.reduce(
+      (acc, ticketTier) =>
         acc +
-        ticketTier[selectedPaymentType]?.price * (selectedTicketTiers[ticketTier?.public_id] || 0)
-      )
-    }, 0)
+        (ticketTier[selectedPaymentType]?.price || 0) *
+          (selectedTicketTiers[ticketTier?.public_id] || 0),
+      0,
+    )
 
   const getPriceWithCurrencySymbol = (amount) => {
     if (selectedPaymentType === 'tier_fiat') {
@@ -71,14 +72,22 @@ export default function Home() {
     return 'N/A'
   }
 
-  const validateEmail = ()=> {
-    var regex = /\S+@\S+\.\S+/;
-    return regex.test(email);
-  }  
+  const validateEmail = () => {
+    const regex = /\S+@\S+\.\S+/
+    return regex.test(email)
+  }
 
-  useEffect(() =>   {
-    if ((getFiatTicketTiers().length) || (getCryptocurrencyTicketTiers().length) || (getAssetOwnershipTicketTiers().length))
-    setEventHasTickets(true)
+  const handleGetTicketsButton = () => {
+    
+  }
+
+  useEffect(() => {
+    if (
+      getFiatTicketTiers().length ||
+      getCryptocurrencyTicketTiers().length ||
+      getAssetOwnershipTicketTiers().length
+    )
+      setEventHasTickets(true)
   })
 
   useEffect(() => {
@@ -147,7 +156,6 @@ export default function Home() {
         </div>
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
-          
             {eventHasTickets ? (
               <>
                 <div>
@@ -195,8 +203,6 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  name='payment-type'
-                  id='fiat'
                   disabled={!getFiatTicketTiers().length}
                   checked={selectedPaymentType === 'tier_fiat'}
                 />
@@ -224,8 +230,6 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  name='payment-type'
-                  id='fiat'
                   disabled={!getCryptocurrencyTicketTiers().length}
                   checked={selectedPaymentType === 'tier_cryptocurrency'}
                 />
@@ -253,8 +257,6 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  name='payment-type'
-                  id='fiat'
                   disabled={!getAssetOwnershipTicketTiers().length}
                   checked={selectedPaymentType === 'tier_asset_ownership'}
                 />
@@ -276,15 +278,19 @@ export default function Home() {
           <div className='row'>
             <div className='col-md-7'>
               <div className='content me-md-0'>
-
                 {getPaymentTypeTicketTiers().map((tier, index) => (
                   <TicketCounter
                     amount={selectedTicketTiers[tier?.public_id] || 0}
-                    onChange={(amount, ticketTier) => setTicketTierSelectedAmount(amount, ticketTier)}
+                    onChange={(amount, ticketTier) =>
+                      setTicketTierSelectedAmount(amount, ticketTier)
+                    }
                     paymentType={selectedPaymentType}
                     ticketTier={tier}
                     key={`ticket-tier-${index}`}
-                    isChecked={tier?.public_id in selectedTicketTiers && selectedTicketTiers[tier?.public_id] > 0}
+                    isChecked={
+                      tier?.public_id in selectedTicketTiers &&
+                      selectedTicketTiers[tier?.public_id] > 0
+                    }
                   />
                 ))}
               </div>
@@ -307,8 +313,13 @@ export default function Home() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   ></input>
-                  <button className='btn btn-secondary btn-lg fsr-6 btn-block mt-15' type='submit' disabled={!validateEmail() || !getTotalPrice()}>
-                    <strong className='antialiased' >Get Tickets</strong>
+                  <button
+                    className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
+                    type='submit'
+                    disabled={!validateEmail() || !getTotalPrice()}
+                    onClick={() => handleGetTicketsButton()}
+                  >
+                    <strong className='antialiased'>Get Tickets</strong>
                   </button>
                 </form>
                 <p>

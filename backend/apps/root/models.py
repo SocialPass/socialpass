@@ -768,20 +768,6 @@ class CheckoutItem(DBModel):
     This model is mapped to a specific ticket tier, as well as a specific ticket
     """
 
-    class CheckoutItemSet(models.QuerySet):
-        """
-        CheckoutItem model queryset manager
-        """
-
-        def filter_not_expired(self):
-            """
-            not expired items
-            """
-            return self.filter(checkout_session__expiration__gte=timezone.now())
-
-    # Queryset manager
-    objects = CheckoutItemSet.as_manager()
-
     # keys
     ticket_tier = models.ForeignKey(
         TicketTier,
@@ -807,39 +793,23 @@ class CheckoutItem(DBModel):
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
 
-    def save(self, *args, **kwargs):
+    def clean_quantity(self, *args, **kwargs):
         """
-        custom save method
-        checks if trying to save an item that exceeds the remaining quantity.
-        the available quantity will be:
-            tier.capacity - tier.quantity_sold - items_not_expired_quantity_sum
-
-        steps:
-            1. get not expired items queryset.
-            if the save is beeing called to update an item so the item will be exluded
-            from the queryset to calculate the quantity available
-            2. calculate the aggregation sum of not_expired_items_quantity.
-            3. calculate the available quantity
-            3. if requested quantity for the object  > available, raise error
+        clean quantity method
+        checks for available tickets
         """
-
-        not_expired_items = CheckoutItem.objects.filter_not_expired().filter(
-            ticket_tier=self.ticket_tier
-        )
-        if self.pk:  # update case
-            not_expired_items = not_expired_items.exclude(pk=self.pk)
-
-        not_expired_quantity = not_expired_items.aggregate(sum=Sum("quantity"))["sum"]
-
         available = self.ticket_tier.capacity - self.ticket_tier.quantity_sold
-        if not_expired_quantity:
-            available -= not_expired_quantity
-
         if self.quantity > available:
             raise TooManyTicketsRequestedError(
                 f"Only {available} quantity is available."
             )
-        return super().save(*args, **kwargs)
+
+    def clean(self, *args, **kwargs):
+        """
+        clean method
+        runs all clean_* methods
+        """
+        self.clean_quantity()
 
 
 class TxFiat(DBModel):

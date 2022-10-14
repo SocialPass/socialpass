@@ -121,8 +121,8 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemCreateSerializer(serializers.ModelSerializer):
-    ticket_tier = serializers.UUIDField()
-    checkout_session = serializers.UUIDField()
+    ticket_tier = serializers.UUIDField(write_only=True)
+    checkout_session = serializers.UUIDField(write_only=True)
 
     class Meta:
         model = CheckoutItem

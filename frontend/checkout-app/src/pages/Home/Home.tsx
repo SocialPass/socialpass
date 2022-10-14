@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import useEvent from '@/hooks/useEvent'
+import useCheckout from '@/hooks/useCheckout'
+
 import { EventApi } from '@/services/api'
+
 import TicketCounter from '@/components/TicketCounter'
 import './index.css'
 
 export default function Home() {
   const navigate = useNavigate()
-  const [ticketTiers, setTicketTiers] = useState<any[]>([])
-  const [selectedPaymentType, setSelectedPaymentType] = useState('')
-  const [eventHasTickets, setEventHasTickets] = useState(false)
+  const { event }: any = useEvent()
+  const { saveCheckout, setCheckout, setCheckoutItems, paymentType, setPaymentType }: any =
+    useEvent()
 
+  const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
   const [email, setEmail] = useState('')
-
-  const { event }: any = useEvent()
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId).then((res) => {
@@ -32,13 +35,13 @@ export default function Home() {
     ticketTiers.filter((ticket) => 'tier_asset_ownership' in ticket && ticket.tier_asset_ownership)
 
   const getPaymentTypeTicketTiers = () => {
-    if (selectedPaymentType == 'tier_fiat') {
+    if (paymentType == 'tier_fiat') {
       return getFiatTicketTiers()
     }
-    if (selectedPaymentType == 'tier_cryptocurrency') {
+    if (paymentType == 'tier_cryptocurrency') {
       return getCryptocurrencyTicketTiers()
     }
-    if (selectedPaymentType == 'tier_asset_ownership') {
+    if (paymentType == 'tier_asset_ownership') {
       return getAssetOwnershipTicketTiers()
     }
     return []
@@ -57,15 +60,14 @@ export default function Home() {
     ticketTiers.reduce(
       (acc, ticketTier) =>
         acc +
-        (ticketTier[selectedPaymentType]?.price || 0) *
-          (selectedTicketTiers[ticketTier?.public_id] || 0),
+        (ticketTier[paymentType]?.price || 0) * (selectedTicketTiers[ticketTier?.public_id] || 0),
       0,
     )
 
   const getPriceWithCurrencySymbol = (amount) => {
-    if (selectedPaymentType === 'tier_fiat') {
+    if (paymentType === 'tier_fiat') {
       return `$${amount}`
-    } else if (selectedPaymentType === 'tier_cryptocurrency') {
+    } else if (paymentType === 'tier_cryptocurrency') {
       return `${amount} ETH`
     }
 
@@ -77,26 +79,35 @@ export default function Home() {
     return regex.test(email)
   }
 
+  const eventHasTickets = () => ticketTiers.length
+
   const handleGetTicketsButton = () => {
-    
+    // setCheckout({
+    //   event_id: '123456789',
+    //   name: 'John Doe',
+    //   email: 'test@test.com',
+    //   cost: 100,
+    // })
+
+    const selected = selectedTicketTiers.map((tier) => ({
+      ticket_tier: ticketTiers.find((t) => t.public_id === tier.public_id),
+      quantiy: tier.quantity,
+    }))
+
+    setCheckoutItems(selected)
+
+    saveCheckout()
+
+    navigate(`checkout/checkoutID`)
   }
 
   useEffect(() => {
-    if (
-      getFiatTicketTiers().length ||
-      getCryptocurrencyTicketTiers().length ||
-      getAssetOwnershipTicketTiers().length
-    )
-      setEventHasTickets(true)
-  })
-
-  useEffect(() => {
     if (getFiatTicketTiers().length) {
-      setSelectedPaymentType('tier_fiat')
+      setPaymentType('tier_fiat')
     } else if (getCryptocurrencyTicketTiers().length) {
-      setSelectedPaymentType('tier_cryptocurrency')
+      setPaymentType('tier_cryptocurrency')
     } else if (getAssetOwnershipTicketTiers().length) {
-      setSelectedPaymentType('tier_asset_ownership')
+      setPaymentType('tier_asset_ownership')
     }
   }, [ticketTiers])
 
@@ -156,7 +167,7 @@ export default function Home() {
         </div>
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
-            {eventHasTickets ? (
+            {eventHasTickets() ? (
               <>
                 <div>
                   <div
@@ -187,7 +198,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {eventHasTickets ? (
+      {eventHasTickets() ? (
         <>
           <div className='content mb-0'>
             <div className='ticket-tier-group'>
@@ -195,7 +206,7 @@ export default function Home() {
                 className={'ticket-tier'}
                 onClick={() => {
                   if (getFiatTicketTiers().length) {
-                    setSelectedPaymentType('tier_fiat')
+                    setPaymentType('tier_fiat')
                     setSelectedTicketTiers([])
                   }
                 }}
@@ -204,7 +215,7 @@ export default function Home() {
                   type='radio'
                   className='ticket-tier-input'
                   disabled={!getFiatTicketTiers().length}
-                  checked={selectedPaymentType === 'tier_fiat'}
+                  checked={paymentType === 'tier_fiat'}
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -222,7 +233,7 @@ export default function Home() {
                 className={'ticket-tier'}
                 onClick={() => {
                   if (getCryptocurrencyTicketTiers().length) {
-                    setSelectedPaymentType('tier_cryptocurrency')
+                    setPaymentType('tier_cryptocurrency')
                     setSelectedTicketTiers([])
                   }
                 }}
@@ -231,7 +242,7 @@ export default function Home() {
                   type='radio'
                   className='ticket-tier-input'
                   disabled={!getCryptocurrencyTicketTiers().length}
-                  checked={selectedPaymentType === 'tier_cryptocurrency'}
+                  checked={paymentType === 'tier_cryptocurrency'}
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -249,7 +260,7 @@ export default function Home() {
                 className={'ticket-tier'}
                 onClick={() => {
                   if (getAssetOwnershipTicketTiers().length) {
-                    setSelectedPaymentType('tier_asset_ownership')
+                    setPaymentType('tier_asset_ownership')
                     setSelectedTicketTiers([])
                   }
                 }}
@@ -258,7 +269,7 @@ export default function Home() {
                   type='radio'
                   className='ticket-tier-input'
                   disabled={!getAssetOwnershipTicketTiers().length}
-                  checked={selectedPaymentType === 'tier_asset_ownership'}
+                  checked={paymentType === 'tier_asset_ownership'}
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -284,7 +295,7 @@ export default function Home() {
                     onChange={(amount, ticketTier) =>
                       setTicketTierSelectedAmount(amount, ticketTier)
                     }
-                    paymentType={selectedPaymentType}
+                    paymentType={paymentType}
                     ticketTier={tier}
                     key={`ticket-tier-${index}`}
                     isChecked={

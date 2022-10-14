@@ -1,10 +1,11 @@
 from datetime import timedelta
-from typing import Any
-from uuid import uuid4
+from typing import Any, Optional
+from uuid import UUID, uuid4
 
 from django.test import TestCase
 from django.utils import timezone
-from rest_framework import status
+from rest_framework import serializers, status
+from rest_framework.fields import empty
 
 from apps.root.factories import (
     CheckoutItemFactory,
@@ -26,6 +27,7 @@ class TestCaseWrapper(TestCase):
     access_key: str
     checkout_item: CheckoutItem
     checkout_session: CheckoutSession
+    random_uuid: UUID
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -40,7 +42,22 @@ class TestCaseWrapper(TestCase):
             checkout_session=cls.checkout_session,
             quantity=10,
         )
+        cls.random_uuid = (
+            uuid4()
+        )  # Random UUID string that is not contained in the test DB.
         return super().setUpTestData()
+
+    def assertSerializedDatetime(self, datetime_string, datetime_field, format=empty):
+        self.assertEqual(
+            datetime_string,
+            serializers.DateTimeField(format=format).to_representation(datetime_field),
+        )
+
+    def assertUUID(self, uuid_string, version=4):
+        try:
+            UUID(uuid_string, version=version)
+        except ValueError:
+            raise AssertionError(f"{uuid_string} string is not a valid UUID")
 
 
 class GetEventTestCase(TestCaseWrapper):
@@ -72,6 +89,9 @@ class GetEventTestCase(TestCaseWrapper):
         )
         self.assertEqual(event_dict["capacity"], self.event.capacity)
         self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)
+        self.assertSerializedDatetime(
+            event_dict["start_date"], self.event.start_date, "%A, %B %d, %Y | %H:%M%p"
+        )
         self.assertEqual(event_dict["team"]["name"], self.team.name)
 
     @prevent_warnings
@@ -80,10 +100,7 @@ class GetEventTestCase(TestCaseWrapper):
         request detail nonexistent event and test if returning 404 NOT FOUND
         """
 
-        invalid_access_key = (
-            uuid4()
-        )  # Random UUID string that is not contained in the test DB.
-        response = self.client.get(f"{self.url_base}event/{invalid_access_key}/")
+        response = self.client.get(f"{self.url_base}event/{self.random_uuid}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @prevent_warnings
@@ -137,6 +154,21 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
     class to test CheckoutItem retrieve, destroy, create and update view
     """
 
+    def generate_item_data(
+        self, tier: str, session: Optional[str] = None, quantity: int = 1
+    ) -> dict:
+        """
+        creates dictionary item data
+        """
+
+        item_data = {
+            "quantity": quantity,
+            "ticket_tier": str(tier),
+            "checkout_session": str(session),
+        }
+
+        return item_data
+
     @prevent_warnings
     def test_get_item_details_200_ok(self) -> None:
         """
@@ -161,10 +193,8 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         """
         request nonexistent item detail and test if return 404 NOT FOUND
         """
-        invalid_access_key = (
-            uuid4()
-        )  # Random UUID string that is not contained in the test DB.
-        response = self.client.get(f"{self.url_base}item/{invalid_access_key}/")
+
+        response = self.client.get(f"{self.url_base}item/{self.random_uuid}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @prevent_warnings
@@ -224,11 +254,9 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         request POST create new item and assert if code 200 OK
         """
 
-        data = {
-            "quantity": 2,
-            "ticket_tier": str(self.ticket_tier.public_id),
-            "checkout_session": str(self.checkout_session.public_id),
-        }
+        data = self.generate_item_data(
+            tier=self.ticket_tier.public_id, session=self.checkout_session.public_id
+        )
 
         # Not using reverse because we want URL changes to explicitly break tests.
         response = self.client.post(
@@ -239,6 +267,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         # assert objects values with json returned
         item_dict = response.json()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertUUID(item_dict["public_id"], version=4)
         self.assertEqual(item_dict["ticket_tier"], str(self.ticket_tier.public_id))
         self.assertEqual(
             item_dict["checkout_session"], str(self.checkout_session.public_id)
@@ -246,21 +275,16 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         self.assertEqual(item_dict["quantity"], data["quantity"])
 
     @prevent_warnings
-    def test_fail_create_item_404_not_found(self):
+    def test_fail_create_item_with_invalid_tier_404_not_found(self):
         """
-        request POST create am item with nonexistent ticket_tier or checkout_session
+        request POST create am item with nonexistent checkout_session
         assets if returning 404 NOT FOUND
         """
-        invalid_access_key = (
-            uuid4()
-        )  # Random UUID string that is not contained in the test DB.
 
-        # try to create with a nonexistent checkout_session.public_id
-        data = {
-            "quantity": 20,
-            "ticket_tier": invalid_access_key,
-            "checkout_session": str(self.checkout_session.public_id),
-        }
+        # try to create with a nonexistent tier.public_id
+        data = self.generate_item_data(
+            tier=self.random_uuid, session=self.checkout_session.public_id
+        )
         response = self.client.post(
             f"{self.url_base}item/",
             data=data,
@@ -269,12 +293,17 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json()["code"], "public-id-not-found")
 
+    @prevent_warnings
+    def test_fail_create_item_with_invalid_session_404_not_found(self):
+        """
+        request POST create am item with nonexistent checkout_session
+        assets if returning 404 NOT FOUND
+        """
+
         # try to create with a nonexistent ticket_tier.public_id
-        data = {
-            "quantity": 20,
-            "ticket_tier": str(self.ticket_tier.public_id),
-            "checkout_session": invalid_access_key,
-        }
+        data = self.generate_item_data(
+            tier=self.ticket_tier.public_id, session=self.random_uuid
+        )
         response = self.client.post(
             f"{self.url_base}item/",
             data=data,
@@ -296,12 +325,10 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         checkout_session = CheckoutSessionFactory(
             event=event, expiration=timezone.now() + timedelta(days=3)
         )
-        data = {
-            "quantity": 51,
-            "ticket_tier": str(ticket_tier.public_id),
-            "checkout_session": str(checkout_session.public_id),
-        }
 
+        data = self.generate_item_data(
+            tier=ticket_tier.public_id, session=checkout_session.public_id, quantity=51
+        )
         response = self.client.post(
             f"{self.url_base}item/",
             data=data,

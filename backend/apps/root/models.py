@@ -768,6 +768,20 @@ class CheckoutItem(DBModel):
     This model is mapped to a specific ticket tier, as well as a specific ticket
     """
 
+    class CheckoutItemSet(models.QuerySet):
+        """
+        CheckoutItem model queryset manager
+        """
+
+        def filter_not_expired(self):
+            """
+            not expired items
+            """
+            return self.filter(checkout_session__expiration__gte=timezone.now())
+
+    # Queryset manager
+    objects = CheckoutItemSet.as_manager()
+
     # keys
     ticket_tier = models.ForeignKey(
         TicketTier,
@@ -809,7 +823,9 @@ class CheckoutItem(DBModel):
             3. if requested quantity for the object  > available, raise error
         """
 
-        not_expired_items = self.filter_not_expired(self.ticket_tier)
+        not_expired_items = CheckoutItem.objects.filter_not_expired().filter(
+            ticket_tier=self.ticket_tier
+        )
         if self.pk:  # update case
             not_expired_items = not_expired_items.exclude(pk=self.pk)
 
@@ -823,18 +839,7 @@ class CheckoutItem(DBModel):
             raise TooManyTicketsRequestedError(
                 f"Only {available} quantity is available."
             )
-
         return super().save(*args, **kwargs)
-
-    @classmethod
-    def filter_not_expired(cls, ticket_tier):
-        """
-        returns filtered queryset with not expired items from a tier
-        """
-        return cls.objects.filter(
-            ticket_tier=ticket_tier,
-            checkout_session__expiration__gte=timezone.now(),
-        )
 
 
 class TxFiat(DBModel):

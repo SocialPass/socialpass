@@ -9,7 +9,7 @@ export default function Home() {
   const navigate = useNavigate()
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [selectedPaymentType, setSelectedPaymentType] = useState('')
-  const [eventHasTickets, setEventHasTickets] = useState(true)
+  const [eventHasTickets, setEventHasTickets] = useState(false)
 
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
   const [email, setEmail] = useState('')
@@ -75,6 +75,11 @@ export default function Home() {
     var regex = /\S+@\S+\.\S+/;
     return regex.test(email);
   }  
+
+  useEffect(() =>   {
+    if ((getFiatTicketTiers().length) || (getCryptocurrencyTicketTiers().length) || (getAssetOwnershipTicketTiers().length))
+    setEventHasTickets(true)
+  })
 
   useEffect(() => {
     if (getFiatTicketTiers().length) {

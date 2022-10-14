@@ -106,17 +106,17 @@ class CheckoutItemView(
                 },
             )
 
-        # update the request.data with tier and session ids
-        # validate request
-        request.data["ticket_tier"] = ticket_tier.pk
-        request.data["checkout_session"] = checkout_session.pk
+        # serialize data
+        # raise exceptions on is_valid
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # perform create
-        # if quantity > quantity available, returns 409
+        # save serialized data
+        # throw exception on quantity error
         try:
-            checkout_item = self.perform_create(serializer)
+            checkout_item = serializer.save(
+                ticket_tier=ticket_tier, checkout_session=checkout_session
+            )
         except TooManyTicketsRequestedError:
             return Response(
                 status=status.HTTP_409_CONFLICT,
@@ -126,7 +126,7 @@ class CheckoutItemView(
                 },
             )
 
-        # return
+        # return serialized checkout item
         headers = self.get_success_headers(serializer.data)
         result = serializers.CheckoutItemReadSerializer(checkout_item)
         return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)

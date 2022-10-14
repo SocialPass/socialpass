@@ -104,7 +104,6 @@ class TicketTierSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemReadSerializer(serializers.ModelSerializer):
-
     ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
     checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
@@ -138,7 +137,6 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
-
     ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
     checkout_session = serializers.UUIDField(
         source="checkout_session.public_id", read_only=True

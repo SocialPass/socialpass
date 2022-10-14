@@ -35,7 +35,6 @@ class EventView(GenericViewSet, RetrieveModelMixin):
                 return serializers.TicketTierSerializer
             case _:
                 return serializers.EventSerializer
-        return super().get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -75,7 +74,6 @@ class CheckoutItemView(
                 return serializers.CheckoutItemUpdateSerializer
             case _:
                 return serializers.CheckoutItemReadSerializer
-        return super().get_serializer_class()
 
     def create(self, request, *args, **kwargs):
         """

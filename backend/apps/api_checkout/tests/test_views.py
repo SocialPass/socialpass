@@ -245,8 +245,11 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             data=data,
             content_type="application/json",
         )
-
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # verify if the value was not updated in the db
+        checkout_item = CheckoutItem.objects.get(public_id=checkout_item.public_id)
+        self.assertEqual(30, checkout_item.quantity)
 
     @prevent_warnings
     def test_create_item_201_created(self):
@@ -337,6 +340,13 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        # verify if the value was not created in the db
+        checkout_item_qs = CheckoutItem.objects.filter(
+            ticket_tier__public_id=ticket_tier.public_id,
+            checkout_session__public_id=checkout_session.public_id,
+        )
+        self.assertFalse(checkout_item_qs.exists())
+
     @prevent_warnings
     def test_delete_item_204_no_content(self):
         """
@@ -347,3 +357,6 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
 
         response = self.client.delete(f"{self.url_base}item/{item_public_id}/")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # verify if the checkout_item was deleted from the db
+        with self.assertRaises(CheckoutItem.DoesNotExist):
+            CheckoutItem.objects.get(public_id=item_public_id)

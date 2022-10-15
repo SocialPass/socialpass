@@ -31,7 +31,7 @@ class MembershipInline(admin.TabularInline):
 
 
 class CustomDBAdmin(admin.ModelAdmin):
-    list_display = ("public_id", "created", "modified")
+    list_display = ["public_id", "created", "modified"]
 
 
 # Admin registrations
@@ -46,18 +46,18 @@ class CustomUserAdmin(UserAdmin):
 class TeamAdmin(CustomDBAdmin):
     inlines = [MembershipInline]
     exclude = ("members",)
-    list_display = CustomDBAdmin.list_display + ("name",)
+    list_display = CustomDBAdmin.list_display + ["name"]
     search_fields = ("name",)
 
 
 @admin.register(Membership)
 class MembershipAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ("user", "team")
+    list_display = CustomDBAdmin.list_display + ["user", "team"]
 
 
 @admin.register(Invite)
 class InviteAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ("email", "sent", "accepted")
+    list_display = CustomDBAdmin.list_display + ["email", "sent", "accepted"]
     raw_id_fields = ("inviter",)
 
     def get_form(self, request, obj=None, **kwargs):
@@ -82,12 +82,12 @@ class EventAdmin(CustomDBAdmin):
             i.transition_live()
         messages.success(request, "Event(s) have been transitioned live")
 
-    list_display = CustomDBAdmin.list_display + (
+    list_display = CustomDBAdmin.list_display + [
         "title",
         "user",
         "team",
         "start_date",
-    )
+    ]
     search_fields = (
         "title",
         "user__username",
@@ -103,7 +103,7 @@ class EventAdmin(CustomDBAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ("checkout_item", "full_embed")
+    list_display = CustomDBAdmin.list_display + ["checkout_item", "full_embed"]
 
 
 @admin.register(TicketRedemptionKey)
@@ -113,14 +113,14 @@ class TicketRedemptionKeyAdmin(CustomDBAdmin):
 
 @admin.register(TicketTier)
 class TicketTierAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + (
+    list_display = CustomDBAdmin.list_display + [
         "ticket_type",
         "event",
         "price",
         "capacity",
         "quantity_sold",
         "max_per_person",
-    )
+    ]
     search_fields = ("event__title",)
 
 
@@ -141,20 +141,20 @@ class TierAssetOwnershipAdmin(CustomDBAdmin):
 
 @admin.register(CheckoutSession)
 class CheckoutSessionAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + (
+    list_display = CustomDBAdmin.list_display + [
         "name",
         "email",
         "expiration",
-    )
+    ]
     search_fields = ("event__title",)
 
 
 @admin.register(CheckoutItem)
 class CheckoutItemAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + (
+    list_display = CustomDBAdmin.list_display + [
         "quantity",
         "ticket_tier",
-    )
+    ]
     search_fields = ("checkout_session__name",)
 
 

@@ -79,7 +79,7 @@ class CheckoutItemView(
     def perform_create(self, serializer, *args, **kwargs):
         """
         perform_create method. used for creating a model
-        utilized in CheckoutItemView.create() and CheckoutItemView.update()
+        utilized in CheckoutItemView.create()
         """
         checkout_item = serializer.save(**kwargs)
         try:
@@ -92,7 +92,7 @@ class CheckoutItemView(
     def perform_update(self, serializer, *args, **kwargs):
         """
         perform_update method. used for updating a model
-        utilized in CheckoutItemView.create() and CheckoutItemView.update()
+        utilized in CheckoutItemView.update()
         """
         checkout_item = serializer.save(**kwargs)
         try:

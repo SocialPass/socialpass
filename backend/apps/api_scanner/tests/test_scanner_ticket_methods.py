@@ -3,7 +3,7 @@ from typing import Any
 from django.core import exceptions
 from django.test import TestCase
 
-from apps.root.exceptions import AlreadyRedeemed, ForbiddenRedemptionError
+from apps.root.exceptions import AlreadyRedeemedError, ForbiddenRedemptionError
 from apps.root.factories import (
     CheckoutItemFactory,
     CheckoutSessionFactory,
@@ -77,7 +77,7 @@ class TestScannerTicketMethods(TestCase):
     def test_redeem_ticket(self):
         """
         tests if the ticket is being successfully redeemed
-        - if ticket is already redeemed, must raise AlreadyRedeemed exception
+        - if ticket is already redeemed, must raise AlreadyRedeemedError exception
         - if ticket event != redemption_access_key event, must raise
             ForbiddenRedemptionError exception
         """
@@ -89,7 +89,7 @@ class TestScannerTicketMethods(TestCase):
         self.assertEqual(redeemed_ticket.redeemed, True)
 
         # test already redeemed
-        with self.assertRaises(AlreadyRedeemed):
+        with self.assertRaises(AlreadyRedeemedError):
             redeemed_ticket.redeem_ticket()
 
         # test forbidden redemption

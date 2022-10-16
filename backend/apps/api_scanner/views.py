@@ -111,7 +111,7 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
                     "message": "Redemption access key has no access to this Event.",
                 },
             )
-        except exceptions.AlreadyRedeemed:
+        except exceptions.AlreadyRedeemedError:
             return Response(
                 status=409,
                 data={

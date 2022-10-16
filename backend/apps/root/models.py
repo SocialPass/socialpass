@@ -18,7 +18,8 @@ from model_utils.models import TimeStampedModel
 from taggit.managers import TaggableManager
 
 from apps.root.exceptions import (
-    AlreadyRedeemed,
+    AlreadyRedeemedError,
+    EventStateTranstionError,
     ForbiddenRedemptionError,
     TooManyTicketsRequestedError,
 )
@@ -348,7 +349,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            raise e
+            raise EventStateTranstionError({"state": str(e)})
 
     def transition_live(self, save=True):
         """
@@ -362,7 +363,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            raise e
+            raise EventStateTranstionError({"state": str(e)})
 
     @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):
@@ -484,7 +485,7 @@ class Ticket(DBModel):
         """Redeems a ticket."""
         # Check if redeemed
         if self.redeemed:
-            raise AlreadyRedeemed({"redeemed": "Ticket is already redeemed."})
+            raise AlreadyRedeemedError({"redeemed": "Ticket is already redeemed."})
 
         # Check if match on redemption access key
         if self.event.id != redemption_access_key.event.id:

@@ -1,11 +1,15 @@
 from django.core.exceptions import ValidationError
 
 
+class EventStateTranstionError(ValidationError):
+    pass
+
+
 class ForbiddenRedemptionError(ValidationError):
     pass
 
 
-class AlreadyRedeemed(ValidationError):
+class AlreadyRedeemedError(ValidationError):
     pass
 
 

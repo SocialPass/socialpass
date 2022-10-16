@@ -801,7 +801,7 @@ class CheckoutItem(DBModel):
         available = self.ticket_tier.capacity - self.ticket_tier.quantity_sold
         if self.quantity > available:
             raise TooManyTicketsRequestedError(
-                f"Only {available} quantity is available."
+                {"quantity": _(f"Only {available} quantity is available.")}
             )
 
     def clean(self, *args, **kwargs):

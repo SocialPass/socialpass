@@ -6,7 +6,7 @@ import useCheckout from '@/hooks/useCheckout'
 
 import { EventApi } from '@/services/api'
 
-import TicketCounter from '@/components/TicketCounter'
+import TicketSelector from '@/components/TicketSelector'
 import './index.css'
 
 export default function Home() {
@@ -290,7 +290,7 @@ export default function Home() {
             <div className='col-md-7'>
               <div className='content me-md-0'>
                 {getPaymentTypeTicketTiers().map((tier, index) => (
-                  <TicketCounter
+                  <TicketSelector
                     amount={selectedTicketTiers[tier?.public_id] || 0}
                     onChange={(amount, ticketTier) =>
                       setTicketTierSelectedAmount(amount, ticketTier)

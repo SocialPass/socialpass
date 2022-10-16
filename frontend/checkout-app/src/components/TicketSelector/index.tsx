@@ -1,6 +1,6 @@
 import propTypes from 'prop-types'
 
-function TicketCounter(props): JSX.Element {
+function TicketSelector(props): JSX.Element {
   const { ticketTier, paymentType, amount, onChange, isChecked } = props
 
   const handleAddOne = () => {
@@ -83,9 +83,9 @@ function TicketCounter(props): JSX.Element {
   )
 }
 
-export default TicketCounter
+export default TicketSelector
 
-TicketCounter.propTypes = {
+TicketSelector.propTypes = {
   amount: propTypes.number,
   ticketTier: propTypes.object,
   paymentType: propTypes.string,

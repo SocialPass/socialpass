@@ -78,32 +78,6 @@ class TestScannerTicketMethods(TestCase):
             ticket_tier=cls.__ticket_tier,
         )
 
-    def test_get_ticket_from_embedded_qr_code(self):
-        invalid_qrcode = "xxxxx-xxxx-xxxx-xxxx-xxxxxxx-xxxxxxx"  # can not split("/")
-        invalid_uuid_qrcode = "xxxx-xxxx/xxxx-xxxxxxxx"
-        valid_qrcode = (
-            "a85afb2d-c111-404a-8162-8bedeedfa2f1/01d9b4ce-2aa4-4e3c-bb84-f0f711a6514b"
-        )
-
-        # test valid qr_code
-        ticket_from_qr_code = Ticket.get_ticket_from_embedded_qr_code(
-            self.ticket.full_embed
-        )
-        self.assertEqual(ticket_from_qr_code, self.ticket)
-
-        # test invalid qr_code (can not split into embed_code and filename)
-        with self.assertRaises(InvalidEmbedCodeError):
-            Ticket.get_ticket_from_embedded_qr_code(invalid_qrcode)
-
-        # test invalid UUID qr_code (do not match with UUID pattern)
-        # djando UUID field raise ValidationError for invalid UUID string
-        with self.assertRaises(exceptions.ValidationError):
-            Ticket.get_ticket_from_embedded_qr_code(invalid_uuid_qrcode)
-
-        # test no ticket from qr_code (random qrcode)
-        with self.assertRaises(Ticket.DoesNotExist):
-            Ticket.get_ticket_from_embedded_qr_code(valid_qrcode)
-
     def test_access_key_can_redeem_ticket(self):
         """
         test if the access key can reedem the given ticket

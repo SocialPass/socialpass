@@ -464,9 +464,6 @@ class Ticket(DBModel):
     )
 
     # Ticket File Info
-    filename = models.UUIDField(
-        default=uuid.uuid4, editable=False, blank=False, null=False
-    )
     file = models.ImageField(storage=get_private_ticket_storage, blank=False, null=True)
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
 
@@ -542,20 +539,6 @@ class Ticket(DBModel):
             raise Exception("The event was not registered properly")
 
         return _pass.get_pass_url()
-
-    @property
-    def full_embed(self):
-        return f"{self.embed_code}/{self.filename}"
-
-    @classmethod
-    def get_ticket_from_embedded_qr_code(cls, embed_code: str):
-        """Returns a ticket from the given embed code."""
-        try:
-            embed_code, filename = embed_code.split("/")
-        except ValueError:
-            raise InvalidEmbedCodeError("Embed code is invalid.")
-
-        return cls.objects.get(embed_code=embed_code, filename=filename)
 
     @classmethod
     def get_claimed_tickets(cls, event: Event):

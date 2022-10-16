@@ -108,7 +108,7 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["id", "filename", "ticket_count", "redeemed_count"]
+        fields = ["id", "ticket_count", "redeemed_count"]
 
     def get_redeemed_count(self, obj):
         return Ticket.get_claimed_tickets(event=obj.event).count()
@@ -119,4 +119,4 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
 
 
 class ScanTicketInputSerializer(serializers.Serializer):
-    embed_code = serializers.CharField()
+    embed_code = serializers.UUIDField()

@@ -190,8 +190,7 @@ class ScanTicketTestCase(TestCaseWrapper):
         """
 
         ticket = self.ticket
-        embed_code = str(ticket.embed_code) + "/" + str(ticket.filename)
-        data = {"embed_code": embed_code}
+        data = {"embed_code": ticket.embed_code}
 
         response = self.make_claim_ticket_post_request(data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -202,27 +201,32 @@ class ScanTicketTestCase(TestCaseWrapper):
     def test_scan_ticket_process_4xx_status_code(self):
         """
         Test if some error occurs during scan claim ticket process
+        status code 400:
+            invalid uuid
         status_code 403:
             access key can not redeem ticket
         status_code 404:
             no ticket has the embed_code given
         status_code 409:
             ticket already redeemed
-        status_code 422:
-            embed_code format is invalid
         """
+
+        # TEST 400 BAD REQUEST
+        embed_code = f"bad_prefix_{uuid4()}"
+        data = {"embed_code": embed_code}
+        response = self.make_claim_ticket_post_request(data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # TEST 403 FORBIDDEN
         ticket = (
             self.ticket__
         )  # ticket with different access key (access key can not redeem this ticket)
-        embed_code = str(ticket.embed_code) + "/" + str(ticket.filename)
-        data = {"embed_code": embed_code}
+        data = {"embed_code": ticket.embed_code}
         response = self.make_claim_ticket_post_request(data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # TEST 404 NOT FOUND
-        embed_code = str(uuid4()) + "/" + str(uuid4())  # random embed_code
+        embed_code = str(uuid4())  # random embed_code
         data = {"embed_code": embed_code}
         response = self.make_claim_ticket_post_request(data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -230,21 +234,12 @@ class ScanTicketTestCase(TestCaseWrapper):
         # TEST 409 CONFLICT
         ticket = self.ticket
         redemption_access_key = self.ticket_redemption_key
-        redeemed_ticket = ticket.redeem_ticket(redemption_access_key)
-        embed_code = (
-            str(redeemed_ticket.embed_code) + "/" + str(redeemed_ticket.filename)
-        )
-        data = {"embed_code": embed_code}
+        ticket.redeem_ticket(redemption_access_key)
+        data = {"embed_code": ticket.embed_code}
         response = self.make_claim_ticket_post_request(
             data
         )  # try redeem already redeemed ticket
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
-
-        # TEST 422 UNPROCESSABLE ENTITY
-        embed_code = uuid4()
-        data = {"embed_code": embed_code}
-        response = self.make_claim_ticket_post_request(data)
-        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     @prevent_warnings
     def test_not_implemented_methods(self):

@@ -90,15 +90,7 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
 
         # Retrieve ticket
         try:
-            ticket = Ticket.get_ticket_from_embedded_qr_code(embed_code)
-        except exceptions.InvalidEmbedCodeError:
-            return Response(
-                status=422,
-                data={
-                    "code": "embed-code-invalid",
-                    "message": "Invalid embedcode format.",
-                },
-            )
+            ticket = Ticket.objects.get(embed_code=embed_code)
         except Ticket.DoesNotExist:
             return Response(
                 status=404,

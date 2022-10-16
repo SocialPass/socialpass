@@ -479,23 +479,16 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
-    def access_key_can_redeem_ticket(
-        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
-    ) -> bool:
-        """Returns a boolean indicating if the access key can reedem the given ticket."""
-        if redemption_access_key is None:
-            return True
-
-        return self.event.id == redemption_access_key.event.id
-
     def redeem_ticket(
         self, redemption_access_key: Optional["TicketRedemptionKey"] = None
     ):
         """Redeems a ticket."""
+        # Check if redeemed
         if self.redeemed:
             raise AlreadyRedeemed("Ticket is already redeemed.")
 
-        if not self.access_key_can_redeem_ticket(redemption_access_key):
+        # Check if match on redemption access key
+        if self.event.id != redemption_access_key.event.id:
             raise ForbiddenRedemptionError("Ticketed event does not match.")
 
         self.redeemed = True

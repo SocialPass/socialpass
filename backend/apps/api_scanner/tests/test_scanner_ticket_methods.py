@@ -78,26 +78,6 @@ class TestScannerTicketMethods(TestCase):
             ticket_tier=cls.__ticket_tier,
         )
 
-    def test_access_key_can_redeem_ticket(self):
-        """
-        test if the access key can reedem the given ticket
-        for that, redemption_access_key must be null or
-            ticket event == redemption_access_key event
-        """
-        ticket = self.ticket
-        __ticket = self.__ticket
-        redemption_access_key = self.ticket_redemption_key
-
-        # assert can redeem ticket
-        self.assertEqual(
-            ticket.access_key_can_redeem_ticket(redemption_access_key), True
-        )
-
-        # assert can not redeem ticket
-        self.assertEqual(
-            __ticket.access_key_can_redeem_ticket(redemption_access_key), False
-        )
-
     def test_redeem_ticket(self):
         """
         tests if the ticket is being successfully redeemed

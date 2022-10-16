@@ -21,6 +21,7 @@ from apps.root.exceptions import (
     AlreadyRedeemed,
     ForbiddenRedemptionError,
     InvalidEmbedCodeError,
+    TooManyTicketsRequestedError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 from config.storages import get_private_ticket_storage
@@ -791,6 +792,24 @@ class CheckoutItem(DBModel):
 
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
+
+    def clean_quantity(self, *args, **kwargs):
+        """
+        clean quantity method
+        checks for available tickets
+        """
+        available = self.ticket_tier.capacity - self.ticket_tier.quantity_sold
+        if self.quantity > available:
+            raise TooManyTicketsRequestedError(
+                {"quantity": _(f"Only {available} quantity is available.")}
+            )
+
+    def clean(self, *args, **kwargs):
+        """
+        clean method
+        runs all clean_* methods
+        """
+        self.clean_quantity()
 
 
 class TxFiat(DBModel):

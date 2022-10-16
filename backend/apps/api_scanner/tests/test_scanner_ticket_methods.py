@@ -48,10 +48,14 @@ class TestScannerTicketMethods(TestCase):
         cls.user = UserWithTeamFactory()
         cls.team = cls.user.membership_set.first().team
         cls.event = EventFactory(team=cls.team, user=cls.user)
-        cls.ticket_tier = TicketTierFactory(event=cls.event)
+        cls.ticket_tier = TicketTierFactory(
+            event=cls.event, capacity=100, quantity_sold=0
+        )
         cls.checkout_session = CheckoutSessionFactory(event=cls.event)
         cls.checkout_item = CheckoutItemFactory(
-            ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
+            ticket_tier=cls.ticket_tier,
+            checkout_session=cls.checkout_session,
+            quantity=10,
         )
         cls.ticket = TicketFactory(
             checkout_item=cls.checkout_item, event=cls.event, ticket_tier=cls.ticket_tier
@@ -59,10 +63,14 @@ class TestScannerTicketMethods(TestCase):
         cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
         # for raising errors
         cls.__event = EventFactory(team=cls.team, user=cls.user)
-        cls.__ticket_tier = TicketTierFactory(event=cls.__event)
+        cls.__ticket_tier = TicketTierFactory(
+            event=cls.__event, capacity=100, quantity_sold=0
+        )
         cls.__checkout_session = CheckoutSessionFactory(event=cls.__event)
         cls.__checkout_item = CheckoutItemFactory(
-            ticket_tier=cls.__ticket_tier, checkout_session=cls.__checkout_session
+            ticket_tier=cls.__ticket_tier,
+            checkout_session=cls.__checkout_session,
+            quantity=10,
         )
         cls.__ticket = TicketFactory(
             checkout_item=cls.__checkout_item,

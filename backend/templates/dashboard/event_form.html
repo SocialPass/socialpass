@@ -99,12 +99,6 @@
 						{% endwith %}
 						<!-- Organizer end -->
 
-            {% if form.tags %}
-						<div class="form-group">
-							{{form.tags|as_crispy_field}}
-						</div>
-            {% endif %}
-
 						<!-- Description start -->
 						{% with form.description as input %}
 							{% include 'components/forms_inputs/textarea.html' %}

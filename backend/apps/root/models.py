@@ -278,9 +278,6 @@ class Event(DBModel):
     cover_image = models.ImageField(
         help_text="A banner image for your event.", blank=True, null=True
     )
-    tags = TaggableManager(
-        blank=True,
-    )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
         blank=True,

@@ -28,12 +28,12 @@ class UserFactory(factory.django.DjangoModelFactory):
     Create user
     """
 
+    class Meta:
+        model = User
+
     username = factory.Faker("name")
     email = factory.Faker("email")
     password = factory.PostGenerationMethodCall("set_password", "password")
-
-    class Meta:
-        model = User
 
 
 class TeamFactory(factory.django.DjangoModelFactory):
@@ -41,10 +41,10 @@ class TeamFactory(factory.django.DjangoModelFactory):
     Create team with event
     """
 
-    name = factory.Faker("name")
-
     class Meta:
         model = Team
+
+    name = factory.Faker("color_name")
 
 
 class MembershipFactory(factory.django.DjangoModelFactory):
@@ -52,11 +52,11 @@ class MembershipFactory(factory.django.DjangoModelFactory):
     Create membership to team
     """
 
-    user = factory.SubFactory(UserFactory)
-    team = factory.SubFactory(TeamFactory)
-
     class Meta:
         model = Membership
+
+    user = factory.SubFactory(UserFactory)
+    team = factory.SubFactory(TeamFactory)
 
 
 class UserWithTeamFactory(UserFactory):
@@ -75,6 +75,9 @@ class EventFactory(factory.django.DjangoModelFactory):
     Create event
     """
 
+    class Meta:
+        model = Event
+
     team = factory.SubFactory(TeamFactory)
     title = factory.Faker("sentence", nb_words=5, variable_nb_words=True)
     organizer = factory.Faker("name")
@@ -86,26 +89,26 @@ class EventFactory(factory.django.DjangoModelFactory):
     long = 2.17403
     city = factory.Faker("city")
 
-    class Meta:
-        model = Event
-
 
 class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):
     """
     Create ticket
     """
 
-    name = factory.Faker("name")
-    event = factory.SubFactory(EventFactory)
-
     class Meta:
         model = TicketRedemptionKey
+
+    name = factory.Faker("name")
+    event = factory.SubFactory(EventFactory)
 
 
 class TicketTierFactory(factory.django.DjangoModelFactory):
     """
     Create ticket_tier
     """
+
+    class Meta:
+        model = TicketTier
 
     ticket_type = "test"
     price = 1.00000000
@@ -114,14 +117,14 @@ class TicketTierFactory(factory.django.DjangoModelFactory):
     max_per_person = 1
     event = factory.SubFactory(EventFactory)
 
-    class Meta:
-        model = TicketTier
-
 
 class CheckoutSessionFactory(factory.django.DjangoModelFactory):
     """
     Create checkout session
     """
+
+    class Meta:
+        model = CheckoutSession
 
     expiration = factory.fuzzy.FuzzyDateTime(timezone.now())
     name = factory.Faker("name")
@@ -129,21 +132,18 @@ class CheckoutSessionFactory(factory.django.DjangoModelFactory):
     cost = 1
     event = factory.SubFactory(EventFactory)
 
-    class Meta:
-        model = CheckoutSession
-
 
 class CheckoutItemFactory(factory.django.DjangoModelFactory):
     """
     Create checkout item with ticket tier and checkout session
     """
 
+    class Meta:
+        model = CheckoutItem
+
     quantity = factory.LazyAttribute(lambda x: random.randrange(0, 100))
     ticket_tier = factory.SubFactory(TicketTierFactory)
     checkout_session = factory.SubFactory(CheckoutSessionFactory)
-
-    class Meta:
-        model = CheckoutItem
 
 
 class TxFiatFactory(factory.django.DjangoModelFactory):
@@ -151,10 +151,10 @@ class TxFiatFactory(factory.django.DjangoModelFactory):
     Create fiat transaction
     """
 
-    checkout_session = factory.SubFactory(CheckoutSessionFactory)
-
     class Meta:
         model = TxFiat
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
 
 
 class TxBlockchainFactory(factory.django.DjangoModelFactory):
@@ -162,10 +162,10 @@ class TxBlockchainFactory(factory.django.DjangoModelFactory):
     Create blockchain transaction
     """
 
-    checkout_session = factory.SubFactory(CheckoutSessionFactory)
-
     class Meta:
         model = TxBlockchain
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
 
 
 class TxAssetOwnershipFactory(factory.django.DjangoModelFactory):
@@ -173,10 +173,10 @@ class TxAssetOwnershipFactory(factory.django.DjangoModelFactory):
     Create asset_ownership transaction
     """
 
-    checkout_session = factory.SubFactory(CheckoutSessionFactory)
-
     class Meta:
         model = TxAssetOwnership
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
 
 
 class TicketFactory(factory.django.DjangoModelFactory):
@@ -184,11 +184,11 @@ class TicketFactory(factory.django.DjangoModelFactory):
     Create ticket
     """
 
+    class Meta:
+        model = Ticket
+
     event = factory.SubFactory(EventFactory)
     ticket_tier = factory.SubFactory(TicketTierFactory)
     checkout_item = factory.SubFactory(CheckoutItemFactory)
     checkout_session = factory.SubFactory(CheckoutSessionFactory)
     file = factory.django.ImageField(color="red")
-
-    class Meta:
-        model = Ticket

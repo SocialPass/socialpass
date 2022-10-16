@@ -55,7 +55,7 @@ class Team(DBModel):
     """
 
     # keys
-    members = models.ManyToManyField("root.User", through="root.Membership", blank=False)
+    members = models.ManyToManyField("User", through="Membership", blank=False)
 
     # basic info
     name = models.CharField(max_length=255, blank=False)
@@ -82,7 +82,7 @@ class Membership(DBModel):
         unique_together = ("team", "user")
 
     # keys
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(
         "root.User", on_delete=models.CASCADE, blank=True, null=True
     )
@@ -130,14 +130,14 @@ class Invite(DBModel):
 
     # Keys
     inviter = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        "User",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
     membership = models.ForeignKey(
-        Membership, on_delete=models.CASCADE, blank=True, null=True
+        "Membership", on_delete=models.CASCADE, blank=True, null=True
     )
 
     # basic info
@@ -241,8 +241,8 @@ class Event(DBModel):
     objects = EventQuerySet.as_manager()
 
     # Keys
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=False, null=False)
+    user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=False, null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=False, null=False)
     google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     # state
@@ -572,10 +572,28 @@ class TicketTier(DBModel):
 
     # keys
     event = models.ForeignKey(
-        Event,
+        "Event",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
+    )
+    tier_fiat = models.OneToOneField(
+        "TierFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_blockchain = models.OneToOneField(
+        "TierBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_asset_ownership = models.OneToOneField(
+        "TierAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     # basic info
@@ -609,24 +627,6 @@ class TicketTier(DBModel):
         help_text="Maximum amount of tickets per attendee.",
         blank=False,
         null=False,
-    )
-    tier_fiat = models.OneToOneField(
-        "TierFiat",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    tier_blockchain = models.OneToOneField(
-        "TierBlockchain",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    tier_asset_ownership = models.OneToOneField(
-        "TierAssetOwnership",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
     )
 
     def __str__(self):
@@ -681,7 +681,7 @@ class CheckoutSession(DBModel):
 
     # keys
     event = models.ForeignKey(
-        Event,
+        "Event",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
@@ -740,13 +740,13 @@ class CheckoutItem(DBModel):
 
     # keys
     ticket_tier = models.ForeignKey(
-        TicketTier,
+        "TicketTier",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
     )
     checkout_session = models.ForeignKey(
-        CheckoutSession,
+        "CheckoutSession",
         on_delete=models.CASCADE,
         blank=False,
         null=False,

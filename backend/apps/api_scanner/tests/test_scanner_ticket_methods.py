@@ -100,19 +100,3 @@ class TestScannerTicketMethods(TestCase):
         __ticket = self.__ticket
         with self.assertRaises(ForbiddenRedemptionError):
             __ticket.redeem_ticket(redemption_access_key)
-
-    def test_get_claimed_tickets(self):
-        """
-        tests if Ticket get_claimed_tickets method is returning redeemed tickets
-            from event
-        - if an event has no redeemed tickets must return an empty queryset
-        """
-        ticket = self.ticket
-        redemption_access_key = self.ticket_redemption_key
-
-        # assert empty queryset
-        self.assertFalse(Ticket.get_claimed_tickets(self.event).exists())
-
-        # assert queryset
-        ticket.redeem_ticket(redemption_access_key)
-        self.assertTrue(Ticket.get_claimed_tickets(self.event).exists())

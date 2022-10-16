@@ -76,7 +76,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_ticket_count(self, obj):
         # TODO: should change to ticket_tier quantity_sold sum
-        return Ticket.objects.filter(checkout_item__ticket_tier__event=obj).count()
+        return Ticket.objects.filter(event=obj).count()
 
 
 class TicketTierSerializer(serializers.ModelSerializer):

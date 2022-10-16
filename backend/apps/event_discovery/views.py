@@ -55,9 +55,7 @@ class EventDiscoveryDetails(DetailView):
         """
         context = super().get_context_data(**kwargs)
         # TODO: should we change the count ticket_count to quantity_sold?
-        ticket_count = Ticket.objects.filter(
-            checkout_item__ticket_tier__event=self.object
-        ).count()
+        ticket_count = Ticket.objects.filter(event=self.object).count()
         tickets_remaining = self.object.capacity - ticket_count
         context.update(
             {

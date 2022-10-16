@@ -136,11 +136,7 @@ class TicketsListView(SetAccessKeyAndEventMixin, ListAPIView):
     queryset = Ticket.objects.all().order_by("-id")  # order_by prevent unordeing warning
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(checkout_item__ticket_tier__event=self.event, **self.filter_kwargs)
-        )
+        return super().get_queryset().filter(event=self.event, **self.filter_kwargs)
 
     @swagger_auto_schema(
         request_body=input_serializer,

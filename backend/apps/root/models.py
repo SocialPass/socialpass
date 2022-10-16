@@ -533,11 +533,6 @@ class Ticket(DBModel):
 
         return _pass.get_pass_url()
 
-    @classmethod
-    def get_claimed_tickets(cls, event: Event):
-        """Returns all scanned tickets"""
-        return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
-
 
 class TicketRedemptionKey(DBModel):
     """

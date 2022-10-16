@@ -667,6 +667,7 @@ class CheckoutSession(DBModel):
 
     class OrderStatus(models.TextChoices):
         VALID = "VALID", _("Valid")
+        FAILED = "FAILED", _("Failed")
         EXPIRED = "EXPIRED", _("Expired")
         COMPLETED = "COMPLETED", _("Completed")
 
@@ -708,6 +709,12 @@ class CheckoutSession(DBModel):
         default=TransactionType.FIAT,
         blank=False,
     )
+    tx_status = models.CharField(
+        max_length=50,
+        choices=OrderStatus.choices,
+        default=OrderStatus.VALID,
+        blank=False,
+    )
     expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
@@ -716,12 +723,6 @@ class CheckoutSession(DBModel):
         validators=[MinValueValidator(0)],
         blank=True,
         null=False,
-    )
-    status = models.CharField(
-        max_length=50,
-        choices=OrderStatus.choices,
-        default=OrderStatus.VALID,
-        blank=False,
     )
 
     def __str__(self):

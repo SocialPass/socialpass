@@ -20,7 +20,6 @@ from taggit.managers import TaggableManager
 from apps.root.exceptions import (
     AlreadyRedeemed,
     ForbiddenRedemptionError,
-    InvalidEmbedCodeError,
     TooManyTicketsRequestedError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
@@ -485,11 +484,13 @@ class Ticket(DBModel):
         """Redeems a ticket."""
         # Check if redeemed
         if self.redeemed:
-            raise AlreadyRedeemed("Ticket is already redeemed.")
+            raise AlreadyRedeemed({"redeemed": "Ticket is already redeemed."})
 
         # Check if match on redemption access key
         if self.event.id != redemption_access_key.event.id:
-            raise ForbiddenRedemptionError("Ticketed event does not match.")
+            raise ForbiddenRedemptionError(
+                {"event": "Event does not match redemption key"}
+            )
 
         self.redeemed = True
         self.redeemed_at = timezone.now()

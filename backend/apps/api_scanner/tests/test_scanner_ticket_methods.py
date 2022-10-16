@@ -3,11 +3,7 @@ from typing import Any
 from django.core import exceptions
 from django.test import TestCase
 
-from apps.root.exceptions import (
-    AlreadyRedeemed,
-    ForbiddenRedemptionError,
-    InvalidEmbedCodeError,
-)
+from apps.root.exceptions import AlreadyRedeemed, ForbiddenRedemptionError
 from apps.root.factories import (
     CheckoutItemFactory,
     CheckoutSessionFactory,

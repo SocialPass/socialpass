@@ -24,7 +24,6 @@ from apps.root.exceptions import (
     TooManyTicketsRequestedError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
-from config.storages import get_private_ticket_storage
 
 
 class DBModel(TimeStampedModel):
@@ -463,11 +462,8 @@ class Ticket(DBModel):
         null=False,
     )
 
-    # Ticket File Info
-    file = models.ImageField(storage=get_private_ticket_storage, blank=False, null=True)
-    embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
-
     # Ticket access info
+    embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     archived = models.BooleanField(default=False, blank=False, null=False)
     redeemed = models.BooleanField(default=False, blank=False, null=False)
     redeemed_at = models.DateTimeField(blank=True, null=True)

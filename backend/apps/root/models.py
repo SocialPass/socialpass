@@ -610,19 +610,19 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
-    tier_fiat = models.ForeignKey(
+    tier_fiat = models.OneToOneField(
         "TierFiat",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    tier_blockchain = models.ForeignKey(
+    tier_blockchain = models.OneToOneField(
         "TierBlockchain",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    tier_asset_ownership = models.ForeignKey(
+    tier_asset_ownership = models.OneToOneField(
         "TierAssetOwnership",
         on_delete=models.CASCADE,
         blank=True,

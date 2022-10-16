@@ -1,7 +1,6 @@
-# Django
+# General
 # ------------------------------------------------------------------------------
 argon2-cffi==21.3.0 # https://github.com/hynek/argon2-cffi
-web3==5.30.0
 boto3==1.24.33 # https://github.com/boto/boto3
 Pillow==9.1.0 # https://github.com/python-pillow/Pillow
 qrcode==7.3.1 # https://github.com/lincolnloop/python-qrcode
@@ -15,7 +14,7 @@ xhtml2pdf==0.2.8 # https://github.com/xhtml2pdf/xhtml2pdf
 # Django
 # ------------------------------------------------------------------------------
 crispy-bootstrap5==0.6 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
-django==4.0.7  # https://www.djangoproject.com/
+django==4.0.8  # https://www.djangoproject.com/
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
 django-allauth==0.51.0  # https://github.com/pennersr/django-allauth
 django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages

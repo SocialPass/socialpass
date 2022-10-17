@@ -8,23 +8,21 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q, Sum
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from model_utils.models import TimeStampedModel
-from taggit.managers import TaggableManager
 
 from apps.root.exceptions import (
-    AlreadyRedeemed,
+    AlreadyRedeemedError,
+    EventStateTranstionError,
     ForbiddenRedemptionError,
-    InvalidEmbedCodeError,
     TooManyTicketsRequestedError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
-from config.storages import get_private_ticket_storage
 
 
 class DBModel(TimeStampedModel):
@@ -55,7 +53,7 @@ class Team(DBModel):
     """
 
     # keys
-    members = models.ManyToManyField("root.User", through="root.Membership", blank=False)
+    members = models.ManyToManyField("User", through="Membership", blank=False)
 
     # basic info
     name = models.CharField(max_length=255, blank=False)
@@ -82,7 +80,7 @@ class Membership(DBModel):
         unique_together = ("team", "user")
 
     # keys
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(
         "root.User", on_delete=models.CASCADE, blank=True, null=True
     )
@@ -130,14 +128,14 @@ class Invite(DBModel):
 
     # Keys
     inviter = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        "User",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
     membership = models.ForeignKey(
-        Membership, on_delete=models.CASCADE, blank=True, null=True
+        "Membership", on_delete=models.CASCADE, blank=True, null=True
     )
 
     # basic info
@@ -241,8 +239,8 @@ class Event(DBModel):
     objects = EventQuerySet.as_manager()
 
     # Keys
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=False, null=False)
+    user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=False, null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=False, null=False)
     google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     # state
@@ -277,9 +275,6 @@ class Event(DBModel):
     )
     cover_image = models.ImageField(
         help_text="A banner image for your event.", blank=True, null=True
-    )
-    tags = TaggableManager(
-        blank=True,
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
@@ -352,7 +347,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            raise e
+            raise EventStateTranstionError({"state": str(e)})
 
     def transition_live(self, save=True):
         """
@@ -366,7 +361,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            raise e
+            raise EventStateTranstionError({"state": str(e)})
 
     @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):
@@ -399,10 +394,6 @@ class Event(DBModel):
     @property
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
-
-    @property
-    def capacity(self):
-        return self.tickettier_set.all().aggregate(Sum("capacity"))["capacity__sum"]
 
     @staticmethod
     def required_form_fields():
@@ -466,14 +457,8 @@ class Ticket(DBModel):
         null=False,
     )
 
-    # Ticket File Info
-    filename = models.UUIDField(
-        default=uuid.uuid4, editable=False, blank=False, null=False
-    )
-    file = models.ImageField(storage=get_private_ticket_storage, blank=False, null=True)
-    embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
-
     # Ticket access info
+    embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     archived = models.BooleanField(default=False, blank=False, null=False)
     redeemed = models.BooleanField(default=False, blank=False, null=False)
     redeemed_at = models.DateTimeField(blank=True, null=True)
@@ -485,24 +470,25 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
-    def access_key_can_redeem_ticket(
-        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
-    ) -> bool:
-        """Returns a boolean indicating if the access key can reedem the given ticket."""
-        if redemption_access_key is None:
-            return True
-
-        return self.event.id == redemption_access_key.event.id
-
     def redeem_ticket(
         self, redemption_access_key: Optional["TicketRedemptionKey"] = None
     ):
         """Redeems a ticket."""
+        # Check if redeemed
         if self.redeemed:
-            raise AlreadyRedeemed("Ticket is already redeemed.")
+            raise AlreadyRedeemedError({"redeemed": "Ticket is already redeemed."})
 
-        if not self.access_key_can_redeem_ticket(redemption_access_key):
-            raise ForbiddenRedemptionError("Ticketed event does not match.")
+        # # Check if redemption key was passed
+        if not redemption_access_key:
+            raise ForbiddenRedemptionError(
+                {"redemption_access_key": "Access key was not passed in"}
+            )
+
+        # Check if match on redemption access key
+        if self.event.id != redemption_access_key.event.id:
+            raise ForbiddenRedemptionError(
+                {"event": "Event does not match redemption key"}
+            )
 
         self.redeemed = True
         self.redeemed_at = timezone.now()
@@ -546,25 +532,6 @@ class Ticket(DBModel):
 
         return _pass.get_pass_url()
 
-    @property
-    def full_embed(self):
-        return f"{self.embed_code}/{self.filename}"
-
-    @classmethod
-    def get_ticket_from_embedded_qr_code(cls, embed_code: str):
-        """Returns a ticket from the given embed code."""
-        try:
-            embed_code, filename = embed_code.split("/")
-        except ValueError:
-            raise InvalidEmbedCodeError("Embed code is invalid.")
-
-        return cls.objects.get(embed_code=embed_code, filename=filename)
-
-    @classmethod
-    def get_claimed_tickets(cls, event: Event):
-        """Returns all scanned tickets"""
-        return cls.objects.filter(redeemed=True, checkout_item__ticket_tier__event=event)
-
 
 class TicketRedemptionKey(DBModel):
     """
@@ -602,10 +569,28 @@ class TicketTier(DBModel):
 
     # keys
     event = models.ForeignKey(
-        Event,
+        "Event",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
+    )
+    tier_fiat = models.OneToOneField(
+        "TierFiat",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_blockchain = models.OneToOneField(
+        "TierBlockchain",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    tier_asset_ownership = models.OneToOneField(
+        "TierAssetOwnership",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     # basic info
@@ -639,24 +624,6 @@ class TicketTier(DBModel):
         help_text="Maximum amount of tickets per attendee.",
         blank=False,
         null=False,
-    )
-    tier_fiat = models.ForeignKey(
-        "TierFiat",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    tier_blockchain = models.ForeignKey(
-        "TierBlockchain",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    tier_asset_ownership = models.ForeignKey(
-        "TierAssetOwnership",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
     )
 
     def __str__(self):
@@ -701,6 +668,7 @@ class CheckoutSession(DBModel):
 
     class OrderStatus(models.TextChoices):
         VALID = "VALID", _("Valid")
+        FAILED = "FAILED", _("Failed")
         EXPIRED = "EXPIRED", _("Expired")
         COMPLETED = "COMPLETED", _("Completed")
 
@@ -711,7 +679,7 @@ class CheckoutSession(DBModel):
 
     # keys
     event = models.ForeignKey(
-        Event,
+        "Event",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
@@ -742,6 +710,12 @@ class CheckoutSession(DBModel):
         default=TransactionType.FIAT,
         blank=False,
     )
+    tx_status = models.CharField(
+        max_length=50,
+        choices=OrderStatus.choices,
+        default=OrderStatus.VALID,
+        blank=False,
+    )
     expiration = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
@@ -750,12 +724,6 @@ class CheckoutSession(DBModel):
         validators=[MinValueValidator(0)],
         blank=True,
         null=False,
-    )
-    status = models.CharField(
-        max_length=50,
-        choices=OrderStatus.choices,
-        default=OrderStatus.VALID,
-        blank=False,
     )
 
     def __str__(self):
@@ -770,13 +738,13 @@ class CheckoutItem(DBModel):
 
     # keys
     ticket_tier = models.ForeignKey(
-        TicketTier,
+        "TicketTier",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
     )
     checkout_session = models.ForeignKey(
-        CheckoutSession,
+        "CheckoutSession",
         on_delete=models.CASCADE,
         blank=False,
         null=False,

@@ -3,7 +3,14 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import CheckoutItem, Event, Team, Ticket, TicketTier
+from apps.root.models import (
+    CheckoutItem,
+    CheckoutSession,
+    Event,
+    Team,
+    Ticket,
+    TicketTier,
+)
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -152,3 +159,73 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
             "ticket_tier",
             "checkout_session",
         ]
+
+
+class CheckoutSessionReadSerializer(serializers.ModelSerializer):
+
+    event = serializers.UUIDField(source="event.public_id")
+    checkout_items = CheckoutItemReadSerializer(
+        source="checkoutitem_set", many=True, allow_null=True
+    )
+
+    class Meta:
+        model = CheckoutSession
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "name",
+            "email",
+            "cost",
+            "status",
+            "event",
+            "checkout_items",
+        ]
+
+
+class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
+    ticket_tier = serializers.UUIDField(write_only=True)
+
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+        ]
+
+
+class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
+
+    event = serializers.UUIDField(write_only=True)
+    checkout_items = CheckoutSessionItemsCreateSerializer(
+        source="checkoutitem_set", many=True, allow_null=True, required=False
+    )
+
+    class Meta:
+        model = CheckoutSession
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "name",
+            "email",
+            "cost",
+            "status",
+            "event",
+            "checkout_items",
+        ]
+
+    def create(self, validated_data):
+        checkout_items = validated_data.pop("checkoutitem_set")
+        checkout_session = CheckoutSession.objects.create(**validated_data)
+
+        for item in checkout_items:
+            checkout_item = CheckoutItem(checkout_session=checkout_session, **item)
+            checkout_item.save()
+
+        return checkout_session

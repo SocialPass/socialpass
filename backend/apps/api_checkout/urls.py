@@ -26,4 +26,19 @@ urlpatterns = [
         ),
         name="item_details",
     ),
+    path(
+        "session/",
+        views.CheckoutSessionView.as_view({"post": "create"}),
+        name="session_create",
+    ),
+    path(
+        "session/<uuid:checkoutsession_public_id>/",
+        views.CheckoutSessionView.as_view({"get": "retrieve"}),
+        name="session_retrieve",
+    ),
+    path(
+        "session/<uuid:checkoutsession_public_id>/items/",
+        views.CheckoutSessionView.as_view({"get": "items"}),
+        name="session_items",
+    ),
 ]

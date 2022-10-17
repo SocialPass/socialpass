@@ -195,8 +195,6 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
         utilized in CheckoutSessionView.create()
         creation flow in serializer.create()
         """
-        serializer.validated_data["checkoutitem_set"] = kwargs["checkoutitem_set"]
-
         checkout_session = serializer.save(**kwargs)
 
         try:

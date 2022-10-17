@@ -225,6 +225,7 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
     checkout_items = CheckoutSessionItemsCreateSerializer(
         source="checkoutitem_set", many=True, allow_null=True, required=False
     )
+    cost = serializers.CharField(read_only=True)
 
     class Meta:
         model = CheckoutSession

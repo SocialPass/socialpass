@@ -241,7 +241,9 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
                     status=status.HTTP_404_NOT_FOUND,
                     data={
                         "code": "public-id-not-found",
-                        "message": f"The ticket_tier `{data['ticket_tier']}` does not exist.",
+                        "message": (
+                            f"The ticket_tier `{data['ticket_tier']}` does not exist."
+                        ),
                     },
                 )
 

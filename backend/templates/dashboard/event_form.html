@@ -99,12 +99,6 @@
 						{% endwith %}
 						<!-- Organizer end -->
 
-            {% if form.tags %}
-						<div class="form-group">
-							{{form.tags|as_crispy_field}}
-						</div>
-            {% endif %}
-
 						<!-- Description start -->
 						{% with form.description as input %}
 							{% include 'components/forms_inputs/textarea.html' %}
@@ -235,20 +229,7 @@
 							Coming soon! Sell different tickets for an event.
 						</p>
 
-						{% comment %} <!-- Capacity start -->
-            {% if form.capacity %}
-						{% with input=form.capacity required="required" %}
-							{% include 'components/forms_inputs/input.html' %}
-						{% endwith %}
-            {% endif %}
-						<!-- Capacity end -->
-
-						<!-- Limit Per Person start -->
-						{% with input=form.limit_per_person required="required" %}
-							{% include 'components/forms_inputs/input.html' %}
-						{% endwith %}
-						<!-- Limit Per Person end --> {% endcomment %}
-            <hr />
+			            <hr />
 					</section>
 					<!-- Tickets end -->
 				</div>

@@ -125,21 +125,6 @@ class EventForm(forms.ModelForm):
         if errors:
             raise forms.ValidationError(errors)
 
-    # def clean_limit_per_person(self):
-    #     # TODO: the clean will be in the ticket tier form
-    #     data = self.cleaned_data["limit_per_person"]
-    #     # Make sure limit per person does not exceed capacity
-    #     if self.instance.pk:
-    #         capacity = self.instance.capacity
-    #     else:
-    #         capacity = self.cleaned_data["capacity"]
-    #     if data > capacity:
-    #         raise forms.ValidationError(
-    #             f"Limit per person exceeds capacity of {capacity}."
-    #         )
-
-    #     return data
-
     def clean(self):
         data = super().clean()
         if "transition_live" in self.data:

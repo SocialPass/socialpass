@@ -103,7 +103,7 @@ class EventAdmin(CustomDBAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ["checkout_item", "full_embed"]
+    list_display = CustomDBAdmin.list_display + ["checkout_item", "embed_code"]
 
 
 @admin.register(TicketRedemptionKey)

@@ -96,7 +96,6 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "storages",
-    "taggit",
     "django_fsm_log",
 ]
 

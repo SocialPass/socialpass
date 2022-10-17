@@ -69,7 +69,6 @@ class EventSerializer(serializers.ModelSerializer):
             "start_date",
             "timezone",
             "localized_address_display",
-            "capacity",
             "ticket_count",
             "cover_image",
         ]

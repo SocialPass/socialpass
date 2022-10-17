@@ -396,10 +396,6 @@ class Event(DBModel):
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
-    @property
-    def capacity(self):
-        return self.tickettier_set.all().aggregate(Sum("capacity"))["capacity__sum"]
-
     @staticmethod
     def required_form_fields():
         fields = [

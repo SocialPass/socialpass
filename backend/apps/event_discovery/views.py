@@ -48,20 +48,3 @@ class EventDiscoveryDetails(DetailView):
     def get_queryset(self):
         qs = super().get_queryset().filter_active()
         return qs.filter(public_id=self.kwargs["event_public_id"])
-
-    def get_context_data(self, **kwargs):
-        """
-        Fetch ticket info
-        """
-        context = super().get_context_data(**kwargs)
-        # TODO: should we change the count ticket_count to quantity_sold?
-        ticket_count = Ticket.objects.filter(event=self.object).count()
-        tickets_remaining = self.object.capacity - ticket_count
-        context.update(
-            {
-                "ticket_count": ticket_count,
-                "tickets_remaining": tickets_remaining,
-                "checkoutportal_base_url": settings.CHECKOUT_PORTAL_BASE_URL,
-            }
-        )
-        return context

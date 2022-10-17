@@ -50,7 +50,6 @@ class EventSerializer(serializers.ModelSerializer):
     redeemed_count = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     team = TeamSerializer()
-    capacity = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -62,7 +61,6 @@ class EventSerializer(serializers.ModelSerializer):
             "start_date",
             "timezone",
             "localized_address_display",
-            "capacity",
             "ticket_count",
             "redeemed_count",
         ]

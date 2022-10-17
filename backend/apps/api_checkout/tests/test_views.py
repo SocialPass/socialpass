@@ -1,47 +1,21 @@
 from datetime import timedelta
-from typing import Any, Optional
+from typing import Optional
 from uuid import UUID, uuid4
 
-from django.test import TestCase
 from django.utils import timezone
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 
-from apps.root.factories import (
-    CheckoutItemFactory,
-    CheckoutSessionFactory,
-    EventFactory,
-    TicketTierFactory,
-    UserWithTeamFactory,
-)
 from apps.root.models import CheckoutItem, CheckoutSession, Event, Team, TicketTier
-from apps.root.utilities.misc import prevent_warnings
+from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 
-class TestCaseWrapper(TestCase):
-    user: Any
-    team: Team
-    event: Event
-    ticket_tier: TicketTier
-    url_base: str
-    access_key: str
-    checkout_item: CheckoutItem
-    checkout_session: CheckoutSession
+class TestCaseWrapper(BaseTestCaseWrapper):
     random_uuid: UUID
 
     @classmethod
     def setUpTestData(cls) -> None:
         cls.url_base = "/api/checkout/v1/"
-        cls.user = UserWithTeamFactory()
-        cls.team = cls.user.membership_set.first().team
-        cls.event = EventFactory(team=cls.team, user=cls.user)
-        cls.ticket_tier = TicketTierFactory(event=cls.event, capacity=100)
-        cls.checkout_session = CheckoutSessionFactory(event=cls.event)
-        cls.checkout_item = CheckoutItemFactory(
-            ticket_tier=cls.ticket_tier,
-            checkout_session=cls.checkout_session,
-            quantity=10,
-        )
         cls.random_uuid = (
             uuid4()
         )  # Random UUID string that is not contained in the test DB.
@@ -87,7 +61,6 @@ class GetEventTestCase(TestCaseWrapper):
             event_dict["localized_address_display"],
             self.event.localized_address_display,
         )
-        self.assertEqual(event_dict["capacity"], self.event.capacity)
         self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)
         self.assertSerializedDatetime(
             event_dict["start_date"], self.event.start_date, "%A, %B %d, %Y | %H:%M%p"
@@ -229,15 +202,12 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             available = tier.capacity (100) - tier.quantity_sold (50) = 50
             try to update quantity to be 51 and getting 400 bad request
         """
-
-        event = EventFactory(team=self.team, user=self.user)
-        ticket_tier = TicketTierFactory(event=event, capacity=100, quantity_sold=50)
-        checkout_session = CheckoutSessionFactory(
-            event=event, expiration=timezone.now() + timedelta(days=3)
-        )
-        checkout_item = CheckoutItemFactory(
-            ticket_tier=ticket_tier, checkout_session=checkout_session, quantity=30
-        )
+        ticket_tier = self.event.tickettier_set.first()
+        ticket_tier.capacity = 100
+        ticket_tier.quantity_sold = 50
+        ticket_tier.save()
+        checkout_session = self.event.checkoutsession_set.first()
+        checkout_item = checkout_session.checkoutitem_set.first()
         data = {"quantity": 51}
 
         response = self.client.put(
@@ -248,8 +218,8 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # verify if the value was not updated in the db
-        checkout_item = CheckoutItem.objects.get(public_id=checkout_item.public_id)
-        self.assertEqual(30, checkout_item.quantity)
+        _checkout_item = CheckoutItem.objects.get(public_id=checkout_item.public_id)
+        self.assertEqual(checkout_item.modified, _checkout_item.modified)
 
     @prevent_warnings
     def test_create_item_201_created(self):
@@ -323,11 +293,11 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         asserts 400 bad request
         """
 
-        event = EventFactory(team=self.team, user=self.user)
-        ticket_tier = TicketTierFactory(event=event, capacity=100, quantity_sold=50)
-        checkout_session = CheckoutSessionFactory(
-            event=event, expiration=timezone.now() + timedelta(days=3)
-        )
+        ticket_tier = self.event.tickettier_set.first()
+        ticket_tier.capacity = 100
+        ticket_tier.quantity_sold = 50
+        ticket_tier.save()
+        checkout_session = self.event.checkoutsession_set.first()
 
         data = self.generate_item_data(
             tier=ticket_tier.public_id, session=checkout_session.public_id, quantity=51
@@ -341,11 +311,12 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # verify if the value was not created in the db
-        checkout_item_qs = CheckoutItem.objects.filter(
+        new_checkout_item_qs = CheckoutItem.objects.filter(
             ticket_tier__public_id=ticket_tier.public_id,
             checkout_session__public_id=checkout_session.public_id,
+            quantity=51,
         )
-        self.assertFalse(checkout_item_qs.exists())
+        self.assertFalse(new_checkout_item_qs)
 
     @prevent_warnings
     def test_delete_item_204_no_content(self):

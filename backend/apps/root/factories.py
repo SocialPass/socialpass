@@ -191,4 +191,3 @@ class TicketFactory(factory.django.DjangoModelFactory):
     ticket_tier = factory.SubFactory(TicketTierFactory)
     checkout_item = factory.SubFactory(CheckoutItemFactory)
     checkout_session = factory.SubFactory(CheckoutSessionFactory)
-    file = factory.django.ImageField(color="red")

@@ -65,9 +65,6 @@ class EventSerializer(serializers.ModelSerializer):
             "redeemed_count",
         ]
 
-    def get_capacity(self, obj):
-        return obj.capacity
-
     def get_redeemed_count(self, obj):
         return Ticket.objects.filter(event=obj).count()
 

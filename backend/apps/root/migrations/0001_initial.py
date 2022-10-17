@@ -9,7 +9,6 @@ import django.db.models.deletion
 import django.utils.timezone
 import django_fsm
 import model_utils.fields
-import taggit.managers
 from django.conf import settings
 from django.db import migrations, models
 
@@ -21,7 +20,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("taggit", "0005_auto_20220424_2025"),
         ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
@@ -412,13 +410,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "tags",
-                    taggit.managers.TaggableManager(
-                        blank=True,
-                        help_text="A comma-separated list of tags.",
-                        through="taggit.TaggedItem",
-                        to="taggit.Tag",
-                        verbose_name="Tags",
-                    ),
+                    models.CharField(blank=True, default="", max_length=1024),
                 ),
             ],
             options={

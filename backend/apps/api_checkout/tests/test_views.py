@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 
 from django.test import TestCase
 from django.utils import timezone
+from factory.faker import faker
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 
@@ -360,3 +361,181 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         # verify if the checkout_item was deleted from the db
         with self.assertRaises(CheckoutItem.DoesNotExist):
             CheckoutItem.objects.get(public_id=item_public_id)
+
+
+class CheckoutSessionViewTestCase(TestCaseWrapper):
+    """
+    class to test CheckoutSession retrieve, create and list items view
+    """
+
+    def generate_session_data(
+        self, event: str, tier: Optional[str] = None, quantity: int = 1
+    ) -> dict:
+        """
+        generates session dictionary with fake name and email, event and items
+        """
+        fake = faker.Faker()
+
+        items = [{"quantity": quantity, "ticket_tier": str(tier)}] if tier else []
+        session_data = {
+            "expiration": serializers.DateTimeField().to_representation(timezone.now()),
+            "name": fake.name(),
+            "email": fake.email(),
+            "cost": 10,
+            "status": "VALID",
+            "event": str(event),
+            "checkout_items": items,
+        }
+
+        return session_data
+
+    @prevent_warnings
+    def test_get_session_details_200_ok(self) -> None:
+        """
+        request GET retrieve item and test if return code 200 OK
+        """
+        item_public_id = self.checkout_session.public_id
+
+        # Not using reverse because we want URL changes to explicitly break tests.
+        response = self.client.get(f"{self.url_base}session/{item_public_id}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # assert objects values with json returned
+        session_dict = response.json()
+        self.assertEqual(session_dict["public_id"], str(self.checkout_session.public_id))
+        self.assertEqual(session_dict["name"], self.checkout_session.name)
+        self.assertSerializedDatetime(
+            session_dict["expiration"], self.checkout_session.expiration
+        )
+        self.assertEqual(session_dict["email"], self.checkout_session.email)
+        self.assertEqual(session_dict["cost"], self.checkout_session.cost)
+        self.assertEqual(session_dict["status"], self.checkout_session.status)
+        self.assertEqual(
+            session_dict["event"], str(self.checkout_session.event.public_id)
+        )
+        # assert items from session
+        item_dict = session_dict["checkout_items"][0]
+        self.assertEqual(item_dict["public_id"], str(self.checkout_item.public_id))
+        self.assertEqual(item_dict["ticket_tier"], str(self.ticket_tier.public_id))
+
+    @prevent_warnings
+    def test_get_session_details_404_not_found(self):
+        """
+        request nonexistent session detail and test if return 404 NOT FOUND
+        """
+
+        response = self.client.get(f"{self.url_base}session/{self.random_uuid}/")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @prevent_warnings
+    def test_create_session_without_items_201_created(self):
+        """
+        request POST create session without items and assert if code 200 OK
+        """
+
+        data = self.generate_session_data(event=self.event.public_id)
+
+        # Not using reverse because we want URL changes to explicitly break tests.
+        response = self.client.post(
+            f"{self.url_base}session/",
+            data=data,
+            content_type="application/json",
+        )
+        # assert objects values with json returned
+        session_dict = response.json()
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertUUID(session_dict["public_id"], version=4)
+        self.assertEqual(session_dict["name"], data["name"])
+        self.assertEqual(session_dict["email"], data["email"])
+        self.assertEqual(session_dict["cost"], data["cost"])
+        self.assertEqual(session_dict["status"], data["status"])
+        self.assertEqual(session_dict["checkout_items"], [])
+
+    @prevent_warnings
+    def test_create_session_with_items_201_created(self):
+        """
+        request POST create session with items and assert if code 200 OK
+        """
+
+        data = self.generate_session_data(
+            event=self.event.public_id, tier=self.ticket_tier.public_id
+        )
+
+        # Not using reverse because we want URL changes to explicitly break tests.
+        response = self.client.post(
+            f"{self.url_base}session/",
+            data=data,
+            content_type="application/json",
+        )
+        # assert objects values with json returned
+        session_dict = response.json()
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertUUID(session_dict["public_id"], version=4)
+        self.assertEqual(session_dict["name"], data["name"])
+        self.assertEqual(session_dict["email"], data["email"])
+        self.assertEqual(session_dict["cost"], data["cost"])
+        self.assertEqual(session_dict["status"], data["status"])
+        item_dict = session_dict["checkout_items"][0]
+        self.assertEqual(item_dict["quantity"], data["checkout_items"][0]["quantity"])
+        self.assertUUID(item_dict["public_id"], version=4)
+
+    @prevent_warnings
+    def test_fail_create_with_invalid_event_404_not_found(self):
+        """
+        request POST create a session with nonexistent or event
+        assets if returning 404 NOT FOUND
+        """
+
+        data = self.generate_session_data(event=self.random_uuid)
+        response = self.client.post(
+            f"{self.url_base}session/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json()["code"], "public-id-not-found")
+
+    @prevent_warnings
+    def test_fail_create_with_invalid_tier_404_not_found(self):
+        """
+        request POST create a session with nonexistent ticket_tier
+        assets if returning 404 NOT FOUND
+        """
+
+        data = self.generate_session_data(
+            event=self.event.public_id, tier=self.random_uuid
+        )
+        response = self.client.post(
+            f"{self.url_base}session/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json()["code"], "public-id-not-found")
+
+    @prevent_warnings
+    def test_create_higher_than_available_items_400_bad_request(self):
+        """
+        request POST create a new session with quantity > quantity available
+        available = (
+            capacity (100) - quantity_sold (50) = 50
+        asserts 400 bar request
+        """
+
+        event = EventFactory(team=self.team, user=self.user)
+        ticket_tier = TicketTierFactory(event=event, capacity=100, quantity_sold=50)
+        data = self.generate_session_data(
+            event=event.public_id, tier=ticket_tier.public_id, quantity=51
+        )
+        response = self.client.post(
+            f"{self.url_base}session/",
+            data=data,
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # verify if the value was not created in the db
+        checkout_item_qs = CheckoutItem.objects.filter(
+            ticket_tier__public_id=ticket_tier.public_id
+        )
+        self.assertFalse(checkout_item_qs.exists())

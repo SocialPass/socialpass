@@ -417,7 +417,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertUUID(session_dict["public_id"], version=4)
         self.assertEqual(session_dict["name"], data["name"])
         self.assertEqual(session_dict["email"], data["email"])
-        self.assertEqual(session_dict["cost"], data["cost"])
         self.assertEqual(session_dict["tx_status"], data["tx_status"])
         self.assertEqual(session_dict["checkout_items"], [])
 
@@ -443,7 +442,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertUUID(session_dict["public_id"], version=4)
         self.assertEqual(session_dict["name"], data["name"])
         self.assertEqual(session_dict["email"], data["email"])
-        self.assertEqual(session_dict["cost"], data["cost"])
         self.assertEqual(session_dict["tx_status"], data["tx_status"])
         item_dict = session_dict["checkout_items"][0]
         self.assertEqual(item_dict["quantity"], data["checkout_items"][0]["quantity"])

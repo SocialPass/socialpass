@@ -1,21 +1,11 @@
-from typing import Any
 from uuid import uuid4
 
 from django.http import Http404
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 from django.views.generic import TemplateView
 from rest_framework import status
 
 from apps.api_scanner.views import SetAccessKeyAndEventMixin
-from apps.root.models import (
-    CheckoutItem,
-    CheckoutSession,
-    Event,
-    Team,
-    Ticket,
-    TicketRedemptionKey,
-    TicketTier,
-)
 from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 

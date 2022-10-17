@@ -1,9 +1,8 @@
-from django.conf import settings
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from apps.root.models import Event, Ticket
+from apps.root.models import Event
 
 
 class EventDiscoveryIndex(TemplateView):

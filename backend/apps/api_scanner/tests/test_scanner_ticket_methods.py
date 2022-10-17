@@ -1,18 +1,4 @@
-from typing import Any
-
-from django.core import exceptions
-from django.test import TestCase
-
 from apps.root.exceptions import AlreadyRedeemedError, ForbiddenRedemptionError
-from apps.root.models import (
-    CheckoutItem,
-    CheckoutSession,
-    Event,
-    Team,
-    Ticket,
-    TicketRedemptionKey,
-    TicketTier,
-)
 from apps.root.utilities.testing import BaseTestCaseWrapper
 
 

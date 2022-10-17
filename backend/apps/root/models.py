@@ -8,14 +8,13 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q, Sum
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from model_utils.models import TimeStampedModel
-from taggit.managers import TaggableManager
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,

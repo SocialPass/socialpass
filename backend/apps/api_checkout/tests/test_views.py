@@ -1,12 +1,10 @@
-from datetime import timedelta
 from typing import Optional
 from uuid import UUID, uuid4
 
-from django.utils import timezone
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 
-from apps.root.models import CheckoutItem, CheckoutSession, Event, Team, TicketTier
+from apps.root.models import CheckoutItem
 from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 

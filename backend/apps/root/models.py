@@ -478,6 +478,12 @@ class Ticket(DBModel):
         if self.redeemed:
             raise AlreadyRedeemedError({"redeemed": "Ticket is already redeemed."})
 
+        # # Check if redemption key was passed
+        if not redemption_access_key:
+            raise ForbiddenRedemptionError(
+                {"redemption_access_key": "Access key was not passed in"}
+            )
+
         # Check if match on redemption access key
         if self.event.id != redemption_access_key.event.id:
             raise ForbiddenRedemptionError(

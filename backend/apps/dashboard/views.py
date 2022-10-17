@@ -372,6 +372,12 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     def get_success_message(self, *args, **kwargs):
         return "Your event has been created successfully!"
 
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.object.pk)
+        )
+
 
 class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     """
@@ -398,6 +404,21 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
     def get_success_message(self, *args, **kwargs):
         return "Your event has been updated successfully."
+
+
+class EventTicketsView(TeamContextMixin, DetailView):
+    """
+    Show the tickets (and CTAs) for an event.
+    """
+
+    model = Event
+    context_object_name = "event"
+    template_name = "dashboard/event_tickets.html"
+
+    def get_object(self):
+        return Event.objects.prefetch_related("tickettier_set").get(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+        )
 
 
 class EventGoLiveView(TeamContextMixin, DetailView):

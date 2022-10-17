@@ -111,6 +111,10 @@ class TicketTierSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemReadSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItem model read serializer
+    """
+
     ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
     checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
@@ -128,6 +132,10 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemCreateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItem model create serializer
+    """
+
     ticket_tier = serializers.UUIDField(write_only=True)
     checkout_session = serializers.UUIDField(write_only=True)
 
@@ -144,6 +152,10 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItems model update serializer
+    """
+
     ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
     checkout_session = serializers.UUIDField(
         source="checkout_session.public_id", read_only=True
@@ -162,6 +174,9 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
 
 
 class CheckoutSessionReadSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItems model read serializer
+    """
 
     event = serializers.UUIDField(source="event.public_id")
     checkout_items = CheckoutItemReadSerializer(
@@ -185,6 +200,10 @@ class CheckoutSessionReadSerializer(serializers.ModelSerializer):
 
 
 class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItems model create serializer
+    """
+
     ticket_tier = serializers.UUIDField(write_only=True)
 
     class Meta:
@@ -199,6 +218,9 @@ class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
 
 
 class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutSession model create serializer with nested CheckoutItems
+    """
 
     event = serializers.UUIDField(write_only=True)
     checkout_items = CheckoutSessionItemsCreateSerializer(
@@ -221,6 +243,10 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        """
+        override create method from ModelSerializer
+        create CheckoutSession and CheckoutItem
+        """
         checkout_items = validated_data.pop("checkoutitem_set")
         checkout_session = CheckoutSession.objects.create(**validated_data)
 

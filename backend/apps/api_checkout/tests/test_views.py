@@ -6,7 +6,7 @@ from factory.faker import faker
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 
-from apps.root.models import CheckoutItem
+from apps.root.models import CheckoutItem, CheckoutSession
 from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 
@@ -312,8 +312,8 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
 
         # verify if the value was not created in the db
         new_checkout_item_qs = CheckoutItem.objects.filter(
-            ticket_tier__public_id=ticket_tier.public_id,
-            checkout_session__public_id=checkout_session.public_id,
+            ticket_tier=ticket_tier,
+            checkout_session=checkout_session,
             quantity=51,
         )
         self.assertFalse(new_checkout_item_qs)
@@ -352,7 +352,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             "name": fake.name(),
             "email": fake.email(),
             "cost": 10,
-            "status": "VALID",
+            "tx_status": "VALID",
             "event": str(event),
             "checkout_items": items,
         }
@@ -379,7 +379,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         )
         self.assertEqual(session_dict["email"], self.checkout_session.email)
         self.assertEqual(session_dict["cost"], self.checkout_session.cost)
-        self.assertEqual(session_dict["status"], self.checkout_session.status)
+        self.assertEqual(session_dict["tx_status"], self.checkout_session.tx_status)
         self.assertEqual(
             session_dict["event"], str(self.checkout_session.event.public_id)
         )
@@ -418,7 +418,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(session_dict["name"], data["name"])
         self.assertEqual(session_dict["email"], data["email"])
         self.assertEqual(session_dict["cost"], data["cost"])
-        self.assertEqual(session_dict["status"], data["status"])
+        self.assertEqual(session_dict["tx_status"], data["tx_status"])
         self.assertEqual(session_dict["checkout_items"], [])
 
     @prevent_warnings
@@ -444,7 +444,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(session_dict["name"], data["name"])
         self.assertEqual(session_dict["email"], data["email"])
         self.assertEqual(session_dict["cost"], data["cost"])
-        self.assertEqual(session_dict["status"], data["status"])
+        self.assertEqual(session_dict["tx_status"], data["tx_status"])
         item_dict = session_dict["checkout_items"][0]
         self.assertEqual(item_dict["quantity"], data["checkout_items"][0]["quantity"])
         self.assertUUID(item_dict["public_id"], version=4)
@@ -489,23 +489,30 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         request POST create a new session with quantity > quantity available
         available = (
             capacity (100) - quantity_sold (50) = 50
-        asserts 400 bar request
+        asserts 400 bad request
         """
 
-        event = EventFactory(team=self.team, user=self.user)
-        ticket_tier = TicketTierFactory(event=event, capacity=100, quantity_sold=50)
+        ticket_tier = self.event.tickettier_set.first()
+        ticket_tier.capacity = 100
+        ticket_tier.quantity_sold = 50
+        ticket_tier.save()
+
+        # ensure there is no item and session with this tier and event
+        CheckoutItem.objects.filter(ticket_tier=ticket_tier).delete()
+        CheckoutSession.objects.filter(event=self.event).delete()
+
+        # test if return 400 bad request
         data = self.generate_session_data(
-            event=event.public_id, tier=ticket_tier.public_id, quantity=51
+            event=ticket_tier.event.public_id, tier=ticket_tier.public_id, quantity=51
         )
         response = self.client.post(
             f"{self.url_base}session/",
             data=data,
             content_type="application/json",
         )
-
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # verify if the value was not created in the db
-        checkout_item_qs = CheckoutItem.objects.filter(
-            ticket_tier__public_id=ticket_tier.public_id
-        )
-        self.assertFalse(checkout_item_qs.exists())
+        checkout_item_qs = CheckoutItem.objects.filter(ticket_tier=ticket_tier)
+        checkout_session_qs = CheckoutSession.objects.filter(event=self.event)
+        self.assertFalse(checkout_item_qs)
+        self.assertFalse(checkout_session_qs)

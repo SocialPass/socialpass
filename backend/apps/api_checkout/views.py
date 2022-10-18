@@ -90,6 +90,8 @@ class CheckoutItemView(
             checkout_item.clean()
         except exceptions.TooManyTicketsRequestedError as e:
             raise ValidationError(code="item-quantity-exceed", detail=e)
+        except exceptions.DuplicatesTiersRequestedError as e:
+            raise ValidationError(code="repeated-ticket-tier", detail=e)
 
         return checkout_item
 

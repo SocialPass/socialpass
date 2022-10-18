@@ -12,8 +12,9 @@ import './index.css'
 export default function Home() {
   const navigate = useNavigate()
   const { event }: any = useEvent()
-  const { saveCheckout, setCheckout, setCheckoutItems, paymentType, setPaymentType }: any =
+  const { saveCheckout, setCheckout, setCheckoutItems }: any =
     useEvent()
+  const [paymentType, setPaymentType ] = useState('')
 
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
   const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])

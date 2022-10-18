@@ -15,3 +15,7 @@ class AlreadyRedeemedError(ValidationError):
 
 class TooManyTicketsRequestedError(ValidationError):
     pass
+
+
+class DuplicatesTiersRequestedError(ValidationError):
+    pass

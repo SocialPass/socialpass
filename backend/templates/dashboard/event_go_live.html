@@ -45,7 +45,7 @@
 						<div class="ws-200 mw-100 mx-auto">
 							<img src="{% static 'images/illustrations/go_live.svg' %}" alt="go_live" class="w-100 h-auto">
 						</div>
-						{% if event.state == "Live" %}
+						{% if event.state == event.StateStatus.LIVE %}
 							<h5>
 								<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
 								Event is live!

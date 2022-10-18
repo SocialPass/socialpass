@@ -14,11 +14,7 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from apps.dashboard.forms import (
-    CustomInviteForm,
-    EventForm,
-    TeamForm,
-)
+from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
 from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
 User = auth.get_user_model()
@@ -375,7 +371,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     def get_success_url(self, *args, **kwargs):
         return reverse(
             "dashboard:event_tickets",
-            args=(self.kwargs["team_public_id"], self.object.pk)
+            args=(self.kwargs["team_public_id"], self.object.pk),
         )
 
 
@@ -436,7 +432,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
 
     def post(self, *args, **kwargs):
         event = self.get_object()
-        if event.state != "Live":
+        if event.state != Event.StateStatus.LIVE:
             event.transition_live()
             messages.add_message(
                 self.request, messages.SUCCESS, "Event has been made live!"
@@ -521,5 +517,5 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
         messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
         return reverse(
             "dashboard:event_tickets",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"])
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
         )

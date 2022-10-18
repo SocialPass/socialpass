@@ -6,7 +6,13 @@ from factory.faker import faker
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 
-from apps.root.models import CheckoutItem, CheckoutSession
+from apps.root.models import (
+    CheckoutItem,
+    CheckoutSession,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
+)
 from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 
@@ -556,3 +562,103 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @prevent_warnings
+    def test_payment_fiat_201_ok(self):
+        """
+        test create TxFiat and update session.tx_fiat
+        assert 201 created
+        """
+
+        data = {"tx_type": "FIAT"}
+        response = self.client.post(
+            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # test if fiat tx was created
+        response_json = response.json()
+        tx_fiat = TxFiat.objects.get(public_id=response_json["public_id"])
+        self.checkout_session.refresh_from_db()
+        self.assertEqual(self.checkout_session.tx_fiat.pk, tx_fiat.pk)
+
+    @prevent_warnings
+    def test_payment_asset_ownership_201_ok(self):
+        """
+        test create TxAssetOwnership and update session.tx_asset_ownership
+        assert 201 created
+        """
+
+        data = {"tx_type": "ASSET_OWNERSHIP"}
+        response = self.client.post(
+            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # test if asset_ownership tx was created and session updated
+        response_json = response.json()
+        tx_asset_ownership = TxAssetOwnership.objects.get(
+            public_id=response_json["public_id"]
+        )
+        self.checkout_session.refresh_from_db()
+        self.assertEqual(
+            self.checkout_session.tx_asset_ownership.pk, tx_asset_ownership.pk
+        )
+
+    @prevent_warnings
+    def test_payment_blockchain_201_ok(self):
+        """
+        test create TxBlockchain and update session.tx_blockchain
+        assert 201 created
+        """
+
+        data = {"tx_type": "BLOCKCHAIN"}
+        response = self.client.post(
+            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # test if blockchain tx was created and session updated
+        response_json = response.json()
+        tx_blockchain = TxBlockchain.objects.get(public_id=response_json["public_id"])
+        self.checkout_session.refresh_from_db()
+        self.assertEqual(self.checkout_session.tx_blockchain.pk, tx_blockchain.pk)
+
+    @prevent_warnings
+    def test_payment_400_bad_request(self):
+        """
+        test create transaction with nonexistent tx_type
+        assert 400 bad request
+        """
+
+        data = {"tx_type": "NONEXISTENT_TYPE"}
+        response = self.client.post(
+            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.checkout_session.refresh_from_db()
+        self.assertIsNone(self.checkout_session.tx_blockchain)
+        self.assertIsNone(self.checkout_session.tx_asset_ownership)
+        self.assertIsNone(self.checkout_session.tx_fiat)
+
+    @prevent_warnings
+    def test_payment_session_404_not_found(self):
+        """
+        test create transaction with nonexistent session
+        assert 404 not found
+        """
+
+        data = {"tx_type": "FIAT"}
+        response = self.client.post(
+            f"{self.url_base}session/{self.random_uuid}/payment/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        tx_fiat = TxFiat.objects.all()
+        self.assertFalse(tx_fiat)

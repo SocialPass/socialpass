@@ -190,6 +190,8 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
                 return serializers.CheckoutItemReadSerializer
             case "create":
                 return serializers.CheckoutSessionCreateSerializer
+            case "payment":
+                return serializers.PaymentSerializer
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
@@ -278,3 +280,29 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
         checkout_items_qs = self.get_object().checkoutitem_set.all()
         serializer = self.get_serializer(checkout_items_qs, many=True)
         return Response(serializer.data)
+
+    def perform_create_payment(self, serializer, *args, **kwargs):
+        """
+        perform_create_payment method. used for creating a payment object
+        """
+        return serializer.save()
+
+    def perform_update_session_tx(self, serializer, tx):
+        """
+        perform_update_session_tx method. used for update
+        a session transaction
+        """
+        checkout_session = self.get_object()
+        serializer.update_session_tx(checkout_session, tx)
+
+    @action(methods=["post"], detail=True)
+    def payment(self, request, *args, **kwargs):
+        """
+        create Payment and update CheckoutSession
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        tx = self.perform_create_payment(serializer)
+        self.perform_update_session_tx(serializer, tx)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

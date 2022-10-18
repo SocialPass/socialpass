@@ -41,4 +41,9 @@ urlpatterns = [
         views.CheckoutSessionView.as_view({"get": "items"}),
         name="session_items",
     ),
+    path(
+        "session/<uuid:checkoutsession_public_id>/payment/",
+        views.CheckoutSessionView.as_view({"post": "payment"}),
+        name="session_payment",
+    ),
 ]

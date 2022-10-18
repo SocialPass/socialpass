@@ -10,6 +10,9 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 
@@ -255,3 +258,39 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
             checkout_item.save()
 
         return checkout_session
+
+
+class PaymentSerializer(serializers.Serializer):
+    """
+    Payment serializer
+    """
+
+    tx_type = serializers.ChoiceField(CheckoutSession.TransactionType, write_only=True)
+    created = serializers.DateTimeField(read_only=True)
+    modified = serializers.DateTimeField(read_only=True)
+    public_id = serializers.UUIDField(read_only=True)
+
+    def create(self, validated_data):
+        """
+        create and return a new transaction based on the tx_type requested
+        """
+        match validated_data["tx_type"]:
+            case "FIAT":
+                return TxFiat.objects.create()
+            case "BLOCKCHAIN":
+                return TxBlockchain.objects.create()
+            case "ASSET_OWNERSHIP":
+                return TxAssetOwnership.objects.create()
+
+    def update_session_tx(self, checkout_session, tx):
+        """
+        update a checkout_session with a transaction
+        """
+        match self.validated_data["tx_type"]:
+            case "FIAT":
+                checkout_session.tx_fiat = tx
+            case "BLOCKCHAIN":
+                checkout_session.tx_blockchain = tx
+            case "ASSET_OWNERSHIP":
+                checkout_session.tx_asset_ownership = tx
+        checkout_session.save()

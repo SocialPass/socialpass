@@ -227,7 +227,9 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         request POST create new item and assert if code 200 OK
         """
 
-        self.checkout_session.checkoutitem_set.all().delete()  # ensure there is no item related to the session
+        # ensure there is no item related to the session
+        self.checkout_session.checkoutitem_set.all().delete()
+        # generate dummy item data
         data = self.generate_item_data(
             tier=self.ticket_tier.public_id, session=self.checkout_session.public_id
         )

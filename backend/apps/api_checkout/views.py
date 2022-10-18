@@ -60,7 +60,11 @@ class CheckoutItemView(
     DestroyModelMixin,
     RetrieveModelMixin,
 ):
-    queryset = CheckoutItem.objects.all().order_by("-created")
+    queryset = (
+        CheckoutItem.objects.select_related("checkout_session")
+        .all()
+        .order_by("-created")
+    )
     lookup_field = "public_id"
     lookup_url_kwarg = "checkoutitem_public_id"
 
@@ -170,7 +174,11 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
     create and retrieve CheckoutSession view
     """
 
-    queryset = CheckoutSession.objects.all().order_by("-created")
+    queryset = (
+        CheckoutSession.objects.prefetch_related("checkoutitem_set")
+        .all()
+        .order_by("-created")
+    )
     lookup_field = "public_id"
     lookup_url_kwarg = "checkoutsession_public_id"
 

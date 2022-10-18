@@ -655,6 +655,9 @@ class TierAssetOwnership(DBModel):
     """
     Represents a asset ownership based tier for an event ticket
     Holds details specific to an asset ownership verification
+
+    Note: These choices are modeled off the moralis API:
+    https://docs.moralis.io/reference/evm-api-overview
     """
 
     class BlockchainChoices(models.TextChoices):

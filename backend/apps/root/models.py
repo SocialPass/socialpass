@@ -683,8 +683,7 @@ class TierAssetOwnership(DBModel):
         default=BlockchainChoices.ETH,
         blank=False,
     )
-    network = models.CharField(
-        max_length=50,
+    network = models.IntegerField(
         choices=NetworkChoices.choices,
         default=NetworkChoices.ETH,
         blank=False,
@@ -695,6 +694,7 @@ class TierAssetOwnership(DBModel):
         default=AssetChoices.NFT,
         blank=False,
     )
+    token_address = models.CharField(max_length=42, blank=False, default="")
     token_id = ArrayField(models.IntegerField(), null=True, blank=True)
 
     def __str__(self) -> str:

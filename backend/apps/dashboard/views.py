@@ -19,7 +19,7 @@ from apps.dashboard.forms import (
     EventForm,
     TeamForm,
 )
-from apps.root.models import Event, Invite, Membership, Team, Ticket
+from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
 User = auth.get_user_model()
 
@@ -460,13 +460,8 @@ class EventDeleteView(TeamContextMixin, DeleteView):
         )
 
     def get_success_url(self):
-        messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
-        if self.object.state == Event.StateStatus.LIVE:
-            return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
-        else:
-            return reverse(
-                "dashboard:event_drafts", args=(self.kwargs["team_public_id"],)
-            )
+        messages.add_message(self.request, messages.SUCCESS, "Event has been deleted.")
+        return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
 
 
 class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
@@ -507,3 +502,24 @@ class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
             qs = qs.filter(wallet_address__icontains=query_address)
 
         return qs
+
+
+class TicketTierDeleteView(TeamContextMixin, DeleteView):
+    """
+    Delete an event's ticket tier.
+    """
+
+    model = TicketTier
+    template_name = "dashboard/ticket_tier_delete.html"
+
+    def get_object(self):
+        return TicketTier.objects.get(
+            pk=self.kwargs["pk"], event__team__public_id=self.kwargs["team_public_id"]
+        )
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"])
+        )

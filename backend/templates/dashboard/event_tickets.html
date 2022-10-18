@@ -93,7 +93,7 @@
 										</div>
 									</div>
 									<div class="ps-20 ms-auto">
-										<a href="#" class="btn btn-danger btn-sm">
+										<a href="{% url 'dashboard:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger btn-sm">
 											<i class="fa-solid fa-trash-can"></i>
 											<span class="visually-hidden">Delete</span>
 										</a>
@@ -129,9 +129,9 @@
 										<summary class="collapse-header">
 											<strong>Blockchain information</strong>
 											<br />
-											<span class="text-muted">Click to show/hide</span>
+											<span class="text-muted fs-base-n2">Click to show/hide</span>
 										</summary>
-										<div class="collapse-content fs-base-n2">
+										<div class="collapse-content">
 											Work in progress ...
 										</div>
 									</details>

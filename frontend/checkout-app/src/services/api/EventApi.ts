@@ -16,6 +16,7 @@ export default {
             },
           },
           title: 'NFT Holders Party',
+          public_id: 'asdfasdf',
           description:
             'Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure youre 21+ to enter.',
           requirements: 'requirements',

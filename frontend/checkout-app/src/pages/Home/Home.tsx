@@ -12,12 +12,11 @@ import './index.css'
 export default function Home() {
   const navigate = useNavigate()
   const { event }: any = useEvent()
-  const { saveCheckout, setCheckout, setCheckoutItems }: any =
-    useEvent()
-  const [paymentType, setPaymentType ] = useState('')
+  const { saveCheckout, setCheckout, checkout, setCheckoutItems, checkoutItems }: any =
+    useCheckout()
 
+  const [paymentType, setPaymentType] = useState('')
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
-  const [selectedTicketTiers, setSelectedTicketTiers] = useState<any[]>([])
   const [email, setEmail] = useState('')
 
   const getTicketTiers = (eventPublicId: string) => {
@@ -49,19 +48,35 @@ export default function Home() {
   }
 
   const setTicketTierSelectedAmount = (amount, ticketTier) => {
-    const new_selected = {
-      ...selectedTicketTiers,
-      [ticketTier.public_id]: amount,
+    const new_selected = [...checkoutItems]
+
+    const ticketIndex = new_selected.findIndex(
+      (item) => item.ticket_tier.public_id === ticketTier.public_id,
+    )
+
+    if (ticketIndex !== -1) {
+      if (amount > 0) {
+        new_selected[ticketIndex].quantity = amount
+      } else {
+        new_selected.splice(ticketIndex, 1)
+      }
+    } else {
+      new_selected.push({
+        ticket_tier: {
+          public_id: ticketTier.public_id,
+          ticket_type: ticketTier.ticket_type,
+          price: ticketTier[paymentType].price,
+        },
+        quantity: amount,
+      })
     }
 
-    setSelectedTicketTiers(new_selected)
+    setCheckoutItems(new_selected)
   }
 
   const getTotalPrice = () =>
-    ticketTiers.reduce(
-      (acc, ticketTier) =>
-        acc +
-        (ticketTier[paymentType]?.price || 0) * (selectedTicketTiers[ticketTier?.public_id] || 0),
+    checkoutItems.reduce(
+      (acc, ticketTier) => acc + ticketTier?.quantity * ticketTier?.ticket_tier?.price || 0,
       0,
     )
 
@@ -83,21 +98,15 @@ export default function Home() {
   const eventHasTickets = () => ticketTiers.length
 
   const handleGetTicketsButton = () => {
-    // setCheckout({
-    //   event_id: '123456789',
-    //   name: 'John Doe',
-    //   email: 'test@test.com',
-    //   cost: 100,
-    // })
+    setCheckout({
+      event_id: event.public_id,
+      email,
+      cost: getTotalPrice(),
+    })
 
-    const selected = selectedTicketTiers.map((tier) => ({
-      ticket_tier: ticketTiers.find((t) => t.public_id === tier.public_id),
-      quantity: tier.quantity,
-    }))
+    console.log('result', checkout, checkoutItems)
 
-    setCheckoutItems(selected)
-
-    saveCheckout()
+    // saveCheckout()
 
     navigate(`checkout/checkoutID`)
   }
@@ -208,7 +217,7 @@ export default function Home() {
                 onClick={() => {
                   if (getFiatTicketTiers().length) {
                     setPaymentType('tier_fiat')
-                    setSelectedTicketTiers([])
+                    setCheckoutItems([])
                   }
                 }}
               >
@@ -235,7 +244,7 @@ export default function Home() {
                 onClick={() => {
                   if (getCryptocurrencyTicketTiers().length) {
                     setPaymentType('tier_cryptocurrency')
-                    setSelectedTicketTiers([])
+                    setCheckoutItems([])
                   }
                 }}
               >
@@ -262,7 +271,7 @@ export default function Home() {
                 onClick={() => {
                   if (getAssetOwnershipTicketTiers().length) {
                     setPaymentType('tier_asset_ownership')
-                    setSelectedTicketTiers([])
+                    setCheckoutItems([])
                   }
                 }}
               >
@@ -292,7 +301,10 @@ export default function Home() {
               <div className='content me-md-0'>
                 {getPaymentTypeTicketTiers().map((tier, index) => (
                   <TicketSelector
-                    amount={selectedTicketTiers[tier?.public_id] || 0}
+                    amount={
+                      checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
+                        ?.quantity || 0
+                    }
                     onChange={(amount, ticketTier) =>
                       setTicketTierSelectedAmount(amount, ticketTier)
                     }
@@ -300,8 +312,7 @@ export default function Home() {
                     ticketTier={tier}
                     key={`ticket-tier-${index}`}
                     isChecked={
-                      tier?.public_id in selectedTicketTiers &&
-                      selectedTicketTiers[tier?.public_id] > 0
+                      !!checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                     }
                   />
                 ))}
@@ -327,9 +338,11 @@ export default function Home() {
                   ></input>
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
-                    type='submit'
                     disabled={!validateEmail() || !getTotalPrice()}
-                    onClick={() => handleGetTicketsButton()}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleGetTicketsButton()
+                    }}
                   >
                     <strong className='antialiased'>Get Tickets</strong>
                   </button>

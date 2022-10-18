@@ -5,6 +5,7 @@ from typing import Optional
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -232,8 +233,8 @@ class Event(DBModel):
             return self.filter(is_featured=True).filter_active()
 
     class StateStatus(models.TextChoices):
-        DRAFT = "Draft"
-        LIVE = "Live"
+        DRAFT = "DRAFT", _("Draft")
+        LIVE = "LIVE", _("Live")
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
@@ -655,6 +656,46 @@ class TierAssetOwnership(DBModel):
     Represents a asset ownership based tier for an event ticket
     Holds details specific to an asset ownership verification
     """
+
+    class BlockchainChoices(models.TextChoices):
+        ETH = "ETH", _("Ethereum")
+
+    class NetworkChoices(models.IntegerChoices):
+        ETH = 1, _("Ethereum")
+        GOERLI = 5, _("Ethereum (Goerli TestNet)")
+        SEPOLIA = 11155111, _("Ethereum (Sepolia TestNet)")
+        MUMBAI = 80001, _("Ethereum (Mumbai TestNet)")
+        POLYGON = 137, _("Polygon")
+        BSC = 56, _("Binance Smart Chain")
+        BSC_TESTNET = 97, _("Binance Smart Chain (TestNet)")
+        AVAX = 43114, _("Avalanche")
+        AVAX_TESTNET = 43113, _("Avalanche (TestNet)")
+        FANTOM = 250, _("Fantom")
+        CRONOS = 25, _("Cronos")
+        CRONOS_TESTNET = 338, _("Cronos (TestNet)")
+
+    class AssetChoices(models.TextChoices):
+        NFT = "NFT", _("NFT")
+
+    blockchain = models.CharField(
+        max_length=50,
+        choices=BlockchainChoices.choices,
+        default=BlockchainChoices.ETH,
+        blank=False,
+    )
+    network = models.CharField(
+        max_length=50,
+        choices=NetworkChoices.choices,
+        default=NetworkChoices.ETH,
+        blank=False,
+    )
+    asset_type = models.CharField(
+        max_length=50,
+        choices=AssetChoices.choices,
+        default=AssetChoices.NFT,
+        blank=False,
+    )
+    token_id = ArrayField(models.IntegerField(), null=True, blank=True)
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"

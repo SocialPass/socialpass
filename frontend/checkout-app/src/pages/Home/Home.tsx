@@ -108,7 +108,7 @@ export default function Home() {
 
     // saveCheckout()
 
-    navigate(`checkout/checkoutID`)
+    navigate(`checkout/${checkout?.public_id}`)
   }
 
   useEffect(() => {

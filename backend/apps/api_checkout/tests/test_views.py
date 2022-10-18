@@ -227,6 +227,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         request POST create new item and assert if code 200 OK
         """
 
+        self.checkout_session.checkoutitem_set.all().delete()  # ensure there is no item related to the session
         data = self.generate_item_data(
             tier=self.ticket_tier.public_id, session=self.checkout_session.public_id
         )
@@ -246,6 +247,25 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             item_dict["checkout_session"], str(self.checkout_session.public_id)
         )
         self.assertEqual(item_dict["quantity"], data["quantity"])
+
+    @prevent_warnings
+    def test_create_item_tickettier_already_existing_400_bad_request(self):
+        """
+        request POST create new item in a session that already have a item
+        for the ticket_tier (must return validation error)
+        """
+
+        data = self.generate_item_data(
+            tier=self.ticket_tier.public_id, session=self.checkout_session.public_id
+        )
+
+        # Not using reverse because we want URL changes to explicitly break tests.
+        response = self.client.post(
+            f"{self.url_base}item/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
     def test_fail_create_item_with_invalid_tier_404_not_found(self):
@@ -514,3 +534,23 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         checkout_session_qs = CheckoutSession.objects.filter(event=self.event)
         self.assertFalse(checkout_item_qs)
         self.assertFalse(checkout_session_qs)
+
+    @prevent_warnings
+    def test_create_session_with_repeated_items_400_bad_request(self):
+        """
+        request POST create session with repeated items and check 400 bad request
+        """
+
+        data = self.generate_session_data(
+            event=self.event.public_id, tier=self.ticket_tier.public_id
+        )
+        # duplicate item
+        data["checkout_items"].append(data["checkout_items"][0])
+
+        # Not using reverse because we want URL changes to explicitly break tests.
+        response = self.client.post(
+            f"{self.url_base}session/",
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

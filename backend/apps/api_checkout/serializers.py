@@ -3,7 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import Event, Team, Ticket, TicketTier
+from apps.root.models import CheckoutItem, Event, Team, Ticket, TicketTier
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -69,14 +69,13 @@ class EventSerializer(serializers.ModelSerializer):
             "start_date",
             "timezone",
             "localized_address_display",
-            "capacity",
             "ticket_count",
             "cover_image",
         ]
 
     def get_ticket_count(self, obj):
         # TODO: should change to ticket_tier quantity_sold sum
-        return Ticket.objects.filter(checkout_item__ticket_tier__event=obj).count()
+        return Ticket.objects.filter(event=obj).count()
 
 
 class TicketTierSerializer(serializers.ModelSerializer):
@@ -100,4 +99,55 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "tier_fiat",
             "tier_blockchain",
             "tier_asset_ownership",
+        ]
+
+
+class CheckoutItemReadSerializer(serializers.ModelSerializer):
+    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
+    checkout_session = serializers.UUIDField(source="checkout_session.public_id")
+
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+            "checkout_session",
+        ]
+        read_only_fields = ["created", "modified", "public_id"]
+
+
+class CheckoutItemCreateSerializer(serializers.ModelSerializer):
+    ticket_tier = serializers.UUIDField(write_only=True)
+    checkout_session = serializers.UUIDField(write_only=True)
+
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+            "checkout_session",
+        ]
+
+
+class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
+    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
+    checkout_session = serializers.UUIDField(
+        source="checkout_session.public_id", read_only=True
+    )
+
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+            "checkout_session",
         ]

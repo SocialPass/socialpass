@@ -1,31 +1,29 @@
-# Django
+# General
 # ------------------------------------------------------------------------------
 argon2-cffi==21.3.0 # https://github.com/hynek/argon2-cffi
-web3==5.30.0
 boto3==1.24.33 # https://github.com/boto/boto3
-Pillow==9.1.0 # https://github.com/python-pillow/Pillow
-qrcode==7.3.1 # https://github.com/lincolnloop/python-qrcode
-sentry-sdk==1.7.2 # https://github.com/getsentry/sentry-python
+celery==5.2.7 # https://github.com/celery/celery
 factory-boy==3.2.1 # https://github.com/FactoryBoy/factory_boy
 google-api-python-client==2.56.0 # https://github.com/googleapis/google-api-python-client
-celery==5.2.7 # https://github.com/celery/celery
+sentry-sdk==1.7.2 # https://github.com/getsentry/sentry-python
+Pillow==9.1.0 # https://github.com/python-pillow/Pillow
+qrcode==7.3.1 # https://github.com/lincolnloop/python-qrcode
 redis==4.3.4 # https://github.com/redis/redis-py
 xhtml2pdf==0.2.8 # https://github.com/xhtml2pdf/xhtml2pdf
 
 # Django
 # ------------------------------------------------------------------------------
+git+https://github.com/nftylabs/passbook.git
 crispy-bootstrap5==0.6 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
-django==4.0.7  # https://www.djangoproject.com/
+django==4.0.8  # https://www.djangoproject.com/
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
 django-allauth==0.51.0  # https://github.com/pennersr/django-allauth
-django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
+django-cors-headers==3.13.0 # https://github.com/adamchainz/django-cors-headers
+django-crispy-forms==1.14.0 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.9.0 # https://github.com/joke2k/django-environ
 django-fsm==2.8.0 # https://github.com/viewflow/django-fsm
 django-fsm-log==3.0.0 # https://github.com/jazzband/django-fsm-log
-django-cors-headers==3.13.0 # https://github.com/adamchainz/django-cors-headers
-django-taggit==3.0.0 # https://github.com/jazzband/django-taggit
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
-django-crispy-forms==1.14.0 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
+django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
 drf-yasg==1.21.3  # https://github.com/axnsan12/drf-yasg/
 whitenoise==6.2.0 # https://github.com/evansd/whitenoise/
-git+https://github.com/nftylabs/passbook.git

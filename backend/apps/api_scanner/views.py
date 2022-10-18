@@ -90,15 +90,7 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
 
         # Retrieve ticket
         try:
-            ticket = Ticket.get_ticket_from_embedded_qr_code(embed_code)
-        except exceptions.InvalidEmbedCodeError:
-            return Response(
-                status=422,
-                data={
-                    "code": "embed-code-invalid",
-                    "message": "Invalid embedcode format.",
-                },
-            )
+            ticket = Ticket.objects.get(embed_code=embed_code)
         except Ticket.DoesNotExist:
             return Response(
                 status=404,
@@ -119,7 +111,7 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
                     "message": "Redemption access key has no access to this Event.",
                 },
             )
-        except exceptions.AlreadyRedeemed:
+        except exceptions.AlreadyRedeemedError:
             return Response(
                 status=409,
                 data={
@@ -144,11 +136,7 @@ class TicketsListView(SetAccessKeyAndEventMixin, ListAPIView):
     queryset = Ticket.objects.all().order_by("-id")  # order_by prevent unordeing warning
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(checkout_item__ticket_tier__event=self.event, **self.filter_kwargs)
-        )
+        return super().get_queryset().filter(event=self.event, **self.filter_kwargs)
 
     @swagger_auto_schema(
         request_body=input_serializer,

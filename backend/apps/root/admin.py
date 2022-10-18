@@ -24,15 +24,14 @@ from apps.root.models import (
 
 User = get_user_model()
 
-# Set up admin site titles
-admin.site.site_title = "SocialPass Admin"
-admin.site.site_header = "SocialPass Admin"
-admin.site.index_title = "SocialPass Admin"
 
-
-# Inlines
+# Custom Classes
 class MembershipInline(admin.TabularInline):
     model = Team.members.through
+
+
+class CustomDBAdmin(admin.ModelAdmin):
+    list_display = ["public_id", "created", "modified"]
 
 
 # Admin registrations
@@ -44,23 +43,21 @@ class CustomUserAdmin(UserAdmin):
 
 
 @admin.register(Team)
-class TeamAdmin(admin.ModelAdmin):
-    inlines = [
-        MembershipInline,
-    ]
+class TeamAdmin(CustomDBAdmin):
+    inlines = [MembershipInline]
     exclude = ("members",)
-    list_display = ("name",)
+    list_display = CustomDBAdmin.list_display + ["name"]
     search_fields = ("name",)
 
 
 @admin.register(Membership)
-class MembershipAdmin(admin.ModelAdmin):
-    list_display = ("user", "team")
+class MembershipAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display + ["user", "team"]
 
 
 @admin.register(Invite)
-class InviteAdmin(admin.ModelAdmin):
-    list_display = ("email", "sent", "accepted")
+class InviteAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display + ["email", "sent", "accepted"]
     raw_id_fields = ("inviter",)
 
     def get_form(self, request, obj=None, **kwargs):
@@ -74,7 +71,7 @@ class InviteAdmin(admin.ModelAdmin):
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(CustomDBAdmin):
     def transition_to_draft(modeladmin, request, queryset):
         for i in queryset:
             i.transition_draft()
@@ -85,13 +82,12 @@ class EventAdmin(admin.ModelAdmin):
             i.transition_live()
         messages.success(request, "Event(s) have been transitioned live")
 
-    list_display = (
+    list_display = CustomDBAdmin.list_display + [
         "title",
-        "public_id",
         "user",
         "team",
         "start_date",
-    )
+    ]
     search_fields = (
         "title",
         "user__username",
@@ -106,72 +102,72 @@ class EventAdmin(admin.ModelAdmin):
 
 
 @admin.register(Ticket)
-class TicketAdmin(admin.ModelAdmin):
-    list_display = ("checkout_item", "full_embed")
+class TicketAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display + ["checkout_item", "embed_code"]
 
 
 @admin.register(TicketRedemptionKey)
-class TicketRedemptionKeyAdmin(admin.ModelAdmin):
-    list_display = ("public_id",)
+class TicketRedemptionKeyAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
 
 
 @admin.register(TicketTier)
-class TicketTierAdmin(admin.ModelAdmin):
-    list_display = (
+class TicketTierAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display + [
         "ticket_type",
         "event",
         "price",
         "capacity",
         "quantity_sold",
         "max_per_person",
-    )
+    ]
     search_fields = ("event__title",)
 
 
 @admin.register(TierFiat)
-class TierFiatAdmin(admin.ModelAdmin):
-    pass
+class TierFiatAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
 
 
 @admin.register(TierBlockchain)
-class TierBlockchainAdmin(admin.ModelAdmin):
-    pass
+class TierBlockchainAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
 
 
 @admin.register(TierAssetOwnership)
-class TierAssetOwnershipAdmin(admin.ModelAdmin):
-    pass
+class TierAssetOwnershipAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
 
 
 @admin.register(CheckoutSession)
-class CheckoutSessionAdmin(admin.ModelAdmin):
-    list_display = (
+class CheckoutSessionAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display + [
         "name",
         "email",
         "expiration",
-    )
+    ]
     search_fields = ("event__title",)
 
 
 @admin.register(CheckoutItem)
-class CheckoutItemAdmin(admin.ModelAdmin):
-    list_display = (
+class CheckoutItemAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display + [
         "quantity",
         "ticket_tier",
-    )
+    ]
     search_fields = ("checkout_session__name",)
 
 
 @admin.register(TxFiat)
-class TxFiatAdmin(admin.ModelAdmin):
-    pass
+class TxFiatAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
 
 
 @admin.register(TxBlockchain)
-class TxBlockchainAdmin(admin.ModelAdmin):
-    pass
+class TxBlockchainAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
 
 
 @admin.register(TxAssetOwnership)
-class TxAssetOwnershipAdmin(admin.ModelAdmin):
-    pass
+class TxAssetOwnershipAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display

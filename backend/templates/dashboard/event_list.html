@@ -65,7 +65,7 @@
 			<div class="event-list-item d-sm-flex align-items-center px-content py-10 {% if not forloop.last %}border-bottom{% endif %}">
 				<!-- Status indicator start -->
 				<div class="ws-sm-100 me-sm-20 flex-shrink-0">
-					<div class="ws-75 hs-75 border border-dotted overflow-hidden d-flex flex-column align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm position-relative pt-20 mx-auto mx-sm-0">
+					<div class="ws-75 hs-75 border border-dotted overflow-hidden d-flex flex-column align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm position-relative pt-20 mx-auto mx-sm-0 {% if event.has_ended %}border-danger-dim-lm border-danger-light-dm{% else %}{% if event.state == 'Live' %}border-success-dim-lm border-success-light-dm{% endif %}{% endif %}">
 						<div class="position-absolute w-100 top-0 start-0 text-center fw-bold fs-base-n4 bg-gray-light-lm bg-darkgray-dim-dm d-flex align-items-center px-5 text-uppercase">
 							{% if event.has_ended %}
 								<i class="fa-solid fa-circle-small text-danger me-5"></i>

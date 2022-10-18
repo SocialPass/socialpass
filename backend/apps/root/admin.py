@@ -116,7 +116,6 @@ class TicketTierAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display + [
         "ticket_type",
         "event",
-        "price",
         "capacity",
         "quantity_sold",
         "max_per_person",

@@ -102,11 +102,6 @@
 								<hr />
 								<div class="row">
 									<div class="col-6 col-sm-3 text-truncate">
-										<strong>Price</strong>
-										<br />
-										{{ ticket_tier.price.normalize }}
-									</div>
-									<div class="col-6 col-sm-3 text-truncate">
 										<strong>Capacity</strong>
 										<br />
 										{{ ticket_tier.capacity }}
@@ -141,7 +136,7 @@
 					{% endfor %}
 					<div class="text-center">
 						Total {{ event.tickettier_set.count }} ticket(s) found
-					</div>	
+					</div>
 				{% else %}
 					<div class="text-center">
 						<div class="ws-200 mw-100 mx-auto">

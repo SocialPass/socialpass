@@ -577,13 +577,6 @@ class TicketTier(DBModel):
         max_length=255,
         blank=False,
     )
-    price = models.DecimalField(
-        max_digits=9,
-        validators=[MinValueValidator(0)],
-        decimal_places=6,
-        blank=False,
-        null=True,
-    )
     capacity = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1)],

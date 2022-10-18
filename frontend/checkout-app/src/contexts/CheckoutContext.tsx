@@ -84,6 +84,7 @@ export const CheckoutProvider = ({ children }: any) => {
         checkout,
         checkoutItems,
         getCheckout,
+        setCheckout,
         getCheckoutItems,
         setCheckoutItems,
         saveCheckout,

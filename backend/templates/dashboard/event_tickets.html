@@ -51,76 +51,92 @@
 						Given below is a list of tickets for your event.
 					</p>
 					{% for ticket_tier in event.tickettier_set.all %}
-						<div class="p-15 p-sm-20 my-20 border rounded">
-							<div class="d-flex align-items-center mb-20">
-								<div>
-									<h6 class="m-0 fs-base-p2">{{ ticket_tier.ticket_type }}</h6>
+						<div class="my-20 border rounded">
+							<div class="p-15 p-sm-20">
+								<div class="d-flex align-items-center mb-20">
 									<div>
-										{% if ticket_tier.tier_fiat %}
-											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-check"></i>
-												Fiat
-											</span>
-										{% else %}
-											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-times"></i>
-												Fiat
-											</span>
-										{% endif %}
-										{% if ticket_tier.tier_blockchain %}
-											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-check"></i>
-												Crypto
-											</span>
-										{% else %}
-											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-times"></i>
-												Crypto
-											</span>
-										{% endif %}
-										{% if ticket_tier.tier_asset_ownership %}
-											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-check"></i>
-												NFTs
-											</span>
-										{% else %}
-											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-times"></i>
-												NFTs
-											</span>
-										{% endif %}
+										<h6 class="m-0 fs-base-p2">{{ ticket_tier.ticket_type }}</h6>
+										<div>
+											{% if ticket_tier.tier_fiat %}
+												<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
+													<i class="fa-regular fa-check"></i>
+													Fiat
+												</span>
+											{% else %}
+												<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
+													<i class="fa-regular fa-times"></i>
+													Fiat
+												</span>
+											{% endif %}
+											{% if ticket_tier.tier_blockchain %}
+												<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
+													<i class="fa-regular fa-check"></i>
+													Crypto
+												</span>
+											{% else %}
+												<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
+													<i class="fa-regular fa-times"></i>
+													Crypto
+												</span>
+											{% endif %}
+											{% if ticket_tier.tier_asset_ownership %}
+												<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
+													<i class="fa-regular fa-check"></i>
+													NFTs
+												</span>
+											{% else %}
+												<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
+													<i class="fa-regular fa-times"></i>
+													NFTs
+												</span>
+											{% endif %}
+										</div>
+									</div>
+									<div class="ps-20 ms-auto">
+										<a href="#" class="btn btn-danger btn-sm">
+											<i class="fa-solid fa-trash-can"></i>
+											<span class="visually-hidden">Delete</span>
+										</a>
 									</div>
 								</div>
-								<div class="ps-20 ms-auto">
-									<a href="#" class="btn btn-danger btn-sm">
-										<i class="fa-solid fa-trash-can"></i>
-										<span class="visually-hidden">Delete</span>
-									</a>
+								<hr />
+								<div class="row">
+									<div class="col-6 col-sm-3 text-truncate">
+										<strong>Price</strong>
+										<br />
+										{{ ticket_tier.price.normalize }}
+									</div>
+									<div class="col-6 col-sm-3 text-truncate">
+										<strong>Capacity</strong>
+										<br />
+										{{ ticket_tier.capacity }}
+									</div>
+									<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
+										<strong>Qty. Sold</strong>
+										<br />
+										{{ ticket_tier.quantity_sold }}
+									</div>
+									<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
+										<strong>Max per person</strong>
+										<br />
+										{{ ticket_tier.max_per_person }}
+									</div>
 								</div>
 							</div>
-							<hr />
-							<div class="row">
-								<div class="col-6 col-sm-3 text-truncate">
-									<strong>Price</strong>
-									<br />
-									{{ ticket_tier.price.normalize }}
+							{% if ticket_tier.tier_asset_ownership %}
+								<div class="collapse-group collapse-group-flush border-top">
+									<details class="collapse-panel">
+										<summary class="collapse-header">
+											<strong>Blockchain information</strong>
+											<br />
+											<span class="text-muted">Click to show/hide</span>
+										</summary>
+										<div class="collapse-content fs-base-n2">
+											Work in progress ...
+										</div>
+									</details>
 								</div>
-								<div class="col-6 col-sm-3 text-truncate">
-									<strong>Capacity</strong>
-									<br />
-									{{ ticket_tier.capacity }}
-								</div>
-								<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
-									<strong>Qty. Sold</strong>
-									<br />
-									{{ ticket_tier.quantity_sold }}
-								</div>
-								<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
-									<strong>Max per person</strong>
-									<br />
-									{{ ticket_tier.max_per_person }}
-								</div>
-							</div>
+							{% endif %}
 						</div>
 					{% endfor %}
 					<div class="text-center">

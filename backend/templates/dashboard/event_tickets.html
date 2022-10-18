@@ -41,7 +41,7 @@
 							Tickets
 						</h3>
 						<div class="ps-20 ms-auto">
-							<a href="#" class="btn btn-primary btn-sm">
+							<a href="#" class="btn btn-primary">
 								<i class="fa-solid fa-plus"></i>
 		                   		<span class="ms-5 d-none d-sm-inline">Create</span>
 							</a>
@@ -52,44 +52,54 @@
 					</p>
 					{% for ticket_tier in event.tickettier_set.all %}
 						<div class="p-15 p-sm-20 my-20 border rounded">
-							<div class="d-flex align-items-center">
+							<div class="d-flex align-items-center mb-20">
 								<div>
 									<h6 class="m-0 fs-base-p2">{{ ticket_tier.ticket_type }}</h6>
-									<div class="fs-base-n2 mt-5">
-										<span class="d-inline-block px-5 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-pill me-15">
-											{% if ticket_tier.tier_fiat %}
+									<div>
+										{% if ticket_tier.tier_fiat %}
+											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
 												<i class="fa-regular fa-check"></i>
-											{% else %}
+												Fiat
+											</span>
+										{% else %}
+											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
 												<i class="fa-regular fa-times"></i>
-											{% endif %}
-											Fiat
-										</span>
-										<span class="d-inline-block px-5 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-pill me-15">
-											{% if ticket_tier.tier_blockchain %}
+												Fiat
+											</span>
+										{% endif %}
+										{% if ticket_tier.tier_blockchain %}
+											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
 												<i class="fa-regular fa-check"></i>
-											{% else %}
+												Crypto
+											</span>
+										{% else %}
+											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
 												<i class="fa-regular fa-times"></i>
-											{% endif %}
-											Crypto
-										</span>
-										<span class="d-inline-block px-5 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-pill me-15">
-											{% if ticket_tier.tier_asset_ownership %}
+												Crypto
+											</span>
+										{% endif %}
+										{% if ticket_tier.tier_asset_ownership %}
+											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
 												<i class="fa-regular fa-check"></i>
-											{% else %}
+												NFTs
+											</span>
+										{% else %}
+											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
 												<i class="fa-regular fa-times"></i>
-											{% endif %}
-											NFTs
-										</span>
+												NFTs
+											</span>
+										{% endif %}
 									</div>
 								</div>
 								<div class="ps-20 ms-auto">
 									<a href="#" class="btn btn-danger btn-sm">
-										<i class="fa-regular fa-trash-can"></i>
+										<i class="fa-solid fa-trash-can"></i>
 										<span class="visually-hidden">Delete</span>
 									</a>
 								</div>
 							</div>
-							<div class="row mt-20">
+							<hr />
+							<div class="row">
 								<div class="col-6 col-sm-3 text-truncate">
 									<strong>Price</strong>
 									<br />

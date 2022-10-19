@@ -329,9 +329,12 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
 
-# Django Taggit  - https://github.com/jazzband/django-taggit
+# Django Silk  - https://github.com/jazzband/django-silk
 # ------------------------------------------------------------------------------
-TAGGIT_CASE_INSENSITIVE = True
+SILKY_PYTHON_PROFILER = True
+# SILKY_AUTHENTICATION = True  # User must login
+# SILKY_AUTHORISATION = True  # User must have permissions
+# SILKY_PERMISSIONS = lambda user: user.is_superuser
 
 
 # CELERY - https://github.com/celery/celery

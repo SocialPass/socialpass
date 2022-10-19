@@ -147,5 +147,16 @@ sentry_sdk.init(
     environment=env("SENTRY_ENV_NAME", default="unset-env"),
 )
 
+
+# Django Silk  - https://github.com/jazzband/django-silk
+# ------------------------------------------------------------------------------
+def is_superuser(user):
+    user.is_superuser
+
+
+SILKY_AUTHENTICATION = True  # User must login
+SILKY_AUTHORISATION = True  # User must have permissions
+SILKY_PERMISSIONS = is_superuser
+
 # Your stuff...
 # ------------------------------------------------------------------------------

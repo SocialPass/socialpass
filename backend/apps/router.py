@@ -52,6 +52,9 @@ urlpatterns += [
     ),  # type: ignore
 ]
 
+# Profiling URLs
+urlpatterns += [path(settings.SILKY_URL, include("silk.urls", namespace="silk"))]
+
 # Local URLs
 is_local = (
     settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"
@@ -90,6 +93,3 @@ if is_local:
         import debug_toolbar
 
         urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
-
-    # Django Silk
-    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]

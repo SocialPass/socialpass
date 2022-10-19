@@ -103,7 +103,6 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "public_id",
             "event_public_id",
             "ticket_type",
-            "price",
             "capacity",
             "max_per_person",
             "tier_fiat",

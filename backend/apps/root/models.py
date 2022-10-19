@@ -1,10 +1,11 @@
 import uuid
-from datetime import timedelta
+from datetime import date, timedelta
 from typing import Optional
 
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -233,8 +234,8 @@ class Event(DBModel):
             return self.filter(is_featured=True).filter_active()
 
     class StateStatus(models.TextChoices):
-        DRAFT = "Draft"
-        LIVE = "Live"
+        DRAFT = "DRAFT", _("Draft")
+        LIVE = "LIVE", _("Live")
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
@@ -266,21 +267,21 @@ class Event(DBModel):
     organizer = models.CharField(
         max_length=255,
         help_text="Name or brand or community organizing the event.",
-        blank=True,
+        blank=False,
         default="",
     )
     description = models.TextField(
         help_text="A short description of your event.",
-        blank=True,
+        blank=False,
         default="",
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event.", blank=True, null=True
+        help_text="A banner image for your event.", blank=False, null=False
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
     end_date = models.DateTimeField(
         help_text="When your event will end (optional).",
@@ -293,7 +294,7 @@ class Event(DBModel):
     timezone = models.CharField(
         verbose_name="time zone",
         max_length=30,
-        blank=True,
+        blank=False,
         default="",
     )
     # localized address string (used to populate maps lookup)
@@ -396,34 +397,12 @@ class Event(DBModel):
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
-    @staticmethod
-    def required_form_fields():
-        fields = [
-            "title",
-            "organizer",
-            "description",
-            "start_date",
-            "timezone",
-        ]
-        return fields
-
-    @staticmethod
-    def optional_form_fields():
-        fields = [
-            "cover_image",
-            "end_date",
-            "initial_place",
-            "address_1",
-            "address_2",
-            "city",
-            "region",
-            "postal_code",
-            "country",
-            "lat",
-            "long",
-            "localized_address_display",
-        ]
-        return fields
+    @property
+    def has_ended(self):
+        if self.end_date:
+            return date.today() > self.end_date.date()
+        else:
+            return False
 
 
 class Ticket(DBModel):
@@ -577,19 +556,19 @@ class TicketTier(DBModel):
     )
     tier_fiat = models.OneToOneField(
         "TierFiat",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
     tier_blockchain = models.OneToOneField(
         "TierBlockchain",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
     tier_asset_ownership = models.OneToOneField(
         "TierAssetOwnership",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
@@ -598,13 +577,6 @@ class TicketTier(DBModel):
     ticket_type = models.CharField(
         max_length=255,
         blank=False,
-    )
-    price = models.DecimalField(
-        max_digits=9,
-        validators=[MinValueValidator(0)],
-        decimal_places=6,
-        blank=False,
-        null=True,
     )
     capacity = models.IntegerField(
         default=1,
@@ -655,7 +627,50 @@ class TierAssetOwnership(DBModel):
     """
     Represents a asset ownership based tier for an event ticket
     Holds details specific to an asset ownership verification
+
+    Note: These choices are modeled off the moralis API:
+    https://docs.moralis.io/reference/evm-api-overview
     """
+
+    class BlockchainChoices(models.TextChoices):
+        ETH = "ETH", _("Ethereum")
+
+    class NetworkChoices(models.IntegerChoices):
+        ETH = 1, _("Ethereum")
+        GOERLI = 5, _("Ethereum (Goerli TestNet)")
+        SEPOLIA = 11155111, _("Ethereum (Sepolia TestNet)")
+        MUMBAI = 80001, _("Ethereum (Mumbai TestNet)")
+        POLYGON = 137, _("Polygon")
+        BSC = 56, _("Binance Smart Chain")
+        BSC_TESTNET = 97, _("Binance Smart Chain (TestNet)")
+        AVAX = 43114, _("Avalanche")
+        AVAX_TESTNET = 43113, _("Avalanche (TestNet)")
+        FANTOM = 250, _("Fantom")
+        CRONOS = 25, _("Cronos")
+        CRONOS_TESTNET = 338, _("Cronos (TestNet)")
+
+    class AssetChoices(models.TextChoices):
+        NFT = "NFT", _("NFT")
+
+    blockchain = models.CharField(
+        max_length=50,
+        choices=BlockchainChoices.choices,
+        default=BlockchainChoices.ETH,
+        blank=False,
+    )
+    network = models.IntegerField(
+        choices=NetworkChoices.choices,
+        default=NetworkChoices.ETH,
+        blank=False,
+    )
+    asset_type = models.CharField(
+        max_length=50,
+        choices=AssetChoices.choices,
+        default=AssetChoices.NFT,
+        blank=False,
+    )
+    token_address = models.CharField(max_length=42, blank=False, default="")
+    token_id = ArrayField(models.IntegerField(), null=True, blank=True)
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"

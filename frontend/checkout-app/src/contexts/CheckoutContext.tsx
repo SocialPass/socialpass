@@ -97,17 +97,20 @@ export const CheckoutProvider = ({ children }: any) => {
             reject(err)
           })
       } else {
-        CheckoutApi.edit(checkout?.public_id, data)
-          .then((response) => {
-            setCheckout(response.data)
-            setIsLoading(false)
-            resolve(response.data)
-          })
-          .catch((err) => {
-            setError(err)
-            setIsLoading(false)
-            reject(err)
-          })
+        // SHOULD BE IMPLEMENTED ON THE BACKEND
+        resolve(checkout)
+
+        // CheckoutApi.edit(checkout?.public_id, data)
+        //   .then((response) => {
+        //     setCheckout(response.data)
+        //     setIsLoading(false)
+        //     resolve(response.data)
+        //   })
+        //   .catch((err) => {
+        //     setError(err)
+        //     setIsLoading(false)
+        //     reject(err)
+        //   })
       }
     })
 

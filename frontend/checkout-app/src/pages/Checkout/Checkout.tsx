@@ -30,8 +30,8 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (!checkout) getCheckout(checkoutPublicId)
-    if (!checkoutItems.length) getCheckoutItems(checkoutPublicId)
+    getCheckout(checkoutPublicId)
+    getCheckoutItems(checkoutPublicId)
   }, [])
 
   return (

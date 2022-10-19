@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
-import { EventApi } from '@/services/api'
+import { EventApi, CheckoutItemApi } from '@/services/api'
 
 import TicketSelector from '@/components/TicketSelector'
 import './index.css'
@@ -54,11 +54,28 @@ export default function Home() {
 
     if (ticketIndex !== -1) {
       if (amount > 0) {
+        // Update on context
         new_selected[ticketIndex].quantity = amount
+
+        // Update on backend
+        if (checkout.public_id) {
+          CheckoutItemApi.edit(new_selected[ticketIndex].public_id, {
+            ...new_selected[ticketIndex],
+            quantity: amount,
+          })
+        }
       } else {
+        // Delete on backend
+        if (checkout.public_id) {
+          console.log(new_selected, ticketIndex)
+          CheckoutItemApi.delete(new_selected[ticketIndex].public_id)
+        }
+
+        // Delete on context
         new_selected.splice(ticketIndex, 1)
       }
     } else {
+      // Create on context
       new_selected.push({
         ticket_tier: {
           public_id: ticketTier.public_id,
@@ -67,6 +84,18 @@ export default function Home() {
         },
         quantity: amount,
       })
+
+      // Create on backend
+      if (checkout.public_id) {
+        CheckoutItemApi.create({
+          ticket_tier: ticketTier.public_id,
+          quantity: amount,
+          checkout_session: checkout.public_id,
+        }).then((res) => {
+          // save the new public_id on the checkout item context
+          new_selected[new_selected.length - 1].public_id = res.data.public_id
+        })
+      }
     }
 
     setCheckoutItems(new_selected)
@@ -332,10 +361,7 @@ export default function Home() {
                   ></input>
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
-                    disabled={
-                      !validateEmail() ||
-                      (checkout?.tx_type !== 'ASSET_OWNERSHIP' && !getTotalPrice())
-                    }
+                    disabled={!validateEmail() || !checkoutItems.length}
                     onClick={(e) => {
                       e.preventDefault()
                       handleGetTicketsButton()

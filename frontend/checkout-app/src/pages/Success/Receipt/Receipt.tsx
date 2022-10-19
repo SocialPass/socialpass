@@ -7,7 +7,7 @@ export default function Summary() {
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
-  const { checkout, checkoutItems, getTxType }: any = useCheckout()
+  const { checkout, checkoutItems, getTxType, setCheckout, setCheckoutItems }: any = useCheckout()
 
   const getTotalPrice = () => {
     return checkoutItems.reduce((acc, item) => {
@@ -29,6 +29,8 @@ export default function Summary() {
 
   const orderAgain = () => {
     navigate(`/${event.public_id}`)
+    setCheckout(null)
+    setCheckoutItems([])
   }
 
   return (

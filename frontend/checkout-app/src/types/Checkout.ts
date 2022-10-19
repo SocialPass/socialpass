@@ -1,5 +1,7 @@
 export type Checkout = {
   public_id: string
+  name: string
+  email: string
 }
 
 type GetCheckout = (checkoutPublicId: string) => Promise<Event | unknown>

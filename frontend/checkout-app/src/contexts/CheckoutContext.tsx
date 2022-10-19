@@ -13,8 +13,21 @@ export const CheckoutProvider = ({ children }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isLoadingCheckoutItems, setIsLoadingCheckoutItems] = useState<boolean>(false)
   const [checkout, setCheckout] = useState<Checkout | null>(null)
-  const [checkoutItems, setCheckoutItems] = useState([])
+  const [checkoutItems, setCheckoutItems] = useState<any>([])
   const [error, setError] = useState<CheckoutError | null>(null)
+
+  const getTotalPrice = () =>
+    checkoutItems.reduce(
+      (acc, ticketTier) => acc + ticketTier?.quantity * ticketTier?.ticket_tier?.price || 0,
+      0,
+    )
+
+  const getTxType = (type) =>
+    ({
+      FIAT: 'tier_fiat',
+      BLOCKCHAIN: 'tier_cryptocurrency',
+      ASSET_OWNERSHIP: 'tier_asset_ownership',
+    }[type])
 
   const getCheckout = (checkoutPublicId: string) =>
     new Promise((resolve, reject) => {
@@ -62,7 +75,13 @@ export const CheckoutProvider = ({ children }: any) => {
 
       const data = {
         ...checkout,
-        checkoutItems,
+        // USING EMAIL HERE BUT NEED TO BE REPLACED BY NAME FROM USER
+        name: checkout?.email || '',
+        checkout_items: checkoutItems.map((item) => ({
+          ...item,
+          ticket_tier: item.ticket_tier.public_id,
+        })),
+        cost: getTotalPrice(),
       }
 
       CheckoutApi.create(data)
@@ -88,6 +107,7 @@ export const CheckoutProvider = ({ children }: any) => {
         getCheckoutItems,
         setCheckoutItems,
         saveCheckout,
+        getTxType,
         isLoading,
         isLoadingCheckoutItems,
         error,

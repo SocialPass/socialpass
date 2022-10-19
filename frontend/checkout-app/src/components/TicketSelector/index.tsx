@@ -20,9 +20,9 @@ function TicketSelector(props): JSX.Element {
   }
 
   const getPriceWithCurrencySymbol = (amount) => {
-    if (paymentType === 'tier_fiat') {
+    if (paymentType === 'FIAT') {
       return `$${amount}`
-    } else if (paymentType === 'tier_cryptocurrency') {
+    } else if (paymentType === 'BLOCKCHAIN') {
       return `${amount} ETH`
     }
 

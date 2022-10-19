@@ -68,11 +68,11 @@ export default function Home() {
             <p className='mt-10'>Please select from one of the checkout options below.</p>
             <h6 className='fw-700 fsr-6 mt-20'>Checkout Options</h6>
 
-            {checkout?.tx_type === 'tier_fiat' ? (
+            {checkout?.tx_type === 'FIAT' ? (
               <FiatCheckoutOption />
-            ) : checkout?.tx_type === 'tier_cryptocurrency' ? (
+            ) : checkout?.tx_type === 'BLOCKCHAIN' ? (
               <CrypotCurrencyCheckoutOption />
-            ) : checkout?.tx_type === 'tier_asset_ownership' ? (
+            ) : checkout?.tx_type === 'ASSET_OWNERSHIP' ? (
               <AssetOwnershipCheckoutOption />
             ) : null}
           </div>

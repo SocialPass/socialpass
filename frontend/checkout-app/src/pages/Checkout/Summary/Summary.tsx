@@ -7,7 +7,7 @@ export default function Summary() {
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
-  const { checkout, checkoutItems }: any = useCheckout()
+  const { checkout, checkoutItems, getTxType }: any = useCheckout()
 
   const handleEditClick = () => {
     navigate(`/${event.public_id}`)
@@ -15,14 +15,14 @@ export default function Summary() {
 
   const getTotalPrice = () => {
     return checkoutItems.reduce((acc, item) => {
-      return acc + item.ticket_tier[checkout.tx_type]?.price * item.quantity
+      return acc + item.ticket_tier[getTxType(checkout.tx_type)]?.price * item.quantity
     }, 0)
   }
 
   const getPriceWithCurrencySymbol = (value) => {
-    if (checkout?.tx_type === 'tier_fiat') {
+    if (checkout?.tx_type === 'FIAT') {
       return `$${value}`
-    } else if (checkout?.tx_type === 'tier_cryptocurrency') {
+    } else if (checkout?.tx_type === 'BLOCKCHAIN') {
       return `${value} ETH`
     }
 
@@ -54,7 +54,7 @@ export default function Summary() {
           {checkout.tx_type !== 'tier_asset_ownership' ? (
             <div className='fs-base-n2 mt-5'>
               <strong>Price</strong> &mdash;{' '}
-              {getPriceWithCurrencySymbol(item.ticket_tier[checkout.tx_type]?.price)}
+              {getPriceWithCurrencySymbol(item.ticket_tier[getTxType(checkout.tx_type)]?.price)}
             </div>
           ) : null}
         </div>

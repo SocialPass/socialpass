@@ -1,5 +1,5 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_theme_value get_user_primary_email %}
+{% load static get_theme_value get_user_primary_email crispy_forms_tags %}
 
 {% block head_title %}Create Ticket - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
@@ -59,7 +59,7 @@
 					{% endfor %}
 
 					<!-- Information start -->
-					<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="basic-information">
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="information">
 						<span class="ws-25 me-10 text-primary">
 							<i class="fa-light fa-ballot-check"></i>
 						</span>
@@ -78,6 +78,64 @@
 						{% include 'components/forms_inputs/input.html' %}
 					{% endwith %}
 					<!-- Information end -->
+
+					<!-- Payment types start -->
+					<br />
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="payment-types">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-file-invoice-dollar"></i>
+						</span>
+						Payment Types
+					</h3>
+					<p class="text-muted fs-base-n2 mt-5">
+						Please select the types of payment you want to accept for this ticket.
+					</p>
+					<div class="btn-group w-100 pe-none">
+					  	<button type="button" class="btn btn-sm py-10 text-base text-start d-flex align-items-center" tabindex="-1">
+					  		<i class="fa-light fa-money-check-dollar me-5"></i>
+					  		<strong class="antialiased me-5">Fiat</strong>
+					  	</button>
+					  	<button type="button" class="btn btn-sm py-10 text-base text-start d-flex align-items-center" tabindex="-1">
+					  		<i class="fa-light fa-wallet me-5"></i>
+					  		<strong class="antialiased me-5">Crypto</strong>
+					  	</button>
+					  	<button type="button" class="btn btn-sm py-10 btn-primary text-start d-flex align-items-center" tabindex="-1">
+					  		<i class="fa-light fa-hexagon-image me-5"></i>
+					  		<strong class="antialiased me-5">NFTs</strong>
+					  		<i class="fa-regular fa-check ms-auto"></i>
+					  	</button>
+					</div>
+					<div class="alert alert-primary d-flex align-items-center mb-30" role="alert">
+						<i class="fa-regular fa-info-circle me-10"></i>
+						<span>
+							As of right now, we only support NFT based payments for tickets. Other payment types are coming soon!
+						</span>
+					</div>
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="asset-ownership">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-hexagon-image"></i>
+						</span>
+						Asset Ownership (NFTs)
+					</h3>
+					<p class="text-muted fs-base-n2 mt-5">
+						Please fill out the following fields to specify the type of assets that you want to accept. When an attendee proves their ownership of these assets, they will be able to redeem tickets for this event.
+					</p>
+					<div class="form-group">
+			  			{{ tier_asset_ownership_form.blockchain|as_crispy_field }}
+					</div>
+					<div class="form-group">
+			  			{{ tier_asset_ownership_form.network|as_crispy_field }}
+					</div>
+					<div class="form-group">
+			  			{{ tier_asset_ownership_form.asset_type|as_crispy_field }}
+					</div>
+					{% with tier_asset_ownership_form.token_address as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with tier_asset_ownership_form.token_id as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					<!-- Payment types end -->
 
 					<!-- Submit button start -->
 					<hr />

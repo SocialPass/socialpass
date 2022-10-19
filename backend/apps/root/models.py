@@ -670,7 +670,12 @@ class TierAssetOwnership(DBModel):
         blank=False,
     )
     token_address = models.CharField(max_length=42, blank=False, default="")
-    token_id = ArrayField(models.IntegerField(), null=True, blank=True)
+    token_id = ArrayField(
+        models.IntegerField(),
+        null=True,
+        blank=True,
+        help_text="Please enter a list of token ID(s) separated by commas."
+    )
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"

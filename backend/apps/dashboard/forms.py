@@ -5,7 +5,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from apps.root.forms import CleanEmailMixin
-from apps.root.models import Event, Invite, Team, TicketTier
+from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
 
 
 class CustomInviteForm(forms.Form, CleanEmailMixin):
@@ -129,3 +129,22 @@ class TicketTierForm(forms.ModelForm):
             ),
         }
         labels = {"ticket_type": "Name of ticket"}
+
+
+class TierAssetOwnershipForm(forms.ModelForm):
+    """
+    Ticket tier asset ownership form
+    """
+
+    class Meta:
+        model = TierAssetOwnership
+        fields = ["blockchain", "network", "asset_type", "token_address", "token_id"]
+        widgets = {
+            "token_address": forms.TextInput(
+                attrs={"placeholder": "Example: 0xb79...79268"}
+            ),
+            "token_id": forms.TextInput(
+                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
+            ),
+        }
+        labels = {"token_id": "Token ID(s)"}

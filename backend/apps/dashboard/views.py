@@ -14,7 +14,10 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm, TicketTierForm
+from apps.dashboard.forms import (
+    CustomInviteForm, EventForm, TeamForm, TicketTierForm,
+    TierAssetOwnershipForm
+)
 from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
 User = auth.get_user_model()
@@ -514,6 +517,7 @@ class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
+        context["tier_asset_ownership_form"] = TierAssetOwnershipForm
         return context
 
     def form_valid(self, form, **kwargs):

@@ -51,7 +51,7 @@ export default function Summary() {
             <span>{item.ticket_tier.ticket_type}</span>
             <span className='ms-auto ps-10 fw-normal'>&times; {item.quantity}</span>
           </h6>
-          {checkout.tx_type !== 'tier_asset_ownership' ? (
+          {checkout?.tx_type !== 'ASSET_OWNERSHIP' ? (
             <div className='fs-base-n2 mt-5'>
               <strong>Price</strong> &mdash;{' '}
               {getPriceWithCurrencySymbol(item.ticket_tier[getTxType(checkout.tx_type)]?.price)}
@@ -78,7 +78,7 @@ export default function Summary() {
           <strong className='antialiased'>Continue</strong>
         </button>
       </form>
-      {checkout.tx_type !== 'tier_asset_ownership' ? (
+      {checkout?.tx_type !== 'ASSET_OWNERSHIP' ? (
         <p>
           <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
         </p>

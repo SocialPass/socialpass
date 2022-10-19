@@ -84,17 +84,31 @@ export const CheckoutProvider = ({ children }: any) => {
         cost: getTotalPrice(),
       }
 
-      CheckoutApi.create(data)
-        .then((response) => {
-          setCheckout(response.data)
-          setIsLoading(false)
-          resolve(response.data)
-        })
-        .catch((err) => {
-          setError(err)
-          setIsLoading(false)
-          reject(err)
-        })
+      if (checkout?.public_id) {
+        CheckoutApi.create(data)
+          .then((response) => {
+            setCheckout(response.data)
+            setIsLoading(false)
+            resolve(response.data)
+          })
+          .catch((err) => {
+            setError(err)
+            setIsLoading(false)
+            reject(err)
+          })
+      } else {
+        CheckoutApi.edit(checkout?.public_id, data)
+          .then((response) => {
+            setCheckout(response.data)
+            setIsLoading(false)
+            resolve(response.data)
+          })
+          .catch((err) => {
+            setError(err)
+            setIsLoading(false)
+            reject(err)
+          })
+      }
     })
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import FiatCheckoutOption from './CheckoutOptions/Fiat'
 import CrypotCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
@@ -13,6 +13,8 @@ import useCheckout from '@/hooks/useCheckout'
 export default function Home() {
   const navigate = useNavigate()
 
+  const { checkoutPublicId } = useParams()
+
   const { event }: any = useEvent()
   const {
     checkout,
@@ -23,14 +25,13 @@ export default function Home() {
     isLoadingCheckoutItems,
   }: any = useCheckout()
 
-
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
   }
 
   useEffect(() => {
-    if (!checkout) getCheckout()
-    if (!checkoutItems.length) getCheckoutItems()
+    if (!checkout) getCheckout(checkoutPublicId)
+    if (!checkoutItems.length) getCheckoutItems(checkoutPublicId)
   }, [])
 
   return (

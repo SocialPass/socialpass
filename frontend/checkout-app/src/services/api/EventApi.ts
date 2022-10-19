@@ -2,49 +2,47 @@ import axios from './http'
 
 export default {
   get(publicId: string) {
-    return new Promise((resolve) => {
-      resolve({
-        data: {
-          public_id: '123456789',
-          team: {
-            name: 'main team',
-            image: null,
-            theme: {
-              logo: 'http://localhost:8000/static/brand-logos/SocialPass-Icon.svg',
-              favicon: 'http://localhost:8000/static/brand-logos/SocialPass-Icon.svg',
-              css_theme: 'http://localhost:8000/static/socialpass-theme/socialpass-theme.css',
-              brand_name: 'SocialPass',
-            },
-          },
-          title: 'NFT Holders Party',
-          public_id: 'asdfasdf',
-          description:
-            'Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure youre 21+ to enter.',
-          requirements: 'requirements',
-          limit_per_person: 5,
-          start_date: '%A, %B %d, %Y | %H:%M%p',
-          timezone: 'EST',
-          localized_address_display: 'James L. Knight Center, Miami, Florida, USA',
-          capacity: 100,
-          ticket_count: 10,
-          cover_image:
-            'https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-          show_ticket_count: true,
-          show_team_image: true,
-        },
-      })
-    })
+    // return new Promise((resolve) => {
+    //   resolve({
+    //     data: {
+    //       public_id: '123456789',
+    //       team: {
+    //         name: 'main team',
+    //         image: null,
+            // theme: {
+            //   logo: 'http://localhost:8000/static/brand-logos/SocialPass-Icon.svg',
+            //   favicon: 'http://localhost:8000/static/brand-logos/SocialPass-Icon.svg',
+            //   css_theme: 'http://localhost:8000/static/socialpass-theme/socialpass-theme.css',
+            //   brand_name: 'SocialPass',
+            // },
+    //       },
+    //       title: 'NFT Holders Party',
+    //       description:
+    //         'Come celebrate with the SocialPass Team! All NFT holders are invited. You just need to make sure youre 21+ to enter.',
+    //       requirements: 'requirements',
+    //       limit_per_person: 5,
+    //       start_date: '%A, %B %d, %Y | %H:%M%p',
+    //       timezone: 'EST',
+    //       localized_address_display: 'James L. Knight Center, Miami, Florida, USA',
+    //       capacity: 100,
+    //       ticket_count: 10,
+    //       cover_image:
+    //         'https://images.pexels.com/photos/801863/pexels-photo-801863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    //       show_ticket_count: true,
+    //       show_team_image: true,
+    //     },
+    //   })
+    // })
 
-    //   return axios
-    //     .get(`/api/v1/event/${publicId}`, {})
-    //     .then((response) => Promise.resolve(response))
-    //     .catch((error) =>
-    //       Promise.reject({
-    //         detail: error.response.data?.detail || 'unknown-error',
-    //         message: error.response.data?.message || 'unknown-error',
-    //       }),
-    //     )
-    // },
+    return axios
+      .get(`/api/checkout/v1/event/${publicId}/`, {})
+      .then((response) => Promise.resolve(response))
+      .catch((error) =>
+        Promise.reject({
+          detail: error.response.data?.detail || 'unknown-error',
+          message: error.response.data?.message || 'unknown-error',
+        }),
+      )
   },
 
   getTicketTiers(publicId: string) {
@@ -131,7 +129,7 @@ export default {
     })
 
     //   return axios
-    //     .get(`/api/v1/event/${publicId}/ticket_tiers`, {})
+    //     .get(`/api/checkout/v1/event/${publicId}/ticket_tiers`, {})
     //     .then((response) => Promise.resolve(response))
     //     .catch((error) =>
     //       Promise.reject({

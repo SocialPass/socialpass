@@ -101,17 +101,17 @@
 								</div>
 								<hr />
 								<div class="row">
-									<div class="col-6 col-sm-3 text-truncate">
+									<div class="col-6 col-sm-4 text-truncate">
 										<strong>Capacity</strong>
 										<br />
 										{{ ticket_tier.capacity }}
 									</div>
-									<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
+									<div class="col-6 col-sm-4 text-truncate">
 										<strong>Qty. Sold</strong>
 										<br />
 										{{ ticket_tier.quantity_sold }}
 									</div>
-									<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
+									<div class="col-12 col-sm-4 mt-10 mt-sm-0 text-truncate">
 										<strong>Max per person</strong>
 										<br />
 										{{ ticket_tier.max_per_person }}
@@ -126,8 +126,36 @@
 											<br />
 											<span class="text-muted fs-base-n2">Click to show/hide</span>
 										</summary>
-										<div class="collapse-content">
-											Work in progress ...
+										<div class="collapse-content p-15 p-sm-20">
+											<div class="row">
+												<div class="col-6 text-truncate">
+													<strong>Blockchain</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.blockchain }}
+												</div>
+												<div class="col-6 text-truncate">
+													<strong>Network</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.network }}
+												</div>
+											</div>
+											<div class="row mt-10">
+												<div class="col-6 text-truncate">
+													<strong>Asset Type</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.asset_type }}
+												</div>
+												<div class="col-6 text-truncate">
+													<strong>Token Address</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.token_address }}
+												</div>
+											</div>
+											<div class="mt-10 text-truncate">
+												<strong>Token ID(s)</strong>
+												<br />
+												{{ ticket_tier.tier_asset_ownership.token_id |join:", "}}
+											</div>
 										</div>
 									</details>
 								</div>

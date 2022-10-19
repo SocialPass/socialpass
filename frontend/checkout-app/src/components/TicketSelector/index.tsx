@@ -31,7 +31,7 @@ function TicketSelector(props): JSX.Element {
 
   return (
     <div className='ticket-tier mb-20'>
-      <input type='checkbox' className='ticket-tier-input' id='c1' checked={isChecked} />
+      <input type='checkbox' className='ticket-tier-input' id='c1' checked={isChecked} readOnly />
       <label htmlFor='c1' className='ticket-tier-label'>
         <div className='d-sm-flex align-items-center'>
           <div className='pe-sm-15'>

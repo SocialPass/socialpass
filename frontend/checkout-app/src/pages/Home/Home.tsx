@@ -103,11 +103,9 @@ export default function Home() {
       tx_type: checkout?.tx_type,
     })
 
-    console.log('result', checkout, checkoutItems)
-
-    // saveCheckout()
-
-    navigate(`checkout/${checkout?.public_id}`)
+    saveCheckout().then((res) => {
+      navigate(`checkout/${checkout?.public_id}`)
+    })
   }
 
   useEffect(() => {
@@ -225,6 +223,7 @@ export default function Home() {
                   className='ticket-tier-input'
                   disabled={!getFiatTicketTiers().length}
                   checked={checkout?.tx_type === 'tier_fiat'}
+                  readOnly
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -252,6 +251,7 @@ export default function Home() {
                   className='ticket-tier-input'
                   disabled={!getCryptocurrencyTicketTiers().length}
                   checked={checkout?.tx_type === 'tier_cryptocurrency'}
+                  readOnly
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -279,6 +279,7 @@ export default function Home() {
                   className='ticket-tier-input'
                   disabled={!getAssetOwnershipTicketTiers().length}
                   checked={checkout?.tx_type === 'tier_asset_ownership'}
+                  readOnly
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>

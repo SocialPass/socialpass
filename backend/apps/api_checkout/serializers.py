@@ -259,9 +259,9 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
         return checkout_session
 
 
-class PaymentSerializer(serializers.Serializer):
+class TransactionSerializer(serializers.Serializer):
     """
-    Payment serializer
+    Transaction serializer
     """
 
     tx_type = serializers.ChoiceField(CheckoutSession.TransactionType, write_only=True)

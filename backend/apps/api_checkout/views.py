@@ -190,8 +190,8 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
                 return serializers.CheckoutItemReadSerializer
             case "create":
                 return serializers.CheckoutSessionCreateSerializer
-            case "payment":
-                return serializers.PaymentSerializer
+            case "transaction":
+                return serializers.TransactionSerializer
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
@@ -281,28 +281,29 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
         serializer = self.get_serializer(checkout_items_qs, many=True)
         return Response(serializer.data)
 
-    def perform_create_payment(self, serializer, *args, **kwargs):
+    def perform_create_transaction(self, serializer, *args, **kwargs):
         """
-        perform_create_payment method. used for creating a payment object
+        perform_create_transaction method.
+        used for creating a transaction object
         """
         return serializer.save()
 
     def perform_update_session_tx(self, serializer, tx):
         """
-        perform_update_session_tx method. used for update
-        a session transaction
+        perform_update_session_tx method.
+        used for updating a session transaction (CheckoutSession.tx_*)
         """
         checkout_session = self.get_object()
         serializer.update_session_tx(checkout_session, tx)
 
     @action(methods=["post"], detail=True)
-    def payment(self, request, *args, **kwargs):
+    def transaction(self, request, *args, **kwargs):
         """
-        create Payment and update CheckoutSession
+        create Transaction and update CheckoutSession (CheckoutSession.tx_*)
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        tx = self.perform_create_payment(serializer)
+        tx = self.perform_create_transaction(serializer)
         self.perform_update_session_tx(serializer, tx)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

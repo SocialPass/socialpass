@@ -564,7 +564,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
-    def test_payment_fiat_201_ok(self):
+    def test_transaction_fiat_201_ok(self):
         """
         test create TxFiat and update session.tx_fiat
         assert 201 created
@@ -572,7 +572,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         data = {"tx_type": "FIAT"}
         response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
             data=data,
             content_type="application/json",
         )
@@ -584,7 +584,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(self.checkout_session.tx_fiat.pk, tx_fiat.pk)
 
     @prevent_warnings
-    def test_payment_asset_ownership_201_ok(self):
+    def test_transaction_asset_ownership_201_ok(self):
         """
         test create TxAssetOwnership and update session.tx_asset_ownership
         assert 201 created
@@ -592,7 +592,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         data = {"tx_type": "ASSET_OWNERSHIP"}
         response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
             data=data,
             content_type="application/json",
         )
@@ -608,7 +608,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         )
 
     @prevent_warnings
-    def test_payment_blockchain_201_ok(self):
+    def test_transaction_blockchain_201_ok(self):
         """
         test create TxBlockchain and update session.tx_blockchain
         assert 201 created
@@ -616,7 +616,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         data = {"tx_type": "BLOCKCHAIN"}
         response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
             data=data,
             content_type="application/json",
         )
@@ -628,7 +628,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(self.checkout_session.tx_blockchain.pk, tx_blockchain.pk)
 
     @prevent_warnings
-    def test_payment_400_bad_request(self):
+    def test_transaction_400_bad_request(self):
         """
         test create transaction with nonexistent tx_type
         assert 400 bad request
@@ -636,7 +636,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         data = {"tx_type": "NONEXISTENT_TYPE"}
         response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/payment/",
+            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
             data=data,
             content_type="application/json",
         )
@@ -647,7 +647,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertIsNone(self.checkout_session.tx_fiat)
 
     @prevent_warnings
-    def test_payment_session_404_not_found(self):
+    def test_transaction_session_404_not_found(self):
         """
         test create transaction with nonexistent session
         assert 404 not found
@@ -655,7 +655,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         data = {"tx_type": "FIAT"}
         response = self.client.post(
-            f"{self.url_base}session/{self.random_uuid}/payment/",
+            f"{self.url_base}session/{self.random_uuid}/transaction/",
             data=data,
             content_type="application/json",
         )

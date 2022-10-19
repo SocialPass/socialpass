@@ -555,19 +555,19 @@ class TicketTier(DBModel):
     )
     tier_fiat = models.OneToOneField(
         "TierFiat",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
     tier_blockchain = models.OneToOneField(
         "TierBlockchain",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
     tier_asset_ownership = models.OneToOneField(
         "TierAssetOwnership",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )

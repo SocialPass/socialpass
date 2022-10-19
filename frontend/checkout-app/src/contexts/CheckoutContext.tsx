@@ -84,7 +84,7 @@ export const CheckoutProvider = ({ children }: any) => {
         cost: getTotalPrice(),
       }
 
-      if (checkout?.public_id) {
+      if (!checkout?.public_id) {
         CheckoutApi.create(data)
           .then((response) => {
             setCheckout(response.data)

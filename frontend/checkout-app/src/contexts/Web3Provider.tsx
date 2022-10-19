@@ -21,26 +21,26 @@ const { chains, provider, webSocketProvider } = configureChains(defaultChains, [
 export const Web3Provider = createClient({
   autoConnect: true,
   connectors: [
-	new MetaMaskConnector({ chains }),
-	new CoinbaseWalletConnector({
-	  chains,
-	  options: {
-		appName: 'wagmi',
-	  },
-	}),
-	new WalletConnectConnector({
-	  chains,
-	  options: {
-		qrcode: true,
-	  },
-	}),
-	new InjectedConnector({
-	  chains,
-	  options: {
-		name: 'Injected',
-		shimDisconnect: true,
-	  },
-	})
+    new MetaMaskConnector({ chains }),
+    new CoinbaseWalletConnector({
+      chains,
+      options: {
+        appName: 'wagmi',
+      },
+    }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        qrcode: true,
+      },
+    }),
+    new InjectedConnector({
+      chains,
+      options: {
+        name: 'Injected',
+        shimDisconnect: true,
+      },
+    }),
   ],
   provider,
   webSocketProvider,

@@ -4,7 +4,7 @@ const Footer = () => {
       <a
         href='https://socialpass.gitbook.io/socialpass/'
         target='_blank'
-        rel="noreferrer"
+        rel='noreferrer'
         className='text-secondary text-decoration-none fs-base-p4'
       >
         <i className='fa-regular fa-question-circle'></i>

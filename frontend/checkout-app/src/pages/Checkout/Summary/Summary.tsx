@@ -15,7 +15,7 @@ export default function Summary() {
 
   const getTotalPrice = () => {
     return checkoutItems.reduce((acc, item) => {
-      return acc + item.ticket_tier[getTxType(checkout.tx_type)]?.price * item.quantity
+      return acc + item.ticket_tier[getTxType(checkout?.tx_type)]?.price * item.quantity
     }, 0)
   }
 
@@ -54,7 +54,7 @@ export default function Summary() {
           {checkout?.tx_type !== 'ASSET_OWNERSHIP' ? (
             <div className='fs-base-n2 mt-5'>
               <strong>Price</strong> &mdash;{' '}
-              {getPriceWithCurrencySymbol(item.ticket_tier[getTxType(checkout.tx_type)]?.price)}
+              {getPriceWithCurrencySymbol(item.ticket_tier[getTxType(checkout?.tx_type)]?.price)}
             </div>
           ) : null}
         </div>

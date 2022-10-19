@@ -1,0 +1,133 @@
+{% extends 'bases/base_primary.html' %}
+{% load static get_theme_value i18n crispy_forms_tags %}
+
+{% block head_title %}
+{% if request.resolver_match.url_name == 'event_create' %}
+	Create Event
+{% else %}
+	{{ event.title }}
+{% endif %} - {% get_theme_value "brand_name" %}
+{% endblock head_title %}
+
+{% block navbar_breadcrumb %}
+{% if url_name == 'event_create' %}
+	Create Event
+{% else %}
+	Event Details
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+{% include 'components/event_details_page_header.html' %}
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	{% include 'components/event_details_card_header.html' %}
+	<!-- Card header end -->
+
+	<!-- Main content start -->
+	<div class="row">
+		<div class="col-lg-9 col-xl-7 mx-auto">
+			<div class="content text-center">
+				<div class="ws-400 mw-100 mx-auto">
+					{% if event.has_ended %}
+						<div class="ws-200 mw-100 mx-auto">
+							<img src="{% static 'images/illustrations/event_ended.svg' %}" alt="event_ended" class="w-100 h-auto">
+						</div>
+						<h5>Event has ended</h5>
+						<p>
+							This event has ended. If you never went live with it, you can <a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}#date-and-time" class="fw-bold antialiased">change the dates</a> and come back to this page.
+						</p>
+					{% else %}
+						<div class="ws-200 mw-100 mx-auto">
+							<img src="{% static 'images/illustrations/go_live.svg' %}" alt="go_live" class="w-100 h-auto">
+						</div>
+						{% if event.state == event.StateStatus.LIVE %}
+							<h5>
+								<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
+								Event is live!
+							</h5>
+							<p>
+								Your event is currently live. Given below is a summary of the event.
+							</p>
+							<table class="table my-20 table-no-outer-padding">
+								<tbody>
+									<tr>
+										<th>Name</th>
+										<td>{{ event.title }}</td>
+									</tr>
+									<tr>
+										<th>Date</th>
+										<td>{{ event.start_date }}</td>
+									</tr>
+									<tr>
+										<th>Location</th>
+										<td>{{ event.localized_address_display }}</td>
+									</tr>
+								</tbody>
+							</table>
+							<div>
+								<a href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}" class="btn btn-lg text-base fs-base fw-bold">
+									<i class="fa-regular fa-sack-dollar me-5"></i>
+									See Stats
+								</a>
+							</div>
+						{% else %}
+							<h5>Let's go live with this event!</h5>
+							<p>
+								Your event is currently a draft. You can make it go live by clicking on the following button.
+							</p>
+							<table class="table my-20 table-no-outer-padding">
+								<tbody>
+									<tr>
+										<th>Name</th>
+										<td>{{ event.title }}</td>
+									</tr>
+									<tr>
+										<th>Date</th>
+										<td>{{ event.start_date }}</td>
+									</tr>
+									<tr>
+										<th>Location</th>
+										<td>{{ event.localized_address_display }}</td>
+									</tr>
+								</tbody>
+							</table>
+							{% if event.tickettier_set.count < 1 %}
+								<div>
+									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased" disabled="disabled">
+										<i class="fa-solid fa-circle-small me-5"></i>
+										Go Live!
+									</button>
+								</div>
+								<div class="alert alert-primary mb-0" role="alert">
+									Before going live, your event must have at least one ticket tier. Go to <a href="#" class="alert-link">tickets</a> to create one now.
+								</div>
+							{% else %}
+								<form method="post">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased">
+										<i class="fa-solid fa-circle-small fa-beat-fade me-5"></i>
+										Go Live!
+									</button>
+								</form>
+							{% endif %}
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Main content end -->
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help managing your event.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock %}

@@ -10,14 +10,15 @@ def get_sidebar_active_status(context, key):
     if key == "events":
         if url_name in [
             "event_list",
-            "event_drafts" "event_create",
+            "event_create",
             "event_detail",
             "event_update",
+            "event_tickets",
+            "event_go_live",
+            "event_delete",
             "event_stats",
+            "ticket_tier_delete",
         ]:
-            return "active"
-    elif key == "drafts":
-        if url_name in ["event_drafts", "event_create"]:
             return "active"
     elif key == "team-details":
         if url_name in ["team_detail", "team_update"]:

@@ -111,7 +111,6 @@ class TicketTierFactory(factory.django.DjangoModelFactory):
         model = TicketTier
 
     ticket_type = "test"
-    price = 1.00000000
     capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
     quantity_sold = 0
     max_per_person = 1

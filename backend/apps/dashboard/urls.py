@@ -42,8 +42,8 @@ urlpatterns = [
     ),
     # Ticketing
     path(
-        "events/published/<uuid:team_public_id>/",
-        views.PublishedEventsListView.as_view(),
+        "events/<uuid:team_public_id>/",
+        views.EventListView.as_view(),
         name="event_list",
     ),
     path(
@@ -67,6 +67,16 @@ urlpatterns = [
         name="event_update",
     ),
     path(
+        "events/tickets/<uuid:team_public_id>/<int:pk>/",
+        views.EventTicketsView.as_view(),
+        name="event_tickets",
+    ),
+    path(
+        "events/go-live/<uuid:team_public_id>/<int:pk>/",
+        views.EventGoLiveView.as_view(),
+        name="event_go_live",
+    ),
+    path(
         "events/delete/<uuid:team_public_id>/<int:pk>/",
         views.EventDeleteView.as_view(),
         name="event_delete",
@@ -75,5 +85,10 @@ urlpatterns = [
         "events/stats/<uuid:team_public_id>/<int:pk>/",
         views.EventStatisticsView.as_view(),
         name="event_stats",
+    ),
+    path(
+        "events/tickets/<uuid:team_public_id>/<int:event_pk>/delete/<int:pk>/",
+        views.TicketTierDeleteView.as_view(),
+        name="ticket_tier_delete",
     ),
 ]

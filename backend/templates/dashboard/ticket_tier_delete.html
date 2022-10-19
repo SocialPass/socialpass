@@ -1,18 +1,18 @@
 {% extends "bases/base_primary.html" %}
 {% load static get_theme_value get_user_primary_email %}
 
-{% block head_title %}Delete Event - {% get_theme_value "brand_name" %}{% endblock head_title %}
+{% block head_title %}Delete Ticket - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
-{% block navbar_breadcrumb %}Delete Event{% endblock %}
+{% block navbar_breadcrumb %}Delete Ticket{% endblock %}
 
 {% block content %}
 <!-- Header start -->
 <div class="border-bottom hs-md-100">
 	<div class="p-content d-flex h-100">
 		<div class="align-self-center">
-			<h1 class="content-title m-0 fs-base-p6">Delete Event</h1>
+			<h1 class="content-title m-0 fs-base-p6">Delete Ticket</h1>
 			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-				Use the following form to confirm the deletion of your event.
+				Use the following form to confirm the deletion of your ticket.
 			</p>
 		</div>
 	</div>
@@ -24,7 +24,7 @@
 	<!-- Card header start -->
 	<div class="px-card py-10 border-bottom">
 		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
-			Delete Event
+			Delete Ticket
 		</span>
 	</div>
 	<!-- Card header end -->
@@ -37,10 +37,10 @@
 					<i class="fa-regular fa-trash-can"></i>
 				</div>
 
-				<!-- Event deletion form start -->
-				<h5>Delete Event</h5>
+				<!-- Ticket tier deletion form start -->
+				<h5>Delete Ticket</h5>
 				<p>
-					You're about to remove <strong>{{ object.title }}</strong> from <strong>{{ object.team.name }}</strong>. Please note, once this action is confirmed, it cannot be undone.
+					You're about to remove <strong>{{ object.ticket_type }}</strong> from <strong>{{ object.event.title }}</strong>. Please note, once this action is confirmed, it cannot be undone.
 				</p>
 				<form class="form" method="post">
 					{% csrf_token %}
@@ -49,7 +49,7 @@
 						<input type="submit" value="Confirm Deletion" class="btn btn-danger">
 					</div>
 				</form>
-				<!-- Event deletion form end -->
+				<!-- Ticket tier deletion form end -->
 			</div>
 		</div>
 		<!-- Main content end -->
@@ -57,7 +57,7 @@
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
-		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help managing your events.
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help managing your tickets.
 	</div>
 	<!-- Card footer end -->
 </div>

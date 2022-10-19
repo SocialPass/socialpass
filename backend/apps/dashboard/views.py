@@ -14,13 +14,8 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from apps.dashboard.forms import (
-    CustomInviteForm,
-    EventDraftForm,
-    EventLiveForm,
-    TeamForm,
-)
-from apps.root.models import Event, Invite, Membership, Team, Ticket
+from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
+from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
 User = auth.get_user_model()
 
@@ -261,7 +256,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
+            self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
@@ -277,7 +272,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
+            self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
 
@@ -297,7 +292,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "Team members updated successfully."
+            self.request, messages.SUCCESS, "Team information updated successfully."
         )
         return reverse("dashboard:team_detail", args=(self.kwargs["team_public_id"],))
 
@@ -356,7 +351,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """
 
     model = Event
-    form_class = EventDraftForm
+    form_class = EventForm
     template_name = "dashboard/event_form.html"
 
     def get_context_data(self, **kwargs):
@@ -371,10 +366,13 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateStatus.DRAFT:
-            return "Your draft has been saved"
-        elif self.object.state == Event.StateStatus.LIVE:
-            return "Your changes have been saved"
+        return "Your event has been created successfully!"
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.object.pk),
+        )
 
 
 class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
@@ -385,14 +383,8 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     model = Event
     slug_field = "pk"
     slug_url_kwarg = "pk"
+    form_class = EventForm
     template_name = "dashboard/event_form.html"
-
-    def get_form_class(self):
-        """get form class based on event state"""
-        if self.object.state == Event.StateStatus.DRAFT:
-            return EventDraftForm
-        elif self.object.state == Event.StateStatus.LIVE:
-            return EventLiveForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -407,10 +399,47 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        if self.object.state == Event.StateStatus.DRAFT:
-            return "Your draft has been saved"
-        elif self.object.state == Event.StateStatus.LIVE:
-            return "Your changes have been saved"
+        return "Your event has been updated successfully."
+
+
+class EventTicketsView(TeamContextMixin, DetailView):
+    """
+    Show the tickets (and CTAs) for an event.
+    """
+
+    model = Event
+    context_object_name = "event"
+    template_name = "dashboard/event_tickets.html"
+
+    def get_object(self):
+        return Event.objects.prefetch_related("tickettier_set").get(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+
+
+class EventGoLiveView(TeamContextMixin, DetailView):
+    """
+    Show controls to make a team's event go live
+    """
+
+    model = Event
+    template_name = "dashboard/event_go_live.html"
+
+    def get_object(self):
+        return Event.objects.prefetch_related("tickettier_set").get(
+            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+
+    def post(self, *args, **kwargs):
+        event = self.get_object()
+        if event.state != Event.StateStatus.LIVE:
+            event.transition_live()
+            messages.add_message(
+                self.request, messages.SUCCESS, "Event has been made live!"
+            )
+        return redirect(
+            "dashboard:event_go_live", self.kwargs["team_public_id"], event.pk
+        )
 
 
 class EventDeleteView(TeamContextMixin, DeleteView):
@@ -427,13 +456,8 @@ class EventDeleteView(TeamContextMixin, DeleteView):
         )
 
     def get_success_url(self):
-        messages.add_message(self.request, messages.SUCCESS, "Event has been deleted")
-        if self.object.state == Event.StateStatus.LIVE:
-            return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
-        else:
-            return reverse(
-                "dashboard:event_drafts", args=(self.kwargs["team_public_id"],)
-            )
+        messages.add_message(self.request, messages.SUCCESS, "Event has been deleted.")
+        return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
 
 
 class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
@@ -474,3 +498,24 @@ class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
             qs = qs.filter(wallet_address__icontains=query_address)
 
         return qs
+
+
+class TicketTierDeleteView(TeamContextMixin, DeleteView):
+    """
+    Delete an event's ticket tier.
+    """
+
+    model = TicketTier
+    template_name = "dashboard/ticket_tier_delete.html"
+
+    def get_object(self):
+        return TicketTier.objects.get(
+            pk=self.kwargs["pk"], event__team__public_id=self.kwargs["team_public_id"]
+        )
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+        )

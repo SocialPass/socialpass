@@ -1,5 +1,5 @@
 import uuid
-from datetime import timedelta
+from datetime import date, timedelta
 from typing import Optional
 
 from allauth.account.adapter import DefaultAccountAdapter
@@ -266,21 +266,21 @@ class Event(DBModel):
     organizer = models.CharField(
         max_length=255,
         help_text="Name or brand or community organizing the event.",
-        blank=True,
+        blank=False,
         default="",
     )
     description = models.TextField(
         help_text="A short description of your event.",
-        blank=True,
+        blank=False,
         default="",
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event.", blank=True, null=True
+        help_text="A banner image for your event.", blank=False, null=False
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
     end_date = models.DateTimeField(
         help_text="When your event will end (optional).",
@@ -293,7 +293,7 @@ class Event(DBModel):
     timezone = models.CharField(
         verbose_name="time zone",
         max_length=30,
-        blank=True,
+        blank=False,
         default="",
     )
     # localized address string (used to populate maps lookup)
@@ -396,34 +396,12 @@ class Event(DBModel):
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
-    @staticmethod
-    def required_form_fields():
-        fields = [
-            "title",
-            "organizer",
-            "description",
-            "start_date",
-            "timezone",
-        ]
-        return fields
-
-    @staticmethod
-    def optional_form_fields():
-        fields = [
-            "cover_image",
-            "end_date",
-            "initial_place",
-            "address_1",
-            "address_2",
-            "city",
-            "region",
-            "postal_code",
-            "country",
-            "lat",
-            "long",
-            "localized_address_display",
-        ]
-        return fields
+    @property
+    def has_ended(self):
+        if self.end_date:
+            return date.today() > self.end_date.date()
+        else:
+            return False
 
 
 class Ticket(DBModel):
@@ -577,19 +555,19 @@ class TicketTier(DBModel):
     )
     tier_fiat = models.OneToOneField(
         "TierFiat",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
     tier_blockchain = models.OneToOneField(
         "TierBlockchain",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
     tier_asset_ownership = models.OneToOneField(
         "TierAssetOwnership",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
@@ -598,13 +576,6 @@ class TicketTier(DBModel):
     ticket_type = models.CharField(
         max_length=255,
         blank=False,
-    )
-    price = models.DecimalField(
-        max_digits=9,
-        validators=[MinValueValidator(0)],
-        decimal_places=6,
-        blank=False,
-        null=True,
     )
     capacity = models.IntegerField(
         default=1,

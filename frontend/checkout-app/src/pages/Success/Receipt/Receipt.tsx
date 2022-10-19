@@ -11,7 +11,7 @@ export default function Summary() {
 
   const getTotalPrice = () => {
     return checkoutItems.reduce((acc, item) => {
-      return acc + item.ticket_tier[checkout.tx_type].price * item.quantity
+      return acc + item.ticket_tier[checkout.tx_type]?.price * item.quantity
     }, 0)
   }
 
@@ -25,9 +25,7 @@ export default function Summary() {
     return 'N/A'
   }
 
-  const downloadReceipt = () => {
-
-  }
+  const downloadReceipt = () => {}
 
   const orderAgain = () => {
     navigate(`/${event.public_id}`)
@@ -47,7 +45,7 @@ export default function Summary() {
 
             <div className='fs-base-n2 mt-5'>
               <strong>Price</strong> &mdash;{' '}
-              {getPriceWithCurrencySymbol(item.ticket_tier[checkout.tx_type].price)}
+              {getPriceWithCurrencySymbol(item.ticket_tier[checkout.tx_type]?.price)}
             </div>
           </div>
         ))}

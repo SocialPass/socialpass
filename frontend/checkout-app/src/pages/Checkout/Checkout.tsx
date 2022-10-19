@@ -16,6 +16,7 @@ export default function Home() {
   const { event }: any = useEvent()
   const {
     checkout,
+    checkoutItems,
     getCheckout,
     getCheckoutItems,
     isLoading,
@@ -28,8 +29,8 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getCheckout()
-    getCheckoutItems()
+    if (!checkout) getCheckout()
+    if (!checkoutItems.length) getCheckoutItems()
   }, [])
 
   return (

@@ -69,7 +69,7 @@ function TicketSelector(props): JSX.Element {
             {paymentType !== 'tier_asset_ownership' && amount == 0 ? (
               <div className='text-center fs-base-n2 mt-5'>
                 <strong>Price: &times; 1 </strong>
-                &mdash;{' '}{getPriceWithCurrencySymbol(ticketTier[paymentType]?.price)}
+                &mdash; {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price)}
               </div>
             ) : null}
           </div>

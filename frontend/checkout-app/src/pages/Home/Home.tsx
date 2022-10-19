@@ -15,9 +15,7 @@ export default function Home() {
   const { saveCheckout, setCheckout, checkout, setCheckoutItems, checkoutItems }: any =
     useCheckout()
 
-  const [paymentType, setPaymentType] = useState('')
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
-  const [email, setEmail] = useState('')
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId).then((res) => {
@@ -35,13 +33,13 @@ export default function Home() {
     ticketTiers.filter((ticket) => 'tier_asset_ownership' in ticket && ticket.tier_asset_ownership)
 
   const getPaymentTypeTicketTiers = () => {
-    if (paymentType == 'tier_fiat') {
+    if (checkout?.tx_type == 'tier_fiat') {
       return getFiatTicketTiers()
     }
-    if (paymentType == 'tier_cryptocurrency') {
+    if (checkout?.tx_type == 'tier_cryptocurrency') {
       return getCryptocurrencyTicketTiers()
     }
-    if (paymentType == 'tier_asset_ownership') {
+    if (checkout?.tx_type == 'tier_asset_ownership') {
       return getAssetOwnershipTicketTiers()
     }
     return []
@@ -65,7 +63,7 @@ export default function Home() {
         ticket_tier: {
           public_id: ticketTier.public_id,
           ticket_type: ticketTier.ticket_type,
-          price: ticketTier[paymentType].price,
+          price: ticketTier[checkout?.tx_type].price,
         },
         quantity: amount,
       })
@@ -81,9 +79,9 @@ export default function Home() {
     )
 
   const getPriceWithCurrencySymbol = (amount) => {
-    if (paymentType === 'tier_fiat') {
+    if (checkout?.tx_type === 'tier_fiat') {
       return `$${amount}`
-    } else if (paymentType === 'tier_cryptocurrency') {
+    } else if (checkout?.tx_type === 'tier_cryptocurrency') {
       return `${amount} ETH`
     }
 
@@ -92,16 +90,17 @@ export default function Home() {
 
   const validateEmail = () => {
     const regex = /\S+@\S+\.\S+/
-    return regex.test(email)
+    return regex.test(checkout?.email)
   }
 
   const eventHasTickets = () => ticketTiers.length
 
   const handleGetTicketsButton = () => {
     setCheckout({
+      ...checkout,
       event_id: event.public_id,
-      email,
       cost: getTotalPrice(),
+      tx_type: checkout?.tx_type,
     })
 
     console.log('result', checkout, checkoutItems)
@@ -113,11 +112,11 @@ export default function Home() {
 
   useEffect(() => {
     if (getFiatTicketTiers().length) {
-      setPaymentType('tier_fiat')
+      setCheckout({ ...checkout, tx_type: 'tier_fiat' })
     } else if (getCryptocurrencyTicketTiers().length) {
-      setPaymentType('tier_cryptocurrency')
+      setCheckout({ ...checkout, tx_type: 'tier_cryptocurrency' })
     } else if (getAssetOwnershipTicketTiers().length) {
-      setPaymentType('tier_asset_ownership')
+      setCheckout({ ...checkout, tx_type: 'tier_asset_ownership' })
     }
   }, [ticketTiers])
 
@@ -216,7 +215,7 @@ export default function Home() {
                 className={'ticket-tier'}
                 onClick={() => {
                   if (getFiatTicketTiers().length) {
-                    setPaymentType('tier_fiat')
+                    setCheckout({ ...checkout, tx_type: 'tier_fiat' })
                     setCheckoutItems([])
                   }
                 }}
@@ -225,7 +224,7 @@ export default function Home() {
                   type='radio'
                   className='ticket-tier-input'
                   disabled={!getFiatTicketTiers().length}
-                  checked={paymentType === 'tier_fiat'}
+                  checked={checkout?.tx_type === 'tier_fiat'}
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -243,7 +242,7 @@ export default function Home() {
                 className={'ticket-tier'}
                 onClick={() => {
                   if (getCryptocurrencyTicketTiers().length) {
-                    setPaymentType('tier_cryptocurrency')
+                    setCheckout({ ...checkout, tx_type: 'tier_cryptocurrency' })
                     setCheckoutItems([])
                   }
                 }}
@@ -252,7 +251,7 @@ export default function Home() {
                   type='radio'
                   className='ticket-tier-input'
                   disabled={!getCryptocurrencyTicketTiers().length}
-                  checked={paymentType === 'tier_cryptocurrency'}
+                  checked={checkout?.tx_type === 'tier_cryptocurrency'}
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -270,7 +269,7 @@ export default function Home() {
                 className={'ticket-tier'}
                 onClick={() => {
                   if (getAssetOwnershipTicketTiers().length) {
-                    setPaymentType('tier_asset_ownership')
+                    setCheckout({ ...checkout, tx_type: 'tier_asset_ownership' })
                     setCheckoutItems([])
                   }
                 }}
@@ -279,7 +278,7 @@ export default function Home() {
                   type='radio'
                   className='ticket-tier-input'
                   disabled={!getAssetOwnershipTicketTiers().length}
-                  checked={paymentType === 'tier_asset_ownership'}
+                  checked={checkout?.tx_type === 'tier_asset_ownership'}
                 />
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
@@ -308,7 +307,7 @@ export default function Home() {
                     onChange={(amount, ticketTier) =>
                       setTicketTierSelectedAmount(amount, ticketTier)
                     }
-                    paymentType={paymentType}
+                    paymentType={checkout?.tx_type}
                     ticketTier={tier}
                     key={`ticket-tier-${index}`}
                     isChecked={
@@ -333,12 +332,15 @@ export default function Home() {
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={checkout?.email}
+                    onChange={(e) => setCheckout({ ...checkout, email: e.target.value })}
                   ></input>
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
-                    disabled={!validateEmail() || !getTotalPrice()}
+                    disabled={
+                      !validateEmail() ||
+                      (checkout?.tx_type !== 'tier_asset_ownership' && !getTotalPrice())
+                    }
                     onClick={(e) => {
                       e.preventDefault()
                       handleGetTicketsButton()

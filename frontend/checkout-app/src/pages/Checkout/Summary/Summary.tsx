@@ -15,7 +15,7 @@ export default function Summary() {
 
   const getTotalPrice = () => {
     return checkoutItems.reduce((acc, item) => {
-      return acc + item.ticket_tier[checkout.tx_type].price * item.quantity
+      return acc + item.ticket_tier[checkout.tx_type]?.price * item.quantity
     }, 0)
   }
 
@@ -51,10 +51,12 @@ export default function Summary() {
             <span>{item.ticket_tier.ticket_type}</span>
             <span className='ms-auto ps-10 fw-normal'>&times; {item.quantity}</span>
           </h6>
-          <div className='fs-base-n2 mt-5'>
-            <strong>Price</strong> &mdash;{' '}
-            {getPriceWithCurrencySymbol(item.ticket_tier[checkout.tx_type].price)}
-          </div>
+          {checkout.tx_type !== 'tier_asset_ownership' ? (
+            <div className='fs-base-n2 mt-5'>
+              <strong>Price</strong> &mdash;{' '}
+              {getPriceWithCurrencySymbol(item.ticket_tier[checkout.tx_type]?.price)}
+            </div>
+          ) : null}
         </div>
       ))}
 
@@ -76,9 +78,11 @@ export default function Summary() {
           <strong className='antialiased'>Continue</strong>
         </button>
       </form>
-      <p>
-        <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
-      </p>
+      {checkout.tx_type !== 'tier_asset_ownership' ? (
+        <p>
+          <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
+        </p>
+      ) : null}
       <hr />
       <p className='text-muted fs-base-n2'>
         If you need help placing your order, please{' '}

@@ -105,6 +105,7 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "tier_fiat",
             "tier_blockchain",
             "tier_asset_ownership",
+            "quantity_sold",
         ]
 
 

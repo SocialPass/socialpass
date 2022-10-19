@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
-from apps.root.factories import EventFactory, UserWithTeamFactory
+from apps.root.factories import EventFactory, TicketTierFactory, UserWithTeamFactory
 
 User = get_user_model()
 
@@ -25,6 +25,9 @@ class EventDiscoveryTest(TestCase):
         # setup event
         self.event_one = EventFactory(team=self.team_one, user=self.user_one)
         self.event_two = EventFactory(team=self.team_two, user=self.user_two)
+
+        # setup ticket tier for event
+        self.ticket_tier = TicketTierFactory(event=self.event_one)
 
     def test_discovery_index(self):
         # Test GET

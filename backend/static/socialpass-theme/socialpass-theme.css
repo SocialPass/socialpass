@@ -8,12 +8,12 @@
  * The above notice must be included in its entirety when this file is used.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&display=swap");
 
 :root {
     /* Font related (sizes, weights, family, etc.) */
 
-    --base-font-family: "Inter", sans-serif;
+    --base-font-family: "Rubik", sans-serif;
     --base-font-size: 1.6rem;
     --small-font-size: 1.4rem;
     --large-font-size: 1.8rem;

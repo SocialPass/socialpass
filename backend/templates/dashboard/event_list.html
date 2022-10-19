@@ -8,134 +8,175 @@
 {% block content %}
 <!-- Header start -->
 <div class="border-bottom hs-md-100">
-  <div class="p-content d-flex h-100">
-    <div class="pe-15 align-self-center">
-      <h1 class="content-title m-0 fs-base-p6">Events</h1>
-      <p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-        List of events created by <strong>{{ current_team.name }}</strong>.
-      </p>
-    </div>
-    <div class="ms-auto align-self-center">
-      <a href="{% url 'dashboard:event_create' current_team.public_id %}" class="btn text-primary fw-bold">
-        <i class="fa-regular fa-party-bell"></i>
-        <span class="ms-5 d-none d-sm-inline">Host an Event</span>
-      </a>
-    </div>
-  </div>
+	<div class="p-content d-flex h-100">
+		<div class="pe-15 align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Events</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				List of events created by <strong>{{ current_team.name }}</strong>.
+			</p>
+		</div>
+		<div class="ms-auto align-self-center">
+			<a href="{% url 'dashboard:event_create' current_team.public_id %}" class="btn btn-primary">
+				<i class="fa-solid fa-plus"></i>
+				<span class="ms-5 d-none d-sm-inline">Create</span>
+			</a>
+		</div>
+	</div>
 </div>
 <!-- Header end -->
 
 <!-- Content card start -->
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="row border-bottom">
+		<div class="col-sm-6">
+			<div class="px-card py-10">
+				<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+					Events - # Total {{ events.count }}
+				</span>
+			</div>
+		</div>
+		<div class="col-sm-6 col-lg-4 offset-lg-2">
+			<!-- Start search form -->
+			<form method="GET" class="px-card pt-0 pt-sm-10 pb-10">
+				<div class="position-relative">
+					<input type="text" class="form-control form-control-sm rounded-pill pe-30" name="title" placeholder="Search by name" value="{{ request.GET.title }}" required="required">
+					<button class="btn btn-link btn-sm bg-transparent lh-1 position-absolute top-50 end-0 translate-y-middle" type="submit">
+						<i class="fa-regular fa-search"></i>
+						<span class="visually-hidden">Search</span>
+					</button>
+				</div>
+			</form>
+			<!-- End Search Form -->
+		</div>
+	</div>
+	<!-- Card header end -->
 
-  <!-- Card header start -->
-  <div class="row border-bottom">
-    <div class="col-lg-6">
-      <div class="px-card py-10">
-        <span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
-          Events - # Total {{ events.count }}
-        </span>
-      </div>
-    </div>
-    <div class="col-lg-6">
-      <!-- Start search form -->
-      <form method="GET" class="d-flex align-items-center px-card py-5">
-        <input type="text" class="form-control form-control-sm" name="title" placeholder="Search by title" value="{{ request.GET.title }}">
-        <button class="btn btn-link btn-sm px-2 ms-3 my-0" type="submit">Search</button>
-      </form>
-      <!-- End Search Form -->
-    </div>
-  </div>
+	<!-- Main content start -->
+	{% if events.count > 0 %}
+		<!-- Event list header start -->
+		<div class="fs-base-n2 fw-bold px-content py-10 lh-sm d-none d-sm-flex align-items-center border-bottom">
+			<div class="ws-100 me-20">Status</div>
+			<div class="flex-grow-1">Event</div>
+		</div>
+		<!-- Event list header end -->
+		{% for event in events %}
+			<!-- Event item start -->
+			<div class="event-list-item d-sm-flex align-items-center px-content py-10 {% if not forloop.last %}border-bottom{% endif %}">
+				<!-- Status indicator start -->
+				<div class="ws-sm-100 me-sm-20 flex-shrink-0">
+					<div class="ws-75 hs-75 border border-dotted overflow-hidden d-flex flex-column align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm position-relative pt-20 mx-auto mx-sm-0 {% if event.has_ended %}border-danger-dim-lm border-danger-light-dm{% else %}{% if event.state == event.StateStatus.LIVE %}border-success-dim-lm border-success-light-dm{% endif %}{% endif %}">
+						<div class="position-absolute w-100 top-0 start-0 text-center fw-bold fs-base-n4 bg-gray-light-lm bg-darkgray-dim-dm d-flex align-items-center px-5 text-uppercase">
+							{% if event.has_ended %}
+								<i class="fa-solid fa-circle-small text-danger me-5"></i>
+								{% if event.state != "Live" %}
+									<i class="fa-regular fa-pencil text-muted me-5"></i>
+								{% endif %}
+								<span class="ms-auto">End</span>
+							{% else %}
+								{% if event.state == event.StateStatus.LIVE %}
+									<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
+									<span class="ms-auto">Live</span>
+								{% else %}
+									<i class="fa-regular fa-pencil text-muted me-5"></i>
+									<span class="ms-auto">Draft</span>
+								{% endif %}
+							{% endif %}
+						</div>
+						<div class="fw-bold text-uppercase">{{ event.start_date|date:"M" }}</div>
+						<div class="text-muted font-monospace">{{ event.start_date.day }}</div>
+					</div>
+				</div>
+				<!-- Status indicator end -->
 
-  <!-- Card header end -->
+				<!-- Name, date, location start -->
+				<div class="py-10 py-sm-0 me-sm-20 flex-grow-1">
+					<div>
+						<a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
+					</div>
+					<div class="fs-base-n2 mt-5">
+						<strong>Date: </strong>
+						<span class="text-muted">{{ event.start_date }}</span>
+					</div>
+					<div class="fs-base-n2">
+						<strong>Location: </strong>
+						<span class="text-muted">{{ event.localized_address_display }}</span>
+					</div>
+				</div>
+				<!-- Name, date, location end -->
 
-  <!-- Main content start -->
-  {% if events.count > 0 %}
-    <div class="table-responsive scroll-shadow-content-x">
-      <table class="table list-table">
-        <thead>
-          <tr class="fs-base-n2">
-            <th>Title</th>
-            <th>Status</th>
-            <th>Start Date</th>
-            <th>Location</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for event in events %}
-            <tr>
-              <td class="fw-bold">{{ event.title }}</td>
-              <td class="fw-bold"> <span class="badge bg-info">{{ event.state }} </span></td>
-              <td class="fs-base-n2">{{ event.start_date }}</td>
-              <td class="fs-base-n2">{{ event.localized_address_display }}</td>
-              <td class="align-middle px-4">
-                <div class="d-flex flex-row justify-content-between">
-                  {% if event.state == "Draft" %}
-                    <a class="btn btn-sm btn-primary" href="{% url 'dashboard:event_update' current_team.public_id event.pk %}">
-                    Edit
-                    </a>
-                    <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
-                      Delete
-                    </a>
-                  {% elif event.state == "Live" %}
-                    <a class="btn btn-sm btn-primary" href="{% url 'dashboard:event_detail' current_team.public_id event.pk %}">
-                    Details
-                    </a>
-                    <a class="btn btn-sm btn-primary" href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}">
-                    Stats
-                    </a>
-                    <a class="btn btn-sm" href="{% url 'dashboard:event_update' current_team.public_id event.pk %}">
-                    Edit
-                    </a>
-                    <a class="btn btn-sm" href="{% url 'event_delete' current_team.public_id event.pk %}">
-                      Delete
-                    </a>
-                  {% endif %}
-                  </div>
-              </td>
-              </tr>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <div class="content text-center">
-      <div class="ws-200 mw-100 mx-auto">
-        <img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
-      </div>
-      <div class="ws-400 mw-100 mx-auto">
-        <h5>Nothing found</h5>
-        <p>
-          Looks like no events have been created yet
-        </p>
-      </div>
-    </div>
-  {% endif %}
-  <!-- Main content end -->
+				<!-- CTAs start -->
+				<div class="d-flex align-items-center flex-row flex-sm-column flex-lg-row flex-shrink-0">
+					<a class="w-sm-100 w-lg-auto btn btn-sm btn-primary" href="{% url 'dashboard:event_update' current_team.public_id event.pk %}">
+						<i class="fa-solid fa-edit me-5"></i>
+						Edit
+					</a>
+					{% if event.has_ended or event.state == event.StateStatus.LIVE %}
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}">
+							<i class="fa-regular fa-sack-dollar me-5"></i>
+							<strong class="antialiased">Stats</strong>
+						</a>
+					{% else %}
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_go_live' current_team.public_id event.pk %}">
+							<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
+							<strong class="antialiased">Go Live</strong>
+						</a>
+					{% endif %}
+					<!--
+					<a class="w-sm-100 w-lg-auto ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-danger" href="{% url 'dashboard:event_delete' current_team.public_id event.pk %}">
+						<i class="fa-regular fa-trash-can"></i>
+						<span class="visually-hidden">Delete</span>
+					</a>
+					-->
+				</div>
+				<!-- CTAs end -->
+			</div>
+			<!-- Event item end -->
+		{% endfor %}
+	{% else %}
+		<div class="content text-center">
+			<div class="ws-200 mw-100 mx-auto">
+				<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+			</div>
+			<div class="ws-400 mw-100 mx-auto">
+				<h5>Nothing found</h5>
+				<p>
+					We could find any events to show you at this moment. Please try creating one first.
+				</p>
+			</div>
+		</div>
+	{% endif %}
+	<!-- Main content end -->
 
-  <!-- Card footer start -->
-  <div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
-    <div>
-            {% if page_obj.has_previous %}
-             <a class="btn btn-sm text-primary fw-bold" href="?page={{ page_obj.previous_page_number }}">Prev</a>
-            {% else %}
-              <button class="btn btn-sm fw-bold" disabled="disabled">Prev</button>
-            {% endif %}
-        </div>
-        <div class="ms-auto">
-          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </div>
-        <div class="ms-auto">
-            {% if page_obj.has_next %}
-             <a class="btn btn-sm text-primary fw-bold" href="?page={{ page_obj.next_page_number }}">Next</a>
-            {% else %}
-              <button class="btn btn-sm fw-bold" disabled="disabled">Next</button>
-            {% endif %}
-        </div>
-  </div>
-  <!-- Card footer end -->
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
+		<div>
+			{% if page_obj.has_previous %}
+				<a class="btn btn-sm text-primary" href="?page={{ page_obj.previous_page_number }}">
+					<strong class="antialiased">Prev</strong>
+				</a>
+			{% else %}
+				<button class="btn btn-sm" disabled="disabled">
+					<strong class="antialiased">Prev</strong>
+				</button>
+			{% endif %}
+		</div>
+		<div class="ms-auto">
+			Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+		</div>
+		<div class="ms-auto">
+			{% if page_obj.has_next %}
+				<a class="btn btn-sm text-primary" href="?page={{ page_obj.next_page_number }}">
+					<strong class="antialiased">Next</strong>
+				</a>
+			{% else %}
+				<button class="btn btn-sm" disabled="disabled">
+					<strong class="antialiased">Next</strong>
+				</button>
+			{% endif %}
+		</div>
+	</div>
+	<!-- Card footer end -->
 </div>
 <!-- Content card end -->
 {% endblock content %}

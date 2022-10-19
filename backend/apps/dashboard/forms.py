@@ -46,23 +46,16 @@ class EventForm(forms.ModelForm):
     base Event form
     """
 
-    show_ticket_count = forms.TypedChoiceField(
-        coerce=lambda x: x == "True",
-        choices=((True, "Yes"), (False, "No")),
-        widget=forms.RadioSelect,
-        initial=(True, "Yes"),
-    )
-    show_team_image = forms.TypedChoiceField(
-        coerce=lambda x: x == "True",
-        choices=((True, "Yes"), (False, "No")),
-        widget=forms.RadioSelect,
-        initial=(True, "Yes"),
-    )
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
 
     class Meta:
-        fields = Event.optional_form_fields() + Event.required_form_fields()
         model = Event
+        fields = [
+            "title", "organizer", "description", "start_date", "end_date", 
+            "initial_place", "lat", "long", "region", "address_1", 
+            "address_2", "country", "city", "postal_code", 
+            "localized_address_display", "timezone", "cover_image", 
+        ]
 
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
@@ -90,17 +83,6 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "publication_date": forms.DateTimeInput(
-                format="%Y-%m-%dT%H:%M",
-                attrs={
-                    "id": "publication_date",
-                    "class": "form-control",
-                    "type": "datetime-local",
-                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
-                },
-            ),
-            "visibility": forms.RadioSelect(),
-            "requirements": forms.HiddenInput(),
             "initial_place": forms.HiddenInput(),
             "lat": forms.HiddenInput(),
             "long": forms.HiddenInput(),
@@ -125,61 +107,3 @@ class EventForm(forms.ModelForm):
                 self.initial["end_date"] = self.instance.end_date.strftime(
                     "%Y-%m-%dT%H:%M"
                 )
-
-    def check_required_fields(self, data=None, exclude=[]):
-        errors = {}
-        # check field
-        for i in Event.required_form_fields():
-            field = data.get(i, None)
-            if not field and i not in exclude:
-                errors[i] = "This field is required"
-        # check for errors
-        # raise exception
-        if errors:
-            raise forms.ValidationError(errors)
-
-    def clean_limit_per_person(self):
-        data = self.cleaned_data["limit_per_person"]
-        # Make sure limit per person does not exceed capacity
-        if self.instance.pk:
-            capacity = self.instance.capacity
-        else:
-            capacity = self.cleaned_data["capacity"]
-        if data > capacity:
-            raise forms.ValidationError(
-                f"Limit per person exceeds capacity of {capacity}."
-            )
-
-        return data
-
-    def clean(self):
-        data = super().clean()
-        if "transition_live" in self.data:
-            self.check_required_fields(data=data, exclude=EventLiveForm.Meta.exclude)
-        return data
-
-    def save(self):
-        instance = super().save()
-        if "transition_draft" in self.data:
-            instance.transition_draft()
-        elif "transition_live" in self.data:
-            instance.transition_live()
-        return instance
-
-
-class EventDraftForm(EventForm):
-    """
-    Form for event.state == draft
-    """
-
-    class Meta(EventForm.Meta):
-        pass
-
-
-class EventLiveForm(EventForm):
-    """
-    Form for event.state == live
-    """
-
-    class Meta(EventForm.Meta):
-        exclude = ["capacity"]

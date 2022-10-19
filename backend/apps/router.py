@@ -27,8 +27,8 @@ urlpatterns = [
 
 # DRF API URLs
 urlpatterns += [
-    path("api/checkout/v0/", include("apps.api_checkout.v0.urls")),
     path("api/scanner/v1/", include("apps.api_scanner.urls")),
+    path("api/checkout/v1/", include("apps.api_checkout.urls")),
 ]
 
 # SITEMAPS URLs
@@ -51,6 +51,9 @@ urlpatterns += [
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),  # type: ignore
 ]
+
+# Profiling URLs
+urlpatterns += [path(settings.SILKY_URL, include("silk.urls", namespace="silk"))]
 
 # Local URLs
 is_local = (

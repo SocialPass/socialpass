@@ -197,7 +197,8 @@ class DashboardTest(TestCase):
         # Test GET
         response = self.client.get(
             reverse(
-                "dashboard:team_member_delete", args=(self.team_one.public_id, member.pk)
+                "dashboard:team_member_delete",
+                args=(self.team_one.public_id, member.pk),
             )
         )
         self.assertEqual(response.status_code, 200)
@@ -205,7 +206,8 @@ class DashboardTest(TestCase):
         # TEST POST
         response = self.client.post(
             reverse(
-                "dashboard:team_member_delete", args=(self.team_one.public_id, member.pk)
+                "dashboard:team_member_delete",
+                args=(self.team_one.public_id, member.pk),
             )
         )
         self.assertEqual(self.team_one.members.count(), 1)
@@ -242,9 +244,6 @@ class DashboardTest(TestCase):
             "user": new_event.user,
             "description": new_event.description,
             "start_date": new_event.start_date,
-            "capacity": new_event.capacity,
-            "limit_per_person": new_event.limit_per_person,
-            "requirements": new_event.requirements,
             "lat": new_event.lat,
             "long": new_event.long,
         }
@@ -311,9 +310,6 @@ class DashboardTest(TestCase):
             "user": self.event_one.user,
             "description": self.event_one.description,
             "start_date": self.event_one.start_date,
-            "capacity": self.event_one.capacity,
-            "limit_per_person": self.event_one.limit_per_person,
-            "requirements": self.event_one.requirements,
             "lat": self.event_one.lat,
             "long": self.event_one.long,
         }

@@ -77,32 +77,6 @@
 </section>
 <!-- Hero section end -->
 
-<!-- Tickets header section start -->
-
-<section>
-    <div class="container-xl">
-        <div class="content d-flex align-items-center border-bottom pb-15 mb-0">
-          {% if event.show_ticket_count %}
-            <h2 class="fsr-2 fw-700 text-strong lh-base m-0">
-                Tickets
-            </h2>
-            <div class="fsr-6 ms-auto ps-20">
-                <span>{{event.capacity}}</span>
-                <br />
-                <strong>Available</strong>
-            </div>
-            <div class="fsr-6 ps-20">
-                <span>{{ticket_count}}</span>
-                <br />
-                <strong>Claimed</strong>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
-<!-- Tickets header section end -->
-
 <!-- Information section start -->
 <section>
     <div class="container-xl">
@@ -115,31 +89,6 @@
                     <p class="fsr-6 mt-10">
                         {{ event.start_date.date }}
                     </p>
-                    {% if event.show_ticket_count %}
-                    <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
-                        Available
-                    </h2>
-                    <p class="fsr-6 mt-10">
-                        {{event.capacity}} Tickets
-                    </p>
-                    <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
-                        Remaining
-                    </h2>
-                    <p class="fsr-6 mt-10">
-                        {{tickets_remaining}} Tickets
-                    </p>
-                    {% endif %}
-                    <h2 class="fsr-4 fw-700 text-strong mt-30 mb-0">
-                        Ownership Requirements
-                    </h2>
-                    <p class="fsr-6 mt-10 mb-0">
-                        Must prove ownership of one asset from the following NFT collection with the following contract address:
-                    </p>
-                    <div class="d-lg-inline-block font-monospace text-truncate bg-gray-very-light-lm bg-darkgray-very-dim-dm py-5 px-15 mt-5 rounded">
-                      {% for requirement in event.requirements %}
-                        <strong>{{requirement.asset_address}}</strong>
-                      {% endfor %}
-                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-lg-3 offset-lg-1">

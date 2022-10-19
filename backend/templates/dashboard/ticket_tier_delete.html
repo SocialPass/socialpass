@@ -1,0 +1,65 @@
+{% extends "bases/base_primary.html" %}
+{% load static get_theme_value get_user_primary_email %}
+
+{% block head_title %}Delete Ticket - {% get_theme_value "brand_name" %}{% endblock head_title %}
+
+{% block navbar_breadcrumb %}Delete Ticket{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Delete Ticket</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				Use the following form to confirm the deletion of your ticket.
+			</p>
+		</div>
+	</div>
+</div>
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Delete Ticket
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<div class="row">
+		<!-- Main content start -->
+		<div class="col-lg-8 col-xl-5 mx-auto text-center">
+			<div class="content">
+				<div class="ws-75 hs-75 mb-30 bg-gray-very-light-lm bg-darkgray-very-dim-dm mx-auto d-flex align-items-center justify-content-center fs-base-p18 rounded-circle">
+					<i class="fa-regular fa-trash-can"></i>
+				</div>
+
+				<!-- Ticket tier deletion form start -->
+				<h5>Delete Ticket</h5>
+				<p>
+					You're about to remove <strong>{{ object.ticket_type }}</strong> from <strong>{{ object.event.title }}</strong>. Please note, once this action is confirmed, it cannot be undone.
+				</p>
+				<form class="form" method="post">
+					{% csrf_token %}
+					{{ form }}
+					<div class="form-group">
+						<input type="submit" value="Confirm Deletion" class="btn btn-danger">
+					</div>
+				</form>
+				<!-- Ticket tier deletion form end -->
+			</div>
+		</div>
+		<!-- Main content end -->
+	</div>
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help managing your tickets.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock content %}

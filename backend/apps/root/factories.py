@@ -1,5 +1,4 @@
 import random
-from typing import Any
 
 import factory
 import factory.django
@@ -8,12 +7,17 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.root.models import (
-    BlockchainOwnership,
+    CheckoutItem,
+    CheckoutSession,
     Event,
     Membership,
     Team,
     Ticket,
     TicketRedemptionKey,
+    TicketTier,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 User = get_user_model()
@@ -24,12 +28,12 @@ class UserFactory(factory.django.DjangoModelFactory):
     Create user
     """
 
+    class Meta:
+        model = User
+
     username = factory.Faker("name")
     email = factory.Faker("email")
     password = factory.PostGenerationMethodCall("set_password", "password")
-
-    class Meta:
-        model = User
 
 
 class TeamFactory(factory.django.DjangoModelFactory):
@@ -37,10 +41,10 @@ class TeamFactory(factory.django.DjangoModelFactory):
     Create team with event
     """
 
-    name = factory.Faker("name")
-
     class Meta:
         model = Team
+
+    name = factory.Faker("color_name")
 
 
 class MembershipFactory(factory.django.DjangoModelFactory):
@@ -48,11 +52,11 @@ class MembershipFactory(factory.django.DjangoModelFactory):
     Create membership to team
     """
 
-    user = factory.SubFactory(UserFactory)
-    team = factory.SubFactory(TeamFactory)
-
     class Meta:
         model = Membership
+
+    user = factory.SubFactory(UserFactory)
+    team = factory.SubFactory(TeamFactory)
 
 
 class UserWithTeamFactory(UserFactory):
@@ -71,44 +75,19 @@ class EventFactory(factory.django.DjangoModelFactory):
     Create event
     """
 
+    class Meta:
+        model = Event
+
+    team = factory.SubFactory(TeamFactory)
     title = factory.Faker("sentence", nb_words=5, variable_nb_words=True)
     organizer = factory.Faker("name")
     description = factory.Faker("paragraph")
     start_date = factory.fuzzy.FuzzyDateTime(timezone.now())
     cover_image = factory.django.ImageField(color="blue")
-    capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
-    limit_per_person = 1
-    requirements: Any = []
     initial_place = factory.Faker("address")
     lat = 41.40338
     long = 2.17403
     city = factory.Faker("city")
-
-    class Meta:
-        model = Event
-
-
-class BlockchainOwnershipFactory(factory.django.DjangoModelFactory):
-    """
-    Create blockchain ownership
-    """
-
-    event = factory.SubFactory(EventFactory)
-
-    class Meta:
-        model = BlockchainOwnership
-
-
-class TicketFactory(factory.django.DjangoModelFactory):
-    """
-    Create ticket
-    """
-
-    event = factory.SubFactory(EventFactory)
-    file = factory.django.ImageField(color="red")
-
-    class Meta:
-        model = Ticket
 
 
 class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):
@@ -116,8 +95,98 @@ class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):
     Create ticket
     """
 
+    class Meta:
+        model = TicketRedemptionKey
+
     name = factory.Faker("name")
     event = factory.SubFactory(EventFactory)
 
+
+class TicketTierFactory(factory.django.DjangoModelFactory):
+    """
+    Create ticket_tier
+    """
+
     class Meta:
-        model = TicketRedemptionKey
+        model = TicketTier
+
+    ticket_type = "test"
+    capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
+    quantity_sold = 0
+    max_per_person = 1
+    event = factory.SubFactory(EventFactory)
+
+
+class CheckoutSessionFactory(factory.django.DjangoModelFactory):
+    """
+    Create checkout session
+    """
+
+    class Meta:
+        model = CheckoutSession
+
+    expiration = factory.fuzzy.FuzzyDateTime(timezone.now())
+    name = factory.Faker("name")
+    email = factory.Faker("email")
+    cost = 1
+    event = factory.SubFactory(EventFactory)
+
+
+class CheckoutItemFactory(factory.django.DjangoModelFactory):
+    """
+    Create checkout item with ticket tier and checkout session
+    """
+
+    class Meta:
+        model = CheckoutItem
+
+    quantity = factory.LazyAttribute(lambda x: random.randrange(0, 100))
+    ticket_tier = factory.SubFactory(TicketTierFactory)
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+
+class TxFiatFactory(factory.django.DjangoModelFactory):
+    """
+    Create fiat transaction
+    """
+
+    class Meta:
+        model = TxFiat
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+
+class TxBlockchainFactory(factory.django.DjangoModelFactory):
+    """
+    Create blockchain transaction
+    """
+
+    class Meta:
+        model = TxBlockchain
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+
+class TxAssetOwnershipFactory(factory.django.DjangoModelFactory):
+    """
+    Create asset_ownership transaction
+    """
+
+    class Meta:
+        model = TxAssetOwnership
+
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)
+
+
+class TicketFactory(factory.django.DjangoModelFactory):
+    """
+    Create ticket
+    """
+
+    class Meta:
+        model = Ticket
+
+    event = factory.SubFactory(EventFactory)
+    ticket_tier = factory.SubFactory(TicketTierFactory)
+    checkout_item = factory.SubFactory(CheckoutItemFactory)
+    checkout_session = factory.SubFactory(CheckoutSessionFactory)

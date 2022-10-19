@@ -58,17 +58,15 @@ class EventSerializer(serializers.ModelSerializer):
             "team",
             "title",
             "description",
-            "limit_per_person",
             "start_date",
             "timezone",
             "localized_address_display",
-            "capacity",
             "ticket_count",
             "redeemed_count",
         ]
 
     def get_redeemed_count(self, obj):
-        return obj.tickets.filter(redeemed=True).count()
+        return Ticket.objects.filter(event=obj).count()
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -100,18 +98,20 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
     Serializes Redeemed Tickets
     """
 
-    ticket_count = serializers.IntegerField(
-        source="event.tickets.count", read_only=True
-    )
+    ticket_count = serializers.SerializerMethodField()
     redeemed_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Ticket
-        fields = ["id", "filename", "ticket_count", "redeemed_count"]
+        fields = ["id", "ticket_count", "redeemed_count"]
 
     def get_redeemed_count(self, obj):
-        return obj.event.tickets.filter(redeemed=True).count()
+        return Ticket.objects.filter(event=obj.event).count()
+
+    def get_ticket_count(self, obj):
+        # TODO: should change to ticket_tier quantity_sold sum
+        return Ticket.objects.filter(event=obj.event).count()
 
 
 class ScanTicketInputSerializer(serializers.Serializer):
-    embed_code = serializers.CharField()
+    embed_code = serializers.UUIDField()

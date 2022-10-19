@@ -11,8 +11,22 @@ from django.test import TestCase
 from passbook.models import BarcodeFormat, Location
 from PyPDF2 import PdfReader
 
-from apps.root.factories import EventFactory, TicketFactory, UserWithTeamFactory
-from apps.root.models import Event, Team, Ticket
+from apps.root.factories import (
+    CheckoutItemFactory,
+    CheckoutSessionFactory,
+    EventFactory,
+    TicketFactory,
+    TicketTierFactory,
+    UserWithTeamFactory,
+)
+from apps.root.models import (
+    CheckoutItem,
+    CheckoutSession,
+    Event,
+    Team,
+    Ticket,
+    TicketTier,
+)
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 
 
@@ -21,13 +35,23 @@ class TestCaseWrapper(TestCase):
     ticket: Ticket
     user: Any
     team: Team
+    ticket_tier: TicketTier
+    checkout_item: CheckoutItem
+    checkout_session: CheckoutSession
 
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user = UserWithTeamFactory()
         cls.team = cls.user.membership_set.first().team
         cls.event = EventFactory(team=cls.team, user=cls.user)
-        cls.ticket = TicketFactory(event=cls.event)
+        cls.ticket_tier = TicketTierFactory(event=cls.event)
+        cls.checkout_session = CheckoutSessionFactory(event=cls.event)
+        cls.checkout_item = CheckoutItemFactory(
+            ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
+        )
+        cls.ticket = TicketFactory(
+            checkout_item=cls.checkout_item, event=cls.event, ticket_tier=cls.ticket_tier
+        )
         return super().setUpTestData()
 
 
@@ -163,7 +187,7 @@ class TestAppleTicket(TestCaseWrapper):
         self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
 
         # raise exception if event has no initial_place
-        self.event.initial_place = None
+        self.event.initial_place = ""
         with self.assertRaises(Exception):
             self.ticket_pass.generate_pass_from_ticket(self.ticket)
 
@@ -281,11 +305,9 @@ class TestPDFTicket(TestCaseWrapper):
         singleline_pdf_text = " ".join(line.strip() for line in pdf_text.splitlines())
         self.assertTrue(search("Congratulations!", singleline_pdf_text))
         self.assertTrue(search("General Admission", singleline_pdf_text))
-        self.assertTrue(search(self.ticket.event.title, singleline_pdf_text))
+        self.assertTrue(search(self.event.title, singleline_pdf_text))
         self.assertTrue(
-            search(
-                self.ticket.event.start_date.strftime("%B %d, %Y"), singleline_pdf_text
-            )
+            search(self.event.start_date.strftime("%B %d, %Y"), singleline_pdf_text)
         )
 
     def test_get_bytes(self):
@@ -432,7 +454,7 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         self.assertIsInstance(self.ticket.get_apple_ticket(), bytes)
 
         # raise exception if event has no initial_place
-        self.event.initial_place = None
+        self.event.initial_place = ""
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()
 
@@ -465,11 +487,9 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         singleline_pdf_text = " ".join(line.strip() for line in pdf_text.splitlines())
         self.assertTrue(search("Congratulations!", singleline_pdf_text))
         self.assertTrue(search("General Admission", singleline_pdf_text))
-        self.assertTrue(search(self.ticket.event.title, singleline_pdf_text))
+        self.assertTrue(search(self.event.title, singleline_pdf_text))
         self.assertTrue(
-            search(
-                self.ticket.event.start_date.strftime("%B %d, %Y"), singleline_pdf_text
-            )
+            search(self.event.start_date.strftime("%B %d, %Y"), singleline_pdf_text)
         )
 
     @patch.object(GoogleTicket.GoogleTicket, "request_creation_ticket")

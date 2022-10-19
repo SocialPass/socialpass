@@ -97,41 +97,10 @@
               {{ event.localized_address_display }}
             </td>
           </tr>
-          <tr>
-            <td class=" ps-0">
-              Capacity
-            </td>
-            <td>
-              {{ event.capacity }}
-            </td>
-          </tr>
-          {% if event.categories.count > 0 %}
-          <tr>
-            <td class=" ps-0">
-              Categories
-            </td>
-            <td>
-              {{ event.categories }}
-            </td>
-          </tr>
-          {% endif %}
         </tbody>
       </table>
       </div>
       <!-- Event Info table end -->
-
-    <!-- Blockchain Requirements start -->
-    <h3 class="card-title fs-base-p4 mt-40 mb-0">Blockchain Requirements</h3>
-    <div class="text-muted text-xs mb-3">
-      The following must be fulfilled in order to access this event.
-    </div>
-    {% if event.requirements %}
-    <pre class="bg-light p-0"><br />{% for item in event.requirements %}Requirement {{ forloop.counter }}<br />-------------<br />{% for k, v in item.items %}<span class="text-primary ">{{ k }}</span>: {{ v }}<br />{% endfor %}<br />{% endfor %}</pre>
-    {% else %}
-    <pre class="bg-light rounded">No Requirements</pre>
-    {% endif %}
-    <!-- Blockchain Requirements end -->
-    </div>
   </div>
   <!-- Main content end -->
 
@@ -144,7 +113,6 @@
       Use these links to get started hosting your event
       </p>
 
-      {% if event.visibility == 'PUBLIC' %}
       <div>
         <h6>Event Page</h6>
         <p>Share with your potential attendees</p>
@@ -164,17 +132,15 @@
           </a>
         </div>
       </div>
-      {% else %}
       <div>
         <h6>Checkout Portal</h6>
         <p>Link to share with your potential attendees</p>
         <a href="{{event.checkout_portal_url}}" target="_blank">Checkout Portal</a>
       </div>
-      {% endif %}
 
       <hr>
 
-      {% with scanner_url=event.ticket_redemption_keys.first.scanner_url %}
+      {% with scanner_url=event.ticket_redemption_key_set.first.scanner_url %}
       <div>
         <h6>Ticket Scanner</h6>
         <p>Link to scan the tickets for this event at the entrance</p>

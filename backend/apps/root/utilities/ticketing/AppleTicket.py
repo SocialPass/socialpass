@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from django.conf import settings
 from passbook.models import (
@@ -35,7 +35,7 @@ class AppleTicket(TicketGenerationBase):
         self.foreground_color: str = "rgb(255,255,255)"
         self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
         self.barcode: Optional[Barcode] = None
-        self.location: Optional[List[Location]] = None
+        self.location: Optional[list[Location]] = None
         self.event_info = EventTicket()
 
         # apple wallet certificate credentials
@@ -142,7 +142,7 @@ class AppleTicket(TicketGenerationBase):
         self.org_name = event.team.name
         self.description = event.title
         self.serial_number = str(ticket.public_id)
-        self.barcode = self.set_barcode(ticket.full_embed)
+        self.barcode = self.set_barcode(ticket.embed_code)
         self.location = self.set_location_list(event.lat, event.long)
         self.set_event_ticket_info(
             event.start_date.strftime("%d %B, %Y"), event.title, event.initial_place

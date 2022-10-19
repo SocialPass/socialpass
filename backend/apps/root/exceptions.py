@@ -1,30 +1,21 @@
-class ForbiddenRedemptionError(Exception):
+from django.core.exceptions import ValidationError
+
+
+class EventStateTranstionError(ValidationError):
     pass
 
 
-class AlreadyRedeemed(Exception):
+class ForbiddenRedemptionError(ValidationError):
     pass
 
 
-class InvalidEmbedCodeError(Exception):
+class AlreadyRedeemedError(ValidationError):
     pass
 
 
-class TooManyTicketsRequestedError(Exception):
+class TooManyTicketsRequestedError(ValidationError):
     pass
 
 
-class TooManyTicketsIssuedError(Exception):
-    pass
-
-
-class TicketsSoldOutError(Exception):
-    pass
-
-
-class ZeroBlockchainAssetsError(Exception):
-    pass
-
-
-class PartialBlockchainAssetError(Exception):
+class DuplicatesTiersRequestedError(ValidationError):
     pass

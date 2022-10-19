@@ -41,7 +41,7 @@
 							Tickets
 						</h3>
 						<div class="ps-20 ms-auto">
-							<a href="#" class="btn btn-primary">
+							<a href="{% url 'dashboard:ticket_tier_create' current_team.public_id event.pk %}" class="btn btn-primary">
 								<i class="fa-solid fa-plus"></i>
 		                   		<span class="ms-5 d-none d-sm-inline">Create</span>
 							</a>
@@ -175,7 +175,7 @@
 								No tickets have been created for this event. You will need to create one first before going live with your event.
 							</p>
 							<div>
-								<a href="#" class="btn btn-primary">
+								<a href="{% url 'dashboard:ticket_tier_create' current_team.public_id event.pk %}" class="btn btn-primary">
 									<i class="fa-solid fa-plus me-5"></i>
 	                    			Create Ticket
 								</a>

@@ -14,7 +14,7 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
+from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm, TicketTierForm
 from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
 User = auth.get_user_model()
@@ -498,6 +498,37 @@ class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
             qs = qs.filter(wallet_address__icontains=query_address)
 
         return qs
+
+
+class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+    """
+    Create an event's ticket tier.
+    """
+
+    model = TicketTier
+    form_class = TicketTierForm
+    template_name = "dashboard/ticket_tier_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        return super().form_valid(form)
+
+    def get_success_message(self, *args, **kwargs):
+        return "Your ticket has been created successfully!"
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+        )
 
 
 class TicketTierDeleteView(TeamContextMixin, DeleteView):

@@ -5,7 +5,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from apps.root.forms import CleanEmailMixin
-from apps.root.models import Event, Invite, Team
+from apps.root.models import Event, Invite, Team, TicketTier
 
 
 class CustomInviteForm(forms.Form, CleanEmailMixin):
@@ -43,7 +43,7 @@ class TeamForm(forms.ModelForm):
 
 class EventForm(forms.ModelForm):
     """
-    base Event form
+    Event form
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
@@ -107,3 +107,25 @@ class EventForm(forms.ModelForm):
                 self.initial["end_date"] = self.instance.end_date.strftime(
                     "%Y-%m-%dT%H:%M"
                 )
+
+
+class TicketTierForm(forms.ModelForm):
+    """
+    Ticket tier form
+    """
+
+    class Meta:
+        model = TicketTier
+        fields = ["ticket_type", "capacity", "max_per_person"]
+        widgets = {
+            "ticket_type": forms.TextInput(
+                attrs={"placeholder": "A short name for this type of ticket"}
+            ),
+            "capacity": forms.NumberInput(
+                attrs={"min": 1}
+            ),
+            "max_per_person": forms.NumberInput(
+                attrs={"min": 1}
+            ),
+        }
+        labels = {"ticket_type": "Name of ticket"}

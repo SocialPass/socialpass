@@ -87,6 +87,11 @@ urlpatterns = [
         name="event_stats",
     ),
     path(
+        "events/tickets/<uuid:team_public_id>/<int:event_pk>/create/",
+        views.TicketTierCreateView.as_view(),
+        name="ticket_tier_create",
+    ),
+    path(
         "events/tickets/<uuid:team_public_id>/<int:event_pk>/delete/<int:pk>/",
         views.TicketTierDeleteView.as_view(),
         name="ticket_tier_delete",

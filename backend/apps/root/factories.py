@@ -15,6 +15,9 @@ from apps.root.models import (
     Ticket,
     TicketRedemptionKey,
     TicketTier,
+    TierAssetOwnership,
+    TierBlockchain,
+    TierFiat,
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
@@ -102,6 +105,33 @@ class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):
     event = factory.SubFactory(EventFactory)
 
 
+class TierFiatFactory(factory.django.DjangoModelFactory):
+    """
+    Create fiat tier
+    """
+
+    class Meta:
+        model = TierFiat
+
+
+class TierBlockchainFactory(factory.django.DjangoModelFactory):
+    """
+    Create blockchain tier
+    """
+
+    class Meta:
+        model = TierBlockchain
+
+
+class TierAssetOwnershipFactory(factory.django.DjangoModelFactory):
+    """
+    Create asset_ownership tier
+    """
+
+    class Meta:
+        model = TierAssetOwnership
+
+
 class TicketTierFactory(factory.django.DjangoModelFactory):
     """
     Create ticket_tier
@@ -115,6 +145,9 @@ class TicketTierFactory(factory.django.DjangoModelFactory):
     quantity_sold = 0
     max_per_person = 1
     event = factory.SubFactory(EventFactory)
+    tier_fiat = factory.SubFactory(TierFiatFactory)
+    tier_blockchain = factory.SubFactory(TierBlockchainFactory)
+    tier_asset_ownership = factory.SubFactory(TierAssetOwnershipFactory)
 
 
 class CheckoutSessionFactory(factory.django.DjangoModelFactory):

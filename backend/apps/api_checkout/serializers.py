@@ -195,6 +195,7 @@ class CheckoutSessionReadSerializer(serializers.ModelSerializer):
             "email",
             "cost",
             "tx_status",
+            "tx_type",
             "event",
             "checkout_items",
         ]
@@ -240,6 +241,7 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
             "email",
             "cost",
             "tx_status",
+            "tx_type",
             "event",
             "checkout_items",
         ]

@@ -19,3 +19,7 @@ class TooManyTicketsRequestedError(ValidationError):
 
 class DuplicatesTiersRequestedError(ValidationError):
     pass
+
+
+class ConflictingTiersRequestedError(ValidationError):
+    pass

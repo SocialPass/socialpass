@@ -92,6 +92,8 @@ class CheckoutItemView(
             raise ValidationError(code="item-quantity-exceed", detail=e)
         except exceptions.DuplicatesTiersRequestedError as e:
             raise ValidationError(code="repeated-ticket-tier", detail=e)
+        except exceptions.ConflictingTiersRequestedError as e:
+            raise ValidationError(code="not-supported-ticket-tier", detail=e)
 
         return checkout_item
 
@@ -105,6 +107,8 @@ class CheckoutItemView(
             checkout_item.clean()
         except exceptions.TooManyTicketsRequestedError as e:
             raise ValidationError(code="item-quantity-exceed", detail=e)
+        except exceptions.ConflictingTiersRequestedError as e:
+            raise ValidationError(code="not-supported-ticket-tier", detail=e)
 
         return checkout_item
 
@@ -217,6 +221,8 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
             raise ValidationError(code="item-quantity-exceed", detail=e)
         except exceptions.DuplicatesTiersRequestedError as e:
             raise ValidationError(code="repeated-ticket-tier", detail=e)
+        except exceptions.ConflictingTiersRequestedError as e:
+            raise ValidationError(code="not-supported-ticket-tier", detail=e)
 
         return checkout_session
 

@@ -148,6 +148,17 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
 
         return item_data
 
+    def request_create_item(self, data: dict):
+        """
+        request POST to item endpoint
+        """
+        # Not using reverse because we want URL changes to explicitly break tests.
+        return self.client.post(
+            f"{self.url_base}item/",
+            data=data,
+            content_type="application/json",
+        )
+
     @prevent_warnings
     def test_get_item_details_200_ok(self) -> None:
         """
@@ -239,13 +250,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         data = self.generate_item_data(
             tier=self.ticket_tier.public_id, session=self.checkout_session.public_id
         )
-
-        # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.post(
-            f"{self.url_base}item/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_item(data)
         # assert objects values with json returned
         item_dict = response.json()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -266,14 +271,52 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         data = self.generate_item_data(
             tier=self.ticket_tier.public_id, session=self.checkout_session.public_id
         )
-
-        # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.post(
-            f"{self.url_base}item/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_item(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @prevent_warnings
+    def test_create_item_conflict_tiers_400_bad_request(self):
+        """
+        test create item with ticket_tier.tier that must
+        conflict with the parent checkout_session.tx_type
+        must return 400 bad request
+        """
+
+        # ensure there is no item related to the session
+        self.checkout_session.checkoutitem_set.all().delete()
+        # generate dummy item data
+        data = self.generate_item_data(
+            tier=self.ticket_tier.public_id, session=self.checkout_session.public_id
+        )
+
+        self.ticket_tier.tier_fiat = None
+        self.ticket_tier.tier_asset_ownership = None
+        self.ticket_tier.tier_blockchain = None
+        self.ticket_tier.save()
+
+        # test if return 400 bad request if not tier FIAT available
+        self.checkout_session.tx_type = CheckoutSession.TransactionType.FIAT
+        self.checkout_session.save()
+        response = self.request_create_item(data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        error_msg = response.json()[0]
+        self.assertIn("ticket_tier does not support fiat", error_msg)
+
+        # test if return 400 bad request if not tier BLOCKCHAIN available
+        self.checkout_session.tx_type = CheckoutSession.TransactionType.BLOCKCHAIN
+        self.checkout_session.save()
+        response = self.request_create_item(data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        error_msg = response.json()[0]
+        self.assertIn("ticket_tier does not support blockchain", error_msg)
+
+        # test if return 400 bad request if not tier ASSET_OWNERSHIP available
+        self.checkout_session.tx_type = CheckoutSession.TransactionType.ASSET_OWNERSHIP
+        self.checkout_session.save()
+        response = self.request_create_item(data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        error_msg = response.json()[0]
+        self.assertIn("ticket_tier does not support asset ownership", error_msg)
 
     @prevent_warnings
     def test_fail_create_item_with_invalid_tier_404_not_found(self):
@@ -286,11 +329,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         data = self.generate_item_data(
             tier=self.random_uuid, session=self.checkout_session.public_id
         )
-        response = self.client.post(
-            f"{self.url_base}item/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_item(data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json()["code"], "public-id-not-found")
 
@@ -305,11 +344,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         data = self.generate_item_data(
             tier=self.ticket_tier.public_id, session=self.random_uuid
         )
-        response = self.client.post(
-            f"{self.url_base}item/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_item(data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json()["code"], "public-id-not-found")
 
@@ -330,11 +365,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         data = self.generate_item_data(
             tier=ticket_tier.public_id, session=checkout_session.public_id, quantity=51
         )
-        response = self.client.post(
-            f"{self.url_base}item/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_item(data)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -380,12 +411,24 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             "name": fake.name(),
             "email": fake.email(),
             "cost": 10,
-            "tx_status": "VALID",
+            "tx_status": CheckoutSession.OrderStatus.VALID,
+            "tx_type": CheckoutSession.TransactionType.FIAT,
             "event": str(event),
             "checkout_items": items,
         }
 
         return session_data
+
+    def request_create_session(self, data: dict):
+        """
+        request POST to session endpoint
+        """
+        # Not using reverse because we want URL changes to explicitly break tests.
+        return self.client.post(
+            f"{self.url_base}session/",
+            data=data,
+            content_type="application/json",
+        )
 
     @prevent_warnings
     def test_get_session_details_200_ok(self) -> None:
@@ -432,13 +475,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         """
 
         data = self.generate_session_data(event=self.event.public_id)
-
-        # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.post(
-            f"{self.url_base}session/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_session(data)
         # assert objects values with json returned
         session_dict = response.json()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -458,12 +495,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             event=self.event.public_id, tier=self.ticket_tier.public_id
         )
 
-        # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.post(
-            f"{self.url_base}session/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_session(data)
         # assert objects values with json returned
         session_dict = response.json()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -476,6 +508,45 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertUUID(item_dict["public_id"], version=4)
 
     @prevent_warnings
+    def test_create_session_conflict_tiers_400_bad_request(self):
+        """
+        test create session with ticket_tier.tier that must
+        conflict with the parent checkout_session.tx_type
+        must return 400 bad request
+        """
+
+        data = self.generate_session_data(
+            event=self.event.public_id, tier=self.ticket_tier.public_id
+        )
+
+        # force ticket_tier has no tier_*
+        self.ticket_tier.tier_fiat = None
+        self.ticket_tier.tier_asset_ownership = None
+        self.ticket_tier.tier_blockchain = None
+        self.ticket_tier.save()
+
+        # test if return 400 bad request if not FIAT available
+        data["tx_type"] = CheckoutSession.TransactionType.FIAT
+        response = self.request_create_session(data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        error_msg = response.json()[0]
+        self.assertIn("ticket_tier does not support fiat", error_msg)
+
+        # test if return 400 bad request if not BLOCKCHAIN available
+        data["tx_type"] = CheckoutSession.TransactionType.BLOCKCHAIN
+        response = self.request_create_session(data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        error_msg = response.json()[0]
+        self.assertIn("ticket_tier does not support blockchain", error_msg)
+
+        # test if return 400 bad request if not ASSET_OWNERSHIP available
+        data["tx_type"] = CheckoutSession.TransactionType.ASSET_OWNERSHIP
+        response = self.request_create_session(data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        error_msg = response.json()[0]
+        self.assertIn("ticket_tier does not support asset ownership", error_msg)
+
+    @prevent_warnings
     def test_fail_create_with_invalid_event_404_not_found(self):
         """
         request POST create a session with nonexistent or event
@@ -483,11 +554,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         """
 
         data = self.generate_session_data(event=self.random_uuid)
-        response = self.client.post(
-            f"{self.url_base}session/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json()["code"], "public-id-not-found")
 
@@ -501,11 +568,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         data = self.generate_session_data(
             event=self.event.public_id, tier=self.random_uuid
         )
-        response = self.client.post(
-            f"{self.url_base}session/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json()["code"], "public-id-not-found")
 
@@ -531,11 +594,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         data = self.generate_session_data(
             event=ticket_tier.event.public_id, tier=ticket_tier.public_id, quantity=51
         )
-        response = self.client.post(
-            f"{self.url_base}session/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # verify if the value was not created in the db
         checkout_item_qs = CheckoutItem.objects.filter(ticket_tier=ticket_tier)
@@ -554,13 +613,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         )
         # duplicate item
         data["checkout_items"].append(data["checkout_items"][0])
-
-        # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.post(
-            f"{self.url_base}session/",
-            data=data,
-            content_type="application/json",
-        )
+        response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings

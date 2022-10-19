@@ -9,7 +9,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -19,6 +19,7 @@ from model_utils.models import TimeStampedModel
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
+    DuplicatesTiersRequestedError,
     EventStateTranstionError,
     ForbiddenRedemptionError,
     TooManyTicketsRequestedError,
@@ -787,12 +788,25 @@ class CheckoutItem(DBModel):
                 {"quantity": _(f"Only {available} quantity is available.")}
             )
 
+    def clean_ticket_tier(self, *args, **kwargs):
+        qs = (
+            self.checkout_session.checkoutitem_set.values("ticket_tier")
+            .annotate(ticket_tier_count=Count("ticket_tier"))
+            .filter(ticket_tier_count__gt=1)
+        )
+
+        if qs.exists():
+            raise DuplicatesTiersRequestedError(
+                {"ticket_tier": _("Duplicate ticket_tier are not accepted")}
+            )
+
     def clean(self, *args, **kwargs):
         """
         clean method
         runs all clean_* methods
         """
         self.clean_quantity()
+        self.clean_ticket_tier()
 
 
 class TxFiat(DBModel):

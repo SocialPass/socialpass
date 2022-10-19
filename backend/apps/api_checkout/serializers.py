@@ -3,7 +3,14 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import CheckoutItem, Event, Team, Ticket, TicketTier
+from apps.root.models import (
+    CheckoutItem,
+    CheckoutSession,
+    Event,
+    Team,
+    Ticket,
+    TicketTier,
+)
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -102,6 +109,10 @@ class TicketTierSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemReadSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItem model read serializer
+    """
+
     ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
     checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
@@ -119,6 +130,10 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemCreateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItem model create serializer
+    """
+
     ticket_tier = serializers.UUIDField(write_only=True)
     checkout_session = serializers.UUIDField(write_only=True)
 
@@ -135,6 +150,10 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
 
 
 class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItems model update serializer
+    """
+
     ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
     checkout_session = serializers.UUIDField(
         source="checkout_session.public_id", read_only=True
@@ -150,3 +169,88 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
             "ticket_tier",
             "checkout_session",
         ]
+
+
+class CheckoutSessionReadSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItems model read serializer
+    """
+
+    event = serializers.UUIDField(source="event.public_id")
+    checkout_items = CheckoutItemReadSerializer(
+        source="checkoutitem_set", many=True, allow_null=True
+    )
+
+    class Meta:
+        model = CheckoutSession
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "name",
+            "email",
+            "cost",
+            "tx_status",
+            "event",
+            "checkout_items",
+        ]
+
+
+class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItems model create serializer
+    """
+
+    ticket_tier = serializers.UUIDField(write_only=True)
+
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "quantity",
+            "ticket_tier",
+        ]
+
+
+class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutSession model create serializer with nested CheckoutItems
+    """
+
+    event = serializers.UUIDField(write_only=True)
+    checkout_items = CheckoutSessionItemsCreateSerializer(
+        source="checkoutitem_set", many=True, allow_null=True, required=False
+    )
+    cost = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = CheckoutSession
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "name",
+            "email",
+            "cost",
+            "tx_status",
+            "event",
+            "checkout_items",
+        ]
+
+    def create(self, validated_data):
+        """
+        override create method from ModelSerializer
+        create CheckoutSession and CheckoutItem
+        """
+        checkout_items = validated_data.pop("checkoutitem_set")
+        checkout_session = CheckoutSession.objects.create(**validated_data)
+
+        for item in checkout_items:
+            checkout_item = CheckoutItem(checkout_session=checkout_session, **item)
+            checkout_item.save()
+
+        return checkout_session

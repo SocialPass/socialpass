@@ -19,6 +19,7 @@ from model_utils.models import TimeStampedModel
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
+    ConflictingTiersRequestedError,
     DuplicatesTiersRequestedError,
     EventStateTranstionError,
     ForbiddenRedemptionError,
@@ -789,16 +790,44 @@ class CheckoutItem(DBModel):
             )
 
     def clean_ticket_tier(self, *args, **kwargs):
-        qs = (
-            self.checkout_session.checkoutitem_set.values("ticket_tier")
-            .annotate(ticket_tier_count=Count("ticket_tier"))
-            .filter(ticket_tier_count__gt=1)
-        )
-
+        """
+        clean ticket_tier method
+        checks for duplicate or conflicting tiers
+        """
+        # check if ticket_tier already exists in the parent CheckoutSession
+        # raises DuplicatesTiersRequestedError if duplicate found
+        qs = CheckoutItem.objects.filter(
+            checkout_session=self.checkout_session, ticket_tier=self.ticket_tier
+        ).exclude(pk=self.pk)
         if qs.exists():
             raise DuplicatesTiersRequestedError(
                 {"ticket_tier": _("Duplicate ticket_tier are not accepted")}
             )
+
+        # check if ticket_tier conflict with the parent CheckoutSession tx_type
+        # raises ConflictingTiersRequestedError if mismatch found
+        match self.checkout_session.tx_type:
+            case CheckoutSession.TransactionType.FIAT:
+                if not self.ticket_tier.tier_fiat:
+                    raise ConflictingTiersRequestedError(
+                        {"ticket_tier": _("ticket_tier does not support fiat")}
+                    )
+            case CheckoutSession.TransactionType.BLOCKCHAIN:
+                if not self.ticket_tier.tier_blockchain:
+                    raise ConflictingTiersRequestedError(
+                        {"ticket_tier": _("ticket_tier does not support blockchain")}
+                    )
+            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+                if not self.ticket_tier.tier_asset_ownership:
+                    raise ConflictingTiersRequestedError(
+                        {
+                            "ticket_tier": _(
+                                "ticket_tier does not support asset ownership"
+                            )
+                        }
+                    )
+            case _:
+                pass
 
     def clean(self, *args, **kwargs):
         """

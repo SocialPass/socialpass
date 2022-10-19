@@ -190,6 +190,8 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
                 return serializers.CheckoutItemReadSerializer
             case "create":
                 return serializers.CheckoutSessionCreateSerializer
+            case "transaction":
+                return serializers.TransactionSerializer
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
@@ -278,3 +280,30 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
         checkout_items_qs = self.get_object().checkoutitem_set.all()
         serializer = self.get_serializer(checkout_items_qs, many=True)
         return Response(serializer.data)
+
+    def perform_create_transaction(self, serializer, *args, **kwargs):
+        """
+        perform_create_transaction method.
+        used for creating a transaction object
+        """
+        return serializer.save()
+
+    def perform_update_session_tx(self, serializer, tx):
+        """
+        perform_update_session_tx method.
+        used for updating a session transaction (CheckoutSession.tx_*)
+        """
+        checkout_session = self.get_object()
+        serializer.update_session_tx(checkout_session, tx)
+
+    @action(methods=["post"], detail=True)
+    def transaction(self, request, *args, **kwargs):
+        """
+        create Transaction and update CheckoutSession (CheckoutSession.tx_*)
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        tx = self.perform_create_transaction(serializer)
+        self.perform_update_session_tx(serializer, tx)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

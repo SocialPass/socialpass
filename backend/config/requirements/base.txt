@@ -24,6 +24,7 @@ django-environ==0.9.0 # https://github.com/joke2k/django-environ
 django-fsm==2.8.0 # https://github.com/viewflow/django-fsm
 django-fsm-log==3.0.0 # https://github.com/jazzband/django-fsm-log
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
+django-silk==5.0.1 # https://github.com/jazzband/django-silk
 django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
 drf-yasg==1.21.3  # https://github.com/axnsan12/drf-yasg/
 whitenoise==6.2.0 # https://github.com/evansd/whitenoise/

@@ -93,10 +93,11 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "crispy_forms",
     "crispy_bootstrap5",
+    "django_fsm_log",
     "rest_framework",
     "rest_framework.authtoken",
     "storages",
-    "django_fsm_log",
+    "silk",
 ]
 
 LOCAL_APPS = [
@@ -152,6 +153,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "silk.middleware.SilkyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",

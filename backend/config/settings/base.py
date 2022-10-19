@@ -93,10 +93,11 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "crispy_forms",
     "crispy_bootstrap5",
+    "django_fsm_log",
     "rest_framework",
     "rest_framework.authtoken",
     "storages",
-    "django_fsm_log",
+    "silk",
 ]
 
 LOCAL_APPS = [
@@ -152,6 +153,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "silk.middleware.SilkyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -327,9 +329,17 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
 
-# Django Taggit  - https://github.com/jazzband/django-taggit
+# Django Silk  - https://github.com/jazzband/django-silk
 # ------------------------------------------------------------------------------
-TAGGIT_CASE_INSENSITIVE = True
+def is_superuser(user):
+    user.is_superuser
+
+
+SILKY_PYTHON_PROFILER = True
+SILKY_AUTHENTICATION = True  # User must login
+SILKY_AUTHORISATION = True  # User must have permissions
+SILKY_PERMISSIONS = is_superuser
+SILKY_URL = env("SILKY_URL")
 
 
 # CELERY - https://github.com/celery/celery

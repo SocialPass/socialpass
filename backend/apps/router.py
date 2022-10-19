@@ -52,6 +52,9 @@ urlpatterns += [
     ),  # type: ignore
 ]
 
+# Profiling URLs
+urlpatterns += [path(settings.SILKY_URL, include("silk.urls", namespace="silk"))]
+
 # Local URLs
 is_local = (
     settings.DEBUG and os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.local"

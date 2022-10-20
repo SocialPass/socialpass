@@ -122,7 +122,7 @@
 								<div class="collapse-group collapse-group-flush border-top">
 									<details class="collapse-panel">
 										<summary class="collapse-header">
-											<strong>Blockchain information</strong>
+											<strong>Asset Ownership (for NFTs)</strong>
 											<br />
 											<span class="text-muted fs-base-n2">Click to show/hide</span>
 										</summary>
@@ -151,11 +151,13 @@
 													{{ ticket_tier.tier_asset_ownership.token_address }}
 												</div>
 											</div>
-											<div class="mt-10 text-truncate">
-												<strong>Token ID(s)</strong>
-												<br />
-												{{ ticket_tier.tier_asset_ownership.token_id |join:", "}}
-											</div>
+											{% if ticket_tier.tier_asset_ownership.token_id %}
+												<div class="mt-10 text-truncate">
+													<strong>Token ID(s)</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.token_id |join:", "}}
+												</div>
+											{% endif %}
 										</div>
 									</details>
 								</div>

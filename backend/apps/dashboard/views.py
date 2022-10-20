@@ -15,8 +15,11 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 
 from apps.dashboard.forms import (
-    CustomInviteForm, EventForm, TeamForm, TicketTierForm,
-    TierAssetOwnershipForm
+    CustomInviteForm,
+    EventForm,
+    TeamForm,
+    TicketTierForm,
+    TierAssetOwnershipForm,
 )
 from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
@@ -517,13 +520,26 @@ class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
-        context["tier_asset_ownership_form"] = TierAssetOwnershipForm
+        context["tier_asset_ownership_form"] = TierAssetOwnershipForm(
+            prefix="tier_asset_ownership_form"
+        )
         return context
 
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        return super().form_valid(form)
+        valid = super().form_valid(form)
+
+        tier_asset_ownership = TierAssetOwnershipForm(
+            form.data, prefix="tier_asset_ownership_form"
+        )
+
+        if tier_asset_ownership.is_valid():
+            tier_asset_ownership.save()
+            self.object.tier_asset_ownership = tier_asset_ownership.instance
+            self.object.save()
+
+        return valid
 
     def get_success_message(self, *args, **kwargs):
         return "Your ticket has been created successfully!"

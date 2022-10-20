@@ -32,7 +32,7 @@
 		<div class="col-sm-6">
 			<div class="px-card py-10">
 				<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
-					Events - # Total {{ events.count }}
+					Events - # Total {{ paginator.count }}
 				</span>
 			</div>
 		</div>
@@ -152,7 +152,7 @@
 	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
 		<div>
 			{% if page_obj.has_previous %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.previous_page_number }}">
+				<a class="btn btn-sm text-primary" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}">
 					<strong class="antialiased">Prev</strong>
 				</a>
 			{% else %}
@@ -166,7 +166,7 @@
 		</div>
 		<div class="ms-auto">
 			{% if page_obj.has_next %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.next_page_number }}">
+				<a class="btn btn-sm text-primary" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}">
 					<strong class="antialiased">Next</strong>
 				</a>
 			{% else %}

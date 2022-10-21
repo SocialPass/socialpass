@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function WalletCheckout() {
   return (
     <div>
@@ -73,7 +71,7 @@ export default function WalletCheckout() {
                     name='wallet'
                     className='wallet-button-input'
                     id='wallet-button-input-1'
-                    checked='checked'
+                    checked
                   />
                   <label htmlFor='wallet-button-input-1' className='wallet-button-label'>
                     <div className='ws-75 mw-100 mx-auto'>

@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react'
 import { CheckoutApi } from '@/services/api'
 import { Checkout, CheckoutContextType, CheckoutError } from '@/types/Checkout'
+import { CheckoutItem } from '@/types/CheckoutItem'
 
 export const CheckoutContext = createContext<CheckoutContextType>({
   checkout: null,
@@ -13,7 +14,7 @@ export const CheckoutProvider = ({ children }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isLoadingCheckoutItems, setIsLoadingCheckoutItems] = useState<boolean>(false)
   const [checkout, setCheckout] = useState<Checkout | null>(null)
-  const [checkoutItems, setCheckoutItems] = useState<any>([])
+  const [checkoutItems, setCheckoutItems] = useState<CheckoutItem[]>([])
   const [error, setError] = useState<CheckoutError | null>(null)
 
   const getTotalPrice = () =>

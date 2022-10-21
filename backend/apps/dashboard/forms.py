@@ -128,7 +128,7 @@ class TicketTierForm(forms.ModelForm):
                 attrs={"min": 1}
             ),
         }
-        labels = {"ticket_type": "Name of ticket"}
+        labels = {"ticket_type": "Name of ticket tier"}
 
 
 class TierAssetOwnershipForm(forms.ModelForm):
@@ -147,4 +147,4 @@ class TierAssetOwnershipForm(forms.ModelForm):
                 attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
             ),
         }
-        labels = {"token_id": "Token ID(s)"}
+        labels = {"token_id": "Token IDs (Optional)"}

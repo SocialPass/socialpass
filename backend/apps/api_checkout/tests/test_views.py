@@ -162,7 +162,9 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         # assert objects values with json returned
         item_dict = response.json()
         self.assertEqual(item_dict["public_id"], str(self.checkout_item.public_id))
-        self.assertEqual(item_dict["ticket_tier"], str(self.ticket_tier.public_id))
+        self.assertEqual(
+            item_dict["ticket_tier"].public_id, str(self.ticket_tier.public_id)
+        )
         self.assertEqual(
             item_dict["checkout_session"], str(self.checkout_session.public_id)
         )
@@ -250,7 +252,9 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         item_dict = response.json()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertUUID(item_dict["public_id"], version=4)
-        self.assertEqual(item_dict["ticket_tier"], str(self.ticket_tier.public_id))
+        self.assertEqual(
+            item_dict["ticket_tier"].public_id, str(self.ticket_tier.public_id)
+        )
         self.assertEqual(
             item_dict["checkout_session"], str(self.checkout_session.public_id)
         )
@@ -414,7 +418,9 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         # assert items from session
         item_dict = session_dict["checkout_items"][0]
         self.assertEqual(item_dict["public_id"], str(self.checkout_item.public_id))
-        self.assertEqual(item_dict["ticket_tier"], str(self.ticket_tier.public_id))
+        self.assertEqual(
+            item_dict["ticket_tier"].public_id, str(self.ticket_tier.public_id)
+        )
 
     @prevent_warnings
     def test_get_session_details_404_not_found(self):

@@ -40,7 +40,7 @@ export default function Success() {
       </div>
 
       <div className='px-content pt-20'>
-        <p className='text-muted mt-5 mb-0'>By {event?.team.theme.brand_name}</p>
+        <p className='text-muted mt-5 mb-0'>By {event?.team.name}</p>
         <h2 className='text-strong fs-base-p2 fw-700 m-0'>{event?.title}</h2>
       </div>
 

@@ -322,6 +322,10 @@ class EventListView(TeamContextMixin, ListView):
         if query_title:
             qs = qs.filter(title__icontains=query_title)
 
+        query_state = self.request.GET.get("state", "")
+        if query_state:
+            qs = qs.filter(state=query_state)
+
         return qs
 
 

@@ -104,7 +104,7 @@
 									</button>
 								</div>
 								<div class="alert alert-primary mb-0" role="alert">
-									Before going live, your event must have at least one ticket tier. Go to <a href="#" class="alert-link">tickets</a> to create one now.
+									Before going live, your event must have at least one ticket tier. Go to <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="alert-link">tickets</a> to create one now.
 								</div>
 							{% else %}
 								<form method="post">

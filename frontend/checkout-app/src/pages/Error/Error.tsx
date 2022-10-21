@@ -1,4 +1,3 @@
-import React from 'react'
 import SomethingWentWrong from '../../assets/something_went_wrong.svg'
 
 const Error = () => {

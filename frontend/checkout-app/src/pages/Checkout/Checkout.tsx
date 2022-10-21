@@ -16,14 +16,7 @@ export default function Home() {
   const { checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
-  const {
-    checkout,
-    checkoutItems,
-    getCheckout,
-    getCheckoutItems,
-    isLoading,
-    isLoadingCheckoutItems,
-  }: any = useCheckout()
+  const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)

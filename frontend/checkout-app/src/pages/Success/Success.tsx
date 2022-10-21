@@ -10,14 +10,7 @@ export default function Success() {
 
   const navigate = useNavigate()
 
-  const {
-    checkout,
-    checkoutItems,
-    getCheckout,
-    getCheckoutItems,
-    isLoading,
-    isLoadingCheckoutItems,
-  }: any = useCheckout()
+  const { checkout }: any = useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event?.public_id}`)

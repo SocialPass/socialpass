@@ -12,8 +12,15 @@ export type CheckoutError = {
 }
 
 export type CheckoutContextType = {
-  checkout: Checkout | null
-  getCheckout: GetCheckout | null
-  isLoading: boolean
-  error: CheckoutError | null
+  checkout?: Checkout | null
+  checkoutItems?
+  getCheckout?: GetCheckout | null
+  setCheckout?,
+  getCheckoutItems?,
+  setCheckoutItems?,
+  saveCheckout?,
+  getTxType?,
+  isLoading?,
+  isLoadingCheckoutItems?,
+  error?,
 }

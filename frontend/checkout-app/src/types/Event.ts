@@ -15,7 +15,7 @@ export type Team = {
 }
 
 export type Theme = {
-  brand_name?: string
+  brand_name?
   css_theme: string
   favicon: string
   logo: string

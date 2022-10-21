@@ -261,6 +261,30 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
         return checkout_session
 
 
+class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
+    """
+    CheckoutItems model update serializer
+    """
+
+    event = serializers.UUIDField(source="event.public_id", read_only=True)
+
+    class Meta:
+        model = CheckoutSession
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "name",
+            "email",
+            "cost",
+            "tx_status",
+            "tx_type",
+            "event",
+        ]
+        read_only_fields = ["expiration", "cost", "tx_status", "tx_type", "event"]
+
+
 class TransactionSerializer(serializers.Serializer):
     """
     Transaction serializer

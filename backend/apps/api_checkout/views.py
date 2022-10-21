@@ -175,7 +175,9 @@ class CheckoutItemView(
         return super().destroy(request, *args, **kwargs)
 
 
-class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
+class CheckoutSessionView(
+    GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
+):
     """
     create and retrieve CheckoutSession view
     """
@@ -194,6 +196,8 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
                 return serializers.CheckoutItemReadSerializer
             case "create":
                 return serializers.CheckoutSessionCreateSerializer
+            case "update":
+                return serializers.CheckoutSessionUpdateSerializer
             case "transaction":
                 return serializers.TransactionSerializer
             case _:
@@ -277,6 +281,12 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
         headers = self.get_success_headers(serializer.data)
         result = serializers.CheckoutSessionReadSerializer(checkout_session)
         return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        """
+        update a CheckoutSession
+        """
+        return super().update(request, *args, **kwargs)
 
     @action(methods=["get"], detail=True)
     def items(self, request, *args, **kwargs):

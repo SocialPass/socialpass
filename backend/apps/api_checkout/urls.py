@@ -24,7 +24,7 @@ urlpatterns = [
         views.CheckoutItemView.as_view(
             {"get": "retrieve", "put": "update", "delete": "destroy"}
         ),
-        name="item_details",
+        name="item_detail",
     ),
     path(
         "session/",
@@ -33,8 +33,8 @@ urlpatterns = [
     ),
     path(
         "session/<uuid:checkoutsession_public_id>/",
-        views.CheckoutSessionView.as_view({"get": "retrieve"}),
-        name="session_retrieve",
+        views.CheckoutSessionView.as_view({"get": "retrieve", "put": "update"}),
+        name="session_detail",
     ),
     path(
         "session/<uuid:checkoutsession_public_id>/items/",

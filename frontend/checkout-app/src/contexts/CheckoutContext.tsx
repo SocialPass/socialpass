@@ -22,6 +22,7 @@ export const CheckoutProvider = ({ children }: any) => {
       0,
     )
 
+// Communicating between what backend (left) and frontend (right) understands as transaction type
   const getTxType = (type) =>
     ({
       FIAT: 'tier_fiat',
@@ -83,7 +84,7 @@ export const CheckoutProvider = ({ children }: any) => {
         })),
         cost: getTotalPrice(),
       }
-
+      // Creates checkout if there isn't one
       if (!checkout?.public_id) {
         CheckoutApi.create(data)
           .then((response) => {

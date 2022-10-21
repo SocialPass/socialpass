@@ -8,6 +8,9 @@ function TicketSelector(props): JSX.Element {
       amount < ticketTier?.capacity &&
       amount < ticketTier?.max_per_person &&
       amount < ticketTier?.capacity - ticketTier?.quantity_sold
+      // Current rules state limits to ticket selection:
+      // Can't go below zero
+      // Can't select more than the capacity, max per person ou more than are tickets available
     ) {
       onChange(amount + 1, ticketTier)
     }
@@ -25,7 +28,7 @@ function TicketSelector(props): JSX.Element {
     } else if (paymentType === 'BLOCKCHAIN') {
       return `${amount} ETH`
     }
-
+    // The asset_ownership modality does not have currency
     return 'N/A'
   }
 

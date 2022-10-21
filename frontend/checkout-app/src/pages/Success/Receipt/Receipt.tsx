@@ -21,7 +21,7 @@ export default function Summary() {
     } else if (checkout?.tx_type === 'BLOCKCHAIN') {
       return `${value} ETH`
     }
-
+  // The asset_ownership modality does not have currency
     return 'N/A'
   }
 
@@ -31,6 +31,7 @@ export default function Summary() {
     navigate(`/${event.public_id}`)
     setCheckout(null)
     setCheckoutItems([])
+    // when ordering again the checkout items will be emptied
   }
 
   return (

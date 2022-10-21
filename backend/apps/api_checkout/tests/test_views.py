@@ -404,7 +404,9 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         # assert objects values with json returned
         session_dict = response.json()
-        self.assertEqual(session_dict["public_id"], str(self.checkout_session.public_id))
+        self.assertEqual(
+            session_dict["public_id"], str(self.checkout_session.public_id)
+        )
         self.assertEqual(session_dict["name"], self.checkout_session.name)
         self.assertSerializedDatetime(
             session_dict["expiration"], self.checkout_session.expiration
@@ -419,7 +421,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         item_dict = session_dict["checkout_items"][0]
         self.assertEqual(item_dict["public_id"], str(self.checkout_item.public_id))
         self.assertEqual(
-            item_dict["ticket_tier"]["public_id], str(self.ticket_tier.public_id)
+            item_dict["ticket_tier"]["public_id"], str(self.ticket_tier.public_id)
         )
 
     @prevent_warnings

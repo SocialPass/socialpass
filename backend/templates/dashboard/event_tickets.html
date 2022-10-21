@@ -38,59 +38,29 @@
 							<span class="ws-25 me-10 text-primary">
 								<i class="fa-light fa-list-check"></i>
 							</span>
-							Tickets
+							Ticket Tiers
 						</h3>
 						<div class="ps-20 ms-auto">
-							<a href="#" class="btn btn-primary">
+							<a href="{% url 'dashboard:ticket_tier_create' current_team.public_id event.pk %}" class="btn btn-primary">
 								<i class="fa-solid fa-plus"></i>
 		                   		<span class="ms-5 d-none d-sm-inline">Create</span>
 							</a>
 						</div>
 					</div>
 					<p class="text-muted fs-base-n2 mt-5">
-						Given below is a list of tickets for your event.
+						Given below is a list of ticket tiers for your event.
 					</p>
 					{% for ticket_tier in event.tickettier_set.all %}
 						<div class="my-20 border rounded">
 							<div class="p-15 p-sm-20">
-								<div class="d-flex align-items-center mb-20">
+								<div class="d-flex align-items-center mb-10">
 									<div>
-										<h6 class="m-0 fs-base-p2">{{ ticket_tier.ticket_type }}</h6>
-										<div>
-											{% if ticket_tier.tier_fiat %}
-												<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-													<i class="fa-regular fa-check"></i>
-													Fiat
-												</span>
-											{% else %}
-												<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-													<i class="fa-regular fa-times"></i>
-													Fiat
-												</span>
-											{% endif %}
-											{% if ticket_tier.tier_blockchain %}
-												<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-													<i class="fa-regular fa-check"></i>
-													Crypto
-												</span>
-											{% else %}
-												<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-													<i class="fa-regular fa-times"></i>
-													Crypto
-												</span>
-											{% endif %}
-											{% if ticket_tier.tier_asset_ownership %}
-												<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-													<i class="fa-regular fa-check"></i>
-													NFTs
-												</span>
-											{% else %}
-												<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-													<i class="fa-regular fa-times"></i>
-													NFTs
-												</span>
-											{% endif %}
+										<div class="text-muted fs-base-n2">
+											Name of Ticket Tier:
 										</div>
+										<h6 class="m-0 fs-base-p2">
+											{{ ticket_tier.ticket_type }}
+										</h6>
 									</div>
 									<div class="ps-20 ms-auto">
 										<a href="{% url 'dashboard:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger btn-sm">
@@ -99,19 +69,59 @@
 										</a>
 									</div>
 								</div>
+								<div class="mb-20">
+									<div class="text-muted fs-base-n2">
+										Checkout Methods:
+									</div>
+									<div>
+										{% if ticket_tier.tier_fiat %}
+											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
+												<i class="fa-regular fa-check"></i>
+												Fiat
+											</span>
+										{% else %}
+											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
+												<i class="fa-regular fa-times"></i>
+												Fiat
+											</span>
+										{% endif %}
+										{% if ticket_tier.tier_blockchain %}
+											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
+												<i class="fa-regular fa-check"></i>
+												Crypto
+											</span>
+										{% else %}
+											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
+												<i class="fa-regular fa-times"></i>
+												Crypto
+											</span>
+										{% endif %}
+										{% if ticket_tier.tier_asset_ownership %}
+											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
+												<i class="fa-regular fa-check"></i>
+												NFTs
+											</span>
+										{% else %}
+											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
+												<i class="fa-regular fa-times"></i>
+												NFTs
+											</span>
+										{% endif %}
+									</div>
+								</div>
 								<hr />
 								<div class="row">
-									<div class="col-6 col-sm-3 text-truncate">
+									<div class="col-6 col-sm-4 text-truncate">
 										<strong>Capacity</strong>
 										<br />
 										{{ ticket_tier.capacity }}
 									</div>
-									<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
+									<div class="col-6 col-sm-4 text-truncate">
 										<strong>Qty. Sold</strong>
 										<br />
 										{{ ticket_tier.quantity_sold }}
 									</div>
-									<div class="col-6 col-sm-3 mt-10 mt-sm-0 text-truncate">
+									<div class="col-12 col-sm-4 mt-10 mt-sm-0 text-truncate">
 										<strong>Max per person</strong>
 										<br />
 										{{ ticket_tier.max_per_person }}
@@ -122,12 +132,42 @@
 								<div class="collapse-group collapse-group-flush border-top">
 									<details class="collapse-panel">
 										<summary class="collapse-header">
-											<strong>Blockchain information</strong>
+											<strong>Asset Ownership (for NFTs)</strong>
 											<br />
 											<span class="text-muted fs-base-n2">Click to show/hide</span>
 										</summary>
-										<div class="collapse-content">
-											Work in progress ...
+										<div class="collapse-content p-15 p-sm-20">
+											<div class="row">
+												<div class="col-6 text-truncate">
+													<strong>Blockchain</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.blockchain }}
+												</div>
+												<div class="col-6 text-truncate">
+													<strong>Network</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.get_network_display }}
+												</div>
+											</div>
+											<div class="row mt-10">
+												<div class="col-6 text-truncate">
+													<strong>Asset Type</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.asset_type }}
+												</div>
+												<div class="col-6 text-truncate">
+													<strong>Token Address</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.token_address }}
+												</div>
+											</div>
+											{% if ticket_tier.tier_asset_ownership.token_id %}
+												<div class="mt-10 text-truncate">
+													<strong>Token ID(s)</strong>
+													<br />
+													{{ ticket_tier.tier_asset_ownership.token_id |join:", "}}
+												</div>
+											{% endif %}
 										</div>
 									</details>
 								</div>
@@ -135,7 +175,7 @@
 						</div>
 					{% endfor %}
 					<div class="text-center">
-						Total {{ event.tickettier_set.count }} ticket(s) found
+						Total {{ event.tickettier_set.count }} ticket tier(s) found
 					</div>
 				{% else %}
 					<div class="text-center">
@@ -144,12 +184,12 @@
 						</div>
 						<div class="ws-400 mw-100 mx-auto">
 							<p>
-								No tickets have been created for this event. You will need to create one first before going live with your event.
+								No ticket tiers have been created for this event. You will need to create one first before going live with your event.
 							</p>
 							<div>
-								<a href="#" class="btn btn-primary">
+								<a href="{% url 'dashboard:ticket_tier_create' current_team.public_id event.pk %}" class="btn btn-primary">
 									<i class="fa-solid fa-plus me-5"></i>
-	                    			Create Ticket
+	                    			Create Ticket Tier
 								</a>
 							</div>
 						</div>

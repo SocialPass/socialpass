@@ -14,7 +14,13 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from apps.dashboard.forms import CustomInviteForm, EventForm, TeamForm
+from apps.dashboard.forms import (
+    CustomInviteForm,
+    EventForm,
+    TeamForm,
+    TicketTierForm,
+    TierAssetOwnershipForm,
+)
 from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
 User = auth.get_user_model()
@@ -316,6 +322,10 @@ class EventListView(TeamContextMixin, ListView):
         if query_title:
             qs = qs.filter(title__icontains=query_title)
 
+        query_state = self.request.GET.get("state", "")
+        if query_state:
+            qs = qs.filter(state=query_state)
+
         return qs
 
 
@@ -498,6 +508,51 @@ class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
             qs = qs.filter(wallet_address__icontains=query_address)
 
         return qs
+
+
+class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+    """
+    Create an event's ticket tier.
+    """
+
+    model = TicketTier
+    form_class = TicketTierForm
+    template_name = "dashboard/ticket_tier_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        context["tier_asset_ownership_form"] = TierAssetOwnershipForm(
+            prefix="tier_asset_ownership_form"
+        )
+        return context
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        valid = super().form_valid(form)
+
+        tier_asset_ownership = TierAssetOwnershipForm(
+            form.data, prefix="tier_asset_ownership_form"
+        )
+
+        if tier_asset_ownership.is_valid():
+            tier_asset_ownership.save()
+            self.object.tier_asset_ownership = tier_asset_ownership.instance
+            self.object.save()
+
+        return valid
+
+    def get_success_message(self, *args, **kwargs):
+        return "Your ticket has been created successfully!"
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+        )
 
 
 class TicketTierDeleteView(TeamContextMixin, DeleteView):

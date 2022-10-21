@@ -1,0 +1,159 @@
+{% extends "bases/base_primary.html" %}
+{% load static get_theme_value get_user_primary_email crispy_forms_tags %}
+
+{% block head_title %}
+{% if request.resolver_match.url_name == 'event_create' %}
+	Create Event
+{% else %}
+	{{ event.title }}
+{% endif %} - {% get_theme_value "brand_name" %}
+{% endblock head_title %}
+
+{% block navbar_breadcrumb %}
+{% if url_name == 'event_create' %}
+	Create Event
+{% else %}
+	Event Details
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+{% include 'components/event_details_page_header.html' %}
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	{% include 'components/event_details_card_header.html' %}
+	<!-- Card header end -->
+
+	<!-- Main content start -->
+	<div class="row">
+		<div class="col-lg-9 col-xl-7 mx-auto">
+			<div class="content">
+				<div class="alert alert-primary d-flex align-items-center mb-30" role="alert">
+					<i class="fa-regular fa-info-circle me-10"></i>
+					<span>
+						You're <strong>creating a ticket tier</strong> for <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="alert-link">{{ event.title }}</a>.
+					</span>
+				</div>
+
+				<!-- Form start -->
+				<form method="POST">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="invalid-feedback">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					<!-- Information start -->
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="information">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-ballot-check"></i>
+						</span>
+						Information
+					</h3>
+					<p class="text-muted fs-base-n2 mt-5">
+						Name your ticket tier and add in capacity numbers.
+					</p>
+					{% with form.ticket_type as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with form.capacity as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with form.max_per_person as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					<!-- Information end -->
+
+					<!-- Checkout methods start -->
+					<br />
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="payment-types">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-file-invoice-dollar"></i>
+						</span>
+						Checkout Methods
+					</h3>
+					<p class="text-muted fs-base-n2 mt-5">
+						Please select the acceptable checkout methods for this ticket tier.
+					</p>
+					<div class="btn-group w-100">
+					  	<button type="button" class="btn btn-sm py-10 text-base text-start d-flex align-items-center" disabled="disabled">
+					  		<i class="fa-light fa-money-check-dollar me-5"></i>
+					  		<strong class="antialiased me-5">Fiat</strong>
+					  	</button>
+					  	<button type="button" class="btn btn-sm py-10 text-base text-start d-flex align-items-center" disabled="disabled">
+					  		<i class="fa-light fa-wallet me-5"></i>
+					  		<strong class="antialiased me-5">Crypto</strong>
+					  	</button>
+					  	<button type="button" class="btn btn-sm py-10 btn-primary text-start d-flex align-items-center">
+					  		<i class="fa-light fa-hexagon-image me-5"></i>
+					  		<strong class="antialiased me-5">NFTs</strong>
+					  		<i class="fa-regular fa-check ms-auto"></i>
+					  	</button>
+					</div>
+					<div class="alert alert-primary d-flex align-items-center mb-30" role="alert">
+						<i class="fa-regular fa-info-circle me-10"></i>
+						<span>
+							As of right now, we only support NFT based checkout for tickets. Other checkout methods are coming soon!
+						</span>
+					</div>
+					<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="asset-ownership">
+						<span class="ws-25 me-10 text-primary">
+							<i class="fa-light fa-hexagon-image"></i>
+						</span>
+						Asset Ownership (for NFTs)
+					</h3>
+					<p class="text-muted fs-base-n2 mt-5">
+						Please fill out the following fields to specify the type of assets that you want to accept. When an attendee proves their ownership of these assets, they will be able to redeem tickets for this event.
+					</p>
+					<div class="form-group">
+			  			{{ tier_asset_ownership_form.blockchain|as_crispy_field }}
+					</div>
+					<div class="form-group">
+			  			{{ tier_asset_ownership_form.network|as_crispy_field }}
+					</div>
+					<div class="form-group">
+			  			{{ tier_asset_ownership_form.asset_type|as_crispy_field }}
+					</div>
+					{% with tier_asset_ownership_form.token_address as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with tier_asset_ownership_form.token_id as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					<!-- Checkout methods end -->
+
+					<!-- Submit button start -->
+					<hr />
+					<div class="form-group text-end">
+						<button type="submit" class="btn btn-primary">Save Ticket Tier</button>
+					</div>
+					<!-- Submit button end -->
+				</form>
+				<!-- Form end -->
+			</div>
+		</div>
+	</div>
+	<!-- Main content start -->
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help managing your tickets.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock content %}

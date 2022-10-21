@@ -28,28 +28,46 @@
 <!-- Content card start -->
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
 	<!-- Card header start -->
-	<div class="row border-bottom">
-		<div class="col-sm-6">
+	<form method="GET" class="row border-bottom">
+		<div class="col-sm-5">
 			<div class="px-card py-10">
 				<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
-					Events - # Total {{ events.count }}
+					Events - # Total {{ paginator.count }}
 				</span>
 			</div>
 		</div>
-		<div class="col-sm-6 col-lg-4 offset-lg-2">
+		<div class="col-sm-7 col-lg-5 offset-lg-2">
 			<!-- Start search form -->
-			<form method="GET" class="px-card pt-0 pt-sm-10 pb-10">
-				<div class="position-relative">
-					<input type="text" class="form-control form-control-sm rounded-pill pe-30" name="title" placeholder="Search by name" value="{{ request.GET.title }}" required="required">
-					<button class="btn btn-link btn-sm bg-transparent lh-1 position-absolute top-50 end-0 translate-y-middle" type="submit">
-						<i class="fa-regular fa-search"></i>
+			<div class="px-card pt-0 pt-sm-10 pb-10">
+				<div class="input-group input-group-sm position-relative">
+					<span class="position-absolute top-50 start-0 translate-y-middle text-primary-dim-lm text-primary-light-dm z-10 ps-10 pe-5">
+						<i class="fa-regular fa-bars-sort"></i>
+					</span>
+					<select class="form-select flex-reset ws-100 ws-sm-150 ps-30" name="state" onchange="this.form.submit()" style="border-top-left-radius: var(--rounded-pill-border-radius); border-bottom-left-radius: var(--rounded-pill-border-radius);">
+						{% if request.GET.state == "LIVE" %}
+							<option value="">All</option>
+							<option value="LIVE" selected="selected">Live</option>
+							<option value="DRAFT">Draft</option>
+						{% elif request.GET.state == "DRAFT" %}
+							<option value="">All</option>
+							<option value="LIVE">Live</option>
+							<option value="DRAFT" selected="selected">Draft</option>
+						{% else %}
+							<option value="" selected="selected">All</option>
+							<option value="LIVE">Live</option>
+							<option value="DRAFT">Draft</option>
+						{% endif %}
+					</select>
+					<input type="text" class="form-control" name="title" placeholder="Search by name" value="{{ request.GET.title }}">
+					<button class="btn text-primary-dim-lm text-primary-light-dm pe-10" type="submit" style="border-top-right-radius: var(--rounded-pill-border-radius); border-bottom-right-radius: var(--rounded-pill-border-radius);">
+						<i class="fa-solid fa-search"></i>
 						<span class="visually-hidden">Search</span>
 					</button>
 				</div>
-			</form>
+			</div>
 			<!-- End Search Form -->
 		</div>
-	</div>
+	</form>
 	<!-- Card header end -->
 
 	<!-- Main content start -->
@@ -152,7 +170,7 @@
 	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
 		<div>
 			{% if page_obj.has_previous %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.previous_page_number }}">
+				<a class="btn btn-sm text-primary" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
 					<strong class="antialiased">Prev</strong>
 				</a>
 			{% else %}
@@ -166,7 +184,7 @@
 		</div>
 		<div class="ms-auto">
 			{% if page_obj.has_next %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.next_page_number }}">
+				<a class="btn btn-sm text-primary" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
 					<strong class="antialiased">Next</strong>
 				</a>
 			{% else %}

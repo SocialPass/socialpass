@@ -2,7 +2,7 @@
     <label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}{% if required %}*{% endif %}</label>
     <input
         type="{{ input.field.widget.input_type }}"
-        name="{{ input.name }}"
+        name="{{ input.html_name }}"
         value="{{ input.value|default_if_none:'' }}"
         {% if input.field.widget.input_type != "hidden" %}
             class="form-control {% if input.errors %}is-invalid{% endif %}"

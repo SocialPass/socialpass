@@ -16,7 +16,7 @@ from apps.root.models import (
 )
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class TeamReadSerializer(serializers.ModelSerializer):
     """
     Team serializer
     """
@@ -60,14 +60,14 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ["name", "image", "theme"]
 
 
-class EventSerializer(serializers.ModelSerializer):
+class EventReadSerializer(serializers.ModelSerializer):
     """
     Event serializer
     """
 
     ticket_count = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
-    team = TeamSerializer()
+    team = TeamReadSerializer()
 
     class Meta:
         model = Event
@@ -88,7 +88,7 @@ class EventSerializer(serializers.ModelSerializer):
         return Ticket.objects.filter(event=obj).count()
 
 
-class TicketTierSerializer(serializers.ModelSerializer):
+class TicketTierReadSerializer(serializers.ModelSerializer):
     """
     TicketTier model serializer
     """
@@ -129,7 +129,6 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
             "ticket_tier",
             "checkout_session",
         ]
-        read_only_fields = ["created", "modified", "public_id"]
 
 
 class CheckoutItemCreateSerializer(serializers.ModelSerializer):
@@ -150,6 +149,11 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
             "ticket_tier",
             "checkout_session",
         ]
+        read_only_fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
 
 
 class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
@@ -157,10 +161,8 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
     CheckoutItems model update serializer
     """
 
-    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
-    checkout_session = serializers.UUIDField(
-        source="checkout_session.public_id", read_only=True
-    )
+    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
+    checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
     class Meta:
         model = CheckoutItem
@@ -169,6 +171,13 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
             "modified",
             "public_id",
             "quantity",
+            "ticket_tier",
+            "checkout_session",
+        ]
+        read_only_fields = [
+            "created",
+            "modified",
+            "public_id",
             "ticket_tier",
             "checkout_session",
         ]
@@ -228,7 +237,6 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
     checkout_items = CheckoutSessionItemsCreateSerializer(
         source="checkoutitem_set", many=True, allow_null=True, required=False
     )
-    cost = serializers.CharField(read_only=True)
 
     class Meta:
         model = CheckoutSession
@@ -245,6 +253,7 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
             "event",
             "checkout_items",
         ]
+        read_only_fields = ["created", "modified", "public_id", "cost"]
 
     def create(self, validated_data):
         """
@@ -266,7 +275,7 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
     CheckoutItems model update serializer
     """
 
-    event = serializers.UUIDField(source="event.public_id", read_only=True)
+    event = serializers.UUIDField(source="event.public_id")
 
     class Meta:
         model = CheckoutSession
@@ -282,10 +291,19 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
             "tx_type",
             "event",
         ]
-        read_only_fields = ["expiration", "cost", "tx_status", "tx_type", "event"]
+        read_only_fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "cost",
+            "tx_status",
+            "tx_type",
+            "event",
+        ]
 
 
-class TransactionSerializer(serializers.Serializer):
+class TransactionCreateSerializer(serializers.Serializer):
     """
     Transaction serializer
     """

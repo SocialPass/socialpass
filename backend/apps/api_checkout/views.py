@@ -31,11 +31,11 @@ class EventView(GenericViewSet, RetrieveModelMixin):
         """
         match self.action:
             case "retrieve":
-                return serializers.EventSerializer
+                return serializers.EventReadSerializer
             case "ticket_tiers":
-                return serializers.TicketTierSerializer
+                return serializers.TicketTierReadSerializer
             case _:
-                return serializers.EventSerializer
+                return serializers.EventReadSerializer
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -199,7 +199,7 @@ class CheckoutSessionView(
             case "update":
                 return serializers.CheckoutSessionUpdateSerializer
             case "transaction":
-                return serializers.TransactionSerializer
+                return serializers.TransactionCreateSerializer
             case _:
                 return serializers.CheckoutSessionReadSerializer
 

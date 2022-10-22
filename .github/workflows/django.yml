@@ -53,7 +53,12 @@ jobs:
         pip install -r backend/config/requirements/test.txt
 
     # Lint!
-    # TODO
+    - name: TEST WHATS IN SERIALIZER FILE
+      run: |
+        cat
+        /home/runner/work/socialpass/socialpass/backend/apps/api_checkout/serializers.py
+
+    # Lint!
     - name: Lint!
       run: |
         cd backend; black .; isort .; flake8 .; mypy .;

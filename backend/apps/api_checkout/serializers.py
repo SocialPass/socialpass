@@ -161,8 +161,10 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
     CheckoutItems model update serializer
     """
 
-    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
-    checkout_session = serializers.UUIDField(source="checkout_session.public_id")
+    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
+    checkout_session = serializers.UUIDField(
+        source="checkout_session.public_id", read_only=True
+    )
 
     class Meta:
         model = CheckoutItem
@@ -275,7 +277,7 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
     CheckoutItems model update serializer
     """
 
-    event = serializers.UUIDField(source="event.public_id")
+    event = serializers.UUIDField(source="event.public_id", read_only=True)
 
     class Meta:
         model = CheckoutSession
@@ -299,7 +301,6 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
             "cost",
             "tx_status",
             "tx_type",
-            "event",
         ]
 
 

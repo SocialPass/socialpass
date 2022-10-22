@@ -31,11 +31,11 @@ class EventView(GenericViewSet, RetrieveModelMixin):
         """
         match self.action:
             case "retrieve":
-                return serializers.EventSerializer
+                return serializers.EventReadSerializer
             case "ticket_tiers":
-                return serializers.TicketTierSerializer
+                return serializers.TicketTierReadSerializer
             case _:
-                return serializers.EventSerializer
+                return serializers.EventReadSerializer
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -175,7 +175,9 @@ class CheckoutItemView(
         return super().destroy(request, *args, **kwargs)
 
 
-class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
+class CheckoutSessionView(
+    GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
+):
     """
     create and retrieve CheckoutSession view
     """
@@ -194,8 +196,10 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
                 return serializers.CheckoutItemReadSerializer
             case "create":
                 return serializers.CheckoutSessionCreateSerializer
+            case "update":
+                return serializers.CheckoutSessionUpdateSerializer
             case "transaction":
-                return serializers.TransactionSerializer
+                return serializers.TransactionCreateSerializer
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
@@ -278,6 +282,12 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
         result = serializers.CheckoutSessionReadSerializer(checkout_session)
         return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def update(self, request, *args, **kwargs):
+        """
+        update a CheckoutSession
+        """
+        return super().update(request, *args, **kwargs)
+
     @action(methods=["get"], detail=True)
     def items(self, request, *args, **kwargs):
         """
@@ -312,4 +322,6 @@ class CheckoutSessionView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
         tx = self.perform_create_transaction(serializer)
         self.perform_update_session_tx(serializer, tx)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )

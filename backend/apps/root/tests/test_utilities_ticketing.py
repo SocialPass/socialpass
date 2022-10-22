@@ -50,7 +50,9 @@ class TestCaseWrapper(TestCase):
             ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
         )
         cls.ticket = TicketFactory(
-            checkout_item=cls.checkout_item, event=cls.event, ticket_tier=cls.ticket_tier
+            checkout_item=cls.checkout_item,
+            event=cls.event,
+            ticket_tier=cls.ticket_tier,
         )
         return super().setUpTestData()
 
@@ -363,8 +365,12 @@ class TestGoogleTicket(TestCaseWrapper):
         self.assertEqual(payload["locations"][0]["latitude"], self.event.lat)
         self.assertEqual(payload["locations"][0]["longitude"], self.event.long)
         self.assertEqual(payload["reviewStatus"], "UNDER_REVIEW")
-        self.assertEqual(payload["eventName"]["defaultValue"]["value"], self.event.title)
-        self.assertEqual(payload["dateTime"]["start"], self.event.start_date.isoformat())
+        self.assertEqual(
+            payload["eventName"]["defaultValue"]["value"], self.event.title
+        )
+        self.assertEqual(
+            payload["dateTime"]["start"], self.event.start_date.isoformat()
+        )
 
         # test raise exception in not address field
         self.event.city = None

@@ -625,6 +625,60 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
+    def test_update_session_200_ok(self):
+        """
+        test PUT session went 200 OK
+        """
+
+        fake = faker.Faker()
+        data = {
+            "name": fake.name(),
+            "email": fake.email(),
+        }
+
+        session_public_id = self.checkout_session.public_id
+        # Not using reverse because we want URL changes to explicitly break tests.
+        response = self.client.put(
+            f"{self.url_base}session/{session_public_id}/",
+            data=data,
+            content_type="application/json",
+        )
+        # assert objects values with json returned
+        session_dict = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(session_dict["name"], data["name"])
+        self.assertEqual(session_dict["email"], data["email"])
+
+    @prevent_warnings
+    def test_not_update_read_only_session_field_200_ok(self):
+        """
+        test if will not update real_only field
+        """
+
+        fake = faker.Faker()
+        data = {
+            "name": fake.name(),
+            "email": fake.email(),
+            "tx_type": CheckoutSession.TransactionType.BLOCKCHAIN,
+            "tx_status": CheckoutSession.OrderStatus.COMPLETED,
+        }
+
+        session_public_id = self.checkout_session.public_id
+        # Not using reverse because we want URL changes to explicitly break tests.
+        response = self.client.put(
+            f"{self.url_base}session/{session_public_id}/",
+            data=data,
+            content_type="application/json",
+        )
+        session_dict = response.json()
+        self.assertNotEqual(
+            session_dict["tx_type"], CheckoutSession.TransactionType.BLOCKCHAIN
+        )
+        self.assertNotEqual(
+            session_dict["tx_status"], CheckoutSession.OrderStatus.COMPLETED
+        )
+
+    @prevent_warnings
     def test_transaction_fiat_201_ok(self):
         """
         test create TxFiat and update session.tx_fiat

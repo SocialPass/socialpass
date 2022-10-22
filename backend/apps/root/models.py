@@ -320,7 +320,9 @@ class Event(DBModel):
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
-    localized_address_display = models.CharField(max_length=1024, blank=True, default="")
+    localized_address_display = models.CharField(
+        max_length=1024, blank=True, default=""
+    )
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -675,7 +677,7 @@ class TierAssetOwnership(DBModel):
         models.IntegerField(),
         null=True,
         blank=True,
-        help_text="Please enter a list of token ID(s) separated by commas."
+        help_text="Please enter a list of token ID(s) separated by commas.",
     )
 
     def __str__(self) -> str:

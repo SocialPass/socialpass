@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('root', '0018_alter_tickettier_tier_asset_ownership_and_more'),
+        ("root", "0018_alter_tickettier_tier_asset_ownership_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='tierassetownership',
-            name='token_id',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), blank=True, help_text='Please enter a list of token ID(s) separated by commas.', null=True, size=None),
+            model_name="tierassetownership",
+            name="token_id",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.IntegerField(),
+                blank=True,
+                help_text="Please enter a list of token ID(s) separated by commas.",
+                null=True,
+                size=None,
+            ),
         ),
     ]

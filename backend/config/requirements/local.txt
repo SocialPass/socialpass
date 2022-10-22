@@ -1,4 +1,5 @@
 -r base.txt
+-r _code_quality.txt
 
 # General
 # ------------------------------------------------------------------------------
@@ -8,14 +9,3 @@ psycopg2-binary==2.9.3 # https://github.com/psycopg/psycopg2
 # ------------------------------------------------------------------------------
 django-debug-toolbar==3.6.0 # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.2.1 # https://github.com/django-extensions/django-extensions
-
-# Code quality
-# ------------------------------------------------------------------------------
-black==22.8.0 # https://github.com/psf/black
-django-stubs[compatible-mypy]==1.11.0 # https://github.com/typeddjango/django-stubs
-djangorestframework-stubs[compatible-mypy]==1.6.0 # https://github.com/typeddjango/djangorestframework-stubs
-flake8==4.0.1 # https://github.com/PyCQA/flake8
-flake8-isort==4.1.1 # https://github.com/gforcada/flake8-isort
-pylint-django==2.5.3 # https://github.com/PyCQA/pylint-django
-pre-commit==2.20.0 # https://github.com/pre-commit/pre-commit
-mypy==0.950 # https://github.com/python/mypy

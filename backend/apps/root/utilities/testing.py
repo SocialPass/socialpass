@@ -59,7 +59,9 @@ class BaseTestCaseWrapper(TestCase):
             ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
         )
         cls.ticket = TicketFactory(
-            checkout_item=cls.checkout_item, event=cls.event, ticket_tier=cls.ticket_tier
+            checkout_item=cls.checkout_item,
+            event=cls.event,
+            ticket_tier=cls.ticket_tier,
         )
         cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
         cls.access_key = cls.ticket_redemption_key.public_id

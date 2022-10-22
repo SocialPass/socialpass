@@ -150,7 +150,9 @@ class GoogleTicket(TicketGenerationBase):
         return json.loads(response.text)
 
     @staticmethod
-    def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):
+    def request_creation_ticket(
+        http_client: AuthorizedSession, url: str, payload: dict
+    ):
         return http_client.post(url, json=payload)
 
     def generate_pass_from_ticket(self, ticket):

@@ -124,7 +124,9 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
 
-                return reverse("dashboard:event_list", args=(membership.team.public_id,))
+                return reverse(
+                    "dashboard:event_list", args=(membership.team.public_id,)
+                )
             else:
                 return reverse("dashboard:team_create")
         else:

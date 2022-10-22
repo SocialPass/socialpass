@@ -51,10 +51,23 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = [
-            "title", "organizer", "description", "start_date", "end_date", 
-            "initial_place", "lat", "long", "region", "address_1", 
-            "address_2", "country", "city", "postal_code", 
-            "localized_address_display", "timezone", "cover_image", 
+            "title",
+            "organizer",
+            "description",
+            "start_date",
+            "end_date",
+            "initial_place",
+            "lat",
+            "long",
+            "region",
+            "address_1",
+            "address_2",
+            "country",
+            "city",
+            "postal_code",
+            "localized_address_display",
+            "timezone",
+            "cover_image",
         ]
 
         widgets = {
@@ -121,12 +134,8 @@ class TicketTierForm(forms.ModelForm):
             "ticket_type": forms.TextInput(
                 attrs={"placeholder": "A short name for this type of ticket"}
             ),
-            "capacity": forms.NumberInput(
-                attrs={"min": 1}
-            ),
-            "max_per_person": forms.NumberInput(
-                attrs={"min": 1}
-            ),
+            "capacity": forms.NumberInput(attrs={"min": 1}),
+            "max_per_person": forms.NumberInput(attrs={"min": 1}),
         }
         labels = {"ticket_type": "Name of ticket tier"}
 

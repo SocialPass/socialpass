@@ -322,4 +322,6 @@ class CheckoutSessionView(
         tx = self.perform_create_transaction(serializer)
         self.perform_update_session_tx(serializer, tx)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )

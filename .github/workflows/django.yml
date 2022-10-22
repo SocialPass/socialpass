@@ -55,7 +55,7 @@ jobs:
     # Lint!
     - name: TEST WHATS IN SERIALIZER FILE
       run: |
-        git rev-parse --abbrev-ref HEAD
+        echo "Running tests on branch $GITHUB_REF"
 
     # Lint!
     - name: Lint!

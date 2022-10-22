@@ -55,8 +55,7 @@ jobs:
     # Lint!
     - name: TEST WHATS IN SERIALIZER FILE
       run: |
-        cat
-        /home/runner/work/socialpass/socialpass/backend/apps/api_checkout/serializers.py
+        git rev-parse --abbrev-ref HEAD
 
     # Lint!
     - name: Lint!

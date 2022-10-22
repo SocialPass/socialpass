@@ -19,11 +19,13 @@ urlpatterns = [
     # Dashboard
     path("dashboard/", include("apps.dashboard.urls")),
     path("dashboard/accounts/", include("allauth.urls")),
-    # Django Admin, use {% url "admin:index" %}{% endraw %}
-    path(settings.ADMIN_URL, admin.site.urls),
-] + static(
+]
+
+# Django settings URLs (admin and media)
+urlpatterns += static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )  # type: ignore
+urlpatterns += [path(settings.ADMIN_URL, admin.site.urls)]
 
 # DRF API URLs
 urlpatterns += [

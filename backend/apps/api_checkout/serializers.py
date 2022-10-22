@@ -108,6 +108,7 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "tier_fiat",
             "tier_blockchain",
             "tier_asset_ownership",
+            "quantity_sold",
         ]
 
 
@@ -116,7 +117,7 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
     CheckoutItem model read serializer
     """
 
-    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id")
+    ticket_tier = TicketTierSerializer()
     checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
     class Meta:
@@ -194,6 +195,7 @@ class CheckoutSessionReadSerializer(serializers.ModelSerializer):
             "name",
             "email",
             "cost",
+            "tx_type",
             "tx_status",
             "tx_type",
             "event",

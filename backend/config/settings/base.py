@@ -217,7 +217,7 @@ STATICFILES_FINDERS = [
 # MEDIA
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = str(APPS_DIR / "media")
+MEDIA_ROOT = str(ROOT_DIR / "media")
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 PRIVATE_TICKET_STORAGE = "django.core.files.storage.FileSystemStorage"

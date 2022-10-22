@@ -28,8 +28,7 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 # Media
 # ------------------------------------------------------------------------------
 # NOTE: This is only for local or development testing.
-BASE_URL = env("BASE_URL")
-MEDIA_URL = BASE_URL + "/media/"
+MEDIA_URL = "/media/"
 
 # Your stuff...
 # ------------------------------------------------------------------------------

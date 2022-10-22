@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
@@ -8,34 +6,13 @@ import Receipt from './Receipt'
 export default function Success() {
   const { event }: any = useEvent()
 
-  const navigate = useNavigate()
-
   const { checkout }: any = useCheckout()
-
-  const handleBackClick = () => {
-    navigate(`/${event?.public_id}`)
-  }
 
   return (
     <>
       <div className='w-100 hs-150 position-relative'>
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
           <img src={event?.cover_image} className='w-100 h-auto' alt='Cover image' />
-        </div>
-
-        <div className='position-absolute z-1 bottom-0 start-0 px-content py-20'>
-          <a
-            href='#'
-            className='btn btn-rounded ps-5 d-flex align-items-center'
-            onClick={() => {
-              handleBackClick()
-            }}
-          >
-            <div className='ws-25 hs-25 bg-secondary text-on-secondary rounded-circle d-flex align-items-center justify-content-center'>
-              <i className='fa-regular fa-arrow-left'></i>
-            </div>
-            <strong className='text-strong antialiased ms-10'>Go Back</strong>
-          </a>
         </div>
       </div>
 

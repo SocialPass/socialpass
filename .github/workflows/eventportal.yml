@@ -1,4 +1,4 @@
-name: EventPortal CI
+name: Checkout App CI
 on:
   pull_request:
     branches: [ master ]

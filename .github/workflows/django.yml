@@ -53,11 +53,6 @@ jobs:
         pip install -r backend/config/requirements/test.txt
 
     # Lint!
-    - name: TEST WHATS IN SERIALIZER FILE
-      run: |
-        echo "Running tests on branch $GITHUB_REF"
-
-    # Lint!
     - name: Lint!
       run: |
         cd backend; black .; isort .; flake8 .; mypy .;

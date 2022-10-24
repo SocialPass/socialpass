@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
-import { useConnect, useAccount, useSignMessage, useDisconnect } from 'wagmi'
+import { useConnect, useAccount, useSignMessage } from 'wagmi'
 
 import FiatCheckoutOption from './CheckoutOptions/Fiat'
 import CrypotCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
@@ -15,19 +15,27 @@ export default function Home() {
   const navigate = useNavigate()
 
   const connectHook = useConnect()
-  const disconnectHook = useDisconnect()
   const accountHook = useAccount()
   const signHook = useSignMessage()
 
   const { checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
-  const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
-
-  const [selectedWallet, setSelectedWalwlet] = useState<any>()
+  const { checkout, getCheckout, getCheckoutItems, pay }: any = useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
+  }
+
+  const handleContinueClick = (e) => {
+    e.preventDefault()
+
+    pay({
+      wallet_address: accountHook.address,
+      signed_message: signHook.data,
+    }).then((response: any) => {
+      navigate('success')
+    })
   }
 
   useEffect(() => {
@@ -81,7 +89,7 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
-          <Summary />
+          <Summary onContinueClick={handleContinueClick} />
         </div>
       </div>
     </>

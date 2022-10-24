@@ -113,6 +113,11 @@ export const CheckoutProvider = ({ children }: any) => {
       }
     })
 
+  const pay = () =>
+    new Promise((resolve, reject) => {
+      resolve(null)
+    })
+
   return (
     <CheckoutContext.Provider
       value={{
@@ -124,6 +129,7 @@ export const CheckoutProvider = ({ children }: any) => {
         setCheckoutItems,
         saveCheckout,
         getTxType,
+        pay,
         isLoading,
         isLoadingCheckoutItems,
         error,

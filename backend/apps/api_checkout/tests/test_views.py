@@ -685,11 +685,8 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         assert 201 created
         """
 
-        data = {"tx_type": "FIAT"}
         response = self.client.post(
             f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # test if fiat tx was created
@@ -704,12 +701,10 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         test create TxAssetOwnership and update session.tx_asset_ownership
         assert 201 created
         """
-
-        data = {"tx_type": "ASSET_OWNERSHIP"}
+        self.checkout_session.tx_type = CheckoutSession.TransactionType.ASSET_OWNERSHIP
+        self.checkout_session.save()
         response = self.client.post(
             f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # test if asset_ownership tx was created and session updated
@@ -728,12 +723,10 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         test create TxBlockchain and update session.tx_blockchain
         assert 201 created
         """
-
-        data = {"tx_type": "BLOCKCHAIN"}
+        self.checkout_session.tx_type = CheckoutSession.TransactionType.BLOCKCHAIN
+        self.checkout_session.save()
         response = self.client.post(
             f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # test if blockchain tx was created and session updated
@@ -743,36 +736,14 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(self.checkout_session.tx_blockchain.pk, tx_blockchain.pk)
 
     @prevent_warnings
-    def test_transaction_400_bad_request(self):
-        """
-        test create transaction with nonexistent tx_type
-        assert 400 bad request
-        """
-
-        data = {"tx_type": "NONEXISTENT_TYPE"}
-        response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.checkout_session.refresh_from_db()
-        self.assertIsNone(self.checkout_session.tx_blockchain)
-        self.assertIsNone(self.checkout_session.tx_asset_ownership)
-        self.assertIsNone(self.checkout_session.tx_fiat)
-
-    @prevent_warnings
     def test_transaction_session_404_not_found(self):
         """
         test create transaction with nonexistent session
         assert 404 not found
         """
 
-        data = {"tx_type": "FIAT"}
         response = self.client.post(
             f"{self.url_base}session/{self.random_uuid}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         tx_fiat = TxFiat.objects.all()

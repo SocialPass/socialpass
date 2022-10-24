@@ -835,7 +835,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
     @prevent_warnings
     def test_confirmation_completed_200_ok(self):
         """
-        test changing tx_status CONFIRMED to FULFILLED
+        test changing tx_status COMPLETED to FULFILLED
         and assert tickets_summary values
         """
         # delete all tickets related to the test checkout_session

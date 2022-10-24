@@ -339,7 +339,7 @@ class TransactionCreateSerializer(serializers.Serializer):
                 checkout_session.tx_blockchain = tx
             case "ASSET_OWNERSHIP":
                 checkout_session.tx_asset_ownership = tx
-        # change here to CONFIRMED?
+        # change tx_status to COMPLETED here?
         checkout_session.save()
 
 
@@ -365,7 +365,7 @@ class ConfirmationSerializer(serializers.ModelSerializer):
     def confirmation(self, checkout_session: CheckoutSession):
         """
         - perform the confirmation
-        - case tx_status == "CONFIRMED" create tickets
+        - case tx_status == "COMPLETED" create tickets
             update checkout_session.tx_status to FULFILLED
         return tx_status
         """

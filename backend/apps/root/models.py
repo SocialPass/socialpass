@@ -320,9 +320,7 @@ class Event(DBModel):
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
-    localized_address_display = models.CharField(
-        max_length=1024, blank=True, default=""
-    )
+    localized_address_display = models.CharField(max_length=1024, blank=True, default="")
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -692,8 +690,9 @@ class CheckoutSession(DBModel):
 
     class OrderStatus(models.TextChoices):
         VALID = "VALID", _("Valid")
+        PROCESSING = "PROCESSING", _("Processing")
         FAILED = "FAILED", _("Failed")
-        EXPIRED = "EXPIRED", _("Expired")
+        FULFILLED = "FULFILLED", _("Fulfilled")
         COMPLETED = "COMPLETED", _("Completed")
 
     class TransactionType(models.TextChoices):
@@ -752,6 +751,14 @@ class CheckoutSession(DBModel):
 
     def __str__(self):
         return self.name
+
+    def create_items_tickets(self):
+        """
+        call `CheckoutItem.create_tickets()` method for all
+        related checkout_item objects
+        """
+        for checkout_item in self.checkoutitem_set.all():
+            checkout_item.create_tickets()
 
 
 class CheckoutItem(DBModel):
@@ -843,6 +850,21 @@ class CheckoutItem(DBModel):
         """
         self.clean_quantity()
         self.clean_ticket_tier()
+
+    def create_tickets(self):
+        """
+        create Tickets and relate to the checkout_item
+        the amount of tickets created will be the same as
+        the quantity defined in the related checkout_item
+        """
+        ticket_keys = {
+            "checkout_session": self.checkout_session,
+            "event": self.checkout_session.event,
+            "ticket_tier": self.ticket_tier,
+            "checkout_item": self,
+        }
+        tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
+        Ticket.objects.bulk_create(tickets)
 
 
 class TxFiat(DBModel):

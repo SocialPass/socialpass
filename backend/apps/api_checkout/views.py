@@ -311,27 +311,29 @@ class CheckoutSessionView(
         perform_update_session_tx method.
         used for updating a session transaction (CheckoutSession.tx_*)
         """
-        checkout_session = self.get_object()
-        serializer.update_session_tx(checkout_session, tx)
+        serializer.update_session_tx(tx)
 
     @action(methods=["post"], detail=True)
     def transaction(self, request, *args, **kwargs):
         """
         create Transaction and update CheckoutSession (CheckoutSession.tx_*)
         """
-        serializer = self.get_serializer(data=request.data)
+        checkout_session = self.get_object()
+        serializer = self.get_serializer(
+            data={}, context={"checkout_session": checkout_session}
+        )
         serializer.is_valid(raise_exception=True)
         tx = self.perform_create_transaction(serializer)
         self.perform_update_session_tx(serializer, tx)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def perform_confirmation(self, serializer, checkout_session):
+    def perform_confirmation(self, serializer):
         """
         perform_confirmation method.
         user for creating tickets and send email
         """
-        serializer.confirmation(checkout_session)
+        serializer.confirmation()
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):
@@ -340,5 +342,5 @@ class CheckoutSessionView(
         """
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        self.perform_confirmation(serializer, instance)
+        self.perform_confirmation(serializer)
         return Response(serializer.data)

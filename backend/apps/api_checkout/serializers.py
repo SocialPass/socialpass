@@ -311,7 +311,6 @@ class TransactionCreateSerializer(serializers.Serializer):
     Transaction serializer
     """
 
-    tx_type = serializers.ChoiceField(CheckoutSession.TransactionType, write_only=True)
     created = serializers.DateTimeField(read_only=True)
     modified = serializers.DateTimeField(read_only=True)
     public_id = serializers.UUIDField(read_only=True)
@@ -320,26 +319,33 @@ class TransactionCreateSerializer(serializers.Serializer):
         """
         create and return a new transaction based on the tx_type requested
         """
-        match validated_data["tx_type"]:
-            case "FIAT":
+        checkout_session = self.context["checkout_session"]
+        tx_types = CheckoutSession.TransactionType
+
+        match checkout_session.tx_type:
+            case tx_types.FIAT:
                 return TxFiat.objects.create()
-            case "BLOCKCHAIN":
+            case tx_types.BLOCKCHAIN:
                 return TxBlockchain.objects.create()
-            case "ASSET_OWNERSHIP":
+            case tx_types.ASSET_OWNERSHIP:
                 return TxAssetOwnership.objects.create()
 
-    def update_session_tx(self, checkout_session, tx):
+    def update_session_tx(self, tx):
         """
         update a checkout_session with a transaction
         """
-        match self.validated_data["tx_type"]:
-            case "FIAT":
+        checkout_session = self.context["checkout_session"]
+        tx_types = CheckoutSession.TransactionType
+
+        match checkout_session.tx_type:
+            case tx_types.FIAT:
                 checkout_session.tx_fiat = tx
-            case "BLOCKCHAIN":
+            case tx_types.BLOCKCHAIN:
                 checkout_session.tx_blockchain = tx
-            case "ASSET_OWNERSHIP":
+            case tx_types.ASSET_OWNERSHIP:
                 checkout_session.tx_asset_ownership = tx
         # change tx_status to COMPLETED here?
+        # checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
 
 
@@ -362,13 +368,15 @@ class ConfirmationSerializer(serializers.ModelSerializer):
         model = CheckoutSession
         fields = ["tx_status", "tickets_summary"]
 
-    def confirmation(self, checkout_session: CheckoutSession):
+    def confirmation(self):
         """
         - perform the confirmation
         - case tx_status == "COMPLETED" create tickets
             update checkout_session.tx_status to FULFILLED
         return tx_status
         """
+        checkout_session = self.instance
+
         match checkout_session.tx_status:
             case CheckoutSession.OrderStatus.COMPLETED:
                 checkout_session.create_items_tickets()

@@ -401,6 +401,10 @@ class Event(DBModel):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
 
     @property
+    def scanner_url(self):
+        return TicketRedemptionKey.objects.filter(event=self)[0].scanner_url
+
+    @property
     def has_ended(self):
         if self.end_date:
             return date.today() > self.end_date.date()

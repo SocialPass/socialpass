@@ -128,9 +128,9 @@
 													The following is the link to the scanner for this event.
 												</p>
 												<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
-													<a href="#" class="fw-bold antialiased text-decoration-none" target="_blank">
+													<a href="{{ event.scanner_url }}" class="fw-bold antialiased" target="_blank">
 														<i class="fa-regular fa-external-link"></i>
-														<span class="scanner-link ms-5">https://socialpass.io/scanner/2983190371296313912321789312837/</span>
+														<span class="scanner-link ms-5">{{ event.scanner_url }}</span>
 													</a>
 												</div>
 												<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">

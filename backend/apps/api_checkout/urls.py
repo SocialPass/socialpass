@@ -47,7 +47,7 @@ urlpatterns = [
         name="session_transaction",
     ),
     path(
-        "session/<uuid:checkoutsession_public_id>/confirmation/",
+        "session/<uuid:checkoutsession_public_id>/confirmation",
         views.CheckoutSessionView.as_view({"get": "confirmation"}),
         name="session_confirmation",
     ),

@@ -335,6 +335,9 @@ class CheckoutSessionView(
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):
+        """
+        get tx_type and perform confirmation
+        """
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         self.perform_confirmation(serializer, instance)

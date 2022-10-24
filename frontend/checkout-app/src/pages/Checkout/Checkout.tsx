@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
+import { useConnect, useAccount, useSignMessage, useDisconnect } from 'wagmi'
 
 import FiatCheckoutOption from './CheckoutOptions/Fiat'
 import CrypotCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
@@ -13,10 +14,17 @@ import useCheckout from '@/hooks/useCheckout'
 export default function Home() {
   const navigate = useNavigate()
 
+  const connectHook = useConnect()
+  const disconnectHook = useDisconnect()
+  const accountHook = useAccount()
+  const signHook = useSignMessage()
+
   const { checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
   const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
+
+  const [selectedWallet, setSelectedWalwlet] = useState<any>()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
@@ -67,7 +75,7 @@ export default function Home() {
             ) : checkout?.tx_type === 'BLOCKCHAIN' ? (
               <CrypotCurrencyCheckoutOption />
             ) : checkout?.tx_type === 'ASSET_OWNERSHIP' ? (
-              <AssetOwnershipCheckoutOption />
+              <AssetOwnershipCheckoutOption connectors={connectHook.connectors} />
             ) : null}
           </div>
         </div>

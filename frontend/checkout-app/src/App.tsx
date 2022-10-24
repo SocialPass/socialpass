@@ -1,5 +1,5 @@
 import { WagmiConfig } from 'wagmi'
-import { Web3Provider } from './contexts/Web3Provider'
+import { client } from './services/wagmi'
 
 import { EventProvider } from './contexts/EventContext'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -9,7 +9,7 @@ import Router from './routes'
 
 export default function App() {
   return (
-    <WagmiConfig client={Web3Provider}>
+    <WagmiConfig client={client}>
       <EventProvider>
         <ThemeProvider>
           <CheckoutProvider>

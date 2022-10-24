@@ -206,7 +206,7 @@
 	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
 		<div>
 			{% if page_obj.has_previous %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
+				<a class="btn btn-sm text-base" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
 					<strong class="antialiased">Prev</strong>
 				</a>
 			{% else %}
@@ -220,7 +220,7 @@
 		</div>
 		<div class="ms-auto">
 			{% if page_obj.has_next %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
+				<a class="btn btn-sm text-base" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
 					<strong class="antialiased">Next</strong>
 				</a>
 			{% else %}

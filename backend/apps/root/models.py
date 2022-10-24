@@ -61,7 +61,11 @@ class Team(DBModel):
     # basic info
     name = models.CharField(max_length=255, blank=False)
     image = models.ImageField(
-        height_field=None, width_field=None, max_length=255, blank=True, null=True
+        blank=True,
+        null=True,
+        height_field=None,
+        width_field=None,
+        upload_to="team__image",
     )
     description = models.TextField(blank=True, default="")
     theme = models.JSONField(blank=True, null=True)
@@ -277,7 +281,10 @@ class Event(DBModel):
         default="",
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event.", blank=False, null=False
+        help_text="A banner image for your event.",
+        blank=False,
+        null=False,
+        upload_to="event__cover_image",
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",

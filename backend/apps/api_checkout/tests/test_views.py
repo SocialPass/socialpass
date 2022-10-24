@@ -830,7 +830,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response_json["tx_status"], CheckoutSession.OrderStatus.FULFILLED
         )
-        ## test if the tickets related to the checkout_session was created
+        # test if the tickets related to the checkout_session was created
         ticket_qs = Ticket.objects.filter(
             checkout_item__checkout_session=self.checkout_session
         )
@@ -840,7 +840,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertTrue(ticket_qs)
         self.assertEqual(ticket_qs.count(), items_quantity_sum)
 
-        ## assert tickets_summary
+        # assert tickets_summary
         self.assertEqual(
             response_json["tickets_summary"]["general_admission"]["quantity"],
             items_quantity_sum,

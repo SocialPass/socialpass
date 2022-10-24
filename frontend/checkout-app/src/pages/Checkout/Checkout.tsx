@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
 import { useConnect, useAccount, useSignMessage } from 'wagmi'
@@ -33,7 +33,7 @@ export default function Home() {
     pay({
       wallet_address: accountHook.address,
       signed_message: signHook.data,
-    }).then((response: any) => {
+    }).then(() => {
       navigate('success')
     })
   }

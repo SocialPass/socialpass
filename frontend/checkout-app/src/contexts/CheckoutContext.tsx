@@ -114,7 +114,7 @@ export const CheckoutProvider = ({ children }: any) => {
     })
 
   const pay = () =>
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
       resolve(null)
     })
 

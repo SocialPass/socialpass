@@ -343,18 +343,29 @@ class TransactionCreateSerializer(serializers.Serializer):
         checkout_session.save()
 
 
-class ConfirmationSerializer(serializers.Serializer):
+class ConfirmationSerializer(serializers.ModelSerializer):
     """
     Confirmation serializer
     """
 
-    tx_status = serializers.CharField()
     tickets_summary = serializers.SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # tickets_summary only available if OrderStatus.COMPLETED
+        checkout_session = kwargs["context"]["view"].get_object()
+        if not checkout_session.tx_status == CheckoutSession.OrderStatus.COMPLETED:
+            del self.fields["tickets_summary"]
+
+    class Meta:
+        model = CheckoutSession
+        fields = ["tx_status", "tickets_summary"]
 
     def confirmation(self, checkout_session: CheckoutSession):
         """
         - perform the confirmation
-        - case tx_status == "CONFIRMED" create ticket
+        - case tx_status == "CONFIRMED" create tickets
             update checkout_session.tx_status to FULFILLED
         return tx_status
         """
@@ -369,10 +380,15 @@ class ConfirmationSerializer(serializers.Serializer):
                 return checkout_session.tx_status
 
     def get_tickets_summary(self, obj):
-        # just accepting general admission tickets by now
+        """
+        returns tickets_summary for general and deluxe admission
+        """
         return {
-            "general_admission": Ticket.objects.filter(
-                checkout_item__checkout_session=obj
-            ).count(),
-            "deluxe_admission": None,
+            "general_admission": {
+                "quantity": Ticket.objects.filter(
+                    checkout_item__checkout_session=obj
+                ).count(),
+                "price": None,
+            },
+            "deluxe_admission": {"quantity": None, "price": None},
         }

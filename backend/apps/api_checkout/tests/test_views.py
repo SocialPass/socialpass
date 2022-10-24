@@ -1,6 +1,7 @@
 from typing import Optional
 from uuid import UUID, uuid4
 
+from django.db.models import Sum
 from django.utils import timezone
 from factory.faker import faker
 from rest_framework import serializers, status
@@ -9,6 +10,7 @@ from rest_framework.fields import empty
 from apps.root.models import (
     CheckoutItem,
     CheckoutSession,
+    Ticket,
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
@@ -778,6 +780,10 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
     @prevent_warnings
     def test_confirmation_processing_200_ok(self):
+        """
+        test return PROCESSING status and not returning tickets_summary
+        """
+
         self.checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         self.checkout_session.save()
         response = self.client.get(
@@ -787,9 +793,15 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.PROCESSING
         )
+        with self.assertRaises(KeyError):
+            response.json()["tickets_summary"]
 
     @prevent_warnings
     def test_confirmation_failed_200_ok(self):
+        """
+        test return FAILED status and not returning tickets_summary
+        """
+
         self.checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
         self.checkout_session.save()
         response = self.client.get(
@@ -799,9 +811,15 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.FAILED
         )
+        with self.assertRaises(KeyError):
+            response.json()["tickets_summary"]
 
     @prevent_warnings
     def test_confirmation_fulfilled_200_ok(self):
+        """
+        test return FULFILLED status and not returning tickets_summary
+        """
+
         self.checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.checkout_session.save()
         response = self.client.get(
@@ -811,7 +829,57 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.FULFILLED
         )
+        with self.assertRaises(KeyError):
+            response.json()["tickets_summary"]
 
     @prevent_warnings
     def test_confirmation_completed_200_ok(self):
-        ...
+        """
+        test changing tx_status CONFIRMED to FULFILLED
+        and assert tickets_summary values
+        """
+        # delete all tickets related to the test checkout_session
+        Ticket.objects.filter(
+            checkout_item__checkout_session=self.checkout_session
+        ).delete()
+        # test if there is no tickets related to the checkout_session
+        ticket_qs = Ticket.objects.filter(
+            checkout_item__checkout_session=self.checkout_session
+        )
+        self.assertFalse(ticket_qs)
+
+        # change the tx_status to completed and poll confirmation endpoint
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_json = response.json()
+        self.assertEqual(
+            response_json["tx_status"], CheckoutSession.OrderStatus.FULFILLED
+        )
+        ## test if the tickets related to the checkout_session was created
+        ticket_qs = Ticket.objects.filter(
+            checkout_item__checkout_session=self.checkout_session
+        )
+        items_quantity_sum = CheckoutItem.objects.filter(
+            checkout_session=self.checkout_session
+        ).aggregate(sum=Sum("quantity"))["sum"]
+        self.assertTrue(ticket_qs)
+        self.assertEqual(ticket_qs.count(), items_quantity_sum)
+
+        ## assert tickets_summary
+        self.assertEqual(
+            response_json["tickets_summary"]["general_admission"]["quantity"],
+            items_quantity_sum,
+        )
+        self.assertEqual(
+            response_json["tickets_summary"]["general_admission"]["price"], None
+        )
+        self.assertEqual(
+            response_json["tickets_summary"]["deluxe_admission"]["quantity"], None
+        )
+        self.assertEqual(
+            response_json["tickets_summary"]["deluxe_admission"]["price"], None
+        )

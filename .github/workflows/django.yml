@@ -63,4 +63,4 @@ jobs:
         set -o allexport
         source backend/.envs/.env.test
         set +o allexport
-        cd backend && python manage.py test
+        cd backend && python manage.py test --settings=config.settings.test

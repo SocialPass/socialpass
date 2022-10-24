@@ -28,7 +28,7 @@ superuser: ## Create backend superuser
 	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)
 
 test: ## Test backend repo
-	(source backend/venv/bin/activate; cd backend; ./manage.py test)
+	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test)
 
 turtle: ## backend shell plus
 	(source backend/venv/bin/activate; cd backend; ./manage.py shell_plus)
@@ -61,7 +61,7 @@ docker-superuser: ## Create backend superuser
 	docker-compose run web python backend/manage.py createsuperuser
 
 docker-test: ## Test backend repo
-	docker-compose run web python backend/manage.py test
+	docker-compose run web python backend/manage.py test --settings=config.settings.test
 
 docker-turtle: ## backend shell plus
 	docker-compose run web python backend/manage.py shell_plus

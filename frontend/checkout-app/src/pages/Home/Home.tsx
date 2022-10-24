@@ -133,13 +133,17 @@ export default function Home() {
     })
   }
 
+  const isNewCheckout = () => !checkout?.public_id
+
   useEffect(() => {
-    if (getFiatTicketTiers().length) {
-      setCheckout({ ...checkout, tx_type: 'FIAT' })
-    } else if (getCryptocurrencyTicketTiers().length) {
-      setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
-    } else if (getAssetOwnershipTicketTiers().length) {
-      setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
+    if (!checkout?.public_id) {
+      if (getFiatTicketTiers().length) {
+        setCheckout({ ...checkout, tx_type: 'FIAT' })
+      } else if (getCryptocurrencyTicketTiers().length) {
+        setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
+      } else if (getAssetOwnershipTicketTiers().length) {
+        setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
+      }
     }
   }, [ticketTiers])
 
@@ -234,7 +238,7 @@ export default function Home() {
               <div
                 className={'ticket-tier'}
                 onClick={() => {
-                  if (getFiatTicketTiers().length) {
+                  if (getFiatTicketTiers().length && isNewCheckout()) {
                     setCheckout({ ...checkout, tx_type: 'FIAT' })
                     setCheckoutItems([])
                   }
@@ -243,7 +247,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getFiatTicketTiers().length}
+                  disabled={!getFiatTicketTiers().length || !isNewCheckout()}
                   checked={checkout?.tx_type === 'FIAT'}
                   readOnly
                 />
@@ -262,7 +266,7 @@ export default function Home() {
               <div
                 className={'ticket-tier'}
                 onClick={() => {
-                  if (getCryptocurrencyTicketTiers().length) {
+                  if (getCryptocurrencyTicketTiers().length && isNewCheckout()) {
                     setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
                     setCheckoutItems([])
                   }
@@ -271,7 +275,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getCryptocurrencyTicketTiers().length}
+                  disabled={!getCryptocurrencyTicketTiers().length || !isNewCheckout()}
                   checked={checkout?.tx_type === 'BLOCKCHAIN'}
                   readOnly
                 />
@@ -290,7 +294,7 @@ export default function Home() {
               <div
                 className={'ticket-tier'}
                 onClick={() => {
-                  if (getAssetOwnershipTicketTiers().length) {
+                  if (getAssetOwnershipTicketTiers().length && isNewCheckout()) {
                     setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
                     setCheckoutItems([])
                   }
@@ -299,7 +303,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getAssetOwnershipTicketTiers().length}
+                  disabled={!getAssetOwnershipTicketTiers().length || !isNewCheckout()}
                   checked={checkout?.tx_type === 'ASSET_OWNERSHIP'}
                   readOnly
                 />

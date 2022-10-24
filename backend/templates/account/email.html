@@ -23,7 +23,7 @@
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
 	<!-- Card header start -->
 	<div class="px-card py-10 border-bottom">
-		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
 			Email Manager
 		</span>
 	</div>
@@ -74,13 +74,15 @@
 							</div>
 						{% endfor %}
 						<div class="form-group text-end mt-10">
-					        <button class="btn btn-sm mt-5" type="submit" name="action_primary">
-					        	<i class="fa-regular fa-check me-5"></i> Make Primary
+					        <button class="btn btn-sm mt-5 text-base" type="submit" name="action_primary">
+					        	<i class="fa-regular fa-check me-5"></i>
+					        	<strong class="antialiased">Make Primary</strong>
 					        </button>
-					        <button class="btn btn-sm mt-5" type="submit" name="action_send">
-					        	<i class="fa-regular fa-paper-plane me-5"></i> Verification
+					        <button class="btn btn-sm mt-5 text-base" type="submit" name="action_send">
+					        	<i class="fa-regular fa-paper-plane me-5"></i>
+					        	<strong class="antialiased">Verification</strong>
 					        </button>
-					        <button class="btn btn-sm text-danger fw-bold mt-5" type="submit" name="action_remove" >
+					        <button class="btn btn-sm btn-danger mt-5" type="submit" name="action_remove" >
 					        	<i class="fa-regular fa-times me-5"></i> Remove
 					        </button>
 					    </div>

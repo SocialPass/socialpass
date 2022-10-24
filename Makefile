@@ -1,44 +1,70 @@
 SHELL := /bin/bash
 
-# python (backend x fastapi)
+#
+# VENV COMMANDS
+#
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-test: ## Test backend repo (backend/venv)
-	(source backend/venv/bin/activate; cd backend && python manage.py test --failfast)
-
-lint: ## Lint backend repo (backend/venv)
+lint: ## Lint backend repo
 	(source backend/venv/bin/activate; cd backend; black .; isort .; flake8 .; mypy .;)
 
-maction: ## Test github actions (requires `act` to be installed, also has flag for M1)
-	act pull_request --container-architecture linux/amd64
+collect: ## collectstatic backend
+	(source backend/venv/bin/activate; cd backend; ./manage.py collectstatic --no-input)
 
-nukedocker: ## BEWARE. THIS WILL DESTROY ALL DOCKER IMAGES AND CONTAINERS ON HOST MACHINE (unix only)
-	docker rmi -f $(docker images -aq) && docker rm -vf $(docker ps -aq)
+migration: ## Create backend migrations
+	(source backend/venv/bin/activate; cd backend; ./manage.py makemigrations)
 
-build: ## docker build (docker)
+migrate: ## Migrate backend migrations
+	(source backend/venv/bin/activate; cd backend; ./manage.py migrate)
+
+populate: ## Populate DB
+	(source backend/venv/bin/activate; cd backend; ./manage.py populate_db)
+
+run: ## Create backend superuser
+	(source backend/venv/bin/activate; cd backend; ./manage.py runserver)
+
+superuser: ## Create backend superuser
+	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)
+
+test: ## Test backend repo
+	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test)
+
+turtle: ## backend shell plus
+	(source backend/venv/bin/activate; cd backend; ./manage.py shell_plus)
+
+#
+# DOCKER COMMANDS
+#
+docker-build: ## docker build
 	docker-compose build
 
-cleanbuild: ## docker build (docker)
+docker-clean: ## docker build
 	docker-compose build --no-cache
 
-up: ## docker up (docker)
-	docker-compose up
-
-collect: ## collectstatic backend (docker)
+docker-collect: ## collectstatic backend
 	docker-compose run web python backend/manage.py collectstatic --no-input
 
-migration: ## Create backend migrations (docker)
+docker-migration: ## Create backend migrations
 	docker-compose run web python backend/manage.py makemigrations
 
-migrate: ## Migrate backend migrations (docker)
+docker-migrate: ## Migrate backend migrations
 	docker-compose run web python backend/manage.py migrate
 
-superuser: ## Create backend superuser (docker)
+docker-nuke: ## BEWARE. THIS WILL DESTROY ALL DOCKER IMAGES AND CONTAINERS ON HOST MACHINE
+	docker rmi -f $(docker images -aq) && docker rm -vf $(docker ps -aq)
+
+docker-populate: ## Populate DB
+	docker-compose run web python backend/manage.py populate_db
+
+docker-superuser: ## Create backend superuser
 	docker-compose run web python backend/manage.py createsuperuser
 
-turtle: ## backend shell plus (docker)
+docker-test: ## Test backend repo
+	docker-compose run web python backend/manage.py test --settings=config.settings.test
+
+docker-turtle: ## backend shell plus
 	docker-compose run web python backend/manage.py shell_plus
 
-prepopulate:
-	docker-compose run web python backend/manage.py populate_db
+docker-up: ## docker up
+	docker-compose up

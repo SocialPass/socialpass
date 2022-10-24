@@ -787,7 +787,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         self.checkout_session.save()
         response = self.client.get(
-            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -805,7 +805,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
         self.checkout_session.save()
         response = self.client.get(
-            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -823,7 +823,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.checkout_session.save()
         response = self.client.get(
-            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -852,7 +852,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         self.checkout_session.save()
         response = self.client.get(
-            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_json = response.json()

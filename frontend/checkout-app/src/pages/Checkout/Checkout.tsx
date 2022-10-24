@@ -27,13 +27,31 @@ export default function Home() {
     navigate(`/${event.public_id}`)
   }
 
+  const getPaymentData = () => {
+    switch (checkout?.tx_type) {
+      case 'FIAT':
+        return {}
+
+      case 'BLOCKCHAIN':
+        return {}
+
+      case 'ASSET_OWNERSHIP':
+        return {
+          wallet_address: accountHook.address,
+          signed_message: signHook.data,
+        }
+
+      default:
+        break
+    }
+  }
+
   const handleContinueClick = (e) => {
     e.preventDefault()
 
-    pay({
-      wallet_address: accountHook.address,
-      signed_message: signHook.data,
-    }).then(() => {
+    const paymentData = getPaymentData()
+
+    pay(paymentData).then(() => {
       navigate('success')
     })
   }

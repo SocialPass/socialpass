@@ -113,9 +113,11 @@ export const CheckoutProvider = ({ children }: any) => {
       }
     })
 
-  const pay = () =>
+  const pay = (data) =>
     new Promise((resolve) => {
-      resolve(null)
+      CheckoutApi.pay(checkout?.public_id, data).then((response) => {
+        resolve(response)
+      })
     })
 
   return (

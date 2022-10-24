@@ -2,6 +2,7 @@ export type Checkout = {
   public_id: string
   name: string
   email: string
+  tx_type: string
 }
 
 type GetCheckout = (checkoutPublicId: string) => Promise<Event | unknown>

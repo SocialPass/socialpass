@@ -200,6 +200,8 @@ class CheckoutSessionView(
                 return serializers.CheckoutSessionUpdateSerializer
             case "transaction":
                 return serializers.TransactionCreateSerializer
+            case "confirmation":
+                return serializers.ConfirmationSerializer
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
@@ -322,6 +324,18 @@ class CheckoutSessionView(
         tx = self.perform_create_transaction(serializer)
         self.perform_update_session_tx(serializer, tx)
         headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_confirmation(self, serializer, checkout_session):
+        """
+        perform_confirmation method.
+        user for creating tickets and send email
+        """
+        serializer.confirmation(checkout_session)
+
+    @action(methods=["get"], detail=True)
+    def confirmation(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        self.perform_confirmation(serializer, instance)
+        return Response(serializer.data)

@@ -117,7 +117,7 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
     CheckoutItem model read serializer
     """
 
-    ticket_tier = TicketTierSerializer()
+    ticket_tier = TicketTierReadSerializer()
     checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
     class Meta:
@@ -339,4 +339,40 @@ class TransactionCreateSerializer(serializers.Serializer):
                 checkout_session.tx_blockchain = tx
             case "ASSET_OWNERSHIP":
                 checkout_session.tx_asset_ownership = tx
+        # change here to CONFIRMED?
         checkout_session.save()
+
+
+class ConfirmationSerializer(serializers.Serializer):
+    """
+    Confirmation serializer
+    """
+
+    tx_status = serializers.CharField()
+    tickets_summary = serializers.SerializerMethodField()
+
+    def confirmation(self, checkout_session: CheckoutSession):
+        """
+        - perform the confirmation
+        - case tx_status == "CONFIRMED" create ticket
+            update checkout_session.tx_status to FULFILLED
+        return tx_status
+        """
+        match checkout_session.tx_status:
+            case CheckoutSession.OrderStatus.COMPLETED:
+                checkout_session.create_items_tickets()
+                # TODO: `checkout_session.send_tickets_to_email()` method
+                checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
+                checkout_session.save()
+                return checkout_session.tx_status
+            case _:
+                return checkout_session.tx_status
+
+    def get_tickets_summary(self, obj):
+        # just accepting general admission tickets by now
+        return {
+            "general_admission": Ticket.objects.filter(
+                checkout_item__checkout_session=obj
+            ).count(),
+            "deluxe_admission": None,
+        }

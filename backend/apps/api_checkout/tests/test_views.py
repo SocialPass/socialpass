@@ -447,9 +447,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         # assert objects values with json returned
         session_dict = response.json()
-        self.assertEqual(
-            session_dict["public_id"], str(self.checkout_session.public_id)
-        )
+        self.assertEqual(session_dict["public_id"], str(self.checkout_session.public_id))
         self.assertEqual(session_dict["name"], self.checkout_session.name)
         self.assertSerializedDatetime(
             session_dict["expiration"], self.checkout_session.expiration
@@ -777,3 +775,43 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         tx_fiat = TxFiat.objects.all()
         self.assertFalse(tx_fiat)
+
+    @prevent_warnings
+    def test_confirmation_processing_200_ok(self):
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json()["tx_status"], CheckoutSession.OrderStatus.PROCESSING
+        )
+
+    @prevent_warnings
+    def test_confirmation_failed_200_ok(self):
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json()["tx_status"], CheckoutSession.OrderStatus.FAILED
+        )
+
+    @prevent_warnings
+    def test_confirmation_fulfilled_200_ok(self):
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation/"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json()["tx_status"], CheckoutSession.OrderStatus.FULFILLED
+        )
+
+    @prevent_warnings
+    def test_confirmation_completed_200_ok(self):
+        ...

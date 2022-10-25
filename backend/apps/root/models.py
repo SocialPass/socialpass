@@ -320,9 +320,7 @@ class Event(DBModel):
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
-    localized_address_display = models.CharField(
-        max_length=1024, blank=True, default=""
-    )
+    localized_address_display = models.CharField(max_length=1024, blank=True, default="")
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -402,7 +400,7 @@ class Event(DBModel):
 
     @property
     def scanner_url(self):
-        return TicketRedemptionKey.objects.filter(event=self)[0].scanner_url
+        return TicketRedemptionKey.objects.filter(event=self).first().scanner_url
 
     @property
     def has_ended(self):

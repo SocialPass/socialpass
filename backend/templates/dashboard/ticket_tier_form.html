@@ -35,7 +35,7 @@
 				<div class="alert alert-primary d-flex align-items-center mb-30" role="alert">
 					<i class="fa-regular fa-info-circle me-10"></i>
 					<span>
-						You're <strong>creating a ticket tier</strong> for <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="alert-link">{{ event.title }}</a>.
+						You're <strong>creating a ticket tier</strong> for <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="alert-link">{{ event.title }}</a>. Your event must have at least one ticket tier before going live.
 					</span>
 				</div>
 

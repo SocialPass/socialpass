@@ -397,10 +397,13 @@
 {% if current_team %}
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 	<script type="text/javascript">
-		var currentTeamTheme = JSON.parse(
-			document.getElementById("current_team_theme").value.replace(/'/g, '"')
-		);
-		Cookies.set("whiteLabelTheme", JSON.stringify(currentTeamTheme));
+		var currentTeamThemeValue = document.getElementById("current_team_theme").value;
+		if (currentTeamThemeValue !== "None") {
+			var currentTeamTheme = JSON.parse(currentTeamThemeValue.replace(/'/g, '"'));
+			Cookies.set("whiteLabelTheme", JSON.stringify(currentTeamTheme));
+		} else {
+			Cookies.remove("whiteLabelTheme");
+		}
 	</script>
 {% endif %}
 {% endblock body %}

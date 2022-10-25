@@ -488,7 +488,7 @@ class Ticket(DBModel):
             raise ForeignKeyConstraintError(
                 {
                     "checkout_session": _(
-                        "checkout_session related to ticket and checkout_item are different"
+                        "checkout_session related to ticket and checkout_item are different"  # noqa
                     )
                 }
             )

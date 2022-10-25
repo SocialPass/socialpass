@@ -21,10 +21,12 @@ export default function Home() {
   const { checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
-  const { checkout, getCheckout, getCheckoutItems, pay }: any = useCheckout()
+  const { checkout, getCheckout, getCheckoutItems, setCheckout, setCheckoutItems, pay }: any = useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
+    setCheckout(null)
+    setCheckoutItems([])
   }
 
   const getPaymentData = () => {
@@ -37,6 +39,7 @@ export default function Home() {
 
       case 'ASSET_OWNERSHIP':
         return {
+          tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
           signed_message: signHook.data,
         }
@@ -107,7 +110,7 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
-          <Summary onContinueClick={handleContinueClick} />
+          <Summary onContinueClick={handleContinueClick} enableContinue={!!accountHook?.address} />
         </div>
       </div>
     </>

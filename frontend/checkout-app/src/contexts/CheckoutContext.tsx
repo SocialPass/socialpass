@@ -116,7 +116,13 @@ export const CheckoutProvider = ({ children }: any) => {
   const pay = (data) =>
     new Promise((resolve) => {
       CheckoutApi.pay(checkout?.public_id, data).then((response) => {
-        resolve(response)
+        setCheckout({
+          ...checkout,
+          tx_status: 'PROCESSING',
+          [getTxType(checkout?.tx_type)]: response.data,
+        })
+
+        resolve(response.data)
       })
     })
 

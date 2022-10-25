@@ -6,7 +6,7 @@ import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
 export default function Summary(props) {
-  const { onContinueClick } = props
+  const { onContinueClick, enableContinue } = props
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
@@ -81,6 +81,7 @@ export default function Summary(props) {
           onClick={(e) => {
             onContinueClick(e)
           }}
+          disabled={!enableContinue}
         >
           <strong className='antialiased'>Continue</strong>
         </button>
@@ -104,4 +105,5 @@ export default function Summary(props) {
 
 Summary.propTypes = {
   onContinueClick: PropTypes.func.isRequired,
+  enableContinue: PropTypes.bool.isRequired,
 }

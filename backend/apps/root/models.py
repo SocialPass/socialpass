@@ -16,6 +16,7 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from model_utils.models import TimeStampedModel
+from sentry_sdk import capture_exception
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
@@ -358,6 +359,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
+            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     def transition_live(self, save=True):
@@ -372,6 +374,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
+            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     @transition(field=state, target=StateStatus.DRAFT)
@@ -471,13 +474,15 @@ class Ticket(DBModel):
         if (self.ticket_tier.event != self.event) or (
             self.checkout_session.event != self.event
         ):
-            raise ForeignKeyConstraintError(
+            e = ForeignKeyConstraintError(
                 {
                     "event": _(
                         "event related to checkout_session and ticket_tier are different"
                     )
                 }
             )
+            capture_exception(e)
+            raise e
 
     def clean_checkout_session(self, *args, **kwargs):
         """
@@ -485,13 +490,15 @@ class Ticket(DBModel):
         check if checkout_item.checkout_session == checkout_session
         """
         if self.checkout_item.checkout_session != self.checkout_session:
-            raise ForeignKeyConstraintError(
+            e = ForeignKeyConstraintError(
                 {
                     "checkout_session": _(
                         "checkout_session related to ticket and checkout_item are different"  # noqa
                     )
                 }
             )
+            capture_exception(e)
+            raise e
 
     def clean(self, *args, **kwargs):
         """
@@ -890,13 +897,15 @@ class CheckoutItem(DBModel):
         check if ticket_tier.event == checkout_session.event
         """
         if self.ticket_tier.event != self.checkout_session.event:
-            raise ForeignKeyConstraintError(
+            e = ForeignKeyConstraintError(
                 {
                     "event": _(
                         "event related to checkout_session and ticket_tier are different"
                     )
                 }
             )
+            capture_exception(e)
+            raise e
 
     def clean(self, *args, **kwargs):
         """

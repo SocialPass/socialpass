@@ -21,7 +21,12 @@ class TeamReadSerializer(serializers.ModelSerializer):
     Team serializer
     """
 
+    class Meta:
+        model = Team
+        fields = ["name", "image", "theme"]
+
     image = serializers.SerializerMethodField()
+    theme = serializers.SerializerMethodField()
 
     def get_image(self, obj):
         request = self.context.get("request")
@@ -30,8 +35,6 @@ class TeamReadSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(image_url)
         else:
             return None
-
-    theme = serializers.SerializerMethodField()
 
     def get_theme(self, obj):
         request = self.context.get("request")
@@ -55,19 +58,11 @@ class TeamReadSerializer(serializers.ModelSerializer):
 
         return theme
 
-    class Meta:
-        model = Team
-        fields = ["name", "image", "theme"]
-
 
 class EventReadSerializer(serializers.ModelSerializer):
     """
     Event serializer
     """
-
-    ticket_count = serializers.SerializerMethodField()
-    start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
-    team = TeamReadSerializer()
 
     class Meta:
         model = Event
@@ -83,6 +78,10 @@ class EventReadSerializer(serializers.ModelSerializer):
             "cover_image",
         ]
 
+    ticket_count = serializers.SerializerMethodField()
+    start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
+    team = TeamReadSerializer()
+
     def get_ticket_count(self, obj):
         # TODO: should change to ticket_tier quantity_sold sum
         return Ticket.objects.filter(event=obj).count()
@@ -92,8 +91,6 @@ class TicketTierReadSerializer(serializers.ModelSerializer):
     """
     TicketTier model serializer
     """
-
-    event_public_id = serializers.UUIDField(source="event.public_id")
 
     class Meta:
         model = TicketTier
@@ -111,14 +108,13 @@ class TicketTierReadSerializer(serializers.ModelSerializer):
             "quantity_sold",
         ]
 
+    event_public_id = serializers.UUIDField(source="event.public_id")
+
 
 class CheckoutItemReadSerializer(serializers.ModelSerializer):
     """
     CheckoutItem model read serializer
     """
-
-    ticket_tier = TicketTierReadSerializer()
-    checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
     class Meta:
         model = CheckoutItem
@@ -130,6 +126,9 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
             "ticket_tier",
             "checkout_session",
         ]
+
+    ticket_tier = TicketTierReadSerializer()
+    checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
 
 class CheckoutItemCreateSerializer(serializers.ModelSerializer):
@@ -137,9 +136,6 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
     CheckoutItem model create serializer
     """
 
-    ticket_tier = serializers.UUIDField(write_only=True)
-    checkout_session = serializers.UUIDField(write_only=True)
-
     class Meta:
         model = CheckoutItem
         fields = [
@@ -155,6 +151,9 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
             "modified",
             "public_id",
         ]
+
+    ticket_tier = serializers.UUIDField(write_only=True)
+    checkout_session = serializers.UUIDField(write_only=True)
 
 
 class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
@@ -162,11 +161,6 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
     CheckoutItems model update serializer
     """
 
-    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
-    checkout_session = serializers.UUIDField(
-        source="checkout_session.public_id", read_only=True
-    )
-
     class Meta:
         model = CheckoutItem
         fields = [
@@ -185,16 +179,16 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
             "checkout_session",
         ]
 
+    ticket_tier = serializers.UUIDField(source="ticket_tier.public_id", read_only=True)
+    checkout_session = serializers.UUIDField(
+        source="checkout_session.public_id", read_only=True
+    )
+
 
 class CheckoutSessionReadSerializer(serializers.ModelSerializer):
     """
     CheckoutItems model read serializer
     """
-
-    event = serializers.UUIDField(source="event.public_id")
-    checkout_items = CheckoutItemReadSerializer(
-        source="checkoutitem_set", many=True, allow_null=True
-    )
 
     class Meta:
         model = CheckoutSession
@@ -213,13 +207,16 @@ class CheckoutSessionReadSerializer(serializers.ModelSerializer):
             "checkout_items",
         ]
 
+    event = serializers.UUIDField(source="event.public_id")
+    checkout_items = CheckoutItemReadSerializer(
+        source="checkoutitem_set", many=True, allow_null=True
+    )
+
 
 class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
     """
     CheckoutItems model create serializer
     """
-
-    ticket_tier = serializers.UUIDField(write_only=True)
 
     class Meta:
         model = CheckoutItem
@@ -231,16 +228,13 @@ class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
             "ticket_tier",
         ]
 
+    ticket_tier = serializers.UUIDField(write_only=True)
+
 
 class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
     """
     CheckoutSession model create serializer with nested CheckoutItems
     """
-
-    event = serializers.UUIDField(write_only=True)
-    checkout_items = CheckoutSessionItemsCreateSerializer(
-        source="checkoutitem_set", many=True, allow_null=True, required=False
-    )
 
     class Meta:
         model = CheckoutSession
@@ -258,6 +252,11 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
             "checkout_items",
         ]
         read_only_fields = ["created", "modified", "public_id", "cost"]
+
+    event = serializers.UUIDField(write_only=True)
+    checkout_items = CheckoutSessionItemsCreateSerializer(
+        source="checkoutitem_set", many=True, allow_null=True, required=False
+    )
 
     def create(self, validated_data):
         """
@@ -279,8 +278,6 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
     CheckoutItems model update serializer
     """
 
-    event = serializers.UUIDField(source="event.public_id", read_only=True)
-
     class Meta:
         model = CheckoutSession
         fields = [
@@ -304,6 +301,8 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
             "tx_status",
             "tx_type",
         ]
+
+    event = serializers.UUIDField(source="event.public_id", read_only=True)
 
 
 class TransactionCreateSerializer(serializers.Serializer):
@@ -356,6 +355,10 @@ class ConfirmationSerializer(serializers.ModelSerializer):
     Confirmation serializer
     """
 
+    class Meta:
+        model = CheckoutSession
+        fields = ["tx_status", "tickets_summary"]
+
     tickets_summary = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -365,10 +368,6 @@ class ConfirmationSerializer(serializers.ModelSerializer):
         checkout_session = kwargs["context"]["view"].get_object()
         if not checkout_session.tx_status == CheckoutSession.OrderStatus.COMPLETED:
             del self.fields["tickets_summary"]
-
-    class Meta:
-        model = CheckoutSession
-        fields = ["tx_status", "tickets_summary"]
 
     def confirmation(self):
         """

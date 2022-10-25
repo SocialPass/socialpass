@@ -333,6 +333,7 @@ class TransactionCreateSerializer(serializers.Serializer):
     def update_session_tx(self, tx):
         """
         update a checkout_session with a transaction
+        once updated, mark as PROCESSING
         """
         checkout_session = self.context["checkout_session"]
         tx_types = CheckoutSession.TransactionType
@@ -344,8 +345,9 @@ class TransactionCreateSerializer(serializers.Serializer):
                 checkout_session.tx_blockchain = tx
             case tx_types.ASSET_OWNERSHIP:
                 checkout_session.tx_asset_ownership = tx
-        # change tx_status to COMPLETED here?
-        # checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+
+        # change tx_status to PROCESSING here
+        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
 
 

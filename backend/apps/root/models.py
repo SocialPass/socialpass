@@ -696,11 +696,11 @@ class CheckoutSession(DBModel):
     """
 
     class OrderStatus(models.TextChoices):
-        VALID = "VALID", _("Valid")
-        PROCESSING = "PROCESSING", _("Processing")
-        FAILED = "FAILED", _("Failed")
-        COMPLETED = "COMPLETED", _("Completed")
-        FULFILLED = "FULFILLED", _("Fulfilled")
+        VALID = "VALID", _("Valid")  # Initial State, TX is valid
+        PROCESSING = "PROCESSING", _("Processing")  # TX has been created, processing...
+        FAILED = "FAILED", _("Failed")  # TX has failed
+        COMPLETED = "COMPLETED", _("Completed")  # TX has been completed, fulfill order
+        FULFILLED = "FULFILLED", _("Fulfilled")  # TX has been filled
 
     class TransactionType(models.TextChoices):
         FIAT = "FIAT", _("Fiat")

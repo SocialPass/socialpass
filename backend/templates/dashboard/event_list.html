@@ -71,7 +71,7 @@
 	<!-- Card header end -->
 
 	<!-- Main content start -->
-	{% if events.count > 0 %}
+	{% if paginator.count > 0 %}
 		<!-- Event list header start -->
 		<div class="fs-base-n2 fw-bold px-content py-10 lh-sm d-none d-sm-flex align-items-center border-bottom">
 			<div class="ws-100 me-20">Status</div>
@@ -128,10 +128,12 @@
 													The following is the link to the scanner for this event.
 												</p>
 												<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
-													<a href="{{ event.scanner_url }}" class="fw-bold antialiased" target="_blank">
+													{% with event_scanner_url=event.scanner_url %}
+													<a href="{{ event_scanner_url }}" class="fw-bold antialiased" target="_blank">
 														<i class="fa-regular fa-external-link"></i>
-														<span class="scanner-link ms-5">{{ event.scanner_url }}</span>
+														<span class="scanner-link ms-5">{{ event_scanner_url }}</span>
 													</a>
+													{% endwith %}
 												</div>
 												<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
 													<i class="fa-regular fa-link"></i>
@@ -245,7 +247,7 @@
 		// Copy code to clipboard
 		var range = document.createRange();
 		range.selectNode(linkBlock);
-		window.getSelection().removeAllRanges(); 
+		window.getSelection().removeAllRanges();
 		window.getSelection().addRange(range);
 		document.execCommand("copy");
 		window.getSelection().removeAllRanges();

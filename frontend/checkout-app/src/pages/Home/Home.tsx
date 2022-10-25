@@ -113,15 +113,17 @@ export default function Home() {
     } else if (checkout?.tx_type === 'BLOCKCHAIN') {
       return `${amount} ETH`
     }
-  // The asset_ownership modality does not have currency
+    // The asset_ownership modality does not have currency
     return 'N/A'
   }
 
   const validateEmail = () => {
-  // Checks for '@', whitespaces and TLD existence
+    // Checks for '@', whitespaces and TLD existence
     const regex = /\S+@\S+\.\S+/
     return regex.test(checkout?.email)
   }
+
+  const validateName = () => checkout?.name?.length > 0
 
   const eventHasTickets = () => ticketTiers.length
 
@@ -131,13 +133,17 @@ export default function Home() {
     })
   }
 
+  const isNewCheckout = () => !checkout?.public_id
+
   useEffect(() => {
-    if (getFiatTicketTiers().length) {
-      setCheckout({ ...checkout, tx_type: 'FIAT' })
-    } else if (getCryptocurrencyTicketTiers().length) {
-      setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
-    } else if (getAssetOwnershipTicketTiers().length) {
-      setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
+    if (!checkout?.public_id) {
+      if (getFiatTicketTiers().length) {
+        setCheckout({ ...checkout, tx_type: 'FIAT' })
+      } else if (getCryptocurrencyTicketTiers().length) {
+        setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
+      } else if (getAssetOwnershipTicketTiers().length) {
+        setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
+      }
     }
   }, [ticketTiers])
 
@@ -155,11 +161,7 @@ export default function Home() {
 
         <div className='position-absolute z-1 top-100 start-50 translate-middle px-content'>
           <div className='ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden bg-gray-very-light-lm bg-darkgray-very-dim-dm'>
-            <img
-              src={event.team.image}
-              className='d-block w-100 h-auto'
-              alt='Team image'
-            ></img>
+            <img src={event.team.image} className='d-block w-100 h-auto' alt='Team image'></img>
           </div>
         </div>
       </div>
@@ -236,7 +238,7 @@ export default function Home() {
               <div
                 className={'ticket-tier'}
                 onClick={() => {
-                  if (getFiatTicketTiers().length) {
+                  if (getFiatTicketTiers().length && isNewCheckout()) {
                     setCheckout({ ...checkout, tx_type: 'FIAT' })
                     setCheckoutItems([])
                   }
@@ -245,7 +247,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getFiatTicketTiers().length}
+                  disabled={!getFiatTicketTiers().length || !isNewCheckout()}
                   checked={checkout?.tx_type === 'FIAT'}
                   readOnly
                 />
@@ -264,7 +266,7 @@ export default function Home() {
               <div
                 className={'ticket-tier'}
                 onClick={() => {
-                  if (getCryptocurrencyTicketTiers().length) {
+                  if (getCryptocurrencyTicketTiers().length && isNewCheckout()) {
                     setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
                     setCheckoutItems([])
                   }
@@ -273,7 +275,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getCryptocurrencyTicketTiers().length}
+                  disabled={!getCryptocurrencyTicketTiers().length || !isNewCheckout()}
                   checked={checkout?.tx_type === 'BLOCKCHAIN'}
                   readOnly
                 />
@@ -292,7 +294,7 @@ export default function Home() {
               <div
                 className={'ticket-tier'}
                 onClick={() => {
-                  if (getAssetOwnershipTicketTiers().length) {
+                  if (getAssetOwnershipTicketTiers().length && isNewCheckout()) {
                     setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
                     setCheckoutItems([])
                   }
@@ -301,7 +303,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getAssetOwnershipTicketTiers().length}
+                  disabled={!getAssetOwnershipTicketTiers().length || !isNewCheckout()}
                   checked={checkout?.tx_type === 'ASSET_OWNERSHIP'}
                   readOnly
                 />
@@ -355,6 +357,14 @@ export default function Home() {
                 <form>
                   <input
                     type='text'
+                    name='name'
+                    className='form-control mb-10'
+                    placeholder='Name'
+                    value={checkout?.name}
+                    onChange={(e) => setCheckout({ ...checkout, name: e.target.value })}
+                  ></input>
+                  <input
+                    type='text'
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
@@ -364,7 +374,7 @@ export default function Home() {
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
                     // Get Tickets button is only enabled by having tickets selected and a valid e-mail input
-                    disabled={!validateEmail() || !checkoutItems.length}
+                    disabled={!validateName() || !validateEmail() || !checkoutItems.length}
                     onClick={(e) => {
                       e.preventDefault()
                       handleGetTicketsButton()

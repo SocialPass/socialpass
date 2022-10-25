@@ -23,7 +23,7 @@
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
 	<!-- Card header start -->
 	<div class="px-card py-10 border-bottom">
-		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
 			Email Manager
 		</span>
 	</div>
@@ -63,24 +63,26 @@
 									{% endif %}
 									{% if emailaddress.verified %}
 										<span class="fw-bold text-success-dim-lm text-success-light-dm">
-											<i class="fa-duotone fa-shield-alt me-5"></i> Verified
+											<i class="fa-regular fa-shield-alt me-5"></i> Verified
 										</span>
 									{% else %}
 										<span class="fw-bold text-danger-dim-lm text-danger-light-dm">
-											<i class="fa-duotone fa-times-circle me-5"></i> Unverified
+											<i class="fa-regular fa-times-circle me-5"></i> Unverified
 										</span>
 									{% endif %}
 								</div>
 							</div>
 						{% endfor %}
 						<div class="form-group text-end mt-10">
-					        <button class="btn btn-sm mt-5" type="submit" name="action_primary">
-					        	<i class="fa-regular fa-check me-5"></i> Make Primary
+					        <button class="btn btn-sm mt-5 text-base" type="submit" name="action_primary">
+					        	<i class="fa-regular fa-check me-5"></i>
+					        	<strong class="antialiased">Make Primary</strong>
 					        </button>
-					        <button class="btn btn-sm mt-5" type="submit" name="action_send">
-					        	<i class="fa-regular fa-paper-plane me-5"></i> Verification
+					        <button class="btn btn-sm mt-5 text-base" type="submit" name="action_send">
+					        	<i class="fa-regular fa-paper-plane me-5"></i>
+					        	<strong class="antialiased">Verification</strong>
 					        </button>
-					        <button class="btn btn-sm text-danger fw-bold mt-5" type="submit" name="action_remove" >
+					        <button class="btn btn-sm btn-danger mt-5" type="submit" name="action_remove" >
 					        	<i class="fa-regular fa-times me-5"></i> Remove
 					        </button>
 					    </div>
@@ -169,7 +171,7 @@
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
-		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you have any trouble with your email addresses.
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold antialiased">contact us</a> and let us know if you have any trouble with your email addresses.
 	</div>
 	<!-- Card footer end -->
 </div>

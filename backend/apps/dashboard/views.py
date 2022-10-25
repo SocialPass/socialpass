@@ -442,6 +442,20 @@ class EventGoLiveView(TeamContextMixin, DetailView):
             pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
         )
 
+    def get(self, *args, **kwargs):
+        event = self.get_object()
+        if event.tickettier_set.count() < 1:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                "Your event must have at least one ticket tier before going live."
+            )
+            return redirect(
+                "dashboard:ticket_tier_create", self.kwargs["team_public_id"], event.pk
+            )
+        else:
+            return super().get(*args, **kwargs)
+
     def post(self, *args, **kwargs):
         event = self.get_object()
         if event.state != Event.StateStatus.LIVE:

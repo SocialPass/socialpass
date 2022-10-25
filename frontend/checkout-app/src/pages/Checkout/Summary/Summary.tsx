@@ -63,6 +63,14 @@ export default function Summary() {
       <form className='mt-20'>
         <input
           type='text'
+          name='name'
+          className='form-control mb-10'
+          placeholder='Name'
+          value={checkout?.name}
+          readOnly
+        ></input>
+        <input
+          type='text'
           name='email'
           className='form-control'
           placeholder='Email Address'

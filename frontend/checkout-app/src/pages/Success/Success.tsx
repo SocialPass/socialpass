@@ -29,8 +29,8 @@ export default function Success() {
               Congratulations!
             </h1>
             <p className='mt-10'>
-              You made it! We've generated your ticket(s) for the event?. You can get them on this
-              page, or in the email we sent you at{' '}
+              You made it! We've generated your ticket(s) for the event?. You can get them in the
+              email we sent you at{' '}
               <a href={`mailto:${checkout?.email}`} className='fw-bold'>
                 {checkout?.email}
               </a>
@@ -55,7 +55,15 @@ export default function Success() {
               </tbody>
             </table>
 
-            <h6 className='fw-700 fsr-6 mt-20'>Get Tickets</h6>
+            <div
+              className='alert alert-primary mt-40 m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+              role='alert'
+            >
+              <i className='fa-regular fa-check me-15'></i>
+              <p className='m-0'>Your tickets will be sent to your email address</p>
+            </div>
+
+            {/* <h6 className='fw-700 fsr-6 mt-20'>Get Tickets</h6>
 
             <button className='btn btn-primary btn-lg btn-block px-20 py-10 text-start d-flex align-items-center my-20'>
               <div>
@@ -76,7 +84,7 @@ export default function Success() {
                 <div className='fw-700 antialiased'>Save to Apple Wallet</div>
               </div>
               <i className='fa-brands fa-apple ms-auto fs-base-p4'></i>
-            </button>
+            </button> */}
           </div>
         </div>
 

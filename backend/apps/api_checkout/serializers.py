@@ -361,14 +361,6 @@ class ConfirmationSerializer(serializers.ModelSerializer):
 
     tickets_summary = serializers.SerializerMethodField()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # tickets_summary only available if OrderStatus.COMPLETED
-        checkout_session = kwargs["context"]["view"].get_object()
-        if not checkout_session.tx_status == CheckoutSession.OrderStatus.COMPLETED:
-            del self.fields["tickets_summary"]
-
     def confirmation(self):
         """
         - perform the confirmation

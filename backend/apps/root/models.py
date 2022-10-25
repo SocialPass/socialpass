@@ -699,8 +699,8 @@ class CheckoutSession(DBModel):
         VALID = "VALID", _("Valid")
         PROCESSING = "PROCESSING", _("Processing")
         FAILED = "FAILED", _("Failed")
-        FULFILLED = "FULFILLED", _("Fulfilled")
         COMPLETED = "COMPLETED", _("Completed")
+        FULFILLED = "FULFILLED", _("Fulfilled")
 
     class TransactionType(models.TextChoices):
         FIAT = "FIAT", _("Fiat")

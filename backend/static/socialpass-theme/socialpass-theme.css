@@ -22,10 +22,6 @@
     /* Base background colors */
 
     --base-body-bg-color: var(--gray-color-very-light);
-
-    /* Border related (mostly for utilities) */
-
-    --base-border-radius: 0.2rem;
 }
 
 .dark-mode {

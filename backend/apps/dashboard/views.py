@@ -21,7 +21,7 @@ from apps.dashboard.forms import (
     TicketTierForm,
     TierAssetOwnershipForm,
 )
-from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
+from apps.root.models import Event, Invite, Membership, Team, TicketTier
 
 User = auth.get_user_model()
 

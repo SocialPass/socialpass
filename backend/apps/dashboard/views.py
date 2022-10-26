@@ -396,8 +396,11 @@ class EventTicketsView(TeamContextMixin, DetailView):
     template_name = "dashboard/event_tickets.html"
 
     def get_object(self):
-        return Event.objects.prefetch_related("tickettier_set").get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+        return (
+            Event.objects.prefetch_related("tickettier_set__tier_asset_ownership")
+            .prefetch_related("tickettier_set__tier_blockchain")
+            .prefetch_related("tickettier_set__tier_fiat")
+            .get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"])
         )
 
 

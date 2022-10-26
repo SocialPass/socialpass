@@ -278,7 +278,7 @@ class CheckoutSessionView(
     def _perform_confirmation(self, checkout_session):
         """
         _perform_confirmation method.
-        user for creating tickets and send email
+        used for creating tickets and send email
         - perform the confirmation
         - case tx_status == "COMPLETED" create tickets
             update checkout_session.tx_status to FULFILLED

@@ -298,6 +298,14 @@ class TransactionCreateSerializer(serializers.Serializer):
     public_id = serializers.UUIDField(read_only=True)
 
 
+class CheckoutItemQuantitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CheckoutItem
+        fields = [
+            "quantity",
+        ]
+
+
 class ConfirmationSerializer(serializers.ModelSerializer):
     """
     Confirmation serializer
@@ -311,14 +319,12 @@ class ConfirmationSerializer(serializers.ModelSerializer):
 
     def get_tickets_summary(self, obj):
         """
-        returns tickets_summary for general and deluxe admission
+        returns CheckoutItems quantity
         """
-        return {
-            "general_admission": {
-                "quantity": Ticket.objects.filter(
-                    checkout_item__checkout_session=obj
-                ).count(),
-                "price": None,
-            },
-            "deluxe_admission": {"quantity": None, "price": None},
-        }
+        if obj.tx_status != CheckoutSession.OrderStatus.FULFILLED:
+            return None
+
+        quantity_serializer = CheckoutItemQuantitySerializer(
+            obj.checkoutitem_set, many=True
+        )
+        return quantity_serializer.data

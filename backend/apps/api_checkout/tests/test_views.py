@@ -764,6 +764,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.PROCESSING
         )
+        self.assertIsNone(response.json()["tickets_summary"])
 
     @prevent_warnings
     def test_confirmation_failed_200_ok(self):
@@ -780,6 +781,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.FAILED
         )
+        self.assertIsNone(response.json()["tickets_summary"])
 
     @prevent_warnings
     def test_confirmation_fulfilled_200_ok(self):
@@ -833,18 +835,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         ).aggregate(sum=Sum("quantity"))["sum"]
         self.assertTrue(ticket_qs)
         self.assertEqual(ticket_qs.count(), items_quantity_sum)
-
-        # assert tickets_summary
         self.assertEqual(
-            response_json["tickets_summary"]["general_admission"]["quantity"],
-            items_quantity_sum,
-        )
-        self.assertEqual(
-            response_json["tickets_summary"]["general_admission"]["price"], None
-        )
-        self.assertEqual(
-            response_json["tickets_summary"]["deluxe_admission"]["quantity"], None
-        )
-        self.assertEqual(
-            response_json["tickets_summary"]["deluxe_admission"]["price"], None
+            response_json["tickets_summary"][0]["quantity"], items_quantity_sum
         )

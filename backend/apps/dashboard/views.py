@@ -408,11 +408,14 @@ class EventGoLiveView(TeamContextMixin, DetailView):
 
     model = Event
     template_name = "dashboard/event_go_live.html"
+    object = None
 
     def get_object(self):
-        return Event.objects.prefetch_related("tickettier_set").get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
-        )
+        if not self.object:
+            self.object = Event.objects.get(
+                pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+            )
+        return self.object
 
     def get(self, *args, **kwargs):
         event = self.get_object()

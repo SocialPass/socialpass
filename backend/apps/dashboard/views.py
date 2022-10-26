@@ -413,6 +413,12 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     def get_success_message(self, *args, **kwargs):
         return "Your event has been updated successfully."
 
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard:event_update",
+            args=(self.kwargs["team_public_id"], self.object.pk),
+        )
+
 
 class EventTicketsView(TeamContextMixin, DetailView):
     """

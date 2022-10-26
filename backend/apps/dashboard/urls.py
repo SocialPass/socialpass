@@ -47,19 +47,9 @@ urlpatterns = [
         name="event_list",
     ),
     path(
-        "events/wip/<uuid:team_public_id>/",
-        views.WIPEventsListView.as_view(),
-        name="event_drafts",
-    ),
-    path(
         "events/create/<uuid:team_public_id>/",
         views.EventCreateView.as_view(),
         name="event_create",
-    ),
-    path(
-        "events/<uuid:team_public_id>/<int:pk>/",
-        views.EventDetailView.as_view(),
-        name="event_detail",
     ),
     path(
         "events/update/<uuid:team_public_id>/<int:pk>/",
@@ -80,11 +70,6 @@ urlpatterns = [
         "events/delete/<uuid:team_public_id>/<int:pk>/",
         views.EventDeleteView.as_view(),
         name="event_delete",
-    ),
-    path(
-        "events/stats/<uuid:team_public_id>/<int:pk>/",
-        views.EventStatisticsView.as_view(),
-        name="event_stats",
     ),
     path(
         "events/tickets/<uuid:team_public_id>/<int:event_pk>/create/",

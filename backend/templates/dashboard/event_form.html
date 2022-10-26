@@ -120,7 +120,8 @@
 					    let address_1 = `${street_number}${gmaps['route']['short_name']}`;
 					    let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
 
-					    document.getElementById("id_initial_place").value = place.name;
+						// TODO: Implement better filtering of place changing to avoid similar locations to be swapped by the GMaps methods
+					    document.getElementById("id_initial_place").value = place.formatted_address;
 					    document.getElementById("id_city").value = locality;
 					    document.getElementById("id_address_1").value = address_1;
 					    document.getElementById("id_address_2").value = address_2;

@@ -338,7 +338,7 @@ class Event(DBModel):
         if self.state == Event.StateStatus.DRAFT:
             _success_url = "dashboard:event_update"
         elif self.state == Event.StateStatus.LIVE:
-            _success_url = "dashboard:event_detail"
+            _success_url = "dashboard:event_update"
         return reverse(
             _success_url,
             args=(

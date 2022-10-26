@@ -94,7 +94,7 @@ class GoogleTicket(TicketGenerationBase):
                 "name": {
                     "defaultValue": {
                         "language": "en-us",
-                        "value": event_obj.initial_place,
+                        "value": event_obj.localized_address_display,
                     }
                 },
                 "address": {"defaultValue": {"language": "en-us", "value": address}},
@@ -150,9 +150,7 @@ class GoogleTicket(TicketGenerationBase):
         return json.loads(response.text)
 
     @staticmethod
-    def request_creation_ticket(
-        http_client: AuthorizedSession, url: str, payload: dict
-    ):
+    def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):
         return http_client.post(url, json=payload)
 
     def generate_pass_from_ticket(self, ticket):

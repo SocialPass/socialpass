@@ -56,7 +56,7 @@ export default function Success() {
             </table>
 
             <div
-              className='alert alert-primary mt-40 m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+              className='alert alert-primary mt-20 mb-20 m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
               role='alert'
             >
               <i className='fa-regular fa-check me-15'></i>

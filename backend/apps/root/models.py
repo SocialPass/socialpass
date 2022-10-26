@@ -16,7 +16,6 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from model_utils.models import TimeStampedModel
-from sentry_sdk import capture_exception
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
@@ -24,7 +23,6 @@ from apps.root.exceptions import (
     DuplicatesTiersRequestedError,
     EventStateTranstionError,
     ForbiddenRedemptionError,
-    ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
@@ -63,11 +61,7 @@ class Team(DBModel):
     # basic info
     name = models.CharField(max_length=255, blank=False)
     image = models.ImageField(
-        blank=True,
-        null=True,
-        height_field=None,
-        width_field=None,
-        upload_to="team__image",
+        height_field=None, width_field=None, max_length=255, blank=True, null=True
     )
     description = models.TextField(blank=True, default="")
     theme = models.JSONField(blank=True, null=True)
@@ -283,10 +277,7 @@ class Event(DBModel):
         default="",
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event.",
-        blank=False,
-        null=False,
-        upload_to="event__cover_image",
+        help_text="A banner image for your event.", blank=False, null=False
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
@@ -321,7 +312,13 @@ class Event(DBModel):
     # The city
     city = models.CharField(max_length=255, blank=True, default="")
     # The ISO 3166-2 2- or 3-character region code
-    region = models.CharField(max_length=4, blank=True, default="")
+    # There is a problem with the GMaps API that does not builds objects in the same pattern
+    # Most of the locations will follow the same ISO3166-1 pattern but, in places in the Great Britain 
+    # for an instance, the same field that holds a 2- or 3-character code will a have a full word like
+    # England, Scotland or Ireland as the region. There is no such documented behavior outside of British or 
+    # British Overseas territories. The largest country name in such scope is Northern Ireland (16) so that 
+    # will be set as the character limit.
+    region = models.CharField(max_length=17, blank=True, default="")
     # The postal code
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
@@ -359,7 +356,6 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     def transition_live(self, save=True):
@@ -374,7 +370,6 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     @transition(field=state, target=StateStatus.DRAFT)
@@ -465,48 +460,6 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
-
-    def clean_event(self, *args, **kwargs):
-        """
-        clean event method
-        check if ticket_tier.event == event and ticket_tier.event == event
-        """
-        if (self.ticket_tier.event != self.event) or (
-            self.checkout_session.event != self.event
-        ):
-            e = ForeignKeyConstraintError(
-                {
-                    "event": _(
-                        "event related to checkout_session and ticket_tier are different"
-                    )
-                }
-            )
-            capture_exception(e)
-            raise e
-
-    def clean_checkout_session(self, *args, **kwargs):
-        """
-        clean checkout_session method
-        check if checkout_item.checkout_session == checkout_session
-        """
-        if self.checkout_item.checkout_session != self.checkout_session:
-            e = ForeignKeyConstraintError(
-                {
-                    "checkout_session": _(
-                        "checkout_session related to ticket and checkout_item are different"  # noqa
-                    )
-                }
-            )
-            capture_exception(e)
-            raise e
-
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_event()
-        self.clean_checkout_session()
 
     def redeem_ticket(
         self, redemption_access_key: Optional["TicketRedemptionKey"] = None
@@ -891,22 +844,6 @@ class CheckoutItem(DBModel):
             case _:
                 pass
 
-    def clean_event(self, *args, **kwargs):
-        """
-        clean event method
-        check if ticket_tier.event == checkout_session.event
-        """
-        if self.ticket_tier.event != self.checkout_session.event:
-            e = ForeignKeyConstraintError(
-                {
-                    "event": _(
-                        "event related to checkout_session and ticket_tier are different"
-                    )
-                }
-            )
-            capture_exception(e)
-            raise e
-
     def clean(self, *args, **kwargs):
         """
         clean method
@@ -914,7 +851,6 @@ class CheckoutItem(DBModel):
         """
         self.clean_quantity()
         self.clean_ticket_tier()
-        self.clean_event()
 
 
 class TxFiat(DBModel):

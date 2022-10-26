@@ -10,9 +10,6 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
-    TxAssetOwnership,
-    TxBlockchain,
-    TxFiat,
 )
 
 
@@ -258,20 +255,6 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
         source="checkoutitem_set", many=True, allow_null=True, required=False
     )
 
-    def create(self, validated_data):
-        """
-        override create method from ModelSerializer
-        create CheckoutSession and CheckoutItem
-        """
-        checkout_items = validated_data.pop("checkoutitem_set")
-        checkout_session = CheckoutSession.objects.create(**validated_data)
-
-        for item in checkout_items:
-            checkout_item = CheckoutItem(checkout_session=checkout_session, **item)
-            checkout_item.save()
-
-        return checkout_session
-
 
 class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
     """
@@ -314,41 +297,6 @@ class TransactionCreateSerializer(serializers.Serializer):
     modified = serializers.DateTimeField(read_only=True)
     public_id = serializers.UUIDField(read_only=True)
 
-    def create(self, validated_data):
-        """
-        create and return a new transaction based on the tx_type requested
-        """
-        checkout_session = self.context["checkout_session"]
-        tx_types = CheckoutSession.TransactionType
-
-        match checkout_session.tx_type:
-            case tx_types.FIAT:
-                return TxFiat.objects.create()
-            case tx_types.BLOCKCHAIN:
-                return TxBlockchain.objects.create()
-            case tx_types.ASSET_OWNERSHIP:
-                return TxAssetOwnership.objects.create()
-
-    def update_session_tx(self, tx):
-        """
-        update a checkout_session with a transaction
-        once updated, mark as PROCESSING
-        """
-        checkout_session = self.context["checkout_session"]
-        tx_types = CheckoutSession.TransactionType
-
-        match checkout_session.tx_type:
-            case tx_types.FIAT:
-                checkout_session.tx_fiat = tx
-            case tx_types.BLOCKCHAIN:
-                checkout_session.tx_blockchain = tx
-            case tx_types.ASSET_OWNERSHIP:
-                checkout_session.tx_asset_ownership = tx
-
-        # change tx_status to PROCESSING here
-        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
-        checkout_session.save()
-
 
 class ConfirmationSerializer(serializers.ModelSerializer):
     """
@@ -360,25 +308,6 @@ class ConfirmationSerializer(serializers.ModelSerializer):
         fields = ["tx_status", "tickets_summary"]
 
     tickets_summary = serializers.SerializerMethodField()
-
-    def confirmation(self):
-        """
-        - perform the confirmation
-        - case tx_status == "COMPLETED" create tickets
-            update checkout_session.tx_status to FULFILLED
-        return tx_status
-        """
-        checkout_session = self.instance
-
-        match checkout_session.tx_status:
-            case CheckoutSession.OrderStatus.COMPLETED:
-                checkout_session.create_items_tickets()
-                # TODO: `checkout_session.send_tickets_to_email()` method
-                checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
-                checkout_session.save()
-                return checkout_session.tx_status
-            case _:
-                return checkout_session.tx_status
 
     def get_tickets_summary(self, obj):
         """

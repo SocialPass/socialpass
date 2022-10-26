@@ -764,8 +764,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.PROCESSING
         )
-        with self.assertRaises(KeyError):
-            response.json()["tickets_summary"]
 
     @prevent_warnings
     def test_confirmation_failed_200_ok(self):
@@ -782,8 +780,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.FAILED
         )
-        with self.assertRaises(KeyError):
-            response.json()["tickets_summary"]
 
     @prevent_warnings
     def test_confirmation_fulfilled_200_ok(self):
@@ -800,8 +796,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.FULFILLED
         )
-        with self.assertRaises(KeyError):
-            response.json()["tickets_summary"]
 
     @prevent_warnings
     def test_confirmation_completed_200_ok(self):

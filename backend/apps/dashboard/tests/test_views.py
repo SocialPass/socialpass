@@ -32,7 +32,7 @@ class DashboardTest(TestCase):
 
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):
-            template_name = "dashboard/event_detail.html"
+            template_name = "dashboard/event_list.html"
 
         # Test logged-in user
         kwargs = {"team_public_id": self.team_one.public_id}
@@ -263,31 +263,6 @@ class DashboardTest(TestCase):
         )
         """
 
-    def test_event_detail(self):
-        # Login User
-        self.assertTrue(
-            self.client.login(username=self.user_one.username, password=self.password)
-        )
-
-        # Test GET (draft event)
-        response = self.client.get(
-            reverse(
-                "dashboard:event_detail",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
-        )
-        self.assertEqual(response.status_code, 302)
-
-        # Test GET (live event)
-        self.event_one.transition_live()
-        response = self.client.get(
-            reverse(
-                "dashboard:event_stats",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
-        )
-        self.assertEqual(response.status_code, 200)
-
     def test_event_update(self):
         # Login User
         self.assertTrue(
@@ -320,37 +295,5 @@ class DashboardTest(TestCase):
             ),
             data=data,
             follow=True,
-        )
-        self.assertEqual(response.status_code, 200)
-        """
-        TODO:
-        Fix form creation. Currently response is 200 but with form validation errors.
-        Below assertion thus returns False
-
-        self.assertEqual(Event.objects.filter(title="Updated Title").count(), 1)
-        """
-
-    def test_event_stats(self):
-        # Login User
-        self.assertTrue(
-            self.client.login(username=self.user_one.username, password=self.password)
-        )
-
-        # Test GET (draft event)
-        response = self.client.get(
-            reverse(
-                "dashboard:event_stats",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
-        )
-        self.assertEqual(response.status_code, 302)
-
-        # Test GET (live event)
-        self.event_one.transition_live()
-        response = self.client.get(
-            reverse(
-                "dashboard:event_stats",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
         )
         self.assertEqual(response.status_code, 200)

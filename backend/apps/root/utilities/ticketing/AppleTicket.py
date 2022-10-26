@@ -136,8 +136,10 @@ class AppleTicket(TicketGenerationBase):
                 "The event object does not have latitude or longitude cordinates"
             )
 
-        if not event.initial_place:
-            raise Exception("The event object does not have an initial_place")
+        if not event.localized_address_display:
+            raise Exception(
+                "The event object does not have an localized_address_display"
+            )
 
         self.org_name = event.team.name
         self.description = event.title
@@ -145,7 +147,9 @@ class AppleTicket(TicketGenerationBase):
         self.barcode = self.set_barcode(ticket.embed_code)
         self.location = self.set_location_list(event.lat, event.long)
         self.set_event_ticket_info(
-            event.start_date.strftime("%d %B, %Y"), event.title, event.initial_place
+            event.start_date.strftime("%d %B, %Y"),
+            event.title,
+            event.localized_address_display,
         )
         self.generate_pass()
 

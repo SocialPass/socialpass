@@ -11,12 +11,10 @@ def get_sidebar_active_status(context, key):
         if url_name in [
             "event_list",
             "event_create",
-            "event_detail",
             "event_update",
             "event_tickets",
             "event_go_live",
             "event_delete",
-            "event_stats",
             "ticket_tier_create",
             "ticket_tier_delete",
         ]:

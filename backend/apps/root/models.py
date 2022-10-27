@@ -315,17 +315,17 @@ class Event(DBModel):
         default="",
     )
     # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=True, default="")
+    address_1 = models.CharField(max_length=255, blank=False, default="")
     # The street/location address (part 2)
     address_2 = models.CharField(max_length=255, blank=True, default="")
     # The city
-    city = models.CharField(max_length=255, blank=True, default="")
+    city = models.CharField(max_length=255, blank=False, default="")
     # The ISO 3166-2 2- or 3-character region code
     region = models.CharField(max_length=4, blank=True, default="")
     # The postal code
-    postal_code = models.CharField(max_length=12, blank=True, default="")
+    postal_code = models.CharField(max_length=12, blank=False, default="")
     # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=True, default="")
+    country = models.CharField(max_length=2, blank=False, default="")
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)

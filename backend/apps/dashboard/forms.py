@@ -76,6 +76,7 @@ class EventForm(forms.ModelForm):
             "postal_code",
             "country",
             "cover_image",
+            "localized_address_display",
         ]
 
         widgets = {
@@ -104,8 +105,12 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "address_1": forms.TextInput(attrs={"placeholder": "Name of place, street and number, P.O. box, c/o"}),
-            "address_2": forms.TextInput(attrs={"placeholder": "Apartment, suite, unit, building, floor, etc."}),
+            "address_1": forms.TextInput(
+                attrs={"placeholder": "Name of place, street and number, P.O. box, c/o"}
+            ),
+            "address_2": forms.TextInput(
+                attrs={"placeholder": "Apartment, suite, unit, building, floor, etc."}
+            ),
             "city": forms.TextInput(attrs={"placeholder": "City name"}),
             "postal_code": forms.TextInput(attrs={"placeholder": "Postal code"}),
         }
@@ -113,6 +118,28 @@ class EventForm(forms.ModelForm):
             "address_1": "Address line 1",
             "address_2": "Address line 2 (Optional)",
         }
+
+    def clean_localized_address_display(self):
+        """
+        custom clean to localized_address_display field
+        localized_address_display will be "address_1, address_2, city, country, postal_code" joined
+        """
+        data = self.cleaned_data
+        address_fields = [
+            data["address_1"],
+            data["city"],
+            data["country"],
+        ]
+        # add address_2 to second list position if exists
+        if data["address_2"]:
+            address_fields.insert(1, data["address_2"])
+        # add postal_code if exists
+        if data["postal_code"]:
+            address_fields.append(data["postal_code"])
+
+        # join fields
+        localized_address_display = ", ".join(address_fields)
+        return localized_address_display
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -158,8 +185,6 @@ class TierAssetOwnershipForm(forms.ModelForm):
             "token_address": forms.TextInput(
                 attrs={"placeholder": "Example: 0xb79...79268"}
             ),
-            "token_id": forms.TextInput(
-                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
-            ),
+            "token_id": forms.TextInput(attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}),
         }
         labels = {"token_id": "Token IDs (Optional)"}

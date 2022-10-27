@@ -149,7 +149,7 @@ class TestAppleTicket(TestCaseWrapper):
         """
 
         path = os.path.join(
-            settings.ROOT_DIR, "apps", "root", "test", "images", "example.jpg"
+            settings.ROOT_DIR, "apps", "root", "tests", "images", "example.jpg"
         )
         self.ticket_pass.set_icon(path=path)
         self.assertEqual(self.ticket_pass.icon, path)

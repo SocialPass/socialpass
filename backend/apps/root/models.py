@@ -283,7 +283,8 @@ class Event(DBModel):
         default="",
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event.",
+        help_text="A banner image for your event. Please make sure the image "
+        "is a high quality landscape image, ideally 960 x 720 pixels (4:3).",
         blank=False,
         null=False,
         upload_to="event__cover_image",

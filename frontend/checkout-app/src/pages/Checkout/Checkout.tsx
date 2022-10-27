@@ -21,7 +21,8 @@ export default function Home() {
   const { checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
-  const { checkout, getCheckout, getCheckoutItems, setCheckout, setCheckoutItems, pay }: any = useCheckout()
+  const { checkout, getCheckout, getCheckoutItems, setCheckout, setCheckoutItems, pay }: any =
+    useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
@@ -55,7 +56,7 @@ export default function Home() {
     const paymentData = getPaymentData()
 
     pay(paymentData).then(() => {
-      navigate('success')
+      navigate('validation')
     })
   }
 
@@ -86,6 +87,18 @@ export default function Home() {
           </a>
         </div>
       </div>
+
+      {checkout?.tx_status === 'FAILED' ? (
+        <div className='px-content pt-20'>
+          <div
+            className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+            role='alert'
+          >
+            <i className='fa-regular fa-times me-15'></i>
+            <p className='m-0'>Sorry! The transaction has failed. Please try again.</p>
+          </div>
+        </div>
+      ) : null}
 
       <div className='px-content pt-20'>
         <p className='text-muted mt-5 mb-0'>By {event.team.name}</p>

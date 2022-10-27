@@ -4,7 +4,6 @@ import factory
 import factory.django
 import factory.fuzzy
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
 
 from apps.root.models import (
@@ -38,17 +37,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Faker("name")
     email = factory.Faker("email")
     password = factory.PostGenerationMethodCall("set_password", "password")
-
-
-def get_mock_team_image():
-    small_gif = (
-        b"\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04"
-        b"\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02"
-        b"\x02\x4c\x01\x00\x3b"
-    )
-    uploaded = SimpleUploadedFile("small.gif", small_gif, content_type="image/gif")
-    return uploaded
-
+    
 
 class TeamFactory(factory.django.DjangoModelFactory):
     """

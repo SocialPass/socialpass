@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
@@ -112,14 +115,19 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse("dashboard:team_create"))
         self.assertEqual(response.status_code, 200)
 
-        # TEST POST
-        data = {
-            "name": "OneTime Team",
-            "description": "OneTime Team Descripton",
-        }
-        response = self.client.post(
-            reverse("dashboard:team_create"), data=data, follow=True
+        path = os.path.join(
+            settings.ROOT_DIR, "apps", "root", "tests", "images", "example.jpg"
         )
+        # TEST POST
+        with open(path, "rb") as img:
+            data = {
+                "name": "OneTime Team",
+                "description": "OneTime Team Descripton",
+                "image": img,
+            }
+            response = self.client.post(
+                reverse("dashboard:team_create"), data=data, follow=True
+            )
         self.assertEqual(Team.objects.filter(name="OneTime Team").count(), 1)
 
     def test_team_detail(self):

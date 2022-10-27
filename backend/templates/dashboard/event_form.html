@@ -86,56 +86,27 @@
 				<p class="text-muted fs-base-n2 mt-5">
 					Help people in the area discover your event and let attendees know where to show up.
 				</p>
-				{% with placeChangedCallback="onPlaceChangedCallback" initialPlace=form.instance.initial_place %}
-					<script>
-					    function onPlaceChangedCallback(place){
-					    // TODO: Use in appromixmating timezone
-					    // document.getElementById("id_timezone_offset").value = place.utc_offset_minutes
-
-					    // Set latitude and longitude hidden field
-					    lat = place.geometry.location.lat();
-					    long = place.geometry.location.lng();
-					    document.getElementById("id_lat").value = lat.toFixed(6)
-					    document.getElementById("id_long").value = long.toFixed(6)
-
-					    // Loop over places object for setting fields
-					    // set fields based on available places components
-					    var gmaps = {};
-					    for (var i = 0; i < place.address_components.length; i++) {
-					    var c = place.address_components[i];
-					    gmaps[c.types[0]] = c;
-					    }
-
-					    if (gmaps['postal_code']){
-					    if (gmaps['postal_code_suffix']){
-					    document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}-${gmaps['postal_code_suffix']['long_name']}`
-					    }
-					    else {
-					    document.getElementById("id_postal_code").value = `${gmaps['postal_code']['long_name']}`
-					    }
-					    }
-
-					    let locality = gmaps['locality'] ? gmaps['locality']['long_name'] : gmaps['administrative_area_level_2']['long_name'];
-					    let street_number = gmaps['street_number'] ? `${gmaps['street_number']['short_name']} ` : '';
-					    let address_1 = `${street_number}${gmaps['route']['short_name']}`;
-					    let address_2 = gmaps['subpremise'] ? gmaps['subpremise']['long_name'] : null;
-
-					    document.getElementById("id_initial_place").value = place.name;
-					    document.getElementById("id_city").value = locality;
-					    document.getElementById("id_address_1").value = address_1;
-					    document.getElementById("id_address_2").value = address_2;
-					    document.getElementById("id_localized_address_display").value = place.formatted_address;
-					    document.getElementById("id_country").value = gmaps['country']['short_name'];
-					    document.getElementById("id_region").value = gmaps['administrative_area_level_1']['short_name'];
-					    }
-					</script>
-					{% include 'components/forms_inputs/gmaps_location.html' %}
-					{% if form.initial_place.help_text %}
-						<div class="form-text">
-						    {{ form.initial_place.help_text }}
-						</div>
-					{% endif %}
+				{% with form.address_1 as input %}
+					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
+				{% with form.address_2 as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with form.city as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				<div class="form-row row-eq-spacing">
+					<div class="col-6">
+						{% with form.postal_code as input %}
+							{% include 'components/forms_inputs/input.html' %}
+						{% endwith %}
+					</div>
+					<div class="col-6">
+						<div class="form-group">
+			  				{{ form.country|as_crispy_field }}
+						</div>
+					</div>
+				</div>
 				<!-- Location end -->
 
 				<!-- Date and time start -->
@@ -228,12 +199,19 @@
 </script>
 
 {% if url_name == 'event_create' %}
-	<!-- Set Default Timezone Script -->
+	<!-- Set Default Timezone and Country Script -->
 	<script>
 		try {
 			document.getElementById(
 				"id_timezone"
 			).value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		} catch (error) {
+			console.log(error);
+		}
+
+		// Default set to US
+		try {
+			document.getElementById("id_country").value = "US";
 		} catch (error) {
 			console.log(error);
 		}

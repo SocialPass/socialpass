@@ -299,9 +299,12 @@ class TransactionCreateSerializer(serializers.Serializer):
 
 
 class CheckoutItemQuantitySerializer(serializers.ModelSerializer):
+    ticket_tier = TicketTierReadSerializer(read_only=True)
+
     class Meta:
         model = CheckoutItem
         fields = [
+            "ticket_tier",
             "quantity",
         ]
 

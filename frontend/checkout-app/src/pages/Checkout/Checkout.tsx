@@ -46,7 +46,7 @@ export default function Home() {
         }
 
       default:
-        break
+        return null
     }
   }
 

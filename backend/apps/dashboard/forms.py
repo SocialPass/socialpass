@@ -104,7 +104,7 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "address_1": forms.TextInput(attrs={"placeholder": "Street and number, P.O. box, c/o"}),
+            "address_1": forms.TextInput(attrs={"placeholder": "Name of place, street and number, P.O. box, c/o"}),
             "address_2": forms.TextInput(attrs={"placeholder": "Apartment, suite, unit, building, floor, etc."}),
             "city": forms.TextInput(attrs={"placeholder": "City name"}),
             "postal_code": forms.TextInput(attrs={"placeholder": "Postal code"}),

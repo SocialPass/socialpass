@@ -31,93 +31,88 @@
 	<!-- Main content start -->
 	<div class="row">
 		<div class="col-lg-9 col-xl-7 mx-auto">
-			<div class="content text-center">
-				<div class="ws-400 mw-100 mx-auto">
-					{% if event.has_ended %}
-						<div class="ws-200 mw-100 mx-auto">
+			<div class="content">
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-bullhorn"></i>
+					</span>
+					Go Live
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Use the controls on this page to go live with your event. Once live, your attendees will be able to buy tickets and start making plans.
+				</p>
+				{% if event.has_ended %}
+					<div class="text-center mt-40">
+						<div class="ws-150 mw-100 mx-auto">
 							<img src="{% static 'images/illustrations/event_ended.svg' %}" alt="event_ended" class="w-100 h-auto">
 						</div>
-						<h5>Event has ended</h5>
-						<p>
-							This event has ended. If you never went live with it, you can <a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}#date-and-time" class="fw-bold antialiased">change the dates</a> and come back to this page.
+						<h5 class="mb-0">Event has ended</h5>
+						<p class="mt-5">
+							This event has ended. If you never went live with it, please consider <a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}#date-and-time" class="fw-bold antialiased">changing the dates</a> and then come back to this page.
 						</p>
-					{% else %}
-						<div class="ws-200 mw-100 mx-auto">
-							<img src="{% static 'images/illustrations/go_live.svg' %}" alt="go_live" class="w-100 h-auto">
-						</div>
-						{% if event.state == event.StateStatus.LIVE %}
-							<h5>
+					</div>
+				{% else %}
+					<div class="ws-150 mw-100 mx-auto mt-40">
+						<img src="{% static 'images/illustrations/go_live.svg' %}" alt="go_live" class="w-100 h-auto">
+					</div>
+					{% if event.state == event.StateStatus.LIVE %}
+						<div class="text-center">
+							<h5 class="mb-0">
 								<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
 								Event is live!
 							</h5>
-							<p>
-								Your event is currently live. Given below is a summary of the event.
+							<p class="mt-5">
+								Your event is currently live. Attendees can now buy tickets for this event from the checkout page. You can get a detailed breakdown on the stats page.
 							</p>
-							<table class="table my-20 table-no-outer-padding">
-								<tbody>
-									<tr>
-										<th>Name</th>
-										<td>{{ event.title }}</td>
-									</tr>
-									<tr>
-										<th>Date</th>
-										<td>{{ event.start_date }}</td>
-									</tr>
-									<tr>
-										<th>Location</th>
-										<td>{{ event.localized_address_display }}</td>
-									</tr>
-								</tbody>
-							</table>
 							<div>
-								<a href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}" class="btn btn-lg text-base fs-base fw-bold">
+								<a href="#" class="btn btn-lg text-base fs-base fw-bold">
 									<i class="fa-regular fa-sack-dollar me-5"></i>
 									See Stats
 								</a>
 							</div>
-						{% else %}
-							<h5>Let's go live with this event!</h5>
-							<p>
-								Your event is currently a draft. You can make it go live by clicking on the following button.
+						</div>
+					{% else %}
+						<div class="text-center">
+							<h5 class="mb-0">Let's go live with this event!</h5>
+							<p class="mt-5">
+								Your event is currently a draft. If you're done setting up, you can make it go live by clicking on the following button.
 							</p>
-							<table class="table my-20 table-no-outer-padding">
-								<tbody>
-									<tr>
-										<th>Name</th>
-										<td>{{ event.title }}</td>
-									</tr>
-									<tr>
-										<th>Date</th>
-										<td>{{ event.start_date }}</td>
-									</tr>
-									<tr>
-										<th>Location</th>
-										<td>{{ event.localized_address_display }}</td>
-									</tr>
-								</tbody>
-							</table>
-							{% if event.tickettier_set.count < 1 %}
-								<div>
-									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased" disabled="disabled">
-										<i class="fa-solid fa-circle-small me-5"></i>
-										Go Live!
-									</button>
-								</div>
-								<div class="alert alert-primary mb-0" role="alert">
-									Before going live, your event must have at least one ticket tier. Go to <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="alert-link">ticket tiers</a> to create one now.
-								</div>
-							{% else %}
-								<form method="post">
-									{% csrf_token %}
-									<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased">
-										<i class="fa-solid fa-circle-small fa-beat-fade me-5"></i>
-										Go Live!
-									</button>
-								</form>
-							{% endif %}
-						{% endif %}
+							<form method="post">
+								{% csrf_token %}
+								<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased">
+									<i class="fa-solid fa-circle-small fa-beat-fade me-5"></i>
+									Go Live!
+								</button>
+							</form>
+						</div>
 					{% endif %}
-				</div>
+				{% endif %}
+				<br />
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-list"></i>
+					</span>
+					Event Summary
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Given below is a summary of the event.
+				</p>
+				<table class="table table-no-outer-padding">
+					<tbody>
+						<tr>
+							<th>Name</th>
+							<td>{{ event.title }}</td>
+						</tr>
+						<tr>
+							<th>Date</th>
+							<td>{{ event.start_date }}</td>
+						</tr>
+						<tr>
+							<th>Location</th>
+							<td>{{ event.localized_address_display }}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -125,7 +120,7 @@
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
-		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you need help managing your event.
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold antialiased">contact us</a> and let us know if you need help managing your event.
 	</div>
 	<!-- Card footer end -->
 </div>

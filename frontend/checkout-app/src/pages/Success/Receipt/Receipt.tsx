@@ -25,7 +25,7 @@ export default function Summary() {
     return 'N/A'
   }
 
-  const downloadReceipt = () => {}
+  // const downloadReceipt = () => {}
 
   const orderAgain = () => {
     navigate(`/${event.public_id}`)
@@ -53,12 +53,12 @@ export default function Summary() {
           </div>
         ))}
 
-        <button
+        {/* <button
           className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
           onClick={() => downloadReceipt()}
         >
           <strong className='antialiased'>Download Receipt</strong>
-        </button>
+        </button> */}
 
         <p>
           <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}

@@ -5,44 +5,31 @@
 # SocialPass
 SocialPass provides end-to-end event organization software aimed at the next generation of events.
 
+[![Django CI](https://github.com/nftylabs/socialpass/actions/workflows/django.yml/badge.svg)](https://github.com/nftylabs/socialpass/actions/workflows/django.yml)
+[![Checkout App CI](https://github.com/nftylabs/socialpass/actions/workflows/eventportal.yml/badge.svg)](https://github.com/nftylabs/socialpass/actions/workflows/eventportal.yml)
+[![Scanner App CI](https://github.com/nftylabs/socialpass/actions/workflows/scanner-app.yml/badge.svg)](https://github.com/nftylabs/socialpass/actions/workflows/scanner-app.yml)
 
-# Before Jumping In
-As mentioned above, SocialPass is all about events and Web3. If you're not familiar with either yet, the resources below are a great way to start:
-
-### Event Resources
-- https://www.eventbrite.com/blog/press/press-releases/eventbrite-acquires-london-based-lanyrd-and-latin-american-events-company-eventioz/
-- https://www.infoworld.com/article/2362947/expert-interview-how-to-scale-django.amp.html
-
-### Web3 Resources
-- url
-- url
-
+# System Overview
 # System Architecture
-
 ![NFTY Labs - System Architecture](https://user-images.githubusercontent.com/5043263/190167231-c711b042-05bf-4fe6-8ca3-308ab73163d3.jpg)
 
-# Database ERD
-
-![NFTY - Social Pass (1)](https://user-images.githubusercontent.com/5043263/190185065-8f8eab59-72f4-4ea7-b27c-31ca8df0bd5e.png)
-[DBdiagram.io](https://dbdiagram.io/d/630cf1010911f91ba5ec1101)
-
-# Infrastructure
-
+## Infrastructure
 ![NFTY Labs - Infrastructure diagram (1)](https://user-images.githubusercontent.com/5043263/190232728-6f39d60b-b8e0-4c74-9d94-2e38a41ad8e3.jpg)
 
-# Contributions
-1. Branches opened for PR with relevant reviewer requested
-2. PR passes all checks
-2. PR reviewed
-3. PR merged into `master`
+## Database ERD
+[DBdiagram.io](https://dbdiagram.io/d/6321f1240911f91ba5ae16a2)
 
-Once merged, `master`, can be pushed directly to either `staging` or `master`.
-This will trigger CI/CD pipelie for the respective environments.
+# Domains
+## Testing
+- Django App: https://demo-socialpass.nftytesting.com
+- Checkout App: https://demo-checkout.nftytesting.com
+- Scanner App: https://demo-scanner.nftytesting.com
 
-Branches should be prefixed matching their corresponding GH label and a brief description of the issue at hand.
-- `minor/*`
-- `major/*`
-- `refactor/*`
+## Production
+- Django App: https://socialpass.io
+- Checkout App: https://checkout.socialpass.io
+- Scanner App: https://scanner.socialpass.io
+
 
 # Getting Started
 ## Contributions
@@ -51,10 +38,15 @@ Branches should be prefixed matching their corresponding GH label and a brief de
 2. PR reviewed
 3. PR merged into `master`
 
+Once merged, `master`, can be pushed directly to either `staging` or `master`.
+This will trigger CI/CD pipeline for the respective environments.
+
 Branches should be prefixed matching their corresponding GH label and a brief description of the issue at hand.
 - `minor/*`
 - `major/*`
 - `refactor/*`
+- `bug/*`
+
 
 ## Clone repo
 ```bash

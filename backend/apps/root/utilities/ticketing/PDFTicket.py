@@ -105,7 +105,7 @@ class PDFTicket(TicketGenerationBase):
             "order_number": "54593405723",
             "ticket_quantity": 1,
             "ticket_type": "General Admission",
-            "location_name": event.initial_place,
+            "location_name": event.localized_address_display,
             "location_address": ", ".join(address_items_list),
             "event_date": event_date,
             "event_time": event_time,

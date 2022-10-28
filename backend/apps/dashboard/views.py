@@ -21,7 +21,7 @@ from apps.dashboard.forms import (
     TicketTierForm,
     TierAssetOwnershipForm,
 )
-from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
+from apps.root.models import Event, Invite, Membership, Team, TicketTier
 
 User = auth.get_user_model()
 
@@ -124,9 +124,7 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
 
-                return reverse(
-                    "dashboard:event_list", args=(membership.team.public_id,)
-                )
+                return reverse("dashboard:event_list", args=(membership.team.public_id,))
             else:
                 return reverse("dashboard:team_create")
         else:
@@ -331,32 +329,6 @@ class EventListView(TeamContextMixin, ListView):
         return qs
 
 
-class PublishedEventsListView(EventListView):
-    def get_queryset(self):
-        return super().get_queryset().filter_active()
-
-
-class WIPEventsListView(EventListView):
-    def get_queryset(self):
-        return super().get_queryset().filter_inactive()
-
-
-class EventDetailView(TeamContextMixin, RequireLiveEventMixin, DetailView):
-    """
-    Returns the details of an Ticket token gate.
-    """
-
-    model = Event
-    context_object_name = "event"
-    template_name = "dashboard/event_detail.html"
-
-    def get_queryset(self):
-        qs = Event.objects.filter(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
-        )
-        return qs
-
-
 class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """
     Creates an Event
@@ -424,8 +396,11 @@ class EventTicketsView(TeamContextMixin, DetailView):
     template_name = "dashboard/event_tickets.html"
 
     def get_object(self):
-        return Event.objects.prefetch_related("tickettier_set").get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+        return (
+            Event.objects.prefetch_related("tickettier_set__tier_asset_ownership")
+            .prefetch_related("tickettier_set__tier_blockchain")
+            .prefetch_related("tickettier_set__tier_fiat")
+            .get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"])
         )
 
 
@@ -436,11 +411,28 @@ class EventGoLiveView(TeamContextMixin, DetailView):
 
     model = Event
     template_name = "dashboard/event_go_live.html"
+    object = None
 
     def get_object(self):
-        return Event.objects.prefetch_related("tickettier_set").get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
-        )
+        if not self.object:
+            self.object = Event.objects.get(
+                pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+            )
+        return self.object
+
+    def get(self, *args, **kwargs):
+        event = self.get_object()
+        if event.tickettier_set.count() < 1:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                "Your event must have at least one ticket tier before going live.",
+            )
+            return redirect(
+                "dashboard:ticket_tier_create", self.kwargs["team_public_id"], event.pk
+            )
+        else:
+            return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         event = self.get_object()
@@ -470,46 +462,6 @@ class EventDeleteView(TeamContextMixin, DeleteView):
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted.")
         return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
-
-
-class EventStatisticsView(TeamContextMixin, RequireLiveEventMixin, ListView):
-    """
-    Returns a list of ticket stats from ticket tokengates.
-    """
-
-    model = Ticket
-    paginate_by = 15
-    context_object_name = "tickets"
-    template_name = "dashboard/event_stats.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        overrode to set json_schema as well as json data
-        """
-        context = super().get_context_data(**kwargs)
-        context["current_gate"] = Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
-        )
-        return context
-
-    def get_object(self):
-        return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
-        )
-
-    def get_queryset(self):
-        """
-        get queryset of Ticket models from given Event
-        """
-        gate = self.get_object()
-        qs = Ticket.objects.filter(event=gate)
-        qs = qs.order_by("-modified")
-
-        query_address = self.request.GET.get("address", "")
-        if query_address:
-            qs = qs.filter(wallet_address__icontains=query_address)
-
-        return qs
 
 
 class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):

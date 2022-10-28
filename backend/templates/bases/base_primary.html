@@ -59,21 +59,25 @@
 	.dark-mode .event-list-item:hover {
 		background-color: var(--primary-color-very-dim);
 	}
+	
+	/* Image on forms */
 
-	#div_id_cover_image {
+	#div_id_cover_image,
+	#div_id_image {
 		margin-bottom: 2rem;
 	}
 
-	
-	/* Event cover image */
-
-	#div_id_cover_image .input-group {
+	#div_id_cover_image .input-group,
+	#div_id_image .input-group {
 		margin-bottom: 1rem;
 	}
 
 	#div_id_cover_image .input-group .input-group-text,
 	#div_id_cover_image .input-group .form-control,
-	#div_id_cover_image .input-group .text-break {
+	#div_id_cover_image .input-group .text-break,
+	#div_id_image .input-group .input-group-text,
+	#div_id_image .input-group .form-control,
+	#div_id_image .input-group .text-break {
 		overflow: hidden;
     	text-overflow: ellipsis;
     	white-space: nowrap;
@@ -184,7 +188,7 @@
 					</li>
 					<li class="dropdown-divider"></li>
 					<li class="dropdown-content">
-						<a href="{% url 'account_logout' %}" class="btn btn-link btn-block bg-gray-very-light-lm bg-darkgray-very-dim-dm text-danger fw-bold">
+						<a href="{% url 'account_logout' %}" class="btn btn-danger btn-block">
 							<i class="fa-regular fa-sign-out"></i>
 							<span class="ms-5">Sign Out</span>
 						</a>
@@ -261,7 +265,7 @@
 						{% get_other_teams current_team.public_id as other_teams %}
 						{% if other_teams|length > 0 %}
 							<li class="dropdown-header fs-base-n2">
-								<i class="fa-duotone fa-arrows-repeat text-primary me-5"></i>
+								<i class="fa-regular fa-arrows-repeat text-primary me-5"></i>
 								Switch Team
 							</li>
 							{% for team in other_teams %}
@@ -296,7 +300,7 @@
 				</div>
 				<a href="{% url 'dashboard:event_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
 					<span class="ws-25 flex-shrink-0">
-						<i class="fa-regular fa-ticket"></i>
+						<i class="fa-regular fa-calendar"></i>
 					</span>
 					<span class="ms-5">Events</span>
 				</a>
@@ -386,7 +390,7 @@
 				<i class="fa-light fa-question-circle me-5"></i>
 				Need help?
 			</span>
-			<a href="https://socialpass.gitbook.io/socialpass" target="_blank" class="ms-10 fw-bold">See Guides <i class="fa-duotone fa-external-link-alt ms-5"></i></a>
+			<a href="https://socialpass.gitbook.io/socialpass" target="_blank" class="ms-10 fw-bold">See Guides <i class="fa-regular fa-external-link-alt ms-5"></i></a>
 		</div>
 		<!-- Footer end -->
 	</div>
@@ -397,10 +401,13 @@
 {% if current_team %}
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 	<script type="text/javascript">
-		var currentTeamTheme = JSON.parse(
-			document.getElementById("current_team_theme").value.replace(/'/g, '"')
-		);
-		Cookies.set("whiteLabelTheme", JSON.stringify(currentTeamTheme));
+		var currentTeamThemeValue = document.getElementById("current_team_theme").value;
+		if (currentTeamThemeValue !== "None") {
+			var currentTeamTheme = JSON.parse(currentTeamThemeValue.replace(/'/g, '"'));
+			Cookies.set("whiteLabelTheme", JSON.stringify(currentTeamTheme));
+		} else {
+			Cookies.remove("whiteLabelTheme");
+		}
 	</script>
 {% endif %}
 {% endblock body %}

@@ -149,7 +149,7 @@ class TestAppleTicket(TestCaseWrapper):
         """
 
         path = os.path.join(
-            settings.ROOT_DIR, "apps", "root", "test", "images", "example.jpg"
+            settings.ROOT_DIR, "apps", "root", "tests", "images", "example.jpg"
         )
         self.ticket_pass.set_icon(path=path)
         self.assertEqual(self.ticket_pass.icon, path)
@@ -188,13 +188,13 @@ class TestAppleTicket(TestCaseWrapper):
         self.ticket_pass.generate_pass_from_ticket(self.ticket)
         self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
 
-        # raise exception if event has no initial_place
-        self.event.initial_place = ""
+        # raise exception if event has no localized_address_display
+        self.event.localized_address_display = ""
         with self.assertRaises(Exception):
             self.ticket_pass.generate_pass_from_ticket(self.ticket)
 
         # raise exception if event has no lat or long cordinates
-        self.event.initial_place = "West Linda, KY 50295"
+        self.event.localized_address_display = "West Linda, KY 50295"
         self.event.lat = None
         self.event.long = None
         with self.assertRaises(Exception):
@@ -365,12 +365,8 @@ class TestGoogleTicket(TestCaseWrapper):
         self.assertEqual(payload["locations"][0]["latitude"], self.event.lat)
         self.assertEqual(payload["locations"][0]["longitude"], self.event.long)
         self.assertEqual(payload["reviewStatus"], "UNDER_REVIEW")
-        self.assertEqual(
-            payload["eventName"]["defaultValue"]["value"], self.event.title
-        )
-        self.assertEqual(
-            payload["dateTime"]["start"], self.event.start_date.isoformat()
-        )
+        self.assertEqual(payload["eventName"]["defaultValue"]["value"], self.event.title)
+        self.assertEqual(payload["dateTime"]["start"], self.event.start_date.isoformat())
 
         # test raise exception in not address field
         self.event.city = None
@@ -459,13 +455,13 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         # generate pass bytes
         self.assertIsInstance(self.ticket.get_apple_ticket(), bytes)
 
-        # raise exception if event has no initial_place
-        self.event.initial_place = ""
+        # raise exception if event has no localized_address_display
+        self.event.localized_address_display = ""
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()
 
         # raise exception if event has no lat or long cordinates
-        self.event.initial_place = "West Alba, KY 50295"
+        self.event.localized_address_display = "West Alba, KY 50295"
         self.event.lat = None
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()

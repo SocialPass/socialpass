@@ -23,7 +23,7 @@ export const CheckoutProvider = ({ children }: any) => {
       0,
     )
 
-// Communicating between what backend (left) and frontend (right) understands as transaction type
+  // Communicating between what backend (left) and frontend (right) understands as transaction type
   const getTxType = (type) =>
     ({
       FIAT: 'tier_fiat',
@@ -77,8 +77,7 @@ export const CheckoutProvider = ({ children }: any) => {
 
       const data = {
         ...checkout,
-        // USING EMAIL HERE BUT NEED TO BE REPLACED BY NAME FROM USER
-        name: checkout?.email || '',
+        name: checkout?.name,
         checkout_items: checkoutItems.map((item) => ({
           ...item,
           ticket_tier: item.ticket_tier.public_id,
@@ -99,20 +98,18 @@ export const CheckoutProvider = ({ children }: any) => {
             reject(err)
           })
       } else {
-        // SHOULD BE IMPLEMENTED ON THE BACKEND
-        resolve(checkout)
-
-        // CheckoutApi.edit(checkout?.public_id, data)
-        //   .then((response) => {
-        //     setCheckout(response.data)
-        //     setIsLoading(false)
-        //     resolve(response.data)
-        //   })
-        //   .catch((err) => {
-        //     setError(err)
-        //     setIsLoading(false)
-        //     reject(err)
-        //   })
+        // Edit checkout on backend
+        CheckoutApi.edit(checkout?.public_id, data)
+          .then((response) => {
+            setCheckout(response.data)
+            setIsLoading(false)
+            resolve(response.data)
+          })
+          .catch((err) => {
+            setError(err)
+            setIsLoading(false)
+            reject(err)
+          })
       }
     })
 

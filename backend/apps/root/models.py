@@ -16,6 +16,7 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from model_utils.models import TimeStampedModel
+from sentry_sdk import capture_exception
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
@@ -23,6 +24,7 @@ from apps.root.exceptions import (
     DuplicatesTiersRequestedError,
     EventStateTranstionError,
     ForbiddenRedemptionError,
+    ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
@@ -61,8 +63,10 @@ class Team(DBModel):
     # basic info
     name = models.CharField(max_length=255, blank=False)
     image = models.ImageField(
-        blank=True,
-        null=True,
+        help_text="A brand image for your team. Please make sure the image is "
+        "square, non-transparent, and ideally in the PNG format.",
+        blank=False,
+        null=False,
         height_field=None,
         width_field=None,
         upload_to="team__image",
@@ -336,7 +340,7 @@ class Event(DBModel):
         if self.state == Event.StateStatus.DRAFT:
             _success_url = "dashboard:event_update"
         elif self.state == Event.StateStatus.LIVE:
-            _success_url = "dashboard:event_detail"
+            _success_url = "dashboard:event_update"
         return reverse(
             _success_url,
             args=(
@@ -357,6 +361,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
+            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     def transition_live(self, save=True):
@@ -371,6 +376,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
+            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     @transition(field=state, target=StateStatus.DRAFT)
@@ -404,6 +410,10 @@ class Event(DBModel):
     @property
     def checkout_portal_url(self):
         return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
+
+    @property
+    def scanner_url(self):
+        return TicketRedemptionKey.objects.filter(event=self).first().scanner_url
 
     @property
     def has_ended(self):
@@ -457,6 +467,48 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
+
+    def clean_event(self, *args, **kwargs):
+        """
+        clean event method
+        check if ticket_tier.event == event and ticket_tier.event == event
+        """
+        if (self.ticket_tier.event != self.event) or (
+            self.checkout_session.event != self.event
+        ):
+            e = ForeignKeyConstraintError(
+                {
+                    "event": _(
+                        "event related to checkout_session and ticket_tier are different"
+                    )
+                }
+            )
+            capture_exception(e)
+            raise e
+
+    def clean_checkout_session(self, *args, **kwargs):
+        """
+        clean checkout_session method
+        check if checkout_item.checkout_session == checkout_session
+        """
+        if self.checkout_item.checkout_session != self.checkout_session:
+            e = ForeignKeyConstraintError(
+                {
+                    "checkout_session": _(
+                        "checkout_session related to ticket and checkout_item are different"  # noqa
+                    )
+                }
+            )
+            capture_exception(e)
+            raise e
+
+    def clean(self, *args, **kwargs):
+        """
+        clean method
+        runs all clean_* methods
+        """
+        self.clean_event()
+        self.clean_checkout_session()
 
     def redeem_ticket(
         self, redemption_access_key: Optional["TicketRedemptionKey"] = None
@@ -850,6 +902,22 @@ class CheckoutItem(DBModel):
             case _:
                 pass
 
+    def clean_event(self, *args, **kwargs):
+        """
+        clean event method
+        check if ticket_tier.event == checkout_session.event
+        """
+        if self.ticket_tier.event != self.checkout_session.event:
+            e = ForeignKeyConstraintError(
+                {
+                    "event": _(
+                        "event related to checkout_session and ticket_tier are different"
+                    )
+                }
+            )
+            capture_exception(e)
+            raise e
+
     def clean(self, *args, **kwargs):
         """
         clean method
@@ -857,6 +925,7 @@ class CheckoutItem(DBModel):
         """
         self.clean_quantity()
         self.clean_ticket_tier()
+        self.clean_event()
 
     def create_tickets(self):
         """

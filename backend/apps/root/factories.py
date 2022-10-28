@@ -37,7 +37,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Faker("name")
     email = factory.Faker("email")
     password = factory.PostGenerationMethodCall("set_password", "password")
-
+    
 
 class TeamFactory(factory.django.DjangoModelFactory):
     """
@@ -48,6 +48,7 @@ class TeamFactory(factory.django.DjangoModelFactory):
         model = Team
 
     name = factory.Faker("color_name")
+    image = factory.django.ImageField(color="blue")
 
 
 class MembershipFactory(factory.django.DjangoModelFactory):

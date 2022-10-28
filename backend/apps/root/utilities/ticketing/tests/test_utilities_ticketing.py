@@ -370,6 +370,11 @@ class TestGoogleTicket(TestCaseWrapper):
 
         # test raise exception in not address field
         self.event.city = None
+        self.event.address_1 = None
+        self.event.address_2 = None
+        self.event.region = None
+        self.event.postal_code = None
+        self.event.country = None
         with self.assertRaises(Exception):
             self.ticket_pass.get_ticket_class_payload(self.event)
 

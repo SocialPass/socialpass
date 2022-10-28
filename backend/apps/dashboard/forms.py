@@ -126,17 +126,22 @@ class EventForm(forms.ModelForm):
         "address_1, address_2, city, country, postal_code" joined
         """
         data = self.cleaned_data
+
+        # add postal code to city if exists
+        if data["postal_code"]:
+            city = data["city"] + "-" + data["postal_code"]
+        else:
+            city = data["city"]
+
         address_fields = [
             data["address_1"],
-            data["city"],
-            data["country"],
+            city,
+            pytz.country_names[data["country"]],
         ]
+
         # add address_2 to second list position if exists
         if data["address_2"]:
             address_fields.insert(1, data["address_2"])
-        # add postal_code if exists
-        if data["postal_code"]:
-            address_fields.append(data["postal_code"])
 
         # join fields
         localized_address_display = ", ".join(address_fields)

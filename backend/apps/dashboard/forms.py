@@ -1,6 +1,5 @@
 from datetime import date
 
-import pycountry
 import pytz
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -48,8 +47,8 @@ def get_country_choices():
     """
 
     choices = []
-    for country in list(pycountry.countries):
-        choices.append((country.alpha_2, country.name))
+    for i in pytz.country_names.items():
+        choices.append((i[0], i[1]))
     return choices
 
 

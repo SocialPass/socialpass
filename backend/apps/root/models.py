@@ -287,7 +287,8 @@ class Event(DBModel):
         default="",
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event.",
+        help_text="A banner image for your event. Please make sure the image "
+        "is a high quality landscape image, ideally 960 x 720 pixels (4:3).",
         blank=False,
         null=False,
         upload_to="event__cover_image",
@@ -319,17 +320,17 @@ class Event(DBModel):
         default="",
     )
     # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=True, default="")
+    address_1 = models.CharField(max_length=255, blank=False, default="")
     # The street/location address (part 2)
     address_2 = models.CharField(max_length=255, blank=True, default="")
     # The city
-    city = models.CharField(max_length=255, blank=True, default="")
+    city = models.CharField(max_length=255, blank=False, default="")
     # The ISO 3166-2 2- or 3-character region code
     region = models.CharField(max_length=4, blank=True, default="")
     # The postal code
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=True, default="")
+    country = models.CharField(max_length=2, blank=False, default="")
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
@@ -750,10 +751,11 @@ class CheckoutSession(DBModel):
     """
 
     class OrderStatus(models.TextChoices):
-        VALID = "VALID", _("Valid")
-        FAILED = "FAILED", _("Failed")
-        EXPIRED = "EXPIRED", _("Expired")
-        COMPLETED = "COMPLETED", _("Completed")
+        VALID = "VALID", _("Valid")  # Initial State, TX is valid
+        PROCESSING = "PROCESSING", _("Processing")  # TX has been created, processing...
+        FAILED = "FAILED", _("Failed")  # TX has failed
+        COMPLETED = "COMPLETED", _("Completed")  # TX has been completed, fulfill order
+        FULFILLED = "FULFILLED", _("Fulfilled")  # TX has been filled
 
     class TransactionType(models.TextChoices):
         FIAT = "FIAT", _("Fiat")
@@ -811,6 +813,14 @@ class CheckoutSession(DBModel):
 
     def __str__(self):
         return self.name
+
+    def create_items_tickets(self):
+        """
+        call `CheckoutItem.create_tickets()` method for all
+        related checkout_item objects
+        """
+        for checkout_item in self.checkoutitem_set.all():
+            checkout_item.create_tickets()
 
 
 class CheckoutItem(DBModel):
@@ -919,6 +929,21 @@ class CheckoutItem(DBModel):
         self.clean_quantity()
         self.clean_ticket_tier()
         self.clean_event()
+
+    def create_tickets(self):
+        """
+        create Tickets and relate to the checkout_item
+        the amount of tickets created will be the same as
+        the quantity defined in the related checkout_item
+        """
+        ticket_keys = {
+            "checkout_session": self.checkout_session,
+            "event": self.checkout_session.event,
+            "ticket_tier": self.ticket_tier,
+            "checkout_item": self,
+        }
+        tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
+        Ticket.objects.bulk_create(tickets)
 
 
 class TxFiat(DBModel):

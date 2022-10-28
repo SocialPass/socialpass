@@ -1,6 +1,7 @@
 from typing import Optional
 from uuid import UUID, uuid4
 
+from django.db.models import Sum
 from django.utils import timezone
 from factory.faker import faker
 from rest_framework import serializers, status
@@ -9,6 +10,7 @@ from rest_framework.fields import empty
 from apps.root.models import (
     CheckoutItem,
     CheckoutSession,
+    Ticket,
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
@@ -447,9 +449,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         # assert objects values with json returned
         session_dict = response.json()
-        self.assertEqual(
-            session_dict["public_id"], str(self.checkout_session.public_id)
-        )
+        self.assertEqual(session_dict["public_id"], str(self.checkout_session.public_id))
         self.assertEqual(session_dict["name"], self.checkout_session.name)
         self.assertSerializedDatetime(
             session_dict["expiration"], self.checkout_session.expiration
@@ -685,11 +685,8 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         assert 201 created
         """
 
-        data = {"tx_type": "FIAT"}
         response = self.client.post(
             f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # test if fiat tx was created
@@ -704,12 +701,10 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         test create TxAssetOwnership and update session.tx_asset_ownership
         assert 201 created
         """
-
-        data = {"tx_type": "ASSET_OWNERSHIP"}
+        self.checkout_session.tx_type = CheckoutSession.TransactionType.ASSET_OWNERSHIP
+        self.checkout_session.save()
         response = self.client.post(
             f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # test if asset_ownership tx was created and session updated
@@ -728,12 +723,10 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         test create TxBlockchain and update session.tx_blockchain
         assert 201 created
         """
-
-        data = {"tx_type": "BLOCKCHAIN"}
+        self.checkout_session.tx_type = CheckoutSession.TransactionType.BLOCKCHAIN
+        self.checkout_session.save()
         response = self.client.post(
             f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # test if blockchain tx was created and session updated
@@ -743,37 +736,105 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(self.checkout_session.tx_blockchain.pk, tx_blockchain.pk)
 
     @prevent_warnings
-    def test_transaction_400_bad_request(self):
-        """
-        test create transaction with nonexistent tx_type
-        assert 400 bad request
-        """
-
-        data = {"tx_type": "NONEXISTENT_TYPE"}
-        response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-            data=data,
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.checkout_session.refresh_from_db()
-        self.assertIsNone(self.checkout_session.tx_blockchain)
-        self.assertIsNone(self.checkout_session.tx_asset_ownership)
-        self.assertIsNone(self.checkout_session.tx_fiat)
-
-    @prevent_warnings
     def test_transaction_session_404_not_found(self):
         """
         test create transaction with nonexistent session
         assert 404 not found
         """
 
-        data = {"tx_type": "FIAT"}
         response = self.client.post(
             f"{self.url_base}session/{self.random_uuid}/transaction/",
-            data=data,
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         tx_fiat = TxFiat.objects.all()
         self.assertFalse(tx_fiat)
+
+    @prevent_warnings
+    def test_confirmation_processing_200_ok(self):
+        """
+        test return PROCESSING status and not returning tickets_summary
+        """
+
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json()["tx_status"], CheckoutSession.OrderStatus.PROCESSING
+        )
+        self.assertIsNone(response.json()["tickets_summary"])
+
+    @prevent_warnings
+    def test_confirmation_failed_200_ok(self):
+        """
+        test return FAILED status and not returning tickets_summary
+        """
+
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json()["tx_status"], CheckoutSession.OrderStatus.FAILED
+        )
+        self.assertIsNone(response.json()["tickets_summary"])
+
+    @prevent_warnings
+    def test_confirmation_fulfilled_200_ok(self):
+        """
+        test return FULFILLED status and not returning tickets_summary
+        """
+
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json()["tx_status"], CheckoutSession.OrderStatus.FULFILLED
+        )
+
+    @prevent_warnings
+    def test_confirmation_completed_200_ok(self):
+        """
+        test changing tx_status COMPLETED to FULFILLED
+        and assert tickets_summary values
+        """
+        # delete all tickets related to the test checkout_session
+        Ticket.objects.filter(
+            checkout_item__checkout_session=self.checkout_session
+        ).delete()
+        # test if there is no tickets related to the checkout_session
+        ticket_qs = Ticket.objects.filter(
+            checkout_item__checkout_session=self.checkout_session
+        )
+        self.assertFalse(ticket_qs)
+
+        # change the tx_status to completed and poll confirmation endpoint
+        self.checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        self.checkout_session.save()
+        response = self.client.get(
+            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_json = response.json()
+        self.assertEqual(
+            response_json["tx_status"], CheckoutSession.OrderStatus.FULFILLED
+        )
+        # test if the tickets related to the checkout_session was created
+        ticket_qs = Ticket.objects.filter(
+            checkout_item__checkout_session=self.checkout_session
+        )
+        items_quantity_sum = CheckoutItem.objects.filter(
+            checkout_session=self.checkout_session
+        ).aggregate(sum=Sum("quantity"))["sum"]
+        self.assertTrue(ticket_qs)
+        self.assertEqual(ticket_qs.count(), items_quantity_sum)
+        self.assertEqual(
+            response_json["tickets_summary"][0]["quantity"], items_quantity_sum
+        )

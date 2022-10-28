@@ -12,7 +12,15 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers
 from apps.root import exceptions
-from apps.root.models import CheckoutItem, CheckoutSession, Event, TicketTier
+from apps.root.models import (
+    CheckoutItem,
+    CheckoutSession,
+    Event,
+    TicketTier,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
+)
 
 
 class EventView(GenericViewSet, RetrieveModelMixin):
@@ -80,9 +88,9 @@ class CheckoutItemView(
             case _:
                 return serializers.CheckoutItemReadSerializer
 
-    def perform_create(self, serializer, *args, **kwargs):
+    def _perform_create(self, serializer, *args, **kwargs):
         """
-        perform_create method. used for creating a model
+        _perform_create method. used for creating a model
         utilized in CheckoutItemView.create()
         """
         checkout_item = serializer.save(**kwargs)
@@ -99,7 +107,7 @@ class CheckoutItemView(
 
     def perform_update(self, serializer, *args, **kwargs):
         """
-        perform_update method. used for updating a model
+        perform_update method. used for updating a model, override from UpdateModelMixin
         utilized in CheckoutItemView.update()
         """
         checkout_item = serializer.save(**kwargs)
@@ -144,7 +152,7 @@ class CheckoutItemView(
         # raise exceptions on errors
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        checkout_item = self.perform_create(
+        checkout_item = self._perform_create(
             serializer=serializer,
             ticket_tier=ticket_tier,
             checkout_session=checkout_session,
@@ -200,27 +208,28 @@ class CheckoutSessionView(
                 return serializers.CheckoutSessionUpdateSerializer
             case "transaction":
                 return serializers.TransactionCreateSerializer
+            case "confirmation":
+                return serializers.ConfirmationSerializer
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
-    def retrieve(self, request, *args, **kwargs):
+    def _perform_create(self, serializer, event, checkoutitem_set):
         """
-        retrieve a CheckoutSession
-        """
-        return super().retrieve(request, *args, **kwargs)
-
-    def perform_create(self, serializer, *args, **kwargs):
-        """
-        perform_create method. used for creating a model
+        _perform_create method. used for creating a model
         utilized in CheckoutSessionView.create()
-        creation flow in serializer.create()
         """
-        checkout_session = serializer.save(**kwargs)
+        validated_data = serializer.validated_data
+        del validated_data["checkoutitem_set"], validated_data["event"]
 
+        # create CheckoutSession and CheckoutItems
+        checkout_session = CheckoutSession.objects.create(**validated_data, event=event)
         try:
-            checkout_item_qs = checkout_session.checkoutitem_set.all()
-            for checkout_item in checkout_item_qs:
+            for checkout_item in checkoutitem_set:
+                checkout_item = CheckoutItem(
+                    checkout_session=checkout_session, **checkout_item
+                )
                 checkout_item.clean()
+                checkout_item.save()
         except exceptions.TooManyTicketsRequestedError as e:
             raise ValidationError(code="item-quantity-exceed", detail=e)
         except exceptions.DuplicatesTiersRequestedError as e:
@@ -229,6 +238,68 @@ class CheckoutSessionView(
             raise ValidationError(code="not-supported-ticket-tier", detail=e)
 
         return checkout_session
+
+    def _perform_create_transaction(self, checkout_session: CheckoutSession):
+        """
+        _perform_create_transaction method.
+        create and return a new transaction based on the tx_type requested
+        """
+        tx_types = CheckoutSession.TransactionType
+
+        match checkout_session.tx_type:
+            case tx_types.FIAT:
+                return TxFiat.objects.create()
+            case tx_types.BLOCKCHAIN:
+                return TxBlockchain.objects.create()
+            case tx_types.ASSET_OWNERSHIP:
+                return TxAssetOwnership.objects.create()
+
+    def _perform_update_session_tx(self, checkout_session, tx):
+        """
+        _perform_update_session_tx method.
+        used for updating a session transaction (CheckoutSession.tx_*)
+        update a checkout_session with a transaction
+        once updated, mark as PROCESSING
+        """
+        tx_types = CheckoutSession.TransactionType
+
+        match checkout_session.tx_type:
+            case tx_types.FIAT:
+                checkout_session.tx_fiat = tx
+            case tx_types.BLOCKCHAIN:
+                checkout_session.tx_blockchain = tx
+            case tx_types.ASSET_OWNERSHIP:
+                checkout_session.tx_asset_ownership = tx
+
+        # change tx_status to PROCESSING here
+        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        checkout_session.save()
+
+    def _perform_confirmation(self, checkout_session):
+        """
+        _perform_confirmation method.
+        used for creating tickets and send email
+        - perform the confirmation
+        - case tx_status == "COMPLETED" create tickets
+            update checkout_session.tx_status to FULFILLED
+        return tx_status
+        """
+
+        match checkout_session.tx_status:
+            case CheckoutSession.OrderStatus.COMPLETED:
+                checkout_session.create_items_tickets()
+                # TODO: `checkout_session.send_tickets_to_email()` method
+                checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
+                checkout_session.save()
+                return checkout_session.tx_status
+            case _:
+                return checkout_session.tx_status
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        retrieve a CheckoutSession
+        """
+        return super().retrieve(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         """
@@ -273,7 +344,7 @@ class CheckoutSessionView(
         # raise exceptions on errors
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        checkout_session = self.perform_create(
+        checkout_session = self._perform_create(
             serializer=serializer, event=event, checkoutitem_set=items
         )
 
@@ -297,31 +368,23 @@ class CheckoutSessionView(
         serializer = self.get_serializer(checkout_items_qs, many=True)
         return Response(serializer.data)
 
-    def perform_create_transaction(self, serializer, *args, **kwargs):
-        """
-        perform_create_transaction method.
-        used for creating a transaction object
-        """
-        return serializer.save()
-
-    def perform_update_session_tx(self, serializer, tx):
-        """
-        perform_update_session_tx method.
-        used for updating a session transaction (CheckoutSession.tx_*)
-        """
-        checkout_session = self.get_object()
-        serializer.update_session_tx(checkout_session, tx)
-
     @action(methods=["post"], detail=True)
     def transaction(self, request, *args, **kwargs):
         """
         create Transaction and update CheckoutSession (CheckoutSession.tx_*)
         """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        tx = self.perform_create_transaction(serializer)
-        self.perform_update_session_tx(serializer, tx)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        checkout_session = self.get_object()
+        tx = self._perform_create_transaction(checkout_session)
+        self._perform_update_session_tx(checkout_session, tx)
+        serializer = self.get_serializer(tx)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(methods=["get"], detail=True)
+    def confirmation(self, request, *args, **kwargs):
+        """
+        get tx_type and perform confirmation
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        self._perform_confirmation(instance)
+        return Response(serializer.data)

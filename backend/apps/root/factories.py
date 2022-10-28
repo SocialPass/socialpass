@@ -37,7 +37,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Faker("name")
     email = factory.Faker("email")
     password = factory.PostGenerationMethodCall("set_password", "password")
-    
+
 
 class TeamFactory(factory.django.DjangoModelFactory):
     """
@@ -93,6 +93,9 @@ class EventFactory(factory.django.DjangoModelFactory):
     lat = 41.40338
     long = 2.17403
     city = factory.Faker("city")
+    address_1 = factory.Faker("street_address")
+    country = factory.Faker("country_code")
+    postal_code = factory.Faker("postcode")
 
 
 class TicketRedemptionKeyFactory(factory.django.DjangoModelFactory):

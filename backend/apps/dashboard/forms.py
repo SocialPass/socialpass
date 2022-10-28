@@ -41,12 +41,24 @@ class TeamForm(forms.ModelForm):
         labels = {"image": "Set Team Image"}
 
 
+def get_country_choices():
+    """
+    Return choices for country where value is the country code
+    """
+
+    choices = []
+    for i in pytz.country_names.items():
+        choices.append((i[0], i[1]))
+    return choices
+
+
 class EventForm(forms.ModelForm):
     """
     Event form
     """
 
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+    country = forms.ChoiceField(choices=get_country_choices())
 
     class Meta:
         model = Event
@@ -56,18 +68,14 @@ class EventForm(forms.ModelForm):
             "description",
             "start_date",
             "end_date",
-            "initial_place",
-            "lat",
-            "long",
-            "region",
+            "timezone",
             "address_1",
             "address_2",
-            "country",
             "city",
             "postal_code",
-            "localized_address_display",
-            "timezone",
+            "country",
             "cover_image",
+            "localized_address_display",
         ]
 
         widgets = {
@@ -96,17 +104,47 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "initial_place": forms.HiddenInput(),
-            "lat": forms.HiddenInput(),
-            "long": forms.HiddenInput(),
-            "region": forms.HiddenInput(),
-            "address_1": forms.HiddenInput(),
-            "address_2": forms.HiddenInput(),
-            "country": forms.HiddenInput(),
-            "city": forms.HiddenInput(),
-            "postal_code": forms.HiddenInput(),
-            "localized_address_display": forms.HiddenInput(),
+            "address_1": forms.TextInput(
+                attrs={"placeholder": "Name of place, street and number, P.O. box, c/o"}
+            ),
+            "address_2": forms.TextInput(
+                attrs={"placeholder": "Apartment, suite, unit, building, floor, etc."}
+            ),
+            "city": forms.TextInput(attrs={"placeholder": "City name"}),
+            "postal_code": forms.TextInput(attrs={"placeholder": "Postal code"}),
         }
+        labels = {
+            "address_1": "Address line 1",
+            "address_2": "Address line 2 (Optional)",
+        }
+
+    def clean_localized_address_display(self):
+        """
+        custom clean to localized_address_display field
+        localized_address_display will be
+        "address_1, address_2, city, country, postal_code" joined
+        """
+        data = self.cleaned_data
+
+        # add postal code to city if exists
+        if data["postal_code"]:
+            city = data["city"] + "-" + data["postal_code"]
+        else:
+            city = data["city"]
+
+        address_fields = [
+            data["address_1"],
+            city,
+            pytz.country_names[data["country"]],
+        ]
+
+        # add address_2 to second list position if exists
+        if data["address_2"]:
+            address_fields.insert(1, data["address_2"])
+
+        # join fields
+        localized_address_display = ", ".join(address_fields)
+        return localized_address_display
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -152,8 +190,6 @@ class TierAssetOwnershipForm(forms.ModelForm):
             "token_address": forms.TextInput(
                 attrs={"placeholder": "Example: 0xb79...79268"}
             ),
-            "token_id": forms.TextInput(
-                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
-            ),
+            "token_id": forms.TextInput(attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}),
         }
         labels = {"token_id": "Token IDs (Optional)"}

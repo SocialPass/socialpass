@@ -122,7 +122,8 @@ class EventForm(forms.ModelForm):
     def clean_localized_address_display(self):
         """
         custom clean to localized_address_display field
-        localized_address_display will be "address_1, address_2, city, country, postal_code" joined
+        localized_address_display will be
+        "address_1, address_2, city, country, postal_code" joined
         """
         data = self.cleaned_data
         address_fields = [

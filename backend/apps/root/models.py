@@ -749,10 +749,11 @@ class CheckoutSession(DBModel):
     """
 
     class OrderStatus(models.TextChoices):
-        VALID = "VALID", _("Valid")
-        FAILED = "FAILED", _("Failed")
-        EXPIRED = "EXPIRED", _("Expired")
-        COMPLETED = "COMPLETED", _("Completed")
+        VALID = "VALID", _("Valid")  # Initial State, TX is valid
+        PROCESSING = "PROCESSING", _("Processing")  # TX has been created, processing...
+        FAILED = "FAILED", _("Failed")  # TX has failed
+        COMPLETED = "COMPLETED", _("Completed")  # TX has been completed, fulfill order
+        FULFILLED = "FULFILLED", _("Fulfilled")  # TX has been filled
 
     class TransactionType(models.TextChoices):
         FIAT = "FIAT", _("Fiat")
@@ -810,6 +811,14 @@ class CheckoutSession(DBModel):
 
     def __str__(self):
         return self.name
+
+    def create_items_tickets(self):
+        """
+        call `CheckoutItem.create_tickets()` method for all
+        related checkout_item objects
+        """
+        for checkout_item in self.checkoutitem_set.all():
+            checkout_item.create_tickets()
 
 
 class CheckoutItem(DBModel):
@@ -918,6 +927,21 @@ class CheckoutItem(DBModel):
         self.clean_quantity()
         self.clean_ticket_tier()
         self.clean_event()
+
+    def create_tickets(self):
+        """
+        create Tickets and relate to the checkout_item
+        the amount of tickets created will be the same as
+        the quantity defined in the related checkout_item
+        """
+        ticket_keys = {
+            "checkout_session": self.checkout_session,
+            "event": self.checkout_session.event,
+            "ticket_tier": self.ticket_tier,
+            "checkout_item": self,
+        }
+        tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
+        Ticket.objects.bulk_create(tickets)
 
 
 class TxFiat(DBModel):

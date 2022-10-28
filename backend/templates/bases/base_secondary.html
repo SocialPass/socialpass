@@ -51,6 +51,28 @@
 			background-size: 50%;
 		}
 	}
+
+	.asteriskField {
+		display: none;
+	}
+
+	/* Image on forms */
+
+	#div_id_image {
+		margin-bottom: 2rem;
+	}
+
+	#div_id_image .input-group {
+		margin-bottom: 1rem;
+	}
+
+	#div_id_image .input-group .input-group-text,
+	#div_id_image .input-group .form-control,
+	#div_id_image .input-group .text-break {
+		overflow: hidden;
+    	text-overflow: ellipsis;
+    	white-space: nowrap;
+	}
 </style>
 
 {% endblock extra_head %}

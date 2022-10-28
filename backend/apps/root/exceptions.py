@@ -23,3 +23,7 @@ class DuplicatesTiersRequestedError(ValidationError):
 
 class ConflictingTiersRequestedError(ValidationError):
     pass
+
+
+class ForeignKeyConstraintError(ValidationError):
+    pass

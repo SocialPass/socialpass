@@ -1,5 +1,5 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_theme_value get_user_primary_email %}
+{% load static get_theme_value get_user_primary_email crispy_forms_tags %}
 
 {% block head_title %}Team Update - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
@@ -23,7 +23,7 @@
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
 	<!-- Card header start -->
 	<div class="px-card py-10 border-bottom">
-		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
 			Team Update Form
 		</span>
 	</div>
@@ -92,25 +92,7 @@
 									{% endfor %}
 									>{% if input.value %}{{ input.value }}{% endif %}</textarea>
 							{% elif input.name == "image" %}
-								<label class="form-label" for="{{ input.id_for_label }}">Image</label>
-								<div class="form-file">
-									<input
-										type="{{ input.field.widget.input_type }}"
-										name="{{ input.name }}"
-										{% if input.field.widget.input_type != "hidden" %}
-											class="form-file-input {% if input.errors %}is-invalid{% endif %}"
-											id="{{ input.auto_id }}"
-										{% endif %}
-										{% if input.field.required %}
-											required="required"
-										{% endif %}
-										{% for k,v in input.field.widget.attrs.items %}
-											{{ k }}="{{ v }}"
-										{% endfor %}
-									/>
-									<label class="form-file-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
-									<label class="form-file-filename fs-base-n2" for="{{ input.id_for_label }}">{% if input.value %}{{ input.value }}{% else %}No file chosen{% endif %}</label>
-								</div>
+								{{ input|as_crispy_field }}
 							{% endif %}
 
 							{% if input.errors %}
@@ -143,7 +125,7 @@
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">
-		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold">contact us</a> and let us know if you have any trouble updating your team's information.
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold antialiased">contact us</a> and let us know if you need help managing your team.
 	</div>
 	<!-- Card footer end -->
 </div>

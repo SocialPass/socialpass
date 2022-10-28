@@ -37,7 +37,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Faker("name")
     email = factory.Faker("email")
     password = factory.PostGenerationMethodCall("set_password", "password")
-
+    
 
 class TeamFactory(factory.django.DjangoModelFactory):
     """
@@ -48,6 +48,7 @@ class TeamFactory(factory.django.DjangoModelFactory):
         model = Team
 
     name = factory.Faker("color_name")
+    image = factory.django.ImageField(color="blue")
 
 
 class MembershipFactory(factory.django.DjangoModelFactory):
@@ -88,6 +89,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     start_date = factory.fuzzy.FuzzyDateTime(timezone.now())
     cover_image = factory.django.ImageField(color="blue")
     initial_place = factory.Faker("address")
+    localized_address_display = initial_place
     lat = 41.40338
     long = 2.17403
     city = factory.Faker("city")

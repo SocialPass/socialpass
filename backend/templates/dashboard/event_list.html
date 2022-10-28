@@ -40,10 +40,10 @@
 			<!-- Start search form -->
 			<div class="px-card pt-0 pt-sm-10 pb-10">
 				<div class="input-group input-group-sm position-relative">
-					<span class="position-absolute top-50 start-0 translate-y-middle text-primary-dim-lm text-primary-light-dm z-10 ps-10 pe-5">
+					<label class="position-absolute top-50 start-0 translate-y-middle text-primary-dim-lm text-primary-light-dm z-10 ps-10 pe-5" for="state-select">
 						<i class="fa-regular fa-bars-sort"></i>
-					</span>
-					<select class="form-select flex-reset ws-100 ws-sm-150 ps-30" name="state" onchange="this.form.submit()" style="border-top-left-radius: var(--rounded-pill-border-radius); border-bottom-left-radius: var(--rounded-pill-border-radius);">
+					</label>
+					<select id="state-select" class="form-select flex-reset ws-100 ws-sm-150 ps-30" name="state" onchange="this.form.submit()" style="border-top-left-radius: var(--rounded-pill-border-radius); border-bottom-left-radius: var(--rounded-pill-border-radius);">
 						{% if request.GET.state == "LIVE" %}
 							<option value="">All</option>
 							<option value="LIVE" selected="selected">Live</option>
@@ -71,7 +71,7 @@
 	<!-- Card header end -->
 
 	<!-- Main content start -->
-	{% if events.count > 0 %}
+	{% if paginator.count > 0 %}
 		<!-- Event list header start -->
 		<div class="fs-base-n2 fw-bold px-content py-10 lh-sm d-none d-sm-flex align-items-center border-bottom">
 			<div class="ws-100 me-20">Status</div>
@@ -87,7 +87,7 @@
 						<div class="position-absolute w-100 top-0 start-0 text-center fw-bold fs-base-n4 bg-gray-light-lm bg-darkgray-dim-dm d-flex align-items-center px-5 text-uppercase">
 							{% if event.has_ended %}
 								<i class="fa-solid fa-circle-small text-danger me-5"></i>
-								{% if event.state != "Live" %}
+								{% if event.state != event.StateStatus.LIVE %}
 									<i class="fa-regular fa-pencil text-muted me-5"></i>
 								{% endif %}
 								<span class="ms-auto">End</span>
@@ -109,8 +109,46 @@
 
 				<!-- Name, date, location start -->
 				<div class="py-10 py-sm-0 me-sm-20 flex-grow-1">
-					<div>
-						<a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
+					<div class="d-sm-flex align-items-center">
+						<div>
+							<a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
+						</div>
+						{% if not event.has_ended %}
+							{% if event.state == event.StateStatus.LIVE %}
+								<div class="mt-5 mt-sm-0 ms-sm-10">
+									<div class="dropdown with-arrow">
+										<button type="button" class="btn btn-sm text-base rounded-pill lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+											<i class="fa-regular fa-qrcode"></i>
+											<strong class="antialiased ms-5">Check-In</strong>
+										</button>
+										<div class="dropdown-menu ws-250">
+											<div class="dropdown-content fs-base-n2">
+												<div class="fw-bold">Scanner Link</div>
+												<p class="text-muted mt-0">
+													The following is the link to the scanner for this event.
+												</p>
+												<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+													{% with event_scanner_url=event.scanner_url %}
+													<a href="{{ event_scanner_url }}" class="fw-bold antialiased" target="_blank">
+														<i class="fa-regular fa-external-link"></i>
+														<span class="scanner-link ms-5">{{ event_scanner_url }}</span>
+													</a>
+													{% endwith %}
+												</div>
+												<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
+													<i class="fa-regular fa-link"></i>
+													<strong class="antialiased ms-5">Copy Link</strong>
+												</button>
+											</div>
+											<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+												<i class="fa-regular fa-check"></i>
+												Copied!
+											</span>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+						{% endif %}
 					</div>
 					<div class="fs-base-n2 mt-5">
 						<strong>Date: </strong>
@@ -130,7 +168,7 @@
 						Edit
 					</a>
 					{% if event.has_ended or event.state == event.StateStatus.LIVE %}
-						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}">
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="#">
 							<i class="fa-regular fa-sack-dollar me-5"></i>
 							<strong class="antialiased">Stats</strong>
 						</a>
@@ -170,7 +208,7 @@
 	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
 		<div>
 			{% if page_obj.has_previous %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
+				<a class="btn btn-sm text-base" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
 					<strong class="antialiased">Prev</strong>
 				</a>
 			{% else %}
@@ -184,7 +222,7 @@
 		</div>
 		<div class="ms-auto">
 			{% if page_obj.has_next %}
-				<a class="btn btn-sm text-primary" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
+				<a class="btn btn-sm text-base" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
 					<strong class="antialiased">Next</strong>
 				</a>
 			{% else %}
@@ -197,4 +235,33 @@
 	<!-- Card footer end -->
 </div>
 <!-- Content card end -->
+
+<!-- Scanner link copy button -->
+<script>
+	function copyLink(e, copyBtn) {
+		// Get the link block
+		var linkBlock = copyBtn.closest(".dropdown-menu").querySelector(
+			".scanner-link"
+		);
+
+		// Copy code to clipboard
+		var range = document.createRange();
+		range.selectNode(linkBlock);
+		window.getSelection().removeAllRanges();
+		window.getSelection().addRange(range);
+		document.execCommand("copy");
+		window.getSelection().removeAllRanges();
+
+		// Show/hide confirmation
+		var successPrompt = copyBtn.closest(".dropdown-menu").querySelector(
+			".success-prompt"
+		);
+		successPrompt.classList.remove("d-none");
+		setTimeout(function() {
+			successPrompt.classList.add("d-none");
+		}, 2000);
+
+		e.preventDefault();
+	}
+</script>
 {% endblock content %}

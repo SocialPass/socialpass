@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
@@ -32,7 +35,7 @@ class DashboardTest(TestCase):
 
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):
-            template_name = "dashboard/event_detail.html"
+            template_name = "dashboard/event_list.html"
 
         # Test logged-in user
         kwargs = {"team_public_id": self.team_one.public_id}
@@ -112,14 +115,19 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse("dashboard:team_create"))
         self.assertEqual(response.status_code, 200)
 
-        # TEST POST
-        data = {
-            "name": "OneTime Team",
-            "description": "OneTime Team Descripton",
-        }
-        response = self.client.post(
-            reverse("dashboard:team_create"), data=data, follow=True
+        path = os.path.join(
+            settings.ROOT_DIR, "apps", "root", "tests", "images", "example.jpg"
         )
+        # TEST POST
+        with open(path, "rb") as img:
+            data = {
+                "name": "OneTime Team",
+                "description": "OneTime Team Descripton",
+                "image": img,
+            }
+            response = self.client.post(
+                reverse("dashboard:team_create"), data=data, follow=True
+            )
         self.assertEqual(Team.objects.filter(name="OneTime Team").count(), 1)
 
     def test_team_detail(self):
@@ -263,31 +271,6 @@ class DashboardTest(TestCase):
         )
         """
 
-    def test_event_detail(self):
-        # Login User
-        self.assertTrue(
-            self.client.login(username=self.user_one.username, password=self.password)
-        )
-
-        # Test GET (draft event)
-        response = self.client.get(
-            reverse(
-                "dashboard:event_detail",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
-        )
-        self.assertEqual(response.status_code, 302)
-
-        # Test GET (live event)
-        self.event_one.transition_live()
-        response = self.client.get(
-            reverse(
-                "dashboard:event_stats",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
-        )
-        self.assertEqual(response.status_code, 200)
-
     def test_event_update(self):
         # Login User
         self.assertTrue(
@@ -320,37 +303,5 @@ class DashboardTest(TestCase):
             ),
             data=data,
             follow=True,
-        )
-        self.assertEqual(response.status_code, 200)
-        """
-        TODO:
-        Fix form creation. Currently response is 200 but with form validation errors.
-        Below assertion thus returns False
-
-        self.assertEqual(Event.objects.filter(title="Updated Title").count(), 1)
-        """
-
-    def test_event_stats(self):
-        # Login User
-        self.assertTrue(
-            self.client.login(username=self.user_one.username, password=self.password)
-        )
-
-        # Test GET (draft event)
-        response = self.client.get(
-            reverse(
-                "dashboard:event_stats",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
-        )
-        self.assertEqual(response.status_code, 302)
-
-        # Test GET (live event)
-        self.event_one.transition_live()
-        response = self.client.get(
-            reverse(
-                "dashboard:event_stats",
-                args=(self.team_one.public_id, self.event_one.pk),
-            )
         )
         self.assertEqual(response.status_code, 200)

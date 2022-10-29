@@ -254,6 +254,10 @@ class DashboardTest(TestCase):
             "start_date": new_event.start_date,
             "lat": new_event.lat,
             "long": new_event.long,
+            "address_1": new_event.address_1,
+            "city": new_event.city,
+            "postal_code": new_event.postal_code,
+            "country": new_event.country,
         }
         response = self.client.post(
             reverse("dashboard:event_create", args=(self.team_one.public_id,)),
@@ -295,6 +299,11 @@ class DashboardTest(TestCase):
             "start_date": self.event_one.start_date,
             "lat": self.event_one.lat,
             "long": self.event_one.long,
+            "address_1": self.event_one.address_1,
+            "city": self.event_one.city,
+            "region": self.event_one.region,
+            "postal_code": self.event_one.postal_code,
+            "country": self.event_one.country,
         }
         response = self.client.post(
             reverse(

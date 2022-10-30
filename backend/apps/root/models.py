@@ -15,6 +15,8 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
+from eth_account import Account
+from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
 from pytz import utc
 from sentry_sdk import capture_exception
@@ -969,6 +971,7 @@ class TxAssetOwnership(DBModel):
     """
 
     wallet_address = models.CharField(max_length=42, blank=False, default="")
+    is_wallet_verified = models.BooleanField(default=False, blank=False, null=False)
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
@@ -991,11 +994,31 @@ class TxAssetOwnership(DBModel):
             "\nSign this message to prove ownership"
             "\n\nThis IS NOT a trade or transaction"
             f"\n\nTimestamp: {self.expires.strftime('%s')}"
-            # f"\nOne-Time Code: {str(self.public_id)[0:7]}"
+            f"\nOne-Time Code: {str(self.public_id)}"
         )
 
-    def validate_signature(self):
-        return
+    def check_signature(self, signature):
+        """
+        Check if provided signature matches wallet address
+        On successful match, mark is_wallet_verified as True
+        """
+        # Encode original message
+        # Handle encoding / decoding exception (usually forgery attempt)
+        try:
+            _msg = encode_defunct(text=self.signing_message)
+            recovered_address = Account.recover_message(_msg, signature=signature)
+        except Exception:
+            return False
 
-    def validate_ownership(self):
+        # Successful recovery attempt
+        # Now check if addresses match
+        if recovered_address != self.wallet_address:
+            return False
+
+        # Matches, mark as verified
+        self.is_wallet_verified = True
+        self.save()
+        return True
+
+    def check_ownership(self):
         return

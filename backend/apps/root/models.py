@@ -1,5 +1,5 @@
 import uuid
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Optional
 
 from allauth.account.adapter import DefaultAccountAdapter
@@ -16,6 +16,7 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from model_utils.models import TimeStampedModel
+from pytz import utc
 from sentry_sdk import capture_exception
 
 from apps.root.exceptions import (
@@ -967,5 +968,34 @@ class TxAssetOwnership(DBModel):
     Represents a checkout transaction via asset ownership
     """
 
+    wallet_address = models.CharField(max_length=42, blank=False, default="")
+
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
+
+    @property
+    def expires(self):
+        return self.created + timedelta(minutes=30)
+
+    @property
+    def is_expired(self):
+        if datetime.now() >= self.expires:
+            return True
+        else:
+            return False
+
+    @property
+    def signature_message(self):
+        return (
+            "Greetings from SocialPass."
+            "\nSign this message to prove ownership"
+            "\n\nThis IS NOT a trade or transaction"
+            f"\n\nTimestamp: {self.expires.strftime('%s')}"
+            # f"\nOne-Time Code: {str(self.public_id)[0:7]}"
+        )
+
+    def validate_signature(self):
+        return
+
+    def validate_ownership(self):
+        return

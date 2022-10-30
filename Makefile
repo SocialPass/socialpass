@@ -12,6 +12,9 @@ lint: ## Lint backend repo
 collect: ## collectstatic backend
 	(source backend/venv/bin/activate; cd backend; ./manage.py collectstatic --no-input)
 
+install: ## Create backend migrations
+	(source backend/venv/bin/activate; cd backend; pip3 install -r config/requirements/local.txt)
+
 migration: ## Create backend migrations
 	(source backend/venv/bin/activate; cd backend; ./manage.py makemigrations)
 

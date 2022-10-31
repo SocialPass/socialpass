@@ -464,6 +464,16 @@ class EventDeleteView(TeamContextMixin, DeleteView):
         return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
 
 
+class EventStatsView(TeamContextMixin, DetailView):
+    """
+    Show stats, sales, orders, and check-in history of an event
+    """
+
+    model = Event
+    template_name = "dashboard/event_stats.html"
+    object = None
+
+
 class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """
     Create an event's ticket tier.

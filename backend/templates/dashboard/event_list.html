@@ -168,7 +168,7 @@
 						Edit
 					</a>
 					{% if event.has_ended or event.state == event.StateStatus.LIVE %}
-						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="#">
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}">
 							<i class="fa-regular fa-sack-dollar me-5"></i>
 							<strong class="antialiased">Stats</strong>
 						</a>

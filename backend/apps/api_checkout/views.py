@@ -248,11 +248,17 @@ class CheckoutSessionView(
 
         match checkout_session.tx_type:
             case tx_types.FIAT:
-                return TxFiat.objects.create()
+                tx = TxFiat.objects.create()
+                tx.process()
+                return tx
             case tx_types.BLOCKCHAIN:
-                return TxBlockchain.objects.create()
+                tx = TxBlockchain.objects.create()
+                tx.process()
+                return tx
             case tx_types.ASSET_OWNERSHIP:
-                return TxAssetOwnership.objects.create()
+                tx = TxAssetOwnership.objects.create()
+                tx.process()
+                return tx
 
     def _perform_update_session_tx(self, checkout_session, tx):
         """

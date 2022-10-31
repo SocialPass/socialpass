@@ -1,25 +1,19 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_theme_value get_user_primary_email format_address %}
+{% load static get_theme_value format_address %}
 
-{% block head_title %}Tickets - {% get_theme_value "brand_name" %}{% endblock head_title %}
+{% block head_title %}{{ event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
-{% block navbar_breadcrumb %}Tickets{% endblock %}
+{% block navbar_breadcrumb %}Event Stats{% endblock %}
 
 {% block content %}
 <!-- Header start -->
 <div class="border-bottom hs-md-100">
 	<div class="p-content d-flex h-100">
-		<div class="pe-15 align-self-center">
-			<h1 class="content-title m-0 fs-base-p6">Tickets</h1>
+		<div class="align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">{{ event.title }}</h1>
 			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-				List of tickets issued for <strong>{{ current_gate.title }}</strong>.
+				See stats, sales, orders, and check-in history of your event.
 			</p>
-		</div>
-		<div class="ms-auto align-self-center">
-			<a href="{{ current_gate.event_portal_url }}" target="_blank" class="btn text-primary fw-bold">
-				<i class="fa-regular fa-store"></i>
-				<span class="ms-5 d-none d-sm-inline">View Live Event</span>
-			</a>
 		</div>
 	</div>
 </div>
@@ -29,82 +23,264 @@
 <div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
 	<!-- Card header start -->
 	<div class="px-card py-10 border-bottom">
-		<span class="bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
-			Tickets - # Total {{ tickets.count }}
+		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Event Stats
 		</span>
 	</div>
 	<!-- Card header end -->
 
 	<!-- Main content start -->
-	{% if tickets.count > 0 %}
-		<div class="table-responsive scroll-shadow-content-x">
-			<table class="table list-table">
-				<thead>
-					<tr class="fs-base-n2">
-						<th>Address</th>
-						<th>Issued At</th>
-						<th>Redeemed</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for ticket in tickets %}
-						<tr>
-							<td class="fw-bold">{% format_address ticket.blockchain_ownership.wallet_address %}</td>
-							<td class="fs-base-n2">{{ ticket.created }}</td>
-							<td class="fs-base-n2 d-flex align-items-center">
-								{% if ticket.redeemed %}
-									<span class="ws-25">
-										<i class="fa-solid fa-check text-success-dim-lm text-success-light-dm"></i>
-									</span>
-									<span>Yes</span>
-								{% else %}
-									<span class="ws-25">
-										<i class="fa-solid fa-times text-danger"></i>
-									</span>
-									<span>No</span>
-								{% endif %}
-							</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	{% else %}
-		<div class="content text-center">
-			<div class="ws-200 mw-100 mx-auto">
-				<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
-			</div>
-			<div class="ws-400 mw-100 mx-auto">
-				<h5>Nothing found</h5>
-				<p>
-					Looks like no tickets have been created for the <strong>{{ current_gate.title }}</strong> event yet.
-				</p>
+	<div class="row row-eq-spacing-lg">
+		<!-- Event cover image start -->
+		<div class="col-lg-5 align-self-center">
+			<div class="content">
+				<div class="d-flex align-items-center justify-content-center rounded-3 overflow-hidden pe-none hs-250 bg-gray-very-light-lm bg-darkgray-very-dim-dm">
+					<img src="{{ event.cover_image.url }}" class="mh-100" alt="{{ event.title }} cover image">
+				</div>
+				<div class="mt-10 d-flex align-items-center">
+					<strong class="me-10">
+						<i class="fa-regular fa-share me-5"></i>
+						Share:
+					</strong>
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="twitter-share">
+						<i class="fa-brands fa-twitter"></i>
+						<span class="visually-hidden">Twitter</span>
+					</a>
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="facebook-share">
+						<i class="fa-brands fa-facebook-f"></i>
+						<span class="visually-hidden">Facebook</span>
+					</a>
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="email-share">
+						<i class="fa-regular fa-envelope"></i>
+						<span class="visually-hidden">Email</span>
+					</a>
+				</div>
 			</div>
 		</div>
-	{% endif %}
+		<!-- Event cover image end -->
+
+		<!-- Event information start -->
+		<div class="col-lg-7 align-self-center">
+			<div class="content">
+				<h3 class="fs-base-p6 m-0">{{ event.title }}</h3>
+				<div class="mt-20 d-flex align-items-center">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-clock"></i>
+					</span>
+					<span>
+						<strong>Date & Time:</strong>
+						<span class="text-muted">{{ event.start_date }}</span>
+					</span>
+				</div>
+				<div class="mt-5 d-flex align-items-center">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-location-dot"></i>
+					</span>
+					<span>
+						<strong>Location:</strong>
+						<span class="text-muted">{{ event.localized_address_display }}</span>
+					</span>
+				</div>
+				<div class="mt-20">
+					<table class="table">
+						<caption>Stat Totals</caption>
+						<tbody>
+							<tr>
+								<th>Tickets Sold</th>
+								<td>{{ tickets|length }}</td>
+							</tr>
+							<tr>
+								<th>Orders</th>
+								<td>{{ checkout_sessions|length }}</td>
+							</tr>
+							<tr>
+								<th>Check-Ins</th>
+								<td>{{ tickets_redeemed|length }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<!-- Event information end -->
+	</div>
 	<!-- Main content end -->
 
+	<!-- Ticket sales start -->
+	<div class="content">
+		<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+			<span class="ws-25 me-10 text-primary">
+				<i class="fa-light fa-ticket"></i>
+			</span>
+			Ticket Sales
+		</h3>
+		<p class="text-muted fs-base-n2 mt-5">
+			List of tickets that have been purchased for this event.
+		</p>
+		{% if tickets|length > 0 %}
+			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
+				<table class="table m-0">
+					<thead>
+						<tr>
+							<th>Public ID</th>
+							<th>Issued At</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for ticket in tickets %}
+							<tr>
+								<td>
+									{{ ticket.public_id }}
+									{% if ticket.redeemed %}
+										<span class="ms-5" data-hm-toggle="tooltip" data-hm-title="Redeemed" data-hm-placement="end">
+											<i class="fa-regular fa-check"></i>
+										</span>
+									{% endif %}
+								</td>
+								<td>
+									{{ ticket.created }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<div class="card mx-0 text-center">
+				<div class="ws-150 mw-100 mx-auto">
+					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+				</div>
+				<div class="ws-400 mw-100 mx-auto">
+					<h5>Nothing found</h5>
+					<p class="mb-0">
+						This event has no tickets at this moment. Please wait for some time and check back on this page.
+					</p>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	<!-- Ticket sales end -->
+
+	<!-- Order history start -->
+	<div class="content">
+		<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+			<span class="ws-25 me-10 text-primary">
+				<i class="fa-light fa-receipt"></i>
+			</span>
+			Order History
+		</h3>
+		<p class="text-muted fs-base-n2 mt-5">
+			List of orders created for this event.
+		</p>
+		{% if checkout_sessions|length > 0 %}
+			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
+				<table class="table m-0">
+					<thead>
+						<tr>
+							<th>Public ID</th>
+							<th>Created At</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for session in checkout_sessions %}
+							<tr>
+								<td>
+									{{ session.public_id }}
+								</td>
+								<td>
+									{{ session.created }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<div class="card mx-0 text-center">
+				<div class="ws-150 mw-100 mx-auto">
+					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+				</div>
+				<div class="ws-400 mw-100 mx-auto">
+					<h5>Nothing found</h5>
+					<p class="mb-0">
+						This event has no orders at this moment. Please wait for some time and check back on this page.
+					</p>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	<!-- Order history end -->
+
+	<!-- Check-ins start -->
+	<div class="content">
+		<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+			<span class="ws-25 me-10 text-primary">
+				<i class="fa-light fa-sign-in"></i>
+			</span>
+			Check-Ins
+		</h3>
+		<p class="text-muted fs-base-n2 mt-5">
+			List of check-ins for for this event. A check-in is a successful scan of an event ticket to give the holder entry to the event.
+		</p>
+		{% if tickets_redeemed|length > 0 %}
+			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
+				<table class="table m-0">
+					<thead>
+						<tr>
+							<th>Public ID</th>
+							<th>Redeemed At</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for ticket in tickets_redeemed %}
+							<tr>
+								<td>
+									{{ ticket.public_id }}
+									{% if ticket.redeemed %}
+										<span class="ms-5" data-hm-toggle="tooltip" data-hm-title="Redeemed" data-hm-placement="end">
+											<i class="fa-regular fa-check"></i>
+										</span>
+									{% endif %}
+								</td>
+								<td>
+									{{ ticket.redeemed_at }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<div class="card mx-0 text-center">
+				<div class="ws-150 mw-100 mx-auto">
+					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+				</div>
+				<div class="ws-400 mw-100 mx-auto">
+					<h5>Nothing found</h5>
+					<p class="mb-0">
+						This event has no check-ins at this moment. Please wait for some time and check back on this page.
+					</p>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	<!-- Check-ins end -->
+
 	<!-- Card footer start -->
-	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
-		<div>
-          	{% if page_obj.has_previous %}
-       			<a class="btn btn-sm text-primary fw-bold" href="?page={{ page_obj.previous_page_number }}">Prev</a>
-          	{% else %}
-          		<button class="btn btn-sm fw-bold" disabled="disabled">Prev</button>
-          	{% endif %}
-        </div>
-        <div class="ms-auto">
-        	Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </div>
-        <div class="ms-auto">
-          	{% if page_obj.has_next %}
-       			<a class="btn btn-sm text-primary fw-bold" href="?page={{ page_obj.next_page_number }}">Next</a>
-          	{% else %}
-          		<button class="btn btn-sm fw-bold" disabled="disabled">Next</button>
-          	{% endif %}
-        </div>
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="https://nftylabs.typeform.com/to/A70KW4vo" target="_blank" class="fw-bold antialiased">contact us</a> and let us know if you need help managing your event.
 	</div>
 	<!-- Card footer end -->
 </div>
 <!-- Content card end -->
+
+<script>
+	const socialpassLinkMessage = "Join {{event.organizer}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{{event.discovery_url}}"
+	const twitterShareAnchor = document.getElementById("twitter-share")
+	const facebookShareAnchor = document.getElementById("facebook-share")
+  	const emailShareAnchor = document.getElementById("email-share")
+  	twitterShareAnchor.href = `https://twitter.com/share?url=${socialpassLinkMessage}`
+  	facebookShareAnchor.href = `http://www.facebook.com/sharer/sharer.php?u=${socialpassLinkMessage}`
+  	emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
+</script>
 {% endblock content %}

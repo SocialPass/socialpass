@@ -473,6 +473,28 @@ class EventStatsView(TeamContextMixin, DetailView):
     template_name = "dashboard/event_stats.html"
     object = None
 
+    def get_object(self):
+        if not self.object:
+            self.object = Event.objects.get(
+                pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+            )
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        event = self.get_object()
+        context["ticket_count"] = event.ticket_set.count()
+        context["checkout_session_count"] = event.checkoutsession_set.count()
+        context["checkin_count"] = event.ticket_set.filter(
+            redeemed__isnull=False
+        ).count()
+        context["tickets"] = event.ticket_set.count()
+        context["checkout_sessions"] = event.checkoutsession_set.count()
+        context["tickets_redeemed"] = event.ticket_set.filter(
+            redeemed__isnull=False
+        ).count()
+        return context
+
 
 class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """

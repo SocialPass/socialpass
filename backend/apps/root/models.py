@@ -23,6 +23,7 @@ from sentry_sdk import capture_exception
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
+    AssetOwnershipSignatureError,
     ConflictingTiersRequestedError,
     DuplicatesTiersRequestedError,
     EventStateTranstionError,
@@ -513,6 +514,7 @@ class Ticket(DBModel):
         """
         self.clean_event()
         self.clean_checkout_session()
+        return super().clean(*args, **kwargs)
 
     def redeem_ticket(
         self, redemption_access_key: Optional["TicketRedemptionKey"] = None
@@ -930,6 +932,7 @@ class CheckoutItem(DBModel):
         self.clean_quantity()
         self.clean_ticket_tier()
         self.clean_event()
+        return super().clean(*args, **kwargs)
 
     def create_tickets(self):
         """
@@ -970,8 +973,11 @@ class TxAssetOwnership(DBModel):
     Represents a checkout transaction via asset ownership
     """
 
+    signature = models.CharField(max_length=255, blank=False, default="")
     wallet_address = models.CharField(max_length=42, blank=False, default="")
-    is_wallet_verified = models.BooleanField(default=False, blank=False, null=False)
+    is_wallet_address_verified = models.BooleanField(
+        default=False, blank=False, null=False
+    )
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
@@ -997,28 +1003,38 @@ class TxAssetOwnership(DBModel):
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 
-    def check_signature(self, signature):
+    def clean_wallet_address(self):
         """
-        Check if provided signature matches wallet address
-        On successful match, mark is_wallet_verified as True
+        clean wallet_addresss method
+
+        Check if recovered address from signature matches provided wallet_address
+        If so, mark is_wallet_address_verified as True
         """
         # Encode original message
         # Handle encoding / decoding exception (usually forgery attempt)
         try:
-            _msg = encode_defunct(text=self.signing_message)
-            recovered_address = Account.recover_message(_msg, signature=signature)
+            _msg = encode_defunct(text=self.signature_message)
+            recovered_address = Account.recover_message(_msg, signature=self.signature)
         except Exception:
-            return False
+            raise AssetOwnershipSignatureError(
+                {"wallet_address": _("Error recovering address")}
+            )
 
         # Successful recovery attempt
         # Now check if addresses match
         if recovered_address != self.wallet_address:
-            return False
+            raise AssetOwnershipSignatureError(
+                {"wallet_address": _("Address was recovered, but did not match")}
+            )
 
         # Matches, mark as verified
-        self.is_wallet_verified = True
+        self.is_wallet_address_verified = True
         self.save()
-        return True
 
-    def check_ownership(self):
-        return
+    def clean(self, *args, **kwargs):
+        """
+        clean method
+        runs all clean_* methods
+        """
+        self.clean_wallet_address()
+        return super().clean(*args, **kwargs)

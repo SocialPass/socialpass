@@ -27,3 +27,11 @@ class ConflictingTiersRequestedError(ValidationError):
 
 class ForeignKeyConstraintError(ValidationError):
     pass
+
+
+class AssetOwnershipSignatureError(ValidationError):
+    pass
+
+
+class AssetOwnershipAddressError(ValidationError):
+    pass

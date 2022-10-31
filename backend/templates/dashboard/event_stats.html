@@ -42,17 +42,17 @@
 						<i class="fa-regular fa-share me-5"></i>
 						Share:
 					</strong>
-					<a href="#" class="btn btn-square btn-sm text-base me-5">
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="twitter-share">
 						<i class="fa-brands fa-twitter"></i>
 						<span class="visually-hidden">Twitter</span>
 					</a>
-					<a href="#" class="btn btn-square btn-sm text-base me-5">
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="facebook-share">
 						<i class="fa-brands fa-facebook-f"></i>
 						<span class="visually-hidden">Facebook</span>
 					</a>
-					<a href="#" class="btn btn-square btn-sm text-base me-5">
-						<i class="fa-brands fa-linkedin"></i>
-						<span class="visually-hidden">LinkedIn</span>
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="email-share">
+						<i class="fa-regular fa-envelope"></i>
+						<span class="visually-hidden">Email</span>
 					</a>
 				</div>
 			</div>
@@ -273,4 +273,14 @@
 	<!-- Card footer end -->
 </div>
 <!-- Content card end -->
+
+<script>
+	const socialpassLinkMessage = "Join {{event.organizer}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{{event.discovery_url}}"
+	const twitterShareAnchor = document.getElementById("twitter-share")
+	const facebookShareAnchor = document.getElementById("facebook-share")
+  	const emailShareAnchor = document.getElementById("email-share")
+  	twitterShareAnchor.href = `https://twitter.com/share?url=${socialpassLinkMessage}`
+  	facebookShareAnchor.href = `http://www.facebook.com/sharer/sharer.php?u=${socialpassLinkMessage}`
+  	emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
+</script>
 {% endblock content %}

@@ -952,6 +952,9 @@ class TxFiat(DBModel):
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"
 
+    def process(self, *args, **kwargs):
+        pass
+
 
 class TxBlockchain(DBModel):
     """
@@ -961,6 +964,9 @@ class TxBlockchain(DBModel):
     def __str__(self) -> str:
         return f"TxBlockchain {self.public_id}"
 
+    def process(self, *args, **kwargs):
+        pass
+
 
 class TxAssetOwnership(DBModel):
     """
@@ -969,3 +975,6 @@ class TxAssetOwnership(DBModel):
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
+
+    def process(self, *args, **kwargs):
+        pass

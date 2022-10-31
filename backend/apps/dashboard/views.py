@@ -486,13 +486,13 @@ class EventStatsView(TeamContextMixin, DetailView):
         context["ticket_count"] = event.ticket_set.count()
         context["checkout_session_count"] = event.checkoutsession_set.count()
         context["checkin_count"] = event.ticket_set.filter(
-            redeemed__isnull=False
+            redeemed=True
         ).count()
-        context["tickets"] = event.ticket_set.count()
-        context["checkout_sessions"] = event.checkoutsession_set.count()
+        context["tickets"] = event.ticket_set
+        context["checkout_sessions"] = event.checkoutsession_set
         context["tickets_redeemed"] = event.ticket_set.filter(
-            redeemed__isnull=False
-        ).count()
+            redeemed=True
+        )
         return context
 
 

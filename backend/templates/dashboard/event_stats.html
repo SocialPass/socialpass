@@ -1,5 +1,5 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_theme_value %}
+{% load static get_theme_value format_address %}
 
 {% block head_title %}{{ event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
@@ -87,15 +87,15 @@
 						<tbody>
 							<tr>
 								<th>Tickets Sold</th>
-								<td>421</td>
+								<td>{{ ticket_count }}</td>
 							</tr>
 							<tr>
 								<th>Orders</th>
-								<td>217</td>
+								<td>{{ checkout_session_count }}</td>
 							</tr>
 							<tr>
 								<th>Check-Ins</th>
-								<td>63</td>
+								<td>{{ checkin_count }}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -117,9 +117,47 @@
 		<p class="text-muted fs-base-n2 mt-5">
 			List of tickets that have been purchased for this event.
 		</p>
-		<div class="card mx-0 hs-300 overflow-y-auto">
-			
-		</div>
+		{% if tickets.count > 0 %}
+			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
+				<table class="table m-0">
+					<thead>
+						<tr>
+							<th>Public ID</th>
+							<th>Issued At</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for ticket in tickets.all %}
+							<tr>
+								<td>
+									{{ ticket.public_id }}
+									{% if ticket.redeemed %}
+										<span class="ms-5" data-hm-toggle="tooltip" data-hm-title="Redeemed" data-hm-placement="end">
+											<i class="fa-regular fa-check"></i>
+										</span>
+									{% endif %}
+								</td>
+								<td>
+									{{ ticket.created }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<div class="card mx-0 text-center">
+				<div class="ws-150 mw-100 mx-auto">
+					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+				</div>
+				<div class="ws-400 mw-100 mx-auto">
+					<h5>Nothing found</h5>
+					<p class="mb-0">
+						This event has no tickets at this moment. Please wait for some time and check back on this page.
+					</p>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 	<!-- Ticket sales end -->
 
@@ -134,9 +172,42 @@
 		<p class="text-muted fs-base-n2 mt-5">
 			List of orders created for this event.
 		</p>
-		<div class="card mx-0 hs-300 overflow-y-auto">
-			
-		</div>
+		{% if checkout_sessions.count > 0 %}
+			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
+				<table class="table m-0">
+					<thead>
+						<tr>
+							<th>Public ID</th>
+							<th>Created At</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for session in checkout_sessions.all %}
+							<tr>
+								<td>
+									{{ session.public_id }}
+								</td>
+								<td>
+									{{ session.created }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<div class="card mx-0 text-center">
+				<div class="ws-150 mw-100 mx-auto">
+					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+				</div>
+				<div class="ws-400 mw-100 mx-auto">
+					<h5>Nothing found</h5>
+					<p class="mb-0">
+						This event has no orders at this moment. Please wait for some time and check back on this page.
+					</p>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 	<!-- Order history end -->
 
@@ -151,9 +222,47 @@
 		<p class="text-muted fs-base-n2 mt-5">
 			List of check-ins for for this event. A check-in is a successful scan of an event ticket to give the holder entry to the event.
 		</p>
-		<div class="card mx-0 hs-300 overflow-y-auto">
-			
-		</div>
+		{% if tickets_redeemed.count > 0 %}
+			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
+				<table class="table m-0">
+					<thead>
+						<tr>
+							<th>Public ID</th>
+							<th>Redeemed At</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for ticket in tickets_redeemed.all %}
+							<tr>
+								<td>
+									{{ ticket.public_id }}
+									{% if ticket.redeemed %}
+										<span class="ms-5" data-hm-toggle="tooltip" data-hm-title="Redeemed" data-hm-placement="end">
+											<i class="fa-regular fa-check"></i>
+										</span>
+									{% endif %}
+								</td>
+								<td>
+									{{ ticket.redeemed_at }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<div class="card mx-0 text-center">
+				<div class="ws-150 mw-100 mx-auto">
+					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+				</div>
+				<div class="ws-400 mw-100 mx-auto">
+					<h5>Nothing found</h5>
+					<p class="mb-0">
+						This event has no check-ins at this moment. Please wait for some time and check back on this page.
+					</p>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 	<!-- Check-ins end -->
 

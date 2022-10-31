@@ -334,8 +334,8 @@ class Event(DBModel):
     # The ISO 3166-1 2-character international code for the country
     country = models.CharField(max_length=2, blank=False, default="")
     # lat/long
-    lat = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
-    long = models.DecimalField(max_digits=9, decimal_places=6, blank=False, null=True)
+    lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    long = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     localized_address_display = models.CharField(max_length=1024, blank=True, default="")
 
     def __str__(self):
@@ -958,6 +958,9 @@ class TxFiat(DBModel):
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"
 
+    def process(self, *args, **kwargs):
+        pass
+
 
 class TxBlockchain(DBModel):
     """
@@ -966,6 +969,9 @@ class TxBlockchain(DBModel):
 
     def __str__(self) -> str:
         return f"TxBlockchain {self.public_id}"
+
+    def process(self, *args, **kwargs):
+        pass
 
 
 class TxAssetOwnership(DBModel):
@@ -1038,3 +1044,6 @@ class TxAssetOwnership(DBModel):
         """
         self.clean_wallet_address()
         return super().clean(*args, **kwargs)
+
+    def process(self, *args, **kwargs):
+        pass

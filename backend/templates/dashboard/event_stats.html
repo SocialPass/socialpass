@@ -87,15 +87,15 @@
 						<tbody>
 							<tr>
 								<th>Tickets Sold</th>
-								<td>{{ ticket_count }}</td>
+								<td>{{ tickets|length }}</td>
 							</tr>
 							<tr>
 								<th>Orders</th>
-								<td>{{ checkout_session_count }}</td>
+								<td>{{ checkout_sessions|length }}</td>
 							</tr>
 							<tr>
 								<th>Check-Ins</th>
-								<td>{{ checkin_count }}</td>
+								<td>{{ tickets_redeemed|length }}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -117,7 +117,7 @@
 		<p class="text-muted fs-base-n2 mt-5">
 			List of tickets that have been purchased for this event.
 		</p>
-		{% if tickets.count > 0 %}
+		{% if tickets|length > 0 %}
 			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
 				<table class="table m-0">
 					<thead>
@@ -127,7 +127,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for ticket in tickets.all %}
+						{% for ticket in tickets %}
 							<tr>
 								<td>
 									{{ ticket.public_id }}
@@ -172,7 +172,7 @@
 		<p class="text-muted fs-base-n2 mt-5">
 			List of orders created for this event.
 		</p>
-		{% if checkout_sessions.count > 0 %}
+		{% if checkout_sessions|length > 0 %}
 			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
 				<table class="table m-0">
 					<thead>
@@ -182,7 +182,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for session in checkout_sessions.all %}
+						{% for session in checkout_sessions %}
 							<tr>
 								<td>
 									{{ session.public_id }}
@@ -222,7 +222,7 @@
 		<p class="text-muted fs-base-n2 mt-5">
 			List of check-ins for for this event. A check-in is a successful scan of an event ticket to give the holder entry to the event.
 		</p>
-		{% if tickets_redeemed.count > 0 %}
+		{% if tickets_redeemed|length > 0 %}
 			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
 				<table class="table m-0">
 					<thead>
@@ -232,7 +232,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for ticket in tickets_redeemed.all %}
+						{% for ticket in tickets_redeemed %}
 							<tr>
 								<td>
 									{{ ticket.public_id }}

@@ -483,16 +483,9 @@ class EventStatsView(TeamContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         event = self.get_object()
-        context["ticket_count"] = event.ticket_set.count()
-        context["checkout_session_count"] = event.checkoutsession_set.count()
-        context["checkin_count"] = event.ticket_set.filter(
-            redeemed=True
-        ).count()
-        context["tickets"] = event.ticket_set
-        context["checkout_sessions"] = event.checkoutsession_set
-        context["tickets_redeemed"] = event.ticket_set.filter(
-            redeemed=True
-        )
+        context["tickets"] = event.ticket_set.all()
+        context["checkout_sessions"] = event.checkoutsession_set.all()
+        context["tickets_redeemed"] = event.ticket_set.filter(redeemed=True).all()
         return context
 
 

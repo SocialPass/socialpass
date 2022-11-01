@@ -65,7 +65,7 @@ export default function Success() {
 
             <p className='text-muted fs-base-n2'>
             If you don't receive the tickets in your email in 10 minutes, please{' '}
-        <a href='https://nftyfinance.typeform.com/to/A70KW4vo' className='fw-bold' target='_blank'>
+        <a href='https://nftyfinance.typeform.com/to/A70KW4vo' className='fw-bold' target='_blank' rel='noreferrer'>
           click here to contact us
         </a>{' '}
         informing this id:{' '}

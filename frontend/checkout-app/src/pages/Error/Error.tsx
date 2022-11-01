@@ -24,9 +24,6 @@ const Error = () => {
           </div>
         </div>
         <div className="content text-end border-top pt-10">
-					<span className="ms-auto text-muted fs-base-n2">
-						&copy; 2022, SP Tech Inc. All rights reserved
-					</span>
 				</div>
       </div>
     </div>

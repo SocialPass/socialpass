@@ -27,7 +27,7 @@ export const EventProvider = ({ children }: any) => {
           resolve(response.data)
         })
         .catch((err) => {
-          setError(err)
+          setError(true)
           setIsLoading(false)
           reject(err)
         })

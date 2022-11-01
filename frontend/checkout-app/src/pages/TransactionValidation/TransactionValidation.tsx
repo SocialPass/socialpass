@@ -47,12 +47,12 @@ export default function TransactionValidation() {
     <>
       <div className='w-100 hs-200 position-relative'>
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
-          <img src={event.cover_image} className='w-100 h-auto' alt='Cover image'></img>
+          <img src={event?.cover_image} className='w-100 h-auto' alt='Cover image'></img>
         </div>
 
         <div className='position-absolute z-1 top-100 start-50 translate-middle px-content'>
           <div className='ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden bg-gray-very-light-lm bg-darkgray-very-dim-dm'>
-            <img src={event.team.image} className='d-block w-100 h-auto' alt='Team image'></img>
+            <img src={event?.team.image} className='d-block w-100 h-auto' alt='Team image'></img>
           </div>
         </div>
       </div>

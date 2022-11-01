@@ -1,4 +1,9 @@
+import { useNavigate } from 'react-router-dom'
+
 const CheckoutLoading = () => {
+const navigate = useNavigate()
+
+
   return (
 
 <div className="page-wrapper">

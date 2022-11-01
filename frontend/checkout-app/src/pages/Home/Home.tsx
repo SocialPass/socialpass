@@ -148,34 +148,34 @@ export default function Home() {
   }, [ticketTiers])
 
   useEffect(() => {
-    getTicketTiers(event.public_id)
-    setCheckout({ ...checkout, event: event.public_id })
+    getTicketTiers(event?.public_id)
+    setCheckout({ ...checkout, event: event?.public_id })
   }, [event])
 
   return (
     <>
       <div className='w-100 hs-200 position-relative'>
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
-          <img src={event.cover_image} className='w-100 h-auto' alt='Cover image'></img>
+          <img src={event?.cover_image} className='w-100 h-auto' alt='Cover image'></img>
         </div>
 
         <div className='position-absolute z-1 top-100 start-50 translate-middle px-content'>
           <div className='ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden bg-gray-very-light-lm bg-darkgray-very-dim-dm'>
-            <img src={event.team.image} className='d-block w-100 h-auto' alt='Team image'></img>
+            <img src={event?.team.image} className='d-block w-100 h-auto' alt='Team image'></img>
           </div>
         </div>
       </div>
 
       <div className='px-content pt-40 text-center'>
         <p className='text-muted mt-5 mb-0'>Hosted By</p>
-        <h6 className='text-strong fs-base fw-700 m-0'>{event.team.name}</h6>
+        <h6 className='text-strong fs-base fw-700 m-0'>{event?.team.name}</h6>
       </div>
 
       <div className='row'>
         <div className='col-md-7'>
           <div className='content mt-20 mb-0'>
-            <h1 className='text-strong fw-700 display-6 m-0'>{event.title}</h1>
-            <p className='mt-20 fsr-6'>{event.description}</p>
+            <h1 className='text-strong fw-700 display-6 m-0'>{event?.title}</h1>
+            <p className='mt-20 fsr-6'>{event?.description}</p>
           </div>
         </div>
 
@@ -187,7 +187,7 @@ export default function Home() {
               </div>
               <div className='fw-bold'>Date & Time</div>
             </div>
-            <p className='text-muted mt-5 mb-0'>{event.start_date}</p>
+            <p className='text-muted mt-5 mb-0'>{event?.start_date}</p>
 
             <div className='d-flex align-items-center mt-15'>
               <div className='ws-25 flex-shrink-0'>
@@ -195,7 +195,7 @@ export default function Home() {
               </div>
               <div className='fw-bold'>Location</div>
             </div>
-            <p className='text-muted mt-5 mb-0'>{event.localized_address_display}</p>
+            <p className='text-muted mt-5 mb-0'>{event?.localized_address_display}</p>
           </div>
         </div>
         <div className='col-12'>
@@ -223,7 +223,7 @@ export default function Home() {
                     role='alert'
                   >
                     <i className='fa-regular fa-times me-15'></i>
-                    <p className='m-0'>Sorry! Tickets are not available for this event.</p>
+                    <p className='m-0'>Sorry! Tickets are not available for this event?.</p>
                   </div>
                 </div>
               </>

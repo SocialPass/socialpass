@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
@@ -47,3 +48,8 @@ class EventDiscoveryDetails(DetailView):
     def get_queryset(self):
         qs = super().get_queryset().filter_active()
         return qs.filter(public_id=self.kwargs["event_public_id"])
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["CHECKOUT_PORTAL_BASE_URL"] = settings.CHECKOUT_PORTAL_BASE_URL
+        return context

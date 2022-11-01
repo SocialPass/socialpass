@@ -21,8 +21,6 @@ from model_utils.models import TimeStampedModel
 from pytz import utc
 from sentry_sdk import capture_exception
 
-
-
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     AssetOwnershipSignatureError,
@@ -736,6 +734,11 @@ class TierAssetOwnership(DBModel):
         choices=AssetChoices.choices,
         default=AssetChoices.NFT,
         blank=False,
+    )
+    balance_required = models.IntegerField(
+        default=1,
+        blank=False,
+        null=False,
     )
     token_address = models.CharField(max_length=42, blank=False, default="")
     token_id = ArrayField(

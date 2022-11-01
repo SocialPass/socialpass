@@ -29,7 +29,7 @@ const Base = () => {
   }, [error])
 
   return (
-    <div className='content'>
+    <div>
       {error ? (
         <Outlet />
       ) : isLoading || !isReady ? (

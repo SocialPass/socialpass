@@ -1,9 +1,12 @@
+import PropTypes from 'prop-types'
+
 import { useNavigate } from 'react-router-dom'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
-export default function Summary() {
+export default function Summary(props) {
+  const { onContinueClick, enableContinue } = props
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
@@ -27,10 +30,6 @@ export default function Summary() {
     }
 
     return 'N/A'
-  }
-
-  const handleContinueClick = () => {
-    navigate('success')
   }
 
   return (
@@ -79,9 +78,10 @@ export default function Summary() {
         />
         <button
           className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
-          onClick={() => {
-            handleContinueClick()
+          onClick={(e) => {
+            onContinueClick(e)
           }}
+          disabled={!enableContinue}
         >
           <strong className='antialiased'>Continue</strong>
         </button>
@@ -101,4 +101,9 @@ export default function Summary() {
       </p>
     </div>
   )
+}
+
+Summary.propTypes = {
+  onContinueClick: PropTypes.func.isRequired,
+  enableContinue: PropTypes.bool.isRequired,
 }

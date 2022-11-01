@@ -18,6 +18,8 @@ from django_fsm import FSMField, transition
 from model_utils.models import TimeStampedModel
 from sentry_sdk import capture_exception
 
+
+
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     ConflictingTiersRequestedError,

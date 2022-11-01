@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
+import { useConnect, useAccount, useSignMessage } from 'wagmi'
 
 import FiatCheckoutOption from './CheckoutOptions/Fiat'
 import CrypotCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
@@ -13,13 +14,50 @@ import useCheckout from '@/hooks/useCheckout'
 export default function Home() {
   const navigate = useNavigate()
 
+  const connectHook = useConnect()
+  const accountHook = useAccount()
+  const signHook = useSignMessage()
+
   const { checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
-  const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
+  const { checkout, getCheckout, getCheckoutItems, setCheckout, setCheckoutItems, pay }: any =
+    useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
+    setCheckout(null)
+    setCheckoutItems([])
+  }
+
+  const getPaymentData = () => {
+    switch (checkout?.tx_type) {
+      case 'FIAT':
+        return {}
+
+      case 'BLOCKCHAIN':
+        return {}
+
+      case 'ASSET_OWNERSHIP':
+        return {
+          tx_type: checkout?.tx_type,
+          wallet_address: accountHook.address,
+          signed_message: signHook.data,
+        }
+
+      default:
+        return null
+    }
+  }
+
+  const handleContinueClick = (e) => {
+    e.preventDefault()
+
+    const paymentData = getPaymentData()
+
+    pay(paymentData).then(() => {
+      navigate('validation')
+    })
   }
 
   useEffect(() => {
@@ -50,6 +88,18 @@ export default function Home() {
         </div>
       </div>
 
+      {checkout?.tx_status === 'FAILED' ? (
+        <div className='px-content pt-20'>
+          <div
+            className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+            role='alert'
+          >
+            <i className='fa-regular fa-times me-15'></i>
+            <p className='m-0'>Sorry! The transaction has failed. Please try again.</p>
+          </div>
+        </div>
+      ) : null}
+
       <div className='px-content pt-20'>
         <p className='text-muted mt-5 mb-0'>By {event.team.name}</p>
         <h2 className='text-strong fs-base-p2 fw-700 m-0'>{event.title}</h2>
@@ -67,13 +117,13 @@ export default function Home() {
             ) : checkout?.tx_type === 'BLOCKCHAIN' ? (
               <CrypotCurrencyCheckoutOption />
             ) : checkout?.tx_type === 'ASSET_OWNERSHIP' ? (
-              <AssetOwnershipCheckoutOption />
+              <AssetOwnershipCheckoutOption connectors={connectHook.connectors} />
             ) : null}
           </div>
         </div>
 
         <div className='col-md-5'>
-          <Summary />
+          <Summary onContinueClick={handleContinueClick} enableContinue={!!accountHook?.address} />
         </div>
       </div>
     </>

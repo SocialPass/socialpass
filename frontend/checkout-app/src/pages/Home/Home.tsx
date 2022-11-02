@@ -223,7 +223,7 @@ export default function Home() {
                     role='alert'
                   >
                     <i className='fa-regular fa-times me-15'></i>
-                    <p className='m-0'>Sorry! Tickets are not available for this event?.</p>
+                    <p className='m-0'>Sorry! Tickets are not available for this event.</p>
                   </div>
                 </div>
               </>

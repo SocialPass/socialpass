@@ -777,21 +777,21 @@ class CheckoutSession(DBModel):
         blank=False,
         null=False,
     )
-    tx_fiat = models.ForeignKey(
+    tx_fiat = models.OneToOneField(
         "TxFiat",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
-    tx_blockchain = models.ForeignKey(
+    tx_blockchain = models.OneToOneField(
         "TxBlockchain",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
-    tx_asset_ownership = models.ForeignKey(
+    tx_asset_ownership = models.OneToOneField(
         "TxAssetOwnership",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
@@ -1014,10 +1014,8 @@ class TxAssetOwnership(DBModel):
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 
-    def clean_wallet_address(self):
+    def process_wallet_address(self):
         """
-        clean wallet_addresss method
-
         Check if recovered address from signature matches provided wallet_address
         If so, mark is_wallet_address_verified as True
         """
@@ -1027,6 +1025,7 @@ class TxAssetOwnership(DBModel):
             _msg = encode_defunct(text=self.signature_message)
             recovered_address = Account.recover_message(_msg, signature=self.signature)
         except Exception:
+            self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
             raise AssetOwnershipSignatureError(
                 {"wallet_address": _("Error recovering address")}
             )
@@ -1034,6 +1033,7 @@ class TxAssetOwnership(DBModel):
         # Successful recovery attempt
         # Now check if addresses match
         if recovered_address != self.wallet_address:
+            self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
             raise AssetOwnershipSignatureError(
                 {"wallet_address": _("Address was recovered, but did not match")}
             )
@@ -1042,13 +1042,13 @@ class TxAssetOwnership(DBModel):
         self.is_wallet_address_verified = True
         self.save()
 
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_wallet_address()
-        return super().clean(*args, **kwargs)
-
     def process(self, *args, **kwargs):
-        pass
+        """
+        1. Process wallet address / signature
+        2. Process Asset Ownership
+        """
+        # 1. Process wallet address / signature
+        self.process_wallet_address()
+
+        # 2. Process asset ownership
+        self.process_asset_ownership()

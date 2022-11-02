@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
-from eth_account import Account
+from eth_account.Account import recover_message
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
 from pytz import utc
@@ -984,8 +984,8 @@ class TxAssetOwnership(DBModel):
     Represents a checkout transaction via asset ownership
     """
 
-    signature = models.CharField(max_length=255, blank=False, default="")
     wallet_address = models.CharField(max_length=42, blank=False, default="")
+    signed_message = models.CharField(max_length=255, blank=False, default="")
     is_wallet_address_verified = models.BooleanField(
         default=False, blank=False, null=False
     )
@@ -1005,7 +1005,7 @@ class TxAssetOwnership(DBModel):
             return False
 
     @property
-    def signature_message(self):
+    def unsigned_message(self):
         return (
             "Greetings from SocialPass."
             "\nSign this message to prove ownership"
@@ -1022,8 +1022,8 @@ class TxAssetOwnership(DBModel):
         # Encode original message
         # Handle encoding / decoding exception (usually forgery attempt)
         try:
-            _msg = encode_defunct(text=self.signature_message)
-            recovered_address = Account.recover_message(_msg, signature=self.signature)
+            _msg = encode_defunct(text=self.unsigned_message)
+            recovered_address = recover_message(_msg, signature=self.signed_message)
         except Exception:
             self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
             raise AssetOwnershipSignatureError(

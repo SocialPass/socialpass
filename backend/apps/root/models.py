@@ -1016,7 +1016,7 @@ class TxAssetOwnership(DBModel):
 
     def process_wallet_address(self):
         """
-        Recover a wallet address from the signed_message,
+        Process a wallet address from the signed_message,
         and verify it matches the original wallet address
         - On failure: Raise error, mark self.checkoutsession.tx_status as FAILED
         - On success: Mark is_wallet_address_verified as True

@@ -389,7 +389,7 @@ export default function Home() {
                 <hr />
                 <p className='text-muted fs-base-n4'>
                   You're also agreeing to our{' '}
-                  <a href='#' className='fw-bold' target='_blank'>
+                  <a href='https://drive.google.com/file/d/1mulvB8lIEl3AZghIBqlISBI-jdNk25W5/view' className='fw-bold' target='_blank'>
                     Terms & Conditions <i className='fa-regular fa-external-link'></i>
                   </a>{' '}
                   by clicking on the above button.

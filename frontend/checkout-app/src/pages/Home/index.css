@@ -79,7 +79,7 @@
 
 .ticket-tier-input:disabled + .ticket-tier-label {
   background-color: var(--base-body-bg-color);
-  border-color: hsla(var(--black-color-hsl), 0.35);
+  border-color: var(--border-color);
   cursor: not-allowed;
   opacity: 0.75;
 }

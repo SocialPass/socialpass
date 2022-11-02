@@ -6,8 +6,8 @@
 
 {% block modals %}
 <div class="modal" tabindex="-1" id="checkout-app-modal" aria-labelledby="checkout-app-modal-toggle" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content border-transparent ws-800 hs-800 mw-100 mh-100 p-0">
+    <div class="modal-dialog modal-fullscreen-sm-down">
+        <div class="modal-content border-transparent ws-860 hs-860 mw-100 mh-100 p-0">
             <div class="d-flex align-items-center hs-50 px-20 text-strong border-bottom">
                 <strong>Claim Ticket</strong>
                 <a href="#" type="button" class="d-block lh-1 link-reset text-decoration-none ms-auto" aria-label="Close" data-hm-dismiss="modal">
@@ -128,10 +128,10 @@
 {% endblock content %}
 
 {% block extra_body %}
-<script src="{{checkoutportal_base_url}}/checkoutportal-embedded.js"></script>
+<script src="{{CHECKOUT_PORTAL_BASE_URL}}/checkoutportal-embedded.js"></script>
 <script type="text/javascript">
     const uuid = `{{event.public_id}}`;
-    const domain = `{{checkoutportal_base_url}}`;
+    const domain = `{{CHECKOUT_PORTAL_BASE_URL}}`;
     var frame = new CheckoutPortalWidget(
       uuid,
       domain

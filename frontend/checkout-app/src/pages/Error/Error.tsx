@@ -23,7 +23,7 @@ const Error = () => {
             <p className='border-top pt-10 mt-10 text-muted fs-base-n4'>
               If this problem persists, please consider{' '}
               <a
-                href='https://nftylabs.typeform.com/to/A70KW4vo'
+                href='https://nfty-ecosystem.typeform.com/socialpass-help'
                 className='fw-bold'
                 target='_blank'
                 rel='noreferrer'

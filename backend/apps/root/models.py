@@ -1016,10 +1016,13 @@ class TxAssetOwnership(DBModel):
 
     def process_wallet_address(self):
         """
-        Check if recovered address from signature matches provided wallet_address
-        If so, mark is_wallet_address_verified as True
+        Recover a wallet address from the signed_message,
+        and verify it matches the original wallet address
+        - On failure: Raise error, mark self.checkoutsession.tx_status as FAILED
+        - On success: Mark is_wallet_address_verified as True
+        Once this wallet address has been verified, set is_wallet_address_verified
         """
-        # Encode original message
+        # Recover wallet address
         # Handle encoding / decoding exception (usually forgery attempt)
         try:
             _msg = encode_defunct(text=self.unsigned_message)
@@ -1038,14 +1041,17 @@ class TxAssetOwnership(DBModel):
                 {"wallet_address": _("Address was recovered, but did not match")}
             )
 
-        # Matches, mark as verified
+        # Success, mark as verified
         self.is_wallet_address_verified = True
         self.save()
+
+    def process_asset_ownership(self):
+        """ """
 
     def process(self, *args, **kwargs):
         """
         1. Process wallet address / signature
-        2. Process Asset Ownership
+        2. Process Asset Ownership (via CheckoutSession.CheckouItem's)
         """
         # 1. Process wallet address / signature
         self.process_wallet_address()

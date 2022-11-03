@@ -38,7 +38,7 @@ services:
   celery_worker:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: config/docker/local/Dockerfile
     image: django_celery_worker
     command: "celery -A config:celery_app worker -l info"
     volumes:
@@ -53,7 +53,7 @@ services:
   web:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: config/docker/local/Dockerfile
     image: socialpass-django-backend
     networks:
       - backend

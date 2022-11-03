@@ -1,9 +1,10 @@
 from django.conf import settings
+from django.http import Http404
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from apps.root.models import Event
+from apps.root.models import Event, CheckoutSession, Ticket
 
 
 class EventDiscoveryIndex(TemplateView):
@@ -52,4 +53,36 @@ class EventDiscoveryDetails(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["CHECKOUT_PORTAL_BASE_URL"] = settings.CHECKOUT_PORTAL_BASE_URL
+        return context
+
+
+class GetTickets(DetailView):
+    model = CheckoutSession
+    slug_field = "public_id"
+    slug_url_kwarg = "checkout_session_public_id"
+    context_object_name = "checkout_session"
+    template_name = "event_discovery/get_tickets.html"
+
+    def get_queryset(self):
+        try:
+            return CheckoutSession.objects.filter(
+                public_id=self.kwargs["checkout_session_public_id"],
+                passcode=self.request.GET.get("passcode", "-1"),
+            )
+        except Exception as e:
+            raise Http404()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        tickets = Ticket.objects.select_related("ticket_tier").filter(
+            checkout_session=self.get_object()
+        )
+        context["tickets"] = []
+        for ticket in tickets:
+            context["tickets"].append({
+                "tier": ticket.ticket_tier,
+                "pdf": ticket.get_pdf_ticket(),
+                "google": ticket.get_google_ticket(),
+                "apple": ticket.get_apple_ticket()
+            })
         return context

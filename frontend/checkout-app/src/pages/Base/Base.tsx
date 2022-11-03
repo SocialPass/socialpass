@@ -18,7 +18,7 @@ const Base = () => {
 
   useEffect(() => {
     if (!event || event.publicId !== eventPublicId) {
-      getEvent(eventPublicId)
+      getEvent(eventPublicId).catch(() => {})
     }
   }, [eventPublicId])
 
@@ -29,7 +29,7 @@ const Base = () => {
   }, [error])
 
   return (
-    <div className='content'>
+    <div>
       {error ? (
         <Outlet />
       ) : isLoading || !isReady ? (

@@ -63,6 +63,20 @@ export default function Success() {
               <p className='m-0'>Your tickets will be sent to your email address</p>
             </div>
 
+            <p className='text-muted fs-base-n2'>
+              If you don't receive the tickets in your email in 10 minutes, please{' '}
+              <a
+                href='https://nfty-ecosystem.typeform.com/socialpass-help'
+                className='fw-bold antialiased'
+                target='_blank'
+                rel='noreferrer'
+              >
+                contact us
+              </a>{' '}
+              and tell us this ID: <br></br>
+              <strong>{checkout.public_id}</strong>
+            </p>
+
             {/* <h6 className='fw-700 fsr-6 mt-20'>Get Tickets</h6>
 
             <button className='btn btn-primary btn-lg btn-block px-20 py-10 text-start d-flex align-items-center my-20'>
@@ -72,6 +86,7 @@ export default function Success() {
               <i className='fa-light fa-file-pdf ms-auto fs-base-p4'></i>
             </button>
 
+            
             <button className='btn btn-lg btn-block px-20 py-10 fs-base text-base text-start d-flex align-items-center my-20'>
               <div>
                 <div className='fw-700 antialiased'>Save to Google Wallet</div>

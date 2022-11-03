@@ -18,9 +18,11 @@ export default function Home() {
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
 
   const getTicketTiers = (eventPublicId: string) => {
-    EventApi.getTicketTiers(eventPublicId).then((res) => {
-      setTicketTiers(res.data)
-    })
+    EventApi.getTicketTiers(eventPublicId)
+      .then((res) => {
+        setTicketTiers(res.data)
+      })
+      .catch(() => {})
   }
 
   const getFiatTicketTiers = () =>
@@ -174,8 +176,8 @@ export default function Home() {
       <div className='row'>
         <div className='col-md-7'>
           <div className='content mt-20 mb-0'>
-            <h1 className='text-strong fw-700 display-6 m-0'>{event?.title}</h1>
-            <p className='mt-20 fsr-6'>{event?.description}</p>
+            <h1 className='text-strong fw-700 display-6 m-0 text-break'>{event?.title}</h1>
+            <p className='mt-20 fsr-6 text-break'>{event?.description}</p>
           </div>
         </div>
 
@@ -350,9 +352,9 @@ export default function Home() {
                 <p className='fs-base-n2 mt-0'>
                   Your ticket(s) will be sent to your email address, so please make sure you enter
                   the correct one!{' '}
-                  <a href='#' className='fw-bold' target='_blank'>
+                  {/* <a href='#' className='fw-bold' target='_blank'>
                     Learn more <i className='fa-regular fa-external-link'></i>
-                  </a>
+                  </a> */}
                 </p>
                 <form>
                   <input
@@ -389,7 +391,12 @@ export default function Home() {
                 <hr />
                 <p className='text-muted fs-base-n4'>
                   You're also agreeing to our{' '}
-                  <a href='#' className='fw-bold' target='_blank'>
+                  <a
+                    href='https://drive.google.com/file/d/1mulvB8lIEl3AZghIBqlISBI-jdNk25W5/view'
+                    className='fw-bold'
+                    target='_blank'
+                    rel='noreferrer'
+                  >
                     Terms & Conditions <i className='fa-regular fa-external-link'></i>
                   </a>{' '}
                   by clicking on the above button.

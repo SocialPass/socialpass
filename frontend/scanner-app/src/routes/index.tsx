@@ -7,6 +7,7 @@ import { Error } from '@/pages/Error'
 import { CapacityReached } from '@/pages/CapacityReached'
 import { Scanner } from '@/pages/Scanner'
 import { Statistics } from '@/pages/Statistics'
+import { ManualRedeem } from '@/pages/ManualRedeem'
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
           <Route path='statistics' element={<Statistics />} />
           <Route path="capacity-reached'" element={<CapacityReached />} />
           <Route path='error' element={<Error />} />
+          <Route path='manual-redeem' element={<ManualRedeem />} />
         </Route>
       </Routes>
     </BrowserRouter>

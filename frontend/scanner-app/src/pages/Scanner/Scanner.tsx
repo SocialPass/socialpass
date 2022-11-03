@@ -87,6 +87,14 @@ const Scanner = () => {
           >
             <strong className='antialiased'>Statistics</strong>
           </Button>
+          <Button
+            className='mt-10'
+            onClick={() => {
+              navigate(`/${redemptionPublicId}/manual-redeem`)
+            }}
+          >
+            <strong className='antialiased'>Redeem Manually</strong>
+          </Button>
         </div>
       </div>
     </>

@@ -744,6 +744,13 @@ class TierAssetOwnership(DBModel):
         return f"TierAssetOwnership {self.public_id}"
 
 
+def get_random_passcode():
+    """
+    Get a random 6-digit passcode.
+    """
+    return get_random_string(6)
+
+
 class CheckoutSession(DBModel):
     """
     Represents a time-limited checkout session (aka 'cart') for an event organizer
@@ -810,6 +817,7 @@ class CheckoutSession(DBModel):
         blank=True,
         null=False,
     )
+    passcode = models.CharField(max_length=6, default=get_random_passcode)
 
     def __str__(self):
         return self.name
@@ -821,6 +829,27 @@ class CheckoutSession(DBModel):
         """
         for checkout_item in self.checkoutitem_set.all():
             checkout_item.create_tickets()
+
+    def send_confirmation_email(self):
+        """
+        send the confirmation link to the attendee's email
+        """
+        """
+        tickets = Ticket.objects.filter(checkout_session=self)
+        ctx_tickets = []
+        for ticket in tickets:
+            ctx_tickets.append({
+                "pdf": ticket.get_pdf_ticket(),
+                "google": ticket.get_google_ticket(),
+                "apple": ticket.get_apple_ticket
+            })
+        ctx = {
+
+        }
+        email_template = "ticket/email/checkout"
+        DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
+        """
+        pass
 
 
 class CheckoutItem(DBModel):

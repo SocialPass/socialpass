@@ -64,15 +64,19 @@ export default function Success() {
             </div>
 
             <p className='text-muted fs-base-n2'>
-            If you don't receive the tickets in your email in 10 minutes, please{' '}
-        <a href='https://nftyfinance.typeform.com/to/A70KW4vo' className='fw-bold antialiased' target='_blank' rel='noreferrer'>
-          contact us
-        </a>{' '}
-        and tell us this ID:{' '}
-        <br></br>
-        <strong>{checkout.public_id}</strong> 
+              If you don't receive the tickets in your email in 10 minutes, please{' '}
+              <a
+                href='https://nfty-ecosystem.typeform.com/socialpass-help'
+                className='fw-bold antialiased'
+                target='_blank'
+                rel='noreferrer'
+              >
+                contact us
+              </a>{' '}
+              and tell us this ID: <br></br>
+              <strong>{checkout.public_id}</strong>
+            </p>
 
-      </p>
             {/* <h6 className='fw-700 fsr-6 mt-20'>Get Tickets</h6>
 
             <button className='btn btn-primary btn-lg btn-block px-20 py-10 text-start d-flex align-items-center my-20'>

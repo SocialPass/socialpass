@@ -5,8 +5,6 @@ const Error = () => {
     <div className="page-wrapper">
       <div className="content-wrapper ws-820 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
         <div>
-
-
           <div className="row">
             <div className="col-md-10 col-lg-8 mx-auto">
               <div className="content mt-50 mb-0 text-center">

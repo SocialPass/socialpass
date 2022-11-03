@@ -7,7 +7,7 @@ import useCheckout from '@/hooks/useCheckout'
 import { CheckoutApi } from '@/services/api'
 
 export default function TransactionValidation() {
-  const { checkoutPublicId } = useParams()
+  const { eventPublicId, checkoutPublicId } = useParams()
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
@@ -32,7 +32,7 @@ export default function TransactionValidation() {
   }
 
   const handleBackClick = () => {
-    navigate(`/${event.public_id}/checkout/${checkout.public_id}`)
+    navigate(`/${eventPublicId}/checkout/${checkoutPublicId}`)
   }
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export default function TransactionValidation() {
                 contact us
               </a>{' '}
               and tell us this ID: <br></br>
-              <strong>{checkout.public_id}</strong>
+              <strong>{checkoutPublicId}</strong>
             </p>
           </div>
         </div>

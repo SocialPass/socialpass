@@ -18,9 +18,11 @@ export default function Home() {
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
 
   const getTicketTiers = (eventPublicId: string) => {
-    EventApi.getTicketTiers(eventPublicId).then((res) => {
-      setTicketTiers(res.data)
-    })
+    EventApi.getTicketTiers(eventPublicId)
+      .then((res) => {
+        setTicketTiers(res.data)
+      })
+      .catch(() => {})
   }
 
   const getFiatTicketTiers = () =>

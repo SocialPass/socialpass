@@ -511,16 +511,20 @@ class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        valid = super().form_valid(form)
-
         tier_asset_ownership = TierAssetOwnershipForm(
             form.data, prefix="tier_asset_ownership_form"
         )
 
-        if tier_asset_ownership.is_valid():
-            tier_asset_ownership.save()
-            self.object.tier_asset_ownership = tier_asset_ownership.instance
-            self.object.save()
+        if not tier_asset_ownership.is_valid():
+            messages.add_message(
+                self.request, messages.ERROR, "The Asset Ownership fields is not valid"
+            )
+            return super().form_invalid(form)
+
+        valid = super().form_valid(form)
+        tier_asset_ownership.save()
+        self.object.tier_asset_ownership = tier_asset_ownership.instance
+        self.object.save()
 
         return valid
 

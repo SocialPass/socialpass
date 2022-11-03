@@ -350,9 +350,9 @@ export default function Home() {
                 <p className='fs-base-n2 mt-0'>
                   Your ticket(s) will be sent to your email address, so please make sure you enter
                   the correct one!{' '}
-                  <a href='#' className='fw-bold' target='_blank'>
+                  {/* <a href='#' className='fw-bold' target='_blank'>
                     Learn more <i className='fa-regular fa-external-link'></i>
-                  </a>
+                  </a> */}
                 </p>
                 <form>
                   <input
@@ -393,7 +393,7 @@ export default function Home() {
                     href='https://drive.google.com/file/d/1mulvB8lIEl3AZghIBqlISBI-jdNk25W5/view'
                     className='fw-bold'
                     target='_blank'
-                    rel="noreferrer"
+                    rel='noreferrer'
                   >
                     Terms & Conditions <i className='fa-regular fa-external-link'></i>
                   </a>{' '}

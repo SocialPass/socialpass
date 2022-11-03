@@ -93,3 +93,4 @@ RUN chown django:django ${APP_HOME}
 USER django
 
 ENTRYPOINT ["/entrypoint"]
+CMD ["/start"]

@@ -73,7 +73,7 @@ class GetTickets(DetailView):
                 public_id=self.kwargs["checkout_session_public_id"],
                 passcode=self.request.GET.get("passcode", "-1"),
             )
-        except Exception as e:
+        except Exception:
             raise Http404()
 
     def get_context_data(self, *args, **kwargs):

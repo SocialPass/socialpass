@@ -132,11 +132,6 @@ class AppleTicket(TicketGenerationBase):
     def generate_pass_from_ticket(self, ticket):
         event = ticket.event
 
-        if not event.lat or not event.long:
-            raise Exception(
-                "The event object does not have latitude or longitude cordinates"
-            )
-
         if not event.localized_address_display:
             raise Exception(
                 "The event object does not have an localized_address_display"

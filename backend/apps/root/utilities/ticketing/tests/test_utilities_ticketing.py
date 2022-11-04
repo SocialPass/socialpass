@@ -112,23 +112,6 @@ class TestAppleTicket(TestCaseWrapper):
         self.ticket_pass.set_barcode(link=link, _format=BarcodeFormat.PDF417)
         self.assertNotEqual(self.ticket_pass.barcode.format, BarcodeFormat.QR)
 
-    def test_set_location_list(self):
-        """
-        test set location based on latitude and longitude cordinates
-        """
-
-        lat = 10.1
-        long = 10.1
-
-        # default: without location
-        self.assertIsNone(self.ticket_pass.location)
-
-        # test set location
-        self.ticket_pass.set_location_list(lat=lat, long=long)
-        self.assertIsInstance(self.ticket_pass.location[0], Location)
-        self.assertEqual(self.ticket_pass.location[0].latitude, lat)
-        self.assertEqual(self.ticket_pass.location[0].longitude, long)
-
     def test_set_colors(self):
         """
         test set foreground, background and label color for the pass
@@ -190,13 +173,6 @@ class TestAppleTicket(TestCaseWrapper):
 
         # raise exception if event has no localized_address_display
         self.event.localized_address_display = ""
-        with self.assertRaises(Exception):
-            self.ticket_pass.generate_pass_from_ticket(self.ticket)
-
-        # raise exception if event has no lat or long cordinates
-        self.event.localized_address_display = "West Linda, KY 50295"
-        self.event.lat = None
-        self.event.long = None
         with self.assertRaises(Exception):
             self.ticket_pass.generate_pass_from_ticket(self.ticket)
 
@@ -362,8 +338,6 @@ class TestGoogleTicket(TestCaseWrapper):
         """
 
         payload = self.ticket_pass.get_ticket_class_payload(self.event)
-        self.assertEqual(payload["locations"][0]["latitude"], self.event.lat)
-        self.assertEqual(payload["locations"][0]["longitude"], self.event.long)
         self.assertEqual(payload["reviewStatus"], "UNDER_REVIEW")
         self.assertEqual(payload["eventName"]["defaultValue"]["value"], self.event.title)
         self.assertEqual(payload["dateTime"]["start"], self.event.start_date.isoformat())
@@ -462,12 +436,6 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
 
         # raise exception if event has no localized_address_display
         self.event.localized_address_display = ""
-        with self.assertRaises(Exception):
-            self.ticket.get_apple_ticket()
-
-        # raise exception if event has no lat or long cordinates
-        self.event.localized_address_display = "West Alba, KY 50295"
-        self.event.lat = None
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()
 

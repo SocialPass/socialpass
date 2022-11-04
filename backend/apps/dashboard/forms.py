@@ -3,7 +3,7 @@ from datetime import date
 import pytz
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from web3 import Web3
+from eth_utils import is_address
 
 from apps.root.forms import CleanEmailMixin
 from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
@@ -198,7 +198,7 @@ class TierAssetOwnershipForm(forms.ModelForm):
     def clean_token_address(self):
         token_address = self.cleaned_data["token_address"]
 
-        if not Web3.isAddress(token_address):
+        if not is_address(token_address):
             raise forms.ValidationError("The token_address if not valid")
 
         return token_address

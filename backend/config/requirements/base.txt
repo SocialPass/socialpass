@@ -9,6 +9,7 @@ sentry-sdk==1.7.2 # https://github.com/getsentry/sentry-python
 Pillow==9.1.0 # https://github.com/python-pillow/Pillow
 qrcode==7.3.1 # https://github.com/lincolnloop/python-qrcode
 redis==4.3.4 # https://github.com/redis/redis-py
+uvicorn[standard]==0.19.0  # https://github.com/encode/uvicorn
 xhtml2pdf==0.2.8 # https://github.com/xhtml2pdf/xhtml2pdf
 
 # Django

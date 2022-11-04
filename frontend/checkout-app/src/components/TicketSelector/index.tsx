@@ -63,13 +63,13 @@ function TicketSelector(props): JSX.Element {
               </button>
             </div>
 
-            {paymentType !== 'tier_asset_ownership' && amount > 0 ? (
+            {paymentType !== 'ASSET_OWNERSHIP' && amount > 0 ? (
               <div className='text-center fs-base-n2 mt-5'>
                 <strong>Price &times; {amount}</strong> &mdash;{' '}
                 {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price * amount)}
               </div>
             ) : null}
-            {paymentType !== 'tier_asset_ownership' && amount == 0 ? (
+            {paymentType !== 'ASSET_OWNERSHIP' && amount == 0 ? (
               <div className='text-center fs-base-n2 mt-5'>
                 <strong>Price: &times; 1 </strong>
                 &mdash; {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price)}
@@ -77,13 +77,14 @@ function TicketSelector(props): JSX.Element {
             ) : null}
           </div>
         </div>
-        {paymentType === 'tier_asset_ownership' ? (
+        {paymentType === 'ASSET_OWNERSHIP' ? (
           <div className='border-top mt-10 pt-10 fs-base-n2'>
             <div>
-              Free for all holders of 1 NFT from collection — <strong>Bubbs</strong>
+              Free for all holders of 1 {ticketTier.tier_asset_ownership.asset_type} from collection
+              — <strong>{ticketTier.tier_asset_ownership.blockchain}</strong>
             </div>
             <div>
-              <strong>Contract</strong> — {ticketTier[paymentType]?.contract_address}
+              <strong>Contract</strong> — {ticketTier.tier_asset_ownership?.token_address}
             </div>
           </div>
         ) : null}

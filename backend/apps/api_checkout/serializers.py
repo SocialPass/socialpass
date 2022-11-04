@@ -10,6 +10,7 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
+    TierAssetOwnership,
 )
 
 
@@ -84,6 +85,22 @@ class EventReadSerializer(serializers.ModelSerializer):
         return Ticket.objects.filter(event=obj).count()
 
 
+class TierAssetOwnershipReadSerializer(serializers.ModelSerializer):
+    """
+    AssetOwnership model serializer
+    """
+
+    class Meta:
+        model = TierAssetOwnership
+        fields = [
+            "blockchain",
+            "network",
+            "asset_type",
+            "token_address",
+            "token_id",
+        ]
+
+
 class TicketTierReadSerializer(serializers.ModelSerializer):
     """
     TicketTier model serializer
@@ -106,6 +123,7 @@ class TicketTierReadSerializer(serializers.ModelSerializer):
         ]
 
     event_public_id = serializers.UUIDField(source="event.public_id")
+    tier_asset_ownership = TierAssetOwnershipReadSerializer()
 
 
 class CheckoutItemReadSerializer(serializers.ModelSerializer):

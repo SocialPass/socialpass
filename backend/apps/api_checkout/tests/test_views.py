@@ -492,6 +492,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(session_dict["email"], data["email"])
         self.assertEqual(session_dict["tx_status"], data["tx_status"])
         self.assertEqual(session_dict["checkout_items"], [])
+        self.assertUUID(session_dict["transaction"]["public_id"], version=4)
 
     @prevent_warnings
     def test_create_session_with_items_201_created(self):
@@ -511,6 +512,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(session_dict["name"], data["name"])
         self.assertEqual(session_dict["email"], data["email"])
         self.assertEqual(session_dict["tx_status"], data["tx_status"])
+        self.assertUUID(session_dict["transaction"]["public_id"], version=4)
         item_dict = session_dict["checkout_items"][0]
         self.assertEqual(item_dict["quantity"], data["checkout_items"][0]["quantity"])
         self.assertUUID(item_dict["public_id"], version=4)
@@ -681,59 +683,81 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
     @prevent_warnings
     def test_transaction_fiat_201_ok(self):
         """
-        test create TxFiat and update session.tx_fiat
-        assert 201 created
+        integration test create session and request transaction
         """
+        # request create session
+        data = self.generate_session_data(
+            event=self.event.public_id, tier=self.ticket_tier.public_id
+        )
+        response = self.request_create_session(data)
+        session_dict = response.json()
 
+        # request perform transaction
         response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
+            f"{self.url_base}session/{session_dict['public_id']}/transaction/",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # test if fiat tx was created
+        # test if fiat tx is the tx related to the checkout_session
         response_json = response.json()
         tx_fiat = TxFiat.objects.get(public_id=response_json["public_id"])
-        self.checkout_session.refresh_from_db()
-        self.assertEqual(self.checkout_session.tx_fiat.pk, tx_fiat.pk)
+        checkout_session = CheckoutSession.objects.get(
+            public_id=session_dict["public_id"]
+        )
+        self.assertEqual(checkout_session.tx_fiat.pk, tx_fiat.pk)
 
     @prevent_warnings
     def test_transaction_asset_ownership_201_ok(self):
         """
-        test create TxAssetOwnership and update session.tx_asset_ownership
-        assert 201 created
+        integration test create session and request transaction
         """
-        self.checkout_session.tx_type = CheckoutSession.TransactionType.ASSET_OWNERSHIP
-        self.checkout_session.save()
+        # request create session
+        data = self.generate_session_data(
+            event=self.event.public_id, tier=self.ticket_tier.public_id
+        )
+        data["tx_type"] = CheckoutSession.TransactionType.ASSET_OWNERSHIP
+        response = self.request_create_session(data)
+        session_dict = response.json()
+
+        # request perform transaction
         response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
+            f"{self.url_base}session/{session_dict['public_id']}/transaction/",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # test if asset_ownership tx was created and session updated
+        # test if fiat tx is the tx related to the checkout_session
         response_json = response.json()
         tx_asset_ownership = TxAssetOwnership.objects.get(
             public_id=response_json["public_id"]
         )
-        self.checkout_session.refresh_from_db()
-        self.assertEqual(
-            self.checkout_session.tx_asset_ownership.pk, tx_asset_ownership.pk
+        checkout_session = CheckoutSession.objects.get(
+            public_id=session_dict["public_id"]
         )
+        self.assertEqual(checkout_session.tx_asset_ownership.pk, tx_asset_ownership.pk)
 
     @prevent_warnings
     def test_transaction_blockchain_201_ok(self):
         """
-        test create TxBlockchain and update session.tx_blockchain
-        assert 201 created
+        integration test create session and request transaction
         """
-        self.checkout_session.tx_type = CheckoutSession.TransactionType.BLOCKCHAIN
-        self.checkout_session.save()
+        # request create session
+        data = self.generate_session_data(
+            event=self.event.public_id, tier=self.ticket_tier.public_id
+        )
+        data["tx_type"] = CheckoutSession.TransactionType.BLOCKCHAIN
+        response = self.request_create_session(data)
+        session_dict = response.json()
+
+        # request perform transaction
         response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
+            f"{self.url_base}session/{session_dict['public_id']}/transaction/",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # test if blockchain tx was created and session updated
+        # test if fiat tx is the tx related to the checkout_session
         response_json = response.json()
         tx_blockchain = TxBlockchain.objects.get(public_id=response_json["public_id"])
-        self.checkout_session.refresh_from_db()
-        self.assertEqual(self.checkout_session.tx_blockchain.pk, tx_blockchain.pk)
+        checkout_session = CheckoutSession.objects.get(
+            public_id=session_dict["public_id"]
+        )
+        self.assertEqual(checkout_session.tx_blockchain.pk, tx_blockchain.pk)
 
     @prevent_warnings
     def test_transaction_session_404_not_found(self):

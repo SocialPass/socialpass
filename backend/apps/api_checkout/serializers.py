@@ -10,6 +10,9 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 
@@ -182,6 +185,58 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
     )
 
 
+class TransactionCreateSerializer(serializers.Serializer):
+    """
+    Transaction serializer
+    """
+
+    created = serializers.DateTimeField(read_only=True)
+    modified = serializers.DateTimeField(read_only=True)
+    public_id = serializers.UUIDField(read_only=True)
+
+
+class TxAssetOwnershipReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxAssetOwnership
+        fields = fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
+class TxBlockchainReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxBlockchain
+        fields = fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
+class TxFiatReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxFiat
+        fields = fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
 class CheckoutSessionReadSerializer(serializers.ModelSerializer):
     """
     CheckoutItems model read serializer
@@ -202,12 +257,29 @@ class CheckoutSessionReadSerializer(serializers.ModelSerializer):
             "tx_type",
             "event",
             "checkout_items",
+            "transaction",
         ]
 
+    transaction = serializers.SerializerMethodField()
     event = serializers.UUIDField(source="event.public_id")
     checkout_items = CheckoutItemReadSerializer(
         source="checkoutitem_set", many=True, allow_null=True
     )
+
+    def get_transaction(self, obj):
+        """
+        return object transaction.public_id
+        """
+        tx_types = CheckoutSession.TransactionType
+        match obj.tx_type:
+            case tx_types.FIAT:
+                return TxFiatReadSerializer(instance=obj.tx_fiat).data
+            case tx_types.BLOCKCHAIN:
+                return TxBlockchainReadSerializer(instance=obj.tx_blockchain).data
+            case tx_types.ASSET_OWNERSHIP:
+                return TxAssetOwnershipReadSerializer(
+                    instance=obj.tx_asset_ownership
+                ).data
 
 
 class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
@@ -247,28 +319,13 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
             "tx_type",
             "event",
             "checkout_items",
-            "transaction_public_id",
         ]
         read_only_fields = ["created", "modified", "public_id", "cost"]
 
-    transaction_public_id = serializers.SerializerMethodField()
     event = serializers.UUIDField(write_only=True)
     checkout_items = CheckoutSessionItemsCreateSerializer(
         source="checkoutitem_set", many=True, allow_null=True, required=False
     )
-
-    def get_transaction_public_id(self, obj):
-        """
-        return object transaction.public_id
-        """
-        tx_types = CheckoutSession.TransactionType
-        match obj.tx_type:
-            case tx_types.FIAT:
-                return str(obj.tx_fiat)
-            case tx_types.BLOCKCHAIN:
-                return str(obj.tx_blockchain)
-            case tx_types.ASSET_OWNERSHIP:
-                return str(obj.tx_asset_ownership)
 
 
 class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
@@ -301,16 +358,6 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
         ]
 
     event = serializers.UUIDField(source="event.public_id", read_only=True)
-
-
-class TransactionCreateSerializer(serializers.Serializer):
-    """
-    Transaction serializer
-    """
-
-    created = serializers.DateTimeField(read_only=True)
-    modified = serializers.DateTimeField(read_only=True)
-    public_id = serializers.UUIDField(read_only=True)
 
 
 class CheckoutItemQuantitySerializer(serializers.ModelSerializer):

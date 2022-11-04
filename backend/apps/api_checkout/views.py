@@ -254,18 +254,19 @@ class CheckoutSessionView(
     def _perform_proccess(self, checkout_session: CheckoutSession):
         """
         Call proccess method for the related transaction
+        ignore mypy types because the session have an tx_*after creation
         """
         tx_types = CheckoutSession.TransactionType
 
         match checkout_session.tx_type:
             case tx_types.FIAT:
-                checkout_session.tx_fiat.process()
+                checkout_session.tx_fiat.process()  # type: ignore
                 return checkout_session.tx_fiat
             case tx_types.BLOCKCHAIN:
-                checkout_session.tx_blockchain.process()
+                checkout_session.tx_blockchain.process()  # type: ignore
                 return checkout_session.tx_blockchain
             case tx_types.ASSET_OWNERSHIP:
-                checkout_session.tx_asset_ownership.process()
+                checkout_session.tx_asset_ownership.process()  # type: ignore
                 return checkout_session.tx_asset_ownership
 
     def _perform_confirmation(self, checkout_session):

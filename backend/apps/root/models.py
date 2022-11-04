@@ -835,7 +835,8 @@ class CheckoutSession(DBModel):
         send the confirmation link to the attendee's email
         """
         ctx = {
-            "url": reverse("event_discovery:get_tickets", args=[self.public_id,]),
+            "event": self.event,
+            "url": reverse("discovery:get_tickets", args=[self.public_id,]),
             "passcode": self.passcode,
         }
         email_template = "ticket/email/checkout"

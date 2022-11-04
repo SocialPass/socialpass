@@ -2,7 +2,7 @@
 
 {% block content %}
 <p>
-	Thank you for purchasing ticket(s) on SocialPass. Please go to the following link to download your ticket(s).
+	Thank you for purchasing ticket(s) for <strong>{{ event.title }}</strong> on SocialPass. Please go to the following link to download your ticket(s):
 </p>
 <div style="
 	text-align: center;
@@ -11,7 +11,7 @@
 	background-color: #ecf0f1;
 	border-radius: 6px;"
 >
-	<a href="{{ url }}?passcode={{ passcode }}" style="
+	<a href="https://socialpass.io{{ url }}?passcode={{ passcode }}" style="
 		text-decoration: none;
 		font-weight: 600;
 		font-size: 16px;

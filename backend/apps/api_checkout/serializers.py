@@ -247,13 +247,28 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
             "tx_type",
             "event",
             "checkout_items",
+            "transaction_public_id",
         ]
         read_only_fields = ["created", "modified", "public_id", "cost"]
 
+    transaction_public_id = serializers.SerializerMethodField()
     event = serializers.UUIDField(write_only=True)
     checkout_items = CheckoutSessionItemsCreateSerializer(
         source="checkoutitem_set", many=True, allow_null=True, required=False
     )
+
+    def get_transaction_public_id(self, obj):
+        """
+        return object transaction.public_id
+        """
+        tx_types = CheckoutSession.TransactionType
+        match obj.tx_type:
+            case tx_types.FIAT:
+                return str(obj.tx_fiat)
+            case tx_types.BLOCKCHAIN:
+                return str(obj.tx_blockchain)
+            case tx_types.ASSET_OWNERSHIP:
+                return str(obj.tx_asset_ownership)
 
 
 class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):

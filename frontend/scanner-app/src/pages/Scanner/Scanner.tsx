@@ -62,6 +62,17 @@ const Scanner = () => {
         </button>
       </div>
 
+      <div className='content'>
+        <Button
+          className='mt-0'
+          onClick={() => {
+            navigate(`/${redemptionPublicId}/manual-redeem`)
+          }}
+        >
+          <strong className='antialiased'>Redeem Manually</strong>
+        </Button>
+      </div>
+
       <div className='mt-auto'>
         <div className='content'>
           <h1 className='fw-700 fs-base-p6 mt-0'>{event.title}</h1>
@@ -91,14 +102,6 @@ const Scanner = () => {
             }}
           >
             <strong className='antialiased'>Statistics</strong>
-          </Button>
-          <Button
-            className='mt-10'
-            onClick={() => {
-              navigate(`/${redemptionPublicId}/manual-redeem`)
-            }}
-          >
-            <strong className='antialiased'>Redeem Manually</strong>
           </Button>
         </div>
       </div>

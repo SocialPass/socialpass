@@ -102,7 +102,7 @@ class PDFTicket(TicketGenerationBase):
 
         context = {
             "event_title": event.title,
-            "order_number": "54593405723",
+            "order_number": ticket.checkout_session.public_id,
             "ticket_quantity": 1,
             "ticket_type": "General Admission",
             "location_name": event.localized_address_display,
@@ -153,13 +153,13 @@ class PDFTicket(TicketGenerationBase):
         Convert HTML URIs to absolute system paths so xhtml2pdf can access those
         resources
         """
-        result = finders.find(uri)
-        if result:
+        try:
+            result = finders.find(uri)
             if not isinstance(result, (list, tuple)):
                 result = [result]
             result = list(os.path.realpath(path) for path in result)
             path = result[0]
-        else:
+        except Exception:
             sUrl = settings.STATIC_URL  # Typically /static/
             sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
             mUrl = settings.MEDIA_URL  # Typically /media/

@@ -10,7 +10,7 @@ urlpatterns = [
         name="event_scan_info",
     ),
     path(
-        "<uuid:access_key>/claim-ticket/",
+        "<str:access_key>/claim-ticket/",
         views.ScanTicket.as_view(),
         name="claim_ticket",
     ),

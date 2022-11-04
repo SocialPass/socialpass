@@ -38,6 +38,26 @@ class SetAccessKeyAndEventMixin:
                 }
             )
 
+    def set_event_and_redemption_access_key_partial_public_id(
+        self, redemption_access_key: str
+    ):
+        try:
+            # check if access_key short version has a minimum characters
+            if len(redemption_access_key) < 8:
+                raise Exception("Invalid redemption access key")
+            # get redemption_access_key
+            self.redemption_access_key = TicketRedemptionKey.objects.get(
+                public_id__startswith=redemption_access_key
+            )
+            self.event = self.redemption_access_key.event
+        except Exception:
+            raise Http404(
+                {
+                    "code": "redemption-access-key-invalid",
+                    "message": "Redemption access key does not exist.",
+                }
+            )
+
 
 class EventRetrieve(SetAccessKeyAndEventMixin, RetrieveAPIView):
     """
@@ -80,8 +100,8 @@ class ScanTicket(SetAccessKeyAndEventMixin, GenericAPIView):
         request_body=input_serializer,
         responses={200: output_serializer},
     )
-    def post(self, request, *args, access_key: uuid.UUID, **kwargs):
-        self.set_event_and_redemption_access_key(access_key)
+    def post(self, request, *args, access_key: str, **kwargs):
+        self.set_event_and_redemption_access_key_partial_public_id(access_key)
 
         # Parse input to get embed-code
         input_serializer = self.input_serializer(data=request.data)
@@ -133,9 +153,7 @@ class TicketsListView(SetAccessKeyAndEventMixin, ListAPIView):
     serializer_class = serializers.TicketSerializer
     input_serializer = None
     output_serializer = serializer_class
-    queryset = Ticket.objects.all().order_by(
-        "-id"
-    )  # order_by prevent unordeing warning
+    queryset = Ticket.objects.all().order_by("-id")  # order_by prevent unordeing warning
 
     def get_queryset(self):
         return super().get_queryset().filter(event=self.event, **self.filter_kwargs)

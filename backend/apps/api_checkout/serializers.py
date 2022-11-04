@@ -202,6 +202,7 @@ class CheckoutSessionReadSerializer(serializers.ModelSerializer):
             "tx_type",
             "event",
             "checkout_items",
+            "passcode",
         ]
 
     event = serializers.UUIDField(source="event.public_id")

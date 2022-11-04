@@ -31,6 +31,7 @@ export type EventError = {
 export type EventContextType = {
   event: Event | null
   getEvent: GetEvent | null
+  setEvent
   isLoading: boolean
   error: EventError | null
 }

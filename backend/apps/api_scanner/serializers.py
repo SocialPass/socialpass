@@ -3,7 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
-from apps.root.models import Event, Team, Ticket
+from apps.root.models import Event, Team, Ticket, TicketTier
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -55,6 +55,7 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         ref_name = "Scanner Event"
         fields = [
+            "public_id",
             "team",
             "title",
             "description",
@@ -93,6 +94,23 @@ class TicketSerializer(serializers.ModelSerializer):
         return "TODOTHISPR"
 
 
+class TicketTierSerializer(serializers.ModelSerializer):
+    """
+    Serializes Ticket Tier
+    """
+
+    class Meta:
+        model = TicketTier
+        fields = [
+            "public_id",
+            "event",
+            "tier_fiat",
+            "tier_blockchain",
+            "tier_asset_ownership",
+            "ticket_type",
+        ]
+
+
 class ScanTicketOutputSerializer(serializers.ModelSerializer):
     """
     Serializes Redeemed Tickets
@@ -100,10 +118,16 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
 
     ticket_count = serializers.SerializerMethodField()
     redeemed_count = serializers.SerializerMethodField()
+    ticket_tier = TicketTierSerializer()
 
     class Meta:
         model = Ticket
-        fields = ["id", "ticket_count", "redeemed_count"]
+        fields = [
+            "id",
+            "ticket_count",
+            "redeemed_count",
+            "ticket_tier"
+        ]
 
     def get_redeemed_count(self, obj):
         return Ticket.objects.filter(event=obj.event).count()

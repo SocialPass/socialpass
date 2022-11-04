@@ -21,18 +21,23 @@ const Scanner = () => {
     if (qrcode && qrcode !== lastQR.current) {
       lastQR.current = qrcode
 
-      TicketApi.claim(event.publicId, qrcode)
+      TicketApi.claim(redemptionPublicId, qrcode)
         .then((data) => {
           setEvent({
             ...event,
             ticket_count: data.ticket_count,
             redeemed_count: data.redeemed_count,
           })
-          toast.success('Succesful Scan')
+
+          toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
         })
-        .catch(() => {
-          toast.error('Scan Failed')
+        .catch((err) => {
+          toast.error(`Scan Failed: ${err.message}`)
         })
+
+      setTimeout(() => {
+        lastQR.current = undefined
+      }, 2000)
     }
   }
 

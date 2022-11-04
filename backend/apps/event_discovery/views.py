@@ -1,3 +1,7 @@
+import base64
+import qrcode
+from io import BytesIO
+
 from django.conf import settings
 from django.http import Http404
 from django.views.generic import TemplateView
@@ -65,7 +69,7 @@ class GetTickets(DetailView):
 
     def get_queryset(self):
         try:
-            return CheckoutSession.objects.filter(
+            return CheckoutSession.objects.select_related("event").filter(
                 public_id=self.kwargs["checkout_session_public_id"],
                 passcode=self.request.GET.get("passcode", "-1"),
             )
@@ -79,10 +83,11 @@ class GetTickets(DetailView):
         )
         context["tickets"] = []
         for ticket in tickets:
+            img = qrcode.make(ticket.embed_code)
+            stream = BytesIO()
+            img.save(stream, format="PNG")
             context["tickets"].append({
-                "tier": ticket.ticket_tier,
-                "pdf": ticket.get_pdf_ticket(),
-                "google": ticket.get_google_ticket(),
-                "apple": ticket.get_apple_ticket()
+                "object": ticket,
+                "qrcode": "data:image/png;base64,"+base64.b64encode(stream.getvalue()).decode("utf-8"),
             })
         return context

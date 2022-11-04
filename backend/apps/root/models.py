@@ -565,7 +565,7 @@ class Ticket(DBModel):
         """
         create or retrieve pass url from google wallet api
         """
-        if not self.class_id:
+        if not self.google_class_id:
             raise Exception("The event was not registered")
 
         _pass = GoogleTicket.GoogleTicket()

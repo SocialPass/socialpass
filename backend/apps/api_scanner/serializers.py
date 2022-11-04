@@ -55,6 +55,7 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         ref_name = "Scanner Event"
         fields = [
+            "public_id",
             "team",
             "title",
             "description",

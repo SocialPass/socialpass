@@ -38,6 +38,7 @@ export const EventProvider = ({ children }: any) => {
       value={{
         event,
         getEvent,
+        setEvent,
         isLoading,
         error,
       }}

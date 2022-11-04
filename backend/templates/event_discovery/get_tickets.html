@@ -122,7 +122,6 @@
 									<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">
 										<div class="p-30 text-white subpixel-antialiased rounded-3" style="background-color: hsl(16, 80%, 50%);">
 											<h3 class="m-0">{{ checkout_session.event.title }}</h3>
-											<div class="fs-base-n2">{{ ticket.object.public_id }}</div>
 											<div class="mt-30 fs-base text-uppercase">
 												Ticket Type:
 											</div>
@@ -138,6 +137,7 @@
 											<div class="ws-200 hs-200 mx-auto mt-40 mb-10">
 												<img src="{{ ticket.qrcode }}" class="w-100 h-100">
 											</div>
+											<div class="text-center fs-base-n2">{{ ticket.object.public_id }}</div>
 										</div>
 									</div>
 								</div>

@@ -2,7 +2,7 @@
 
 {% block content %}
 <p>
-	Thank you for redeeming your ticket on SocialPass. Please go to the following link to download your ticket as PDF, or save to your Google or Apple wallets:
+	Thank you for purchasing ticket(s) on SocialPass. Please go to the following link to download your ticket(s).
 </p>
 <div style="
 	text-align: center;
@@ -11,7 +11,7 @@
 	background-color: #ecf0f1;
 	border-radius: 6px;"
 >
-	<a href="#" style="
+	<a href="{{ url }}?passcode={{ passcode }}" style="
 		text-decoration: none;
 		font-weight: 600;
 		font-size: 16px;
@@ -21,7 +21,7 @@
 		background-color: #3995b8;
 		border-radius: 6px;"
 	>
-		Get Ticket
+		Get Tickets
 	</a>
 </div>
 {% endblock %}

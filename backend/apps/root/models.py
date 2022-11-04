@@ -834,22 +834,12 @@ class CheckoutSession(DBModel):
         """
         send the confirmation link to the attendee's email
         """
-        """
-        tickets = Ticket.objects.filter(checkout_session=self)
-        ctx_tickets = []
-        for ticket in tickets:
-            ctx_tickets.append({
-                "pdf": ticket.get_pdf_ticket(),
-                "google": ticket.get_google_ticket(),
-                "apple": ticket.get_apple_ticket
-            })
         ctx = {
-
+            "url": reverse("event_discovery:get_tickets", args=[self.public_id,]),
+            "passcode": self.passcode,
         }
         email_template = "ticket/email/checkout"
         DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
-        """
-        pass
 
 
 class CheckoutItem(DBModel):

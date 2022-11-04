@@ -46,13 +46,17 @@
 			.dark-mode {
 				--base-body-bg-color: var(--dark-color-very-dim);
 			}
+
+			.ws-820 {
+				width: 82rem !important;
+			}
 		</style>
 	</head>
 	<body>
 		<!-- Page wrapper start -->
 		<div class="page-wrapper">
 			<!-- Content wrapper start -->
-			<div class="content-wrapper ws-600 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
+			<div class="content-wrapper ws-820 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
 				<!-- Main content start -->
 				<div>
 					<!-- Navbar start -->
@@ -104,22 +108,16 @@
 							</p>
 							{% for ticket in tickets %}
 								<div class="my-30 fs-base-p8">
-									<div class="d-flex align-items-center">
-										<div>
-											<h2 class="text-strong fw-700 fsr-5 m-0">
-												Ticket #{{ forloop.counter }}
-											</h2>
-											<p class="text-muted mt-5 mb-0 fs-base-n2">
-												{{ ticket.object.public_id }}
-											</p>
-										</div>
-										<div class="ps-20 ms-auto">
+										<h2 class="text-strong fw-700 fsr-5 m-0">
+											Ticket #{{ forloop.counter }}
+											<small class="fs-base-n2 text-muted fw-400">{{ ticket.object.public_id }}</small>
+										</h2>
+										<div class="mt-10">
 											<button class="btn text-base download-btn" data-target="{{ ticket.object.public_id }}">
 												<i class="fa-regular fa-download me-5"></i>
 												<strong class="antialiased">Download</strong>
 											</button>
 										</div>
-									</div>
 									<hr />
 									<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">
 										<div class="p-30 text-white subpixel-antialiased rounded-3" style="background-color: hsl(16, 80%, 50%);">
@@ -140,12 +138,6 @@
 												<img src="{{ ticket.qrcode }}" class="w-100 h-100">
 											</div>
 										</div>
-									</div>
-									<div>
-										<button class="download-btn btn btn-link btn-block bg-transparent text-base rounded-0" type="button" data-target="{{ ticket.object.public_id }}">
-											<i class="fa-regular fa-download me-5"></i>
-											<strong class="antialiased">Save As PDF</strong>
-										</button>
 									</div>
 								</div>
 							{% endfor %}

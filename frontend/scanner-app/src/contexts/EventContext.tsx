@@ -5,6 +5,7 @@ import { Event, EventError, EventContextType } from '@/types/Event'
 export const EventContext = createContext<EventContextType>({
   event: null,
   getEvent: () => new Promise(() => null),
+  setEvent: () => null,
   isLoading: false,
   error: null,
 })

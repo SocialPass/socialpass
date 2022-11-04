@@ -144,8 +144,8 @@ class AppleTicket(TicketGenerationBase):
         self.org_name = event.team.name
         self.description = event.title
         self.serial_number = str(ticket.public_id)
-        self.barcode = self.set_barcode(ticket.embed_code)
-        self.location = self.set_location_list(event.lat, event.long)
+        self.set_barcode(str(ticket.embed_code))
+        self.set_location_list(event.lat, event.long)
         self.set_event_ticket_info(
             event.start_date.strftime("%d %B, %Y"),
             event.title,

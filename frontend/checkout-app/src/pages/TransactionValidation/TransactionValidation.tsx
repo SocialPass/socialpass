@@ -31,10 +31,6 @@ export default function TransactionValidation() {
     return timer
   }
 
-  const handleBackClick = () => {
-    navigate(`/${eventPublicId}/checkout/${checkoutPublicId}`)
-  }
-
   useEffect(() => {
     let interval
 

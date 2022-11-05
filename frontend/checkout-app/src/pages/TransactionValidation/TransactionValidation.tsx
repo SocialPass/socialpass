@@ -7,7 +7,7 @@ import useCheckout from '@/hooks/useCheckout'
 import { CheckoutApi } from '@/services/api'
 
 export default function TransactionValidation() {
-  const { eventPublicId, checkoutPublicId } = useParams()
+  const { checkoutPublicId } = useParams()
   const navigate = useNavigate()
 
   const { event }: any = useEvent()

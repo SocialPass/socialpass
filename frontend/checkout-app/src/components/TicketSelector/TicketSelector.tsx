@@ -57,6 +57,7 @@ function TicketSelector(props): JSX.Element {
 
               {ticketTier?.ticket_type}
             </h6>
+
             <p className='m-0 fs-base-n2'>{ticketTier?.capacity} available</p>
           </div>
 
@@ -83,13 +84,19 @@ function TicketSelector(props): JSX.Element {
               </button>
             </div>
 
-            {paymentType !== 'tier_asset_ownership' && amount > 0 ? (
+            {paymentType === 'ASSET_OWNERSHIP' ? (
+              <div className='text-center fs-12 mt-5'>
+                Max {ticketTier?.max_per_person} per person
+              </div>
+            ) : null}
+
+            {paymentType !== 'ASSET_OWNERSHIP' && amount > 0 ? (
               <div className='text-center fs-base-n2 mt-5'>
                 <strong>Price &times; {amount}</strong> &mdash;{' '}
                 {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price * amount)}
               </div>
             ) : null}
-            {paymentType !== 'tier_asset_ownership' && amount == 0 ? (
+            {paymentType !== 'ASSET_OWNERSHIP' && amount == 0 ? (
               <div className='text-center fs-base-n2 mt-5'>
                 <strong>Price: &times; 1 </strong>
                 &mdash; {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price)}
@@ -97,13 +104,32 @@ function TicketSelector(props): JSX.Element {
             ) : null}
           </div>
         </div>
-        {paymentType === 'tier_asset_ownership' ? (
+        {paymentType === 'ASSET_OWNERSHIP' ? (
           <div className='border-top mt-10 pt-10 fs-base-n2'>
-            <div>
-              Free for all holders of 1 NFT from collection — <strong>Bubbs</strong>
+            <div>Free to all holders of the following:</div>
+            <div className='row mt-10'>
+              <div className='col-6'>
+                <strong>Blockchain</strong>
+                <br />
+                {ticketTier.tier_asset_ownership.blockchain}
+              </div>
+              <div className='col-6'>
+                <strong>Network</strong>
+                <br />
+                {ticketTier.tier_asset_ownership.network}
+              </div>
             </div>
-            <div>
-              <strong>Contract</strong> — {ticketTier[paymentType]?.contract_address}
+            <div className='row mt-10'>
+              <div className='col-6'>
+                <strong>Asset Type</strong>
+                <br />
+                {ticketTier.tier_asset_ownership.asset_type}
+              </div>
+              <div className='col-6 text-truncate'>
+                <strong>Token Address</strong>
+                <br />
+                {ticketTier.tier_asset_ownership?.token_address}
+              </div>
             </div>
           </div>
         ) : null}

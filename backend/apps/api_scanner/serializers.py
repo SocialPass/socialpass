@@ -11,6 +11,11 @@ class TeamSerializer(serializers.ModelSerializer):
     Team serializer
     """
 
+    class Meta:
+        model = Team
+        ref_name = "Scanner Event"
+        fields = ["name", "image", "theme"]
+
     theme = serializers.SerializerMethodField()
 
     def get_theme(self, obj):
@@ -35,27 +40,16 @@ class TeamSerializer(serializers.ModelSerializer):
 
         return theme
 
-    class Meta:
-        model = Team
-        ref_name = "Scanner Event"
-        fields = ["name", "image", "theme"]
-
 
 class EventSerializer(serializers.ModelSerializer):
     """
     Serializes Ticketed events
     """
 
-    ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
-    redeemed_count = serializers.SerializerMethodField()
-    start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
-    team = TeamSerializer()
-
     class Meta:
         model = Event
         ref_name = "Scanner Event"
         fields = [
-            "public_id",
             "team",
             "title",
             "description",
@@ -66,32 +60,13 @@ class EventSerializer(serializers.ModelSerializer):
             "redeemed_count",
         ]
 
+    ticket_count = serializers.IntegerField(source="tickets.count", read_only=True)
+    redeemed_count = serializers.SerializerMethodField()
+    start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    team = TeamSerializer()
+
     def get_redeemed_count(self, obj):
         return Ticket.objects.filter(event=obj).count()
-
-
-class TicketSerializer(serializers.ModelSerializer):
-    """
-    Serializes Ticketed events Tickets
-    """
-
-    wallet_address = serializers.SerializerMethodField()
-    created = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
-    redeemed_at = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
-
-    class Meta:
-        model = Ticket
-        fields = [
-            "public_id",
-            "created",
-            "redeemed",
-            "redeemed_at",
-            "redeemed_by",
-            "wallet_address",
-        ]
-
-    def get_wallet_address(self, obj):
-        return "TODOTHISPR"
 
 
 class TicketTierSerializer(serializers.ModelSerializer):
@@ -102,7 +77,6 @@ class TicketTierSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketTier
         fields = [
-            "public_id",
             "event",
             "tier_fiat",
             "tier_blockchain",
@@ -111,23 +85,39 @@ class TicketTierSerializer(serializers.ModelSerializer):
         ]
 
 
+class TicketSerializer(serializers.ModelSerializer):
+    """
+    Serializes Ticketed events Tickets
+    """
+
+    class Meta:
+        model = Ticket
+        fields = [
+            "created",
+            "redeemed",
+            "embed_code",
+            "redeemed_at",
+            "redeemed_by",
+            "ticket_tier",
+        ]
+
+    created = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    redeemed_at = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    ticket_tier = TicketTierSerializer()
+
+
 class ScanTicketOutputSerializer(serializers.ModelSerializer):
     """
     Serializes Redeemed Tickets
     """
 
+    class Meta:
+        model = Ticket
+        fields = ["id", "ticket_count", "redeemed_count", "ticket_tier"]
+
     ticket_count = serializers.SerializerMethodField()
     redeemed_count = serializers.SerializerMethodField()
     ticket_tier = TicketTierSerializer()
-
-    class Meta:
-        model = Ticket
-        fields = [
-            "id",
-            "ticket_count",
-            "redeemed_count",
-            "ticket_tier"
-        ]
 
     def get_redeemed_count(self, obj):
         return Ticket.objects.filter(event=obj.event).count()

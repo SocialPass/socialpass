@@ -15,13 +15,13 @@ export const EventProvider = ({ children }: any) => {
   const [event, setEvent] = useState<Event | null>(null)
   const [error, setError] = useState<EventError | null>(null)
 
-  const getEvent = (eventPublicId: string) =>
+  const getEvent = (redemptionPublicId: string) =>
     new Promise((resolve, reject) => {
       setIsLoading(true)
       setError(null)
       setEvent(null)
 
-      RedemptionApi.get(eventPublicId)
+      RedemptionApi.get(redemptionPublicId)
         .then((response) => {
           setEvent(response.data)
           setIsLoading(false)

@@ -497,6 +497,7 @@ class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     model = TicketTier
     form_class = TicketTierForm
     template_name = "dashboard/ticket_tier_form.html"
+    form_data = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -504,25 +505,34 @@ class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
         context["tier_asset_ownership_form"] = TierAssetOwnershipForm(
-            prefix="tier_asset_ownership_form"
+            prefix="tier_asset_ownership_form", data=self.form_data
         )
         return context
 
     def form_valid(self, form, **kwargs):
-        context = self.get_context_data(**kwargs)
-        form.instance.event = context["event"]
-        valid = super().form_valid(form)
+        # set form.data to self
+        # this is reused in get_context_data to preserve entries / content
+        self.form_data = form.data
 
+        # validate tier_asset_ownership
+        # if exists, save tier_asset_ownership to TicketTierForm instance
         tier_asset_ownership = TierAssetOwnershipForm(
-            form.data, prefix="tier_asset_ownership_form"
+            self.form_data, prefix="tier_asset_ownership_form"
         )
-
         if tier_asset_ownership.is_valid():
             tier_asset_ownership.save()
-            self.object.tier_asset_ownership = tier_asset_ownership.instance
-            self.object.save()
+            form.instance.tier_asset_ownership = tier_asset_ownership.instance
+        else:
+            messages.add_message(
+                self.request, messages.ERROR, "The Asset Ownership fields are not valid"
+            )
+            return super().form_invalid(form)
 
-        return valid
+        # add event data to TicketTierForm from context
+        # validate TicketTierForm
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
         return "Your ticket has been created successfully!"

@@ -50,6 +50,7 @@ function TicketSelector(props): JSX.Element {
               {ticketTier?.ticket_type}
             </h6>
             <p className='m-0 fs-base-n2'>{ticketTier?.capacity} available</p>
+
           </div>
 
           <div className='ticket-tier-controls ms-auto mt-10 mt-sm-0'>
@@ -62,6 +63,12 @@ function TicketSelector(props): JSX.Element {
                 +
               </button>
             </div>
+
+            {paymentType === 'ASSET_OWNERSHIP' ? (
+              <div className='text-center fs-12 mt-5'>
+                Max {ticketTier?.max_per_person} per person
+              </div>
+            ) : null}
 
             {paymentType !== 'ASSET_OWNERSHIP' && amount > 0 ? (
               <div className='text-center fs-base-n2 mt-5'>
@@ -79,35 +86,32 @@ function TicketSelector(props): JSX.Element {
         </div>
         {paymentType === 'ASSET_OWNERSHIP' ? (
           <div className='border-top mt-10 pt-10 fs-base-n2'>
-              <div>
-                Free to all holders of the following:
+            <div>Free to all holders of the following:</div>
+            <div className='row mt-10'>
+              <div className='col-6'>
+                <strong>Blockchain</strong>
+                <br />
+                {ticketTier.tier_asset_ownership.blockchain}
               </div>
-              <div className="row mt-10">
-                <div className="col-6">
-                  <strong>Blockchain</strong>
-                  <br/>
-                  {ticketTier.tier_asset_ownership.blockchain}
-                </div>
-                <div className="col-6">
-                  <strong>Network</strong>
-                  <br/>
-                  {ticketTier.tier_asset_ownership.network}
-                </div>
+              <div className='col-6'>
+                <strong>Network</strong>
+                <br />
+                {ticketTier.tier_asset_ownership.network}
               </div>
-              <div className="row mt-10">
-                <div className="col-6">
-                  <strong>Asset Type</strong>
-                  <br/>
-                  {ticketTier.tier_asset_ownership.asset_type}
-                </div>
-                <div className="col-6 text-truncate">
-                  <strong>Token Address</strong>
-                  <br/>
-                  {ticketTier.tier_asset_ownership?.token_address}
-                </div>
-              </div>
-
             </div>
+            <div className='row mt-10'>
+              <div className='col-6'>
+                <strong>Asset Type</strong>
+                <br />
+                {ticketTier.tier_asset_ownership.asset_type}
+              </div>
+              <div className='col-6 text-truncate'>
+                <strong>Token Address</strong>
+                <br />
+                {ticketTier.tier_asset_ownership?.token_address}
+              </div>
+            </div>
+          </div>
         ) : null}
       </label>
     </div>

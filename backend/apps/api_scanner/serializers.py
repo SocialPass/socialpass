@@ -55,7 +55,6 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         ref_name = "Scanner Event"
         fields = [
-            "public_id",
             "team",
             "title",
             "description",
@@ -82,7 +81,6 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = [
-            "public_id",
             "created",
             "redeemed",
             "redeemed_at",
@@ -102,7 +100,6 @@ class TicketTierSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketTier
         fields = [
-            "public_id",
             "event",
             "tier_fiat",
             "tier_blockchain",
@@ -122,12 +119,7 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = [
-            "id",
-            "ticket_count",
-            "redeemed_count",
-            "ticket_tier"
-        ]
+        fields = ["id", "ticket_count", "redeemed_count", "ticket_tier"]
 
     def get_redeemed_count(self, obj):
         return Ticket.objects.filter(event=obj.event).count()

@@ -199,6 +199,6 @@ class TierAssetOwnershipForm(forms.ModelForm):
         token_address = self.cleaned_data["token_address"]
 
         if not is_address(token_address):
-            raise forms.ValidationError("The token_address if not valid")
+            raise forms.ValidationError("The token address is not valid")
 
         return token_address

@@ -79,14 +79,35 @@ function TicketSelector(props): JSX.Element {
         </div>
         {paymentType === 'ASSET_OWNERSHIP' ? (
           <div className='border-top mt-10 pt-10 fs-base-n2'>
-            <div>
-              Free for all holders of 1 {ticketTier.tier_asset_ownership.asset_type} from collection
-              — <strong>{ticketTier.tier_asset_ownership.blockchain}</strong>
+              <div>
+                Free to all holders of the following:
+              </div>
+              <div className="row mt-10">
+                <div className="col-6">
+                  <strong>Blockchain</strong>
+                  <br/>
+                  {ticketTier.tier_asset_ownership.blockchain}
+                </div>
+                <div className="col-6">
+                  <strong>Network</strong>
+                  <br/>
+                  {ticketTier.tier_asset_ownership.network}
+                </div>
+              </div>
+              <div className="row mt-10">
+                <div className="col-6">
+                  <strong>Asset Type</strong>
+                  <br/>
+                  {ticketTier.tier_asset_ownership.asset_type}
+                </div>
+                <div className="col-6 text-truncate">
+                  <strong>Token Address</strong>
+                  <br/>
+                  {ticketTier.tier_asset_ownership?.token_address}
+                </div>
+              </div>
+
             </div>
-            <div>
-              <strong>Contract</strong> — {ticketTier.tier_asset_ownership?.token_address}
-            </div>
-          </div>
         ) : null}
       </label>
     </div>

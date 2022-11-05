@@ -100,6 +100,9 @@ class TierAssetOwnershipReadSerializer(serializers.ModelSerializer):
             "token_id",
         ]
 
+    blockchain = serializers.CharField(source="get_blockchain_display")
+    network = serializers.CharField(source="get_network_display")
+
 
 class TicketTierReadSerializer(serializers.ModelSerializer):
     """

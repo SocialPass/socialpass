@@ -211,12 +211,9 @@ class TicketsListViewTestCase(TestCaseWrapper):
 
     @prevent_warnings
     def test_list_tickets_200_ok(self):
-
         response = self.client.get(f"{self.url_base}{self.access_key}/tickets/")
         ticket_dict = response.json()["results"][0]
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(ticket_dict["public_id"], str(self.ticket.public_id))
         self.assertEqual(ticket_dict["wallet_address"], "TODOTHISPR")
 
     @prevent_warnings

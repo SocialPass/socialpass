@@ -90,17 +90,20 @@ class TicketSerializer(serializers.ModelSerializer):
     Serializes Ticketed events Tickets
     """
 
-    created = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
-    redeemed_at = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
-
     class Meta:
         model = Ticket
         fields = [
             "created",
             "redeemed",
+            "embed_code",
             "redeemed_at",
             "redeemed_by",
+            "ticket_tier",
         ]
+
+    created = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    redeemed_at = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
+    ticket_tier = TicketTierSerializer()
 
 
 class ScanTicketOutputSerializer(serializers.ModelSerializer):

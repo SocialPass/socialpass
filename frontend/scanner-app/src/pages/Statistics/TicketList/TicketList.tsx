@@ -29,10 +29,14 @@ const TicketList = (props) => {
           <div className='py-10 border-top' key={`ticket-${ticket.publicId}`}>
             <div className='fw-700 text-primary mt-5'>Issued:</div>
             <div>{ticket.created}</div>
+            <div className='fw-700 text-primary mt-5'>Ticket Type:</div>
+            <div>{ticket.ticket_tier.ticket_type}</div>
             {ticket.redeemed ? (
               <>
                 <div className='fw-700 text-primary mt-5'>Redeemed:</div>
                 <div>{ticket.redeemed_at}</div>
+                <div className='fw-700 text-primary mt-5'>Access Code:</div>
+                <div>{ticket.embed_code}</div>
               </>
             ) : null}
           </div>

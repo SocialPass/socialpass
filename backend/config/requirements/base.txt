@@ -10,6 +10,7 @@ Pillow==9.1.0 # https://github.com/python-pillow/Pillow
 qrcode==7.3.1 # https://github.com/lincolnloop/python-qrcode
 redis==4.3.4 # https://github.com/redis/redis-py
 xhtml2pdf==0.2.8 # https://github.com/xhtml2pdf/xhtml2pdf
+eth-utils==1.9.5 # https://github.com/ethereum/eth-utils
 
 # Django
 # ------------------------------------------------------------------------------

@@ -11,6 +11,9 @@
         {% if input.field.required %}
             required="required"
         {% endif %}
+        {% if input.field.widget.input_type == "datetime-local" %}
+            onfocus="this.showPicker()"
+        {% endif %}
         {% for k,v in input.field.widget.attrs.items %}
             {{ k }}="{{ v }}"
         {% endfor %}

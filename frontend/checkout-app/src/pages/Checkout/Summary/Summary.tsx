@@ -94,7 +94,12 @@ export default function Summary(props) {
       <hr />
       <p className='text-muted fs-base-n2'>
         If you need help placing your order, please{' '}
-        <a href='#' className='fw-bold' target='_blank'>
+        <a
+          href='https://nfty-ecosystem.typeform.com/socialpass-help'
+          className='fw-bold'
+          rel='noreferrer'
+          target='_blank'
+        >
           contact us <i className='fa-regular fa-external-link'></i>
         </a>{' '}
         and let us know

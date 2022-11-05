@@ -18,7 +18,7 @@ const Base = () => {
 
   useEffect(() => {
     if (!event || event.publicId !== eventPublicId) {
-      getEvent(eventPublicId)
+      getEvent(eventPublicId).catch(() => {})
     }
   }, [eventPublicId])
 

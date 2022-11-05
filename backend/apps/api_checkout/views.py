@@ -294,7 +294,7 @@ class CheckoutSessionView(
         match checkout_session.tx_status:
             case CheckoutSession.OrderStatus.COMPLETED:
                 checkout_session.create_items_tickets()
-                # TODO: `checkout_session.send_tickets_to_email()` method
+                checkout_session.send_confirmation_email()
                 checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
                 checkout_session.save()
                 return checkout_session.tx_status

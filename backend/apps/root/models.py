@@ -565,7 +565,7 @@ class Ticket(DBModel):
         """
         create or retrieve pass url from google wallet api
         """
-        if not self.class_id:
+        if not self.google_class_id:
             raise Exception("The event was not registered")
 
         _pass = GoogleTicket.GoogleTicket()
@@ -744,6 +744,13 @@ class TierAssetOwnership(DBModel):
         return f"TierAssetOwnership {self.public_id}"
 
 
+def get_random_passcode():
+    """
+    Get a random 6-digit passcode.
+    """
+    return get_random_string(6)
+
+
 class CheckoutSession(DBModel):
     """
     Represents a time-limited checkout session (aka 'cart') for an event organizer
@@ -810,6 +817,7 @@ class CheckoutSession(DBModel):
         blank=True,
         null=False,
     )
+    passcode = models.CharField(max_length=6, default=get_random_passcode)
 
     def __str__(self):
         return self.name
@@ -821,6 +829,18 @@ class CheckoutSession(DBModel):
         """
         for checkout_item in self.checkoutitem_set.all():
             checkout_item.create_tickets()
+
+    def send_confirmation_email(self):
+        """
+        send the confirmation link to the attendee's email
+        """
+        ctx = {
+            "event": self.event,
+            "url": reverse("discovery:get_tickets", args=[self.public_id,]),
+            "passcode": self.passcode,
+        }
+        email_template = "ticket/email/checkout"
+        DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
 
 
 class CheckoutItem(DBModel):

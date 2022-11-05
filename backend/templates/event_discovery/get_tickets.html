@@ -1,0 +1,231 @@
+{% load static get_debug_status get_preferred_color_scheme %}
+<!DOCTYPE html>
+{% get_debug_status as debug %}
+<html lang="en" class="socialpass-event-discovery {% get_preferred_color_scheme %}" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>Get Tickets - SocialPass</title>
+
+		<!-- Fav icon -->
+		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
+
+		<!-- Halfmoon CSS -->
+		{% if debug %}
+			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
+		{% else %}
+			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
+		{% endif %}
+
+		<!-- SocialPass CSS theme -->
+		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- Open graph -->
+		<meta property="og:type" content="article">
+		<meta property="og:url" content="{{ request.build_absolute_uri }}">
+		<meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
+		<meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
+		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:site" content="@socialpass_io">
+
+		<!-- Custom styles -->
+		<style type="text/css">
+			:root {
+				--base-body-bg-color: var(--gray-color-light);
+				--base-border-radius: 0.4rem;
+			}
+
+			.dark-mode {
+				--base-body-bg-color: var(--dark-color-very-dim);
+			}
+
+			.ws-820 {
+				width: 82rem !important;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Page wrapper start -->
+		<div class="page-wrapper">
+			<!-- Content wrapper start -->
+			<div class="content-wrapper ws-820 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
+				<!-- Main content start -->
+				<div>
+					<!-- Navbar start -->
+					<nav class="d-flex align-items-center px-20">
+						<!-- Branding start -->
+						<div class="d-flex align-items-center fw-bold user-select-none">
+							<div class="ws-75">
+								<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
+							</div>
+							<div class="text-strong ms-10">
+								<div class="fs-base-p4">
+									SocialPass
+								</div>
+								<div class="fs-base-n4 lh-1 fw-normal">
+									Ticket Portal
+								</div>
+							</div>
+						</div>
+						<!-- Branding end -->
+
+						<!-- Dark mode toggle start -->
+						<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
+							<i class="fa-solid fa-moon"></i>
+							<span class="visually-hidden">Toggle dark mode</span>
+						</button>
+						<!-- Dark mode toggle end -->
+					</nav>
+					<!-- Navbar end -->
+
+					{% if checkout_session.tx_status == checkout_session.OrderStatus.VALID or checkout_session.tx_status == checkout_session.OrderStatus.PROCESSING %}
+						<div class="content">
+							<h1 class="text-strong fw-700 fsr-4 m-0">
+								Processing Checkout ...
+							</h1>
+							<p class="mt-10">
+								We are processing your order and generating your ticket. Please come back to this page after some time.
+							</p>
+							<div class="progress hs-25 my-50">
+								<div class="progress-bar progress-bar-secondary progress-bar-animated w-100" role="progressbar"></div>
+							</div>
+						</div>
+					{% elif checkout_session.tx_status == checkout_session.OrderStatus.COMPLETED or checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
+						<div class="content">
+							<h1 class="text-strong fw-700 fsr-4 m-0">
+								Get Tickets &times; {{ tickets|length }}
+							</h1>
+							<p class="mt-10">
+								The following ticket(s) were generated for you. You can save a ticket as PNG by clicking on the download button. The QR code must be presented to the organizer for scanning and entry.
+							</p>
+							{% for ticket in tickets %}
+								<div class="my-30 fs-base-p8">
+										<h2 class="text-strong fw-700 fsr-5 m-0">
+											Ticket #{{ forloop.counter }}
+											<small class="fs-base-n2 text-muted fw-400">{{ ticket.object.public_id }}</small>
+										</h2>
+										<div class="mt-10">
+											<button class="btn text-base download-btn" data-target="{{ ticket.object.public_id }}">
+												<i class="fa-regular fa-download me-5"></i>
+												<strong class="antialiased">Download</strong>
+											</button>
+										</div>
+									<hr />
+									<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">
+										<div class="p-30 text-white subpixel-antialiased rounded-3" style="background-color: hsl(16, 80%, 50%);">
+											<h3 class="m-0">{{ checkout_session.event.title }}</h3>
+											<div class="mt-30 fs-base text-uppercase">
+												Ticket Type:
+											</div>
+											<div>{{ ticket.object.ticket_tier.ticket_type }}</div>
+											<div class="mt-20 fs-base text-uppercase">
+												Date & Time:
+											</div>
+											<div>{{ checkout_session.event.start_date }}</div>
+											<div class="mt-20 fs-base text-uppercase">
+												Location:
+											</div>
+											<div>{{ checkout_session.event.localized_address_display }}</div>
+											<div class="ws-200 hs-200 mx-auto mt-40 mb-10">
+												<img src="{{ ticket.qrcode }}" class="w-100 h-100">
+											</div>
+											<div class="text-center fs-base-n2">{{ ticket.object.public_id }}</div>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					{% else %}
+						<div class="content mt-50 mb-0 text-center">
+							<div class="ws-300 mw-100 mx-auto">
+								<img src="{%  static 'images/illustrations/something_went_wrong.svg' %}" class="d-block w-100 h-auto" alt="something_went_wrong">
+							</div>
+							<h1 class="text-strong fw-700 fsr-4 mb-0">
+								Something went wrong!
+							</h1>
+							<p class="mt-10">
+								Looks like something went wrong during your checkout process.
+							</p>
+						</div>
+					{% endif %}
+				</div>
+				<!-- Main content end -->
+
+				<!-- Footer start -->
+				<div class="content text-end border-top pt-10 mt-auto">
+					<span class="ms-auto text-muted fs-base-n2">
+						&copy; 2022, SP Tech Inc. All rights reserved
+					</span>
+				</div>
+				<!-- Footer end -->
+			</div>
+			<!-- Content wrapper end -->
+		</div>
+		<!-- Page wrapper end -->
+
+		<!-- Halfmoon JS -->
+		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
+
+		<!-- PDF Generation -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+		<script type="text/javascript">
+            var getCanvas; // global variable
+
+            $(".download-btn").on('click', function(event) {
+            	var target = event.target;
+            	if (target.matches(".download-btn *")) {
+					target = target.closest(".download-btn");
+				}
+				var ticketID = target.getAttribute("data-target");
+            	var element = $("#" + ticketID);
+                html2canvas(element, {
+                    onrendered: function(canvas) {
+                        getCanvas = canvas;
+                        var imgageData = getCanvas.toDataURL("image/png");
+                        var a = document.createElement("a");
+                        a.href = imgageData; //Image Base64 Goes here
+                        a.download = ticketID + ".png"; //File name Here
+                        a.click(); //Downloaded file
+                    }
+                });
+            });
+		</script>
+
+		{% if debug %}
+			<script type="text/javascript">
+				/**
+				 * Handle the keydown event (only on debug mode).
+				 *
+				 * This is used to create the dark mode and sidebar toggle shortcuts.
+				 * These shortcuts are very useful for testing.
+				 */
+				document.addEventListener("keydown", function (event) {
+					if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+						event = event || window.event;
+
+						if (!(event.ctrlKey || event.metaKey)) {
+							// Toggle dark mode when [shift] + [D] keys are pressed
+							if (event.shiftKey && event.which == 68) {
+								halfmoon.toggleDarkMode();
+							}
+
+							// Toggle sidebar when [shift] + [S] keys are pressed
+							if (event.shiftKey && event.which == 83) {
+								halfmoon.toggleSidebar();
+							}
+						}
+					}
+				});
+			</script>
+		{% endif %}
+	</body>
+</html>

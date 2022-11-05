@@ -12,4 +12,9 @@ urlpatterns = [
         views.EventDiscoveryDetails.as_view(),
         name="details",
     ),
+    path(
+        "get-tickets/<uuid:checkout_session_public_id>",
+        views.GetTickets.as_view(),
+        name="get_tickets",
+    ),
 ]

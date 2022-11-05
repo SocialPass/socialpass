@@ -519,7 +519,7 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
             self.ticket.get_google_ticket()
 
         # test if generated a url, if not will raise an exception
-        self.ticket.class_id = "random_class"
+        self.ticket.google_class_id = "random_class"
         save_url = self.ticket.get_google_ticket()
         validator = URLValidator()
         self.assertIsNone(validator(save_url))

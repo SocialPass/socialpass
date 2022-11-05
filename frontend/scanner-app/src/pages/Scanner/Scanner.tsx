@@ -89,7 +89,7 @@ const Scanner = () => {
             <div className='col-6 ps-5'>
               <div className='bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100'>
                 <strong className='antialiased'>
-                  Remaining: {event?.ticket_count || event?.capacity}
+                  Remaining: {event?.ticket_count - event?.redeemed_count}
                 </strong>
               </div>
             </div>

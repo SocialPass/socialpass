@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
-from eth_account.Account import recover_message
+from eth_account import Account
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
 from pytz import utc
@@ -844,7 +844,12 @@ class CheckoutSession(DBModel):
         """
         ctx = {
             "event": self.event,
-            "url": reverse("discovery:get_tickets", args=[self.public_id,]),
+            "url": reverse(
+                "discovery:get_tickets",
+                args=[
+                    self.public_id,
+                ],
+            ),
             "passcode": self.passcode,
         }
         email_template = "ticket/email/checkout"
@@ -1046,7 +1051,9 @@ class TxAssetOwnership(DBModel):
         # Handle encoding / decoding exception (usually forgery attempt)
         try:
             _msg = encode_defunct(text=self.unsigned_message)
-            recovered_address = recover_message(_msg, signature=self.signed_message)
+            recovered_address = Account.recover_message(
+                _msg, signature=self.signed_message
+            )
         except Exception:
             self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
             raise AssetOwnershipSignatureError(

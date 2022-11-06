@@ -14,7 +14,21 @@ from apps.root.models import (
 )
 
 
-class TeamReadSerializer(serializers.ModelSerializer):
+class BaseModelSerializer(serializers.ModelSerializer):
+    """
+    Base model serializer
+    Most notably, calls .clean() method in save()
+    """
+
+    def save(self):
+        try:
+            self.instance = super().save()
+            self.instance.clean()
+        except Exception as e:
+            raise serializers.ValidationError(e.message_dict)
+
+
+class TeamReadSerializer(BaseModelSerializer):
     """
     Team serializer
     """
@@ -57,7 +71,7 @@ class TeamReadSerializer(serializers.ModelSerializer):
         return theme
 
 
-class EventReadSerializer(serializers.ModelSerializer):
+class EventReadSerializer(BaseModelSerializer):
     """
     Event serializer
     """
@@ -85,7 +99,7 @@ class EventReadSerializer(serializers.ModelSerializer):
         return Ticket.objects.filter(event=obj).count()
 
 
-class TierAssetOwnershipReadSerializer(serializers.ModelSerializer):
+class TierAssetOwnershipReadSerializer(BaseModelSerializer):
     """
     AssetOwnership model serializer
     """
@@ -104,7 +118,7 @@ class TierAssetOwnershipReadSerializer(serializers.ModelSerializer):
     network = serializers.CharField(source="get_network_display")
 
 
-class TicketTierReadSerializer(serializers.ModelSerializer):
+class TicketTierReadSerializer(BaseModelSerializer):
     """
     TicketTier model serializer
     """
@@ -129,7 +143,7 @@ class TicketTierReadSerializer(serializers.ModelSerializer):
     tier_asset_ownership = TierAssetOwnershipReadSerializer()
 
 
-class CheckoutItemReadSerializer(serializers.ModelSerializer):
+class CheckoutItemReadSerializer(BaseModelSerializer):
     """
     CheckoutItem model read serializer
     """
@@ -149,7 +163,7 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
     checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
 
-class CheckoutItemCreateSerializer(serializers.ModelSerializer):
+class CheckoutItemCreateSerializer(BaseModelSerializer):
     """
     CheckoutItem model create serializer
     """
@@ -170,11 +184,15 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
             "public_id",
         ]
 
-    ticket_tier = serializers.UUIDField(write_only=True)
-    checkout_session = serializers.UUIDField(write_only=True)
+    ticket_tier = serializers.SlugRelatedField(
+        write_only=True, slug_field="public_id", queryset=TicketTier.objects.all()
+    )
+    checkout_session = serializers.SlugRelatedField(
+        write_only=True, slug_field="public_id", queryset=CheckoutSession.objects.all()
+    )
 
 
-class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
+class CheckoutItemUpdateSerializer(BaseModelSerializer):
     """
     CheckoutItems model update serializer
     """
@@ -203,7 +221,7 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
     )
 
 
-class CheckoutSessionReadSerializer(serializers.ModelSerializer):
+class CheckoutSessionReadSerializer(BaseModelSerializer):
     """
     CheckoutItems model read serializer
     """
@@ -232,7 +250,7 @@ class CheckoutSessionReadSerializer(serializers.ModelSerializer):
     )
 
 
-class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
+class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
     """
     CheckoutItems model create serializer
     """
@@ -250,7 +268,7 @@ class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
     ticket_tier = serializers.UUIDField(write_only=True)
 
 
-class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
+class CheckoutSessionCreateSerializer(BaseModelSerializer):
     """
     CheckoutSession model create serializer with nested CheckoutItems
     """
@@ -278,7 +296,7 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
     )
 
 
-class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
+class CheckoutSessionUpdateSerializer(BaseModelSerializer):
     """
     CheckoutItems model update serializer
     """
@@ -320,7 +338,7 @@ class TransactionCreateSerializer(serializers.Serializer):
     public_id = serializers.UUIDField(read_only=True)
 
 
-class CheckoutItemQuantitySerializer(serializers.ModelSerializer):
+class CheckoutItemQuantitySerializer(BaseModelSerializer):
     ticket_tier = TicketTierReadSerializer(read_only=True)
 
     class Meta:
@@ -331,7 +349,7 @@ class CheckoutItemQuantitySerializer(serializers.ModelSerializer):
         ]
 
 
-class ConfirmationSerializer(serializers.ModelSerializer):
+class ConfirmationSerializer(BaseModelSerializer):
     """
     Confirmation serializer
     """

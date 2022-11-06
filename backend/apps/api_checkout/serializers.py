@@ -12,6 +12,9 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     TierAssetOwnership,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 
@@ -271,6 +274,44 @@ class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
     )
 
 
+class TxAssetOwnershipReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxAssetOwnership
+        fields = ["created", "modified", "public_id", "unsigned_message"]
+
+
+class TxBlockchainReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxBlockchain
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
+class TxFiatReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxFiat
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
 class CheckoutSessionCreateSerializer(BaseModelSerializer):
     """
     CheckoutSession model create serializer with nested CheckoutItems
@@ -288,6 +329,9 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "cost",
             "tx_status",
             "tx_type",
+            "tx_asset_ownership",
+            "tx_blockchain",
+            "tx_fiat",
             "event",
             "checkout_items",
         ]
@@ -299,16 +343,37 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
     checkout_items = CheckoutSessionItemsCreateSerializer(
         source="checkoutitem_set", many=True, allow_null=True, required=False
     )
+    tx_asset_ownership = TxAssetOwnershipReadSerializer(allow_null=True, required=False)
+    tx_blockchain = TxBlockchainReadSerializer(allow_null=True, required=False)
+    tx_fiat = TxFiatReadSerializer(allow_null=True, required=False)
 
     def create(self, validated_data):
         """
         custom create method to handle nested writeable serializer
         www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers
         """
+        # create CheckoutItem's
+        # note: we pop checkoutitem_set as to create it manually
         checkout_items = validated_data.pop("checkoutitem_set")
         checkout_session = CheckoutSession.objects.create(**validated_data)
         for item in checkout_items:
             CheckoutItem.objects.create(checkout_session=checkout_session, **item)
+
+        # create Transaction
+        # also save tx to the CheckoutSession
+        match checkout_session.tx_type:
+            case CheckoutSession.TransactionType.FIAT:
+                tx = TxFiat.objects.create()
+                checkout_session.tx_fiat = tx
+            case CheckoutSession.TransactionType.BLOCKCHAIN:
+                tx = TxBlockchain.objects.create()
+                checkout_session.tx_blockchain = tx
+            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+                tx = TxAssetOwnership.objects.create()
+                checkout_session.tx_asset_ownership = tx
+        checkout_session.save()
+
+        # return parent CheckoutSession
         return checkout_session
 
 

@@ -162,48 +162,6 @@ class CheckoutSessionView(
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
-    def _perform_create_transaction(self, checkout_session: CheckoutSession):
-        """
-        _perform_create_transaction method.
-        create and return a new transaction based on the tx_type requested
-        """
-        tx_types = CheckoutSession.TransactionType
-
-        match checkout_session.tx_type:
-            case tx_types.FIAT:
-                tx = TxFiat.objects.create()
-                tx.process()
-                return tx
-            case tx_types.BLOCKCHAIN:
-                tx = TxBlockchain.objects.create()
-                tx.process()
-                return tx
-            case tx_types.ASSET_OWNERSHIP:
-                tx = TxAssetOwnership.objects.create()
-                tx.process()
-                return tx
-
-    def _perform_update_session_tx(self, checkout_session, tx):
-        """
-        _perform_update_session_tx method.
-        used for updating a session transaction (CheckoutSession.tx_*)
-        update a checkout_session with a transaction
-        once updated, mark as PROCESSING
-        """
-        tx_types = CheckoutSession.TransactionType
-
-        match checkout_session.tx_type:
-            case tx_types.FIAT:
-                checkout_session.tx_fiat = tx
-            case tx_types.BLOCKCHAIN:
-                checkout_session.tx_blockchain = tx
-            case tx_types.ASSET_OWNERSHIP:
-                checkout_session.tx_asset_ownership = tx
-
-        # change tx_status to PROCESSING here
-        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
-        checkout_session.save()
-
     def _perform_confirmation(self, checkout_session):
         """
         _perform_confirmation method.
@@ -228,6 +186,7 @@ class CheckoutSessionView(
         """
         creates a CheckoutSession with CheckoutItems related
         """
+        print("wassup")
         return super().create(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -254,13 +213,11 @@ class CheckoutSessionView(
     @action(methods=["post"], detail=True)
     def transaction(self, request, *args, **kwargs):
         """
-        create Transaction and update CheckoutSession (CheckoutSession.tx_*)
+        process transaction
         """
-        checkout_session = self.get_object()
-        tx = self._perform_create_transaction(checkout_session)
-        self._perform_update_session_tx(checkout_session, tx)
-        serializer = self.get_serializer(tx)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print("todoooo")
+        # serializer = self.get_serializer(tx)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):

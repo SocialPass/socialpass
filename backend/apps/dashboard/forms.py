@@ -3,6 +3,7 @@ from datetime import date
 import pytz
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from eth_utils import is_address
 
 from apps.root.forms import CleanEmailMixin
 from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
@@ -200,3 +201,11 @@ class TierAssetOwnershipForm(forms.ModelForm):
             "token_id": forms.TextInput(attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}),
         }
         labels = {"token_id": "Token IDs (Optional)"}
+
+    def clean_token_address(self):
+        token_address = self.cleaned_data["token_address"]
+
+        if not is_address(token_address):
+            raise forms.ValidationError("The token address is not valid")
+
+        return token_address

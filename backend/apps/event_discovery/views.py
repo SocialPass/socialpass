@@ -1,9 +1,14 @@
+import base64
+import qrcode
+from io import BytesIO
+
 from django.conf import settings
+from django.http import Http404
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from apps.root.models import Event
+from apps.root.models import Event, CheckoutSession, Ticket
 
 
 class EventDiscoveryIndex(TemplateView):
@@ -52,4 +57,37 @@ class EventDiscoveryDetails(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["CHECKOUT_PORTAL_BASE_URL"] = settings.CHECKOUT_PORTAL_BASE_URL
+        return context
+
+
+class GetTickets(DetailView):
+    model = CheckoutSession
+    slug_field = "public_id"
+    slug_url_kwarg = "checkout_session_public_id"
+    context_object_name = "checkout_session"
+    template_name = "event_discovery/get_tickets.html"
+
+    def get_queryset(self):
+        try:
+            return CheckoutSession.objects.select_related("event").filter(
+                public_id=self.kwargs["checkout_session_public_id"],
+                passcode=self.request.GET.get("passcode", "-1"),
+            )
+        except Exception:
+            raise Http404()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        tickets = Ticket.objects.select_related("ticket_tier").filter(
+            checkout_session=self.get_object()
+        )
+        context["tickets"] = []
+        for ticket in tickets:
+            img = qrcode.make(ticket.embed_code)
+            stream = BytesIO()
+            img.save(stream, format="PNG")
+            context["tickets"].append({
+                "object": ticket,
+                "qrcode": "data:image/png;base64,"+base64.b64encode(stream.getvalue()).decode("utf-8"),
+            })
         return context

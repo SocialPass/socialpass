@@ -21,18 +21,23 @@ const Scanner = () => {
     if (qrcode && qrcode !== lastQR.current) {
       lastQR.current = qrcode
 
-      TicketApi.claim(event.publicId, qrcode)
+      TicketApi.claim(redemptionPublicId, qrcode)
         .then((data) => {
           setEvent({
             ...event,
             ticket_count: data.ticket_count,
             redeemed_count: data.redeemed_count,
           })
-          toast.success('Succesful Scan')
+
+          toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
         })
-        .catch(() => {
-          toast.error('Scan Failed')
+        .catch((err) => {
+          toast.error(`Scan Failed: ${err.message}`)
         })
+
+      setTimeout(() => {
+        lastQR.current = undefined
+      }, 2000)
     }
   }
 
@@ -57,6 +62,17 @@ const Scanner = () => {
         </button>
       </div>
 
+      <div className='content'>
+        <Button
+          className='mt-0'
+          onClick={() => {
+            navigate(`/${redemptionPublicId}/manual-redeem`)
+          }}
+        >
+          <strong className='antialiased'>Redeem Manually</strong>
+        </Button>
+      </div>
+
       <div className='mt-auto'>
         <div className='content'>
           <h1 className='fw-700 fs-base-p6 mt-0'>{event.title}</h1>
@@ -73,7 +89,7 @@ const Scanner = () => {
             <div className='col-6 ps-5'>
               <div className='bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100'>
                 <strong className='antialiased'>
-                  Remaining: {event?.ticket_count || event?.capacity}
+                  Remaining: {event?.ticket_count - event?.redeemed_count}
                 </strong>
               </div>
             </div>

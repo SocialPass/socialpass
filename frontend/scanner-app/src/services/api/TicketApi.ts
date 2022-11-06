@@ -13,7 +13,7 @@ export default {
       )
   },
 
-  claim(publicId: string, qrCode: string) {
+  claim(publicId: string | undefined, qrCode: string) {
     return axios
       .post(`/api/scanner/v1/${publicId}/claim-ticket/`, { embed_code: qrCode })
       .then((response) => Promise.resolve(response.data))

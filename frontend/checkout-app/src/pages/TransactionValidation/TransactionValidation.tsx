@@ -45,30 +45,51 @@ export default function TransactionValidation() {
 
   return (
     <>
-      <div className='w-100 hs-200 position-relative'>
+      <div className='w-100 hs-150 position-relative'>
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
-          <img src={event.cover_image} className='w-100 h-auto' alt='Cover image'></img>
-        </div>
-
-        <div className='position-absolute z-1 top-100 start-50 translate-middle px-content'>
-          <div className='ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden bg-gray-very-light-lm bg-darkgray-very-dim-dm'>
-            <img src={event.team.image} className='d-block w-100 h-auto' alt='Team image'></img>
-          </div>
+          <img src={event.cover_image} className='w-100 h-auto' alt='Cover image' />
         </div>
       </div>
 
       <div className='px-content pt-20'>
-        <p className='text-muted mt-5 mb-0'>By {event?.team.name}</p>
-        <h2 className='text-strong fs-base-p2 fw-700 m-0'>{event?.title}</h2>
+        <p className='text-muted mt-5 mb-0'>By SocialPass</p>
+        <h2 className='text-strong fs-base-p2 fw-700 m-0'>NFT Holders Party</h2>
       </div>
 
       <div className='row'>
-        <div className='text-center mt-50'>
-          <div className='spinner-border text-primary text-center' role='status' />
+        <div className='col-md-10 col-lg-8 mx-auto'>
+          <div className='content mt-50 mb-0'>
+            <h1 className='text-strong fw-700 fsr-4 m-0'>Processing Checkout ...</h1>
+            <p className='mt-10'>
+              Please wait while we process your order and generate your ticket.
+            </p>
+            <div className='progress hs-25 mt-50 mb-20'>
+              <div
+                className='progress-bar progress-bar-secondary progress-bar-animated w-100'
+                role='progressbar'
+              ></div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className='text-center'>
-          <p className='text-muted mt-5 mb-0'>Please wait, we are validating your transaction...</p>
+      <div className='row'>
+        <div className='col-md-10 col-lg-8 mx-auto'>
+          <div className='content mt-0 mb-0'>
+            <p className='text-muted fs-base-n2'>
+              If this loading is taking too long, please{' '}
+              <a
+                href='https://nfty-ecosystem.typeform.com/socialpass-help'
+                className='fw-bold antialiased'
+                target='_blank'
+                rel='noreferrer'
+              >
+                contact us
+              </a>{' '}
+              and tell us this ID: <br></br>
+              <strong>{checkoutPublicId}</strong>
+            </p>
+          </div>
         </div>
       </div>
     </>

@@ -26,16 +26,17 @@ const TicketList = (props) => {
     <>
       <div className='fs-base-n2 mt-15'>
         {getTicketsPage()?.map((ticket) => (
-          <div className='py-10 border-top' key={`ticket-${ticket.publicId}`}>
-            <div>
-              <strong>Wallet: </strong> {ticket.wallet_address}
-            </div>
+          <div className='py-10 border-top' key={`ticket-${ticket.embed_code}`}>
             <div className='fw-700 text-primary mt-5'>Issued:</div>
             <div>{ticket.created}</div>
+            <div className='fw-700 text-primary mt-5'>Ticket Type:</div>
+            <div>{ticket.ticket_tier.ticket_type}</div>
             {ticket.redeemed ? (
               <>
                 <div className='fw-700 text-primary mt-5'>Redeemed:</div>
                 <div>{ticket.redeemed_at}</div>
+                <div className='fw-700 text-primary mt-5'>Access Code:</div>
+                <div>{ticket.embed_code}</div>
               </>
             ) : null}
           </div>

@@ -18,7 +18,7 @@ export default function Home() {
   const accountHook = useAccount()
   const signHook = useSignMessage()
 
-  const { checkoutPublicId } = useParams()
+  const { eventPublicId, checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
   const { checkout, getCheckout, getCheckoutItems, setCheckout, setCheckoutItems, pay }: any =
@@ -61,8 +61,11 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getCheckout(checkoutPublicId)
-    getCheckoutItems(checkoutPublicId)
+    getCheckout(checkoutPublicId).catch(() => {
+      navigate(`/${eventPublicId}/checkout/${checkoutPublicId}/error`)
+    })
+
+    getCheckoutItems(checkoutPublicId).catch(() => {})
   }, [])
 
   return (

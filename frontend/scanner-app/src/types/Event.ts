@@ -21,7 +21,7 @@ export type Theme = {
   logo: string
 }
 
-type GetEvent = (eventPublicId: string) => Promise<Event | unknown>
+type GetEvent = (redemptionPublicId: string) => Promise<Event | unknown>
 
 export type EventError = {
   detail: string
@@ -31,6 +31,7 @@ export type EventError = {
 export type EventContextType = {
   event: Event | null
   getEvent: GetEvent | null
+  setEvent
   isLoading: boolean
   error: EventError | null
 }

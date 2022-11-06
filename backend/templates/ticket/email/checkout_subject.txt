@@ -1,0 +1,1 @@
+[SocialPass] Tickets for {{ event.title }}

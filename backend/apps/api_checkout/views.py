@@ -25,8 +25,10 @@ from apps.root.models import (
 
 class EventView(GenericViewSet, RetrieveModelMixin):
     """
-    Generic Viewset for the Event API.
-    Responsible for retrieving event & its ticket tiers
+    Event ViewSet
+    Routes
+    - @retrieve: Event Retrieval
+    - @ticket_tiers: Event TicketTier's retrieval
     """
 
     queryset = Event.objects.all().order_by("-created")
@@ -65,9 +67,18 @@ class CheckoutItemView(
     GenericViewSet,
     CreateModelMixin,
     UpdateModelMixin,
-    DestroyModelMixin,
     RetrieveModelMixin,
+    DestroyModelMixin,
 ):
+    """
+    CheckoutItem ViewSet
+    Routes:
+    - @create: CheckoutItem Creation
+    - @retrieve: CheckoutItem Retrieval
+    - @update: CheckoutItem Update
+    - @destroy: CheckoutItem Deletion
+    """
+
     queryset = (
         CheckoutItem.objects.select_related("checkout_session")
         .all()
@@ -118,7 +129,14 @@ class CheckoutSessionView(
     GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
 ):
     """
-    create and retrieve CheckoutSession view
+    CheckoutSession Viewset
+    Routes:
+    - @create: Create CheckoutSession
+    - @retrieve: Retrieve CheckoutSession
+    - @update: Update CheckoutSession
+    - @items: List CheckoutItems from CheckoutSession
+    - @transaction: Create Transaction and update CheckoutSession transaction
+    - @confirmation: Get tx_type and perform confirmation
     """
 
     queryset = (
@@ -232,12 +250,6 @@ class CheckoutSessionView(
             case _:
                 return checkout_session.tx_status
 
-    def retrieve(self, request, *args, **kwargs):
-        """
-        retrieve a CheckoutSession
-        """
-        return super().retrieve(request, *args, **kwargs)
-
     def create(self, request, *args, **kwargs):
         """
         creates a CheckoutSession with CheckoutItems related
@@ -289,6 +301,12 @@ class CheckoutSessionView(
         headers = self.get_success_headers(serializer.data)
         result = serializers.CheckoutSessionReadSerializer(checkout_session)
         return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        retrieve a CheckoutSession
+        """
+        return super().retrieve(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         """

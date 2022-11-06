@@ -3,6 +3,7 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
+from apps.root import exceptions
 from apps.root.models import (
     CheckoutItem,
     CheckoutSession,
@@ -24,7 +25,7 @@ class BaseModelSerializer(serializers.ModelSerializer):
         try:
             self.instance = super().save()
             self.instance.clean()
-        except Exception as e:
+        except (exceptions.BaseValidationError) as e:
             raise serializers.ValidationError(e.message_dict)
 
 

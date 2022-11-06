@@ -1,35 +1,39 @@
 from django.core.exceptions import ValidationError
 
 
-class EventStateTranstionError(ValidationError):
+class BaseValidationError(ValidationError):
     pass
 
 
-class ForbiddenRedemptionError(ValidationError):
+class EventStateTranstionError(BaseValidationError):
     pass
 
 
-class AlreadyRedeemedError(ValidationError):
+class ForbiddenRedemptionError(BaseValidationError):
     pass
 
 
-class TooManyTicketsRequestedError(ValidationError):
+class AlreadyRedeemedError(BaseValidationError):
     pass
 
 
-class DuplicatesTiersRequestedError(ValidationError):
+class TooManyTicketsRequestedError(BaseValidationError):
     pass
 
 
-class ConflictingTiersRequestedError(ValidationError):
+class DuplicatesTiersRequestedError(BaseValidationError):
     pass
 
 
-class ForeignKeyConstraintError(ValidationError):
+class ConflictingTiersRequestedError(BaseValidationError):
     pass
 
 
-class AssetOwnershipSignatureError(ValidationError):
+class ForeignKeyConstraintError(BaseValidationError):
+    pass
+
+
+class AssetOwnershipSignatureError(BaseValidationError):
     pass
 
 

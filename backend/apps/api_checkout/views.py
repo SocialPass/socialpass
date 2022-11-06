@@ -162,32 +162,6 @@ class CheckoutSessionView(
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
-    def _perform_create(self, serializer, event, checkoutitem_set):
-        """
-        _perform_create method. used for creating a model
-        utilized in CheckoutSessionView.create()
-        """
-        validated_data = serializer.validated_data
-        del validated_data["checkoutitem_set"], validated_data["event"]
-
-        # create CheckoutSession and CheckoutItems
-        checkout_session = CheckoutSession.objects.create(**validated_data, event=event)
-        try:
-            for checkout_item in checkoutitem_set:
-                checkout_item = CheckoutItem(
-                    checkout_session=checkout_session, **checkout_item
-                )
-                checkout_item.clean()
-                checkout_item.save()
-        except exceptions.TooManyTicketsRequestedError as e:
-            raise ValidationError(code="item-quantity-exceed", detail=e)
-        except exceptions.DuplicatesTiersRequestedError as e:
-            raise ValidationError(code="repeated-ticket-tier", detail=e)
-        except exceptions.ConflictingTiersRequestedError as e:
-            raise ValidationError(code="not-supported-ticket-tier", detail=e)
-
-        return checkout_session
-
     def _perform_create_transaction(self, checkout_session: CheckoutSession):
         """
         _perform_create_transaction method.
@@ -254,53 +228,7 @@ class CheckoutSessionView(
         """
         creates a CheckoutSession with CheckoutItems related
         """
-        # get `event` and `ticket_tiers` objects.
-        # if either one does not exist, returns 404
-        try:
-            event = Event.objects.get(public_id=request.data["event"])
-        except Event.DoesNotExist:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND,
-                data={
-                    "code": "public-id-not-found",
-                    "message": "The event does not exist.",
-                },
-            )
-
-        items = []
-        for data in request.data["checkout_items"]:
-            try:
-                items.append(
-                    {
-                        "ticket_tier": TicketTier.objects.get(
-                            public_id=data["ticket_tier"]
-                        ),
-                        "quantity": data["quantity"],
-                    }
-                )
-            except TicketTier.DoesNotExist:
-                return Response(
-                    status=status.HTTP_404_NOT_FOUND,
-                    data={
-                        "code": "public-id-not-found",
-                        "message": (
-                            f"The ticket_tier `{data['ticket_tier']}` does not exist."
-                        ),
-                    },
-                )
-
-        # serialize and create data
-        # raise exceptions on errors
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        checkout_session = self._perform_create(
-            serializer=serializer, event=event, checkoutitem_set=items
-        )
-
-        # return serialized checkout session
-        headers = self.get_success_headers(serializer.data)
-        result = serializers.CheckoutSessionReadSerializer(checkout_session)
-        return Response(result.data, status=status.HTTP_201_CREATED, headers=headers)
+        return super().create(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         """

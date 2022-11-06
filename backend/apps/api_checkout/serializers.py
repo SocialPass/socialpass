@@ -266,7 +266,9 @@ class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
             "ticket_tier",
         ]
 
-    ticket_tier = serializers.UUIDField(write_only=True)
+    ticket_tier = serializers.SlugRelatedField(
+        write_only=True, slug_field="public_id", queryset=TicketTier.objects.all()
+    )
 
 
 class CheckoutSessionCreateSerializer(BaseModelSerializer):
@@ -291,10 +293,23 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
         ]
         read_only_fields = ["created", "modified", "public_id", "cost"]
 
-    event = serializers.UUIDField(write_only=True)
+    event = serializers.SlugRelatedField(
+        write_only=True, slug_field="public_id", queryset=Event.objects.all()
+    )
     checkout_items = CheckoutSessionItemsCreateSerializer(
         source="checkoutitem_set", many=True, allow_null=True, required=False
     )
+
+    def create(self, validated_data):
+        """
+        custom create method to handle nested writeable serializer
+        www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers
+        """
+        checkout_items = validated_data.pop("checkoutitem_set")
+        checkout_session = CheckoutSession.objects.create(**validated_data)
+        for item in checkout_items:
+            CheckoutItem.objects.create(checkout_session=checkout_session, **item)
+        return checkout_session
 
 
 class CheckoutSessionUpdateSerializer(BaseModelSerializer):

@@ -2,6 +2,7 @@ import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
 
+import requests
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -1072,7 +1073,23 @@ class TxAssetOwnership(DBModel):
         self.save()
 
     def process_asset_ownership(self):
-        """ """
+        """
+        Process asset ownership
+        Loop over CheckoutItem's, verify user meets tier
+        """
+        base_url = "https://deep-index.moralis.io/api/v2"
+        for item in self.checkoutsession.checkoutitem_set.all():
+            tier_asset_ownership = item.ticket_tier.tier_asset_ownership
+            chain = hex(tier_asset_ownership.network)
+            token_address = tier_asset_ownership.token_address
+            api_url = f"{base_url}/{self.wallet_address}/nft?chain={chain}&token_addresses={token_address}&format=decimal"
+            headers = {
+                "accept": "application/json",
+                "X-API-Key": settings.MORALIS_API_KEY,
+            }
+            response = requests.get(api_url, headers=headers)
+            print(item, api_url)
+            print(response.text)
 
     def process(self, *args, **kwargs):
         """
@@ -1083,4 +1100,4 @@ class TxAssetOwnership(DBModel):
         self.process_wallet_address()
 
         # 2. Process asset ownership
-        self.process_asset_ownership()
+        # self.process_asset_ownership()

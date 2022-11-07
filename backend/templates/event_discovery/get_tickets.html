@@ -86,7 +86,7 @@
 					</nav>
 					<!-- Navbar end -->
 
-					{% if checkout_session.tx_status == checkout_session.OrderStatus.VALID or checkout_session.tx_status == checkout_session.OrderStatus.PROCESSING %}
+					{% if checkout_session.tx_status == checkout_session.OrderStatus.VALID or checkout_session.tx_status == checkout_session.OrderStatus.PROCESSING or checkout_session.tx_status == checkout_session.OrderStatus.COMPLETED %}
 						<div class="content">
 							<h1 class="text-strong fw-700 fsr-4 m-0">
 								Processing Checkout ...
@@ -98,7 +98,7 @@
 								<div class="progress-bar progress-bar-secondary progress-bar-animated w-100" role="progressbar"></div>
 							</div>
 						</div>
-					{% elif checkout_session.tx_status == checkout_session.OrderStatus.COMPLETED or checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
+					{% elif checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
 						<div class="content">
 							<h1 class="text-strong fw-700 fsr-4 m-0">
 								Get Tickets &times; {{ tickets|length }}

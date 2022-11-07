@@ -245,6 +245,16 @@ class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
     )
 
 
+class TxAssetOwnershipWriteSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxAssetOwnership
+        fields = ["wallet_address", "signed_message"]
+
+
 class TxAssetOwnershipReadSerializer(serializers.ModelSerializer):
     """
     TxAssetOwnership model read serializer
@@ -419,16 +429,6 @@ class CheckoutSessionUpdateSerializer(BaseModelSerializer):
         ]
 
     event = serializers.UUIDField(source="event.public_id", read_only=True)
-
-
-class TransactionCreateSerializer(serializers.Serializer):
-    """
-    Transaction serializer
-    """
-
-    created = serializers.DateTimeField(read_only=True)
-    modified = serializers.DateTimeField(read_only=True)
-    public_id = serializers.UUIDField(read_only=True)
 
 
 class CheckoutItemQuantitySerializer(BaseModelSerializer):

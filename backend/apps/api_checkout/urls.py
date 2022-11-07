@@ -43,8 +43,8 @@ urlpatterns = [
     ),
     path(
         "session/<uuid:checkoutsession_public_id>/transaction/",
-        views.CheckoutSessionView.as_view({"post": "transaction"}),
-        name="session_transaction",
+        views.CheckoutSessionView.as_view({"post": "transact_asset_ownership"}),
+        name="session_transact_asset_ownership",
     ),
     path(
         "session/<uuid:checkoutsession_public_id>/confirmation",

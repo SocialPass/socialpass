@@ -135,7 +135,7 @@ class CheckoutSessionView(
     - @retrieve: Retrieve CheckoutSession
     - @update: Update CheckoutSession
     - @items: List CheckoutItems from CheckoutSession
-    - @transaction: Create Transaction and update CheckoutSession transaction
+    - @transact_asset_ownership: Process transact_asset_ownership
     - @confirmation: Get tx_type and perform confirmation
     """
 
@@ -155,8 +155,8 @@ class CheckoutSessionView(
                 return serializers.CheckoutSessionCreateSerializer
             case "update":
                 return serializers.CheckoutSessionUpdateSerializer
-            case "transaction":
-                return serializers.TransactionCreateSerializer
+            case "transact_asset_ownership":
+                return serializers.TxAssetOwnershipWriteSerializer
             case "confirmation":
                 return serializers.ConfirmationSerializer
             case _:
@@ -210,11 +210,20 @@ class CheckoutSessionView(
         return Response(serializer.data)
 
     @action(methods=["post"], detail=True)
-    def transaction(self, request, *args, **kwargs):
+    def transact_asset_ownership(self, request, *args, **kwargs):
         """
-        process transaction
+        transact_asset_ownership
+        note: just asset ownership (need different routes for other ones)
         """
-        return Response("TODO", status=status.HTTP_201_CREATED)
+        checkout_session = self.get_object()
+        tx = checkout_session.tx_asset_ownership
+        serializer = self.get_serializer(tx, data=request.data, partial=True)
+        if serializer.is_valid():
+            tx = serializer.save()
+            tx.process()
+            return Response("TODO", status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):

@@ -225,35 +225,6 @@ class CheckoutItemUpdateSerializer(BaseModelSerializer):
     )
 
 
-class CheckoutSessionReadSerializer(BaseModelSerializer):
-    """
-    CheckoutItems model read serializer
-    """
-
-    class Meta:
-        model = CheckoutSession
-        fields = [
-            "created",
-            "modified",
-            "public_id",
-            "expiration",
-            "name",
-            "email",
-            "cost",
-            "tx_type",
-            "tx_status",
-            "tx_type",
-            "event",
-            "checkout_items",
-            "passcode",
-        ]
-
-    event = serializers.UUIDField(source="event.public_id")
-    checkout_items = CheckoutItemReadSerializer(
-        source="checkoutitem_set", many=True, allow_null=True
-    )
-
-
 class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
     """
     CheckoutItems model create serializer
@@ -375,6 +346,35 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
 
         # return parent CheckoutSession
         return checkout_session
+
+
+class CheckoutSessionReadSerializer(BaseModelSerializer):
+    """
+    CheckoutItems model read serializer
+    """
+
+    class Meta:
+        model = CheckoutSession
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "name",
+            "email",
+            "cost",
+            "tx_type",
+            "tx_status",
+            "tx_type",
+            "event",
+            "checkout_items",
+            "passcode",
+        ]
+
+    event = serializers.UUIDField(source="event.public_id")
+    checkout_items = CheckoutItemReadSerializer(
+        source="checkoutitem_set", many=True, allow_null=True
+    )
 
 
 class CheckoutSessionUpdateSerializer(BaseModelSerializer):

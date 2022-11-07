@@ -7,6 +7,7 @@ WORKDIR /code/
 
 # python setup
 COPY config/requirements/local.txt /code/local.txt
+COPY config/requirements/_code_quality.txt /code/_code_quality.txt
 COPY config/requirements/base.txt /code/base.txt
 
 RUN pip install --upgrade pip

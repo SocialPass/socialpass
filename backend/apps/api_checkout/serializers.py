@@ -27,6 +27,7 @@ class BaseModelSerializer(serializers.ModelSerializer):
     def save(self):
         try:
             self.instance = super().save()
+            print(self.instance.__class__.__name__, "CLEAN")
             self.instance.clean()
         except (exceptions.BaseValidationError) as e:
             raise serializers.ValidationError(e.message_dict)
@@ -189,10 +190,10 @@ class CheckoutItemCreateSerializer(BaseModelSerializer):
         ]
 
     ticket_tier = serializers.SlugRelatedField(
-        write_only=True, slug_field="public_id", queryset=TicketTier.objects.all()
+        slug_field="public_id", queryset=TicketTier.objects.all()
     )
     checkout_session = serializers.SlugRelatedField(
-        write_only=True, slug_field="public_id", queryset=CheckoutSession.objects.all()
+        slug_field="public_id", queryset=CheckoutSession.objects.all()
     )
 
 
@@ -241,7 +242,7 @@ class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
         ]
 
     ticket_tier = serializers.SlugRelatedField(
-        write_only=True, slug_field="public_id", queryset=TicketTier.objects.all()
+        slug_field="public_id", queryset=TicketTier.objects.all()
     )
 
 
@@ -325,7 +326,6 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
     checkout_items = CheckoutSessionItemsCreateSerializer(
         source="checkoutitem_set",
         many=True,
-        write_only=True,
     )
     tx_asset_ownership = TxAssetOwnershipReadSerializer(required=False, write_only=True)
     tx_blockchain = TxBlockchainReadSerializer(required=False, write_only=True)
@@ -341,7 +341,9 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
         checkout_items = validated_data.pop("checkoutitem_set")
         checkout_session = CheckoutSession.objects.create(**validated_data)
         for item in checkout_items:
-            CheckoutItem.objects.create(checkout_session=checkout_session, **item)
+            CheckoutItem.objects.create(
+                checkout_session=checkout_session, **item
+            ).clean()
 
         # create Transaction
         # also save tx to the CheckoutSession

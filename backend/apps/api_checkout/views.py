@@ -186,7 +186,6 @@ class CheckoutSessionView(
         """
         creates a CheckoutSession with CheckoutItems related
         """
-        print("wassup")
         return super().create(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):

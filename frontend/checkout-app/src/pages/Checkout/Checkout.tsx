@@ -30,7 +30,7 @@ export default function Home() {
     setCheckoutItems([])
   }
 
-  const getPaymentData = () => {
+  const getPaymentData = async () => {
     switch (checkout?.tx_type) {
       case 'FIAT':
         return {}
@@ -39,11 +39,11 @@ export default function Home() {
         return {}
 
       case 'ASSET_OWNERSHIP':
-        console.log(checkout);
+        const signed_message = await signHook.signMessageAsync({message: checkout?.tx_asset_ownership?.unsigned_message});
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
-          signed_message: signHook.data,
+          signed_message: signed_message
         }
 
       default:
@@ -51,14 +51,12 @@ export default function Home() {
     }
   }
 
-  const handleContinueClick = (e) => {
+  const handleContinueClick = async (e) => {
     e.preventDefault()
 
-    const paymentData = getPaymentData()
-
-    pay(paymentData).then(() => {
-      navigate('validation')
-    })
+    const paymentData = await getPaymentData();
+    await pay(paymentData);
+    navigate('validation');
   }
 
   useEffect(() => {
@@ -100,6 +98,18 @@ export default function Home() {
           >
             <i className='fa-regular fa-times me-15'></i>
             <p className='m-0'>Sorry! The transaction has failed. Please try again.</p>
+          </div>
+        </div>
+      ) : null}
+
+      {signHook.isError ? (
+        <div className='px-content pt-20'>
+          <div
+            className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+            role='alert'
+          >
+            <i className='fa-regular fa-times me-15'></i>
+            <p className='m-0'>The signature request was cancelled. Please try again.</p>
           </div>
         </div>
       ) : null}

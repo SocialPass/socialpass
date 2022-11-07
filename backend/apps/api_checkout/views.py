@@ -215,9 +215,7 @@ class CheckoutSessionView(
         """
         process transaction
         """
-        print("todoooo")
-        # serializer = self.get_serializer(tx)
-        # return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response("TODO", status=status.HTTP_201_CREATED)
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):

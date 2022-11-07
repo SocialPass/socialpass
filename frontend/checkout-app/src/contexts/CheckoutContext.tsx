@@ -26,9 +26,9 @@ export const CheckoutProvider = ({ children }: any) => {
   // Communicating between what backend (left) and frontend (right) understands as transaction type
   const getTxType = (type) =>
     ({
-      FIAT: 'tier_fiat',
-      BLOCKCHAIN: 'tier_cryptocurrency',
-      ASSET_OWNERSHIP: 'tier_asset_ownership',
+      FIAT: 'tx_fiat',
+      BLOCKCHAIN: 'tx_cryptocurrency',
+      ASSET_OWNERSHIP: 'tx_asset_ownership',
     }[type])
 
   const getCheckout = (checkoutPublicId: string) =>

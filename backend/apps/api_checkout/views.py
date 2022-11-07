@@ -1,6 +1,5 @@
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
@@ -11,16 +10,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers
-from apps.root import exceptions
-from apps.root.models import (
-    CheckoutItem,
-    CheckoutSession,
-    Event,
-    TicketTier,
-    TxAssetOwnership,
-    TxBlockchain,
-    TxFiat,
-)
+from apps.root.models import CheckoutItem, CheckoutSession, Event
 
 
 class EventView(GenericViewSet, RetrieveModelMixin):

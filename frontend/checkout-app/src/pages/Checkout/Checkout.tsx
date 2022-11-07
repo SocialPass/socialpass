@@ -38,13 +38,14 @@ export default function Home() {
       case 'BLOCKCHAIN':
         return {}
 
-      case 'ASSET_OWNERSHIP':
+      case 'ASSET_OWNERSHIP': {
         const signed_message = await signHook.signMessageAsync({message: checkout?.tx_asset_ownership?.unsigned_message});
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
           signed_message: signed_message
         }
+      }
 
       default:
         return null

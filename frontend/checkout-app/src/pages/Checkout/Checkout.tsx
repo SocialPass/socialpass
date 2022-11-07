@@ -39,6 +39,7 @@ export default function Home() {
         return {}
 
       case 'ASSET_OWNERSHIP':
+        console.log(checkout);
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,

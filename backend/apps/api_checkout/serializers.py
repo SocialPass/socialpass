@@ -297,7 +297,6 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "expiration",
             "name",
             "email",
-            "cost",
             "tx_status",
             "tx_type",
             "tx_asset_ownership",
@@ -306,17 +305,21 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "event",
             "checkout_items",
         ]
-        read_only_fields = ["created", "modified", "public_id", "cost"]
+        read_only_fields = ["created", "modified", "public_id"]
 
     event = serializers.SlugRelatedField(
-        write_only=True, slug_field="public_id", queryset=Event.objects.all()
+        slug_field="public_id",
+        queryset=Event.objects.all(),
+        write_only=True,
     )
     checkout_items = CheckoutSessionItemsCreateSerializer(
-        source="checkoutitem_set", many=True, allow_null=True, required=False
+        source="checkoutitem_set",
+        many=True,
+        write_only=True,
     )
-    tx_asset_ownership = TxAssetOwnershipReadSerializer(allow_null=True, required=False)
-    tx_blockchain = TxBlockchainReadSerializer(allow_null=True, required=False)
-    tx_fiat = TxFiatReadSerializer(allow_null=True, required=False)
+    tx_asset_ownership = TxAssetOwnershipReadSerializer(required=False, write_only=True)
+    tx_blockchain = TxBlockchainReadSerializer(required=False, write_only=True)
+    tx_fiat = TxFiatReadSerializer(required=False, write_only=True)
 
     def create(self, validated_data):
         """
@@ -362,19 +365,30 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "expiration",
             "name",
             "email",
-            "cost",
-            "tx_type",
             "tx_status",
             "tx_type",
+            "tx_asset_ownership",
+            "tx_blockchain",
+            "tx_fiat",
             "event",
             "checkout_items",
             "passcode",
         ]
+        read_only_fields = ["created", "modified", "public_id"]
 
-    event = serializers.UUIDField(source="event.public_id")
-    checkout_items = CheckoutItemReadSerializer(
-        source="checkoutitem_set", many=True, allow_null=True
+    event = serializers.SlugRelatedField(
+        slug_field="public_id",
+        queryset=Event.objects.all(),
     )
+    checkout_items = CheckoutSessionItemsCreateSerializer(
+        source="checkoutitem_set",
+        many=True,
+        allow_null=True,
+        required=False,
+    )
+    tx_asset_ownership = TxAssetOwnershipReadSerializer(required=False)
+    tx_blockchain = TxBlockchainReadSerializer(required=False)
+    tx_fiat = TxFiatReadSerializer(required=False)
 
 
 class CheckoutSessionUpdateSerializer(BaseModelSerializer):
@@ -391,7 +405,6 @@ class CheckoutSessionUpdateSerializer(BaseModelSerializer):
             "expiration",
             "name",
             "email",
-            "cost",
             "tx_status",
             "tx_type",
             "event",
@@ -401,7 +414,6 @@ class CheckoutSessionUpdateSerializer(BaseModelSerializer):
             "modified",
             "public_id",
             "expiration",
-            "cost",
             "tx_status",
             "tx_type",
         ]

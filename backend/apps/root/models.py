@@ -1045,7 +1045,7 @@ class TxAssetOwnership(DBModel):
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 
-    def process_wallet_address(self, checkout_session=None):
+    def _process_wallet_address(self, checkout_session=None):
         """
         Recover a wallet address from the signed_message vs unsigned_message
         - On success: Mark is_wallet_address_verified as True
@@ -1077,7 +1077,7 @@ class TxAssetOwnership(DBModel):
         self.is_wallet_address_verified = True
         self.save()
 
-    def process_asset_ownership(self, checkout_session=None):
+    def _process_asset_ownership(self, checkout_session=None):
         """
         Process asset ownership
         - On success: Mark session as completed, call CheckoutSession.fulfill()
@@ -1087,7 +1087,8 @@ class TxAssetOwnership(DBModel):
         3. Verify API response
             - Ensure wallet has sufficient balance for tier (balance_required * quantity)
             - Filter for already-issued token ID's (tier.issued_token_id)
-            - TODO: Ensure metadata matches
+            - Ensure metadata matches (TODO)
+            - Ensure token ID matches from tier_asset_ownership.token_id (TODO)
             - Update tier_asset_ownership.issued_token_id
         4. Finished
             - Mark checkoutsession as completed
@@ -1112,13 +1113,13 @@ class TxAssetOwnership(DBModel):
             response = requests.get(api_url, headers=headers)
             try:
                 response.raise_for_status()
-                data = response.json()
+                response = response.json()
             except requests.exceptions.HTTPError as e:
                 raise TxAssetOwnershipProcessingError(e)
 
             # Ensure wallet has sufficient balance for tier (balance_required * quantity)
             expected = tier_asset_ownership.balance_required * item.quantity
-            actual = data["total"]
+            actual = response["total"]
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
                     {
@@ -1132,17 +1133,23 @@ class TxAssetOwnership(DBModel):
 
             # Filter against already-issued token ID's (tier.issued_token_id's)
             # Note: list comprehension for fastest performance
-            filtered_items = [
-                item
-                for item in data["result"]
-                if int(item["token_id"]) not in tier_asset_ownership.issued_token_id
+            filtered_data = [
+                data
+                for data in response["result"]
+                if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
             ]
 
+            # TODO: Ensure token ID matches from tier_asset_ownership.token_id
+            # Not needed for NFT NG - let's do after
+
             # TODO: Ensure metadata matches
+            # https://github.com/nftylabs/socialpass/issues/451
 
             # OK.
             # Update tier_asset_ownership.issued_token_id's
-            # tier_asset_ownership.issued_token_id +=
+            # TODO
+            # tier_asset_ownership.issued_token_id += filtered_data[:expected]
+            # tier_asset_ownership.save()
 
         # OK.
         # - Mark CheckoutSession as COMPLETED
@@ -1167,7 +1174,7 @@ class TxAssetOwnership(DBModel):
         checkout_session.save()
 
         # Process wallet address / signature
-        self.process_wallet_address(checkout_session=checkout_session)
+        self._process_wallet_address(checkout_session=checkout_session)
 
         # Process asset ownership
-        self.process_asset_ownership(checkout_session=checkout_session)
+        self._process_asset_ownership(checkout_session=checkout_session)

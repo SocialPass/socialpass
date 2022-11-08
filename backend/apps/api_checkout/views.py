@@ -190,7 +190,7 @@ class CheckoutSessionView(
         serializer = self.get_serializer(tx, data=request.data, partial=True)
         if serializer.is_valid():
             tx = serializer.save()
-            tx.process()
+            tx.process(checkout_session=checkout_session)
             return Response("TODO", status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

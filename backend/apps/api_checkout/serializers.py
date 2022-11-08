@@ -27,7 +27,6 @@ class BaseModelSerializer(serializers.ModelSerializer):
     def save(self):
         try:
             self.instance = super().save()
-            print(self.instance.__class__.__name__, "CLEAN")
             self.instance.clean()
         except (exceptions.BaseValidationError) as e:
             raise serializers.ValidationError(e.message_dict)

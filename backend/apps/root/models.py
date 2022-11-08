@@ -1114,8 +1114,10 @@ class TxAssetOwnership(DBModel):
             try:
                 response.raise_for_status()
                 response = response.json()
-            except requests.exceptions.HTTPError as e:
-                raise TxAssetOwnershipProcessingError(e)
+            except requests.exceptions.HTTPError:
+                raise TxAssetOwnershipProcessingError(
+                    {"message": _("An error has ocurred")}
+                )
 
             # Ensure wallet has sufficient balance for tier (balance_required * quantity)
             expected = tier_asset_ownership.balance_required * item.quantity

@@ -21,8 +21,15 @@ export default function Home() {
   const { eventPublicId, checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
-  const { checkout, getCheckout, getCheckoutItems, setCheckout, setCheckoutItems, pay }: any =
-    useCheckout()
+  const {
+    checkout,
+    getCheckout,
+    getCheckoutItems,
+    setCheckout,
+    setCheckoutItems,
+    pay,
+    error,
+  }: any = useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
@@ -64,9 +71,18 @@ export default function Home() {
         navigate('validation')
       })
       .catch((err) => {
-        console.log(err)
         setCheckout({ ...checkout, tx_status: 'FAILED' })
       })
+  }
+
+  const getErrorMessage = () => {
+    if (error) {
+      const messages = Object.keys(error).map((e) => error[e][0])
+
+      return `Sorry! ${messages.join('<br />')}`
+    }
+
+    return 'Sorry! The transaction has failed. Please try again.'
   }
 
   useEffect(() => {
@@ -107,7 +123,7 @@ export default function Home() {
             role='alert'
           >
             <i className='fa-regular fa-times me-15'></i>
-            <p className='m-0'>Sorry! The transaction has failed. Please try again.</p>
+            <p className='m-0'>{getErrorMessage()}</p>
           </div>
         </div>
       ) : null}

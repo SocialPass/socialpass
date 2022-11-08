@@ -154,6 +154,14 @@ export default function Home() {
     setCheckout({ ...checkout, event: event?.public_id })
   }, [event])
 
+  const isTiersAvailable = () => {
+    if (ticketTiers[0]?.capacity > ticketTiers[0]?.quantity_sold) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   return (
     <>
       <div className='w-100 hs-200 position-relative'>
@@ -204,18 +212,30 @@ export default function Home() {
           <div className='content mt-20 mb-0'>
             {eventHasTickets() ? (
               <>
-                <div>
-                  <div
-                    className='alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
-                    role='alert'
-                  >
-                    <i className='fa-regular fa-check me-15'></i>
-                    <p className='m-0'>
-                      Tickets available! Please select the payment type and tickets you want to
-                      purchase.
-                    </p>
+                {isTiersAvailable() ? (
+                  <div>
+                    <div
+                      className='alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+                      role='alert'
+                    >
+                      <i className='fa-regular fa-check me-15'></i>
+                      <p className='m-0'>
+                        Tickets available! Please select the payment type and tickets you want to
+                        purchase.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div>
+                    <div
+                      className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+                      role='alert'
+                    >
+                      <i className='fa-regular fa-times me-15'></i>
+                      <p className='m-0'>Sorry! No tickets available.</p>
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -329,6 +349,7 @@ export default function Home() {
               <div className='content me-md-0'>
                 {getPaymentTypeTicketTiers().map((tier, index) => (
                   <TicketSelector
+                    isTiersAvailable={isTiersAvailable}
                     amount={
                       checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                         ?.quantity || 0

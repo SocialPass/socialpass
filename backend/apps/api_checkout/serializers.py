@@ -91,17 +91,11 @@ class EventReadSerializer(BaseModelSerializer):
             "start_date",
             "timezone",
             "localized_address_display",
-            "ticket_count",
             "cover_image",
         ]
 
-    ticket_count = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
     team = TeamReadSerializer()
-
-    def get_ticket_count(self, obj):
-        # TODO: should change to ticket_tier quantity_sold sum
-        return Ticket.objects.filter(event=obj).count()
 
 
 class TierAssetOwnershipReadSerializer(BaseModelSerializer):

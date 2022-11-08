@@ -861,6 +861,7 @@ class CheckoutSession(DBModel):
         self.create_items_tickets()
         self.send_confirmation_email()
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        self.save()
 
 
 class CheckoutItem(DBModel):
@@ -1086,9 +1087,8 @@ class TxAssetOwnership(DBModel):
         1. Loop over CheckoutItem's
         2. Format & make API call for each CheckoutItem and its respective tier
         3. Verify API response
-            - Ensure wallet meets filter for already-issued token ID's (tier.issued_id's)
-            - Ensure wallet has sufficient balance for tier (tier.balance_required)
-            - Ensure wallet has sufficient balance for checkout item (item.quantity)
+            - Filter for already-issued token ID's (tier.issued_id's)
+            - Ensure wallet has sufficient balance for tier (balance_required * quantity)
             - TODO: Ensure metadata matches
             - All checks have passed. Append to issued_id's
         4. Finished
@@ -1117,27 +1117,26 @@ class TxAssetOwnership(DBModel):
                 "X-API-Key": settings.MORALIS_API_KEY,
             }
             response = requests.get(api_url, headers=headers)
-            print(item, api_url)
-            print(response.text)
+            # print(item, api_url)
+            # print(response.text)
 
-            # Ensure wallet meets filter for already-issued token ID's (tier.issued_id's)
+            # Filter for already-issued token ID's (tier.issued_id's)
 
-            # Ensure wallet has sufficient balance for tier (tier.balance_required)
-
-            # Ensure wallet has sufficient balance for checkout item (item.quantity)
+            # Ensure wallet has sufficient balance for tier (balance_required * quantity)
+            print("required", tier_asset_ownership.balance_required * item.quantity)
 
             # TODO: Ensure metadata matches
 
             # All checks have passed. Append to issued_id's
+            issued_ids.push
 
         # OK.
         # - Update issued_id's for the related tiers
         # - Mark CheckoutSession as COMPLETED
         # - Proceed to fulfilling CheckoutSession
-
         self.checkoutsession.tx_status = CheckoutSession.OrderStatus.COMPLETED
-
-        self.checkoutsession.fulfill()
+        self.checkoutsession.save()
+        # self.checkoutsession.fulfill()
 
     def process(self, *args, **kwargs):
         """

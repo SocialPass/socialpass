@@ -203,7 +203,7 @@ class CheckoutSessionView(
         except TxAssetOwnershipProcessingError as e:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
-            raise ValidationError(e.message_dict)
+            return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):

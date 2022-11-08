@@ -747,6 +747,7 @@ class TierAssetOwnership(DBModel):
         blank=True,
         help_text="Please enter a list of token ID(s) separated by commas.",
     )
+    issued_token_id = ArrayField(models.IntegerField(), default=list)
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"
@@ -1086,12 +1087,11 @@ class TxAssetOwnership(DBModel):
         1. Loop over CheckoutItem's
         2. Format & make API call for each CheckoutItem and its respective tier
         3. Verify API response
-            - Filter for already-issued token ID's (tier.issued_id's)
             - Ensure wallet has sufficient balance for tier (balance_required * quantity)
+            - Filter for already-issued token ID's (tier.issued_token_id)
             - TODO: Ensure metadata matches
-            - Update tier_asset_ownership.issued_token_id's
+            - Update tier_asset_ownership.issued_token_id
         4. Finished
-            - Update issued_id's for the related tiers
             - Mark checkoutsession as completed
             - Proceed to checkoutsession.fulfill()
         """
@@ -1112,12 +1112,33 @@ class TxAssetOwnership(DBModel):
                 "X-API-Key": settings.MORALIS_API_KEY,
             }
             response = requests.get(api_url, headers=headers)
-            print(response.json())
-
-            # Filter against already-issued token ID's (tier.issued_token_id's)
+            try:
+                response.raise_for_status()
+                data = response.json()
+            except requests.exceptions.HTTPError as e:
+                raise TxAssetOwnershipProcessingError(e)
 
             # Ensure wallet has sufficient balance for tier (balance_required * quantity)
-            print("required", tier_asset_ownership.balance_required * item.quantity)
+            expected = tier_asset_ownership.balance_required * item.quantity
+            actual = data["total"]
+            if actual < expected:
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "quantity": (
+                            "Quantity requested exceeds the queried balance. "
+                            f"Expected Balance: {expected}. "
+                            f"Actual Balance: {actual}."
+                        )
+                    }
+                )
+
+            # Filter against already-issued token ID's (tier.issued_token_id's)
+            # Note: list comprehension for fastest performance
+            filtered_items = [
+                item
+                for item in data["result"]
+                if int(item["token_id"]) not in tier_asset_ownership.issued_token_id
+            ]
 
             # TODO: Ensure metadata matches
 

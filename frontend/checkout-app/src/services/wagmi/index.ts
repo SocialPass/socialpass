@@ -27,6 +27,9 @@ export const client = createClient({
       chains,
       options: {
         qrcode: true,
+        rpc: {
+          1: 'https://eth-mainnet.alchemyapi.io/v2/{alchemy_id}',
+        },
       },
     }),
     // new InjectedConnector({

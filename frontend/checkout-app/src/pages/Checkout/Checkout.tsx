@@ -115,6 +115,18 @@ export default function Home() {
         </div>
       ) : null}
 
+      {signHook.isLoading ? (
+        <div className='px-content pt-20'>
+          <div
+            className='alert alert-primary m-0 text-info-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+            role='alert'
+          >
+            <i className='fa-regular fa-times me-15'></i>
+            <p className='m-0'>Please complete the request in your wallet provider</p>
+          </div>
+        </div>
+      ) : null}
+
       <div className='px-content pt-20'>
         <p className='text-muted mt-5 mb-0'>By {event.team.name}</p>
         <h2 className='text-strong fs-base-p2 fw-700 m-0'>{event.title}</h2>

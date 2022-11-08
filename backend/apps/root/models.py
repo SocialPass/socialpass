@@ -651,12 +651,6 @@ class TicketTier(DBModel):
         blank=True,
         null=False,
     )
-    quantity_sold = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        blank=True,
-        null=False,
-    )
     max_per_person = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
@@ -667,6 +661,10 @@ class TicketTier(DBModel):
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
+
+    @property
+    def quantity_sold(self):
+        return Ticket.objects.filter(ticket_tier=self).count()
 
 
 class TierFiat(DBModel):

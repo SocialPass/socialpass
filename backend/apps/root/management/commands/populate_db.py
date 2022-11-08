@@ -74,6 +74,7 @@ class Command(BaseCommand):
         for _ in range(num_events):
             # create events, tier, checkout session and item
             event = EventFactory(team=team, user=user)
+            TicketRedemptionKeyFactory(event=event)
             ticket_tier = TicketTierFactory(event=event)
             checkout_session = CheckoutSessionFactory(event=event)
             checkout_item = CheckoutItemFactory(
@@ -85,12 +86,9 @@ class Command(BaseCommand):
                 TicketFactory(
                     checkout_item=checkout_item, ticket_tier=ticket_tier, event=event
                 )
-                TicketRedemptionKeyFactory(event=event)
 
         self.stdout.write(
-            self.style.SUCCESS(
-                "THE DATABASE POPULATE HAS BEEN POPULATED WITH FAKE DATA"
-            )
+            self.style.SUCCESS("THE DATABASE POPULATE HAS BEEN POPULATED WITH FAKE DATA")
         )
 
     def create_superuser(self) -> None:

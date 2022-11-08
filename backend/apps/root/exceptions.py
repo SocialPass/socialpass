@@ -33,13 +33,5 @@ class ForeignKeyConstraintError(BaseValidationError):
     pass
 
 
-class AssetOwnershipSignatureError(BaseValidationError):
-    pass
-
-
-class AssetOwnershipAddressError(BaseValidationError):
-    pass
-
-
-class TxProccessingError(BaseValidationError):
+class TxAssetOwnershipProcessingError(BaseValidationError):
     pass

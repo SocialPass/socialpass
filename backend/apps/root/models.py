@@ -23,14 +23,13 @@ from sentry_sdk import capture_exception
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
-    AssetOwnershipSignatureError,
     ConflictingTiersRequestedError,
     DuplicatesTiersRequestedError,
     EventStateTranstionError,
     ForbiddenRedemptionError,
     ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
-    TxProccessingError,
+    TxAssetOwnershipProcessingError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 
@@ -1051,7 +1050,7 @@ class TxAssetOwnership(DBModel):
         """
         Recover a wallet address from the signed_message vs unsigned_message
         - On success: Mark is_wallet_address_verified as True
-        - On failure: Raise error, mark self.checkoutsession.tx_status as FAILED
+        - On error: Raise TxAssetOwnershipProcessingError, mark session.tx_status as FAILED
         Once this wallet address has been verified, set is_wallet_address_verified
         """
         # Recover wallet address
@@ -1063,7 +1062,7 @@ class TxAssetOwnership(DBModel):
             )
         except Exception:
             self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
-            raise AssetOwnershipSignatureError(
+            raise TxAssetOwnershipProcessingError(
                 {"wallet_address": _("Error recovering address")}
             )
 
@@ -1071,7 +1070,7 @@ class TxAssetOwnership(DBModel):
         # Now check if addresses match
         if recovered_address != self.wallet_address:
             self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
-            raise AssetOwnershipSignatureError(
+            raise TxAssetOwnershipProcessingError(
                 {"wallet_address": _("Address was recovered, but did not match")}
             )
 
@@ -1090,16 +1089,12 @@ class TxAssetOwnership(DBModel):
             - Filter for already-issued token ID's (tier.issued_id's)
             - Ensure wallet has sufficient balance for tier (balance_required * quantity)
             - TODO: Ensure metadata matches
-            - All checks have passed. Append to issued_id's
+            - Update tier_asset_ownership.issued_token_id's
         4. Finished
             - Update issued_id's for the related tiers
             - Mark checkoutsession as completed
             - Proceed to checkoutsession.fulfill()
         """
-        # issued ids: k-v store for tier_asset_ownership <> [token id's]
-        # eventually stored in tier_asset_ownership.issued_ids
-        issued_ids = {}
-
         # Loop over related CheckoutItem's
         for item in self.checkoutsession.checkoutitem_set.all():
             # Format & make API call for each CheckoutItem and its respective tier
@@ -1117,26 +1112,25 @@ class TxAssetOwnership(DBModel):
                 "X-API-Key": settings.MORALIS_API_KEY,
             }
             response = requests.get(api_url, headers=headers)
-            # print(item, api_url)
-            # print(response.text)
+            print(response.json())
 
-            # Filter for already-issued token ID's (tier.issued_id's)
+            # Filter against already-issued token ID's (tier.issued_token_id's)
 
             # Ensure wallet has sufficient balance for tier (balance_required * quantity)
             print("required", tier_asset_ownership.balance_required * item.quantity)
 
             # TODO: Ensure metadata matches
 
-            # All checks have passed. Append to issued_id's
-            issued_ids.push
+            # OK.
+            # Update tier_asset_ownership.issued_token_id's
+            # tier_asset_ownership.issued_token_id +=
 
         # OK.
-        # - Update issued_id's for the related tiers
         # - Mark CheckoutSession as COMPLETED
         # - Proceed to fulfilling CheckoutSession
         self.checkoutsession.tx_status = CheckoutSession.OrderStatus.COMPLETED
         self.checkoutsession.save()
-        # self.checkoutsession.fulfill()
+        self.checkoutsession.fulfill()
 
     def process(self, *args, **kwargs):
         """

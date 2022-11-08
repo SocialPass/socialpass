@@ -1047,7 +1047,7 @@ class TxAssetOwnership(DBModel):
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 
-    def process_wallet_address(self):
+    def process_wallet_address(self, checkout_session=None):
         """
         Recover a wallet address from the signed_message vs unsigned_message
         - On success: Mark is_wallet_address_verified as True
@@ -1062,7 +1062,7 @@ class TxAssetOwnership(DBModel):
                 _msg, signature=self.signed_message
             )
         except Exception:
-            self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
                 {"wallet_address": _("Error recovering address")}
             )
@@ -1070,7 +1070,7 @@ class TxAssetOwnership(DBModel):
         # Successful recovery attempt
         # Now check if addresses match
         if recovered_address != self.wallet_address:
-            self.checkoutsession.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
                 {"wallet_address": _("Address was recovered, but did not match")}
             )
@@ -1079,7 +1079,7 @@ class TxAssetOwnership(DBModel):
         self.is_wallet_address_verified = True
         self.save()
 
-    def process_asset_ownership(self):
+    def process_asset_ownership(self, checkout_session=None):
         """
         Process asset ownership
         - On success: Mark session as completed, call CheckoutSession.fulfill()
@@ -1096,7 +1096,7 @@ class TxAssetOwnership(DBModel):
             - Proceed to checkoutsession.fulfill()
         """
         # Loop over related CheckoutItem's
-        for item in self.checkoutsession.checkoutitem_set.all():
+        for item in checkout_session.checkoutitem_set.all():
             # Format & make API call for each CheckoutItem and its respective tier
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             chain = hex(tier_asset_ownership.network)
@@ -1149,17 +1149,27 @@ class TxAssetOwnership(DBModel):
         # OK.
         # - Mark CheckoutSession as COMPLETED
         # - Proceed to fulfilling CheckoutSession
-        self.checkoutsession.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        self.checkoutsession.save()
-        self.checkoutsession.fulfill()
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        checkout_session.save()
+        checkout_session.fulfill()
 
-    def process(self, *args, **kwargs):
+    def process(self, checkout_session=None):
         """
-        1. Process wallet address / signature
-        2. Process Asset Ownership (via CheckoutSession.CheckouItem's)
+        1. Get/Set checkout_session (avoid duplicate queries)
+        2. Set checkout_session as processing
+        3. Process wallet address / signature
+        4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
         """
-        # 1. Process wallet address / signature
-        self.process_wallet_address()
+        # Get/Set checkout_session (avoid duplicate queries)
+        if not checkout_session:
+            checkout_session = self.checkoutsession
 
-        # 2. Process asset ownership
-        # self.process_asset_ownership()
+        # Set checkout_session as processing
+        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        checkout_session.save()
+
+        # Process wallet address / signature
+        self.process_wallet_address(checkout_session=checkout_session)
+
+        # Process asset ownership
+        self.process_asset_ownership(checkout_session=checkout_session)

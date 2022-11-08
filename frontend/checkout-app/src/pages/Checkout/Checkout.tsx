@@ -39,11 +39,13 @@ export default function Home() {
         return {}
 
       case 'ASSET_OWNERSHIP': {
-        const signed_message = await signHook.signMessageAsync({message: checkout?.tx_asset_ownership?.unsigned_message});
+        const signed_message = await signHook.signMessageAsync({
+          message: checkout?.tx_asset_ownership?.unsigned_message,
+        })
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
-          signed_message: signed_message
+          signed_message: signed_message,
         }
       }
 
@@ -55,9 +57,16 @@ export default function Home() {
   const handleContinueClick = async (e) => {
     e.preventDefault()
 
-    const paymentData = await getPaymentData();
-    await pay(paymentData);
-    navigate('validation');
+    const paymentData = await getPaymentData()
+
+    pay(paymentData)
+      .then(() => {
+        navigate('validation')
+      })
+      .catch((err) => {
+        console.log(err)
+        setCheckout({ ...checkout, tx_status: 'FAILED' })
+      })
   }
 
   useEffect(() => {

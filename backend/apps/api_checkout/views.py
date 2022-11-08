@@ -190,7 +190,13 @@ class CheckoutSessionView(
         serializer = self.get_serializer(tx, data=request.data, partial=True)
         if serializer.is_valid():
             tx = serializer.save()
-            tx.process(checkout_session=checkout_session)
+            try:
+                tx.process(checkout_session=checkout_session)
+            except Exception as e:
+                return Response(
+                    {"detail": dict(e), "message": "Error processing transaction"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             return Response("TODO", status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

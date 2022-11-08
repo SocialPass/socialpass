@@ -37,5 +37,9 @@ class AssetOwnershipSignatureError(BaseValidationError):
     pass
 
 
-class AssetOwnershipAddressError(ValidationError):
+class AssetOwnershipAddressError(BaseValidationError):
+    pass
+
+
+class TxProccessingError(BaseValidationError):
     pass

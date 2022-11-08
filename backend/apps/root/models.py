@@ -30,6 +30,7 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
+    TxProccessingError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 
@@ -855,6 +856,12 @@ class CheckoutSession(DBModel):
         email_template = "ticket/email/checkout"
         DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
 
+    def fulfill(self):
+        """ """
+        self.create_items_tickets()
+        self.send_confirmation_email()
+        self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+
 
 class CheckoutItem(DBModel):
     """
@@ -1041,10 +1048,9 @@ class TxAssetOwnership(DBModel):
 
     def process_wallet_address(self):
         """
-        Process a wallet address from the signed_message,
-        and verify it matches the original wallet address
-        - On failure: Raise error, mark self.checkoutsession.tx_status as FAILED
+        Recover a wallet address from the signed_message vs unsigned_message
         - On success: Mark is_wallet_address_verified as True
+        - On failure: Raise error, mark self.checkoutsession.tx_status as FAILED
         Once this wallet address has been verified, set is_wallet_address_verified
         """
         # Recover wallet address
@@ -1075,21 +1081,37 @@ class TxAssetOwnership(DBModel):
     def process_asset_ownership(self):
         """
         Process asset ownership
+        - On success: Mark session as completed, call CheckoutSession.fulfill()
+        - On error: Raise TxProccessingError, with conflicing checkout item ID
         1. Loop over CheckoutItem's
-        2. Make API call for each CheckoutItem and its respective tier
-        3. Verify API response vs CheckoutItem
-            - Ensure balance
-            - Ensure token ID's
-            - Ensure metadata
-            - Ensure Quantity
-
+        2. Format & make API call for each CheckoutItem and its respective tier
+        3. Verify API response
+            - Ensure wallet meets filter for already-issued token ID's (tier.issued_id's)
+            - Ensure wallet has sufficient balance for tier (tier.balance_required)
+            - Ensure wallet has sufficient balance for checkout item (item.quantity)
+            - TODO: Ensure metadata matches
+            - All checks have passed. Append to issued_id's
+        4. Finished
+            - Update issued_id's for the related tiers
+            - Mark checkoutsession as completed
+            - Proceed to checkoutsession.fulfill()
         """
-        base_url = "https://deep-index.moralis.io/api/v2"
+        # issued ids: k-v store for tier_asset_ownership <> [token id's]
+        # eventually stored in tier_asset_ownership.issued_ids
+        issued_ids = {}
+
+        # Loop over related CheckoutItem's
         for item in self.checkoutsession.checkoutitem_set.all():
+            # Format & make API call for each CheckoutItem and its respective tier
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             chain = hex(tier_asset_ownership.network)
             token_address = tier_asset_ownership.token_address
-            api_url = f"{base_url}/{self.wallet_address}/nft?chain={chain}&token_addresses={token_address}&format=decimal"
+            api_url = (
+                f"https://deep-index.moralis.io/api/v2/{self.wallet_address}/nft"
+                f"?chain={chain}"
+                f"&token_addresses={token_address}"
+                f"&format=decimal"
+            )
             headers = {
                 "accept": "application/json",
                 "X-API-Key": settings.MORALIS_API_KEY,
@@ -1097,6 +1119,25 @@ class TxAssetOwnership(DBModel):
             response = requests.get(api_url, headers=headers)
             print(item, api_url)
             print(response.text)
+
+            # Ensure wallet meets filter for already-issued token ID's (tier.issued_id's)
+
+            # Ensure wallet has sufficient balance for tier (tier.balance_required)
+
+            # Ensure wallet has sufficient balance for checkout item (item.quantity)
+
+            # TODO: Ensure metadata matches
+
+            # All checks have passed. Append to issued_id's
+
+        # OK.
+        # - Update issued_id's for the related tiers
+        # - Mark CheckoutSession as COMPLETED
+        # - Proceed to fulfilling CheckoutSession
+
+        self.checkoutsession.tx_status = CheckoutSession.OrderStatus.COMPLETED
+
+        self.checkoutsession.fulfill()
 
     def process(self, *args, **kwargs):
         """

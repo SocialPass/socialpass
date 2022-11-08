@@ -152,26 +152,6 @@ class CheckoutSessionView(
             case _:
                 return serializers.CheckoutSessionReadSerializer
 
-    def _perform_confirmation(self, checkout_session):
-        """
-        _perform_confirmation method.
-        used for creating tickets and send email
-        - perform the confirmation
-        - case tx_status == "COMPLETED" create tickets
-            update checkout_session.tx_status to FULFILLED
-        return tx_status
-        """
-
-        match checkout_session.tx_status:
-            case CheckoutSession.OrderStatus.COMPLETED:
-                checkout_session.create_items_tickets()
-                checkout_session.send_confirmation_email()
-                checkout_session.tx_status = CheckoutSession.OrderStatus.FULFILLED
-                checkout_session.save()
-                return checkout_session.tx_status
-            case _:
-                return checkout_session.tx_status
-
     def create(self, request, *args, **kwargs):
         """
         creates a CheckoutSession with CheckoutItems related
@@ -222,5 +202,4 @@ class CheckoutSessionView(
         """
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        self._perform_confirmation(instance)
         return Response(serializer.data)

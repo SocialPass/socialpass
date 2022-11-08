@@ -195,6 +195,8 @@ class CheckoutSessionView(
             try:
                 tx.process(checkout_session=checkout_session)
             except TxAssetOwnershipProcessingError as e:
+                checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+                checkout_session.save()
                 raise ValidationError(e.message_dict)
 
             return Response("TODO", status=status.HTTP_201_CREATED)

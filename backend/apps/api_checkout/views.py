@@ -7,9 +7,11 @@ from rest_framework.mixins import (
     UpdateModelMixin,
 )
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers
+from apps.root.exceptions import TxAssetOwnershipProcessingError
 from apps.root.models import CheckoutItem, CheckoutSession, Event
 
 
@@ -192,11 +194,9 @@ class CheckoutSessionView(
             tx = serializer.save()
             try:
                 tx.process(checkout_session=checkout_session)
-            except Exception as e:
-                return Response(
-                    {"detail": dict(e), "message": "Error processing transaction"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            except TxAssetOwnershipProcessingError as e:
+                raise ValidationError(e.message_dict)
+
             return Response("TODO", status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

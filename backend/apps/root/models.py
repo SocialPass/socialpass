@@ -1075,7 +1075,14 @@ class TxAssetOwnership(DBModel):
     def process_asset_ownership(self):
         """
         Process asset ownership
-        Loop over CheckoutItem's, verify user meets tier
+        1. Loop over CheckoutItem's
+        2. Make API call for each CheckoutItem and its respective tier
+        3. Verify API response vs CheckoutItem
+            - Ensure balance
+            - Ensure token ID's
+            - Ensure metadata
+            - Ensure Quantity
+
         """
         base_url = "https://deep-index.moralis.io/api/v2"
         for item in self.checkoutsession.checkoutitem_set.all():

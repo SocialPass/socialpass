@@ -1138,6 +1138,7 @@ class TxAssetOwnership(DBModel):
                 for data in response["result"]
                 if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
             ]
+            print(filtered_data)
 
             # TODO: Ensure token ID matches from tier_asset_ownership.token_id
             # Not needed for NFT NG - let's do after

@@ -7,14 +7,7 @@ from factory.faker import faker
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 
-from apps.root.models import (
-    CheckoutItem,
-    CheckoutSession,
-    Ticket,
-    TxAssetOwnership,
-    TxBlockchain,
-    TxFiat,
-)
+from apps.root.models import CheckoutItem, CheckoutSession, Ticket
 from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 
@@ -672,20 +665,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertNotEqual(
             session_dict["tx_status"], CheckoutSession.OrderStatus.COMPLETED
         )
-
-    @prevent_warnings
-    def test_transaction_session_404_not_found(self):
-        """
-        test create transaction with nonexistent session
-        assert 404 not found
-        """
-
-        response = self.client.post(
-            f"{self.url_base}session/{self.random_uuid}/transaction/",
-        )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        tx_fiat = TxFiat.objects.all()
-        self.assertFalse(tx_fiat)
 
     @prevent_warnings
     def test_confirmation_processing_200_ok(self):

@@ -9,7 +9,6 @@ from apps.root.models import (
     CheckoutSession,
     Event,
     Team,
-    Ticket,
     TicketTier,
     TierAssetOwnership,
     TxAssetOwnership,

@@ -187,21 +187,23 @@ class CheckoutSessionView(
         transact_asset_ownership
         note: just asset ownership (need different routes for other ones)
         """
+        # get objects
         checkout_session = self.get_object()
         tx = checkout_session.tx_asset_ownership
-        serializer = self.get_serializer(tx, data=request.data, partial=True)
-        if serializer.is_valid():
-            tx = serializer.save()
-            try:
-                tx.process(checkout_session=checkout_session)
-            except TxAssetOwnershipProcessingError as e:
-                checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-                checkout_session.save()
-                raise ValidationError(e.message_dict)
 
+        # serialize data
+        serializer = self.get_serializer(tx, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        tx = serializer.save()
+
+        # try/except on processing tranasction
+        try:
+            tx.process(checkout_session=checkout_session)
             return Response("TODO", status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except TxAssetOwnershipProcessingError as e:
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.save()
+            raise ValidationError(e.message_dict)
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):

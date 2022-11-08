@@ -1172,7 +1172,6 @@ class TxAssetOwnership(DBModel):
 
         # OK.
         # - Bulk update tier_asset_ownership.issued_token_id
-        print("OKKKKKK")
         tier_asset_ownership_list = []
         for t in ticket_tiers_with_ids:
             t.issued_token_id += ticket_tiers_with_ids[t]

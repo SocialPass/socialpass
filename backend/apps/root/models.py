@@ -1089,11 +1089,13 @@ class TxAssetOwnership(DBModel):
             - Filter for already-issued token ID's (tier.issued_token_id)
             - Ensure metadata matches (TODO)
             - Ensure token ID matches from tier_asset_ownership.token_id (TODO)
-            - Update tier_asset_ownership.issued_token_id
         4. Finished
+            - Bulk update tier_asset_ownership.issued_token_id
             - Mark checkoutsession as completed
             - Proceed to checkoutsession.fulfill()
         """
+        ticket_tiers_with_ids = {}
+
         # Loop over related CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
             # Format & make API call for each CheckoutItem and its respective tier
@@ -1134,31 +1136,56 @@ class TxAssetOwnership(DBModel):
                 )
 
             # Filter against already-issued token ID's (tier.issued_token_id's)
-            # Note: list comprehension for fastest performance
             filtered_data = [
                 data
                 for data in response["result"]
                 if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
             ]
-            print(filtered_data)
+            filtered_ids = [
+                int(data.get("token_id"))
+                for data in filtered_data
+                if data.get("token_id")
+            ]
+            actual = len(filtered_ids)
+            if actual < expected:
+                # TODO: if actual < expected here, we may need to call API again
+                # This is because there can be paginated results
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "issued_token_id": (
+                            f"Could not find unique token ID's "
+                            f"Token ID's issued: {tier_asset_ownership.issued_token_id}. "
+                            f"Token ID's found: {filtered_ids}."
+                        )
+                    }
+                )
 
             # TODO: Ensure token ID matches from tier_asset_ownership.token_id
-            # Not needed for NFT NG - let's do after
+            # NOT needed for NFT NG - let's do after
 
             # TODO: Ensure metadata matches
             # https://github.com/nftylabs/socialpass/issues/451
 
             # OK.
-            # Update tier_asset_ownership.issued_token_id's
-            # TODO
-            # tier_asset_ownership.issued_token_id += filtered_data[:expected]
-            # tier_asset_ownership.save()
+            # Update ticket_tiers_with_ids dictionary.
+            ticket_tiers_with_ids[tier_asset_ownership] = filtered_ids[:expected]
 
         # OK.
+        # - Bulk update tier_asset_ownership.issued_token_id
+        print("OKKKKKK")
+        tier_asset_ownership_list = []
+        for t in ticket_tiers_with_ids:
+            t.issued_token_id += ticket_tiers_with_ids[t]
+            tier_asset_ownership_list.append(t)
+        TierAssetOwnership.objects.bulk_update(
+            tier_asset_ownership_list, ["issued_token_id"]
+        )
+
         # - Mark CheckoutSession as COMPLETED
-        # - Proceed to fulfilling CheckoutSession
         checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
+
+        # - Proceed to fulfilling CheckoutSession
         checkout_session.fulfill()
 
     def process(self, checkout_session=None):

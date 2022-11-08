@@ -1123,7 +1123,7 @@ class TxAssetOwnership(DBModel):
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
                     {
-                        "quantity": (
+                        "quantity": _(
                             "Quantity requested exceeds the queried balance. "
                             f"Expected Balance: {expected}. "
                             f"Actual Balance: {actual}."

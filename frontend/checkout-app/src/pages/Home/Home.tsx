@@ -155,7 +155,10 @@ export default function Home() {
   }, [event])
 
   const isTiersAvailable = () => {
-    if (ticketTiers[0]?.capacity > ticketTiers[0]?.quantity_sold) {
+    if (
+      ticketTiers[0]?.capacity > ticketTiers[0]?.quantity_sold ||
+      ticketTiers[0]?.capacity === 0
+    ) {
       return true
     } else {
       return false

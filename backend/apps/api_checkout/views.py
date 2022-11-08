@@ -199,7 +199,7 @@ class CheckoutSessionView(
         # try/except on processing tranasction
         try:
             tx.process(checkout_session=checkout_session)
-            return Response("TODO", status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         except TxAssetOwnershipProcessingError as e:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()

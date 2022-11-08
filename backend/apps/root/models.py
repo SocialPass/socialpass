@@ -745,7 +745,7 @@ class TierAssetOwnership(DBModel):
         blank=True,
         help_text="Please enter a list of token ID(s) separated by commas.",
     )
-    issued_token_id = ArrayField(models.IntegerField(), default=list)
+    issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"

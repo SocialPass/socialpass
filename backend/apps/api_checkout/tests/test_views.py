@@ -216,12 +216,22 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             available = tier.capacity (100) - tier.quantity_sold (50) = 50
             try to update quantity to be 51 and getting 400 bad request
         """
+        # capacity
         ticket_tier = self.event.tickettier_set.first()
         ticket_tier.capacity = 100
-        ticket_tier.quantity_sold = 50
         ticket_tier.save()
+
+        # generate tickets
         checkout_session = self.event.checkoutsession_set.first()
         checkout_item = checkout_session.checkoutitem_set.first()
+        ticket_keys = {
+            "checkout_session": checkout_session,
+            "event": self.event,
+            "ticket_tier": ticket_tier,
+            "checkout_item": checkout_item,
+        }
+        tickets = [Ticket(**ticket_keys) for _ in range(51)]
+        Ticket.objects.bulk_create(tickets)
         data = {"quantity": 51}
 
         response = self.client.put(
@@ -355,10 +365,9 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         available = capacity (100) - quantity_sold (50) = 50
         asserts 400 bad request
         """
-
+        # set capacity
         ticket_tier = self.event.tickettier_set.first()
         ticket_tier.capacity = 100
-        ticket_tier.quantity_sold = 50
         ticket_tier.save()
         checkout_session = self.event.checkoutsession_set.first()
 
@@ -579,7 +588,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         ticket_tier = self.event.tickettier_set.first()
         ticket_tier.capacity = 100
-        ticket_tier.quantity_sold = 50
         ticket_tier.save()
 
         # ensure there is no item and session with this tier and event
@@ -714,44 +722,4 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.FULFILLED
-        )
-
-    @prevent_warnings
-    def test_confirmation_completed_200_ok(self):
-        """
-        test changing tx_status COMPLETED to FULFILLED
-        and assert tickets_summary values
-        """
-        # delete all tickets related to the test checkout_session
-        Ticket.objects.filter(
-            checkout_item__checkout_session=self.checkout_session
-        ).delete()
-        # test if there is no tickets related to the checkout_session
-        ticket_qs = Ticket.objects.filter(
-            checkout_item__checkout_session=self.checkout_session
-        )
-        self.assertFalse(ticket_qs)
-
-        # change the tx_status to completed and poll confirmation endpoint
-        self.checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        self.checkout_session.save()
-        response = self.client.get(
-            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response_json = response.json()
-        self.assertEqual(
-            response_json["tx_status"], CheckoutSession.OrderStatus.FULFILLED
-        )
-        # test if the tickets related to the checkout_session was created
-        ticket_qs = Ticket.objects.filter(
-            checkout_item__checkout_session=self.checkout_session
-        )
-        items_quantity_sum = CheckoutItem.objects.filter(
-            checkout_session=self.checkout_session
-        ).aggregate(sum=Sum("quantity"))["sum"]
-        self.assertTrue(ticket_qs)
-        self.assertEqual(ticket_qs.count(), items_quantity_sum)
-        self.assertEqual(
-            response_json["tickets_summary"][0]["quantity"], items_quantity_sum
         )

@@ -32,7 +32,12 @@ const Scanner = () => {
           toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
         })
         .catch((err) => {
-          toast.error(`Scan Failed: ${err.message}`)
+          if (err.message === "Ticket has already been redeemed.")  {
+            toast.custom(`Warning: ${err.message}`)
+          }
+          else  {
+            toast.error(`Scan Failed: ${err.message}`)
+          }
         })
 
       setTimeout(() => {

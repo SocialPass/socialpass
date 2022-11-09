@@ -1,14 +1,13 @@
 import base64
-import qrcode
 from io import BytesIO
 
-from django.conf import settings
-from django.http import Http404
-from django.views.generic import TemplateView
+import qrcode
+from django.http import Http404, HttpResponseRedirect
+from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from apps.root.models import Event, CheckoutSession, Ticket
+from apps.root.models import CheckoutSession, Event, Ticket
 
 
 class EventDiscoveryIndex(TemplateView):
@@ -43,21 +42,13 @@ class EventDiscoveryBrowse(ListView):
         return qs
 
 
-class EventDiscoveryDetails(DetailView):
-    model = Event
-    slug_field = "public_id"
-    slug_url_kwarg = "event_public_id"
-    context_object_name = "event"
-    template_name = "event_discovery/event_details.html"
-
-    def get_queryset(self):
-        qs = super().get_queryset().filter_active()
-        return qs.filter(public_id=self.kwargs["event_public_id"])
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["CHECKOUT_PORTAL_BASE_URL"] = settings.CHECKOUT_PORTAL_BASE_URL
-        return context
+class EventDiscoveryDetails(View):
+    def get(self, *args, **kwargs):
+        try:
+            event = Event.objects.get(public_id=self.kwargs["event_public_id"])
+        except Exception:
+            raise Http404()
+        return HttpResponseRedirect(event.checkout_portal_url)
 
 
 class GetTickets(DetailView):
@@ -86,8 +77,11 @@ class GetTickets(DetailView):
             img = qrcode.make(ticket.embed_code)
             stream = BytesIO()
             img.save(stream, format="PNG")
-            context["tickets"].append({
-                "object": ticket,
-                "qrcode": "data:image/png;base64,"+base64.b64encode(stream.getvalue()).decode("utf-8"),
-            })
+            context["tickets"].append(
+                {
+                    "object": ticket,
+                    "qrcode": "data:image/png;base64,"
+                    + base64.b64encode(stream.getvalue()).decode("utf-8"),
+                }
+            )
         return context

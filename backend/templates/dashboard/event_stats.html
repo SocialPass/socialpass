@@ -8,12 +8,18 @@
 {% block content %}
 <!-- Header start -->
 <div class="border-bottom hs-md-100">
-	<div class="p-content d-flex h-100">
+	<div class="p-content d-md-flex h-100">
 		<div class="align-self-center">
 			<h1 class="content-title m-0 fs-base-p6">{{ event.title }}</h1>
 			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
 				See stats, sales, orders, and check-in history of your event.
 			</p>
+		</div>
+		<div class="ms-auto align-self-center mt-10 mt-md-0">
+			<a href="{% url 'discovery:details' event.public_id %}" class="btn btn-primary" target="_blank">
+				<i class="fa-solid fa-external-link me-5"></i>
+				Public Page
+			</a>
 		</div>
 	</div>
 </div>

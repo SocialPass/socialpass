@@ -365,7 +365,6 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     def transition_live(self, save=True):
@@ -380,7 +379,6 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     @transition(field=state, target=StateStatus.DRAFT)
@@ -487,7 +485,6 @@ class Ticket(DBModel):
                     )
                 }
             )
-            capture_exception(e)
             raise e
 
     def clean_checkout_session(self, *args, **kwargs):
@@ -503,7 +500,6 @@ class Ticket(DBModel):
                     )
                 }
             )
-            capture_exception(e)
             raise e
 
     def clean(self, *args, **kwargs):
@@ -956,7 +952,6 @@ class CheckoutItem(DBModel):
                     )
                 }
             )
-            capture_exception(e)
             raise e
 
     def clean(self, *args, **kwargs):

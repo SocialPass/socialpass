@@ -1,1 +1,1 @@
-Thank you for purchasing ticket(s) for {{ event.title }} on SocialPass. Please go to the following link to download your ticket(s): https://socialpass.io{{ url }}?passcode={{ passcode }}
+Thank you for purchasing ticket(s) for {{ event.title }} on SocialPass. Please go to the following link to download your ticket(s): {{ domain }}{{ url }}?passcode={{ passcode }}

@@ -7,10 +7,13 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -838,6 +841,7 @@ class CheckoutSession(DBModel):
         """
         ctx = {
             "event": self.event,
+            "domain": Site.objects.get_current().domain,
             "url": reverse(
                 "discovery:get_tickets",
                 args=[
@@ -846,8 +850,15 @@ class CheckoutSession(DBModel):
             ),
             "passcode": self.passcode,
         }
-        email_template = "ticket/email/checkout"
-        DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
+        msg_plain = render_to_string("ticket/email/checkout_message.txt", ctx)
+        msg_html = render_to_string("ticket/email/checkout.html", ctx)
+        send_mail(
+            "[SocialPass] Tickets for " + self.event.title,
+            msg_plain,
+            "tickets-no-reply@socialpass.io",
+            [self.email],
+            html_message=msg_html,
+        )
 
     def fulfill(self):
         """ """

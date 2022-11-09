@@ -585,14 +585,22 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             capacity (100) - quantity_sold (50) = 50
         asserts 400 bad request
         """
-
+        # set capacity
         ticket_tier = self.event.tickettier_set.first()
         ticket_tier.capacity = 100
         ticket_tier.save()
 
-        # ensure there is no item and session with this tier and event
-        CheckoutItem.objects.filter(ticket_tier=ticket_tier).delete()
-        CheckoutSession.objects.filter(event=self.event).delete()
+        # generate tickets
+        checkout_session = self.event.checkoutsession_set.first()
+        checkout_item = checkout_session.checkoutitem_set.first()
+        ticket_keys = {
+            "checkout_session": checkout_session,
+            "event": self.event,
+            "ticket_tier": ticket_tier,
+            "checkout_item": checkout_item,
+        }
+        tickets = [Ticket(**ticket_keys) for _ in range(51)]
+        Ticket.objects.bulk_create(tickets)
 
         # test if return 400 bad request
         data = self.generate_session_data(
@@ -600,11 +608,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         )
         response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # verify if the value was not created in the db
-        checkout_item_qs = CheckoutItem.objects.filter(ticket_tier=ticket_tier)
-        checkout_session_qs = CheckoutSession.objects.filter(event=self.event)
-        self.assertFalse(checkout_item_qs)
-        self.assertFalse(checkout_session_qs)
 
     @prevent_warnings
     def test_create_session_with_repeated_items_400_bad_request(self):

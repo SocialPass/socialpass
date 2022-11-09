@@ -70,7 +70,7 @@ export default function Success() {
               <a
                 target='_blank'
                 rel='noreferrer'
-                href={'https://socialpass.io/get-tickets/' + checkout.public_id + '?passcode=' + checkout.passcode}
+                href={`https://socialpass.io/get-tickets/${checkout?.public_id}?passcode=${checkout?.passcode}`}
                 className='d-block text-center fw-bold antialiased'
               >
                 Get My Tickets

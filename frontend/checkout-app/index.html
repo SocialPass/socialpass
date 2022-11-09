@@ -88,13 +88,13 @@
   </script>
 
   <!-- Start Rollbar -->
-  <script>
+  <script type="module">
     var _rollbarConfig = {
       accessToken: '86a31882f236497db5c142da8ba72a5f',
       captureUncaught: true,
       captureUnhandledRejections: true,
       payload: {
-        environment: 'production',
+        environment: import.meta.env.VITE_APP_ROLLBAR_ENVIRONMENT,
       },
     }
     // Rollbar Snippet

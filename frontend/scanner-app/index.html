@@ -53,13 +53,13 @@
     <meta name="twitter:site" content="@socialpass_io" />
 
     <!-- Start Rollbar -->
-    <script>
+    <script type="module">
       var _rollbarConfig = {
         accessToken: 'e19adfa974894504b3d7b717c7c5f055',
         captureUncaught: true,
         captureUnhandledRejections: true,
         payload: {
-          environment: 'production',
+          environment: import.meta.env.VITE_APP_ROLLBAR_ENVIRONMENT
         },
       }
       // Rollbar Snippet

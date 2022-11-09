@@ -60,11 +60,26 @@ export default function Success() {
               role='alert'
             >
               <i className='fa-regular fa-check me-15'></i>
-              <p className='m-0'>Your tickets will be sent to your email address</p>
+              <p className='m-0'>Your tickets have been sent to your email address.</p>
+            </div>
+
+            <p className='mb-5'>
+              You can also use the following link to get your tickets:
+            </p>
+            <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded py-10 px-15 text-truncate'>
+              <a
+                target='_blank'
+                rel='noreferrer'
+                href={'https://socialpass.io/get-tickets/' + checkout.public_id + '?passcode=' + checkout.passcode}
+                className='d-block text-center fw-bold antialiased'
+              >
+                Get My Tickets
+                <i className='fa-regular fa-external-link ms-10'></i>
+              </a>
             </div>
 
             <p className='text-muted fs-base-n2'>
-              If you don't receive the tickets in your email in 10 minutes, please{' '}
+              In case you don't receive your tickets or the link above does not work, please{' '}
               <a
                 href='https://nfty-ecosystem.typeform.com/socialpass-help'
                 className='fw-bold antialiased'
@@ -74,7 +89,7 @@ export default function Success() {
                 contact us
               </a>{' '}
               and tell us this ID: <br></br>
-              <strong>{checkout.public_id}</strong>
+              <strong className='text-strong'>{checkout.public_id}</strong>
             </p>
 
             {/* <h6 className='fw-700 fsr-6 mt-20'>Get Tickets</h6>

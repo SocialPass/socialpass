@@ -87,7 +87,7 @@ export default function TransactionValidation() {
                 contact us
               </a>{' '}
               and tell us this ID: <br></br>
-              <strong>{checkoutPublicId}</strong>
+              <strong className='text-strong'>{checkoutPublicId}</strong>
             </p>
           </div>
         </div>

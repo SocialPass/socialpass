@@ -154,11 +154,19 @@ export default function Home() {
     setCheckout({ ...checkout, event: event?.public_id })
   }, [event])
 
+  const allTicketsAvailable = ticketTiers?.reduce(
+    (acc, tier) => {
+      acc.total += tier.capacity - tier.quantity_sold
+      return acc
+    },
+    {
+      total: 0,
+    },
+  )
+
   const isTiersAvailable = () => {
-    if (
-      ticketTiers[0]?.capacity > ticketTiers[0]?.quantity_sold ||
-      ticketTiers[0]?.capacity === 0
-    ) {
+    console.log(allTicketsAvailable.total)
+    if (allTicketsAvailable.total) {
       return true
     } else {
       return false

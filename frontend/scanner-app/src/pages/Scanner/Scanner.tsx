@@ -34,7 +34,7 @@ const Scanner = () => {
           toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
         })
         .catch((err) => {
-          if (err.message === "Ticket has already been redeemed.")  {
+          if (err.message === 'Ticket has already been redeemed.')  {
             toast.success(`Succesful Scan: ${err.message}`)
           }
           else  {

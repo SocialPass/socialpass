@@ -154,6 +154,9 @@ export default function Home() {
     setCheckout({ ...checkout, event: event?.public_id })
   }, [event])
 
+  const isSomeTiersAvailable = () =>
+    ticketTiers?.some((tier) => tier.capacity - tier.quantity_sold > 0)
+
   return (
     <>
       <div className='w-100 hs-200 position-relative'>
@@ -202,7 +205,7 @@ export default function Home() {
         </div>
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
-            {eventHasTickets() ? (
+            {isSomeTiersAvailable() ? (
               <>
                 <div>
                   <div

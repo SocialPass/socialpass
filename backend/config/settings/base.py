@@ -140,9 +140,7 @@ PASSWORD_HASHERS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -356,6 +354,18 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_TIME_LIMIT = 3 * 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
 CELERY_TASK_SOFT_TIME_LIMIT = 60
+
+# Rollbar
+# ------------------------------------------------------------------------------
+MIDDLEWARE += ["rollbar.contrib.django.middleware.RollbarNotifierMiddleware"]
+ROLLBAR_ENV_NAME = env("ROLLBAR_ENV_NAME")
+
+ROLLBAR = {
+    "access_token": "c1f5ed4dcef64a42b1fd2fd2c7718fb4",
+    "environment": ROLLBAR_ENV_NAME,
+    "code_version": "1.0",
+    "root": ROOT_DIR,
+}
 
 # INTERNAL
 # ------------------------------------------------------------------------------

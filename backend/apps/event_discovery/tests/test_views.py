@@ -63,7 +63,7 @@ class EventDiscoveryTest(TestCase):
 
         url = reverse("discovery:details", args=(self.event_one.public_id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
 
         # Re-enable logging
         logger.setLevel(previous_level)
@@ -72,4 +72,4 @@ class EventDiscoveryTest(TestCase):
         self.event_one.transition_live()
         url = reverse("discovery:details", args=(self.event_one.public_id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)

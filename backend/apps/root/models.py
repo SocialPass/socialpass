@@ -1,7 +1,8 @@
 import uuid
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Optional
 
+import requests
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -15,10 +16,9 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
+from eth_account import Account
+from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
-from sentry_sdk import capture_exception
-
-
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
@@ -28,6 +28,7 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
+    TxAssetOwnershipProcessingError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 
@@ -364,7 +365,6 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     def transition_live(self, save=True):
@@ -379,7 +379,6 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            capture_exception(e)
             raise EventStateTranstionError({"state": str(e)})
 
     @transition(field=state, target=StateStatus.DRAFT)
@@ -486,7 +485,6 @@ class Ticket(DBModel):
                     )
                 }
             )
-            capture_exception(e)
             raise e
 
     def clean_checkout_session(self, *args, **kwargs):
@@ -502,7 +500,6 @@ class Ticket(DBModel):
                     )
                 }
             )
-            capture_exception(e)
             raise e
 
     def clean(self, *args, **kwargs):
@@ -512,6 +509,7 @@ class Ticket(DBModel):
         """
         self.clean_event()
         self.clean_checkout_session()
+        return super().clean(*args, **kwargs)
 
     def redeem_ticket(
         self, redemption_access_key: Optional["TicketRedemptionKey"] = None
@@ -648,12 +646,6 @@ class TicketTier(DBModel):
         blank=True,
         null=False,
     )
-    quantity_sold = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        blank=True,
-        null=False,
-    )
     max_per_person = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
@@ -664,6 +656,10 @@ class TicketTier(DBModel):
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
+
+    @property
+    def quantity_sold(self):
+        return Ticket.objects.filter(ticket_tier=self).count()
 
 
 class TierFiat(DBModel):
@@ -732,6 +728,11 @@ class TierAssetOwnership(DBModel):
         default=AssetChoices.NFT,
         blank=False,
     )
+    balance_required = models.IntegerField(
+        default=1,
+        blank=False,
+        null=False,
+    )
     token_address = models.CharField(max_length=42, blank=False, default="")
     token_id = ArrayField(
         models.IntegerField(),
@@ -739,6 +740,7 @@ class TierAssetOwnership(DBModel):
         blank=True,
         help_text="Please enter a list of token ID(s) separated by commas.",
     )
+    issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"
@@ -776,21 +778,21 @@ class CheckoutSession(DBModel):
         blank=False,
         null=False,
     )
-    tx_fiat = models.ForeignKey(
+    tx_fiat = models.OneToOneField(
         "TxFiat",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
-    tx_blockchain = models.ForeignKey(
+    tx_blockchain = models.OneToOneField(
         "TxBlockchain",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
-    tx_asset_ownership = models.ForeignKey(
+    tx_asset_ownership = models.OneToOneField(
         "TxAssetOwnership",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
@@ -836,11 +838,23 @@ class CheckoutSession(DBModel):
         """
         ctx = {
             "event": self.event,
-            "url": reverse("discovery:get_tickets", args=[self.public_id,]),
+            "url": reverse(
+                "discovery:get_tickets",
+                args=[
+                    self.public_id,
+                ],
+            ),
             "passcode": self.passcode,
         }
         email_template = "ticket/email/checkout"
         DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
+
+    def fulfill(self):
+        """ """
+        self.create_items_tickets()
+        self.send_confirmation_email()
+        self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        self.save()
 
 
 class CheckoutItem(DBModel):
@@ -938,7 +952,6 @@ class CheckoutItem(DBModel):
                     )
                 }
             )
-            capture_exception(e)
             raise e
 
     def clean(self, *args, **kwargs):
@@ -949,6 +962,7 @@ class CheckoutItem(DBModel):
         self.clean_quantity()
         self.clean_ticket_tier()
         self.clean_event()
+        return super().clean(*args, **kwargs)
 
     def create_tickets(self):
         """
@@ -995,8 +1009,195 @@ class TxAssetOwnership(DBModel):
     Represents a checkout transaction via asset ownership
     """
 
+    wallet_address = models.CharField(max_length=42, blank=False, default="")
+    signed_message = models.CharField(max_length=255, blank=False, default="")
+    is_wallet_address_verified = models.BooleanField(
+        default=False, blank=False, null=False
+    )
+
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
 
-    def process(self, *args, **kwargs):
-        pass
+    @property
+    def expires(self):
+        return self.created + timedelta(minutes=30)
+
+    @property
+    def is_expired(self):
+        if datetime.now() >= self.expires:
+            return True
+        else:
+            return False
+
+    @property
+    def unsigned_message(self):
+        return (
+            "Greetings from SocialPass."
+            "\nSign this message to prove ownership"
+            "\n\nThis IS NOT a trade or transaction"
+            f"\n\nTimestamp: {self.expires.strftime('%s')}"
+            f"\nOne-Time Code: {str(self.public_id)}"
+        )
+
+    def _process_wallet_address(self, checkout_session=None):
+        """
+        Recover a wallet address from the signed_message vs unsigned_message
+        - On success: Mark is_wallet_address_verified as True
+        - On error: Raise TxAssetOwnershipProcessingError, mark session.tx_status as FAILED
+        Once this wallet address has been verified, set is_wallet_address_verified
+        """
+        # Recover wallet address
+        # Handle encoding / decoding exception (usually forgery attempt)
+        try:
+            _msg = encode_defunct(text=self.unsigned_message)
+            recovered_address = Account.recover_message(
+                _msg, signature=self.signed_message
+            )
+        except Exception:
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            raise TxAssetOwnershipProcessingError(
+                {"wallet_address": _("Error recovering address")}
+            )
+
+        # Successful recovery attempt
+        # Now check if addresses match
+        if recovered_address != self.wallet_address:
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            raise TxAssetOwnershipProcessingError(
+                {"wallet_address": _("Address was recovered, but did not match")}
+            )
+
+        # Success, mark as verified
+        self.is_wallet_address_verified = True
+        self.save()
+
+    def _process_asset_ownership(self, checkout_session=None):
+        """
+        Process asset ownership
+        - On success: Mark session as completed, call CheckoutSession.fulfill()
+        - On error: Raise TxProccessingError, with conflicing checkout item ID
+        1. Loop over CheckoutItem's
+        2. Format & make API call for each CheckoutItem and its respective tier
+        3. Verify API response
+            - Ensure wallet has sufficient balance for tier (balance_required * quantity)
+            - Filter for already-issued token ID's (tier.issued_token_id)
+            - Ensure metadata matches (TODO)
+            - Ensure token ID matches from tier_asset_ownership.token_id (TODO)
+        4. Finished
+            - Bulk update tier_asset_ownership.issued_token_id
+            - Mark checkoutsession as completed
+            - Proceed to checkoutsession.fulfill()
+        """
+        ticket_tiers_with_ids = {}
+
+        # Loop over related CheckoutItem's
+        for item in checkout_session.checkoutitem_set.all():
+            # Format & make API call for each CheckoutItem and its respective tier
+            tier_asset_ownership = item.ticket_tier.tier_asset_ownership
+            chain = hex(tier_asset_ownership.network)
+            token_address = tier_asset_ownership.token_address
+            api_url = (
+                f"https://deep-index.moralis.io/api/v2/{self.wallet_address}/nft"
+                f"?chain={chain}"
+                f"&token_addresses={token_address}"
+                f"&format=decimal"
+            )
+            headers = {
+                "accept": "application/json",
+                "X-API-Key": settings.MORALIS_API_KEY,
+            }
+            response = requests.get(api_url, headers=headers)
+            try:
+                response.raise_for_status()
+                response = response.json()
+            except requests.exceptions.HTTPError:
+                raise TxAssetOwnershipProcessingError(
+                    {"message": _("An error has ocurred")}
+                )
+
+            # Ensure wallet has sufficient balance for tier (balance_required * quantity)
+            expected = tier_asset_ownership.balance_required * item.quantity
+            actual = response["total"]
+            if actual < expected:
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "quantity": _(
+                            "Quantity requested exceeds the queried balance. "
+                            f"Expected Balance: {expected}. "
+                            f"Actual Balance: {actual}."
+                        )
+                    }
+                )
+
+            # Filter against already-issued token ID's (tier.issued_token_id's)
+            filtered_data = [
+                data
+                for data in response["result"]
+                if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
+            ]
+            filtered_ids = [
+                int(data.get("token_id"))
+                for data in filtered_data
+                if data.get("token_id")
+            ]
+            actual = len(filtered_ids)
+            if actual < expected:
+                # TODO: if actual < expected here, we may need to call API again
+                # This is because there can be paginated results
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "issued_token_id": (
+                            f"Could not find unique token ID's "
+                            f"Token ID's issued: {tier_asset_ownership.issued_token_id}. "
+                            f"Token ID's found: {filtered_ids}."
+                        )
+                    }
+                )
+
+            # TODO: Ensure token ID matches from tier_asset_ownership.token_id
+            # NOT needed for NFT NG - let's do after
+
+            # TODO: Ensure metadata matches
+            # https://github.com/nftylabs/socialpass/issues/451
+
+            # OK.
+            # Update ticket_tiers_with_ids dictionary.
+            ticket_tiers_with_ids[tier_asset_ownership] = filtered_ids[:expected]
+
+        # OK.
+        # - Bulk update tier_asset_ownership.issued_token_id
+        tier_asset_ownership_list = []
+        for t in ticket_tiers_with_ids:
+            t.issued_token_id += ticket_tiers_with_ids[t]
+            tier_asset_ownership_list.append(t)
+        TierAssetOwnership.objects.bulk_update(
+            tier_asset_ownership_list, ["issued_token_id"]
+        )
+
+        # - Mark CheckoutSession as COMPLETED
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        checkout_session.save()
+
+        # - Proceed to fulfilling CheckoutSession
+        checkout_session.fulfill()
+
+    def process(self, checkout_session=None):
+        """
+        1. Get/Set checkout_session (avoid duplicate queries)
+        2. Set checkout_session as processing
+        3. Process wallet address / signature
+        4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
+        """
+        # Get/Set checkout_session (avoid duplicate queries)
+        if not checkout_session:
+            checkout_session = self.checkoutsession
+
+        # Set checkout_session as processing
+        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        checkout_session.save()
+
+        # Process wallet address / signature
+        self._process_wallet_address(checkout_session=checkout_session)
+
+        # Process asset ownership
+        self._process_asset_ownership(checkout_session=checkout_session)

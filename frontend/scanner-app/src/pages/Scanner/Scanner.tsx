@@ -1,6 +1,8 @@
 import { useRef } from 'react'
 import { Html5QrcodeScanner } from './Html5QrcodeScanner'
-import toast from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast'
+import { FiAlertTriangle } from 'react-icons/fi'
+
 
 import useEvent from '@/hooks/useEvent'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -20,9 +22,9 @@ const Scanner = () => {
   const handleScan = (qrcode: any) => {
     if (qrcode && qrcode !== lastQR.current) {
       lastQR.current = qrcode
-
       TicketApi.claim(redemptionPublicId, qrcode)
         .then((data) => {
+          console.log(data)
           setEvent({
             ...event,
             ticket_count: data.ticket_count,
@@ -32,7 +34,15 @@ const Scanner = () => {
           toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
         })
         .catch((err) => {
-          toast.error(`Scan Failed: ${err.message}`)
+          if (err.message === 'Ticket has already been redeemed.')  {
+            toast('Succesful Scan: Ticket has already been redeemed', {
+            icon: '⚠️',
+            });
+            
+          }
+          else  {
+            toast.error(`Scan Failed: ${err.message}`)
+          }
         })
 
       setTimeout(() => {

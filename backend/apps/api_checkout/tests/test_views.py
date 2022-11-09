@@ -1,20 +1,12 @@
 from typing import Optional
 from uuid import UUID, uuid4
 
-from django.db.models import Sum
 from django.utils import timezone
 from factory.faker import faker
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 
-from apps.root.models import (
-    CheckoutItem,
-    CheckoutSession,
-    Ticket,
-    TxAssetOwnership,
-    TxBlockchain,
-    TxFiat,
-)
+from apps.root.models import CheckoutItem, CheckoutSession, Ticket
 from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 
@@ -223,12 +215,22 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             available = tier.capacity (100) - tier.quantity_sold (50) = 50
             try to update quantity to be 51 and getting 400 bad request
         """
+        # capacity
         ticket_tier = self.event.tickettier_set.first()
         ticket_tier.capacity = 100
-        ticket_tier.quantity_sold = 50
         ticket_tier.save()
+
+        # generate tickets
         checkout_session = self.event.checkoutsession_set.first()
         checkout_item = checkout_session.checkoutitem_set.first()
+        ticket_keys = {
+            "checkout_session": checkout_session,
+            "event": self.event,
+            "ticket_tier": ticket_tier,
+            "checkout_item": checkout_item,
+        }
+        tickets = [Ticket(**ticket_keys) for _ in range(51)]
+        Ticket.objects.bulk_create(tickets)
         data = {"quantity": 51}
 
         response = self.client.put(
@@ -257,11 +259,10 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         response = self.request_create_item(data)
         # assert objects values with json returned
         item_dict = response.json()
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertUUID(item_dict["public_id"], version=4)
-        self.assertEqual(
-            item_dict["ticket_tier"]["public_id"], str(self.ticket_tier.public_id)
-        )
+        self.assertEqual(item_dict["ticket_tier"], str(self.ticket_tier.public_id))
         self.assertEqual(
             item_dict["checkout_session"], str(self.checkout_session.public_id)
         )
@@ -305,24 +306,28 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         self.checkout_session.save()
         response = self.request_create_item(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        error_msg = response.json()[0]
-        self.assertIn("ticket_tier does not support fiat", error_msg)
+        error_msg = response.json()
+        self.assertIn("ticket_tier does not support fiat", error_msg["ticket_tier"])
 
         # test if return 400 bad request if not tier BLOCKCHAIN available
         self.checkout_session.tx_type = CheckoutSession.TransactionType.BLOCKCHAIN
         self.checkout_session.save()
         response = self.request_create_item(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        error_msg = response.json()[0]
-        self.assertIn("ticket_tier does not support blockchain", error_msg)
+        error_msg = response.json()
+        self.assertIn(
+            "ticket_tier does not support blockchain", error_msg["ticket_tier"]
+        )
 
         # test if return 400 bad request if not tier ASSET_OWNERSHIP available
         self.checkout_session.tx_type = CheckoutSession.TransactionType.ASSET_OWNERSHIP
         self.checkout_session.save()
         response = self.request_create_item(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        error_msg = response.json()[0]
-        self.assertIn("ticket_tier does not support asset ownership", error_msg)
+        error_msg = response.json()
+        self.assertIn(
+            "ticket_tier does not support asset ownership", error_msg["ticket_tier"]
+        )
 
     @prevent_warnings
     def test_fail_create_item_with_invalid_tier_404_not_found(self):
@@ -336,8 +341,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             tier=self.random_uuid, session=self.checkout_session.public_id
         )
         response = self.request_create_item(data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json()["code"], "public-id-not-found")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
     def test_fail_create_item_with_invalid_session_404_not_found(self):
@@ -351,8 +355,7 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
             tier=self.ticket_tier.public_id, session=self.random_uuid
         )
         response = self.request_create_item(data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json()["code"], "public-id-not-found")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
     def test_create_higher_than_available_item_400_bad_request(self):
@@ -361,10 +364,9 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         available = capacity (100) - quantity_sold (50) = 50
         asserts 400 bad request
         """
-
+        # set capacity
         ticket_tier = self.event.tickettier_set.first()
         ticket_tier.capacity = 100
-        ticket_tier.quantity_sold = 50
         ticket_tier.save()
         checkout_session = self.event.checkoutsession_set.first()
 
@@ -416,7 +418,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             "expiration": serializers.DateTimeField().to_representation(timezone.now()),
             "name": fake.name(),
             "email": fake.email(),
-            "cost": 10,
             "tx_status": CheckoutSession.OrderStatus.VALID,
             "tx_type": CheckoutSession.TransactionType.FIAT,
             "event": str(event),
@@ -455,7 +456,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             session_dict["expiration"], self.checkout_session.expiration
         )
         self.assertEqual(session_dict["email"], self.checkout_session.email)
-        self.assertEqual(session_dict["cost"], self.checkout_session.cost)
         self.assertEqual(session_dict["tx_status"], self.checkout_session.tx_status)
         self.assertEqual(
             session_dict["event"], str(self.checkout_session.event.public_id)
@@ -463,9 +463,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         # assert items from session
         item_dict = session_dict["checkout_items"][0]
         self.assertEqual(item_dict["public_id"], str(self.checkout_item.public_id))
-        self.assertEqual(
-            item_dict["ticket_tier"]["public_id"], str(self.ticket_tier.public_id)
-        )
+        self.assertEqual(item_dict["ticket_tier"], str(self.ticket_tier.public_id))
 
     @prevent_warnings
     def test_get_session_details_404_not_found(self):
@@ -537,21 +535,21 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         data["tx_type"] = CheckoutSession.TransactionType.FIAT
         response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        error_msg = response.json()[0]
+        error_msg = response.json()["ticket_tier"]
         self.assertIn("ticket_tier does not support fiat", error_msg)
 
         # test if return 400 bad request if not BLOCKCHAIN available
         data["tx_type"] = CheckoutSession.TransactionType.BLOCKCHAIN
         response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        error_msg = response.json()[0]
+        error_msg = response.json()["ticket_tier"]
         self.assertIn("ticket_tier does not support blockchain", error_msg)
 
         # test if return 400 bad request if not ASSET_OWNERSHIP available
         data["tx_type"] = CheckoutSession.TransactionType.ASSET_OWNERSHIP
         response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        error_msg = response.json()[0]
+        error_msg = response.json()["ticket_tier"]
         self.assertIn("ticket_tier does not support asset ownership", error_msg)
 
     @prevent_warnings
@@ -563,8 +561,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         data = self.generate_session_data(event=self.random_uuid)
         response = self.request_create_session(data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json()["code"], "public-id-not-found")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
     def test_fail_create_with_invalid_tier_404_not_found(self):
@@ -577,8 +574,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             event=self.event.public_id, tier=self.random_uuid
         )
         response = self.request_create_session(data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json()["code"], "public-id-not-found")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @prevent_warnings
     def test_create_higher_than_available_items_400_bad_request(self):
@@ -588,15 +584,22 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             capacity (100) - quantity_sold (50) = 50
         asserts 400 bad request
         """
-
+        # set capacity
         ticket_tier = self.event.tickettier_set.first()
         ticket_tier.capacity = 100
-        ticket_tier.quantity_sold = 50
         ticket_tier.save()
 
-        # ensure there is no item and session with this tier and event
-        CheckoutItem.objects.filter(ticket_tier=ticket_tier).delete()
-        CheckoutSession.objects.filter(event=self.event).delete()
+        # generate tickets
+        checkout_session = self.event.checkoutsession_set.first()
+        checkout_item = checkout_session.checkoutitem_set.first()
+        ticket_keys = {
+            "checkout_session": checkout_session,
+            "event": self.event,
+            "ticket_tier": ticket_tier,
+            "checkout_item": checkout_item,
+        }
+        tickets = [Ticket(**ticket_keys) for _ in range(51)]
+        Ticket.objects.bulk_create(tickets)
 
         # test if return 400 bad request
         data = self.generate_session_data(
@@ -604,11 +607,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         )
         response = self.request_create_session(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # verify if the value was not created in the db
-        checkout_item_qs = CheckoutItem.objects.filter(ticket_tier=ticket_tier)
-        checkout_session_qs = CheckoutSession.objects.filter(event=self.event)
-        self.assertFalse(checkout_item_qs)
-        self.assertFalse(checkout_session_qs)
 
     @prevent_warnings
     def test_create_session_with_repeated_items_400_bad_request(self):
@@ -679,77 +677,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         )
 
     @prevent_warnings
-    def test_transaction_fiat_201_ok(self):
-        """
-        test create TxFiat and update session.tx_fiat
-        assert 201 created
-        """
-
-        response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # test if fiat tx was created
-        response_json = response.json()
-        tx_fiat = TxFiat.objects.get(public_id=response_json["public_id"])
-        self.checkout_session.refresh_from_db()
-        self.assertEqual(self.checkout_session.tx_fiat.pk, tx_fiat.pk)
-
-    @prevent_warnings
-    def test_transaction_asset_ownership_201_ok(self):
-        """
-        test create TxAssetOwnership and update session.tx_asset_ownership
-        assert 201 created
-        """
-        self.checkout_session.tx_type = CheckoutSession.TransactionType.ASSET_OWNERSHIP
-        self.checkout_session.save()
-        response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # test if asset_ownership tx was created and session updated
-        response_json = response.json()
-        tx_asset_ownership = TxAssetOwnership.objects.get(
-            public_id=response_json["public_id"]
-        )
-        self.checkout_session.refresh_from_db()
-        self.assertEqual(
-            self.checkout_session.tx_asset_ownership.pk, tx_asset_ownership.pk
-        )
-
-    @prevent_warnings
-    def test_transaction_blockchain_201_ok(self):
-        """
-        test create TxBlockchain and update session.tx_blockchain
-        assert 201 created
-        """
-        self.checkout_session.tx_type = CheckoutSession.TransactionType.BLOCKCHAIN
-        self.checkout_session.save()
-        response = self.client.post(
-            f"{self.url_base}session/{self.checkout_session.public_id}/transaction/",
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # test if blockchain tx was created and session updated
-        response_json = response.json()
-        tx_blockchain = TxBlockchain.objects.get(public_id=response_json["public_id"])
-        self.checkout_session.refresh_from_db()
-        self.assertEqual(self.checkout_session.tx_blockchain.pk, tx_blockchain.pk)
-
-    @prevent_warnings
-    def test_transaction_session_404_not_found(self):
-        """
-        test create transaction with nonexistent session
-        assert 404 not found
-        """
-
-        response = self.client.post(
-            f"{self.url_base}session/{self.random_uuid}/transaction/",
-        )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        tx_fiat = TxFiat.objects.all()
-        self.assertFalse(tx_fiat)
-
-    @prevent_warnings
     def test_confirmation_processing_200_ok(self):
         """
         test return PROCESSING status and not returning tickets_summary
@@ -797,44 +724,4 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.json()["tx_status"], CheckoutSession.OrderStatus.FULFILLED
-        )
-
-    @prevent_warnings
-    def test_confirmation_completed_200_ok(self):
-        """
-        test changing tx_status COMPLETED to FULFILLED
-        and assert tickets_summary values
-        """
-        # delete all tickets related to the test checkout_session
-        Ticket.objects.filter(
-            checkout_item__checkout_session=self.checkout_session
-        ).delete()
-        # test if there is no tickets related to the checkout_session
-        ticket_qs = Ticket.objects.filter(
-            checkout_item__checkout_session=self.checkout_session
-        )
-        self.assertFalse(ticket_qs)
-
-        # change the tx_status to completed and poll confirmation endpoint
-        self.checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        self.checkout_session.save()
-        response = self.client.get(
-            f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response_json = response.json()
-        self.assertEqual(
-            response_json["tx_status"], CheckoutSession.OrderStatus.FULFILLED
-        )
-        # test if the tickets related to the checkout_session was created
-        ticket_qs = Ticket.objects.filter(
-            checkout_item__checkout_session=self.checkout_session
-        )
-        items_quantity_sum = CheckoutItem.objects.filter(
-            checkout_session=self.checkout_session
-        ).aggregate(sum=Sum("quantity"))["sum"]
-        self.assertTrue(ticket_qs)
-        self.assertEqual(ticket_qs.count(), items_quantity_sum)
-        self.assertEqual(
-            response_json["tickets_summary"][0]["quantity"], items_quantity_sum
         )

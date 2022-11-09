@@ -4,9 +4,9 @@ export type Checkout = {
   email?
   tx_type?
   tx_status?
-  tier_fiat?
-  tier_cryptocurrency?
-  tier_asset_ownership?
+  tx_fiat?
+  tx_cryptocurrency?
+  tx_asset_ownership?
 }
 
 type GetCheckout = (checkoutPublicId: string) => Promise<Event | unknown>

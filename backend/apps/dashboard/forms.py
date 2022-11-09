@@ -186,12 +186,20 @@ class TierAssetOwnershipForm(forms.ModelForm):
 
     class Meta:
         model = TierAssetOwnership
-        fields = ["blockchain", "network", "asset_type", "token_address", "token_id"]
+        fields = [
+            "balance_required",
+            "blockchain",
+            "network",
+            "asset_type",
+            "token_address",
+            "token_id",
+        ]
         widgets = {
             "token_address": forms.TextInput(
                 attrs={"placeholder": "Example: 0xb79...79268"}
             ),
             "token_id": forms.TextInput(attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}),
+            "balance_required": forms.NumberInput(attrs={"min": 1}),
         }
         labels = {"token_id": "Token IDs (Optional)"}
 

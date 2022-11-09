@@ -21,8 +21,15 @@ export default function Home() {
   const { eventPublicId, checkoutPublicId } = useParams()
 
   const { event }: any = useEvent()
-  const { checkout, getCheckout, getCheckoutItems, setCheckout, setCheckoutItems, pay }: any =
-    useCheckout()
+  const {
+    checkout,
+    getCheckout,
+    getCheckoutItems,
+    setCheckout,
+    setCheckoutItems,
+    pay,
+    error,
+  }: any = useCheckout()
 
   const handleBackClick = () => {
     navigate(`/${event.public_id}`)
@@ -30,7 +37,7 @@ export default function Home() {
     setCheckoutItems([])
   }
 
-  const getPaymentData = () => {
+  const getPaymentData = async () => {
     switch (checkout?.tx_type) {
       case 'FIAT':
         return {}
@@ -38,26 +45,45 @@ export default function Home() {
       case 'BLOCKCHAIN':
         return {}
 
-      case 'ASSET_OWNERSHIP':
+      case 'ASSET_OWNERSHIP': {
+        const signed_message = await signHook.signMessageAsync({
+          message: checkout?.tx_asset_ownership?.unsigned_message,
+        })
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
-          signed_message: signHook.data,
+          signed_message: signed_message,
         }
+      }
 
       default:
         return null
     }
   }
 
-  const handleContinueClick = (e) => {
+  const handleContinueClick = async (e) => {
     e.preventDefault()
 
-    const paymentData = getPaymentData()
+    const paymentData = await getPaymentData()
 
-    pay(paymentData).then(() => {
-      navigate('validation')
-    })
+    pay(paymentData)
+      .then(() => {
+        navigate('validation')
+      })
+      .catch((err) => {
+        console.log(err);
+        setCheckout({ ...checkout, tx_status: 'FAILED' })
+      })
+  }
+
+  const getErrorMessage = () => {
+    if (error) {
+      const messages = Object.keys(error).map((e) => error[e][0])
+
+      return `Sorry! ${messages.join('<br />')}`
+    }
+
+    return 'Sorry! The transaction has failed. Please try again.'
   }
 
   useEffect(() => {
@@ -98,7 +124,31 @@ export default function Home() {
             role='alert'
           >
             <i className='fa-regular fa-times me-15'></i>
-            <p className='m-0'>Sorry! The transaction has failed. Please try again.</p>
+            <p className='m-0'>{getErrorMessage()}</p>
+          </div>
+        </div>
+      ) : null}
+
+      {signHook.isError ? (
+        <div className='px-content pt-20'>
+          <div
+            className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+            role='alert'
+          >
+            <i className='fa-regular fa-times me-15'></i>
+            <p className='m-0'>The signature request was cancelled. Please try again.</p>
+          </div>
+        </div>
+      ) : null}
+
+      {signHook.isLoading ? (
+        <div className='px-content pt-20'>
+          <div
+            className='alert alert-primary m-0 text-info-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+            role='alert'
+          >
+            <i className='fa-regular fa-times me-15'></i>
+            <p className='m-0'>Please complete the request in your wallet provider</p>
           </div>
         </div>
       ) : null}

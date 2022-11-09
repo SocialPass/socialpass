@@ -1,11 +1,12 @@
 export type Event = {
-  title: string
-  start_date: string
-  localized_address_display: string
-  capacity: number
-  ticket_count: number
-  redeemed_count?: number
+  public_id: string
   team: Team
+  title: string
+  description: string
+  start_date: string
+  timezone: string
+  localized_address_display: string
+  cover_image: string
 }
 
 export type Team = {

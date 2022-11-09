@@ -54,12 +54,7 @@ export default {
     return axios
       .post(`/api/checkout/v1/session/${publicId}/transaction/`, data)
       .then((response) => Promise.resolve(response))
-      .catch((error) =>
-        Promise.reject({
-          detail: error.response.data?.detail || 'unknown-error',
-          message: error.response.data?.message || 'unknown-error',
-        }),
-      )
+      .catch((error) => Promise.reject(error.response.data))
   },
 
   getConfirmation(publicId: AnyARecord) {

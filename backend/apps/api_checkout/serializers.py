@@ -3,18 +3,35 @@ import copy
 from django.templatetags.static import static
 from rest_framework import serializers
 
+from apps.root import exceptions
 from apps.root.models import (
     CheckoutItem,
     CheckoutSession,
     Event,
     Team,
-    Ticket,
     TicketTier,
     TierAssetOwnership,
+    TxAssetOwnership,
+    TxBlockchain,
+    TxFiat,
 )
 
 
-class TeamReadSerializer(serializers.ModelSerializer):
+class BaseModelSerializer(serializers.ModelSerializer):
+    """
+    Base model serializer
+    Most notably, calls .clean() method in save()
+    """
+
+    def save(self):
+        try:
+            self.instance = super().save()
+            self.instance.clean()
+        except (exceptions.BaseValidationError) as e:
+            raise serializers.ValidationError(e.message_dict)
+
+
+class TeamReadSerializer(BaseModelSerializer):
     """
     Team serializer
     """
@@ -57,7 +74,7 @@ class TeamReadSerializer(serializers.ModelSerializer):
         return theme
 
 
-class EventReadSerializer(serializers.ModelSerializer):
+class EventReadSerializer(BaseModelSerializer):
     """
     Event serializer
     """
@@ -72,20 +89,14 @@ class EventReadSerializer(serializers.ModelSerializer):
             "start_date",
             "timezone",
             "localized_address_display",
-            "ticket_count",
             "cover_image",
         ]
 
-    ticket_count = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
     team = TeamReadSerializer()
 
-    def get_ticket_count(self, obj):
-        # TODO: should change to ticket_tier quantity_sold sum
-        return Ticket.objects.filter(event=obj).count()
 
-
-class TierAssetOwnershipReadSerializer(serializers.ModelSerializer):
+class TierAssetOwnershipReadSerializer(BaseModelSerializer):
     """
     AssetOwnership model serializer
     """
@@ -104,7 +115,7 @@ class TierAssetOwnershipReadSerializer(serializers.ModelSerializer):
     network = serializers.CharField(source="get_network_display")
 
 
-class TicketTierReadSerializer(serializers.ModelSerializer):
+class TicketTierReadSerializer(BaseModelSerializer):
     """
     TicketTier model serializer
     """
@@ -129,7 +140,7 @@ class TicketTierReadSerializer(serializers.ModelSerializer):
     tier_asset_ownership = TierAssetOwnershipReadSerializer()
 
 
-class CheckoutItemReadSerializer(serializers.ModelSerializer):
+class CheckoutItemReadSerializer(BaseModelSerializer):
     """
     CheckoutItem model read serializer
     """
@@ -149,7 +160,7 @@ class CheckoutItemReadSerializer(serializers.ModelSerializer):
     checkout_session = serializers.UUIDField(source="checkout_session.public_id")
 
 
-class CheckoutItemCreateSerializer(serializers.ModelSerializer):
+class CheckoutItemCreateSerializer(BaseModelSerializer):
     """
     CheckoutItem model create serializer
     """
@@ -170,11 +181,15 @@ class CheckoutItemCreateSerializer(serializers.ModelSerializer):
             "public_id",
         ]
 
-    ticket_tier = serializers.UUIDField(write_only=True)
-    checkout_session = serializers.UUIDField(write_only=True)
+    ticket_tier = serializers.SlugRelatedField(
+        slug_field="public_id", queryset=TicketTier.objects.all()
+    )
+    checkout_session = serializers.SlugRelatedField(
+        slug_field="public_id", queryset=CheckoutSession.objects.all()
+    )
 
 
-class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
+class CheckoutItemUpdateSerializer(BaseModelSerializer):
     """
     CheckoutItems model update serializer
     """
@@ -203,36 +218,7 @@ class CheckoutItemUpdateSerializer(serializers.ModelSerializer):
     )
 
 
-class CheckoutSessionReadSerializer(serializers.ModelSerializer):
-    """
-    CheckoutItems model read serializer
-    """
-
-    class Meta:
-        model = CheckoutSession
-        fields = [
-            "created",
-            "modified",
-            "public_id",
-            "expiration",
-            "name",
-            "email",
-            "cost",
-            "tx_type",
-            "tx_status",
-            "tx_type",
-            "event",
-            "checkout_items",
-            "passcode",
-        ]
-
-    event = serializers.UUIDField(source="event.public_id")
-    checkout_items = CheckoutItemReadSerializer(
-        source="checkoutitem_set", many=True, allow_null=True
-    )
-
-
-class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
+class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
     """
     CheckoutItems model create serializer
     """
@@ -247,10 +233,60 @@ class CheckoutSessionItemsCreateSerializer(serializers.ModelSerializer):
             "ticket_tier",
         ]
 
-    ticket_tier = serializers.UUIDField(write_only=True)
+    ticket_tier = serializers.SlugRelatedField(
+        slug_field="public_id", queryset=TicketTier.objects.all()
+    )
 
 
-class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
+class TxAssetOwnershipWriteSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxAssetOwnership
+        fields = ["wallet_address", "signed_message"]
+
+
+class TxAssetOwnershipReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxAssetOwnership
+        fields = ["created", "modified", "public_id", "unsigned_message"]
+
+
+class TxBlockchainReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxBlockchain
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
+class TxFiatReadSerializer(serializers.ModelSerializer):
+    """
+    TxAssetOwnership model read serializer
+    """
+
+    class Meta:
+        model = TxFiat
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
+class CheckoutSessionCreateSerializer(BaseModelSerializer):
     """
     CheckoutSession model create serializer with nested CheckoutItems
     """
@@ -264,21 +300,102 @@ class CheckoutSessionCreateSerializer(serializers.ModelSerializer):
             "expiration",
             "name",
             "email",
-            "cost",
             "tx_status",
             "tx_type",
+            "tx_asset_ownership",
+            "tx_blockchain",
+            "tx_fiat",
             "event",
             "checkout_items",
         ]
-        read_only_fields = ["created", "modified", "public_id", "cost"]
+        read_only_fields = ["created", "modified", "public_id"]
 
-    event = serializers.UUIDField(write_only=True)
-    checkout_items = CheckoutSessionItemsCreateSerializer(
-        source="checkoutitem_set", many=True, allow_null=True, required=False
+    event = serializers.SlugRelatedField(
+        slug_field="public_id",
+        queryset=Event.objects.all(),
+        write_only=True,
     )
+    checkout_items = CheckoutSessionItemsCreateSerializer(
+        source="checkoutitem_set",
+        many=True,
+    )
+    tx_asset_ownership = TxAssetOwnershipReadSerializer(required=False, write_only=True)
+    tx_blockchain = TxBlockchainReadSerializer(required=False, write_only=True)
+    tx_fiat = TxFiatReadSerializer(required=False, write_only=True)
+
+    def create(self, validated_data):
+        """
+        custom create method to handle nested writeable serializer
+        www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers
+        """
+        # create CheckoutItem's
+        # note: we pop checkoutitem_set as to create it manually
+        checkout_items = validated_data.pop("checkoutitem_set")
+        checkout_session = CheckoutSession.objects.create(**validated_data)
+        for item in checkout_items:
+            CheckoutItem.objects.create(
+                checkout_session=checkout_session, **item
+            ).clean()
+
+        # create Transaction
+        # also save tx to the CheckoutSession
+        match checkout_session.tx_type:
+            case CheckoutSession.TransactionType.FIAT:
+                tx = TxFiat.objects.create()
+                checkout_session.tx_fiat = tx
+            case CheckoutSession.TransactionType.BLOCKCHAIN:
+                tx = TxBlockchain.objects.create()
+                checkout_session.tx_blockchain = tx
+            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+                tx = TxAssetOwnership.objects.create()
+                checkout_session.tx_asset_ownership = tx
+        checkout_session.save()
+
+        # return parent CheckoutSession
+        return checkout_session
 
 
-class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
+class CheckoutSessionReadSerializer(BaseModelSerializer):
+    """
+    CheckoutItems model read serializer
+    """
+
+    class Meta:
+        model = CheckoutSession
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+            "expiration",
+            "name",
+            "email",
+            "tx_status",
+            "tx_type",
+            "tx_asset_ownership",
+            "tx_blockchain",
+            "tx_fiat",
+            "event",
+            "checkout_items",
+            "passcode",
+        ]
+        read_only_fields = ["created", "modified", "public_id"]
+
+    event = serializers.SlugRelatedField(
+        slug_field="public_id",
+        queryset=Event.objects.all(),
+    )
+    checkout_items = CheckoutSessionItemsCreateSerializer(
+        source="checkoutitem_set",
+        many=True,
+        allow_null=True,
+        required=False,
+    )
+    tx_asset_ownership = TxAssetOwnershipReadSerializer(required=False)
+    tx_blockchain = TxBlockchainReadSerializer(required=False)
+    tx_fiat = TxFiatReadSerializer(required=False)
+
+
+class CheckoutSessionUpdateSerializer(BaseModelSerializer):
     """
     CheckoutItems model update serializer
     """
@@ -292,7 +409,6 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
             "expiration",
             "name",
             "email",
-            "cost",
             "tx_status",
             "tx_type",
             "event",
@@ -302,7 +418,6 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
             "modified",
             "public_id",
             "expiration",
-            "cost",
             "tx_status",
             "tx_type",
         ]
@@ -310,17 +425,7 @@ class CheckoutSessionUpdateSerializer(serializers.ModelSerializer):
     event = serializers.UUIDField(source="event.public_id", read_only=True)
 
 
-class TransactionCreateSerializer(serializers.Serializer):
-    """
-    Transaction serializer
-    """
-
-    created = serializers.DateTimeField(read_only=True)
-    modified = serializers.DateTimeField(read_only=True)
-    public_id = serializers.UUIDField(read_only=True)
-
-
-class CheckoutItemQuantitySerializer(serializers.ModelSerializer):
+class CheckoutItemQuantitySerializer(BaseModelSerializer):
     ticket_tier = TicketTierReadSerializer(read_only=True)
 
     class Meta:
@@ -331,7 +436,7 @@ class CheckoutItemQuantitySerializer(serializers.ModelSerializer):
         ]
 
 
-class ConfirmationSerializer(serializers.ModelSerializer):
+class ConfirmationSerializer(BaseModelSerializer):
     """
     Confirmation serializer
     """

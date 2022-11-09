@@ -26,9 +26,9 @@ export const CheckoutProvider = ({ children }: any) => {
   // Communicating between what backend (left) and frontend (right) understands as transaction type
   const getTxType = (type) =>
     ({
-      FIAT: 'tier_fiat',
-      BLOCKCHAIN: 'tier_cryptocurrency',
-      ASSET_OWNERSHIP: 'tier_asset_ownership',
+      FIAT: 'tx_fiat',
+      BLOCKCHAIN: 'tx_cryptocurrency',
+      ASSET_OWNERSHIP: 'tx_asset_ownership',
     }[type])
 
   const getCheckout = (checkoutPublicId: string) =>
@@ -114,16 +114,21 @@ export const CheckoutProvider = ({ children }: any) => {
     })
 
   const pay = (data) =>
-    new Promise((resolve) => {
-      CheckoutApi.pay(checkout?.public_id, data).then((response) => {
-        setCheckout({
-          ...checkout,
-          tx_status: 'PROCESSING',
-          [getTxType(checkout?.tx_type)]: response.data,
-        })
+    new Promise((resolve, reject) => {
+      CheckoutApi.pay(checkout?.public_id, data)
+        .then((response) => {
+          setCheckout({
+            ...checkout,
+            tx_status: 'PROCESSING',
+            [getTxType(checkout?.tx_type)]: response.data,
+          })
 
-        resolve(response.data)
-      })
+          resolve(response.data)
+        })
+        .catch((err) => {
+          setError(err)
+          reject(err)
+        })
     })
 
   return (

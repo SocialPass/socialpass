@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Html5QrcodeScanner } from './Html5QrcodeScanner'
-import toast from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast'
 import { FiAlertTriangle } from 'react-icons/fi'
 
 
@@ -35,7 +35,10 @@ const Scanner = () => {
         })
         .catch((err) => {
           if (err.message === 'Ticket has already been redeemed.')  {
-            toast.success(`Succesful Scan: ${err.message}`)
+            toast('Succesful Scan: Ticket has already been redeemed', {
+            icon: '⚠️',
+            });
+            
           }
           else  {
             toast.error(`Scan Failed: ${err.message}`)

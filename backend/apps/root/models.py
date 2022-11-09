@@ -835,20 +835,23 @@ class CheckoutSession(DBModel):
         for checkout_item in self.checkoutitem_set.all():
             checkout_item.create_tickets()
 
+    @property
+    def get_tickets_link(self):
+        """
+        get link to get the tickets for this session
+        """
+        domain = Site.objects.get_current().domain
+        url = reverse("discovery:get_tickets", args=[self.public_id,],)
+        tickets_link = domain + url + "?passcode=" + self.passcode
+        return tickets_link
+
     def send_confirmation_email(self):
         """
         send the confirmation link to the attendee's email
         """
         ctx = {
             "event": self.event,
-            "domain": Site.objects.get_current().domain,
-            "url": reverse(
-                "discovery:get_tickets",
-                args=[
-                    self.public_id,
-                ],
-            ),
-            "passcode": self.passcode,
+            "tickets_link": self.get_tickets_link,
         }
         msg_plain = render_to_string("ticket/email/checkout_message.txt", ctx)
         msg_html = render_to_string("ticket/email/checkout.html", ctx)

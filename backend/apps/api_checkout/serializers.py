@@ -377,6 +377,7 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "event",
             "checkout_items",
             "passcode",
+            "get_tickets_link",
         ]
         read_only_fields = ["created", "modified", "public_id"]
 

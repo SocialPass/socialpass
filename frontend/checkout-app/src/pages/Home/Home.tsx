@@ -352,7 +352,6 @@ export default function Home() {
               <div className='content me-md-0'>
                 {getPaymentTypeTicketTiers().map((tier, index) => (
                   <TicketSelector
-                    isTiersAvailable={isTiersAvailable}
                     amount={
                       checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                         ?.quantity || 0

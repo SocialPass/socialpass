@@ -1,7 +1,15 @@
 import propTypes from 'prop-types'
 
 function TicketSelector(props): JSX.Element {
-  const { ticketTier, paymentType, amount, onChange, isChecked, isTiersAvailable } = props
+  const { ticketTier, paymentType, amount, onChange, isChecked } = props
+
+  const isTierAvailable = () => {
+    if (ticketTier?.capacity > ticketTier?.quantity_sold || ticketTier?.capacity === 0) {
+      return true
+    } else {
+      return false
+    }
+  }
 
   const handleAddOne = () => {
     if (
@@ -41,11 +49,14 @@ function TicketSelector(props): JSX.Element {
   }
 
   return (
-    <div
-      className={`ticket-tier mb-20 ${isTiersAvailable() ? '' : 'disabled-card'}`}
-      onClick={() => handleCardClick()}
-    >
-      <input type='checkbox' className='ticket-tier-input' checked={isChecked} readOnly />
+    <div className='ticket-tier mb-20' onClick={() => handleCardClick()}>
+      <input
+        disabled={!isTierAvailable()}
+        type='checkbox'
+        className='ticket-tier-input'
+        checked={isChecked}
+        readOnly
+      />
       <label htmlFor='c1' className='ticket-tier-label'>
         <div className='d-sm-flex align-items-center'>
           <div className='pe-sm-15'>
@@ -151,5 +162,4 @@ TicketSelector.propTypes = {
   paymentType: propTypes.string,
   onChange: propTypes.func,
   isChecked: propTypes.bool,
-  isTiersAvailable: propTypes.func,
 }

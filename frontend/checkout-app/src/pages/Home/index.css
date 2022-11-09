@@ -14,12 +14,6 @@
   display: block;
 }
 
-.disabled-card {
-  cursor: not-allowed;
-  pointer-events: none;
-  opacity: 0.4;
-}
-
 .ticket-tier-input {
   position: absolute;
   opacity: 0;

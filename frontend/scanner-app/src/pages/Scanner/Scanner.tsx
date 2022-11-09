@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import { Html5QrcodeScanner } from './Html5QrcodeScanner'
-import { toast, Toaster } from 'react-hot-toast'
-import { FiAlertTriangle } from 'react-icons/fi'
+import { toast } from 'react-hot-toast'
 
 
 import useEvent from '@/hooks/useEvent'

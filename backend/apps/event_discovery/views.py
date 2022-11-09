@@ -2,7 +2,6 @@ import base64
 import qrcode
 from io import BytesIO
 
-from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView

@@ -4,7 +4,7 @@ function TicketSelector(props): JSX.Element {
   const { ticketTier, paymentType, amount, onChange, isChecked } = props
 
   const isTierAvailable = () => {
-    if (ticketTier?.capacity > ticketTier?.quantity_sold || ticketTier?.capacity === 0) {
+    if (ticketTier?.capacity > ticketTier?.quantity_sold) {
       return true
     } else {
       return false

@@ -154,23 +154,8 @@ export default function Home() {
     setCheckout({ ...checkout, event: event?.public_id })
   }, [event])
 
-  const allTicketsAvailable = ticketTiers?.reduce(
-    (acc, tier) => {
-      acc.total += tier.capacity - tier.quantity_sold
-      return acc
-    },
-    {
-      total: 0,
-    },
-  )
-
-  const isTiersAvailable = () => {
-    if (allTicketsAvailable.total) {
-      return true
-    } else {
-      return false
-    }
-  }
+  const isSomeTiersAvailable = () =>
+    ticketTiers?.some((tier) => tier.capacity - tier.quantity_sold > 0)
 
   return (
     <>
@@ -220,32 +205,20 @@ export default function Home() {
         </div>
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
-            {eventHasTickets() ? (
+            {isSomeTiersAvailable() ? (
               <>
-                {isTiersAvailable() ? (
-                  <div>
-                    <div
-                      className='alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
-                      role='alert'
-                    >
-                      <i className='fa-regular fa-check me-15'></i>
-                      <p className='m-0'>
-                        Tickets available! Please select the payment type and tickets you want to
-                        purchase.
-                      </p>
-                    </div>
+                <div>
+                  <div
+                    className='alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+                    role='alert'
+                  >
+                    <i className='fa-regular fa-check me-15'></i>
+                    <p className='m-0'>
+                      Tickets available! Please select the payment type and tickets you want to
+                      purchase.
+                    </p>
                   </div>
-                ) : (
-                  <div>
-                    <div
-                      className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
-                      role='alert'
-                    >
-                      <i className='fa-regular fa-times me-15'></i>
-                      <p className='m-0'>Sorry! No tickets available.</p>
-                    </div>
-                  </div>
-                )}
+                </div>
               </>
             ) : (
               <>

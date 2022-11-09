@@ -3,8 +3,8 @@ import qrcode
 from io import BytesIO
 
 from django.conf import settings
-from django.http import Http404
-from django.views.generic import TemplateView
+from django.http import Http404, HttpResponseRedirect
+from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -43,21 +43,11 @@ class EventDiscoveryBrowse(ListView):
         return qs
 
 
-class EventDiscoveryDetails(DetailView):
-    model = Event
-    slug_field = "public_id"
-    slug_url_kwarg = "event_public_id"
-    context_object_name = "event"
-    template_name = "event_discovery/event_details.html"
+class EventDiscoveryDetails(View):
 
-    def get_queryset(self):
-        qs = super().get_queryset().filter_active()
-        return qs.filter(public_id=self.kwargs["event_public_id"])
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["CHECKOUT_PORTAL_BASE_URL"] = settings.CHECKOUT_PORTAL_BASE_URL
-        return context
+    def get(self, *args, **kwargs):
+        event_public_id = str(self.kwargs["event_public_id"])
+        return HttpResponseRedirect(settings.CHECKOUT_PORTAL_BASE_URL + "/" + event_public_id)
 
 
 class GetTickets(DetailView):

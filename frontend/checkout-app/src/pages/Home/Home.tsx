@@ -165,7 +165,6 @@ export default function Home() {
   )
 
   const isTiersAvailable = () => {
-    console.log(allTicketsAvailable.total)
     if (allTicketsAvailable.total) {
       return true
     } else {

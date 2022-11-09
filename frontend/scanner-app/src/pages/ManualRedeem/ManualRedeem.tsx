@@ -34,7 +34,14 @@ const ManualRedeem = () => {
         toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
       })
       .catch((err) => {
-        toast.error(`Scan Failed: ${err.message}`)
+        if (err.message === 'Ticket has already been redeemed.')  {
+          toast('Succesful Scan: Ticket has already been redeemed', {
+          icon: '⚠️',
+          });
+        }
+        else  {
+          toast.error(`Scan Failed: ${err.message}`)
+        }
       })
   }
 

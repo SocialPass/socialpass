@@ -7,7 +7,6 @@ from rest_framework.mixins import (
     UpdateModelMixin,
 )
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers

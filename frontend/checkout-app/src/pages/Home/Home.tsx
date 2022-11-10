@@ -395,12 +395,12 @@ export default function Home() {
                 <p className='text-muted fs-base-n4'>
                   You're also agreeing to our{' '}
                   <a
-                    href='https://drive.google.com/file/d/1mulvB8lIEl3AZghIBqlISBI-jdNk25W5/view'
+                    href={`${import.meta.env.VITE_APP_API_URL}/static/legal/terms-of-use.pdf`}
                     className='fw-bold'
                     target='_blank'
                     rel='noreferrer'
                   >
-                    Terms & Conditions <i className='fa-regular fa-external-link'></i>
+                    Terms of Use <i className='fa-regular fa-external-link'></i>
                   </a>{' '}
                   by clicking on the above button.
                 </p>

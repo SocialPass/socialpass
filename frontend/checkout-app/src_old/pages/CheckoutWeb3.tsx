@@ -232,7 +232,10 @@ export const CheckoutWeb3 = () => {
             </button>
             <div className='form-check mt-15'>
               <input type='checkbox' className='form-check-input pe-none' id='terms-checkbox' checked tabIndex={-1} />
-              <label className='form-check-label'>I accept and agree to the <a href='https://drive.google.com/file/u/6/d/1mulvB8lIEl3AZghIBqlISBI-jdNk25W5/view?usp=sharing' target='_blank'  rel='noreferrer'>Terms &amp; Conditions</a> (Required)</label>
+              <label className='form-check-label'>I accept and agree to the
+                <a href={`${import.meta.env.VITE_APP_API_URL}/static/legal/terms-of-use.pdf`} target='_blank' rel='noreferrer'>
+                  Terms of Use</a> (Required)
+                </label>
             </div>
           </div>
         </div>

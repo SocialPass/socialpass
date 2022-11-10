@@ -1,7 +1,6 @@
 from typing import Optional
 from uuid import UUID, uuid4
 
-from django.utils import timezone
 from factory.faker import faker
 from rest_framework import serializers, status
 from rest_framework.fields import empty

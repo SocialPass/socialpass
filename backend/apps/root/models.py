@@ -1217,7 +1217,7 @@ class TxAssetOwnership(DBModel):
             # Update ticket_tiers_with_ids dictionary.
             token_ids = [
                 int(data.get("token_id"))
-                for data in filtered_by_issued_ids
+                for data in filtered_by_metadata
                 if data.get("token_id")
             ]
             ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]

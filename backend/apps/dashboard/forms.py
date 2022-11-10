@@ -188,7 +188,6 @@ class TierAssetOwnershipForm(forms.ModelForm):
         model = TierAssetOwnership
         fields = [
             "balance_required",
-            "blockchain",
             "network",
             "asset_type",
             "token_address",

@@ -1195,11 +1195,8 @@ class TxAssetOwnership(DBModel):
                         if attributes["value"] != "Silver" or i["value"] != "Rainbow":
                             continue
                     filtered_by_metadata.append(i)
-
             actual = len(filtered_by_metadata)
             if actual < expected:
-                # TODO: if actual < expected here, we may need to call API again
-                # This is because there can be paginated results
                 raise TxAssetOwnershipProcessingError(
                     {
                         "metadata": (

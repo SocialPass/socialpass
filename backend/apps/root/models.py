@@ -841,7 +841,7 @@ class CheckoutSession(DBModel):
         """
         get link to get the tickets for this session
         """
-        domain = Site.objects.get_current().domain
+        domain = Site.objects.all().first().domain
         url = reverse(
             "discovery:get_tickets",
             args=[

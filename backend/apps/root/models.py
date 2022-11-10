@@ -1149,12 +1149,12 @@ class TxAssetOwnership(DBModel):
                 )
 
             # Filter against already-issued token ID's (tier.issued_token_id's)
-            filtered_by_ids = [
+            filtered_by_issued_ids = [
                 data
                 for data in response["result"]
                 if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
             ]
-            actual = len(filtered_by_ids)
+            actual = len(filtered_by_issued_ids)
             if actual < expected:
                 # TODO: if actual < expected here, we may need to call API again
                 # This is because there can be paginated results
@@ -1176,7 +1176,12 @@ class TxAssetOwnership(DBModel):
 
             # OK.
             # Update ticket_tiers_with_ids dictionary.
-            ticket_tiers_with_ids[tier_asset_ownership] = filtered_by_ids[:expected]
+            token_ids = [
+                int(data.get("token_id"))
+                for data in filtered_by_issued_ids
+                if data.get("token_id")
+            ]
+            ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 
         # OK.
         # - Bulk update tier_asset_ownership.issued_token_id

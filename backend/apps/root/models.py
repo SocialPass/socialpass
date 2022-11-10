@@ -1,3 +1,4 @@
+import json
 import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
@@ -1100,7 +1101,7 @@ class TxAssetOwnership(DBModel):
         3. Verify API response
             - Ensure wallet has sufficient balance for tier (balance_required * quantity)
             - Filter for already-issued token ID's (tier.issued_token_id)
-            - Ensure metadata matches (TODO)
+            - Ensure metadata matches
             - Ensure token ID matches from tier_asset_ownership.token_id (TODO)
         4. Finished
             - Bulk update tier_asset_ownership.issued_token_id
@@ -1135,6 +1136,7 @@ class TxAssetOwnership(DBModel):
                 )
 
             # Ensure wallet has sufficient balance for tier (balance_required * quantity)
+            # Raise exception on insufficient balance
             expected = tier_asset_ownership.balance_required * item.quantity
             actual = response["total"]
             if actual < expected:
@@ -1149,6 +1151,7 @@ class TxAssetOwnership(DBModel):
                 )
 
             # Filter against already-issued token ID's (tier.issued_token_id's)
+            # Raise exception on insufficient unique token ID's
             filtered_by_issued_ids = [
                 data
                 for data in response["result"]
@@ -1168,11 +1171,47 @@ class TxAssetOwnership(DBModel):
                     }
                 )
 
+            # Ensure metadata matches
+            # Raise exception on lack of metadata matches
+            filtered_by_metadata = []
+            for i in filtered_by_issued_ids:
+                # Hard-coded for NFT NG
+                # 1. “Silver” (At least 1 silver)
+                # 1. “Rainbow” (At least 1 rainbow)
+                # 2. “Gold” (At least 1 gold)
+                # 3. “Whale” (At least 4 silvers AND 4 rainbow)
+                metadata = json.loads(i["metadata"])
+                attributes = metadata["attributes"][0]
+                if item.ticket_tier.ticket_type == "Silver":
+                    if attributes["value"] != "Silver":
+                        continue
+                elif item.ticket_tier.ticket_type == "Rainbow":
+                    if attributes["value"] != "Rainbow":
+                        continue
+                elif item.ticket_tier.ticket_type == "Gold":
+                    if attributes["value"] != "Gold":
+                        continue
+                elif item.ticket_tier.ticket_type == "Whale":
+                    if attributes["value"] != "Silver" or i["value"] != "Rainbow":
+                        continue
+                filtered_by_metadata.append(i)
+
+            actual = len(filtered_by_metadata)
+            if actual < expected:
+                # TODO: if actual < expected here, we may need to call API again
+                # This is because there can be paginated results
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "metadata": (
+                            f"Could not find enough NFT's that match the metadata required"
+                            f"Expected NFT's: {expected}. "
+                            f"Actual NFT's: {actual}."
+                        )
+                    }
+                )
+
             # TODO: Ensure token ID matches from tier_asset_ownership.token_id
             # NOT needed for NFT NG - let's do after
-
-            # TODO: Ensure metadata matches
-            # https://github.com/nftylabs/socialpass/issues/451
 
             # OK.
             # Update ticket_tiers_with_ids dictionary.

@@ -841,7 +841,12 @@ class CheckoutSession(DBModel):
         get link to get the tickets for this session
         """
         domain = Site.objects.get_current().domain
-        url = reverse("discovery:get_tickets", args=[self.public_id,],)
+        url = reverse(
+            "discovery:get_tickets",
+            args=[
+                self.public_id,
+            ],
+        )
         tickets_link = domain + url + "?passcode=" + self.passcode
         return tickets_link
 
@@ -1188,19 +1193,13 @@ class TxAssetOwnership(DBModel):
             tier_asset_ownership_list, ["issued_token_id"]
         )
 
-        # - Mark CheckoutSession as COMPLETED
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        checkout_session.save()
-
-        # - Proceed to fulfilling CheckoutSession
-        checkout_session.fulfill()
-
     def process(self, checkout_session=None):
         """
         1. Get/Set checkout_session (avoid duplicate queries)
         2. Set checkout_session as processing
         3. Process wallet address / signature
         4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
+        5. OK
         """
         # Get/Set checkout_session (avoid duplicate queries)
         if not checkout_session:
@@ -1210,8 +1209,22 @@ class TxAssetOwnership(DBModel):
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
 
-        # Process wallet address / signature
-        self._process_wallet_address(checkout_session=checkout_session)
+        # try / catch on process methods
+        try:
+            # Process wallet address / signature
+            self._process_wallet_address(checkout_session=checkout_session)
 
-        # Process asset ownership
-        self._process_asset_ownership(checkout_session=checkout_session)
+            # Process asset ownership
+            self._process_asset_ownership(checkout_session=checkout_session)
+        except Exception as e:
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.save()
+            raise e
+
+        # OK
+        # - Mark CheckoutSession as COMPLETED
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        checkout_session.save()
+
+        # - Proceed to fulfilling CheckoutSession
+        checkout_session.fulfill()

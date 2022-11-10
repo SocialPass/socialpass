@@ -195,14 +195,14 @@ class CheckoutSessionView(
         serializer.is_valid(raise_exception=True)
         tx = serializer.save()
 
-        # try/except on processing tranasction
+        # try/except on processing transaction
         try:
             tx.process(checkout_session=checkout_session)
             return Response(status=status.HTTP_201_CREATED)
         except TxAssetOwnershipProcessingError as e:
-            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            checkout_session.save()
             return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=["get"], detail=True)
     def confirmation(self, request, *args, **kwargs):

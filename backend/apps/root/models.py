@@ -1154,21 +1154,16 @@ class TxAssetOwnership(DBModel):
                 for data in response["result"]
                 if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
             ]
-            filtered_ids = [
-                int(data.get("token_id"))
-                for data in filtered_data
-                if data.get("token_id")
-            ]
-            actual = len(filtered_ids)
+            actual = len(filtered_data)
             if actual < expected:
                 # TODO: if actual < expected here, we may need to call API again
                 # This is because there can be paginated results
                 raise TxAssetOwnershipProcessingError(
                     {
                         "issued_token_id": (
-                            f"Could not find unique token ID's "
-                            f"Token ID's issued: {tier_asset_ownership.issued_token_id}. "
-                            f"Token ID's found: {filtered_ids}."
+                            f"Could not find enough NFT's. "
+                            f"Expected unique NFT's: {expected}. "
+                            f"Actual unique NFT's: {actual}."
                         )
                     }
                 )
@@ -1181,7 +1176,7 @@ class TxAssetOwnership(DBModel):
 
             # OK.
             # Update ticket_tiers_with_ids dictionary.
-            ticket_tiers_with_ids[tier_asset_ownership] = filtered_ids[:expected]
+            ticket_tiers_with_ids[tier_asset_ownership] = filtered_data[:expected]
 
         # OK.
         # - Bulk update tier_asset_ownership.issued_token_id

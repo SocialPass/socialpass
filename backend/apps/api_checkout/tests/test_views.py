@@ -415,7 +415,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         items = [{"quantity": quantity, "ticket_tier": str(tier)}] if tier else []
         session_data = {
-            "expiration": serializers.DateTimeField().to_representation(timezone.now()),
             "name": fake.name(),
             "email": fake.email(),
             "tx_status": CheckoutSession.OrderStatus.VALID,
@@ -452,9 +451,6 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
         session_dict = response.json()
         self.assertEqual(session_dict["public_id"], str(self.checkout_session.public_id))
         self.assertEqual(session_dict["name"], self.checkout_session.name)
-        self.assertSerializedDatetime(
-            session_dict["expiration"], self.checkout_session.expiration
-        )
         self.assertEqual(session_dict["email"], self.checkout_session.email)
         self.assertEqual(session_dict["tx_status"], self.checkout_session.tx_status)
         self.assertEqual(

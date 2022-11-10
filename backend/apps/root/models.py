@@ -1203,7 +1203,7 @@ class TxAssetOwnership(DBModel):
                 raise TxAssetOwnershipProcessingError(
                     {
                         "metadata": (
-                            f"Could not find enough NFT's that match the metadata required"
+                            f"Could not find NFT's that match the metadata required. "
                             f"Expected NFT's: {expected}. "
                             f"Actual NFT's: {actual}."
                         )

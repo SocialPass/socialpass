@@ -1,6 +1,6 @@
 {% extends "bases/base_secondary.html" %}
 
-{% load account %}
+{% load account static %}
 
 {% block head_title %}Sign Up - SocialPass{% endblock %}
 
@@ -89,7 +89,7 @@
 		<div class="form-check">
 			<input type="checkbox" id="agree-to-terms" name="agree-to-terms" class="form-check-input">
 			<label for="agree-to-terms" class="form-check-label">
-				I agree to the <a href="https://drive.google.com/file/d/1mulvB8lIEl3AZghIBqlISBI-jdNk25W5/view" target="_blank">Terms & Conditions <i class="fa-solid fa-up-right-from-square ms-5"></i></a>
+				I agree to the <a href="{% static 'legal/organizer-terms-and-conditions.pdf' %}" target="_blank">Terms & Conditions <i class="fa-solid fa-up-right-from-square ms-5"></i></a>
 			</label>
 		</div>
 	</div>

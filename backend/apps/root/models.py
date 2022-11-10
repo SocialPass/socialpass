@@ -1170,7 +1170,6 @@ class TxAssetOwnership(DBModel):
                         )
                     }
                 )
-
             # Ensure metadata matches
             # Raise exception on lack of metadata matches
             filtered_by_metadata = []
@@ -1180,21 +1179,22 @@ class TxAssetOwnership(DBModel):
                 # 1. “Rainbow” (At least 1 rainbow)
                 # 2. “Gold” (At least 1 gold)
                 # 3. “Whale” (At least 4 silvers AND 4 rainbow)
-                metadata = json.loads(i["metadata"])
-                attributes = metadata["attributes"][0]
-                if item.ticket_tier.ticket_type == "Silver":
-                    if attributes["value"] != "Silver":
-                        continue
-                elif item.ticket_tier.ticket_type == "Rainbow":
-                    if attributes["value"] != "Rainbow":
-                        continue
-                elif item.ticket_tier.ticket_type == "Gold":
-                    if attributes["value"] != "Gold":
-                        continue
-                elif item.ticket_tier.ticket_type == "Whale":
-                    if attributes["value"] != "Silver" or i["value"] != "Rainbow":
-                        continue
-                filtered_by_metadata.append(i)
+                if i.get("metadata"):
+                    metadata = json.loads(i["metadata"])
+                    attributes = metadata["attributes"][0]
+                    if item.ticket_tier.ticket_type == "Silver":
+                        if attributes["value"] != "Silver":
+                            continue
+                    elif item.ticket_tier.ticket_type == "Rainbow":
+                        if attributes["value"] != "Rainbow":
+                            continue
+                    elif item.ticket_tier.ticket_type == "Gold":
+                        if attributes["value"] != "Gold":
+                            continue
+                    elif item.ticket_tier.ticket_type == "Whale":
+                        if attributes["value"] != "Silver" or i["value"] != "Rainbow":
+                            continue
+                    filtered_by_metadata.append(i)
 
             actual = len(filtered_by_metadata)
             if actual < expected:

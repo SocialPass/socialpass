@@ -1192,7 +1192,10 @@ class TxAssetOwnership(DBModel):
                         if attributes["value"] != "Gold":
                             continue
                     elif item.ticket_tier.ticket_type == "Whale":
-                        if attributes["value"] != "Silver" or i["value"] != "Rainbow":
+                        if (
+                            attributes["value"] != "Silver"
+                            or attributes["value"] != "Rainbow"
+                        ):
                             continue
                     filtered_by_metadata.append(i)
                 else:

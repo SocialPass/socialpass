@@ -358,6 +358,9 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
     """
     CheckoutItems model read serializer
     """
+    get_tickets_link = serializers.SerializerMethodField()
+    def get_get_tickets_link(self, obj):
+        return obj.get_tickets_link
 
     class Meta:
         model = CheckoutSession

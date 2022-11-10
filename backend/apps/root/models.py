@@ -1194,7 +1194,7 @@ class TxAssetOwnership(DBModel):
                     elif item.ticket_tier.ticket_type == "Whale":
                         if (
                             attributes["value"] != "Silver"
-                            or attributes["value"] != "Rainbow"
+                            and attributes["value"] != "Rainbow"
                         ):
                             continue
                     filtered_by_metadata.append(i)

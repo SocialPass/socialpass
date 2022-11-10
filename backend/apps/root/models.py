@@ -1195,6 +1195,9 @@ class TxAssetOwnership(DBModel):
                         if attributes["value"] != "Silver" or i["value"] != "Rainbow":
                             continue
                     filtered_by_metadata.append(i)
+                else:
+                    filtered_by_metadata.append(i)
+
             actual = len(filtered_by_metadata)
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(

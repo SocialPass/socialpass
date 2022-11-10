@@ -1,3 +1,4 @@
+import json
 import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
@@ -841,7 +842,12 @@ class CheckoutSession(DBModel):
         get link to get the tickets for this session
         """
         domain = Site.objects.all().first().domain
-        url = reverse("discovery:get_tickets", args=[self.public_id,],)
+        url = reverse(
+            "discovery:get_tickets",
+            args=[
+                self.public_id,
+            ],
+        )
         tickets_link = domain + url + "?passcode=" + self.passcode
         return tickets_link
 
@@ -1095,7 +1101,7 @@ class TxAssetOwnership(DBModel):
         3. Verify API response
             - Ensure wallet has sufficient balance for tier (balance_required * quantity)
             - Filter for already-issued token ID's (tier.issued_token_id)
-            - Ensure metadata matches (TODO)
+            - Ensure metadata matches
             - Ensure token ID matches from tier_asset_ownership.token_id (TODO)
         4. Finished
             - Bulk update tier_asset_ownership.issued_token_id
@@ -1130,6 +1136,7 @@ class TxAssetOwnership(DBModel):
                 )
 
             # Ensure wallet has sufficient balance for tier (balance_required * quantity)
+            # Raise exception on insufficient balance
             expected = tier_asset_ownership.balance_required * item.quantity
             actual = response["total"]
             if actual < expected:
@@ -1144,26 +1151,61 @@ class TxAssetOwnership(DBModel):
                 )
 
             # Filter against already-issued token ID's (tier.issued_token_id's)
-            filtered_data = [
+            # Raise exception on insufficient unique token ID's
+            filtered_by_issued_ids = [
                 data
                 for data in response["result"]
                 if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
             ]
-            filtered_ids = [
-                int(data.get("token_id"))
-                for data in filtered_data
-                if data.get("token_id")
-            ]
-            actual = len(filtered_ids)
+            actual = len(filtered_by_issued_ids)
             if actual < expected:
                 # TODO: if actual < expected here, we may need to call API again
                 # This is because there can be paginated results
                 raise TxAssetOwnershipProcessingError(
                     {
                         "issued_token_id": (
-                            f"Could not find unique token ID's "
-                            f"Token ID's issued: {tier_asset_ownership.issued_token_id}. "
-                            f"Token ID's found: {filtered_ids}."
+                            f"Could not find enough NFT's. "
+                            f"Expected unique NFT's: {expected}. "
+                            f"Actual unique NFT's: {actual}."
+                        )
+                    }
+                )
+            # Ensure metadata matches
+            # Raise exception on lack of metadata matches
+            filtered_by_metadata = []
+            for i in filtered_by_issued_ids:
+                # Hard-coded for NFT NG
+                # 1. “Silver” (At least 1 silver)
+                # 1. “Rainbow” (At least 1 rainbow)
+                # 2. “Gold” (At least 1 gold)
+                # 3. “Whale” (At least 4 silvers AND 4 rainbow)
+                if i.get("metadata"):
+                    metadata = json.loads(i["metadata"])
+                    attributes = metadata["attributes"][0]
+                    if item.ticket_tier.ticket_type == "Silver":
+                        if attributes["value"] != "Silver":
+                            continue
+                    elif item.ticket_tier.ticket_type == "Rainbow":
+                        if attributes["value"] != "Rainbow":
+                            continue
+                    elif item.ticket_tier.ticket_type == "Gold":
+                        if attributes["value"] != "Gold":
+                            continue
+                    elif item.ticket_tier.ticket_type == "Whale":
+                        if attributes["value"] != "Silver" or i["value"] != "Rainbow":
+                            continue
+                    filtered_by_metadata.append(i)
+                else:
+                    filtered_by_metadata.append(i)
+
+            actual = len(filtered_by_metadata)
+            if actual < expected:
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "metadata": (
+                            f"Could not find NFT's that match the metadata required. "
+                            f"Expected NFT's: {expected}. "
+                            f"Actual NFT's: {actual}."
                         )
                     }
                 )
@@ -1171,12 +1213,14 @@ class TxAssetOwnership(DBModel):
             # TODO: Ensure token ID matches from tier_asset_ownership.token_id
             # NOT needed for NFT NG - let's do after
 
-            # TODO: Ensure metadata matches
-            # https://github.com/nftylabs/socialpass/issues/451
-
             # OK.
             # Update ticket_tiers_with_ids dictionary.
-            ticket_tiers_with_ids[tier_asset_ownership] = filtered_ids[:expected]
+            token_ids = [
+                int(data.get("token_id"))
+                for data in filtered_by_metadata
+                if data.get("token_id")
+            ]
+            ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 
         # OK.
         # - Bulk update tier_asset_ownership.issued_token_id
@@ -1188,19 +1232,13 @@ class TxAssetOwnership(DBModel):
             tier_asset_ownership_list, ["issued_token_id"]
         )
 
-        # - Mark CheckoutSession as COMPLETED
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        checkout_session.save()
-
-        # - Proceed to fulfilling CheckoutSession
-        checkout_session.fulfill()
-
     def process(self, checkout_session=None):
         """
         1. Get/Set checkout_session (avoid duplicate queries)
         2. Set checkout_session as processing
         3. Process wallet address / signature
         4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
+        5. OK
         """
         # Get/Set checkout_session (avoid duplicate queries)
         if not checkout_session:
@@ -1210,8 +1248,22 @@ class TxAssetOwnership(DBModel):
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
 
-        # Process wallet address / signature
-        self._process_wallet_address(checkout_session=checkout_session)
+        # try / catch on process methods
+        try:
+            # Process wallet address / signature
+            self._process_wallet_address(checkout_session=checkout_session)
 
-        # Process asset ownership
-        self._process_asset_ownership(checkout_session=checkout_session)
+            # Process asset ownership
+            self._process_asset_ownership(checkout_session=checkout_session)
+        except Exception as e:
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.save()
+            raise e
+
+        # OK
+        # - Mark CheckoutSession as COMPLETED
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        checkout_session.save()
+
+        # - Proceed to fulfilling CheckoutSession
+        checkout_session.fulfill()

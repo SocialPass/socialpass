@@ -123,8 +123,7 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
         return Ticket.objects.filter(event=obj.event).count()
 
     def get_ticket_count(self, obj):
-        # TODO: should change to ticket_tier quantity_sold sum
-        return Ticket.objects.filter(event=obj.event).count()
+        return Ticket.objects.filter(event=obj.event, redeemed=True).count()
 
 
 class ScanTicketInputSerializer(serializers.Serializer):

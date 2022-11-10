@@ -120,10 +120,10 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
     ticket_tier = TicketTierSerializer()
 
     def get_redeemed_count(self, obj):
-        return Ticket.objects.filter(event=obj.event).count()
+        return Ticket.objects.filter(event=obj.event, redeemed=True).count()
 
     def get_ticket_count(self, obj):
-        return Ticket.objects.filter(event=obj.event, redeemed=True).count()
+        return Ticket.objects.filter(event=obj.event).count()
 
 
 class ScanTicketInputSerializer(serializers.Serializer):

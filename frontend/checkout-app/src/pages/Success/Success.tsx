@@ -84,7 +84,7 @@ export default function Success() {
               <a
                 target='_blank'
                 rel='noreferrer'
-                href={checkout.get_tickets_link}
+                href={checkout?.get_tickets_link}
                 className='d-block text-center fw-bold antialiased'
               >
                 Get My Tickets
@@ -103,7 +103,7 @@ export default function Success() {
                 contact us
               </a>{' '}
               and tell us this ID: <br></br>
-              <strong className='text-strong'>{checkout.public_id}</strong>
+              <strong className='text-strong'>{checkout?.public_id}</strong>
             </p>
 
             {/* <h6 className='fw-700 fsr-6 mt-20'>Get Tickets</h6>

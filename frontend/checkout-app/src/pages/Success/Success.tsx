@@ -1,12 +1,28 @@
+import { useEffect } from 'react'
+
+import { useNavigate, useParams } from 'react-router-dom'
+
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
 import Receipt from './Receipt'
 
 export default function Success() {
-  const { event }: any = useEvent()
+  const { eventPublicId, checkoutPublicId } = useParams()
+  const navigate = useNavigate()
 
-  const { checkout }: any = useCheckout()
+  const { event }: any = useEvent()
+  const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
+
+  useEffect(() => {
+    if (!checkout) {
+      getCheckout(checkoutPublicId).catch(() => {
+        navigate(`/${eventPublicId}/checkout/${checkoutPublicId}/error`)
+      })
+
+      getCheckoutItems(checkoutPublicId).catch(() => {})
+    }
+  }, [])
 
   return (
     <>
@@ -63,9 +79,7 @@ export default function Success() {
               <p className='m-0'>Your tickets have been sent to your email address.</p>
             </div>
 
-            <p className='mb-5'>
-              You can also use the following link to get your tickets:
-            </p>
+            <p className='mb-5'>You can also use the following link to get your tickets:</p>
             <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded py-10 px-15 text-truncate'>
               <a
                 target='_blank'

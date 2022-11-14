@@ -85,7 +85,7 @@ const Statistics = () => {
                 </div>
               </div>
 
-              <div className='mt-15'>
+              <div className='mt-5'>
                 <strong>Total:</strong> {ticketsFiltered.length} tickets{' '}
                 {isRedeemed ? 'claimed' : 'unclaimed'}
               </div>
@@ -97,7 +97,7 @@ const Statistics = () => {
 
         <div className='content'>
           <Button
-            className='py-15 fs-base-p4'
+            className='py-10 fs-base-p4'
             onClick={() => {
               navigate(`/${redemptionPublicId}/scanner`)
             }}

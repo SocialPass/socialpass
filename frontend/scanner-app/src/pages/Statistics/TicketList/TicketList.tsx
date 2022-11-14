@@ -7,7 +7,7 @@ const TicketList = (props) => {
   const { tickets } = props
 
   const [page, setPage] = useState(1)
-  const [pageSize] = useState(5)
+  const [pageSize] = useState(3)
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage)
@@ -24,7 +24,7 @@ const TicketList = (props) => {
 
   return (
     <>
-      <div className='fs-base-n2 mt-15'>
+      <div className='fs-base-n2 mt-5'>
         {getTicketsPage()?.map((ticket) => (
           <div className='py-10 border-top' key={`ticket-${ticket.embed_code}`}>
             <div className='fw-700 text-primary mt-5'>Issued:</div>

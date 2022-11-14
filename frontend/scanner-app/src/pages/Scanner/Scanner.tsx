@@ -71,7 +71,7 @@ const Scanner = () => {
         </button>
       </div>
 
-      <div className='content'>
+      <div className='py-10 px-10'>
         <Button
           className='mt-0'
           onClick={() => {
@@ -83,15 +83,18 @@ const Scanner = () => {
       </div>
 
       <div className='mt-auto'>
-        <div className='content'>
+        <div className='content-wrapper px-20'>
           <h1 className='fw-700 fs-base-p6 mt-0'>{event.title}</h1>
-          <div className='mt-15'>
+          <div className='mt-10'>
             <i className='fa-regular fa-clock me-5'></i>
             {event.start_date}
           </div>
-          <div className='row mt-15'>
+          <div className='row mt-5'>
             <div className='col-6 pe-5'>
               <div className='bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100'>
+                {
+                  //TODO: Correctly center Accepted and Remaining placeholders
+                }
                 <strong className='antialiased'>Accepted: {event?.redeemed_count || 0}</strong>
               </div>
             </div>
@@ -105,7 +108,7 @@ const Scanner = () => {
           </div>
 
           <Button
-            className='mt-30'
+            className='mt-10'
             onClick={() => {
               navigate(`/${redemptionPublicId}/statistics`)
             }}

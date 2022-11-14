@@ -91,15 +91,12 @@ const Scanner = () => {
           </div>
           <div className='row mt-5'>
             <div className='col-6 pe-5'>
-              <div className='bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100'>
-                {
-                  //TODO: Correctly center Accepted and Remaining placeholders
-                }
+              <div className='bg-secondary text-on-secondary rounded-3 p-10 h-100 text-center'>
                 <strong className='antialiased'>Accepted: {event?.redeemed_count || 0}</strong>
               </div>
             </div>
             <div className='col-6 ps-5'>
-              <div className='bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100'>
+              <div className='bg-secondary text-on-secondary rounded-3 p-10 h-100 text-center'>
                 <strong className='antialiased'>
                   Remaining: {event?.ticket_count - event?.redeemed_count}
                 </strong>

@@ -2,6 +2,7 @@ import propTypes from 'prop-types'
 
 const EventContainer = (props) => {
   const { event } = props
+  console.log(event)
 
   return (
     <div className='mt-auto'>
@@ -10,7 +11,7 @@ const EventContainer = (props) => {
         <div className='fw-700 text-primary mt-30'>
           <i className='fa-regular fa-user me-5'></i> Total Attendance:
         </div>
-        <div>1000</div>
+        <div>{event?.ticket_count}</div>
         <div className='fw-700 text-primary mt-15'>
           <i className='fa-regular fa-clock me-5'></i> Date:
         </div>

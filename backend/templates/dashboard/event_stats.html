@@ -16,7 +16,7 @@
 			</p>
 		</div>
 		<div class="ms-auto align-self-center mt-10 mt-md-0">
-			<a href="{% url 'discovery:details' event.public_id %}" class="btn btn-primary" target="_blank">
+			<a href="{% url 'discovery:details' event.id event.slug %}" class="btn btn-primary" target="_blank">
 				<i class="fa-solid fa-external-link me-5"></i>
 				Public Page
 			</a>

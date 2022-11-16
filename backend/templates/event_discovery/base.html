@@ -50,7 +50,7 @@
       <meta property="og:url" content="{{ request.build_absolute_uri }}">
       <meta property="og:title" content="{{ event.title }}">
       <meta property="og:description" content="{{ event.description }}">
-      <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ event.cover_image.url }}">
+      <meta property="og:image" content="{{ event.cover_image.url }}">
     {% else %}
       <meta name="description" content="SocialPass is the go-to events platform, powered by Web3">
       <meta name="author" content="SocialPass">

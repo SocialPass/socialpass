@@ -2,7 +2,6 @@ import base64
 from io import BytesIO
 
 import qrcode
-from django.conf import settings
 from django.http import Http404
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -53,11 +52,6 @@ class EventDiscoveryDetails(DetailView):
     def get_queryset(self):
         qs = super().get_queryset().filter_active()
         return qs.filter(id=self.kwargs["event_id"])
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["checkout_portal_base_url"] = settings.CHECKOUT_PORTAL_BASE_URL
-        return context
 
 
 class GetTickets(DetailView):

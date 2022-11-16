@@ -3,8 +3,8 @@ from io import BytesIO
 
 import qrcode
 from django.conf import settings
-from django.http import Http404, HttpResponseRedirect
-from django.views.generic import TemplateView, View
+from django.http import Http404
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 

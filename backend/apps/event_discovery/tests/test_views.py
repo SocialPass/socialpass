@@ -61,15 +61,15 @@ class EventDiscoveryTest(TestCase):
         previous_level = logger.getEffectiveLevel()
         logger.setLevel(logging.ERROR)
 
-        url = reverse("discovery:details", args=(self.event_one.public_id,))
+        url = reverse("discovery:details", args=(self.event_one.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
 
         # Re-enable logging
         logger.setLevel(previous_level)
 
         # Test GET (Live)
         self.event_one.transition_live()
-        url = reverse("discovery:details", args=(self.event_one.public_id,))
+        url = reverse("discovery:details", args=(self.event_one.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)

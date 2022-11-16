@@ -50,6 +50,10 @@ class EventDiscoveryDetails(DetailView):
     context_object_name = "event"
     template_name = "event_discovery/event_details.html"
 
+    def get_queryset(self):
+        qs = super().get_queryset().filter_active()
+        return qs.filter(id=self.kwargs["event_id"])
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["checkout_portal_base_url"] = settings.CHECKOUT_PORTAL_BASE_URL

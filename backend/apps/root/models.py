@@ -18,6 +18,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from eth_account import Account
@@ -411,7 +412,7 @@ class Event(DBModel):
 
     @property
     def discovery_url(self):
-        return reverse("discovery:details", args=(self.public_id,))
+        return reverse("discovery:details", args=(self.id, self.slug))
 
     @property
     def checkout_portal_url(self):
@@ -427,6 +428,10 @@ class Event(DBModel):
             return date.today() > self.end_date.date()
         else:
             return False
+
+    @property
+    def slug(self):
+        return slugify(self.title)
 
 
 class Ticket(DBModel):

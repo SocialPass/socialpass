@@ -8,7 +8,12 @@ urlpatterns = [
     path("", views.EventDiscoveryIndex.as_view(), name="index"),
     path("events/browse", views.EventDiscoveryBrowse.as_view(), name="browse"),
     path(
-        "events/<uuid:event_public_id>",
+        "events/<int:event_id>",
+        views.EventDiscoveryDetails.as_view(),
+        name="details",
+    ),
+    path(
+        "events/<int:event_id>/<slug:event_optional_slug>",
         views.EventDiscoveryDetails.as_view(),
         name="details",
     ),

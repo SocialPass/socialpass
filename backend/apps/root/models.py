@@ -9,7 +9,6 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -189,7 +188,7 @@ class Invite(DBModel):
         return expiration_date <= timezone.now()
 
     def send_invitation(self, request, **kwargs):
-        current_site = get_current_site(request)
+        current_site = Site.objects.all().first()
         invite_url = reverse("dashboard:team_accept_invite", args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs

@@ -76,7 +76,6 @@ class EventForm(forms.ModelForm):
             "postal_code",
             "country",
             "cover_image",
-            "localized_address_display",
         ]
 
         widgets = {
@@ -118,34 +117,6 @@ class EventForm(forms.ModelForm):
             "address_1": "Address line 1",
             "address_2": "Address line 2 (Optional)",
         }
-
-    def clean_localized_address_display(self):
-        """
-        custom clean to localized_address_display field
-        localized_address_display will be
-        "address_1, address_2, city, country, postal_code" joined
-        """
-        data = self.cleaned_data
-
-        # add postal code to city if exists
-        if data["postal_code"]:
-            city = data["city"] + "-" + data["postal_code"]
-        else:
-            city = data["city"]
-
-        address_fields = [
-            data["address_1"],
-            city,
-            pytz.country_names[data["country"]],
-        ]
-
-        # add address_2 to second list position if exists
-        if data["address_2"]:
-            address_fields.insert(1, data["address_2"])
-
-        # join fields
-        localized_address_display = ", ".join(address_fields)
-        return localized_address_display
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

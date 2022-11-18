@@ -189,12 +189,13 @@ class TestAppleTicket(TestCaseWrapper):
         self.assertIsInstance(self.ticket_pass.get_bytes(), bytes)
 
         # raise exception if event has no localized_address_display
-        self.event.localized_address_display = ""
+        self.event.city = ""
+        self.event.address_1 = ""
         with self.assertRaises(Exception):
             self.ticket_pass.generate_pass_from_ticket(self.ticket)
 
         # raise exception if event has no lat or long cordinates
-        self.event.localized_address_display = "West Linda, KY 50295"
+        self.event.city = "Florianópolis"
         self.event.lat = None
         self.event.long = None
         with self.assertRaises(Exception):
@@ -460,13 +461,14 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         # generate pass bytes
         self.assertIsInstance(self.ticket.get_apple_ticket(), bytes)
 
-        # raise exception if event has no localized_address_display
-        self.event.localized_address_display = ""
+        # raise exception if event has no city or address_1
+        self.event.city = ""
+        self.event.address_1 = ""
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()
 
         # raise exception if event has no lat or long cordinates
-        self.event.localized_address_display = "West Alba, KY 50295"
+        self.event.city = "Florianópolis"
         self.event.lat = None
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()

@@ -3,6 +3,7 @@ import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
 
+import pytz
 import requests
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
@@ -340,7 +341,6 @@ class Event(DBModel):
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    localized_address_display = models.CharField(max_length=1024, blank=True, default="")
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -428,6 +428,35 @@ class Event(DBModel):
             return date.today() > self.end_date.date()
         else:
             return False
+
+    @property
+    def localized_address_display(self):
+        """
+        localized_address_display will be
+        "address_1, address_2, city, country, postal_code" joined
+        """
+        if not self.city and not self.address_1:
+            return None
+
+        # add postal code to city if exists
+        if self.postal_code:
+            city = self.city + "-" + self.postal_code
+        else:
+            city = self.city
+
+        address_fields = [
+            self.address_1,
+            city,
+            pytz.country_names[self.country],
+        ]
+
+        # add address_2 to second list position if exists
+        if self.address_2:
+            address_fields.insert(1, self.address_2)
+
+        # join fields
+        localized_address_display = ", ".join(address_fields)
+        return localized_address_display
 
     @property
     def slug(self):

@@ -412,7 +412,7 @@ class Event(DBModel):
 
     @property
     def discovery_url(self):
-        return reverse("discovery:details", args=(self.public_id,))
+        return reverse("discovery:details", args=(self.id, self.slug))
 
     @property
     def checkout_portal_url(self):

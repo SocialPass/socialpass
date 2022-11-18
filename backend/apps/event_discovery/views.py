@@ -2,8 +2,8 @@ import base64
 from io import BytesIO
 
 import qrcode
-from django.http import Http404, HttpResponseRedirect
-from django.views.generic import TemplateView, View
+from django.http import Http404
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -42,13 +42,16 @@ class EventDiscoveryBrowse(ListView):
         return qs
 
 
-class EventDiscoveryDetails(View):
-    def get(self, *args, **kwargs):
-        try:
-            event = Event.objects.get(public_id=self.kwargs["event_public_id"])
-        except Exception:
-            raise Http404()
-        return HttpResponseRedirect(event.checkout_portal_url)
+class EventDiscoveryDetails(DetailView):
+    model = Event
+    slug_field = "id"
+    slug_url_kwarg = "event_id"
+    context_object_name = "event"
+    template_name = "event_discovery/event_details.html"
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter_active()
+        return qs.filter(id=self.kwargs["event_id"])
 
 
 class GetTickets(DetailView):

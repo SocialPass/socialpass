@@ -19,6 +19,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from eth_account import Account
@@ -456,6 +457,10 @@ class Event(DBModel):
         # join fields
         localized_address_display = ", ".join(address_fields)
         return localized_address_display
+
+    @property
+    def slug(self):
+        return slugify(self.title)
 
 
 class Ticket(DBModel):

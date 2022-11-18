@@ -29,7 +29,7 @@ export default function Home() {
     ticketTiers.filter((ticket) => 'tier_fiat' in ticket && ticket.tier_fiat)
 
   const getCryptocurrencyTicketTiers = () =>
-    ticketTiers.filter((ticket) => 'tier_cryptocurrency' in ticket && ticket.tier_cryptocurrency)
+    ticketTiers.filter((ticket) => 'tier_blockchain' in ticket && ticket.tier_blockchain)
 
   const getAssetOwnershipTicketTiers = () =>
     ticketTiers.filter((ticket) => 'tier_asset_ownership' in ticket && ticket.tier_asset_ownership)

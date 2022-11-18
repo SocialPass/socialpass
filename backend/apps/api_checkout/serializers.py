@@ -146,8 +146,6 @@ class CheckoutItemReadSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutItem
         fields = [
-            "created",
-            "modified",
             "public_id",
             "quantity",
             "ticket_tier",
@@ -253,7 +251,12 @@ class TxAssetOwnershipReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TxAssetOwnership
-        fields = ["created", "modified", "public_id", "unsigned_message"]
+        fields = [
+            "created", 
+            "modified", 
+            "public_id", 
+            "unsigned_message"
+            ]
 
 
 class TxBlockchainReadSerializer(serializers.ModelSerializer):
@@ -303,7 +306,11 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "event",
             "checkout_items",
         ]
-        read_only_fields = ["created", "modified", "public_id"]
+        read_only_fields = [
+            "created", 
+            "modified", 
+            "public_id"
+        ]
 
     event = serializers.SlugRelatedField(
         slug_field="public_id",
@@ -376,7 +383,11 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "passcode",
             "get_tickets_link",
         ]
-        read_only_fields = ["created", "modified", "public_id"]
+        read_only_fields = [
+            "created", 
+            "modified", 
+            "public_id"
+            ]
 
     event = serializers.SlugRelatedField(
         slug_field="public_id",

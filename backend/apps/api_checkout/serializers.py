@@ -123,8 +123,6 @@ class TicketTierReadSerializer(BaseModelSerializer):
     class Meta:
         model = TicketTier
         fields = [
-            "created",
-            "modified",
             "public_id",
             "event_public_id",
             "ticket_type",
@@ -294,8 +292,6 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutSession
         fields = [
-            "created",
-            "modified",
             "public_id",
             "name",
             "email",

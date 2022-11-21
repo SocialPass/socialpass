@@ -76,6 +76,8 @@ export default function Home() {
       })
   }
 
+
+
   const getErrorMessage = () => {
     if (error) {
       const messages = Object.keys(error).map((e) => error[e][0])
@@ -85,6 +87,10 @@ export default function Home() {
 
     return 'Sorry! The transaction has failed. Please try again.'
   }
+
+  // Adding 15 minutes to current date as expiration date
+  const expirationDate = new Date(new Date().getTime() + 15 * 60000);
+  console.log("Expiration Date: ", expirationDate)
 
   useEffect(() => {
     getCheckout(checkoutPublicId).catch(() => {

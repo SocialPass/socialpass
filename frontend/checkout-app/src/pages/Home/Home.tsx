@@ -152,6 +152,7 @@ export default function Home() {
   useEffect(() => {
     getTicketTiers(event?.public_id)
     setCheckout({ ...checkout, event: event?.public_id })
+    console.log("Checkout on Home: ", checkout)
   }, [event])
 
   const isSomeTiersAvailable = () =>
@@ -193,6 +194,13 @@ export default function Home() {
               <div className='fw-bold'>Date & Time</div>
             </div>
             <p className='text-muted mt-5 mb-0'>{event?.start_date}</p>
+
+            <div className='d-flex align-items-center mt-15'>
+              <div className='ws-25 flex-shrink-0'>
+                <i className='fa-regular fa-location-dot'></i>
+              </div>
+              <div className='fw-bold'>Timer: { }</div>
+            </div>
 
             <div className='d-flex align-items-center mt-15'>
               <div className='ws-25 flex-shrink-0'>

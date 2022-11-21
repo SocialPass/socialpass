@@ -1116,6 +1116,8 @@ class TxAssetOwnership(DBModel):
     is_wallet_address_verified = models.BooleanField(
         default=False, blank=False, null=False
     )
+    error_message = models.CharField(max_length=1024, blank=True, default="")
+    token_id = ArrayField(models.IntegerField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
@@ -1304,6 +1306,7 @@ class TxAssetOwnership(DBModel):
             - Proceed to checkoutsession.fulfill()
         """
         ticket_tiers_with_ids = {}
+        tiers_token_ids = set()
 
         # Loop over related CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
@@ -1315,6 +1318,14 @@ class TxAssetOwnership(DBModel):
                 api_response = self._call_moralis_api(
                     tier_asset_ownership=tier_asset_ownership
                 )
+
+                # filter address token ids
+                tier_token_ids = [
+                    int(data["token_id"])
+                    for data in api_response["result"]
+                    if data.get("token_id")
+                ]
+                tiers_token_ids = tiers_token_ids.union(tier_token_ids)
 
                 # check if wallet has sufficient balance
                 self._check_balance(expected=expected, actual=api_response["total"])
@@ -1343,6 +1354,8 @@ class TxAssetOwnership(DBModel):
                 ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 
             except TxAssetOwnershipProcessingError as e:
+                checkout_session.tx_asset_ownership.token_id = list(tiers_token_ids)
+                checkout_session.tx_asset_ownership.save()
                 raise e
 
         # - Bulk update tier_asset_ownership.issued_token_id
@@ -1353,6 +1366,8 @@ class TxAssetOwnership(DBModel):
         TierAssetOwnership.objects.bulk_update(
             tier_asset_ownership_list, ["issued_token_id"]
         )
+        checkout_session.tx_asset_ownership.token_id = list(tiers_token_ids)
+        checkout_session.tx_asset_ownership.save()
 
     def process(self, checkout_session=None):
         """
@@ -1382,7 +1397,9 @@ class TxAssetOwnership(DBModel):
             self._process_asset_ownership(checkout_session=checkout_session)
         except Exception as e:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.tx_asset_ownership.error_message = str(e)
             checkout_session.save()
+            checkout_session.tx_asset_ownership.save()
             raise e
 
         # OK

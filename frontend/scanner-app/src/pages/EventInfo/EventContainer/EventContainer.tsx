@@ -2,7 +2,6 @@ import propTypes from 'prop-types'
 
 const EventContainer = (props) => {
   const { event } = props
-  console.log(event)
 
   return (
     <div className='mt-auto'>

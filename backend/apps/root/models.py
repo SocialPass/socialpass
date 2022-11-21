@@ -1064,6 +1064,119 @@ class TxAssetOwnership(DBModel):
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 
+    def _call_moralis_api(self, tier_asset_ownership):
+        # Format & make API call for each CheckoutItem and its respective tier
+        chain = hex(tier_asset_ownership.network)
+        token_address = tier_asset_ownership.token_address
+        api_url = (
+            f"https://deep-index.moralis.io/api/v2/{self.wallet_address}/nft"
+            f"?chain={chain}"
+            f"&token_addresses={token_address}"
+            f"&format=decimal"
+        )
+        headers = {
+            "accept": "application/json",
+            "X-API-Key": settings.MORALIS_API_KEY,
+        }
+        response = requests.get(api_url, headers=headers)
+        try:
+            response.raise_for_status()
+            response = response.json()
+        except requests.exceptions.HTTPError:
+            raise TxAssetOwnershipProcessingError({"message": _("An error has ocurred")})
+        return response
+
+    def _check_balance(self, expected, actual):
+        # Ensure wallet has sufficient balance for tier (balance_required * quantity)
+        # Raise exception on insufficient balance
+
+        if actual < expected:
+            raise TxAssetOwnershipProcessingError(
+                {
+                    "quantity": _(
+                        "Quantity requested exceeds the queried balance. "
+                        f"Expected Balance: {expected}. "
+                        f"Actual Balance: {actual}."
+                    )
+                }
+            )
+
+    def _get_filtered_by_issued_ids(self, tier_asset_ownership, expected, result):
+        # Filter against already-issued token ID's (tier.issued_token_id's)
+        # Raise exception on insufficient unique token ID's
+        filtered_by_issued_ids = [
+            data
+            for data in result
+            if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
+        ]
+        actual = len(filtered_by_issued_ids)
+        if actual < expected:
+            # TODO: if actual < expected here, we may need to call API again
+            # This is because there can be paginated results
+            raise TxAssetOwnershipProcessingError(
+                {
+                    "issued_token_id": (
+                        f"Could not find enough NFT's. "
+                        f"Expected unique NFT's: {expected}. "
+                        f"Actual unique NFT's: {actual}."
+                    )
+                }
+            )
+        return filtered_by_issued_ids
+
+    def _check_metadata_matches(self, item, filtered_by_issued_ids, expected):
+        # Ensure metadata matches
+        # Raise exception on lack of metadata matches
+        filtered_by_metadata = []
+        for i in filtered_by_issued_ids:
+            # Hard-coded for NFT NG
+            # 1. “Silver” (At least 1 silver)
+            # 1. “Rainbow” (At least 1 rainbow)
+            # 2. “Gold” (At least 1 gold)
+            # 3. “Whale” (At least 4 silvers AND 4 rainbow)
+            if i.get("metadata"):
+                metadata = json.loads(i["metadata"])
+                attributes = metadata["attributes"][0]
+                if item.ticket_tier.ticket_type == "Silver":
+                    if attributes["value"] != "Silver":
+                        continue
+                elif item.ticket_tier.ticket_type == "Rainbow":
+                    if attributes["value"] != "Rainbow":
+                        continue
+                elif item.ticket_tier.ticket_type == "Gold":
+                    if attributes["value"] != "Gold":
+                        continue
+                elif item.ticket_tier.ticket_type == "Whale":
+                    if (
+                        attributes["value"] != "Silver"
+                        and attributes["value"] != "Rainbow"
+                    ):
+                        continue
+                filtered_by_metadata.append(i)
+            else:
+                filtered_by_metadata.append(i)
+
+        actual = len(filtered_by_metadata)
+        if actual < expected:
+            raise TxAssetOwnershipProcessingError(
+                {
+                    "metadata": (
+                        f"Could not find NFT's that match the metadata required. "
+                        f"Expected NFT's: {expected}. "
+                        f"Actual NFT's: {actual}."
+                    )
+                }
+            )
+        return filtered_by_metadata
+
+    def _get_token_ids_from_metadata(self, filtered_by_metadata):
+        token_ids = []
+        for data in filtered_by_metadata:
+            token_id = data.get("token_id")
+            if token_id:
+                token_ids.append(int(token_id))
+        return token_ids
+
     def _process_wallet_address(self, checkout_session=None):
         """
         Recover a wallet address from the signed_message vs unsigned_message
@@ -1117,120 +1230,44 @@ class TxAssetOwnership(DBModel):
 
         # Loop over related CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
-            # Format & make API call for each CheckoutItem and its respective tier
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
-            chain = hex(tier_asset_ownership.network)
-            token_address = tier_asset_ownership.token_address
-            api_url = (
-                f"https://deep-index.moralis.io/api/v2/{self.wallet_address}/nft"
-                f"?chain={chain}"
-                f"&token_addresses={token_address}"
-                f"&format=decimal"
-            )
-            headers = {
-                "accept": "application/json",
-                "X-API-Key": settings.MORALIS_API_KEY,
-            }
-            response = requests.get(api_url, headers=headers)
-            try:
-                response.raise_for_status()
-                response = response.json()
-            except requests.exceptions.HTTPError:
-                raise TxAssetOwnershipProcessingError(
-                    {"message": _("An error has ocurred")}
-                )
-
-            # Ensure wallet has sufficient balance for tier (balance_required * quantity)
-            # Raise exception on insufficient balance
             expected = tier_asset_ownership.balance_required * item.quantity
-            actual = response["total"]
-            if actual < expected:
-                raise TxAssetOwnershipProcessingError(
-                    {
-                        "quantity": _(
-                            "Quantity requested exceeds the queried balance. "
-                            f"Expected Balance: {expected}. "
-                            f"Actual Balance: {actual}."
-                        )
-                    }
+
+            try:
+                # call moralis api for the item tier_asset_ownership
+                api_response = self._call_moralis_api(
+                    tier_asset_ownership=tier_asset_ownership
                 )
 
-            # Filter against already-issued token ID's (tier.issued_token_id's)
-            # Raise exception on insufficient unique token ID's
-            filtered_by_issued_ids = [
-                data
-                for data in response["result"]
-                if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
-            ]
-            actual = len(filtered_by_issued_ids)
-            if actual < expected:
-                # TODO: if actual < expected here, we may need to call API again
-                # This is because there can be paginated results
-                raise TxAssetOwnershipProcessingError(
-                    {
-                        "issued_token_id": (
-                            f"Could not find enough NFT's. "
-                            f"Expected unique NFT's: {expected}. "
-                            f"Actual unique NFT's: {actual}."
-                        )
-                    }
-                )
-            # Ensure metadata matches
-            # Raise exception on lack of metadata matches
-            filtered_by_metadata = []
-            for i in filtered_by_issued_ids:
-                # Hard-coded for NFT NG
-                # 1. “Silver” (At least 1 silver)
-                # 1. “Rainbow” (At least 1 rainbow)
-                # 2. “Gold” (At least 1 gold)
-                # 3. “Whale” (At least 4 silvers AND 4 rainbow)
-                if i.get("metadata"):
-                    metadata = json.loads(i["metadata"])
-                    attributes = metadata["attributes"][0]
-                    if item.ticket_tier.ticket_type == "Silver":
-                        if attributes["value"] != "Silver":
-                            continue
-                    elif item.ticket_tier.ticket_type == "Rainbow":
-                        if attributes["value"] != "Rainbow":
-                            continue
-                    elif item.ticket_tier.ticket_type == "Gold":
-                        if attributes["value"] != "Gold":
-                            continue
-                    elif item.ticket_tier.ticket_type == "Whale":
-                        if (
-                            attributes["value"] != "Silver"
-                            and attributes["value"] != "Rainbow"
-                        ):
-                            continue
-                    filtered_by_metadata.append(i)
-                else:
-                    filtered_by_metadata.append(i)
+                # check if wallet has sufficient balance
+                self._check_balance(expected=expected, actual=api_response["total"])
 
-            actual = len(filtered_by_metadata)
-            if actual < expected:
-                raise TxAssetOwnershipProcessingError(
-                    {
-                        "metadata": (
-                            f"Could not find NFT's that match the metadata required. "
-                            f"Expected NFT's: {expected}. "
-                            f"Actual NFT's: {actual}."
-                        )
-                    }
+                # get token ids filtered by issued ids
+                filtered_by_issued_ids = self._get_filtered_by_issued_ids(
+                    tier_asset_ownership=tier_asset_ownership,
+                    expected=expected,
+                    result=api_response["result"],
                 )
 
-            # TODO: Ensure token ID matches from tier_asset_ownership.token_id
-            # NOT needed for NFT NG - let's do after
+                # check if metadata matches and get token ids filtered by metadata
+                filtered_by_metadata = self._check_metadata_matches(
+                    item=item,
+                    filtered_by_issued_ids=filtered_by_issued_ids,
+                    expected=expected,
+                )
 
-            # OK.
-            # Update ticket_tiers_with_ids dictionary.
-            token_ids = [
-                int(data.get("token_id"))
-                for data in filtered_by_metadata
-                if data.get("token_id")
-            ]
-            ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
+                # TODO: Ensure token ID matches from tier_asset_ownership.token_id
+                # NOT needed for NFT NG - let's do after
+                # get formatted token ids from metadata
+                token_ids = self._get_token_ids_from_metadata(
+                    filtered_by_metadata=filtered_by_metadata
+                )
+                # Update ticket_tiers_with_ids dictionary.
+                ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 
-        # OK.
+            except TxAssetOwnershipProcessingError as e:
+                raise e
+
         # - Bulk update tier_asset_ownership.issued_token_id
         tier_asset_ownership_list = []
         for t in ticket_tiers_with_ids:

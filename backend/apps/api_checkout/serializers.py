@@ -256,7 +256,7 @@ class TxAssetOwnershipReadSerializer(serializers.ModelSerializer):
             "modified", 
             "public_id", 
             "unsigned_message"
-            ]
+        ]
 
 
 class TxBlockchainReadSerializer(serializers.ModelSerializer):
@@ -387,7 +387,7 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "created", 
             "modified", 
             "public_id"
-            ]
+        ]
 
     event = serializers.SlugRelatedField(
         slug_field="public_id",

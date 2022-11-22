@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useConnect, useAccount, useSignMessage } from 'wagmi'
 
 import FiatCheckoutOption from './CheckoutOptions/Fiat'
-import CrypotCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
+import CryptoCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
 import AssetOwnershipCheckoutOption from './CheckoutOptions/AssetOwnership'
 import Summary from './Summary'
 
@@ -174,7 +174,7 @@ export default function Home() {
             {checkout?.tx_type === 'FIAT' ? (
               <FiatCheckoutOption />
             ) : checkout?.tx_type === 'BLOCKCHAIN' ? (
-              <CrypotCurrencyCheckoutOption />
+                <CryptoCurrencyCheckoutOption />
             ) : checkout?.tx_type === 'ASSET_OWNERSHIP' ? (
               <AssetOwnershipCheckoutOption connectors={connectHook.connectors} />
             ) : null}

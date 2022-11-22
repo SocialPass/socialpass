@@ -36,7 +36,7 @@ export default function CountdownTimer() {
 
     return (
         <div>
-            <div>{slotMinutes}:{slotSeconds} </div>
+            <div>{(slotMinutes < 10) ? ("0" + slotMinutes) : slotMinutes} : {(slotSeconds < 10) ? ("0" + slotSeconds) : slotSeconds} </div>
         </div>
     );
 }

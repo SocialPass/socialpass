@@ -1,28 +1,46 @@
-import { useState, useEffect } from 'react'
-import propTypes from 'prop-types'
+import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom'
+import propTypes from "prop-types";
 
+export default function CountdownTimer() {
+    const expirationDate = new Date(new Date().getTime() + 15 * 60000);
+    const checkoutDate = new Date()
 
-function CountdownTimer(props): JSX.Element {
-    const { totalTime } = props
-    const [counter, setCounter] = useState(totalTime)
+    var timeInSeconds = Math.abs((expirationDate.getTime() - checkoutDate.getTime()) / 1000);
+    let slotSeconds
+    let slotMinutes;
+    const navigate = useNavigate()
+    const handleRedirectSession = () => {
+        navigate(`/`)
+    }
 
+    const [timer, setTimer] = useState(timeInSeconds);
 
     useEffect(() => {
-        counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
-    }, [counter]);
+        setInterval(() => {
+            setTimer((time) => time - 1);
+        }, 1000);
+        return () => console.log("Session has expired");
+    }, []);
 
+    useEffect(() => {
+        if (timer === 0) {
+            console.log("Timer reached 0");
+            handleRedirectSession()
+            setTimer(timeInSeconds)
+        }
+    }, [timer]);
+
+    slotMinutes = Math.floor(timer / 60)
+    slotSeconds = timer - slotMinutes * 60
 
     return (
         <div>
-            <div>Counter: {counter}</div>
+            <div>{slotMinutes}:{slotSeconds} </div>
         </div>
-    )
+    );
 }
-
-export default CountdownTimer
-
 
 CountdownTimer.propTypes = {
-    counter: propTypes.number,
-    totalTime: propTypes.number,
-}
+    counter: propTypes.number
+};

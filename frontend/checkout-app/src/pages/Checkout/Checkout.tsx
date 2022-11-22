@@ -10,6 +10,7 @@ import Summary from './Summary'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
+import CountdownTimer from '@/components/CountdownTimer'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -88,9 +89,6 @@ export default function Home() {
     return 'Sorry! The transaction has failed. Please try again.'
   }
 
-  // Adding 15 minutes to current date as expiration date
-  const expirationDate = new Date(new Date().getTime() + 15 * 60000);
-  console.log("Expiration Date: ", expirationDate)
 
   useEffect(() => {
     getCheckout(checkoutPublicId).catch(() => {
@@ -120,6 +118,9 @@ export default function Home() {
             </div>
             <strong className='text-strong antialiased ms-10'>Go Back</strong>
           </a>
+          <div>
+            <CountdownTimer />
+          </div>
         </div>
       </div>
 

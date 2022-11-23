@@ -70,7 +70,6 @@ export default function Home() {
       } else {
         // Delete on backend
         if (checkout.public_id) {
-          console.log(new_selected, ticketIndex)
           CheckoutItemApi.delete(new_selected[ticketIndex].public_id)
         }
 

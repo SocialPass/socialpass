@@ -120,7 +120,6 @@ export default function Home() {
           </a>
           <div>
             <CountdownTimer expiration={checkout?.expiration} />
-            {console.log(checkout)}
           </div>
         </div>
       </div>

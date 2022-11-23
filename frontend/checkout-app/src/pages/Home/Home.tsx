@@ -205,7 +205,8 @@ export default function Home() {
           </div>
         </div>
         <div>
-          {(checkout?.expiration == null) ? '' : <CountdownTimer expiration={checkout?.expiration} />
+          {
+            (checkout?.expiration == null) ? '' : <CountdownTimer expiration={checkout?.expiration} />
           }
         </div>
 

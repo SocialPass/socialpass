@@ -7,6 +7,8 @@ function CountdownTimer(props): JSX.Element {
     const expirationDate = new Date(new Date(expiration).getTime());
     const currentDate = new Date()
 
+    const [expire, setExpire] = useState({ slotMinutes: 0, slotSeconds: 0 })
+
     let timeInSeconds = Math.abs((currentDate.getTime() - expirationDate.getTime()) / 1000);
     let slotSeconds
     let slotMinutes;
@@ -17,29 +19,30 @@ function CountdownTimer(props): JSX.Element {
 
     const [timer, setTimer] = useState(timeInSeconds);
 
-    useEffect(() => {
-        console.log(expiration)
-        console.log(expirationDate)
-        setInterval(() => {
-            setTimer((time) => time - 1);
-        }, 1000);
-        return () => console.log("Session has expired");
-    }, []);
+    let counter = setInterval(() => {
+        slotMinutes = Math.floor(((expirationDate.getTime() - currentDate.getTime()) % 3600000) / 60000)
+        slotSeconds = Math.floor(((expirationDate.getTime() - currentDate.getTime()) % 60000) / 1000)
+        setExpire({ slotMinutes, slotSeconds })
+        console.log("expire", expire)
+    }, 1000)
 
-    useEffect(() => {
-        if (timer === 0) {
-            console.log("Timer reached 0");
-            handleRedirectSession()
-            setTimer(timeInSeconds)
-        }
-    }, [timer]);
+    // useEffect(() => {
+    //     return () => clearInterval(counter)
+    // }, []);
 
-    slotMinutes = Math.floor(timer / 60)
-    slotSeconds = timer - slotMinutes * 60
+    // useEffect(() => {
+    //     if ((expirationDate.getTime() - currentDate.getTime()) <= 0) {
+    //         console.log("Timer reached 0");
+    //         handleRedirectSession()
+    //         setTimer(timeInSeconds)
+    //     }
+    // }, [timer]);
+
+
 
     return (
         <div>
-            <div>{(slotMinutes < 10) ? ("0" + slotMinutes) : slotMinutes} : {(slotSeconds < 10) ? ("0" + slotSeconds) : Math.floor(slotSeconds)} </div>
+            <div>{(expire.slotMinutes < 10) ? ("0" + expire.slotMinutes) : expire.slotMinutes} : {(expire.slotSeconds < 10) ? ("0" + expire.slotSeconds.toFixed(0)) : expire.slotSeconds.toFixed(0)} </div>
         </div>
     );
 }

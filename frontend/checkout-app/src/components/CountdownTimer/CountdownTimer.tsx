@@ -21,8 +21,17 @@ function CountdownTimer(props): JSX.Element {
 
 
     return (
-        <div>
-            {(isNaN(minutes)) ? '' : zeroLeft(minutes) + ' : '}{(isNaN(seconds)) ? '' : zeroLeft(seconds)}
+        <div className='py-20 w-100 h-100'>
+            <div className='d-flex align-items-center'>
+                <div className='ws-25 flex-shrink-0'>
+                    <i className='fa-regular fa-clock'></i>
+                </div>
+                <div className='fw-bold'>{(isNaN(minutes)) ? '' : zeroLeft(minutes) + ' : '}{(isNaN(seconds)) ? '' : zeroLeft(seconds)}</div>
+            </div>
+
+            <div className='bg-gray fs-14'> After this time the tickets will be available to general purchase.
+            </div>
+
         </div>
     );
 }

@@ -188,6 +188,11 @@ export default function Home() {
 
         <div className='col-md-5'>
           <div className='content mt-0 mt-md-30 mb-0'>
+            <div>
+              {
+                (checkout?.expiration == null) ? '' : <CountdownTimer expiration={checkout?.expiration} />
+              }
+            </div>
             <div className='d-flex align-items-center'>
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-clock'></i>
@@ -204,12 +209,6 @@ export default function Home() {
             <p className='text-muted mt-5 mb-0'>{event?.localized_address_display}</p>
           </div>
         </div>
-        <div>
-          {
-            (checkout?.expiration == null) ? '' : <CountdownTimer expiration={checkout?.expiration} />
-          }
-        </div>
-
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
             {isSomeTiersAvailable() ? (

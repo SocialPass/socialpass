@@ -118,9 +118,6 @@ export default function Home() {
             </div>
             <strong className='text-strong antialiased ms-10'>Go Back</strong>
           </a>
-          <div>
-            <CountdownTimer expiration={checkout?.expiration} />
-          </div>
         </div>
       </div>
 
@@ -183,8 +180,12 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
+          <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
+            <CountdownTimer expiration={checkout?.expiration} />
+          </div>
           <Summary onContinueClick={handleContinueClick} enableContinue={!!accountHook?.address} />
         </div>
+
       </div>
     </>
   )

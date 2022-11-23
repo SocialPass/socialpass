@@ -52,7 +52,7 @@ const Scanner = () => {
 
   return (
     <>
-      <div className='position-relative d-flex align-items-center justify-content-center border hs-400 overflow-hidden'>
+      <div className='position-relative d-flex bg-content align-items-center justify-content-center hs-400 overflow-hidden'>
         <span className='text-center'>
           <Html5QrcodeScanner
             fps={1}

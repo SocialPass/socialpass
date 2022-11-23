@@ -26,10 +26,9 @@ function CountdownTimer(props): JSX.Element {
                 </div>
                 <div className='fw-bold'>{(isNaN(minutes)) ? '' : zeroLeft(minutes) + ' : '}{(isNaN(seconds)) ? '' : zeroLeft(seconds)}</div>
             </div>
-
-            <div className='bg-gray fs-14'> After this time the tickets will be available to general purchase.
+            <div className='mt-10 px-10 py-5 rounded bg-gray-very-light-lm bg-darkgray-very-dim-dm border border-dotted fs-base-n2'>
+                After this time, the tickets you have selected will be available for general purchase.
             </div>
-
         </div>
     );
 }

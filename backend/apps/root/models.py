@@ -941,6 +941,21 @@ class CheckoutItem(DBModel):
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
 
+    def clean_max_per_person(self, *args, **kwargs):
+        """
+        clean max_per_person method
+        checks if quantity requested is not more than maximum per person
+        """
+        max_per_person = self.ticket_tier.max_per_person
+        if self.quantity > max_per_person:
+            raise TooManyTicketsRequestedError(
+                {
+                    "quantity": _(
+                        f"Only {max_per_person} quantity per person is available."
+                    )
+                }
+            )
+
     def clean_quantity(self, *args, **kwargs):
         """
         clean quantity method
@@ -1012,6 +1027,7 @@ class CheckoutItem(DBModel):
         clean method
         runs all clean_* methods
         """
+        self.clean_max_per_person()
         self.clean_quantity()
         self.clean_ticket_tier()
         self.clean_event()

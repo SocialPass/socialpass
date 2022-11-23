@@ -299,6 +299,7 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "public_id",
             "name",
             "email",
+            "expiration",
             "tx_status",
             "tx_type",
             "tx_asset_ownership",
@@ -307,7 +308,7 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "event",
             "checkout_items",
         ]
-        read_only_fields = ["created", "modified", "public_id"]
+        read_only_fields = ["created", "modified", "public_id", "expiration"]
 
     event = serializers.SlugRelatedField(
         slug_field="public_id",
@@ -358,7 +359,9 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
     """
     CheckoutItems model read serializer
     """
+
     get_tickets_link = serializers.SerializerMethodField()
+
     def get_get_tickets_link(self, obj):
         return obj.get_tickets_link
 
@@ -370,6 +373,7 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "public_id",
             "name",
             "email",
+            "expiration",
             "tx_status",
             "tx_type",
             "tx_asset_ownership",
@@ -380,7 +384,7 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "passcode",
             "get_tickets_link",
         ]
-        read_only_fields = ["created", "modified", "public_id"]
+        read_only_fields = ["created", "modified", "public_id", "expiration"]
 
     event = serializers.SlugRelatedField(
         slug_field="public_id",
@@ -410,6 +414,7 @@ class CheckoutSessionUpdateSerializer(BaseModelSerializer):
             "public_id",
             "name",
             "email",
+            "expiration",
             "tx_status",
             "tx_type",
             "event",
@@ -420,6 +425,7 @@ class CheckoutSessionUpdateSerializer(BaseModelSerializer):
             "public_id",
             "tx_status",
             "tx_type",
+            "expiration",
         ]
 
     event = serializers.UUIDField(source="event.public_id", read_only=True)

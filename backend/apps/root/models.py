@@ -3,13 +3,13 @@ import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
 
+import pytz
 import requests
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -18,6 +18,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from eth_account import Account
@@ -189,7 +190,7 @@ class Invite(DBModel):
         return expiration_date <= timezone.now()
 
     def send_invitation(self, request, **kwargs):
-        current_site = get_current_site(request)
+        current_site = Site.objects.all().first()
         invite_url = reverse("dashboard:team_accept_invite", args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
@@ -340,7 +341,6 @@ class Event(DBModel):
     # lat/long
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    localized_address_display = models.CharField(max_length=1024, blank=True, default="")
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -412,7 +412,7 @@ class Event(DBModel):
 
     @property
     def discovery_url(self):
-        return reverse("discovery:details", args=(self.public_id,))
+        return reverse("discovery:details", args=(self.id, self.slug))
 
     @property
     def checkout_portal_url(self):
@@ -428,6 +428,39 @@ class Event(DBModel):
             return date.today() > self.end_date.date()
         else:
             return False
+
+    @property
+    def localized_address_display(self):
+        """
+        localized_address_display will be
+        "address_1, address_2, city, country, postal_code" joined
+        """
+        if not self.city and not self.address_1:
+            return None
+
+        # add postal code to city if exists
+        if self.postal_code:
+            city = self.city + "-" + self.postal_code
+        else:
+            city = self.city
+
+        address_fields = [
+            self.address_1,
+            city,
+            pytz.country_names[self.country],
+        ]
+
+        # add address_2 to second list position if exists
+        if self.address_2:
+            address_fields.insert(1, self.address_2)
+
+        # join fields
+        localized_address_display = ", ".join(address_fields)
+        return localized_address_display
+
+    @property
+    def slug(self):
+        return slugify(self.title)
 
 
 class Ticket(DBModel):

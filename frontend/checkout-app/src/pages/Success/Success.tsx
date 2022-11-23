@@ -1,12 +1,28 @@
+import { useEffect } from 'react'
+
+import { useNavigate, useParams } from 'react-router-dom'
+
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
 import Receipt from './Receipt'
 
 export default function Success() {
-  const { event }: any = useEvent()
+  const { eventPublicId, checkoutPublicId } = useParams()
+  const navigate = useNavigate()
 
-  const { checkout }: any = useCheckout()
+  const { event }: any = useEvent()
+  const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
+
+  useEffect(() => {
+    if (!checkout) {
+      getCheckout(checkoutPublicId).catch(() => {
+        navigate(`/${eventPublicId}/checkout/${checkoutPublicId}/error`)
+      })
+
+      getCheckoutItems(checkoutPublicId).catch(() => {})
+    }
+  }, [])
 
   return (
     <>
@@ -63,14 +79,12 @@ export default function Success() {
               <p className='m-0'>Your tickets have been sent to your email address.</p>
             </div>
 
-            <p className='mb-5'>
-              You can also use the following link to get your tickets:
-            </p>
+            <p className='mb-5'>You can also use the following link to get your tickets:</p>
             <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded py-10 px-15 text-truncate'>
               <a
                 target='_blank'
                 rel='noreferrer'
-                href={checkout.get_tickets_link}
+                href={checkout?.get_tickets_link}
                 className='d-block text-center fw-bold antialiased'
               >
                 Get My Tickets
@@ -89,7 +103,7 @@ export default function Success() {
                 contact us
               </a>{' '}
               and tell us this ID: <br></br>
-              <strong className='text-strong'>{checkout.public_id}</strong>
+              <strong className='text-strong'>{checkout?.public_id}</strong>
             </p>
 
             {/* <h6 className='fw-700 fsr-6 mt-20'>Get Tickets</h6>

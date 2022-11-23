@@ -294,10 +294,10 @@ export default function Home() {
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
                     <span className='ticket-tier-uncheck'>
-                      <i className='fa-light fa-money-check-dollar-pen'></i>
+                      <i className='fa-light fa-wallet'></i>
                     </span>
                     <span className='ticket-tier-check'>
-                      <i className='fa-light fa-money-check-dollar-pen'></i>
+                      <i className='fa-light fa-wallet'></i>
                     </span>
                     Crypto
                   </h6>
@@ -322,10 +322,10 @@ export default function Home() {
                 <label htmlFor='fiat' className='ticket-tier-label'>
                   <h6 className='fw-700 m-0 fs-base'>
                     <span className='ticket-tier-uncheck'>
-                      <i className='fa-light fa-money-check-dollar-pen'></i>
+                      <i className='fa-light fa-hexagon-image'></i>
                     </span>
                     <span className='ticket-tier-check'>
-                      <i className='fa-light fa-money-check-dollar-pen'></i>
+                      <i className='fa-light fa-hexagon-image'></i>
                     </span>
                     NFTs
                   </h6>

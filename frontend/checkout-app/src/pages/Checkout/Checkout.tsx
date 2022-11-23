@@ -119,7 +119,8 @@ export default function Home() {
             <strong className='text-strong antialiased ms-10'>Go Back</strong>
           </a>
           <div>
-            <CountdownTimer />
+            <CountdownTimer expiration={checkout?.expiration} />
+            {console.log(checkout)}
           </div>
         </div>
       </div>

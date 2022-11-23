@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom'
 import { useCountdown } from "@/hooks/useCountdown";
 import propTypes from "prop-types";

@@ -153,7 +153,6 @@ export default function Home() {
   useEffect(() => {
     getTicketTiers(event?.public_id)
     setCheckout({ ...checkout, event: event?.public_id })
-    console.log("Checkout on Home: ", checkout)
   }, [event])
 
   const isSomeTiersAvailable = () =>

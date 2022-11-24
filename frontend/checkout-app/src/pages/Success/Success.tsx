@@ -19,12 +19,16 @@ export default function Success() {
 
   useEffect(() => {
     const timer: any =
-      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
-    if (counter <= 0) {
-      navigate(`/${checkout?.get_tickets_link}`)
-    }
+      setInterval(() => {
+        if (counter - 1 <= 0) {
+          navigate(`/${checkout?.get_tickets_link}`)
+        } else {
+          setCounter(counter - 1)
+        }
+      }, 1000);
+
     return () => clearInterval(timer);
-  }, [counter]);
+  });
 
   useEffect(() => {
     if (!checkout) {

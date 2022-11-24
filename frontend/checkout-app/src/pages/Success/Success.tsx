@@ -15,13 +15,13 @@ export default function Success() {
   const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
 
 
-  const [counter, setCounter] = useState(50);
+  const [counter, setCounter] = useState(6);
 
   useEffect(() => {
     const timer: any =
       counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
     if (counter <= 0) {
-      navigate(`${checkout?.get_tickets_link}`)
+      navigate(`/${checkout?.get_tickets_link}`)
     }
     return () => clearInterval(timer);
   }, [counter]);

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -14,6 +14,18 @@ export default function Success() {
   const { event }: any = useEvent()
   const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
 
+
+  const [counter, setCounter] = useState(50);
+
+  useEffect(() => {
+    const timer: any =
+      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+    if (counter <= 0) {
+      navigate(`${checkout?.get_tickets_link}`)
+    }
+    return () => clearInterval(timer);
+  }, [counter]);
+
   useEffect(() => {
     if (!checkout) {
       getCheckout(checkoutPublicId).catch(() => {
@@ -26,6 +38,7 @@ export default function Success() {
 
   return (
     <>
+      {console.log(counter)}
       <div className='w-100 hs-150 position-relative'>
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
           <img src={event?.cover_image} className='w-100 h-auto' alt='Cover image' />
@@ -91,7 +104,9 @@ export default function Success() {
                 <i className='fa-regular fa-external-link ms-10'></i>
               </a>
             </div>
-
+            <div className='mt-20'>
+              <strong className='text-strong'>You will be automatically redirected to the tickets page in {counter} seconds.</strong>
+            </div>
             <p className='text-muted fs-base-n2'>
               In case you don't receive your tickets or the link above does not work, please{' '}
               <a

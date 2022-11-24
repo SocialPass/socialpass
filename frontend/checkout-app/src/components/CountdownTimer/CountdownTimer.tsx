@@ -5,7 +5,7 @@ import propTypes from 'prop-types';
 
 function CountdownTimer(props): JSX.Element {
     const { expiration } = props
-    const { setCheckout }: any = useCheckout()
+    const { setCheckout, setCheckoutItems }: any = useCheckout()
     const { eventPublicId } = useParams()
     const navigate = useNavigate()
 
@@ -14,6 +14,7 @@ function CountdownTimer(props): JSX.Element {
     function handleFinishedCountown() {
         if (minutes + seconds <= 0) {
             setCheckout(null)
+            setCheckoutItems([])
             navigate(`/${eventPublicId}`)
         }
     }

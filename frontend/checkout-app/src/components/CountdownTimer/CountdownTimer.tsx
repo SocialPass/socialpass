@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCountdown } from '@/hooks/useCountdown';
+import useCheckout from '@/hooks/useCheckout';
 import propTypes from 'prop-types';
 
 function CountdownTimer(props): JSX.Element {
     const { expiration } = props
-
+    const { setCheckout }: any = useCheckout()
     const { eventPublicId } = useParams()
     const navigate = useNavigate()
 
@@ -12,6 +13,7 @@ function CountdownTimer(props): JSX.Element {
 
     function handleFinishedCountown() {
         if (minutes + seconds <= 0) {
+            setCheckout(null)
             navigate(`/${eventPublicId}`)
         }
     }

@@ -1,16 +1,17 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useCountdown } from '@/hooks/useCountdown';
 import propTypes from 'prop-types';
 
 function CountdownTimer(props): JSX.Element {
     const { expiration } = props
 
+    const { eventPublicId } = useParams()
     const navigate = useNavigate()
 
     const { minutes, seconds } = useCountdown(expiration)
 
     if (minutes + seconds <= 0) {
-        navigate('/')
+        navigate(`/${eventPublicId}`)
     }
 
     function zeroLeft(number) {

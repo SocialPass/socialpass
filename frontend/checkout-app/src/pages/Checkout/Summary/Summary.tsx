@@ -6,7 +6,8 @@ import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
 export default function Summary(props) {
-  const { onContinueClick, enableContinue } = props
+  const { onContinueClick, enableContinue, isCheckoutProcessing } = props
+  
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
@@ -30,6 +31,13 @@ export default function Summary(props) {
     }
 
     return 'N/A'
+  }
+
+  const isButtonDisable = () => {
+    if(!isCheckoutProcessing && !!enableContinue)
+      return false
+    else
+      return true
   }
 
   return (
@@ -81,7 +89,8 @@ export default function Summary(props) {
           onClick={(e) => {
             onContinueClick(e)
           }}
-          disabled={!enableContinue}
+          // disabled={!enableContinue && !isCheckoutProcessing}
+          disabled={isButtonDisable()}
         >
           <strong className='antialiased'>Continue</strong>
         </button>
@@ -111,4 +120,5 @@ export default function Summary(props) {
 Summary.propTypes = {
   onContinueClick: PropTypes.func.isRequired,
   enableContinue: PropTypes.bool.isRequired,
+  isCheckoutProcessing: PropTypes.bool.isRequired
 }

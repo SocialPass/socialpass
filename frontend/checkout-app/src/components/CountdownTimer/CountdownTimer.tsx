@@ -10,8 +10,10 @@ function CountdownTimer(props): JSX.Element {
 
     const { minutes, seconds } = useCountdown(expiration)
 
-    if (minutes + seconds <= 0) {
-        navigate(`/${eventPublicId}`)
+    function handleFinishedCountown() {
+        if (minutes + seconds <= 0) {
+            navigate(`/${eventPublicId}`)
+        }
     }
 
     function zeroLeft(number) {
@@ -21,6 +23,7 @@ function CountdownTimer(props): JSX.Element {
 
     return (
         <div className='py-20 w-100 h-100'>
+            {handleFinishedCountown()}
             <div className='d-flex align-items-center'>
                 <div className='ws-25 flex-shrink-0'>
                     <i className='fa-regular fa-clock'></i>

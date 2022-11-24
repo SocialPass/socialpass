@@ -188,7 +188,7 @@ export default function Home() {
           <div className='content mt-0 mt-md-30 mb-0'>
             <div>
               {
-                (checkout?.expiration == null) ? '' : <CountdownTimer expiration={checkout?.expiration} />
+                (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={checkout?.expiration} />
               }
             </div>
             <div className='d-flex align-items-center'>

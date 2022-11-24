@@ -5,7 +5,7 @@ import propTypes from 'prop-types';
 
 function CountdownTimer(props): JSX.Element {
     const { expiration } = props
-    const { setCheckout, setCheckoutItems }: any = useCheckout()
+    const { checkout, setCheckout, setCheckoutItems }: any = useCheckout()
     const { eventPublicId } = useParams()
     const navigate = useNavigate()
 

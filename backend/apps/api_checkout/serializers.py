@@ -39,7 +39,6 @@ class TeamReadSerializer(BaseModelSerializer):
     class Meta:
         model = Team
         fields = ["name", "image", "theme"]
-
     image = serializers.SerializerMethodField()
     theme = serializers.SerializerMethodField()
 
@@ -87,7 +86,7 @@ class EventReadSerializer(BaseModelSerializer):
             "title",
             "description",
             "start_date",
-            "timezone",
+            "timezone", # not used in checkout app
             "localized_address_display",
             "cover_image",
         ]
@@ -123,8 +122,6 @@ class TicketTierReadSerializer(BaseModelSerializer):
     class Meta:
         model = TicketTier
         fields = [
-            "created",
-            "modified",
             "public_id",
             "event_public_id",
             "ticket_type",
@@ -148,8 +145,6 @@ class CheckoutItemReadSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutItem
         fields = [
-            "created",
-            "modified",
             "public_id",
             "quantity",
             "ticket_tier",
@@ -168,8 +163,8 @@ class CheckoutItemCreateSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutItem
         fields = [
-            "created",
-            "modified",
+            "created", # not used in checkout app
+            "modified", # not used in checkout app
             "public_id",
             "quantity",
             "ticket_tier",
@@ -197,8 +192,8 @@ class CheckoutItemUpdateSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutItem
         fields = [
-            "created",
-            "modified",
+            "created", # not used in checkout app
+            "modified", # not used in checkout app
             "public_id",
             "quantity",
             "ticket_tier",
@@ -226,8 +221,8 @@ class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutItem
         fields = [
-            "created",
-            "modified",
+            "created", # not used in checkout app
+            "modified", # not used in checkout app
             "public_id",
             "quantity",
             "ticket_tier",
@@ -255,7 +250,12 @@ class TxAssetOwnershipReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TxAssetOwnership
-        fields = ["created", "modified", "public_id", "unsigned_message"]
+        fields = [
+            "created",  # not used in checkout app
+            "modified",  # not used in checkout app
+            "public_id", 
+            "unsigned_message"
+        ]
 
 
 class TxBlockchainReadSerializer(serializers.ModelSerializer):
@@ -294,8 +294,6 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutSession
         fields = [
-            "created",
-            "modified",
             "public_id",
             "name",
             "email",
@@ -307,7 +305,11 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "event",
             "checkout_items",
         ]
-        read_only_fields = ["created", "modified", "public_id"]
+        read_only_fields = [
+            "created", 
+            "modified", 
+            "public_id"
+        ]
 
     event = serializers.SlugRelatedField(
         slug_field="public_id",
@@ -365,8 +367,8 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutSession
         fields = [
-            "created",
-            "modified",
+            "created", # not used in checkout app
+            "modified", # not used in checkout app
             "public_id",
             "name",
             "email",
@@ -379,8 +381,13 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "checkout_items",
             "passcode",
             "get_tickets_link",
+            "expiration",
         ]
-        read_only_fields = ["created", "modified", "public_id"]
+        read_only_fields = [
+            "created", 
+            "modified", 
+            "public_id"
+        ]
 
     event = serializers.SlugRelatedField(
         slug_field="public_id",
@@ -405,8 +412,8 @@ class CheckoutSessionUpdateSerializer(BaseModelSerializer):
     class Meta:
         model = CheckoutSession
         fields = [
-            "created",
-            "modified",
+            "created", # not used in checkout app
+            "modified", # not used in checkout app
             "public_id",
             "name",
             "email",
@@ -443,7 +450,10 @@ class ConfirmationSerializer(BaseModelSerializer):
 
     class Meta:
         model = CheckoutSession
-        fields = ["tx_status", "tickets_summary"]
+        fields = [
+            "tx_status", 
+            "tickets_summary" # not used in checkout app -> it's used in test_view.py
+        ]
 
     tickets_summary = serializers.SerializerMethodField()
 

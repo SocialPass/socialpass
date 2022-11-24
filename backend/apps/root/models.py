@@ -1154,54 +1154,9 @@ class TxAssetOwnership(DBModel):
             )
         return filtered_by_issued_ids
 
-    def _check_metadata_matches(self, item, filtered_by_issued_ids, expected):
-        # Ensure metadata matches
-        # Raise exception on lack of metadata matches
-        filtered_by_metadata = []
-        for i in filtered_by_issued_ids:
-            # Hard-coded for NFT NG
-            # 1. “Silver” (At least 1 silver)
-            # 1. “Rainbow” (At least 1 rainbow)
-            # 2. “Gold” (At least 1 gold)
-            # 3. “Whale” (At least 4 silvers AND 4 rainbow)
-            if i.get("metadata"):
-                metadata = json.loads(i["metadata"])
-                attributes = metadata["attributes"][0]
-                if item.ticket_tier.ticket_type == "Silver":
-                    if attributes["value"] != "Silver":
-                        continue
-                elif item.ticket_tier.ticket_type == "Rainbow":
-                    if attributes["value"] != "Rainbow":
-                        continue
-                elif item.ticket_tier.ticket_type == "Gold":
-                    if attributes["value"] != "Gold":
-                        continue
-                elif item.ticket_tier.ticket_type == "Whale":
-                    if (
-                        attributes["value"] != "Silver"
-                        and attributes["value"] != "Rainbow"
-                    ):
-                        continue
-                filtered_by_metadata.append(i)
-            else:
-                filtered_by_metadata.append(i)
-
-        actual = len(filtered_by_metadata)
-        if actual < expected:
-            raise TxAssetOwnershipProcessingError(
-                {
-                    "metadata": (
-                        f"Could not find NFT's that match the metadata required. "
-                        f"Expected NFT's: {expected}. "
-                        f"Actual NFT's: {actual}."
-                    )
-                }
-            )
-        return filtered_by_metadata
-
-    def _get_token_ids_from_metadata(self, filtered_by_metadata):
+    def _get_token_ids(self, address_data):
         token_ids = []
-        for data in filtered_by_metadata:
+        for data in address_data:
             token_id = data.get("token_id")
             if token_id:
                 token_ids.append(int(token_id))
@@ -1271,11 +1226,7 @@ class TxAssetOwnership(DBModel):
                 )
 
                 # filter address token ids
-                tier_token_ids = [
-                    int(data["token_id"])
-                    for data in api_response["result"]
-                    if data.get("token_id")
-                ]
+                tier_token_ids = self._get_token_ids(api_response["result"])
                 tiers_token_ids = tiers_token_ids.union(tier_token_ids)
 
                 # check if wallet has sufficient balance
@@ -1288,19 +1239,9 @@ class TxAssetOwnership(DBModel):
                     result=api_response["result"],
                 )
 
-                # check if metadata matches and get token ids filtered by metadata
-                filtered_by_metadata = self._check_metadata_matches(
-                    item=item,
-                    filtered_by_issued_ids=filtered_by_issued_ids,
-                    expected=expected,
-                )
-
                 # TODO: Ensure token ID matches from tier_asset_ownership.token_id
-                # NOT needed for NFT NG - let's do after
                 # get formatted token ids from metadata
-                token_ids = self._get_token_ids_from_metadata(
-                    filtered_by_metadata=filtered_by_metadata
-                )
+                token_ids = self._get_token_ids(address_data=filtered_by_issued_ids)
                 # Update ticket_tiers_with_ids dictionary.
                 ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 

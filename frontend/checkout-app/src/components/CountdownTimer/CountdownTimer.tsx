@@ -1,11 +1,12 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCountdown } from '@/hooks/useCountdown';
 import useCheckout from '@/hooks/useCheckout';
 import propTypes from 'prop-types';
 
 function CountdownTimer(props): JSX.Element {
     const { expiration } = props
-    const { checkout, setCheckout, setCheckoutItems }: any = useCheckout()
+    const { setCheckout, setCheckoutItems }: any = useCheckout()
     const { eventPublicId } = useParams()
     const navigate = useNavigate()
 
@@ -16,6 +17,7 @@ function CountdownTimer(props): JSX.Element {
             setCheckout(null)
             setCheckoutItems([])
             navigate(`/${eventPublicId}`)
+            alert("Your checkout session timer has run out. Please try again.")
         }
     }
 
@@ -23,10 +25,13 @@ function CountdownTimer(props): JSX.Element {
         return String(number).padStart(2, '0')
     }
 
+    useEffect(() => {
+        handleFinishedCountown()
+    })
+
 
     return (
         <div className='py-20 w-100 h-100'>
-            {handleFinishedCountown()}
             <div className='d-flex align-items-center mt-10 px-10 py-5 rounded bg-gray-very-light-lm bg-darkgray-very-dim-dm border border-dotted fs-base-n2'>
                 <div className='ws-25 flex-shrink-0'>
                     <i className='fa-regular fa-alarm-clock'></i>

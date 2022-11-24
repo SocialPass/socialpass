@@ -93,7 +93,7 @@ export default function Success() {
             </div>
 
             <p className='mb-5'>You can also use the following link to get your tickets:</p>
-            <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded py-10 px-15 text-truncate'>
+            <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top py-10 px-15 text-truncate border border-dotted'>
               <a
                 target='_blank'
                 rel='noreferrer'
@@ -104,8 +104,8 @@ export default function Success() {
                 <i className='fa-regular fa-external-link ms-10'></i>
               </a>
             </div>
-            <div className='mt-20'>
-              <strong className='text-strong'>You will be automatically redirected to the tickets page in {counter} seconds.</strong>
+            <div className='rounded-bottom border border-dotted border-top-0 py-10 px-15'>
+              You will be automatically redirected to the tickets download page in <strong className='text-strong'>{counter} seconds.</strong>
             </div>
             <p className='text-muted fs-base-n2'>
               In case you don't receive your tickets or the link above does not work, please{' '}

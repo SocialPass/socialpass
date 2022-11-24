@@ -38,7 +38,6 @@ export default function Success() {
 
   return (
     <>
-      {console.log(counter)}
       <div className='w-100 hs-150 position-relative'>
         <div className='d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none'>
           <img src={event?.cover_image} className='w-100 h-auto' alt='Cover image' />

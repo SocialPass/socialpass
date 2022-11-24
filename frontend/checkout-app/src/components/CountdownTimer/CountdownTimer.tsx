@@ -28,7 +28,7 @@ function CountdownTimer(props): JSX.Element {
             {handleFinishedCountown()}
             <div className='d-flex align-items-center'>
                 <div className='ws-25 flex-shrink-0'>
-                    <i className='fa-regular fa-clock'></i>
+                    <i className='fa-regular fa-alarm-clock'></i>
                 </div>
                 <div className='fw-bold'>{(isNaN(minutes)) ? '' : zeroLeft(minutes) + ' : '}{(isNaN(seconds)) ? '' : zeroLeft(seconds)}</div>
             </div>

@@ -8,9 +8,9 @@ function CountdownTimer(props): JSX.Element {
 	const { expiration } = props
 	const { setCheckout, setCheckoutItems }: any = useCheckout()
 	const { eventPublicId } = useParams()
-	const navigate = useNavigate()
-
+    const navigate = useNavigate()
 	const { minutes, seconds } = useCountdown(expiration)
+    console.log("useCountdown: ", useCountdown(expiration))
 
 	function handleFinishedCountown() {
 		if (minutes + seconds <= 0) {

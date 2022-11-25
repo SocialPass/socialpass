@@ -2,15 +2,20 @@ import { useEffect, useState } from 'react';
 
 const useCountdown = (targetDate) => {
     const countDownDate = new Date(targetDate).getTime();
-    let gap = Math.floor(((countDownDate - (new Date().getTime()))) / 1000);
-    const [countDown, setCountDown] = useState(gap);
+
+    const [countDown, setCountDown] = useState(
+        countDownDate - new Date().getTime()
+    );
 
     useEffect(() => {
-        setInterval(() => {
-            setCountDown(gap);
+        console.log("useEffect called")
+        const interval = setInterval(() => {
+            setCountDown(countDownDate - new Date().getTime());
         }, 1000);
-    },);
-    console.log(countDown)
+
+        return () => clearInterval(interval);
+    }, []);
+
     return getReturnValues(countDown);
 };
 
@@ -22,7 +27,7 @@ const getReturnValues = (countDown) => {
     );
     const minutes = Math.floor((countDown % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((countDown % (1000 * 60)) / 1000);
-    console.log("getReturnValues", days, hours, minutes, seconds)
+
     return { days, hours, minutes, seconds };
 };
 

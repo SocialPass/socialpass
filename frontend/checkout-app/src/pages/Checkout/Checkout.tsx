@@ -182,7 +182,7 @@ export default function Home() {
         <div className='col-md-5'>
           <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
             {
-              (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={checkout?.expiration} />
+              (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />
             }
           </div>
           <Summary onContinueClick={handleContinueClick} enableContinue={!!accountHook?.address} />

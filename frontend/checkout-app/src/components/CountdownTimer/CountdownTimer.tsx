@@ -10,7 +10,6 @@ function CountdownTimer(props): JSX.Element {
 	const { eventPublicId } = useParams()
     const navigate = useNavigate()
 	const { minutes, seconds } = useCountdown(new Date(expiration))
-    console.log("useCountdown: ", useCountdown(expiration))
 
 	function handleFinishedCountown() {
 		if (minutes + seconds <= 0) {

@@ -49,7 +49,10 @@ export default function Home() {
       case 'ASSET_OWNERSHIP': {
         const signed_message = await signHook.signMessageAsync({
           message: checkout?.tx_asset_ownership?.unsigned_message,
+        }).catch(() => {
+          setIsCheckoutProcessing(false)
         })
+        
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
@@ -65,9 +68,9 @@ export default function Home() {
   const handleContinueClick = async (e) => {
     e.preventDefault()
 
-    const paymentData = await getPaymentData()
     setIsCheckoutProcessing(true)
-
+    const paymentData = await getPaymentData()
+    
     pay(paymentData)
       .then(() => {
         setIsCheckoutProcessing(false)

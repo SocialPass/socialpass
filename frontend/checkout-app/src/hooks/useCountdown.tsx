@@ -8,7 +8,6 @@ const useCountdown = (targetDate) => {
     );
 
     useEffect(() => {
-        console.log("useEffect called")
         const interval = setInterval(() => {
             setCountDown(countDownDate - new Date().getTime());
         }, 1000);

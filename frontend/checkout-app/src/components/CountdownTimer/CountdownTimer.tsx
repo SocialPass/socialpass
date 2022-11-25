@@ -16,7 +16,7 @@ function CountdownTimer(props): JSX.Element {
 			setCheckout(null)
 			setCheckoutItems([])
 			navigate(`/${eventPublicId}`)
-			alert("Your checkout session timer has run out. Please try again.")
+			alert('Your checkout session timer has run out. Please try again.')
 		}
 	}
 

@@ -9,7 +9,9 @@ const Pagination = (props) => {
       <div>
         <button
           className='btn btn-sm btn-square btn-rounded'
-          onClick={(e) => onChange(e, page - 1)}
+          onClick={(e) => {
+            onChange(e, page - 1)
+          }}
           disabled={page === 1}
         >
           <i className='fa-regular fa-arrow-left'></i>
@@ -19,7 +21,11 @@ const Pagination = (props) => {
 
       <ul className='pagination pagination-sm pagination-rounded my-0 ms-auto'>
         {Array.from(Array(count).keys()).map((i) => (
-          <li className={`page-item ${i + 1 === page ? 'active' : ''}`} key={`ticket-page-${i}`}>
+          <li className={`page-item ${i + 1 === page ? 'active' : ''}`}
+            key={`ticket-page-${i}`}
+            onClick={(e) => {
+              onChange(e, i + 1)
+            }}>
             <a href='#' className='page-link'>
               {i + 1}
             </a>
@@ -30,8 +36,11 @@ const Pagination = (props) => {
       <div className='ms-auto'>
         <button
           className='btn btn-sm btn-square btn-rounded'
-          onClick={(e) => onChange(e, page + 1)}
+          onClick={(e) => {
+            onChange(e, page + 1)
+          }}
           disabled={page === count}
+
         >
           <i className='fa-regular fa-arrow-right'></i>
           <span className='visually-hidden'>Next</span>

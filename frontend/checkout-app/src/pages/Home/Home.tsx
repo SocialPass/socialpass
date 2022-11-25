@@ -29,8 +29,8 @@ export default function Home() {
   const getFiatTicketTiers = () =>
     ticketTiers.filter((ticket) => 'tier_fiat' in ticket && ticket.tier_fiat)
 
-  const getCryptocurrencyTicketTiers = () =>
-    ticketTiers.filter((ticket) => 'tier_cryptocurrency' in ticket && ticket.tier_cryptocurrency)
+  const getBlockchainTicketTiers = () =>
+    ticketTiers.filter((ticket) => 'tier_blockchain' in ticket && ticket.tier_blockchain)
 
   const getAssetOwnershipTicketTiers = () =>
     ticketTiers.filter((ticket) => 'tier_asset_ownership' in ticket && ticket.tier_asset_ownership)
@@ -40,7 +40,7 @@ export default function Home() {
       return getFiatTicketTiers()
     }
     if (checkout?.tx_type == 'BLOCKCHAIN') {
-      return getCryptocurrencyTicketTiers()
+      return getBlockchainTicketTiers()
     }
     if (checkout?.tx_type == 'ASSET_OWNERSHIP') {
       return getAssetOwnershipTicketTiers()
@@ -141,7 +141,7 @@ export default function Home() {
     if (!checkout?.public_id) {
       if (getFiatTicketTiers().length) {
         setCheckout({ ...checkout, tx_type: 'FIAT' })
-      } else if (getCryptocurrencyTicketTiers().length) {
+      } else if (getBlockchainTicketTiers().length) {
         setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
       } else if (getAssetOwnershipTicketTiers().length) {
         setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
@@ -275,7 +275,7 @@ export default function Home() {
               <div
                 className={'ticket-tier'}
                 onClick={() => {
-                  if (getCryptocurrencyTicketTiers().length && isNewCheckout()) {
+                  if (getBlockchainTicketTiers().length && isNewCheckout()) {
                     setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
                     setCheckoutItems([])
                   }
@@ -284,7 +284,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getCryptocurrencyTicketTiers().length || !isNewCheckout()}
+                  disabled={!getBlockchainTicketTiers().length || !isNewCheckout()}
                   checked={checkout?.tx_type === 'BLOCKCHAIN'}
                   readOnly
                 />

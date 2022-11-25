@@ -33,7 +33,7 @@ export default function Summary(props) {
     return 'N/A'
   }
 
-  const isButtonDisable = (!isCheckoutProcessing && !!enableContinue) ? false : true 
+  const isButtonDisable = (!isCheckoutProcessing && enableContinue) ? false : true 
 
   return (
     <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>

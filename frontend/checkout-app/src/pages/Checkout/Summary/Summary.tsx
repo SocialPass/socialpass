@@ -33,12 +33,7 @@ export default function Summary(props) {
     return 'N/A'
   }
 
-  const isButtonDisable = () => {
-    if(!isCheckoutProcessing && !!enableContinue)
-      return false
-    else
-      return true
-  }
+  const isButtonDisable = (!isCheckoutProcessing && !!enableContinue) ? false : true 
 
   return (
     <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
@@ -89,8 +84,7 @@ export default function Summary(props) {
           onClick={(e) => {
             onContinueClick(e)
           }}
-          // disabled={!enableContinue && !isCheckoutProcessing}
-          disabled={isButtonDisable()}
+          disabled={isButtonDisable}
         >
           <strong className='antialiased'>Continue</strong>
         </button>

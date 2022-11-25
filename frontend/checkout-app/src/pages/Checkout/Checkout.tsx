@@ -65,8 +65,8 @@ export default function Home() {
   const handleContinueClick = async (e) => {
     e.preventDefault()
 
-    setIsCheckoutProcessing(true)
     const paymentData = await getPaymentData()
+    setIsCheckoutProcessing(true)
 
     pay(paymentData)
       .then(() => {

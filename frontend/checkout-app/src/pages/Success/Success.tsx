@@ -4,31 +4,22 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
+import { useCountdown } from '@/hooks/useCountdown'
 
 import Receipt from './Receipt'
 
 export default function Success() {
   const { eventPublicId, checkoutPublicId } = useParams()
   const navigate = useNavigate()
-
   const { event }: any = useEvent()
   const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
-
-
-  const [counter, setCounter] = useState(6);
+  const { seconds } = useCountdown(new Date((new Date().getTime()) + 6000))
 
   useEffect(() => {
-    const timer: any =
-      setInterval(() => {
-        if (counter - 1 <= 0) {
-          navigate(`/${checkout?.get_tickets_link}`)
-        } else {
-          setCounter(counter - 1)
-        }
-      }, 1000);
-
-    return () => clearInterval(timer);
-  });
+    if (seconds <= 0) {
+      navigate(`/${checkout?.get_tickets_link}`)
+    }
+  }, [seconds])
 
   useEffect(() => {
     if (!checkout) {
@@ -108,7 +99,7 @@ export default function Success() {
               </a>
             </div>
             <div className='rounded-bottom border border-dotted border-top-0 py-10 px-15'>
-              You will be automatically redirected to the tickets download page in <strong className='text-strong'>{counter} seconds.</strong>
+              You will be automatically redirected to the tickets download page in <strong className='text-strong'>{seconds} seconds.</strong>
             </div>
             <p className='text-muted fs-base-n2'>
               In case you don't receive your tickets or the link above does not work, please{' '}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
 import { useConnect, useAccount, useSignMessage } from 'wagmi'
@@ -14,6 +14,7 @@ import CountdownTimer from '@/components/CountdownTimer'
 
 export default function Home() {
   const navigate = useNavigate()
+  const [isCheckoutProcessing, setIsCheckoutProcessing] = useState(false)
 
   const connectHook = useConnect()
   const accountHook = useAccount()
@@ -49,7 +50,10 @@ export default function Home() {
       case 'ASSET_OWNERSHIP': {
         const signed_message = await signHook.signMessageAsync({
           message: checkout?.tx_asset_ownership?.unsigned_message,
+        }).catch(() => {
+          setIsCheckoutProcessing(false)
         })
+        
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
@@ -65,15 +69,18 @@ export default function Home() {
   const handleContinueClick = async (e) => {
     e.preventDefault()
 
+    setIsCheckoutProcessing(true)
     const paymentData = await getPaymentData()
-
+    
     pay(paymentData)
       .then(() => {
+        setIsCheckoutProcessing(false)
         navigate('validation')
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err)
         setCheckout({ ...checkout, tx_status: 'FAILED' })
+        setIsCheckoutProcessing(false)
       })
   }
 

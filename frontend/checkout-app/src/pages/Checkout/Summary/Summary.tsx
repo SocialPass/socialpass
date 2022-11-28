@@ -6,8 +6,7 @@ import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
 export default function Summary(props) {
-  const { onContinueClick, enableContinue, isCheckoutProcessing } = props
-  
+  const { onContinueClick, enableContinue } = props
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
@@ -32,8 +31,6 @@ export default function Summary(props) {
 
     return 'N/A'
   }
-
-  const isButtonDisable = (!isCheckoutProcessing && enableContinue) ? false : true 
 
   return (
     <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
@@ -84,11 +81,8 @@ export default function Summary(props) {
           onClick={(e) => {
             onContinueClick(e)
           }}
-          disabled={isButtonDisable}
+          disabled={!enableContinue}
         >
-          {isButtonDisable && 
-            <span className="spinner-border spinner-border-sm me-5" role="status" aria-hidden="true"></span>
-          }
           <strong className='antialiased'>Continue</strong>
         </button>
       </form>
@@ -117,5 +111,4 @@ export default function Summary(props) {
 Summary.propTypes = {
   onContinueClick: PropTypes.func.isRequired,
   enableContinue: PropTypes.bool.isRequired,
-  isCheckoutProcessing: PropTypes.bool.isRequired
 }

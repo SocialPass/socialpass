@@ -71,7 +71,7 @@ export default function Home() {
       .then(() => {
         navigate('validation')
       })
-      .catch((err) => {
+      .catch(() => {
         setCheckout({ ...checkout, tx_status: 'FAILED' })
       })
   }

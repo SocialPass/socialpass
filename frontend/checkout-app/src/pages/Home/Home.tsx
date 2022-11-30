@@ -8,6 +8,7 @@ import { EventApi, CheckoutItemApi } from '@/services/api'
 
 import TicketSelector from '@/components/TicketSelector'
 import './index.css'
+import CountdownTimer from '@/components/CountdownTimer'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -69,7 +70,6 @@ export default function Home() {
       } else {
         // Delete on backend
         if (checkout.public_id) {
-          console.log(new_selected, ticketIndex)
           CheckoutItemApi.delete(new_selected[ticketIndex].public_id)
         }
 
@@ -186,6 +186,11 @@ export default function Home() {
 
         <div className='col-md-5'>
           <div className='content mt-0 mt-md-30 mb-0'>
+            <div>
+              {
+                (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />
+              }
+            </div>
             <div className='d-flex align-items-center'>
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-clock'></i>
@@ -193,7 +198,6 @@ export default function Home() {
               <div className='fw-bold'>Date & Time</div>
             </div>
             <p className='text-muted mt-5 mb-0'>{event?.start_date}</p>
-
             <div className='d-flex align-items-center mt-15'>
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-location-dot'></i>

@@ -161,7 +161,6 @@ class CheckoutSessionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CheckoutSession
 
-    expiration = factory.fuzzy.FuzzyDateTime(timezone.now())
     name = factory.Faker("name")
     email = factory.Faker("email")
     cost = 1

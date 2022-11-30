@@ -27,6 +27,7 @@ from model_utils.models import TimeStampedModel
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
+    CheckoutSessionExpired,
     ConflictingTiersRequestedError,
     DuplicatesTiersRequestedError,
     EventStateTranstionError,
@@ -790,6 +791,13 @@ def get_random_passcode():
     return get_random_string(6)
 
 
+def get_expiration_datetime():
+    """
+    Get current datetime + 10 minutes
+    """
+    return timezone.now() + timezone.timedelta(minutes=10)
+
+
 class CheckoutSession(DBModel):
     """
     Represents a time-limited checkout session (aka 'cart') for an event organizer
@@ -847,7 +855,9 @@ class CheckoutSession(DBModel):
         default=OrderStatus.VALID,
         blank=False,
     )
-    expiration = models.DateTimeField(blank=True, null=True)
+    expiration = models.DateTimeField(
+        blank=True, null=True, default=get_expiration_datetime
+    )
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
     cost = models.IntegerField(
@@ -883,6 +893,29 @@ class CheckoutSession(DBModel):
         )
         tickets_link = domain + url + "?passcode=" + self.passcode
         return tickets_link
+
+    @property
+    def is_expired(self):
+        if timezone.now() > self.expiration:
+            return True
+        else:
+            return False
+
+    def clean_expiration(self, *args, **kwargs):
+        """
+        clean expiration method
+        check if the checkout_session is expired
+        """
+        if self.is_expired:
+            raise CheckoutSessionExpired({"expired": _("The Session has been expired")})
+
+    def clean(self, *args, **kwargs):
+        """
+        clean method
+        runs all clean_* methods
+        """
+        self.clean_expiration()
+        return super().clean(*args, **kwargs)
 
     def send_confirmation_email(self):
         """
@@ -1295,6 +1328,9 @@ class TxAssetOwnership(DBModel):
         # Get/Set checkout_session (avoid duplicate queries)
         if not checkout_session:
             checkout_session = self.checkoutsession
+
+        if checkout_session.is_expired:
+            raise CheckoutSessionExpired({"expired": _("The Session has been expired")})
 
         # Set checkout_session as processing
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING

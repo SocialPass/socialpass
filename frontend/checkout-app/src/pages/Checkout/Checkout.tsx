@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
 import { useConnect, useAccount, useSignMessage } from 'wagmi'
 
 import FiatCheckoutOption from './CheckoutOptions/Fiat'
-import CrypotCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
+import CryptoCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
 import AssetOwnershipCheckoutOption from './CheckoutOptions/AssetOwnership'
 import Summary from './Summary'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
+import CountdownTimer from '@/components/CountdownTimer'
 
 export default function Home() {
   const navigate = useNavigate()
-  const [isCheckoutProcessing, setIsCheckoutProcessing] = useState(false)
 
   const connectHook = useConnect()
   const accountHook = useAccount()
@@ -49,10 +49,7 @@ export default function Home() {
       case 'ASSET_OWNERSHIP': {
         const signed_message = await signHook.signMessageAsync({
           message: checkout?.tx_asset_ownership?.unsigned_message,
-        }).catch(() => {
-          setIsCheckoutProcessing(false)
         })
-        
         return {
           tx_type: checkout?.tx_type,
           wallet_address: accountHook.address,
@@ -68,20 +65,18 @@ export default function Home() {
   const handleContinueClick = async (e) => {
     e.preventDefault()
 
-    setIsCheckoutProcessing(true)
     const paymentData = await getPaymentData()
-    
+
     pay(paymentData)
       .then(() => {
-        setIsCheckoutProcessing(false)
         navigate('validation')
       })
-      .catch((err) => {
-        console.log(err)
+      .catch(() => {
         setCheckout({ ...checkout, tx_status: 'FAILED' })
-        setIsCheckoutProcessing(false)
       })
   }
+
+
 
   const getErrorMessage = () => {
     if (error) {
@@ -92,6 +87,7 @@ export default function Home() {
 
     return 'Sorry! The transaction has failed. Please try again.'
   }
+
 
   useEffect(() => {
     getCheckout(checkoutPublicId).catch(() => {
@@ -175,7 +171,7 @@ export default function Home() {
             {checkout?.tx_type === 'FIAT' ? (
               <FiatCheckoutOption />
             ) : checkout?.tx_type === 'BLOCKCHAIN' ? (
-              <CrypotCurrencyCheckoutOption />
+                <CryptoCurrencyCheckoutOption />
             ) : checkout?.tx_type === 'ASSET_OWNERSHIP' ? (
               <AssetOwnershipCheckoutOption connectors={connectHook.connectors} />
             ) : null}
@@ -183,12 +179,14 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
-          <Summary 
-            onContinueClick={handleContinueClick} 
-            enableContinue={!!accountHook?.address} 
-            isCheckoutProcessing={isCheckoutProcessing} 
-          />
+          <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
+            {
+              (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />
+            }
+          </div>
+          <Summary onContinueClick={handleContinueClick} enableContinue={!!accountHook?.address} />
         </div>
+
       </div>
     </>
   )

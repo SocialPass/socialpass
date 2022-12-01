@@ -4,12 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useConnect, useAccount, useSignMessage } from 'wagmi'
 
 import FiatCheckoutOption from './CheckoutOptions/Fiat'
-import CrypotCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
+import CryptoCurrencyCheckoutOption from './CheckoutOptions/CryptoCurrency'
 import AssetOwnershipCheckoutOption from './CheckoutOptions/AssetOwnership'
 import Summary from './Summary'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
+import CountdownTimer from '@/components/CountdownTimer'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -70,11 +71,12 @@ export default function Home() {
       .then(() => {
         navigate('validation')
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         setCheckout({ ...checkout, tx_status: 'FAILED' })
       })
   }
+
+
 
   const getErrorMessage = () => {
     if (error) {
@@ -85,6 +87,7 @@ export default function Home() {
 
     return 'Sorry! The transaction has failed. Please try again.'
   }
+
 
   useEffect(() => {
     getCheckout(checkoutPublicId).catch(() => {
@@ -168,7 +171,7 @@ export default function Home() {
             {checkout?.tx_type === 'FIAT' ? (
               <FiatCheckoutOption />
             ) : checkout?.tx_type === 'BLOCKCHAIN' ? (
-              <CrypotCurrencyCheckoutOption />
+                <CryptoCurrencyCheckoutOption />
             ) : checkout?.tx_type === 'ASSET_OWNERSHIP' ? (
               <AssetOwnershipCheckoutOption connectors={connectHook.connectors} />
             ) : null}
@@ -176,8 +179,14 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
+          <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
+            {
+              (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />
+            }
+          </div>
           <Summary onContinueClick={handleContinueClick} enableContinue={!!accountHook?.address} />
         </div>
+
       </div>
     </>
   )

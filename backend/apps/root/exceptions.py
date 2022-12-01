@@ -39,3 +39,7 @@ class TxAssetOwnershipProcessingError(BaseValidationError):
 
 class EventNotRegisteredError(BaseValidationError):
     pass
+
+
+class CheckoutSessionExpired(BaseValidationError):
+    pass

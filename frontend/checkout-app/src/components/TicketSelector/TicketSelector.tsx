@@ -122,7 +122,7 @@ function TicketSelector(props): JSX.Element {
         </div>
         {paymentType === 'ASSET_OWNERSHIP' ? (
           <div className='border-top mt-10 pt-10 fs-base-n2'>
-            <div>Free to all holders of the following:</div>
+            <div>Free for all holders of the following:</div>
             <div className='row mt-10'>
               <div className='col-6'>
                 <strong>Blockchain</strong>

@@ -188,9 +188,9 @@ export default function Home() {
         <div className='col-md-7'>
           <div className='content mt-20 mb-0'>
             <h1 className='text-strong fw-700 display-6 m-0 text-break'>{event?.title}</h1>
-            <p className='mt-20 fsr-6 text-break'>
-              <div dangerouslySetInnerHTML={sanitizedEventDescription()} />
-            </p>
+            <div className='mt-20 fsr-6 text-break'>
+              <p dangerouslySetInnerHTML={sanitizedEventDescription()} />
+            </div>
           </div>
         </div>
 

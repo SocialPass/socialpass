@@ -52,7 +52,7 @@ const Scanner = () => {
 
   return (
     <>
-      <div className='position-relative d-flex align-items-center justify-content-center border hs-400 overflow-hidden'>
+      <div className='position-relative d-flex bg-content align-items-center justify-content-center hs-400 overflow-hidden'>
         <span className='text-center'>
           <Html5QrcodeScanner
             fps={1}
@@ -71,7 +71,7 @@ const Scanner = () => {
         </button>
       </div>
 
-      <div className='content'>
+      <div className='py-10 px-10'>
         <Button
           className='mt-0'
           onClick={() => {
@@ -83,20 +83,20 @@ const Scanner = () => {
       </div>
 
       <div className='mt-auto'>
-        <div className='content'>
+        <div className='content-wrapper px-20'>
           <h1 className='fw-700 fs-base-p6 mt-0'>{event.title}</h1>
-          <div className='mt-15'>
+          <div className='mt-10'>
             <i className='fa-regular fa-clock me-5'></i>
             {event.start_date}
           </div>
-          <div className='row mt-15'>
+          <div className='row mt-5'>
             <div className='col-6 pe-5'>
-              <div className='bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100'>
+              <div className='bg-secondary text-on-secondary rounded-3 p-10 h-100 text-center'>
                 <strong className='antialiased'>Accepted: {event?.redeemed_count || 0}</strong>
               </div>
             </div>
             <div className='col-6 ps-5'>
-              <div className='bg-secondary text-on-secondary rounded-3 py-10 px-15 h-100'>
+              <div className='bg-secondary text-on-secondary rounded-3 p-10 h-100 text-center'>
                 <strong className='antialiased'>
                   Remaining: {event?.ticket_count - event?.redeemed_count}
                 </strong>
@@ -105,7 +105,7 @@ const Scanner = () => {
           </div>
 
           <Button
-            className='mt-30'
+            className='mt-10'
             onClick={() => {
               navigate(`/${redemptionPublicId}/statistics`)
             }}

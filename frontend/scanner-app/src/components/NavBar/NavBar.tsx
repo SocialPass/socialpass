@@ -4,7 +4,7 @@ const NavBar = () => {
   const { theme }: any = useTheme()
 
   return (
-    <nav className='d-flex align-items-center px-20 py-5 m-10 bg-content rounded-3 shadow-lg'>
+    <nav className='d-flex align-items-center px-20 my-5 mx-10 bg-content rounded-3 shadow-lg'>
       <a
         href='#'
         className='d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none'

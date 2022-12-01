@@ -81,6 +81,7 @@ class GoogleTicket(TicketGenerationBase):
         if not address:
             raise Exception("Address can not be empty")
 
+        print(event_obj.localized_address_display)
         # Create the payload
         payload = {
             "eventName": {
@@ -185,6 +186,30 @@ class GoogleTicket(TicketGenerationBase):
 
         # Get the save to wallet URL
         object_id = json.loads(response.text).get("id")
+        claims = {
+            "iss": http_client.credentials.service_account_email,
+            "aud": "google",
+            "origins": ["socialpass.io"],
+            "typ": "savetowallet",
+            "payload": {"eventTicketObjects": [{"id": object_id}]},
+        }
+        signer = crypt.RSASigner.from_service_account_info(service_account_info)
+        token = jwt.encode(signer, claims).decode("utf-8")
+        self.save_url = "https://pay.google.com/gp/v/save/%s" % token
+
+        return {"token": token, "save_url": self.save_url}
+
+    def get_existing_pass_from_ticket(self, ticket):
+        """
+        TODO: doc
+        """
+        object_id = f"{self.get_issuer_id()}.{str(ticket.public_id)}"
+
+        service_account_info = self.get_service_account_info()
+        http_client = self.authenticate(
+            service_account_info=service_account_info,
+            scopes=["https://www.googleapis.com/auth/wallet_object.issuer"],
+        )
         claims = {
             "iss": http_client.credentials.service_account_email,
             "aud": "google",

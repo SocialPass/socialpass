@@ -29,6 +29,7 @@ from apps.root.exceptions import (
     AlreadyRedeemedError,
     ConflictingTiersRequestedError,
     DuplicatesTiersRequestedError,
+    EventNotRegisteredError,
     EventStateTranstionError,
     ForbiddenRedemptionError,
     ForeignKeyConstraintError,
@@ -455,6 +456,7 @@ class Event(DBModel):
 
         # join fields
         localized_address_display = ", ".join(address_fields)
+        print(f"oia o localized: {localized_address_display} ")
         return localized_address_display
 
     @property
@@ -600,13 +602,19 @@ class Ticket(DBModel):
         """
         create or retrieve pass url from google wallet api
         """
-        if not self.google_class_id:
-            raise Exception("The event was not registered")
+        if not self.event.google_class_id:
+            raise EventNotRegisteredError("The event was not registered")
 
         _pass = GoogleTicket.GoogleTicket()
         resp = _pass.generate_pass_from_ticket(self)
+
         if resp.get("error"):
-            raise Exception("The event was not registered properly")
+            match resp["error"]["errors"][0]["reason"]:
+                case "existingResource":
+                    _pass.get_existing_pass_from_ticket(self)
+                case "classNotFound":
+                    _pass.insert_update_ticket_class(self.event)
+                    _pass.generate_pass_from_ticket(self)
 
         return _pass.get_pass_url()
 

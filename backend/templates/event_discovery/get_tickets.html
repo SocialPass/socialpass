@@ -115,8 +115,20 @@
 										<div class="mt-10">
 											<button class="btn text-base download-btn" data-target="{{ ticket.object.public_id }}">
 												<i class="fa-regular fa-download me-5"></i>
-												<strong class="antialiased">Download</strong>
+												<strong class="antialiased">Download PNG</strong>
 											</button>
+											<a class="btn text-base download-btn" href="{% url 'discovery:ticket_pdf' ticket.object.public_id %}" download>
+												<i class="fa-regular fa-download me-5"></i>
+												<strong class="antialiased">Download PDF</strong>
+											</a>
+											<a class="btn text-base download-btn" href="{% url 'discovery:ticket_apple' ticket.object.public_id %}" download>
+												<i class="fa-regular fa-download me-5"></i>
+												<strong class="antialiased">Apple Pass</strong>
+											</a>
+											<a class="btn text-base download-btn" href="{% url 'discovery:ticket_google' ticket.object.public_id %}" download>
+												<i class="fa-regular fa-download me-5"></i>
+												<strong class="antialiased">Google Pass</strong>
+											</a>
 										</div>
 									<hr />
 									<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">

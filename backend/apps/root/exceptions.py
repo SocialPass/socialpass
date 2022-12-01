@@ -35,3 +35,7 @@ class ForeignKeyConstraintError(BaseValidationError):
 
 class TxAssetOwnershipProcessingError(BaseValidationError):
     pass
+
+
+class EventNotRegisteredError(BaseValidationError):
+    pass

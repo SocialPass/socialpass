@@ -22,4 +22,19 @@ urlpatterns = [
         views.GetTickets.as_view(),
         name="get_tickets",
     ),
+    path(
+        "download_pdf/<uuid:ticket_public_id>",
+        views.DownloadPDFView.as_view(),
+        name="ticket_pdf",
+    ),
+    path(
+        "download_apple_pass/<uuid:ticket_public_id>",
+        views.DownloadApplePassView.as_view(),
+        name="ticket_apple",
+    ),
+    path(
+        "google_pass/<uuid:ticket_public_id>",
+        views.GooglePassView.as_view(),
+        name="ticket_google",
+    ),
 ]

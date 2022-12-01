@@ -194,13 +194,6 @@ class TestAppleTicket(TestCaseWrapper):
         with self.assertRaises(Exception):
             self.ticket_pass.generate_pass_from_ticket(self.ticket)
 
-        # raise exception if event has no lat or long cordinates
-        self.event.city = "Florianópolis"
-        self.event.lat = None
-        self.event.long = None
-        with self.assertRaises(Exception):
-            self.ticket_pass.generate_pass_from_ticket(self.ticket)
-
     def test_get_bytes(self):
         """
         test `get_bytes` method

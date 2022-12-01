@@ -2,12 +2,15 @@ import base64
 from io import BytesIO
 
 import qrcode
-from django.http import Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.views import View
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
+from apps.root.exceptions import EventNotRegisteredError
 from apps.root.models import CheckoutSession, Event, Ticket
+from apps.root.utilities.ticketing import GoogleTicket
 
 
 class EventDiscoveryIndex(TemplateView):
@@ -88,3 +91,40 @@ class GetTickets(DetailView):
                 }
             )
         return context
+
+
+class DownloadPDFView(View):
+    def get(request, *args, **kwargs):
+        try:
+            ticket = Ticket.objects.get(public_id=kwargs["ticket_public_id"])
+            response = HttpResponse(
+                ticket.get_pdf_ticket(), content_type="application/pdf"
+            )
+            response["Content-Disposition"] = 'attachment; filename="ticket.pdf"'
+            return response
+        except Exception:
+            raise Http404()
+
+
+class DownloadApplePassView(View):
+    def get(request, *args, **kwargs):
+        try:
+            ticket = Ticket.objects.get(public_id=kwargs["ticket_public_id"])
+            response = HttpResponse(
+                ticket.get_apple_ticket(), content_type="application/vnd.apple.pkpass"
+            )
+            response["Content-Disposition"] = 'attachment; filename="ticket.pkpass"'
+            return response
+        except Exception:
+            raise Http404()
+
+
+class GooglePassView(View):
+    def get(request, *args, **kwargs):
+        try:
+            ticket = Ticket.objects.get(public_id=kwargs["ticket_public_id"])
+            url = ticket.get_google_ticket()
+            response = HttpResponseRedirect(url)
+            return response
+        except Exception:
+            raise Http404()

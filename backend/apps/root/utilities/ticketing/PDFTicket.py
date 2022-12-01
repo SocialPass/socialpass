@@ -112,9 +112,6 @@ class PDFTicket(TicketGenerationBase):
             "event_timezone": event.timezone,
         }
 
-        if event.cover_image:
-            context["event_logo_url"] = event.cover_image.url
-
         return self.generate_pdf(context, barcode_content=str(ticket.embed_code))
 
     def get_bytes(self):

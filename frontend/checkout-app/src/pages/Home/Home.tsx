@@ -10,6 +10,8 @@ import TicketSelector from '@/components/TicketSelector'
 import './index.css'
 import CountdownTimer from '@/components/CountdownTimer'
 
+import DOMPurify from 'dompurify'
+
 export default function Home() {
   const navigate = useNavigate()
   const { event }: any = useEvent()
@@ -137,6 +139,12 @@ export default function Home() {
 
   const isNewCheckout = () => !checkout?.public_id
 
+
+  const sanitizedEventDescription = () => ({
+    __html: DOMPurify.sanitize(event?.description)
+  })
+
+
   useEffect(() => {
     if (!checkout?.public_id) {
       if (getFiatTicketTiers().length) {
@@ -180,7 +188,9 @@ export default function Home() {
         <div className='col-md-7'>
           <div className='content mt-20 mb-0'>
             <h1 className='text-strong fw-700 display-6 m-0 text-break'>{event?.title}</h1>
-            <p className='mt-20 fsr-6 text-break'>{event?.description}</p>
+            <div className='mt-20 fsr-6 text-break'>
+              <p className='m-0' dangerouslySetInnerHTML={sanitizedEventDescription()} />
+            </div>
           </div>
         </div>
 

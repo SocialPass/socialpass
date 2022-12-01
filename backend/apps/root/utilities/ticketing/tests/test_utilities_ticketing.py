@@ -460,12 +460,6 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
         with self.assertRaises(Exception):
             self.ticket.get_apple_ticket()
 
-        # raise exception if event has no lat or long cordinates
-        self.event.city = "Florianópolis"
-        self.event.lat = None
-        with self.assertRaises(Exception):
-            self.ticket.get_apple_ticket()
-
     def test_get_pdf_ticket(self):
         """
         test generate pass pdf bytes
@@ -514,7 +508,7 @@ class TestTicketUtilitiesMethods(TestCaseWrapper):
             self.ticket.get_google_ticket()
 
         # test if generated a url, if not will raise an exception
-        self.ticket.google_class_id = "random_class"
+        self.ticket.event.google_class_id = "random_class"
         save_url = self.ticket.get_google_ticket()
         validator = URLValidator()
         self.assertIsNone(validator(save_url))

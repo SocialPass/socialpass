@@ -457,7 +457,6 @@ class Event(DBModel):
 
         # join fields
         localized_address_display = ", ".join(address_fields)
-        print(f"oia o localized: {localized_address_display} ")
         return localized_address_display
 
     @property

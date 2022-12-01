@@ -1143,7 +1143,11 @@ class TxAssetOwnership(DBModel):
         )
 
     def _call_moralis_api(self, tier_asset_ownership):
-        # Format & make API call for each CheckoutItem and its respective tier
+        """
+        Format & make API call for each CheckoutItem and its respective tier
+        raise HTTPError if status code error
+        """
+
         chain = hex(tier_asset_ownership.network)
         token_address = tier_asset_ownership.token_address
         api_url = (
@@ -1165,8 +1169,10 @@ class TxAssetOwnership(DBModel):
         return response
 
     def _check_balance(self, expected, actual):
-        # Ensure wallet has sufficient balance for tier (balance_required * quantity)
-        # Raise exception on insufficient balance
+        """
+        Ensure wallet has sufficient balance for tier (balance_required * quantity)
+        Raise exception on insufficient balance
+        """
 
         if actual < expected:
             raise TxAssetOwnershipProcessingError(
@@ -1180,8 +1186,11 @@ class TxAssetOwnership(DBModel):
             )
 
     def _get_filtered_by_issued_ids(self, tier_asset_ownership, expected, result):
-        # Filter against already-issued token ID's (tier.issued_token_id's)
-        # Raise exception on insufficient unique token ID's
+        """
+        Filter against already-issued token ID's (tier.issued_token_id's)
+        Raise exception on insufficient unique token ID's
+        """
+
         filtered_by_issued_ids = [
             data
             for data in result
@@ -1203,6 +1212,10 @@ class TxAssetOwnership(DBModel):
         return filtered_by_issued_ids
 
     def _get_token_ids(self, address_data):
+        """
+        return list of tokens ID's from a list of dictionaries
+        """
+
         token_ids = []
         for data in address_data:
             token_id = data.get("token_id")
@@ -1274,7 +1287,7 @@ class TxAssetOwnership(DBModel):
                 )
 
                 # filter address token ids
-                tier_token_ids = self._get_token_ids(api_response["result"])
+                tier_token_ids = self._get_token_ids(address_data=api_response["result"])
                 tiers_token_ids = tiers_token_ids.union(tier_token_ids)
 
                 # check if wallet has sufficient balance

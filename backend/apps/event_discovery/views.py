@@ -8,9 +8,7 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from apps.root.exceptions import EventNotRegisteredError
 from apps.root.models import CheckoutSession, Event, Ticket
-from apps.root.utilities.ticketing import GoogleTicket
 
 
 class EventDiscoveryIndex(TemplateView):

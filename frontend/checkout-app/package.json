@@ -22,6 +22,7 @@
     "axios": "^0.27.2",
     "babel-plugin-transform-import-meta": "^2.2.0",
     "buffer": "^6.0.3",
+    "dompurify": "^2.4.1",
     "ethers": "^5.7.0",
     "events": "^3.3.0",
     "process": "^0.11.10",

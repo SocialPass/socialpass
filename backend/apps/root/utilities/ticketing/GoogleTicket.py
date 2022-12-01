@@ -81,7 +81,6 @@ class GoogleTicket(TicketGenerationBase):
         if not address:
             raise Exception("Address can not be empty")
 
-        print(event_obj.localized_address_display)
         # Create the payload
         payload = {
             "eventName": {
@@ -201,7 +200,7 @@ class GoogleTicket(TicketGenerationBase):
 
     def get_existing_pass_from_ticket(self, ticket):
         """
-        TODO: doc
+        Get Google Wallet ticket link if there is an exiting ticket resource
         """
         object_id = f"{self.get_issuer_id()}.{str(ticket.public_id)}"
 

@@ -92,7 +92,16 @@ class GetTickets(DetailView):
 
 
 class DownloadPDFView(View):
+    """
+    DownloadPDFView View
+    Routes:
+    - @get: download a PDF ticket
+    """
+
     def get(request, *args, **kwargs):
+        """
+        download a PDF ticket
+        """
         try:
             ticket = Ticket.objects.get(public_id=kwargs["ticket_public_id"])
             response = HttpResponse(
@@ -105,7 +114,16 @@ class DownloadPDFView(View):
 
 
 class DownloadApplePassView(View):
+    """
+    DownloadApplePassView View
+    Routes:
+    - @get: download a Apple Wallet .pkpass
+    """
+
     def get(request, *args, **kwargs):
+        """
+        download a Apple Wallet ticket (.pkpass)
+        """
         try:
             ticket = Ticket.objects.get(public_id=kwargs["ticket_public_id"])
             response = HttpResponse(
@@ -118,7 +136,16 @@ class DownloadApplePassView(View):
 
 
 class GooglePassView(View):
+    """
+    GooglePassView View
+    Routes:
+    - @get: redict to Google Wallet add ticket page
+    """
+
     def get(request, *args, **kwargs):
+        """
+        redirect a user for the Google Wallet Pass page
+        """
         try:
             ticket = Ticket.objects.get(public_id=kwargs["ticket_public_id"])
             url = ticket.get_google_ticket()

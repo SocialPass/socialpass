@@ -611,8 +611,10 @@ class Ticket(DBModel):
         if resp.get("error"):
             match resp["error"]["errors"][0]["reason"]:
                 case "existingResource":
+                    # case ticket already created
                     _pass.get_existing_pass_from_ticket(self)
                 case "classNotFound":
+                    # case event class not created
                     _pass.insert_update_ticket_class(self.event)
                     _pass.generate_pass_from_ticket(self)
 

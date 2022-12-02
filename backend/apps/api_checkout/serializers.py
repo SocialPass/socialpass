@@ -99,7 +99,7 @@ class EventReadSerializer(BaseModelSerializer):
     def get_description(self, obj):
         try:
             description_html = json.loads(obj.description)["html"]
-        except Exception as e:
+        except Exception:
             description_html = obj.description
         return description_html
 

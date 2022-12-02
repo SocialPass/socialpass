@@ -97,7 +97,11 @@ class EventReadSerializer(BaseModelSerializer):
     team = TeamReadSerializer()
 
     def get_description(self, obj):
-        return json.loads(obj.description)["html"]
+        try:
+            description_html = json.loads(obj.description)["html"]
+        except Exception as e:
+            description_html = obj.description
+        return description_html
 
 
 class TierAssetOwnershipReadSerializer(BaseModelSerializer):

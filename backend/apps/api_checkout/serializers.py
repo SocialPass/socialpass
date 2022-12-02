@@ -1,4 +1,5 @@
 import copy
+import json
 
 from django.templatetags.static import static
 from rest_framework import serializers
@@ -91,8 +92,12 @@ class EventReadSerializer(BaseModelSerializer):
             "cover_image",
         ]
 
+    description = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
     team = TeamReadSerializer()
+
+    def get_description(self, obj):
+        return json.loads(obj.description)["html"]
 
 
 class TierAssetOwnershipReadSerializer(BaseModelSerializer):

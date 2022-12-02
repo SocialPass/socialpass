@@ -100,6 +100,12 @@
 	}
 </style>
 
+{% if request.resolver_match.url_name == 'event_create' or request.resolver_match.url_name == 'event_update' %}
+	{{ form.media }}
+	<!-- Quill CSS overrides -->
+	<link href="{% static 'quill-text-editor/quill.snow.css' %}" rel="stylesheet">
+{% endif %}
+
 {% endblock extra_head %}
 
 {% block body %}

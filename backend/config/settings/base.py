@@ -94,6 +94,7 @@ THIRD_PARTY_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "django_fsm_log",
+    "django_quill",
     "rest_framework",
     "rest_framework.authtoken",
     "storages",
@@ -395,3 +396,21 @@ APPLE_WALLET_WWDR_CERTIFICATE = env("APPLE_WALLET_WWDR_CERTIFICATE")
 APPLE_WALLET_PASSWORD = env("APPLE_WALLET_PASSWORD")
 APPLE_WALLET_PASS_TYPE_ID = env("APPLE_WALLET_PASS_TYPE_ID")
 APPLE_WALLET_TEAM_ID = env("APPLE_WALLET_TEAM_ID")
+
+# QUILL RICH TEXT EDITOR
+# ------------------------------------------------------------------------------
+QUILL_CONFIGS = {
+    "default": {
+        "theme": "snow",
+        "modules": {
+            "syntax": True,
+            "toolbar": [
+                [
+                    {"align": []},
+                    "bold", "italic", "underline", "strike",
+                ],
+                ["link"],
+            ]
+        }
+    }
+}

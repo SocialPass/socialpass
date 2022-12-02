@@ -3,11 +3,11 @@ from datetime import date
 import pytz
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
 from apps.root.forms import CleanEmailMixin
 from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
-
 
 class CustomInviteForm(forms.Form, CleanEmailMixin):
     """
@@ -58,6 +58,7 @@ class EventForm(forms.ModelForm):
     Event form
     """
 
+    description = QuillFormField()
     timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
     country = forms.ChoiceField(choices=get_country_choices())
 
@@ -82,9 +83,6 @@ class EventForm(forms.ModelForm):
             "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
             "organizer": forms.TextInput(
                 attrs={"placeholder": "Name of Brand or Community organizing the event"}
-            ),
-            "description": forms.Textarea(
-                attrs={"placeholder": "A short description of your event", "rows": 3}
             ),
             "start_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",

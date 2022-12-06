@@ -77,7 +77,7 @@ export default function Home() {
         setIsCheckoutProcessing(false)
         navigate('validation')
       })
-      .catch((err) => {
+      .catch(() => {
         setCheckout({ ...checkout, tx_status: 'FAILED' })
         setIsCheckoutProcessing(false)
       })

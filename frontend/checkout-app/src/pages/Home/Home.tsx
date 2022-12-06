@@ -20,8 +20,8 @@ export default function Home() {
 
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
 
-  // const [name, setName] = useState<string>([])
-  // const [email, setEmail] = useState<string>([])
+  const [name, setName] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)
@@ -127,10 +127,10 @@ export default function Home() {
   const validateEmail = () => {
     // Checks for '@', whitespaces and TLD existence
     const regex = /\S+@\S+\.\S+/
-    return regex.test(checkout?.email)
+    return regex.test(email)
   }
 
-  const validateName = () => checkout?.name?.length > 0
+  const validateName = () => name.length > 0
 
   const eventHasTickets = () => ticketTiers.length
 
@@ -149,6 +149,14 @@ export default function Home() {
 
 
   useEffect(() => {
+    setCheckout({ ...checkout, name: name })
+  }, [name])
+
+  useEffect(() => {
+    setCheckout({ ...checkout, email: email })
+  }, [email])
+
+  useEffect(() => {
     if (!checkout?.public_id) {
       if (getFiatTicketTiers().length) {
         setCheckout({ ...checkout, tx_type: 'FIAT' })
@@ -163,6 +171,7 @@ export default function Home() {
   useEffect(() => {
     getTicketTiers(event?.public_id)
     setCheckout({ ...checkout, event: event?.public_id })
+    console.log(checkout?.name)
   }, [event])
 
   const isSomeTiersAvailable = () =>
@@ -382,9 +391,8 @@ export default function Home() {
                     name='name'
                     className='form-control mb-10'
                     placeholder='Name'
-                    defaultValue=''
-                    value={checkout?.name}
-                    onChange={(e) => setCheckout({ ...checkout, name: e.target.value })}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   >
                   </input>
                   <input
@@ -392,9 +400,8 @@ export default function Home() {
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
-                    defaultValue=''
-                    value={checkout?.email}
-                    onChange={(e) => setCheckout({ ...checkout, email: e.target.value })}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   >
                   </input>
                   <button

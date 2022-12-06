@@ -20,8 +20,8 @@ export default function Home() {
 
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
 
-  const [name, setName] = useState<string>('')
-  const [email, setEmail] = useState<string>('')
+  const [name, setName] = useState<string>(checkout?.name || '')
+  const [email, setEmail] = useState<string>(checkout?.email || '')
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)

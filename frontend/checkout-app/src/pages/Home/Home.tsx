@@ -20,6 +20,9 @@ export default function Home() {
 
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
 
+  // const [name, setName] = useState<string>([])
+  // const [email, setEmail] = useState<string>([])
+
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)
       .then((res) => {
@@ -379,17 +382,21 @@ export default function Home() {
                     name='name'
                     className='form-control mb-10'
                     placeholder='Name'
+                    defaultValue=''
                     value={checkout?.name}
                     onChange={(e) => setCheckout({ ...checkout, name: e.target.value })}
-                  ></input>
+                  >
+                  </input>
                   <input
                     type='text'
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
+                    defaultValue=''
                     value={checkout?.email}
                     onChange={(e) => setCheckout({ ...checkout, email: e.target.value })}
-                  ></input>
+                  >
+                  </input>
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
                     // Get Tickets button is only enabled by having tickets selected and a valid e-mail input

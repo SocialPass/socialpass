@@ -149,12 +149,9 @@ export default function Home() {
 
 
   useEffect(() => {
-    setCheckout({ ...checkout, name: name })
-  }, [name])
+    setCheckout({ ...checkout, name: name, email: email })
+  }, [name, email])
 
-  useEffect(() => {
-    setCheckout({ ...checkout, email: email })
-  }, [email])
 
   useEffect(() => {
     if (!checkout?.public_id) {

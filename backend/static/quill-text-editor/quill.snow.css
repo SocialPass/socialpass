@@ -4,7 +4,7 @@
 
 .ql-container {
 	font-family: var(--base-font-family);
-	font-size: 1.4rem;
+	font-size: var(--base-font-size);
 	background-color: var(--input-bg-color);
 }
 .ql-editor ul[data-checked=true] > li::before,

@@ -203,7 +203,7 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
-          <div className='content mt-0 mt-md-30 mb-0'>
+          <div className='content mt-10 mt-md-30 mb-0'>
             <div>
               {
                 (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />

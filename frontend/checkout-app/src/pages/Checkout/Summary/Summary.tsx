@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +12,9 @@ export default function Summary(props) {
 
   const { event }: any = useEvent()
   const { checkout, checkoutItems, getTxType }: any = useCheckout()
+
+  const [name, setName] = useState<string>(checkout?.name)
+  const [email, setEmail] = useState<string>(checkout?.email)
 
   const handleEditClick = () => {
     navigate(`/${event.public_id}`)
@@ -31,6 +35,11 @@ export default function Summary(props) {
 
     return 'N/A'
   }
+
+  useEffect(() => {
+    setName(checkout?.name)
+    setEmail(checkout?.email)
+  }, [])
 
   return (
     <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
@@ -65,7 +74,7 @@ export default function Summary(props) {
           name='name'
           className='form-control mb-10'
           placeholder='Name'
-          value={checkout?.name}
+          value={name}
           readOnly
         ></input>
         <input
@@ -73,7 +82,7 @@ export default function Summary(props) {
           name='email'
           className='form-control'
           placeholder='Email Address'
-          value={checkout?.email}
+          value={email}
           readOnly
         />
         <button

@@ -95,7 +95,7 @@ export default function Summary(props) {
           }}
           disabled={isButtonDisable}
         >
-          {isButtonDisable &&
+          {isCheckoutProcessing &&
             <span className="spinner-border spinner-border-sm me-5" role="status" aria-hidden="true"></span>
           }
           <strong className='antialiased'>Continue</strong>

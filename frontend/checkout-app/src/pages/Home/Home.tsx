@@ -20,8 +20,8 @@ export default function Home() {
 
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
 
-  // const [name, setName] = useState<string>([])
-  // const [email, setEmail] = useState<string>([])
+  const [name, setName] = useState<string>(checkout?.name || '')
+  const [email, setEmail] = useState<string>(checkout?.email || '')
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)
@@ -127,10 +127,10 @@ export default function Home() {
   const validateEmail = () => {
     // Checks for '@', whitespaces and TLD existence
     const regex = /\S+@\S+\.\S+/
-    return regex.test(checkout?.email)
+    return regex.test(email)
   }
 
-  const validateName = () => checkout?.name?.length > 0
+  const validateName = () => name.length > 0
 
   const eventHasTickets = () => ticketTiers.length
 
@@ -146,6 +146,11 @@ export default function Home() {
   const sanitizedEventDescription = () => ({
     __html: DOMPurify.sanitize(event?.description)
   })
+
+
+  useEffect(() => {
+    setCheckout({ ...checkout, name: name, email: email })
+  }, [name, email])
 
 
   useEffect(() => {
@@ -198,7 +203,7 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
-          <div className='content mt-0 mt-md-30 mb-0'>
+          <div className='content mt-10 mt-md-30 mb-0'>
             <div>
               {
                 (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />
@@ -269,7 +274,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getFiatTicketTiers().length || !isNewCheckout()}
+                  disabled={!getFiatTicketTiers().length}
                   checked={checkout?.tx_type === 'FIAT'}
                   readOnly
                 />
@@ -297,7 +302,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getBlockchainTicketTiers().length || !isNewCheckout()}
+                  disabled={!getBlockchainTicketTiers().length}
                   checked={checkout?.tx_type === 'BLOCKCHAIN'}
                   readOnly
                 />
@@ -325,7 +330,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getAssetOwnershipTicketTiers().length || !isNewCheckout()}
+                  disabled={!getAssetOwnershipTicketTiers().length}
                   checked={checkout?.tx_type === 'ASSET_OWNERSHIP'}
                   readOnly
                 />
@@ -382,9 +387,8 @@ export default function Home() {
                     name='name'
                     className='form-control mb-10'
                     placeholder='Name'
-                    defaultValue=''
-                    value={checkout?.name}
-                    onChange={(e) => setCheckout({ ...checkout, name: e.target.value })}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   >
                   </input>
                   <input
@@ -392,9 +396,8 @@ export default function Home() {
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
-                    defaultValue=''
-                    value={checkout?.email}
-                    onChange={(e) => setCheckout({ ...checkout, email: e.target.value })}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   >
                   </input>
                   <button

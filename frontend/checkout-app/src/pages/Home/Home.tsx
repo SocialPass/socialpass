@@ -274,7 +274,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getFiatTicketTiers().length || !isNewCheckout()}
+                  disabled={!getFiatTicketTiers().length}
                   checked={checkout?.tx_type === 'FIAT'}
                   readOnly
                 />
@@ -302,7 +302,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getBlockchainTicketTiers().length || !isNewCheckout()}
+                  disabled={!getBlockchainTicketTiers().length}
                   checked={checkout?.tx_type === 'BLOCKCHAIN'}
                   readOnly
                 />
@@ -330,7 +330,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getAssetOwnershipTicketTiers().length || !isNewCheckout()}
+                  disabled={!getAssetOwnershipTicketTiers().length}
                   checked={checkout?.tx_type === 'ASSET_OWNERSHIP'}
                   readOnly
                 />

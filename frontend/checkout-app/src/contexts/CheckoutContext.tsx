@@ -73,7 +73,6 @@ export const CheckoutProvider = ({ children }: any) => {
     new Promise((resolve, reject) => {
       setIsLoading(true)
       setError(null)
-      setCheckout(null)
 
       const data = {
         ...checkout,

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import { useNavigate } from 'react-router-dom'
@@ -6,11 +7,15 @@ import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
 
 export default function Summary(props) {
-  const { onContinueClick, enableContinue } = props
+  const { onContinueClick, enableContinue, isCheckoutProcessing } = props
+
   const navigate = useNavigate()
 
   const { event }: any = useEvent()
   const { checkout, checkoutItems, getTxType }: any = useCheckout()
+
+  const [name, setName] = useState<string>(checkout?.name)
+  const [email, setEmail] = useState<string>(checkout?.email)
 
   const handleEditClick = () => {
     navigate(`/${event.public_id}`)
@@ -31,6 +36,13 @@ export default function Summary(props) {
 
     return 'N/A'
   }
+
+  const isButtonDisable = (!isCheckoutProcessing && enableContinue) ? false : true 
+
+  useEffect(() => {
+    setName(checkout?.name)
+    setEmail(checkout?.email)
+  }, [])
 
   return (
     <div className='px-content pt-md-20 position-md-sticky top-0 start-0'>
@@ -65,7 +77,7 @@ export default function Summary(props) {
           name='name'
           className='form-control mb-10'
           placeholder='Name'
-          value={checkout?.name}
+          value={name}
           readOnly
         ></input>
         <input
@@ -73,7 +85,7 @@ export default function Summary(props) {
           name='email'
           className='form-control'
           placeholder='Email Address'
-          value={checkout?.email}
+          value={email}
           readOnly
         />
         <button
@@ -81,8 +93,11 @@ export default function Summary(props) {
           onClick={(e) => {
             onContinueClick(e)
           }}
-          disabled={!enableContinue}
+          disabled={isButtonDisable}
         >
+          {isCheckoutProcessing &&
+            <span className="spinner-border spinner-border-sm me-5" role="status" aria-hidden="true"></span>
+          }
           <strong className='antialiased'>Continue</strong>
         </button>
       </form>
@@ -111,4 +126,5 @@ export default function Summary(props) {
 Summary.propTypes = {
   onContinueClick: PropTypes.func.isRequired,
   enableContinue: PropTypes.bool.isRequired,
+  isCheckoutProcessing: PropTypes.bool.isRequired
 }

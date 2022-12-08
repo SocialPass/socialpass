@@ -20,6 +20,9 @@ export default function Home() {
 
   const [ticketTiers, setTicketTiers] = useState<any[]>([])
 
+  const [name, setName] = useState<string>(checkout?.name || '')
+  const [email, setEmail] = useState<string>(checkout?.email || '')
+
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)
       .then((res) => {
@@ -124,10 +127,10 @@ export default function Home() {
   const validateEmail = () => {
     // Checks for '@', whitespaces and TLD existence
     const regex = /\S+@\S+\.\S+/
-    return regex.test(checkout?.email)
+    return regex.test(email)
   }
 
-  const validateName = () => checkout?.name?.length > 0
+  const validateName = () => name.length > 0
 
   const eventHasTickets = () => ticketTiers.length
 
@@ -146,6 +149,11 @@ export default function Home() {
 
 
   useEffect(() => {
+    setCheckout({ ...checkout, name: name, email: email })
+  }, [name, email, checkout?.public_id])
+
+
+  useEffect(() => {
     if (!checkout?.public_id) {
       if (getFiatTicketTiers().length) {
         setCheckout({ ...checkout, tx_type: 'FIAT' })
@@ -155,12 +163,16 @@ export default function Home() {
         setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
       }
     }
-  }, [ticketTiers])
+  }, [ticketTiers, checkout?.public_id])
 
   useEffect(() => {
     getTicketTiers(event?.public_id)
     setCheckout({ ...checkout, event: event?.public_id })
-  }, [event])
+    if (isNewCheckout()) {
+      setName('')
+      setEmail('')
+    }
+  }, [event, checkout?.public_id])
 
   const isSomeTiersAvailable = () =>
     ticketTiers?.some((tier) => tier.capacity - tier.quantity_sold > 0)
@@ -195,7 +207,7 @@ export default function Home() {
         </div>
 
         <div className='col-md-5'>
-          <div className='content mt-0 mt-md-30 mb-0'>
+          <div className='content mt-10 mt-md-30 mb-0'>
             <div>
               {
                 (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />
@@ -266,7 +278,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getFiatTicketTiers().length || !isNewCheckout()}
+                  disabled={!getFiatTicketTiers().length}
                   checked={checkout?.tx_type === 'FIAT'}
                   readOnly
                 />
@@ -294,7 +306,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getBlockchainTicketTiers().length || !isNewCheckout()}
+                  disabled={!getBlockchainTicketTiers().length}
                   checked={checkout?.tx_type === 'BLOCKCHAIN'}
                   readOnly
                 />
@@ -322,7 +334,7 @@ export default function Home() {
                 <input
                   type='radio'
                   className='ticket-tier-input'
-                  disabled={!getAssetOwnershipTicketTiers().length || !isNewCheckout()}
+                  disabled={!getAssetOwnershipTicketTiers().length}
                   checked={checkout?.tx_type === 'ASSET_OWNERSHIP'}
                   readOnly
                 />
@@ -379,17 +391,19 @@ export default function Home() {
                     name='name'
                     className='form-control mb-10'
                     placeholder='Name'
-                    value={checkout?.name}
-                    onChange={(e) => setCheckout({ ...checkout, name: e.target.value })}
-                  ></input>
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  >
+                  </input>
                   <input
                     type='text'
                     name='email'
                     className='form-control'
                     placeholder='Email Address'
-                    value={checkout?.email}
-                    onChange={(e) => setCheckout({ ...checkout, email: e.target.value })}
-                  ></input>
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  >
+                  </input>
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
                     // Get Tickets button is only enabled by having tickets selected and a valid e-mail input

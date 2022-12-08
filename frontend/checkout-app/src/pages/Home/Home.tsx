@@ -150,7 +150,7 @@ export default function Home() {
 
   useEffect(() => {
     setCheckout({ ...checkout, name: name, email: email })
-  }, [name, email])
+  }, [name, email, checkout?.public_id])
 
 
   useEffect(() => {
@@ -163,12 +163,16 @@ export default function Home() {
         setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
       }
     }
-  }, [ticketTiers])
+  }, [ticketTiers, checkout?.public_id])
 
   useEffect(() => {
     getTicketTiers(event?.public_id)
     setCheckout({ ...checkout, event: event?.public_id })
-  }, [event])
+    if (isNewCheckout()) {
+      setName('')
+      setEmail('')
+    }
+  }, [event, checkout?.public_id])
 
   const isSomeTiersAvailable = () =>
     ticketTiers?.some((tier) => tier.capacity - tier.quantity_sold > 0)

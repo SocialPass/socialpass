@@ -17,7 +17,7 @@ export default function Success() {
 
   useEffect(() => {
     if (seconds <= 0) {
-      navigate(`/${checkout?.get_tickets_link}`)
+      document.getElementById('get-tickets-link')?.click()
     }
   }, [seconds])
 
@@ -89,7 +89,7 @@ export default function Success() {
             <p className='mb-5'>You can also use the following link to get your tickets:</p>
             <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top py-10 px-15 text-truncate border border-dotted'>
               <a
-                target='_blank'
+                id='get-tickets-link'
                 rel='noreferrer'
                 href={checkout?.get_tickets_link}
                 className='d-block text-center fw-bold antialiased'

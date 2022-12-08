@@ -90,7 +90,6 @@ export default function Success() {
             <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top py-10 px-15 text-truncate border border-dotted'>
               <a
                 id='get-tickets-link'
-                rel='noreferrer'
                 href={checkout?.get_tickets_link}
                 className='d-block text-center fw-bold antialiased'
               >

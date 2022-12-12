@@ -1211,16 +1211,6 @@ class TxAssetOwnership(DBModel):
             )
         return filtered_by_issued_ids
 
-    def _get_token_ids(self, address_data):
-        """
-        return list of tokens ID's from a list of dictionaries
-        """
-        return [
-            int(data.get("token_id"))
-            for data in address_data["result"]
-            if data.get("token_id")
-        ]
-
     def _process_wallet_address(self, checkout_session=None):
         """
         Recover a wallet address from the signed_message vs unsigned_message
@@ -1293,7 +1283,11 @@ class TxAssetOwnership(DBModel):
             )
 
             # 3c. Prep token ID list for bulk update
-            token_ids = self._get_token_ids(address_data=filtered_by_issued_ids)
+            token_ids = [
+                int(data.get("token_id"))
+                for data in filtered_by_issued_ids["result"]
+                if data.get("token_id")
+            ]
             ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 
         # 4. Finished.

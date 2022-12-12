@@ -935,7 +935,12 @@ class CheckoutSession(DBModel):
         )
 
     def fulfill(self):
-        """ """
+        """
+        Fullfil an order related to a checkout session
+        - create tickets
+        - send confirmation email
+        - mark as fullfilled
+        """
         self.create_items_tickets()
         self.send_confirmation_email()
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
@@ -1307,15 +1312,17 @@ class TxAssetOwnership(DBModel):
     def process(self, checkout_session=None):
         """
         1. Get/Set checkout_session (avoid duplicate queries)
-        2. Set checkout_session as processing
-        3. Process wallet address / signature
-        4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
-        5. OK
+        2. Check checkout session expiration
+        3. Set checkout_session as processing
+        4. Process wallet address / signature
+        5. Process Asset Ownership (via CheckoutSession.CheckouItem's)
+        6. OK
         """
         # Get/Set checkout_session (avoid duplicate queries)
         if not checkout_session:
             checkout_session = self.checkoutsession
 
+        # Check checkout session expiration
         if checkout_session.is_expired:
             raise CheckoutSessionExpired({"expired": _("The Session has been expired")})
 
@@ -1325,10 +1332,7 @@ class TxAssetOwnership(DBModel):
 
         # try / catch on process methods
         try:
-            # Process wallet address / signature
             self._process_wallet_address(checkout_session=checkout_session)
-
-            # Process asset ownership
             self._process_asset_ownership(checkout_session=checkout_session)
         except Exception as e:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
@@ -1338,9 +1342,6 @@ class TxAssetOwnership(DBModel):
             raise e
 
         # OK
-        # - Mark CheckoutSession as COMPLETED
         checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
-
-        # - Proceed to fulfilling CheckoutSession
         checkout_session.fulfill()

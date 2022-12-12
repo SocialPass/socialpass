@@ -1215,13 +1215,11 @@ class TxAssetOwnership(DBModel):
         """
         return list of tokens ID's from a list of dictionaries
         """
-
-        token_ids = []
-        for data in address_data:
-            token_id = data.get("token_id")
-            if token_id:
-                token_ids.append(int(token_id))
-        return token_ids
+        return [
+            int(data.get("token_id"))
+            for data in address_data["result"]
+            if data.get("token_id")
+        ]
 
     def _process_wallet_address(self, checkout_session=None):
         """
@@ -1263,49 +1261,43 @@ class TxAssetOwnership(DBModel):
         1. Loop over CheckoutItem's
         2. Format & make API call for each CheckoutItem and its respective tier
         3. Verify API response
-            - Ensure wallet has sufficient balance for tier (balance_required * quantity)
-            - Filter for already-issued token ID's (tier.issued_token_id)
-            - Ensure metadata matches
-            - Ensure token ID matches from tier_asset_ownership.token_id (TODO)
-        4. Finished
-            - Bulk update tier_asset_ownership.issued_token_id
-            - Mark checkoutsession as completed
-            - Proceed to checkoutsession.fulfill()
+            a Ensure wallet has sufficient balance for tier (balance_required * quantity)
+            b Filter for already-issued token ID's (tier.issued_token_id)
+            c Prep token ID list for bulk update
+        4. Finished.
+            a. Bulk update tier_asset_ownership.issued_token_id
+            b. Save Token ID's alongside TxAssetOwnershop
         """
+        # Globals
         ticket_tiers_with_ids = {}
         tiers_token_ids = set()
 
-        # Loop over related CheckoutItem's
+        # 1. Loop over CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
-            tier_asset_ownership = item.ticket_tier.tier_asset_ownership
-            expected = tier_asset_ownership.balance_required * item.quantity
 
-            # call moralis api for the item tier_asset_ownership
+            # 2. Format & make API call for each CheckoutItem and its respective tier
+            tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             api_response = self._call_moralis_api(
                 tier_asset_ownership=tier_asset_ownership
             )
 
-            # filter address token ids
-            tier_token_ids = self._get_token_ids(address_data=api_response["result"])
-            tiers_token_ids = tiers_token_ids.union(tier_token_ids)
-
-            # check if wallet has sufficient balance
+            # 3a. Check if wallet has balance
+            expected = tier_asset_ownership.balance_required * item.quantity
             self._check_balance(expected=expected, actual=api_response["total"])
 
-            # get token ids filtered by issued ids
+            # 3b. Filter for already-issued token ID's (tier.issued_token_id)
             filtered_by_issued_ids = self._get_filtered_by_issued_ids(
                 tier_asset_ownership=tier_asset_ownership,
                 expected=expected,
                 result=api_response["result"],
             )
 
-            # TODO: Ensure token ID matches from tier_asset_ownership.token_id
-            # get formatted token ids from metadata
+            # 3c. Prep token ID list for bulk update
             token_ids = self._get_token_ids(address_data=filtered_by_issued_ids)
-            # Update ticket_tiers_with_ids dictionary.
             ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 
-        # - Bulk update tier_asset_ownership.issued_token_id
+        # 4. Finished.
+        # 4a. Bulk update tier_asset_ownership.issued_token_id
         tier_asset_ownership_list = []
         for t in ticket_tiers_with_ids:
             t.issued_token_id += ticket_tiers_with_ids[t]
@@ -1313,6 +1305,8 @@ class TxAssetOwnership(DBModel):
         TierAssetOwnership.objects.bulk_update(
             tier_asset_ownership_list, ["issued_token_id"]
         )
+
+        # 4b. Save Token ID's alongside TxAssetOwnership
         checkout_session.tx_asset_ownership.token_id = list(tiers_token_ids)
         checkout_session.tx_asset_ownership.save()
 

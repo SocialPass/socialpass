@@ -1288,7 +1288,6 @@ class TxAssetOwnership(DBModel):
             )
 
             # 3c. Prep token ID list for bulk update
-            breakpoint()
             token_ids = [
                 int(data.get("token_id"))
                 for data in filtered_by_issued_ids

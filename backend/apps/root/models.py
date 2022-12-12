@@ -1280,36 +1280,30 @@ class TxAssetOwnership(DBModel):
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             expected = tier_asset_ownership.balance_required * item.quantity
 
-            try:
-                # call moralis api for the item tier_asset_ownership
-                api_response = self._call_moralis_api(
-                    tier_asset_ownership=tier_asset_ownership
-                )
+            # call moralis api for the item tier_asset_ownership
+            api_response = self._call_moralis_api(
+                tier_asset_ownership=tier_asset_ownership
+            )
 
-                # filter address token ids
-                tier_token_ids = self._get_token_ids(address_data=api_response["result"])
-                tiers_token_ids = tiers_token_ids.union(tier_token_ids)
+            # filter address token ids
+            tier_token_ids = self._get_token_ids(address_data=api_response["result"])
+            tiers_token_ids = tiers_token_ids.union(tier_token_ids)
 
-                # check if wallet has sufficient balance
-                self._check_balance(expected=expected, actual=api_response["total"])
+            # check if wallet has sufficient balance
+            self._check_balance(expected=expected, actual=api_response["total"])
 
-                # get token ids filtered by issued ids
-                filtered_by_issued_ids = self._get_filtered_by_issued_ids(
-                    tier_asset_ownership=tier_asset_ownership,
-                    expected=expected,
-                    result=api_response["result"],
-                )
+            # get token ids filtered by issued ids
+            filtered_by_issued_ids = self._get_filtered_by_issued_ids(
+                tier_asset_ownership=tier_asset_ownership,
+                expected=expected,
+                result=api_response["result"],
+            )
 
-                # TODO: Ensure token ID matches from tier_asset_ownership.token_id
-                # get formatted token ids from metadata
-                token_ids = self._get_token_ids(address_data=filtered_by_issued_ids)
-                # Update ticket_tiers_with_ids dictionary.
-                ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
-
-            except TxAssetOwnershipProcessingError as e:
-                checkout_session.tx_asset_ownership.token_id = list(tiers_token_ids)
-                checkout_session.tx_asset_ownership.save()
-                raise e
+            # TODO: Ensure token ID matches from tier_asset_ownership.token_id
+            # get formatted token ids from metadata
+            token_ids = self._get_token_ids(address_data=filtered_by_issued_ids)
+            # Update ticket_tiers_with_ids dictionary.
+            ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
 
         # - Bulk update tier_asset_ownership.issued_token_id
         tier_asset_ownership_list = []

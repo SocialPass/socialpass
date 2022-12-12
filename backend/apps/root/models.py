@@ -1288,9 +1288,10 @@ class TxAssetOwnership(DBModel):
             )
 
             # 3c. Prep token ID list for bulk update
+            breakpoint()
             token_ids = [
                 int(data.get("token_id"))
-                for data in filtered_by_issued_ids["result"]
+                for data in filtered_by_issued_ids
                 if data.get("token_id")
             ]
             ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
@@ -1339,6 +1340,7 @@ class TxAssetOwnership(DBModel):
             checkout_session.tx_asset_ownership.error_message = str(e)
             checkout_session.save()
             checkout_session.tx_asset_ownership.save()
+            print(e)
             raise e
 
         # OK

@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.utils import timezone
 
 from .forms import PasscodeForm
 
@@ -113,7 +114,32 @@ class GetTickets(View):
         """
         checkout_session = self.get_object()
         passcode_form = PasscodeForm()
-        
+
+        return render(self.request, "event_discovery/get_tickets_passcode.html", {
+            "checkout_session": checkout_session,
+            "passcode_form": passcode_form,
+        })
+
+    def post(self, *args, **kwargs):
+        """
+        override post view to handle passcode form
+        """
+        checkout_session = self.get_object()
+        passcode_form = PasscodeForm(self.request.POST)
+        if passcode_form.is_valid():
+            actual_passcode = checkout_session.passcode.lower()
+            entered_passcode = passcode_form.cleaned_data["passcode"].lower()
+            if (
+                actual_passcode != entered_passcode or
+                checkout_session.passcode_expiration < timezone.now()
+            ):
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Sorry, but the passcode is invalid! Please try again or \
+                    consider generating another one.",
+                )
+
         return render(self.request, "event_discovery/get_tickets_passcode.html", {
             "checkout_session": checkout_session,
             "passcode_form": passcode_form,

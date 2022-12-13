@@ -891,7 +891,7 @@ class CheckoutSession(DBModel):
                 self.public_id,
             ],
         )
-        tickets_link = domain + url + "?passcode=" + self.passcode
+        tickets_link = domain + url
         return tickets_link
 
     @property
@@ -924,6 +924,7 @@ class CheckoutSession(DBModel):
         ctx = {
             "event": self.event,
             "tickets_link": self.get_tickets_link,
+            "passcode": self.passcode,
         }
         msg_plain = render_to_string("ticket/email/checkout_message.txt", ctx)
         msg_html = render_to_string("ticket/email/checkout.html", ctx)

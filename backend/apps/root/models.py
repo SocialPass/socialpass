@@ -866,6 +866,7 @@ class CheckoutSession(DBModel):
         null=False,
     )
     passcode = models.CharField(max_length=6, default=get_random_passcode)
+    passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
 
     def __str__(self):
         return self.name
@@ -944,6 +945,14 @@ class CheckoutSession(DBModel):
         self.create_items_tickets()
         self.send_confirmation_email()
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        self.save()
+
+    def refresh_passcode(self):
+        """
+        refresh passcode and its expiration
+        """
+        self.passcode = get_random_passcode()
+        self.passcode_expiration = get_expiration_datetime()
         self.save()
 
 

@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView, View
-from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.utils import timezone
 
@@ -59,42 +58,6 @@ class EventDiscoveryDetails(DetailView):
         return qs.filter(id=self.kwargs["event_id"])
 
 
-class GetTickets(DetailView):
-    model = CheckoutSession
-    slug_field = "public_id"
-    slug_url_kwarg = "checkout_session_public_id"
-    context_object_name = "checkout_session"
-    template_name = "event_discovery/get_tickets.html"
-
-    def get_queryset(self):
-        try:
-            return CheckoutSession.objects.select_related("event").filter(
-                public_id=self.kwargs["checkout_session_public_id"],
-                passcode=self.request.GET.get("passcode", "-1"),
-            )
-        except Exception:
-            raise Http404()
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        tickets = Ticket.objects.select_related("ticket_tier").filter(
-            checkout_session=self.get_object()
-        )
-        context["tickets"] = []
-        for ticket in tickets:
-            img = qrcode.make(ticket.embed_code)
-            stream = BytesIO()
-            img.save(stream, format="PNG")
-            context["tickets"].append(
-                {
-                    "object": ticket,
-                    "qrcode": "data:image/png;base64,"
-                    + base64.b64encode(stream.getvalue()).decode("utf-8"),
-                }
-            )
-        return context
-
-
 class GetTickets(View):
     """
     Get tickets for a checkout session
@@ -143,12 +106,32 @@ class GetTickets(View):
                     actual_passcode != entered_passcode or
                     checkout_session.passcode_expiration < timezone.now()
                 ):
+                    # validation was unsuccessful, so we show error message
                     messages.add_message(
                         self.request,
                         messages.ERROR,
                         "Sorry, but the passcode is invalid! Please try again \
                         or consider generating another one.",
                     )
+                else:
+                    # validation was successful, so we send over the tickets
+                    # and change the template
+                    template_name = "get_tickets.html"
+                    tickets = Ticket.objects.select_related("ticket_tier").filter(
+                        checkout_session=checkout_session
+                    )
+                    ctx["tickets"] = []
+                    for ticket in tickets:
+                        img = qrcode.make(ticket.embed_code)
+                        stream = BytesIO()
+                        img.save(stream, format="PNG")
+                        ctx["tickets"].append(
+                            {
+                                "object": ticket,
+                                "qrcode": "data:image/png;base64,"
+                                + base64.b64encode(stream.getvalue()).decode("utf-8"),
+                            }
+                        )
 
         # refresh passcode and send email
         elif "resend_passcode" in self.request.POST:

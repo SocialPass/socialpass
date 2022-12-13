@@ -125,22 +125,40 @@ class GetTickets(View):
         override post view to handle passcode form
         """
         checkout_session = self.get_object()
-        passcode_form = PasscodeForm(self.request.POST)
-        if passcode_form.is_valid():
-            actual_passcode = checkout_session.passcode.lower()
-            entered_passcode = passcode_form.cleaned_data["passcode"].lower()
-            if (
-                actual_passcode != entered_passcode or
-                checkout_session.passcode_expiration < timezone.now()
-            ):
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "Sorry, but the passcode is invalid! Please try again or \
-                    consider generating another one.",
-                )
-
-        return render(self.request, "event_discovery/get_tickets_passcode.html", {
+        passcode_form = PasscodeForm()
+        template_name = "get_tickets_passcode.html"
+        ctx = {
             "checkout_session": checkout_session,
             "passcode_form": passcode_form,
-        })
+        }
+
+        # handle the passcode submission
+        if "passcode_submit" in self.request.POST:
+            passcode_form = PasscodeForm(self.request.POST)
+            ctx["passcode_form"] = passcode_form
+            if passcode_form.is_valid():
+                actual_passcode = checkout_session.passcode.lower()
+                entered_passcode = passcode_form.cleaned_data["passcode"].lower()
+                if (
+                    actual_passcode != entered_passcode or
+                    checkout_session.passcode_expiration < timezone.now()
+                ):
+                    messages.add_message(
+                        self.request,
+                        messages.ERROR,
+                        "Sorry, but the passcode is invalid! Please try again \
+                        or consider generating another one.",
+                    )
+
+        # refresh passcode and send email
+        elif "resend_passcode" in self.request.POST:
+            checkout_session.refresh_passcode()
+            checkout_session.send_confirmation_email()
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                "Passcode sent to your email address. Please note, this \
+                passcode will be valid for only 10 minutes.",
+            )
+
+        return render(self.request, f"event_discovery/{template_name}", ctx)

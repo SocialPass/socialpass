@@ -115,12 +115,22 @@
 									{% include 'components/forms_inputs/input.html' %}
 								{% endwith %}
 								<div class="form-group">
-									<button class="btn btn-primary btn-block">Submit</button>
+									<button class="btn btn-primary btn-block" type="submit" name="passcode_submit">Submit</button>
 								</div>
 							</form>
-							<p class="text-muted">
-								If you haven't received your passcode (or would like to create another one), please <a href="#" class="fw-bold antialiased">click here</a>.
-							</p>
+							<hr />
+							<form method="post">
+								{% csrf_token %}
+								<p class="mb-0 fs-base-n2 text-muted">
+									If you haven't received your passcode (or would like to create another one), click on the following button.
+								</p>
+								<div class="form-group mt-10">
+									<button class="btn btn-block" type="submit" name="resend_passcode">
+										<i class="fa-regular fa-rotate-right me-5"></i>
+										<strong class="antialiased">Resend Passcode</strong>
+									</button>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>

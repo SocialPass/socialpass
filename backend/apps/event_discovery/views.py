@@ -2,10 +2,14 @@ import base64
 from io import BytesIO
 
 import qrcode
+from django.contrib import messages
 from django.http import Http404
-from django.views.generic import TemplateView
+from django.shortcuts import render
+from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+
+from .forms import PasscodeForm
 
 from apps.root.models import CheckoutSession, Event, Ticket
 
@@ -88,3 +92,29 @@ class GetTickets(DetailView):
                 }
             )
         return context
+
+
+class GetTickets(View):
+    """
+    Get tickets for a checkout session
+    """
+
+    def get_object(self):
+        try:
+            return CheckoutSession.objects.select_related("event").get(
+                public_id=self.kwargs["checkout_session_public_id"],
+            )
+        except Exception:
+            raise Http404()
+
+    def get(self, *args, **kwargs):
+        """
+        override get view to handle passcode
+        """
+        checkout_session = self.get_object()
+        passcode_form = PasscodeForm()
+        
+        return render(self.request, "event_discovery/get_tickets_passcode.html", {
+            "checkout_session": checkout_session,
+            "passcode_form": passcode_form,
+        })

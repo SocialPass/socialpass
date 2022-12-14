@@ -37,7 +37,7 @@ export default function Summary(props) {
     return 'N/A'
   }
 
-  const isButtonDisable = (!isCheckoutProcessing && enableContinue) ? false : true 
+  const isButtonDisable = (!isCheckoutProcessing && enableContinue) ? false : true
 
   useEffect(() => {
     setName(checkout?.name)
@@ -110,7 +110,7 @@ export default function Summary(props) {
       <p className='text-muted fs-base-n2'>
         If you need help placing your order, please{' '}
         <a
-          href='https://nfty-ecosystem.typeform.com/socialpass-help'
+          href='https://docs.google.com/forms/d/e/1FAIpQLSdEw1zowks1E9K6xDFiBn00auyWV06zvJUwKzeo7miBzdpA6w/viewform'
           className='fw-bold'
           rel='noreferrer'
           target='_blank'

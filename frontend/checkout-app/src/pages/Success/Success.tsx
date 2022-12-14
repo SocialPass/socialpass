@@ -103,7 +103,7 @@ export default function Success() {
             <p className='text-muted fs-base-n2'>
               In case you don't receive your tickets or the link above does not work, please{' '}
               <a
-                href='https://nfty-ecosystem.typeform.com/socialpass-help'
+                href='https://docs.google.com/forms/d/e/1FAIpQLSdEw1zowks1E9K6xDFiBn00auyWV06zvJUwKzeo7miBzdpA6w/viewform'
                 className='fw-bold antialiased'
                 target='_blank'
                 rel='noreferrer'
@@ -123,7 +123,7 @@ export default function Success() {
               <i className='fa-light fa-file-pdf ms-auto fs-base-p4'></i>
             </button>
 
-            
+
             <button className='btn btn-lg btn-block px-20 py-10 fs-base text-base text-start d-flex align-items-center my-20'>
               <div>
                 <div className='fw-700 antialiased'>Save to Google Wallet</div>

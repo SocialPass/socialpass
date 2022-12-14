@@ -79,7 +79,7 @@ export default function TransactionValidation() {
             <p className='text-muted fs-base-n2'>
               If this loading is taking too long, please{' '}
               <a
-                href='https://nfty-ecosystem.typeform.com/socialpass-help'
+                href='https://docs.google.com/forms/d/e/1FAIpQLSdEw1zowks1E9K6xDFiBn00auyWV06zvJUwKzeo7miBzdpA6w/viewform'
                 className='fw-bold antialiased'
                 target='_blank'
                 rel='noreferrer'

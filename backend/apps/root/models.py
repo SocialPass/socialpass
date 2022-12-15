@@ -2,6 +2,7 @@ import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
 
+import json
 import pytz
 import requests
 from allauth.account.adapter import DefaultAccountAdapter
@@ -369,11 +370,11 @@ class Event(DBModel):
         response = GoogleTicket.GoogleTicket.insert_update_ticket_class(
             event_obj=self, is_insert=is_insert
         )
-        if "error" in response:
-            return False
-        else:
-            self.google_class_id = response["id"]
+        if 200 <= response.status_code <= 299:
+            self.google_class_id = json.loads(response.text)["id"]
             return True
+        else:
+            return False
 
     def transition_draft(self, save=True):
         """

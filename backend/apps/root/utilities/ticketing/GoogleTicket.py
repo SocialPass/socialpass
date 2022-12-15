@@ -126,7 +126,7 @@ class GoogleTicket:
             url = url + "/" + class_id
             response = http_client.patch(url, json=payload)
 
-        return json.loads(response.text)
+        return response
 
     @staticmethod
     def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):

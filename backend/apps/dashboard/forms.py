@@ -103,17 +103,23 @@ class EventForm(forms.ModelForm):
                 },
             ),
             "address_1": forms.TextInput(
-                attrs={"placeholder": "Name of place, street and number, P.O. box, c/o"}
+                attrs={"placeholder": "Name of venue"}
             ),
             "address_2": forms.TextInput(
-                attrs={"placeholder": "Apartment, suite, unit, building, floor, etc."}
+                attrs={
+                    "placeholder": str(
+                        "Street and number, P.O. box, apartment, suite, unit, "
+                        "building, floor, etc."
+                    ),
+                    "required": True
+                }
             ),
             "city": forms.TextInput(attrs={"placeholder": "City name"}),
             "postal_code": forms.TextInput(attrs={"placeholder": "Postal code"}),
         }
         labels = {
-            "address_1": "Address line 1",
-            "address_2": "Address line 2 (Optional)",
+            "address_1": "Name of venue",
+            "address_2": "Address of venue",
         }
 
     def __init__(self, *args, **kwargs):

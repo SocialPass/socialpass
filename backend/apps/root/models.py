@@ -34,6 +34,7 @@ from apps.root.exceptions import (
     ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
     TxAssetOwnershipProcessingError,
+    GoogleEventClassRequestError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 
@@ -357,6 +358,23 @@ class Event(DBModel):
             ),
         )
 
+    def handle_google_event_class(self):
+        """
+        insert/update Google class for event
+        - return Boolean value, True when no error occurs, False otherwise
+        """
+        is_insert = True
+        if self.google_class_id != "":
+            is_insert = False
+        response = GoogleTicket.GoogleTicket.insert_update_ticket_class(
+            event_obj=self, is_insert=is_insert
+        )
+        if "error" in response:
+            return False
+        else:
+            self.google_class_id = response["id"]
+            return True
+
     def transition_draft(self, save=True):
         """
         wrapper around _transition_draft
@@ -400,14 +418,16 @@ class Event(DBModel):
         This function handles state transition from DRAFT to LIVE
         Side effects include
         - Create ticket scanner object
-        - Set google_class_id
+        - Handle Google event class
         """
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
-        # - Set google_class_id
-        self.google_class_id = (
-            f"{settings.GOOGLE_WALLET_ISSUER_ID}.{str(self.public_id)}"
-        )
+        # - Handle Google event class
+        google_event_class_status = self.handle_google_event_class()
+        if not google_event_class_status:
+            raise GoogleEventClassRequestError(
+                "Something went wrong while handling the Google event class."
+            )
 
     @property
     def discovery_url(self):
@@ -460,6 +480,26 @@ class Event(DBModel):
     @property
     def slug(self):
         return slugify(self.title)
+
+    def clean_handle_google_event_class(self, *args, **kwargs):
+        """
+        clean the handling of the Google event class
+        """
+        # we do this only for LIVE events to reduce the number of API requests
+        if self.state == Event.StateStatus.LIVE:
+            google_event_class_status = self.handle_google_event_class()
+            if not google_event_class_status:
+                raise GoogleEventClassRequestError(
+                    "Something went wrong while handling the Google event class."
+                )
+
+    def clean(self, *args, **kwargs):
+        """
+        clean method
+        runs all clean_* methods
+        """
+        self.clean_handle_google_event_class()
+        return super().clean(*args, **kwargs)
 
 
 class Ticket(DBModel):

@@ -437,10 +437,19 @@ class EventGoLiveView(TeamContextMixin, DetailView):
     def post(self, *args, **kwargs):
         event = self.get_object()
         if event.state != Event.StateStatus.LIVE:
-            event.transition_live()
-            messages.add_message(
-                self.request, messages.SUCCESS, "Event has been made live!"
-            )
+            try:
+                event.transition_live()
+            except Exception:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Something went wrong, please try again. Contact us if \
+                    this error persists for longer than a few minutes."
+                )
+            else:
+                messages.add_message(
+                    self.request, messages.SUCCESS, "Event has been made live!"
+                )
         return redirect(
             "dashboard:event_go_live", self.kwargs["team_public_id"], event.pk
         )

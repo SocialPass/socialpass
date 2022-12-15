@@ -5,16 +5,11 @@ from google.auth import crypt, jwt
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from apps.root.utilities.ticketing.TicketGeneration import TicketGenerationBase
 
-
-class GoogleTicket(TicketGenerationBase):
+class GoogleTicket:
     """
     Model for Google Wallet tickets.
     """
-
-    def __init__(self) -> None:
-        self.save_url = None
 
     @staticmethod
     def get_service_account_info():
@@ -61,25 +56,10 @@ class GoogleTicket(TicketGenerationBase):
         Get the payload for inserting/updating a ticket class.
         """
         # Create the address from the fields
-        address = ""
-        if event_obj.address_1:
-            address += event_obj.address_1 + "\n"
-        if event_obj.address_2:
-            address += event_obj.address_2 + "\n"
-
-        address_items_list = []
-        if event_obj.city:
-            address_items_list.append(event_obj.city)
-        if event_obj.region:
-            address_items_list.append(event_obj.region)
-        if event_obj.postal_code:
-            address_items_list.append(event_obj.postal_code)
-        if event_obj.country:
-            address_items_list.append(event_obj.country)
-        address += ", ".join(address_items_list)
-
-        if not address:
-            raise Exception("Address can not be empty")
+        venue_name = event_obj.address_1
+        address = event_obj.localized_address_display.replace(
+            venue_name + ", ", "", 1
+        )
 
         # Create the payload
         payload = {
@@ -94,18 +74,17 @@ class GoogleTicket(TicketGenerationBase):
                 "name": {
                     "defaultValue": {
                         "language": "en-us",
-                        "value": event_obj.localized_address_display,
+                        "value": venue_name,
                     }
                 },
-                "address": {"defaultValue": {"language": "en-us", "value": address}},
+                "address": {
+                    "defaultValue": {
+                        "language": "en-us",
+                        "value": address,
+                    }
+                },
             },
         }
-
-        # Add the latitude and longitude (if available)
-        if event_obj.lat and event_obj.long:
-            payload["locations"] = [
-                {"latitude": float(event_obj.lat), "longitude": float(event_obj.long)}
-            ]
 
         # Add datetime end (if available)
         if event_obj.end_date:

@@ -129,6 +129,56 @@ class GoogleTicket:
         return response
 
     @staticmethod
+    def create_ticket(ticket_obj):
+        """
+        Create a ticket.
+        """
+        event = ticket_obj.event
+        service_account_info = GoogleTicket.get_service_account_info()
+        http_client = GoogleTicket.authenticate(
+            service_account_info=service_account_info,
+            scopes=["https://www.googleapis.com/auth/wallet_object.issuer"],
+        )
+        ticket_id = f"{GoogleTicket.get_issuer_id()}.{str(ticket_obj.public_id)}"
+        class_id = "{}.{}".format(
+            GoogleTicket.get_issuer_id(),
+            str(event.public_id),
+        )
+        url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
+        payload = {
+            "id": ticket_id,
+            "classId": class_id,
+            "state": "ACTIVE",
+            "ticketType": {
+                "defaultValue": {
+                    "language": "en-us",
+                    "value": ticket_obj.ticket_tier.ticket_type,
+                }
+            },
+            "barcode": {"type": "QR_CODE", "value": str(ticket_obj.embed_code)},
+        }
+        response = http_client.post(url, json=payload)
+        return response
+
+    @staticmethod
+    def get_ticket_url(ticket_id):
+        """
+        Get the save URL for a Google ticket.
+        """
+        service_account_info = GoogleTicket.get_service_account_info()
+        claims = {
+            "iss": service_account_info["client_email"],
+            "aud": "google",
+            "origins": ["socialpass.io"],
+            "typ": "savetowallet",
+            "payload": {"eventTicketObjects": [{"id": ticket_id}]},
+        }
+        signer = crypt.RSASigner.from_service_account_info(service_account_info)
+        token = jwt.encode(signer, claims).decode("utf-8")
+        save_url = "https://pay.google.com/gp/v/save/%s" % token
+        return save_url
+
+    @staticmethod
     def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):
         return http_client.post(url, json=payload)
 

@@ -116,6 +116,17 @@
 												<i class="fa-regular fa-download me-5"></i>
 												<strong class="antialiased">Download</strong>
 											</button>
+											{% if ticket.google_ticket.exists %}
+												<a href="{{ ticket.google_ticket.save_url }}" target="_blank" rel="noopener" class="btn text-base">
+													<i class="fa-brands fa-google me-5"></i>
+													Save to Google Wallet
+												</a>
+											{% else %}
+												<button disabled="disabled" class="btn">
+													<i class="fa-brands fa-google me-5"></i>
+													Save to Google Wallet
+												</button>
+											{% endif %}
 										</div>
 									<hr />
 									<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">

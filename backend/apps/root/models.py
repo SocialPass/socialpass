@@ -35,7 +35,7 @@ from apps.root.exceptions import (
     ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
     TxAssetOwnershipProcessingError,
-    GoogleEventClassRequestError,
+    GoogleWalletAPIRequestError,
 )
 from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
 
@@ -363,9 +363,12 @@ class Event(DBModel):
         """
         insert/update Google class for event
         - return Boolean value, True when no error occurs, False otherwise
+        - object is NOT saved afterwards (done manually)
+        - we use Boolean to handle fail case (not exceptions), because this 
+          functionality should be non-blocking during fail case
         """
         is_insert = True
-        if self.google_class_id != "":
+        if not self.google_class_id:
             is_insert = False
         response = GoogleTicket.GoogleTicket.insert_update_ticket_class(
             event_obj=self, is_insert=is_insert
@@ -426,7 +429,7 @@ class Event(DBModel):
         # - Handle Google event class
         google_event_class_status = self.handle_google_event_class()
         if not google_event_class_status:
-            raise GoogleEventClassRequestError(
+            raise GoogleWalletAPIRequestError(
                 "Something went wrong while handling the Google event class."
             )
 
@@ -490,7 +493,7 @@ class Event(DBModel):
         if self.state == Event.StateStatus.LIVE:
             google_event_class_status = self.handle_google_event_class()
             if not google_event_class_status:
-                raise GoogleEventClassRequestError(
+                raise GoogleWalletAPIRequestError(
                     "Something went wrong while handling the Google event class."
                 )
 
@@ -650,6 +653,29 @@ class Ticket(DBModel):
             raise Exception("The event was not registered properly")
 
         return _pass.get_pass_url()
+
+    def get_google_ticket_url(self):
+        """
+        retrieve the save URL for the Google ticket
+        - create a Google ticket if one doesn't exist, set ID, save object
+        - return save URL for success case, False otherwise
+        - we use Boolean to handle fail case (not exceptions), because this 
+          functionality should be non-blocking during fail case
+        """
+        # Google ticket has not been created
+        if not self.google_class_id:
+            response = GoogleTicket.GoogleTicket.create_ticket(ticket_obj=self)
+            if 200 <= response.status_code <= 299:
+                # Created successfully, we set the ID and save
+                self.google_class_id = json.loads(response.text)["id"]
+                self.save()
+            else:
+                # Error while making API request
+                return False
+
+        # Create the save URL and return
+        save_url = GoogleTicket.GoogleTicket.get_ticket_url(self.google_class_id)
+        return save_url
 
 
 class TicketRedemptionKey(DBModel):

@@ -111,8 +111,8 @@ class GetTickets(View):
                     messages.add_message(
                         self.request,
                         messages.ERROR,
-                        "Sorry, but the passcode is invalid! Please try again \
-                        or consider generating another one.",
+                        "Sorry, but the passcode is invalid, or has expired! \
+                        Please try again or generate another one.",
                     )
                 else:
                     # validation was successful, so we send over the tickets

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
-//import { useCountdown } from '@/hooks/useCountdown'
+// import { useCountdown } from '@/hooks/useCountdown'
 
 import Receipt from './Receipt'
 
@@ -13,7 +13,7 @@ export default function Success() {
   const navigate = useNavigate()
   const { event }: any = useEvent()
   const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
-  //const { seconds } = useCountdown(new Date((new Date().getTime()) + 6000))
+  // const { seconds } = useCountdown(new Date((new Date().getTime()) + 6000))
 
   /*
   useEffect(() => {

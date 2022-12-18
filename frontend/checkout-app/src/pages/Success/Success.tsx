@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import useEvent from '@/hooks/useEvent'
 import useCheckout from '@/hooks/useCheckout'
-import { useCountdown } from '@/hooks/useCountdown'
+//import { useCountdown } from '@/hooks/useCountdown'
 
 import Receipt from './Receipt'
 
@@ -13,13 +13,15 @@ export default function Success() {
   const navigate = useNavigate()
   const { event }: any = useEvent()
   const { checkout, getCheckout, getCheckoutItems }: any = useCheckout()
-  const { seconds } = useCountdown(new Date((new Date().getTime()) + 6000))
+  //const { seconds } = useCountdown(new Date((new Date().getTime()) + 6000))
 
+  /*
   useEffect(() => {
     if (seconds <= 0) {
       document.getElementById('get-tickets-link')?.click()
     }
   }, [seconds])
+  */
 
   useEffect(() => {
     if (!checkout) {
@@ -87,7 +89,7 @@ export default function Success() {
             </div>
 
             <p className='mb-5'>You can also use the following link to get your tickets:</p>
-            <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top py-10 px-15 text-truncate border border-dotted'>
+            <div className='bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded py-10 px-15 text-truncate border border-dotted'>
               <a
                 id='get-tickets-link'
                 href={checkout?.get_tickets_link}
@@ -97,9 +99,11 @@ export default function Success() {
                 <i className='fa-regular fa-external-link ms-10'></i>
               </a>
             </div>
+            {/*
             <div className='rounded-bottom border border-dotted border-top-0 py-10 px-15'>
               You will be automatically redirected to the tickets download page in <strong className='text-strong'>{seconds} seconds.</strong>
             </div>
+            */}
             <p className='text-muted fs-base-n2'>
               In case you don't receive your tickets or the link above does not work, please{' '}
               <a

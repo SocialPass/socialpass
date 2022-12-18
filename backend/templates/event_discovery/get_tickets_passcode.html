@@ -91,10 +91,13 @@
 					<div class="col-sm-9 col-md-7 mx-auto">
 						<div class="content">
 							<h1 class="text-strong fw-700 fsr-4 m-0">
-								Enter Passcode
+								Get Tickets
 							</h1>
-							<p class="mt-10">
-								We've sent a passcode over to your email address ({{ checkout_session.email|make_list|first }}*****@*****{{ checkout_session.email|make_list|last }}). Please enter this passcode to download your tickets.
+							<p class="text-muted m-0 fs-base-n2">
+								Enter Passcode
+							</p>
+							<p class="mt-20">
+								We've sent a <strong>passcode</strong> over to your email address ({{ checkout_session.email|make_list|first }}*****@*****{{ checkout_session.email|make_list|last }}). Please enter this passcode to download your tickets.
 							</p>
 							{% if messages %}
 								{% for message in messages %}

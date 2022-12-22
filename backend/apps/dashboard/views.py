@@ -253,6 +253,26 @@ class TeamMemberManageView(TeamContextMixin, FormView):
 
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
+
+        # Check if already member
+        if Membership.objects.filter(
+                user__email=form.cleaned_data.get("email"),
+                team=context["current_team"],
+            ).exists():
+            messages.add_message(
+                self.request, messages.ERROR, "Already a member."
+            )
+            return super().form_invalid(form)
+
+        # Delete existing invites (if they exist)
+        invites = Invite.objects.filter(
+            email=form.cleaned_data.get("email"),
+            team=context["current_team"],
+        )
+        for invite in invites:
+            invite.delete()
+
+        # Create new invite
         instance = form.save(email=form.cleaned_data.get("email"))
         instance.team = context["current_team"]
         instance.inviter = self.request.user

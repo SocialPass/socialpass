@@ -368,7 +368,7 @@ class Event(DBModel):
           functionality should be non-blocking during fail case
         """
         is_insert = True
-        if not self.google_class_id:
+        if self.google_class_id != "":
             is_insert = False
         response = GoogleTicket.GoogleTicket.insert_update_ticket_class(
             event_obj=self, is_insert=is_insert
@@ -663,7 +663,7 @@ class Ticket(DBModel):
           functionality should be non-blocking during fail case
         """
         # Google ticket has not been created
-        if not self.google_class_id:
+        if self.google_class_id == "":
             response = GoogleTicket.GoogleTicket.create_ticket(ticket_obj=self)
             if 200 <= response.status_code <= 299:
                 # Created successfully, we set the ID and save

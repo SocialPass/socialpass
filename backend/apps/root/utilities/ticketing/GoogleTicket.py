@@ -126,6 +126,7 @@ class GoogleTicket:
             url = url + "/" + class_id
             response = http_client.patch(url, json=payload)
 
+        print(response.text)
         return response
 
     @staticmethod

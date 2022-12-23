@@ -7,12 +7,12 @@ The ticket scanner is the part of SocialPass which lets event organizers scan ti
 ### Using Docker (Recommended)
 
 You can run the application (along with everything else) using Docker:
-https://github.com/nftylabs/socialpass#run-with-docker-and-docker-compose.
+https://github.com/SPTech-Group/socialpass#run-with-docker-and-docker-compose.
 
 ### Running manually
 
 If you want to run the app without Docker, follow the steps below. Please note, you need to make sure you have the backend Django application running. You can do this with Docker (as mentioned above), or run it manually (with or without pyenv):
-https://github.com/nftylabs/socialpass#run-with-pyenv.
+https://github.com/SPTech-Group/socialpass#run-with-pyenv.
 
 #### Using Yarn
 

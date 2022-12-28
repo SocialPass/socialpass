@@ -357,12 +357,12 @@ class TestGoogleTicket(TestCaseWrapper):
     def setUp(self) -> None:
         self.ticket_pass = GoogleTicket.GoogleTicket()
 
-    def test_get_ticket_class_payload(self):
+    def test_get_event_class_payload(self):
         """
         test if payload is being set properly
         """
 
-        payload = self.ticket_pass.get_ticket_class_payload(self.event)
+        payload = self.ticket_pass.get_event_class_payload(self.event)
         self.assertEqual(payload["locations"][0]["latitude"], self.event.lat)
         self.assertEqual(payload["locations"][0]["longitude"], self.event.long)
         self.assertEqual(payload["reviewStatus"], "UNDER_REVIEW")
@@ -377,7 +377,7 @@ class TestGoogleTicket(TestCaseWrapper):
         self.event.postal_code = None
         self.event.country = None
         with self.assertRaises(Exception):
-            self.ticket_pass.get_ticket_class_payload(self.event)
+            self.ticket_pass.get_event_class_payload(self.event)
 
     def test_get_service_account_info(self):
         """
@@ -445,7 +445,7 @@ class TestGoogleTicket(TestCaseWrapper):
         self.assertIsNone(validator(save_url))
         self.assertTrue(save_url.startswith("https://pay.google.com/gp/v/save/"))
 
-    def test_insert_update_ticket_class(self):
+    def test_insert_update_event_class(self):
         return "Not yet implemented"
 
     def test_authenticate(self):

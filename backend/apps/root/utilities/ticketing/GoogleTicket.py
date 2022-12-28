@@ -51,7 +51,7 @@ class GoogleTicket:
         return settings.GOOGLE_WALLET_ISSUER_ID
 
     @staticmethod
-    def get_ticket_class_payload(event_obj):
+    def get_event_class_payload(event_obj):
         """
         Get the payload for inserting/updating a ticket class.
         """
@@ -93,7 +93,7 @@ class GoogleTicket:
         return payload
 
     @staticmethod
-    def insert_update_ticket_class(
+    def insert_update_event_class(
         event_obj,
         is_insert=True,
         issuer_name="SocialPass",
@@ -111,7 +111,7 @@ class GoogleTicket:
         )
         class_id = f"{GoogleTicket.get_issuer_id()}.{str(event_obj.public_id)}"
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketClass"
-        payload = GoogleTicket.get_ticket_class_payload(event_obj)
+        payload = GoogleTicket.get_event_class_payload(event_obj)
 
         # Add branding attributes to the payload
         payload["issuerName"] = issuer_name

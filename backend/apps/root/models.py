@@ -361,20 +361,20 @@ class Event(DBModel):
     def handle_google_event_class(self):
         """
         insert/update Google class for event
-        - return Boolean value, True when no error occurs, False otherwise
         - object is NOT saved afterwards (done manually)
+        - return class ID for success case, False otherwise
         - we use Boolean to handle fail case (not exceptions), because this 
           functionality should be non-blocking during fail case
         """
         is_insert = True
         if self.google_class_id != "":
             is_insert = False
-        response = GoogleTicket.GoogleTicket.insert_update_ticket_class(
+        response = GoogleTicket.GoogleTicket.insert_update_event_class(
             event_obj=self, is_insert=is_insert
         )
         if 200 <= response.status_code <= 299:
             self.google_class_id = json.loads(response.text)["id"]
-            return True
+            return self.google_class_id
         else:
             return False
 
@@ -426,8 +426,8 @@ class Event(DBModel):
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
         # - Handle Google event class
-        google_event_class_status = self.handle_google_event_class()
-        if not google_event_class_status:
+        google_event_class_id = self.handle_google_event_class()
+        if not google_event_class_id:
             raise GoogleWalletAPIRequestError(
                 "Something went wrong while handling the Google event class."
             )
@@ -490,8 +490,8 @@ class Event(DBModel):
         """
         # we do this only for LIVE events to reduce the number of API requests
         if self.state == Event.StateStatus.LIVE:
-            google_event_class_status = self.handle_google_event_class()
-            if not google_event_class_status:
+            google_event_class_id = self.handle_google_event_class()
+            if not google_event_class_id:
                 raise GoogleWalletAPIRequestError(
                     "Something went wrong while handling the Google event class."
                 )

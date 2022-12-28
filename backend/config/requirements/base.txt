@@ -15,8 +15,8 @@ eth-utils==2.0.0 # https://github.com/ethereum/eth-utils
 
 # Django
 # ------------------------------------------------------------------------------
-git+https://github.com/nftylabs/django-quill-editor
-git+https://github.com/nftylabs/passbook.git
+git+https://github.com/SPTech-Group/django-quill-editor
+git+https://github.com/SPTech-Group/passbook.git
 crispy-bootstrap5==0.6 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==4.0.8  # https://www.djangoproject.com/
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework

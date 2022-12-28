@@ -168,7 +168,6 @@ class Invite(DBModel):
     )
     sent = models.DateTimeField(verbose_name=_("sent"), blank=False, null=True)
     email = models.EmailField(
-        unique=True,
         verbose_name="e-mail address",
         max_length=254,
         blank=False,

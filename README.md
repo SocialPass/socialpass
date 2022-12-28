@@ -5,9 +5,9 @@
 # SocialPass
 SocialPass provides end-to-end event organization software aimed at the next generation of events.
 
-[![Django CI](https://github.com/nftylabs/socialpass/actions/workflows/django.yml/badge.svg)](https://github.com/nftylabs/socialpass/actions/workflows/django.yml)
-[![Checkout App CI](https://github.com/nftylabs/socialpass/actions/workflows/eventportal.yml/badge.svg)](https://github.com/nftylabs/socialpass/actions/workflows/eventportal.yml)
-[![Scanner App CI](https://github.com/nftylabs/socialpass/actions/workflows/scanner-app.yml/badge.svg)](https://github.com/nftylabs/socialpass/actions/workflows/scanner-app.yml)
+[![Django CI](https://github.com/SPTech-Group/socialpass/actions/workflows/django.yml/badge.svg)](https://github.com/SPTech-Group/socialpass/actions/workflows/django.yml)
+[![Checkout App CI](https://github.com/SPTech-Group/socialpass/actions/workflows/eventportal.yml/badge.svg)](https://github.com/SPTech-Group/socialpass/actions/workflows/eventportal.yml)
+[![Scanner App CI](https://github.com/SPTech-Group/socialpass/actions/workflows/scanner-app.yml/badge.svg)](https://github.com/SPTech-Group/socialpass/actions/workflows/scanner-app.yml)
 
 # System Overview
 # System Architecture

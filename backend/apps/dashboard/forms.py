@@ -6,18 +6,17 @@ from django.utils.translation import gettext_lazy as _
 from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
-from apps.root.forms import CleanEmailMixin
 from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
 
-class CustomInviteForm(forms.Form, CleanEmailMixin):
+class CustomInviteForm(forms.Form):
     """
-    sub-classed validation to remove check for active user
+    Invite users to team
     """
 
     email = forms.EmailField(
         label=_("E-mail"),
         required=True,
-        widget=forms.TextInput(attrs={"type": "email", "size": "30"}),
+        widget=forms.TextInput(attrs={"type": "email"}),
         initial="",
     )
 

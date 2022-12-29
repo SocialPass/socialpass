@@ -43,8 +43,8 @@ class EventDiscoveryTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Test GET (2 live events)
-        self.event_one.transition_live()
-        self.event_two.transition_live()
+        self.event_one.transition_live(ignore_google_api=True)
+        self.event_two.transition_live(ignore_google_api=True)
         url = reverse("discovery:browse")
         response = self.client.get(url)
         self.assertEqual(response.context_data["events"].count(), 2)
@@ -69,7 +69,7 @@ class EventDiscoveryTest(TestCase):
         logger.setLevel(previous_level)
 
         # Test GET (Live)
-        self.event_one.transition_live()
+        self.event_one.transition_live(ignore_google_api=True)
         url = reverse("discovery:details", args=(self.event_one.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

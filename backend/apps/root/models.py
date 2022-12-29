@@ -392,13 +392,13 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
-    def transition_live(self, save=True):
+    def transition_live(self, save=True, ignore_google_api=False):
         """
         wrapper around _transition_live
         allows for saving after transition
         """
         try:
-            self._transition_live()
+            self._transition_live(ignore_google_api=ignore_google_api)
             # Save unless explicilty told not to
             # This implies the caller will handle saving post-transition
             if save:
@@ -416,7 +416,7 @@ class Event(DBModel):
         pass
 
     @transition(field=state, target=StateStatus.LIVE)
-    def _transition_live(self):
+    def _transition_live(self, ignore_google_api=False):
         """
         This function handles state transition from DRAFT to LIVE
         Side effects include
@@ -426,11 +426,12 @@ class Event(DBModel):
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
         # - Handle Google event class
-        google_event_class_id = self.handle_google_event_class()
-        if not google_event_class_id:
-            raise GoogleWalletAPIRequestError(
-                "Something went wrong while handling the Google event class."
-            )
+        if not ignore_google_api:
+            google_event_class_id = self.handle_google_event_class()
+            if not google_event_class_id:
+                raise GoogleWalletAPIRequestError(
+                    "Something went wrong while handling the Google event class."
+                )
 
     @property
     def discovery_url(self):

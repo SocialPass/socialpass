@@ -1,5 +1,3 @@
-import json
-
 from django.conf import settings
 from google.auth import crypt, jwt
 from google.auth.transport.requests import AuthorizedSession
@@ -177,59 +175,3 @@ class GoogleTicket:
         token = jwt.encode(signer, claims).decode("utf-8")
         save_url = "https://pay.google.com/gp/v/save/%s" % token
         return save_url
-
-    @staticmethod
-    def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):
-        return http_client.post(url, json=payload)
-
-    def generate_pass_from_ticket(self, ticket):
-        """
-        Generate a Google ticket (pass) create the save to wallet URL and
-        return it along with the token.
-        """
-        # Generate the ticket
-        event = ticket.event
-        service_account_info = self.get_service_account_info()
-        http_client = self.authenticate(
-            service_account_info=service_account_info,
-            scopes=["https://www.googleapis.com/auth/wallet_object.issuer"],
-        )
-        ticket_id = f"{self.get_issuer_id()}.{str(ticket.public_id)}"
-        class_id = "{}.{}".format(
-            self.get_issuer_id(),
-            str(event.public_id),
-        )
-        url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
-        payload = {
-            "id": ticket_id,
-            "classId": class_id,
-            "state": "ACTIVE",
-            "barcode": {"type": "QR_CODE", "value": str(ticket.embed_code)},
-        }
-        response = self.request_creation_ticket(http_client, url, payload)
-
-        # Check if there was an error
-        if not (200 <= response.status_code <= 299):
-            return json.loads(response.text)
-
-        # Get the save to wallet URL
-        object_id = json.loads(response.text).get("id")
-        claims = {
-            "iss": http_client.credentials.service_account_email,
-            "aud": "google",
-            "origins": ["socialpass.io"],
-            "typ": "savetowallet",
-            "payload": {"eventTicketObjects": [{"id": object_id}]},
-        }
-        signer = crypt.RSASigner.from_service_account_info(service_account_info)
-        token = jwt.encode(signer, claims).decode("utf-8")
-        self.save_url = "https://pay.google.com/gp/v/save/%s" % token
-
-        return {"token": token, "save_url": self.save_url}
-
-    def get_pass_url(self):
-        if not self.save_url:
-            raise Exception(
-                "The pass url was not generated with `generate_pass_from_ticket` method"
-            )
-        return self.save_url

@@ -37,7 +37,7 @@ from apps.root.exceptions import (
     TxAssetOwnershipProcessingError,
     GoogleWalletAPIRequestError,
 )
-from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
+from apps.root.utilities.ticketing import GoogleTicket
 
 
 class DBModel(TimeStampedModel):
@@ -616,42 +616,6 @@ class Ticket(DBModel):
         self.redeemed_by = redemption_access_key
         self.save()
         return self
-
-    def get_apple_ticket(self):
-        """
-        create a passfile and get its bytes
-        """
-        try:
-            _pass = AppleTicket.AppleTicket()
-            _pass.generate_pass_from_ticket(self)
-            return _pass.get_bytes()
-        except Exception as e:
-            raise e
-
-    def get_pdf_ticket(self):
-        """
-        create a pdf pass and get its bytes
-        """
-        try:
-            _pass = PDFTicket.PDFTicket()
-            _pass.generate_pass_from_ticket(self)
-            return _pass.get_bytes()
-        except Exception as e:
-            raise e
-
-    def get_google_ticket(self):
-        """
-        create or retrieve pass url from google wallet api
-        """
-        if not self.google_class_id:
-            raise Exception("The event was not registered")
-
-        _pass = GoogleTicket.GoogleTicket()
-        resp = _pass.generate_pass_from_ticket(self)
-        if resp.get("error"):
-            raise Exception("The event was not registered properly")
-
-        return _pass.get_pass_url()
 
     def get_google_ticket_url(self):
         """

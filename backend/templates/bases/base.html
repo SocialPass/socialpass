@@ -20,12 +20,7 @@
 		{% block wip_event_creation_ux%}{% endblock %}
 
 		<!-- Halfmoon CSS -->
-		{% if debug %}
-			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
-		{% else %}
-			<link href="{% static 'socialpass-theme/halfmoon.css' %}" rel="stylesheet" />
-		{% endif %}
-
+		<link href="{% static 'socialpass-theme/halfmoon.min.css' %}" rel="stylesheet" />
 
 		<!-- SocialPass CSS theme -->
 		<link href="{% get_theme_value 'css_theme' %}" rel="stylesheet" />

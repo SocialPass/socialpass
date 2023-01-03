@@ -1,20 +1,13 @@
-import json
-
 from django.conf import settings
 from google.auth import crypt, jwt
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from apps.root.utilities.ticketing.TicketGeneration import TicketGenerationBase
 
-
-class GoogleTicket(TicketGenerationBase):
+class GoogleTicket:
     """
     Model for Google Wallet tickets.
     """
-
-    def __init__(self) -> None:
-        self.save_url = None
 
     @staticmethod
     def get_service_account_info():
@@ -56,30 +49,15 @@ class GoogleTicket(TicketGenerationBase):
         return settings.GOOGLE_WALLET_ISSUER_ID
 
     @staticmethod
-    def get_ticket_class_payload(event_obj):
+    def get_event_class_payload(event_obj):
         """
         Get the payload for inserting/updating a ticket class.
         """
         # Create the address from the fields
-        address = ""
-        if event_obj.address_1:
-            address += event_obj.address_1 + "\n"
-        if event_obj.address_2:
-            address += event_obj.address_2 + "\n"
-
-        address_items_list = []
-        if event_obj.city:
-            address_items_list.append(event_obj.city)
-        if event_obj.region:
-            address_items_list.append(event_obj.region)
-        if event_obj.postal_code:
-            address_items_list.append(event_obj.postal_code)
-        if event_obj.country:
-            address_items_list.append(event_obj.country)
-        address += ", ".join(address_items_list)
-
-        if not address:
-            raise Exception("Address can not be empty")
+        venue_name = event_obj.address_1
+        address = event_obj.localized_address_display.replace(
+            venue_name + ", ", "", 1
+        )
 
         # Create the payload
         payload = {
@@ -94,18 +72,17 @@ class GoogleTicket(TicketGenerationBase):
                 "name": {
                     "defaultValue": {
                         "language": "en-us",
-                        "value": event_obj.localized_address_display,
+                        "value": venue_name,
                     }
                 },
-                "address": {"defaultValue": {"language": "en-us", "value": address}},
+                "address": {
+                    "defaultValue": {
+                        "language": "en-us",
+                        "value": address,
+                    }
+                },
             },
         }
-
-        # Add the latitude and longitude (if available)
-        if event_obj.lat and event_obj.long:
-            payload["locations"] = [
-                {"latitude": float(event_obj.lat), "longitude": float(event_obj.long)}
-            ]
 
         # Add datetime end (if available)
         if event_obj.end_date:
@@ -114,7 +91,7 @@ class GoogleTicket(TicketGenerationBase):
         return payload
 
     @staticmethod
-    def insert_update_ticket_class(
+    def insert_update_event_class(
         event_obj,
         is_insert=True,
         issuer_name="SocialPass",
@@ -132,7 +109,7 @@ class GoogleTicket(TicketGenerationBase):
         )
         class_id = f"{GoogleTicket.get_issuer_id()}.{str(event_obj.public_id)}"
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketClass"
-        payload = GoogleTicket.get_ticket_class_payload(event_obj)
+        payload = GoogleTicket.get_event_class_payload(event_obj)
 
         # Add branding attributes to the payload
         payload["issuerName"] = issuer_name
@@ -147,27 +124,22 @@ class GoogleTicket(TicketGenerationBase):
             url = url + "/" + class_id
             response = http_client.patch(url, json=payload)
 
-        return json.loads(response.text)
+        return response
 
     @staticmethod
-    def request_creation_ticket(http_client: AuthorizedSession, url: str, payload: dict):
-        return http_client.post(url, json=payload)
-
-    def generate_pass_from_ticket(self, ticket):
+    def create_ticket(ticket_obj):
         """
-        Generate a Google ticket (pass) create the save to wallet URL and
-        return it along with the token.
+        Create a ticket.
         """
-        # Generate the ticket
-        event = ticket.event
-        service_account_info = self.get_service_account_info()
-        http_client = self.authenticate(
+        event = ticket_obj.event
+        service_account_info = GoogleTicket.get_service_account_info()
+        http_client = GoogleTicket.authenticate(
             service_account_info=service_account_info,
             scopes=["https://www.googleapis.com/auth/wallet_object.issuer"],
         )
-        ticket_id = f"{self.get_issuer_id()}.{str(ticket.public_id)}"
+        ticket_id = f"{GoogleTicket.get_issuer_id()}.{str(ticket_obj.public_id)}"
         class_id = "{}.{}".format(
-            self.get_issuer_id(),
+            GoogleTicket.get_issuer_id(),
             str(event.public_id),
         )
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
@@ -175,32 +147,31 @@ class GoogleTicket(TicketGenerationBase):
             "id": ticket_id,
             "classId": class_id,
             "state": "ACTIVE",
-            "barcode": {"type": "QR_CODE", "value": str(ticket.embed_code)},
+            "ticketType": {
+                "defaultValue": {
+                    "language": "en-us",
+                    "value": ticket_obj.ticket_tier.ticket_type,
+                }
+            },
+            "barcode": {"type": "QR_CODE", "value": str(ticket_obj.embed_code)},
         }
-        response = self.request_creation_ticket(http_client, url, payload)
+        response = http_client.post(url, json=payload)
+        return response
 
-        # Check if there was an error
-        if not (200 <= response.status_code <= 299):
-            return json.loads(response.text)
-
-        # Get the save to wallet URL
-        object_id = json.loads(response.text).get("id")
+    @staticmethod
+    def get_ticket_url(ticket_id):
+        """
+        Get the save URL for a Google ticket.
+        """
+        service_account_info = GoogleTicket.get_service_account_info()
         claims = {
-            "iss": http_client.credentials.service_account_email,
+            "iss": service_account_info["client_email"],
             "aud": "google",
             "origins": ["socialpass.io"],
             "typ": "savetowallet",
-            "payload": {"eventTicketObjects": [{"id": object_id}]},
+            "payload": {"eventTicketObjects": [{"id": ticket_id}]},
         }
         signer = crypt.RSASigner.from_service_account_info(service_account_info)
         token = jwt.encode(signer, claims).decode("utf-8")
-        self.save_url = "https://pay.google.com/gp/v/save/%s" % token
-
-        return {"token": token, "save_url": self.save_url}
-
-    def get_pass_url(self):
-        if not self.save_url:
-            raise Exception(
-                "The pass url was not generated with `generate_pass_from_ticket` method"
-            )
-        return self.save_url
+        save_url = "https://pay.google.com/gp/v/save/%s" % token
+        return save_url

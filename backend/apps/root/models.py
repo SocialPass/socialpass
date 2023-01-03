@@ -2,6 +2,7 @@ import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
 
+import json
 import pytz
 import requests
 from allauth.account.adapter import DefaultAccountAdapter
@@ -34,8 +35,9 @@ from apps.root.exceptions import (
     ForeignKeyConstraintError,
     TooManyTicketsRequestedError,
     TxAssetOwnershipProcessingError,
+    GoogleWalletAPIRequestError,
 )
-from apps.root.utilities.ticketing import AppleTicket, GoogleTicket, PDFTicket
+from apps.root.utilities.ticketing import GoogleTicket
 
 
 class DBModel(TimeStampedModel):
@@ -356,6 +358,26 @@ class Event(DBModel):
             ),
         )
 
+    def handle_google_event_class(self):
+        """
+        insert/update Google class for event
+        - object is NOT saved afterwards (done manually)
+        - return class ID for success case, False otherwise
+        - we use Boolean to handle fail case (not exceptions), because this 
+          functionality should be non-blocking during fail case
+        """
+        is_insert = True
+        if self.google_class_id != "":
+            is_insert = False
+        response = GoogleTicket.GoogleTicket.insert_update_event_class(
+            event_obj=self, is_insert=is_insert
+        )
+        if 200 <= response.status_code <= 299:
+            self.google_class_id = json.loads(response.text)["id"]
+            return self.google_class_id
+        else:
+            return False
+
     def transition_draft(self, save=True):
         """
         wrapper around _transition_draft
@@ -370,13 +392,13 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
-    def transition_live(self, save=True):
+    def transition_live(self, save=True, ignore_google_api=False):
         """
         wrapper around _transition_live
         allows for saving after transition
         """
         try:
-            self._transition_live()
+            self._transition_live(ignore_google_api=ignore_google_api)
             # Save unless explicilty told not to
             # This implies the caller will handle saving post-transition
             if save:
@@ -394,19 +416,22 @@ class Event(DBModel):
         pass
 
     @transition(field=state, target=StateStatus.LIVE)
-    def _transition_live(self):
+    def _transition_live(self, ignore_google_api=False):
         """
         This function handles state transition from DRAFT to LIVE
         Side effects include
         - Create ticket scanner object
-        - Set google_class_id
+        - Handle Google event class
         """
         # - Create ticket scanner object
         TicketRedemptionKey.objects.get_or_create(event=self)
-        # - Set google_class_id
-        self.google_class_id = (
-            f"{settings.GOOGLE_WALLET_ISSUER_ID}.{str(self.public_id)}"
-        )
+        # - Handle Google event class
+        if not ignore_google_api:
+            google_event_class_id = self.handle_google_event_class()
+            if not google_event_class_id:
+                raise GoogleWalletAPIRequestError(
+                    "Something went wrong while handling the Google event class."
+                )
 
     @property
     def discovery_url(self):
@@ -459,6 +484,26 @@ class Event(DBModel):
     @property
     def slug(self):
         return slugify(self.title)
+
+    def clean_handle_google_event_class(self, *args, **kwargs):
+        """
+        clean the handling of the Google event class
+        """
+        # we do this only for LIVE events to reduce the number of API requests
+        if self.state == Event.StateStatus.LIVE:
+            google_event_class_id = self.handle_google_event_class()
+            if not google_event_class_id:
+                raise GoogleWalletAPIRequestError(
+                    "Something went wrong while handling the Google event class."
+                )
+
+    def clean(self, *args, **kwargs):
+        """
+        clean method
+        runs all clean_* methods
+        """
+        self.clean_handle_google_event_class()
+        return super().clean(*args, **kwargs)
 
 
 class Ticket(DBModel):
@@ -573,41 +618,28 @@ class Ticket(DBModel):
         self.save()
         return self
 
-    def get_apple_ticket(self):
+    def get_google_ticket_url(self):
         """
-        create a passfile and get its bytes
+        retrieve the save URL for the Google ticket
+        - create a Google ticket if one doesn't exist, set ID, save object
+        - return save URL for success case, False otherwise
+        - we use Boolean to handle fail case (not exceptions), because this 
+          functionality should be non-blocking during fail case
         """
-        try:
-            _pass = AppleTicket.AppleTicket()
-            _pass.generate_pass_from_ticket(self)
-            return _pass.get_bytes()
-        except Exception as e:
-            raise e
+        # Google ticket has not been created
+        if self.google_class_id == "":
+            response = GoogleTicket.GoogleTicket.create_ticket(ticket_obj=self)
+            if 200 <= response.status_code <= 299:
+                # Created successfully, we set the ID and save
+                self.google_class_id = json.loads(response.text)["id"]
+                self.save()
+            else:
+                # Error while making API request
+                return False
 
-    def get_pdf_ticket(self):
-        """
-        create a pdf pass and get its bytes
-        """
-        try:
-            _pass = PDFTicket.PDFTicket()
-            _pass.generate_pass_from_ticket(self)
-            return _pass.get_bytes()
-        except Exception as e:
-            raise e
-
-    def get_google_ticket(self):
-        """
-        create or retrieve pass url from google wallet api
-        """
-        if not self.google_class_id:
-            raise Exception("The event was not registered")
-
-        _pass = GoogleTicket.GoogleTicket()
-        resp = _pass.generate_pass_from_ticket(self)
-        if resp.get("error"):
-            raise Exception("The event was not registered properly")
-
-        return _pass.get_pass_url()
+        # Create the save URL and return
+        save_url = GoogleTicket.GoogleTicket.get_ticket_url(self.google_class_id)
+        return save_url
 
 
 class TicketRedemptionKey(DBModel):

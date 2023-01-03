@@ -123,14 +123,28 @@ class GetTickets(View):
                     )
                     ctx["tickets"] = []
                     for ticket in tickets:
+                        # QR code
                         img = qrcode.make(ticket.embed_code)
                         stream = BytesIO()
                         img.save(stream, format="PNG")
+
+                        # Google ticket
+                        google_ticket = {
+                            "exists": False,
+                            "save_url": "",
+                        }
+                        google_ticket_url = ticket.get_google_ticket_url()
+                        if google_ticket_url:
+                            google_ticket["exists"] = True
+                            google_ticket["save_url"] = google_ticket_url
+
+                        # Add ticket to context
                         ctx["tickets"].append(
                             {
                                 "object": ticket,
                                 "qrcode": "data:image/png;base64,"
                                 + base64.b64encode(stream.getvalue()).decode("utf-8"),
+                                "google_ticket": google_ticket,
                             }
                         )
 

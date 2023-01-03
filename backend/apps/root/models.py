@@ -278,7 +278,6 @@ class Event(DBModel):
     # Basic Info
     title = models.CharField(
         max_length=255,
-        unique=True,
         help_text="Brief name for your event. Must be unique!",
         blank=False,
     )

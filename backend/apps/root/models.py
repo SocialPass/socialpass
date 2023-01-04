@@ -5,6 +5,7 @@ from typing import Optional
 import json
 import pytz
 import requests
+import rollbar
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -377,6 +378,7 @@ class Event(DBModel):
             return self.google_class_id
         else:
             print("GOOGLE WALLET ERROR: " + response.text)
+            rollbar.report_message("GOOGLE WALLET ERROR: " + response.text)
             return False
 
     def transition_draft(self, save=True):
@@ -637,6 +639,7 @@ class Ticket(DBModel):
             else:
                 # Error while making API request
                 print("GOOGLE WALLET ERROR: " + response.text)
+                rollbar.report_message("GOOGLE WALLET ERROR: " + response.text)
                 return False
 
         # Create the save URL and return

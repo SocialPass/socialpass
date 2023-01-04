@@ -376,6 +376,7 @@ class Event(DBModel):
             self.google_class_id = json.loads(response.text)["id"]
             return self.google_class_id
         else:
+            print("GOOGLE WALLET ERROR: " + response.text)
             return False
 
     def transition_draft(self, save=True):
@@ -635,6 +636,7 @@ class Ticket(DBModel):
                 self.save()
             else:
                 # Error while making API request
+                print("GOOGLE WALLET ERROR: " + response.text)
                 return False
 
         # Create the save URL and return

@@ -317,6 +317,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": ("rest_framework.parsers.JSONParser",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 15,
+    "EXCEPTION_HANDLER": "rollbar.contrib.django_rest_framework.post_exception_handler",
 }
 REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ["rest_framework.renderers.JSONRenderer"]
 
@@ -355,18 +356,6 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_TIME_LIMIT = 3 * 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
 CELERY_TASK_SOFT_TIME_LIMIT = 60
-
-# Rollbar
-# ------------------------------------------------------------------------------
-MIDDLEWARE += ["rollbar.contrib.django.middleware.RollbarNotifierMiddleware"]
-ROLLBAR_ENV_NAME = env("ROLLBAR_ENV_NAME")
-
-ROLLBAR = {
-    "access_token": "c1f5ed4dcef64a42b1fd2fd2c7718fb4",
-    "environment": ROLLBAR_ENV_NAME,
-    "code_version": "1.0",
-    "root": ROOT_DIR,
-}
 
 # INTERNAL
 # ------------------------------------------------------------------------------
@@ -407,7 +396,10 @@ QUILL_CONFIGS = {
             "toolbar": [
                 [
                     {"align": []},
-                    "bold", "italic", "underline", "strike",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "strike",
                 ],
                 ["link"],
             ]

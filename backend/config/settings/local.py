@@ -1,7 +1,7 @@
 import socket
 
 from .base import *  # noqa
-from .base import env
+from .base import MIDDLEWARE, ROOT_DIR, env
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -92,3 +92,16 @@ MEDIA_URL = "/media/"
 # ------------------------------------------------------------------------------
 SHELL_PLUS_PRINT_SQL = True
 INSTALLED_APPS += ["drf_yasg"]
+
+
+# Rollbar
+# ------------------------------------------------------------------------------
+MIDDLEWARE += ["rollbar.contrib.django.middleware.RollbarNotifierMiddleware"]
+ROLLBAR_ENV_NAME = env("ROLLBAR_ENV_NAME")
+
+ROLLBAR = {
+    "access_token": "c1f5ed4dcef64a42b1fd2fd2c7718fb4",
+    "environment": ROLLBAR_ENV_NAME,
+    "code_version": "1.0",
+    "root": ROOT_DIR,
+}

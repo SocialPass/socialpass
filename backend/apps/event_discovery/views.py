@@ -138,6 +138,18 @@ class GetTickets(View):
                             google_ticket["exists"] = True
                             google_ticket["save_url"] = google_ticket_url
 
+                        # Apple ticket
+                        apple_ticket = {
+                            "exists": False,
+                            "bytes": "",
+                        }
+                        apple_ticket_bytes = ticket.get_apple_ticket_bytes()
+                        if apple_ticket_bytes:
+                            apple_ticket["exists"] = True
+                            apple_ticket["bytes"] = base64.b64encode(
+                                apple_ticket_bytes
+                            ).decode("ascii")
+
                         # Add ticket to context
                         ctx["tickets"].append(
                             {
@@ -145,6 +157,7 @@ class GetTickets(View):
                                 "qrcode": "data:image/png;base64,"
                                 + base64.b64encode(stream.getvalue()).decode("utf-8"),
                                 "google_ticket": google_ticket,
+                                "apple_ticket": apple_ticket,
                             }
                         )
 

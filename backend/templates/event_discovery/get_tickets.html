@@ -123,6 +123,17 @@
 													Save to Google Wallet
 												</button>
 											{% endif %}
+											{% if ticket.apple_ticket.exists %}
+												<a href="data:application/vnd.apple.pkpass;base64,{{ ticket.apple_ticket.bytes }}" class="btn text-base" download="{{ ticket.object.public_id }} [{{ ticket.object.event.title }}].pkpass">
+													<i class="fa-brands fa-apple me-5"></i>
+													Save to Apple Wallet
+												</a>
+											{% else %}
+												<button disabled="disabled" class="btn">
+													<i class="fa-brands fa-apple me-5"></i>
+													Save to Apple Wallet
+												</button>
+											{% endif %}
 										</div>
 									<hr />
 									<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">

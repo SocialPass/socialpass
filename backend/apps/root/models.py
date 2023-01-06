@@ -39,6 +39,7 @@ from apps.root.exceptions import (
     GoogleWalletAPIRequestError,
 )
 from apps.root.utilities.ticketing import GoogleTicket
+from apps.root.utilities.ticketing import AppleTicket
 
 
 class DBModel(TimeStampedModel):
@@ -645,6 +646,24 @@ class Ticket(DBModel):
         # Create the save URL and return
         save_url = GoogleTicket.GoogleTicket.get_ticket_url(self.google_class_id)
         return save_url
+
+    def get_apple_ticket_bytes(self):
+        """
+        retrieve the bytes for the Google ticket
+        - return bytes for success case, False otherwise
+        - we use Boolean to handle fail case (not exceptions), because this 
+          functionality should be non-blocking during fail case
+        """
+        try:
+            # Create pass and return the bytes
+            _pass = AppleTicket.AppleTicket()
+            _pass.generate_pass_from_ticket(self)
+            return _pass.get_bytes()
+        except Exception as e:
+            # Error while getting the pass
+            print("APPLE WALLET ERROR: " + str(e))
+            rollbar.report_message("APPLE WALLET ERROR: " + str(e))
+            return False
 
 
 class TicketRedemptionKey(DBModel):

@@ -1,8 +1,8 @@
+import json
 import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional
 
-import json
 import pytz
 import requests
 import rollbar
@@ -34,12 +34,11 @@ from apps.root.exceptions import (
     EventStateTranstionError,
     ForbiddenRedemptionError,
     ForeignKeyConstraintError,
+    GoogleWalletAPIRequestError,
     TooManyTicketsRequestedError,
     TxAssetOwnershipProcessingError,
-    GoogleWalletAPIRequestError,
 )
-from apps.root.utilities.ticketing import GoogleTicket
-from apps.root.utilities.ticketing import AppleTicket
+from apps.root.utilities.ticketing import AppleTicket, GoogleTicket
 
 
 class DBModel(TimeStampedModel):
@@ -365,7 +364,7 @@ class Event(DBModel):
         insert/update Google class for event
         - object is NOT saved afterwards (done manually)
         - return class ID for success case, False otherwise
-        - we use Boolean to handle fail case (not exceptions), because this 
+        - we use Boolean to handle fail case (not exceptions), because this
           functionality should be non-blocking during fail case
         """
         is_insert = True
@@ -627,7 +626,7 @@ class Ticket(DBModel):
         retrieve the save URL for the Google ticket
         - create a Google ticket if one doesn't exist, set ID, save object
         - return save URL for success case, False otherwise
-        - we use Boolean to handle fail case (not exceptions), because this 
+        - we use Boolean to handle fail case (not exceptions), because this
           functionality should be non-blocking during fail case
         """
         # Google ticket has not been created
@@ -649,9 +648,9 @@ class Ticket(DBModel):
 
     def get_apple_ticket_bytes(self):
         """
-        retrieve the bytes for the Google ticket
+        retrieve the bytes for the Apple ticket
         - return bytes for success case, False otherwise
-        - we use Boolean to handle fail case (not exceptions), because this 
+        - we use Boolean to handle fail case (not exceptions), because this
           functionality should be non-blocking during fail case
         """
         try:

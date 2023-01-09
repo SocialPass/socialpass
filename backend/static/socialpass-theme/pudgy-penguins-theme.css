@@ -1,0 +1,315 @@
+/**
+ * ----------------------------------------------------------------------------
+ * SocialPass theme
+ * Version: Beta
+ * Theme for Halfmoon 2.x.x
+ * Copyright 2022 - Present, SocialPass. All rights reserved
+ * ----------------------------------------------------------------------------
+ * The above notice must be included in its entirety when this file is used.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
+
+:root {
+    /* Font related (sizes, weights, family, etc.) */
+
+    --base-font-family: "Open Sans", sans-serif;
+    --base-font-size: 1.6rem;
+    --small-font-size: 1.4rem;
+    --large-font-size: 1.8rem;
+    --bold-font-weight: 600;
+
+    /* Base background colors */
+
+    --base-body-bg-color: var(--gray-color-very-light);
+}
+
+.dark-mode {
+    /* Base background colors */
+
+    --base-body-bg-color: var(--dark-color);
+    --base-content-bg-color: var(--dark-color-very-light);
+}
+
+.readable-mode {
+    /* Font related (sizes, weights, family, etc.) */
+
+    --base-font-size: 1.8rem;
+    --small-font-size: 1.6rem;
+    --large-font-size: 2.0rem;
+}
+
+/* System colors */
+
+:root {
+    /* SocialPass blue */
+
+    --pudgy-penguins-blue-color-hue: 219;
+    --pudgy-penguins-blue-color-saturation: 95%;
+    --pudgy-penguins-blue-color-lightness: 70%;
+    --pudgy-penguins-blue-color-lightness-step-up-1: 75%;
+    --pudgy-penguins-blue-color-lightness-step-up-2: 80%;
+    --pudgy-penguins-blue-color-lightness-step-down-1: 65%;
+    --pudgy-penguins-blue-color-lightness-step-down-2: 60%;
+
+    --pudgy-penguins-blue-color-hsl: var(--pudgy-penguins-blue-color-hue), var(--pudgy-penguins-blue-color-saturation), var(--pudgy-penguins-blue-color-lightness);
+    --pudgy-penguins-blue-color-light-hsl: var(--pudgy-penguins-blue-color-hue), var(--pudgy-penguins-blue-color-saturation), var(--pudgy-penguins-blue-color-lightness-step-up-2);
+    --pudgy-penguins-blue-color-very-light-hsl: var(--pudgy-penguins-blue-color-hue), var(--pudgy-penguins-blue-color-saturation), 95%;
+    --pudgy-penguins-blue-color-dim-hsl: var(--pudgy-penguins-blue-color-hue), var(--pudgy-penguins-blue-color-saturation), var(--pudgy-penguins-blue-color-lightness-step-down-2);
+    --pudgy-penguins-blue-color-very-dim-hsl: var(--pudgy-penguins-blue-color-hue), 15%, 15%;
+
+    --pudgy-penguins-blue-color: hsl(var(--pudgy-penguins-blue-color-hsl));
+    --pudgy-penguins-blue-color-light: hsl(var(--pudgy-penguins-blue-color-light-hsl));
+    --pudgy-penguins-blue-color-very-light: hsl(var(--pudgy-penguins-blue-color-very-light-hsl));
+    --pudgy-penguins-blue-color-dim: hsl(var(--pudgy-penguins-blue-color-dim-hsl));
+    --pudgy-penguins-blue-color-very-dim: hsl(var(--pudgy-penguins-blue-color-very-dim-hsl));
+
+    --text-color-on-pudgy-penguins-blue-color-bg: var(--white-color);
+}
+
+/* Context colors */
+
+:root {
+    /* Primary colors */
+
+    --primary-color-hue: var(--pudgy-penguins-blue-color-hue);
+    --primary-color-saturation: var(--pudgy-penguins-blue-color-saturation);
+    --primary-color-lightness: var(--pudgy-penguins-blue-color-lightness);
+    --primary-color-lightness-step-up-1: var(--pudgy-penguins-blue-color-lightness-step-up-1);
+    --primary-color-lightness-step-up-2: var(--pudgy-penguins-blue-color-lightness-step-up-2);
+    --primary-color-lightness-step-down-1: var(--pudgy-penguins-blue-color-lightness-step-down-1);
+    --primary-color-lightness-step-down-2: var(--pudgy-penguins-blue-color-lightness-step-down-2);
+
+    --primary-color-hsl: var(--pudgy-penguins-blue-color-hsl);
+    --primary-color-light-hsl: var(--pudgy-penguins-blue-color-light-hsl);
+    --primary-color-very-light-hsl: var(--pudgy-penguins-blue-color-very-light-hsl);
+    --primary-color-dim-hsl: var(--pudgy-penguins-blue-color-dim-hsl);
+    --primary-color-very-dim-hsl: var(--pudgy-penguins-blue-color-very-dim-hsl);
+
+    --primary-color: var(--pudgy-penguins-blue-color);
+    --primary-color-light: var(--pudgy-penguins-blue-color-light);
+    --primary-color-very-light: var(--pudgy-penguins-blue-color-very-light);
+    --primary-color-dim: var(--pudgy-penguins-blue-color-dim);
+    --primary-color-very-dim: var(--pudgy-penguins-blue-color-very-dim);
+
+    --text-color-on-primary-color-bg: var(--text-color-on-pudgy-penguins-blue-color-bg);
+
+    /* Secondary colors */
+
+    --secondary-color-hue: var(--pudgy-penguins-blue-color-hue);
+    --secondary-color-saturation: var(--pudgy-penguins-blue-color-saturation);
+    --secondary-color-lightness: var(--pudgy-penguins-blue-color-lightness);
+    --secondary-color-lightness-step-up-1: var(--pudgy-penguins-blue-color-lightness-step-up-1);
+    --secondary-color-lightness-step-up-2: var(--pudgy-penguins-blue-color-lightness-step-up-2);
+    --secondary-color-lightness-step-down-1: var(--pudgy-penguins-blue-color-lightness-step-down-1);
+    --secondary-color-lightness-step-down-2: var(--pudgy-penguins-blue-color-lightness-step-down-2);
+
+    --secondary-color-hsl: var(--pudgy-penguins-blue-color-hsl);
+    --secondary-color-light-hsl: var(--pudgy-penguins-blue-color-light-hsl);
+    --secondary-color-very-light-hsl: var(--pudgy-penguins-blue-color-very-light-hsl);
+    --secondary-color-dim-hsl: var(--pudgy-penguins-blue-color-dim-hsl);
+    --secondary-color-very-dim-hsl: var(--pudgy-penguins-blue-color-very-dim-hsl);
+
+    --secondary-color: var(--pudgy-penguins-blue-color);
+    --secondary-color-light: var(--pudgy-penguins-blue-color-light);
+    --secondary-color-very-light: var(--pudgy-penguins-blue-color-very-light);
+    --secondary-color-dim: var(--pudgy-penguins-blue-color-dim);
+    --secondary-color-very-dim: var(--pudgy-penguins-blue-color-very-dim);
+
+    --text-color-on-secondary-color-bg: var(--text-color-on-pudgy-penguins-blue-color-bg);
+}
+
+/* Lists */
+
+:root {
+    /* Unordered list */
+
+    --unordered-list-item-bullet-width: 0.6rem;
+}
+
+/* Buttons */
+
+:root {
+    --button-vertical-padding: 0.6rem;
+
+    --small-button-vertical-padding: 0.4rem;
+
+    --large-button-vertical-padding: 0.8rem;
+
+    /* Default button */
+
+    --button-border-color: var(--border-color);
+}
+
+.dark-mode {
+    /* Default button */
+
+    --button-bg-clip: border-box;
+
+    /* Primary button */
+
+    --button-primary-border-color: transparent;
+
+    /* Secondary button */
+
+    --button-secondary-border-color: transparent;
+
+    /* Success button */
+
+    --button-success-border-color: transparent;
+
+    /* Warning button */
+
+    --button-warning-border-color: transparent;
+
+    /* Danger button */
+
+    --button-danger-border-color: transparent;
+}
+
+/* Form */
+
+:root {
+    /* Default input */
+
+    --input-border-color: var(--border-color);
+
+    /* Form label */
+
+    --form-label-font-weight: var(--bold-font-weight);
+
+    /* Input group text */
+
+    --input-group-text-border-color: var(--border-color);
+
+    /* Checkbox */
+
+    --checkbox-border-color-focus: var(--input-border-color-focus);
+    --checkbox-box-shadow-focus: var(--input-box-shadow-focus);
+}
+
+.dark-mode {
+    /* Default input */
+
+    --input-bg-clip: border-box;
+
+    --input-border-color-focus: var(--primary-color-dim);
+    --input-box-shadow-focus: 0 0 0 0.3rem hsla(var(--primary-color-hsl), 0.15);
+}
+
+/* Navbar */
+
+:root {
+    --navbar-height: 4.8rem;
+
+    --navbar-text-color: hsla(var(--white-color-hsl), 0.85);
+    --navbar-bg-color: var(--primary-color-dim);
+    --navbar-border-color: transparent;
+}
+
+.dark-mode {
+    --navbar-bg-color: hsl(var(--primary-color-hue), var(--primary-color-saturation), 10%);
+    --navbar-border-color: hsla(var(--white-color-hsl), 0.15);
+}
+
+/* Sidebar */
+
+:root {
+    --sidebar-padding: 0;
+    --sidebar-border-width: 0;
+
+    --sidebar-text-color: hsla(var(--white-color-hsl), 0.85);
+    --sidebar-bg-color: var(--primary-color);
+    --sidebar-border-color: hsla(var(--white-color-hsl), 0.15);
+
+    --sidebar-content-padding: 0.4rem 2.5rem;
+
+    /* Sidebar link */
+
+    --sidebar-link-margin: 0;
+    --sidebar-link-border-radius: 0;
+
+    --sidebar-link-text-color: var(--sidebar-text-color);
+
+    --sidebar-link-text-color-hover: var(--sidebar-link-text-color);
+    --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.1);
+
+    /* Active sidebar link */
+
+    --sidebar-link-active-text-color: var(--white-color);
+    --sidebar-link-active-bg-color: hsl(359, 79%, 74%);
+
+    --sidebar-link-active-text-color-hover: var(--sidebar-link-active-text-color);
+}
+
+.dark-mode {
+    --sidebar-border-width: var(--base-border-width);
+
+    --sidebar-bg-color: hsl(var(--primary-color-hue), var(--primary-color-saturation), 15%);
+
+    /* Sidebar link */
+
+    --sidebar-link-bg-color-hover: hsla(var(--white-color-hsl), 0.05);
+}
+
+/* Card */
+
+:root {
+    --card-border-color: var(--border-color);
+}
+
+/* Dropdown */
+
+:root {
+    /* Dropdown menu */
+
+    --dropdown-menu-bg-color: var(--base-content-bg-color);
+    --dropdown-menu-border-color: var(--border-color);
+}
+
+/* Tooltips */
+
+:root {
+    --tooltip-text-color: var(--white-color);
+    --tooltip-bg-color: var(--black-color);
+    --tooltip-box-shadow: none;
+}
+
+/* Sticky alerts */
+
+:root {
+    --sticky-alerts-width: 34rem;
+}
+
+/**
+ * Scanner specific styles
+ */
+
+.socialpass-scanner {
+    --base-body-bg-color: var(--gray-color-light);
+}
+
+.socialpass-scanner.dark-mode {
+    --base-body-bg-color: var(--dark-color-very-dim);
+}
+
+.socialpass-scanner .content-wrapper {
+    color: var(--text-color-on-primary-color-bg);
+    background-color: var(--primary-color);
+}
+
+.socialpass-scanner.dark-mode .content-wrapper {
+    background-color: hsl(var(--primary-color-hue), 40%, 15%);
+}
+
+/* Content and card */
+
+.socialpass-scanner {
+    --content-and-card-spacing: 4rem;
+}
+
+@media (max-width: 576px) {
+    .socialpass-scanner {
+        --content-and-card-spacing: 2rem;
+    }
+}

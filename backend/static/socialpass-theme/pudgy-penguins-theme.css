@@ -8,16 +8,26 @@
  * The above notice must be included in its entirety when this file is used.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
+@font-face {
+    font-family: Menco;
+    src: url("../fonts/Menco/Menco-Medium.otf") format("opentype");
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: Menco;
+    src: url("../fonts/Menco/Menco-Bold.otf") format("opentype");
+    font-weight: 700;
+}
 
 :root {
     /* Font related (sizes, weights, family, etc.) */
 
-    --base-font-family: "Open Sans", sans-serif;
+    --base-font-family: "Menco", sans-serif;
     --base-font-size: 1.6rem;
     --small-font-size: 1.4rem;
     --large-font-size: 1.8rem;
-    --bold-font-weight: 600;
+    --bold-font-weight: 700;
 
     /* Base background colors */
 

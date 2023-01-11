@@ -305,7 +305,7 @@
 
 .socialpass-scanner .content-wrapper {
     color: var(--text-color-on-primary-color-bg);
-    background-color: var(--primary-color);
+    background-color: var(--primary-color-dim);
 }
 
 .socialpass-scanner.dark-mode .content-wrapper {

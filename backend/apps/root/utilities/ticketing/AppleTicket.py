@@ -53,7 +53,7 @@ class AppleTicket:
 		return value.encode("UTF-8").decode("unicode_escape")
 
 	def set_event_ticket_info(
-		self, start_date: str, event_title: str, ticket_type:str, event_location: str
+		self, start_date: str, event_title: str, ticket_type: str, event_location: str
 	):
 		"""
 		set EventTicket infos.

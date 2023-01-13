@@ -1,382 +1,306 @@
-{% load static get_debug_status get_preferred_color_scheme %}
-<!DOCTYPE html>
-{% get_debug_status as debug %}
-<html lang="en" class="socialpass-event-discovery {% get_preferred_color_scheme %}" spellcheck="false">
-	<head>
-		<!-- Meta tags -->
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+{% extends "event_discovery/get_tickets_base.html" %}
+{% load static get_theme_value %}
 
-		<!-- Title -->
-		<title>Get Tickets - SocialPass</title>
+{% block body %}
+<!-- Page wrapper start -->
+<div class="page-wrapper">
+	<!-- Ticket image containers start -->
+	{% for ticket in tickets %}
+		<div class="d-none content-wrapper ws-600 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column" id="{{ ticket.object.public_id }}-container">
+			<div class="content">
+				<h5 class="fs-base-p8 text-strong m-0">
+					<span id="{{ ticket.object.public_id }}-indicator" class="me-5">
+					<i class="fa-light fa-circle-notch fa-spin"></i>
+					</span>
+					Downloading Ticket ...
+				</h5>
+				<p class="text-muted mt-5 fs-base-n2">
+					Please hold tight as we create your ticket image and prepare it for download.
+				</p>
+				<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">
+					<div class="p-40 text-white rounded-5" style="background-color: hsl(16, 80%, 60%);">
+						<h3 class="fs-base-p12">{{ checkout_session.event.title }}</h3>
+						<div class="mt-30 fw-bold">
+							Ticket Type:
+						</div>
+						<div class="fs-base-p2">
+							{{ ticket.object.ticket_tier.ticket_type }}
+						</div>
+						<div class="mt-20 fw-bold">
+							Date & Time:
+						</div>
+						<div class="fs-base-p2">
+							{{ checkout_session.event.start_date }}
+						</div>
+						<div class="mt-20 fw-bold">
+							Location:
+						</div>
+						<div class="fs-base-p2">
+							{{ checkout_session.event.localized_address_display }}
+						</div>
+						<div class="ws-200 hs-200 mx-auto mt-40 mb-10">
+							<img src="{{ ticket.qrcode }}" class="w-100 h-100" />
+						</div>
+						<div class="text-center fs-base-n2">{{ ticket.object.embed_code }}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	<!-- Ticket image containers end -->
 
-		<!-- Fav icon -->
-		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}" />
+	<!-- Main content wrapper start -->
+	<div class="content-wrapper ws-820 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column" id="main-container">
+		<!-- Navbar start -->
+		<nav class="d-flex align-items-center px-20">
+			<!-- Branding start -->
+			<div class="d-flex align-items-center fw-bold user-select-none">
+				<div class="ws-75">
+					<img src="{% get_theme_value 'logo_not_dashboard' %}" alt="Brand Icon" class="d-block w-100 h-auto" />
+				</div>
+				<div class="text-strong ms-10">
+					<div class="fs-base-p4">
+						{% get_theme_value "brand_name" %}
+					</div>
+					<div class="fs-base-n4 lh-1 fw-normal">
+						Ticket Portal
+					</div>
+				</div>
+			</div>
+			<!-- Branding end -->
 
-		<!-- Halfmoon CSS -->
-		<link href="{% static 'socialpass-theme/halfmoon.min.css' %}" rel="stylesheet" />
+			<!-- Dark mode toggle start -->
+			<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
+				<i class="fa-solid fa-moon"></i>
+				<span class="visually-hidden">Toggle dark mode</span>
+			</button>
+			<!-- Dark mode toggle end -->
+		</nav>
+		<!-- Navbar end -->
 
-		<!-- SocialPass CSS theme -->
-		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
+		<!-- Header start -->
+		<div class="w-100 hs-150 position-relative">
+			<!-- Event cover image start -->
+			<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
+				<img src="{{ checkout_session.event.cover_image.url }}" class="w-100 h-auto" alt="Cover image" />
+			</div>
+			<!-- Event cover image end -->
 
-		<!-- Font Awesome 6 -->
-		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+			<!-- Event organizer and title start -->
+			<div class="w-100 position-absolute z-1 bottom-0 start-0 px-content pt-50 pb-10" style="background: linear-gradient(transparent, hsla(0, 0%, 0%, 0.5), hsla(0, 0%, 0%, 0.75)">
+				<p class="text-white m-0 text-truncate">
+					By {{ checkout_session.event.organizer }}
+				</p>
+				<h5 class="text-white fs-base-p2 fw-700 m-0 text-truncate">
+					{{ checkout_session.event.title }}
+				</h5>
+			</div>
+			<!-- Event organizer and title end -->
+		</div>
+		<!-- Header end -->
 
-		<!-- Open graph -->
-		<meta property="og:type" content="article" />
-		<meta property="og:url" content="{{ request.build_absolute_uri }}" />
-		<meta property="og:title" content="SocialPass - Get Tickets" />
-		<meta property="og:description" content="Get your event tickets on SocialPass!" />
-		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png" />
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:site" content="@socialpass_io" />
-
-		<!-- Custom styles -->
-		<style type="text/css">
-			:root {
-				--base-body-bg-color: var(--gray-color-light);
-			}
-
-			.dark-mode {
-				--base-body-bg-color: var(--dark-color-very-dim);
-			}
-
-			.ws-820 {
-				width: 82rem !important;
-			}
-		</style>
-	</head>
-	<body>
-		<!-- Page wrapper start -->
-		<div class="page-wrapper">
-			<!-- Ticket image containers start -->
+		<!-- Main content start -->
+		{% if checkout_session.tx_status == checkout_session.OrderStatus.VALID or checkout_session.tx_status == checkout_session.OrderStatus.PROCESSING or checkout_session.tx_status == checkout_session.OrderStatus.COMPLETED %}
+			<div class="content">
+				<h1 class="text-strong fw-700 fsr-4 m-0">
+					Processing Checkout ...
+				</h1>
+				<p class="mt-10">
+					We are processing your order and generating your ticket(s). Please come back to this page after some time.
+				</p>
+				<div class="progress hs-25 my-50">
+					<div class="progress-bar progress-bar-secondary progress-bar-animated w-100" role="progressbar"></div>
+				</div>
+			</div>
+		{% elif checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
+			<div class="content mb-0">
+				<h1 class="text-strong fw-700 fsr-4 m-0">
+					Get Tickets &times; {{ tickets|length }}
+				</h1>
+				<p class="mt-10">
+					The following ticket(s) were generated for you to attend the <strong>{{ checkout_session.event.title }}</strong> event. You can save a ticket as PNG by clicking on the download button, or use one of your Google or
+					Apple wallets.
+				</p>
+				<p>
+					The QR code found on the ticket must be presented to the organizer for scanning and entry.
+				</p>
+			</div>
 			{% for ticket in tickets %}
-				<div class="d-none content-wrapper ws-600 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column" id="{{ ticket.object.public_id }}-container">
-					<div class="content">
-						<h5 class="fs-base-p8 text-strong m-0">
-							<span id="{{ ticket.object.public_id }}-indicator" class="me-5">
-								<i class="fa-light fa-circle-notch fa-spin"></i>
-							</span>
-							Downloading Ticket ...
-						</h5>
-						<p class="text-muted mt-5 fs-base-n2">
-							Please hold tight as we create your ticket image and prepare it for download.
+				<div class="content mt-0 mb-10">
+					<hr />
+				</div>
+				<div>
+					<div class="p-content py-0">
+						<h2 class="text-strong fw-700 fsr-5 m-0">
+							Ticket # {{ forloop.counter }}
+						</h2>
+						<p class="text-muted fs-base-n2 mt-5 text-truncate">
+							{{ ticket.object.public_id }}
 						</p>
-						<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">
-							<div class="p-40 text-white rounded-5" style="background-color: hsl(16, 80%, 60%);">
-								<h3 class="fs-base-p12">{{ checkout_session.event.title }}</h3>
-								<div class="mt-30 fw-bold">
-									Ticket Type:
+						<p class="my-5">
+							<span class="d-inline-flex">
+							<span class="flex-shrink-0 ws-25 me-5">
+							<i class="fa-light fa-ticket"></i>
+							</span>
+							<strong>Ticket Type: </strong>
+							</span>
+							{{ ticket.object.ticket_tier.ticket_type }}
+						</p>
+						<p class="my-5">
+							<span class="d-inline-flex">
+							<span class="flex-shrink-0 ws-25 me-5">
+							<i class="fa-light fa-clock"></i>
+							</span>
+							<strong>Date & Time: </strong>
+							</span>
+							{{ checkout_session.event.start_date }}
+						</p>
+						<p class="my-5">
+							<span class="d-inline-flex">
+							<span class="flex-shrink-0 ws-25 me-5">
+							<i class="fa-light fa-location-dot"></i>
+							</span>
+							<strong>Location: </strong>
+							</span>
+							{{ checkout_session.event.localized_address_display }}
+						</p>
+					</div>
+					<div class="row row-eq-spacing-lg">
+						<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-0">
+							<div class="content">
+								<div class="hs-50">
+									<button class="download-btn btn btn-secondary rounded-pill w-100 h-100 d-flex align-items-center px-20" data-target="{{ ticket.object.public_id }}">
+										<div class="flex-shrink-0 fs-base-p8 me-20">
+											<i class="fa-light fa-download"></i>
+										</div>
+										<div class="lh-sm fs-base-n4 text-start">
+											Direct
+											<br />
+											<strong class="antialiased fs-base">Download</strong>
+										</div>
+									</button>
 								</div>
-								<div class="fs-base-p2">
-									{{ ticket.object.ticket_tier.ticket_type }}
-								</div>
-								<div class="mt-20 fw-bold">
-									Date & Time:
-								</div>
-								<div class="fs-base-p2">
-									{{ checkout_session.event.start_date }}
-								</div>
-								<div class="mt-20 fw-bold">
-									Location:
-								</div>
-								<div class="fs-base-p2">
-									{{ checkout_session.event.localized_address_display }}
-								</div>
-								<div class="ws-200 hs-200 mx-auto mt-40 mb-10">
-									<img src="{{ ticket.qrcode }}" class="w-100 h-100" />
-								</div>
-								<div class="text-center fs-base-n2">{{ ticket.object.embed_code }}</div>
 							</div>
 						</div>
+						{% if ticket.google_ticket.exists %}
+							<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-0">
+								<div class="content">
+									<div class="hs-50">
+										<a href="{{ ticket.google_ticket.save_url }}" target="_blank" rel="noopener" class="btn text-base rounded-pill w-100 h-100 d-flex align-items-center px-20">
+											<div class="flex-shrink-0 fs-base-p8 me-20">
+												<img src="{% static 'images/google-wallet.svg' %}" alt="Google Wallet" class="d-block hs-25" />
+											</div>
+											<div class="lh-sm fs-base-n4 text-start">
+												Add to
+												<br />
+												<strong class="antialiased fs-base">Google Wallet</strong>
+											</div>
+										</a>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+						{% if ticket.apple_ticket.exists %}
+							<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-0">
+								<div class="content">
+									<div class="hs-50">
+										<a href="data:application/vnd.apple.pkpass;base64,{{ ticket.apple_ticket.bytes }}" download="{{ ticket.object.public_id }} [{{ ticket.object.event.title }}].pkpass" class="btn text-base rounded-pill w-100 h-100 d-flex align-items-center px-20">
+											<div class="flex-shrink-0 fs-base-p8 me-20">
+												<img src="{% static 'images/apple-wallet.svg' %}" alt="Apple Wallet" class="d-block hs-25" />
+											</div>
+											<div class="lh-sm fs-base-n4 text-start">
+												Add to
+												<br />
+												<strong class="antialiased fs-base">Apple Wallet</strong>
+											</div>
+										</a>
+									</div>
+								</div>
+							</div>
+						{% endif %}
 					</div>
 				</div>
 			{% endfor %}
-			<!-- Ticket image containers end -->
-
-			<!-- Main content wrapper start -->
-			<div class="content-wrapper ws-820 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column" id="main-container">
-				<!-- Navbar start -->
-				<nav class="d-flex align-items-center px-20">
-					<!-- Branding start -->
-					<div class="d-flex align-items-center fw-bold user-select-none">
-						<div class="ws-75">
-							<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto" />
-						</div>
-						<div class="text-strong ms-10">
-							<div class="fs-base-p4">
-								SocialPass
-							</div>
-							<div class="fs-base-n4 lh-1 fw-normal">
-								Ticket Portal
-							</div>
-						</div>
-					</div>
-					<!-- Branding end -->
-
-					<!-- Dark mode toggle start -->
-					<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
-						<i class="fa-solid fa-moon"></i>
-						<span class="visually-hidden">Toggle dark mode</span>
-					</button>
-					<!-- Dark mode toggle end -->
-				</nav>
-				<!-- Navbar end -->
-
-				<!-- Header start -->
-				<div class="w-100 hs-150 position-relative">
-					<!-- Event cover image start -->
-					<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
-						<img src="{{ checkout_session.event.cover_image.url }}" class="w-100 h-auto" alt="Cover image" />
-					</div>
-					<!-- Event cover image end -->
-
-					<!-- Event organizer and title start -->
-					<div class="w-100 position-absolute z-1 bottom-0 start-0 px-content pt-50 pb-10" style="background: linear-gradient(transparent, hsla(0, 0%, 0%, 0.5), hsla(0, 0%, 0%, 0.75)">
-						<p class="text-white m-0 text-truncate">
-							By {{ checkout_session.event.organizer }}
-						</p>
-						<h5 class="text-white fs-base-p2 fw-700 m-0 text-truncate">
-							{{ checkout_session.event.title }}
-						</h5>
-					</div>
-					<!-- Event organizer and title end -->
+		{% else %}
+			<div class="content mt-50 mb-0 text-center">
+				<div class="ws-300 mw-100 mx-auto">
+					<img src="{%  static 'images/illustrations/something_went_wrong.svg' %}" class="d-block w-100 h-auto" alt="something_went_wrong" />
 				</div>
-				<!-- Header end -->
-
-				<!-- Main content start -->
-				{% if checkout_session.tx_status == checkout_session.OrderStatus.VALID or checkout_session.tx_status == checkout_session.OrderStatus.PROCESSING or checkout_session.tx_status == checkout_session.OrderStatus.COMPLETED %}
-					<div class="content">
-						<h1 class="text-strong fw-700 fsr-4 m-0">
-							Processing Checkout ...
-						</h1>
-						<p class="mt-10">
-							We are processing your order and generating your ticket(s). Please come back to this page after some time.
-						</p>
-						<div class="progress hs-25 my-50">
-							<div class="progress-bar progress-bar-secondary progress-bar-animated w-100" role="progressbar"></div>
-						</div>
-					</div>
-				{% elif checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
-					<div class="content mb-0">
-						<h1 class="text-strong fw-700 fsr-4 m-0">
-							Get Tickets &times; {{ tickets|length }}
-						</h1>
-						<p class="mt-10">
-							The following ticket(s) were generated for you to attend the <strong>{{ checkout_session.event.title }}</strong> event. You can save a ticket as PNG by clicking on the download button, or use one of your Google or
-							Apple wallets.
-						</p>
-						<p>
-							The QR code found on the ticket must be presented to the organizer for scanning and entry.
-						</p>
-					</div>
-					{% for ticket in tickets %}
-						<div class="content mt-0 mb-10">
-							<hr />
-						</div>
-						<div>
-							<div class="p-content py-0">
-								<h2 class="text-strong fw-700 fsr-5 m-0">
-									Ticket # {{ forloop.counter }}
-								</h2>
-								<p class="text-muted fs-base-n2 mt-5 text-truncate">
-									{{ ticket.object.public_id }}
-								</p>
-								<p class="my-5">
-									<span class="d-inline-flex">
-										<span class="flex-shrink-0 ws-25 me-5">
-											<i class="fa-light fa-ticket"></i>
-										</span>
-										<strong>Ticket Type: </strong>
-									</span>
-									{{ ticket.object.ticket_tier.ticket_type }}
-								</p>
-								<p class="my-5">
-									<span class="d-inline-flex">
-										<span class="flex-shrink-0 ws-25 me-5">
-											<i class="fa-light fa-clock"></i>
-										</span>
-										<strong>Date & Time: </strong>
-									</span>
-									{{ checkout_session.event.start_date }}
-								</p>
-								<p class="my-5">
-									<span class="d-inline-flex">
-										<span class="flex-shrink-0 ws-25 me-5">
-											<i class="fa-light fa-location-dot"></i>
-										</span>
-										<strong>Location: </strong>
-									</span>
-									{{ checkout_session.event.localized_address_display }}
-								</p>
-							</div>
-							<div class="row row-eq-spacing-lg">
-								<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-0">
-									<div class="content">
-										<div class="hs-50">
-											<button class="download-btn btn btn-secondary rounded-pill w-100 h-100 d-flex align-items-center px-20" data-target="{{ ticket.object.public_id }}">
-												<div class="flex-shrink-0 fs-base-p8 me-20">
-													<i class="fa-light fa-download"></i>
-												</div>
-												<div class="lh-sm fs-base-n4 text-start">
-													Direct
-													<br />
-													<strong class="antialiased fs-base">Download</strong>
-												</div>
-											</button>
-										</div>
-									</div>
-								</div>
-								{% if ticket.google_ticket.exists %}
-									<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-0">
-										<div class="content">
-											<div class="hs-50">
-												<a href="{{ ticket.google_ticket.save_url }}" target="_blank" rel="noopener" class="btn text-base rounded-pill w-100 h-100 d-flex align-items-center px-20">
-													<div class="flex-shrink-0 fs-base-p8 me-20">
-														<img src="{% static 'images/google-wallet.svg' %}" alt="Google Wallet" class="d-block hs-25" />
-													</div>
-													<div class="lh-sm fs-base-n4 text-start">
-														Add to
-														<br />
-														<strong class="antialiased fs-base">Google Wallet</strong>
-													</div>
-												</a>
-											</div>
-										</div>
-									</div>
-								{% endif %}
-								{% if ticket.apple_ticket.exists %}
-									<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-0">
-										<div class="content">
-											<div class="hs-50">
-												<a href="data:application/vnd.apple.pkpass;base64,{{ ticket.apple_ticket.bytes }}" download="{{ ticket.object.public_id }} [{{ ticket.object.event.title }}].pkpass" class="btn text-base rounded-pill w-100 h-100 d-flex align-items-center px-20">
-													<div class="flex-shrink-0 fs-base-p8 me-20">
-														<img src="{% static 'images/apple-wallet.svg' %}" alt="Apple Wallet" class="d-block hs-25" />
-													</div>
-													<div class="lh-sm fs-base-n4 text-start">
-														Add to
-														<br />
-														<strong class="antialiased fs-base">Apple Wallet</strong>
-													</div>
-												</a>
-											</div>
-										</div>
-									</div>
-								{% endif %}
-							</div>
-						</div>
-					{% endfor %}
-				{% else %}
-					<div class="content mt-50 mb-0 text-center">
-						<div class="ws-300 mw-100 mx-auto">
-							<img src="{%  static 'images/illustrations/something_went_wrong.svg' %}" class="d-block w-100 h-auto" alt="something_went_wrong" />
-						</div>
-						<h1 class="text-strong fw-700 fsr-4 mb-0">
-							Something went wrong!
-						</h1>
-						<p class="mt-10">
-							Looks like something went wrong during your checkout process.
-						</p>
-					</div>
-				{% endif %}
-				<!-- Main content end -->
-
-				<!-- Footer start -->
-				<br />
-				<br />
-				<div class="content text-end border-top pt-10 mt-auto">
-					<span class="ms-auto text-muted fs-base-n2">
-						&copy; 2022, SP Tech Inc. All rights reserved
-					</span>
-				</div>
-				<!-- Footer end -->
+				<h1 class="text-strong fw-700 fsr-4 mb-0">
+					Something went wrong!
+				</h1>
+				<p class="mt-10">
+					Looks like something went wrong during your checkout process.
+				</p>
 			</div>
-			<!-- Main content wrapper end -->
-		</div>
-		<!-- Page wrapper end -->
-
-		<!-- Halfmoon JS -->
-		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
-
-		<!-- PNG Generation -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-		<script type="text/javascript">
-			var getCanvas; // Global variable
-
-			$(".download-btn").on("click", function (event) {
-				// Get the proper target
-				var target = event.target;
-				if (target.matches(".download-btn *")) {
-					target = target.closest(".download-btn");
-				}
-				var ticketID = target.getAttribute("data-target");
-
-				// Reset indicator
-				$("#" + ticketID + "-indicator").html(
-					"<i class='fa-light fa-circle-notch fa-spin'></i>"
-				);
-
-				// Hide main container, show ticket container and scroll to top
-				$("#main-container").addClass("d-none");
-				$("#" + ticketID + "-container").removeClass("d-none");
-				window.scrollTo({ top: 0 });
-
-				// Download the ticket
-				var element = $("#" + ticketID);
-				html2canvas(element, {
-					onrendered: function (canvas) {
-						getCanvas = canvas;
-						var imgageData = getCanvas.toDataURL("image/png");
-						var a = document.createElement("a");
-						a.href = imgageData; // Image Base64 Goes here
-						a.download = ticketID + ".png"; // File name Here
-						a.click(); // Downloaded file
-					},
-				});
-
-				// Change indicator after 2 seconds
-				setTimeout(function () {
-					$("#" + ticketID + "-indicator").html(
-						"<i class='fa-regular fa-check text-success'></i>"
-					);
-				}, 2000);
-
-				// Show main container, hide ticket container after 3 seconds
-				setTimeout(function () {
-					$("#main-container").removeClass("d-none");
-					$("#" + ticketID + "-container").addClass("d-none");
-				}, 3000);
-			});
-		</script>
-
-		{% if debug %}
-			<script type="text/javascript">
-				/**
-				 * Handle the keydown event (only on debug mode).
-				 *
-				 * This is used to create the dark mode and sidebar toggle shortcuts.
-				 * These shortcuts are very useful for testing.
-				 */
-				document.addEventListener("keydown", function (event) {
-					if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
-						event = event || window.event;
-
-						if (!(event.ctrlKey || event.metaKey)) {
-							// Toggle dark mode when [shift] + [D] keys are pressed
-							if (event.shiftKey && event.which == 68) {
-								halfmoon.toggleDarkMode();
-							}
-
-							// Toggle sidebar when [shift] + [S] keys are pressed
-							if (event.shiftKey && event.which == 83) {
-								halfmoon.toggleSidebar();
-							}
-						}
-					}
-				});
-			</script>
 		{% endif %}
-	</body>
-</html>
+		<!-- Main content end -->
+
+		<!-- Footer start -->
+		<br />
+		<br />
+		<div class="content text-end border-top pt-10 mt-auto">
+			<span class="ms-auto text-muted fs-base-n2">
+			&copy; 2022, SP Tech Inc. All rights reserved
+			</span>
+		</div>
+		<!-- Footer end -->
+	</div>
+	<!-- Main content wrapper end -->
+</div>
+<!-- Page wrapper end -->
+{% endblock body %}
+
+{% block extra_body %}
+<!-- PNG Generation -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script type="text/javascript">
+	var getCanvas; // Global variable
+	
+	$(".download-btn").on("click", function (event) {
+		// Get the proper target
+		var target = event.target;
+		if (target.matches(".download-btn *")) {
+			target = target.closest(".download-btn");
+		}
+		var ticketID = target.getAttribute("data-target");
+	
+		// Reset indicator
+		$("#" + ticketID + "-indicator").html(
+			"<i class='fa-light fa-circle-notch fa-spin'></i>"
+		);
+	
+		// Hide main container, show ticket container and scroll to top
+		$("#main-container").addClass("d-none");
+		$("#" + ticketID + "-container").removeClass("d-none");
+		window.scrollTo({ top: 0 });
+	
+		// Download the ticket
+		var element = $("#" + ticketID);
+		html2canvas(element, {
+			onrendered: function (canvas) {
+				getCanvas = canvas;
+				var imgageData = getCanvas.toDataURL("image/png");
+				var a = document.createElement("a");
+				a.href = imgageData; // Image Base64 Goes here
+				a.download = ticketID + ".png"; // File name Here
+				a.click(); // Downloaded file
+			},
+		});
+	
+		// Change indicator after 2 seconds
+		setTimeout(function () {
+			$("#" + ticketID + "-indicator").html(
+				"<i class='fa-regular fa-check text-success'></i>"
+			);
+		}, 2000);
+	
+		// Show main container, hide ticket container after 3 seconds
+		setTimeout(function () {
+			$("#main-container").removeClass("d-none");
+			$("#" + ticketID + "-container").addClass("d-none");
+		}, 3000);
+	});
+</script>
+{% endblock extra_body %}

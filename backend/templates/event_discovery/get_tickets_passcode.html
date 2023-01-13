@@ -1,181 +1,100 @@
-{% load static get_debug_status get_preferred_color_scheme %}
-<!DOCTYPE html>
-{% get_debug_status as debug %}
-<html lang="en" class="socialpass-event-discovery {% get_preferred_color_scheme %}" spellcheck="false">
-	<head>
-		<!-- Meta tags -->
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+{% extends "event_discovery/get_tickets_base.html" %}
+{% load static get_theme_value %}
 
-		<!-- Title -->
-		<title>Get Tickets - SocialPass</title>
-
-		<!-- Fav icon -->
-		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
-
-		<!-- Halfmoon CSS -->
-		<link href="{% static 'socialpass-theme/halfmoon.min.css' %}" rel="stylesheet" />
-
-		<!-- SocialPass CSS theme -->
-		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
-
-		<!-- Font Awesome 6 -->
-		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
-
-		<!-- Open graph -->
-		<meta property="og:type" content="article">
-		<meta property="og:url" content="{{ request.build_absolute_uri }}">
-		<meta property="og:title" content="SocialPass - Get Tickets">
-		<meta property="og:description" content="Get your event tickets on SocialPass!">
-		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
-		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:site" content="@socialpass_io">
-
-		<!-- Custom styles -->
-		<style type="text/css">
-			:root {
-				--base-body-bg-color: var(--gray-color-light);
-			}
-
-			.dark-mode {
-				--base-body-bg-color: var(--dark-color-very-dim);
-			}
-
-			.ws-820 {
-				width: 82rem !important;
-			}
-		</style>
-	</head>
-	<body>
-		<!-- Page wrapper start -->
-		<div class="page-wrapper">
-			<!-- Content wrapper start -->
-			<div class="content-wrapper ws-820 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
-				<!-- Navbar start -->
-				<nav class="d-flex align-items-center px-20">
-					<!-- Branding start -->
-					<div class="d-flex align-items-center fw-bold user-select-none">
-						<div class="ws-75">
-							<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
-						</div>
-						<div class="text-strong ms-10">
-							<div class="fs-base-p4">
-								SocialPass
-							</div>
-							<div class="fs-base-n4 lh-1 fw-normal">
-								Ticket Portal
-							</div>
-						</div>
-					</div>
-					<!-- Branding end -->
-
-					<!-- Dark mode toggle start -->
-					<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
-						<i class="fa-solid fa-moon"></i>
-						<span class="visually-hidden">Toggle dark mode</span>
-					</button>
-					<!-- Dark mode toggle end -->
-				</nav>
-				<div class="content m-0">
-					<hr />
+{% block body %}
+<!-- Page wrapper start -->
+<div class="page-wrapper">
+	<!-- Content wrapper start -->
+	<div class="content-wrapper ws-820 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
+		<!-- Navbar start -->
+		<nav class="d-flex align-items-center px-20">
+			<!-- Branding start -->
+			<div class="d-flex align-items-center fw-bold user-select-none">
+				<div class="ws-75">
+					<img src="{% get_theme_value 'logo_not_dashboard' %}" alt="Brand Icon" class="d-block w-100 h-auto">
 				</div>
-				<!-- Navbar end -->
-
-				<!-- Passcode form start -->
-				<div class="row mt-auto">
-					<div class="col-sm-9 col-md-7 mx-auto">
-						<div class="content">
-							<h1 class="text-strong fw-700 fsr-4 m-0">
-								Get Tickets
-							</h1>
-							<p class="text-muted m-0 fs-base-n2">
-								Enter Passcode
-							</p>
-							<p class="mt-20">
-								We've sent a <strong>passcode</strong> over to your email address ({{ checkout_session.email|make_list|first }}*****@*****{{ checkout_session.email|make_list|last }}). Please enter this passcode to download your tickets.
-							</p>
-							{% if messages %}
-								{% for message in messages %}
-									{% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
-										<div class="alert alert-primary" role="alert">{{ message }}</div>
-									{% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-										<div class="alert alert-danger" role="alert">{{ message }}</div>
-									{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-										<div class="alert alert-success" role="alert">{{ message }}</div>
-									{% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-										<div class="alert alert-warning" role="alert">{{ message }}</div>
-									{% endif %}
-								{% endfor %}
-							{% endif %}
-							<form method="post">
-								{% csrf_token %}
-								{% with input=passcode_form.passcode %}
-									{% include 'components/forms_inputs/input.html' %}
-								{% endwith %}
-								<div class="form-group">
-									<button class="btn btn-primary btn-block" type="submit" name="passcode_submit">Submit</button>
-								</div>
-							</form>
-							<hr />
-							<form method="post">
-								{% csrf_token %}
-								<p class="mb-0 fs-base-n2 text-muted">
-									If you haven't received your passcode (or would like to create another one), click on the following button.
-								</p>
-								<div class="form-group mt-10">
-									<button class="btn btn-block" type="submit" name="resend_passcode">
-										<i class="fa-regular fa-rotate-right me-5"></i>
-										<strong class="antialiased">Resend Passcode</strong>
-									</button>
-								</div>
-							</form>
-						</div>
+				<div class="text-strong ms-10">
+					<div class="fs-base-p4">
+						{% get_theme_value "brand_name" %}
+					</div>
+					<div class="fs-base-n4 lh-1 fw-normal">
+						Ticket Portal
 					</div>
 				</div>
-				<!-- Passcode form end -->
-
-				<!-- Footer start -->
-				<div class="content text-end border-top pt-10 mt-auto">
-					<span class="ms-auto text-muted fs-base-n2">
-						&copy; 2022, SP Tech Inc. All rights reserved
-					</span>
-				</div>
-				<!-- Footer end -->
 			</div>
-			<!-- Content wrapper end -->
+			<!-- Branding end -->
+
+			<!-- Dark mode toggle start -->
+			<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
+				<i class="fa-solid fa-moon"></i>
+				<span class="visually-hidden">Toggle dark mode</span>
+			</button>
+			<!-- Dark mode toggle end -->
+		</nav>
+		<!-- Navbar end -->
+
+		<!-- Passcode form start -->
+		<div class="row mt-auto">
+			<div class="col-sm-9 col-md-7 mx-auto">
+				<div class="content">
+					<h1 class="text-strong fw-700 fsr-4 m-0">
+						Get Tickets
+					</h1>
+					<p class="text-muted m-0 fs-base-n2">
+						Enter Passcode
+					</p>
+					<p class="mt-20">
+						We've sent a <strong>passcode</strong> over to your email address ({{ checkout_session.email|make_list|first }}*****@*****{{ checkout_session.email|make_list|last }}). Please enter this passcode to download your tickets.
+					</p>
+					{% if messages %}
+						{% for message in messages %}
+							{% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+								<div class="alert alert-primary" role="alert">{{ message }}</div>
+							{% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+								<div class="alert alert-danger" role="alert">{{ message }}</div>
+							{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+								<div class="alert alert-success" role="alert">{{ message }}</div>
+							{% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+								<div class="alert alert-warning" role="alert">{{ message }}</div>
+							{% endif %}
+						{% endfor %}
+					{% endif %}
+					<form method="post">
+						{% csrf_token %}
+						{% with input=passcode_form.passcode %}
+							{% include 'components/forms_inputs/input.html' %}
+						{% endwith %}
+						<div class="form-group">
+							<button class="btn btn-primary btn-block" type="submit" name="passcode_submit">Submit</button>
+						</div>
+					</form>
+					<hr />
+					<form method="post">
+						{% csrf_token %}
+						<p class="mb-0 fs-base-n2 text-muted">
+							If you haven't received your passcode (or would like to create another one), click on the following button.
+						</p>
+						<div class="form-group mt-10">
+							<button class="btn btn-block" type="submit" name="resend_passcode">
+							<i class="fa-regular fa-rotate-right me-5"></i>
+							<strong class="antialiased">Resend Passcode</strong>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
 		</div>
-		<!-- Page wrapper end -->
+		<!-- Passcode form end -->
 
-		<!-- Halfmoon JS -->
-		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
-
-		{% if debug %}
-			<script type="text/javascript">
-				/**
-				 * Handle the keydown event (only on debug mode).
-				 *
-				 * This is used to create the dark mode and sidebar toggle shortcuts.
-				 * These shortcuts are very useful for testing.
-				 */
-				document.addEventListener("keydown", function (event) {
-					if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
-						event = event || window.event;
-
-						if (!(event.ctrlKey || event.metaKey)) {
-							// Toggle dark mode when [shift] + [D] keys are pressed
-							if (event.shiftKey && event.which == 68) {
-								halfmoon.toggleDarkMode();
-							}
-
-							// Toggle sidebar when [shift] + [S] keys are pressed
-							if (event.shiftKey && event.which == 83) {
-								halfmoon.toggleSidebar();
-							}
-						}
-					}
-				});
-			</script>
-		{% endif %}
-	</body>
-</html>
+		<!-- Footer start -->
+		<div class="content text-end border-top pt-10 mt-auto">
+			<span class="ms-auto text-muted fs-base-n2">
+			&copy; 2022, SP Tech Inc. All rights reserved
+			</span>
+		</div>
+		<!-- Footer end -->
+	</div>
+	<!-- Content wrapper end -->
+</div>
+<!-- Page wrapper end -->
+{% endblock body %}

@@ -1,0 +1,86 @@
+{% load static get_debug_status get_preferred_color_scheme get_theme_value %}
+<!DOCTYPE html>
+{% get_debug_status as debug %}
+<html lang="en" class="socialpass-event-discovery {% get_preferred_color_scheme %}" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>Get Tickets - {% get_theme_value "brand_name" %}</title>
+
+		<!-- Fav icon -->
+		<link rel="icon" href="{% get_theme_value 'favicon' %}" />
+
+		<!-- Halfmoon CSS -->
+		<link href="{% static 'socialpass-theme/halfmoon.min.css' %}" rel="stylesheet" />
+
+		<!-- SocialPass CSS theme -->
+		<link href="{% get_theme_value 'css_theme' %}" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- Open graph -->
+		<meta property="og:type" content="article" />
+		<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+		<meta property="og:title" content="SocialPass - Get Tickets" />
+		<meta property="og:description" content="Get your event tickets on SocialPass!" />
+		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@socialpass_io" />
+
+		<!-- Custom styles -->
+		<style type="text/css">
+			:root {
+				--base-body-bg-color: var(--gray-color-light);
+			}
+
+			.dark-mode {
+				--base-body-bg-color: var(--dark-color-very-dim);
+			}
+
+			.ws-820 {
+				width: 82rem !important;
+			}
+		</style>
+	</head>
+	<body>
+		{% block body %}{% endblock body %}
+
+		<!-- Halfmoon JS -->
+		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
+
+		{% if debug %}
+			<script type="text/javascript">
+				/**
+				 * Handle the keydown event (only on debug mode).
+				 *
+				 * This is used to create the dark mode and sidebar toggle shortcuts.
+				 * These shortcuts are very useful for testing.
+				 */
+				document.addEventListener("keydown", function (event) {
+					if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+						event = event || window.event;
+
+						if (!(event.ctrlKey || event.metaKey)) {
+							// Toggle dark mode when [shift] + [D] keys are pressed
+							if (event.shiftKey && event.which == 68) {
+								halfmoon.toggleDarkMode();
+							}
+
+							// Toggle sidebar when [shift] + [S] keys are pressed
+							if (event.shiftKey && event.which == 83) {
+								halfmoon.toggleSidebar();
+							}
+						}
+					}
+				});
+			</script>
+		{% endif %}
+
+		{% block extra_body %}{% endblock extra_body %}
+	</body>
+</html>

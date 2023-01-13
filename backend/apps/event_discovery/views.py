@@ -80,6 +80,7 @@ class GetTickets(View):
         passcode_form = PasscodeForm()
 
         return render(self.request, "event_discovery/get_tickets_passcode.html", {
+            "current_team": checkout_session.event.team,
             "checkout_session": checkout_session,
             "passcode_form": passcode_form,
         })
@@ -92,6 +93,7 @@ class GetTickets(View):
         passcode_form = PasscodeForm()
         template_name = "get_tickets_passcode.html"
         ctx = {
+            "current_team": checkout_session.event.team,
             "checkout_session": checkout_session,
             "passcode_form": passcode_form,
         }

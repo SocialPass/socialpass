@@ -378,13 +378,12 @@ export default function Home() {
             </div>
             <div className='col-md-5'>
               <div className='px-content pt-md-30 position-md-sticky top-0 start-0'>
-                <p className='fs-base-n2 mt-0'>
-                  Your ticket(s) will be sent to your email address, so please make sure you enter
-                  the correct one!{' '}
-                  {/* <a href='#' className='fw-bold' target='_blank'>
-                    Learn more <i className='fa-regular fa-external-link'></i>
-                  </a> */}
-                </p>
+                <div className='alert alert-primary fs-base-n4 p-5 mt-10' role='alert'>
+                    <i className='fa-regular fa-info-circle me-5 text-primary'></i>
+                    Your ticket(s) will be sent to your email. We only require 
+                    your email to deliver your tickets in a secure way.
+                    {' '}<strong>No account</strong> is created without your consent.
+                  </div>
                 <form>
                   <input
                     type='text'
@@ -404,11 +403,6 @@ export default function Home() {
                     onChange={(e) => setEmail(e.target.value)}
                   >
                   </input>
-                  <div className='alert alert-primary fs-base-n4 p-5' role='alert'>
-                    <i className='fa-regular fa-info-circle me-5 text-primary'></i>
-                    We only require your email to deliver your tickets in a secure way.{' '}
-                    <strong>No account</strong> is created without your consent.
-                  </div>
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
                     // Get Tickets button is only enabled by having tickets selected and a valid e-mail input

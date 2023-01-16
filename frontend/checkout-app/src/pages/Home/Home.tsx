@@ -404,8 +404,8 @@ export default function Home() {
                     onChange={(e) => setEmail(e.target.value)}
                   >
                   </input>
-                  <div className='alert alert-secondary fs-base-n4 p-5' role='alert'>
-                    <i className='fa-regular fa-info-circle me-5 text-secondary'></i>
+                  <div className='alert alert-primary fs-base-n4 p-5' role='alert'>
+                    <i className='fa-regular fa-info-circle me-5 text-primary'></i>
                     We only require your email to deliver your tickets in a secure way.{' '}
                     <strong>No account</strong> is created without your consent.
                   </div>

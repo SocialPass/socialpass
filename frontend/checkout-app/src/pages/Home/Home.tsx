@@ -404,6 +404,11 @@ export default function Home() {
                     onChange={(e) => setEmail(e.target.value)}
                   >
                   </input>
+                  <div className='alert alert-secondary fs-base-n4 p-5' role='alert'>
+                    <i className='fa-regular fa-info-circle me-5 text-secondary'></i>
+                    We only require your email to deliver your tickets in a secure way.{' '}
+                    <strong>No account</strong> is created without your consent.
+                  </div>
                   <button
                     className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
                     // Get Tickets button is only enabled by having tickets selected and a valid e-mail input

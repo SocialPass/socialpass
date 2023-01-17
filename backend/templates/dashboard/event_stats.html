@@ -1,5 +1,5 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_theme_value format_address %}
+{% load static get_theme_value format_address format_to_event_timezone %}
 
 {% block head_title %}{{ event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
@@ -144,7 +144,7 @@
 									{% endif %}
 								</td>
 								<td>
-									{{ ticket.created }}
+									{% format_to_event_timezone ticket.created event.timezone %}
 								</td>
 							</tr>
 						{% endfor %}
@@ -194,7 +194,7 @@
 									{{ session.public_id }}
 								</td>
 								<td>
-									{{ session.created }}
+									{% format_to_event_timezone session.created event.timezone %}
 								</td>
 							</tr>
 						{% endfor %}
@@ -249,7 +249,7 @@
 									{% endif %}
 								</td>
 								<td>
-									{{ ticket.redeemed_at }}
+									{% format_to_event_timezone ticket.redeemed_at event.timezone %}
 								</td>
 							</tr>
 						{% endfor %}

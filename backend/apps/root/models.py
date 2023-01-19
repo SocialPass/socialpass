@@ -275,6 +275,7 @@ class Event(DBModel):
 
     # Publish info
     is_featured = models.BooleanField(default=False, blank=False, null=False)
+    is_featured_top = models.BooleanField(default=False)
 
     # Basic Info
     title = models.CharField(

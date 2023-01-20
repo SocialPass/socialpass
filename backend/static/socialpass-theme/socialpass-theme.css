@@ -91,24 +91,6 @@
     --text-color-on-socialpass-orange-color-bg: var(--white-color);
 }
 
-.dark-mode {
-    /* SocialPass blue */
-
-    --socialpass-blue-color-lightness: 40%;
-    --socialpass-blue-color-lightness-step-up-1: 45%;
-    --socialpass-blue-color-lightness-step-up-2: 50%;
-    --socialpass-blue-color-lightness-step-down-1: 35%;
-    --socialpass-blue-color-lightness-step-down-2: 30%;
-
-    /* SocialPass orange */
-
-    --socialpass-orange-color-lightness: 50%;
-    --socialpass-orange-color-lightness-step-up-1: 55%;
-    --socialpass-orange-color-lightness-step-up-2: 60%;
-    --socialpass-orange-color-lightness-step-down-1: 45%;
-    --socialpass-orange-color-lightness-step-down-2: 40%;
-}
-
 /* Context colors */
 
 :root {

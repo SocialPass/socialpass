@@ -20,11 +20,15 @@ class EventDiscoveryIndex(TemplateView):
 
     def get_context_data(self, **kwargs):
         """
-        featured events
+        featured event
         """
         context = super().get_context_data(**kwargs)
-        featured_events = Event.objects.filter_featured()[:3]
-        context.update({"featured_events": featured_events})
+        featured_top = Event.objects.filter(is_featured_top=True)[:1]
+        if featured_top.count() > 0:
+            featured_event = featured_top[0]
+        else:
+            featured_event = False
+        context.update({"featured_event": featured_event})
         return context
 
 

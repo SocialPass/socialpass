@@ -6,7 +6,7 @@ app_name = "discovery"
 
 urlpatterns = [
     path("", views.EventDiscoveryIndex.as_view(), name="index"),
-    path("events/browse", views.EventDiscoveryBrowse.as_view(), name="browse"),
+    #path("events/browse", views.EventDiscoveryBrowse.as_view(), name="browse"),
     path(
         "events/<int:event_id>",
         views.EventDiscoveryDetails.as_view(),

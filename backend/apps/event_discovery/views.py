@@ -32,6 +32,7 @@ class EventDiscoveryIndex(TemplateView):
         return context
 
 
+"""
 class EventDiscoveryBrowse(ListView):
     model = Event
     paginate_by = 15
@@ -49,6 +50,7 @@ class EventDiscoveryBrowse(ListView):
             qs = qs.filter(title__icontains=query_title)
 
         return qs
+"""
 
 
 class EventDiscoveryDetails(DetailView):

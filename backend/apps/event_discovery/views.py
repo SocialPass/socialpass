@@ -7,7 +7,7 @@ from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
+#from django.views.generic.list import ListView
 from django.utils import timezone
 
 from .forms import PasscodeForm

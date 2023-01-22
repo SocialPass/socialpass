@@ -84,6 +84,7 @@ class Team(DBModel):
     )
     description = models.TextField(blank=True, default="")
     theme = models.JSONField(blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         """

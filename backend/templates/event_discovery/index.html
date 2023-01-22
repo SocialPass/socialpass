@@ -48,6 +48,9 @@
 									</div>
 									<div class="text-muted fs-base-n2 mb-20">
 										By {{ featured_event.organizer }}
+										{% if featured_event.team.is_verified %}
+											<i class="fa-solid fa-badge-check text-primary"></i>
+										{% endif %}
 									</div>
 									<div class="d-flex align-items-center fs-base-n2">
 										<div class="ws-25 flex-shrink-0">

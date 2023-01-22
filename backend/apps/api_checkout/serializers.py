@@ -39,7 +39,7 @@ class TeamReadSerializer(BaseModelSerializer):
 
     class Meta:
         model = Team
-        fields = ["name", "image", "theme"]
+        fields = ["name", "image", "theme", "is_verified",]
     image = serializers.SerializerMethodField()
     theme = serializers.SerializerMethodField()
 

@@ -193,7 +193,12 @@ export default function Home() {
 
       <div className='px-content pt-40 text-center'>
         <p className='text-muted mt-5 mb-0'>Hosted By</p>
-        <h6 className='text-strong fs-base fw-700 m-0'>{event?.team.name}</h6>
+        <h6 className='text-strong fs-base fw-700 m-0'>
+          {event?.team.name}
+          {event?.team.is_verified && 
+            <i className='fa-solid fa-badge-check text-primary ms-5'></i>
+          }
+        </h6>
       </div>
 
       <div className='row'>

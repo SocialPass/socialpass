@@ -40,7 +40,7 @@
 			<meta property="og:type" content="article">
 			<meta property="og:url" content="{{ request.build_absolute_uri }}">
 			<meta property="og:title" content="{{ event.title }}">
-			<meta property="og:description" content="{{ event.description }}">
+			<meta property="og:description" content="Date & Time: {{ event.start_date }} | Location: {{ event.localized_address_display }} | Get your tickets now!">
 			<meta property="og:image" content="{{ event.cover_image.url }}">
 		{% else %}
 			<meta name="description" content="SocialPass is the go-to events platform, powered by Web3">

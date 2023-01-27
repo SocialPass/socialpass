@@ -158,6 +158,15 @@
 						<strong>Location: </strong>
 						<span class="text-muted">{{ event.localized_address_display }}</span>
 					</div>
+					{% if event.state == event.StateStatus.LIVE %}
+						<div class="fs-base-n2">
+							<strong>Live: </strong>
+							<a href="{% url 'discovery:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
+								Public Page
+								<i class="fa-regular fa-external-link ms-5"></i>
+							</a>
+						</div>
+					{% endif %}
 				</div>
 				<!-- Name, date, location end -->
 

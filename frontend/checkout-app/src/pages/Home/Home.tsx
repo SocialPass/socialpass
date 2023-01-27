@@ -383,10 +383,9 @@ export default function Home() {
             </div>
             <div className='col-md-5'>
               <div className='px-content pt-md-30 position-md-sticky top-0 start-0'>
-                <div className='alert alert-primary fs-base-n4 p-5 mt-10' role='alert'>
+                <div className='alert alert-primary text-base fs-base-n4 p-5 mt-10' role='alert'>
                     <i className='fa-regular fa-info-circle me-5 text-primary'></i>
-                    Your ticket(s) will be sent to your email. We only require 
-                    your email to deliver your tickets in a secure way.
+                    We only require your email to deliver your tickets in a secure way.
                     {' '}<strong>No account</strong> is created without your consent.
                   </div>
                 <form>

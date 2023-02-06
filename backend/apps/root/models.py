@@ -1226,6 +1226,7 @@ class TxAssetOwnership(DBModel):
             f"?chain={chain}"
             f"&token_addresses={token_address}"
             f"&format=decimal"
+            f"&disable_total=false"
         )
         headers = {
             "accept": "application/json",

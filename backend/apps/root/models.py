@@ -735,14 +735,14 @@ class TicketTier(DBModel):
     capacity = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event.",
+        help_text="Maximum amount of attendees for this ticket tier, including guests.",
         blank=True,
         null=False,
     )
     max_per_order = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee.",
+        help_text="Maximum amount of tickets per order.",
         blank=False,
         null=False,
     )

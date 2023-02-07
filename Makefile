@@ -24,13 +24,13 @@ migrate: ## Migrate backend migrations
 populate: ## Populate DB
 	(source backend/venv/bin/activate; cd backend; ./manage.py populate_db)
 
-reset: ## Create backend superuser
+reset: ## Reset DB
 	(source backend/venv/bin/activate; cd backend; ./manage.py reset_db)
 
-run: ## Create backend superuser
+run: ## Runserver
 	(source backend/venv/bin/activate; cd backend; ./manage.py runserver)
 
-superuser: ## Create backend superuser
+superuser: ## Create superuser
 	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)
 
 test: ## Test backend repo

@@ -739,7 +739,7 @@ class TicketTier(DBModel):
         blank=True,
         null=False,
     )
-    max_per_person = models.IntegerField(
+    max_per_order = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
         help_text="Maximum amount of tickets per attendee.",
@@ -1044,17 +1044,17 @@ class CheckoutItem(DBModel):
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
 
-    def clean_max_per_person(self, *args, **kwargs):
+    def clean_max_per_order(self, *args, **kwargs):
         """
-        clean max_per_person method
+        clean max_per_order method
         checks if quantity requested is not more than maximum per person
         """
-        max_per_person = self.ticket_tier.max_per_person
-        if self.quantity > max_per_person:
+        max_per_order = self.ticket_tier.max_per_order
+        if self.quantity > max_per_order:
             raise TooManyTicketsRequestedError(
                 {
                     "quantity": _(
-                        f"Only {max_per_person} quantity per person is available."
+                        f"Only {max_per_order} quantity per person is available."
                     )
                 }
             )
@@ -1130,7 +1130,7 @@ class CheckoutItem(DBModel):
         clean method
         runs all clean_* methods
         """
-        self.clean_max_per_person()
+        self.clean_max_per_order()
         self.clean_quantity()
         self.clean_ticket_tier()
         self.clean_event()

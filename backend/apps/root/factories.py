@@ -146,7 +146,7 @@ class TicketTierFactory(factory.django.DjangoModelFactory):
 
     ticket_type = "test"
     capacity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
-    max_per_person = 1
+    max_per_order = 1
     event = factory.SubFactory(EventFactory)
     tier_fiat = factory.SubFactory(TierFiatFactory)
     tier_blockchain = factory.SubFactory(TierBlockchainFactory)

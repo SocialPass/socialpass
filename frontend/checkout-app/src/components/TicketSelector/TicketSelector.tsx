@@ -14,7 +14,7 @@ function TicketSelector(props): JSX.Element {
   const handleAddOne = () => {
     if (
       amount < ticketTier?.capacity &&
-      amount < ticketTier?.max_per_person &&
+      amount < ticketTier?.max_per_order &&
       amount < ticketTier?.capacity - ticketTier?.quantity_sold
       // Current rules state limits to ticket selection:
       // Can't go below zero
@@ -102,7 +102,7 @@ function TicketSelector(props): JSX.Element {
 
             {paymentType === 'ASSET_OWNERSHIP' ? (
               <div className='text-center fs-12 mt-5'>
-                Max {ticketTier?.max_per_person} per person
+                Max {ticketTier?.max_per_order} per person
               </div>
             ) : null}
 

@@ -118,7 +118,7 @@ class TicketTierAdmin(CustomDBAdmin):
         "event",
         "capacity",
         "quantity_sold",
-        "max_per_person",
+        "max_per_order",
     ]
     search_fields = ("event__title",)
 

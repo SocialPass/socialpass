@@ -92,7 +92,7 @@ class GetEventTestCase(TestCaseWrapper):
         self.assertEqual(ticket_tier_dict["ticket_type"], self.ticket_tier.ticket_type)
         self.assertEqual(ticket_tier_dict["capacity"], self.ticket_tier.capacity)
         self.assertEqual(
-            ticket_tier_dict["max_per_person"], self.ticket_tier.max_per_person
+            ticket_tier_dict["max_per_order"], self.ticket_tier.max_per_order
         )
 
     @prevent_warnings

@@ -1144,9 +1144,8 @@ class CheckoutItem(DBModel):
 
     def create_tickets(self):
         """
-        create Tickets and relate to the checkout_item
-        the amount of tickets created will be the same as
-        the quantity defined in the related checkout_item
+        create ticets based on a corresponding checkoutitem
+        this will account for attendee tickets as well as guest tickets
         """
         ticket_keys = {
             "checkout_session": self.checkout_session,
@@ -1154,8 +1153,15 @@ class CheckoutItem(DBModel):
             "ticket_tier": self.ticket_tier,
             "checkout_item": self,
         }
-        tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
-        Ticket.objects.bulk_create(tickets)
+        attendee_tix = [Ticket(**ticket_keys) for _ in range(self.quantity)]
+        guest_tix = [
+            Ticket(**ticket_keys) for _ in range(self.ticket_tier.allowed_guests)
+        ]
+        if attendee_tix:
+            Ticket.objects.bulk_create(attendee_tix)
+
+        if guest_tix:
+            Ticket.objects.bulk_create(guest_tix)
 
 
 class TxFiat(DBModel):

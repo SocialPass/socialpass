@@ -1147,6 +1147,7 @@ class CheckoutItem(DBModel):
         this will account for attendee tickets as well as guest tickets
         """
         # Create Attendee Tickets
+        # Amount is equal to the quantity ordered
         attendee_tix_keys = {
             "checkout_session": self.checkout_session,
             "event": self.checkout_session.event,
@@ -1158,6 +1159,7 @@ class CheckoutItem(DBModel):
             Ticket.objects.bulk_create(attendee_tix)
 
         # Create Guest Tickets
+        # Amount is equal to the quantity ordered times the number of allowed guests
         guest_tix_keys = {
             "checkout_session": self.checkout_session,
             "event": self.checkout_session.event,
@@ -1166,7 +1168,8 @@ class CheckoutItem(DBModel):
             "is_guest": True,
         }
         guest_tix = [
-            Ticket(**guest_tix_keys) for _ in range(self.ticket_tier.allowed_guests)
+            Ticket(**guest_tix_keys)
+            for _ in range(self.quantity * self.ticket_tier.allowed_guests)
         ]
         if guest_tix:
             Ticket.objects.bulk_create(guest_tix)

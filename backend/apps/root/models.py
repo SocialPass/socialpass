@@ -543,6 +543,10 @@ class Ticket(DBModel):
         null=False,
     )
 
+    # Basic Info
+    google_class_id = models.CharField(max_length=255, blank=True, default="")
+    is_guest = models.BooleanField(default=False, blank=False, null=False)
+
     # Ticket access info
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     archived = models.BooleanField(default=False, blank=False, null=False)
@@ -551,7 +555,6 @@ class Ticket(DBModel):
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, blank=True, null=True
     )
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
@@ -1140,22 +1143,31 @@ class CheckoutItem(DBModel):
 
     def create_tickets(self):
         """
-        create ticets based on a corresponding checkoutitem
+        create tickets based on a corresponding CheckoutItem
         this will account for attendee tickets as well as guest tickets
         """
-        ticket_keys = {
+        # Create Attendee Tickets
+        attendee_tix_keys = {
             "checkout_session": self.checkout_session,
             "event": self.checkout_session.event,
             "ticket_tier": self.ticket_tier,
             "checkout_item": self,
         }
-        attendee_tix = [Ticket(**ticket_keys) for _ in range(self.quantity)]
-        guest_tix = [
-            Ticket(**ticket_keys) for _ in range(self.ticket_tier.allowed_guests)
-        ]
+        attendee_tix = [Ticket(**attendee_tix_keys) for _ in range(self.quantity)]
         if attendee_tix:
             Ticket.objects.bulk_create(attendee_tix)
 
+        # Create Guest Tickets
+        guest_tix_keys = {
+            "checkout_session": self.checkout_session,
+            "event": self.checkout_session.event,
+            "ticket_tier": self.ticket_tier,
+            "checkout_item": self,
+            "is_guest": True,
+        }
+        guest_tix = [
+            Ticket(**guest_tix_keys) for _ in range(self.ticket_tier.allowed_guests)
+        ]
         if guest_tix:
             Ticket.objects.bulk_create(guest_tix)
 

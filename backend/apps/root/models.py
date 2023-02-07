@@ -1053,16 +1053,12 @@ class CheckoutItem(DBModel):
     def clean_max_per_order(self, *args, **kwargs):
         """
         clean max_per_order method
-        checks if quantity requested is not more than maximum per person
+        checks if quantity requested is not more than maximum per order
         """
         max_per_order = self.ticket_tier.max_per_order
         if self.quantity > max_per_order:
             raise TooManyTicketsRequestedError(
-                {
-                    "quantity": _(
-                        f"Only {max_per_order} quantity per person is available."
-                    )
-                }
+                {"quantity": _(f"Only {max_per_order} quantity per order is available.")}
             )
 
     def clean_quantity(self, *args, **kwargs):

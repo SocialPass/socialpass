@@ -18,7 +18,7 @@ function TicketSelector(props): JSX.Element {
       amount < ticketTier?.capacity - ticketTier?.quantity_sold
       // Current rules state limits to ticket selection:
       // Can't go below zero
-      // Can't select more than the capacity, max per person ou more than are tickets available
+      // Can't select more than the capacity, max per order ou more than are tickets available
     ) {
       onChange(amount + 1, ticketTier)
     }
@@ -100,11 +100,12 @@ function TicketSelector(props): JSX.Element {
               </button>
             </div>
 
-            {paymentType === 'ASSET_OWNERSHIP' ? (
               <div className='text-center fs-12 mt-5'>
-                Max {ticketTier?.max_per_order} per person
+                Max per order: {ticketTier?.max_per_order}
               </div>
-            ) : null}
+              <div className='text-center fs-12 mt-5'>
+                Complementary Guests: {ticketTier?.allowed_guests}
+              </div>
 
             {paymentType !== 'ASSET_OWNERSHIP' && amount > 0 ? (
               <div className='text-center fs-base-n2 mt-5'>

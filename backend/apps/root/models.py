@@ -746,6 +746,12 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
+    allowed_guests = models.IntegerField(
+        default=1,
+        help_text="Number of complentary guest tickets an attendee will receive",
+        blank=False,
+        null=False,
+    )
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"

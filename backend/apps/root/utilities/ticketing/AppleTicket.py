@@ -61,7 +61,7 @@ class AppleTicket:
 		date_field = Field("when", start_date, "", "", Alignment.RIGHT)
 		self.event_info.headerFields.append(date_field)
 		self.event_info.addPrimaryField("name", event_title, "EVENT")
-		self.event_info.addPrimaryField("ticket type", ticket_type, "TICKET TYPE")
+		self.event_info.addSecondaryField("ticket type", ticket_type, "TICKET TYPE")
 		self.event_info.addSecondaryField("where", event_location, "WHERE")
 
 	def set_barcode(self, link: str, _format: BarcodeFormat = BarcodeFormat.QR):
@@ -140,10 +140,15 @@ class AppleTicket:
 		self.serial_number = str(ticket.public_id)
 		self.set_barcode(str(ticket.embed_code))
 		self.set_location_list(event.lat, event.long)
+
+		ticket_type = ticket.ticket_tier.ticket_type
+		if ticket.ticket_tier.allowed_guests > 0:
+			ticket_type += f" | +{ticket.ticket_tier.allowed_guests} Guest(s) Allowed"
+			
 		self.set_event_ticket_info(
 			event.start_date.strftime("%d %B, %Y"),
 			event.title,
-			ticket.ticket_tier.ticket_type,
+			ticket_type,
 			event.localized_address_display,
 		)
 		self.generate_pass()

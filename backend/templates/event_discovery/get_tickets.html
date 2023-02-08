@@ -29,19 +29,22 @@
 						<div class="mt-30 fw-bold">
 							Ticket Type:
 						</div>
-						<div class="fs-base-p2">
+						<div class="fs-base-p2 mt-5">
 							{{ ticket.object.ticket_tier.ticket_type }}
+							{% if ticket.object.ticket_tier.allowed_guests > 0 %}
+								| +{{ ticket.object.ticket_tier.allowed_guests }} Guest(s) Allowed
+							{% endif %}
 						</div>
 						<div class="mt-20 fw-bold">
 							Date & Time:
 						</div>
-						<div class="fs-base-p2">
+						<div class="fs-base-p2 mt-5">
 							{{ checkout_session.event.start_date }}
 						</div>
 						<div class="mt-20 fw-bold">
 							Location:
 						</div>
-						<div class="fs-base-p2">
+						<div class="fs-base-p2 mt-5">
 							{{ checkout_session.event.localized_address_display }}
 						</div>
 						<div class="ws-200 hs-200 mx-auto mt-40 mb-10">

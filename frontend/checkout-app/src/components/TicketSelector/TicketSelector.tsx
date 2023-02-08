@@ -70,6 +70,11 @@ function TicketSelector(props): JSX.Element {
               </span>
 
               {ticketTier?.ticket_type}
+              {ticketTier?.allowed_guests > 0 && (
+                <span className="fw-400 fs-base-n2">
+                  {' | +' + ticketTier?.allowed_guests + ' Guest(s) Allowed'}
+                </span>
+              )}
             </h6>
 
             <p className='m-0 fs-base-n2'>

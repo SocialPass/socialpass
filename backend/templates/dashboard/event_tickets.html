@@ -55,17 +55,17 @@
 							<div class="p-15 p-sm-20">
 								<div class="d-flex align-items-center mb-20">
 									<div>
-										<h6 class="m-0 fs-base-p2">
-											{{ ticket_tier.ticket_type }}
-										</h6>
-										<div class="fs-base-n2">
-											Allowed Guests:
-											{% if ticket_tier.allowed_guests > 0 %}
-												+{{ ticket_tier.allowed_guests }}
-											{% else %}
-												0
-											{% endif %}
+										<div class="text-muted fs-base-n2">
+											Name of Ticket Tier:
 										</div>
+										<h6 class="m-0 fs-base-p2 mt-5">
+											{{ ticket_tier.ticket_type }}
+											<span class="fw-400 fs-base-n2">
+												{% if ticket_tier.allowed_guests > 0 %}
+													| +{{ ticket_tier.allowed_guests }} Guest(s) Allowed
+												{% endif %}
+											</span>
+										</h6>
 									</div>
 									<div class="ps-20 ms-auto">
 										<a href="{% url 'dashboard:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger btn-sm">

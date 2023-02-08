@@ -136,6 +136,7 @@ class TicketTierReadSerializer(BaseModelSerializer):
             "ticket_type",
             "capacity",
             "max_per_person",
+            "allowed_guests",
             "tier_fiat",
             "tier_blockchain",
             "tier_asset_ownership",

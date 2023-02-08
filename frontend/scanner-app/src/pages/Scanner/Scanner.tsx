@@ -32,22 +32,26 @@ const Scanner = () => {
           if (data.ticket_tier.allowed_guests > 0) {
             toast.success(
               `Succesful Scan, Tier: ${data.ticket_tier.ticket_type} 
-              | +${data.ticket_tier.allowed_guests} Guest(s) Allowed`
+              | +${data.ticket_tier.allowed_guests} Guest(s) Allowed`,
+              { duration: 12500, }
             )
           }
           else {
-            toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
+            toast.success(
+              `Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`,
+              { duration: 12500, }
+            )
           }
         })
         .catch((err) => {
           if (err.message === 'Ticket has already been redeemed.')  {
-            toast('Succesful Scan: Ticket has already been redeemed', {
-            icon: '⚠️',
-            });
-            
+            toast(
+              'Succesful Scan: Ticket has already been redeemed', 
+              { icon: '⚠️', duration: 10000, }
+            );
           }
           else  {
-            toast.error(`Scan Failed: ${err.message}`)
+            toast.error(`Scan Failed: ${err.message}`, { duration: 10000, })
           }
         })
 

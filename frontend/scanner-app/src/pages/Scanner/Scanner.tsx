@@ -29,8 +29,15 @@ const Scanner = () => {
             ticket_count: data.ticket_count,
             redeemed_count: data.redeemed_count,
           })
-
-          toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
+          if (data.ticket_tier.allowed_guests > 0) {
+            toast.success(
+              `Succesful Scan, Tier: ${data.ticket_tier.ticket_type} 
+              | +${data.ticket_tier.allowed_guests} Guest(s) Allowed`
+            )
+          }
+          else {
+            toast.success(`Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`)
+          }
         })
         .catch((err) => {
           if (err.message === 'Ticket has already been redeemed.')  {

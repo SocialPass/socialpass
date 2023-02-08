@@ -82,6 +82,7 @@ class TicketTierSerializer(serializers.ModelSerializer):
             "tier_blockchain",
             "tier_asset_ownership",
             "ticket_type",
+            "allowed_guests",
         ]
 
 

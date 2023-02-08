@@ -76,6 +76,9 @@
 					{% with form.max_per_person as input %}
 						{% include 'components/forms_inputs/input.html' %}
 					{% endwith %}
+					{% with form.allowed_guests as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
 					<!-- Information end -->
 
 					<!-- Checkout methods start -->

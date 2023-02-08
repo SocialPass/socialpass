@@ -53,14 +53,19 @@
 					{% for ticket_tier in event.tickettier_set.all %}
 						<div class="my-20 border rounded">
 							<div class="p-15 p-sm-20">
-								<div class="d-flex align-items-center mb-10">
+								<div class="d-flex align-items-center mb-20">
 									<div>
-										<div class="text-muted fs-base-n2">
-											Name of Ticket Tier:
-										</div>
 										<h6 class="m-0 fs-base-p2">
 											{{ ticket_tier.ticket_type }}
 										</h6>
+										<div class="fs-base-n2">
+											Allowed Guests:
+											{% if ticket_tier.allowed_guests > 0 %}
+												+{{ ticket_tier.allowed_guests }}
+											{% else %}
+												0
+											{% endif %}
+										</div>
 									</div>
 									<div class="ps-20 ms-auto">
 										<a href="{% url 'dashboard:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger btn-sm">

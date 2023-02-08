@@ -142,13 +142,14 @@ class TicketTierForm(forms.ModelForm):
 
     class Meta:
         model = TicketTier
-        fields = ["ticket_type", "capacity", "max_per_person"]
+        fields = ["ticket_type", "capacity", "max_per_person", "allowed_guests"]
         widgets = {
             "ticket_type": forms.TextInput(
                 attrs={"placeholder": "A short name for this type of ticket"}
             ),
             "capacity": forms.NumberInput(attrs={"min": 1}),
             "max_per_person": forms.NumberInput(attrs={"min": 1}),
+            "allowed_guests": forms.NumberInput(attrs={"min": 0}),
         }
         labels = {"ticket_type": "Name of ticket tier"}
 

@@ -746,6 +746,13 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
+    allowed_guests = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        help_text="Maximum number of guests allowed for one ticket.",
+        blank=False,
+        null=False,
+    )
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"

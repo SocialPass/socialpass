@@ -49,7 +49,7 @@ class EventView(GenericViewSet, RetrieveModelMixin):
         """
         list ticket tiers from event
         """
-        ticket_tiers_qs = self.get_object().tickettier_set.all()
+        ticket_tiers_qs = self.get_object().tickettier_set.all().order_by("is_guest_tier")
         serializer = self.get_serializer(ticket_tiers_qs, many=True)
         return Response(serializer.data)
 

@@ -31,8 +31,8 @@
 						</div>
 						<div class="fs-base-p2 mt-5">
 							{{ ticket.object.ticket_tier.ticket_type }}
-							{% if ticket.object.ticket_tier.allowed_guests > 0 %}
-								| +{{ ticket.object.ticket_tier.allowed_guests }} Guest(s) Allowed
+							{% if ticket.object.ticket_tier.is_guest_tier %}
+								| For Guests
 							{% endif %}
 						</div>
 						<div class="mt-20 fw-bold">

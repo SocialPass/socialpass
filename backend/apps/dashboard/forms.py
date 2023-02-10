@@ -149,7 +149,6 @@ class TicketTierForm(forms.ModelForm):
             ),
             "capacity": forms.NumberInput(attrs={"min": 1}),
             "max_per_person": forms.NumberInput(attrs={"min": 1}),
-            "allowed_guests": forms.NumberInput(attrs={"min": 0}),
         }
         labels = {"ticket_type": "Name of ticket tier"}
 

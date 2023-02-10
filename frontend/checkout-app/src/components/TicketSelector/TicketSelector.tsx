@@ -70,9 +70,9 @@ function TicketSelector(props): JSX.Element {
               </span>
 
               {ticketTier?.ticket_type}
-              {ticketTier?.allowed_guests > 0 && (
-                <span className="fw-400 fs-base-n2">
-                  {' | +' + ticketTier?.allowed_guests + ' Guest(s) Allowed'}
+              {ticketTier?.is_guest_tier && (
+                <span className="fw-400 fs-base-n4 text-muted">
+                  {' '}| <i className='fa-regular fa-user-plus'></i> For Guests
                 </span>
               )}
             </h6>

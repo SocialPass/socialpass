@@ -29,10 +29,10 @@ const Scanner = () => {
             ticket_count: data.ticket_count,
             redeemed_count: data.redeemed_count,
           })
-          if (data.ticket_tier.allowed_guests > 0) {
+          if (data.ticket_tier.is_guest_tier) {
             toast.success(
               `Succesful Scan, Tier: ${data.ticket_tier.ticket_type} 
-              | +${data.ticket_tier.allowed_guests} Guest(s) Allowed`,
+              | For Guests`,
               { duration: 12500, }
             )
           }

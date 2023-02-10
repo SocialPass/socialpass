@@ -109,46 +109,8 @@
 
 				<!-- Name, date, location start -->
 				<div class="py-10 py-sm-0 me-sm-20 flex-grow-1">
-					<div class="d-sm-flex align-items-center">
-						<div>
-							<a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
-						</div>
-						{% if not event.has_ended %}
-							{% if event.state == event.StateStatus.LIVE %}
-								<div class="mt-5 mt-sm-0 ms-sm-10">
-									<div class="dropdown with-arrow">
-										<button type="button" class="btn btn-sm text-base rounded-pill lh-1" data-hm-toggle="dropdown" aria-expanded="false">
-											<i class="fa-regular fa-qrcode"></i>
-											<strong class="antialiased ms-5">Check-In</strong>
-										</button>
-										<div class="dropdown-menu ws-250">
-											<div class="dropdown-content fs-base-n2">
-												<div class="fw-bold">Scanner Link</div>
-												<p class="text-muted mt-0">
-													The following is the link to the scanner for this event.
-												</p>
-												<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
-													{% with event_scanner_url=event.scanner_url %}
-													<a href="{{ event_scanner_url }}" class="fw-bold antialiased" target="_blank">
-														<i class="fa-regular fa-external-link"></i>
-														<span class="scanner-link ms-5">{{ event_scanner_url }}</span>
-													</a>
-													{% endwith %}
-												</div>
-												<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
-													<i class="fa-regular fa-link"></i>
-													<strong class="antialiased ms-5">Copy Link</strong>
-												</button>
-											</div>
-											<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
-												<i class="fa-regular fa-check"></i>
-												Copied!
-											</span>
-										</div>
-									</div>
-								</div>
-							{% endif %}
-						{% endif %}
+					<div>
+						<a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
 					</div>
 					<div class="fs-base-n2 mt-5">
 						<strong>Date: </strong>
@@ -159,12 +121,65 @@
 						<span class="text-muted">{{ event.localized_address_display }}</span>
 					</div>
 					{% if event.state == event.StateStatus.LIVE %}
-						<div class="fs-base-n2">
-							<strong>Live: </strong>
-							<a href="{% url 'discovery:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
-								Public Page
-								<i class="fa-regular fa-external-link ms-5"></i>
-							</a>
+						<div class="mt-5">
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-external-link"></i>
+									<strong class="antialiased ms-5">Public Page</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">Public Page Link</div>
+										<p class="text-muted mt-0">
+											When sharing the event link, please use the following  for the best SEO/SMO support.
+										</p>
+										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+											<a href="{% url 'discovery:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
+												<i class="fa-regular fa-external-link"></i>
+												<span class="link-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'discovery:details' event.id event.slug %}</span>
+											</a>
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
+											<i class="fa-regular fa-link"></i>
+											<strong class="antialiased ms-5">Copy Link</strong>
+										</button>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-qrcode"></i>
+									<strong class="antialiased ms-5">Check-In</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">Scanner Link</div>
+										<p class="text-muted mt-0">
+											The following is the link to the scanner for this event.
+										</p>
+										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+											{% with event_scanner_url=event.scanner_url %}
+												<a href="{{ event_scanner_url }}" class="fw-bold antialiased" target="_blank">
+													<i class="fa-regular fa-external-link"></i>
+													<span class="link-to-copy ms-5">{{ event_scanner_url }}</span>
+												</a>
+											{% endwith %}
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
+											<i class="fa-regular fa-link"></i>
+											<strong class="antialiased ms-5">Copy Link</strong>
+										</button>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
 						</div>
 					{% endif %}
 				</div>
@@ -250,7 +265,7 @@
 	function copyLink(e, copyBtn) {
 		// Get the link block
 		var linkBlock = copyBtn.closest(".dropdown-menu").querySelector(
-			".scanner-link"
+			".link-to-copy"
 		);
 
 		// Copy code to clipboard

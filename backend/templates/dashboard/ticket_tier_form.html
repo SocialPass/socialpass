@@ -76,9 +76,15 @@
 					{% with form.max_per_person as input %}
 						{% include 'components/forms_inputs/input.html' %}
 					{% endwith %}
-					{% with form.allowed_guests as input %}
-						{% include 'components/forms_inputs/input.html' %}
-					{% endwith %}
+					<div class="form-group p-10 m-0 border border-dotted rounded">
+						<label class="form-label">For Guests</label>
+						<div class="form-check">
+							{{	form.is_guest_tier|as_crispy_field	}}
+						</div>
+						<div class="form-text m-0">
+							Please select this if this ticket tier is for guests. Guest ticket tiers are marked clearly on the checkout application and generally given less priority.
+						</div>
+					</div>
 					<!-- Information end -->
 
 					<!-- Checkout methods start -->

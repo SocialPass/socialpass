@@ -60,11 +60,11 @@
 										</div>
 										<h6 class="m-0 fs-base-p2 mt-5">
 											{{ ticket_tier.ticket_type }}
-											<span class="fw-400 fs-base-n2">
-												{% if ticket_tier.allowed_guests > 0 %}
-													| +{{ ticket_tier.allowed_guests }} Guest(s) Allowed
-												{% endif %}
-											</span>
+											{% if ticket_tier.is_guest_tier %}
+												<span class="d-inline-block px-10 py-5 rounded-pill bg-gray-very-light-lm bg-darkgray-dim-dm fs-base-n2">
+													For Guests
+												</span>
+											{% endif %}
 										</h6>
 									</div>
 									<div class="ps-20 ms-auto">

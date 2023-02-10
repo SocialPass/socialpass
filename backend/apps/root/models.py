@@ -753,6 +753,7 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
+    is_guest_tier = models.BooleanField(default=False)
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"

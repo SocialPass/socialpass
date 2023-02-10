@@ -17,6 +17,7 @@ def get_sidebar_active_status(context, key):
             "event_delete",
             "event_stats",
             "ticket_tier_create",
+            "ticket_tier_update",
             "ticket_tier_delete",
         ]:
             return "active"

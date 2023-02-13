@@ -225,7 +225,6 @@ export default function Home() {
               <div className='fw-bold'>
                 Date
                 {'  '}&mdash;{' '}
-                <i className="fa-light fa-earth-africa me-5"></i>
                 {event?.timezone}
               </div>
             </div>

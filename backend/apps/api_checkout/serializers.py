@@ -94,7 +94,7 @@ class EventReadSerializer(BaseModelSerializer):
             "description",
             "start_date",
             "end_date",
-            "timezone",  # not used in checkout app
+            "timezone",
             "localized_address_display",
             "cover_image",
         ]

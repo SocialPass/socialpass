@@ -218,9 +218,9 @@ export default function Home() {
                 (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />
               }
             </div>
-            <div className='d-flex align-items-center fs-base-n2'>
+            <div className='d-flex align-items-center'>
               <div className='ws-25 flex-shrink-0'>
-                <i className='fa-regular fa-clock'></i>
+                <i className='fa-light fa-calendars'></i>
               </div>
               <div className='fw-bold'>
                 Date
@@ -233,9 +233,9 @@ export default function Home() {
             {event.end_date && (
               <p className='text-muted mt-5 mb-0'><strong className='text-base'>End:</strong> {event?.end_date}</p>
             )}
-            <div className='d-flex align-items-center fs-base-n2 mt-15'>
+            <div className='d-flex align-items-center mt-15'>
               <div className='ws-25 flex-shrink-0'>
-                <i className='fa-regular fa-location-dot'></i>
+                <i className='fa-light fa-location-dot'></i>
               </div>
               <div className='fw-bold'>Location</div>
             </div>

@@ -100,8 +100,8 @@ class EventReadSerializer(BaseModelSerializer):
         ]
 
     description = serializers.SerializerMethodField()
-    start_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
-    end_date = serializers.DateTimeField(format="%A, %B %d, %Y | %H:%M%p")
+    start_date = serializers.DateTimeField(format="%a, %b %d, %Y | %H:%M%p")
+    end_date = serializers.DateTimeField(format="%a, %b %d, %Y | %H:%M%p")
     team = TeamReadSerializer()
 
     def get_description(self, obj):

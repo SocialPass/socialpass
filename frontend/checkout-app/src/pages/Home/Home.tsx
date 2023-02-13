@@ -222,16 +222,17 @@ export default function Home() {
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-clock'></i>
               </div>
-              <div className='fw-bold'>Date & Time</div>
+              <div className='fw-bold'>
+                Date & Time
+                {'  '}&mdash;{' '}
+                <i className="fa-light fa-earth-africa me-5"></i>
+                {event?.timezone}
+              </div>
             </div>
-            <p className='text-muted mt-5 mb-0'>Start: {event?.start_date}</p>
-              {event.end_date ? (
-                <p className='text-muted mt-5 mb-0'>End: {event?.end_date}</p>
-              ) : (
-                null
-              )
-              }
-            <p className='text-muted mt-5 mb-0'>{event?.timezone}</p>
+            <p className='text-muted mt-5 mb-0'><strong className='text-base'>Start:</strong> {event?.start_date}</p>
+            {event.end_date && (
+              <p className='text-muted mt-5 mb-0'><strong className='text-base'>End:</strong> {event?.end_date}</p>
+            )}
             <div className='d-flex align-items-center mt-15'>
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-location-dot'></i>

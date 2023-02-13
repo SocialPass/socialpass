@@ -195,7 +195,7 @@ export default function Home() {
         <p className='text-muted mt-5 mb-0'>Hosted By</p>
         <h6 className='text-strong fs-base fw-700 m-0'>
           {event?.team.name}
-          {event?.team.is_verified && 
+          {event?.team.is_verified &&
             <i className='fa-solid fa-badge-check text-primary ms-5'></i>
           }
         </h6>
@@ -224,7 +224,14 @@ export default function Home() {
               </div>
               <div className='fw-bold'>Date & Time</div>
             </div>
-            <p className='text-muted mt-5 mb-0'>{event?.start_date}</p>
+            <p className='text-muted mt-5 mb-0'>Start: {event?.start_date}</p>
+              {event.end_date ? (
+                <p className='text-muted mt-5 mb-0'>End: {event?.end_date}</p>
+              ) : (
+                null
+              )
+              }
+            <p className='text-muted mt-5 mb-0'>{event?.timezone}</p>
             <div className='d-flex align-items-center mt-15'>
               <div className='ws-25 flex-shrink-0'>
                 <i className='fa-regular fa-location-dot'></i>

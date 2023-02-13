@@ -62,7 +62,7 @@ class GetEventTestCase(TestCaseWrapper):
         )
         self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)
         self.assertSerializedDatetime(
-            event_dict["start_date"], self.event.start_date, "%A, %B %d, %Y | %H:%M%p"
+            event_dict["start_date"], self.event.start_date, "%a, %b %d, %Y | %H:%M %p"
         )
         self.assertEqual(event_dict["team"]["name"], self.team.name)
 

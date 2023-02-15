@@ -45,12 +45,18 @@ class Command(BaseCommand):
 			results.append({
 				"ticket_id": str(ticket.public_id),
 				"ticket_tier": ticket.ticket_tier.ticket_type,
-				"created": format_to_event_timezone(ticket.created, ticket.event.timezone),
+				"created": format_to_event_timezone(
+					ticket.created, ticket.event.timezone
+				),
 				"redeemed": ticket.redeemed,
-				"redeemed_at": format_to_event_timezone(ticket.redeemed_at, ticket.event.timezone),
+				"redeemed_at": format_to_event_timezone(
+					ticket.redeemed_at, ticket.event.timezone
+				),
 				"checkout_session": str(ticket.checkout_session.public_id),
 				"customer_name": ticket.checkout_session.name,
 				"customer_email": ticket.checkout_session.email,
-				"wallet_address": ticket.checkout_session.tx_asset_ownership.wallet_address
+				"wallet_address": str(
+					ticket.checkout_session.tx_asset_ownership.wallet_address
+				)
 			})
 		print(f"\n{json.dumps(results)}\n")

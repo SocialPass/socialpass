@@ -48,6 +48,34 @@
 						<i class="fa-regular fa-share me-5"></i>
 						Share:
 					</strong>
+					<div class="dropdown with-arrow">
+						<button type="button" class="btn btn-sm text-base me-5" data-hm-toggle="dropdown" aria-expanded="false">
+							<i class="fa-regular fa-external-link"></i>
+							<strong class="antialiased ms-5">Copy Link</strong>
+						</button>
+						<div class="dropdown-menu ws-250">
+							<div class="dropdown-content fs-base-n2">
+								<div class="fw-bold">Public Page Link</div>
+								<p class="text-muted mt-0">
+									When sharing the event link, please use the following  for the best SEO/SMO support.
+								</p>
+								<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+									<a href="{% url 'discovery:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
+										<i class="fa-regular fa-external-link"></i>
+										<span class="link-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'discovery:details' event.id event.slug %}</span>
+									</a>
+								</div>
+								<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
+									<i class="fa-regular fa-link"></i>
+									<strong class="antialiased ms-5">Copy Link</strong>
+								</button>
+							</div>
+							<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end- z-1">
+								<i class="fa-regular fa-check"></i>
+								Copied!
+							</span>
+						</div>
+					</div>
 					<a href="#" class="btn btn-square btn-sm text-base me-5" id="twitter-share">
 						<i class="fa-brands fa-twitter"></i>
 						<span class="visually-hidden">Twitter</span>
@@ -289,4 +317,34 @@
   	facebookShareAnchor.href = `http://www.facebook.com/sharer/sharer.php?u=${socialpassLinkMessage}`
   	emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
 </script>
+
+<!-- Scanner link copy button -->
+<script>
+	function copyLink(e, copyBtn) {
+		// Get the link block
+		var linkBlock = copyBtn.closest(".dropdown-menu").querySelector(
+			".link-to-copy"
+		);
+
+		// Copy code to clipboard
+		var range = document.createRange();
+		range.selectNode(linkBlock);
+		window.getSelection().removeAllRanges();
+		window.getSelection().addRange(range);
+		document.execCommand("copy");
+		window.getSelection().removeAllRanges();
+
+		// Show/hide confirmation
+		var successPrompt = copyBtn.closest(".dropdown-menu").querySelector(
+			".success-prompt"
+		);
+		successPrompt.classList.remove("d-none");
+		setTimeout(function() {
+			successPrompt.classList.add("d-none");
+		}, 2000);
+
+		e.preventDefault();
+	}
+</script>
+
 {% endblock content %}

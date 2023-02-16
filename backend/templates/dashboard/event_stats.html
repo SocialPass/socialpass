@@ -12,7 +12,7 @@
 		<div class="align-self-center">
 			<h1 class="content-title m-0 fs-base-p6">{{ event.title }}</h1>
 			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-				See stats, sales, orders, and check-in history of your event.
+				See stats, history, orders, and check-in history of your event.
 			</p>
 		</div>
 		<div class="ms-auto align-self-center mt-10 mt-md-0">
@@ -124,10 +124,6 @@
 								<td>{{ tickets|length }}</td>
 							</tr>
 							<tr>
-								<th>Orders</th>
-								<td>{{ checkout_sessions|length }}</td>
-							</tr>
-							<tr>
 								<th>Check-Ins</th>
 								<td>{{ tickets_redeemed|length }}</td>
 							</tr>
@@ -140,39 +136,60 @@
 	</div>
 	<!-- Main content end -->
 
-	<!-- Ticket sales start -->
+	<!-- Ticket history start -->
 	<div class="content">
 		<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
 			<span class="ws-25 me-10 text-primary">
 				<i class="fa-light fa-ticket"></i>
 			</span>
-			Ticket Sales
+			Ticket History
 		</h3>
 		<p class="text-muted fs-base-n2 mt-5">
 			List of tickets that have been purchased for this event.
 		</p>
-		{% if tickets|length > 0 %}
-			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
+		{% if tickets|length >= 0 %}
+			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 40rem;">
 				<table class="table m-0">
 					<thead>
 						<tr>
-							<th>Public ID</th>
-							<th>Issued At</th>
+							<th>Ticket Tier</th>
+							<th>Customer Name</th>
+							<th>Customer Email</th>
+							<th>Date/Time Ordered</th>
+							<th>Date/Time Redeemed</th>
+							<th>Redeemed</th>
+							<th>Session ID</th>
+							<th>Ticket ID</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for ticket in tickets %}
 							<tr>
 								<td>
-									{{ ticket.public_id }}
+									{{ ticket.ticket_tier }}
+								</td>
+								<td>
+									{{ ticket.customer_name }}
+								</td>
+								<td>
+									{{ ticket.customer_email }}
+								</td>
+								<td>
+									{% format_to_event_timezone ticket.created ticket.timezone %}
+								</td>
+								<td>
 									{% if ticket.redeemed %}
-										<span class="ms-5" data-hm-toggle="tooltip" data-hm-title="Redeemed" data-hm-placement="end">
-											<i class="fa-regular fa-check"></i>
-										</span>
+									{% format_to_event_timezone ticket.redeemed_at ticket.timezone %}
 									{% endif %}
 								</td>
 								<td>
-									{% format_to_event_timezone ticket.created event.timezone %}
+									{{ ticket.redeemed }}
+								</td>
+								<td>
+									{{ ticket.checkout_session }}
+								</td>
+								<td>
+									{{ ticket.customer_name }}
 								</td>
 							</tr>
 						{% endfor %}
@@ -193,112 +210,7 @@
 			</div>
 		{% endif %}
 	</div>
-	<!-- Ticket sales end -->
-
-	<!-- Order history start -->
-	<div class="content">
-		<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
-			<span class="ws-25 me-10 text-primary">
-				<i class="fa-light fa-receipt"></i>
-			</span>
-			Order History
-		</h3>
-		<p class="text-muted fs-base-n2 mt-5">
-			List of orders created for this event.
-		</p>
-		{% if checkout_sessions|length > 0 %}
-			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
-				<table class="table m-0">
-					<thead>
-						<tr>
-							<th>Public ID</th>
-							<th>Created At</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for session in checkout_sessions %}
-							<tr>
-								<td>
-									{{ session.public_id }}
-								</td>
-								<td>
-									{% format_to_event_timezone session.created event.timezone %}
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			</div>
-		{% else %}
-			<div class="card mx-0 text-center">
-				<div class="ws-150 mw-100 mx-auto">
-					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
-				</div>
-				<div class="ws-400 mw-100 mx-auto">
-					<h5>Nothing found</h5>
-					<p class="mb-0">
-						This event has no orders at this moment. Please wait for some time and check back on this page.
-					</p>
-				</div>
-			</div>
-		{% endif %}
-	</div>
-	<!-- Order history end -->
-
-	<!-- Check-ins start -->
-	<div class="content">
-		<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
-			<span class="ws-25 me-10 text-primary">
-				<i class="fa-light fa-sign-in"></i>
-			</span>
-			Check-Ins
-		</h3>
-		<p class="text-muted fs-base-n2 mt-5">
-			List of check-ins for for this event. A check-in is a successful scan of an event ticket to give the holder entry to the event.
-		</p>
-		{% if tickets_redeemed|length > 0 %}
-			<div class="card mx-0 overflow-y-auto p-0" style="max-height: 30rem;">
-				<table class="table m-0">
-					<thead>
-						<tr>
-							<th>Public ID</th>
-							<th>Redeemed At</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for ticket in tickets_redeemed %}
-							<tr>
-								<td>
-									{{ ticket.public_id }}
-									{% if ticket.redeemed %}
-										<span class="ms-5" data-hm-toggle="tooltip" data-hm-title="Redeemed" data-hm-placement="end">
-											<i class="fa-regular fa-check"></i>
-										</span>
-									{% endif %}
-								</td>
-								<td>
-									{% format_to_event_timezone ticket.redeemed_at event.timezone %}
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			</div>
-		{% else %}
-			<div class="card mx-0 text-center">
-				<div class="ws-150 mw-100 mx-auto">
-					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
-				</div>
-				<div class="ws-400 mw-100 mx-auto">
-					<h5>Nothing found</h5>
-					<p class="mb-0">
-						This event has no check-ins at this moment. Please wait for some time and check back on this page.
-					</p>
-				</div>
-			</div>
-		{% endif %}
-	</div>
-	<!-- Check-ins end -->
+	<!-- Ticket history end -->
 
 	<!-- Card footer start -->
 	<div class="px-card py-10 border-top text-muted fs-base-n2">

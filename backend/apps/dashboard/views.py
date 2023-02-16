@@ -21,7 +21,7 @@ from apps.dashboard.forms import (
     TicketTierForm,
     TierAssetOwnershipForm,
 )
-from apps.root.models import Event, Invite, Membership, Team, TicketTier
+from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
 
 User = auth.get_user_model()
 
@@ -256,12 +256,10 @@ class TeamMemberManageView(TeamContextMixin, FormView):
 
         # Check if already member
         if Membership.objects.filter(
-                user__email=form.cleaned_data.get("email"),
-                team=context["current_team"],
-            ).exists():
-            messages.add_message(
-                self.request, messages.ERROR, "Already a member."
-            )
+            user__email=form.cleaned_data.get("email"),
+            team=context["current_team"],
+        ).exists():
+            messages.add_message(self.request, messages.ERROR, "Already a member.")
             return super().form_invalid(form)
 
         # Delete existing invites (if they exist)
@@ -464,7 +462,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
                     self.request,
                     messages.ERROR,
                     "Something went wrong, please try again. Contact us if \
-                    this error persists for longer than a few minutes."
+                    this error persists for longer than a few minutes.",
                 )
             else:
                 messages.add_message(
@@ -512,9 +510,32 @@ class EventStatsView(TeamContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         event = self.get_object()
-        context["tickets"] = event.ticket_set.all()
-        context["checkout_sessions"] = event.checkoutsession_set.all()
+
+        # Tickets
+        tickets = Ticket.objects.select_related(
+            "ticket_tier",
+            "checkout_session",
+            "checkout_session__tx_asset_ownership",
+        ).filter(event=event)
+        results = []
+        for ticket in tickets:
+            results.append(
+                {
+                    "ticket_id": str(ticket.public_id),
+                    "ticket_tier": ticket.ticket_tier.ticket_type,
+                    "created": ticket.created,
+                    "redeemed": ticket.redeemed,
+                    "redeemed_at": ticket.redeemed_at,
+                    "checkout_session": str(ticket.checkout_session.public_id),
+                    "customer_name": ticket.checkout_session.name,
+                    "customer_email": ticket.checkout_session.email,
+                }
+            )
+        context["tickets"] = results
+
+        # Tickets redeemed
         context["tickets_redeemed"] = event.ticket_set.filter(redeemed=True).all()
+
         return context
 
 

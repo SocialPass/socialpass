@@ -68,6 +68,10 @@
 										</h6>
 									</div>
 									<div class="ps-20 ms-auto">
+										<a href="{% url 'dashboard:ticket_tier_update' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-primary btn-sm">
+											<i class="fa-solid fa-edit"></i>
+											<span class="visually-hidden">Update</span>
+										</a>
 										<a href="{% url 'dashboard:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger btn-sm">
 											<i class="fa-solid fa-trash-can"></i>
 											<span class="visually-hidden">Delete</span>

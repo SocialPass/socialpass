@@ -39,7 +39,7 @@
                 </a>
             </li>
             <li class="tab-item">
-                <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_tickets' or url_name == 'ticket_tier_create' %}active{% endif %}">
+                <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_tickets' or url_name == 'ticket_tier_create' or url_name == 'ticket_tier_update' %}active{% endif %}">
                     <i class="fa-regular fa-circle-2 text-primary me-5"></i>
                     <strong>
                         <span class="d-none d-sm-inline">Ticket Tiers</span>

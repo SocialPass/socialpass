@@ -180,6 +180,37 @@
 									</span>
 								</div>
 							</div>
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-rectangle-code"></i>
+									<strong class="antialiased ms-5">Embed</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">
+											<code>&lt;iframe&gt;</code> embed
+										</div>
+										<p class="text-muted mt-0">
+											Copy and paste the following code to embed this event on your website.
+										</p>
+										<div class="p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1 overflow-x-auto text-nowrap">
+											<code class="content-to-copy bg-transparent m-0 p-0">&lt;iframe src="{{ event.checkout_portal_url }}" style="display: block; border: 0; max-width: 
+												100%;" name="SocialPass Event" scrolling="yes" frameborder="1" marginheight="0px" marginwidth="0px" height="645px" width="860px" allowfullscreen&gt;&lt;/iframe&gt;</code>
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
+											<i class="fa-regular fa-link-simple"></i>
+											<strong class="antialiased ms-5">Copy Code</strong>
+										</button>
+										<p class="text-muted mt-5 mb-0 fs-base-n2 text-center">
+											<a href="https://codepen.io/tahmid-hm-dev/pen/yLxLYYd" target="_blank" rel="noopener" class="fw-bold antialiased"><i class="fa-brands fa-codepen me-5"></i> CodePen Demo/Code</a>
+										</p>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
 						</div>
 					{% endif %}
 				</div>

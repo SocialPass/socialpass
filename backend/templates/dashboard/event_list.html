@@ -136,10 +136,10 @@
 										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
 											<a href="{% url 'discovery:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
 												<i class="fa-regular fa-external-link"></i>
-												<span class="link-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'discovery:details' event.id event.slug %}</span>
+												<span class="content-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'discovery:details' event.id event.slug %}</span>
 											</a>
 										</div>
-										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
 											<i class="fa-regular fa-link-simple"></i>
 											<strong class="antialiased ms-5">Copy Link</strong>
 										</button>
@@ -165,11 +165,11 @@
 											{% with event_scanner_url=event.scanner_url %}
 												<a href="{{ event_scanner_url }}" class="fw-bold antialiased" target="_blank">
 													<i class="fa-regular fa-external-link"></i>
-													<span class="link-to-copy ms-5">{{ event_scanner_url }}</span>
+													<span class="content-to-copy ms-5">{{ event_scanner_url }}</span>
 												</a>
 											{% endwith %}
 										</div>
-										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
 											<i class="fa-regular fa-link-simple"></i>
 											<strong class="antialiased ms-5">Copy Link</strong>
 										</button>
@@ -260,17 +260,17 @@
 </div>
 <!-- Content card end -->
 
-<!-- Scanner link copy button -->
+<!-- Copy button -->
 <script>
-	function copyLink(e, copyBtn) {
-		// Get the link block
-		var linkBlock = copyBtn.closest(".dropdown-menu").querySelector(
-			".link-to-copy"
+	function copyToClipboard(e, copyBtn) {
+		// Get the content to copy
+		var contentToCopy = copyBtn.closest(".dropdown-menu").querySelector(
+			".content-to-copy"
 		);
 
 		// Copy code to clipboard
 		var range = document.createRange();
-		range.selectNode(linkBlock);
+		range.selectNode(contentToCopy);
 		window.getSelection().removeAllRanges();
 		window.getSelection().addRange(range);
 		document.execCommand("copy");

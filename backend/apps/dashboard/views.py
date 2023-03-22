@@ -611,6 +611,17 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
         )
         return context
 
+    def form_valid(self, form):
+        tickets_count = Ticket.objects.filter(ticket_tier__pk=self.kwargs["pk"]).count()
+        if form.cleaned_data["capacity"] < tickets_count:
+            form.add_error(
+                "capacity",
+                f"Capacity can't be less than the number of issued tickets "
+                f"(currently {str(tickets_count)})."
+            )
+            return self.form_invalid(form)
+        return super().form_valid(form)
+
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Ticket has been edited.")
         return reverse(

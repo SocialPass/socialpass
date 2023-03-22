@@ -807,6 +807,7 @@ class TierAssetOwnership(DBModel):
         FANTOM = 250, _("Fantom")
         CRONOS = 25, _("Cronos")
         CRONOS_TESTNET = 338, _("Cronos (TestNet)")
+        ARBITRUM = 42161, _("Arbitrum")
 
     class AssetChoices(models.TextChoices):
         NFT = "NFT", _("NFT")

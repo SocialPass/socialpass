@@ -53,5 +53,13 @@ def get_theme_value(context, key):
         value = static(theme.get("favicon", "images/favicons/socialpass-favicon.ico"))
     elif key == "css_theme":
         value = static(theme.get("css_theme", "socialpass-theme/socialpass-theme.css"))
+    elif key == "ticket_brand_name":
+        value = theme.get("ticket_brand_name", "SocialPass")
+    elif key == "ticket_logo":
+        value = static(theme.get("ticket_logo", "images/SocialPass-Icon-White.svg"))
+    elif key == "ticket_text_color":
+        value = theme.get("ticket_text_color", "#ffffff")
+    elif key == "ticket_bg_color":
+        value = theme.get("ticket_bg_color", "#eb7347")
 
     return value

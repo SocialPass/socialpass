@@ -18,11 +18,11 @@
 					Please hold tight as we create your ticket image and prepare it for download.
 				</p>
 				<div class="ws-500 p-10 mx-auto" id="{{ ticket.object.public_id }}">
-					<div class="p-40 text-white rounded-5" style="background-color: hsl(16, 80%, 60%);">
+					<div class="p-40 rounded-5" style="color: {% get_theme_value 'ticket_text_color' %}; background-color: {% get_theme_value 'ticket_bg_color' %};">
 						<div class="d-flex justify-content-center pb-20">
 							<div class="d-flex align-items-center">
-								<img src="{% static 'images/SocialPass-Icon-White.svg' %}" alt="SocialPass Icon" width="48" class="d-block me-10">
-								<strong class="fs-base-p8">SocialPass</strong>
+								<img src="{% get_theme_value 'ticket_logo' %}" alt="SocialPass Icon" width="48" class="d-block me-10">
+								<strong class="fs-base-p8">{% get_theme_value 'ticket_brand_name' %}</strong>
 							</div>
 						</div>
 						<h3 class="fs-base-p12">{{ checkout_session.event.title }}</h3>

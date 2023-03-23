@@ -140,8 +140,8 @@ class AppleTicket:
 		self.label_color = theme.get("ticket_text_color", "rgb(255,255,255)")
 		self.background_color = theme.get("ticket_bg_color", "rgb(239,124,78)")
 		self.foreground_color = theme.get("ticket_text_color", "rgb(255,255,255)")
-		if "ticket_logo_png" in theme:
-			self.icon = settings.ROOT_DIR / "static" / theme.get("ticket_logo_png")
+		if "ticket_logo_apple" in theme:
+			self.icon = settings.ROOT_DIR / "static" / theme.get("ticket_logo_apple")
 		else:
 			self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
 

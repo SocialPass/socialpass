@@ -136,7 +136,7 @@ class AppleTicket:
 				"The event object does not have an localized_address_display"
 			)
 
-		self.org_name = theme.get("ticket_brand_name", event.team.name)
+		self.org_name = event.team.name
 		self.label_color = theme.get("ticket_text_color", "rgb(255,255,255)")
 		self.background_color = theme.get("ticket_bg_color", "rgb(239,124,78)")
 		self.foreground_color = theme.get("ticket_text_color", "rgb(255,255,255)")

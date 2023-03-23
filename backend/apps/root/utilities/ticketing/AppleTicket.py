@@ -129,13 +129,22 @@ class AppleTicket:
 
 	def generate_pass_from_ticket(self, ticket):
 		event = ticket.event
+		theme = event.team.theme
 
 		if not event.localized_address_display:
 			raise Exception(
 				"The event object does not have an localized_address_display"
 			)
 
-		self.org_name = event.team.name
+		self.org_name = theme.get("ticket_brand_name", event.team.name)
+		self.label_color = theme.get("ticket_text_color", "rgb(255,255,255)")
+		self.background_color = theme.get("ticket_bg_color", "rgb(239,124,78)")
+		self.foreground_color = theme.get("ticket_text_color", "rgb(255,255,255)")
+		if "ticket_logo_png" in theme:
+			self.icon = settings.ROOT_DIR / "static" / theme.get("ticket_logo_png")
+		else:
+			self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
+
 		self.description = event.title
 		self.serial_number = str(ticket.public_id)
 		self.set_barcode(str(ticket.embed_code))

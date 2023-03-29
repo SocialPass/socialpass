@@ -1,7 +1,7 @@
 import propTypes from 'prop-types'
 
 function TicketSelector(props): JSX.Element {
-  const { ticketTier, paymentType, amount, onChange, isChecked, extraParty, setExtraParty } = props
+  const { ticketTier, paymentType, amount, onChange, isChecked, extraParty } = props
 
   const isTierAvailable = () => {
     if (ticketTier?.capacity > ticketTier?.quantity_sold) {
@@ -20,13 +20,13 @@ function TicketSelector(props): JSX.Element {
       // Can't go below zero
       // Can't select more than the capacity, max per person ou more than are tickets available
     ) {
-      onChange(amount + 1, ticketTier)
+      onChange(amount + 1, extraParty, ticketTier)
     }
   }
 
   const handleSubtractOne = () => {
     if (amount > 0) {
-      onChange(amount - 1, ticketTier)
+      onChange(amount - 1, extraParty, ticketTier)
     }
   }
 
@@ -36,13 +36,13 @@ function TicketSelector(props): JSX.Element {
       // Current rules state limits to ticket selection:
       // Can't select more than the guests allowed
     ) {
-      setExtraParty(extraParty + 1)
+      onChange(amount, extraParty + 1, ticketTier)
     }
   }
 
   const handleSubtractOneParty = () => {
     if (extraParty > 0) {
-      setExtraParty(extraParty - 1)
+      onChange(amount, extraParty - 1, ticketTier)
     }
   }
 
@@ -60,8 +60,7 @@ function TicketSelector(props): JSX.Element {
     if (amount === 0) {
       handleAddOne()
     } else {
-      onChange(0, ticketTier)
-      setExtraParty(0)
+      onChange(0, 0, ticketTier)
     }
   }
 
@@ -220,5 +219,4 @@ TicketSelector.propTypes = {
   onChange: propTypes.func,
   isChecked: propTypes.bool,
   extraParty: propTypes.number,
-  setExtraParty: propTypes.func,
 }

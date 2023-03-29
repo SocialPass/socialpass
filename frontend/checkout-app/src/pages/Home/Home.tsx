@@ -22,7 +22,6 @@ export default function Home() {
 
   const [name, setName] = useState<string>(checkout?.name || '')
   const [email, setEmail] = useState<string>(checkout?.email || '')
-  const [extraParty, setExtraParty] = useState<number>(0)
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)
@@ -54,7 +53,7 @@ export default function Home() {
     return []
   }
 
-  const setTicketTierSelectedAmount = (amount, ticketTier) => {
+  const setTicketTierSelectedAmount = (amount, guests, ticketTier) => {
     const new_selected = [...checkoutItems]
 
     const ticketIndex = new_selected.findIndex(
@@ -65,13 +64,14 @@ export default function Home() {
       if (amount > 0) {
         // Update on context
         new_selected[ticketIndex].quantity = amount
+        new_selected[ticketIndex].extra_party = guests
 
         // Update on backend
         if (checkout.public_id) {
           CheckoutItemApi.edit(new_selected[ticketIndex].public_id, {
             ...new_selected[ticketIndex],
             quantity: amount,
-            extra_party: extraParty
+            extra_party: guests
           })
         }
       } else {
@@ -92,16 +92,16 @@ export default function Home() {
           price: ticketTier[getTxType(checkout?.tx_type)]?.price,
         },
         quantity: amount,
-        extra_party: extraParty
+        extra_party: guests
       })
 
       // Create on backend
       if (checkout.public_id) {
         CheckoutItemApi.create({
           ticket_tier: ticketTier.public_id,
-          quantity: amount,
-          extra_party: extraParty,
           checkout_session: checkout.public_id,
+          quantity: amount,
+          extra_party: guests,
         }).then((res) => {
           // save the new public_id on the checkout item context
           new_selected[new_selected.length - 1].public_id = res.data.public_id
@@ -378,8 +378,8 @@ export default function Home() {
                       checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                         ?.quantity || 0
                     }
-                    onChange={(amount, ticketTier) =>
-                      setTicketTierSelectedAmount(amount, ticketTier)
+                    onChange={(amount, guests, ticketTier) =>
+                      setTicketTierSelectedAmount(amount, guests, ticketTier)
                     }
                     paymentType={checkout?.tx_type}
                     ticketTier={tier}
@@ -388,8 +388,10 @@ export default function Home() {
                     isChecked={
                       !!checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                     }
-                    extraParty={extraParty}
-                    setExtraParty={setExtraParty}
+                    extraParty={
+                      checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
+                      ?.extra_party || 0
+                    }
                   />
                 ))}
               </div>

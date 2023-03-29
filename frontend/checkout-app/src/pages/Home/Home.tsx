@@ -22,11 +22,14 @@ export default function Home() {
 
   const [name, setName] = useState<string>(checkout?.name || '')
   const [email, setEmail] = useState<string>(checkout?.email || '')
+  const [tiersLoading, setTiersLoading] = useState<boolean>(true)
 
   const getTicketTiers = (eventPublicId: string) => {
+    setTiersLoading(true);
     EventApi.getTicketTiers(eventPublicId)
       .then((res) => {
-        setTicketTiers(res.data)
+        setTicketTiers(res.data);
+        setTiersLoading(false);
       })
       .catch(() => {})
   }
@@ -247,7 +250,10 @@ export default function Home() {
         </div>
         <div className='col-12'>
           <div className='content mt-20 mb-0'>
-            {isSomeTiersAvailable() ? (
+            {tiersLoading ? (
+              <>
+              </>
+            ) : isSomeTiersAvailable() ? (
               <>
                 <div>
                   <div

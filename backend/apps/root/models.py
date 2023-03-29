@@ -494,7 +494,7 @@ class Event(DBModel):
     def quantity_total_sold(self):
         sold = Ticket.objects.filter(event=self, redeemed=True)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"]
-        return sold_with_party
+        return sold_with_party or 0
 
     @property
     def quantity_total_redeemed(self):
@@ -502,7 +502,7 @@ class Event(DBModel):
         redeemed_with_party = redeemed.aggregate(models.Sum("party_size"))[
             "party_size__sum"
         ]
-        return redeemed_with_party
+        return redeemed_with_party or 0
 
     def clean_handle_google_event_class(self, *args, **kwargs):
         """
@@ -778,7 +778,7 @@ class TicketTier(DBModel):
         tickets_with_party = tickets.aggregate(models.Sum("party_size"))[
             "party_size__sum"
         ]
-        return tickets_with_party
+        return tickets_with_party or 0
 
 
 class TierFiat(DBModel):

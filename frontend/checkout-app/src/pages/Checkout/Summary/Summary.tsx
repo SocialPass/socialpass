@@ -110,12 +110,14 @@ export default function Summary(props) {
       <p className='text-muted fs-base-n2'>
         If you need help placing your order, please{' '}
         <a
-          href='https://docs.google.com/forms/d/e/1FAIpQLSdEw1zowks1E9K6xDFiBn00auyWV06zvJUwKzeo7miBzdpA6w/viewform'
+          href='#'
+          data-hm-toggle='modal'
+          data-hm-target='discord-support-ticket-modal'
           className='fw-bold'
           rel='noreferrer'
           target='_blank'
         >
-          contact us <i className='fa-regular fa-external-link'></i>
+          contact us
         </a>{' '}
         and let us know
       </p>

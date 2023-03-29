@@ -79,7 +79,9 @@ export default function TransactionValidation() {
             <p className='text-muted fs-base-n2'>
               If this loading is taking too long, please{' '}
               <a
-                href='https://docs.google.com/forms/d/e/1FAIpQLSdEw1zowks1E9K6xDFiBn00auyWV06zvJUwKzeo7miBzdpA6w/viewform'
+                href='#'
+                data-hm-toggle='modal'
+                data-hm-target='discord-support-ticket-modal'
                 className='fw-bold antialiased'
                 target='_blank'
                 rel='noreferrer'

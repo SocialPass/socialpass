@@ -1,5 +1,6 @@
 import secrets
 
+import rollbar
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib import auth, messages
@@ -458,6 +459,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
             try:
                 event.transition_live()
             except Exception:
+                rollbar.report_exc_info()
                 messages.add_message(
                     self.request,
                     messages.ERROR,

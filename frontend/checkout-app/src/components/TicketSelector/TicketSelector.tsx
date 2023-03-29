@@ -1,7 +1,7 @@
 import propTypes from 'prop-types'
 
 function TicketSelector(props): JSX.Element {
-  const { ticketTier, paymentType, amount, onChange, isChecked, partySize, setPartySize } = props
+  const { ticketTier, paymentType, amount, onChange, isChecked, extraParty, setExtraParty } = props
 
   const isTierAvailable = () => {
     if (ticketTier?.capacity > ticketTier?.quantity_sold) {
@@ -32,17 +32,17 @@ function TicketSelector(props): JSX.Element {
 
   const handleAddOneParty = () => {
     if (
-      partySize < ticketTier?.allowed_guests
+      extraParty < ticketTier?.allowed_guests
       // Current rules state limits to ticket selection:
       // Can't select more than the guests allowed
     ) {
-      setPartySize(partySize + 1)
+      setExtraParty(extraParty + 1)
     }
   }
 
   const handleSubtractOneParty = () => {
-    if (partySize > 0) {
-      setPartySize(partySize - 1)
+    if (extraParty > 0) {
+      setExtraParty(extraParty - 1)
     }
   }
 
@@ -61,7 +61,7 @@ function TicketSelector(props): JSX.Element {
       handleAddOne()
     } else {
       onChange(0, ticketTier)
-      setPartySize(0)
+      setExtraParty(0)
     }
   }
 
@@ -171,13 +171,13 @@ function TicketSelector(props): JSX.Element {
             </div>
           </div>
         ) : null}
-        {ticketTier && ticketTier.allowed_guests > 0 ?
+        {ticketTier && ticketTier.allowed_guests > 0 && isChecked ?
         <div className='ticket-tier-controls border-top mt-10 pt-10'>
 					<div className='d-flex align-items-center'>
 						<div>
-							<div className='fw-bold fs-base-n2'>Party Size</div>
+							<div className='fw-bold'>Extra Guest(s) - Free</div>
 							<div className='fs-base-n4 lh-sm'>
-								Including ticket holder and guest(s).
+								Please set the number of guest(s) you want to bring.
 							</div>
 						</div>
 						<div className='ps-20 flex-shrink-0 ms-auto'>
@@ -191,7 +191,7 @@ function TicketSelector(props): JSX.Element {
 								>
 									-
 								</button>
-								<div className='form-control form-number text-center'>{partySize}</div>
+								<div className='form-control form-number text-center'>{extraParty}</div>
 								<button
 									className='btn ws-25 px-0'
 									onClick={(e) => {
@@ -219,6 +219,6 @@ TicketSelector.propTypes = {
   paymentType: propTypes.string,
   onChange: propTypes.func,
   isChecked: propTypes.bool,
-  partySize: propTypes.number,
-  setPartySize: propTypes.func,
+  extraParty: propTypes.number,
+  setExtraParty: propTypes.func,
 }

@@ -22,7 +22,7 @@ export default function Home() {
 
   const [name, setName] = useState<string>(checkout?.name || '')
   const [email, setEmail] = useState<string>(checkout?.email || '')
-  const [partySize, setPartySize] = useState<number>(0)
+  const [extraParty, setExtraParty] = useState<number>(0)
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)
@@ -71,7 +71,7 @@ export default function Home() {
           CheckoutItemApi.edit(new_selected[ticketIndex].public_id, {
             ...new_selected[ticketIndex],
             quantity: amount,
-            party_size: partySize
+            party_size: extraParty
           })
         }
       } else {
@@ -92,7 +92,7 @@ export default function Home() {
           price: ticketTier[getTxType(checkout?.tx_type)]?.price,
         },
         quantity: amount,
-        party_size: partySize
+        party_size: extraParty
       })
 
       // Create on backend
@@ -100,7 +100,7 @@ export default function Home() {
         CheckoutItemApi.create({
           ticket_tier: ticketTier.public_id,
           quantity: amount,
-          party_size: partySize,
+          party_size: extraParty,
           checkout_session: checkout.public_id,
         }).then((res) => {
           // save the new public_id on the checkout item context
@@ -388,8 +388,8 @@ export default function Home() {
                     isChecked={
                       !!checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                     }
-                    partySize={partySize}
-                    setPartySize={setPartySize}
+                    extraParty={extraParty}
+                    setExtraParty={setExtraParty}
                   />
                 ))}
               </div>

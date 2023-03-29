@@ -129,7 +129,7 @@ class AppleTicket:
 
 	def generate_pass_from_ticket(self, ticket):
 		event = ticket.event
-		theme = event.team.theme
+		theme = event.team.theme or {}
 
 		if not event.localized_address_display:
 			raise Exception(

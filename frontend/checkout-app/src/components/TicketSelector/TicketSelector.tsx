@@ -1,7 +1,7 @@
 import propTypes from 'prop-types'
 
 function TicketSelector(props): JSX.Element {
-  const { ticketTier, paymentType, amount, onChange, isChecked, partySize } = props
+  const { ticketTier, paymentType, amount, onChange, isChecked, partySize, setPartySize } = props
 
   const isTierAvailable = () => {
     if (ticketTier?.capacity > ticketTier?.quantity_sold) {
@@ -30,6 +30,22 @@ function TicketSelector(props): JSX.Element {
     }
   }
 
+  const handleAddOneParty = () => {
+    if (
+      partySize < ticketTier?.allowed_guests
+      // Current rules state limits to ticket selection:
+      // Can't select more than the guests allowed
+    ) {
+      setPartySize(partySize + 1)
+    }
+  }
+
+  const handleSubtractOneParty = () => {
+    if (partySize > 0) {
+      setPartySize(partySize - 1)
+    }
+  }
+
   const getPriceWithCurrencySymbol = (amount) => {
     if (paymentType === 'FIAT') {
       return `$${amount}`
@@ -45,6 +61,7 @@ function TicketSelector(props): JSX.Element {
       handleAddOne()
     } else {
       onChange(0, ticketTier)
+      setPartySize(0)
     }
   }
 
@@ -154,6 +171,7 @@ function TicketSelector(props): JSX.Element {
             </div>
           </div>
         ) : null}
+        {ticketTier && ticketTier.allowed_guests > 0 ?
         <div className='ticket-tier-controls border-top mt-10 pt-10'>
 					<div className='d-flex align-items-center'>
 						<div>
@@ -168,7 +186,7 @@ function TicketSelector(props): JSX.Element {
 									className='btn ws-25 px-0'
 									onClick={(e) => {
 										e.stopPropagation()
-										handleSubtractOne()
+										handleSubtractOneParty()
 									}}
 								>
 									-
@@ -178,7 +196,7 @@ function TicketSelector(props): JSX.Element {
 									className='btn ws-25 px-0'
 									onClick={(e) => {
 										e.stopPropagation()
-										handleAddOne()
+										handleAddOneParty()
 									}}
 								>
 									+
@@ -187,6 +205,7 @@ function TicketSelector(props): JSX.Element {
 						</div>
 					</div>
 				</div>
+        : null}
       </label>
     </div>
   )
@@ -201,4 +220,5 @@ TicketSelector.propTypes = {
   onChange: propTypes.func,
   isChecked: propTypes.bool,
   partySize: propTypes.number,
+  setPartySize: propTypes.func,
 }

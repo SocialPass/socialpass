@@ -22,6 +22,7 @@ export default function Home() {
 
   const [name, setName] = useState<string>(checkout?.name || '')
   const [email, setEmail] = useState<string>(checkout?.email || '')
+  const [partySize, setPartySize] = useState<number>(0)
 
   const getTicketTiers = (eventPublicId: string) => {
     EventApi.getTicketTiers(eventPublicId)
@@ -384,7 +385,8 @@ export default function Home() {
                     isChecked={
                       !!checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                     }
-                    partySize={1}
+                    partySize={partySize}
+                    setPartySize={setPartySize}
                   />
                 ))}
               </div>

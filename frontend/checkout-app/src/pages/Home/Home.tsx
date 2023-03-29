@@ -71,6 +71,7 @@ export default function Home() {
           CheckoutItemApi.edit(new_selected[ticketIndex].public_id, {
             ...new_selected[ticketIndex],
             quantity: amount,
+            party_size: partySize
           })
         }
       } else {
@@ -91,6 +92,7 @@ export default function Home() {
           price: ticketTier[getTxType(checkout?.tx_type)]?.price,
         },
         quantity: amount,
+        party_size: partySize
       })
 
       // Create on backend
@@ -98,6 +100,7 @@ export default function Home() {
         CheckoutItemApi.create({
           ticket_tier: ticketTier.public_id,
           quantity: amount,
+          party_size: partySize,
           checkout_session: checkout.public_id,
         }).then((res) => {
           // save the new public_id on the checkout item context

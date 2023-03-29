@@ -55,7 +55,7 @@ const Base = () => {
 										href='https://discord.com/channels/1062852686015369289/1063885474294403112'
 										className='fw-bold antialiased'
 										target='_blank'
-										rel='noopener'
+										rel='noreferrer'
 									>
 										<i className='fa-regular fa-external-link' />
 										<span className='ms-5'>https://discord.com/channels/1062852686015369289/1063885474294403112</span>

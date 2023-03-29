@@ -529,6 +529,7 @@ class EventStatsView(TeamContextMixin, DetailView):
                     "checkout_session": str(ticket.checkout_session.public_id),
                     "customer_name": ticket.checkout_session.name,
                     "customer_email": ticket.checkout_session.email,
+                    "party_size": ticket.party_size,
                 }
             )
         context["tickets"] = results

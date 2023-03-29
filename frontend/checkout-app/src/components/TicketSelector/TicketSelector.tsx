@@ -1,7 +1,7 @@
 import propTypes from 'prop-types'
 
 function TicketSelector(props): JSX.Element {
-  const { ticketTier, paymentType, amount, onChange, isChecked } = props
+  const { ticketTier, paymentType, amount, onChange, isChecked, partySize } = props
 
   const isTierAvailable = () => {
     if (ticketTier?.capacity > ticketTier?.quantity_sold) {
@@ -154,6 +154,39 @@ function TicketSelector(props): JSX.Element {
             </div>
           </div>
         ) : null}
+        <div className='ticket-tier-controls border-top mt-10 pt-10'>
+					<div className='d-flex align-items-center'>
+						<div>
+							<div className='fw-bold fs-base-n2'>Party Size</div>
+							<div className='fs-base-n4 lh-sm'>
+								Including ticket holder and guest(s).
+							</div>
+						</div>
+						<div className='ps-20 flex-shrink-0 ms-auto'>
+							<div className='input-group input-group-sm ws-100'>
+								<button
+									className='btn ws-25 px-0'
+									onClick={(e) => {
+										e.stopPropagation()
+										handleSubtractOne()
+									}}
+								>
+									-
+								</button>
+								<div className='form-control form-number text-center'>{partySize}</div>
+								<button
+									className='btn ws-25 px-0'
+									onClick={(e) => {
+										e.stopPropagation()
+										handleAddOne()
+									}}
+								>
+									+
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
       </label>
     </div>
   )
@@ -167,4 +200,5 @@ TicketSelector.propTypes = {
   paymentType: propTypes.string,
   onChange: propTypes.func,
   isChecked: propTypes.bool,
+  partySize: propTypes.number,
 }

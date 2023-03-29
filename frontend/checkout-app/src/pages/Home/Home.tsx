@@ -384,6 +384,7 @@ export default function Home() {
                     isChecked={
                       !!checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
                     }
+                    partySize={1}
                   />
                 ))}
               </div>

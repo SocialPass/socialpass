@@ -66,10 +66,10 @@ class EventSerializer(serializers.ModelSerializer):
     team = TeamSerializer()
 
     def get_redeemed_count(self, obj):
-        return obj.event.quantity_total_redeemed
+        return obj.quantity_total_redeemed
 
     def get_ticket_count(self, obj):
-        return obj.event.quantity_total_sold
+        return obj.quantity_total_sold
 
 
 class TicketTierSerializer(serializers.ModelSerializer):

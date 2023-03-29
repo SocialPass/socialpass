@@ -149,8 +149,8 @@ class GoogleTicket:
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
 
         ticket_type = ticket_obj.ticket_tier.ticket_type
-        if ticket_obj.ticket_tier.allowed_guests > 0:
-            ticket_type += f" | +{ticket_obj.ticket_tier.allowed_guests} Guest(s) Allowed"
+        if ticket_obj.party_size > 1:
+            ticket_type += f" | Party Size: {ticket_obj.party_size}"
 
         payload = {
             "id": ticket_id,

@@ -151,8 +151,8 @@ class AppleTicket:
 		self.set_location_list(event.lat, event.long)
 
 		ticket_type = ticket.ticket_tier.ticket_type
-		if ticket.ticket_tier.allowed_guests > 0:
-			ticket_type += f" | +{ticket.ticket_tier.allowed_guests} Guest(s) Allowed"
+		if ticket.party_size > 1:
+			ticket_type += f" | Party Size: {ticket.party_size}"
 			
 		self.set_event_ticket_info(
 			event.start_date.strftime("%d %B, %Y"),

@@ -490,6 +490,20 @@ class Event(DBModel):
     def slug(self):
         return slugify(self.title)
 
+    @property
+    def quantity_total_sold(self):
+        sold = Ticket.objects.filter(event=self, redeemed=True)
+        sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"]
+        return sold_with_party
+
+    @property
+    def quantity_total_redeemed(self):
+        redeemed = Ticket.objects.filter(event=self, redeemed=True)
+        redeemed_with_party = redeemed.aggregate(models.Sum("party_size"))[
+            "party_size__sum"
+        ]
+        return redeemed_with_party
+
     def clean_handle_google_event_class(self, *args, **kwargs):
         """
         clean the handling of the Google event class
@@ -544,6 +558,7 @@ class Ticket(DBModel):
     )
 
     # Ticket access info
+    party_size = models.IntegerField(default=1)
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     archived = models.BooleanField(default=False, blank=False, null=False)
     redeemed = models.BooleanField(default=False, blank=False, null=False)
@@ -759,7 +774,11 @@ class TicketTier(DBModel):
 
     @property
     def quantity_sold(self):
-        return Ticket.objects.filter(ticket_tier=self).count()
+        tickets = Ticket.objects.filter(ticket_tier=self)
+        tickets_with_party = tickets.aggregate(models.Sum("party_size"))[
+            "party_size__sum"
+        ]
+        return tickets_with_party
 
 
 class TierFiat(DBModel):

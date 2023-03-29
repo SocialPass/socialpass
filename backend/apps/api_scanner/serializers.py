@@ -61,12 +61,15 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
     redeemed_count = serializers.SerializerMethodField()
-    ticket_count = serializers.IntegerField(source="ticket_set.count", read_only=True)
+    ticket_count = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     team = TeamSerializer()
 
     def get_redeemed_count(self, obj):
-        return Ticket.objects.filter(event=obj, redeemed=True).count()
+        return obj.event.quantity_total_redeemed
+
+    def get_ticket_count(self, obj):
+        return obj.event.quantity_total_sold
 
 
 class TicketTierSerializer(serializers.ModelSerializer):
@@ -121,10 +124,10 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
     ticket_tier = TicketTierSerializer()
 
     def get_redeemed_count(self, obj):
-        return Ticket.objects.filter(event=obj.event, redeemed=True).count()
+        return obj.event.quantity_total_redeemed
 
     def get_ticket_count(self, obj):
-        return Ticket.objects.filter(event=obj.event).count()
+        return obj.event.quantity_total_sold
 
 
 class ScanTicketInputSerializer(serializers.Serializer):

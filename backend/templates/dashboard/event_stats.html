@@ -124,8 +124,16 @@
 								<td>{{ tickets|length }}</td>
 							</tr>
 							<tr>
-								<th>Check-Ins</th>
+								<th>Tickets Redeemed</th>
 								<td>{{ tickets_redeemed|length }}</td>
+							</tr>
+							<tr>
+								<th>Total People</th>
+								<td>{{ event.quantity_total_sold }}</td>
+							</tr>
+							<tr>
+								<th>Check-Ins (People)</th>
+								<td>{{ event.quantity_total_redeemed }}</td>
 							</tr>
 						</tbody>
 					</table>

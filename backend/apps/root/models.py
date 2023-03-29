@@ -492,7 +492,7 @@ class Event(DBModel):
 
     @property
     def quantity_total_sold(self):
-        sold = Ticket.objects.filter(event=self, redeemed=True)
+        sold = Ticket.objects.filter(event=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"]
         return sold_with_party or 0
 

@@ -117,7 +117,7 @@ class ScanTicketOutputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["id", "ticket_count", "redeemed_count", "ticket_tier"]
+        fields = ["id", "ticket_count", "redeemed_count", "ticket_tier", "party_size",]
 
     ticket_count = serializers.SerializerMethodField()
     redeemed_count = serializers.SerializerMethodField()

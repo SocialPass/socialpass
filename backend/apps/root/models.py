@@ -558,7 +558,7 @@ class Ticket(DBModel):
     )
 
     # Ticket access info
-    party_size = models.IntegerField(default=1)
+    party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     archived = models.BooleanField(default=False, blank=False, null=False)
     redeemed = models.BooleanField(default=False, blank=False, null=False)

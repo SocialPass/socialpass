@@ -167,6 +167,7 @@ class CheckoutItemReadSerializer(BaseModelSerializer):
             "quantity",
             "ticket_tier",
             "checkout_session",
+            "extra_party",
         ]
 
     ticket_tier = TicketTierReadSerializer()
@@ -187,6 +188,7 @@ class CheckoutItemCreateSerializer(BaseModelSerializer):
             "quantity",
             "ticket_tier",
             "checkout_session",
+            "extra_party",
         ]
         read_only_fields = [
             "created",
@@ -216,6 +218,7 @@ class CheckoutItemUpdateSerializer(BaseModelSerializer):
             "quantity",
             "ticket_tier",
             "checkout_session",
+            "extra_party",
         ]
         read_only_fields = [
             "created",
@@ -244,6 +247,7 @@ class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
             "public_id",
             "quantity",
             "ticket_tier",
+            "extra_party",
         ]
 
     ticket_tier = serializers.SlugRelatedField(
@@ -456,6 +460,7 @@ class CheckoutItemQuantitySerializer(BaseModelSerializer):
         fields = [
             "ticket_tier",
             "quantity",
+            "extra_party",
         ]
 
 

@@ -1067,6 +1067,10 @@ class CheckoutItem(DBModel):
         blank=True,
         null=False,
     )
+    extra_party = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+    )
 
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
@@ -1169,11 +1173,16 @@ class CheckoutItem(DBModel):
         the amount of tickets created will be the same as
         the quantity defined in the related checkout_item
         """
+        extra_party = self.extra_party
+        if extra_party > self.ticket_tier.allowed_guests:
+            extra_party = self.ticket_tier.allowed_guests
+
         ticket_keys = {
             "checkout_session": self.checkout_session,
             "event": self.checkout_session.event,
             "ticket_tier": self.ticket_tier,
             "checkout_item": self,
+            "party_size": extra_party + 1,
         }
         tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
         Ticket.objects.bulk_create(tickets)

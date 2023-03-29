@@ -51,7 +51,12 @@ const Base = () => {
 									Need help? Please use the following link to create a ticket on the <code>#support-ticket</code> channel in our Discord server.
 								</p>
 								<div className='text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1'>
-									<a href='https://discord.com/channels/1062852686015369289/1063885474294403112' className='fw-bold antialiased' target='_blank'>
+									<a 
+										href='https://discord.com/channels/1062852686015369289/1063885474294403112'
+										className='fw-bold antialiased'
+										target='_blank'
+										rel='noopener'
+									>
 										<i className='fa-regular fa-external-link' />
 										<span className='ms-5'>https://discord.com/channels/1062852686015369289/1063885474294403112</span>
 									</a>

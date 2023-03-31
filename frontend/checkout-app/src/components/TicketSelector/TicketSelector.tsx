@@ -94,7 +94,10 @@ function TicketSelector(props): JSX.Element {
             </h6>
 
             <p className='m-0 fs-base-n2'>
-              {ticketTier?.capacity - ticketTier?.quantity_sold} available
+              {
+                (ticketTier?.capacity - ticketTier?.quantity_sold) > 0 ?
+                (ticketTier?.capacity - ticketTier?.quantity_sold) : 0}
+                {' '}available
             </p>
           </div>
 

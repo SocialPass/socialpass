@@ -20,7 +20,11 @@ function TicketSelector(props): JSX.Element {
       // Can't go below zero
       // Can't select more than the capacity, max per person ou more than are tickets available
     ) {
-      onChange(amount + 1, extraParty, ticketTier)
+      let totalSelected = (amount + 1) + ((amount + 1) * extraParty)
+      let totalAvailable = ticketTier?.capacity - ticketTier?.quantity_sold
+      if (totalSelected <= totalAvailable) {
+        onChange(amount + 1, extraParty, ticketTier)
+      }
     }
   }
 
@@ -36,7 +40,11 @@ function TicketSelector(props): JSX.Element {
       // Current rules state limits to ticket selection:
       // Can't select more than the guests allowed
     ) {
-      onChange(amount, extraParty + 1, ticketTier)
+      let totalSelected = amount + (amount * (extraParty + 1))
+      let totalAvailable = ticketTier?.capacity - ticketTier?.quantity_sold
+      if (totalSelected <= totalAvailable) {
+        onChange(amount, extraParty + 1, ticketTier)
+      }
     }
   }
 

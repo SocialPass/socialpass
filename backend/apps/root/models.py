@@ -35,6 +35,7 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     ForeignKeyConstraintError,
     GoogleWalletAPIRequestError,
+    TooManyGuestsError,
     TooManyTicketsRequestedError,
     TxAssetOwnershipProcessingError,
 )
@@ -1090,6 +1091,20 @@ class CheckoutItem(DBModel):
                 }
             )
 
+    def clean_extra_party(self, *args, **kwargs):
+        """
+        clean extra_party method
+        checks for number of guests allowed
+        """
+        if self.extra_party > self.ticket_tier.allowed_guests:
+            raise TooManyGuestsError(
+                {
+                    "extra_party": _(
+                        f"Only {self.ticket_tier.allowed_guests} guest(s) allowed."
+                    )
+                }
+            )
+
     def clean_quantity(self, *args, **kwargs):
         """
         clean quantity method
@@ -1162,6 +1177,7 @@ class CheckoutItem(DBModel):
         runs all clean_* methods
         """
         self.clean_max_per_person()
+        self.clean_extra_party()
         self.clean_quantity()
         self.clean_ticket_tier()
         self.clean_event()

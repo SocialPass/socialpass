@@ -1110,8 +1110,9 @@ class CheckoutItem(DBModel):
         clean quantity method
         checks for available tickets
         """
+        total_selected = self.quantity + (self.quantity * self.extra_party)
         available = self.ticket_tier.capacity - self.ticket_tier.quantity_sold
-        if self.quantity > available:
+        if total_selected > available:
             raise TooManyTicketsRequestedError(
                 {"quantity": _(f"Only {available} quantity is available.")}
             )

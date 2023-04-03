@@ -40,6 +40,11 @@ class TxAssetOwnershipProcessingError(BaseValidationError):
 class CheckoutSessionExpired(BaseValidationError):
     pass
 
+
 class GoogleWalletAPIRequestError(BaseValidationError):
+    pass
+
+
+class TooManyGuestsError(BaseValidationError):
     pass
     

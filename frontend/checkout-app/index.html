@@ -104,6 +104,13 @@
       captureUnhandledRejections: true,
       payload: {
         environment: import.meta.env.VITE_APP_ROLLBAR_ENVIRONMENT,
+        client: {
+            javascript: {
+                code_version: import.meta.env.CF_PAGES_COMMIT_SHA,
+                source_map_enabled: true,
+                guess_uncaught_frames: true
+            }
+        },
       },
     }
     // Rollbar Snippet

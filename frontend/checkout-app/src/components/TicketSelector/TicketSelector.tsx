@@ -183,15 +183,15 @@ function TicketSelector(props): JSX.Element {
         ) : null}
         {ticketTier && ticketTier.allowed_guests > 0 && isChecked ?
         <div className='ticket-tier-controls border-top mt-10 pt-10'>
-					<div className='d-flex align-items-center'>
+					<div className='d-sm-flex align-items-center'>
 						<div>
 							<div className='fw-bold'>Extra Guest(s) - Free</div>
 							<div className='fs-base-n4 lh-sm'>
 								Please set the number of guest(s) you want to bring.
 							</div>
 						</div>
-						<div className='ps-20 flex-shrink-0 ms-auto'>
-							<div className='input-group input-group-sm ws-100'>
+						<div className='mt-10 mt-sm-0 ps-sm-20 flex-shrink-0 ms-auto'>
+							<div className='input-group input-group-sm ws-100 mx-auto'>
 								<button
 									className='btn ws-25 px-0'
 									onClick={(e) => {
@@ -214,6 +214,10 @@ function TicketSelector(props): JSX.Element {
 							</div>
 						</div>
 					</div>
+          <div className='border-top text-end mt-15 pt-10 fs-base-n2'>
+            <strong>Total:</strong> {amount + (amount * extraParty)}
+            {' '}(Quantity + Quantity &times; Guests)
+          </div>
 				</div>
         : null}
       </label>

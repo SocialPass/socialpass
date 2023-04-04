@@ -103,5 +103,5 @@ ROLLBAR = {
     "access_token": "c1f5ed4dcef64a42b1fd2fd2c7718fb4",
     "environment": ROLLBAR_ENV_NAME,
     "code_version": "1.0",
-    "root": ROOT_DIR,
+    "root": str(ROOT_DIR),
 }

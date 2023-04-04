@@ -113,13 +113,9 @@ LOGGING = {
 
 # Django Silk  - https://github.com/jazzband/django-silk
 # ------------------------------------------------------------------------------
-def is_superuser(user):
-    user.is_superuser
-
-
 SILKY_AUTHENTICATION = True  # User must login
 SILKY_AUTHORISATION = True  # User must have permissions
-SILKY_PERMISSIONS = is_superuser
+SILKY_PERMISSIONS = lambda user: user.is_superuser  # noqa
 
 # Rollbar
 # ------------------------------------------------------------------------------

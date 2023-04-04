@@ -236,7 +236,7 @@ export default function Home() {
               </div>
             </div>
             <p className='text-muted mt-5 mb-0'><strong className='text-base'>Start:</strong> {event?.start_date}</p>
-            {event.end_date && (
+            {event?.end_date && (
               <p className='text-muted mt-5 mb-0'><strong className='text-base'>End:</strong> {event?.end_date}</p>
             )}
             <div className='d-flex align-items-center mt-15'>

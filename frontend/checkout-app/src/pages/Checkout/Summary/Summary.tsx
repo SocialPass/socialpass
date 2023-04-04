@@ -62,6 +62,9 @@ export default function Summary(props) {
             <span>{item.ticket_tier.ticket_type}</span>
             <span className='ms-auto ps-10 fw-normal'>&times; {item.quantity}</span>
           </h6>
+          <div className='fs-base-n2 text-muted'>
+            Extra Guest(s): {item.extra_party}
+          </div>
           {checkout?.tx_type !== 'ASSET_OWNERSHIP' ? (
             <div className='fs-base-n2 mt-5'>
               <strong>Price</strong> &mdash;{' '}

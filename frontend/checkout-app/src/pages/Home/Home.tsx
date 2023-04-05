@@ -139,7 +139,7 @@ export default function Home() {
 
   const validateName = () => name.length > 0
 
-  const eventHasTickets = () => ticketTiers.length
+  //const eventHasTickets = () => ticketTiers.length
 
   const handleGetTicketsButton = () => {
     saveCheckout().then((res) => {
@@ -262,8 +262,7 @@ export default function Home() {
                   >
                     <i className='fa-regular fa-check me-15'></i>
                     <p className='m-0'>
-                      Tickets available! Please select the payment type and tickets you want to
-                      purchase.
+                      Tickets available! Please select the tickets you want to purchase.
                     </p>
                   </div>
                 </div>
@@ -284,6 +283,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/*
       {eventHasTickets() ? (
         <>
           <div className='content mb-0'>
@@ -374,8 +375,23 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </>
+      ) : (
+        <>
+          <div className='py-20'></div>
+        </>
+      )}
+    	*/}
 
-          <div className='row'>
+      {tiersLoading ? (
+      	<div className='text-center py-40'>
+      		<div className='spinner-border' role='status'>
+      			<span className='visually-hidden'>Loading...</span>
+      		</div>
+      	</div>
+      ) : (
+      	<>
+      		<div className='row'>
             <div className='col-md-7'>
               <div className='content me-md-0'>
                 {getPaymentTypeTicketTiers().map((tier, index) => (
@@ -459,10 +475,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </>
-      ) : (
-        <>
-          <div className='py-20'></div>
         </>
       )}
     </>

@@ -139,7 +139,7 @@ export default function Home() {
 
   const validateName = () => name.length > 0
 
-  //const eventHasTickets = () => ticketTiers.length
+  // const eventHasTickets = () => ticketTiers.length
 
   const handleGetTicketsButton = () => {
     saveCheckout().then((res) => {

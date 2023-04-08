@@ -7,5 +7,5 @@ flake8==6.0.0 # https://github.com/PyCQA/flake8
 flake8-isort==6.0.0 # https://github.com/gforcada/flake8-isort
 pylint-django==2.5.3 # https://github.com/PyCQA/pylint-django
 pre-commit==3.2.2 # https://github.com/pre-commit/pre-commit
-mypy==1.2.0 # https://github.com/python/mypy
+mypy==1.1.1 # https://github.com/python/mypy
 coverage==7.2.3

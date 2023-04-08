@@ -7,14 +7,14 @@ factory-boy==3.2.1 # https://github.com/FactoryBoy/factory_boy
 google-api-python-client==2.84.0 # https://github.com/googleapis/google-api-python-client
 qrcode==7.4.2 # https://github.com/lincolnloop/python-qrcode
 rollbar==0.16.3 #https://github.com/rollbar/pyrollbar/
-eth-utils==2.0.5 # https://github.com/ethereum/eth-utils
+eth-utils==2.1.0 # https://github.com/ethereum/eth-utils
 
 # Django
 # ------------------------------------------------------------------------------
 git+https://github.com/SPTech-Group/django-quill-editor
 git+https://github.com/SPTech-Group/passbook.git
 crispy-bootstrap5==0.6 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
-django==4.2.1  # https://www.djangoproject.com/
+django==4.2.0  # https://www.djangoproject.com/
 djangorestframework==3.14.0  # https://github.com/encode/django-rest-framework
 django-allauth==0.54.0  # https://github.com/pennersr/django-allauth
 django-cors-headers==3.14.0 # https://github.com/adamchainz/django-cors-headers

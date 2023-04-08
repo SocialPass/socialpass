@@ -65,23 +65,6 @@ INTERNAL_IPS = ["127.0.0.1", "10.0.2.2", "0.0.0.0", "localhost"]
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
-# Celery
-# ------------------------------------------------------------------------------
-# NOTE:
-# CELERY_LOCAL_DEVELOPMENT defaults to false, to avoid requiring celery without docker
-# With Docker, this .env is set to True
-CELERY_LOCAL_DEVELOPMENT = env("CELERY_LOCAL_DEVELOPMENT", default=False)
-if CELERY_LOCAL_DEVELOPMENT:
-    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-always-eager
-    CELERY_TASK_ALWAYS_EAGER = False
-    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
-    CELERY_TASK_EAGER_PROPAGATES = False
-else:
-    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-always-eager
-    CELERY_TASK_ALWAYS_EAGER = True
-    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
-    CELERY_TASK_EAGER_PROPAGATES = True
-
 # Media
 # ------------------------------------------------------------------------------
 # NOTE: This is only for local or development testing.

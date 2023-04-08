@@ -1,11 +1,11 @@
 # Code quality
 # ------------------------------------------------------------------------------
-black==22.8.0 # https://github.com/psf/black
-django-stubs[compatible-mypy]==1.11.0 # https://github.com/typeddjango/django-stubs
-djangorestframework-stubs[compatible-mypy]==1.6.0 # https://github.com/typeddjango/djangorestframework-stubs
-flake8==4.0.1 # https://github.com/PyCQA/flake8
-flake8-isort==4.1.1 # https://github.com/gforcada/flake8-isort
+black==23.3.0 # https://github.com/psf/black
+django-stubs[compatible-mypy]==1.16.0 # https://github.com/typeddjango/django-stubs
+djangorestframework-stubs[compatible-mypy]==1.10.0 # https://github.com/typeddjango/djangorestframework-stubs
+flake8==6.0.0 # https://github.com/PyCQA/flake8
+flake8-isort==6.0.0 # https://github.com/gforcada/flake8-isort
 pylint-django==2.5.3 # https://github.com/PyCQA/pylint-django
-pre-commit==2.20.0 # https://github.com/pre-commit/pre-commit
-mypy==0.950 # https://github.com/python/mypy
-coverage==6.5.0
+pre-commit==3.2.2 # https://github.com/pre-commit/pre-commit
+mypy==1.2.0 # https://github.com/python/mypy
+coverage==7.2.3

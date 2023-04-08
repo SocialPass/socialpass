@@ -96,8 +96,8 @@ class EventAdmin(CustomDBAdmin):
     inlines = [StateLogInline]
     readonly_fields = ["state"]
     actions = [
-        transition_to_draft,  # type: ignore
-        transition_to_live,  # type: ignore
+        transition_to_draft,
+        transition_to_live,
     ]
 
 

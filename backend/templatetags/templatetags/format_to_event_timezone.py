@@ -1,5 +1,4 @@
 import pytz
-
 from django import template
 
 register = template.Library()

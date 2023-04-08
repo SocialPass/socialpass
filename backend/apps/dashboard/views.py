@@ -124,7 +124,6 @@ class RedirectToTeamView(RedirectView):
         if self.request.user.is_authenticated:
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
-
                 return reverse("dashboard:event_list", args=(membership.team.public_id,))
             else:
                 return reverse("dashboard:team_create")
@@ -530,7 +529,7 @@ class EventStatsView(TeamContextMixin, DetailView):
                     "redeemed_at": ticket.redeemed_at,
                     "checkout_session": str(ticket.checkout_session.public_id),
                     "customer_name": ticket.checkout_session.name,
-                    "wallet_address": ticket.checkout_session.tx_asset_ownership.wallet_address, # noqa
+                    "wallet_address": ticket.checkout_session.tx_asset_ownership.wallet_address,  # noqa
                     "party_size": ticket.party_size,
                 }
             )

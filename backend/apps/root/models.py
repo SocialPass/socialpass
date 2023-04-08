@@ -1389,7 +1389,6 @@ class TxAssetOwnership(DBModel):
 
         # 1. Loop over CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
-
             # 2. Format & make API call for each CheckoutItem and its respective tier
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             api_response = self._call_moralis_api(

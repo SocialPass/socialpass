@@ -5,14 +5,15 @@ import qrcode
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render
+
+# from django.views.generic.list import ListView
+from django.utils import timezone
 from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
-#from django.views.generic.list import ListView
-from django.utils import timezone
-
-from .forms import PasscodeForm
 
 from apps.root.models import CheckoutSession, Event, Ticket
+
+from .forms import PasscodeForm
 
 
 class EventDiscoveryIndex(TemplateView):
@@ -85,11 +86,15 @@ class GetTickets(View):
         checkout_session = self.get_object()
         passcode_form = PasscodeForm()
 
-        return render(self.request, "event_discovery/get_tickets_passcode.html", {
-            "current_team": checkout_session.event.team,
-            "checkout_session": checkout_session,
-            "passcode_form": passcode_form,
-        })
+        return render(
+            self.request,
+            "event_discovery/get_tickets_passcode.html",
+            {
+                "current_team": checkout_session.event.team,
+                "checkout_session": checkout_session,
+                "passcode_form": passcode_form,
+            },
+        )
 
     def post(self, *args, **kwargs):
         """
@@ -112,8 +117,8 @@ class GetTickets(View):
                 actual_passcode = checkout_session.passcode.lower()
                 entered_passcode = passcode_form.cleaned_data["passcode"].lower()
                 if (
-                    actual_passcode != entered_passcode or
-                    checkout_session.passcode_expiration < timezone.now()
+                    actual_passcode != entered_passcode
+                    or checkout_session.passcode_expiration < timezone.now()
                 ):
                     # validation was unsuccessful, so we show error message
                     messages.add_message(

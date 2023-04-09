@@ -1,0 +1,29 @@
+# Specify required build-system information
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# Specify black configuration
+[tool.black]
+line-length = 89
+target-version = ['py37', 'py38', 'py39', 'py310']
+
+# Specify flake8 configuration
+[tool.flake8]
+max-line-length = 89
+exclude = ["*/migrations/*", "*/venv/*"]
+
+# Specify isort configuration
+[tool.isort]
+line_length = 89
+multi_line_output = 3
+include_trailing_comma = true
+skip = ["migrations", "venv"]
+
+# Specify mypy configuration
+[mypy]
+python_version = 3.9
+warn_unused_configs = true
+warn_unused_ignores = true
+ignore_missing_imports = true
+exclude = ["*/migrations/*", "*/venv/*"]

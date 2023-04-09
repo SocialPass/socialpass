@@ -7,7 +7,7 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 lint: ## Lint backend repo
-	(source backend/venv/bin/activate; cd backend; black .; isort .; flake8 .; mypy .;)
+	(source backend/venv/bin/activate; cd backend; black --exclude ".*\/(migrations|venv)\/.*" .; isort .; flake8 .; mypy .;)
 
 collect: ## collectstatic backend
 	(source backend/venv/bin/activate; cd backend; ./manage.py collectstatic --no-input)

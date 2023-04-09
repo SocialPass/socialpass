@@ -290,6 +290,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     Manage a team's members.
     """
 
+    object: Membership  # Mypy typing
     model = Membership
     pk_url_kwarg = "member_pk"
     template_name = "dashboard/member_delete.html"
@@ -479,6 +480,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
     Delete a team's event
     """
 
+    object: Event  # Mypy typing
     model = Event
     template_name = "dashboard/event_delete.html"
 
@@ -637,6 +639,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
     Delete an event's ticket tier.
     """
 
+    object: TicketTier  # Mypy typing
     model = TicketTier
     template_name = "dashboard/ticket_tier_delete.html"
 

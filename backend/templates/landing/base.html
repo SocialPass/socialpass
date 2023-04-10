@@ -1,0 +1,341 @@
+{% load static get_debug_status get_preferred_color_scheme %}
+<!DOCTYPE html>
+{% get_debug_status as debug %}
+<html lang="en" class="socialpass-event-discovery {% get_preferred_color_scheme %}" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>{% block head_title %}SocialPass - Hosting the Next Generation of Events{% endblock head_title %}</title>
+
+		<!-- Fav icon -->
+		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
+
+		<!-- Halfmoon CSS -->
+		<link href="{% static 'socialpass-theme/halfmoon.min.css' %}" rel="stylesheet" />
+
+		<!-- SocialPass CSS theme -->
+		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- SEO tags -->
+		<meta name="description" content="SocialPass is the go-to events platform, powered by Web3">
+		<meta name="author" content="SocialPass">
+		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting, fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
+
+		<!-- Open graph -->
+		<meta property="og:type" content="article">
+		<meta property="og:url" content="{{ request.build_absolute_uri }}">
+		<meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
+		<meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
+		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:site" content="@socialpass_io">
+
+		<!-- Google Tag Manager -->
+		{% if not debug %}
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
+			<script>
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+				gtag('config', 'G-FQKKDVZZVX');
+			</script>
+		{% endif %}
+
+		<!-- Custom styles -->
+		<style type="text/css">
+			:root {
+				--base-body-bg-color: var(--white-color);
+				--base-body-bg-image: linear-gradient(
+					60deg,
+					transparent, transparent, transparent, transparent,
+					hsla(var(--primary-color-hsl), 0.1),
+					hsla(var(--secondary-color-hsl), 0.1),
+					transparent, transparent, transparent
+				);
+			}
+
+			.dark-mode {
+				--base-body-bg-color: var(--dark-color);
+			}
+
+			/* Gutter */
+
+			.g-content {
+				padding: var(--content-and-card-spacing-half);
+			}
+
+			.g-content > * {
+				padding: var(--content-and-card-spacing-half);
+			}
+
+			.g-content > * > .content,
+			.g-content > * > .card {
+				margin: 0;
+			}
+
+			/* Footer */
+
+			.footer {
+				color: hsla(var(--white-color-hsl), 0.9);
+				background-color: var(--primary-color);
+				border-top: var(--base-border-width) var(--base-border-style) transparent;
+				border-bottom: var(--base-border-width) var(--base-border-style) transparent;
+			}
+
+			.dark-mode .footer {
+				background-color: hsl(var(--primary-color-hue), 40%, 15%);
+			}
+
+			.footer-copyright {
+				border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+			}
+
+			/* Review section */
+
+			#review-section {
+				color: hsla(var(--white-color-hsl), 0.9);
+				background-color: var(--primary-color);
+			}
+
+			.dark-mode #review-section {
+				background-color: hsl(var(--primary-color-hue), 40%, 15%);
+			}
+		</style>
+
+		{% block extra_head %}{% endblock extra_head %}
+	</head>
+	<body>
+		{% block body %}
+		<!-- Modals start -->
+		{% block modals %}{% endblock modals %}
+		<!-- Modals end -->
+
+		<!-- Page wrapper start -->
+		<div class="page-wrapper">
+			<!-- Sticky alerts start -->
+			<div class="sticky-alerts">
+				{% block sticky_alerts %}{% endblock sticky_alerts %}
+			</div>
+			<!-- Sticky alerts end -->
+
+			<!-- Content wrapper start -->
+			<div class="content-wrapper">
+				<!-- Navbar start -->
+				<nav class="w-100 bg-content-lm bg-body-dm">
+					<div class="container-xl">
+						<div class="content my-0 hs-75 d-flex align-items-center">
+							<!-- Branding start -->
+							<a href="{% url 'discovery:index' %}" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+								<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block" width="70">
+								<div class="fs-base-p8 fw-700 ms-10 d-none d-md-block">
+									<span class="text-primary">Social</span><span class="text-secondary">Pass</span>
+								</div>
+							</a>
+							<!-- Branding end -->
+
+							<!-- Navbar links start -->
+							<div class="text-secondary ms-auto fw-bold d-none d-md-block">
+								<a href="{% url 'discovery:index' %}" class="link-reset text-decoration-none me-30">Attend</a>
+								<a href="{% url 'discovery:index_host' %}" class="link-reset text-decoration-none me-30">Host</a>
+								<a href="https://docs.socialpass.io/" target="_blank" rel="noopener" class="link-reset text-decoration-none">Docs</a>
+							</div>
+							<!-- Navbar links end -->
+
+							<!-- Navbar CTAs start -->
+							<div class="ms-auto">
+								<div class="dropdown with-arrow d-md-none">
+									<button type="button" class="btn btn-link btn-square rounded-circle bg-gray-very-light-lm bg-darkgray-very-dim-dm me-5" data-hm-toggle="dropdown">
+										<i class="fa-regular fa-bars"></i>
+										<span class="visually-hidden">Open Navbar Links</span>
+									</button>
+									<div class="dropdown-menu dropdown-menu-center">
+										<a href="{% url 'discovery:index' %}" class="dropdown-item fw-bold text-secondary">Attend</a>
+										<a href="{% url 'discovery:index_host' %}" class="dropdown-item fw-bold text-secondary">Host</a>
+										<a href="https://docs.socialpass.io/" target="_blank" rel="noopener" class="dropdown-item fw-bold text-secondary">Docs</a>
+									</div>
+								</div>
+								<a href="#" class="btn btn-link btn-square rounded-circle bg-gray-very-light-lm bg-darkgray-very-dim-dm me-5" data-hm-toggle="dark-mode">
+									<i class="fa-duotone fa-moon-stars hidden-dm"></i>
+									<i class="fa-duotone fa-sun hidden-lm"></i>
+									<span class="visually-hidden">Toggle Dark Mode</span>
+								</a>
+								{% if user.is_authenticated %}
+									<a href="{% url 'dashboard:dashboard_redirect' %}" class="btn btn-primary rounded-2">
+										<i class="fa-light fa-arrow-right me-5"></i>
+										<strong class="antialiased">Dashboard</strong>
+									</a>
+								{% else %}
+									<a href="{% url 'account_login' %}" class="btn btn-link rounded-2 me-5 d-none d-sm-inline-block">
+										<strong class="antialiased">Sign In</strong>
+									</a>
+									<a href="{% url 'account_signup' %}" class="btn btn-primary rounded-2">
+										<strong class="antialiased">Get Started</strong>
+									</a>
+								{% endif %}
+							</div>
+							<!-- Navbar CTAs end -->
+						</div>
+					</div>
+				</nav>
+				<!-- Navbar end -->
+
+				<!-- Main content start -->
+				{% block content %}{% endblock content %}
+				<!-- Main content end -->
+
+				<!-- Footer start -->
+				<footer class="footer pt-10">
+					<div class="container-xl">
+						<div class="row g-content">
+							<!-- Follow us start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content">
+									<h5 class="content-title text-on-primary mt-0 mb-20">
+										Follow Us
+									</h5>
+									<div class="mt-10">
+										<a href="https://twitter.com/SocialPass_io" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
+											<span class="ws-25">
+												<i class="fa-brands fa-twitter"></i>
+											</span>
+											<span>Twitter</span>
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="https://discord.gg/3jnCzESa" target="_blank" class="d-inline-flex align-items-center link-reset text-decoration-none">
+											<span class="ws-25">
+												<i class="fa-brands fa-discord"></i>
+											</span>
+											<span>Discord</span>
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Follow us end -->
+
+							<!-- Need help start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content">
+									<h5 class="content-title text-on-primary mt-20 mt-md-0 mb-20">
+										Need Help?
+									</h5>
+									<div class="mt-10">
+										<a href="#" data-hm-toggle="modal" data-hm-target="discord-support-ticket-modal" target="_blank" class="link-reset text-decoration-none">
+											Contact Us
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Need help end -->
+
+							<!-- Legal start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content">
+									<h5 class="content-title text-on-primary mt-20 mt-lg-0 mb-20">
+										Legal
+									</h5>
+									<div class="mt-10">
+										<a href="{% static 'legal/terms-of-use.pdf' %}" target="_blank" class="link-reset text-decoration-none">
+											Terms of Use
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="{% static 'legal/organizer-terms-and-conditions.pdf' %}" target="_blank" class="link-reset text-decoration-none">
+											Organizer Terms & Conditions
+										</a>
+									</div>
+									<div class="mt-10">
+										<a href="{% static 'legal/privacy-policy.pdf' %}" target="_blank" class="link-reset text-decoration-none">
+											Privacy Policy
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Legal end -->
+
+							<!-- Misc. start -->
+							<div class="col-md-6 col-lg-3">
+								<div class="content">
+									<div class="d-flex align-items-center fw-bold pe-none user-select-none mt-20 mt-lg-0">
+										<div class="ws-75">
+											<img src="{% static 'images/SocialPass-Icon-White.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
+										</div>
+										<div class="text-on-primary ms-10">
+											<div class="fs-base-p4">
+												SocialPass
+											</div>
+											<div class="fs-base-n4 lh-1 fw-normal">
+												Event Discovery
+											</div>
+										</div>
+									</div>
+									<p class="mt-30 mb-15">
+										SocialPass is the go-to events platform, powered by Web3.
+									</p>
+									<div>
+										<a href="#" class="btn bg-white text-black fw-bold border-0">
+											Scroll To Top
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- Misc. end -->
+						</div>
+
+						<!-- Copyright start -->
+						<div class="footer-copyright content my-20">
+							<p class="opacity-75 fs-base-n2 mb-0">
+								&copy; {% now "Y" %}, SocialPass. All rights reserved
+							</p>
+						</div>
+						<!-- Copyright end -->
+					</div>
+				</footer>
+				<!-- Footer end -->
+			</div>
+			<!-- Content wrapper end -->
+		</div>
+		<!-- Page wrapper end -->
+		{% endblock body %}
+
+		<!-- Halfmoon JS -->
+		<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
+
+		{% if debug %}
+			<script type="text/javascript">
+				/**
+				 * Handle the keydown event (only on debug mode).
+				 *
+				 * This is used to create the dark mode and sidebar toggle shortcuts.
+				 * These shortcuts are very useful for testing.
+				 */
+				document.addEventListener("keydown", function (event) {
+					if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+						event = event || window.event;
+
+						if (!(event.ctrlKey || event.metaKey)) {
+							// Toggle dark mode when [shift] + [D] keys are pressed
+							if (event.shiftKey && event.which == 68) {
+								halfmoon.toggleDarkMode();
+							}
+
+							// Toggle sidebar when [shift] + [S] keys are pressed
+							if (event.shiftKey && event.which == 83) {
+								halfmoon.toggleSidebar();
+							}
+						}
+					}
+				});
+			</script>
+		{% endif %}
+
+		{% block extra_body %}{% endblock extra_body %}
+	</body>
+</html>

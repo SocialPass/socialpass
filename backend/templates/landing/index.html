@@ -1,0 +1,177 @@
+{% extends "landing/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<!-- Hero section start -->
+<section id="hero-section" class="py-30 py-lg-50">
+	<div class="container-xl">
+		<div class="row">
+			<div class="col-lg-10 col-xl-9 mx-auto">
+				<div class="content text-center">
+					<h1 class="display-1 fw-700 text-strong mt-lg-50">
+						Tickets for Unforgettable Events 
+					</h1>
+					<p class="fsr-5">
+						SocialPass is the go-to events platform for hosts and attendees worldwide. We help you manage and ticket your most memorable events in the easiest way possible!
+					</p>
+					<br /><br />
+					<div class="ws-500 h-auto mw-100 bg-content border border-dotted rounded-4 overflow-hidden mx-auto" style="box-shadow: 0 0 2rem 1rem hsla(var(--secondary-color-hsl), 0.1);">
+						<img src="{% static 'images/socialpass-checkout-lm.png' %}" class="d-block w-100 h-100 hidden-dm" alt="Hero image">
+						<img src="{% static 'images/socialpass-checkout-dm.png' %}" class="d-block w-100 h-100 hidden-lm" alt="Hero image">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Hero section end -->
+
+<!-- First section start -->
+<section class="py-50 bg-content-lm bg-body-dm">
+	<div class="container-xl">
+		<!-- Header start -->
+		<div class="row">
+			<div class="col-lg-9 col-xl-7 mx-auto">
+				<div class="content text-center">
+					<h2 class="display-5 fw-700 text-strong">
+						Manage Events the Easy Way
+					</h2>
+					<p class="fsr-6">
+						SocialPass provides all the tools needed to manage the best events
+					</p>
+				</div>
+			</div>
+		</div>
+		<!-- Header end -->
+
+		<!-- Row start -->
+		<div class="row g-content">
+			<!-- Column start -->
+			<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-0 col-xl-4 px-lg-50 px-xl-30 px-xxl-50">
+				<div class="p-content rounded-5 border border-dotted border-primary-light-lm border-primary-dim-dm text-center hs-sm-350 d-flex flex-column" style="box-shadow: 0 0 2rem 1rem hsla(var(--primary-color-hsl), 0.1);">
+					<div class="ws-75 hs-75 mx-auto bg-primary rounded-circle text-on-primary d-flex align-items-center justify-content-center fs-base-p18 mt-10" style="box-shadow: 0 0 0 0.625rem hsla(var(--primary-color-hsl), 0.25);">
+						<i class="fa-solid fa-edit"></i>
+					</div>
+					<h3 class="fsr-2 fw-700 text-strong mt-40 mb-0">
+						Publish
+					</h3>
+					<p class="mt-5 mb-20 text-muted">
+						Create, customize & collaborate
+					</p>
+					<div class="mt-auto">
+						<a href="{% url 'discovery:index_host' %}#publish" class="btn btn-primary btn-lg btn-block">
+							<strong class="antialiased">Learn More</strong>
+						</a>
+					</div>
+				</div>
+			</div>
+			<!-- Column end -->
+
+			<!-- Column start -->
+			<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-0 col-xl-4 px-lg-50 px-xl-30 px-xxl-50">
+				<div class="p-content rounded-5 border border-dotted border-primary-light-lm border-primary-dim-dm text-center hs-sm-350 d-flex flex-column" style="box-shadow: 0 0 2rem 1rem hsla(var(--primary-color-hsl), 0.1);">
+					<div class="ws-75 hs-75 mx-auto bg-primary rounded-circle text-on-primary d-flex align-items-center justify-content-center fs-base-p18 mt-10" style="box-shadow: 0 0 0 0.625rem hsla(var(--primary-color-hsl), 0.25);">
+						<i class="fa-solid fa-bullhorn"></i>
+					</div>
+					<h3 class="fsr-2 fw-700 text-strong mt-40 mb-0">
+						Promote
+					</h3>
+					<p class="mt-5 mb-20 text-muted">
+						Share & embed your branded event
+					</p>
+					<div class="mt-auto">
+						<a href="{% url 'discovery:index_host' %}#promote" class="btn btn-primary btn-lg btn-block">
+							<strong class="antialiased">Learn More</strong>
+						</a>
+					</div>
+				</div>
+			</div>
+			<!-- Column end -->
+
+			<!-- Column start -->
+			<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-xl-4 offset-xl-0 px-lg-50 px-xl-30 px-xxl-50">
+				<div class="p-content rounded-5 border border-dotted border-primary-light-lm border-primary-dim-dm text-center hs-sm-350 d-flex flex-column" style="box-shadow: 0 0 2rem 1rem hsla(var(--primary-color-hsl), 0.1);">
+					<div class="ws-75 hs-75 mx-auto bg-primary rounded-circle text-on-primary d-flex align-items-center justify-content-center fs-base-p18 mt-10" style="box-shadow: 0 0 0 0.625rem hsla(var(--primary-color-hsl), 0.25);">
+						<i class="fa-solid fa-party-horn"></i>
+					</div>
+					<h3 class="fsr-2 fw-700 text-strong mt-40 mb-0">
+						Party
+					</h3>
+					<p class="mt-5 mb-20 text-muted">
+						Scan tickets & track stats
+					</p>
+					<div class="mt-auto">
+						<a href="{% url 'discovery:index_host' %}#party" class="btn btn-primary btn-lg btn-block">
+							<strong class="antialiased">Learn More</strong>
+						</a>
+					</div>
+				</div>
+			</div>
+			<!-- Column end -->
+		</div>
+		<!-- Row end -->
+	</div>
+</section>
+<!-- First section end -->
+
+<!-- Second section start -->
+<section class="py-50 bg-content-lm bg-body-dm">
+	<div class="container-xl">
+		<!-- Header start -->
+		<div class="row">
+			<div class="col-lg-9 col-xl-8 mx-auto">
+				<div class="content text-center">
+					<h2 class="display-5 fw-700 text-strong">
+						Attend Events with Peace of Mind
+					</h2>
+					<p class="fsr-6">
+						Avoid all the stress and hassle that comes with attending an event. SocialPass provides attendees the best and simplest solutions on the market. 
+					</p>
+				</div>
+			</div>
+		</div>
+		<!-- Header end -->
+
+		<!-- Row start -->
+		<div class="row g-content">
+			<!-- Column start -->
+			<div class="col-xl-6 align-self-center">
+				<div class="content">
+					<div class="ws-600 h-auto mw-100 bg-content border border-dotted rounded-4 overflow-hidden mx-auto" style="box-shadow: 0 0 2rem 1rem hsla(var(--secondary-color-hsl), 0.1);">
+						<img src="https://placehold.co/600" class="d-block w-100 h-100" alt="Image">
+					</div>
+				</div>
+			</div>
+			<!-- Column end -->
+
+			<!-- Column start -->
+			<div class="col-xl-5 offset-xl-1 align-self-center">
+				<div class="content">
+					<h4 class="fsr-2 fw-700 text-strong mt-40 mt-xl-0">
+						RSVP In Seconds
+					</h4>
+					<p>
+						SocialPass strives to offer attendees the most seamless RSVP experience possible. Grab tickets in under one minute!
+					</p>
+					<h4 class="fsr-2 fw-700 text-strong mt-40">
+						Accessible Everywhere 
+					</h4>
+					<p>
+						Built on open standards, SocialPass is available across all devices of any make, shape, or size. Whether you’re using Apple, Android, or desktop, we have you covered.
+					</p>
+					<h4 class="fsr-2 fw-700 text-strong mt-40">
+						Revamped Checkout Options
+					</h4>
+					<p>
+						Here at SocialPass, we are dedicated to bringing tickets into the 21st Century without compromising on experience.  Our first of many features - token gated events - has connected NFT communities around the world.   Stay tuned for more checkout options to come.
+					</p>
+				</div>
+			</div>
+			<!-- Column end -->
+		</div>
+		<!-- Row end -->
+	</div>
+</section>
+<!-- Second section end -->
+{% endblock content %}

@@ -269,15 +269,17 @@ export default function Home() {
               </>
             ) : (
               <>
-                <div>
-                  <div
-                    className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
-                    role='alert'
-                  >
-                    <i className='fa-regular fa-times me-15'></i>
-                    <p className='m-0'>Sorry! Tickets are not available for this event.</p>
+                {ticketTiers.length > 0 &&
+                  <div>
+                    <div
+                      className='alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center'
+                      role='alert'
+                    >
+                      <i className='fa-regular fa-times me-15'></i>
+                      <p className='m-0'>Sorry! Tickets are not available for this event.</p>
+                    </div>
                   </div>
-                </div>
+                }
               </>
             )}
           </div>
@@ -391,90 +393,92 @@ export default function Home() {
       	</div>
       ) : (
       	<>
-      		<div className='row'>
-            <div className='col-md-7'>
-              <div className='content me-md-0'>
-                {getPaymentTypeTicketTiers().map((tier, index) => (
-                  <TicketSelector
-                    amount={
-                      checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
-                        ?.quantity || 0
-                    }
-                    onChange={(amount, guests, ticketTier) =>
-                      setTicketTierSelectedAmount(amount, guests, ticketTier)
-                    }
-                    paymentType={checkout?.tx_type}
-                    ticketTier={tier}
-                    key={`ticket-tier-${index}`}
-                    // below !! operator converts Object to boolean
-                    isChecked={
-                      !!checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
-                    }
-                    extraParty={
-                      checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
-                      ?.extra_party || 0
-                    }
-                  />
-                ))}
+          {ticketTiers.length > 0 &&
+        		<div className='row'>
+              <div className='col-md-7'>
+                <div className='content me-md-0'>
+                  {getPaymentTypeTicketTiers().map((tier, index) => (
+                    <TicketSelector
+                      amount={
+                        checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
+                          ?.quantity || 0
+                      }
+                      onChange={(amount, guests, ticketTier) =>
+                        setTicketTierSelectedAmount(amount, guests, ticketTier)
+                      }
+                      paymentType={checkout?.tx_type}
+                      ticketTier={tier}
+                      key={`ticket-tier-${index}`}
+                      // below !! operator converts Object to boolean
+                      isChecked={
+                        !!checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
+                      }
+                      extraParty={
+                        checkoutItems.find((item) => item.ticket_tier.public_id === tier.public_id)
+                        ?.extra_party || 0
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className='col-md-5'>
+                <div className='px-content pt-md-30 position-md-sticky top-0 start-0'>
+                  <div className='alert alert-primary text-base fs-base-n4 p-5 mt-10' role='alert'>
+                      <i className='fa-regular fa-info-circle me-5 text-primary'></i>
+                      We only require your email to deliver your tickets in a secure way.
+                      {' '}<strong>No account</strong> is created without your consent.
+                    </div>
+                  <form>
+                    <input
+                      type='text'
+                      name='name'
+                      className='form-control mb-10'
+                      placeholder='Name'
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    >
+                    </input>
+                    <input
+                      type='text'
+                      name='email'
+                      className='form-control'
+                      placeholder='Email Address'
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    >
+                    </input>
+                    <button
+                      className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
+                      // Get Tickets button is only enabled by having tickets selected and a valid e-mail input
+                      disabled={!validateName() || !validateEmail() || !checkoutItems.length}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleGetTicketsButton()
+                      }}
+                    >
+                      <strong className='antialiased'>Get Tickets</strong>
+                    </button>
+                  </form>
+                  <p>
+                    <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
+                  </p>
+                  <hr />
+                  <p className='text-muted fs-base-n4'>
+                    You're also agreeing to our{' '}
+                    <a
+                      href={`${import.meta.env.VITE_APP_API_URL}/static/legal/terms-of-use.pdf`}
+                      className='fw-bold'
+                      target='_blank'
+                      rel='noreferrer'
+                    >
+                      Terms of Use <i className='fa-regular fa-external-link'></i>
+                    </a>{' '}
+                    by clicking on the above button.
+                  </p>
+                </div>
               </div>
             </div>
-            <div className='col-md-5'>
-              <div className='px-content pt-md-30 position-md-sticky top-0 start-0'>
-                <div className='alert alert-primary text-base fs-base-n4 p-5 mt-10' role='alert'>
-                    <i className='fa-regular fa-info-circle me-5 text-primary'></i>
-                    We only require your email to deliver your tickets in a secure way.
-                    {' '}<strong>No account</strong> is created without your consent.
-                  </div>
-                <form>
-                  <input
-                    type='text'
-                    name='name'
-                    className='form-control mb-10'
-                    placeholder='Name'
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  >
-                  </input>
-                  <input
-                    type='text'
-                    name='email'
-                    className='form-control'
-                    placeholder='Email Address'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  >
-                  </input>
-                  <button
-                    className='btn btn-secondary btn-lg fsr-6 btn-block mt-15'
-                    // Get Tickets button is only enabled by having tickets selected and a valid e-mail input
-                    disabled={!validateName() || !validateEmail() || !checkoutItems.length}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleGetTicketsButton()
-                    }}
-                  >
-                    <strong className='antialiased'>Get Tickets</strong>
-                  </button>
-                </form>
-                <p>
-                  <strong>Total Price</strong> &mdash; {getPriceWithCurrencySymbol(getTotalPrice())}
-                </p>
-                <hr />
-                <p className='text-muted fs-base-n4'>
-                  You're also agreeing to our{' '}
-                  <a
-                    href={`${import.meta.env.VITE_APP_API_URL}/static/legal/terms-of-use.pdf`}
-                    className='fw-bold'
-                    target='_blank'
-                    rel='noreferrer'
-                  >
-                    Terms of Use <i className='fa-regular fa-external-link'></i>
-                  </a>{' '}
-                  by clicking on the above button.
-                </p>
-              </div>
-            </div>
-          </div>
+          }
         </>
       )}
     </>

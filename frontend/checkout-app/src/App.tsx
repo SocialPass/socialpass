@@ -8,7 +8,7 @@ import { CheckoutProvider } from './contexts/CheckoutContext'
 import Router from './routes'
 
 const rollbarConfig = {
-   accessToken: "86a31882f236497db5c142da8ba72a5f",
+   accessToken: '86a31882f236497db5c142da8ba72a5f',
    captureUncaught: true,
    captureUnhandledRejections: true,
    payload: {

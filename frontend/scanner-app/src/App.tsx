@@ -6,7 +6,7 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import Router from './routes'
 
 const rollbarConfig = {
-   accessToken: "e19adfa974894504b3d7b717c7c5f055",
+   accessToken: 'e19adfa974894504b3d7b717c7c5f055',
    captureUncaught: true,
    captureUnhandledRejections: true,
    payload: {

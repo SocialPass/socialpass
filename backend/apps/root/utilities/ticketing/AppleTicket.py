@@ -60,8 +60,11 @@ class AppleTicket:
         date_field = Field("when", start_date, "", "", Alignment.RIGHT)
         self.event_info.headerFields.append(date_field)
         self.event_info.addPrimaryField("name", event_title, "EVENT")
-        self.event_info.addSecondaryField("ticket type", ticket_type, "TICKET TYPE")
         self.event_info.addSecondaryField("where", event_location, "WHERE")
+        self.event_info.addAuxiliaryField("ticket type", ticket_type, "TICKET TYPE")
+        self.event_info.addBackField("name", event_title, "EVENT")
+        self.event_info.addBackField("where", event_location, "WHERE")
+        self.event_info.addBackField("ticket type", ticket_type, "TICKET TYPE")
 
     def set_barcode(self, link: str, _format: BarcodeFormat = BarcodeFormat.QR):
         """

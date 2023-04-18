@@ -455,9 +455,11 @@ class EventGoLiveView(TeamContextMixin, DetailView):
 
     def post(self, *args, **kwargs):
         event = self.get_object()
+        is_success = False
         if event.state != Event.StateStatus.LIVE:
             try:
                 event.transition_live()
+                is_success = True
             except Exception:
                 rollbar.report_exc_info()
                 messages.add_message(
@@ -471,7 +473,13 @@ class EventGoLiveView(TeamContextMixin, DetailView):
                     self.request, messages.SUCCESS, "Event has been made live!"
                 )
         return redirect(
-            "dashboard:event_go_live", self.kwargs["team_public_id"], event.pk
+            reverse(
+                "dashboard:event_go_live",
+                kwargs={
+                    "team_public_id": self.kwargs["team_public_id"],
+                    "pk": event.pk,
+                }
+            ) + f"?is_success={str(is_success)}"
         )
 
 

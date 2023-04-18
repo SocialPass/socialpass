@@ -434,7 +434,8 @@ class Event(DBModel):
                 html_message=msg_html,
             )
         except Exception as e:
-            pass
+            print("EMAIL ERROR: " + str(e))
+            rollbar.report_message("EMAIL ERROR: " + str(e))
 
     @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):

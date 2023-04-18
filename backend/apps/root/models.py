@@ -412,6 +412,30 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
+        # Send emails to team members (fail silently)
+        try:
+            ctx = {
+                "event": self,
+                "scanner_url": self.scanner_url,
+            }
+            emails = []
+            memberships = Membership.objects.select_related("user").filter(
+                team=self.team
+            )
+            for m in memberships:
+                emails.append(m.user.email)
+            msg_plain = render_to_string("dashboard/email/go_live_message.txt", ctx)
+            msg_html = render_to_string("dashboard/email/go_live.html", ctx)
+            send_mail(
+                "[SocialPass] Your event is live - " + self.title,
+                msg_plain,
+                "tickets-no-reply@socialpass.io",
+                emails,
+                html_message=msg_html,
+            )
+        except Exception as e:
+            pass
+
     @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):
         """

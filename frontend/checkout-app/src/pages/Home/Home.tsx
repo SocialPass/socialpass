@@ -212,14 +212,38 @@ export default function Home() {
         <div className='col-md-7'>
           <div className='content mt-20 mb-0'>
             <h1 className='text-strong fw-700 display-6 m-0 text-break'>{event?.title}</h1>
-            <div className='mt-20 fsr-6 text-break'>
-              <p className='m-0' dangerouslySetInnerHTML={sanitizedEventDescription()} />
+            <div id='desc-cont' className='my-20 overflow-hidden position-relative max-h-250'>
+              <div className='m-0' dangerouslySetInnerHTML={sanitizedEventDescription()} />
+              {(document.getElementById('desc-cont')?.scrollHeight || -1) > 
+               (document.getElementById('desc-cont')?.clientHeight || 0) &&
+                <div
+                  id='desc-read'
+                  className='position-absolute bottom-0 start-0 w-100 text-center pb-10'
+                  style={{
+                    paddingTop: '12rem',
+                    background: 'linear-gradient(transparent, var(--base-content-bg-color))',
+                    borderBottom: '1px dotted var(--border-color)',
+                  }}
+                >
+                  <button
+                    type='button'
+                    className='btn btn-rounded'
+                    onClick={() => {
+                      document.getElementById('desc-cont')?.classList.remove('overflow-hidden')
+                      document.getElementById('desc-cont')?.classList.remove('max-h-250')
+                      document.getElementById('desc-read')?.classList.add('d-none')
+                    }}
+                  >
+                    Read More
+                  </button>
+                </div>
+              }
             </div>
           </div>
         </div>
 
         <div className='col-md-5'>
-          <div className='content mt-10 mt-md-30 mb-0'>
+          <div className='content pt-10 pt-md-30 my-0 position-md-sticky top-0 start-0'>
             <div>
               {
                 (checkout?.expiration == null || checkout?.tx_status == 'FULFILLED') ? '' : <CountdownTimer expiration={new Date(checkout?.expiration)} />

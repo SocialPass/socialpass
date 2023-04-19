@@ -159,18 +159,26 @@ function TicketSelector(props): JSX.Element {
               <div className='col-6'>
                 <strong>Blockchain</strong>
                 <br />
+                {ticketTier.tier_asset_ownership.blockchain === 'Ethereum' &&
+                  <i className='fa-brands fa-ethereum me-5'></i>
+                }
                 {ticketTier.tier_asset_ownership.blockchain}
               </div>
               <div className='col-6'>
                 <strong>Network</strong>
                 <br />
-                {ticketTier.tier_asset_ownership.network}
+                {ticketTier.tier_asset_ownership.network === 'Ethereum'? (
+                  <span>Ethereum Mainnet</span>
+                ) : (
+                  <span>{ticketTier.tier_asset_ownership.network}</span>
+                )}
               </div>
             </div>
             <div className='row mt-10'>
               <div className='col-6'>
                 <strong>Asset Type</strong>
                 <br />
+                <i className='fa-solid fa-hexagon-vertical-nft-slanted me-5'></i>
                 {ticketTier.tier_asset_ownership.asset_type}
               </div>
               <div className='col-6 text-truncate'>

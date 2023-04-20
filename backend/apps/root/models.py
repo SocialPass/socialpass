@@ -772,6 +772,7 @@ class TicketTier(DBModel):
     ticket_type = models.CharField(
         max_length=255,
         blank=False,
+        help_text="A short descriptive label for your ticket tier.",
     )
     capacity = models.IntegerField(
         default=1,

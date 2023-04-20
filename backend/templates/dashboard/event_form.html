@@ -62,11 +62,14 @@
 					Basic Information
 				</h3>
 				<p class="text-muted fs-base-n2 mt-5">
-					Name your event and tell event-goers why they should come. Add details that highlight what makes it unique.
+					Name your event, add your cover image, and tell event-goers why they should come. Add details that highlight what makes it unique.
 				</p>
 				{% with form.title as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
+				<div class="form-group">
+					{{ form.cover_image|as_crispy_field }}
+				</div>
 				{% with input=form.organizer %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
@@ -146,22 +149,6 @@
 					{{ form.timezone|as_crispy_field }}
 				</div>
 				<!-- Date and time end -->
-
-				<!-- Main event image start -->
-				<br />
-				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="main-event-image">
-					<span class="ws-25 me-10 text-primary">
-						<i class="fa-light fa-image"></i>
-					</span>
-					Main Event Image
-				</h3>
-				<p class="text-muted fs-base-n2 mt-5">
-					Use this image to showcase your event. This will be the banner image attendees will se when purchasing the tickets.
-				</p>
-				<div class="form-group">
-					{{ form.cover_image|as_crispy_field }}
-				</div>
-				<!-- Main event image end -->
 
 				<!-- Submit button start -->
 				<hr />

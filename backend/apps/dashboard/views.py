@@ -333,6 +333,17 @@ class EventListView(TeamContextMixin, ListView):
     context_object_name = "events"
     template_name = "dashboard/event_list.html"
 
+    def get(self, *args, **kwargs):
+        qs = self.get_queryset()
+        if qs.count() < 1:
+            messages.add_message(
+                self.request, messages.INFO, "Let's create an event to get started!"
+            )
+            return redirect(
+                "dashboard:event_create", self.kwargs["team_public_id"],
+            )
+        return super(EventListView, self).get(*args, **kwargs)
+
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(team__public_id=self.kwargs["team_public_id"])

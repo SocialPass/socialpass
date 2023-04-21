@@ -33,22 +33,24 @@ const Scanner = () => {
             toast.success(
               `Succesful Scan, Tier: ${data.ticket_tier.ticket_type} 
               | Party Size: ${data.party_size}`,
-              { duration: 12500, }
+              { duration: 15000, }
             )
           }
           else {
             toast.success(
               `Succesful Scan, Tier: ${data.ticket_tier.ticket_type}`,
-              { duration: 12500, }
+              { duration: 15000, }
             )
           }
+          document.getElementById('successPlay')?.click()
         })
         .catch((err) => {
           if (err.message === 'Ticket has already been redeemed.')  {
             toast(
               'Succesful Scan: Ticket has already been redeemed', 
-              { icon: '⚠️', duration: 10000, }
-            );
+              { icon: '⚠️', duration: 15000, }
+            )
+            document.getElementById('successPlay')?.click()
           }
           else  {
             toast.error(`Scan Failed: ${err.message}`, { duration: 10000, })

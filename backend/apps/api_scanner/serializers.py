@@ -58,18 +58,28 @@ class EventSerializer(serializers.ModelSerializer):
             "localized_address_display",
             "ticket_count",
             "redeemed_count",
+            "total_people",
+            "total_checkins",
         ]
 
     redeemed_count = serializers.SerializerMethodField()
     ticket_count = serializers.SerializerMethodField()
+    total_people = serializers.SerializerMethodField()
+    total_checkins = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField(format="%A, %B %d | %H:%M%p")
     team = TeamSerializer()
 
     def get_redeemed_count(self, obj):
-        return obj.quantity_total_redeemed
+        return obj.tickets_redeemed
 
     def get_ticket_count(self, obj):
+        return obj.tickets_total
+
+    def get_total_people(self, obj):
         return obj.quantity_total_sold
+
+    def get_total_checkins(self, obj):
+        return obj.quantity_total_redeemed
 
 
 class TicketTierSerializer(serializers.ModelSerializer):

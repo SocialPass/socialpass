@@ -11,6 +11,7 @@ const rollbarConfig = {
    accessToken: '86a31882f236497db5c142da8ba72a5f',
    captureUncaught: true,
    captureUnhandledRejections: true,
+   environment: import.meta.env.VITE_APP_ROLLBAR_ENVIRONMENT,
    payload: {
      client: {
        javascript: {

@@ -517,6 +517,14 @@ class Event(DBModel):
         return slugify(self.title)
 
     @property
+    def tickets_total(self):
+        return Ticket.objects.filter(event=self).count()
+
+    @property
+    def tickets_redeemed(self):
+        return Ticket.objects.filter(event=self, redeemed=True).count()    
+
+    @property
     def quantity_total_sold(self):
         sold = Ticket.objects.filter(event=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"]

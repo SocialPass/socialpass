@@ -17,7 +17,6 @@ function Router() {
         <Route path='/:redemptionPublicId' element={<Base />}>
           <Route path='' element={<EventInfo />} />
           <Route path='scanner' element={<Scanner />} />
-          <Route path='statistics' element={<Statistics />} />
           <Route path="capacity-reached'" element={<CapacityReached />} />
           <Route path='error' element={<Error />} />
           <Route path='manual-redeem' element={<ManualRedeem />} />

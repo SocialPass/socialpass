@@ -116,15 +116,6 @@ const Scanner = () => {
               </div>
             </div>
           </div>
-
-          <Button
-            className='mt-10'
-            onClick={() => {
-              navigate(`/${redemptionPublicId}/statistics`)
-            }}
-          >
-            <strong className='antialiased'>Statistics</strong>
-          </Button>
         </div>
       </div>
     </>

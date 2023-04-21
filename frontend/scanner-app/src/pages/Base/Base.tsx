@@ -15,7 +15,7 @@ const Base = () => {
   const { event, getEvent, isLoading, error }: any = useEvent()
   const { isReady }: any = useTheme()
 
-  let successBleep = new Audio(
+  const successBleep = new Audio(
     'https://audio.jukehost.co.uk/1tzXHHljHV2r3YFRijEZmvd4SnvY1uOu'
   )
   const successPlay = () => {

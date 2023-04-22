@@ -15,3 +15,4 @@ updates:
     schedule:
       cron: 0 14 * * *
     range: '>= {major}.{minor}, < {major+1}.0.0'
+

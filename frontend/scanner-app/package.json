@@ -10,13 +10,14 @@
     "test": "jest",
     "tsc": "tsc",
     "format": "rome format ./src",
-	"format:write": "rome format ./src --write",
-	"lint": "rome check ./src "
+    "format:write": "rome format ./src --write",
+    "lint": "rome check ./src "
   },
   "dependencies": {
     "@rollbar/react": "^0.11.1",
     "axios": "^1.3.5",
     "html5-qrcode": "^2.3.7",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.1.0",
     "react-hot-toast": "^2.4.0",

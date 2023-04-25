@@ -1,4 +1,4 @@
-import Base from './Base'
+import Base from "./Base";
 
-export { Base }
-export default Base
+export { Base };
+export default Base;

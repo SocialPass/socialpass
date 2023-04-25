@@ -1,3 +1,3 @@
 export type TicketTier = {
-  public_id: string
-}
+	public_id: string;
+};

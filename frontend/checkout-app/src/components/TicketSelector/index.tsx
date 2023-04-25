@@ -1,4 +1,4 @@
-import TicketSelector from './TicketSelector'
+import TicketSelector from "./TicketSelector";
 
-export { TicketSelector }
-export default TicketSelector
+export { TicketSelector };
+export default TicketSelector;

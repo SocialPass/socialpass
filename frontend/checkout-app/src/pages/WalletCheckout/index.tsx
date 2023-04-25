@@ -1,4 +1,4 @@
-import WalletCheckout from './WalletCheckout'
+import WalletCheckout from "./WalletCheckout";
 
-export { WalletCheckout }
-export default WalletCheckout
+export { WalletCheckout };
+export default WalletCheckout;

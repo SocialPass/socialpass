@@ -1,4 +1,4 @@
-import Receipt from './Receipt'
+import Receipt from "./Receipt";
 
-export { Receipt }
-export default Receipt
+export { Receipt };
+export default Receipt;

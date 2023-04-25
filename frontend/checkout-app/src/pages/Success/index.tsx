@@ -1,4 +1,4 @@
-import Success from './Success'
+import Success from "./Success";
 
-export { Success }
-export default Success
+export { Success };
+export default Success;

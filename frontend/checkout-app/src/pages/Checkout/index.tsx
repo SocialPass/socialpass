@@ -1,4 +1,4 @@
-import Checkout from './Checkout'
+import Checkout from "./Checkout";
 
-export { Checkout }
-export default Checkout
+export { Checkout };
+export default Checkout;

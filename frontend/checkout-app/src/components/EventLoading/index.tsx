@@ -1,4 +1,4 @@
-import EventLoading from './EventLoading'
+import EventLoading from "./EventLoading";
 
-export { EventLoading }
-export default EventLoading
+export { EventLoading };
+export default EventLoading;

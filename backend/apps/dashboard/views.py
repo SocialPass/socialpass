@@ -183,9 +183,7 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         if invitation.accepted:
             return render(self.request, "invitations/already_accepted.html")
 
-        return render(
-            self.request, "invitations/accept.html", {"invitation": invitation}
-        )
+        return render(self.request, "invitations/accept.html", {"invitation": invitation})
 
     def post(self, *args, **kwargs):
         """
@@ -340,7 +338,8 @@ class EventListView(TeamContextMixin, ListView):
                 self.request, messages.INFO, "Let's create an event to get started!"
             )
             return redirect(
-                "dashboard:event_create", self.kwargs["team_public_id"],
+                "dashboard:event_create",
+                self.kwargs["team_public_id"],
             )
         return super(EventListView, self).get(*args, **kwargs)
 
@@ -489,8 +488,9 @@ class EventGoLiveView(TeamContextMixin, DetailView):
                 kwargs={
                     "team_public_id": self.kwargs["team_public_id"],
                     "pk": event.pk,
-                }
-            ) + f"?is_success={str(is_success)}"
+                },
+            )
+            + f"?is_success={str(is_success)}"
         )
 
 

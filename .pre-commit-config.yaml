@@ -1,6 +1,12 @@
 default_stages: [commit]
 
 repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.262'
+    hooks:
+      - id: ruff
+        args: [--fix, --line-length=91, --exit-non-zero-on-fix]
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.2.0
     hooks:
@@ -11,4 +17,4 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
-        args: [--line-length=89]
+        args: [--line-length=91]

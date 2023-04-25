@@ -9,8 +9,9 @@
     "preview": "vite preview",
     "test": "jest",
     "tsc": "tsc",
-    "lint": "rome format ./src --write",
-	"checker": "rome check ./src "
+    "format": "rome format ./src",
+	"format:write": "rome format ./src --write",
+	"lint": "rome check ./src "
   },
   "dependencies": {
     "@rollbar/react": "^0.11.1",

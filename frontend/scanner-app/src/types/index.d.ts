@@ -1,7 +1,7 @@
-export {}
+export {};
 
 declare global {
-  interface Window {
-    icon: string
-  }
+	interface Window {
+		icon: string;
+	}
 }

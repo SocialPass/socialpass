@@ -1,4 +1,4 @@
-import Scanner from './Scanner'
+import Scanner from "./Scanner";
 
-export { Scanner }
-export default Scanner
+export { Scanner };
+export default Scanner;

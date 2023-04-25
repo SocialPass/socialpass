@@ -1,4 +1,4 @@
-import EventInfo from './EventInfo'
+import EventInfo from "./EventInfo";
 
-export { EventInfo }
-export default EventInfo
+export { EventInfo };
+export default EventInfo;

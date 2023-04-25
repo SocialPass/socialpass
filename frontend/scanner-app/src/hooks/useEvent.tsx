@@ -1,15 +1,15 @@
-import { useContext } from 'react'
+import { useContext } from "react";
 
-import { EventContext } from '@/contexts/EventContext'
+import { EventContext } from "@/contexts/EventContext";
 
 const useEvent = () => {
-  const context = useContext(EventContext)
+	const context = useContext(EventContext);
 
-  if (!context) {
-    throw new Error('useEvent must be used within a EventProvider')
-  }
+	if (!context) {
+		throw new Error("useEvent must be used within a EventProvider");
+	}
 
-  return context
-}
+	return context;
+};
 
-export default useEvent
+export default useEvent;

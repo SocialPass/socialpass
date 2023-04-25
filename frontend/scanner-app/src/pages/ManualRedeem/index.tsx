@@ -1,4 +1,4 @@
-import ManualRedeem from './ManualRedeem'
+import ManualRedeem from "./ManualRedeem";
 
-export { ManualRedeem }
-export default ManualRedeem
+export { ManualRedeem };
+export default ManualRedeem;

@@ -1,31 +1,31 @@
-import { useNavigate } from 'react-router-dom'
-import useEvent from '@/hooks/useEvent'
-import { EventContainer } from './EventContainer'
-import { Button } from '@/components/Button'
-import NavBar from '@/components/NavBar'
+import { useNavigate } from "react-router-dom";
+import useEvent from "@/hooks/useEvent";
+import { EventContainer } from "./EventContainer";
+import { Button } from "@/components/Button";
+import NavBar from "@/components/NavBar";
 
 const EventInfo = () => {
-  const { event }: any = useEvent()
-  const navigate = useNavigate()
+	const { event }: any = useEvent();
+	const navigate = useNavigate();
 
-  return (
-    <>
-      <NavBar />
+	return (
+		<>
+			<NavBar />
 
-      <EventContainer event={event} />
+			<EventContainer event={event} />
 
-      <div className='content'>
-        <Button
-          className='btn-lg py-15 fs-base-p4'
-          onClick={() => {
-            navigate('scanner')
-          }}
-        >
-          <strong className='antialiased'>Start Scanning</strong>
-        </Button>
-      </div>
-    </>
-  )
-}
+			<div className='content'>
+				<Button
+					className='btn-lg py-15 fs-base-p4'
+					onClick={() => {
+						navigate("scanner");
+					}}
+				>
+					<strong className='antialiased'>Start Scanning</strong>
+				</Button>
+			</div>
+		</>
+	);
+};
 
-export default EventInfo
+export default EventInfo;

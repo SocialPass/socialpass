@@ -9,9 +9,8 @@
     "preview": "vite preview",
     "test": "jest",
     "tsc": "tsc",
-    "lint": "eslint src/**/*.{js,jsx,ts,tsx,json} --quiet",
-    "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx,json}' --quiet",
-    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
+    "lint": "rome format ./src --write",
+	"checker": "rome check ./src "
   },
   "dependencies": {
     "@rollbar/react": "^0.11.1",
@@ -52,6 +51,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.8.7",
+    "rome": "12.0.0",
     "typescript": "^5.0.4",
     "vite": "4.2.1"
   }

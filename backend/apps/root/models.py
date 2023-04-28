@@ -1019,22 +1019,6 @@ class CheckoutSession(DBModel):
         else:
             return False
 
-    def clean_expiration(self, *args, **kwargs):
-        """
-        clean expiration method
-        check if the checkout_session is expired
-        """
-        if self.is_expired:
-            raise CheckoutSessionExpired({"expired": _("The Session has been expired")})
-
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_expiration()
-        return super().clean(*args, **kwargs)
-
     def send_confirmation_email(self):
         """
         send the confirmation link to the attendee's email

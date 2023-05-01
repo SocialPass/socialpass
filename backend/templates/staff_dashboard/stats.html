@@ -7,6 +7,35 @@
 	<div class="row">
 		<div class="col-md-5 align-self-center">
 			<div class="content">
+				<h2 class="fw-700 text-strong fsr-3">Total Organizer Signups</h2>
+				<div class="d-flex align-items-center">
+					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
+					251
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
+					{{ organizers_weekly|last }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
+					4
+				</div>
+			</div>
+		</div>
+		<div class="col-md-7 align-self-center">
+			<div class="content d-flex justify-content-center">
+				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Item card end -->
+
+<!-- Item card start -->
+<div class="card border-transparent my-10 p-0">
+	<div class="row">
+		<div class="col-md-5 align-self-center">
+			<div class="content">
 				<h2 class="fw-700 text-strong fsr-3">Total Events Created</h2>
 				<div class="d-flex align-items-center">
 					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
@@ -24,7 +53,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="1, 5, 3, 6"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -53,7 +82,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="1, 5, 3, 6"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -82,7 +111,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="1, 5, 3, 6"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -111,7 +140,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="1, 5, 3, 6"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -140,7 +169,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="1, 5, 3, 6"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -169,7 +198,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="1, 5, 3, 6"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -180,22 +209,31 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
 	const charts = document.querySelectorAll(".chart")
+	const weeks = {{ weeks|safe }};
 	for (var i = 0; i <= charts.length; i++) {
 		var ctx = charts[i]
-		var values = ctx.getAttribute("data-values").split(",").map(function(item) {
-			return parseInt(item, 10)
-		})
+		var placeholder = ctx.getAttribute("data-values");
+		let values;
+		let values_label;
+		switch (placeholder) {
+			case 'organizers_weekly':
+				values_label = '# of organizer sign-ups per week'
+				values = {{organizers_weekly|safe}};
+			default:
+				break;
+		}
+		console.log(values);
 		new Chart(ctx, {
 			type: "line",
 			data: {
-				labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+				labels: weeks,
 				datasets: [{
-					label: '# of events per week',
+					label: values_label,
 					data: values,
-					borderWidth: 2,
+					borderWidth: 3,
 					borderColor: 'hsl(197, 53%, 47%)',
 					backgroundColor: 'hsla(197, 53%, 47%, 0.1)',
-					tension: 0.25,
+					tension: 0.33,
 					fill: true,
 				}]
 			},

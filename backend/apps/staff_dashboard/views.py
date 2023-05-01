@@ -5,6 +5,15 @@ from apps.root.models import Event, Team
 
 class StatsPageView(TemplateView):
     template_name = "staff_dashboard/stats.html"
+    """
+    - Total Organizer Signups
+    - Total Events Created
+    - Total Tickets Sold
+    - Total Attendees
+    - Average Tickets (per event)
+    - Average Attendees (per event)
+    - Average Time to Ticket
+    """
 
 
 class EventListView(ListView):

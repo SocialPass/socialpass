@@ -1,0 +1,118 @@
+{% load static get_debug_status get_preferred_color_scheme %}
+<!DOCTYPE html>
+{% get_debug_status as debug %}
+<html lang="en" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>SocialPass - Internal Dashboard</title>
+
+		<!-- Fav icon -->
+		<link rel="icon" href="{% static 'images/favicons/socialpass-favicon.ico' %}">
+
+		<!-- Halfmoon CSS -->
+		<link href="{% static 'socialpass-theme/halfmoon.min.css' %}" rel="stylesheet" />
+
+		<!-- SocialPass CSS theme -->
+		<link href="{% static 'socialpass-theme/socialpass-theme.css' %}" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- Custom styles -->
+		<style type="text/css">
+			:root {
+				--base-body-bg-color: var(--gray-color-light);
+			}
+
+			.dark-mode {
+				--base-body-bg-color: var(--dark-color-very-dim);
+			}
+
+			.ws-960 {
+				width: 96rem !important;
+			}
+		</style>
+	</head>
+	<body>
+	<!-- Page wrapper start -->
+	<div class="page-wrapper">
+		<!-- Content wrapper start -->
+		<div class="content-wrapper ws-960 mw-100 min-vh-100 mx-auto d-flex flex-column">
+			<!-- Navbar start -->
+			<nav class="content d-flex align-items-center justify-content-center px-20 bg-white-lm bg-dark-very-light-dm rounded my-10">
+				<!-- Branding start -->
+				<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+					<div class="ws-75">
+						<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
+					</div>
+					<div class="text-strong ms-10">
+						<div class="fs-base-p4">
+							SocialPass
+						</div>
+						<div class="fs-base-n4 lh-1 fw-normal">
+							Internal Dashboard
+						</div>
+					</div>
+				</a>
+				<!-- Branding end -->
+
+				<!-- Dark mode toggle start -->
+				<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
+					<i class="fa-solid fa-moon"></i>
+					<span class="visually-hidden">Toggle dark mode</span>
+				</button>
+				<!-- Dark mode toggle end -->
+			</nav>
+			<!-- Navbar end -->
+
+			<!-- Main content start -->
+			{% block content %}{% endblock content %}
+			<!-- Main content end -->
+
+			<!-- Footer start -->
+			<div class="content text-end border-top mt-auto pt-10">
+				<span class="text-muted fs-base-n2">
+					&copy; 2022, SP Tech Inc. All rights reserved
+				</span>
+			</div>
+			<!-- Footer end -->
+		</div>
+		<!-- Content wrapper end -->
+	</div>
+	<!-- Page wrapper end -->
+
+	<!-- Halfmoon JS -->
+	<script src="{% static 'socialpass-theme/halfmoon.js' %}"></script>
+
+	<script type="text/javascript">
+		/**
+		 * Handle the keydown event (only on debug mode).
+		 *
+		 * This is used to create the dark mode and sidebar toggle shortcuts.
+		 * These shortcuts are very useful for testing.
+		 */
+		document.addEventListener("keydown", function (event) {
+			if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+				event = event || window.event;
+
+				if (!(event.ctrlKey || event.metaKey)) {
+					// Toggle dark mode when [shift] + [D] keys are pressed
+					if (event.shiftKey && event.which == 68) {
+						halfmoon.toggleDarkMode();
+					}
+
+					// Toggle sidebar when [shift] + [S] keys are pressed
+					if (event.shiftKey && event.which == 83) {
+						halfmoon.toggleSidebar();
+					}
+				}
+			}
+		});
+	</script>
+</body>
+</html>

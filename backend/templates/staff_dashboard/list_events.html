@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-
+{% for obj in object_list %}
 <!-- Item card start -->
 <div class="card border-transparent my-10 p-10">
 	<div class="d-flex align-items-center">
@@ -10,164 +10,27 @@
 			<img src="https://nyc3.digitaloceanspaces.com/production-socialpass-bucket/public/media/event__cover_image/-------------_1UxFUnI.png" alt="team image" class="w-100 h-auto">
 		</div>
 		<div class="ps-20">
-			<div class="fw-bold fs-base-p4">Pudgies in Asia</div>
-			<div class="text-muted">Organizer: Pudgy Penguins</div>
+			<div class="fw-bold fs-base-p4">{{obj.title}}</div>
+			<div class="text-muted">Organizer: {{obj.team.name}}</div>
 		</div>
 	</div>
 	<div class="row mt-10 border-top">
 		<div class="col-sm-4 mt-10">
 			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Start Date</div>
-			April 12, 2023, 7 p.m.
+			{{obj.start_date}}
 		</div>
+		{% if obj.end_date %}
 		<div class="col-sm-4 mt-10">
 			<div class="fw-bold"><i class="fa-light fa-calendar"></i> End Date</div>
-			April 12, 2023, 11 p.m.
+			{{obj.end_date}}
 		</div>
+		{% endif %}
 		<div class="col-sm-4 mt-10">
 			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Location</div>
-			The Lightbox, 248 W 37th St, New York-10018, United States
+			{{obj.localized_address_display}}
 		</div>
 	</div>
 </div>
 <!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card border-transparent my-10 p-10">
-	<div class="d-flex align-items-center">
-		<div class="flex-shrink-0 ws-100 hs-75 rounded overflow-hidden d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm">
-			<img src="https://nyc3.digitaloceanspaces.com/production-socialpass-bucket/public/media/event__cover_image/-------------_1UxFUnI.png" alt="team image" class="w-100 h-auto">
-		</div>
-		<div class="ps-20">
-			<div class="fw-bold fs-base-p4">Pudgies in Asia</div>
-			<div class="text-muted">Organizer: Pudgy Penguins</div>
-		</div>
-	</div>
-	<div class="row mt-10 border-top">
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Start Date</div>
-			April 12, 2023, 7 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> End Date</div>
-			April 12, 2023, 11 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Location</div>
-			The Lightbox, 248 W 37th St, New York-10018, United States
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card border-transparent my-10 p-10">
-	<div class="d-flex align-items-center">
-		<div class="flex-shrink-0 ws-100 hs-75 rounded overflow-hidden d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm">
-			<img src="https://nyc3.digitaloceanspaces.com/production-socialpass-bucket/public/media/event__cover_image/-------------_1UxFUnI.png" alt="team image" class="w-100 h-auto">
-		</div>
-		<div class="ps-20">
-			<div class="fw-bold fs-base-p4">Pudgies in Asia</div>
-			<div class="text-muted">Organizer: Pudgy Penguins</div>
-		</div>
-	</div>
-	<div class="row mt-10 border-top">
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Start Date</div>
-			April 12, 2023, 7 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> End Date</div>
-			April 12, 2023, 11 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Location</div>
-			The Lightbox, 248 W 37th St, New York-10018, United States
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card border-transparent my-10 p-10">
-	<div class="d-flex align-items-center">
-		<div class="flex-shrink-0 ws-100 hs-75 rounded overflow-hidden d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm">
-			<img src="https://nyc3.digitaloceanspaces.com/production-socialpass-bucket/public/media/event__cover_image/-------------_1UxFUnI.png" alt="team image" class="w-100 h-auto">
-		</div>
-		<div class="ps-20">
-			<div class="fw-bold fs-base-p4">Pudgies in Asia</div>
-			<div class="text-muted">Organizer: Pudgy Penguins</div>
-		</div>
-	</div>
-	<div class="row mt-10 border-top">
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Start Date</div>
-			April 12, 2023, 7 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> End Date</div>
-			April 12, 2023, 11 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Location</div>
-			The Lightbox, 248 W 37th St, New York-10018, United States
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card border-transparent my-10 p-10">
-	<div class="d-flex align-items-center">
-		<div class="flex-shrink-0 ws-100 hs-75 rounded overflow-hidden d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm">
-			<img src="https://nyc3.digitaloceanspaces.com/production-socialpass-bucket/public/media/event__cover_image/-------------_1UxFUnI.png" alt="team image" class="w-100 h-auto">
-		</div>
-		<div class="ps-20">
-			<div class="fw-bold fs-base-p4">Pudgies in Asia</div>
-			<div class="text-muted">Organizer: Pudgy Penguins</div>
-		</div>
-	</div>
-	<div class="row mt-10 border-top">
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Start Date</div>
-			April 12, 2023, 7 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> End Date</div>
-			April 12, 2023, 11 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Location</div>
-			The Lightbox, 248 W 37th St, New York-10018, United States
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card border-transparent my-10 p-10">
-	<div class="d-flex align-items-center">
-		<div class="flex-shrink-0 ws-100 hs-75 rounded overflow-hidden d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm">
-			<img src="https://nyc3.digitaloceanspaces.com/production-socialpass-bucket/public/media/event__cover_image/-------------_1UxFUnI.png" alt="team image" class="w-100 h-auto">
-		</div>
-		<div class="ps-20">
-			<div class="fw-bold fs-base-p4">Pudgies in Asia</div>
-			<div class="text-muted">Organizer: Pudgy Penguins</div>
-		</div>
-	</div>
-	<div class="row mt-10 border-top">
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Start Date</div>
-			April 12, 2023, 7 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> End Date</div>
-			April 12, 2023, 11 p.m.
-		</div>
-		<div class="col-sm-4 mt-10">
-			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Location</div>
-			The Lightbox, 248 W 37th St, New York-10018, United States
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
+{% endfor %}
 {% endblock %}

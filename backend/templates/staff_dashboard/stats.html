@@ -43,7 +43,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
-					6
+					{{ events_weekly|last }}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
@@ -53,7 +53,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="events_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -72,7 +72,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
-					6
+					{{tickets_weekly|last}}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
@@ -82,7 +82,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="tickets_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -101,7 +101,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
-					6
+					{{attendees_weekly|last}}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
@@ -111,7 +111,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values="attendees_weekly"></canvas>
 			</div>
 		</div>
 	</div>
@@ -140,7 +140,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values=""></canvas>
 			</div>
 		</div>
 	</div>
@@ -169,7 +169,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values=""></canvas>
 			</div>
 		</div>
 	</div>
@@ -198,7 +198,7 @@
 		</div>
 		<div class="col-md-7 align-self-center">
 			<div class="content d-flex justify-content-center">
-				<canvas class="chart ws-400 h-auto mw-100" data-values="organizers_weekly"></canvas>
+				<canvas class="chart ws-400 h-auto mw-100" data-values=""></canvas>
 			</div>
 		</div>
 	</div>
@@ -219,10 +219,22 @@
 			case 'organizers_weekly':
 				values_label = '# of organizer sign-ups per week'
 				values = {{organizers_weekly|safe}};
+				break;
+			case 'events_weekly':
+				values_label = '# of events created per week'
+				values = {{events_weekly|safe}};
+				break;
+			case 'tickets_weekly':
+				values_label = '# of tickets sold per week'
+				values = {{tickets_weekly|safe}};
+				break;
+			case 'attendees_weekly':
+				values_label = '# of attendees per week'
+				values = {{attendees_weekly|safe}};
+				break;
 			default:
 				break;
 		}
-		console.log(values);
 		new Chart(ctx, {
 			type: "line",
 			data: {

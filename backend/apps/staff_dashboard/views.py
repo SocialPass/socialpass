@@ -2,7 +2,7 @@ import datetime
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.db.models.functions import ExtractWeek
-from django.db.models import Count
+from django.db.models import F, Count
 from apps.root.models import Event, Team, User, Ticket
 
 
@@ -70,7 +70,7 @@ class StatsPageView(TemplateView):
                     context["tickets_weekly"][week] = str(i["total"])
         context["tickets_weekly"] = list(context["tickets_weekly"].values())
 
-        # Attendees (Tickets Scanend)
+        # Attendees (Tickets Scanned)
         attendees_weekly = list(
             Ticket.objects.filter(redeemed=True)
             .annotate(week=ExtractWeek("created"))
@@ -86,11 +86,25 @@ class StatsPageView(TemplateView):
                     context["attendees_weekly"][week] = str(i["total"])
         context["attendees_weekly"] = list(context["attendees_weekly"].values())
 
-        # Average Tickets (per event)
-
-        # Average Attendees (per event)
+        # Average Tickets per Event
 
         # Average Time to Ticket
+        ticket_time_weekly = (
+            Ticket.objects.annotate(week=ExtractWeek("created"))
+            .values("week")
+            .annotate(total=F("created") - F("checkout_session__created"))
+            .values("week", "total")
+        )
+        context["ticket_time_weekly"] = {}
+        for week in context["weeks"]:
+            context["ticket_time_weekly"][week] = "0"
+            for i in ticket_time_weekly:
+                if week == i["week"]:
+                    context["ticket_time_weekly"][week] = str(
+                        i["total"].total_seconds() / 60
+                    )
+        context["ticket_time_weekly"] = list(context["ticket_time_weekly"].values())
+
         return context
 
 

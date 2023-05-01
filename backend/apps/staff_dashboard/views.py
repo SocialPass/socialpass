@@ -86,8 +86,6 @@ class StatsPageView(TemplateView):
                     context["attendees_weekly"][week] = str(i["total"])
         context["attendees_weekly"] = list(context["attendees_weekly"].values())
 
-        # Average Tickets per Event
-
         # Average Time to Ticket
         ticket_time_weekly = (
             Ticket.objects.annotate(week=ExtractWeek("created"))

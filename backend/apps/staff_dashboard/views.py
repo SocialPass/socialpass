@@ -1,4 +1,5 @@
 import datetime
+import statistics
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.db.models.functions import ExtractWeek
@@ -34,6 +35,23 @@ class StatsPageView(TemplateView):
         monthly = data[-4] or data
         monthly = [float(i) for i in monthly]
         return sum(monthly)
+
+    def get_total_avg(self, data=[]):
+        """
+        Returns total sum given a list of values
+        Return in float
+        """
+        total = [float(i) for i in data]
+        return statistics.mean(total)
+
+    def get_monthly_avg(self, data=[]):
+        """
+        Returns a monthly sum given a list
+        Return in float
+        """
+        monthly = data[-4] or data
+        monthly = [float(i) for i in monthly]
+        return statistics.mean(monthly)
 
     def get_context_data(self):
         context = super().get_context_data()
@@ -134,12 +152,8 @@ class StatsPageView(TemplateView):
                     context["ticket_time_weekly"][week] = str(i["total"].total_seconds())
         ticket_time_weekly = list(context["ticket_time_weekly"].values())
         context["ticket_time_weekly"] = ticket_time_weekly
-        context[
-            "ticket_time_monthly"
-        ] = "TODO AVERAGE"  # self.get_monthly_sum(data=ticket_time_weekly)
-        context[
-            "ticket_time_total"
-        ] = "TODO AVERAGE"  # self.get_total_sum(data=ticket_time_weekly)
+        context["ticket_time_monthly"] = self.get_monthly_avg(data=ticket_time_weekly)
+        context["ticket_time_total"] = self.get_total_avg(data=ticket_time_weekly)
         return context
 
 

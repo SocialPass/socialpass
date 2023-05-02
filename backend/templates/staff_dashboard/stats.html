@@ -10,7 +10,7 @@
 				<h2 class="fw-700 text-strong fsr-3">Total Organizer Signups</h2>
 				<div class="d-flex align-items-center">
 					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
-					251
+					{{ organizers_total|floatformat }}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
@@ -18,7 +18,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
-					4
+					{{ organizers_monthly|floatformat }}
 				</div>
 			</div>
 		</div>
@@ -39,7 +39,7 @@
 				<h2 class="fw-700 text-strong fsr-3">Total Events Created</h2>
 				<div class="d-flex align-items-center">
 					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
-					251
+					{{ events_total|floatformat }}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
@@ -47,7 +47,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
-					42
+					{{ events_monthly|floatformat }}
 				</div>
 			</div>
 		</div>
@@ -68,7 +68,7 @@
 				<h2 class="fw-700 text-strong fsr-3">Total Tickets Sold</h2>
 				<div class="d-flex align-items-center">
 					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
-					251
+					{{ tickets_total|floatformat }}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
@@ -76,7 +76,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
-					42
+					{{ tickets_monthly|floatformat }}
 				</div>
 			</div>
 		</div>
@@ -97,7 +97,7 @@
 				<h2 class="fw-700 text-strong fsr-3">Total Attendees</h2>
 				<div class="d-flex align-items-center">
 					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
-					251
+					{{ attendees_total|floatformat }}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
@@ -105,7 +105,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
-					42
+					{{ attendees_monthly|floatformat }}
 				</div>
 			</div>
 		</div>
@@ -126,7 +126,7 @@
 				<h2 class="fw-700 text-strong fsr-3">Average Time to Ticket</h2>
 				<div class="d-flex align-items-center">
 					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
-					251
+					{{ ticket_time_total|floatformat }}
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
@@ -134,7 +134,7 @@
 				</div>
 				<div class="d-flex align-items-center mt-5">
 					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
-					42
+					{{ ticket_time_monthly|floatformat }}
 				</div>
 			</div>
 		</div>

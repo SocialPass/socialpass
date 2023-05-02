@@ -18,10 +18,27 @@ class StatsPageView(TemplateView):
     - Average Time to Ticket
     """
 
+    def get_total_sum(self, data=[]):
+        """
+        Returns total sum given a list of values
+        Return in float
+        """
+        total = [float(i) for i in data]
+        return sum(total)
+
+    def get_monthly_sum(self, data=[]):
+        """
+        Returns a monthly sum given a list
+        Return in float
+        """
+        monthly = data[-4] or data
+        monthly = [float(i) for i in monthly]
+        return sum(monthly)
+
     def get_context_data(self):
         context = super().get_context_data()
 
-        # Get week number, used in future queries
+        ## Get week number, used in future queries
         current_week = datetime.datetime.now().isocalendar()[1]
         context["weeks"] = [i + 1 for i in range(0, current_week)]
 
@@ -38,7 +55,10 @@ class StatsPageView(TemplateView):
             for i in organizers_weekly:
                 if week == i["week"]:
                     context["organizers_weekly"][week] = str(i["total"])
-        context["organizers_weekly"] = list(context["organizers_weekly"].values())
+        organizers_weekly = list(context["organizers_weekly"].values())
+        context["organizers_weekly"] = organizers_weekly
+        context["organizers_monthly"] = self.get_monthly_sum(data=organizers_weekly)
+        context["organizers_total"] = self.get_total_sum(data=organizers_weekly)
 
         ## Events Created
         events_weekly = list(
@@ -53,7 +73,10 @@ class StatsPageView(TemplateView):
             for i in events_weekly:
                 if week == i["week"]:
                     context["events_weekly"][week] = str(i["total"])
-        context["events_weekly"] = list(context["events_weekly"].values())
+        events_weekly = list(context["events_weekly"].values())
+        context["events_weekly"] = events_weekly
+        context["events_monthly"] = self.get_monthly_sum(data=events_weekly)
+        context["events_total"] = self.get_total_sum(data=events_weekly)
 
         ## Tickets Sold
         tickets_weekly = list(
@@ -68,9 +91,12 @@ class StatsPageView(TemplateView):
             for i in tickets_weekly:
                 if week == i["week"]:
                     context["tickets_weekly"][week] = str(i["total"])
-        context["tickets_weekly"] = list(context["tickets_weekly"].values())
+        tickets_weekly = list(context["tickets_weekly"].values())
+        context["tickets_weekly"] = tickets_weekly
+        context["tickets_monthly"] = self.get_monthly_sum(data=tickets_weekly)
+        context["tickets_total"] = self.get_total_sum(data=tickets_weekly)
 
-        # Attendees (Tickets Scanned)
+        ## Attendees (Tickets Scanned)
         attendees_weekly = list(
             Ticket.objects.filter(redeemed=True)
             .annotate(week=ExtractWeek("created"))
@@ -84,9 +110,12 @@ class StatsPageView(TemplateView):
             for i in attendees_weekly:
                 if week == i["week"]:
                     context["attendees_weekly"][week] = str(i["total"])
-        context["attendees_weekly"] = list(context["attendees_weekly"].values())
+        attendees_weekly = list(context["attendees_weekly"].values())
+        context["attendees_weekly"] = attendees_weekly
+        context["attendees_monthly"] = self.get_monthly_sum(data=attendees_weekly)
+        context["attendees_total"] = self.get_total_sum(data=attendees_weekly)
 
-        # Average Time to Ticket
+        ## Average Time to Ticket
         ticket_time_weekly = (
             Ticket.objects.annotate(week=ExtractWeek("created"))
             .values("week")
@@ -101,7 +130,10 @@ class StatsPageView(TemplateView):
                     context["ticket_time_weekly"][week] = str(
                         i["total"].total_seconds() / 60
                     )
-        context["ticket_time_weekly"] = list(context["ticket_time_weekly"].values())
+        ticket_time_weekly = list(context["ticket_time_weekly"].values())
+        context["ticket_time_weekly"] = ticket_time_weekly
+        context["ticket_time_monthly"] = self.get_monthly_sum(data=ticket_time_weekly)
+        context["ticket_time_total"] = self.get_total_sum(data=ticket_time_weekly)
 
         return context
 

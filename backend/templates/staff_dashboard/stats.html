@@ -125,7 +125,7 @@
 			<div class="content">
 				<h2 class="fw-700 text-strong fsr-3">Average Time to Ticket</h2>
 				<div class="d-flex align-items-center">
-					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
+					<strong class="ws-200 flex-shrink-0">Total (Average): </strong>
 					{{ ticket_time_total|floatformat }}
 				</div>
 				<div class="d-flex align-items-center mt-5">
@@ -175,7 +175,7 @@
 				values = {{attendees_weekly|safe}};
 				break;
 			case 'ticket_time_weekly':
-				values_label = 'time (minutes)';
+				values_label = 'time to checkout (seconds)';
 				values = {{ticket_time_weekly|safe}}
 			default:
 				break;

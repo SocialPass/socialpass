@@ -127,14 +127,15 @@ class StatsPageView(TemplateView):
             context["ticket_time_weekly"][week] = "0"
             for i in ticket_time_weekly:
                 if week == i["week"]:
-                    context["ticket_time_weekly"][week] = str(
-                        i["total"].total_seconds() / 60
-                    )
+                    context["ticket_time_weekly"][week] = str(i["total"].total_seconds())
         ticket_time_weekly = list(context["ticket_time_weekly"].values())
         context["ticket_time_weekly"] = ticket_time_weekly
-        context["ticket_time_monthly"] = self.get_monthly_sum(data=ticket_time_weekly)
-        context["ticket_time_total"] = self.get_total_sum(data=ticket_time_weekly)
-
+        context[
+            "ticket_time_monthly"
+        ] = "TODO AVERAGE"  # self.get_monthly_sum(data=ticket_time_weekly)
+        context[
+            "ticket_time_total"
+        ] = "TODO AVERAGE"  # self.get_total_sum(data=ticket_time_weekly)
         return context
 
 

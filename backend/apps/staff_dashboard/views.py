@@ -2,7 +2,7 @@ import datetime
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.db.models.functions import ExtractWeek
-from django.db.models import F, Count
+from django.db.models import Avg, F, Count
 from apps.root.models import Event, Team, User, Ticket
 
 
@@ -123,7 +123,7 @@ class StatsPageView(TemplateView):
         ticket_time_weekly = (
             Ticket.objects.annotate(week=ExtractWeek("created"))
             .values("week")
-            .annotate(total=F("created") - F("checkout_session__created"))
+            .annotate(total=Avg(F("created") - F("checkout_session__created")))
             .values("week", "total")
         )
         context["ticket_time_weekly"] = {}

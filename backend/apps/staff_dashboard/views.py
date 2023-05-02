@@ -41,7 +41,10 @@ class StatsPageView(TemplateView):
         Returns total sum given a list of values
         Return in float
         """
-        total = [float(i) for i in data]
+        total = []
+        for i in data:
+            print(i)
+            total.append(float(i))
         return statistics.mean(total)
 
     def get_monthly_avg(self, data=[]):
@@ -50,7 +53,10 @@ class StatsPageView(TemplateView):
         Return in float
         """
         monthly = data[-4] or data
-        monthly = [float(i) for i in monthly]
+        monthly = []
+        for i in data:
+            print(i)
+            monthly.append(float(i))
         return statistics.mean(monthly)
 
     def get_context_data(self):

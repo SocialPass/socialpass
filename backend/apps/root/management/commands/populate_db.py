@@ -88,7 +88,9 @@ class Command(BaseCommand):
                 )
 
         self.stdout.write(
-            self.style.SUCCESS("THE DATABASE POPULATE HAS BEEN POPULATED WITH FAKE DATA")
+            self.style.SUCCESS(
+                "THE DATABASE POPULATE HAS BEEN POPULATED WITH FAKE DATA"
+            )
         )
 
     def create_superuser(self) -> None:

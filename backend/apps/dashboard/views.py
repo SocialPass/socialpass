@@ -124,7 +124,9 @@ class RedirectToTeamView(RedirectView):
         if self.request.user.is_authenticated:
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
-                return reverse("dashboard:event_list", args=(membership.team.public_id,))
+                return reverse(
+                    "dashboard:event_list", args=(membership.team.public_id,)
+                )
             else:
                 return reverse("dashboard:team_create")
         else:
@@ -183,7 +185,9 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         if invitation.accepted:
             return render(self.request, "invitations/already_accepted.html")
 
-        return render(self.request, "invitations/accept.html", {"invitation": invitation})
+        return render(
+            self.request, "invitations/accept.html", {"invitation": invitation}
+        )
 
     def post(self, *args, **kwargs):
         """

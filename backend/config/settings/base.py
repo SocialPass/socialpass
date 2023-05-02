@@ -57,9 +57,7 @@ if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
             "DJANGO_DATABASE_URL", default="postgres:///local_socialpass_db"
         ),
     }
-    DATABASES["default"]["CONN_MAX_AGE"] = env.int(
-        "CONN_MAX_AGE", default=60
-    )  # noqa F405
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
     DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
@@ -223,18 +221,6 @@ MEDIA_ROOT = str(ROOT_DIR / "media")
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 PRIVATE_TICKET_STORAGE = "django.core.files.storage.FileSystemStorage"
 
-
-# SECURITY
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
-SECURE_BROWSER_XSS_FILTER = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
-
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
@@ -316,17 +302,16 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PARSER_CLASSES": ("rest_framework.parsers.JSONParser",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 15,
+    "PAGE_SIZE": 100,
     "EXCEPTION_HANDLER": "rollbar.contrib.django_rest_framework.post_exception_handler",
+    "DEFAULT_THROTTLE_RATES": {"anon": "1000/day", "user": "1000/day"},
 }
 REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ["rest_framework.renderers.JSONRenderer"]
 
 # Your stuff...
 # ------------------------------------------------------------------------------
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_ALLOWED_ORIGINS = env.list(
-    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
-)
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"])
 CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 
@@ -336,31 +321,11 @@ CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 SILKY_PYTHON_PROFILER = True
 SILKY_URL = env("SILKY_URL")
 
-
-# CELERY - https://github.com/celery/celery
-# ------------------------------------------------------------------------------
-if USE_TZ:
-    # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-timezone
-    CELERY_TIMEZONE = TIME_ZONE
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-broker_url
-CELERY_BROKER_URL = env("CELERY_BROKER_URL")
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_backend
-CELERY_RESULT_BACKEND = env("CELERY_BROKER_URL")
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-accept_content
-CELERY_ACCEPT_CONTENT = ["json"]
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-task_serializer
-CELERY_TASK_SERIALIZER = "json"
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_serializer
-CELERY_RESULT_SERIALIZER = "json"
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-time-limit
-CELERY_TASK_TIME_LIMIT = 3 * 60
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
-CELERY_TASK_SOFT_TIME_LIMIT = 60
-
 # INTERNAL
 # ------------------------------------------------------------------------------
 CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")
 SCANNER_BASE_URL = env("SCANNER_BASE_URL")
+STAFF_URL = env("STAFF_URL")
 
 # MORALIS
 # ------------------------------------------------------------------------------
@@ -402,7 +367,7 @@ QUILL_CONFIGS = {
                     "strike",
                 ],
                 ["link"],
-            ]
-        }
+            ],
+        },
     }
 }

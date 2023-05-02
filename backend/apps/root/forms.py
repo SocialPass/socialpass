@@ -39,15 +39,14 @@ class CleanEmailMixin:
         }
         try:
             self.validate_invitation(email)
-        except (AlreadyInvited):
+        except AlreadyInvited:
             raise forms.ValidationError(errors["already_invited"])
-        except (AlreadyAccepted):
+        except AlreadyAccepted:
             raise forms.ValidationError(errors["already_accepted"])
         return email
 
 
 class InviteAdminAddForm(forms.ModelForm, CleanEmailMixin):
-
     email = forms.EmailField(
         label=_("E-mail"),
         required=True,

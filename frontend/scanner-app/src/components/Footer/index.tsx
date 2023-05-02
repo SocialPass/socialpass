@@ -1,4 +1,4 @@
-import Footer from './Footer'
+import Footer from "./Footer";
 
-export { Footer }
-export default Footer
+export { Footer };
+export default Footer;

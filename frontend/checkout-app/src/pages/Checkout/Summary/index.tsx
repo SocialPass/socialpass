@@ -1,4 +1,4 @@
-import Summary from './Summary'
+import Summary from "./Summary";
 
-export { Summary }
-export default Summary
+export { Summary };
+export default Summary;

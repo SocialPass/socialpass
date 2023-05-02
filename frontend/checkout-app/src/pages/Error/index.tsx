@@ -1,4 +1,4 @@
-import Error from './Error'
+import Error from "./Error";
 
-export { Error }
-export default Error
+export { Error };
+export default Error;

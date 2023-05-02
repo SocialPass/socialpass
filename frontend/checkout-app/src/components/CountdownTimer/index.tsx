@@ -1,4 +1,4 @@
-import CountdownTimer from './CountdownTimer'
+import CountdownTimer from "./CountdownTimer";
 
-export { CountdownTimer }
-export default CountdownTimer
+export { CountdownTimer };
+export default CountdownTimer;

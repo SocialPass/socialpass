@@ -55,9 +55,7 @@ class GoogleTicket:
         """
         # Create the address from the fields
         venue_name = event_obj.address_1
-        address = event_obj.localized_address_display.replace(
-            venue_name + ", ", "", 1
-        )
+        address = event_obj.localized_address_display.replace(venue_name + ", ", "", 1)
 
         # Create the payload
         payload = {
@@ -116,9 +114,9 @@ class GoogleTicket:
         theme = event_obj.team.theme or {}
         payload["issuerName"] = theme.get("ticket_brand_name", issuer_name)
         payload["hexBackgroundColor"] = theme.get("ticket_bg_color", hex_bg_color)
-        payload["logo"] = {"sourceUri": {"uri": theme.get(
-            "ticket_logo_google", logo_uri
-        )}}
+        payload["logo"] = {
+            "sourceUri": {"uri": theme.get("ticket_logo_google", logo_uri)}
+        }
 
         # Insert or update the ticket class
         if is_insert:

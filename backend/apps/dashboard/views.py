@@ -124,8 +124,9 @@ class RedirectToTeamView(RedirectView):
         if self.request.user.is_authenticated:
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
-
-                return reverse("dashboard:event_list", args=(membership.team.public_id,))
+                return reverse(
+                    "dashboard:event_list", args=(membership.team.public_id,)
+                )
             else:
                 return reverse("dashboard:team_create")
         else:
@@ -291,6 +292,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     Manage a team's members.
     """
 
+    object: Membership  # Mypy typing
     model = Membership
     pk_url_kwarg = "member_pk"
     template_name = "dashboard/member_delete.html"
@@ -332,6 +334,18 @@ class EventListView(TeamContextMixin, ListView):
     ordering = ["-modified"]
     context_object_name = "events"
     template_name = "dashboard/event_list.html"
+
+    def get(self, *args, **kwargs):
+        qs = self.get_queryset()
+        if qs.count() < 1:
+            messages.add_message(
+                self.request, messages.INFO, "Let's create an event to get started!"
+            )
+            return redirect(
+                "dashboard:event_create",
+                self.kwargs["team_public_id"],
+            )
+        return super(EventListView, self).get(*args, **kwargs)
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -455,9 +469,11 @@ class EventGoLiveView(TeamContextMixin, DetailView):
 
     def post(self, *args, **kwargs):
         event = self.get_object()
+        is_success = False
         if event.state != Event.StateStatus.LIVE:
             try:
                 event.transition_live()
+                is_success = True
             except Exception:
                 rollbar.report_exc_info()
                 messages.add_message(
@@ -471,7 +487,14 @@ class EventGoLiveView(TeamContextMixin, DetailView):
                     self.request, messages.SUCCESS, "Event has been made live!"
                 )
         return redirect(
-            "dashboard:event_go_live", self.kwargs["team_public_id"], event.pk
+            reverse(
+                "dashboard:event_go_live",
+                kwargs={
+                    "team_public_id": self.kwargs["team_public_id"],
+                    "pk": event.pk,
+                },
+            )
+            + f"?is_success={str(is_success)}"
         )
 
 
@@ -480,6 +503,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
     Delete a team's event
     """
 
+    object: Event  # Mypy typing
     model = Event
     template_name = "dashboard/event_delete.html"
 
@@ -530,7 +554,7 @@ class EventStatsView(TeamContextMixin, DetailView):
                     "redeemed_at": ticket.redeemed_at,
                     "checkout_session": str(ticket.checkout_session.public_id),
                     "customer_name": ticket.checkout_session.name,
-                    "wallet_address": ticket.checkout_session.tx_asset_ownership.wallet_address, # noqa
+                    "wallet_address": ticket.checkout_session.tx_asset_ownership.wallet_address,  # noqa
                     "party_size": ticket.party_size,
                 }
             )
@@ -638,6 +662,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
     Delete an event's ticket tier.
     """
 
+    object: TicketTier  # Mypy typing
     model = TicketTier
     template_name = "dashboard/ticket_tier_delete.html"
 

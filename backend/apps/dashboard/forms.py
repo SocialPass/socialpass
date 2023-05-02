@@ -8,6 +8,7 @@ from eth_utils import is_address
 
 from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
 
+
 class CustomInviteForm(forms.Form):
     """
     Invite users to team
@@ -101,16 +102,14 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "address_1": forms.TextInput(
-                attrs={"placeholder": "Name of venue"}
-            ),
+            "address_1": forms.TextInput(attrs={"placeholder": "Name of venue"}),
             "address_2": forms.TextInput(
                 attrs={
                     "placeholder": str(
                         "Street and number, P.O. box, apartment, suite, unit, "
                         "building, floor, etc."
                     ),
-                    "required": True
+                    "required": True,
                 }
             ),
             "city": forms.TextInput(attrs={"placeholder": "City name"}),
@@ -172,7 +171,9 @@ class TierAssetOwnershipForm(forms.ModelForm):
             "token_address": forms.TextInput(
                 attrs={"placeholder": "Example: 0xb79...79268"}
             ),
-            "token_id": forms.TextInput(attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}),
+            "token_id": forms.TextInput(
+                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
+            ),
             "balance_required": forms.NumberInput(attrs={"min": 1}),
         }
         labels = {"token_id": "Token IDs (Optional)"}

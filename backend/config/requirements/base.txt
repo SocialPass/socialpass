@@ -1,33 +1,30 @@
 # General
 # ------------------------------------------------------------------------------
 argon2-cffi==21.3.0 # https://github.com/hynek/argon2-cffi
-boto3==1.24.33 # https://github.com/boto/boto3
-celery==5.2.7 # https://github.com/celery/celery
-eth-account==0.7.0 # https://github.com/ethereum/eth-account
+boto3==1.26.109 # https://github.com/boto/boto3
+eth-account==0.8.0 # https://github.com/ethereum/eth-account
+eth-utils==2.1.0 # https://github.com/ethereum/eth-utils
 factory-boy==3.2.1 # https://github.com/FactoryBoy/factory_boy
-google-api-python-client==2.56.0 # https://github.com/googleapis/google-api-python-client
-Pillow==9.1.0 # https://github.com/python-pillow/Pillow
-qrcode==7.3.1 # https://github.com/lincolnloop/python-qrcode
+google-api-python-client==2.84.0 # https://github.com/googleapis/google-api-python-client
+Pillow==9.5.0 # https://github.com/python-pillow/Pillow
+qrcode==7.4.2 # https://github.com/lincolnloop/python-qrcode
 rollbar==0.16.3 #https://github.com/rollbar/pyrollbar/
-redis==4.3.4 # https://github.com/redis/redis-py
-xhtml2pdf==0.2.8 # https://github.com/xhtml2pdf/xhtml2pdf
-eth-utils==2.0.0 # https://github.com/ethereum/eth-utils
 
 # Django
 # ------------------------------------------------------------------------------
 git+https://github.com/SPTech-Group/django-quill-editor
 git+https://github.com/SPTech-Group/passbook.git
 crispy-bootstrap5==0.6 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
-django==4.0.8  # https://www.djangoproject.com/
-djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
-django-allauth==0.51.0  # https://github.com/pennersr/django-allauth
-django-cors-headers==3.13.0 # https://github.com/adamchainz/django-cors-headers
-django-crispy-forms==1.14.0 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
-django-environ==0.9.0 # https://github.com/joke2k/django-environ
-django-fsm==2.8.0 # https://github.com/viewflow/django-fsm
-django-fsm-log==3.0.0 # https://github.com/jazzband/django-fsm-log
-django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
-django-silk==5.0.1 # https://github.com/jazzband/django-silk
-django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
-drf-yasg==1.21.3  # https://github.com/axnsan12/drf-yasg/
-whitenoise==6.2.0 # https://github.com/evansd/whitenoise/
+django==4.2.0  # https://www.djangoproject.com/
+djangorestframework==3.14.0  # https://github.com/encode/django-rest-framework
+django-allauth==0.54.0  # https://github.com/pennersr/django-allauth
+django-cors-headers==3.14.0 # https://github.com/adamchainz/django-cors-headers
+django-crispy-forms==2.0 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
+django-environ==0.10.0 # https://github.com/joke2k/django-environ
+django-fsm==2.8.1 # https://github.com/viewflow/django-fsm
+django-fsm-log==3.1.0 # https://github.com/jazzband/django-fsm-log
+django-model-utils==4.3.1  # https://github.com/jazzband/django-model-utils
+django-silk==5.0.3 # https://github.com/jazzband/django-silk
+django-storages[boto3]==1.13.2  # https://github.com/jschneier/django-storages
+drf-yasg==1.21.5  # https://github.com/axnsan12/drf-yasg/
+whitenoise==6.4.0 # https://github.com/evansd/whitenoise/

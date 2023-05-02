@@ -55,7 +55,7 @@ jobs:
     # Lint!
     - name: Lint!
       run: |
-        cd backend; black .; isort .; flake8 .; mypy .;
+        cd backend; black .; mypy .; ruff .;
 
     # Set environment variable && run tets
     - name: Export .env and run tests

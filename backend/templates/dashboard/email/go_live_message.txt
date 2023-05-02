@@ -1,0 +1,1 @@
+Your event {{ event.title }} is live on SocialPass! You can use the scanner app to scan your guest's tickets and let them in: {{ scanner_url }}. You can also find stats, embeds, and more on the dashboard.

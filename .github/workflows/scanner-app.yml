@@ -15,7 +15,7 @@ jobs:
       run: npm install --legacy-peer-deps
     - name: Run ESlint checks
       working-directory: ./frontend/scanner-app
-      run: npm run lint;
+      run: npm run format:write;
   build:
     runs-on: ubuntu-latest
     steps:

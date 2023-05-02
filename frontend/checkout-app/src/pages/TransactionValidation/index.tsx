@@ -1,4 +1,4 @@
-import TransactionValidation from './TransactionValidation'
+import TransactionValidation from "./TransactionValidation";
 
-export { TransactionValidation }
-export default TransactionValidation
+export { TransactionValidation };
+export default TransactionValidation;

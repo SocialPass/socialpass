@@ -1,4 +1,4 @@
-import TicketList from './TicketList'
+import TicketList from "./TicketList";
 
-export { TicketList }
-export default TicketList
+export { TicketList };
+export default TicketList;

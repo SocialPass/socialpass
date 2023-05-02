@@ -1,4 +1,4 @@
-import EventContainer from './EventContainer'
+import EventContainer from "./EventContainer";
 
-export { EventContainer }
-export default EventContainer
+export { EventContainer };
+export default EventContainer;

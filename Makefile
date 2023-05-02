@@ -7,12 +7,12 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 lint: ## Lint backend repo
-	(source backend/venv/bin/activate; cd backend; black .; isort .; flake8 .; mypy .;)
+	(source backend/venv/bin/activate; cd backend; black --exclude ".*\/(migrations|venv)\/.*" .; mypy .; ruff .;)
 
 collect: ## collectstatic backend
 	(source backend/venv/bin/activate; cd backend; ./manage.py collectstatic --no-input)
 
-install: ## Create backend migrations
+install: ## Install requirements
 	(source backend/venv/bin/activate; cd backend; pip3 install -r config/requirements/local.txt)
 
 migration: ## Create backend migrations
@@ -24,10 +24,10 @@ migrate: ## Migrate backend migrations
 populate: ## Populate DB
 	(source backend/venv/bin/activate; cd backend; ./manage.py populate_db)
 
-reset: ## Create backend superuser
+reset: ## Reset Database
 	(source backend/venv/bin/activate; cd backend; ./manage.py reset_db)
 
-run: ## Create backend superuser
+run: ## Run Backend Server
 	(source backend/venv/bin/activate; cd backend; ./manage.py runserver)
 
 superuser: ## Create backend superuser
@@ -36,7 +36,7 @@ superuser: ## Create backend superuser
 test: ## Test backend repo
 	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test)
 
-turtle: ## backend shell plus
+turtle: ## Run shell_plus
 	(source backend/venv/bin/activate; cd backend; ./manage.py shell_plus)
 
 #

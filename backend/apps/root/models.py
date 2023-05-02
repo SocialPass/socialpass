@@ -412,6 +412,31 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
+        # Send emails to team members (fail silently)
+        try:
+            ctx = {
+                "event": self,
+                "scanner_url": self.scanner_url,
+            }
+            emails = []
+            memberships = Membership.objects.select_related("user").filter(
+                team=self.team
+            )
+            for m in memberships:
+                emails.append(m.user.email)
+            msg_plain = render_to_string("dashboard/email/go_live_message.txt", ctx)
+            msg_html = render_to_string("dashboard/email/go_live.html", ctx)
+            send_mail(
+                "[SocialPass] Your event is live - " + self.title,
+                msg_plain,
+                "tickets-no-reply@socialpass.io",
+                emails,
+                html_message=msg_html,
+            )
+        except Exception as e:
+            print("EMAIL ERROR: " + str(e))
+            rollbar.report_message("EMAIL ERROR: " + str(e))
+
     @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):
         """
@@ -490,6 +515,14 @@ class Event(DBModel):
     @property
     def slug(self):
         return slugify(self.title)
+
+    @property
+    def tickets_total(self):
+        return Ticket.objects.filter(event=self).count()
+
+    @property
+    def tickets_redeemed(self):
+        return Ticket.objects.filter(event=self, redeemed=True).count()
 
     @property
     def quantity_total_sold(self):
@@ -747,6 +780,7 @@ class TicketTier(DBModel):
     ticket_type = models.CharField(
         max_length=255,
         blank=False,
+        help_text="A short descriptive label for your ticket tier.",
     )
     capacity = models.IntegerField(
         default=1,
@@ -1290,7 +1324,9 @@ class TxAssetOwnership(DBModel):
             response.raise_for_status()
             response = response.json()
         except requests.exceptions.HTTPError:
-            raise TxAssetOwnershipProcessingError({"message": _("An error has ocurred")})
+            raise TxAssetOwnershipProcessingError(
+                {"message": _("An error has ocurred")}
+            )
         return response
 
     def _check_balance(self, expected, actual):
@@ -1389,7 +1425,6 @@ class TxAssetOwnership(DBModel):
 
         # 1. Loop over CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
-
             # 2. Format & make API call for each CheckoutItem and its respective tier
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             api_response = self._call_moralis_api(

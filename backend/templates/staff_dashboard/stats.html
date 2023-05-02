@@ -1,0 +1,208 @@
+{% extends "staff_dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Item card start -->
+<div class="card border-transparent my-10 p-0">
+	<div class="row">
+		<div class="col-md-5 align-self-center">
+			<div class="content">
+				<h2 class="fw-700 text-strong fsr-3">Total Organizer Signups</h2>
+				<div class="d-flex align-items-center">
+					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
+					{{ organizers_total|floatformat }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
+					{{ organizers_weekly|last }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
+					{{ organizers_monthly|floatformat }}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-7 align-self-center">
+			<div class="content d-flex justify-content-center">
+				<canvas class="chart ws-450 h-auto mw-100" data-values="organizers_weekly"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Item card end -->
+
+<!-- Item card start -->
+<div class="card border-transparent my-10 p-0">
+	<div class="row">
+		<div class="col-md-5 align-self-center">
+			<div class="content">
+				<h2 class="fw-700 text-strong fsr-3">Total Events Created</h2>
+				<div class="d-flex align-items-center">
+					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
+					{{ events_total|floatformat }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
+					{{ events_weekly|last }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
+					{{ events_monthly|floatformat }}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-7 align-self-center">
+			<div class="content d-flex justify-content-center">
+				<canvas class="chart ws-450 h-auto mw-100" data-values="events_weekly"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Item card end -->
+
+<!-- Item card start -->
+<div class="card border-transparent my-10 p-0">
+	<div class="row">
+		<div class="col-md-5 align-self-center">
+			<div class="content">
+				<h2 class="fw-700 text-strong fsr-3">Total Tickets Sold</h2>
+				<div class="d-flex align-items-center">
+					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
+					{{ tickets_total|floatformat }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
+					{{tickets_weekly|last}}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
+					{{ tickets_monthly|floatformat }}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-7 align-self-center">
+			<div class="content d-flex justify-content-center">
+				<canvas class="chart ws-450 h-auto mw-100" data-values="tickets_weekly"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Item card end -->
+
+<!-- Item card start -->
+<div class="card border-transparent my-10 p-0">
+	<div class="row">
+		<div class="col-md-5 align-self-center">
+			<div class="content">
+				<h2 class="fw-700 text-strong fsr-3">Total Attendees</h2>
+				<div class="d-flex align-items-center">
+					<strong class="ws-200 flex-shrink-0">Total (Cumulative): </strong>
+					{{ attendees_total|floatformat }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
+					{{attendees_weekly|last}}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
+					{{ attendees_monthly|floatformat }}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-7 align-self-center">
+			<div class="content d-flex justify-content-center">
+				<canvas class="chart ws-450 h-auto mw-100" data-values="attendees_weekly"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Item card end -->
+
+<!-- Item card start -->
+<div class="card border-transparent my-10 p-0">
+	<div class="row">
+		<div class="col-md-5 align-self-center">
+			<div class="content">
+				<h2 class="fw-700 text-strong fsr-3">Average Time to Ticket</h2>
+				<div class="d-flex align-items-center">
+					<strong class="ws-200 flex-shrink-0">Total (Average): </strong>
+					{{ ticket_time_total|floatformat }}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Week (7 days): </strong>
+					{{ticket_time_weekly|last}}
+				</div>
+				<div class="d-flex align-items-center mt-5">
+					<strong class="ws-200 flex-shrink-0">Last Month (30 days): </strong>
+					{{ ticket_time_monthly|floatformat }}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-7 align-self-center">
+			<div class="content d-flex justify-content-center">
+				<canvas class="chart ws-450 h-auto mw-100" data-values="ticket_time_weekly"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Item card end -->
+
+<!-- Chart JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+	const charts = document.querySelectorAll(".chart")
+	const weeks = {{ weeks|safe }};
+	for (var i = 0; i <= charts.length; i++) {
+		var ctx = charts[i]
+		var placeholder = ctx.getAttribute("data-values");
+		let values;
+		let values_label;
+		switch (placeholder) {
+			case 'organizers_weekly':
+				values_label = '# of organizer sign-ups per week'
+				values = {{organizers_weekly|safe}};
+				break;
+			case 'events_weekly':
+				values_label = '# of events created per week'
+				values = {{events_weekly|safe}};
+				break;
+			case 'tickets_weekly':
+				values_label = '# of tickets sold per week'
+				values = {{tickets_weekly|safe}};
+				break;
+			case 'attendees_weekly':
+				values_label = '# of attendees per week'
+				values = {{attendees_weekly|safe}};
+				break;
+			case 'ticket_time_weekly':
+				values_label = 'time to checkout (seconds)';
+				values = {{ticket_time_weekly|safe}}
+			default:
+				break;
+		}
+		Chart.defaults.font.size = 13.69;
+		new Chart(ctx, {
+			type: "line",
+			data: {
+				labels: weeks,
+				datasets: [{
+					label: values_label,
+					data: values,
+					borderWidth: 3,
+					borderColor: 'hsl(197, 53%, 47%)',
+					backgroundColor: 'hsla(197, 53%, 47%, 0.1)',
+					tension: 0.35,
+					fill: true,
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		})
+	}
+</script>
+{% endblock %}

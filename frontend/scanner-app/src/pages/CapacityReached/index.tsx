@@ -1,4 +1,4 @@
-import CapacityReached from './CapacityReached'
+import CapacityReached from "./CapacityReached";
 
-export { CapacityReached }
-export default CapacityReached
+export { CapacityReached };
+export default CapacityReached;

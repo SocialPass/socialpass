@@ -47,4 +47,3 @@ class GoogleWalletAPIRequestError(BaseValidationError):
 
 class TooManyGuestsError(BaseValidationError):
     pass
-    

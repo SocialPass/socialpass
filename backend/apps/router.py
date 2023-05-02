@@ -20,7 +20,7 @@ urlpatterns = [
     path("dashboard/", include("apps.dashboard.urls")),
     path("dashboard/accounts/", include("allauth.urls")),
     # Staff Dashboard
-    path("staff_dashboard/", include("apps.staff_dashboard.urls")),
+    path(settings.STAFF_URL, include("apps.staff_dashboard.urls")),
 ]
 
 # Django settings URLs (admin and media)
@@ -87,9 +87,7 @@ if is_local:
             schema_view.with_ui("swagger", cache_timeout=0),
             name="schema-swagger-ui",
         ),
-        path(
-            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
-        ),
+        path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     ]
 
     # Django Debug Toolbar

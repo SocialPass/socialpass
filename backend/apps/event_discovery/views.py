@@ -17,7 +17,7 @@ from .forms import PasscodeForm
 
 
 class EventDiscoveryIndex(TemplateView):
-    template_name = "event_discovery/index.html"
+    template_name = "landing/index.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -31,6 +31,10 @@ class EventDiscoveryIndex(TemplateView):
             featured_event = False
         context.update({"featured_event": featured_event})
         return context
+
+
+class EventDiscoveryHostIndex(TemplateView):
+    template_name = "landing/index_host.html"
 
 
 """

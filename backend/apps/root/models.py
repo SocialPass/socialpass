@@ -1,6 +1,6 @@
 import json
 import uuid
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from typing import Optional
 
 import pytz
@@ -1248,13 +1248,6 @@ class TxAssetOwnership(DBModel):
     @property
     def expires(self):
         return self.created + timedelta(minutes=30)
-
-    @property
-    def is_expired(self):
-        if datetime.now() >= self.expires:
-            return True
-        else:
-            return False
 
     @property
     def unsigned_message(self):

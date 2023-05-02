@@ -171,7 +171,9 @@ class TierAssetOwnershipForm(forms.ModelForm):
             "token_address": forms.TextInput(
                 attrs={"placeholder": "Example: 0xb79...79268"}
             ),
-            "token_id": forms.TextInput(attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}),
+            "token_id": forms.TextInput(
+                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
+            ),
             "balance_required": forms.NumberInput(attrs={"min": 1}),
         }
         labels = {"token_id": "Token IDs (Optional)"}

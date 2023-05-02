@@ -133,7 +133,9 @@ class TicketsListView(SetAccessKeyAndEventMixin, ListAPIView):
     serializer_class = serializers.TicketSerializer
     input_serializer = None
     output_serializer = serializer_class
-    queryset = Ticket.objects.all().order_by("-id")  # order_by prevent unordeing warning
+    queryset = Ticket.objects.all().order_by(
+        "-id"
+    )  # order_by prevent unordeing warning
 
     def get_queryset(self):
         return super().get_queryset().filter(event=self.event, **self.filter_kwargs)

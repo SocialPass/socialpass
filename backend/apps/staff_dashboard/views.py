@@ -40,7 +40,11 @@ class StatsPageView(TemplateView):
 
         ## Get week number, used in future queries
         current_week = datetime.datetime.now().isocalendar()[1]
-        context["weeks"] = [i + 1 for i in range(0, current_week)]
+        weeks = [i + 1 for i in range(0, current_week)]
+        context["weeks"] = [
+            datetime.date.fromisocalendar(2023, week, 1).strftime("%b %d")
+            for week in weeks
+        ]  # (YWD)
 
         ## Organizer Sign Ups
         organizers_weekly = list(
@@ -50,7 +54,7 @@ class StatsPageView(TemplateView):
             .values("week", "total")
         )
         context["organizers_weekly"] = {}
-        for week in context["weeks"]:
+        for week in weeks:
             context["organizers_weekly"][week] = "0"
             for i in organizers_weekly:
                 if week == i["week"]:
@@ -68,7 +72,7 @@ class StatsPageView(TemplateView):
             .values("week", "total")
         )
         context["events_weekly"] = {}
-        for week in context["weeks"]:
+        for week in weeks:
             context["events_weekly"][week] = "0"
             for i in events_weekly:
                 if week == i["week"]:
@@ -86,7 +90,7 @@ class StatsPageView(TemplateView):
             .values("week", "total")
         )
         context["tickets_weekly"] = {}
-        for week in context["weeks"]:
+        for week in weeks:
             context["tickets_weekly"][week] = "0"
             for i in tickets_weekly:
                 if week == i["week"]:
@@ -105,7 +109,7 @@ class StatsPageView(TemplateView):
             .values("week", "total")
         )
         context["attendees_weekly"] = {}
-        for week in context["weeks"]:
+        for week in weeks:
             context["attendees_weekly"][week] = "0"
             for i in attendees_weekly:
                 if week == i["week"]:
@@ -123,7 +127,7 @@ class StatsPageView(TemplateView):
             .values("week", "total")
         )
         context["ticket_time_weekly"] = {}
-        for week in context["weeks"]:
+        for week in weeks:
             context["ticket_time_weekly"][week] = "0"
             for i in ticket_time_weekly:
                 if week == i["week"]:

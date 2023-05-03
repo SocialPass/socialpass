@@ -120,7 +120,7 @@
 						<caption>Stat Totals</caption>
 						<tbody>
 							<tr>
-								<th>Tickets Sold</th>
+								<th>Tickets</th>
 								<td>{{ tickets|length }}</td>
 							</tr>
 							<tr>
@@ -128,11 +128,19 @@
 								<td>{{ tickets_redeemed|length }}</td>
 							</tr>
 							<tr>
-								<th>Total People</th>
+								<th>
+									Total Attendees
+									<br />
+									<span class="fs-base-n2 text-muted fw-400">(Tickets + Guests)</span>
+								</th>
 								<td>{{ event.quantity_total_sold }}</td>
 							</tr>
 							<tr>
-								<th>Check-Ins (People)</th>
+								<th>
+									Total Attendees Redeemed
+									<br />
+									<span class="fs-base-n2 text-muted fw-400">(Tickets + Guests Redeemed)</span>
+								</th>
 								<td>{{ event.quantity_total_redeemed }}</td>
 							</tr>
 						</tbody>

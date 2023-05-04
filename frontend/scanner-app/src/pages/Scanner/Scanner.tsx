@@ -102,14 +102,14 @@ const Scanner = () => {
 						<div className='col-6 pe-5'>
 							<div className='bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100'>
 								<strong className='antialiased'>
-									Total Sold: {event?.total_people}
+									Attendees: {event?.total_people}
 								</strong>
 							</div>
 						</div>
 						<div className='col-6 ps-5'>
 							<div className='bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100'>
 								<strong className='antialiased'>
-									Total Check-Ins: {event?.total_checkins}
+									Check-Ins: {event?.total_checkins}
 								</strong>
 							</div>
 						</div>

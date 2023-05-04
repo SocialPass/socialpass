@@ -61,7 +61,7 @@ const Scanner = () => {
 
 	return (
 		<>
-			<div className='position-relative d-flex bg-content align-items-center justify-content-center hs-400 overflow-hidden'>
+			<div className='position-relative d-flex bg-content align-items-center justify-content-center overflow-hidden'>
 				<span className='text-center'>
 					<Html5QrcodeScanner
 						fps={1}
@@ -101,27 +101,20 @@ const Scanner = () => {
 					<div className='row mt-5 fs-base-n2'>
 						<div className='col-6 pe-5'>
 							<div className='bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100'>
-								<strong className='antialiased'>Tickets: {event?.ticket_count}</strong>
+								<strong className='antialiased'>
+									Total Sold: {event?.total_people}
+								</strong>
 							</div>
 						</div>
 						<div className='col-6 ps-5'>
 							<div className='bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100'>
 								<strong className='antialiased'>
-									Tickets Redeemed: {event?.redeemed_count}
+									Total Check-Ins: {event?.total_checkins}
 								</strong>
 							</div>
 						</div>
 					</div>
-					<div className='bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100 mt-10 fs-base-n2'>
-						<strong className='antialiased'>
-							Total Attendees (Tickets + Guests): {event?.total_people}
-						</strong>
-					</div>
-					<div className='bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100 mt-10 fs-base-n2'>
-						<strong className='antialiased'>
-							Total Attendees Redeemed (Tickets + Guests Redeemed): {event?.total_checkins}
-						</strong>
-					</div>
+
 				</div>
 			</div>
 		</>

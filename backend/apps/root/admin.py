@@ -17,9 +17,11 @@ from apps.root.models import (
     TierAssetOwnership,
     TierBlockchain,
     TierFiat,
+    TierFree,
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
+    TxFree,
 )
 
 User = get_user_model()
@@ -136,6 +138,11 @@ class TierAssetOwnershipAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display
 
 
+@admin.register(TierFree)
+class TierFreeAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
+
+
 @admin.register(CheckoutSession)
 class CheckoutSessionAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display + [
@@ -167,4 +174,8 @@ class TxBlockchainAdmin(CustomDBAdmin):
 
 @admin.register(TxAssetOwnership)
 class TxAssetOwnershipAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
+
+@admin.register(TxFree)
+class TxFreeAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display

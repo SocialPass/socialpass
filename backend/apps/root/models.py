@@ -775,6 +775,12 @@ class TicketTier(DBModel):
         blank=True,
         null=True,
     )
+    tier_free = models.OneToOneField(
+        "TierFree",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
 
     # basic info
     ticket_type = models.CharField(
@@ -901,6 +907,15 @@ class TierAssetOwnership(DBModel):
         return f"TierAssetOwnership {self.public_id}"
 
 
+class TierFree(DBModel):
+    """
+    Represents a free tier for an event ticket
+    """
+
+    def __str__(self) -> str:
+        return f"TierFree {self.public_id}"
+
+
 def get_random_passcode():
     """
     Get a random 6-digit passcode.
@@ -954,6 +969,12 @@ class CheckoutSession(DBModel):
     )
     tx_asset_ownership = models.OneToOneField(
         "TxAssetOwnership",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    tx_free = models.OneToOneField(
+        "TxFree",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -1478,3 +1499,15 @@ class TxAssetOwnership(DBModel):
         checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
         checkout_session.fulfill()
+
+
+class TxFree(DBModel):
+    """
+    Represents a free checkout transaction
+    """
+
+    def __str__(self) -> str:
+        return f"TxFree {self.public_id}"
+
+    def process(self, *args, **kwargs):
+        pass

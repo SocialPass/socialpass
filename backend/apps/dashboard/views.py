@@ -566,14 +566,29 @@ class EventStatsView(TeamContextMixin, DetailView):
         return context
 
 
-class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+class TicketTierCreateView(TeamContextMixin, TemplateView):
     """
-    Create an event's ticket tier.
+    Select the type of ticket tier to create.
+    """
+
+    template_name = "dashboard/ticket_tier_create.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+
+class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+    """
+    Create an NFT-based ticket tier.
     """
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "dashboard/ticket_tier_form.html"
+    template_name = "dashboard/ticket_tier_nft_form.html"
     form_data = None
 
     def get_context_data(self, **kwargs):

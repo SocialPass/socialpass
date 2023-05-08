@@ -30,7 +30,7 @@
 
 	<!-- Main content start -->
 	<div class="row">
-		<div class="col-lg-8 col-xl-6 mx-auto">
+		<div class="col-lg-9 col-xl-7 mx-auto">
 			<div class="content">
 				<h3 class="fs-base-p4 m-0 d-flex align-items-center">
 					<span class="ws-25 me-10 text-primary">
@@ -44,7 +44,7 @@
 						Please select the <strong>type of ticket tier</strong> you want to create for <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="alert-link">{{ event.title }}</a>. Your event must have at least one ticket tier before going live.
 					</span>
 				</div>
-				<a href="#" class="btn btn-lg btn-block py-10 d-flex flex-column mt-20">
+				<a href="{% url 'dashboard:ticket_tier_free_create' current_team.public_id event.pk  %}" class="btn btn-lg btn-block py-10 d-flex flex-column mt-20">
 					<div class="d-flex align-items-center">
 						<i class="fa-light fa-party-horn me-20 text-primary"></i>
 						<strong class="antialiased text-base me-20">Free Ticket Tier</strong>

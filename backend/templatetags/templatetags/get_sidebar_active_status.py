@@ -18,6 +18,7 @@ def get_sidebar_active_status(context, key):
             "event_stats",
             "ticket_tier_create",
             "ticket_tier_nft_create",
+            "ticket_tier_free_create",
             "ticket_tier_update",
             "ticket_tier_delete",
         ]:

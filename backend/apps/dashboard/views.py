@@ -22,7 +22,7 @@ from apps.dashboard.forms import (
     TicketTierForm,
     TierAssetOwnershipForm,
 )
-from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
+from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier, TierFree
 
 User = auth.get_user_model()
 
@@ -627,7 +627,41 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        return "Your ticket has been created successfully!"
+        return "Your ticket tier has been created successfully!"
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+        )
+
+
+class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+    """
+    Create a free ticket tier.
+    """
+
+    model = TicketTier
+    form_class = TicketTierForm
+    template_name = "dashboard/ticket_tier_free_form.html"
+    form_data = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+    def form_valid(self, form, **kwargs):
+        self.form_data = form.data
+        form.instance.tier_free = TierFree.objects.create()
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        return super().form_valid(form)
+
+    def get_success_message(self, *args, **kwargs):
+        return "Your ticket tier has been created successfully!"
 
     def get_success_url(self, *args, **kwargs):
         return reverse(

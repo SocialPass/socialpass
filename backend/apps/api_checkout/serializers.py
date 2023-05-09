@@ -148,6 +148,7 @@ class TicketTierReadSerializer(BaseModelSerializer):
             "tier_fiat",
             "tier_blockchain",
             "tier_asset_ownership",
+            "tier_free",
             "quantity_sold",
         ]
 

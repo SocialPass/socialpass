@@ -37,6 +37,10 @@ class TxAssetOwnershipProcessingError(BaseValidationError):
     pass
 
 
+class TxFreeProcessingError(BaseValidationError):
+    pass
+
+
 class CheckoutSessionExpired(BaseValidationError):
     pass
 

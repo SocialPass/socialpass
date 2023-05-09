@@ -947,6 +947,7 @@ class CheckoutSession(DBModel):
         FIAT = "FIAT", _("Fiat")
         BLOCKCHAIN = "BLOCKCHAIN", _("Blockchain")
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
+        FREE = "FREE", _("Free")
 
     # keys
     event = models.ForeignKey(

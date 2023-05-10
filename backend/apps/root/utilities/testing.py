@@ -1,26 +1,7 @@
 import logging
-from typing import Any
 
 from django.test import TestCase
-
-from apps.root.factories import (
-    CheckoutItemFactory,
-    CheckoutSessionFactory,
-    EventFactory,
-    TicketFactory,
-    TicketRedemptionKeyFactory,
-    TicketTierFactory,
-    UserWithTeamFactory,
-)
-from apps.root.models import (
-    CheckoutItem,
-    CheckoutSession,
-    Event,
-    Team,
-    Ticket,
-    TicketRedemptionKey,
-    TicketTier,
-)
+from model_bakery import baker
 
 
 class BaseTestCaseWrapper(TestCase):
@@ -29,35 +10,32 @@ class BaseTestCaseWrapper(TestCase):
     Handles default initialization, common vars, methods, etc.
     """
 
-    # Globals
-    url_base: str
-    user: Any
-    password: str
-    team: Team
-    event: Event
-    ticket: Ticket
-    ticket_tier: TicketTier
-    access_key: str
-    checkout_item: CheckoutItem
-    checkout_session: CheckoutSession
-    ticket_redemption_key: TicketRedemptionKey
-    _event: Event
-    _ticket: Ticket
-    _ticket_tier: TicketTier
-    _checkout_item: CheckoutItem
-    _checkout_session: CheckoutSession
-
     @classmethod
-    def setUpTestData(cls) -> None:
+    def setUpTestData(cls):
+        # Setup users
         cls.password = "password"
-        cls.user = UserWithTeamFactory()
-        cls.team = cls.user.membership_set.first().team
-        cls.event = EventFactory(team=cls.team, user=cls.user)
-        cls.ticket_tier = TicketTierFactory(event=cls.event)
+        cls.user_one = baker.make("root.User")
+        cls.user_two = baker.make("root.User")
+        cls.user_one.set_password(cls.password)
+        cls.user_two.set_password(cls.password)
+        cls.user_one.save()
+        cls.user_two.save()
+
+        # setup memberships / teams
+        cls.team_one = baker.make("root.Team")
+        cls.team_one.members.add(cls.user_one)
+
+        # setup event
+        cls.event_one = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
+        cls.event_two = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
+
+        """
+        # TODO: Checkout (Session, Items)
         cls.checkout_session = CheckoutSessionFactory(event=cls.event)
         cls.checkout_item = CheckoutItemFactory(
             ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
         )
+
         cls.ticket = TicketFactory(
             checkout_item=cls.checkout_item,
             event=cls.event,
@@ -66,7 +44,7 @@ class BaseTestCaseWrapper(TestCase):
         cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
         cls.access_key = cls.ticket_redemption_key.public_id
 
-        # for raising errors
+        # TODO: for raising errors
         cls._event = EventFactory(team=cls.team, user=cls.user)
         cls._ticket_tier = TicketTierFactory(event=cls._event)
         cls._checkout_session = CheckoutSessionFactory(event=cls._event)
@@ -78,6 +56,7 @@ class BaseTestCaseWrapper(TestCase):
             event=cls._event,
             ticket_tier=cls._ticket_tier,
         )
+        """
         return super().setUpTestData()
 
 

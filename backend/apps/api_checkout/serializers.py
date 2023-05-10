@@ -74,9 +74,7 @@ class TeamReadSerializer(BaseModelSerializer):
             theme["favicon"] = request.build_absolute_uri(static(obj.theme["favicon"]))
 
         if "css_theme" in obj.theme:
-            theme["css_theme"] = request.build_absolute_uri(
-                static(obj.theme["css_theme"])
-            )
+            theme["css_theme"] = request.build_absolute_uri(static(obj.theme["css_theme"]))
 
         return theme
 
@@ -317,7 +315,6 @@ class TxFreeWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TxFree
-        fields = []
 
 
 class TxFreeReadSerializer(serializers.ModelSerializer):
@@ -381,9 +378,7 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
         checkout_items = validated_data.pop("checkoutitem_set")
         checkout_session = CheckoutSession.objects.create(**validated_data)
         for item in checkout_items:
-            CheckoutItem.objects.create(
-                checkout_session=checkout_session, **item
-            ).clean()
+            CheckoutItem.objects.create(checkout_session=checkout_session, **item).clean()
 
         # create Transaction
         # also save tx to the CheckoutSession

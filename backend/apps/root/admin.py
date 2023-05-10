@@ -176,6 +176,7 @@ class TxBlockchainAdmin(CustomDBAdmin):
 class TxAssetOwnershipAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display
 
+
 @admin.register(TxFree)
 class TxFreeAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display

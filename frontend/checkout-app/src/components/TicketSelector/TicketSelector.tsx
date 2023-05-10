@@ -132,7 +132,7 @@ function TicketSelector(props): JSX.Element {
 							</button>
 						</div>
 
-						{(paymentType === "ASSET_OWNERSHIP" || paymentType === "FREE") ? (
+						{paymentType === "ASSET_OWNERSHIP" || paymentType === "FREE" ? (
 							<div className='text-center fs-12 mt-5'>
 								Max {ticketTier?.max_per_person} per person
 							</div>
@@ -195,8 +195,9 @@ function TicketSelector(props): JSX.Element {
 							<strong>This is a FREE ticket tier</strong>
 						</div>
 						<div className='text-muted mt-5'>
-							You can claim ticket(s) as long as they are available. First come, first served!
-						</div> 
+							You can claim ticket(s) as long as they are available. First come, first
+							served!
+						</div>
 					</div>
 				) : null}
 				{ticketTier && ticketTier.allowed_guests > 0 && isChecked ? (

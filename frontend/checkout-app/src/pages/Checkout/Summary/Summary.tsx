@@ -37,7 +37,10 @@ export default function Summary(props) {
 		return "N/A";
 	};
 
-	const isButtonDisable = (!isCheckoutProcessing && enableContinue) || checkout?.tx_type === "FREE" ? false : true;
+	const isButtonDisable =
+		(!isCheckoutProcessing && enableContinue) || checkout?.tx_type === "FREE"
+			? false
+			: true;
 
 	useEffect(() => {
 		setName(checkout?.name);

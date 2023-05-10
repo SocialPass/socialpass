@@ -339,72 +339,70 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
-			{(
-				!tiersLoading &&
+			{!tiersLoading &&
 				getFreeTicketTiers().length > 0 &&
-				getAssetOwnershipTicketTiers().length > 0
-			)  && (
-				<div className='content mb-0'>
-					<div className='ticket-tier-group'>
-						<div
-							className={'ticket-tier'}
-							onClick={() => {
-					  			if (getFreeTicketTiers().length && isNewCheckout()) {
-									setCheckout({ ...checkout, tx_type: 'FREE' })
-									setCheckoutItems([])
-					  			}
-							}}
-					  	>
-							<input
-					  			type='radio'
-					  			className='ticket-tier-input'
-						  		disabled={!getFreeTicketTiers().length}
-						  		checked={checkout?.tx_type === 'FREE'}
-						  		readOnly
-							/>
-							<label className='ticket-tier-label'>
-						  		<h6 className='fw-700 m-0 fs-base'>
-									<span className='ticket-tier-uncheck'>
-						  				<i className='fa-light fa-party-horn'></i>
-									</span>
-									<span className='ticket-tier-check'>
-						  				<i className='fa-light fa-party-horn'></i>
-									</span>
-									Free
-						  		</h6>
-							</label>
-					  	</div>
-						<div
-							className={'ticket-tier'}
-							onClick={() => {
-					  			if (getAssetOwnershipTicketTiers().length && isNewCheckout()) {
-									setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
-									setCheckoutItems([])
-					  			}
-							}}
-					  	>
-							<input
-					  			type='radio'
-					  			className='ticket-tier-input'
-						  		disabled={!getAssetOwnershipTicketTiers().length}
-						  		checked={checkout?.tx_type === 'ASSET_OWNERSHIP'}
-						  		readOnly
-							/>
-							<label className='ticket-tier-label'>
-						  		<h6 className='fw-700 m-0 fs-base'>
-									<span className='ticket-tier-uncheck'>
-						  				<i className='fa-light fa-hexagon-image'></i>
-									</span>
-									<span className='ticket-tier-check'>
-						  				<i className='fa-light fa-hexagon-image'></i>
-									</span>
-									NFTs
-						  		</h6>
-							</label>
-					  	</div>
+				getAssetOwnershipTicketTiers().length > 0 && (
+					<div className='content mb-0'>
+						<div className='ticket-tier-group'>
+							<div
+								className={"ticket-tier"}
+								onClick={() => {
+									if (getFreeTicketTiers().length && isNewCheckout()) {
+										setCheckout({ ...checkout, tx_type: "FREE" });
+										setCheckoutItems([]);
+									}
+								}}
+							>
+								<input
+									type='radio'
+									className='ticket-tier-input'
+									disabled={!getFreeTicketTiers().length}
+									checked={checkout?.tx_type === "FREE"}
+									readOnly
+								/>
+								<label className='ticket-tier-label'>
+									<h6 className='fw-700 m-0 fs-base'>
+										<span className='ticket-tier-uncheck'>
+											<i className='fa-light fa-party-horn'></i>
+										</span>
+										<span className='ticket-tier-check'>
+											<i className='fa-light fa-party-horn'></i>
+										</span>
+										Free
+									</h6>
+								</label>
+							</div>
+							<div
+								className={"ticket-tier"}
+								onClick={() => {
+									if (getAssetOwnershipTicketTiers().length && isNewCheckout()) {
+										setCheckout({ ...checkout, tx_type: "ASSET_OWNERSHIP" });
+										setCheckoutItems([]);
+									}
+								}}
+							>
+								<input
+									type='radio'
+									className='ticket-tier-input'
+									disabled={!getAssetOwnershipTicketTiers().length}
+									checked={checkout?.tx_type === "ASSET_OWNERSHIP"}
+									readOnly
+								/>
+								<label className='ticket-tier-label'>
+									<h6 className='fw-700 m-0 fs-base'>
+										<span className='ticket-tier-uncheck'>
+											<i className='fa-light fa-hexagon-image'></i>
+										</span>
+										<span className='ticket-tier-check'>
+											<i className='fa-light fa-hexagon-image'></i>
+										</span>
+										NFTs
+									</h6>
+								</label>
+							</div>
+						</div>
 					</div>
-				</div>
-			)}
+				)}
 
 			{tiersLoading ? (
 				<div className='text-center py-40'>

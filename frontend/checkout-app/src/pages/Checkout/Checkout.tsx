@@ -88,8 +88,7 @@ export default function Home() {
 					setCheckout({ ...checkout, tx_status: "FAILED" });
 					setIsCheckoutProcessing(false);
 				});
-		}
-		else {
+		} else {
 			pay(paymentData)
 				.then(() => {
 					setIsCheckoutProcessing(false);
@@ -190,7 +189,9 @@ export default function Home() {
 						<h1 className='text-strong fw-700 fsr-4 m-0'>Complete Checkout</h1>
 						{checkout?.tx_type !== "FREE" ? (
 							<>
-								<p className='mt-10'>Please select from one of the checkout options below.</p>
+								<p className='mt-10'>
+									Please select from one of the checkout options below.
+								</p>
 								<h6 className='fw-700 fsr-6 mt-20'>Checkout Options</h6>
 
 								{checkout?.tx_type === "FIAT" ? (
@@ -203,13 +204,23 @@ export default function Home() {
 							</>
 						) : (
 							<>
-								<p className='mt-10'>You are about to checkout with FREE ticket(s) only. Please take note of the following:</p>
+								<p className='mt-10'>
+									You are about to checkout with FREE ticket(s) only. Please take note of
+									the following:
+								</p>
 								<ul className='unordered-list'>
-									<li>FREE tickets require no payment/verfication. The only constraint is the availability at checkout.</li>
-									<li>Due to the above point, event organizers <em>may</em> give less priority to free tickets in the case of capacity issues.</li>
+									<li>
+										FREE tickets require no payment/verfication. The only constraint is the
+										availability at checkout.
+									</li>
+									<li>
+										Due to the above point, event organizers <em>may</em> give less
+										priority to free tickets in the case of capacity issues.
+									</li>
 								</ul>
 								<p>
-									If all of that sounds good, please click on the <strong>Continue</strong> button to get your ticket(s).
+									If all of that sounds good, please click on the <strong>Continue</strong>{" "}
+									button to get your ticket(s).
 								</p>
 							</>
 						)}

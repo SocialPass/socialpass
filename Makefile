@@ -34,7 +34,7 @@ superuser: ## Create backend superuser
 	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)
 
 test: ## Test backend repo
-	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test)
+	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test --failfast)
 
 turtle: ## Run shell_plus
 	(source backend/venv/bin/activate; cd backend; ./manage.py shell_plus)

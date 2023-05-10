@@ -1,33 +1,13 @@
 import logging
 
-from django.contrib.auth import get_user_model
-from django.test import RequestFactory, TestCase
+from django.test import TestCase
 from django.urls import reverse
-
-from apps.root.factories import EventFactory, TicketTierFactory, UserWithTeamFactory
-
-User = get_user_model()
+from model_bakery import baker
 
 
 class EventDiscoveryTest(TestCase):
     def setUp(self):
-        self.factory = RequestFactory()
-
-        # Setup users
-        self.password = "password"
-        self.user_one = UserWithTeamFactory()
-        self.user_two = UserWithTeamFactory()
-
-        # setup teams
-        self.team_one = self.user_one.membership_set.first().team
-        self.team_two = self.user_two.membership_set.first().team
-
-        # setup event
-        self.event_one = EventFactory(team=self.team_one, user=self.user_one)
-        self.event_two = EventFactory(team=self.team_two, user=self.user_two)
-
-        # setup ticket tier for event
-        self.ticket_tier = TicketTierFactory(event=self.event_one)
+        self.event_one = baker.make("Event")
 
     def test_discovery_index(self):
         # Test GET

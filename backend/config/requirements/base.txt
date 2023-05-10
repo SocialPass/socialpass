@@ -5,6 +5,7 @@ boto3==1.26.109 # https://github.com/boto/boto3
 eth-account==0.8.0 # https://github.com/ethereum/eth-account
 eth-utils==2.1.0 # https://github.com/ethereum/eth-utils
 factory-boy==3.2.1 # https://github.com/FactoryBoy/factory_boy
+model-bakery==1.11.0 # https://github.com/model-bakers/model_bakery
 google-api-python-client==2.84.0 # https://github.com/googleapis/google-api-python-client
 Pillow==9.5.0 # https://github.com/python-pillow/Pillow
 qrcode==7.4.2 # https://github.com/lincolnloop/python-qrcode

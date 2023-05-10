@@ -2,17 +2,11 @@ version: 2
 updates:
   - package-ecosystem: pip
     directory: "/backend"
-    schedule:
-      cron: 0 14 * * *
     range: '>= {major}.{minor}, < {major+1}.0.0'
   - package-ecosystem: npm
     directory: "/frontend/checkout-app"
-    schedule:
-      cron: 0 14 * * *
     range: '>= {major}.{minor}, < {major+1}.0.0'
   - package-ecosystem: npm
     directory: "/frontend/scanner-app"
-    schedule:
-      cron: 0 14 * * *
     range: '>= {major}.{minor}, < {major+1}.0.0'
 

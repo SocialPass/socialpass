@@ -30,6 +30,7 @@ export default function Home() {
 		setCheckout,
 		setCheckoutItems,
 		pay,
+		transactFree,
 		error,
 	}: any = useCheckout();
 
@@ -63,6 +64,9 @@ export default function Home() {
 				};
 			}
 
+			case "FREE":
+				return {};
+
 			default:
 				return null;
 		}
@@ -74,15 +78,28 @@ export default function Home() {
 		setIsCheckoutProcessing(true);
 		const paymentData = await getPaymentData();
 
-		pay(paymentData)
-			.then(() => {
-				setIsCheckoutProcessing(false);
-				navigate("validation");
-			})
-			.catch(() => {
-				setCheckout({ ...checkout, tx_status: "FAILED" });
-				setIsCheckoutProcessing(false);
-			});
+		if (checkout?.tx_type === "FREE") {
+			transactFree(paymentData)
+				.then(() => {
+					setIsCheckoutProcessing(false);
+					navigate("validation");
+				})
+				.catch(() => {
+					setCheckout({ ...checkout, tx_status: "FAILED" });
+					setIsCheckoutProcessing(false);
+				});
+		}
+		else {
+			pay(paymentData)
+				.then(() => {
+					setIsCheckoutProcessing(false);
+					navigate("validation");
+				})
+				.catch(() => {
+					setCheckout({ ...checkout, tx_status: "FAILED" });
+					setIsCheckoutProcessing(false);
+				});
+		}
 	};
 
 	const getErrorMessage = () => {

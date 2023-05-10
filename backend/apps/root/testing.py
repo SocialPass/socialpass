@@ -10,55 +10,54 @@ class BaseTestCaseWrapper(TestCase):
     Handles default initialization, common vars, methods, etc.
     """
 
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         # Setup users
-        cls.password = "password"
-        cls.user_one = baker.make("root.User")
-        cls.user_two = baker.make("root.User")
-        cls.user_one.set_password(cls.password)
-        cls.user_two.set_password(cls.password)
-        cls.user_one.save()
-        cls.user_two.save()
+        self.password = "password"
+        self.user_one = baker.make("root.User")
+        self.user_two = baker.make("root.User")
+        self.user_one.set_password(self.password)
+        self.user_two.set_password(self.password)
+        self.user_one.save()
+        self.user_two.save()
 
         # setup memberships / teams
-        cls.team_one = baker.make("root.Team")
-        cls.team_one.members.add(cls.user_one)
+        self.team_one = baker.make("root.Team")
+        self.team_one.members.add(self.user_one)
 
         # setup event
-        cls.event_one = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
-        cls.event_two = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
-        cls.ticket_tier = baker.make("root.TicketTier", event=cls.event_one)
+        self.event = baker.make("root.Event", user=self.user_one, team=self.team_one)
+        self.event_two = baker.make("root.Event", user=self.user_one, team=self.team_one)
+        self.ticket_tier = baker.make("root.TicketTier", event=self.event)
 
         # setup checkout / tickets
-        cls.checkout_session = baker.make("CheckoutSession", event=cls.event_one)
-        cls.checkout_item = baker.make(
-            "CheckoutItem", checkout_session=cls.checkout_session
+        self.checkout_session = baker.make("CheckoutSession", event=self.event)
+        self.checkout_item = baker.make(
+            "CheckoutItem", checkout_session=self.checkout_session
         )
-        cls.ticket = baker.make(
+        self.ticket = baker.make(
             "Ticket",
-            checkout_item=cls.checkout_item,
-            event=cls.event_one,
-            ticket_tier=cls.ticket_tier,
+            checkout_item=self.checkout_item,
+            event=self.event,
+            ticket_tier=self.ticket_tier,
         )
 
         # TODO:
         """
         # Set Event Live
-        cls.ticket_redemption_key =  baker.make("TicketRedemptionKey", event=cls.event)
-        cls.access_key = cls.ticket_redemption_key.public_id
+        self.ticket_redemption_key =  baker.make("TicketRedemptionKey", event=self.event)
+        self.access_key = self.ticket_redemption_key.public_id
 
         # TODO: for raising errors
-        cls._event = EventFactory(team=cls.team, user=cls.user)
-        cls._ticket_tier = TicketTierFactory(event=cls._event)
-        cls._checkout_session = CheckoutSessionFactory(event=cls._event)
-        cls._checkout_item = CheckoutItemFactory(
-            ticket_tier=cls._ticket_tier, checkout_session=cls._checkout_session
+        self._event = EventFactory(team=self.team, user=self.user)
+        self._ticket_tier = TicketTierFactory(event=self._event)
+        self._checkout_session = CheckoutSessionFactory(event=self._event)
+        self._checkout_item = CheckoutItemFactory(
+            ticket_tier=self._ticket_tier, checkout_session=self._checkout_session
         )
-        cls._ticket = TicketFactory(
-            checkout_item=cls._checkout_item,
-            event=cls._event,
-            ticket_tier=cls._ticket_tier,
+        self._ticket = TicketFactory(
+            checkout_item=self._checkout_item,
+            event=self._event,
+            ticket_tier=self._ticket_tier,
         )
         """
         return super().setUpTestData()

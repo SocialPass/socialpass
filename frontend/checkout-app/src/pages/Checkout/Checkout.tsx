@@ -188,16 +188,31 @@ export default function Home() {
 				<div className='col-md-7'>
 					<div className='content mt-20 mb-0 me-md-0'>
 						<h1 className='text-strong fw-700 fsr-4 m-0'>Complete Checkout</h1>
-						<p className='mt-10'>Please select from one of the checkout options below.</p>
-						<h6 className='fw-700 fsr-6 mt-20'>Checkout Options</h6>
+						{checkout?.tx_type !== "FREE" ? (
+							<>
+								<p className='mt-10'>Please select from one of the checkout options below.</p>
+								<h6 className='fw-700 fsr-6 mt-20'>Checkout Options</h6>
 
-						{checkout?.tx_type === "FIAT" ? (
-							<FiatCheckoutOption />
-						) : checkout?.tx_type === "BLOCKCHAIN" ? (
-							<CryptoCurrencyCheckoutOption />
-						) : checkout?.tx_type === "ASSET_OWNERSHIP" ? (
-							<AssetOwnershipCheckoutOption connectors={connectHook.connectors} />
-						) : null}
+								{checkout?.tx_type === "FIAT" ? (
+									<FiatCheckoutOption />
+								) : checkout?.tx_type === "BLOCKCHAIN" ? (
+									<CryptoCurrencyCheckoutOption />
+								) : checkout?.tx_type === "ASSET_OWNERSHIP" ? (
+									<AssetOwnershipCheckoutOption connectors={connectHook.connectors} />
+								) : null}
+							</>
+						) : (
+							<>
+								<p className='mt-10'>You are about to checkout with FREE ticket(s) only. Please take note of the following:</p>
+								<ul className='unordered-list'>
+									<li>FREE tickets require no payment/verfication. The only constraint is the availability at checkout.</li>
+									<li>Due to the above point, event organizers <em>may</em> give less priority to free tickets in the case of capacity issues.</li>
+								</ul>
+								<p>
+									If all of that sounds good, please click on the <strong>Continue</strong> button to get your ticket(s).
+								</p>
+							</>
+						)}
 					</div>
 				</div>
 

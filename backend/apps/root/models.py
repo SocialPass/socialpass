@@ -1510,5 +1510,14 @@ class TxFree(DBModel):
     def __str__(self) -> str:
         return f"TxFree {self.public_id}"
 
-    def process(self, *args, **kwargs):
-        pass
+    def process(self, checkout_session=None):
+        """
+        Nothing to check for free transactions, we just go through the states.
+        """
+        if not checkout_session:
+            checkout_session = self.checkoutsession
+        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        checkout_session.save()
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        checkout_session.save()
+        checkout_session.fulfill()

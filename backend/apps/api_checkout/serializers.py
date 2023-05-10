@@ -315,6 +315,7 @@ class TxFreeWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TxFree
+        fields: list = []
 
 
 class TxFreeReadSerializer(serializers.ModelSerializer):

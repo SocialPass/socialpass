@@ -31,6 +31,9 @@
 						</div>
 						<div class="fs-base-p2 mt-5">
 							{{ ticket.object.ticket_tier.ticket_type }}
+							{% if ticket.object.ticket_tier.tier_free %}
+								| FREE
+							{% endif %}
 							{% if ticket.object.party_size > 1 %}
 								| Party Size: {{ ticket.object.party_size }}
 							{% endif %}

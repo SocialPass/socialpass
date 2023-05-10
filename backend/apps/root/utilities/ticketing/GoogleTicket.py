@@ -147,6 +147,8 @@ class GoogleTicket:
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
 
         ticket_type = ticket_obj.ticket_tier.ticket_type
+        if ticket_obj.ticket_tier.tier_free:
+            ticket_type += " | FREE"
         if ticket_obj.party_size > 1:
             ticket_type += f" | Party Size: {ticket_obj.party_size}"
 

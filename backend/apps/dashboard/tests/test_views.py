@@ -3,36 +3,38 @@ import os
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 from django.urls import reverse
 from django.views.generic import TemplateView
 from model_bakery import baker
 
 from apps.dashboard import forms, views
 from apps.root.models import Invite, Membership, Team
+from apps.root.utilities.testing import BaseTestCaseWrapper
 
 
-class DashboardTest(TestCase):
-    def setUp(self):
+class DashboardTest(BaseTestCaseWrapper):
+    @classmethod
+    def setUpTestData(cls):
         # Setup request factory
-        self.factory = RequestFactory()
+        cls.factory = RequestFactory()
 
         # Setup users
-        self.password = "password"
-        self.user_one = baker.make("root.User")
-        self.user_two = baker.make("root.User")
-        self.user_one.set_password(self.password)
-        self.user_two.set_password(self.password)
-        self.user_one.save()
-        self.user_two.save()
+        cls.password = "password"
+        cls.user_one = baker.make("root.User")
+        cls.user_two = baker.make("root.User")
+        cls.user_one.set_password(cls.password)
+        cls.user_two.set_password(cls.password)
+        cls.user_one.save()
+        cls.user_two.save()
 
         # setup memberships / teams
-        self.team_one = baker.make("root.Team")
-        self.team_one.members.add(self.user_one)
+        cls.team_one = baker.make("root.Team")
+        cls.team_one.members.add(cls.user_one)
 
         # setup event
-        self.event_one = baker.make("root.Event", user=self.user_one, team=self.team_one)
-        self.event_two = baker.make("root.Event", user=self.user_one, team=self.team_one)
+        cls.event_one = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
+        cls.event_two = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
 
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):

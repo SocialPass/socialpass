@@ -11,7 +11,7 @@ from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
 
 class TestCaseWrapper(BaseTestCaseWrapper):
     @classmethod
-    def setUpTestData(cls) -> None:
+    def setUpTestData(cls):
         # Globals
         cls.url_base = "/api/scanner/v1/"
         return super().setUpTestData()

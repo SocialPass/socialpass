@@ -112,9 +112,9 @@ export const CheckoutProvider = ({ children }: any) => {
 			}
 		});
 
-	const pay = (data) =>
+	const transactNFT = (data) =>
 		new Promise((resolve, reject) => {
-			CheckoutApi.pay(checkout?.public_id, data)
+			CheckoutApi.transactNFT(checkout?.public_id, data)
 				.then((response) => {
 					setCheckout({
 						...checkout,
@@ -159,7 +159,7 @@ export const CheckoutProvider = ({ children }: any) => {
 				setCheckoutItems,
 				saveCheckout,
 				getTxType,
-				pay,
+				transactNFT,
 				transactFree,
 				isLoading,
 				isLoadingCheckoutItems,

@@ -50,9 +50,9 @@ export default {
 			);
 	},
 
-	pay(publicId: any, data: any) {
+	transactNFT(publicId: any, data: any) {
 		return axios
-			.post(`/api/checkout/v1/session/${publicId}/transaction/`, data)
+			.post(`/api/checkout/v1/session/${publicId}/nft/`, data)
 			.then((response) => Promise.resolve(response))
 			.catch((error) => Promise.reject(error.response.data));
 	},

@@ -29,7 +29,7 @@ export default function Home() {
 		getCheckoutItems,
 		setCheckout,
 		setCheckoutItems,
-		pay,
+		transactNFT,
 		transactFree,
 		error,
 	}: any = useCheckout();
@@ -89,7 +89,7 @@ export default function Home() {
 					setIsCheckoutProcessing(false);
 				});
 		} else {
-			pay(paymentData)
+			transactNFT(paymentData)
 				.then(() => {
 					setIsCheckoutProcessing(false);
 					navigate("validation");

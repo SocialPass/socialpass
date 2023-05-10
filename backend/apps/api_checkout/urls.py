@@ -42,7 +42,7 @@ urlpatterns = [
         name="session_items",
     ),
     path(
-        "session/<uuid:checkoutsession_public_id>/transaction/",
+        "session/<uuid:checkoutsession_public_id>/nft/",
         views.CheckoutSessionView.as_view({"post": "transact_asset_ownership"}),
         name="session_transact_asset_ownership",
     ),

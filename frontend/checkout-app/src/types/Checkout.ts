@@ -25,8 +25,9 @@ export type CheckoutContextType = {
 	setCheckoutItems?;
 	saveCheckout?;
 	getTxType?;
-	pay?;
 	isLoading?;
 	isLoadingCheckoutItems?;
 	error?;
+	transactNFT?;
+	transactFree?;
 };

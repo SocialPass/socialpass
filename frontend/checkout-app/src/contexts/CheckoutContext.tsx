@@ -130,6 +130,24 @@ export const CheckoutProvider = ({ children }: any) => {
 				});
 		});
 
+	const transactFree = (data) =>
+		new Promise((resolve, reject) => {
+			CheckoutApi.transactFree(checkout?.public_id, data)
+				.then((response) => {
+					setCheckout({
+						...checkout,
+						tx_status: "PROCESSING",
+						[getTxType(checkout?.tx_type)]: response.data,
+					});
+
+					resolve(response.data);
+				})
+				.catch((err) => {
+					setError(err);
+					reject(err);
+				});
+		});
+
 	return (
 		<CheckoutContext.Provider
 			value={{
@@ -142,6 +160,7 @@ export const CheckoutProvider = ({ children }: any) => {
 				saveCheckout,
 				getTxType,
 				pay,
+				transactFree,
 				isLoading,
 				isLoadingCheckoutItems,
 				error,

@@ -57,6 +57,13 @@ export default {
 			.catch((error) => Promise.reject(error.response.data));
 	},
 
+	transactFree(publicId: any, data: any) {
+		return axios
+			.post(`/api/checkout/v1/session/${publicId}/free/`, data)
+			.then((response) => Promise.resolve(response))
+			.catch((error) => Promise.reject(error.response.data));
+	},
+
 	getConfirmation(publicId: AnyARecord) {
 		return axios
 			.get(`/api/checkout/v1/session/${publicId}/confirmation`, {})

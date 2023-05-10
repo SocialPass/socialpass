@@ -1,5 +1,5 @@
 from apps.root.exceptions import AlreadyRedeemedError, ForbiddenRedemptionError
-from apps.root.utilities.testing import BaseTestCaseWrapper
+from apps.root.testing import BaseTestCaseWrapper
 
 
 class TestScannerTicketMethods(BaseTestCaseWrapper):

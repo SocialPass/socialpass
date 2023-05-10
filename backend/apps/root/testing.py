@@ -28,20 +28,24 @@ class BaseTestCaseWrapper(TestCase):
         # setup event
         cls.event_one = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
         cls.event_two = baker.make("root.Event", user=cls.user_one, team=cls.team_one)
+        cls.ticket_tier = baker.make("root.TicketTier", event=cls.event_one)
 
-        """
-        # TODO: Checkout (Session, Items)
-        cls.checkout_session = CheckoutSessionFactory(event=cls.event)
-        cls.checkout_item = CheckoutItemFactory(
-            ticket_tier=cls.ticket_tier, checkout_session=cls.checkout_session
+        # setup checkout / tickets
+        cls.checkout_session = baker.make("CheckoutSession", event=cls.event_one)
+        cls.checkout_item = baker.make(
+            "CheckoutItem", checkout_session=cls.checkout_session
         )
-
-        cls.ticket = TicketFactory(
+        cls.ticket = baker.make(
+            "Ticket",
             checkout_item=cls.checkout_item,
-            event=cls.event,
+            event=cls.event_one,
             ticket_tier=cls.ticket_tier,
         )
-        cls.ticket_redemption_key = TicketRedemptionKeyFactory(event=cls.event)
+
+        # TODO:
+        """
+        # Set Event Live
+        cls.ticket_redemption_key =  baker.make("TicketRedemptionKey", event=cls.event)
         cls.access_key = cls.ticket_redemption_key.public_id
 
         # TODO: for raising errors

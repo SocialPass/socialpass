@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from rest_framework import status
 
 from apps.api_scanner.views import SetAccessKeyAndEventMixin
-from apps.root.utilities.testing import BaseTestCaseWrapper, prevent_warnings
+from apps.root.testing import BaseTestCaseWrapper, prevent_warnings
 
 
 class TestCaseWrapper(BaseTestCaseWrapper):

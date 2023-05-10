@@ -59,9 +59,7 @@ class GoogleTicket:
 
         # Create the payload
         payload = {
-            "eventName": {
-                "defaultValue": {"language": "en-us", "value": event_obj.title}
-            },
+            "eventName": {"defaultValue": {"language": "en-us", "value": event_obj.title}},
             "reviewStatus": "UNDER_REVIEW",
             "dateTime": {
                 "start": event_obj.start_date.isoformat(),
@@ -114,9 +112,7 @@ class GoogleTicket:
         theme = event_obj.team.theme or {}
         payload["issuerName"] = theme.get("ticket_brand_name", issuer_name)
         payload["hexBackgroundColor"] = theme.get("ticket_bg_color", hex_bg_color)
-        payload["logo"] = {
-            "sourceUri": {"uri": theme.get("ticket_logo_google", logo_uri)}
-        }
+        payload["logo"] = {"sourceUri": {"uri": theme.get("ticket_logo_google", logo_uri)}}
 
         # Insert or update the ticket class
         if is_insert:

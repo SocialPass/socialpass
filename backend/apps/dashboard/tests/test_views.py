@@ -10,7 +10,7 @@ from model_bakery import baker
 
 from apps.dashboard import forms, views
 from apps.root.models import Invite, Membership, Team
-from apps.root.utilities.testing import BaseTestCaseWrapper
+from apps.root.testing import BaseTestCaseWrapper
 
 
 class DashboardTest(BaseTestCaseWrapper):

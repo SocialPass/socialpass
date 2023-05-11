@@ -12,10 +12,9 @@ from apps.root.testing import BaseTestCaseWrapper, prevent_warnings
 class TestCaseWrapper(BaseTestCaseWrapper):
     random_uuid: UUID
 
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.url_base = "/api/checkout/v1/"
-        cls.random_uuid = (
+    def setUpTestData(self):
+        self.url_base = "/api/checkout/v1/"
+        self.random_uuid = (
             uuid4()
         )  # Random UUID string that is not contained in the test DB.
         return super().setUpTestData()

@@ -10,10 +10,9 @@ from apps.root.testing import BaseTestCaseWrapper, prevent_warnings
 
 
 class TestCaseWrapper(BaseTestCaseWrapper):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         # Globals
-        cls.url_base = "/api/scanner/v1/"
+        self.url_base = "/api/scanner/v1/"
         return super().setUpTestData()
 
 

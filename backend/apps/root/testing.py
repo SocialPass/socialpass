@@ -3,7 +3,7 @@ from random import randint
 
 from django.test import TestCase
 from model_bakery import baker
-from apps.root.models import CheckoutSession
+from apps.root.models import CheckoutSession, User
 
 
 def prevent_warnings(func):
@@ -27,10 +27,12 @@ def prevent_warnings(func):
 
 class BaseModelScaffold:
     def setUp(self):
+        super().setUp()
+
         # Setup users
         self.password = "password"
-        self.user_one = baker.make("root.User")
-        self.user_two = baker.make("root.User")
+        self.user_one = baker.make("root.User", username="user_one")
+        self.user_two = baker.make("root.User", username="user_two")
         self.user_one.set_password(self.password)
         self.user_two.set_password(self.password)
         self.user_one.save()
@@ -83,13 +85,17 @@ class BaseModelScaffold:
         # TODO: Improve returning access keys (currently just URL format)
         self.redemption_access_key = self.event.ticketredemptionkey_set.first()
         self.access_key = self.redemption_access_key.public_id
-        return super().setUp()
 
 
 class BaseTestCaseWrapper(BaseModelScaffold, TestCase):
-    """
-    Base TestCase wrapper.
-    Handles default initialization, common vars, methods, etc.
-    """
-
     pass
+
+
+class LocalDBScaffold(BaseModelScaffold):
+    def setUp(self):
+        # Create superuser
+        queryset = User.objects.filter(username="admin")
+        if not queryset.exists():
+            User.objects.create_superuser("admin", "admin@admin.com", "password")
+
+        # return super().setUp()

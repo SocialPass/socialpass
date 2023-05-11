@@ -46,7 +46,7 @@ export default function Summary() {
 							<span>{item.ticket_tier.ticket_type}</span>
 							<span className='ms-auto ps-10 fw-normal'>&times; {item.quantity}</span>
 						</h6>
-
+						<div className='fs-base-n2 text-muted'>Extra Guest(s): {item.extra_party}</div>
 						<div className='fs-base-n2 mt-5'>
 							<strong>Price</strong> &mdash;{" "}
 							{getPriceWithCurrencySymbol(

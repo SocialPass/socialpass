@@ -484,7 +484,7 @@ class Event(DBModel):
         "address_1, address_2, city, country, postal_code" joined
         """
         if not self.city and not self.address_1:
-            return None
+            return ""
 
         # add postal code to city if exists
         if self.postal_code:

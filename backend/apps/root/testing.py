@@ -1,4 +1,5 @@
 import logging
+from random import randint
 
 from django.test import TestCase
 from model_bakery import baker
@@ -41,16 +42,27 @@ class BaseModelScaffold:
 
         # setup event
         self.event = baker.make("root.Event", user=self.user_one, team=self.team_one)
-        self.event_two = baker.make("root.Event", user=self.user_one, team=self.team_one)
         self.event.transition_live(save=True, ignore_google_api=True)
-        # add free tier
+
+        # setup event tiers
+        # - free tier
         self.ticket_tier = baker.make(
             "root.TicketTier",
-            capacity=1000,
+            capacity=randint(1, 10000),
             event=self.event,
             tier_free=baker.make("root.TierFree"),
         )
+
+        # - asset ownership tier
+        self.ticket_tier_two = baker.make(
+            "root.TicketTier",
+            capacity=randint(1, 10000),
+            event=self.event,
+            tier_asset_ownership=baker.make("root.TierAssetOwnership"),
+        )
+
         # setup checkout session / items / ticket
+        # - free tier
         self.checkout_session = baker.make(
             "root.CheckoutSession",
             event=self.event,
@@ -61,12 +73,14 @@ class BaseModelScaffold:
             ticket_tier=self.ticket_tier,
             checkout_session=self.checkout_session,
         )
+        # TODO: Use checkout code here
         self.ticket = baker.make(
             "Ticket",
             checkout_item=self.checkout_item,
             event=self.event,
             ticket_tier=self.ticket_tier,
         )
+        # TODO: Improve returning access keys (currently just URL format)
         self.redemption_access_key = self.event.ticketredemptionkey_set.first()
         self.access_key = self.redemption_access_key.public_id
         return super().setUp()

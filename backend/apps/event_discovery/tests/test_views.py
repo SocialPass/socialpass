@@ -20,7 +20,6 @@ class EventDiscoveryTest(BaseTestCaseWrapper):
 
         # Test GET (2 live events)
         self.event.transition_live(ignore_google_api=True)
-        self.event_two.transition_live(ignore_google_api=True)
         url = reverse("discovery:browse")
         response = self.client.get(url)
         self.assertEqual(response.context_data["events"].count(), 2)

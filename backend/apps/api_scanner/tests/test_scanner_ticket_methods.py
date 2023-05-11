@@ -4,7 +4,7 @@ from apps.root.testing import BaseTestCaseWrapper
 
 class TestScannerTicketMethods(BaseTestCaseWrapper):
     def setUp(self):
-        return super().setUpTestData()
+        return super().setUp()
 
     def test_redeem_ticket(self):
         """

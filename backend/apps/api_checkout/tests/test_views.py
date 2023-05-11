@@ -12,12 +12,12 @@ from apps.root.testing import BaseTestCaseWrapper, prevent_warnings
 class TestCaseWrapper(BaseTestCaseWrapper):
     random_uuid: UUID
 
-    def setUpTestData(self):
+    def setUp(self):
         self.url_base = "/api/checkout/v1/"
         self.random_uuid = (
             uuid4()
         )  # Random UUID string that is not contained in the test DB.
-        return super().setUpTestData()
+        return super().setUp()
 
     def assertSerializedDatetime(self, datetime_string, datetime_field, format=empty):
         self.assertEqual(

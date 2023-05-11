@@ -13,7 +13,7 @@ class TestCaseWrapper(BaseTestCaseWrapper):
     def setUp(self):
         # Globals
         self.url_base = "/api/scanner/v1/"
-        return super().setUpTestData()
+        return super().setUp()
 
 
 class TestMixins(TestCaseWrapper):

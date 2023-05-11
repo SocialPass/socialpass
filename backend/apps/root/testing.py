@@ -2,6 +2,7 @@ import logging
 
 from django.test import TestCase
 from model_bakery import baker
+from apps.root.models import CheckoutSession
 
 
 class BaseTestCaseWrapper(TestCase):
@@ -27,12 +28,23 @@ class BaseTestCaseWrapper(TestCase):
         # setup event
         self.event = baker.make("root.Event", user=self.user_one, team=self.team_one)
         self.event_two = baker.make("root.Event", user=self.user_one, team=self.team_one)
-        self.ticket_tier = baker.make("root.TicketTier", event=self.event)
-
-        # setup checkout / tickets
-        self.checkout_session = baker.make("CheckoutSession", event=self.event)
+        # add free tier
+        self.ticket_tier = baker.make(
+            "root.TicketTier",
+            capacity=1000,
+            event=self.event,
+            tier_free=baker.make("root.TierFree"),
+        )
+        # setup checkout session / items / ticket
+        self.checkout_session = baker.make(
+            "root.CheckoutSession",
+            event=self.event,
+            tx_type=CheckoutSession.TransactionType.FREE,
+        )
         self.checkout_item = baker.make(
-            "CheckoutItem", checkout_session=self.checkout_session
+            "CheckoutItem",
+            ticket_tier=self.ticket_tier,
+            checkout_session=self.checkout_session,
         )
         self.ticket = baker.make(
             "Ticket",
@@ -40,12 +52,7 @@ class BaseTestCaseWrapper(TestCase):
             event=self.event,
             ticket_tier=self.ticket_tier,
         )
-
-        # TODO:
         """
-        # Set Event Live
-        self.ticket_redemption_key =  baker.make("TicketRedemptionKey", event=self.event)
-        self.access_key = self.ticket_redemption_key.public_id
 
         # TODO: for raising errors
         self._event = EventFactory(team=self.team, user=self.user)

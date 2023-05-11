@@ -5,12 +5,26 @@ from model_bakery import baker
 from apps.root.models import CheckoutSession
 
 
-class BaseTestCaseWrapper(TestCase):
+def prevent_warnings(func):
     """
-    Base TestCase wrapper.
-    Handles default initialization, common vars, methods, etc.
+    Decorator for ignoring 400s status codes for test evaluation.
+    Decorate every 400-500s codes tests with this.
     """
 
+    def new_func(*args, **kwargs):
+        # Temporarily increasing logging level so the 404 tests do not pollute the test CLI
+        logger = logging.getLogger("django.request")
+        previous_logging_level = logger.getEffectiveLevel()
+        logger.setLevel(logging.ERROR)
+
+        func(*args, **kwargs)
+
+        logger.setLevel(previous_logging_level)
+
+    return new_func
+
+
+class BaseModelScaffold:
     def setUp(self):
         # Setup users
         self.password = "password"
@@ -55,38 +69,13 @@ class BaseTestCaseWrapper(TestCase):
         )
         self.redemption_access_key = self.event.ticketredemptionkey_set.first()
         self.access_key = self.redemption_access_key.public_id
-        """
-
-        # TODO: for raising errors
-        self._event = EventFactory(team=self.team, user=self.user)
-        self._ticket_tier = TicketTierFactory(event=self._event)
-        self._checkout_session = CheckoutSessionFactory(event=self._event)
-        self._checkout_item = CheckoutItemFactory(
-            ticket_tier=self._ticket_tier, checkout_session=self._checkout_session
-        )
-        self._ticket = TicketFactory(
-            checkout_item=self._checkout_item,
-            event=self._event,
-            ticket_tier=self._ticket_tier,
-        )
-        """
-        return super().setUpTestData()
+        return super().setUp()
 
 
-def prevent_warnings(func):
+class BaseTestCaseWrapper(BaseModelScaffold, TestCase):
     """
-    Decorator for ignoring 400s status codes for test evaluation.
-    Decorate every 400-500s codes tests with this.
+    Base TestCase wrapper.
+    Handles default initialization, common vars, methods, etc.
     """
 
-    def new_func(*args, **kwargs):
-        # Temporarily increasing logging level so the 404 tests do not pollute the test CLI
-        logger = logging.getLogger("django.request")
-        previous_logging_level = logger.getEffectiveLevel()
-        logger.setLevel(logging.ERROR)
-
-        func(*args, **kwargs)
-
-        logger.setLevel(previous_logging_level)
-
-    return new_func
+    pass

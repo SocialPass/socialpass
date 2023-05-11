@@ -7,9 +7,8 @@ from apps.root.testing import BaseTestCaseWrapper
 
 
 class EventDiscoveryTest(BaseTestCaseWrapper):
-    @classmethod
-    def setUpTestData(cls):
-        cls.event_one = baker.make("Event")
+    def setUp(self):
+        self.event_one = baker.make("Event")
 
     def test_discovery_index(self):
         # Test GET

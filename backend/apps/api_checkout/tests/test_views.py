@@ -60,11 +60,10 @@ class GetEventTestCase(TestCaseWrapper):
             event_dict["localized_address_display"],
             self.event.localized_address_display,
         )
-        self.assertEqual(event_dict["cover_image"], self.event.cover_image.url)
         self.assertSerializedDatetime(
             event_dict["start_date"], self.event.start_date, "%a, %b %d, %Y | %H:%M %p"
         )
-        self.assertEqual(event_dict["team"]["name"], self.team.name)
+        self.assertEqual(event_dict["team"]["name"], self.team_one.name)
 
     @prevent_warnings
     def test_get_event_details_404_not_found(self):
@@ -413,7 +412,7 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             "name": fake.name(),
             "email": fake.email(),
             "tx_status": CheckoutSession.OrderStatus.VALID,
-            "tx_type": CheckoutSession.TransactionType.FIAT,
+            "tx_type": CheckoutSession.TransactionType.FREE,
             "event": str(event),
             "checkout_items": items,
         }

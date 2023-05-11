@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.api_checkout import serializers
-from apps.root.exceptions import TxAssetOwnershipProcessingError
+from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 from apps.root.models import CheckoutItem, CheckoutSession, Event
 
 
@@ -148,6 +148,8 @@ class CheckoutSessionView(
                 return serializers.CheckoutSessionUpdateSerializer
             case "transact_asset_ownership":
                 return serializers.TxAssetOwnershipWriteSerializer
+            case "transact_free":
+                return serializers.TxFreeWriteSerializer
             case "confirmation":
                 return serializers.ConfirmationSerializer
             case _:
@@ -200,6 +202,29 @@ class CheckoutSessionView(
             tx.process(checkout_session=checkout_session)
             return Response(status=status.HTTP_201_CREATED)
         except TxAssetOwnershipProcessingError as e:
+            return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=["post"], detail=True)
+    def transact_free(self, request, *args, **kwargs):
+        """
+        transact_free
+        """
+        # get objects
+        checkout_session = self.get_object()
+        tx = checkout_session.tx_free
+
+        # serialize data
+        serializer = self.get_serializer(tx, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        tx = serializer.save()
+
+        # try/except on processing transaction
+        try:
+            tx.process(checkout_session=checkout_session)
+            return Response(status=status.HTTP_201_CREATED)
+        except TxFreeProcessingError as e:
             return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)

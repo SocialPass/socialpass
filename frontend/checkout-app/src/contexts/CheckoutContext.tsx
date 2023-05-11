@@ -112,9 +112,27 @@ export const CheckoutProvider = ({ children }: any) => {
 			}
 		});
 
-	const pay = (data) =>
+	const transactNFT = (data) =>
 		new Promise((resolve, reject) => {
-			CheckoutApi.pay(checkout?.public_id, data)
+			CheckoutApi.transactNFT(checkout?.public_id, data)
+				.then((response) => {
+					setCheckout({
+						...checkout,
+						tx_status: "PROCESSING",
+						[getTxType(checkout?.tx_type)]: response.data,
+					});
+
+					resolve(response.data);
+				})
+				.catch((err) => {
+					setError(err);
+					reject(err);
+				});
+		});
+
+	const transactFree = (data) =>
+		new Promise((resolve, reject) => {
+			CheckoutApi.transactFree(checkout?.public_id, data)
 				.then((response) => {
 					setCheckout({
 						...checkout,
@@ -141,7 +159,8 @@ export const CheckoutProvider = ({ children }: any) => {
 				setCheckoutItems,
 				saveCheckout,
 				getTxType,
-				pay,
+				transactNFT,
+				transactFree,
 				isLoading,
 				isLoadingCheckoutItems,
 				error,

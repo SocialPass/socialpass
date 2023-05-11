@@ -15,7 +15,7 @@ The app should allow users (organizers) to do the following things:
 Apart from the above functional requirements, the app should also adhere to the following:
 
 - Load reasonably fast and work on all browsers
-- Be available only for authenticated users 
+- Be available only for authenticated users
 
 ## User Flows
 

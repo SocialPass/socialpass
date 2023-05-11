@@ -22,7 +22,15 @@ from apps.dashboard.forms import (
     TicketTierForm,
     TierAssetOwnershipForm,
 )
-from apps.root.models import Event, Invite, Membership, Team, Ticket, TicketTier
+from apps.root.models import (
+    Event,
+    Invite,
+    Membership,
+    Team,
+    Ticket,
+    TicketTier,
+    TierFree,
+)
 
 User = auth.get_user_model()
 
@@ -124,9 +132,7 @@ class RedirectToTeamView(RedirectView):
         if self.request.user.is_authenticated:
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
-                return reverse(
-                    "dashboard:event_list", args=(membership.team.public_id,)
-                )
+                return reverse("dashboard:event_list", args=(membership.team.public_id,))
             else:
                 return reverse("dashboard:team_create")
         else:
@@ -185,9 +191,7 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         if invitation.accepted:
             return render(self.request, "invitations/already_accepted.html")
 
-        return render(
-            self.request, "invitations/accept.html", {"invitation": invitation}
-        )
+        return render(self.request, "invitations/accept.html", {"invitation": invitation})
 
     def post(self, *args, **kwargs):
         """
@@ -566,14 +570,29 @@ class EventStatsView(TeamContextMixin, DetailView):
         return context
 
 
-class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+class TicketTierCreateView(TeamContextMixin, TemplateView):
     """
-    Create an event's ticket tier.
+    Select the type of ticket tier to create.
+    """
+
+    template_name = "dashboard/ticket_tier_create.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+
+class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+    """
+    Create an NFT-based ticket tier.
     """
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "dashboard/ticket_tier_form.html"
+    template_name = "dashboard/ticket_tier_nft_form.html"
     form_data = None
 
     def get_context_data(self, **kwargs):
@@ -612,7 +631,41 @@ class TicketTierCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
-        return "Your ticket has been created successfully!"
+        return "Your ticket tier has been created successfully!"
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard:event_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+        )
+
+
+class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+    """
+    Create a free ticket tier.
+    """
+
+    model = TicketTier
+    form_class = TicketTierForm
+    template_name = "dashboard/ticket_tier_free_form.html"
+    form_data = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+    def form_valid(self, form, **kwargs):
+        self.form_data = form.data
+        form.instance.tier_free = TierFree.objects.create()
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        return super().form_valid(form)
+
+    def get_success_message(self, *args, **kwargs):
+        return "Your ticket tier has been created successfully!"
 
     def get_success_url(self, *args, **kwargs):
         return reverse(

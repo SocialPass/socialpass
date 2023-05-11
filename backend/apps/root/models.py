@@ -767,6 +767,12 @@ class TicketTier(DBModel):
         blank=True,
         null=True,
     )
+    tier_free = models.OneToOneField(
+        "TierFree",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
 
     # basic info
     ticket_type = models.CharField(
@@ -891,6 +897,17 @@ class TierAssetOwnership(DBModel):
         return f"TierAssetOwnership {self.public_id}"
 
 
+class TierFree(DBModel):
+    """
+    Represents a free tier for an event ticket
+    """
+
+    issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
+
+    def __str__(self) -> str:
+        return f"TierFree {self.public_id}"
+
+
 def get_random_passcode():
     """
     Get a random 6-digit passcode.
@@ -922,6 +939,7 @@ class CheckoutSession(DBModel):
         FIAT = "FIAT", _("Fiat")
         BLOCKCHAIN = "BLOCKCHAIN", _("Blockchain")
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
+        FREE = "FREE", _("Free")
 
     # keys
     event = models.ForeignKey(
@@ -944,6 +962,12 @@ class CheckoutSession(DBModel):
     )
     tx_asset_ownership = models.OneToOneField(
         "TxAssetOwnership",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    tx_free = models.OneToOneField(
+        "TxFree",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -1455,6 +1479,38 @@ class TxAssetOwnership(DBModel):
             raise e
 
         # OK
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        checkout_session.save()
+        checkout_session.fulfill()
+
+
+class TxFree(DBModel):
+    """
+    Represents a free checkout transaction
+    """
+
+    def __str__(self) -> str:
+        return f"TxFree {self.public_id}"
+
+    def process(self, checkout_session=None):
+        """
+        Go through the states, only stop to check for issued emails.
+        """
+        if not checkout_session:
+            checkout_session = self.checkoutsession
+        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        checkout_session.save()
+
+        # Check for issued emails
+        for item in checkout_session.checkoutitem_set.all():
+            if checkout_session.email in item.ticket_tier.tier_free.issued_emails:
+                checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+                checkout_session.save()
+                raise Exception("This email has already been used for this ticket tier.")
+            else:
+                item.ticket_tier.tier_free.issued_emails.append(checkout_session.email)
+                item.ticket_tier.tier_free.save()
+
         checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
         checkout_session.fulfill()

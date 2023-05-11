@@ -53,10 +53,10 @@
 					{% for ticket_tier in event.tickettier_set.all %}
 						<div class="my-20 border rounded">
 							<div class="p-15 p-sm-20">
-								<div class="d-flex align-items-center mb-20">
+								<div class="d-flex align-items-center mb-10">
 									<div>
 										<div class="text-muted fs-base-n2">
-											Name of Ticket Tier:
+											Name & Type of Ticket Tier:
 										</div>
 										<h6 class="m-0 fs-base-p2 mt-5">
 											{{ ticket_tier.ticket_type }}
@@ -79,42 +79,18 @@
 									</div>
 								</div>
 								<div class="mb-20">
-									<div class="text-muted fs-base-n2">
-										Checkout Methods:
-									</div>
 									<div>
-										{% if ticket_tier.tier_fiat %}
-											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-check"></i>
-												Fiat
-											</span>
-										{% else %}
-											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-times"></i>
-												Fiat
-											</span>
-										{% endif %}
-										{% if ticket_tier.tier_blockchain %}
-											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-check"></i>
-												Crypto
-											</span>
-										{% else %}
-											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-times"></i>
-												Crypto
-											</span>
-										{% endif %}
 										{% if ticket_tier.tier_asset_ownership %}
-											<span class="badge badge-success badge-pill fs-base-n2 lh-sm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-check"></i>
+											<strong class="badge badge-success border-transparent py-5 ws-200 mw-100 fs-base">
+												<i class="fa-regular fa-hexagon-vertical-nft me-5"></i>
 												NFTs
-											</span>
-										{% else %}
-											<span class="badge badge-pill fs-base-n2 lh-sm text-base bg-gray-very-light-lm bg-darkgray-dim-dm border-transparent mt-5 me-5">
-												<i class="fa-regular fa-times"></i>
-												NFTs
-											</span>
+											</strong>
+										{% endif %}
+										{% if ticket_tier.tier_free %}
+											<strong class="badge badge-success border-transparent py-5 ws-200 mw-100 fs-base">
+												<i class="fa-regular fa-party-horn me-5"></i>
+												Free
+											</strong>
 										{% endif %}
 									</div>
 								</div>

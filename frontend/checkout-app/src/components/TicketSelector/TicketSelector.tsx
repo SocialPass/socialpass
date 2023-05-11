@@ -132,19 +132,18 @@ function TicketSelector(props): JSX.Element {
 							</button>
 						</div>
 
-						{paymentType === "ASSET_OWNERSHIP" ? (
+						{paymentType === "ASSET_OWNERSHIP" || paymentType === "FREE" ? (
 							<div className='text-center fs-12 mt-5'>
 								Max {ticketTier?.max_per_person} per person
 							</div>
 						) : null}
-
-						{paymentType !== "ASSET_OWNERSHIP" && amount > 0 ? (
+						{(paymentType === "FIAT" || paymentType === "BLOCKCHAIN") && amount > 0 ? (
 							<div className='text-center fs-base-n2 mt-5'>
 								<strong>Price &times; {amount}</strong> &mdash;{" "}
 								{getPriceWithCurrencySymbol(ticketTier[paymentType]?.price * amount)}
 							</div>
 						) : null}
-						{paymentType !== "ASSET_OWNERSHIP" && amount == 0 ? (
+						{(paymentType === "FIAT" || paymentType === "BLOCKCHAIN") && amount == 0 ? (
 							<div className='text-center fs-base-n2 mt-5'>
 								<strong>Price: &times; 1 </strong>
 								&mdash; {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price)}
@@ -159,10 +158,17 @@ function TicketSelector(props): JSX.Element {
 							<div className='col-6'>
 								<strong>Blockchain</strong>
 								<br />
-								{ticketTier.tier_asset_ownership.blockchain === "Ethereum" && (
-									<i className='fa-brands fa-ethereum me-5'></i>
-								)}
-								{ticketTier.tier_asset_ownership.blockchain}
+								<div className='d-flex align-items-center'>
+									{ticketTier.tier_asset_ownership.blockchain === "Ethereum" && (
+										<img
+											src='https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png'
+											alt='Ethereum'
+											className='d-block me-5'
+											height='16'
+										></img>
+									)}
+									{ticketTier.tier_asset_ownership.blockchain}
+								</div>
 							</div>
 							<div className='col-6'>
 								<strong>Network</strong>
@@ -178,7 +184,7 @@ function TicketSelector(props): JSX.Element {
 							<div className='col-6'>
 								<strong>Asset Type</strong>
 								<br />
-								<i className='fa-solid fa-hexagon-vertical-nft-slanted me-5'></i>
+								<i className='fa-light fa-hexagon-image me-5'></i>
 								{ticketTier.tier_asset_ownership.asset_type}
 							</div>
 							<div className='col-6 text-truncate'>
@@ -186,6 +192,18 @@ function TicketSelector(props): JSX.Element {
 								<br />
 								{ticketTier.tier_asset_ownership?.token_address}
 							</div>
+						</div>
+					</div>
+				) : null}
+				{paymentType === "FREE" ? (
+					<div className='border-top mt-10 pt-10 fs-base-n2'>
+						<div>
+							<i className='fa-light fa-info-circle me-5'></i>
+							<strong>This is a FREE ticket tier</strong>
+						</div>
+						<div className='text-muted mt-5'>
+							You can claim ticket(s) as long as they are available. First come, first
+							served!
 						</div>
 					</div>
 				) : null}

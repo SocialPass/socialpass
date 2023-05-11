@@ -1,0 +1,81 @@
+{% extends 'bases/base_primary.html' %}
+{% load static get_theme_value i18n crispy_forms_tags %}
+
+{% block head_title %}
+{% if request.resolver_match.url_name == 'event_create' %}
+	Create Event
+{% else %}
+	{{ event.title }}
+{% endif %} - {% get_theme_value "brand_name" %}
+{% endblock head_title %}
+
+{% block navbar_breadcrumb %}
+{% if url_name == 'event_create' %}
+	Create Event
+{% else %}
+	Event Details
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+{% include 'components/event_details_page_header.html' %}
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	{% include 'components/event_details_card_header.html' %}
+	<!-- Card header end -->
+
+	<!-- Main content start -->
+	<div class="row">
+		<div class="col-lg-9 col-xl-7 mx-auto">
+			<div class="content">
+				<h3 class="fs-base-p4 m-0 d-flex align-items-center">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-plus-circle"></i>
+					</span>
+					Create Ticket Tier
+				</h3>
+				<div class="alert alert-primary d-flex align-items-center mb-30" role="alert">
+					<i class="fa-regular fa-info-circle me-10"></i>
+					<span>
+						Please select the <strong>type of ticket tier</strong> you want to create for <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="alert-link">{{ event.title }}</a>. Your event must have at least one ticket tier before going live.
+					</span>
+				</div>
+				<a href="{% url 'dashboard:ticket_tier_free_create' current_team.public_id event.pk  %}" class="btn btn-lg btn-block py-10 d-flex flex-column mt-20">
+					<div class="d-flex align-items-center">
+						<i class="fa-light fa-party-horn me-20 text-primary"></i>
+						<strong class="antialiased text-base me-20">Free Ticket Tier</strong>
+						<i class="fa-light fa-arrow-right ms-auto"></i>
+					</div>
+					<div class="border-top border-start-0 border-end-0 border-bottom-0 border-dotted pt-10 mt-10 text-muted fs-base-n2 text-start d-flex align-items-center">
+						<i class="fa-light fa-info-circle me-20 flex-shrink-0"></i>
+						Requires no payment. Only quantity checks are made during purchase.
+					</div>
+				</a>
+				<a href="{% url 'dashboard:ticket_tier_nft_create' current_team.public_id event.pk  %}" class="btn btn-lg btn-block py-10 d-flex flex-column mt-20">
+					<div class="d-flex align-items-center">
+						<i class="fa-light fa-hexagon-vertical-nft me-20 text-primary"></i>
+						<strong class="antialiased text-base me-20">NFT Ticket Tier</strong>
+						<i class="fa-light fa-arrow-right ms-auto"></i>
+					</div>
+					<div class="border-top border-start-0 border-end-0 border-bottom-0 border-dotted pt-10 mt-10 text-muted fs-base-n2 text-start d-flex align-items-center">
+						<i class="fa-light fa-info-circle me-20 flex-shrink-0"></i>
+						Requires the user to prove ownership of digital assets (NFTs).
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+	<!-- Main content end -->
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top text-muted fs-base-n2">
+		Please <a href="#" data-hm-toggle="modal" data-hm-target="discord-support-ticket-modal" target="_blank" class="fw-bold antialiased">contact us</a> and let us know if you need help managing your event.
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+{% endblock %}

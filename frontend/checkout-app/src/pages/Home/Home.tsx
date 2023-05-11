@@ -51,6 +51,9 @@ export default function Home() {
 			(ticket) => "tier_asset_ownership" in ticket && ticket.tier_asset_ownership,
 		);
 
+	const getFreeTicketTiers = () =>
+		ticketTiers.filter((ticket) => "tier_free" in ticket && ticket.tier_free);
+
 	const getPaymentTypeTicketTiers = () => {
 		if (checkout?.tx_type == "FIAT") {
 			return getFiatTicketTiers();
@@ -60,6 +63,9 @@ export default function Home() {
 		}
 		if (checkout?.tx_type == "ASSET_OWNERSHIP") {
 			return getAssetOwnershipTicketTiers();
+		}
+		if (checkout?.tx_type == "FREE") {
+			return getFreeTicketTiers();
 		}
 		return [];
 	};
@@ -168,12 +174,18 @@ export default function Home() {
 
 	useEffect(() => {
 		if (!checkout?.public_id) {
-			if (getFiatTicketTiers().length) {
-				setCheckout({ ...checkout, tx_type: "FIAT" });
-			} else if (getBlockchainTicketTiers().length) {
-				setCheckout({ ...checkout, tx_type: "BLOCKCHAIN" });
-			} else if (getAssetOwnershipTicketTiers().length) {
+			// Prioritize NFTs < CRYPTO < FIAT < FREE
+			if (getAssetOwnershipTicketTiers().length > 0) {
 				setCheckout({ ...checkout, tx_type: "ASSET_OWNERSHIP" });
+			}
+			if (getBlockchainTicketTiers().length > 0) {
+				setCheckout({ ...checkout, tx_type: "BLOCKCHAIN" });
+			}
+			if (getFiatTicketTiers().length > 0) {
+				setCheckout({ ...checkout, tx_type: "FIAT" });
+			}
+			if (getFreeTicketTiers().length > 0) {
+				setCheckout({ ...checkout, tx_type: "FREE" });
 			}
 		}
 	}, [ticketTiers, checkout?.public_id]);
@@ -236,7 +248,7 @@ export default function Home() {
 										paddingTop: "12rem",
 										background:
 											"linear-gradient(transparent, var(--base-content-bg-color))",
-										borderBottom: "1px dotted var(--border-color)",
+										borderBottom: "1px solid var(--border-color)",
 									}}
 								>
 									<button
@@ -331,105 +343,70 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
-
-			{/*
-      {eventHasTickets() ? (
-        <>
-          <div className='content mb-0'>
-            <div className='ticket-tier-group'>
-              <div
-                className={'ticket-tier'}
-                onClick={() => {
-                  if (getFiatTicketTiers().length && isNewCheckout()) {
-                    setCheckout({ ...checkout, tx_type: 'FIAT' })
-                    setCheckoutItems([])
-                  }
-                }}
-              >
-                <input
-                  type='radio'
-                  className='ticket-tier-input'
-                  disabled={!getFiatTicketTiers().length}
-                  checked={checkout?.tx_type === 'FIAT'}
-                  readOnly
-                />
-                <label htmlFor='fiat' className='ticket-tier-label'>
-                  <h6 className='fw-700 m-0 fs-base'>
-                    <span className='ticket-tier-uncheck'>
-                      <i className='fa-light fa-money-check-dollar-pen'></i>
-                    </span>
-                    <span className='ticket-tier-check'>
-                      <i className='fa-light fa-money-check-dollar-pen'></i>
-                    </span>
-                    Fiat
-                  </h6>
-                </label>
-              </div>
-              <div
-                className={'ticket-tier'}
-                onClick={() => {
-                  if (getBlockchainTicketTiers().length && isNewCheckout()) {
-                    setCheckout({ ...checkout, tx_type: 'BLOCKCHAIN' })
-                    setCheckoutItems([])
-                  }
-                }}
-              >
-                <input
-                  type='radio'
-                  className='ticket-tier-input'
-                  disabled={!getBlockchainTicketTiers().length}
-                  checked={checkout?.tx_type === 'BLOCKCHAIN'}
-                  readOnly
-                />
-                <label htmlFor='fiat' className='ticket-tier-label'>
-                  <h6 className='fw-700 m-0 fs-base'>
-                    <span className='ticket-tier-uncheck'>
-                      <i className='fa-light fa-wallet'></i>
-                    </span>
-                    <span className='ticket-tier-check'>
-                      <i className='fa-light fa-wallet'></i>
-                    </span>
-                    Crypto
-                  </h6>
-                </label>
-              </div>
-              <div
-                className={'ticket-tier'}
-                onClick={() => {
-                  if (getAssetOwnershipTicketTiers().length && isNewCheckout()) {
-                    setCheckout({ ...checkout, tx_type: 'ASSET_OWNERSHIP' })
-                    setCheckoutItems([])
-                  }
-                }}
-              >
-                <input
-                  type='radio'
-                  className='ticket-tier-input'
-                  disabled={!getAssetOwnershipTicketTiers().length}
-                  checked={checkout?.tx_type === 'ASSET_OWNERSHIP'}
-                  readOnly
-                />
-                <label htmlFor='fiat' className='ticket-tier-label'>
-                  <h6 className='fw-700 m-0 fs-base'>
-                    <span className='ticket-tier-uncheck'>
-                      <i className='fa-light fa-hexagon-image'></i>
-                    </span>
-                    <span className='ticket-tier-check'>
-                      <i className='fa-light fa-hexagon-image'></i>
-                    </span>
-                    NFTs
-                  </h6>
-                </label>
-              </div>
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className='py-20'></div>
-        </>
-      )}
-    	*/}
+			{!tiersLoading &&
+				getFreeTicketTiers().length > 0 &&
+				getAssetOwnershipTicketTiers().length > 0 && (
+					<div className='content mb-0'>
+						<div className='ticket-tier-group'>
+							<div
+								className={"ticket-tier"}
+								onClick={() => {
+									if (getFreeTicketTiers().length && isNewCheckout()) {
+										setCheckout({ ...checkout, tx_type: "FREE" });
+										setCheckoutItems([]);
+									}
+								}}
+							>
+								<input
+									type='radio'
+									className='ticket-tier-input'
+									disabled={!getFreeTicketTiers().length}
+									checked={checkout?.tx_type === "FREE"}
+									readOnly
+								/>
+								<label className='ticket-tier-label'>
+									<h6 className='fw-700 m-0 fs-base'>
+										<span className='ticket-tier-uncheck'>
+											<i className='fa-light fa-party-horn'></i>
+										</span>
+										<span className='ticket-tier-check'>
+											<i className='fa-light fa-party-horn'></i>
+										</span>
+										Free
+									</h6>
+								</label>
+							</div>
+							<div
+								className={"ticket-tier"}
+								onClick={() => {
+									if (getAssetOwnershipTicketTiers().length && isNewCheckout()) {
+										setCheckout({ ...checkout, tx_type: "ASSET_OWNERSHIP" });
+										setCheckoutItems([]);
+									}
+								}}
+							>
+								<input
+									type='radio'
+									className='ticket-tier-input'
+									disabled={!getAssetOwnershipTicketTiers().length}
+									checked={checkout?.tx_type === "ASSET_OWNERSHIP"}
+									readOnly
+								/>
+								<label className='ticket-tier-label'>
+									<h6 className='fw-700 m-0 fs-base'>
+										<span className='ticket-tier-uncheck'>
+											<i className='fa-light fa-hexagon-image'></i>
+										</span>
+										<span className='ticket-tier-check'>
+											<i className='fa-light fa-hexagon-image'></i>
+										</span>
+										NFTs
+									</h6>
+								</label>
+							</div>
+						</div>
+					</div>
+				)}
 
 			{tiersLoading ? (
 				<div className='text-center py-40'>

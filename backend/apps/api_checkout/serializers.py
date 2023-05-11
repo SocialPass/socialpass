@@ -15,6 +15,7 @@ from apps.root.models import (
     TxAssetOwnership,
     TxBlockchain,
     TxFiat,
+    TxFree,
 )
 
 
@@ -73,9 +74,7 @@ class TeamReadSerializer(BaseModelSerializer):
             theme["favicon"] = request.build_absolute_uri(static(obj.theme["favicon"]))
 
         if "css_theme" in obj.theme:
-            theme["css_theme"] = request.build_absolute_uri(
-                static(obj.theme["css_theme"])
-            )
+            theme["css_theme"] = request.build_absolute_uri(static(obj.theme["css_theme"]))
 
         return theme
 
@@ -148,6 +147,7 @@ class TicketTierReadSerializer(BaseModelSerializer):
             "tier_fiat",
             "tier_blockchain",
             "tier_asset_ownership",
+            "tier_free",
             "quantity_sold",
         ]
 
@@ -257,7 +257,7 @@ class CheckoutSessionItemsCreateSerializer(BaseModelSerializer):
 
 class TxAssetOwnershipWriteSerializer(serializers.ModelSerializer):
     """
-    TxAssetOwnership model read serializer
+    TxAssetOwnership model write serializer
     """
 
     class Meta:
@@ -308,6 +308,30 @@ class TxFiatReadSerializer(serializers.ModelSerializer):
         ]
 
 
+class TxFreeWriteSerializer(serializers.ModelSerializer):
+    """
+    TxFree model write serializer
+    """
+
+    class Meta:
+        model = TxFree
+        fields: list = []
+
+
+class TxFreeReadSerializer(serializers.ModelSerializer):
+    """
+    TxFree model read serializer
+    """
+
+    class Meta:
+        model = TxFree
+        fields = [
+            "created",
+            "modified",
+            "public_id",
+        ]
+
+
 class CheckoutSessionCreateSerializer(BaseModelSerializer):
     """
     CheckoutSession model create serializer with nested CheckoutItems
@@ -325,6 +349,7 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             "tx_asset_ownership",
             "tx_blockchain",
             "tx_fiat",
+            "tx_free",
             "event",
             "checkout_items",
         ]
@@ -342,6 +367,7 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
     tx_asset_ownership = TxAssetOwnershipReadSerializer(required=False, write_only=True)
     tx_blockchain = TxBlockchainReadSerializer(required=False, write_only=True)
     tx_fiat = TxFiatReadSerializer(required=False, write_only=True)
+    tx_free = TxFreeReadSerializer(required=False, write_only=True)
 
     def create(self, validated_data):
         """
@@ -353,9 +379,7 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
         checkout_items = validated_data.pop("checkoutitem_set")
         checkout_session = CheckoutSession.objects.create(**validated_data)
         for item in checkout_items:
-            CheckoutItem.objects.create(
-                checkout_session=checkout_session, **item
-            ).clean()
+            CheckoutItem.objects.create(checkout_session=checkout_session, **item).clean()
 
         # create Transaction
         # also save tx to the CheckoutSession
@@ -369,6 +393,9 @@ class CheckoutSessionCreateSerializer(BaseModelSerializer):
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 tx = TxAssetOwnership.objects.create()
                 checkout_session.tx_asset_ownership = tx
+            case CheckoutSession.TransactionType.FREE:
+                tx = TxFree.objects.create()
+                checkout_session.tx_free = tx
         checkout_session.save()
 
         # return parent CheckoutSession
@@ -399,6 +426,7 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
             "tx_asset_ownership",
             "tx_blockchain",
             "tx_fiat",
+            "tx_free",
             "event",
             "checkout_items",
             "passcode",
@@ -420,6 +448,7 @@ class CheckoutSessionReadSerializer(BaseModelSerializer):
     tx_asset_ownership = TxAssetOwnershipReadSerializer(required=False)
     tx_blockchain = TxBlockchainReadSerializer(required=False)
     tx_fiat = TxFiatReadSerializer(required=False)
+    tx_free = TxFreeReadSerializer(required=False)
 
 
 class CheckoutSessionUpdateSerializer(BaseModelSerializer):

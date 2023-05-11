@@ -28,6 +28,7 @@ class BaseTestCaseWrapper(TestCase):
         # setup event
         self.event = baker.make("root.Event", user=self.user_one, team=self.team_one)
         self.event_two = baker.make("root.Event", user=self.user_one, team=self.team_one)
+        self.event.transition_live(save=True, ignore_google_api=True)
         # add free tier
         self.ticket_tier = baker.make(
             "root.TicketTier",
@@ -52,6 +53,8 @@ class BaseTestCaseWrapper(TestCase):
             event=self.event,
             ticket_tier=self.ticket_tier,
         )
+        self.redemption_access_key = self.event.ticketredemptionkey_set.first()
+        self.access_key = self.redemption_access_key.public_id
         """
 
         # TODO: for raising errors

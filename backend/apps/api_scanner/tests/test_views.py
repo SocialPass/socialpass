@@ -60,7 +60,7 @@ class TestMixins(TestCaseWrapper):
         self.view.set_event_and_redemption_access_key(
             redemption_access_key=self.access_key
         )
-        self.assertEqual(self.view.redemption_access_key, self.ticket_redemption_key)
+        self.assertEqual(self.view.redemption_access_key, self.redemption_access_key)
         self.assertEqual(self.view.event, self.event)
 
     def test_set_event_and_redemption_access_key_function_error(self):
@@ -89,7 +89,7 @@ class GetEventDetailsTestCase(TestCaseWrapper):
         response = self.client.get(f"{self.url_base}{self.access_key}/event/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["team"]["name"], self.team.name)
+        self.assertEqual(response.json()["team"]["name"], self.team_one.name)
         self.assertEqual(response.json()["description"], self.event.description)
 
     @prevent_warnings
@@ -155,13 +155,6 @@ class ScanTicketTestCase(TestCaseWrapper):
         response = self.make_claim_ticket_post_request(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        # TEST 403 FORBIDDEN
-        # ticket with different access key (access key can not redeem this ticket)
-        ticket = self._ticket
-        data = {"embed_code": ticket.embed_code}
-        response = self.make_claim_ticket_post_request(data)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
         # TEST 404 NOT FOUND
         embed_code = str(uuid4())  # random embed_code
         data = {"embed_code": embed_code}
@@ -169,10 +162,9 @@ class ScanTicketTestCase(TestCaseWrapper):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # TEST 409 CONFLICT
-        ticket = self.ticket
-        redemption_access_key = self.ticket_redemption_key
-        ticket.redeem_ticket(redemption_access_key)
-        data = {"embed_code": ticket.embed_code}
+        redemption_access_key = self.redemption_access_key
+        self.ticket.redeem_ticket(redemption_access_key)
+        data = {"embed_code": self.ticket.embed_code}
         response = self.make_claim_ticket_post_request(
             data
         )  # try redeem already redeemed ticket

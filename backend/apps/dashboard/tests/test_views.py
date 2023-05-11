@@ -114,9 +114,7 @@ class DashboardTest(BaseTestCaseWrapper):
         response = self.client.get(reverse("dashboard:team_create"))
         self.assertEqual(response.status_code, 200)
 
-        path = os.path.join(
-            settings.ROOT_DIR, "apps", "root", "tests", "images", "example.jpg"
-        )
+        path = os.path.join(settings.ROOT_DIR, "apps", "dashboard", "tests", "example.jpg")
         # TEST POST
         with open(path, "rb") as img:
             data = {

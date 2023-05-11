@@ -3,9 +3,6 @@ from apps.root.testing import BaseTestCaseWrapper
 
 
 class TestScannerTicketMethods(BaseTestCaseWrapper):
-    def setUp(self):
-        return super().setUp()
-
     def test_redeem_ticket(self):
         """
         tests if the ticket is being successfully redeemed

@@ -174,13 +174,17 @@ export default function Home() {
 
 	useEffect(() => {
 		if (!checkout?.public_id) {
-			if (getFiatTicketTiers().length) {
-				setCheckout({ ...checkout, tx_type: "FIAT" });
-			} else if (getBlockchainTicketTiers().length) {
-				setCheckout({ ...checkout, tx_type: "BLOCKCHAIN" });
-			} else if (getAssetOwnershipTicketTiers().length) {
+			// Prioritize NFTs < CRYPTO < FIAT < FREE
+			if (getAssetOwnershipTicketTiers().length > 0) {
 				setCheckout({ ...checkout, tx_type: "ASSET_OWNERSHIP" });
-			} else if (getFreeTicketTiers().length) {
+			}
+			if (getBlockchainTicketTiers().length > 0) {
+				setCheckout({ ...checkout, tx_type: "BLOCKCHAIN" });
+			}
+			if (getFiatTicketTiers().length > 0) {
+				setCheckout({ ...checkout, tx_type: "FIAT" });
+			}
+			if (getFreeTicketTiers().length > 0) {
 				setCheckout({ ...checkout, tx_type: "FREE" });
 			}
 		}

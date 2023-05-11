@@ -158,10 +158,17 @@ function TicketSelector(props): JSX.Element {
 							<div className='col-6'>
 								<strong>Blockchain</strong>
 								<br />
-								{ticketTier.tier_asset_ownership.blockchain === "Ethereum" && (
-									<i className='fa-brands fa-ethereum me-5'></i>
-								)}
-								{ticketTier.tier_asset_ownership.blockchain}
+								<div className='d-flex align-items-center'>
+									{ticketTier.tier_asset_ownership.blockchain === "Ethereum" && (
+										<img
+											src='https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png'
+											alt='Ethereum'
+											className='d-block me-5'
+											height='16'
+										></img>
+									)}
+									{ticketTier.tier_asset_ownership.blockchain}
+								</div>
 							</div>
 							<div className='col-6'>
 								<strong>Network</strong>

@@ -102,6 +102,10 @@ export default function Home() {
 	};
 
 	const getErrorMessage = () => {
+		if (checkout?.tx_type === "FREE") {
+			return "Sorry! The transaction has failed. It could be because you've already used this email to get FREE ticket(s) from this tier.";
+		}
+
 		if (error) {
 			const messages = Object.keys(error).map((e) => error[e][0]);
 

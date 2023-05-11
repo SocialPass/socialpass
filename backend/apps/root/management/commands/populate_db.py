@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from apps.root.testing import LocalDBScaffold
 
 
 class Command(BaseCommand):
@@ -11,4 +12,8 @@ class Command(BaseCommand):
     help = "populate database with fake data"
 
     def handle(self, *args, **kwargs):
-        return
+        self.stdout.write(self.style.SUCCESS("Populating..."))
+        LocalDBScaffold.setUp(self)
+        self.stdout.write(
+            self.style.SUCCESS("Mock data has been populated in the database!")
+        )

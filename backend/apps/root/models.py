@@ -912,6 +912,8 @@ class TierFree(DBModel):
     Represents a free tier for an event ticket
     """
 
+    issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
+
     def __str__(self) -> str:
         return f"TierFree {self.public_id}"
 
@@ -1512,12 +1514,23 @@ class TxFree(DBModel):
 
     def process(self, checkout_session=None):
         """
-        Nothing to check for free transactions, we just go through the states.
+        Go through the states, only stop to check for issued emails.
         """
         if not checkout_session:
             checkout_session = self.checkoutsession
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
+
+        # Check for issued emails
+        for item in checkout_session.checkoutitem_set.all():
+            if checkout_session.email in item.ticket_tier.tier_free.issued_emails:
+                checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+                checkout_session.save()
+                raise Exception("This email has already been used for this ticket tier.")
+            else:
+                item.ticket_tier.tier_free.issued_emails.append(checkout_session.email)
+                item.ticket_tier.tier_free.save()
+
         checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
         checkout_session.fulfill()

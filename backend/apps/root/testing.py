@@ -27,8 +27,6 @@ def prevent_warnings(func):
 
 class BaseModelScaffold:
     def setUp(self):
-        super().setUp()
-
         # Setup users
         self.password = "password"
         self.user_one = baker.make("root.User", username="user_one")
@@ -93,9 +91,14 @@ class BaseTestCaseWrapper(BaseModelScaffold, TestCase):
 
 class LocalDBScaffold(BaseModelScaffold):
     def setUp(self):
+        # Delete test data (user_one / user_two)
+        User.objects.filter(username="user_one").delete()
+        User.objects.filter(username="user_two").delete()
+
         # Create superuser
         queryset = User.objects.filter(username="admin")
         if not queryset.exists():
             User.objects.create_superuser("admin", "admin@admin.com", "password")
 
-        # return super().setUp()
+        # Delete user / related data
+        return super(LocalDBScaffold, self).setUp()  # Call parent class method

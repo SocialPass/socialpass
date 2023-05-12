@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID, uuid4
 
-from factory.faker import faker
+import faker
 from rest_framework import serializers, status
 from rest_framework.fields import empty
 

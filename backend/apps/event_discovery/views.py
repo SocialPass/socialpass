@@ -13,7 +13,21 @@ from django.views.generic.detail import DetailView
 
 from apps.root.models import CheckoutSession, Event, Ticket
 
-from .forms import PasscodeForm
+from .forms import PasscodeForm, NFTCheckoutForm
+
+
+class NFTCheckout(View):
+
+    def get(self, *args, **kwargs):
+        nft_checkout_form = NFTCheckoutForm()
+
+        return render(
+            self.request,
+            "event_discovery/nft_checkout.html",
+            {
+                "nft_checkout_form": nft_checkout_form,
+            },
+        )
 
 
 class EventDiscoveryIndex(TemplateView):

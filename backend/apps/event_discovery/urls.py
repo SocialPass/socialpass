@@ -23,4 +23,9 @@ urlpatterns = [
         views.GetTickets.as_view(),
         name="get_tickets",
     ),
+    path(
+        "nft-checkout/",
+        views.NFTCheckout.as_view(),
+        name="nft_checkout",
+    ),
 ]

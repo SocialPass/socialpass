@@ -6,7 +6,8 @@
 	<script src="{% static 'js/dist/bundle.js' %}"></script>
 </head>
 <body>
-	<button id="connect-wallet" onclick='connectWallet()'>Conect Wallet</button>
+	<button id="connect-wallet" onclick='connectWallet()'>Connect Wallet</button>
+	<button id="connect-wallet" onclick='disconnectWallet()'>Disconnect Wallet</button>
 	<form>
 		{{ nft_checkout_form.as_p }}
 		<button type="submit" id="submit-btn" onclick='walletSign("")'>Continue</button>

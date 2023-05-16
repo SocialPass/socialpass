@@ -3,12 +3,13 @@
 <html>
 <head>
 	<title></title>
+	<script src="{% static 'js/dist/bundle.js' %}"></script>
 </head>
 <body>
-	<button id="connect-wallet">Conect Wallet</button>
+	<button id="connect-wallet" onclick='connectWallet()'>Conect Wallet</button>
 	<form>
 		{{ nft_checkout_form.as_p }}
-		<button type="submit" id="submit-btn">Continue</button>
+		<button type="submit" id="submit-btn" onclick='walletSign("")'>Continue</button>
 	</form>
 	<script type="text/javascript">
 		localStorage.clear();
@@ -30,6 +31,5 @@
 		let data = window.localStorage.getItem("nft_tt_data");
 		document.getElementById("id_ticket_tier_data").value = data;
 	</script>
-	<script type="module" src="{% static 'js/dist/bundle.js' %}"></script>
 </body>
 </html>

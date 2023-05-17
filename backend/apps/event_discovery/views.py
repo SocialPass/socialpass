@@ -12,6 +12,7 @@ from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 
 from apps.root.models import CheckoutSession, Event, Ticket
+from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProccessingError
 
 from .forms import PasscodeForm, NFTCheckoutForm
 
@@ -50,8 +51,25 @@ class CheckoutPageTwo(TemplateView):
         POST
         Process Checkout Session (and related TX, etc.)
         """
-        CheckoutSession.objects.get(public_id=self.kwargs["public_id"])
-        return super().get(*args, **kwargs)
+        try:
+            checkout_session = CheckoutSession.objects.get(
+                public_id=self.kwargs["public_id"]
+            )
+            checkout_session.process_transaction()
+        except TxAssetOwnershipProcessingError:
+            return
+            # TODO
+            # return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
+        except TxFreeProccessingError:
+            return
+            # TODO
+            # return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return
+            # TODO
+            # return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return super().post(*args, **kwargs)
 
 
 class EventDiscoveryIndex(TemplateView):

@@ -31,7 +31,7 @@ class NFTCheckout(View):
 
 
 class CheckoutPageTwo(TemplateView):
-    template_name = ("event_discovery/nft_checkout.html",)
+    template_name = "event_discovery/nft_checkout.html"
 
     def get_context_data(self, *args, **kwargs):
         """
@@ -40,9 +40,9 @@ class CheckoutPageTwo(TemplateView):
         Fetch Checkout Items
         """
         context = super().get_context_data(*args, **kwargs)
-        context["checkout_session"] = CheckoutSession.objects.get(
-            public_id=self.kwargs["public_id"]
-        )
+        context["checkout_session"] = CheckoutSession.objects.prefetch_related(
+            "checkoutitem_set"
+        ).get(public_id=self.kwargs["public_id"])
         context["checkout_items"] = context["checkout_session"].checkoutitem_set.all()
         return context
 
@@ -70,6 +70,17 @@ class CheckoutPageTwo(TemplateView):
             # return Response(status=status.HTTP_400_BAD_REQUEST)
 
         return super().post(*args, **kwargs)
+
+
+class CheckoutPageSuccess(DetailView):
+    model = CheckoutSession
+    slug_field = "id"
+    template_name = "event_discovery/nft_checkout.html"
+
+    def get_object(self):
+        # TODO
+        # Prefetch event, checkout items, tickets, etc.
+        return super().get_object()
 
 
 class EventDiscoveryIndex(TemplateView):

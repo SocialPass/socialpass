@@ -18,6 +18,16 @@ from .forms import PasscodeForm, NFTCheckoutForm
 
 
 class NFTCheckout(View):
+    """
+    GET
+    Fetch Event
+    Fetch Event Ticket Tiers
+
+    POST
+    Create Checkout Session
+    Create Checkout Items
+    """
+
     def get(self, *args, **kwargs):
         nft_checkout_form = NFTCheckoutForm()
 
@@ -140,6 +150,7 @@ class CheckoutPageSuccess(DetailView):
     def get_object(self):
         # TODO
         # Prefetch event, checkout items, tickets, etc.
+        # Redirect if checkout not success
         return super().get_object()
 
 

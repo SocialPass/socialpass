@@ -1060,6 +1060,30 @@ class CheckoutSession(DBModel):
         for checkout_item in self.checkoutitem_set.all():
             checkout_item.create_tickets()
 
+    def process_transaction(self):
+        """
+        Responsible for processing the correct transaction based on tx_type
+        Note: Always processes free tickets
+        """
+        # Only process checkout sessions with a tx_status of valid
+        if self.tx_status != CheckoutSession.OrderStatus.VALID:
+            return
+
+        # Process Free
+        if self.tx_free:
+            self.tx_free.process()
+
+        # Process specific TX
+        match self.tx_type:
+            case CheckoutSession.TransactionType.FIAT:
+                self.tx_fiat.process()
+            case CheckoutSession.TransactionType.BLOCKCHAIN:
+                self.tx_blockchain.process()
+            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+                self.tx_asset_ownership.process()
+            case _:
+                pass
+
     def fulfill(self):
         """
         Fullfil an order related to a checkout session

@@ -50,6 +50,7 @@ class CheckoutPageTwo(TemplateView):
         POST
         Process Checkout Session (and related TX, etc.)
         """
+        CheckoutSession.objects.get(public_id=self.kwargs["public_id"])
         return super().get(*args, **kwargs)
 
 

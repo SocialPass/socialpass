@@ -1003,14 +1003,6 @@ class CheckoutSession(DBModel):
     def __str__(self):
         return self.name
 
-    def create_items_tickets(self):
-        """
-        call `CheckoutItem.create_tickets()` method for all
-        related checkout_item objects
-        """
-        for checkout_item in self.checkoutitem_set.all():
-            checkout_item.create_tickets()
-
     @property
     def get_tickets_link(self):
         """
@@ -1052,6 +1044,22 @@ class CheckoutSession(DBModel):
             html_message=msg_html,
         )
 
+    def refresh_passcode(self):
+        """
+        refresh passcode and its expiration
+        """
+        self.passcode = get_random_passcode()
+        self.passcode_expiration = get_expiration_datetime()
+        self.save()
+
+    def create_items_tickets(self):
+        """
+        call `CheckoutItem.create_tickets()` method for all
+        related checkout_item objects
+        """
+        for checkout_item in self.checkoutitem_set.all():
+            checkout_item.create_tickets()
+
     def fulfill(self):
         """
         Fullfil an order related to a checkout session
@@ -1062,14 +1070,6 @@ class CheckoutSession(DBModel):
         self.create_items_tickets()
         self.send_confirmation_email()
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
-        self.save()
-
-    def refresh_passcode(self):
-        """
-        refresh passcode and its expiration
-        """
-        self.passcode = get_random_passcode()
-        self.passcode_expiration = get_expiration_datetime()
         self.save()
 
 

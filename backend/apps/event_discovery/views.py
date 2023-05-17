@@ -31,14 +31,18 @@ class NFTCheckout(View):
 
 
 class CheckoutPageTwo(TemplateView):
+    """
+    GET
+    Fetch Checkout Session
+    Fetch Checkout Items
+
+    POST
+    Process Checkout Session (and related TX, etc.)
+    """
+
     template_name = "event_discovery/nft_checkout.html"
 
     def get_context_data(self, *args, **kwargs):
-        """
-        GET
-        Fetch Checkout Session
-        Fetch Checkout Items
-        """
         context = super().get_context_data(*args, **kwargs)
         context["checkout_session"] = CheckoutSession.objects.prefetch_related(
             "checkoutitem_set"
@@ -47,10 +51,6 @@ class CheckoutPageTwo(TemplateView):
         return context
 
     def post(self, *args, **kwargs):
-        """
-        POST
-        Process Checkout Session (and related TX, etc.)
-        """
         try:
             checkout_session = CheckoutSession.objects.get(
                 public_id=self.kwargs["public_id"]

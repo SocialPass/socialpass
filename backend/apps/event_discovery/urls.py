@@ -28,4 +28,5 @@ urlpatterns = [
         views.NFTCheckout.as_view(),
         name="nft_checkout",
     ),
+    path("checkout-two/", views.CheckoutPageTwo.as_view(), name="checkout_two"),
 ]

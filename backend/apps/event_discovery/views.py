@@ -17,7 +17,6 @@ from .forms import PasscodeForm, NFTCheckoutForm
 
 
 class NFTCheckout(View):
-
     def get(self, *args, **kwargs):
         nft_checkout_form = NFTCheckoutForm()
 
@@ -28,6 +27,30 @@ class NFTCheckout(View):
                 "nft_checkout_form": nft_checkout_form,
             },
         )
+
+
+class CheckoutPageTwo(TemplateView):
+    template_name = ("event_discovery/nft_checkout.html",)
+
+    def get_context_data(self, *args, **kwargs):
+        """
+        GET
+        Fetch Checkout Session
+        Fetch Checkout Items
+        """
+        context = super().get_context_data(*args, **kwargs)
+        context["checkout_session"] = CheckoutSession.objects.get(
+            public_id=self.kwargs["public_id"]
+        )
+        context["checkout_items"] = context["checkout_session"].checkoutitem_set.all()
+        return context
+
+    def post(self, *args, **kwargs):
+        """
+        POST
+        Process Checkout Session (and related TX, etc.)
+        """
+        return super().get(*args, **kwargs)
 
 
 class EventDiscoveryIndex(TemplateView):

@@ -12,7 +12,7 @@ from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 
 from apps.root.models import CheckoutSession, Event, Ticket
-from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProccessingError
+from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
 from .forms import PasscodeForm, NFTCheckoutForm
 
@@ -60,7 +60,7 @@ class CheckoutPageTwo(TemplateView):
             return
             # TODO
             # return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
-        except TxFreeProccessingError:
+        except TxFreeProcessingError:
             return
             # TODO
             # return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)

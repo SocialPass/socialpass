@@ -21,7 +21,7 @@ class DashboardTest(BaseTestCaseWrapper):
 
     def test_team_context_mixin(self):
         class TestTeamContextView(views.TeamContextMixin, TemplateView):
-            template_name = "dashboard/event_list.html"
+            template_name = "dashboard_organizer/event_list.html"
 
         # Test logged-in user
         kwargs = {"team_public_id": self.team_one.public_id}

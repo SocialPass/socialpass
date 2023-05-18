@@ -243,7 +243,7 @@ class TeamDetailView(TeamContextMixin, TemplateView):
     Returns the details of the logged in user's team.
     """
 
-    template_name = "dashboard/team_detail.html"
+    template_name = "dashboard_organizer/team_detail.html"
 
 
 class TeamMemberManageView(TeamContextMixin, FormView):
@@ -252,7 +252,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
     """
 
     form_class = CustomInviteForm
-    template_name = "dashboard/member_form.html"
+    template_name = "dashboard_organizer/member_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -303,7 +303,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     object: Membership  # Mypy typing
     model = Membership
     pk_url_kwarg = "member_pk"
-    template_name = "dashboard/member_delete.html"
+    template_name = "dashboard_organizer/member_delete.html"
 
     def get_success_url(self):
         messages.add_message(
@@ -322,7 +322,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
     form_class = TeamForm
     model = Team
     pk_url_kwarg = "team_public_id"
-    template_name = "dashboard/team_form.html"
+    template_name = "dashboard_organizer/team_form.html"
 
     def get_object(self):
         return self.team
@@ -345,7 +345,7 @@ class EventListView(TeamContextMixin, ListView):
     paginate_by = 15
     ordering = ["-modified"]
     context_object_name = "events"
-    template_name = "dashboard/event_list.html"
+    template_name = "dashboard_organizer/event_list.html"
 
     def get(self, *args, **kwargs):
         qs = self.get_queryset()
@@ -381,7 +381,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
 
     model = Event
     form_class = EventForm
-    template_name = "dashboard/event_form.html"
+    template_name = "dashboard_organizer/event_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -413,7 +413,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     slug_field = "pk"
     slug_url_kwarg = "pk"
     form_class = EventForm
-    template_name = "dashboard/event_form.html"
+    template_name = "dashboard_organizer/event_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -438,7 +438,7 @@ class EventTicketsView(TeamContextMixin, DetailView):
 
     model = Event
     context_object_name = "event"
-    template_name = "dashboard/event_tickets.html"
+    template_name = "dashboard_organizer/event_tickets.html"
 
     def get_object(self):
         return (
@@ -455,7 +455,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
     """
 
     model = Event
-    template_name = "dashboard/event_go_live.html"
+    template_name = "dashboard_organizer/event_go_live.html"
     object = None
 
     def get_object(self):
@@ -519,7 +519,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     object: Event  # Mypy typing
     model = Event
-    template_name = "dashboard/event_delete.html"
+    template_name = "dashboard_organizer/event_delete.html"
 
     def get_object(self):
         return Event.objects.get(
@@ -539,7 +539,7 @@ class EventStatsView(TeamContextMixin, DetailView):
     """
 
     model = Event
-    template_name = "dashboard/event_stats.html"
+    template_name = "dashboard_organizer/event_stats.html"
     object = None
 
     def get_object(self):
@@ -587,7 +587,7 @@ class TicketTierCreateView(TeamContextMixin, TemplateView):
     Select the type of ticket tier to create.
     """
 
-    template_name = "dashboard/ticket_tier_create.html"
+    template_name = "dashboard_organizer/ticket_tier_create.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -604,7 +604,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "dashboard/ticket_tier_nft_form.html"
+    template_name = "dashboard_organizer/ticket_tier_nft_form.html"
     form_data = None
 
     def get_context_data(self, **kwargs):
@@ -659,7 +659,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "dashboard/ticket_tier_free_form.html"
+    template_name = "dashboard_organizer/ticket_tier_free_form.html"
     form_data = None
 
     def get_context_data(self, **kwargs):
@@ -694,7 +694,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
     form_class = TicketTierForm
     model = TicketTier
     pk_url_kwarg = "pk"
-    template_name = "dashboard/ticket_tier_update_form.html"
+    template_name = "dashboard_organizer/ticket_tier_update_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -729,7 +729,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
 
     object: TicketTier  # Mypy typing
     model = TicketTier
-    template_name = "dashboard/ticket_tier_delete.html"
+    template_name = "dashboard_organizer/ticket_tier_delete.html"
 
     def get_object(self):
         return TicketTier.objects.get(

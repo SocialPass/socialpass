@@ -418,8 +418,10 @@ class Event(DBModel):
             memberships = Membership.objects.select_related("user").filter(team=self.team)
             for m in memberships:
                 emails.append(m.user.email)
-            msg_plain = render_to_string("dashboard/email/go_live_message.txt", ctx)
-            msg_html = render_to_string("dashboard/email/go_live.html", ctx)
+            msg_plain = render_to_string(
+                "dashboard_organizer/email/go_live_message.txt", ctx
+            )
+            msg_html = render_to_string("dashboard_organizer/email/go_live.html", ctx)
             send_mail(
                 "[SocialPass] Your event is live - " + self.title,
                 msg_plain,

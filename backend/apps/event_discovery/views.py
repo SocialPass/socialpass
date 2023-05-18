@@ -53,7 +53,7 @@ class CheckoutPageOne(DetailView):
     """
 
     model = Event
-    template_name = "event_discovery/nft_checkout.html"
+    template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
         self.object = Event.objects.prefetch_related("tickettier_set").get(

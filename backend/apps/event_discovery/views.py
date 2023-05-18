@@ -40,7 +40,7 @@ class NFTCheckout(View):
         )
 
 
-class EventDetails(TemplateView):
+class CheckoutPageOne(DetailView):
     """
     Checkout page one (start of flow)
 
@@ -52,45 +52,62 @@ class EventDetails(TemplateView):
     Create checkout session + items
     """
 
-    template_name = "events/event_details.html"
+    model = Event
+    template_name = "event_discovery/nft_checkout.html"
+
+    def get_object(self):
+        self.object = Event.objects.prefetch_related("tickettier_set").get(
+            id=self.kwargs["event_id"], state=Event.StateStatus.LIVE
+        )
+        if not self.object:
+            raise Http404()
+        return self.object
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        # Get event
-        event = Event.objects.prefetch_related(
-            "tickettier_set"
-        ).get(id=self.kwargs["event_id"], state=Event.StateStatus.LIVE)
-
         # Get all ticket tiers and set up holder lists
-        tiers_all = event.tickettier_set.all()
-        tiers_free, tiers_fiat, tiers_blockchain, tiers_asset_ownership = ([] for i in range(4))
+        tiers_all = self.object.tickettier_set.all()
+        tiers_free, tiers_fiat, tiers_blockchain, tiers_asset_ownership = (
+            [] for i in range(4)
+        )
 
         # Populate holder lists with correct tiers
         for tier in tiers_all:
-            if tier.tier_free: tiers_free.append(tier)
-            if tier.tier_fiat: tiers_fiat.append(tier)
-            if tier.tier_blockchain: tiers_blockchain.append(tier)
-            if tier.tier_asset_ownership: tiers_asset_ownership.append(tier)
+            if tier.tier_free:
+                tiers_free.append(tier)
+            if tier.tier_fiat:
+                tiers_fiat.append(tier)
+            if tier.tier_blockchain:
+                tiers_blockchain.append(tier)
+            if tier.tier_asset_ownership:
+                tiers_asset_ownership.append(tier)
 
         # Determine how many types of tiers are available
         tier_types_count = 0
-        if len(tiers_free) > 0: tier_types_count += 1
-        if len(tiers_fiat) > 0: tier_types_count += 1
-        if len(tiers_blockchain) > 0: tier_types_count += 1
-        if len(tiers_asset_ownership) > 0: tier_types_count += 1
+        if len(tiers_free) > 0:
+            tier_types_count += 1
+        if len(tiers_fiat) > 0:
+            tier_types_count += 1
+        if len(tiers_blockchain) > 0:
+            tier_types_count += 1
+        if len(tiers_asset_ownership) > 0:
+            tier_types_count += 1
 
-        # If checkout type not given (default), 
+        # If checkout type not given (default),
         # we prioritize NFTs < Crypto < Fiat < Free
         checkout_type = self.kwargs.get("checkout_type", "")
         if not checkout_type:
-            if len(tiers_asset_ownership) > 0: checkout_type = "nft"
-            if len(tiers_blockchain) > 0: checkout_type = "crypto"
-            if len(tiers_fiat) > 0: checkout_type = "fiat"
-            if len(tiers_free) > 0: checkout_type = "free"
+            if len(tiers_asset_ownership) > 0:
+                checkout_type = "nft"
+            if len(tiers_blockchain) > 0:
+                checkout_type = "crypto"
+            if len(tiers_fiat) > 0:
+                checkout_type = "fiat"
+            if len(tiers_free) > 0:
+                checkout_type = "free"
 
         # Set everything to context
-        context["event"] = event
         context["tiers_free"] = tiers_free
         context["tiers_fiat"] = tiers_fiat
         context["tiers_blockchain"] = tiers_blockchain

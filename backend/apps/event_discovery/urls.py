@@ -30,13 +30,13 @@ urlpatterns = [
     ),
     path(
         "e/<int:event_id>/<slug:event_slug>/",
-        views.EventDetails.as_view(),
-        name="event_detals"
+        views.CheckoutPageOne.as_view(),
+        name="event_detals",
     ),
     re_path(
         r"e/(?P<event_id>\d+)/(?P<event_slug>[-\w]+)/(?P<checkout_type>free|fiat|crypto|nft)/",
-        views.EventDetails.as_view(),
-        name="event_detals"
+        views.CheckoutPageOne.as_view(),
+        name="event_detals",
     ),
     path("checkout-two/", views.CheckoutPageTwo.as_view(), name="checkout_two"),
 ]

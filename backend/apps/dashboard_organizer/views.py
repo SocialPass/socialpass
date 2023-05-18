@@ -15,7 +15,7 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
-from apps.dashboard.forms import (
+from apps.dashboard_organizer.forms import (
     CustomInviteForm,
     EventForm,
     TeamForm,
@@ -85,7 +85,7 @@ class RequireLiveEventMixin:
                 "This event is not live yet. \
                 Please complete the creation process.",
             )
-            return redirect("dashboard:event_update", **self.kwargs)
+            return redirect("dashboard_organizer:event_update", **self.kwargs)
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -113,7 +113,7 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
             self.request, messages.SUCCESS, "Your team has been created successfully."
         )
         return reverse(
-            "dashboard:event_list",
+            "dashboard_organizer:event_list",
             args=(self.object.public_id,),
         )
 
@@ -132,9 +132,11 @@ class RedirectToTeamView(RedirectView):
         if self.request.user.is_authenticated:
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
-                return reverse("dashboard:event_list", args=(membership.team.public_id,))
+                return reverse(
+                    "dashboard_organizer:event_list", args=(membership.team.public_id,)
+                )
             else:
-                return reverse("dashboard:team_create")
+                return reverse("dashboard_organizer:team_create")
         else:
             return reverse("account_login")
 
@@ -288,7 +290,9 @@ class TeamMemberManageView(TeamContextMixin, FormView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
-        return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
+        return reverse(
+            "dashboard_organizer:team_members", args=(self.kwargs["team_public_id"],)
+        )
 
 
 class TeamMemberDeleteView(TeamContextMixin, DeleteView):
@@ -305,7 +309,9 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
-        return reverse("dashboard:team_members", args=(self.kwargs["team_public_id"],))
+        return reverse(
+            "dashboard_organizer:team_members", args=(self.kwargs["team_public_id"],)
+        )
 
 
 class TeamUpdateView(TeamContextMixin, UpdateView):
@@ -325,7 +331,9 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse("dashboard:team_detail", args=(self.kwargs["team_public_id"],))
+        return reverse(
+            "dashboard_organizer:team_detail", args=(self.kwargs["team_public_id"],)
+        )
 
 
 class EventListView(TeamContextMixin, ListView):
@@ -346,7 +354,7 @@ class EventListView(TeamContextMixin, ListView):
                 self.request, messages.INFO, "Let's create an event to get started!"
             )
             return redirect(
-                "dashboard:event_create",
+                "dashboard_organizer:event_create",
                 self.kwargs["team_public_id"],
             )
         return super(EventListView, self).get(*args, **kwargs)
@@ -391,7 +399,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse(
-            "dashboard:event_tickets",
+            "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_public_id"], self.object.pk),
         )
 
@@ -466,7 +474,9 @@ class EventGoLiveView(TeamContextMixin, DetailView):
                 "Your event must have at least one ticket tier before going live.",
             )
             return redirect(
-                "dashboard:ticket_tier_create", self.kwargs["team_public_id"], event.pk
+                "dashboard_organizer:ticket_tier_create",
+                self.kwargs["team_public_id"],
+                event.pk,
             )
         else:
             return super().get(*args, **kwargs)
@@ -492,7 +502,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
                 )
         return redirect(
             reverse(
-                "dashboard:event_go_live",
+                "dashboard_organizer:event_go_live",
                 kwargs={
                     "team_public_id": self.kwargs["team_public_id"],
                     "pk": event.pk,
@@ -518,7 +528,9 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted.")
-        return reverse("dashboard:event_list", args=(self.kwargs["team_public_id"],))
+        return reverse(
+            "dashboard_organizer:event_list", args=(self.kwargs["team_public_id"],)
+        )
 
 
 class EventStatsView(TeamContextMixin, DetailView):
@@ -635,7 +647,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
 
     def get_success_url(self, *args, **kwargs):
         return reverse(
-            "dashboard:event_tickets",
+            "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
         )
 
@@ -669,7 +681,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     def get_success_url(self, *args, **kwargs):
         return reverse(
-            "dashboard:event_tickets",
+            "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
         )
 
@@ -705,7 +717,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Ticket has been edited.")
         return reverse(
-            "dashboard:event_tickets",
+            "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
         )
 
@@ -727,6 +739,6 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
         return reverse(
-            "dashboard:event_tickets",
+            "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
         )

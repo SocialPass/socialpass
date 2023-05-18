@@ -13,7 +13,7 @@
     Confirm the invitation to <a href="mailto:{{ invitation.email }}" class="fw-bold">{{invitation.email}}</a>{% if invitation.team %} from <strong>{{invitation.team.name}}</strong>{% endif %}.
 </p>
 
-<form method="POST" action="{% url 'dashboard:team_accept_invite' request.resolver_match.kwargs.key %}">
+<form method="POST" action="{% url 'dashboard_organizer:team_accept_invite' request.resolver_match.kwargs.key %}">
     {% csrf_token %}
 
     {% if form.non_field_errors %}

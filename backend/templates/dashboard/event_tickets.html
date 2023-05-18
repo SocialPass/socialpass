@@ -40,7 +40,7 @@
 						Ticket Tiers
 					</h3>
 					<div class="ps-20 ms-auto">
-						<a href="{% url 'dashboard:ticket_tier_create' current_team.public_id event.pk %}" class="btn btn-primary btn-sm">
+						<a href="{% url 'dashboard_organizer:ticket_tier_create' current_team.public_id event.pk %}" class="btn btn-primary btn-sm">
 							<i class="fa-solid fa-plus"></i>
 		                   	<span class="ms-5 d-none d-sm-inline">Create</span>
 						</a>
@@ -68,11 +68,11 @@
 										</h6>
 									</div>
 									<div class="ps-20 ms-auto">
-										<a href="{% url 'dashboard:ticket_tier_update' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-primary btn-sm">
+										<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-primary btn-sm">
 											<i class="fa-solid fa-edit"></i>
 											<span class="visually-hidden">Update</span>
 										</a>
-										<a href="{% url 'dashboard:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger btn-sm">
+										<a href="{% url 'dashboard_organizer:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger btn-sm">
 											<i class="fa-solid fa-trash-can"></i>
 											<span class="visually-hidden">Delete</span>
 										</a>
@@ -169,7 +169,7 @@
 						</div>
 						<div class="ws-400 mw-100 mx-auto">
 							<p>
-								No ticket tiers have been created for this event. You will need to <a href="{% url 'dashboard:ticket_tier_create' current_team.public_id event.pk %}" class="fw-bold antialiased">create one</a> first before going live.
+								No ticket tiers have been created for this event. You will need to <a href="{% url 'dashboard_organizer:ticket_tier_create' current_team.public_id event.pk %}" class="fw-bold antialiased">create one</a> first before going live.
 							</p>
 						</div>
 					</div>

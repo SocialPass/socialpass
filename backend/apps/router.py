@@ -16,8 +16,8 @@ from apps.event_discovery.sitemaps import EventDetailSiteMap, StaticViewEventSit
 urlpatterns = [
     # Event Discovery
     path("", include("apps.event_discovery.urls")),
-    # Dashboard
-    path("dashboard/", include("apps.dashboard.urls")),
+    # Organizer Dashboard
+    path("dashboard/", include("apps.dashboard_organizer.urls")),
     path("dashboard/accounts/", include("allauth.urls")),
     # Staff Dashboard
     path(settings.STAFF_URL, include("apps.staff_dashboard.urls")),

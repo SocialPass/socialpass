@@ -18,7 +18,7 @@
         </div>
         {% if url_name != 'event_create' %}
             <div class="ps-15 ms-auto align-self-center">
-                <a href="{% url 'dashboard:event_delete' current_team.public_id event.pk %}" class="btn btn-danger">
+                <a href="{% url 'dashboard_organizer:event_delete' current_team.public_id event.pk %}" class="btn btn-danger">
                     <i class="fa-solid fa-trash-can"></i>
                     <span class="ms-5 d-none d-sm-inline">Delete</span>
                 </a>

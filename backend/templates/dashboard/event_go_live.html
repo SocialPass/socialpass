@@ -104,7 +104,7 @@
 						Attendees can now buy tickets for this event from the checkout page. You can get a detailed breakdown on the stats page.
 					</p>
 					<div class="text-center">
-						<a href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}" class="btn btn-lg text-base fs-base fw-bold">
+						<a href="{% url 'dashboard_organizer:event_stats' current_team.public_id event.pk %}" class="btn btn-lg text-base fs-base fw-bold">
 							<i class="fa-regular fa-sack-dollar me-5"></i>
 							See Stats
 						</a>
@@ -153,7 +153,7 @@
 						</div>
 						<h5 class="mb-0">Event has ended</h5>
 						<p class="mt-5">
-							This event has ended. If you never went live with it, please consider <a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}#date-and-time" class="fw-bold antialiased">changing the dates</a> and then come back to this page.
+							This event has ended. If you never went live with it, please consider <a href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}#date-and-time" class="fw-bold antialiased">changing the dates</a> and then come back to this page.
 						</p>
 					</div>
 				{% else %}
@@ -170,7 +170,7 @@
 								Your event is currently live. Attendees can now buy tickets for this event from the checkout page. You can get a detailed breakdown on the stats page.
 							</p>
 							<div>
-								<a href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}" class="btn btn-lg text-base fs-base fw-bold">
+								<a href="{% url 'dashboard_organizer:event_stats' current_team.public_id event.pk %}" class="btn btn-lg text-base fs-base fw-bold">
 									<i class="fa-regular fa-sack-dollar me-5"></i>
 									See Stats
 								</a>

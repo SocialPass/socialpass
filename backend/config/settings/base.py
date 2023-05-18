@@ -100,9 +100,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "apps.event_discovery.apps.EventDiscoveryConfig",
     "apps.root.apps.RootConfig",
-    "apps.dashboard.apps.DashboardConfig",
+    "apps.event_discovery.apps.EventDiscoveryConfig",
+    "apps.dashboard_organizer.apps.DashboardOrganizerConfig",
     "templatetags",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -123,7 +123,7 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "root.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "dashboard:dashboard_redirect"
+LOGIN_REDIRECT_URL = "dashboard_organizer:dashboard_redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 

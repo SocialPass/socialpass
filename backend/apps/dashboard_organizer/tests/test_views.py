@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from model_bakery import baker
 
-from apps.dashboard import forms, views
+from apps.dashboard_organizer import forms, views
 from apps.root.models import Invite, Membership, Team
 from apps.root.testing import BaseTestCaseWrapper
 
@@ -53,7 +53,7 @@ class DashboardTest(BaseTestCaseWrapper):
         )
 
         # Test GET
-        response = self.client.get(reverse("dashboard:user_detail"))
+        response = self.client.get(reverse("dashboard_organizer:user_detail"))
         self.assertEqual(response.status_code, 200)
 
     def test_dashboard_redirect(self):
@@ -63,15 +63,21 @@ class DashboardTest(BaseTestCaseWrapper):
         )
 
         # Test logged-in user
-        response = self.client.get(reverse("dashboard:dashboard_redirect"), follow=True)
+        response = self.client.get(
+            reverse("dashboard_organizer:dashboard_redirect"), follow=True
+        )
         self.assertRedirects(
             response,
-            expected_url=reverse("dashboard:event_list", args=(self.team_one.public_id,)),
+            expected_url=reverse(
+                "dashboard_organizer:event_list", args=(self.team_one.public_id,)
+            ),
         )
 
         # Test logged-out user
         self.client.logout()
-        response = self.client.get(reverse("dashboard:dashboard_redirect"), follow=True)
+        response = self.client.get(
+            reverse("dashboard_organizer:dashboard_redirect"), follow=True
+        )
         self.assertRedirects(response, expected_url=reverse("account_login"))
 
     def test_team_accept_invite(self):
@@ -82,7 +88,8 @@ class DashboardTest(BaseTestCaseWrapper):
         )
         invite.send_invitation(request)
         self.client.post(
-            reverse("dashboard:team_accept_invite", args=(invite.key,)), follow=True
+            reverse("dashboard_organizer:team_accept_invite", args=(invite.key,)),
+            follow=True,
         )
         invite = Invite.objects.get(inviter=self.user_one)
         self.assertEqual(invite.accepted, True)
@@ -94,7 +101,7 @@ class DashboardTest(BaseTestCaseWrapper):
         )
 
         # Test GET
-        response = self.client.get(reverse("dashboard:team_create"))
+        response = self.client.get(reverse("dashboard_organizer:team_create"))
         self.assertEqual(response.status_code, 200)
 
         path = os.path.join(settings.ROOT_DIR, "apps", "dashboard", "tests", "example.jpg")
@@ -106,7 +113,7 @@ class DashboardTest(BaseTestCaseWrapper):
                 "image": img,
             }
             response = self.client.post(
-                reverse("dashboard:team_create"), data=data, follow=True
+                reverse("dashboard_organizer:team_create"), data=data, follow=True
             )
         self.assertEqual(Team.objects.filter(name="OneTime Team").count(), 1)
 
@@ -118,7 +125,7 @@ class DashboardTest(BaseTestCaseWrapper):
 
         # Test GET
         response = self.client.get(
-            reverse("dashboard:team_detail", args=(self.team_one.public_id,))
+            reverse("dashboard_organizer:team_detail", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -130,7 +137,7 @@ class DashboardTest(BaseTestCaseWrapper):
 
         # Test GET
         response = self.client.get(
-            reverse("dashboard:team_update", args=(self.team_one.public_id,))
+            reverse("dashboard_organizer:team_update", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -140,7 +147,7 @@ class DashboardTest(BaseTestCaseWrapper):
             "description": "Updated Team Descripton",
         }
         response = self.client.post(
-            reverse("dashboard:team_update", args=(self.team_one.public_id,)),
+            reverse("dashboard_organizer:team_update", args=(self.team_one.public_id,)),
             data=data,
             follow=True,
         )
@@ -160,7 +167,7 @@ class DashboardTest(BaseTestCaseWrapper):
 
         # Test GET
         response = self.client.get(
-            reverse("dashboard:team_members", args=(self.team_one.public_id,))
+            reverse("dashboard_organizer:team_members", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -172,7 +179,7 @@ class DashboardTest(BaseTestCaseWrapper):
 
         # Get response
         response = self.client.post(
-            reverse("dashboard:team_members", args=(self.team_one.public_id,)),
+            reverse("dashboard_organizer:team_members", args=(self.team_one.public_id,)),
             data=data,
             follow=True,
         )
@@ -191,7 +198,7 @@ class DashboardTest(BaseTestCaseWrapper):
         # Test GET
         response = self.client.get(
             reverse(
-                "dashboard:team_member_delete",
+                "dashboard_organizer:team_member_delete",
                 args=(self.team_one.public_id, member.pk),
             )
         )
@@ -200,7 +207,7 @@ class DashboardTest(BaseTestCaseWrapper):
         # TEST POST
         response = self.client.post(
             reverse(
-                "dashboard:team_member_delete",
+                "dashboard_organizer:team_member_delete",
                 args=(self.team_one.public_id, member.pk),
             )
         )
@@ -214,7 +221,7 @@ class DashboardTest(BaseTestCaseWrapper):
 
         # Test GET
         response = self.client.get(
-            reverse("dashboard:event_list", args=(self.team_one.public_id,))
+            reverse("dashboard_organizer:event_list", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -226,7 +233,7 @@ class DashboardTest(BaseTestCaseWrapper):
 
         # Test GET
         response = self.client.get(
-            reverse("dashboard:event_create", args=(self.team_one.public_id,))
+            reverse("dashboard_organizer:event_create", args=(self.team_one.public_id,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -244,7 +251,7 @@ class DashboardTest(BaseTestCaseWrapper):
             "country": new_event.country,
         }
         response = self.client.post(
-            reverse("dashboard:event_create", args=(self.team_one.public_id,)),
+            reverse("dashboard_organizer:event_create", args=(self.team_one.public_id,)),
             data=data,
             follow=True,
         )
@@ -273,7 +280,7 @@ class DashboardTest(BaseTestCaseWrapper):
         # Test GET
         response = self.client.get(
             reverse(
-                "dashboard:event_update",
+                "dashboard_organizer:event_update",
                 args=(self.team_one.public_id, self.event.pk),
             )
         )
@@ -294,7 +301,7 @@ class DashboardTest(BaseTestCaseWrapper):
         }
         response = self.client.post(
             reverse(
-                "dashboard:event_update",
+                "dashboard_organizer:event_update",
                 args=(self.team_one.public_id, self.event.pk),
             ),
             data=data,
@@ -313,7 +320,7 @@ class DashboardTest(BaseTestCaseWrapper):
         # Test GET
         response = self.client.get(
             reverse(
-                "dashboard:event_update",
+                "dashboard_organizer:event_update",
                 args=(self.team_one.public_id, self.event.pk),
             )
         )
@@ -334,7 +341,7 @@ class DashboardTest(BaseTestCaseWrapper):
         }
         response = self.client.post(
             reverse(
-                "dashboard:event_update",
+                "dashboard_organizer:event_update",
                 args=(self.team_one.public_id, self.event.pk),
             ),
             data=data,

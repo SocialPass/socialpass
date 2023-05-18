@@ -190,7 +190,7 @@ class Invite(DBModel):
 
     def send_invitation(self, request, **kwargs):
         current_site = Site.objects.all().first()
-        invite_url = reverse("dashboard:team_accept_invite", args=[self.key])
+        invite_url = reverse("dashboard_organizer:team_accept_invite", args=[self.key])
         invite_url = request.build_absolute_uri(invite_url)
         ctx = kwargs
         ctx.update(
@@ -347,9 +347,9 @@ class Event(DBModel):
 
     def get_absolute_url(self):
         if self.state == Event.StateStatus.DRAFT:
-            _success_url = "dashboard:event_update"
+            _success_url = "dashboard_organizer:event_update"
         elif self.state == Event.StateStatus.LIVE:
-            _success_url = "dashboard:event_update"
+            _success_url = "dashboard_organizer:event_update"
         return reverse(
             _success_url,
             args=(

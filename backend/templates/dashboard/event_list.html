@@ -16,7 +16,7 @@
 			</p>
 		</div>
 		<div class="ms-auto align-self-center">
-			<a href="{% url 'dashboard:event_create' current_team.public_id %}" class="btn btn-primary">
+			<a href="{% url 'dashboard_organizer:event_create' current_team.public_id %}" class="btn btn-primary">
 				<i class="fa-solid fa-plus"></i>
 				<span class="ms-5 d-none d-sm-inline">Create</span>
 			</a>
@@ -110,7 +110,7 @@
 				<!-- Name, date, location start -->
 				<div class="py-10 py-sm-0 me-sm-20 flex-grow-1">
 					<div>
-						<a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
+						<a href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
 					</div>
 					<div class="fs-base-n2 mt-5">
 						<strong>Date: </strong>
@@ -194,7 +194,7 @@
 											Copy and paste the following code to embed this event on your website.
 										</p>
 										<div class="p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1 overflow-x-auto text-nowrap">
-											<code class="content-to-copy bg-transparent m-0 p-0">&lt;iframe src="{{ event.checkout_portal_url }}" style="display: block; border: 0; max-width: 
+											<code class="content-to-copy bg-transparent m-0 p-0">&lt;iframe src="{{ event.checkout_portal_url }}" style="display: block; border: 0; max-width:
 												100%;" name="SocialPass Event" scrolling="yes" frameborder="1" marginheight="0px" marginwidth="0px" height="645px" width="860px" allowfullscreen&gt;&lt;/iframe&gt;</code>
 										</div>
 										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
@@ -218,23 +218,23 @@
 
 				<!-- CTAs start -->
 				<div class="d-flex align-items-center flex-row flex-sm-column flex-lg-row flex-shrink-0">
-					<a class="w-sm-100 w-lg-auto btn btn-sm btn-primary" href="{% url 'dashboard:event_update' current_team.public_id event.pk %}">
+					<a class="w-sm-100 w-lg-auto btn btn-sm btn-primary" href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}">
 						<i class="fa-solid fa-edit me-5"></i>
 						Edit
 					</a>
 					{% if event.has_ended or event.state == event.StateStatus.LIVE %}
-						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_stats' current_team.public_id event.pk %}">
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard_organizer:event_stats' current_team.public_id event.pk %}">
 							<i class="fa-regular fa-sack-dollar me-5"></i>
 							<strong class="antialiased">Stats</strong>
 						</a>
 					{% else %}
-						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard:event_go_live' current_team.public_id event.pk %}">
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard_organizer:event_go_live' current_team.public_id event.pk %}">
 							<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
 							<strong class="antialiased">Go Live</strong>
 						</a>
 					{% endif %}
 					<!--
-					<a class="w-sm-100 w-lg-auto ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-danger" href="{% url 'dashboard:event_delete' current_team.public_id event.pk %}">
+					<a class="w-sm-100 w-lg-auto ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-danger" href="{% url 'dashboard_organizer:event_delete' current_team.public_id event.pk %}">
 						<i class="fa-regular fa-trash-can"></i>
 						<span class="visually-hidden">Delete</span>
 					</a>

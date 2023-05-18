@@ -2,7 +2,7 @@
     <ul class="tabs tabs-justified border-0 m-0">
         {% if url_name == 'event_create' %}
             <li class="tab-item">
-                <a href="{% url 'dashboard:event_create' current_team.public_id %}" class="tab-link px-5 active">
+                <a href="{% url 'dashboard_organizer:event_create' current_team.public_id %}" class="tab-link px-5 active">
                     <i class="fa-regular fa-circle-1 text-primary me-5"></i>
                     <strong>
                         <span class="d-none d-sm-inline">Information</span>
@@ -30,7 +30,7 @@
             </li>
         {% else %}
             <li class="tab-item">
-                <a href="{% url 'dashboard:event_update' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_update' %}active{% endif %}">
+                <a href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_update' %}active{% endif %}">
                     <i class="fa-regular fa-circle-1 text-primary me-5"></i>
                     <strong>
                         <span class="d-none d-sm-inline">Information</span>
@@ -39,7 +39,7 @@
                 </a>
             </li>
             <li class="tab-item">
-                <a href="{% url 'dashboard:event_tickets' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_tickets' or url_name == 'ticket_tier_create' or url_name == 'ticket_tier_nft_create' or url_name == 'ticket_tier_free_create' or url_name == 'ticket_tier_update' %}active{% endif %}">
+                <a href="{% url 'dashboard_organizer:event_tickets' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_tickets' or url_name == 'ticket_tier_create' or url_name == 'ticket_tier_nft_create' or url_name == 'ticket_tier_free_create' or url_name == 'ticket_tier_update' %}active{% endif %}">
                     <i class="fa-regular fa-circle-2 text-primary me-5"></i>
                     <strong>
                         <span class="d-none d-sm-inline">Ticket Tiers</span>
@@ -48,7 +48,7 @@
                 </a>
             </li>
             <li class="tab-item">
-                <a href="{% url 'dashboard:event_go_live' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_go_live' %}active{% endif %}">
+                <a href="{% url 'dashboard_organizer:event_go_live' current_team.public_id event.pk %}" class="tab-link px-5 {% if url_name == 'event_go_live' %}active{% endif %}">
                     <i class="fa-regular fa-circle-3 text-primary me-5"></i>
                     <strong>
                         <span class="d-none d-sm-inline">Go Live</span>

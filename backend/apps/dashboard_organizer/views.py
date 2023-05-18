@@ -561,6 +561,10 @@ class EventStatsView(TeamContextMixin, DetailView):
         ).filter(event=event)
         results = []
         for ticket in tickets:
+            if ticket.checkout_session.tx_asset_ownership:
+                wallet_address = ticket.checkout_session.tx_asset_ownership.wallet_address
+            else:
+                wallet_address = None
             results.append(
                 {
                     "ticket_id": str(ticket.public_id),
@@ -570,7 +574,7 @@ class EventStatsView(TeamContextMixin, DetailView):
                     "redeemed_at": ticket.redeemed_at,
                     "checkout_session": str(ticket.checkout_session.public_id),
                     "customer_name": ticket.checkout_session.name,
-                    "wallet_address": ticket.checkout_session.tx_asset_ownership.wallet_address,  # noqa
+                    "wallet_address": wallet_address,
                     "party_size": ticket.party_size,
                 }
             )

@@ -46,7 +46,7 @@
 			<!-- Navbar start -->
 			<nav class="content d-flex align-items-center px-20 bg-white-lm bg-dark-very-light-dm rounded my-10">
 				<!-- Branding start -->
-				<a href="{% url 'staff_dashboard_organizer:stats' %}" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+				<a href="{% url 'dashboard_staff:stats' %}" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
 					<div class="ws-75">
 						<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
 					</div>
@@ -69,8 +69,8 @@
 				<!-- Dark mode toggle end -->
 
 				<!-- Links start -->
-				<a href="{% url 'staff_dashboard_organizer:events' %}" class="fw-bold antialiased me-20 ms-auto">Events</a>
-				<a href="{% url 'staff_dashboard_organizer:teams' %}" class="fw-bold antialiased">Teams</a>
+				<a href="{% url 'dashboard_staff:events' %}" class="fw-bold antialiased me-20 ms-auto">Events</a>
+				<a href="{% url 'dashboard_staff:teams' %}" class="fw-bold antialiased">Teams</a>
 				<!-- Links end -->
 			</nav>
 			<!-- Navbar end -->

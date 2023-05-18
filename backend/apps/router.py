@@ -20,7 +20,7 @@ urlpatterns = [
     path("dashboard/", include("apps.dashboard_organizer.urls")),
     path("dashboard/accounts/", include("allauth.urls")),
     # Staff Dashboard
-    path(settings.STAFF_URL, include("apps.staff_dashboard.urls")),
+    path(settings.STAFF_URL, include("apps.dashboard_staff.urls")),
 ]
 
 # Django settings URLs (admin and media)

@@ -8,7 +8,7 @@ from apps.root.models import Event, Team, User, Ticket
 
 
 class StatsPageView(TemplateView):
-    template_name = "staff_dashboard/stats.html"
+    template_name = "dashboard_staff/stats.html"
     """
     - Total Organizer Signups
     - Total Events Created
@@ -43,7 +43,6 @@ class StatsPageView(TemplateView):
         """
         total = []
         for i in data:
-            print(i)
             total.append(float(i))
         return statistics.mean(total)
 
@@ -55,7 +54,6 @@ class StatsPageView(TemplateView):
         monthly = data[-4] or data
         monthly = []
         for i in data:
-            print(i)
             monthly.append(float(i))
         return statistics.mean(monthly)
 
@@ -167,11 +165,11 @@ class EventListView(ListView):
     model = Event
     paginate_by = 25
     ordering = ["-start_date"]
-    template_name = "staff_dashboard/list_events.html"
+    template_name = "dashboard_staff/list_events.html"
 
 
 class TeamListView(ListView):
     model = Team
     paginate_by = 25
     ordering = ["-modified"]
-    template_name = "staff_dashboard/list_teams.html"
+    template_name = "dashboard_staff/list_teams.html"

@@ -1,2 +1,4 @@
 {% extends "checkout/base.html" %}
-{% load static %}
+{% load static get_theme_value %}
+
+{% block head_title %}{{ object.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}

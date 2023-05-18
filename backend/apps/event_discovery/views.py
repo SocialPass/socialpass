@@ -117,7 +117,7 @@ class CheckoutPageOne(DetailView):
         return context
 
 
-class CheckoutPageTwo(TemplateView):
+class CheckoutPageTwo(DetailView):
     """
     GET
     Fetch Checkout Session
@@ -127,22 +127,29 @@ class CheckoutPageTwo(TemplateView):
     Process Checkout Session (and related TX, etc.)
     """
 
+    model = CheckoutSession
+    slug_field = "public_id"
     template_name = "event_discovery/nft_checkout.html"
+
+    def get_object(self):
+        # TODO
+        # Prefetch event, checkout items, tickets, etc.
+        # Redirect if checkout not success
+        self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(
+            public_id=self.kwargs["public_id"]
+        )
+        if not self.object:
+            raise Http404
+        return super().get_object()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["checkout_session"] = CheckoutSession.objects.prefetch_related(
-            "checkoutitem_set"
-        ).get(public_id=self.kwargs["public_id"])
-        context["checkout_items"] = context["checkout_session"].checkoutitem_set.all()
+        context["checkout_items"] = self.object.checkoutitem_set.all()
         return context
 
     def post(self, *args, **kwargs):
         try:
-            checkout_session = CheckoutSession.objects.get(
-                public_id=self.kwargs["public_id"]
-            )
-            checkout_session.process_transaction()
+            self.object.process_transaction()
         except TxAssetOwnershipProcessingError:
             return
             # TODO
@@ -161,7 +168,7 @@ class CheckoutPageTwo(TemplateView):
 
 class CheckoutPageSuccess(DetailView):
     model = CheckoutSession
-    slug_field = "id"
+    slug_field = "public_id"
     template_name = "event_discovery/nft_checkout.html"
 
     def get_object(self):

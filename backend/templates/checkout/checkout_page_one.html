@@ -112,118 +112,280 @@
 		</div>
 	{% endif %}
 	<!-- Checkout type selector end -->
+</div>
 
+<div class="row">
+	<!-- Ticket tiers start -->
+	<div class="col-md-7">
+		<div class="content me-md-0">
+			{% for tier in tiers_active %}
+				<div class="ticket-tier mb-20">
+					<input
+						id="{{ tier.public_id }}"
+						{% if tier.capacity <= tier.quantity_sold %}disabled{% endif %}
+						type="checkbox"
+						class="ticket-tier-input"
+					>
+					<label for="{{ tier.public_id }}" class="ticket-tier-label">
+						<div class="d-sm-flex align-items-center">
+							<div class='pe-sm-15'>
+								<h6 class='fw-700 m-0 fs-base'>
+									<span class='ticket-tier-uncheck'>
+										<i class='fa-light fa-square'></i>
+									</span>
+									<span class='ticket-tier-check'>
+										<i class='fa-light fa-check-square'></i>
+									</span>
+									{{ tier.ticket_type }}
+									{% if tier.allowed_guests > 0 %}
+										<span class="fw-400 fs-base-n2">
+											| + {{ tier.allowed_guests }} Guest(s) Allowed
+										</span>
+									{% endif %}
+								</h6>
+								<p class='m-0 fs-base-n2'>
+									{{ tier.availability }} available
+								</p>
+							</div>
+							<div class="ticket-tier-controls ms-auto mt-10 mt-sm-0">
+								<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
+									<button class="btn ws-25 px-0">-</button>
+									<div class="form-control form-number text-center">0</div>
+									<button class="btn ws-25 px-0">+</button>
+								</div>
+								<div class="text-center fs-12 mt-5">
+									Max {{ tier.max_per_person }} per person
+								</div>
+							</div>
+						</div>
+						{% if checkout_type == "free" %}
+							<div class="border-top mt-10 pt-10 fs-base-n2">
+								<div>
+									<i class="fa-light fa-info-circle me-5"></i>
+									<strong>This is a FREE ticket tier</strong>
+								</div>
+								<div class="text-muted mt-5">
+									You can claim ticket(s) as long as they are available. First come, first
+									served!
+								</div>
+							</div>
+						{% endif %}
+						{% if checkout_type == "nft" %}
+							<div class="border-top mt-10 pt-10 fs-base-n2">
+								<div>Free for all holders of the following:</div>
+								<div class="row mt-10">
+									<div class="col-6 text-truncate">
+										<strong>Blockchain</strong>
+										<br />
+										{% if tier.tier_asset_ownership.blockchain == "ETH" %}
+											<div class="d-flex align-items-center">
+												<img
+													src="https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png"
+													alt="Ethereum"
+													class="d-block me-5"
+													height="16"
+												>
+												Ethereum
+											</div>
+										{% else %}
+											{{ tier.tier_asset_ownership.blockchain }}
+										{% endif %}
+									</div>
+									<div class="col-6 text-truncate">
+										<strong>Network</strong>
+										<br />
+										{{ tier.tier_asset_ownership.get_network_display }}
+									</div>
+								</div>
+								<div class="row mt-10">
+									<div class="col-6 text-truncate">
+										<strong>Asset Type</strong>
+										<br />
+										{{ tier.tier_asset_ownership.asset_type }}
+									</div>
+									<div class="col-6 text-truncate">
+										<strong>Token Address</strong>
+										<br />
+										{{ tier.tier_asset_ownership.token_address }}
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					</label>
 
+			<!--
+			<label htmlFor='c1' class='ticket-tier-label'>
+				<div class='d-sm-flex align-items-center'>
+					<div class='pe-sm-15'>
+						<h6 class='fw-700 m-0 fs-base'>
+							<span class='ticket-tier-uncheck'>
+								<i class='fa-light fa-square'></i>
+							</span>
 
-				<!--
-				<div class="m-0" dangerouslySetInnerHTML={sanitizedEventDescription()} />
-							{(document.getElementById("desc-cont")?.scrollHeight || -1) >
-								(document.getElementById("desc-cont")?.clientHeight || 0) && (
-								<div
-									id="desc-read"
-									class="position-absolute bottom-0 start-0 w-100 text-center pb-10"
-									style={{
-										paddingTop: "12rem",
-										background:
-											"linear-gradient(transparent, var(--base-content-bg-color))",
-										borderBottom: "1px solid var(--border-color)",
-									}}
-								>
+							<span class='ticket-tier-check'>
+								<i class='fa-light fa-check-square'></i>
+							</span>
+
+							{ticketTier?.ticket_type}
+							{ticketTier?.allowed_guests > 0 && (
+								<span class="fw-400 fs-base-n2">
+									{" | +" + ticketTier?.allowed_guests + " Guest(s) Allowed"}
+								</span>
+							)}
+						</h6>
+
+						<p class='m-0 fs-base-n2'>
+							{ticketTier?.capacity - ticketTier?.quantity_sold > 0
+								? ticketTier?.capacity - ticketTier?.quantity_sold
+								: 0}{" "}
+							available
+						</p>
+					</div>
+
+					<div class='ticket-tier-controls ms-auto mt-10 mt-sm-0'>
+						<div class='input-group input-group-sm input-group-pill ws-100 mx-auto'>
+							<button
+								class='btn ws-25 px-0'
+								onClick={(e) => {
+									e.stopPropagation();
+									handleSubtractOne();
+								}}
+							>
+								-
+							</button>
+							<div class='form-control form-number text-center'>{amount}</div>
+							<button
+								class='btn ws-25 px-0'
+								onClick={(e) => {
+									e.stopPropagation();
+									handleAddOne();
+								}}
+							>
+								+
+							</button>
+						</div>
+
+						{paymentType === "ASSET_OWNERSHIP" || paymentType === "FREE" ? (
+							<div class='text-center fs-12 mt-5'>
+								Max {ticketTier?.max_per_person} per person
+							</div>
+						) : null}
+						{(paymentType === "FIAT" || paymentType === "BLOCKCHAIN") && amount > 0 ? (
+							<div class='text-center fs-base-n2 mt-5'>
+								<strong>Price &times; {amount}</strong> &mdash;{" "}
+								{getPriceWithCurrencySymbol(ticketTier[paymentType]?.price * amount)}
+							</div>
+						) : null}
+						{(paymentType === "FIAT" || paymentType === "BLOCKCHAIN") && amount == 0 ? (
+							<div class='text-center fs-base-n2 mt-5'>
+								<strong>Price: &times; 1 </strong>
+								&mdash; {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price)}
+							</div>
+						) : null}
+					</div>
+				</div>
+				{paymentType === "ASSET_OWNERSHIP" ? (
+					<div class='border-top mt-10 pt-10 fs-base-n2'>
+						<div>Free for all holders of the following:</div>
+						<div class='row mt-10'>
+							<div class='col-6'>
+								<strong>Blockchain</strong>
+								<br />
+								<div class='d-flex align-items-center'>
+									{ticketTier.tier_asset_ownership.blockchain === "Ethereum" && (
+										<img
+											src='https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png'
+											alt='Ethereum'
+											class='d-block me-5'
+											height='16'
+										></img>
+									)}
+									{ticketTier.tier_asset_ownership.blockchain}
+								</div>
+							</div>
+							<div class='col-6'>
+								<strong>Network</strong>
+								<br />
+								{ticketTier.tier_asset_ownership.network === "Ethereum" ? (
+									<span>Ethereum Mainnet</span>
+								) : (
+									<span>{ticketTier.tier_asset_ownership.network}</span>
+								)}
+							</div>
+						</div>
+						<div class='row mt-10'>
+							<div class='col-6'>
+								<strong>Asset Type</strong>
+								<br />
+								<i class='fa-light fa-hexagon-image me-5'></i>
+								{ticketTier.tier_asset_ownership.asset_type}
+							</div>
+							<div class='col-6 text-truncate'>
+								<strong>Token Address</strong>
+								<br />
+								{ticketTier.tier_asset_ownership?.token_address}
+							</div>
+						</div>
+					</div>
+				) : null}
+				{paymentType === "FREE" ? (
+					<div class='border-top mt-10 pt-10 fs-base-n2'>
+						<div>
+							<i class='fa-light fa-info-circle me-5'></i>
+							<strong>This is a FREE ticket tier</strong>
+						</div>
+						<div class='text-muted mt-5'>
+							You can claim ticket(s) as long as they are available. First come, first
+							served!
+						</div>
+					</div>
+				) : null}
+				{ticketTier && ticketTier.allowed_guests > 0 && isChecked ? (
+					<div class='ticket-tier-controls border-top mt-10 pt-10'>
+						<div class='d-sm-flex align-items-center'>
+							<div>
+								<div class='fw-bold'>Extra Guest(s) - Free</div>
+								<div class='fs-base-n4 lh-sm'>
+									Please set the number of guest(s) you want to bring.
+								</div>
+							</div>
+							<div class='mt-10 mt-sm-0 ps-sm-20 flex-shrink-0 ms-auto'>
+								<div class='input-group input-group-sm ws-100 mx-auto'>
 									<button
-										type="button"
-										class="btn btn-rounded"
-										onClick={() => {
-											document
-												.getElementById("desc-cont")
-												?.classList.remove("overflow-hidden");
-											document.getElementById("desc-cont")?.classList.remove("max-h-250");
-											document.getElementById("desc-read")?.classList.add("d-none");
+										class='btn ws-25 px-0'
+										onClick={(e) => {
+											e.stopPropagation();
+											handleSubtractOneParty();
 										}}
 									>
-										Read More
+										-
+									</button>
+									<div class='form-control form-number text-center'>{extraParty}</div>
+									<button
+										class='btn ws-25 px-0'
+										onClick={(e) => {
+											e.stopPropagation();
+											handleAddOneParty();
+										}}
+									>
+										+
 									</button>
 								</div>
-							)}
-						</div>
-					</div>
-				}
-
-			-->
-
-		<!--
-				<div class="col-md-5">
-					<div class="content pt-10 pt-md-30 my-0 position-md-sticky top-0 start-0">
-						<div>
-							{checkout?.expiration == null || checkout?.tx_status == "FULFILLED" ? (
-								""
-							) : (
-								<CountdownTimer expiration={new Date(checkout?.expiration)} />
-							)}
-						</div>
-						<div class="d-flex align-items-center">
-							<div class="ws-25 flex-shrink-0">
-								<i class="fa-light fa-calendars"></i>
-							</div>
-							<div class="fw-bold">
-								Date
-								{"  "}&mdash; {event?.timezone}
 							</div>
 						</div>
-						<p class="text-muted mt-5 mb-0">
-							<strong class="text-base">Start:</strong> {event?.start_date}
-						</p>
-						{event?.end_date && (
-							<p class="text-muted mt-5 mb-0">
-								<strong class="text-base">End:</strong> {event?.end_date}
-							</p>
-						)}
-						<div class="d-flex align-items-center mt-15">
-							<div class="ws-25 flex-shrink-0">
-								<i class="fa-light fa-location-dot"></i>
-							</div>
-							<div class="fw-bold">Location</div>
+						<div class='border-top text-end mt-15 pt-10 fs-base-n2'>
+							<strong>Total:</strong> {amount + amount * extraParty} (Quantity + Quantity
+							&times; Guests)
 						</div>
-						<p class="text-muted mt-5 mb-0">{event?.localized_address_display}</p>
 					</div>
-				</div>
-				<div class="col-12">
-					<div class="content mt-20 mb-0">
-						{tiersLoading ? (
-							<></>
-						) : isSomeTiersAvailable() ? (
-							<>
-								<div>
-									<div
-										class="alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center"
-										role="alert"
-									>
-										<i class="fa-regular fa-check me-15"></i>
-										<p class="m-0">
-											Tickets available! Please select the tickets you want to purchase.
-										</p>
-									</div>
-								</div>
-							</>
-						) : (
-							<>
-								{ticketTiers.length > 0 && (
-									<div>
-										<div
-											class="alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center"
-											role="alert"
-										>
-											<i class="fa-regular fa-times me-15"></i>
-											<p class="m-0">
-												Sorry! Tickets are not available for this event.
-											</p>
-										</div>
-									</div>
-								)}
-							</>
-						)}
-					</div>
-				</div>
+				) : null}
+			</label>
 		-->
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	<!-- Ticket tiers end -->
 </div>
 {% endblock content %}
 

@@ -68,8 +68,8 @@ class CheckoutPageOne(DetailView):
 
         # Get all ticket tiers and set up holder lists
         tiers_all = self.object.tickettier_set.all()
-        tiers_free, tiers_fiat, tiers_blockchain, tiers_asset_ownership = (
-            [] for i in range(4)
+        tiers_active, tiers_free, tiers_fiat, tiers_blockchain, tiers_asset_ownership = (
+            [] for i in range(5)
         )
 
         # Populate holder lists with correct tiers
@@ -107,7 +107,18 @@ class CheckoutPageOne(DetailView):
             if len(tiers_free) > 0:
                 checkout_type = "free"
 
+        # Set tiers active
+        if checkout_type == "free":
+            tiers_active = tiers_free
+        elif checkout_type == "fiat":
+            tiers_active = tiers_fiat
+        elif checkout_type == "crypto":
+            tiers_active = tiers_blockchain
+        elif checkout_type == "nft":
+            tiers_active = tiers_asset_ownership
+
         # Set everything to context
+        context["tiers_active"] = tiers_active
         context["tiers_free"] = tiers_free
         context["tiers_fiat"] = tiers_fiat
         context["tiers_blockchain"] = tiers_blockchain

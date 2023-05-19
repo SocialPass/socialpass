@@ -822,6 +822,10 @@ class TicketTier(DBModel):
         tickets_with_party = tickets.aggregate(models.Sum("party_size"))["party_size__sum"]
         return tickets_with_party or 0
 
+    @property
+    def availability(self):
+        return self.capacity - self.quantity_sold
+
 
 class TierFiat(DBModel):
     """

@@ -212,181 +212,49 @@
 							</div>
 						{% endif %}
 					</label>
-
-			<!--
-			<label htmlFor='c1' class='ticket-tier-label'>
-				<div class='d-sm-flex align-items-center'>
-					<div class='pe-sm-15'>
-						<h6 class='fw-700 m-0 fs-base'>
-							<span class='ticket-tier-uncheck'>
-								<i class='fa-light fa-square'></i>
-							</span>
-
-							<span class='ticket-tier-check'>
-								<i class='fa-light fa-check-square'></i>
-							</span>
-
-							{ticketTier?.ticket_type}
-							{ticketTier?.allowed_guests > 0 && (
-								<span class="fw-400 fs-base-n2">
-									{" | +" + ticketTier?.allowed_guests + " Guest(s) Allowed"}
-								</span>
-							)}
-						</h6>
-
-						<p class='m-0 fs-base-n2'>
-							{ticketTier?.capacity - ticketTier?.quantity_sold > 0
-								? ticketTier?.capacity - ticketTier?.quantity_sold
-								: 0}{" "}
-							available
-						</p>
-					</div>
-
-					<div class='ticket-tier-controls ms-auto mt-10 mt-sm-0'>
-						<div class='input-group input-group-sm input-group-pill ws-100 mx-auto'>
-							<button
-								class='btn ws-25 px-0'
-								onClick={(e) => {
-									e.stopPropagation();
-									handleSubtractOne();
-								}}
-							>
-								-
-							</button>
-							<div class='form-control form-number text-center'>{amount}</div>
-							<button
-								class='btn ws-25 px-0'
-								onClick={(e) => {
-									e.stopPropagation();
-									handleAddOne();
-								}}
-							>
-								+
-							</button>
-						</div>
-
-						{paymentType === "ASSET_OWNERSHIP" || paymentType === "FREE" ? (
-							<div class='text-center fs-12 mt-5'>
-								Max {ticketTier?.max_per_person} per person
-							</div>
-						) : null}
-						{(paymentType === "FIAT" || paymentType === "BLOCKCHAIN") && amount > 0 ? (
-							<div class='text-center fs-base-n2 mt-5'>
-								<strong>Price &times; {amount}</strong> &mdash;{" "}
-								{getPriceWithCurrencySymbol(ticketTier[paymentType]?.price * amount)}
-							</div>
-						) : null}
-						{(paymentType === "FIAT" || paymentType === "BLOCKCHAIN") && amount == 0 ? (
-							<div class='text-center fs-base-n2 mt-5'>
-								<strong>Price: &times; 1 </strong>
-								&mdash; {getPriceWithCurrencySymbol(ticketTier[paymentType]?.price)}
-							</div>
-						) : null}
-					</div>
-				</div>
-				{paymentType === "ASSET_OWNERSHIP" ? (
-					<div class='border-top mt-10 pt-10 fs-base-n2'>
-						<div>Free for all holders of the following:</div>
-						<div class='row mt-10'>
-							<div class='col-6'>
-								<strong>Blockchain</strong>
-								<br />
-								<div class='d-flex align-items-center'>
-									{ticketTier.tier_asset_ownership.blockchain === "Ethereum" && (
-										<img
-											src='https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png'
-											alt='Ethereum'
-											class='d-block me-5'
-											height='16'
-										></img>
-									)}
-									{ticketTier.tier_asset_ownership.blockchain}
-								</div>
-							</div>
-							<div class='col-6'>
-								<strong>Network</strong>
-								<br />
-								{ticketTier.tier_asset_ownership.network === "Ethereum" ? (
-									<span>Ethereum Mainnet</span>
-								) : (
-									<span>{ticketTier.tier_asset_ownership.network}</span>
-								)}
-							</div>
-						</div>
-						<div class='row mt-10'>
-							<div class='col-6'>
-								<strong>Asset Type</strong>
-								<br />
-								<i class='fa-light fa-hexagon-image me-5'></i>
-								{ticketTier.tier_asset_ownership.asset_type}
-							</div>
-							<div class='col-6 text-truncate'>
-								<strong>Token Address</strong>
-								<br />
-								{ticketTier.tier_asset_ownership?.token_address}
-							</div>
-						</div>
-					</div>
-				) : null}
-				{paymentType === "FREE" ? (
-					<div class='border-top mt-10 pt-10 fs-base-n2'>
-						<div>
-							<i class='fa-light fa-info-circle me-5'></i>
-							<strong>This is a FREE ticket tier</strong>
-						</div>
-						<div class='text-muted mt-5'>
-							You can claim ticket(s) as long as they are available. First come, first
-							served!
-						</div>
-					</div>
-				) : null}
-				{ticketTier && ticketTier.allowed_guests > 0 && isChecked ? (
-					<div class='ticket-tier-controls border-top mt-10 pt-10'>
-						<div class='d-sm-flex align-items-center'>
-							<div>
-								<div class='fw-bold'>Extra Guest(s) - Free</div>
-								<div class='fs-base-n4 lh-sm'>
-									Please set the number of guest(s) you want to bring.
-								</div>
-							</div>
-							<div class='mt-10 mt-sm-0 ps-sm-20 flex-shrink-0 ms-auto'>
-								<div class='input-group input-group-sm ws-100 mx-auto'>
-									<button
-										class='btn ws-25 px-0'
-										onClick={(e) => {
-											e.stopPropagation();
-											handleSubtractOneParty();
-										}}
-									>
-										-
-									</button>
-									<div class='form-control form-number text-center'>{extraParty}</div>
-									<button
-										class='btn ws-25 px-0'
-										onClick={(e) => {
-											e.stopPropagation();
-											handleAddOneParty();
-										}}
-									>
-										+
-									</button>
-								</div>
-							</div>
-						</div>
-						<div class='border-top text-end mt-15 pt-10 fs-base-n2'>
-							<strong>Total:</strong> {amount + amount * extraParty} (Quantity + Quantity
-							&times; Guests)
-						</div>
-					</div>
-				) : null}
-			</label>
-		-->
 				</div>
 			{% endfor %}
 		</div>
 	</div>
 	<!-- Ticket tiers end -->
+
+	<!-- Form start -->
+	<div class="col-md-5">
+		<div class="px-content pt-md-30 position-md-sticky top-0 start-0">
+			<div class="alert alert-primary text-base fs-base-n4 p-5 mt-10" role="alert">
+				<i class="fa-regular fa-info-circle me-5 text-primary"></i>
+				We only require your email to deliver your tickets in a secure way. <strong>No account</strong> is created without your consent.
+			</div>
+			<form class="checkout-form">
+				{% with form.name as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with form.email as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
+					<strong className='antialiased'>Get Tickets</strong>
+				</button>
+			</form>
+			<p class="text-muted fs-base-n4">
+				You're also agreeing to our
+				<a href="#" class="fw-bold mx-5" target="_blank" rel="noreferrer">
+					Terms of Use <i class="fa-regular fa-external-link"></i>
+				</a>
+				by clicking on the above button.
+			</p>
+		</div>
+	</div>
+	<!-- Form end -->
 </div>
+
+<!-- Footer start -->
+<div class="content text-end border-top pt-10">
+	<span class="ms-auto text-muted fs-base-n2">
+		&copy; 2022, SP Tech Inc. All rights reserved
+	</span>
+</div>
+<!-- Footer end -->
 {% endblock content %}
 
 {% block extra_body %}

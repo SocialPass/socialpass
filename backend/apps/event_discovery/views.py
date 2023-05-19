@@ -14,7 +14,7 @@ from django.views.generic.detail import DetailView
 from apps.root.models import CheckoutSession, Event, Ticket
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
-from .forms import PasscodeForm, NFTCheckoutForm
+from .forms import PasscodeForm, CheckoutForm, NFTCheckoutForm
 
 
 class NFTCheckout(View):
@@ -118,6 +118,7 @@ class CheckoutPageOne(DetailView):
             tiers_active = tiers_asset_ownership
 
         # Set everything to context
+        context["form"] = CheckoutForm()
         context["tiers_active"] = tiers_active
         context["tiers_free"] = tiers_free
         context["tiers_fiat"] = tiers_fiat

@@ -15,6 +15,23 @@ class PasscodeForm(forms.Form):
     )
 
 
+class CheckoutForm(forms.Form):
+
+    ticket_tier_data = forms.CharField(
+        widget=forms.HiddenInput()
+    )
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"placeholder": "Name"}
+        ),
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"placeholder": "Email Address"}
+        ),
+    )
+
+
 class NFTCheckoutForm(forms.Form):
 
     wallet_address = forms.CharField(

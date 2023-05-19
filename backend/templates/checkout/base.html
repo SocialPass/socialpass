@@ -174,6 +174,18 @@
 				border-bottom-right-radius: var(--rounded-pill-border-radius);
 			}
 
+			/* Description */
+
+			#desc-cont p > br {
+				display: none;
+			}
+
+			#desc-read {
+				padding-top: 12rem;
+				background-image: linear-gradient(transparent, var(--base-content-bg-color));
+				border-bottom: 1px solid var(--border-color);
+			}
+
 			/* Utilities and related */
 
 			.border-blend {
@@ -192,6 +204,10 @@
 
 			.ws-860 {
 				width: 86rem !important;
+			}
+
+			.max-h-250 {
+				height: 25rem !important;
 			}
 		</style>
 
@@ -232,6 +248,10 @@
 					<!-- Dark mode toggle end -->
 				</nav>
 				<!-- Navbar end -->
+
+				<!-- Content start -->
+				{% block content %}{% endblock content %}
+				<!-- Content end -->
 			</div>
 		</div>
 		<!-- Page wrapper end -->

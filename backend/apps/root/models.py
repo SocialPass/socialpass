@@ -534,6 +534,15 @@ class Event(DBModel):
         ]
         return redeemed_with_party or 0
 
+    @property
+    def description_html(self):
+        description_html = ""
+        try:
+            description_html = json.loads(self.description)["html"]
+        except Exception:
+            pass
+        return description_html
+
     def clean_handle_google_event_class(self, *args, **kwargs):
         """
         clean the handling of the Google event class

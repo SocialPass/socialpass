@@ -201,7 +201,7 @@
 									<div class="col-6 text-truncate">
 										<strong>Asset Type</strong>
 										<br />
-										{{ tier.tier_asset_ownership.asset_type }}
+										<i class="fa-light fa-hexagon-image"></i> {{ tier.tier_asset_ownership.asset_type }}
 									</div>
 									<div class="col-6 text-truncate">
 										<strong>Token Address</strong>
@@ -226,6 +226,7 @@
 				We only require your email to deliver your tickets in a secure way. <strong>No account</strong> is created without your consent.
 			</div>
 			<form class="checkout-form">
+				{% csrf_token %}
 				{% with form.name as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}

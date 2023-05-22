@@ -5,7 +5,7 @@
 
 {% block content %}
 <!-- Header start -->
-<div class="w-100 hs-150 position-relative">
+<div class="w-100 hs-200 position-relative">
 	<!-- Event cover image start -->
 	<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
 		<img src="{{ object.event.cover_image.url }}" class="w-100 h-auto" alt="Cover image">
@@ -94,6 +94,61 @@
 		</div>
 	</div>
 	<!-- Information section end -->
+
+	<!-- Order summary start -->
+	<div class="col-md-5">
+		<div class="px-content pt-md-20 position-md-sticky top-0 start-0">
+			<div class="bg-gray-very-light-lm bg-darkgray-very-dim-dm px-15 py-20 border border-dotted">
+				<div class="d-flex align-items-center mb-10">
+					<h6 class="fw-700 fsr-6 m-0">
+						Summary
+					</h6>
+
+					<!-- Edit button start -->
+					<div class="ms-auto">
+						<a href="{% url 'discovery:checkout_one' object.event.id object.event.slug %}" class="fw-bold antialiased">Edit</a>
+					</div>
+					<!-- Edit button end -->
+				</div>
+				{% for item in checkout_items %}
+					<!-- Order item start -->
+					<div class="pt-10 border-top">
+						<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
+							<span>{{ item.ticket_tier.ticket_type }}</span>
+							<span class="ms-auto ps-10 fw-normal">
+								&times; {{ item.quantity }}
+							</span>
+						</h6>
+						<div class="fs-base-n2 mt-5 text-muted">
+							Allowed Guest(s): 
+							{{ item.ticket_tier.allowed_guests }}
+						</div>
+					</div>
+					<!-- Order item end -->
+				{% endfor %}
+			</div>
+			<form class="checkout-form mt-40 mb-20">
+				{% csrf_token %}
+				{% with form.name as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with form.email as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
+					<strong class="antialiased">Get Tickets</strong>
+				</button>
+			</form>
+			<hr />
+			<p class="text-muted fs-base-n2">
+				If you need help placing your order, please
+				<a href="#" data-hm-toggle="modal" data-hm-target="discord-support-ticket-modal" class="fw-bold"
+				>contact us</a>
+				and let us know
+			</p>
+		</div>
+	</div>
+	<!-- Order summary end -->
 </div>
 <!-- Payment content end -->
 {% endblock content %}

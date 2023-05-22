@@ -127,7 +127,11 @@
 					<!-- Order item end -->
 				{% endfor %}
 			</div>
-			<form class="checkout-form mt-40 mb-20">
+			<h6 class="fw-700 fsr-6 mt-40 mb-0">
+				Confirm Order
+			</h6>
+			<hr />
+			<form class="checkout-form my-20">
 				{% csrf_token %}
 				{% with form.name as input %}
 					{% include 'components/forms_inputs/input.html' %}

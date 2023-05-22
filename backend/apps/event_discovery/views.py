@@ -14,7 +14,7 @@ from django.views.generic.detail import DetailView
 from apps.root.models import CheckoutSession, Event, Ticket
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
-from .forms import PasscodeForm, CheckoutForm, NFTCheckoutForm
+from .forms import PasscodeForm, CheckoutForm, CheckoutForm2, NFTCheckoutForm
 
 
 class NFTCheckout(View):
@@ -157,7 +157,12 @@ class CheckoutPageTwo(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+
         context["checkout_items"] = self.object.checkoutitem_set.all()
+        context["form"] = CheckoutForm2(initial={
+            "name": self.object.name,
+            "email": self.object.email
+        })
         return context
 
     def post(self, *args, **kwargs):

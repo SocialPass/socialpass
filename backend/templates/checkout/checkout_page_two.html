@@ -8,8 +8,8 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<button class="btn close" aria-label="Close" data-hm-dismiss="modal">&times;</button>
-			<div>
-				Place your wallet connector buttons here...
+			<div id="buttons-container">
+			  <!-- Placeholder for connector buttons -->
 			</div>
 		</div>
 	</div>
@@ -133,7 +133,7 @@
 							</span>
 						</h6>
 						<div class="fs-base-n2 mt-5 text-muted">
-							Allowed Guest(s): 
+							Allowed Guest(s):
 							{{ item.ticket_tier.allowed_guests }}
 						</div>
 					</div>
@@ -176,4 +176,5 @@
 		document.getElementById("desc-read").classList.remove("d-none");
 	}
 </script>
+<script src="{% static 'js/dist/bundle.js' %}"></script>
 {% endblock extra_body %}

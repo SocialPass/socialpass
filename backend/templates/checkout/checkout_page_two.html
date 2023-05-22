@@ -3,6 +3,19 @@
 
 {% block head_title %}{{ object.event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
+{% block modals %}
+<div class="modal" tabindex="-1" id="wallet-connector-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<button class="btn close" aria-label="Close" data-hm-dismiss="modal">&times;</button>
+			<div>
+				Place your wallet connector buttons here...
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock modals %}
+
 {% block content %}
 <!-- Header start -->
 <div class="w-100 hs-200 position-relative">
@@ -77,7 +90,7 @@
 				</div>
 
 				<!-- Connect wallet button start -->
-				<button type="button" class="btn btn-lg btn-block p-15 text-base text-start d-flex align-items-center my-20">
+				<button type="button" class="btn btn-lg btn-block p-15 text-base text-start d-flex align-items-center my-20" data-hm-toggle="modal" data-hm-target="wallet-connector-modal">
 					<i class="fa-light fa-wallet text-primary fs-base-p16 flex-shrink-0 ws-50"></i>
 					<div>
 						<div class="fw-700 antialiased fs-base-p4">Connect Wallet</div>

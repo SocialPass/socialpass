@@ -5,6 +5,7 @@ import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
 import { SafeConnector } from '@wagmi/connectors/safe'
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
 import { publicProvider } from '@wagmi/core/providers/public'
+import { watchAccount } from '@wagmi/core'
 import {
 	configureChains,
 	connect,
@@ -51,6 +52,17 @@ const config = createConfig({
 	webSocketPublicClient,
 })
 
+async function connectWallet(connector) {
+	// Connect wallet
+	const result = await connect({
+		connector:connector,
+	})
+	const account = getAccount();
+	console.log(result);
+	console.log(account);
+	//document.getElementById("id_wallet_address").value = account.address;
+}
+
 export function setupWallets(){
 	// get container
 	const container = document.getElementById("buttons-container");
@@ -72,20 +84,20 @@ export function setupWallets(){
 	  // Append the button to the container
 	  container.appendChild(button);
 	});
-}
 
-export async function connectWallet(connector) {
-	// Connect wallet
-	const result = await connect({
-		connector:connector,
-	})
-	const account = getAccount();
-	console.log(result);
-	console.log(account);
-	//document.getElementById("id_wallet_address").value = account.address;
+	// Add Wallet Address Listener
+	watchAccount((account) => {
+		console.log('watching account', account)
+		if (!account.address){
+			disconnectWallet()
+		}
+		// TODO:
+		// Update wallet address HTML value on change
+	});
 }
 
 export async function walletSign(message) {
+	console.log('signing...')
 	// Sign message
 	const signature = await signMessage({
 		message: message,
@@ -96,6 +108,7 @@ export async function walletSign(message) {
 
 export async function disconnectWallet() {
 	// Disconnect wallet
+	console.log('disconnecting...')
 	await disconnect();
 	//document.getElementById("id_wallet_address").value = "";
 	//document.getElementById("id_signed_message").value = "";
@@ -103,8 +116,6 @@ export async function disconnectWallet() {
 
 
 // Setup globals, etc.
-window.connectWallet = connectWallet;
 window.walletSign = walletSign;
 window.disconnectWallet = disconnectWallet;
-window.config = config;
 setupWallets()

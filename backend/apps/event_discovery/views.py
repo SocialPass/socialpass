@@ -141,7 +141,8 @@ class CheckoutPageTwo(DetailView):
 
     model = CheckoutSession
     slug_field = "public_id"
-    template_name = "event_discovery/nft_checkout.html"
+    slug_url_kwarg = "public_id"
+    template_name = "checkout/checkout_page_two.html"
 
     def get_object(self):
         # TODO

@@ -66,22 +66,32 @@ class CheckoutPageOne(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        # Get all ticket tiers and set up holder lists
+        # Get all ticket tiers and set up holder lists and availabilities
         tiers_all = self.object.tickettier_set.all()
         tiers_active, tiers_free, tiers_fiat, tiers_blockchain, tiers_asset_ownership = (
             [] for i in range(5)
         )
+        availability = {
+            "free": False,
+            "fiat": False,
+            "blockchain": False,
+            "asset_ownership": False,
+        }
 
-        # Populate holder lists with correct tiers
+        # Populate holder lists with correct tiers and update availability
         for tier in tiers_all:
             if tier.tier_free:
                 tiers_free.append(tier)
+                if tier.availability > 0: availability["free"] = True
             if tier.tier_fiat:
                 tiers_fiat.append(tier)
+                if tier.availability > 0: availability["fiat"] = True
             if tier.tier_blockchain:
                 tiers_blockchain.append(tier)
+                if tier.availability > 0: availability["blockchain"] = True
             if tier.tier_asset_ownership:
                 tiers_asset_ownership.append(tier)
+                if tier.availability > 0: availability["asset_ownership"] = True
 
         # Determine how many types of tiers are available
         tier_types_count = 0
@@ -97,6 +107,17 @@ class CheckoutPageOne(DetailView):
         # If checkout type not given (default),
         # we prioritize NFTs < Crypto < Fiat < Free
         checkout_type = self.kwargs.get("checkout_type", "")
+        if not checkout_type:
+            if availability["asset_ownership"]:
+                checkout_type = "nft"
+            if availability["blockchain"]:
+                checkout_type = "crypto"
+            if availability["fiat"]:
+                checkout_type = "fiat"
+            if availability["free"]:
+                checkout_type = "free"
+
+        # If checkout type is still empty (no tier available), we set using length   
         if not checkout_type:
             if len(tiers_asset_ownership) > 0:
                 checkout_type = "nft"
@@ -125,6 +146,7 @@ class CheckoutPageOne(DetailView):
         context["tiers_blockchain"] = tiers_blockchain
         context["tiers_asset_ownership"] = tiers_asset_ownership
         context["tier_types_count"] = tier_types_count
+        context["availability"] = availability
         context["checkout_type"] = checkout_type
         return context
 

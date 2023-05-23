@@ -187,13 +187,21 @@ class CheckoutPageTwo(DetailView):
 class CheckoutPageSuccess(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
-    template_name = "event_discovery/nft_checkout.html"
+    slug_url_kwarg = "public_id"
+    template_name = "checkout/checkout_page_success.html"
 
     def get_object(self):
-        # TODO
-        # Prefetch event, checkout items, tickets, etc.
-        # Redirect if checkout not success
+        self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(
+            public_id=self.kwargs["public_id"],
+        )
+        if not self.object:
+            raise Http404
         return super().get_object()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["checkout_items"] = self.object.checkoutitem_set.all()
+        return context
 
 
 class EventDiscoveryIndex(TemplateView):

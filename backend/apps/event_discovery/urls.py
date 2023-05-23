@@ -39,4 +39,5 @@ urlpatterns = [
         name="checkout_one",
     ),
     path("checkout-two/<uuid:public_id>/", views.CheckoutPageTwo.as_view(), name="checkout_two"),
+    path("checkout-success/<uuid:public_id>/", views.CheckoutPageSuccess.as_view(), name="checkout_success"),
 ]

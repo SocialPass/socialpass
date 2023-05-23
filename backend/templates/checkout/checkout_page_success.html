@@ -1,0 +1,133 @@
+{% extends "checkout/base.html" %}
+{% load static get_theme_value %}
+
+{% block head_title %}{{ object.event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
+
+{% block content %}
+<!-- Header start -->
+<div class="w-100 hs-150 position-relative">
+	<!-- Event cover image start -->
+	<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
+		<img src="{{ object.event.cover_image.url }}" class="w-100 h-auto" alt="Cover image">
+	</div>
+	<!-- Event cover image end -->
+</div>
+<!-- Header end -->
+
+<!-- Event and team name start -->
+<div class="px-content pt-20">
+	<p class="text-muted mt-5 mb-0">
+		By {{ object.event.organizer }}
+	</p>
+	<h2 class="text-strong fs-base-p2 fw-700 m-0">
+		{{ object.event.title }}
+	</h2>
+</div>
+<!-- Event and team name end -->
+
+<!-- Payment content start -->
+<div class="row">
+	<!-- Information section start -->
+	<div class="col-md-7">
+		<div class="content mt-20 mb-0 me-md-0">
+			<h1 class="text-strong fw-700 fsr-4 m-0">
+				<i class="fa-light fa-check-circle text-success-dim-lm text-success-light-dm me-5"></i>
+				Congratulations!
+			</h1>
+			<p class="mt-10">
+				You made it! We've generated your ticket(s) for the event. You can get them on this page, or in the email we sent you at <a href="mailto:{{ object.email }}" class="fw-bold">{{ object.email }}</a>.
+			</p>
+
+			<!-- Event summary start -->
+			<h6 class="fw-700 fsr-6 mt-20">
+				Event Summary
+			</h6>
+			<table class="table table-no-outer-padding">
+				<tbody>
+					<tr>
+						<th>Name</th>
+						<td>{{ object.event.title }}</td>
+					</tr>
+					<tr>
+						<th>Date</th>
+						<td>{{ object.event.start_date }}</td>
+					</tr>
+					<tr>
+						<th>Location</th>
+						<td>{{ object.event.localized_address_display }}</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- Event summary end -->
+
+			<div class="alert alert-primary mt-20 mb-20 m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
+				<i class="fa-regular fa-check me-15"></i>
+				<p class="m-0">Your tickets have been sent to your email address.</p>
+			</div>
+			<p class="mb-5">
+				You can also use the following link to get your tickets:
+			</p>
+			<div class="bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded py-10 px-15 text-truncate border border-dotted">
+				<a id="get-tickets-link" href="{{ object.get_tickets_link }}" class="d-block text-center fw-bold antialiased">
+					Get My Tickets
+					<i class="fa-regular fa-external-link ms-10"></i>
+				</a>
+			</div>
+			<p class="text-muted fs-base-n2">
+				In case you don't receive your tickets or the link above does not work, please
+				<a href="#" data-hm-toggle="modal" data-hm-target="discord-support-ticket-modal"class="fw-bold antialiased">contact us</a>
+				and tell us this ID: <br>
+				<strong class="text-strong">{{ object.public_id }}</strong>
+			</p>
+		</div>
+	</div>
+	<!-- Information section end -->
+
+	<!-- Order summary start -->
+	<div class="col-md-5">
+		<div class="px-content pt-md-20 position-md-sticky top-0 start-0">
+			<div class="bg-gray-very-light-lm bg-darkgray-very-dim-dm px-15 py-20 border border-dotted">
+				<div class="d-flex align-items-center mb-10">
+					<h6 class="fw-700 fsr-6 m-0">
+						Receipt
+					</h6>
+				</div>
+				{% for item in checkout_items %}
+					<!-- Order item start -->
+					<div class="pt-10 border-top">
+						<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
+							<span>{{ item.ticket_tier.ticket_type }}</span>
+							<span class="ms-auto ps-10 fw-normal">
+								&times; {{ item.quantity }}
+							</span>
+						</h6>
+						<div class="fs-base-n2 mt-5 text-muted">
+							Allowed Guest(s): 
+							{{ item.ticket_tier.allowed_guests }}
+						</div>
+					</div>
+					<!-- Order item end -->
+				{% endfor %}
+			</div>
+			<hr class="mt-20" />
+			<p class="fs-base-n2">
+				Want to buy more tickets?
+			</p>
+			<a href="#" class="btn btn-lg btn-block px-20 py-10 fs-base text-base">
+				<i class="fa-solid fa-rotate-right me-5"></i>
+				<strong class="antialiased">Order Again</strong>
+			</a>
+		</div>
+	</div>
+	<!-- Order summary end -->
+</div>
+<!-- Payment content end -->
+{% endblock content %}
+
+{% block extra_body %}
+<script type="text/javascript">
+	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
+		document.getElementById("desc-read").classList.remove("d-none");
+	}
+</script>
+{% endblock extra_body %}

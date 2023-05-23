@@ -92,6 +92,28 @@
 	</div>
 	<!-- Date and location end -->
 
+	<!-- Alerts start -->
+	<div class="col-12">
+		<div class="content mb-0">
+			{% if availability.free or availability.fiat or availability.blockchain or availability.asset_ownership %}
+				<div class="alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
+					<i class="fa-regular fa-check me-15"></i>
+					<p class="m-0">
+						Tickets available! Please select the tickets you want to purchase.
+					</p>
+				</div>
+			{% else %}
+				<div class="alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
+					<i class="fa-regular fa-times me-15"></i>
+					<p class="m-0">
+						Sorry! Tickets are not available for this event.
+					</p>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+	<!-- Alerts end -->
+
 	<!-- Checkout type selector start -->
 	{% if tier_types_count > 1 %}
 		<div class="col-12" id="checkout-type-selector">

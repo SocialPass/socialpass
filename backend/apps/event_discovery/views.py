@@ -139,7 +139,10 @@ class CheckoutPageOne(DetailView):
             tiers_active = tiers_asset_ownership
 
         # Set everything to context
-        context["form"] = CheckoutForm()
+        context["form"] = CheckoutForm(initial={
+            "name": self.request.GET.get("name", ""),
+            "email": self.request.GET.get("email", ""),
+        })
         context["tiers_active"] = tiers_active
         context["tiers_free"] = tiers_free
         context["tiers_fiat"] = tiers_fiat

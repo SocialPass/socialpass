@@ -29,14 +29,9 @@ from model_utils.models import TimeStampedModel
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     CheckoutSessionExpired,
-    ConflictingTiersRequestedError,
-    DuplicatesTiersRequestedError,
     EventStateTranstionError,
     ForbiddenRedemptionError,
-    ForeignKeyConstraintError,
     GoogleWalletAPIRequestError,
-    TooManyGuestsError,
-    TooManyTicketsRequestedError,
     TxAssetOwnershipProcessingError,
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
@@ -543,26 +538,6 @@ class Event(DBModel):
             pass
         return description_html
 
-    def clean_handle_google_event_class(self, *args, **kwargs):
-        """
-        clean the handling of the Google event class
-        """
-        # we do this only for LIVE events to reduce the number of API requests
-        if self.state == Event.StateStatus.LIVE:
-            google_event_class_id = self.handle_google_event_class()
-            if not google_event_class_id:
-                raise GoogleWalletAPIRequestError(
-                    "Something went wrong while handling the Google event class."
-                )
-
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_handle_google_event_class()
-        return super().clean(*args, **kwargs)
-
 
 class Ticket(DBModel):
     """
@@ -609,47 +584,6 @@ class Ticket(DBModel):
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
-
-    def clean_event(self, *args, **kwargs):
-        """
-        clean event method
-        check if ticket_tier.event == event and ticket_tier.event == event
-        """
-        if (self.ticket_tier.event != self.event) or (
-            self.checkout_session.event != self.event
-        ):
-            e = ForeignKeyConstraintError(
-                {
-                    "event": _(
-                        "event related to checkout_session and ticket_tier are different"
-                    )
-                }
-            )
-            raise e
-
-    def clean_checkout_session(self, *args, **kwargs):
-        """
-        clean checkout_session method
-        check if checkout_item.checkout_session == checkout_session
-        """
-        if self.checkout_item.checkout_session != self.checkout_session:
-            e = ForeignKeyConstraintError(
-                {
-                    "checkout_session": _(
-                        "checkout_session related to ticket and checkout_item are different"  # noqa
-                    )
-                }
-            )
-            raise e
-
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_event()
-        self.clean_checkout_session()
-        return super().clean(*args, **kwargs)
 
     def redeem_ticket(self, redemption_access_key: Optional["TicketRedemptionKey"] = None):
         """Redeems a ticket."""
@@ -1147,106 +1081,6 @@ class CheckoutItem(DBModel):
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
 
-    def clean_max_per_person(self, *args, **kwargs):
-        """
-        clean max_per_person method
-        checks if quantity requested is not more than maximum per person
-        """
-        max_per_person = self.ticket_tier.max_per_person
-        if self.quantity > max_per_person:
-            raise TooManyTicketsRequestedError(
-                {"quantity": _(f"Only {max_per_person} quantity per person is available.")}
-            )
-
-    def clean_extra_party(self, *args, **kwargs):
-        """
-        clean extra_party method
-        checks for number of guests allowed
-        """
-        if self.extra_party > self.ticket_tier.allowed_guests:
-            raise TooManyGuestsError(
-                {
-                    "extra_party": _(
-                        f"Only {self.ticket_tier.allowed_guests} guest(s) allowed."
-                    )
-                }
-            )
-
-    def clean_quantity(self, *args, **kwargs):
-        """
-        clean quantity method
-        checks for available tickets
-        """
-        total_selected = self.quantity + (self.quantity * self.extra_party)
-        available = self.ticket_tier.capacity - self.ticket_tier.quantity_sold
-        if total_selected > available:
-            raise TooManyTicketsRequestedError(
-                {"quantity": _(f"Only {available} quantity is available.")}
-            )
-
-    def clean_ticket_tier(self, *args, **kwargs):
-        """
-        clean ticket_tier method
-        checks for duplicate or conflicting tiers
-        """
-        # check if ticket_tier already exists in the parent CheckoutSession
-        # raises DuplicatesTiersRequestedError if duplicate found
-        qs = CheckoutItem.objects.filter(
-            checkout_session=self.checkout_session, ticket_tier=self.ticket_tier
-        ).exclude(pk=self.pk)
-        if qs.exists():
-            raise DuplicatesTiersRequestedError(
-                {"ticket_tier": _("Duplicate ticket_tier are not accepted")}
-            )
-
-        # check if ticket_tier conflict with the parent CheckoutSession tx_type
-        # raises ConflictingTiersRequestedError if mismatch found
-        match self.checkout_session.tx_type:
-            case CheckoutSession.TransactionType.FIAT:
-                if not self.ticket_tier.tier_fiat:
-                    raise ConflictingTiersRequestedError(
-                        {"ticket_tier": _("ticket_tier does not support fiat")}
-                    )
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                if not self.ticket_tier.tier_blockchain:
-                    raise ConflictingTiersRequestedError(
-                        {"ticket_tier": _("ticket_tier does not support blockchain")}
-                    )
-            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                if not self.ticket_tier.tier_asset_ownership:
-                    raise ConflictingTiersRequestedError(
-                        {"ticket_tier": _("ticket_tier does not support asset ownership")}
-                    )
-            case _:
-                pass
-
-    def clean_event(self, *args, **kwargs):
-        """
-        clean event method
-        check if ticket_tier.event == checkout_session.event
-        """
-        if self.ticket_tier.event != self.checkout_session.event:
-            e = ForeignKeyConstraintError(
-                {
-                    "event": _(
-                        "event related to checkout_session and ticket_tier are different"
-                    )
-                }
-            )
-            raise e
-
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_max_per_person()
-        self.clean_extra_party()
-        self.clean_quantity()
-        self.clean_ticket_tier()
-        self.clean_event()
-        return super().clean(*args, **kwargs)
-
     def create_tickets(self):
         """
         create Tickets and relate to the checkout_item
@@ -1550,6 +1384,7 @@ class TxFree(DBModel):
                 item.ticket_tier.tier_free.issued_emails.append(checkout_session.email)
                 item.ticket_tier.tier_free.save()
 
+        # OK
         checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
         checkout_session.fulfill()

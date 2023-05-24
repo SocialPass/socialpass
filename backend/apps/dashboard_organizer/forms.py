@@ -7,6 +7,7 @@ from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
 from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
+from apps.root.exceptions import GoogleWalletAPIRequestError
 
 
 class CustomInviteForm(forms.Form):
@@ -77,6 +78,7 @@ class EventForm(forms.ModelForm):
             "postal_code",
             "country",
             "cover_image",
+            "google_class_id",
         ]
 
         widgets = {
@@ -132,6 +134,19 @@ class EventForm(forms.ModelForm):
                 self.initial["end_date"] = self.instance.end_date.strftime(
                     "%Y-%m-%dT%H:%M"
                 )
+
+    def clean_google_class_id(self, *args, **kwargs):
+        """
+        clean the handling of the Google event class / clean_google_class_id
+        Note: # we do this only for LIVE events to reduce the number of API requests
+        """
+        if self.instance.pk:
+            if self.instance.state == Event.StateStatus.LIVE:
+                google_event_class_id = self.instance.handle_google_event_class()
+                if not google_event_class_id:
+                    raise GoogleWalletAPIRequestError(
+                        "Something went wrong while handling the Google event class."
+                    )
 
 
 class TicketTierForm(forms.ModelForm):

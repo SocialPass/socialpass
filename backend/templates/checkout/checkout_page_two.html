@@ -73,28 +73,31 @@
 					If all of that sounds good, please click on the <strong>Continue</strong> button to get your ticket(s).
 				</p>
 			{% elif object.tx_type == "ASSET_OWNERSHIP" %}
-				<p class="mt-10">
-					Please select from one of the checkout options below.
-				</p>
-				<h6 class="fw-700 fsr-6 mt-20">
-					Checkout Options
-				</h6>
 				<div class="alert alert-primary text-base pe-none user-select-none" role="alert">
 					<h6 class="alert-heading fw-700 m-0">
 						<i class="fa-light fa-check-square text-primary me-5"></i>
 						Proof of NFT ownership
 					</h6>
+					<p class="mt-5 mb-0">Prove ownership of the required digital assets (NFTs) to get your ticket(s).</p>
 				</div>
+				<p>
+					Please connect your wallet and click on the <strong>Get Tickets</strong> button to sign a message and get your ticket(s).
+				</p>
 
 				<!-- Connect wallet button start -->
-				<button type="button" class="btn btn-lg btn-block p-15 text-base text-start d-flex align-items-center my-20">
+				<div class="text-center position-relative" style="min-height: 4rem;">
+					<div class="position-absolute top-50 start-50 translate-middle">
+						<div class="spinner-border" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+					</div>
 					<w3m-core-button></w3m-core-button>
-				</button>
+				</div>
 				<!-- Connect wallet button end -->
 
-				<p class="fs-base-n2 text-muted d-flex">
+				<p class="fs-base-n2 text-muted d-flex border-top pt-10">
 					<i class="fa-light fa-info-circle me-10 mt-5 flex-shrink-0"></i>
-					Please note, you only need to prove the ownership of the required digital asset(s). This is not a trade, but only a verification.
+					It's worth noting again that you only need to prove the ownership of the required digital asset(s). This is not a trade, but only a verification.
 				</p>
 			{% endif %}
 		</div>

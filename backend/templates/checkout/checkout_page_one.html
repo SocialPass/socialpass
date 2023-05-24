@@ -147,6 +147,10 @@
 						{% if tier.capacity <= tier.quantity_sold %}disabled{% endif %}
 						type="checkbox"
 						class="ticket-tier-input"
+						data-max-per-person="{{ tier.max_per_person }}"
+						data-availability="{{ tier.availability }}"
+						data-amount="0"
+						data-extra-party="0"
 					>
 					<label for="{{ tier.public_id }}" class="ticket-tier-label">
 						<div class="d-sm-flex align-items-center">
@@ -180,7 +184,9 @@
 							<div class="ticket-tier-controls ms-auto mt-10 mt-sm-0">
 								<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
 									<button class="btn ws-25 px-0">-</button>
-									<div class="form-control form-number text-center">0</div>
+									<div class="form-control text-center">
+										<span class="ticket-tier-amount">0</span>
+									</div>
 									<button class="btn ws-25 px-0">+</button>
 								</div>
 								<div class="text-center fs-12 mt-5">
@@ -257,6 +263,7 @@
 			</div>
 			<form class="checkout-form">
 				{% csrf_token %}
+				{{ form.ticket_tier_data }}
 				{% with form.name as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
@@ -285,5 +292,44 @@
 	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
 		document.getElementById("desc-read").classList.remove("d-none");
 	}
+</script>
+
+<script type="text/javascript">
+
+function updateTierData() {
+	var data = [];
+	var selectedTiers = document.querySelectorAll(".ticket-tier-input:checked");
+	for (var i = 0; i < selectedTiers.length; i++) {
+		var tier = selectedTiers[i];
+		data.push({
+			"id": tier.getAttribute("id"),
+			"amount": tier.getAttribute("data-amount"),
+			"extra_party": tier.getAttribute("data-extra-party"),
+		})
+	}
+	document.getElementById("id_ticket_tier_data").value = JSON.stringify(data);
+	console.log(data);
+}
+
+function updateTier(tier) {
+	var tierLabel = tier.closest(".ticket-tier").querySelector(".ticket-tier-label");
+	tierLabel.querySelector(".ticket-tier-amount").innerHTML = tier.getAttribute("data-amount");
+	updateTierData();
+}
+
+var ticketTiers = document.querySelectorAll(".ticket-tier-input");
+for (var i = 0; i < ticketTiers.length; i++) {
+	var tier = ticketTiers[i];
+	tier.addEventListener("change", function() {
+	  	if (this.checked) {
+	    	this.setAttribute("data-amount", 1);
+	  	} else {
+	    	this.setAttribute("data-amount", 0);
+	    	this.setAttribute("data-extra-party", 0);
+	  	}
+	  	updateTier(this);
+	});
+}
+
 </script>
 {% endblock extra_body %}

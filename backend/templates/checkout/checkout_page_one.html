@@ -151,6 +151,8 @@
 						data-availability="{{ tier.availability }}"
 						data-amount="0"
 						data-extra-party="0"
+						data-allowed-guests="{{ tier.allowed_guests }}"
+						onchange="tierOnchange(this)"
 					>
 					<label for="{{ tier.public_id }}" class="ticket-tier-label">
 						<div class="d-sm-flex align-items-center">
@@ -183,11 +185,9 @@
 							</div>
 							<div class="ticket-tier-controls ms-auto mt-10 mt-sm-0">
 								<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
-									<button class="btn ws-25 px-0">-</button>
-									<div class="form-control text-center">
-										<span class="ticket-tier-amount">0</span>
-									</div>
-									<button class="btn ws-25 px-0">+</button>
+									<button class="btn ws-25 px-0" onclick="subtractAmount(this)">-</button>
+									<input type="text" class="ticket-tier-amount form-control text-center" readonly value="0">
+									<button class="btn ws-25 px-0" onclick="addAmount(this)">+</button>
 								</div>
 								<div class="text-center fs-12 mt-5">
 									Max {{ tier.max_per_person }} per person
@@ -247,6 +247,29 @@
 								</div>
 							</div>
 						{% endif %}
+						{% if tier.allowed_guests > 0 %}
+							<div class="ticket-tier-guest ticket-tier-controls border-top mt-10 pt-10">
+								<div class="d-sm-flex align-items-center">
+									<div>
+										<div class="fw-bold">Extra Guest(s) - Free</div>
+										<div class="fs-base-n4 lh-sm">
+											Please set the number of guest(s) you want to bring.
+										</div>
+									</div>
+									<div class="ms-auto mt-10 mt-sm-0">
+										<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
+											<button class="btn ws-25 px-0" onclick="subtractExtraParty(this)">-</button>
+											<input type="text" class="ticket-tier-extra-party form-control text-center" readonly value="0">
+											<button class="btn ws-25 px-0" onclick="addExtraParty(this)">+</button>
+										</div>
+									</div>
+								</div>
+								<div class="border-top text-end mt-15 pt-10 fs-base-n2">
+									<strong>Total:</strong> <span class="ticket-tier-total-selected">1</span> (Quantity + Quantity
+									&times; Guests)
+								</div>
+							</div>
+						{% endif %}
 					</label>
 				</div>
 			{% endfor %}
@@ -293,43 +316,5 @@
 		document.getElementById("desc-read").classList.remove("d-none");
 	}
 </script>
-
-<script type="text/javascript">
-
-function updateTierData() {
-	var data = [];
-	var selectedTiers = document.querySelectorAll(".ticket-tier-input:checked");
-	for (var i = 0; i < selectedTiers.length; i++) {
-		var tier = selectedTiers[i];
-		data.push({
-			"id": tier.getAttribute("id"),
-			"amount": tier.getAttribute("data-amount"),
-			"extra_party": tier.getAttribute("data-extra-party"),
-		})
-	}
-	document.getElementById("id_ticket_tier_data").value = JSON.stringify(data);
-	console.log(data);
-}
-
-function updateTier(tier) {
-	var tierLabel = tier.closest(".ticket-tier").querySelector(".ticket-tier-label");
-	tierLabel.querySelector(".ticket-tier-amount").innerHTML = tier.getAttribute("data-amount");
-	updateTierData();
-}
-
-var ticketTiers = document.querySelectorAll(".ticket-tier-input");
-for (var i = 0; i < ticketTiers.length; i++) {
-	var tier = ticketTiers[i];
-	tier.addEventListener("change", function() {
-	  	if (this.checked) {
-	    	this.setAttribute("data-amount", 1);
-	  	} else {
-	    	this.setAttribute("data-amount", 0);
-	    	this.setAttribute("data-extra-party", 0);
-	  	}
-	  	updateTier(this);
-	});
-}
-
-</script>
+<script src="{% static 'js/TicketSelector.js' %}"></script>
 {% endblock extra_body %}

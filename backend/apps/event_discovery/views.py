@@ -82,16 +82,20 @@ class CheckoutPageOne(DetailView):
         for tier in tiers_all:
             if tier.tier_free:
                 tiers_free.append(tier)
-                if tier.availability > 0: availability["free"] = True
+                if tier.availability > 0:
+                    availability["free"] = True
             if tier.tier_fiat:
                 tiers_fiat.append(tier)
-                if tier.availability > 0: availability["fiat"] = True
+                if tier.availability > 0:
+                    availability["fiat"] = True
             if tier.tier_blockchain:
                 tiers_blockchain.append(tier)
-                if tier.availability > 0: availability["blockchain"] = True
+                if tier.availability > 0:
+                    availability["blockchain"] = True
             if tier.tier_asset_ownership:
                 tiers_asset_ownership.append(tier)
-                if tier.availability > 0: availability["asset_ownership"] = True
+                if tier.availability > 0:
+                    availability["asset_ownership"] = True
 
         # Determine how many types of tiers are available
         tier_types_count = 0
@@ -117,7 +121,7 @@ class CheckoutPageOne(DetailView):
             if availability["free"]:
                 checkout_type = "free"
 
-        # If checkout type is still empty (no tier available), we set using length   
+        # If checkout type is still empty (no tier available), we set using length
         if not checkout_type:
             if len(tiers_asset_ownership) > 0:
                 checkout_type = "nft"
@@ -139,10 +143,12 @@ class CheckoutPageOne(DetailView):
             tiers_active = tiers_asset_ownership
 
         # Set everything to context
-        context["form"] = CheckoutForm(initial={
-            "name": self.request.GET.get("name", ""),
-            "email": self.request.GET.get("email", ""),
-        })
+        context["form"] = CheckoutForm(
+            initial={
+                "name": self.request.GET.get("name", ""),
+                "email": self.request.GET.get("email", ""),
+            }
+        )
         context["tiers_active"] = tiers_active
         context["tiers_free"] = tiers_free
         context["tiers_fiat"] = tiers_fiat
@@ -184,10 +190,9 @@ class CheckoutPageTwo(DetailView):
         context = super().get_context_data(*args, **kwargs)
 
         context["checkout_items"] = self.object.checkoutitem_set.all()
-        context["form"] = CheckoutForm2(initial={
-            "name": self.object.name,
-            "email": self.object.email
-        })
+        context["form"] = CheckoutForm2(
+            initial={"name": self.object.name, "email": self.object.email}
+        )
         return context
 
     def post(self, *args, **kwargs):

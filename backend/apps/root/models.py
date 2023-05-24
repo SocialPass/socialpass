@@ -35,6 +35,7 @@ from apps.root.exceptions import (
     TxAssetOwnershipProcessingError,
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
+from apps.root.utils import get_expiration_datetime, get_random_passcode
 
 
 class DBModel(TimeStampedModel):
@@ -133,12 +134,6 @@ class Invite(DBModel):
             sent_threshold = timezone.now() - timedelta(days=3)
             q = Q(accepted=True) | Q(sent__lt=sent_threshold)
             return q
-
-        def delete_expired_confirmations(self):
-            """
-            delete all expired invites
-            """
-            self.all_expired().delete()
 
     # Queryset manager
     objects = InviteQuerySet.as_manager()
@@ -239,12 +234,6 @@ class Event(DBModel):
             """
             return self.filter(state=Event.StateStatus.LIVE)
 
-        def filter_featured(self):
-            """
-            public, featured events (filter_active ++ featured=True)
-            """
-            return self.filter(is_featured=True).filter_active()
-
     class StateStatus(models.TextChoices):
         DRAFT = "DRAFT", _("Draft")
         LIVE = "LIVE", _("Live")
@@ -267,7 +256,6 @@ class Event(DBModel):
     )
 
     # Publish info
-    is_featured = models.BooleanField(default=False, blank=False, null=False)
     is_featured_top = models.BooleanField(default=False)
 
     # Basic Info
@@ -314,13 +302,6 @@ class Event(DBModel):
         blank=False,
         default="",
     )
-    # localized address string (used to populate maps lookup)
-    initial_place = models.CharField(
-        max_length=1024,
-        help_text="Where your event will take place.",
-        blank=True,
-        default="",
-    )
     # The street/location address (part 1)
     address_1 = models.CharField(max_length=255, blank=False, default="")
     # The street/location address (part 2)
@@ -333,9 +314,6 @@ class Event(DBModel):
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
     country = models.CharField(max_length=2, blank=False, default="")
-    # lat/long
-    lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    long = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -570,17 +548,16 @@ class Ticket(DBModel):
         blank=False,
         null=False,
     )
+    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     # Ticket access info
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
-    archived = models.BooleanField(default=False, blank=False, null=False)
     redeemed = models.BooleanField(default=False, blank=False, null=False)
     redeemed_at = models.DateTimeField(blank=True, null=True)
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, blank=True, null=True
     )
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
@@ -857,20 +834,6 @@ class TierFree(DBModel):
         return f"TierFree {self.public_id}"
 
 
-def get_random_passcode():
-    """
-    Get a random 6-digit passcode.
-    """
-    return get_random_string(6)
-
-
-def get_expiration_datetime():
-    """
-    Get current datetime + 10 minutes
-    """
-    return timezone.now() + timezone.timedelta(minutes=10)
-
-
 class CheckoutSession(DBModel):
     """
     Represents a time-limited checkout session (aka 'cart') for an event organizer
@@ -1012,18 +975,15 @@ class CheckoutSession(DBModel):
     def process_transaction(self):
         """
         Responsible for processing the correct transaction based on tx_type
-        Note: Always processes free tickets
         """
         # Only process checkout sessions with a tx_status of valid
         if self.tx_status != CheckoutSession.OrderStatus.VALID:
             return
 
-        # Process Free
-        if self.tx_free:
-            self.tx_free.process()
-
         # Process specific TX
         match self.tx_type:
+            case CheckoutSession.TransactionType.FREE:
+                self.tx_free.process()
             case CheckoutSession.TransactionType.FIAT:
                 self.tx_fiat.process()
             case CheckoutSession.TransactionType.BLOCKCHAIN:

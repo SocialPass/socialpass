@@ -124,6 +124,7 @@ function tierTypeOnchange(tierTypeInput) {
 		document
 			.getElementById("tiers-" + tierTypeInput.getAttribute("id"))
 			.classList.add("d-block");
+		document.getElementById("id_checkout_type").value = tierTypeInput.value;
 
 		// Un-select all selected tiers
 		var selectedTiers = document.querySelectorAll(

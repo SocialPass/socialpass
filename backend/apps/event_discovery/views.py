@@ -145,6 +145,7 @@ class CheckoutPageOne(DetailView):
         # Set everything to context
         context["form"] = CheckoutForm(
             initial={
+                "checkout_type": checkout_type,
                 "name": self.request.GET.get("name", ""),
                 "email": self.request.GET.get("email", ""),
             }

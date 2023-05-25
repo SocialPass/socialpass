@@ -201,10 +201,8 @@
 			</div>
 			<form class="checkout-form position-relative" method="POST">
 				{% csrf_token %}
-				<div class="position-absolute top-0 start-0 opacity-0 w-100" style="z-index: -1;">
-					{{ form.ticket_tier_data }}
-					{{ form.checkout_type }}
-				</div>
+				{{ form.ticket_tier_data }}
+				{{ form.checkout_type }}
 				{% with form.name as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}

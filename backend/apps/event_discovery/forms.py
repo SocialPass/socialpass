@@ -18,15 +18,10 @@ class PasscodeForm(forms.Form):
 class CheckoutForm(forms.Form):
 
     checkout_type = forms.CharField(
-        widget=forms.TextInput(
-            attrs={"class": "form-control"}
-        ),
+        widget=forms.HiddenInput(),
     )
     ticket_tier_data = forms.CharField(
-        #widget=forms.HiddenInput()
-        widget=forms.TextInput(
-            attrs={"class": "form-control"}
-        )
+        widget=forms.HiddenInput(),
     )
     name = forms.CharField(
         widget=forms.TextInput(

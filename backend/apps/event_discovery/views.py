@@ -174,21 +174,8 @@ class CheckoutPageOne(DetailView):
                 email=form.cleaned_data["email"],
             )
 
-            # Make sure ticket tier data is not empty
-            ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
-            if not ticket_tier_data:
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "Something went wrong, please try again.",
-                )
-                return redirect(
-                    "discovery:checkout_one",
-                    self.kwargs["event_id"],
-                    self.kwargs["event_slug"],
-                )
-
             # Create checkout items
+            ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
             for item in ticket_tier_data:
                 CheckoutItem.objects.create(
                     ticket_tier_id=int(item["id"]),
@@ -206,7 +193,7 @@ class CheckoutPageOne(DetailView):
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Something went wrong, please try again.",
+                "Please select at least one ticket tier to continue.",
             )
             return redirect(
                 "discovery:checkout_one",

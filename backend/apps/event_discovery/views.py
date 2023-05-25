@@ -193,7 +193,7 @@ class CheckoutPageOne(DetailView):
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Please select at least one ticket tier to continue.",
+                "Something went wrong. Please try again.",
             )
             return redirect(
                 "discovery:checkout_one",

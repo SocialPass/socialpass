@@ -209,13 +209,16 @@
 				{% with form.email as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
-				<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
+				<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" onclick="submitForm(event)">
 					<strong class="antialiased">Get Tickets</strong>
 				</button>
 			</form>
+			<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="ticket-tier-error-message">
+				Please select at least one ticket tier to continue.
+			</div>
 			<p class="text-muted fs-base-n4">
 				You're also agreeing to our
-				<a href="#" class="fw-bold mx-5" target="_blank" rel="noreferrer">
+				<a href="#" class="fw-bold" target="_blank" rel="noreferrer">
 					Terms of Use <i class="fa-regular fa-external-link"></i>
 				</a>
 				by clicking on the above button.

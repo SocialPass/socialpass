@@ -18,9 +18,9 @@ function updateTierData() {
 		});
 	}
 	if (data.length > 0) {
-		document.getElementById("id_ticket_tier_data").value = JSON.stringify(data);
-	}
-	else {
+		document.getElementById("id_ticket_tier_data").value =
+			JSON.stringify(data);
+	} else {
 		document.getElementById("id_ticket_tier_data").value = "";
 	}
 }
@@ -138,6 +138,24 @@ function tierTypeOnchange(tierTypeInput) {
 		for (var i = 0; i < selectedTiers.length; i++) {
 			selectedTiers[i].checked = false;
 			selectedTiers[i].dispatchEvent(new Event("change"));
+		}
+	}
+}
+
+function submitForm(event) {
+	document
+		.getElementById("ticket-tier-error-message")
+		.classList.add("d-none");
+	if (
+		document.getElementById("id_name").checkValidity() &&
+		document.getElementById("id_email").checkValidity() &&
+		document.getElementById("id_checkout_type").checkValidity()
+	) {
+		if (document.getElementById("id_ticket_tier_data").value === "") {
+			document
+				.getElementById("ticket-tier-error-message")
+				.classList.remove("d-none");
+			event.preventDefault();
 		}
 	}
 }

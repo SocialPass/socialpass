@@ -5,6 +5,7 @@
             {% if tier.capacity <= tier.quantity_sold %}disabled{% endif %}
             type="checkbox"
             class="ticket-tier-input"
+            data-pk="{{ tier.id }}"
             data-max-per-person="{{ tier.max_per_person }}"
             data-availability="{{ tier.availability }}"
             data-amount="0"

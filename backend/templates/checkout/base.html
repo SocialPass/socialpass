@@ -261,6 +261,13 @@
 
 		<!-- Page wrapper start -->
 		<div class="page-wrapper">
+			<!-- Sticky alerts start -->
+			<div class="sticky-alerts">
+				{% include "bases/toast_messages.html" %}
+				{% block sticky_alerts %}{% endblock sticky_alerts %}
+			</div>
+			<!-- Sticky alerts end -->
+			
 			<div class="content-wrapper ws-860 mw-100 min-vh-100 mx-auto bg-white-lm bg-dark-very-light-dm d-flex flex-column">
 				<!-- Navbar start -->
 				<nav class="d-flex align-items-center px-20">

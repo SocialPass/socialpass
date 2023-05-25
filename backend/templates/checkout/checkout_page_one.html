@@ -199,7 +199,7 @@
 				<i class="fa-regular fa-info-circle me-5 text-primary"></i>
 				We only require your email to deliver your tickets in a secure way. <strong>No account</strong> is created without your consent.
 			</div>
-			<form class="checkout-form">
+			<form class="checkout-form" method="POST">
 				{% csrf_token %}
 				{{ form.checkout_type }}
 				{{ form.ticket_tier_data }}

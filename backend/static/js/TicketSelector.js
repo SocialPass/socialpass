@@ -12,7 +12,7 @@ function updateTierData() {
 	for (var i = 0; i < selectedTiers.length; i++) {
 		var tier = selectedTiers[i];
 		data.push({
-			id: tier.getAttribute("id"),
+			id: tier.getAttribute("data-pk"),
 			amount: tier.getAttribute("data-amount"),
 			extra_party: tier.getAttribute("data-extra-party"),
 		});

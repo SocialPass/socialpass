@@ -1,17 +1,19 @@
 import base64
 from io import BytesIO
+import json
 
 import qrcode
 from django.contrib import messages
+from django.db import transaction
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # from django.views.generic.list import ListView
 from django.utils import timezone
 from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 
-from apps.root.models import CheckoutSession, Event, Ticket
+from apps.root.models import CheckoutSession, CheckoutItem, Event, Ticket, TicketTier
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
 from .forms import PasscodeForm, CheckoutForm, CheckoutForm2, NFTCheckoutForm
@@ -146,6 +148,7 @@ class CheckoutPageOne(DetailView):
         context["form"] = CheckoutForm(
             initial={
                 "checkout_type": checkout_type,
+                "ticket_tier_data": "[]",
                 "name": self.request.GET.get("name", ""),
                 "email": self.request.GET.get("email", ""),
             }
@@ -160,6 +163,57 @@ class CheckoutPageOne(DetailView):
         context["checkout_type"] = checkout_type
         return context
 
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        form = CheckoutForm(self.request.POST)
+        if form.is_valid():
+            # Create checkout session
+            checkout_session = CheckoutSession.objects.create(
+                event=self.get_object(),
+                tx_type=form.cleaned_data["checkout_type"],
+                name=form.cleaned_data["name"],
+                email=form.cleaned_data["email"],
+            )
+
+            # Make sure ticket tier data is not empty
+            ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
+            if not ticket_tier_data:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Something went wrong, please try again.",
+                )
+                return redirect(
+                    "discovery:checkout_one",
+                    self.kwargs["event_id"],
+                    self.kwargs["event_slug"],
+                )
+
+            # Create checkout items
+            for item in ticket_tier_data:
+                CheckoutItem.objects.create(
+                    ticket_tier_id=int(item["id"]),
+                    checkout_session=checkout_session,
+                    quantity=int(item["amount"]),
+                    extra_party=int(item["extra_party"]),
+                )
+
+            return redirect(
+                "discovery:checkout_two",
+                checkout_session.public_id,
+            )
+        else:
+            # Something went wrong, so we show error message
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong, please try again.",
+            )
+            return redirect(
+                "discovery:checkout_one",
+                self.kwargs["event_id"],
+                self.kwargs["event_slug"],
+            )
 
 class CheckoutPageTwo(DetailView):
     """

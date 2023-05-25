@@ -168,23 +168,6 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="col-12" id="checkout-type-selector">
-			<div class="content mb-0">
-				<div class="btn-group d-flex" role="group" aria-label="Checkout type selector">
-					{% if tiers_free|length > 0 %}
-						<a href="{% url 'discovery:checkout_one' event.id event.slug 'free' %}#checkout-type-selector" class="btn btn-lg fw-bold antialiased fs-base {% if checkout_type == 'free' %}btn-primary{% endif %}">
-							<i class="fa-light fa-party-horn me-5"></i> Free
-						</a>
-					{% endif %}
-					{% if tiers_asset_ownership|length > 0 %}
-						<a href="{% url 'discovery:checkout_one' event.id event.slug 'nft' %}#checkout-type-selector" class="btn btn-lg fw-bold antialiased fs-base {% if checkout_type == 'nft' %}btn-primary{% endif %}">
-							<i class="fa-light fa-hexagon-image me-5"></i> NFTs
-						</a>
-					{% endif %}
-				</div>
-			</div>
-		</div>
 	{% endif %}
 	<!-- Checkout type selector end -->
 </div>

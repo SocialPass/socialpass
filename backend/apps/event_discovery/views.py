@@ -72,10 +72,10 @@ class CheckoutPageOne(DetailView):
             [] for i in range(5)
         )
         availability = {
-            "free": False,
-            "fiat": False,
-            "blockchain": False,
-            "asset_ownership": False,
+            "FREE": False,
+            "FIAT": False,
+            "BLOCKCHAIN": False,
+            "ASSET_OWNERSHIP": False,
         }
 
         # Populate holder lists with correct tiers and update availability
@@ -83,19 +83,19 @@ class CheckoutPageOne(DetailView):
             if tier.tier_free:
                 tiers_free.append(tier)
                 if tier.availability > 0:
-                    availability["free"] = True
+                    availability["FREE"] = True
             if tier.tier_fiat:
                 tiers_fiat.append(tier)
                 if tier.availability > 0:
-                    availability["fiat"] = True
+                    availability["FIAT"] = True
             if tier.tier_blockchain:
                 tiers_blockchain.append(tier)
                 if tier.availability > 0:
-                    availability["blockchain"] = True
+                    availability["BLOCKCHAIN"] = True
             if tier.tier_asset_ownership:
                 tiers_asset_ownership.append(tier)
                 if tier.availability > 0:
-                    availability["asset_ownership"] = True
+                    availability["ASSET_OWNERSHIP"] = True
 
         # Determine how many types of tiers are available
         tier_types_count = 0
@@ -112,34 +112,34 @@ class CheckoutPageOne(DetailView):
         # we prioritize NFTs < Crypto < Fiat < Free
         checkout_type = self.kwargs.get("checkout_type", "")
         if not checkout_type:
-            if availability["asset_ownership"]:
-                checkout_type = "nft"
-            if availability["blockchain"]:
-                checkout_type = "crypto"
-            if availability["fiat"]:
-                checkout_type = "fiat"
-            if availability["free"]:
-                checkout_type = "free"
+            if availability["ASSET_OWNERSHIP"]:
+                checkout_type = "ASSET_OWNERSHIP"
+            if availability["BLOCKCHAIN"]:
+                checkout_type = "BLOCKCHAIN"
+            if availability["FIAT"]:
+                checkout_type = "FIAT"
+            if availability["FREE"]:
+                checkout_type = "FREE"
 
         # If checkout type is still empty (no tier available), we set using length
         if not checkout_type:
             if len(tiers_asset_ownership) > 0:
-                checkout_type = "nft"
+                checkout_type = "ASSET_OWNERSHIP"
             if len(tiers_blockchain) > 0:
-                checkout_type = "crypto"
+                checkout_type = "BLOCKCHAIN"
             if len(tiers_fiat) > 0:
-                checkout_type = "fiat"
+                checkout_type = "FIAT"
             if len(tiers_free) > 0:
-                checkout_type = "free"
+                checkout_type = "FREE"
 
         # Set tiers active
-        if checkout_type == "free":
+        if checkout_type == "FREE":
             tiers_active = tiers_free
-        elif checkout_type == "fiat":
+        elif checkout_type == "FIAT":
             tiers_active = tiers_fiat
-        elif checkout_type == "crypto":
+        elif checkout_type == "BLOCKCHAIN":
             tiers_active = tiers_blockchain
-        elif checkout_type == "nft":
+        elif checkout_type == "ASSET_OWNERSHIP":
             tiers_active = tiers_asset_ownership
 
         # Set everything to context

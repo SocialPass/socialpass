@@ -17,7 +17,12 @@ function updateTierData() {
 			extra_party: tier.getAttribute("data-extra-party"),
 		});
 	}
-	document.getElementById("id_ticket_tier_data").value = JSON.stringify(data);
+	if (data.length > 0) {
+		document.getElementById("id_ticket_tier_data").value = JSON.stringify(data);
+	}
+	else {
+		document.getElementById("id_ticket_tier_data").value = "";
+	}
 }
 
 function updateTier(tier) {

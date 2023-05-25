@@ -148,7 +148,6 @@ class CheckoutPageOne(DetailView):
         context["form"] = CheckoutForm(
             initial={
                 "checkout_type": checkout_type,
-                "ticket_tier_data": "[]",
                 "name": self.request.GET.get("name", ""),
                 "email": self.request.GET.get("email", ""),
             }

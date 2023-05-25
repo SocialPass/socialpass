@@ -24,7 +24,7 @@ class CheckoutForm(forms.Form):
     )
     ticket_tier_data = forms.CharField(
         #widget=forms.HiddenInput()
-        widget=forms.Textarea(
+        widget=forms.TextInput(
             attrs={"class": "form-control"}
         )
     )

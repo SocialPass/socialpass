@@ -116,6 +116,59 @@
 
 	<!-- Checkout type selector start -->
 	{% if tier_types_count > 1 %}
+		<div class="col-12">
+			<div class="content mb-0">
+				<div class="ticket-tier-group">
+					{% if tiers_free|length > 0 %}
+						<div class="ticket-tier">
+							<input
+								type="radio"
+								class="ticket-tier-input"
+								name="payment-type"
+								id="free"
+								{% if checkout_type == "free" %}checked{% endif %}
+								onchange="tierTypeOnchange(this)"
+							>
+							<label for="free" class="ticket-tier-label">
+								<h6 class="fw-700 m-0 fs-base">
+									<span class="ticket-tier-uncheck">
+										<i class="fa-light fa-party-horn"></i>
+									</span>
+									<span class="ticket-tier-check">
+										<i class="fa-light fa-party-horn"></i>
+									</span>
+									Free
+								</h6>
+							</label>
+						</div>
+					{% endif %}
+					{% if tiers_asset_ownership|length > 0 %}
+						<div class="ticket-tier">
+							<input 
+								type="radio"
+								class="ticket-tier-input"
+								name="payment-type"
+								id="nft"
+								{% if checkout_type == "nft" %}checked{% endif %}
+								onchange="tierTypeOnchange(this)"
+							>
+							<label for="nft" class="ticket-tier-label">
+								<h6 class="fw-700 m-0 fs-base">
+									<span class="ticket-tier-uncheck">
+										<i class="fa-light fa-hexagon-image"></i>
+									</span>
+									<span class="ticket-tier-check">
+										<i class="fa-light fa-hexagon-image"></i>
+									</span>
+									NFTs
+								</h6>
+							</label>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
 		<div class="col-12" id="checkout-type-selector">
 			<div class="content mb-0">
 				<div class="btn-group d-flex" role="group" aria-label="Checkout type selector">
@@ -140,139 +193,16 @@
 	<!-- Ticket tiers start -->
 	<div class="col-md-7">
 		<div class="content me-md-0">
-			{% for tier in tiers_active %}
-				<div class="ticket-tier mb-20">
-					<input
-						id="{{ tier.public_id }}"
-						{% if tier.capacity <= tier.quantity_sold %}disabled{% endif %}
-						type="checkbox"
-						class="ticket-tier-input"
-						data-max-per-person="{{ tier.max_per_person }}"
-						data-availability="{{ tier.availability }}"
-						data-amount="0"
-						data-extra-party="0"
-						data-allowed-guests="{{ tier.allowed_guests }}"
-						onchange="tierOnchange(this)"
-					>
-					<label for="{{ tier.public_id }}" class="ticket-tier-label">
-						<div class="d-sm-flex align-items-center">
-							<div class='pe-sm-15'>
-								<h6 class='fw-700 m-0 fs-base'>
-									{% if tier.availability > 0 %}
-										<span class='ticket-tier-uncheck'>
-											<i class='fa-light fa-square'></i>
-										</span>
-										<span class='ticket-tier-check'>
-											<i class='fa-light fa-check-square'></i>
-										</span>
-									{% endif %}
-									{{ tier.ticket_type }}
-									{% if tier.allowed_guests > 0 %}
-										<span class="fw-400 fs-base-n2">
-											| + {{ tier.allowed_guests }} Guest(s) Allowed
-										</span>
-									{% endif %}
-								</h6>
-								<p class='m-0 fs-base-n2'>
-									{% if tier.availability < 1 %}
-										<strong class="text-danger">
-											<i class="fa-light fa-ban me-5"></i> Sold out!
-										</strong>
-									{% else %}
-										{{ tier.availability }} available
-									{% endif %}
-								</p>
-							</div>
-							<div class="ticket-tier-controls ms-auto mt-10 mt-sm-0">
-								<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
-									<button class="btn ws-25 px-0" onclick="subtractAmount(this)">-</button>
-									<input type="text" class="ticket-tier-amount form-control text-center" readonly value="0">
-									<button class="btn ws-25 px-0" onclick="addAmount(this)">+</button>
-								</div>
-								<div class="text-center fs-12 mt-5">
-									Max {{ tier.max_per_person }} per person
-								</div>
-							</div>
-						</div>
-						{% if checkout_type == "free" %}
-							<div class="border-top mt-10 pt-10 fs-base-n2">
-								<div>
-									<i class="fa-light fa-info-circle me-5"></i>
-									<strong>This is a FREE ticket tier</strong>
-								</div>
-								<div class="text-muted mt-5">
-									You can claim ticket(s) as long as they are available in terms of quantity. First come, first
-									served!
-								</div>
-							</div>
-						{% endif %}
-						{% if checkout_type == "nft" %}
-							<div class="border-top mt-10 pt-10 fs-base-n2">
-								<div>Free for all holders of the following:</div>
-								<div class="row mt-10">
-									<div class="col-6 text-truncate">
-										<strong>Blockchain</strong>
-										<br />
-										{% if tier.tier_asset_ownership.blockchain == "ETH" %}
-											<div class="d-flex align-items-center">
-												<img
-													src="https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png"
-													alt="Ethereum"
-													class="d-block me-5"
-													height="16"
-												>
-												Ethereum
-											</div>
-										{% else %}
-											{{ tier.tier_asset_ownership.blockchain }}
-										{% endif %}
-									</div>
-									<div class="col-6 text-truncate">
-										<strong>Network</strong>
-										<br />
-										{{ tier.tier_asset_ownership.get_network_display }}
-									</div>
-								</div>
-								<div class="row mt-10">
-									<div class="col-6 text-truncate">
-										<strong>Asset Type</strong>
-										<br />
-										<i class="fa-light fa-hexagon-image"></i> {{ tier.tier_asset_ownership.asset_type }}
-									</div>
-									<div class="col-6 text-truncate">
-										<strong>Token Address</strong>
-										<br />
-										{{ tier.tier_asset_ownership.token_address }}
-									</div>
-								</div>
-							</div>
-						{% endif %}
-						{% if tier.allowed_guests > 0 %}
-							<div class="ticket-tier-guest ticket-tier-controls border-top mt-10 pt-10">
-								<div class="d-sm-flex align-items-center">
-									<div>
-										<div class="fw-bold">Extra Guest(s) - Free</div>
-										<div class="fs-base-n4 lh-sm">
-											Please set the number of guest(s) you want to bring.
-										</div>
-									</div>
-									<div class="ms-auto mt-10 mt-sm-0">
-										<div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
-											<button class="btn ws-25 px-0" onclick="subtractExtraParty(this)">-</button>
-											<input type="text" class="ticket-tier-extra-party form-control text-center" readonly value="0">
-											<button class="btn ws-25 px-0" onclick="addExtraParty(this)">+</button>
-										</div>
-									</div>
-								</div>
-								<div class="border-top text-end mt-15 pt-10 fs-base-n2">
-									<strong>Total:</strong> <span class="ticket-tier-total-selected">1</span> (Quantity + Quantity
-									&times; Guests)
-								</div>
-							</div>
-						{% endif %}
-					</label>
-				</div>
-			{% endfor %}
+			<div class="tiers-container {% if checkout_type == 'free' %}d-block{% endif %}" id="tiers-free">
+				{% with tiers_free as tiers %}
+					{% include 'checkout/ticket_tiers.html' %}
+				{% endwith %}
+			</div>
+			<div class="tiers-container {% if checkout_type == 'nft' %}d-block{% endif %}" id="tiers-nft">
+				{% with tiers_asset_ownership as tiers %}
+					{% include 'checkout/ticket_tiers.html' %}
+				{% endwith %}
+			</div>
 		</div>
 	</div>
 	<!-- Ticket tiers end -->

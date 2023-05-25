@@ -6,7 +6,9 @@
 
 function updateTierData() {
 	var data = [];
-	var selectedTiers = document.querySelectorAll(".ticket-tier-input:checked");
+	var selectedTiers = document.querySelectorAll(
+		"[type=checkbox].ticket-tier-input:checked"
+	);
 	for (var i = 0; i < selectedTiers.length; i++) {
 		var tier = selectedTiers[i];
 		data.push({
@@ -109,6 +111,27 @@ function addExtraParty(button) {
 		if (totalSelected <= availability) {
 			tierInput.setAttribute("data-extra-party", extraParty + 1);
 			updateTier(tierInput);
+		}
+	}
+}
+
+function tierTypeOnchange(tierTypeInput) {
+	var tiersContainers = document.querySelectorAll(".tiers-container");
+	for (var i = 0; i < tiersContainers.length; i++) {
+		tiersContainers[i].classList.remove("d-block");
+	}
+	if (tierTypeInput.checked) {
+		document
+			.getElementById("tiers-" + tierTypeInput.getAttribute("id"))
+			.classList.add("d-block");
+
+		// Un-select all selected tiers
+		var selectedTiers = document.querySelectorAll(
+			"[type=checkbox].ticket-tier-input:checked"
+		);
+		for (var i = 0; i < selectedTiers.length; i++) {
+			selectedTiers[i].checked = false;
+			selectedTiers[i].dispatchEvent(new Event("change"));
 		}
 	}
 }

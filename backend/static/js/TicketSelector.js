@@ -122,7 +122,7 @@ function tierTypeOnchange(tierTypeInput) {
 	}
 	if (tierTypeInput.checked) {
 		document
-			.getElementById("tiers-" + tierTypeInput.getAttribute("id"))
+			.getElementById("tiers-" + tierTypeInput.value)
 			.classList.add("d-block");
 		document.getElementById("id_checkout_type").value = tierTypeInput.value;
 

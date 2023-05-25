@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
 
-from apps.root.models import CheckoutSession, CheckoutItem, Event, Ticket, TicketTier
+from apps.root.models import CheckoutSession, CheckoutItem, Event, Ticket
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
 from .forms import PasscodeForm, CheckoutForm, CheckoutForm2, NFTCheckoutForm
@@ -165,30 +165,7 @@ class CheckoutPageOne(DetailView):
     @transaction.atomic
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST)
-        if form.is_valid():
-            # Create checkout session
-            checkout_session = CheckoutSession.objects.create(
-                event=self.get_object(),
-                tx_type=form.cleaned_data["checkout_type"],
-                name=form.cleaned_data["name"],
-                email=form.cleaned_data["email"],
-            )
-
-            # Create checkout items
-            ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
-            for item in ticket_tier_data:
-                CheckoutItem.objects.create(
-                    ticket_tier_id=int(item["id"]),
-                    checkout_session=checkout_session,
-                    quantity=int(item["amount"]),
-                    extra_party=int(item["extra_party"]),
-                )
-
-            return redirect(
-                "discovery:checkout_two",
-                checkout_session.public_id,
-            )
-        else:
+        if not form.is_valid():
             # Something went wrong, so we show error message
             messages.add_message(
                 self.request,
@@ -200,6 +177,31 @@ class CheckoutPageOne(DetailView):
                 self.kwargs["event_id"],
                 self.kwargs["event_slug"],
             )
+
+        # Form is valid, continue...
+        # Create checkout session
+        checkout_session = CheckoutSession.objects.create(
+            event=self.get_object(),
+            tx_type=form.cleaned_data["checkout_type"],
+            name=form.cleaned_data["name"],
+            email=form.cleaned_data["email"],
+        )
+
+        # Create checkout items
+        ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
+        for item in ticket_tier_data:
+            CheckoutItem.objects.create(
+                ticket_tier_id=int(item["id"]),
+                checkout_session=checkout_session,
+                quantity=int(item["amount"]),
+                extra_party=int(item["extra_party"]),
+            )
+        # Redirect on success
+        return redirect(
+            "discovery:checkout_two",
+            checkout_session.public_id,
+        )
+
 
 class CheckoutPageTwo(DetailView):
     """

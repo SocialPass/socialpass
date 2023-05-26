@@ -38,10 +38,16 @@ class CheckoutForm(forms.Form):
 class CheckoutForm2(forms.Form):
 
     wallet_address = forms.CharField(
-        widget=forms.HiddenInput()
+        #widget=forms.HiddenInput()
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Wallet address"}
+        ),
     )
     signed_message = forms.CharField(
-        widget=forms.HiddenInput()
+        #widget=forms.HiddenInput()
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Signed message"}
+        ),
     )
     name = forms.CharField(
         widget=forms.TextInput(

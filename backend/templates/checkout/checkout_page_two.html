@@ -169,6 +169,8 @@
 			<hr />
 			<form class="checkout-form my-20">
 				{% csrf_token %}
+				{{ form.wallet_address }}
+				{{ form.signed_message }}
 				{% with form.name as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}

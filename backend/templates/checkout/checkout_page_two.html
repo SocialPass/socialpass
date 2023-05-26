@@ -84,20 +84,67 @@
 					Please connect your wallet and click on the <strong>Get Tickets</strong> button to sign a message and get your ticket(s).
 				</p>
 
-				<!-- Connect wallet button start -->
+				<!-- Connect wallet button start
 				<div class="text-center position-relative" style="min-height: 4rem;">
-					<!--
 					<div class="position-absolute top-50 start-50 translate-middle">
 						<div class="spinner-border" role="status">
 							<span class="visually-hidden">Loading...</span>
 						</div>
 					</div>
 					<w3m-core-button></w3m-core-button>
-					-->
 					<div id="buttons-container">
 					</div>
 				</div>
-				<!-- Connect wallet button end -->
+				Connect wallet button end -->
+
+				<button type="button" class="wallet-btn btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+					<div class="fw-700 antialiased text-truncate">
+						<span class="wallet-btn-not-connected">Metamask</span>
+						<span class="wallet-btn-connected">
+							0x4D...7344
+							<span class="text-muted fw-normal fs-base-n4">(Click to disconnect)</span>
+						</span>
+					</div>
+					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+						<img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="Logo" class="w-auto h-100">
+					</div>
+				</button>
+				<button type="button" class="wallet-btn btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+					<div class="fw-700 antialiased text-truncate">
+						<span class="wallet-btn-not-connected">WalletConnect</span>
+						<span class="wallet-btn-connected">
+							0x4D...7344
+							<span class="text-muted fw-normal fs-base-n4">(Click to disconnect)</span>
+						</span>
+					</div>
+					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+						<img src="https://altcoinsbox.com/wp-content/uploads/2023/04/wallet-connect-logo.png" alt="Logo" class="w-auto h-100">
+					</div>
+				</button>
+				<button type="button" class="wallet-btn btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+					<div class="fw-700 antialiased text-truncate">
+						<span class="wallet-btn-not-connected">Coinbase</span>
+						<span class="wallet-btn-connected">
+							0x4D...7344
+							<span class="text-muted fw-normal fs-base-n4">(Click to disconnect)</span>
+						</span>
+					</div>
+					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+						<img src="https://www.svgrepo.com/show/331345/coinbase-v2.svg" alt="Logo" class="w-auto h-100">
+					</div>
+				</button>
+				<button type="button" class="wallet-btn btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+					<div class="fw-700 antialiased text-truncate">
+						<span class="wallet-btn-not-connected">Ledger</span>
+						<span class="wallet-btn-connected">
+							0x4D...7344
+							<span class="text-muted fw-normal fs-base-n4">(Click to disconnect)</span>
+						</span>
+					</div>
+					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+						<img src="https://play-lh.googleusercontent.com/mHjR3KaAMw3RGA15-t8gXNAy_Onr4ZYUQ07Z9fG2vd51IXO5rd7wtdqEWbNMPTgdqrk=s48-rw" alt="Logo" class="w-auto h-100">
+					</div>
+				</button>
 
 				<p class="fs-base-n2 text-muted d-flex border-top pt-10">
 					<i class="fa-light fa-info-circle me-10 mt-5 flex-shrink-0"></i>
@@ -125,7 +172,7 @@
 				</div>
 				{% for item in checkout_items %}
 					<!-- Order item start -->
-					<div class="pt-10 border-top">
+					<div class="py-10 border-top">
 						<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
 							<span>{{ item.ticket_tier.ticket_type }}</span>
 							<span class="ms-auto ps-10 fw-normal">
@@ -174,6 +221,10 @@
 <script type="text/javascript">
 	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
 		document.getElementById("desc-read").classList.remove("d-none");
+	}
+
+	function walletBtnClick(button) {
+		button.classList.toggle("connected");
 	}
 </script>
 <script src="{% static 'js/dist/bundle.js' %}"></script>

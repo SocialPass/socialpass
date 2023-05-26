@@ -55,26 +55,33 @@ async function connectWallet(connector) {
 	const result = await connect({
 		connector:connector,
 	});
-	const account = getAccount();
 
-	// watch account for disconnects, etc.
+	// #1: Wallet is connected
+	if(result.account){
+		// TODO:
+		return
+	}
+
+	// add watchAccount for account changes, disconnects, etc.
 	watchAccount((account) => {
 		console.log('watching....');
 		if (account.address){
-			// TODO:
+			console.log(account.address)
+			// TODO: #2 Wallet address has changed
 			// Wallet is connected; hide wallet buttons and show disconnect button
 			return
 		}
 		if (!account.address){
+			console.log('disconnected...')
 			disconnectWallet();
-			// TODO:
-			// Wallet is disconnected; show wallet buttons and hide disconnect button
 		}
 	});
 }
 
 export async function disconnectWallet() {
 	await disconnect();
+	// TODO: #3 wallet is disconnected
+	// Wallet is disconnected; show wallet buttons and hide disconnect button
 }
 
 export async function signWallet(message) {
@@ -88,7 +95,7 @@ export async function signWallet(message) {
 	// Else throw error
 	console.log(signature)
 	if (signature){
-		document.getElementById("id_signed_message").value = {signature}
+		document.getElementById("id_signed_message").value = signature;
 	} else {
 		// TODO: SHOW ERROR TO USER, PROMPT TO SIGN AGAIN
 		return
@@ -100,7 +107,7 @@ function setupWallets(){
 		// Add onClick
 		if (connector.ready){
 			console.log(connector, 'ready', )
-			  // Create a button element
+			  // Get the button element
 			  const button = document.getElementById(connector.id);
 
 			  // Add an event listener to the button (optional)

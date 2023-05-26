@@ -96,26 +96,28 @@
 					</div>
 				</div>
 				Connect wallet button end -->
-
-				<button id="Metamask" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+				<button id="disconnect" type="button" onclick="disconnectWallet()">
+					<div class="wallet-btn-dynamic-content fw-700 antialiased text-truncate">Disconnect</div>
+				</button>
+				<button id="metaMask" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
 					<div class="wallet-btn-dynamic-content fw-700 antialiased text-truncate">Metamask</div>
 					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
 						<img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="Logo" class="w-auto h-100">
 					</div>
 				</button>
-				<button id="WalletConnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+				<button id="walletConnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
 					<div class="wallet-btn-dynamic-content fw-700 antialiased text-truncate">WalletConnect</div>
 					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
 						<img src="https://altcoinsbox.com/wp-content/uploads/2023/04/wallet-connect-logo.png" alt="Logo" class="w-auto h-100">
 					</div>
 				</button>
-				<button id="Coinbase" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+				<button id="coinbaseWallet" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
 					<div class="wallet-btn-dynamic-content fw-700 antialiased text-truncate">Coinbase</div>
 					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
 						<img src="https://www.svgrepo.com/show/331345/coinbase-v2.svg" alt="Logo" class="w-auto h-100">
 					</div>
 				</button>
-				<button id="Ledger" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="walletBtnClick(this)">
+				<button id="ledger" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
 					<div class="wallet-btn-dynamic-content fw-700 antialiased text-truncate">Ledger</div>
 					<div class="ws-25 hs-25 ms-auto flex-shrink-0">
 						<img src="https://play-lh.googleusercontent.com/mHjR3KaAMw3RGA15-t8gXNAy_Onr4ZYUQ07Z9fG2vd51IXO5rd7wtdqEWbNMPTgdqrk=s48-rw" alt="Logo" class="w-auto h-100">
@@ -196,21 +198,5 @@
 {% endblock content %}
 
 {% block extra_body %}
-<script type="text/javascript">
-	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
-		document.getElementById("desc-read").classList.remove("d-none");
-	}
-
-	function walletBtnClick(button) {
-		if (button.classList.contains("connected")) {
-			button.querySelector(".wallet-btn-dynamic-content").innerHTML = button.getAttribute("id");
-			button.classList.remove("connected");
-		}
-		else {
-			button.querySelector(".wallet-btn-dynamic-content").innerHTML = '0x4D...7344<span class="text-muted fw-normal fs-base-n4"> | Click to disconnect</span>';
-			button.classList.add("connected");
-		}
-	}
-</script>
 <script src="{% static 'js/dist/bundle.js' %}"></script>
 {% endblock extra_body %}

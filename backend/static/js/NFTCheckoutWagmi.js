@@ -50,54 +50,6 @@ const config = createConfig({
 	webSocketPublicClient,
 })
 
-export function setupWalletDisplay(){
-	// get/wipe container
-	const container = document.getElementById("buttons-container");
-	container.innerHTML = "";
-
-	// Iterate over the list and create buttons
-	config.args.connectors.forEach(function(connector) {
-		if (connector.ready){
-			// Create a button element
-		  	const button = document.createElement('button');
-
-		  	// Set the button's text content to the current item value
-		  	button.textContent = connector.name;
-
-		  	// Add an event listener to the button (optional)
-		  	button.addEventListener('click', function() {
-				connectWallet(connector)
-		  	});
-
-		  	// Append the button to the container
-		  	container.appendChild(button);
-		}
-	});
-}
-
-export function setupConnectedDisplay(account){
-	// get/wipe container
-	const container = document.getElementById("buttons-container");
-	container.innerHTML = "";
-
-	// add disconnect button if needed
-	const button = document.createElement('button');
-	button.textContent = `Disconnect: ${account.address}`;
-    button.addEventListener('click', function() {
-		disconnectWallet();
-  	});
-  	container.appendChild(button);
-}
-
-export async function walletSign(message) {
-	// Sign message
-	console.log('signing...')
-	const signature = await signMessage({
-		message: message,
-	});
-	console.log(signature)
-}
-
 async function connectWallet(connector) {
 	// Connect wallet
 	const result = await connect({
@@ -105,33 +57,69 @@ async function connectWallet(connector) {
 	});
 	const account = getAccount();
 
-	// setup connected display
-	if (account.address){
-		setupConnectedDisplay(account)
-	}
-
 	// watch account for disconnects, etc.
 	watchAccount((account) => {
 		console.log('watching....');
 		if (account.address){
-			setupConnectedDisplay(account)
+			// TODO:
+			// Wallet is connected; hide wallet buttons and show disconnect button
+			return
 		}
 		if (!account.address){
 			disconnectWallet();
+			// TODO:
+			// Wallet is disconnected; show wallet buttons and hide disconnect button
 		}
 	});
 }
 
 export async function disconnectWallet() {
-	// Disconnect wallet
 	await disconnect();
+}
 
-	// setup wallets
-	setupWalletDisplay();
+export async function signWallet(message) {
+	// Sign message
+	console.log('signing...')
+	const signature = await signMessage({
+		message: message,
+	});
+
+	// Set signed message if available
+	// Else throw error
+	console.log(signature)
+	if (signature){
+		document.getElementById("id_signed_message").value = {signature}
+	} else {
+		// TODO: SHOW ERROR TO USER, PROMPT TO SIGN AGAIN
+		return
+	}
+}
+function setupWallets(){
+	// Setup globals, attach onClick listeners, etc.
+	config.args.connectors.forEach(function(connector) {
+		// Add onClick
+		if (connector.ready){
+			console.log(connector, 'ready', )
+			  // Create a button element
+			  const button = document.getElementById(connector.id);
+
+			  // Add an event listener to the button (optional)
+			  button.addEventListener('click', function() {
+				connectWallet(connector)
+			  });
+		}
+
+		// TODO:
+		// Disable or hide wallet connector as not 'ready', or available in current environment
+		else {
+
+		}
+	});
 }
 
 
+
 // Setup globals, etc.
-setupWalletDisplay();
-window.walletSign = walletSign;
+setupWallets();
+window.signWallet = signWallet;
 window.disconnectWallet = disconnectWallet;

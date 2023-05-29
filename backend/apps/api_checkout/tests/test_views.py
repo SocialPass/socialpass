@@ -81,7 +81,9 @@ class GetEventTestCase(TestCaseWrapper):
         event_public_id = self.event.public_id
 
         # Not using reverse because we want URL changes to explicitly break tests.
-        response = self.client.get(f"{self.url_base}event/{event_public_id}/ticket_tiers/")
+        response = self.client.get(
+            f"{self.url_base}event/{event_public_id}/ticket_tiers/"
+        )
         ticket_tier_dict = response.json()[0]
         self.assertEqual(ticket_tier_dict["public_id"], str(self.ticket_tier.public_id))
         self.assertEqual(ticket_tier_dict["event_public_id"], str(self.event.public_id))
@@ -310,7 +312,9 @@ class CheckoutItemViewTestCase(TestCaseWrapper):
         response = self.request_create_item(data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         error_msg = response.json()
-        self.assertIn("ticket_tier does not support blockchain", error_msg["ticket_tier"])
+        self.assertIn(
+            "ticket_tier does not support blockchain", error_msg["ticket_tier"]
+        )
 
         # test if return 400 bad request if not tier ASSET_OWNERSHIP available
         self.checkout_session.tx_type = CheckoutSession.TransactionType.ASSET_OWNERSHIP
@@ -442,11 +446,15 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
 
         # assert objects values with json returned
         session_dict = response.json()
-        self.assertEqual(session_dict["public_id"], str(self.checkout_session.public_id))
+        self.assertEqual(
+            session_dict["public_id"], str(self.checkout_session.public_id)
+        )
         self.assertEqual(session_dict["name"], self.checkout_session.name)
         self.assertEqual(session_dict["email"], self.checkout_session.email)
         self.assertEqual(session_dict["tx_status"], self.checkout_session.tx_status)
-        self.assertEqual(session_dict["event"], str(self.checkout_session.event.public_id))
+        self.assertEqual(
+            session_dict["event"], str(self.checkout_session.event.public_id)
+        )
         # assert items from session
         item_dict = session_dict["checkout_items"][0]
         self.assertEqual(item_dict["public_id"], str(self.checkout_item.public_id))
@@ -692,7 +700,9 @@ class CheckoutSessionViewTestCase(TestCaseWrapper):
             f"{self.url_base}session/{self.checkout_session.public_id}/confirmation"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["tx_status"], CheckoutSession.OrderStatus.FAILED)
+        self.assertEqual(
+            response.json()["tx_status"], CheckoutSession.OrderStatus.FAILED
+        )
         self.assertIsNone(response.json()["tickets_summary"])
 
     @prevent_warnings

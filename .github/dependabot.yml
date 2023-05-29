@@ -4,14 +4,11 @@ updates:
     directory: /frontend/scanner-app
     schedule:
       interval: daily
-    open-pull-requests-limit: 0
   - package-ecosystem: npm
     directory: /frontend/checkout-app
     schedule:
       interval: daily
-    open-pull-requests-limit: 0
   - package-ecosystem: pip
     directory: /backend
     schedule:
       interval: daily
-    open-pull-requests-limit: 0

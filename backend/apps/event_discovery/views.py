@@ -47,9 +47,13 @@ class CheckoutPageOne(DetailView):
 
         # Get all ticket tiers and set up holder lists and availabilities
         tiers_all = self.object.tickettier_set.all()
-        tiers_active, tiers_free, tiers_fiat, tiers_blockchain, tiers_asset_ownership = (
-            [] for i in range(5)
-        )
+        (
+            tiers_active,
+            tiers_free,
+            tiers_fiat,
+            tiers_blockchain,
+            tiers_asset_ownership,
+        ) = ([] for i in range(5))
         availability = {
             "FREE": False,
             "FIAT": False,

@@ -55,7 +55,7 @@ jobs:
     # Lint!
     - name: Lint!
       run: |
-        cd backend; black .; mypy .; ruff .;
+        cd backend; black --exclude ".*\/(migrations|venv|node_modules|staticfiles)\/.*" .; mypy .; ruff .;
 
     # Set environment variable && run tets
     - name: Export .env and run tests

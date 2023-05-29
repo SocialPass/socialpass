@@ -193,7 +193,9 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         if invitation.accepted:
             return render(self.request, "invitations/already_accepted.html")
 
-        return render(self.request, "invitations/accept.html", {"invitation": invitation})
+        return render(
+            self.request, "invitations/accept.html", {"invitation": invitation}
+        )
 
     def post(self, *args, **kwargs):
         """
@@ -562,7 +564,9 @@ class EventStatsView(TeamContextMixin, DetailView):
         results = []
         for ticket in tickets:
             if ticket.checkout_session.tx_asset_ownership:
-                wallet_address = ticket.checkout_session.tx_asset_ownership.wallet_address
+                wallet_address = (
+                    ticket.checkout_session.tx_asset_ownership.wallet_address
+                )
             else:
                 wallet_address = None
             results.append(

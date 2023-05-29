@@ -29,7 +29,9 @@ class DashboardTest(BaseTestCaseWrapper):
         request.user = self.user_one
         response = TestTeamContextView.as_view()(request, **kwargs)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data["team_public_id"], self.team_one.public_id)
+        self.assertEqual(
+            response.context_data["team_public_id"], self.team_one.public_id
+        )
 
         # Test logged-in user without membership
         self.team_one.members.remove(self.user_two)
@@ -181,7 +183,9 @@ class DashboardTest(BaseTestCaseWrapper):
 
         # Get response
         response = self.client.post(
-            reverse("dashboard_organizer:team_members", args=(self.team_one.public_id,)),
+            reverse(
+                "dashboard_organizer:team_members", args=(self.team_one.public_id,)
+            ),
             data=data,
             follow=True,
         )
@@ -253,7 +257,9 @@ class DashboardTest(BaseTestCaseWrapper):
             "country": new_event.country,
         }
         response = self.client.post(
-            reverse("dashboard_organizer:event_create", args=(self.team_one.public_id,)),
+            reverse(
+                "dashboard_organizer:event_create", args=(self.team_one.public_id,)
+            ),
             data=data,
             follow=True,
         )

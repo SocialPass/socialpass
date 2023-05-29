@@ -101,7 +101,9 @@ class Membership(DBModel):
 
     # keys
     team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
-    user = models.ForeignKey("root.User", on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(
+        "root.User", on_delete=models.CASCADE, blank=True, null=True
+    )
 
     def __str__(self):
         return f"{self.team.name}-{self.user.email}"
@@ -154,7 +156,9 @@ class Invite(DBModel):
     accepted = models.BooleanField(
         verbose_name=_("accepted"), default=False, blank=False, null=False
     )
-    key = models.CharField(verbose_name=_("key"), max_length=64, unique=True, blank=False)
+    key = models.CharField(
+        verbose_name=_("key"), max_length=64, unique=True, blank=False
+    )
     sent = models.DateTimeField(verbose_name=_("sent"), blank=False, null=True)
     email = models.EmailField(
         verbose_name="e-mail address",
@@ -388,7 +392,9 @@ class Event(DBModel):
                 "scanner_url": self.scanner_url,
             }
             emails = []
-            memberships = Membership.objects.select_related("user").filter(team=self.team)
+            memberships = Membership.objects.select_related("user").filter(
+                team=self.team
+            )
             for m in memberships:
                 emails.append(m.user.email)
             msg_plain = render_to_string(
@@ -562,7 +568,9 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
-    def redeem_ticket(self, redemption_access_key: Optional["TicketRedemptionKey"] = None):
+    def redeem_ticket(
+        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
+    ):
         """Redeems a ticket."""
         # Check if redeemed
         if self.redeemed:
@@ -730,7 +738,9 @@ class TicketTier(DBModel):
     @property
     def quantity_sold(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
-        tickets_with_party = tickets.aggregate(models.Sum("party_size"))["party_size__sum"]
+        tickets_with_party = tickets.aggregate(models.Sum("party_size"))[
+            "party_size__sum"
+        ]
         return tickets_with_party or 0
 
     @property
@@ -1140,7 +1150,9 @@ class TxAssetOwnership(DBModel):
             response.raise_for_status()
             response = response.json()
         except requests.exceptions.HTTPError:
-            raise TxAssetOwnershipProcessingError({"message": _("An error has ocurred")})
+            raise TxAssetOwnershipProcessingError(
+                {"message": _("An error has ocurred")}
+            )
         return response
 
     def _check_balance(self, expected, actual):
@@ -1339,7 +1351,9 @@ class TxFree(DBModel):
             if checkout_session.email in item.ticket_tier.tier_free.issued_emails:
                 checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
                 checkout_session.save()
-                raise Exception("This email has already been used for this ticket tier.")
+                raise Exception(
+                    "This email has already been used for this ticket tier."
+                )
             else:
                 item.ticket_tier.tier_free.issued_emails.append(checkout_session.email)
                 item.ticket_tier.tier_free.save()

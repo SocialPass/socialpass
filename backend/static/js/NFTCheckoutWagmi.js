@@ -10,7 +10,6 @@ import {
 	connect,
 	createConfig,
 	disconnect,
-	getAccount,
 	signMessage,
 	mainnet
 } from '@wagmi/core'
@@ -59,6 +58,7 @@ async function connectWallet(connector) {
 	// #1: Wallet is connected
 	if(result.account){
 		document.getElementById('connected-address').innerText = result.account;
+		document.getElementById('id_wallet_address').value = result.account;
 		document.getElementById('disconnect').querySelector('img').setAttribute(
 			'src',
 			document.getElementById(result.connector.id).querySelector('img').getAttribute('src')
@@ -72,17 +72,17 @@ async function connectWallet(connector) {
 		// #2 Wallet address has changed
 		// Wallet is connected; hide wallet buttons and show disconnect button
 		if (account.address){
-			document.getElementById('connected-address').innerText = result.account;
+			document.getElementById('connected-address').innerText = account.address;
+			document.getElementById('id_wallet_address').value = account.address;
 			document.getElementById('disconnect').querySelector('img').setAttribute(
 				'src',
-				document.getElementById(result.connector.id).querySelector('img').getAttribute('src')
+				document.getElementById(account.connector.id).querySelector('img').getAttribute('src')
 			);
 			document.getElementById('connect-container').classList.add('d-none');
 			document.getElementById('disconnect-container').classList.remove('d-none');
 		}
 		// #3 Wallet has disconnected
 		if (!account.address){
-			console.log('disconnected...')
 			disconnectWallet();
 		}
 	});
@@ -90,32 +90,35 @@ async function connectWallet(connector) {
 
 export async function disconnectWallet() {
 	await disconnect();
+	document.getElementById('id_wallet_address').value = '';
+	document.getElementById("id_signed_message").value = '';
 	document.getElementById('connect-container').classList.remove('d-none');
 	document.getElementById('disconnect-container').classList.add('d-none');
 }
 
 export async function signWallet(message) {
-	// Sign message
-	console.log('signing...')
-	const signature = await signMessage({
-		message: message,
-	});
+	// Remove error
+	document
+	.getElementById("wallet-signature-error-message")
+	.classList.add("d-none");
 
-	// Set signed message if available
-	console.log(signature)
-	if (signature){
+	// Sign message
+	try	{
+		const signature = await signMessage({
+			message: message,
+		});
 		document.getElementById("id_signed_message").value = signature;
+	} catch (e){
+		document
+		.getElementById("wallet-signature-error-message")
+		.classList.remove("d-none");
 	}
-	// Else throw error
-	// TODO: SHOW ERROR TO USER, PROMPT TO SIGN AGAIN
-	else {
-		return
-	}
+
+
 }
 function setupWallets(){
 	config.args.connectors.forEach(function(connector) {
 		if (connector.ready){
-			console.log(connector, 'ready', )
 			  // Get the button element
 			  const button = document.getElementById(connector.id);
 			  // Add an event listener to the button (optional)
@@ -130,8 +133,6 @@ function setupWallets(){
 		}
 	});
 }
-
-
 
 // Setup globals, etc.
 setupWallets();

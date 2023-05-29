@@ -185,7 +185,7 @@
 				Confirm Order
 			</h6>
 			<hr />
-			<form class="checkout-form my-20">
+			<form class="checkout-form my-20" id="asset_ownership_form">
 				{% csrf_token %}
 				{{ form.wallet_address }}
 				{{ form.signed_message }}
@@ -198,7 +198,7 @@
 				<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="wallet-signature-error-message">
 					User denied message signature.
 				</div>
-				<button onclick="signWallet('test')" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
+				<button onclick="signWallet(message)" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
 					<strong class="antialiased">Get Tickets</strong>
 				</button>
 			</form>
@@ -218,4 +218,7 @@
 
 {% block extra_body %}
 <script src="{% static 'js/dist/bundle.js' %}"></script>
+<script>
+	const message = `{{object.tx_asset_ownership.unsigned_message}}`
+</script>
 {% endblock extra_body %}

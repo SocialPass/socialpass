@@ -108,6 +108,7 @@ export async function signWallet(message) {
 			message: message,
 		});
 		document.getElementById("id_signed_message").value = signature;
+		document.getElementById("asset-ownership-field").submit();
 	} catch (e){
 		document
 		.getElementById("wallet-signature-error-message")

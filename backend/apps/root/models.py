@@ -982,14 +982,57 @@ class CheckoutSession(DBModel):
         for checkout_item in self.checkoutitem_set.all():
             checkout_item.create_tickets()
 
+    def create_transaction(self):
+        """
+        Responsible for creating the correct transaction based on tx_*
+        """
+        # Only process checkout sessions WITHOUT an associated TX
+        if self.tx_fiat or self.tx_free or self.tx_asset_ownership or self.tx_blockchain:
+            return
+
+        # Create specific TX
+        match self.tx_type:
+            case CheckoutSession.TransactionType.FREE:
+                tx = TxFree.objects.create()
+                self.tx_free = tx
+                self.save()
+            case CheckoutSession.TransactionType.FIAT:
+                tx = TxFiat.objects.create()
+                self.tx_fiat = tx
+                self.save()
+            case CheckoutSession.TransactionType.BLOCKCHAIN:
+                tx = TxBlockchain.objects.create()
+                self.tx_blockchain = tx
+                self.save()
+            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+                tx = TxAssetOwnership.objects.create()
+                self.tx_asset_ownership = tx
+                self.save()
+            case _:
+                pass
+
+    def finalize_transaction(self, form_data):
+        """
+        Responsible for finalizing transaction info based on form_data supplied
+        """
+        match self.tx_type:
+            case CheckoutSession.TransactionType.FREE:
+                pass
+            case CheckoutSession.TransactionType.FIAT:
+                pass
+            case CheckoutSession.TransactionType.BLOCKCHAIN:
+                pass
+            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+                tx.wallet_address = form_data.cleaned_data["wallet_address"],
+                tx.signed_message = form_data.cleaned_data["signed_message"],
+                tx.save()
+            case _:
+                pass
+
     def process_transaction(self):
         """
         Responsible for processing the correct transaction based on tx_type
         """
-        # Only process checkout sessions with a tx_status of valid
-        if self.tx_status != CheckoutSession.OrderStatus.VALID:
-            return
-
         # Process specific TX
         match self.tx_type:
             case CheckoutSession.TransactionType.FREE:
@@ -1113,16 +1156,12 @@ class TxAssetOwnership(DBModel):
         return f"TxAssetOwnership {self.public_id}"
 
     @property
-    def expires(self):
-        return self.created + timedelta(minutes=30)
-
-    @property
     def unsigned_message(self):
         return (
             "Greetings from SocialPass."
             "\nSign this message to prove ownership"
             "\n\nThis IS NOT a trade or transaction"
-            f"\n\nTimestamp: {self.expires.strftime('%s')}"
+            f"\n\nTimestamp: {self.created.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 

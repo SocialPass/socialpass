@@ -146,8 +146,9 @@ class CheckoutPageOne(DetailView):
     @transaction.atomic
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST)
+
+        # Something went wrong, so we show error message
         if not form.is_valid():
-            # Something went wrong, so we show error message
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -160,13 +161,14 @@ class CheckoutPageOne(DetailView):
             )
 
         # Form is valid, continue...
-        # Create checkout session
+        # Create checkout session & related transaction
         checkout_session = CheckoutSession.objects.create(
             event=self.get_object(),
             tx_type=form.cleaned_data["checkout_type"],
             name=form.cleaned_data["name"],
             email=form.cleaned_data["email"],
         )
+        checkout_session.create_transaction()
 
         # Create checkout items
         ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
@@ -196,15 +198,12 @@ class CheckoutPageTwo(DetailView):
 
     model = CheckoutSession
     slug_field = "public_id"
-    slug_url_kwarg = "public_id"
+    slug_url_kwarg = "checkout_session_public_id"
     template_name = "checkout/checkout_page_two.html"
 
     def get_object(self):
-        # TODO
-        # Prefetch event, checkout items, tickets, etc.
-        # Redirect if checkout not success
         self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(
-            public_id=self.kwargs["public_id"]
+            public_id=self.kwargs["checkout_session_public_id"]
         )
         if not self.object:
             raise Http404
@@ -212,15 +211,32 @@ class CheckoutPageTwo(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-
         context["checkout_items"] = self.object.checkoutitem_set.all()
         context["form"] = CheckoutForm2(
             initial={"name": self.object.name, "email": self.object.email}
         )
         return context
 
+    @transaction.atomic
     def post(self, *args, **kwargs):
+        form = CheckoutForm2(self.request.POST)
+
+        # Something went wrong, so we show error message
+        if not form.is_valid():
+          messages.add_message(
+              self.request,
+              messages.ERROR,
+              "Something went wrong. Please try again.",
+          )
+          return redirect(
+              "discovery:checkout_two",
+              self.kwargs["checkout_session_public_id"],
+          )
+
+        # Form is valid, continue...
+        # ...
         try:
+            self.object.finalize_transaction(form_data=form)
             self.object.process_transaction()
         except TxAssetOwnershipProcessingError:
             return

@@ -59,7 +59,13 @@ async function connectWallet(connector) {
 	// #1: Wallet is connected
 	if(result.account){
 		// TODO:
-		return
+		document.getElementById('connected-address').innerText = result.account.address;
+		document.getElementById('disconnect').querySelector('img').setAttribute(
+			'src',
+			document.getElementById(result.account.id).querySelector('img').getAttribute('src')
+		);
+		document.getElementById('connect-container').classList.add('d-none');
+		document.getElementById('disconnect-container').classList.remove('d-none');
 	}
 
 	// add watchAccount for account changes, disconnects, etc.
@@ -69,7 +75,13 @@ async function connectWallet(connector) {
 			console.log(account.address)
 			// TODO: #2 Wallet address has changed
 			// Wallet is connected; hide wallet buttons and show disconnect button
-			return
+			document.getElementById('connected-address').innerText = result.account.address;
+			document.getElementById('disconnect').querySelector('img').setAttribute(
+				'src',
+				document.getElementById(result.account.id).querySelector('img').getAttribute('src')
+			);
+			document.getElementById('connect-container').classList.add('d-none');
+			document.getElementById('disconnect-container').classList.remove('d-none');
 		}
 		if (!account.address){
 			console.log('disconnected...')
@@ -82,6 +94,8 @@ export async function disconnectWallet() {
 	await disconnect();
 	// TODO: #3 wallet is disconnected
 	// Wallet is disconnected; show wallet buttons and hide disconnect button
+	document.getElementById('connect-container').classList.remove('d-none');
+	document.getElementById('disconnect-container').classList.add('d-none');
 }
 
 export async function signWallet(message) {

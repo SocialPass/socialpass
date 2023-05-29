@@ -24,11 +24,6 @@ urlpatterns = [
         name="get_tickets",
     ),
     path(
-        "nft-checkout/",
-        views.NFTCheckout.as_view(),
-        name="nft_checkout",
-    ),
-    path(
         "e/<int:event_id>/<slug:event_slug>/",
         views.CheckoutPageOne.as_view(),
         name="checkout_one",
@@ -38,6 +33,14 @@ urlpatterns = [
         views.CheckoutPageOne.as_view(),
         name="checkout_one",
     ),
-    path("checkout-two/<uuid:public_id>/", views.CheckoutPageTwo.as_view(), name="checkout_two"),
-    path("checkout-success/<uuid:public_id>/", views.CheckoutPageSuccess.as_view(), name="checkout_success"),
+    path(
+        "checkout-two/<uuid:public_id>/",
+        views.CheckoutPageTwo.as_view(),
+        name="checkout_two",
+    ),
+    path(
+        "checkout-success/<uuid:public_id>/",
+        views.CheckoutPageSuccess.as_view(),
+        name="checkout_success",
+    ),
 ]

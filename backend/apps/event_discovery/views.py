@@ -16,30 +16,7 @@ from django.views.generic.detail import DetailView
 from apps.root.models import CheckoutSession, CheckoutItem, Event, Ticket
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
-from .forms import PasscodeForm, CheckoutForm, CheckoutForm2, NFTCheckoutForm
-
-
-class NFTCheckout(View):
-    """
-    GET
-    Fetch Event
-    Fetch Event Ticket Tiers
-
-    POST
-    Create Checkout Session
-    Create Checkout Items
-    """
-
-    def get(self, *args, **kwargs):
-        nft_checkout_form = NFTCheckoutForm()
-
-        return render(
-            self.request,
-            "event_discovery/nft_checkout.html",
-            {
-                "nft_checkout_form": nft_checkout_form,
-            },
-        )
+from .forms import PasscodeForm, CheckoutForm, CheckoutForm2
 
 
 class CheckoutPageOne(DetailView):

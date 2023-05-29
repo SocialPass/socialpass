@@ -56,13 +56,14 @@ async function connectWallet(connector) {
 		connector:connector,
 	});
 
+	console.log(result);
 	// #1: Wallet is connected
 	if(result.account){
 		// TODO:
-		document.getElementById('connected-address').innerText = result.account.address;
+		document.getElementById('connected-address').innerText = result.address;
 		document.getElementById('disconnect').querySelector('img').setAttribute(
 			'src',
-			document.getElementById(result.account.id).querySelector('img').getAttribute('src')
+			document.getElementById(result.connector.id).querySelector('img').getAttribute('src')
 		);
 		document.getElementById('connect-container').classList.add('d-none');
 		document.getElementById('disconnect-container').classList.remove('d-none');
@@ -72,13 +73,13 @@ async function connectWallet(connector) {
 	watchAccount((account) => {
 		console.log('watching....');
 		if (account.address){
-			console.log(account.address)
+
 			// TODO: #2 Wallet address has changed
 			// Wallet is connected; hide wallet buttons and show disconnect button
-			document.getElementById('connected-address').innerText = result.account.address;
+			document.getElementById('connected-address').innerText = result.address;
 			document.getElementById('disconnect').querySelector('img').setAttribute(
 				'src',
-				document.getElementById(result.account.id).querySelector('img').getAttribute('src')
+				document.getElementById(result.connector.id).querySelector('img').getAttribute('src')
 			);
 			document.getElementById('connect-container').classList.add('d-none');
 			document.getElementById('disconnect-container').classList.remove('d-none');

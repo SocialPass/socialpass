@@ -60,7 +60,7 @@ async function connectWallet(connector) {
 	// #1: Wallet is connected
 	if(result.account){
 		// TODO:
-		document.getElementById('connected-address').innerText = result.address;
+		document.getElementById('connected-address').innerText = result.account;
 		document.getElementById('disconnect').querySelector('img').setAttribute(
 			'src',
 			document.getElementById(result.connector.id).querySelector('img').getAttribute('src')
@@ -76,7 +76,7 @@ async function connectWallet(connector) {
 
 			// TODO: #2 Wallet address has changed
 			// Wallet is connected; hide wallet buttons and show disconnect button
-			document.getElementById('connected-address').innerText = result.address;
+			document.getElementById('connected-address').innerText = result.account;
 			document.getElementById('disconnect').querySelector('img').setAttribute(
 				'src',
 				document.getElementById(result.connector.id).querySelector('img').getAttribute('src')

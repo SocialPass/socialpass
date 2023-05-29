@@ -56,10 +56,8 @@ async function connectWallet(connector) {
 		connector:connector,
 	});
 
-	console.log(result);
 	// #1: Wallet is connected
 	if(result.account){
-		// TODO:
 		document.getElementById('connected-address').innerText = result.account;
 		document.getElementById('disconnect').querySelector('img').setAttribute(
 			'src',
@@ -71,11 +69,9 @@ async function connectWallet(connector) {
 
 	// add watchAccount for account changes, disconnects, etc.
 	watchAccount((account) => {
-		console.log('watching....');
+		// #2 Wallet address has changed
+		// Wallet is connected; hide wallet buttons and show disconnect button
 		if (account.address){
-
-			// TODO: #2 Wallet address has changed
-			// Wallet is connected; hide wallet buttons and show disconnect button
 			document.getElementById('connected-address').innerText = result.account;
 			document.getElementById('disconnect').querySelector('img').setAttribute(
 				'src',
@@ -84,6 +80,7 @@ async function connectWallet(connector) {
 			document.getElementById('connect-container').classList.add('d-none');
 			document.getElementById('disconnect-container').classList.remove('d-none');
 		}
+		// #3 Wallet has disconnected
 		if (!account.address){
 			console.log('disconnected...')
 			disconnectWallet();
@@ -93,8 +90,6 @@ async function connectWallet(connector) {
 
 export async function disconnectWallet() {
 	await disconnect();
-	// TODO: #3 wallet is disconnected
-	// Wallet is disconnected; show wallet buttons and hide disconnect button
 	document.getElementById('connect-container').classList.remove('d-none');
 	document.getElementById('disconnect-container').classList.add('d-none');
 }
@@ -107,34 +102,31 @@ export async function signWallet(message) {
 	});
 
 	// Set signed message if available
-	// Else throw error
 	console.log(signature)
 	if (signature){
 		document.getElementById("id_signed_message").value = signature;
-	} else {
-		// TODO: SHOW ERROR TO USER, PROMPT TO SIGN AGAIN
+	}
+	// Else throw error
+	// TODO: SHOW ERROR TO USER, PROMPT TO SIGN AGAIN
+	else {
 		return
 	}
 }
 function setupWallets(){
-	// Setup globals, attach onClick listeners, etc.
 	config.args.connectors.forEach(function(connector) {
-		// Add onClick
 		if (connector.ready){
 			console.log(connector, 'ready', )
 			  // Get the button element
 			  const button = document.getElementById(connector.id);
-
 			  // Add an event listener to the button (optional)
 			  button.addEventListener('click', function() {
 				connectWallet(connector)
 			  });
 		}
-
 		// TODO:
 		// Disable or hide wallet connector as not 'ready', or available in current environment
 		else {
-
+			return
 		}
 	});
 }

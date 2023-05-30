@@ -239,11 +239,13 @@ class CheckoutPageTwo(DetailView):
             self.get_object().finalize_transaction(form_data=form)
             self.get_object().process_transaction()
         except TxAssetOwnershipProcessingError as e:
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                e.message_dict,
-            )
+            for key, value in e.message_dict.items():
+                for message in value:
+                    messages.add_message(
+                        self.request,
+                        messages.ERROR,
+                        str(message),
+                    )
             return redirect(
                 "discovery:checkout_two",
                 self.kwargs["checkout_session_public_id"],

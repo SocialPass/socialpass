@@ -179,6 +179,7 @@ class CheckoutPageOne(DetailView):
                 quantity=int(item["amount"]),
                 extra_party=int(item["extra_party"]),
             )
+
         # Redirect on success
         return redirect(
             "discovery:checkout_two",
@@ -234,7 +235,7 @@ class CheckoutPageTwo(DetailView):
             )
 
         # Form is valid, continue...
-        # ...
+        # Finalize / process transaction and handle exceptions
         try:
             self.get_object().finalize_transaction(form_data=form)
             self.get_object().process_transaction()
@@ -270,7 +271,11 @@ class CheckoutPageTwo(DetailView):
                 self.kwargs["checkout_session_public_id"],
             )
 
-        return super().post(*args, **kwargs)
+        # Redirect on success
+        return redirect(
+            "discovery:checkout_success",
+            checkout_session.public_id,
+        )
 
 
 class CheckoutPageSuccess(DetailView):

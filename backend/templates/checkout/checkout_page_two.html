@@ -187,15 +187,24 @@
 			<hr />
 			<form class="checkout-form my-20" id="asset_ownership_form" method="POST">
 				{% csrf_token %}
-				{{ form.wallet_address }}
-				{{ form.signed_message }}
+				{% if object.tx_type == "ASSET_OWNERSHIP" %}
+					{{ form.wallet_address }}
+					{{ form.signed_message }}
+				{% endif %}
 				{% with form.name as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
 				{% with form.email as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
-				<button id="checkout-submit-btn" type="submit" onclick="signWallet(message, event)" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
+				<button
+					id="checkout-submit-btn"
+					type="submit"
+					{% if object.tx_type == "ASSET_OWNERSHIP" %}
+						onclick="signWallet(message, event)"
+					{% endif %}
+					class="btn btn-secondary btn-lg fsr-6 btn-block mt-15"
+				>
 					<strong class="antialiased">Get Tickets</strong>
 				</button>
 				<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="wallet-address-error-message">

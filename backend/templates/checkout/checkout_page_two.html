@@ -185,7 +185,7 @@
 				Confirm Order
 			</h6>
 			<hr />
-			<form class="checkout-form my-20" id="asset_ownership_form">
+			<form class="checkout-form my-20" id="asset_ownership_form" method="POST">
 				{% csrf_token %}
 				{{ form.wallet_address }}
 				{{ form.signed_message }}

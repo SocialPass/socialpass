@@ -1023,8 +1023,9 @@ class CheckoutSession(DBModel):
             case CheckoutSession.TransactionType.BLOCKCHAIN:
                 pass
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                tx.wallet_address = form_data.cleaned_data["wallet_address"],
-                tx.signed_message = form_data.cleaned_data["signed_message"],
+                tx = self.tx_asset_ownership
+                tx.wallet_address = form_data.cleaned_data["wallet_address"]
+                tx.signed_message = form_data.cleaned_data["signed_message"]
                 tx.save()
             case _:
                 pass

@@ -5,7 +5,7 @@ import json
 import qrcode
 from django.contrib import messages
 from django.db import transaction
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render, redirect
 
 # from django.views.generic.list import ListView
@@ -236,20 +236,39 @@ class CheckoutPageTwo(DetailView):
         # Form is valid, continue...
         # ...
         try:
-            self.object.finalize_transaction(form_data=form)
-            self.object.process_transaction()
-        except TxAssetOwnershipProcessingError:
-            return
-            # TODO
-            # return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
-        except TxFreeProcessingError:
-            return
-            # TODO
-            # return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
-            return
-            # TODO
-            # return Response(status=status.HTTP_400_BAD_REQUEST)
+            self.get_object().finalize_transaction(form_data=form)
+            self.get_object().process_transaction()
+        except TxAssetOwnershipProcessingError as e:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                e.message_dict,
+            )
+            return redirect(
+                "discovery:checkout_two",
+                self.kwargs["checkout_session_public_id"],
+            )
+        except TxFreeProcessingError as e:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                e.message_dict,
+            )
+            return redirect(
+                "discovery:checkout_two",
+                self.kwargs["checkout_session_public_id"],
+            )
+        except Exception as e:
+            raise e
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong. Please try again.",
+            )
+            return redirect(
+                "discovery:checkout_two",
+                self.kwargs["checkout_session_public_id"],
+            )
 
         return super().post(*args, **kwargs)
 

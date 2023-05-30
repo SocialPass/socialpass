@@ -10,12 +10,12 @@ from django.views.generic import TemplateView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-from apps.event_discovery.sitemaps import EventDetailSiteMap, StaticViewEventSitemap
+from apps.marketing.sitemaps import EventDetailSiteMap, StaticViewEventSitemap
 
 # Django Template URLs
 urlpatterns = [
     # Event Discovery
-    path("", include("apps.event_discovery.urls")),
+    path("", include("apps.checkout.urls")),
     path("", include("apps.marketing.urls")),
     # Organizer Dashboard
     path("dashboard/", include("apps.dashboard_organizer.urls")),

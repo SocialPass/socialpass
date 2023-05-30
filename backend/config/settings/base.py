@@ -103,8 +103,6 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.root.apps.RootConfig",
-    "apps.event_discovery.apps.EventDiscoveryConfig",
-    "apps.dashboard_organizer.apps.DashboardOrganizerConfig",
     "templatetags",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -440,7 +440,7 @@ class Event(DBModel):
 
     @property
     def discovery_url(self):
-        return reverse("discovery:details", args=(self.id, self.slug))
+        return reverse("marketing:details", args=(self.id, self.slug))
 
     @property
     def checkout_portal_url(self):
@@ -928,7 +928,7 @@ class CheckoutSession(DBModel):
         """
         domain = Site.objects.all().first().domain
         url = reverse(
-            "discovery:get_tickets",
+            "checkout:get_tickets",
             args=[
                 self.public_id,
             ],

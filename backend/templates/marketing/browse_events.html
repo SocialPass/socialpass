@@ -1,4 +1,4 @@
-{% extends "event_discovery/base.html" %}
+{% extends "marketing/base.html" %}
 
 {% load static %}
 
@@ -49,7 +49,7 @@
         {% if events.count > 0 %}
             <!-- Event cards start -->
             <div class="row g-content">
-                {% include "event_discovery/components/event_cards.html" with events=events %}
+                {% include "marketing/components/event_cards.html" with events=events %}
             </div>
             <!-- Event cards end -->
 

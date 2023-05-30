@@ -2,8 +2,9 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from apps.root.models import Event
 
+
 class EventDiscoveryIndex(TemplateView):
-    template_name = "landing/index.html"
+    template_name = "marketing/landing/index.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -20,7 +21,7 @@ class EventDiscoveryIndex(TemplateView):
 
 
 class EventDiscoveryHostIndex(TemplateView):
-    template_name = "landing/index_host.html"
+    template_name = "marketing/landing/index_host.html"
 
 
 """
@@ -29,7 +30,7 @@ class EventDiscoveryBrowse(ListView):
 	paginate_by = 15
 	ordering = ["-modified"]
 	context_object_name = "events"
-	template_name = "event_discovery/browse_events.html"
+	template_name = "marketing/browse_events.html"
 
 	def get_queryset(self):
 		# Get public, published event queryset
@@ -49,7 +50,7 @@ class EventDiscoveryDetails(DetailView):
     slug_field = "id"
     slug_url_kwarg = "event_id"
     context_object_name = "event"
-    template_name = "event_discovery/event_details.html"
+    template_name = "marketing/event_details.html"
 
     def get_queryset(self):
         qs = super().get_queryset().filter_active()

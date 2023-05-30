@@ -1,4 +1,4 @@
-{% extends "event_discovery/get_tickets_base.html" %}
+{% extends "checkout/get_tickets_base.html" %}
 {% load static get_theme_value %}
 
 {% block body %}
@@ -269,7 +269,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <script type="text/javascript">
 	var getCanvas; // Global variable
-	
+
 	$(".download-btn").on("click", function (event) {
 		// Get the proper target
 		var target = event.target;
@@ -277,17 +277,17 @@
 			target = target.closest(".download-btn");
 		}
 		var ticketID = target.getAttribute("data-target");
-	
+
 		// Reset indicator
 		$("#" + ticketID + "-indicator").html(
 			"<i class='fa-light fa-circle-notch fa-spin'></i>"
 		);
-	
+
 		// Hide main container, show ticket container and scroll to top
 		$("#main-container").addClass("d-none");
 		$("#" + ticketID + "-container").removeClass("d-none");
 		window.scrollTo({ top: 0 });
-	
+
 		// Download the ticket
 		var element = $("#" + ticketID);
 		html2canvas(element, {
@@ -300,14 +300,14 @@
 				a.click(); // Downloaded file
 			},
 		});
-	
+
 		// Change indicator after 2 seconds
 		setTimeout(function () {
 			$("#" + ticketID + "-indicator").html(
 				"<i class='fa-regular fa-check text-success'></i>"
 			);
 		}, 2000);
-	
+
 		// Show main container, hide ticket container after 3 seconds
 		setTimeout(function () {
 			$("#main-container").removeClass("d-none");

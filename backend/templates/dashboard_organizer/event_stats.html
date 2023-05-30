@@ -16,7 +16,7 @@
 			</p>
 		</div>
 		<div class="ms-auto align-self-center mt-10 mt-md-0">
-			<a href="{% url 'discovery:details' event.id event.slug %}" class="btn btn-primary" target="_blank">
+			<a href="{% url 'marketing:details' event.id event.slug %}" class="btn btn-primary" target="_blank">
 				<i class="fa-solid fa-external-link me-5"></i>
 				Public Page
 			</a>
@@ -56,9 +56,9 @@
 									When sharing the event link, please use the following  for the best SEO/SMO support.
 								</p>
 								<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
-									<a href="{% url 'discovery:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
+									<a href="{% url 'marketing:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
 										<i class="fa-regular fa-external-link"></i>
-										<span class="link-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'discovery:details' event.id event.slug %}</span>
+										<span class="link-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'marketing:details' event.id event.slug %}</span>
 									</a>
 								</div>
 								<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">

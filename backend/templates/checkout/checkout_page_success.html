@@ -102,7 +102,7 @@
 							</span>
 						</h6>
 						<div class="fs-base-n2 mt-5 text-muted">
-							Allowed Guest(s): 
+							Allowed Guest(s):
 							{{ item.ticket_tier.allowed_guests }}
 						</div>
 					</div>
@@ -113,7 +113,7 @@
 			<p class="fs-base-n2">
 				Want to buy more tickets?
 			</p>
-			<a href="{% url 'discovery:checkout_one' object.event.id object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-lg btn-block px-20 py-10 fs-base text-base">
+			<a href="{% url 'checkout:checkout_one' object.event.id object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-lg btn-block px-20 py-10 fs-base text-base">
 				<i class="fa-solid fa-rotate-right me-5"></i>
 				<strong class="antialiased">Order Again</strong>
 			</a>

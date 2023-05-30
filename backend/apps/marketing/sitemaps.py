@@ -7,11 +7,11 @@ from apps.root.models import Event
 
 class StaticViewEventSitemap(sitemaps.Sitemap):
     """
-    class to define static pages on event discovery app
+    class to define static pages on event marketing app
     """
 
     def items(self):
-        return ["discovery:index", "discovery:browse"]
+        return ["marketing:index", "marketing:browse"]
 
     def location(self, item):
         return reverse(item)
@@ -19,7 +19,7 @@ class StaticViewEventSitemap(sitemaps.Sitemap):
 
 class EventDetailSiteMap(sitemaps.Sitemap):
     """
-    class to define events urls on event discovery app.
+    class to define events urls on event marketing app.
     By limitation, the sitemaps protocol only fetch 50000 items
     """
 
@@ -35,4 +35,4 @@ class EventDetailSiteMap(sitemaps.Sitemap):
         return queryset
 
     def location(self, item):
-        return reverse("discovery:details", args=(item["public_id"],))
+        return reverse("marketing:details", args=(item["public_id"],))

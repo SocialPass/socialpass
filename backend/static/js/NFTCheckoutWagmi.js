@@ -20,7 +20,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 const config = createConfig({
-	autoConnect: false,
+	autoConnect: true,
 	connectors: [
 		new MetaMaskConnector(),
 		new WalletConnectConnector({
@@ -82,37 +82,7 @@ async function connectWallet(connector) {
 			.classList.remove("d-none");
 	}
 
-	// add watchAccount for account changes, disconnects, etc.
-	watchAccount((account) => {
-		// #2 Wallet address has changed
-		// Wallet is connected; hide wallet buttons and show disconnect button
-		if (account.address) {
-			document.getElementById("connected-address").innerText =
-				truncateAddress(account.address);
-			document.getElementById("id_wallet_address").value =
-				account.address;
-			document
-				.getElementById("disconnect")
-				.querySelector("img")
-				.setAttribute(
-					"src",
-					document
-						.getElementById(account.connector.id)
-						.querySelector("img")
-						.getAttribute("src")
-				);
-			document
-				.getElementById("connect-container")
-				.classList.add("d-none");
-			document
-				.getElementById("disconnect-container")
-				.classList.remove("d-none");
-		}
-		// #3 Wallet has disconnected
-		if (!account.address) {
-			disconnectWallet();
-		}
-	});
+
 }
 
 export async function disconnectWallet() {
@@ -125,7 +95,7 @@ export async function disconnectWallet() {
 
 export async function signWallet(message, event) {
 	event.preventDefault();
-	
+
 	// Remove error messages
 	document
 		.getElementById("wallet-address-error-message")
@@ -170,12 +140,48 @@ export async function signWallet(message, event) {
 	}
 }
 
+function setupWatchAccount(){
+	// add watchAccount for account changes, disconnects, etc.
+	watchAccount((account) => {
+		// #2 Wallet address has changed
+		// Wallet is connected; hide wallet buttons and show disconnect button
+		if (account.address) {
+			document.getElementById("connected-address").innerText =
+				truncateAddress(account.address);
+			document.getElementById("id_wallet_address").value =
+				account.address;
+			document
+				.getElementById("disconnect")
+				.querySelector("img")
+				.setAttribute(
+					"src",
+					document
+						.getElementById(account.connector.id)
+						.querySelector("img")
+						.getAttribute("src")
+				);
+			document
+				.getElementById("connect-container")
+				.classList.add("d-none");
+			document
+				.getElementById("disconnect-container")
+				.classList.remove("d-none");
+		}
+		// #3 Wallet has disconnected
+		if (!account.address) {
+			disconnectWallet();
+		}
+	});
+}
+
 function setupWallets() {
 	config.args.connectors.forEach(function (connector) {
 		if (connector.ready) {
 			// Get the button element
 			const button = document.getElementById(connector.id);
-			// Add an event listener to the button (optional)
+
+			// Show the button and add an event listener to the button
+			button.classList.remove("d-none");
 			button.addEventListener("click", function () {
 				connectWallet(connector);
 			});
@@ -190,5 +196,6 @@ function setupWallets() {
 
 // Setup globals, etc.
 setupWallets();
+setupWatchAccount();
 window.signWallet = signWallet;
 window.disconnectWallet = disconnectWallet;

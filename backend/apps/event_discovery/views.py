@@ -1,14 +1,13 @@
-import base64
 from io import BytesIO
+import base64
 import json
-
 import qrcode
+import rollbar
+
 from django.contrib import messages
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import render, redirect
-
-# from django.views.generic.list import ListView
 from django.utils import timezone
 from django.views.generic import TemplateView, View
 from django.views.generic.detail import DetailView
@@ -260,7 +259,7 @@ class CheckoutPageTwo(DetailView):
                 self.kwargs["checkout_session_public_id"],
             )
         except Exception as e:
-            raise e
+            rollbar.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,

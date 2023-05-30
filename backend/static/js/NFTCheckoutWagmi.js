@@ -49,6 +49,12 @@ const config = createConfig({
 	webSocketPublicClient,
 })
 
+const truncateAddress = (address) => {
+	const beginning = address.substring(0, 5);
+	const end = address.slice(address.length - 5);
+	return `${beginning}...${end}`;
+};
+
 async function connectWallet(connector) {
 	// Connect wallet
 	const result = await connect({
@@ -57,7 +63,7 @@ async function connectWallet(connector) {
 
 	// #1: Wallet is connected
 	if(result.account){
-		document.getElementById('connected-address').innerText = result.account;
+		document.getElementById('connected-address').innerText = truncateAddress(result.account);
 		document.getElementById('id_wallet_address').value = result.account;
 		document.getElementById('disconnect').querySelector('img').setAttribute(
 			'src',
@@ -72,7 +78,7 @@ async function connectWallet(connector) {
 		// #2 Wallet address has changed
 		// Wallet is connected; hide wallet buttons and show disconnect button
 		if (account.address){
-			document.getElementById('connected-address').innerText = account.address;
+			document.getElementById('connected-address').innerText = truncateAddress(account.address);
 			document.getElementById('id_wallet_address').value = account.address;
 			document.getElementById('disconnect').querySelector('img').setAttribute(
 				'src',

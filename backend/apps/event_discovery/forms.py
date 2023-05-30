@@ -37,5 +37,7 @@ class CheckoutForm2(forms.Form):
         widget=forms.TextInput(attrs={"placeholder": "Name", "readonly": "readonly"}),
     )
     email = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": "Email Address", "readonly": "readonly"}),
+        widget=forms.EmailInput(
+            attrs={"placeholder": "Email Address", "readonly": "readonly"}
+        ),
     )

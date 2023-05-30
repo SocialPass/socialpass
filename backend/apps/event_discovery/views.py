@@ -179,6 +179,7 @@ class CheckoutPageOne(DetailView):
                 extra_party=int(item["extra_party"]),
             )
 
+        # OK
         # Redirect on success
         return redirect(
             "discovery:checkout_two",
@@ -236,9 +237,10 @@ class CheckoutPageTwo(DetailView):
         # Form is valid, continue...
         # Finalize / process transaction and handle exceptions
         try:
-            self.get_object().finalize_transaction(form_data=form)
-            self.get_object().process_transaction()
-        except TxAssetOwnershipProcessingError as e:
+            self.get_object()
+            self.object.finalize_transaction(form_data=form)
+            self.object.process_transaction()
+        except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
             for key, value in e.message_dict.items():
                 for message in value:
                     messages.add_message(
@@ -250,17 +252,7 @@ class CheckoutPageTwo(DetailView):
                 "discovery:checkout_two",
                 self.kwargs["checkout_session_public_id"],
             )
-        except TxFreeProcessingError as e:
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                e.message_dict,
-            )
-            return redirect(
-                "discovery:checkout_two",
-                self.kwargs["checkout_session_public_id"],
-            )
-        except Exception as e:
+        except Exception:
             rollbar.report_exc_info()
             messages.add_message(
                 self.request,
@@ -272,10 +264,11 @@ class CheckoutPageTwo(DetailView):
                 self.kwargs["checkout_session_public_id"],
             )
 
+        # OK
         # Redirect on success
         return redirect(
             "discovery:checkout_success",
-            checkout_session.public_id,
+            self.object.public_id,
         )
 
 

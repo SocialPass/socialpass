@@ -280,12 +280,12 @@ class CheckoutPageTwo(DetailView):
 class CheckoutPageSuccess(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
-    slug_url_kwarg = "public_id"
+    slug_url_kwarg = "checkout_session_public_id"
     template_name = "checkout/checkout_page_success.html"
 
     def get_object(self):
         self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(
-            public_id=self.kwargs["public_id"],
+            public_id=self.kwargs["checkout_session_public_id"],
         )
         if not self.object:
             raise Http404

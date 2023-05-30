@@ -31,12 +31,8 @@ class CheckoutForm(forms.Form):
 
 
 class CheckoutForm2(forms.Form):
-    wallet_address = forms.CharField(
-        widget=forms.HiddenInput()
-    )
-    signed_message = forms.CharField(
-        widget=forms.HiddenInput()
-    )
+    wallet_address = forms.CharField(widget=forms.HiddenInput())
+    signed_message = forms.CharField(widget=forms.HiddenInput())
     name = forms.CharField(
         widget=forms.TextInput(attrs={"placeholder": "Name"}),
     )

@@ -5,7 +5,7 @@ import json
 import qrcode
 from django.contrib import messages
 from django.db import transaction
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404
 from django.shortcuts import render, redirect
 
 # from django.views.generic.list import ListView
@@ -223,15 +223,15 @@ class CheckoutPageTwo(DetailView):
 
         # Something went wrong, so we show error message
         if not form.is_valid():
-          messages.add_message(
-              self.request,
-              messages.ERROR,
-              "Something went wrong. Please try again.",
-          )
-          return redirect(
-              "discovery:checkout_two",
-              self.kwargs["checkout_session_public_id"],
-          )
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong. Please try again.",
+            )
+            return redirect(
+                "discovery:checkout_two",
+                self.kwargs["checkout_session_public_id"],
+            )
 
         # Form is valid, continue...
         # ...

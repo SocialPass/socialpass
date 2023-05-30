@@ -28,7 +28,6 @@ from model_utils.models import TimeStampedModel
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
-    CheckoutSessionExpired,
     EventStateTranstionError,
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
@@ -908,9 +907,6 @@ class CheckoutSession(DBModel):
         default=OrderStatus.VALID,
         blank=False,
     )
-    expiration = models.DateTimeField(
-        blank=True, null=True, default=get_expiration_datetime
-    )
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
     cost = models.IntegerField(
@@ -939,13 +935,6 @@ class CheckoutSession(DBModel):
         )
         tickets_link = domain + url
         return tickets_link
-
-    @property
-    def is_expired(self):
-        if timezone.now() > self.expiration:
-            return True
-        else:
-            return False
 
     def send_confirmation_email(self):
         """
@@ -987,7 +976,12 @@ class CheckoutSession(DBModel):
         Responsible for creating the correct transaction based on tx_*
         """
         # Only process checkout sessions WITHOUT an associated TX
-        if self.tx_fiat or self.tx_free or self.tx_asset_ownership or self.tx_blockchain:
+        if (
+            self.tx_fiat
+            or self.tx_free
+            or self.tx_asset_ownership
+            or self.tx_blockchain
+        ):
             return
 
         # Create specific TX
@@ -1333,19 +1327,14 @@ class TxAssetOwnership(DBModel):
     def process(self, checkout_session=None):
         """
         1. Get/Set checkout_session (avoid duplicate queries)
-        2. Check checkout session expiration
-        3. Set checkout_session as processing
-        4. Process wallet address / signature
-        5. Process Asset Ownership (via CheckoutSession.CheckouItem's)
-        6. OK
+        2. Set checkout_session as processing
+        3. Process wallet address / signature
+        4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
+        5. OK
         """
         # Get/Set checkout_session (avoid duplicate queries)
         if not checkout_session:
             checkout_session = self.checkoutsession
-
-        # Check checkout session expiration
-        if checkout_session.is_expired:
-            raise CheckoutSessionExpired({"expired": _("The Session has been expired")})
 
         # Set checkout_session as processing
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING

@@ -148,7 +148,6 @@ class CheckoutSessionAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display + [
         "name",
         "email",
-        "expiration",
     ]
     search_fields = ("event__title",)
 

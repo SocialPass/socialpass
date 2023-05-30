@@ -195,12 +195,15 @@
 				{% with form.email as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
-				<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="wallet-signature-error-message">
-					User denied message signature.
-				</div>
-				<button onclick="signWallet(message)" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
+				<button id="checkout-submit-btn" type="submit" onclick="signWallet(message, event)" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15">
 					<strong class="antialiased">Get Tickets</strong>
 				</button>
+				<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="wallet-address-error-message">
+					Please connect your wallet first!
+				</div>
+				<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="wallet-signature-error-message">
+					Please sign the message with your wallet address to continue.
+				</div>
 			</form>
 			<hr />
 			<p class="text-muted fs-base-n2">

@@ -439,14 +439,6 @@ class Event(DBModel):
                 )
 
     @property
-    def discovery_url(self):
-        return reverse("marketing:details", args=(self.id, self.slug))
-
-    @property
-    def checkout_portal_url(self):
-        return f"{settings.CHECKOUT_PORTAL_BASE_URL}/{self.public_id}"
-
-    @property
     def scanner_url(self):
         return TicketRedemptionKey.objects.filter(event=self).first().scanner_url
 

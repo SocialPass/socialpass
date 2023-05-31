@@ -327,7 +327,6 @@ SILKY_URL = env("SILKY_URL")
 
 # INTERNAL
 # ------------------------------------------------------------------------------
-CHECKOUT_PORTAL_BASE_URL = env("CHECKOUT_PORTAL_BASE_URL")
 SCANNER_BASE_URL = env("SCANNER_BASE_URL")
 STAFF_URL = env("STAFF_URL")
 

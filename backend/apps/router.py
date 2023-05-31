@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-from apps.marketing.sitemaps import EventDetailSiteMap, StaticViewEventSitemap
+from apps.marketing.sitemaps import MarketingSiteMap
 
 # Django Template URLs
 urlpatterns = [
@@ -37,7 +37,10 @@ urlpatterns += [
 ]
 
 # SITEMAPS URLs
-sitemaps = {"discovery": StaticViewEventSitemap, "events-discovery": EventDetailSiteMap}
+sitemaps = {
+    "marketing": MarketingSiteMap,
+    #"events-discovery": EventDetailSiteMap
+}
 urlpatterns += [
     path(
         "sitemap.xml",

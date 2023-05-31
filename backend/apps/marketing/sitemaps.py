@@ -5,18 +5,18 @@ from django.urls import reverse
 from apps.root.models import Event
 
 
-class StaticViewEventSitemap(sitemaps.Sitemap):
+class MarketingSiteMap(sitemaps.Sitemap):
     """
     class to define static pages on event marketing app
     """
 
     def items(self):
-        return ["marketing:index", "marketing:browse"]
+        return ["marketing:index"]
 
     def location(self, item):
         return reverse(item)
 
-
+'''
 class EventDetailSiteMap(sitemaps.Sitemap):
     """
     class to define events urls on event marketing app.
@@ -35,4 +35,5 @@ class EventDetailSiteMap(sitemaps.Sitemap):
         return queryset
 
     def location(self, item):
-        return reverse("marketing:details", args=(item["public_id"],))
+        return reverse("checkout:checkout_one", args=(item["public_id"],))
+'''

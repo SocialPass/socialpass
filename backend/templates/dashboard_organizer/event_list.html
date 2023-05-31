@@ -134,9 +134,9 @@
 											When sharing the event link, please use the following  for the best SEO/SMO support.
 										</p>
 										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
-											<a href="{% url 'marketing:details' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
+											<a href="{% url 'checkout:checkout_one' event.id event.slug %}" class="fw-bold antialiased" target="_blank">
 												<i class="fa-regular fa-external-link"></i>
-												<span class="content-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'marketing:details' event.id event.slug %}</span>
+												<span class="content-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'checkout:checkout_one' event.id event.slug %}</span>
 											</a>
 										</div>
 										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
@@ -194,7 +194,7 @@
 											Copy and paste the following code to embed this event on your website.
 										</p>
 										<div class="p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1 overflow-x-auto text-nowrap">
-											<code class="content-to-copy bg-transparent m-0 p-0">&lt;iframe src="{{ event.checkout_portal_url }}" style="display: block; border: 0; max-width:
+											<code class="content-to-copy bg-transparent m-0 p-0">&lt;iframe src="{% url 'checkout:checkout_one' event.id event.slug %}" style="display: block; border: 0; max-width:
 												100%;" name="SocialPass Event" scrolling="yes" frameborder="1" marginheight="0px" marginwidth="0px" height="645px" width="860px" allowfullscreen&gt;&lt;/iframe&gt;</code>
 										</div>
 										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">

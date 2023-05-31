@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from apps.root.models import Event
 
 
-class EventDiscoveryIndex(TemplateView):
+class MarketingIndex(TemplateView):
     template_name = "marketing/landing/index.html"
 
     def get_context_data(self, **kwargs):
@@ -20,7 +20,7 @@ class EventDiscoveryIndex(TemplateView):
         return context
 
 
-class EventDiscoveryHostIndex(TemplateView):
+class MarketingHostIndex(TemplateView):
     template_name = "marketing/landing/index_host.html"
 
 
@@ -43,15 +43,3 @@ class EventDiscoveryBrowse(ListView):
 
 		return qs
 """
-
-
-class EventDiscoveryDetails(DetailView):
-    model = Event
-    slug_field = "id"
-    slug_url_kwarg = "event_id"
-    context_object_name = "event"
-    template_name = "marketing/event_details.html"
-
-    def get_queryset(self):
-        qs = super().get_queryset().filter_active()
-        return qs.filter(id=self.kwargs["event_id"])

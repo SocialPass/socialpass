@@ -965,34 +965,28 @@ class CheckoutSession(DBModel):
 
     def create_transaction(self):
         """
-        Responsible for creating the correct transaction based on tx_*
+        Responsible for creating the correct transaction based on tx_status
         """
-        # Only process checkout sessions WITHOUT an associated TX
-        if (
-            self.tx_fiat
-            or self.tx_free
-            or self.tx_asset_ownership
-            or self.tx_blockchain
-        ):
-            return
-
-        # Create specific TX
         match self.tx_type:
             case CheckoutSession.TransactionType.FREE:
                 tx = TxFree.objects.create()
                 self.tx_free = tx
+                self.tx_status = CheckoutSession.OrderStatus.VALID
                 self.save()
             case CheckoutSession.TransactionType.FIAT:
                 tx = TxFiat.objects.create()
                 self.tx_fiat = tx
+                self.tx_status = CheckoutSession.OrderStatus.VALID
                 self.save()
             case CheckoutSession.TransactionType.BLOCKCHAIN:
                 tx = TxBlockchain.objects.create()
                 self.tx_blockchain = tx
+                self.tx_status = CheckoutSession.OrderStatus.VALID
                 self.save()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 tx = TxAssetOwnership.objects.create()
                 self.tx_asset_ownership = tx
+                self.tx_status = CheckoutSession.OrderStatus.VALID
                 self.save()
             case _:
                 pass

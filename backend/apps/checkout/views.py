@@ -165,14 +165,13 @@ class CheckoutPageOne(DetailView):
             )
 
         # Form is valid, continue...
-        # Create checkout session & related transaction
+        # Create checkout session
         checkout_session = CheckoutSession.objects.create(
             event=self.get_object(),
             tx_type=form.cleaned_data["checkout_type"],
             name=form.cleaned_data["name"],
             email=form.cleaned_data["email"],
         )
-        checkout_session.create_transaction()
 
         # Create checkout items
         ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
@@ -227,6 +226,14 @@ class CheckoutPageTwo(DetailView):
                 initial={"name": self.object.name, "email": self.object.email}
             )
         return context
+
+    def get(self, *args, **kwargs):
+        """
+        override get to call create_transaction for each attempt
+        """
+        response = super().get(*args, **kwargs)
+        self.object.create_transaction()
+        return response
 
     @transaction.atomic
     def post(self, *args, **kwargs):

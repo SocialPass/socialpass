@@ -15,7 +15,12 @@ from django.views.generic.detail import DetailView
 from apps.root.models import CheckoutSession, CheckoutItem, Event, Ticket
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
-from .forms import PasscodeForm, CheckoutForm, CheckoutForm2
+from .forms import (
+    PasscodeForm,
+    CheckoutForm,
+    CheckoutFormFree,
+    CheckoutFormAssetOwnership,
+)
 
 
 class CheckoutPageOne(DetailView):
@@ -213,14 +218,23 @@ class CheckoutPageTwo(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["checkout_items"] = self.object.checkoutitem_set.all()
-        context["form"] = CheckoutForm2(
-            initial={"name": self.object.name, "email": self.object.email}
-        )
+        if self.object.tx_type == CheckoutSession.TransactionType.FREE:
+            context["form"] = CheckoutFormFree(
+                initial={"name": self.object.name, "email": self.object.email}
+            )
+        elif self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+            context["form"] = CheckoutFormAssetOwnership(
+                initial={"name": self.object.name, "email": self.object.email}
+            )
         return context
 
     @transaction.atomic
     def post(self, *args, **kwargs):
-        form = CheckoutForm2(self.request.POST)
+        self.get_object()
+        if self.object.tx_type == CheckoutSession.TransactionType.FREE:
+            form = CheckoutFormFree(self.request.POST)
+        elif self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+            form = CheckoutFormAssetOwnership(self.request.POST)
 
         # Something went wrong, so we show error message
         if not form.is_valid():
@@ -237,7 +251,6 @@ class CheckoutPageTwo(DetailView):
         # Form is valid, continue...
         # Finalize / process transaction and handle exceptions
         try:
-            self.get_object()
             self.object.finalize_transaction(form_data=form)
             self.object.process_transaction()
         except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
@@ -252,12 +265,12 @@ class CheckoutPageTwo(DetailView):
                 "checkout:checkout_two",
                 self.kwargs["checkout_session_public_id"],
             )
-        except Exception:
+        except Exception as e:
             rollbar.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Something went wrong. Please try again.",
+                str(e),
             )
             return redirect(
                 "checkout:checkout_two",

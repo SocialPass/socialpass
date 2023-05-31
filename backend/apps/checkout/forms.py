@@ -30,7 +30,18 @@ class CheckoutForm(forms.Form):
     )
 
 
-class CheckoutForm2(forms.Form):
+class CheckoutFormFree(forms.Form):
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Name", "readonly": "readonly"}),
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"placeholder": "Email Address", "readonly": "readonly"}
+        ),
+    )
+
+
+class CheckoutFormAssetOwnership(forms.Form):
     wallet_address = forms.CharField(widget=forms.HiddenInput())
     signed_message = forms.CharField(widget=forms.HiddenInput())
     name = forms.CharField(

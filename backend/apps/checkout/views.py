@@ -149,7 +149,13 @@ class CheckoutPageOne(DetailView):
 
     @transaction.atomic
     def post(self, *args, **kwargs):
-        form = CheckoutForm(self.request.POST)
+        # Setup form
+        self.get_object()
+        form = CheckoutForm(
+            self.request.POST,
+            event=self.object,
+            tiers_all=self.object.tickettier_set.all()
+        )
 
         # Something went wrong, so we show error message
         if not form.is_valid():
@@ -167,7 +173,7 @@ class CheckoutPageOne(DetailView):
         # Form is valid, continue...
         # Create checkout session
         checkout_session = CheckoutSession.objects.create(
-            event=self.get_object(),
+            event=self.object,
             tx_type=form.cleaned_data["checkout_type"],
             name=form.cleaned_data["name"],
             email=form.cleaned_data["email"],

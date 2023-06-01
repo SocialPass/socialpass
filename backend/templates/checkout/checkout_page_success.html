@@ -68,7 +68,7 @@
 				You can also use the following link to get your tickets:
 			</p>
 			<div class="bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded py-10 px-15 text-truncate border border-dotted">
-				<a id="get-tickets-link" href="{{ object.get_tickets_link }}" class="d-block text-center fw-bold antialiased">
+				<a id="get-tickets-link" href="{% url 'checkout:get_tickets' object.public_id %}" class="d-block text-center fw-bold antialiased">
 					Get My Tickets
 					<i class="fa-regular fa-external-link ms-10"></i>
 				</a>
@@ -113,7 +113,7 @@
 			<p class="fs-base-n2">
 				Want to buy more tickets?
 			</p>
-			<a href="{% url 'checkout:checkout_one' object.event.id object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-lg btn-block px-20 py-10 fs-base text-base">
+			<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-lg btn-block px-20 py-10 fs-base text-base">
 				<i class="fa-solid fa-rotate-right me-5"></i>
 				<strong class="antialiased">Order Again</strong>
 			</a>

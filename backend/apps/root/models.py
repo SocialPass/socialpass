@@ -6,6 +6,7 @@ from typing import Optional
 import pytz
 import requests
 import rollbar
+from autoslug import AutoSlugField
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -258,9 +259,6 @@ class Event(DBModel):
         null=False,
     )
 
-    # Publish info
-    is_featured_top = models.BooleanField(default=False)
-
     # Basic Info
     title = models.CharField(
         max_length=255,
@@ -317,6 +315,10 @@ class Event(DBModel):
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
     country = models.CharField(max_length=2, blank=False, default="")
+
+    # Publish info
+    is_featured_top = models.BooleanField(default=False)
+    slug = AutoSlugField(populate_from='title', null=True, unique=True)
 
     def __str__(self):
         return f"{self.team} - {self.title}"
@@ -497,10 +499,6 @@ class Event(DBModel):
         # join fields
         localized_address_display = ", ".join(address_fields)
         return localized_address_display
-
-    @property
-    def slug(self):
-        return slugify(self.title)
 
     @property
     def tickets_total(self):

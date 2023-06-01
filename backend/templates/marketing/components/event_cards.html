@@ -2,7 +2,7 @@
 
 {% for event in events %}
 	<div class="col-sm-8 offset-sm-2 col-md-6 offset-md-0 col-lg-4 {% if from == 'featured_events' and forloop.counter == 3 %}offset-md-3 offset-lg-0{% endif %}">
-		<a href="{% url 'checkout:checkout_one' event.id event.slug %}" class="event-card card card-link p-0">
+		<a href="{% url 'checkout:checkout_one' event.slug %}" class="event-card card card-link p-0">
 			<!-- Event cover image start -->
 			<div class="d-flex align-items-center justify-content-center w-100 hs-200 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded-top overflow-hidden pe-none">
         <!-- Backwards compatibility -->

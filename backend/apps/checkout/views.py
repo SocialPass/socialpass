@@ -40,7 +40,7 @@ class CheckoutPageOne(DetailView):
 
     def get_object(self):
         self.object = Event.objects.prefetch_related("tickettier_set").get(
-            id=self.kwargs["event_id"], state=Event.StateStatus.LIVE
+            slug=self.kwargs["event_slug"], state=Event.StateStatus.LIVE
         )
         if not self.object:
             raise Http404()
@@ -166,7 +166,6 @@ class CheckoutPageOne(DetailView):
             )
             return redirect(
                 "checkout:checkout_one",
-                self.kwargs["event_id"],
                 self.kwargs["event_slug"],
             )
 
@@ -193,6 +192,7 @@ class CheckoutPageOne(DetailView):
         # Redirect on success
         return redirect(
             "checkout:checkout_two",
+            self.object.slug,
             checkout_session.public_id,
         )
 
@@ -213,7 +213,7 @@ class CheckoutPageTwo(DetailView):
     template_name = "checkout/checkout_page_two.html"
 
     def get_object(self):
-        self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(
+        self.object = CheckoutSession.objects.select_related("event").prefetch_related("checkoutitem_set").get(
             public_id=self.kwargs["checkout_session_public_id"]
         )
         if not self.object:
@@ -294,6 +294,7 @@ class CheckoutPageTwo(DetailView):
         # Redirect on success
         return redirect(
             "checkout:checkout_success",
+            self.object.event.slug,
             self.object.public_id,
         )
 

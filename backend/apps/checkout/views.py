@@ -39,8 +39,14 @@ class CheckoutPageOne(DetailView):
     template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
-        self.object = Event.objects.prefetch_related("tickettier_set").get(
-            slug=self.kwargs["event_slug"], state=Event.StateStatus.LIVE
+        self.object = (
+                Event.objects.
+                prefetch_related(
+                    "tickettier_set",
+                    "tickettier_set__tier_free",
+                    "tickettier_set__tier_asset_ownership",
+                )
+                .get(slug=self.kwargs["event_slug"], state=Event.StateStatus.LIVE)
         )
         if not self.object:
             raise Http404()

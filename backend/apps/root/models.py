@@ -20,6 +20,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
@@ -744,7 +745,7 @@ class TicketTier(DBModel):
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
 
-    @property
+    @cached_property
     def quantity_sold(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         tickets_with_party = tickets.aggregate(models.Sum("party_size"))[
@@ -752,7 +753,7 @@ class TicketTier(DBModel):
         ]
         return tickets_with_party or 0
 
-    @property
+    @cached_property
     def availability(self):
         return self.capacity - self.quantity_sold
 

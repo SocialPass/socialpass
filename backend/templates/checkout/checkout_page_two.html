@@ -103,48 +103,56 @@
 				</div>
 				Connect wallet button end -->
 
-				<!-- Disconnect container start -->
-				<div id="disconnect-container" class="d-none">
-					<button id="disconnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="disconnectWallet()">
-						<div class="fw-700 antialiased text-truncate">
-							<span id="connected-address">0x...123456</span>
-							<span class="text-muted fs-base-n4"> | Click to disconnect</span>
-						</div>
-						<div class="ws-25 hs-25 ms-auto flex-shrink-0">
-							<img src="..." alt="Logo" class="w-auto h-100">
-						</div>
-					</button>
-				</div>
-				<!-- Disconnect container end -->
+				<div class="position-relative w-100" style="min-height: 5rem;">
+					<!-- Loading start -->
+					<div class="position-absolute top-50 start-50 translate-middle z-0">
+						<div class="spinner-border" role="status"></div>
+					</div>
+					<!-- Loading end -->
 
-				<!-- Connect container start -->
-				<div id="connect-container" class="d-none">
-					<button id="metaMask" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
-						<div class="fw-700 antialiased text-truncate">Metamask</div>
-						<div class="ws-25 hs-25 ms-auto flex-shrink-0">
-							<img src="{% static 'images/wallets/metamask.svg' %}" alt="Metamask" class="w-auto h-100">
-						</div>
-					</button>
-					<button id="walletConnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
-						<div class="fw-700 antialiased text-truncate">WalletConnect</div>
-						<div class="ws-25 hs-25 ms-auto flex-shrink-0">
-							<img src="{% static 'images/wallets/walletconnect.png' %}" alt="WalletConnect" class="w-auto h-100">
-						</div>
-					</button>
-					<button id="coinbaseWallet" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
-						<div class="fw-700 antialiased text-truncate">Coinbase</div>
-						<div class="ws-25 hs-25 ms-auto flex-shrink-0">
-							<img src="{% static 'images/wallets/coinbase.svg' %}" alt="Coinbase" class="w-auto h-100">
-						</div>
-					</button>
-					<button id="ledger" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
-						<div class="fw-700 antialiased text-truncate">Ledger</div>
-						<div class="ws-25 hs-25 ms-auto flex-shrink-0">
-							<img src="{% static 'images/wallets/ledger.png' %}" alt="Ledger" class="w-auto h-100">
-						</div>
-					</button>
+					<!-- Disconnect container start -->
+					<div id="disconnect-container" class="d-none position-relative bg-content z-1">
+						<button id="disconnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="disconnectWallet()">
+							<div class="fw-700 antialiased text-truncate">
+								<span id="connected-address">0x...123456</span>
+								<span class="text-muted fs-base-n4"> | Click to disconnect</span>
+							</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="..." alt="Logo" class="w-auto h-100">
+							</div>
+						</button>
+					</div>
+					<!-- Disconnect container end -->
+
+					<!-- Connect container start -->
+					<div id="connect-container" class="d-none position-relative bg-content z-1">
+						<button id="metaMask" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">Metamask</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/metamask.svg' %}" alt="Metamask" class="w-auto h-100">
+							</div>
+						</button>
+						<button id="walletConnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">WalletConnect</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/walletconnect.png' %}" alt="WalletConnect" class="w-auto h-100">
+							</div>
+						</button>
+						<button id="coinbaseWallet" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">Coinbase</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/coinbase.svg' %}" alt="Coinbase" class="w-auto h-100">
+							</div>
+						</button>
+						<button id="ledger" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">Ledger</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/ledger.png' %}" alt="Ledger" class="w-auto h-100">
+							</div>
+						</button>
+					</div>
+					<!-- Connect container end -->
 				</div>
-				<!-- Connect container end -->
 
 				<p class="fs-base-n2 text-muted d-flex border-top pt-10">
 					<i class="fa-light fa-info-circle me-10 mt-5 flex-shrink-0"></i>

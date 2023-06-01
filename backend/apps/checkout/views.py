@@ -39,15 +39,11 @@ class CheckoutPageOne(DetailView):
     template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
-        self.object = (
-                Event.objects.
-                prefetch_related(
-                    "tickettier_set",
-                    "tickettier_set__tier_free",
-                    "tickettier_set__tier_asset_ownership",
-                )
-                .get(slug=self.kwargs["event_slug"], state=Event.StateStatus.LIVE)
-        )
+        self.object = Event.objects.prefetch_related(
+            "tickettier_set",
+            "tickettier_set__tier_free",
+            "tickettier_set__tier_asset_ownership",
+        ).get(slug=self.kwargs["event_slug"], state=Event.StateStatus.LIVE)
         if not self.object:
             raise Http404()
         return self.object
@@ -160,7 +156,7 @@ class CheckoutPageOne(DetailView):
         form = CheckoutForm(
             self.request.POST,
             event=self.object,
-            tiers_all=self.object.tickettier_set.all()
+            tiers_all=self.object.tickettier_set.all(),
         )
 
         # Something went wrong, so we show error message
@@ -219,8 +215,10 @@ class CheckoutPageTwo(DetailView):
     template_name = "checkout/checkout_page_two.html"
 
     def get_object(self):
-        self.object = CheckoutSession.objects.select_related("event").prefetch_related("checkoutitem_set").get(
-            public_id=self.kwargs["checkout_session_public_id"]
+        self.object = (
+            CheckoutSession.objects.select_related("event")
+            .prefetch_related("checkoutitem_set")
+            .get(public_id=self.kwargs["checkout_session_public_id"])
         )
         if not self.object:
             raise Http404

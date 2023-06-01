@@ -16,6 +16,7 @@ class MarketingSiteMap(sitemaps.Sitemap):
     def location(self, item):
         return reverse(item)
 
+
 '''
 class EventDetailSiteMap(sitemaps.Sitemap):
     """

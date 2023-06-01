@@ -319,7 +319,7 @@ class Event(DBModel):
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)
-    slug = AutoSlugField(populate_from='title', null=True, unique=True)
+    slug = AutoSlugField(populate_from="title", null=True, unique=True)
 
     def __str__(self):
         return f"{self.team} - {self.title}"

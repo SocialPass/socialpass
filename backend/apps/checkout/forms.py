@@ -32,8 +32,8 @@ class CheckoutForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.event = kwargs.pop('event', None)
-        self.tiers_all = kwargs.pop('tiers_all', None)
+        self.event = kwargs.pop("event", None)
+        self.tiers_all = kwargs.pop("tiers_all", None)
         super().__init__(*args, **kwargs)
 
     def clean(self):
@@ -45,13 +45,15 @@ class CheckoutForm(forms.Form):
         ticket_tier_data = json.loads(cleaned_data["ticket_tier_data"])
         for item in ticket_tier_data:
             for tier in self.tiers_all:
-                if int(item['id']) == tier.id:
-                    amount = int(item['amount'])
-                    extra_party = int(item['extra_party'])
+                if int(item["id"]) == tier.id:
+                    amount = int(item["amount"])
+                    extra_party = int(item["extra_party"])
 
                     # 1. Max Per Person
                     if amount > tier.max_per_person:
-                        raise ValidationError(f"Only {tier.max_per_person} per person is available.")
+                        raise ValidationError(
+                            f"Only {tier.max_per_person} per person is available."
+                        )
 
                     # 2. Amount
                     total_selected = amount + (amount * extra_party)
@@ -61,7 +63,9 @@ class CheckoutForm(forms.Form):
 
                     # 3. Extra Party
                     if extra_party > tier.allowed_guests:
-                        raise ValidationError(f"Only {tier.allowed_guests} guest(s) allowed.")
+                        raise ValidationError(
+                            f"Only {tier.allowed_guests} guest(s) allowed."
+                        )
 
         # OK
         return cleaned_data

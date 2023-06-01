@@ -39,7 +39,7 @@ urlpatterns += [
 # SITEMAPS URLs
 sitemaps = {
     "marketing": MarketingSiteMap,
-    #"events-discovery": EventDetailSiteMap
+    # "events-discovery": EventDetailSiteMap
 }
 urlpatterns += [
     path(

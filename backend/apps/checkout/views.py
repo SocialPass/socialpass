@@ -258,6 +258,7 @@ class CheckoutPageTwo(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
 
@@ -276,6 +277,7 @@ class CheckoutPageTwo(DetailView):
                     )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
         except Exception as e:
@@ -287,6 +289,7 @@ class CheckoutPageTwo(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
 
@@ -308,6 +311,7 @@ class CheckoutPageSuccess(DetailView):
     def get_object(self):
         self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(
             public_id=self.kwargs["checkout_session_public_id"],
+            tx_status=CheckoutSession.OrderStatus.FULFILLED,
         )
         if not self.object:
             raise Http404

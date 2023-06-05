@@ -2,8 +2,6 @@
 from django.contrib import sitemaps
 from django.urls import reverse
 
-from apps.root.models import Event
-
 
 class MarketingSiteMap(sitemaps.Sitemap):
     """
@@ -11,7 +9,7 @@ class MarketingSiteMap(sitemaps.Sitemap):
     """
 
     def items(self):
-        return ["marketing:index"]
+        return ["marketing:index", "marketing:index_host"]
 
     def location(self, item):
         return reverse(item)

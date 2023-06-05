@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from apps.api_checkout import views
 
 app_name = "api_checkout"
 urlpatterns = [

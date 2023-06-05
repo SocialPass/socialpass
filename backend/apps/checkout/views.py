@@ -1,5 +1,6 @@
 from io import BytesIO
 import base64
+import datetime
 import json
 import qrcode
 import rollbar
@@ -221,6 +222,10 @@ class CheckoutPageTwo(DetailView):
             .get(public_id=self.kwargs["checkout_session_public_id"])
         )
         if not self.object:
+            raise Http404
+        # Check if expired or not
+        expiration = self.object.created + datetime.timedelta(minutes=30)
+        if timezone.now() > expiration:
             raise Http404
         return super().get_object()
 

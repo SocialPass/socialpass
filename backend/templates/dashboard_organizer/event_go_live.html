@@ -129,7 +129,7 @@
 						</p>
 						<form method="post">
 							{% csrf_token %}
-							<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased">
+							<button type="submit" class="btn btn-primary btn-lg fs-base fw-bold antialiased" onclick="goLive(event)">
 								<i class="fa-solid fa-circle-small fa-beat-fade me-5"></i>
 								Go Live!
 							</button>
@@ -234,6 +234,18 @@
 {% endblock %}
 
 {% block extra_body %}
+	<!-- Go live button processing state -->
+	<script type="text/javascript">
+		function goLive(event) {
+			event.target.classList.add("disabled");
+			event.target.innerHTML = [
+		        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`,
+		        `<span class="ms-5">Processing...</span>`,
+		    ].join("");
+		}
+	</script>
+
+	<!-- Confetti animation -->
 	{% if event.state == event.StateStatus.LIVE and request.GET.is_success == "True" %}
 		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 		<script type="text/javascript">

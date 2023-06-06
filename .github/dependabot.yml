@@ -4,10 +4,6 @@ updates:
     directory: /frontend/scanner-app
     schedule:
       interval: daily
-  - package-ecosystem: npm
-    directory: /frontend/checkout-app
-    schedule:
-      interval: daily
   - package-ecosystem: pip
     directory: /backend
     schedule:

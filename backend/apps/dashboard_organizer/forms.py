@@ -178,7 +178,6 @@ class TierAssetOwnershipForm(forms.ModelForm):
         fields = [
             "balance_required",
             "network",
-            "asset_type",
             "token_address",
             "token_id",
         ]

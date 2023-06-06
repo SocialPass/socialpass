@@ -1,7 +1,7 @@
 # General
 # ------------------------------------------------------------------------------
 argon2-cffi==21.3.0 # https://github.com/hynek/argon2-cffi
-boto3==1.26.109 # https://github.com/boto/boto3
+boto3==1.26.148 # https://github.com/boto/boto3
 eth-account==0.8.0 # https://github.com/ethereum/eth-account
 eth-utils==2.1.0 # https://github.com/ethereum/eth-utils
 Faker==18.7.0 # https://github.com/joke2k/faker

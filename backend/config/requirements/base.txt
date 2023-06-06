@@ -15,7 +15,7 @@ rollbar==0.16.3 #https://github.com/rollbar/pyrollbar/
 # ------------------------------------------------------------------------------
 git+https://github.com/SPTech-Group/django-quill-editor
 git+https://github.com/SPTech-Group/passbook.git
-crispy-bootstrap5==0.6 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
+crispy-bootstrap5==0.7 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==4.2.0  # https://www.djangoproject.com/
 djangorestframework==3.14.0  # https://github.com/encode/django-rest-framework
 django-autoslug==1.9.9 # https://github.com/justinmayer/django-autoslug

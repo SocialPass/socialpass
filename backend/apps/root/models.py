@@ -294,6 +294,12 @@ class Event(DBModel):
         blank=True,
         null=True,
     )
+    fiat_currency = models.CharField(
+        max_length=3,
+        help_text="The fiat currency to use for all tickets of this event.",
+        blank=False,
+        default="USD",
+    )
 
     # Location info
     # timezone of event
@@ -531,6 +537,13 @@ class Event(DBModel):
             pass
         return description_html
 
+    @property
+    def currency_symbol(self):
+        CURRENCY_SYMBOLS = {
+            "USD": "$",
+        }
+        return CURRENCY_SYMBOLS.get(self.fiat_currency, "")
+
 
 class Ticket(DBModel):
     """
@@ -762,6 +775,16 @@ class TierFiat(DBModel):
     Represents a fiat-based tier for an event ticket
     Holds payment processing fields specific to a fiat payment
     """
+
+    price_per_ticket = models.DecimalField(
+        max_digits=19,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        help_text="Price of one ticket for this tier.",
+        blank=False,
+        null=False,
+        default=0.99,
+    )
 
     def __str__(self) -> str:
         return f"TierFiat {self.public_id}"

@@ -783,7 +783,6 @@ class TierFiat(DBModel):
         help_text="Price of one ticket for this tier.",
         blank=False,
         null=False,
-        default=0.99,
     )
 
     def __str__(self) -> str:

@@ -6,7 +6,14 @@ from django.utils.translation import gettext_lazy as _
 from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
-from apps.root.models import Event, Invite, Team, TicketTier, TierAssetOwnership
+from apps.root.models import (
+    Event,
+    Invite,
+    Team,
+    TicketTier,
+    TierAssetOwnership,
+    TierFiat,
+)
 from apps.root.exceptions import GoogleWalletAPIRequestError
 
 
@@ -199,3 +206,18 @@ class TierAssetOwnershipForm(forms.ModelForm):
             raise forms.ValidationError("The token address is not valid")
 
         return token_address
+
+
+class TierFiatForm(forms.ModelForm):
+    """
+    Ticket tier fiat form
+    """
+
+    class Meta:
+        model = TierFiat
+        fields = ["price_per_ticket",]
+        widgets = {
+            "price_per_ticket": forms.TextInput(
+                attrs={"placeholder": "Price of one ticket"}
+            ),
+        }

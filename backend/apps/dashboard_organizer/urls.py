@@ -87,6 +87,11 @@ urlpatterns = [
         name="ticket_tier_nft_create",
     ),
     path(
+        "events/tickets/<uuid:team_public_id>/<int:event_pk>/create/fiat/",
+        views.TicketTierFiatCreateView.as_view(),
+        name="ticket_tier_fiat_create",
+    ),
+    path(
         "events/tickets/<uuid:team_public_id>/<int:event_pk>/create/free/",
         views.TicketTierFreeCreateView.as_view(),
         name="ticket_tier_free_create",

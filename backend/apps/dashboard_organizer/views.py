@@ -21,6 +21,7 @@ from apps.dashboard_organizer.forms import (
     TeamForm,
     TicketTierForm,
     TierAssetOwnershipForm,
+    TierFiatForm,
 )
 from apps.root.models import (
     Event,
@@ -30,6 +31,7 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     TierFree,
+    TierFiat,
 )
 
 User = auth.get_user_model()
@@ -641,6 +643,61 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
         else:
             messages.add_message(
                 self.request, messages.ERROR, "The Asset Ownership fields are not valid"
+            )
+            return super().form_invalid(form)
+
+        # add event data to TicketTierForm from context
+        # validate TicketTierForm
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        return super().form_valid(form)
+
+    def get_success_message(self, *args, **kwargs):
+        return "Your ticket tier has been created successfully!"
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard_organizer:event_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+        )
+
+
+class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+    """
+    Create a Fiat-based ticket tier.
+    """
+
+    model = TicketTier
+    form_class = TicketTierForm
+    template_name = "dashboard_organizer/ticket_tier_fiat_form.html"
+    form_data = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        context["tier_fiat_form"] = TierFiatForm(
+            prefix="tier_fiat_form", data=self.form_data
+        )
+        return context
+
+    def form_valid(self, form, **kwargs):
+        # set form.data to self
+        # this is reused in get_context_data to preserve entries / content
+        self.form_data = form.data
+
+        # validate tier_asset_ownership
+        # if exists, save tier_fiat to TicketTierForm instance
+        tier_fiat = TierFiatForm(
+            self.form_data, prefix="tier_fiat_form"
+        )
+        if tier_fiat.is_valid():
+            tier_fiat.save()
+            form.instance.tier_fiat = tier_fiat.instance
+        else:
+            messages.add_message(
+                self.request, messages.ERROR, "The Fiat fields are not valid"
             )
             return super().form_invalid(form)
 

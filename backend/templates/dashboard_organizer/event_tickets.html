@@ -66,6 +66,12 @@
 												{% endif %}
 											</span>
 										</h6>
+										{% if ticket_tier.tier_fiat %}
+										<div class="text-muted">
+											<strong>Price per ticket: </strong>
+											{{ event.currency_symbol }}{{ ticket_tier.tier_fiat.price_per_ticket }}
+										</div>
+										{% endif %}
 									</div>
 									<div class="ps-20 ms-auto">
 										<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-primary btn-sm">
@@ -80,6 +86,12 @@
 								</div>
 								<div class="mb-20">
 									<div>
+										{% if ticket_tier.tier_fiat %}
+											<strong class="badge badge-success border-transparent py-5 ws-200 mw-100 fs-base">
+												<i class="fa-regular fa-money-check-dollar me-5"></i>
+												Fiat
+											</strong>
+										{% endif %}
 										{% if ticket_tier.tier_asset_ownership %}
 											<strong class="badge badge-success border-transparent py-5 ws-200 mw-100 fs-base">
 												<i class="fa-regular fa-hexagon-vertical-nft me-5"></i>

@@ -545,8 +545,8 @@ class Event(DBModel):
         Not all currencies will have recognizable symbols. If we just store the 
         most used ones here locally, we should be good to go for all use cases.
         
-        When used BEFORE amount, we should always be handle prices, no matter 
-        what the currency. 
+        When used BEFORE amount, we should always be able to handle prices, no 
+        matter what the currency. 
         Example:
             - 29.99 in USD becomes $29.99
             - 500 in Pakistani Rupee becomes PKR 500

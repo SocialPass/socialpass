@@ -149,6 +149,30 @@
 							</label>
 						</div>
 					{% endif %}
+					{% if tiers_fiat|length > 0 %}
+						<div class="ticket-tier">
+							<input
+								type="radio"
+								class="ticket-tier-input"
+								name="payment-type"
+								id="FIAT"
+								value="FIAT"
+								{% if checkout_type == "FIAT" %}checked{% endif %}
+								onchange="tierTypeOnchange(this)"
+							>
+							<label for="FIAT" class="ticket-tier-label">
+								<h6 class="fw-700 m-0 fs-base">
+									<span class="ticket-tier-uncheck">
+										<i class="fa-light fa-money-check-dollar"></i>
+									</span>
+									<span class="ticket-tier-check">
+										<i class="fa-light fa-money-check-dollar"></i>
+									</span>
+									Fiat
+								</h6>
+							</label>
+						</div>
+					{% endif %}
 					{% if tiers_asset_ownership|length > 0 %}
 						<div class="ticket-tier">
 							<input 
@@ -189,6 +213,11 @@
 					{% include 'checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
+			<div class="tiers-container {% if checkout_type == 'FIAT' %}d-block{% endif %}" id="tiers-FIAT">
+				{% with tiers_fiat as tiers %}
+					{% include 'checkout/ticket_tiers.html' %}
+				{% endwith %}
+			</div>
 			<div class="tiers-container {% if checkout_type == 'ASSET_OWNERSHIP' %}d-block{% endif %}" id="tiers-ASSET_OWNERSHIP">
 				{% with tiers_asset_ownership as tiers %}
 					{% include 'checkout/ticket_tiers.html' %}
@@ -222,6 +251,12 @@
 			<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="ticket-tier-error-message">
 				Please select at least one ticket tier to continue.
 			</div>
+			<p>
+				<strong>Total Price</strong>
+				&mdash;
+				<span id="total-price" data-fiat-currency="{{ event.currency_symbol }}">N/A</span>
+			</p>
+			<hr />
 			<p class="text-muted fs-base-n4">
 				You're also agreeing to our
 				<a href="#" class="fw-bold" target="_blank" rel="noreferrer">

@@ -9,6 +9,7 @@ function updateTierData() {
 	var selectedTiers = document.querySelectorAll(
 		"[type=checkbox].ticket-tier-input:checked"
 	);
+	var totalPrice = 0;
 	for (var i = 0; i < selectedTiers.length; i++) {
 		var tier = selectedTiers[i];
 		data.push({
@@ -16,12 +17,28 @@ function updateTierData() {
 			amount: tier.getAttribute("data-amount"),
 			extra_party: tier.getAttribute("data-extra-party"),
 		});
+		if (!isNaN(tier.getAttribute("data-price-per-ticket"))) {
+			totalPrice +=
+				Number(tier.getAttribute("data-price-per-ticket")) *
+				Number(tier.getAttribute("data-amount"));
+		}
 	}
 	if (data.length > 0) {
 		document.getElementById("id_ticket_tier_data").value =
 			JSON.stringify(data);
 	} else {
 		document.getElementById("id_ticket_tier_data").value = "";
+	}
+
+	// Hanlde total price
+	document.getElementById("total-price").innerHTML = "N/A";
+	if (selectedTiers.length > 0) {
+		if (document.getElementById("id_checkout_type").value === "FIAT") {
+			document.getElementById("total-price").innerHTML =
+				document
+					.getElementById("total-price")
+					.getAttribute("data-fiat-currency") + String(totalPrice.toFixed(2));
+		}
 	}
 }
 

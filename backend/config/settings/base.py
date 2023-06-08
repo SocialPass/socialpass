@@ -95,6 +95,7 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "django_fsm_log",
     "django_quill",
+    "djmoney",
     "rest_framework",
     "rest_framework.authtoken",
     "storages",

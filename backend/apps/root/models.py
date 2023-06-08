@@ -23,6 +23,7 @@ from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
+from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
@@ -299,6 +300,7 @@ class Event(DBModel):
         help_text="The fiat currency to use for all tickets of this event.",
         blank=False,
         default="USD",
+        choices=CURRENCY_CHOICES,
     )
 
     # Location info
@@ -539,10 +541,20 @@ class Event(DBModel):
 
     @property
     def currency_symbol(self):
+        """
+        Not all currencies will have recognizable symbols. If we just store the 
+        most used ones here locally, we should be good to go for all use cases.
+        """
         CURRENCY_SYMBOLS = {
             "USD": "$",
+            "GBP": "£",
+            "EUR": "€",
+            "CNY": "¥",
+            "INR": "₹",
+            "BDT": "৳", # Bangladesh
+            "VND": "₫", # Vietnam
         }
-        return CURRENCY_SYMBOLS.get(self.fiat_currency, "")
+        return CURRENCY_SYMBOLS.get(self.fiat_currency, self.fiat_currency + " ")
 
 
 class Ticket(DBModel):

@@ -283,6 +283,14 @@
 							</a>
 						</li>
 						<li>
+							<a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-money-check-dollar"></i>
+								</span>
+								<span class="ms-10">Payment Details</span>
+							</a>
+						</li>
+						<li>
 							<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}#add-member" class="dropdown-item d-flex align-items-center">
 								<span class="ws-25">
 									<i class="fa-regular fa-user-plus"></i>
@@ -358,6 +366,12 @@
 						<i class="fa-regular fa-lock"></i>
 					</span>
 					<span class="ms-5">Manage Members</span>
+				</a>
+				<a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'payment-details' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-money-check-dollar"></i>
+					</span>
+					<span class="ms-5">Payment Details</span>
 				</a>
 			</div>
 			<!-- Team end -->

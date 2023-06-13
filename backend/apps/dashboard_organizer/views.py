@@ -807,3 +807,21 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
             "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
         )
+
+
+class PaymentDetailView(TeamContextMixin, View):
+    """
+    Connect and manage Stripe account.
+    """
+
+    def get(self, *args, **kwargs):
+        """
+        Override GET view to return the template
+        """
+        
+        context = self.get_context_data(**kwargs)
+        return render(
+            self.request, "dashboard_organizer/payment_detail.html", {
+                "current_team": context["current_team"],
+            }
+        )

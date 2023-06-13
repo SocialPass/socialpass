@@ -959,3 +959,42 @@ class StripeReturn(TeamContextMixin, RedirectView):
             "dashboard_organizer:payment_detail",
             args=(self.kwargs["team_public_id"],)
         )
+
+
+class StripeDelete(TeamContextMixin, View):
+    """
+    Delete a connected Stripe account
+    """
+
+    def get(self, *args, **kwargs):
+        """
+        Override GET view to return the template
+        """
+
+        context = self.get_context_data(**kwargs)
+        return render(
+            self.request, "dashboard_organizer/stripe_delete.html", {
+                "current_team": context["current_team"],
+            }
+        )
+
+    def post(self, *args, **kwargs):
+        """
+        Override POST view to handle Stripe deletion flow
+        """
+        
+        context = self.get_context_data(**kwargs)
+        current_team = context["current_team"]
+        current_team.tmp_stripe_account_id = ""
+        current_team.stripe_account_id = ""
+        current_team.stripe_account_country = ""
+        current_team.save()
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Stripe account has been removed.",
+        )
+        return redirect(
+            "dashboard_organizer:payment_detail",
+            self.kwargs["team_public_id"],
+        )

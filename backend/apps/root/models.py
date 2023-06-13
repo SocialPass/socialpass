@@ -84,6 +84,33 @@ class Team(DBModel):
     theme = models.JSONField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
 
+    # stripe
+    tmp_stripe_account_id = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Temporary Stripe account ID used to create account links.",
+    )
+    stripe_account_id = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Connected Stripe account ID.",
+    )
+    stripe_account_country = models.CharField(
+        max_length=10,
+        blank=True,
+        default="",
+        help_text="Connected Stripe account country.",
+    )
+
+    @property
+    def is_stripe_connected(self):
+        if self.stripe_account_id:
+            return True
+        else:
+            return False
+
     def __str__(self):
         """
         return string representation of model

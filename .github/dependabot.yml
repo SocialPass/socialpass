@@ -3,8 +3,10 @@ updates:
   - package-ecosystem: npm
     directory: /frontend/scanner-app
     schedule:
-      interval: daily
+      interval: weekly
+      day: "sunday"
   - package-ecosystem: pip
     directory: /backend
     schedule:
-      interval: daily
+      interval: weekly
+      day: "sunday"

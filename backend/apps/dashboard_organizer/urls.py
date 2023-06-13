@@ -45,6 +45,11 @@ urlpatterns = [
         views.PaymentDetailView.as_view(),
         name="payment_detail",
     ),
+    path(
+        "stripe-refresh/<uuid:team_public_id>/",
+        views.StripeRefresh.as_view(),
+        name="stripe_refresh",
+    ),
     # Ticketing
     path(
         "events/<uuid:team_public_id>/",

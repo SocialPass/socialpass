@@ -40,6 +40,11 @@ urlpatterns = [
         views.TeamMemberDeleteView.as_view(),
         name="team_member_delete",
     ),
+    path(
+        "payment-detail/<uuid:team_public_id>/",
+        views.PaymentDetailView.as_view(),
+        name="payment_detail",
+    ),
     # Ticketing
     path(
         "events/<uuid:team_public_id>/",

@@ -43,32 +43,54 @@
 					You're managing payment details as...<br />
 					<strong>{{ request.user.username }}</strong> - <a href="mailto:{% get_user_primary_email %}" target="_blank" class="fw-bold">{% get_user_primary_email %}</a>
 				</p>
-				<h2 class="card-title fs-base-p4 mt-20 mb-0">Connect Stripe Account</h2>
-				<p class="fs-base-n2 mt-5">
-					Before you can create fiat tiers and start accepting payments, you must connect your Stripe account. Click on the following button to get started. You will be redirected to a form which you will need to fill up with your account information.
-				</p>
-				<form class="form" method="post">
-					{% csrf_token %}
-					{{ form }}
+				{% if current_team.is_stripe_connected %}
+					<h2 class="card-title fs-base-p4 mt-20 mb-0">
+						<i class="fa-regular fa-check-circle text-success me-5"></i>
+						Stripe Account Connected
+					</h2>
+					<p class="fs-base-n2 mt-5">
+						The following Stripe account is connected to your team. You can now start creating fiat tiers and accept payments!
+					</p>
 					<div class="form-group">
-						<button
-							type="submit"
-							class="btn btn-primary btn-lg fs-base btn-block"
-							style="
-								--button-primary-bg-color: #5433ff;
-								--button-primary-bg-color-hover: #5433ff;
-								--button-primary-bg-color-active: #5433ff;
-								--button-primary-text-color: #fff;
-								--button-primary-text-color-hover: #fff;
-								--button-primary-text-color-active: #fff;
-							"
-							onclick="post(event)"
-						>
-							<i class="fa-brands fa-stripe-s me-5"></i>
-							Connect Stripe Account
-						</button>
+						<label class="form-label">Account ID</label>
+						<input class="form-control" value="{{ current_team.stripe_account_id }}" readonly>
 					</div>
-				</form>
+					<div class="form-group">
+						<label class="form-label">Country</label>
+						<input class="form-control" value="{{ current_team.stripe_account_country }}" readonly>
+					</div>
+					<hr />
+					<p class="fs-base-n2 mt-5">
+						If you want to change your payment details, please remove this account first and connect another one.
+					</p>
+				{% else %}
+					<h2 class="card-title fs-base-p4 mt-20 mb-0">Connect Stripe Account</h2>
+					<p class="fs-base-n2 mt-5">
+						Before you can create fiat tiers and start accepting payments, you must connect your Stripe account. Click on the following button to get started. You will be redirected to a form which you will need to fill up with your account information.
+					</p>
+					<form class="form" method="post">
+						{% csrf_token %}
+						{{ form }}
+						<div class="form-group">
+							<button
+								type="submit"
+								class="btn btn-primary btn-lg fs-base btn-block"
+								style="
+									--button-primary-bg-color: #5433ff;
+									--button-primary-bg-color-hover: #5433ff;
+									--button-primary-bg-color-active: #5433ff;
+									--button-primary-text-color: #fff;
+									--button-primary-text-color-hover: #fff;
+									--button-primary-text-color-active: #fff;
+								"
+								onclick="post(event)"
+							>
+								<i class="fa-brands fa-stripe-s me-5"></i>
+								Connect Stripe Account
+							</button>
+						</div>
+					</form>
+				{% endif %}
 			</div>
 		</div>
 		<!-- Main content end -->

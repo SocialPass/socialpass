@@ -1,6 +1,7 @@
 import secrets
 
 import rollbar
+import stripe
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib import auth, messages
@@ -818,10 +819,61 @@ class PaymentDetailView(TeamContextMixin, View):
         """
         Override GET view to return the template
         """
-        
+
         context = self.get_context_data(**kwargs)
         return render(
             self.request, "dashboard_organizer/payment_detail.html", {
                 "current_team": context["current_team"],
             }
         )
+
+    def post(self, *args, **kwargs):
+        """
+        Override POST view to handle Stripe flow
+        """
+        
+        context = self.get_context_data(**kwargs)
+        current_team = context["current_team"]
+        stripe.api_key = settings.STRIPE_API_KEY
+
+        # Temporary Stripe account ID does not exist
+        # Start connection flow for the first time by creating account
+        if not current_team.tmp_stripe_account_id:
+            try:
+                stripe_account = stripe.Account.create(type="standard")
+            except Exception:
+                rollbar.report_exc_info()
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Something went wrong. Please try again.",
+                )
+                return redirect(
+                    "dashboard_organizer:payment_detail",
+                    self.kwargs["team_public_id"],
+                )
+            current_team.tmp_stripe_account_id = stripe_account["id"]
+            current_team.save()
+
+        # Create account link
+        try:
+            stripe_account_link = stripe.AccountLink.create(
+                account=current_team.tmp_stripe_account_id,
+                refresh_url="https://example.com/reauth",
+                return_url="https://example.com/return",
+                type="account_onboarding",
+            )
+        except Exception:
+            rollbar.report_exc_info()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong. Please try again.",
+            )
+            return redirect(
+                "dashboard_organizer:payment_detail",
+                self.kwargs["team_public_id"],
+            )
+
+        # Redirect user to Stripe so that they can fill out the form
+        return redirect(stripe_account_link["url"])

@@ -50,6 +50,11 @@ urlpatterns = [
         views.StripeRefresh.as_view(),
         name="stripe_refresh",
     ),
+    path(
+        "stripe-return/<uuid:team_public_id>/",
+        views.StripeReturn.as_view(),
+        name="stripe_return",
+    ),
     # Ticketing
     path(
         "events/<uuid:team_public_id>/",

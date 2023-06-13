@@ -836,6 +836,13 @@ class PaymentDetailView(TeamContextMixin, View):
         current_team = context["current_team"]
         stripe.api_key = settings.STRIPE_API_KEY
 
+        # Stripe account already connected
+        if current_team.is_stripe_connected:
+            return redirect(
+                "dashboard_organizer:payment_detail",
+                self.kwargs["team_public_id"],
+            )
+
         # Temporary Stripe account ID does not exist
         # Start connection flow for the first time by creating account
         if not current_team.tmp_stripe_account_id:
@@ -860,7 +867,7 @@ class PaymentDetailView(TeamContextMixin, View):
             stripe_account_link = stripe.AccountLink.create(
                 account=current_team.tmp_stripe_account_id,
                 refresh_url=current_team.stripe_refresh_link,
-                return_url="https://example.com/return",
+                return_url=current_team.stripe_return_link,
                 type="account_onboarding",
             )
         except Exception:
@@ -890,7 +897,65 @@ class StripeRefresh(TeamContextMixin, RedirectView):
             messages.ERROR,
             "Something went wrong. Please try again.",
         )
-        return redirect(
+        return reverse(
             "dashboard_organizer:payment_detail",
-            self.kwargs["team_public_id"],
+            args=(self.kwargs["team_public_id"],)
+        )
+
+
+class StripeReturn(TeamContextMixin, RedirectView):
+    """
+    Check if Stripe account has been properly created, redirect accordingly.
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        current_team = context["current_team"]
+        stripe.api_key = settings.STRIPE_API_KEY
+
+        # Stripe account already connected
+        if current_team.is_stripe_connected:
+            return reverse(
+                "dashboard_organizer:payment_detail",
+                args=(self.kwargs["team_public_id"],)
+            )
+
+        # Get Stripe account
+        try:
+            stripe_account = stripe.Account.retrieve(
+                current_team.tmp_stripe_account_id
+            )
+        except Exception:
+            rollbar.report_exc_info()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong. Please try again.",
+            )
+            return reverse(
+                "dashboard_organizer:payment_detail",
+                args=(self.kwargs["team_public_id"],)
+            )
+
+        # Make sure details have been submitted
+        if stripe_account["details_submitted"]:
+            current_team.stripe_account_id = current_team.tmp_stripe_account_id
+            current_team.stripe_account_country = stripe_account["country"]
+            current_team.save()
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                "Stripe account connected successfully!",
+            )
+        else:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong. Please try again.",
+            )
+
+        # Return redirect URL
+        return reverse(
+            "dashboard_organizer:payment_detail",
+            args=(self.kwargs["team_public_id"],)
         )

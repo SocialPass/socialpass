@@ -122,6 +122,17 @@ class Team(DBModel):
         )
         return domain + url
 
+    @property
+    def stripe_return_link(self):
+        domain = Site.objects.all().first().domain
+        url = reverse(
+            "dashboard_organizer:stripe_return",
+            args=[
+                self.public_id,
+            ],
+        )
+        return domain + url
+
     def __str__(self):
         """
         return string representation of model

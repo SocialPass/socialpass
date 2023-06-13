@@ -39,7 +39,36 @@
 		<!-- Main content start -->
 		<div class="col-lg-6 border-lg-end">
 			<div class="content">
-
+				<p class="fs-base-n2">
+					You're managing payment details as...<br />
+					<strong>{{ request.user.username }}</strong> - <a href="mailto:{% get_user_primary_email %}" target="_blank" class="fw-bold">{% get_user_primary_email %}</a>
+				</p>
+				<h2 class="card-title fs-base-p4 mt-20 mb-0">Connect Stripe Account</h2>
+				<p class="fs-base-n2 mt-5">
+					Before you can create fiat tiers and start accepting payments, you must connect your Stripe account. Click on the following button to get started. You will be redirected to a form which you will need to fill up with your account information.
+				</p>
+				<form class="form" method="post">
+					{% csrf_token %}
+					{{ form }}
+					<div class="form-group">
+						<button
+							type="submit"
+							class="btn btn-primary btn-lg fs-base btn-block"
+							style="
+								--button-primary-bg-color: #5433ff;
+								--button-primary-bg-color-hover: #5433ff;
+								--button-primary-bg-color-active: #5433ff;
+								--button-primary-text-color: #fff;
+								--button-primary-text-color-hover: #fff;
+								--button-primary-text-color-active: #fff;
+							"
+							onclick="post(event)"
+						>
+							<i class="fa-brands fa-stripe-s me-5"></i>
+							Connect Stripe Account
+						</button>
+					</div>
+				</form>
 			</div>
 		</div>
 		<!-- Main content end -->
@@ -61,3 +90,16 @@
 </div>
 <!-- Content card end -->
 {% endblock content %}
+
+{% block extra_body %}
+	<!-- Connect Stripe button processing state -->
+	<script type="text/javascript">
+		function post(event) {
+			event.target.classList.add("disabled");
+			event.target.innerHTML = [
+		        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`,
+		        `<span class="ms-5">Processing...</span>`,
+		    ].join("");
+		}
+	</script>
+{% endblock %}

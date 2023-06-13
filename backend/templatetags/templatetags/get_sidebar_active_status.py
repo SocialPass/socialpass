@@ -31,7 +31,7 @@ def get_sidebar_active_status(context, key):
         if url_name in ["team_members", "team_member_delete"]:
             return "active"
     elif key == "payment-details":
-        if url_name in ["payment_detail",]:
+        if url_name in ["payment_detail", "stripe_delete",]:
             return "active"
     elif key == "change-password":
         if url_name == "account_change_password":

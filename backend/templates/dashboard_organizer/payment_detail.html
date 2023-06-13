@@ -16,7 +16,7 @@
 			</p>
 		</div>
 		<div class="ms-auto align-self-center">
-			<a href="#" class="btn btn-danger">
+			<a href="{% url 'dashboard_organizer:stripe_delete' current_team.public_id %}" class="btn btn-danger">
 				<i class="fa-solid fa-times"></i>
 				<span class="ms-5 d-none d-sm-inline">Remove</span>
 			</a>

@@ -859,7 +859,7 @@ class PaymentDetailView(TeamContextMixin, View):
         try:
             stripe_account_link = stripe.AccountLink.create(
                 account=current_team.tmp_stripe_account_id,
-                refresh_url="https://example.com/reauth",
+                refresh_url=current_team.stripe_refresh_link,
                 return_url="https://example.com/return",
                 type="account_onboarding",
             )
@@ -877,3 +877,20 @@ class PaymentDetailView(TeamContextMixin, View):
 
         # Redirect user to Stripe so that they can fill out the form
         return redirect(stripe_account_link["url"])
+
+
+class StripeRefresh(TeamContextMixin, RedirectView):
+    """
+    Redirect to Stripe connect page. 
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        messages.add_message(
+            self.request,
+            messages.ERROR,
+            "Something went wrong. Please try again.",
+        )
+        return redirect(
+            "dashboard_organizer:payment_detail",
+            self.kwargs["team_public_id"],
+        )

@@ -55,10 +55,10 @@
 						Requires no payment. Only quantity checks are made during purchase.
 					</div>
 				</a>
-				<a href="{% url 'dashboard_organizer:ticket_tier_fiat_create' current_team.public_id event.pk  %}" class="btn btn-lg btn-block py-10 d-flex flex-column mt-20">
+				<a {% if current_team.is_stripe_connected %}href="{% url 'dashboard_organizer:ticket_tier_fiat_create' current_team.public_id event.pk  %}"{% endif %} class="btn btn-lg btn-block py-10 d-flex flex-column mt-20 {% if not current_team.is_stripe_connected %}disabled mb-0{% endif %}">
 					<div class="d-flex align-items-center">
-						<i class="fa-light fa-money-check-dollar me-20 text-primary"></i>
-						<strong class="antialiased text-base me-20">Fiat Ticket Tier</strong>
+						<i class="fa-light fa-money-check-dollar me-20 {% if current_team.is_stripe_connected %}text-primary{% endif %}"></i>
+						<strong class="antialiased {% if current_team.is_stripe_connected %}text-base{% endif %} me-20">Fiat Ticket Tier</strong>
 						<i class="fa-light fa-arrow-right ms-auto"></i>
 					</div>
 					<div class="border-top border-start-0 border-end-0 border-bottom-0 border-dotted pt-10 mt-10 text-muted fs-base-n2 text-start d-flex align-items-center">
@@ -66,6 +66,14 @@
 						Requires payment via traditional fiat money.
 					</div>
 				</a>
+				{% if not current_team.is_stripe_connected %}
+					<div class="alert alert-danger text-base fs-base-n2 d-flex align-items-center mt-5" role="alert">
+						<i class="fa-regular fa-info-circle me-20"></i>
+						<div>
+							Before you can create <strong>fiat tiers</strong>, you need to connect your Stripe account to your team in <a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="fw-bold alert-link">payment details</a>.
+						</div>
+					</div>
+				{% endif %}
 				<a href="{% url 'dashboard_organizer:ticket_tier_nft_create' current_team.public_id event.pk  %}" class="btn btn-lg btn-block py-10 d-flex flex-column mt-20">
 					<div class="d-flex align-items-center">
 						<i class="fa-light fa-hexagon-vertical-nft me-20 text-primary"></i>

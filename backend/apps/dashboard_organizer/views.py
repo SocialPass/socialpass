@@ -683,6 +683,20 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         )
         return context
 
+    def dispatch(self, request, *args, **kwargs):
+        team = Team.objects.get(public_id=self.kwargs["team_public_id"])
+        if not team.is_stripe_connected:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Please connect your Stripe account first.",
+            )
+            return redirect(
+                "dashboard_organizer:payment_detail",
+                self.kwargs["team_public_id"],
+            )
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form, **kwargs):
         # set form.data to self
         # this is reused in get_context_data to preserve entries / content

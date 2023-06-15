@@ -382,6 +382,9 @@ class CheckoutFiat(DetailView):
                 self.kwargs["checkout_session_public_id"],
             )
 
+        # Form is valid, continue...
+        # self.object.finalize_transaction(form_data=form) # Does nothing for FIAT
+
         """
         # Form is valid, continue...
         # Finalize / process transaction and handle exceptions

@@ -174,6 +174,9 @@
 								&times; {{ item.quantity }}
 							</span>
 						</h6>
+						<div>
+							Price &times; 1 &mdash; {{ object.event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
+						</div>
 						<div class="fs-base-n2 mt-5 text-muted">
 							Allowed Guest(s):
 							{{ item.extra_party }}
@@ -182,6 +185,11 @@
 					<!-- Order item end -->
 				{% endfor %}
 			</div>
+			<p>
+				<strong>Total Price</strong>
+				&mdash;
+				{{ object.event.currency_symbol }}{{ object.total_price }}
+			</p>
 			<h6 class="fw-700 fsr-6 mt-40 mb-0">
 				Confirm Order
 			</h6>
@@ -215,6 +223,11 @@
 					Please sign the message with your wallet address to continue.
 				</div>
 			</form>
+			<p>
+				<strong>Total Price</strong>
+				&mdash;
+				{{ object.event.currency_symbol }}{{ object.total_price }}
+			</p>
 			<hr />
 			<p class="text-muted fs-base-n2">
 				If you need help placing your order, please

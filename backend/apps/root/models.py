@@ -864,6 +864,10 @@ class TierFiat(DBModel):
     def __str__(self) -> str:
         return f"TierFiat {self.public_id}"
 
+    @property
+    def price_per_ticket_cents(self):
+        return round(self.price_per_ticket * 100)
+
 
 class TierBlockchain(DBModel):
     """
@@ -1044,6 +1048,20 @@ class CheckoutSession(DBModel):
         tickets_link = domain + url
         return tickets_link
 
+    @property
+    def total_price(self):
+        if self.tx_fiat:
+            total_price = 0
+            checkout_items = CheckoutItem.objects.select_related(
+                "ticket_tier", "ticket_tier__tier_fiat"
+            ).filter(checkout_session=self)
+            for item in checkout_items:
+                tier_price = item.ticket_tier.tier_fiat.price_per_ticket
+                total_price += item.quantity * tier_price
+            return total_price
+        else:
+            return "N/A"
+
     def send_confirmation_email(self):
         """
         send the confirmation link to the attendee's email
@@ -1190,7 +1208,7 @@ class CheckoutItem(DBModel):
 
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
-
+    
     def create_tickets(self):
         """
         create Tickets and relate to the checkout_item
@@ -1215,6 +1233,15 @@ class CheckoutItem(DBModel):
 class TxFiat(DBModel):
     """
     Represents a checkout transaction via fiat payment
+    """
+    """
+    stripe_session_id = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Stripe checkout session ID.",
+    )
+    stripe_line_items = models.JSONField(blank=True, null=True)
     """
 
     def __str__(self) -> str:

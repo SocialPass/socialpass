@@ -845,7 +845,7 @@ class PaymentDetailView(TeamContextMixin, View):
         """
         Override POST view to handle Stripe flow
         """
-        
+
         context = self.get_context_data(**kwargs)
         current_team = context["current_team"]
         stripe.api_key = settings.STRIPE_API_KEY
@@ -861,7 +861,10 @@ class PaymentDetailView(TeamContextMixin, View):
         # Start connection flow for the first time by creating account
         if not current_team.tmp_stripe_account_id:
             try:
-                stripe_account = stripe.Account.create(type="standard")
+                stripe_account = stripe.Account.create(
+                    type="express", # Express Account
+                    settings={"payouts": {"schedule": {"interval": "manual"}}} # Manual Payouts
+                )
             except Exception:
                 rollbar.report_exc_info()
                 messages.add_message(
@@ -902,7 +905,7 @@ class PaymentDetailView(TeamContextMixin, View):
 
 class StripeRefresh(TeamContextMixin, RedirectView):
     """
-    Redirect to Stripe connect page. 
+    Redirect to Stripe connect page.
     """
 
     def get_redirect_url(self, *args, **kwargs):
@@ -996,7 +999,7 @@ class StripeDelete(TeamContextMixin, View):
         """
         Override POST view to handle Stripe deletion flow
         """
-        
+
         context = self.get_context_data(**kwargs)
         current_team = context["current_team"]
         current_team.tmp_stripe_account_id = ""

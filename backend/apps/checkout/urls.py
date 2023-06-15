@@ -26,6 +26,11 @@ urlpatterns = [
         name="checkout_two",
     ),
     path(
+        "event/<slug:event_slug>/checkout-fiat/<uuid:checkout_session_public_id>/",
+        views.CheckoutFiat.as_view(),
+        name="checkout_fiat",
+    ),
+    path(
         "event/<slug:event_slug>/success/<uuid:checkout_session_public_id>/",
         views.CheckoutPageSuccess.as_view(),
         name="checkout_success",

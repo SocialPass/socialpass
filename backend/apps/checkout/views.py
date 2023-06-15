@@ -21,6 +21,7 @@ from .forms import (
     CheckoutForm,
     CheckoutFormFree,
     CheckoutFormAssetOwnership,
+    CheckoutFormFiat,
 )
 
 
@@ -193,11 +194,18 @@ class CheckoutPageOne(DetailView):
 
         # OK
         # Redirect on success
-        return redirect(
-            "checkout:checkout_two",
-            self.object.slug,
-            checkout_session.public_id,
-        )
+        if checkout_session.tx_type == CheckoutSession.TransactionType.FIAT:
+            return redirect(
+                "checkout:checkout_fiat",
+                self.object.slug,
+                checkout_session.public_id,
+            )
+        else:
+            return redirect(
+                "checkout:checkout_two",
+                self.object.slug,
+                checkout_session.public_id,
+            )
 
 
 class CheckoutPageTwo(DetailView):
@@ -301,6 +309,111 @@ class CheckoutPageTwo(DetailView):
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
+
+        # OK
+        # Redirect on success
+        return redirect(
+            "checkout:checkout_success",
+            self.object.event.slug,
+            self.object.public_id,
+        )
+
+
+class CheckoutFiat(DetailView):
+    """
+    GET
+    Fetch Checkout Session
+    Fetch Checkout Items
+
+    POST
+    Process Fiat Checkout Session
+    """
+
+    model = CheckoutSession
+    slug_field = "public_id"
+    slug_url_kwarg = "checkout_session_public_id"
+    template_name = "checkout/checkout_fiat.html"
+
+    def get_object(self):
+        self.object = (
+            CheckoutSession.objects.select_related("event")
+            .prefetch_related("checkoutitem_set")
+            .get(public_id=self.kwargs["checkout_session_public_id"])
+        )
+        if not self.object:
+            raise Http404
+        # Check if expired or not
+        expiration = self.object.created + datetime.timedelta(minutes=30)
+        if timezone.now() > expiration:
+            raise Http404
+        return super().get_object()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["checkout_items"] = self.object.checkoutitem_set.all()
+        context["form"] = CheckoutFormFiat(
+            initial={"name": self.object.name, "email": self.object.email}
+        )
+        return context
+
+    def get(self, *args, **kwargs):
+        """
+        override get to call create_transaction for each attempt
+        """
+        response = super().get(*args, **kwargs)
+        self.object.create_transaction()
+        return response
+
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        self.get_object()
+        form = CheckoutFormFiat(self.request.POST)
+
+        # Something went wrong, so we show error message
+        if not form.is_valid():
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong. Please try again.",
+            )
+            return redirect(
+                "checkout:checkout_two",
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
+
+        """
+        # Form is valid, continue...
+        # Finalize / process transaction and handle exceptions
+        try:
+            self.object.finalize_transaction(form_data=form)
+            self.object.process_transaction()
+        except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
+            for key, value in e.message_dict.items():
+                for message in value:
+                    messages.add_message(
+                        self.request,
+                        messages.ERROR,
+                        str(message),
+                    )
+            return redirect(
+                "checkout:checkout_two",
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
+        except Exception as e:
+            rollbar.report_exc_info()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                str(e),
+            )
+            return redirect(
+                "checkout:checkout_two",
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
+        """
 
         # OK
         # Redirect on success

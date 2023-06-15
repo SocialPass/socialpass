@@ -1,0 +1,237 @@
+{% extends "checkout/base.html" %}
+{% load static get_theme_value %}
+
+{% block head_title %}{{ object.event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
+
+{% block content %}
+<!-- Header start -->
+<div class="w-100 hs-200 position-relative">
+	<!-- Event cover image start -->
+	<div class="d-flex align-items-center justify-content-center w-100 h-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none">
+		<img src="{{ object.event.cover_image.url }}" class="w-100 h-auto" alt="Cover image">
+	</div>
+	<!-- Event cover image end -->
+
+	<!-- Back button start -->
+	<div class="position-absolute z-1 bottom-0 start-0 px-content py-20">
+		<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-rounded ps-5 d-flex align-items-center">
+			<div class="ws-25 hs-25 bg-secondary text-on-secondary rounded-circle d-flex align-items-center justify-content-center">
+				<i class="fa-regular fa-arrow-left"></i>
+			</div>
+			<strong class="text-strong antialiased ms-10">Go Back</strong>
+		</a>
+	</div>
+	<!-- Back button end -->
+</div>
+<!-- Header end -->
+
+<!-- Event and team name start -->
+<div class="px-content pt-20">
+	<p class="text-muted mt-5 mb-0">
+		By {{ object.event.organizer }}
+	</p>
+	<h2 class="text-strong fs-base-p2 fw-700 m-0">
+		{{ object.event.title }}
+	</h2>
+</div>
+<!-- Event and team name end -->
+
+<!-- Messages start -->
+<div class="px-content">
+	{% include "checkout/messages.html" %}
+</div>
+<!-- Messages end -->
+
+<!-- Payment content start -->
+<div class="row">
+	<!-- Information section start -->
+	<div class="col-md-7">
+		<div class="content mt-20 mb-0 me-md-0">
+			<h1 class="text-strong fw-700 fsr-4 m-0">
+				Complete Checkout
+			</h1>
+			{% if object.tx_type == "FREE" %}
+				<p class="mt-10">
+					You are about to checkout with FREE ticket(s) only. Please take note of the following:
+				</p>
+				<ul class="unordered-list">
+					<li>
+						FREE tickets require no payment/verfication. The only constraint is the	availability at checkout.
+					</li>
+					<li>
+						Due to the above point, event organizers <em>may</em> give less priority to free tickets in the case of capacity issues.
+					</li>
+				</ul>
+				<p>
+					If all of that sounds good, please click on the <strong>Continue</strong> button to get your ticket(s).
+				</p>
+			{% elif object.tx_type == "ASSET_OWNERSHIP" %}
+				<div class="alert alert-primary text-base pe-none user-select-none" role="alert">
+					<h6 class="alert-heading fw-700 m-0">
+						<i class="fa-light fa-check-square text-primary me-5"></i>
+						Proof of NFT ownership
+					</h6>
+					<p class="mt-5 mb-0">Prove ownership of the required digital assets (NFTs) to get your ticket(s).</p>
+				</div>
+				<p>
+					Please connect your wallet and click on the <strong>Get Tickets</strong> button to sign a message and get your ticket(s).
+				</p>
+
+				<!-- Connect wallet button start
+				<div class="text-center position-relative" style="min-height: 4rem;">
+					<div class="position-absolute top-50 start-50 translate-middle">
+						<div class="spinner-border" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+					</div>
+					<w3m-core-button></w3m-core-button>
+					<div id="buttons-container">
+					</div>
+				</div>
+				Connect wallet button end -->
+
+				<div class="position-relative w-100" style="min-height: 5rem;">
+					<!-- Loading start -->
+					<div class="position-absolute top-50 start-50 translate-middle z-0">
+						<div class="spinner-border" role="status"></div>
+					</div>
+					<!-- Loading end -->
+
+					<!-- Disconnect container start -->
+					<div id="disconnect-container" class="d-none position-relative bg-content z-1">
+						<button id="disconnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10" onclick="disconnectWallet()">
+							<div class="fw-700 antialiased text-truncate">
+								<span id="connected-address">0x...123456</span>
+								<span class="text-muted fs-base-n4"> | Click to disconnect</span>
+							</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="..." alt="Logo" class="w-auto h-100">
+							</div>
+						</button>
+					</div>
+					<!-- Disconnect container end -->
+
+					<!-- Connect container start -->
+					<div id="connect-container" class="d-none position-relative bg-content z-1">
+						<button id="metaMask" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">Metamask</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/metamask.svg' %}" alt="Metamask" class="w-auto h-100">
+							</div>
+						</button>
+						<button id="walletConnect" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">WalletConnect</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/walletconnect.png' %}" alt="WalletConnect" class="w-auto h-100">
+							</div>
+						</button>
+						<button id="coinbaseWallet" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">Coinbase</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/coinbase.svg' %}" alt="Coinbase" class="w-auto h-100">
+							</div>
+						</button>
+						<button id="ledger" type="button" class="btn btn-lg btn-block py-10 fs-base text-base text-start d-flex align-items-center my-10">
+							<div class="fw-700 antialiased text-truncate">Ledger</div>
+							<div class="ws-25 hs-25 ms-auto flex-shrink-0">
+								<img src="{% static 'images/wallets/ledger.png' %}" alt="Ledger" class="w-auto h-100">
+							</div>
+						</button>
+					</div>
+					<!-- Connect container end -->
+				</div>
+
+				<p class="fs-base-n2 text-muted d-flex border-top pt-10">
+					<i class="fa-light fa-info-circle me-10 mt-5 flex-shrink-0"></i>
+					It's worth noting again that you only need to prove the ownership of the required digital asset(s). This is not a trade, but only a verification.
+				</p>
+			{% endif %}
+		</div>
+	</div>
+	<!-- Information section end -->
+
+	<!-- Order summary start -->
+	<div class="col-md-5">
+		<div class="px-content pt-md-20 position-md-sticky top-0 start-0">
+			<div class="bg-gray-very-light-lm bg-darkgray-very-dim-dm px-15 py-20 border border-dotted">
+				<div class="d-flex align-items-center mb-10">
+					<h6 class="fw-700 fsr-6 m-0">
+						Summary
+					</h6>
+
+					<!-- Edit button start -->
+					<div class="ms-auto">
+						<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="fw-bold antialiased">Edit</a>
+					</div>
+					<!-- Edit button end -->
+				</div>
+				{% for item in checkout_items %}
+					<!-- Order item start -->
+					<div class="py-10 border-top">
+						<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
+							<span>{{ item.ticket_tier.ticket_type }}</span>
+							<span class="ms-auto ps-10 fw-normal">
+								&times; {{ item.quantity }}
+							</span>
+						</h6>
+						<div class="fs-base-n2 mt-5 text-muted">
+							Allowed Guest(s):
+							{{ item.extra_party }}
+						</div>
+					</div>
+					<!-- Order item end -->
+				{% endfor %}
+			</div>
+			<h6 class="fw-700 fsr-6 mt-40 mb-0">
+				Confirm Order
+			</h6>
+			<hr />
+			<form class="checkout-form my-20" id="asset_ownership_form" method="POST">
+				{% csrf_token %}
+				{% if object.tx_type == "ASSET_OWNERSHIP" %}
+					{{ form.wallet_address }}
+					{{ form.signed_message }}
+				{% endif %}
+				{% with form.name as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with form.email as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				<button
+					id="checkout-submit-btn"
+					type="submit"
+					{% if object.tx_type == "ASSET_OWNERSHIP" %}
+						onclick="signWallet(message, event)"
+					{% endif %}
+					class="btn btn-secondary btn-lg fsr-6 btn-block mt-15"
+				>
+					<strong class="antialiased">Get Tickets</strong>
+				</button>
+				<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="wallet-address-error-message">
+					Please connect your wallet first!
+				</div>
+				<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="wallet-signature-error-message">
+					Please sign the message with your wallet address to continue.
+				</div>
+			</form>
+			<hr />
+			<p class="text-muted fs-base-n2">
+				If you need help placing your order, please
+				<a href="#" data-hm-toggle="modal" data-hm-target="discord-support-ticket-modal" class="fw-bold"
+				>contact us</a>
+				and let us know
+			</p>
+		</div>
+	</div>
+	<!-- Order summary end -->
+</div>
+<!-- Payment content end -->
+{% endblock content %}
+
+{% block extra_body %}
+<script src="{% static 'js/dist/bundle.js' %}"></script>
+<script>
+	const message = `{{object.tx_asset_ownership.unsigned_message}}`
+</script>
+{% endblock extra_body %}

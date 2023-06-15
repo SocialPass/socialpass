@@ -93,3 +93,14 @@ class CheckoutFormAssetOwnership(forms.Form):
             attrs={"placeholder": "Email Address", "readonly": "readonly"}
         ),
     )
+
+
+class CheckoutFormFiat(forms.Form):
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Name", "readonly": "readonly"}),
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"placeholder": "Email Address", "readonly": "readonly"}
+        ),
+    )

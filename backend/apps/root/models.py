@@ -6,6 +6,7 @@ from typing import Optional
 import pytz
 import requests
 import rollbar
+import stripe
 from autoslug import AutoSlugField
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
@@ -37,7 +38,7 @@ from apps.root.exceptions import (
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
 from apps.root.utils import get_expiration_datetime, get_random_passcode
-
+stripe.api_key = settings.STRIPE_API_KEY
 
 class DBModel(TimeStampedModel):
     """
@@ -132,6 +133,14 @@ class Team(DBModel):
             ],
         )
         return domain + url
+
+    @property
+    def stripe_express_dashboard_link(self):
+        if self.stripe_account_id:
+            login_link = stripe.Account.create_login_link(
+              self.stripe_account_id,
+            )
+            return login_link.url
 
     def __str__(self):
         """
@@ -591,11 +600,11 @@ class Event(DBModel):
     @property
     def currency_symbol(self):
         """
-        Not all currencies will have recognizable symbols. If we just store the 
+        Not all currencies will have recognizable symbols. If we just store the
         most used ones here locally, we should be good to go for all use cases.
-        
-        When used BEFORE amount, we should always be able to handle prices, no 
-        matter what the currency. 
+
+        When used BEFORE amount, we should always be able to handle prices, no
+        matter what the currency.
         Example:
             - 29.99 in USD becomes $29.99
             - 500 in Pakistani Rupee becomes PKR 500

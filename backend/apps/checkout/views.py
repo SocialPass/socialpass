@@ -4,7 +4,9 @@ import datetime
 import json
 import qrcode
 import rollbar
+import stripe
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.http import Http404
@@ -336,8 +338,8 @@ class CheckoutFiat(DetailView):
 
     def get_object(self):
         self.object = (
-            CheckoutSession.objects.select_related("event")
-            .prefetch_related("checkoutitem_set")
+            CheckoutSession.objects.select_related("event", "event__team", "tx_fiat",)
+            .prefetch_related("checkoutitem_set",)
             .get(public_id=self.kwargs["checkout_session_public_id"])
         )
         if not self.object:
@@ -350,7 +352,9 @@ class CheckoutFiat(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["checkout_items"] = self.object.checkoutitem_set.all()
+        context["checkout_items"] = self.object.checkoutitem_set.select_related(
+            "ticket_tier", "ticket_tier__tier_fiat"
+        ).all()
         context["form"] = CheckoutFormFiat(
             initial={"name": self.object.name, "email": self.object.email}
         )
@@ -364,10 +368,12 @@ class CheckoutFiat(DetailView):
         self.object.create_transaction()
         return response
 
-    @transaction.atomic
     def post(self, *args, **kwargs):
         self.get_object()
+        context = self.get_context_data()
+        checkout_session = self.get_object()
         form = CheckoutFormFiat(self.request.POST)
+        stripe.api_key = settings.STRIPE_API_KEY
 
         # Something went wrong, so we show error message
         if not form.is_valid():
@@ -383,48 +389,71 @@ class CheckoutFiat(DetailView):
             )
 
         # Form is valid, continue...
-        # self.object.finalize_transaction(form_data=form) # Does nothing for FIAT
 
-        """
-        # Form is valid, continue...
-        # Finalize / process transaction and handle exceptions
-        try:
-            self.object.finalize_transaction(form_data=form)
-            self.object.process_transaction()
-        except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
-            for key, value in e.message_dict.items():
-                for message in value:
+        # Create line items using Stripe PRICES API
+        # We only do this if prices have not been created yet
+        if not checkout_session.tx_fiat.stripe_line_items:
+            stripe_line_items = []
+            for item in context["checkout_items"]:
+                price_per_ticket_cents = item.ticket_tier.tier_fiat.price_per_ticket_cents
+                try:
+                    price = stripe.Price.create(
+                        unit_amount=price_per_ticket_cents * item.quantity,
+                        currency=checkout_session.event.fiat_currency.lower(),
+                        product_data={
+                            "name": item.ticket_tier.ticket_type,
+                        },
+                    )
+                except Exception:
+                    rollbar.report_exc_info()
                     messages.add_message(
                         self.request,
                         messages.ERROR,
-                        str(message),
+                        "Something went wrong. Please try again.",
                     )
-            return redirect(
-                "checkout:checkout_two",
-                self.kwargs["event_slug"],
-                self.kwargs["checkout_session_public_id"],
-            )
-        except Exception as e:
-            rollbar.report_exc_info()
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                str(e),
-            )
-            return redirect(
-                "checkout:checkout_two",
-                self.kwargs["event_slug"],
-                self.kwargs["checkout_session_public_id"],
-            )
-        """
+                    return redirect(
+                        "checkout:checkout_fiat",
+                        self.kwargs["event_slug"],
+                        self.kwargs["checkout_session_public_id"],
+                    )
+                stripe_line_items.append({
+                    "price": price["id"],
+                    "quantity": item.quantity,
+                })
+            checkout_session.tx_fiat.stripe_line_items = stripe_line_items
+            checkout_session.tx_fiat.save()
+            print(checkout_session.tx_fiat.stripe_line_items)
+
+        # Create Stripe session using API
+        # Again, we only do this if session has not been created yet
+        if not checkout_session.tx_fiat.stripe_session_id:
+            try:
+                session = stripe.checkout.Session.create(
+                    mode="payment",
+                    line_items=checkout_session.tx_fiat.stripe_line_items,
+                    payment_intent_data={"application_fee_amount": 123},
+                    success_url="https://example.com/success",
+                    cancel_url="https://example.com/cancel",
+                    stripe_account=checkout_session.event.team.stripe_account_id,
+                )
+            except Exception:
+                rollbar.report_exc_info()
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Something went wrong. Please try again.",
+                )
+                return redirect(
+                    "checkout:checkout_fiat",
+                    self.kwargs["event_slug"],
+                    self.kwargs["checkout_session_public_id"],
+                )
+            checkout_session.tx_fiat.stripe_session_id = session["id"]
+            checkout_session.tx_fiat.stripe_session_url = session["url"]
 
         # OK
-        # Redirect on success
-        return redirect(
-            "checkout:checkout_success",
-            self.object.event.slug,
-            self.object.public_id,
-        )
+        # Redirect to Stripe checkout
+        return redirect(checkout_session.tx_fiat.stripe_session_url)
 
 
 class CheckoutPageSuccess(DetailView):

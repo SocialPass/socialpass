@@ -1234,15 +1234,19 @@ class TxFiat(DBModel):
     """
     Represents a checkout transaction via fiat payment
     """
-    """
+    
     stripe_session_id = models.CharField(
         max_length=255,
         blank=True,
         default="",
         help_text="Stripe checkout session ID.",
     )
+    stripe_session_url = models.URLField(
+        blank=True,
+        default="",
+        help_text="Stripe checkout session URL.",
+    )
     stripe_line_items = models.JSONField(blank=True, null=True)
-    """
 
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"

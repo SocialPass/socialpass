@@ -372,6 +372,7 @@ class CheckoutFiat(DetailView):
         self.get_object()
         context = self.get_context_data()
         checkout_session = self.get_object()
+        tx_fiat = checkout_session.tx_fiat
         form = CheckoutFormFiat(self.request.POST)
         stripe.api_key = settings.STRIPE_API_KEY
 
@@ -392,7 +393,7 @@ class CheckoutFiat(DetailView):
 
         # Create line items using Stripe PRICES API
         # We only do this if prices have not been created yet
-        if not checkout_session.tx_fiat.stripe_line_items:
+        if not tx_fiat.stripe_line_items:
             stripe_line_items = []
             for item in context["checkout_items"]:
                 price_per_ticket_cents = item.ticket_tier.tier_fiat.price_per_ticket_cents
@@ -401,7 +402,7 @@ class CheckoutFiat(DetailView):
                         unit_amount=price_per_ticket_cents * item.quantity,
                         currency=checkout_session.event.fiat_currency.lower(),
                         product_data={
-                            "name": item.ticket_tier.ticket_type,
+                            "name": f"{item.ticket_tier.ticket_type} × {item.quantity}",
                         },
                     )
                 except Exception:
@@ -418,26 +419,25 @@ class CheckoutFiat(DetailView):
                     )
                 stripe_line_items.append({
                     "price": price["id"],
-                    "quantity": item.quantity,
+                    "quantity": 1,
                 })
-            checkout_session.tx_fiat.stripe_line_items = stripe_line_items
-            checkout_session.tx_fiat.save()
-            print(checkout_session.tx_fiat.stripe_line_items)
+            tx_fiat.stripe_line_items = stripe_line_items
+            # tx_fiat.save()
 
         # Create Stripe session using API
         # Again, we only do this if session has not been created yet
-        if not checkout_session.tx_fiat.stripe_session_id:
+        if not tx_fiat.stripe_session_id:
             try:
                 session = stripe.checkout.Session.create(
                     customer_email=checkout_session.email,
                     mode="payment",
-                    line_items=checkout_session.tx_fiat.stripe_line_items,
+                    line_items=tx_fiat.stripe_line_items,
                     payment_intent_data={
                         "application_fee_amount": 123, #TODO
                         "transfer_data": {
                             "destination": checkout_session.event.team.stripe_account_id
                         },
-                      },
+                    },
                     success_url="https://example.com/success",
                     cancel_url="https://example.com/cancel",
                 )
@@ -453,12 +453,14 @@ class CheckoutFiat(DetailView):
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
                 )
-            checkout_session.tx_fiat.stripe_session_id = session["id"]
-            checkout_session.tx_fiat.stripe_session_url = session["url"]
+            tx_fiat.stripe_session_id = session["id"]
+            tx_fiat.stripe_session_url = session["url"]
+            # tx_fiat.save()
 
         # OK
         # Redirect to Stripe checkout
-        return redirect(checkout_session.tx_fiat.stripe_session_url)
+        # tx_fiat.save() #TODO: Why doesn't saving work in this method?
+        return redirect(tx_fiat.stripe_session_url)
 
 
 class CheckoutPageSuccess(DetailView):

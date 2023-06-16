@@ -523,6 +523,8 @@ class StripeCheckoutSuccess(RedirectView):
         if not payload["public_id"] == str(checkout_session.public_id):
             raise Http404
 
+        # TODO: Verify using Stripe's API as well
+
         # OK
         # Process transaction
         # Redirect to checkout success

@@ -238,7 +238,7 @@ class CheckoutPageTwo(DetailView):
         if not self.object:
             raise Http404
         # Check if expired or not
-        expiration = self.object.created + datetime.timedelta(minutes=30)
+        expiration = self.object.created + datetime.timedelta(minutes=15)
         if timezone.now() > expiration:
             raise Http404
         return super().get_object()
@@ -349,7 +349,7 @@ class CheckoutFiat(DetailView):
         if not self.object:
             raise Http404
         # Check if expired or not
-        expiration = self.object.created + datetime.timedelta(minutes=30)
+        expiration = self.object.created + datetime.timedelta(minutes=15)
         if timezone.now() > expiration:
             raise Http404
         return super().get_object()

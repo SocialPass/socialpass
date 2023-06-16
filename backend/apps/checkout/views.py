@@ -441,7 +441,7 @@ class CheckoutFiat(DetailView):
                             "destination": checkout_session.event.team.stripe_account_id
                         },
                     },
-                    success_url="https://example.com/success",
+                    success_url=checkout_session.stripe_checkout_success_link,
                     cancel_url=checkout_session.stripe_checkout_cancel_link,
                 )
             except Exception:
@@ -497,6 +497,36 @@ class StripeCheckoutCancel(RedirectView):
         )
         return reverse(
             "checkout:checkout_fiat",
+            args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)
+        )
+
+
+class StripeCheckoutSuccess(RedirectView):
+    """
+    Redirect to checkout success
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        # Get object
+        checkout_session = CheckoutSession.objects.get(
+            public_id=self.kwargs["checkout_session_public_id"]
+        )
+        if not checkout_session:
+            raise Http404
+
+        # Make sure the provided token is valid (stateless double verification)
+        payload = jwt.decode(
+            self.kwargs["token"],
+            settings.STRIPE_API_KEY,
+            algorithms=["HS256"],
+        )
+        if not payload["public_id"] == str(checkout_session.public_id):
+            raise Http404
+
+        # OK
+        # Redirect to checkout success
+        return reverse(
+            "checkout:checkout_success",
             args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)
         )
 

@@ -1288,8 +1288,19 @@ class TxFiat(DBModel):
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"
 
-    def process(self, *args, **kwargs):
-        pass
+    def process(self, checkout_session=None):
+        """
+        Go through the states.
+        """
+        if not checkout_session:
+            checkout_session = self.checkoutsession
+        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        checkout_session.save()
+
+        # OK
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        checkout_session.save()
+        checkout_session.fulfill()
 
 
 class TxBlockchain(DBModel):

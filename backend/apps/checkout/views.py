@@ -508,7 +508,7 @@ class StripeCheckoutSuccess(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         # Get object
-        checkout_session = CheckoutSession.objects.get(
+        checkout_session = CheckoutSession.objects.select_related("tx_fiat").get(
             public_id=self.kwargs["checkout_session_public_id"]
         )
         if not checkout_session:
@@ -524,7 +524,9 @@ class StripeCheckoutSuccess(RedirectView):
             raise Http404
 
         # OK
+        # Process transaction
         # Redirect to checkout success
+        checkout_session.tx_fiat.process()
         return reverse(
             "checkout:checkout_success",
             args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)

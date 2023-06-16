@@ -31,6 +31,11 @@ urlpatterns = [
         name="checkout_fiat",
     ),
     path(
+        "event/<slug:event_slug>/stripe-cancel/<uuid:checkout_session_public_id>/<str:token>/",
+        views.StripeCheckoutCancel.as_view(),
+        name="stripe_checkout_cancel",
+    ),
+    path(
         "event/<slug:event_slug>/success/<uuid:checkout_session_public_id>/",
         views.CheckoutPageSuccess.as_view(),
         name="checkout_success",

@@ -2,6 +2,7 @@ from io import BytesIO
 import base64
 import datetime
 import json
+import jwt
 import qrcode
 import rollbar
 import stripe
@@ -11,8 +12,10 @@ from django.contrib import messages
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import View
+from django.views.generic.base import RedirectView
 from django.views.generic.detail import DetailView
 
 from apps.root.models import CheckoutSession, CheckoutItem, Event, Ticket
@@ -439,7 +442,7 @@ class CheckoutFiat(DetailView):
                         },
                     },
                     success_url="https://example.com/success",
-                    cancel_url="https://example.com/cancel",
+                    cancel_url=checkout_session.stripe_checkout_cancel_link,
                 )
             except Exception:
                 rollbar.report_exc_info()
@@ -461,6 +464,41 @@ class CheckoutFiat(DetailView):
         # Redirect to Stripe checkout
         # tx_fiat.save() #TODO: Why doesn't saving work in this method?
         return redirect(tx_fiat.stripe_session_url)
+
+
+class StripeCheckoutCancel(RedirectView):
+    """
+    Redirect to fiat checkout
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        # Get object
+        checkout_session = CheckoutSession.objects.get(
+            public_id=self.kwargs["checkout_session_public_id"]
+        )
+        if not checkout_session:
+            raise Http404
+
+        # Make sure the provided token is valid (stateless double verification)
+        payload = jwt.decode(
+            self.kwargs["token"],
+            settings.STRIPE_API_KEY,
+            algorithms=["HS256"],
+        )
+        if not payload["public_id"] == str(checkout_session.public_id):
+            raise Http404
+
+        # OK
+        # Redirect to fiat checkout
+        messages.add_message(
+            self.request,
+            messages.INFO,
+            "Payment was cancelled, you can try again.",
+        )
+        return reverse(
+            "checkout:checkout_fiat",
+            args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)
+        )
 
 
 class CheckoutPageSuccess(DetailView):

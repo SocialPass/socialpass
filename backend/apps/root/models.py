@@ -1081,6 +1081,24 @@ class CheckoutSession(DBModel):
         )
         return domain + url
 
+    @property
+    def stripe_checkout_success_link(self):
+        domain = Site.objects.all().first().domain
+        token = jwt.encode(
+            {"public_id": str(self.public_id)},
+            settings.STRIPE_API_KEY,
+            algorithm="HS256",
+        )
+        url = reverse(
+            "checkout:stripe_checkout_success",
+            args=[
+                self.event.slug,
+                self.public_id,
+                token,
+            ],
+        )
+        return domain + url
+
     def send_confirmation_email(self):
         """
         send the confirmation link to the attendee's email

@@ -3,6 +3,7 @@ import uuid
 from datetime import date, timedelta
 from typing import Optional
 
+import jwt
 import pytz
 import requests
 import rollbar
@@ -1061,6 +1062,24 @@ class CheckoutSession(DBModel):
             return total_price
         else:
             return "N/A"
+
+    @property
+    def stripe_checkout_cancel_link(self):
+        domain = Site.objects.all().first().domain
+        token = jwt.encode(
+            {"public_id": str(self.public_id)},
+            settings.STRIPE_API_KEY,
+            algorithm="HS256",
+        )
+        url = reverse(
+            "checkout:stripe_checkout_cancel",
+            args=[
+                self.event.slug,
+                self.public_id,
+                token,
+            ],
+        )
+        return domain + url
 
     def send_confirmation_email(self):
         """

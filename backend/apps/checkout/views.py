@@ -6,6 +6,7 @@ import jwt
 import qrcode
 import rollbar
 import stripe
+import time
 
 from django.conf import settings
 from django.contrib import messages
@@ -443,6 +444,7 @@ class CheckoutFiat(DetailView):
                     },
                     success_url=checkout_session.stripe_checkout_success_link,
                     cancel_url=checkout_session.stripe_checkout_cancel_link,
+                    expires_at=int(time.time()) + 1800, # 30 minutes from now
                 )
             except Exception:
                 rollbar.report_exc_info()

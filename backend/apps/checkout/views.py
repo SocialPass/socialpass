@@ -429,12 +429,17 @@ class CheckoutFiat(DetailView):
         if not checkout_session.tx_fiat.stripe_session_id:
             try:
                 session = stripe.checkout.Session.create(
+                    customer_email=checkout_session.email,
                     mode="payment",
                     line_items=checkout_session.tx_fiat.stripe_line_items,
-                    payment_intent_data={"application_fee_amount": 123},
+                    payment_intent_data={
+                        "application_fee_amount": 123, #TODO
+                        "transfer_data": {
+                            "destination": checkout_session.event.team.stripe_account_id
+                        },
+                      },
                     success_url="https://example.com/success",
                     cancel_url="https://example.com/cancel",
-                    stripe_account=checkout_session.event.team.stripe_account_id,
                 )
             except Exception:
                 rollbar.report_exc_info()

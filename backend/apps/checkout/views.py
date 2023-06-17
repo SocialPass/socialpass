@@ -396,55 +396,16 @@ class CheckoutFiat(DetailView):
         # Form is valid, continue...
 
         # Create line items using Stripe PRICES API
-        # We only do this if prices have not been created yet
-        if not tx_fiat.stripe_line_items:
-            stripe_line_items = []
-            for item in context["checkout_items"]:
-                price_per_ticket_cents = item.ticket_tier.tier_fiat.price_per_ticket_cents
-                try:
-                    price = stripe.Price.create(
-                        unit_amount=price_per_ticket_cents * item.quantity,
-                        currency=checkout_session.event.fiat_currency.lower(),
-                        product_data={
-                            "name": f"{item.ticket_tier.ticket_type} × {item.quantity}",
-                        },
-                    )
-                except Exception:
-                    rollbar.report_exc_info()
-                    messages.add_message(
-                        self.request,
-                        messages.ERROR,
-                        "Something went wrong. Please try again.",
-                    )
-                    return redirect(
-                        "checkout:checkout_fiat",
-                        self.kwargs["event_slug"],
-                        self.kwargs["checkout_session_public_id"],
-                    )
-                stripe_line_items.append({
-                    "price": price["id"],
-                    "quantity": 1,
-                })
-            tx_fiat.stripe_line_items = stripe_line_items
-            tx_fiat.save()
-
-        # Create Stripe session using API
-        # Again, we only do this if session has not been created yet
-        if not tx_fiat.stripe_session_id:
+        stripe_line_items = []
+        for item in context["checkout_items"]:
+            price_per_ticket_cents = item.ticket_tier.tier_fiat.price_per_ticket_cents
             try:
-                session = stripe.checkout.Session.create(
-                    customer_email=checkout_session.email,
-                    mode="payment",
-                    line_items=tx_fiat.stripe_line_items,
-                    payment_intent_data={
-                        "application_fee_amount": 123, #TODO
-                        "transfer_data": {
-                            "destination": checkout_session.event.team.stripe_account_id
-                        },
+                price = stripe.Price.create(
+                    unit_amount=price_per_ticket_cents * item.quantity,
+                    currency=checkout_session.event.fiat_currency.lower(),
+                    product_data={
+                        "name": f"{item.ticket_tier.ticket_type} × {item.quantity}",
                     },
-                    success_url=checkout_session.stripe_checkout_success_link,
-                    cancel_url=checkout_session.stripe_checkout_cancel_link,
-                    expires_at=int(time.time()) + 1800, # 30 minutes from now
                 )
             except Exception:
                 rollbar.report_exc_info()
@@ -458,9 +419,44 @@ class CheckoutFiat(DetailView):
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
                 )
-            tx_fiat.stripe_session_id = session["id"]
-            tx_fiat.stripe_session_url = session["url"]
-            tx_fiat.save()
+            stripe_line_items.append({
+                "price": price["id"],
+                "quantity": 1,
+            })
+        tx_fiat.stripe_line_items = stripe_line_items
+        tx_fiat.save()
+
+        # Create Stripe session using API
+        try:
+            session = stripe.checkout.Session.create(
+                customer_email=checkout_session.email,
+                mode="payment",
+                line_items=tx_fiat.stripe_line_items,
+                payment_intent_data={
+                    "application_fee_amount": 123, #TODO
+                    "transfer_data": {
+                        "destination": checkout_session.event.team.stripe_account_id
+                    },
+                },
+                success_url=checkout_session.stripe_checkout_success_link,
+                cancel_url=checkout_session.stripe_checkout_cancel_link,
+                expires_at=int(time.time()) + 1800, # 30 minutes from now
+            )
+        except Exception:
+            rollbar.report_exc_info()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Something went wrong. Please try again.",
+            )
+            return redirect(
+                "checkout:checkout_fiat",
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
+        tx_fiat.stripe_session_id = session["id"]
+        tx_fiat.stripe_session_url = session["url"]
+        tx_fiat.save()
 
         # OK
         # Redirect to Stripe checkout

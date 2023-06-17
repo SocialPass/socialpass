@@ -1245,7 +1245,7 @@ class CheckoutItem(DBModel):
 
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
-    
+
     def create_tickets(self):
         """
         create Tickets and relate to the checkout_item
@@ -1271,14 +1271,14 @@ class TxFiat(DBModel):
     """
     Represents a checkout transaction via fiat payment
     """
-    
+
     stripe_session_id = models.CharField(
         max_length=255,
         blank=True,
         default="",
         help_text="Stripe checkout session ID.",
     )
-    stripe_session_url = models.URLField(
+    stripe_session_url = models.TextField(
         blank=True,
         default="",
         help_text="Stripe checkout session URL.",

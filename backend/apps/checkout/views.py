@@ -426,7 +426,7 @@ class CheckoutFiat(DetailView):
                     "quantity": 1,
                 })
             tx_fiat.stripe_line_items = stripe_line_items
-            # tx_fiat.save()
+            tx_fiat.save()
 
         # Create Stripe session using API
         # Again, we only do this if session has not been created yet
@@ -460,11 +460,10 @@ class CheckoutFiat(DetailView):
                 )
             tx_fiat.stripe_session_id = session["id"]
             tx_fiat.stripe_session_url = session["url"]
-            # tx_fiat.save()
+            tx_fiat.save()
 
         # OK
         # Redirect to Stripe checkout
-        # tx_fiat.save() #TODO: Why doesn't saving work in this method?
         return redirect(tx_fiat.stripe_session_url)
 
 

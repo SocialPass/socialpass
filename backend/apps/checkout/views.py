@@ -398,10 +398,9 @@ class CheckoutFiat(DetailView):
         # Create line items using Stripe PRICES API
         stripe_line_items = []
         for item in context["checkout_items"]:
-            price_per_ticket_cents = item.ticket_tier.tier_fiat.price_per_ticket_cents
             try:
                 price = stripe.Price.create(
-                    unit_amount=price_per_ticket_cents * item.quantity,
+                    unit_amount=item.unit_amount,
                     currency=checkout_session.event.fiat_currency.lower(),
                     product_data={
                         "name": f"{item.ticket_tier.ticket_type} × {item.quantity}",

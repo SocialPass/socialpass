@@ -87,6 +87,12 @@
 					</div>
 					<!-- Order item end -->
 				{% endfor %}
+				<hr />
+				<p>
+					<strong>Total Price</strong>
+					&mdash;
+					{{ object.event.currency_symbol }}{{ object.total_price }}
+				</p>
 			</div>
 			<h6 class="fw-700 fsr-6 mt-40 mb-0">
 				Confirm Order
@@ -119,12 +125,6 @@
 					Continue on Stripe
 				</button>
 			</form>
-			<p>
-				<strong>Total Price</strong>
-				&mdash;
-				{{ object.event.currency_symbol }}{{ object.total_price }}
-			</p>
-			<hr />
 			<p class="text-muted fs-base-n2">
 				If you need help placing your order, please
 				<a href="#" data-hm-toggle="modal" data-hm-target="discord-support-ticket-modal" class="fw-bold"

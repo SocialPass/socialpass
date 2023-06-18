@@ -69,10 +69,10 @@ class CheckoutPageOne(DetailView):
             tiers_asset_ownership,
         ) = ([] for i in range(5))
         availability = {
-            "FREE": False,
             "FIAT": False,
-            "BLOCKCHAIN": False,
             "ASSET_OWNERSHIP": False,
+            "BLOCKCHAIN": False,
+            "FREE": False,
         }
 
         # Populate holder lists with correct tiers and update availability
@@ -106,28 +106,14 @@ class CheckoutPageOne(DetailView):
             tier_types_count += 1
 
         # If checkout type not given (default),
-        # we prioritize NFTs < Crypto < Fiat < Free
+        # we prioritize Fiat < NFTs < Crypto < Free
+        # see above `availability` dictionary for ordering
         checkout_type = self.kwargs.get("checkout_type", "")
         if not checkout_type:
-            if availability["ASSET_OWNERSHIP"]:
-                checkout_type = "ASSET_OWNERSHIP"
-            if availability["BLOCKCHAIN"]:
-                checkout_type = "BLOCKCHAIN"
-            if availability["FIAT"]:
-                checkout_type = "FIAT"
-            if availability["FREE"]:
-                checkout_type = "FREE"
-
-        # If checkout type is still empty (no tier available), we set using length
-        if not checkout_type:
-            if len(tiers_asset_ownership) > 0:
-                checkout_type = "ASSET_OWNERSHIP"
-            if len(tiers_blockchain) > 0:
-                checkout_type = "BLOCKCHAIN"
-            if len(tiers_fiat) > 0:
-                checkout_type = "FIAT"
-            if len(tiers_free) > 0:
-                checkout_type = "FREE"
+            for key, value in availability.items():
+                if value == True:
+                    checkout_type = key
+                    break
 
         # Set tiers active
         if checkout_type == "FREE":

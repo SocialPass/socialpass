@@ -1243,6 +1243,9 @@ class CheckoutItem(DBModel):
         validators=[MinValueValidator(0)],
     )
 
+    def __str__(self):
+        return f"CheckoutItem {self.public_id}"
+
     @property
     def unit_amount(self):
         if not self.ticket_tier.tier_fiat:
@@ -1251,9 +1254,6 @@ class CheckoutItem(DBModel):
         price_per_ticket_cents = self.ticket_tier.tier_fiat.price_per_ticket_cents
         unit_amount = price_per_ticket_cents * self.quantity
         return unit_amount
-
-    def __str__(self):
-        return f"CheckoutItem {self.public_id}"
 
     def create_tickets(self):
         """

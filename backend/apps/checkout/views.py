@@ -408,15 +408,13 @@ class CheckoutFiat(DetailView):
                 "price": price["id"],
                 "quantity": 1,
             })
-        tx_fiat.stripe_line_items = stripe_line_items
-        tx_fiat.save()
 
         # Create Stripe session using API
         try:
             session = stripe.checkout.Session.create(
                 customer_email=checkout_session.email,
                 mode="payment",
-                line_items=tx_fiat.stripe_line_items,
+                line_items=stripe_line_items,
                 payment_intent_data={
                     "application_fee_amount": checkout_session.application_fee_amount,
                     "transfer_data": {
@@ -439,6 +437,9 @@ class CheckoutFiat(DetailView):
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
+
+        # Store the Stripe data in transaction and save
+        tx_fiat.stripe_line_items = stripe_line_items
         tx_fiat.stripe_session_id = session["id"]
         tx_fiat.stripe_session_url = session["url"]
         tx_fiat.save()

@@ -1099,6 +1099,23 @@ class CheckoutSession(DBModel):
         )
         return domain + url
 
+    @property
+    def application_fee_amount(self):
+        """
+        application fee that will be requested to be applied to the payment,
+        & transferred to the application owner’s Stripe account.
+
+        Current model is 4% + $2 Per Ticket (i.e., $100 ticket we would take $6)
+        """
+        items = self.checkoutitem_set.all()
+        application_fee_amount = 0
+        per_ticket = .04
+        flat_fee = 200
+        for i in items:
+            application_fee_amount += ((i.unit_amount * per_ticket) + flat_fee)
+        application_fee_amount = round(application_fee_amount)
+        return application_fee_amount
+
     def send_confirmation_email(self):
         """
         send the confirmation link to the attendee's email

@@ -418,7 +418,7 @@ class CheckoutFiat(DetailView):
                 mode="payment",
                 line_items=tx_fiat.stripe_line_items,
                 payment_intent_data={
-                    "application_fee_amount": 123, #TODO
+                    "application_fee_amount": checkout_session.application_fee_amount,
                     "transfer_data": {
                         "destination": checkout_session.event.team.stripe_account_id
                     },

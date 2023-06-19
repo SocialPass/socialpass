@@ -56,7 +56,7 @@
 			<p class="mt-5 fs-base-n2">
 				Please complete the payment to get your ticket(s)
 			</p>
-			<div class="bg-gray-very-light-lm bg-darkgray-very-dim-dm px-15 py-20 border border-dotted">
+			<div class="bg-gray-very-light-lm bg-darkgray-very-dim-dm p-20 pb-0 border border-dotted">
 				<div class="d-flex align-items-center mb-10">
 					<h6 class="fw-700 fsr-6 m-0">
 						Summary
@@ -70,7 +70,7 @@
 				</div>
 				{% for item in checkout_items %}
 					<!-- Order item start -->
-					<div class="py-10 border-top">
+					<div class="py-15 border-top">
 						<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
 							<span>{{ item.ticket_tier.ticket_type }}</span>
 							<span class="ms-auto ps-10 fw-normal">
@@ -87,12 +87,11 @@
 					</div>
 					<!-- Order item end -->
 				{% endfor %}
-				<hr />
-				<p>
-					<strong>Total Price</strong>
-					&mdash;
-					{{ object.event.currency_symbol }}{{ object.total_price }}
-				</p>
+			</div>
+			<div class="bg-primary-very-light-lm bg-primary-very-dim-dm p-20 border border-dotted border-top-0">
+				<strong>Total Price</strong>
+				&mdash;
+				{{ object.event.currency_symbol }}{{ object.total_price }}
 			</div>
 			<h6 class="fw-700 fsr-6 mt-40 mb-0">
 				Confirm Order

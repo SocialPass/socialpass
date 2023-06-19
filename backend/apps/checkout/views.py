@@ -506,7 +506,21 @@ class StripeCheckoutSuccess(RedirectView):
         if not payload["public_id"] == str(checkout_session.public_id):
             raise Http404
 
-        # TODO: Verify using Stripe's API as well
+        # Verify using Stripe's API (triple verification)
+        stripe.api_key = settings.STRIPE_API_KEY
+        stripe_session = stripe.checkout.Session.retrieve(
+            checkout_session.tx_fiat.stripe_session_id
+        )
+        if not stripe_session["payment_status"] == "paid":
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                "Payment has not been completed. Please try again.",
+            )
+            return reverse(
+                "checkout:checkout_fiat",
+                args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)
+            )
 
         # OK
         # Process transaction

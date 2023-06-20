@@ -56,7 +56,9 @@
 								class="d-flex align-items-center ps-15 ms-auto"
 								hx-include="[name='group']"
 								hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-								hx-swap="none"
+								hx-swap="transition:true innerHtml"
+								hx-swap-oob="true"
+								hx-target=".sticky-alerts"
 								hx-post="{% url 'dashboard_organizer:team_member_set_group' team_public_id=current_team.public_id member_pk=member.id %}">
 									{% for group in member.GroupChoices %}
 									<option

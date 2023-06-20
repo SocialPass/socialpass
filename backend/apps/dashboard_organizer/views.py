@@ -316,22 +316,17 @@ class TeamMemberUpdateGroupView(TeamContextPermissionMixin, View):
             member = Membership.objects.get(pk=kwargs.get("member_pk"))
             group = Group.objects.get(name=self.request.POST.get("group"))
         except Exception as e:
-            raise Http404
+            return render(self.request, "bases/toasts/error_toasts.html", {
+                "message": f"An unknown error occured"
+            })
 
         # OK
         # Update member
         member.group = group
         member.save()
-        return HttpResponse(status=200)
-
-
-    def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Team members updated successfully."
-        )
-        return reverse(
-            "dashboard_organizer:team_members", args=(self.kwargs["team_public_id"],)
-        )
+        return render(self.request, "bases/toasts/success_toast.html", {
+            "message": f"{member.user.email} added to {group.name} group"
+        })
 
 
 class TeamMemberDeleteView(TeamContextPermissionMixin, DeleteView):

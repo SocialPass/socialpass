@@ -5,6 +5,7 @@ import stripe
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib import auth, messages
+from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
@@ -113,7 +114,12 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
     template_name = "account/team_create.html"
 
     def get_success_url(self):
-        self.object.members.add(self.request.user)
+        # Create membership
+        Membership.objects.create(
+            team=self.object,
+            user=self.request.user,
+            group=Group.objects.get(name=Membership.GroupChoices.ADMIN)
+        )
         messages.add_message(
             self.request, messages.SUCCESS, "Your team has been created successfully."
         )

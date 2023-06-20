@@ -1259,6 +1259,7 @@ class CheckoutItem(DBModel):
         default=0,
         validators=[MinValueValidator(0)],
     )
+    is_overflow = models.BooleanField(default=False)
 
     def __str__(self):
         return f"CheckoutItem {self.public_id}"
@@ -1277,6 +1278,8 @@ class CheckoutItem(DBModel):
         create Tickets and relate to the checkout_item
         the amount of tickets created will be the same as
         the quantity defined in the related checkout_item
+
+        also check overflow and mark if necessary
         """
         extra_party = self.extra_party
         if extra_party > self.ticket_tier.allowed_guests:
@@ -1290,6 +1293,14 @@ class CheckoutItem(DBModel):
             "party_size": extra_party + 1,
         }
         tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
+
+        # check overflow
+        tickets_total_people = (extra_party + 1) * self.quantity
+        if tickets_total_people > self.ticket_tier.availability:
+            self.is_overflow = True
+            self.save()
+
+        # creat tickets
         Ticket.objects.bulk_create(tickets)
 
 

@@ -53,18 +53,18 @@
 							<p class="d-flex align-items-center ps-15 ms-auto">
 								{{ member.group }}
 							</p>
-							{% if current_membership|group_has_perms:'manage_members' %}
 							<div class="d-flex align-items-center ps-15 ms-auto">
 								{% if member.user != request.user %}
+								{% if current_membership|group_has_perms:'manage_members' %}
 									<a href="{% url 'dashboard_organizer:team_member_delete' team_public_id=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-square text-danger" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-breakpoint="md" data-hm-title="Remove member from your team">
 										<i class="fa-solid fa-times"></i>
 										<span class="visually-hidden">Remove</span>
 									</a>
+								{% endif %}
 								{% else %}
 									<span class="fs-base-n2">(You)</span>
 								{% endif %}
 							</div>
-							{% endif %}
 						</div>
 					{% endfor %}
 					{% for invite in current_team.invite_set.all %}

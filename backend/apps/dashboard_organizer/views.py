@@ -39,13 +39,15 @@ from apps.root.models import (
 User = auth.get_user_model()
 
 
-class TeamContextMixin(UserPassesTestMixin, ContextMixin):
+class TeamContextPermissionMixin(UserPassesTestMixin, ContextMixin):
     """
     Common context used site-wide
-    Used to set current_team from team_public_id
+    Used to set current_team and current membership from team_public_id
+    Also accepts an array of permissions to check against in the view
     """
+    permissions_required = []
 
-    def test_func(self):
+    def check_active_membership(self):
         try:
             user_membership = Membership.objects.select_related("team").get(
                 team__public_id=self.kwargs["team_public_id"],
@@ -57,6 +59,20 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
             user_membership = False
 
         return self.request.user.is_authenticated and user_membership
+
+    def check_group_permissions(self):
+        membership = self.membership
+        permissions_required = self.permissions_required
+        print('hello')
+        if not permissions_required:
+            return True
+        if membership and membership.group:
+            return membership.group.permissions.filter(codename__in=permissions_required).exists()
+
+    def test_func(self):
+        if self.check_active_membership() and self.check_group_permissions():
+            return True
+        return False
 
     def handle_no_permission(self):
         if not self.request.user.is_authenticated:
@@ -228,7 +244,7 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         return redirect(self.redirect_url)
 
 
-class TeamDetailView(TeamContextMixin, TemplateView):
+class TeamDetailView(TeamContextPermissionMixin, TemplateView):
     """
     Returns the details of the logged in user's team.
     """
@@ -236,7 +252,7 @@ class TeamDetailView(TeamContextMixin, TemplateView):
     template_name = "dashboard_organizer/team_detail.html"
 
 
-class TeamMemberManageView(TeamContextMixin, FormView):
+class TeamMemberManageView(TeamContextPermissionMixin, FormView):
     """
     Manage a team's members.
     """
@@ -285,7 +301,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
         )
 
 
-class TeamMemberDeleteView(TeamContextMixin, DeleteView):
+class TeamMemberDeleteView(TeamContextPermissionMixin, DeleteView):
     """
     Manage a team's members.
     """
@@ -294,6 +310,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     model = Membership
     pk_url_kwarg = "member_pk"
     template_name = "dashboard_organizer/member_delete.html"
+    permissions_required = ["manage_members"]
 
     def get_success_url(self):
         messages.add_message(
@@ -304,7 +321,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
         )
 
 
-class TeamUpdateView(TeamContextMixin, UpdateView):
+class TeamUpdateView(TeamContextPermissionMixin, UpdateView):
     """
     Updates the user's team.
     """
@@ -326,7 +343,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         )
 
 
-class EventListView(TeamContextMixin, ListView):
+class EventListView(TeamContextPermissionMixin, ListView):
     """
     Returns a list of Ticket token gates.
     """
@@ -364,7 +381,7 @@ class EventListView(TeamContextMixin, ListView):
         return qs
 
 
-class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+class EventCreateView(SuccessMessageMixin, TeamContextPermissionMixin, CreateView):
     """
     Creates an Event
     """
@@ -394,7 +411,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         )
 
 
-class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
+class EventUpdateView(SuccessMessageMixin, TeamContextPermissionMixin, UpdateView):
     """
     Updates an Event
     """
@@ -421,7 +438,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return "Your event has been updated successfully."
 
 
-class EventTicketsView(TeamContextMixin, DetailView):
+class EventTicketsView(TeamContextPermissionMixin, DetailView):
     """
     Show the tickets (and CTAs) for an event.
     """
@@ -439,7 +456,7 @@ class EventTicketsView(TeamContextMixin, DetailView):
         )
 
 
-class EventGoLiveView(TeamContextMixin, DetailView):
+class EventGoLiveView(TeamContextPermissionMixin, DetailView):
     """
     Show controls to make a team's event go live
     """
@@ -502,7 +519,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
         )
 
 
-class EventDeleteView(TeamContextMixin, DeleteView):
+class EventDeleteView(TeamContextPermissionMixin, DeleteView):
     """
     Delete a team's event
     """
@@ -523,7 +540,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
         )
 
 
-class EventStatsView(TeamContextMixin, DetailView):
+class EventStatsView(TeamContextPermissionMixin, DetailView):
     """
     Show stats, sales, orders, and check-in history of an event
     """
@@ -578,7 +595,7 @@ class EventStatsView(TeamContextMixin, DetailView):
         return context
 
 
-class TicketTierCreateView(TeamContextMixin, TemplateView):
+class TicketTierCreateView(TeamContextPermissionMixin, TemplateView):
     """
     Select the type of ticket tier to create.
     """
@@ -593,7 +610,7 @@ class TicketTierCreateView(TeamContextMixin, TemplateView):
         return context
 
 
-class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextPermissionMixin, CreateView):
     """
     Create an NFT-based ticket tier.
     """
@@ -648,7 +665,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
         )
 
 
-class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextPermissionMixin, CreateView):
     """
     Create a Fiat-based ticket tier.
     """
@@ -717,7 +734,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         )
 
 
-class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
+class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextPermissionMixin, CreateView):
     """
     Create a free ticket tier.
     """
@@ -751,7 +768,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         )
 
 
-class TicketTierUpdateView(TeamContextMixin, UpdateView):
+class TicketTierUpdateView(TeamContextPermissionMixin, UpdateView):
     """
     Update an event's ticket tier.
     """
@@ -787,7 +804,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
         )
 
 
-class TicketTierDeleteView(TeamContextMixin, DeleteView):
+class TicketTierDeleteView(TeamContextPermissionMixin, DeleteView):
     """
     Delete an event's ticket tier.
     """
@@ -809,11 +826,12 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
         )
 
 
-class PaymentDetailView(TeamContextMixin, TemplateView):
+class PaymentDetailView(TeamContextPermissionMixin, TemplateView):
     """
     Connect and manage Stripe account.
     """
     template_name = "dashboard_organizer/payment_detail.html"
+    permissions_required = ["manage_payment_details"]
 
     def post(self, *args, **kwargs):
         """
@@ -877,7 +895,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
         return redirect(stripe_account_link["url"])
 
 
-class StripeRefresh(TeamContextMixin, RedirectView):
+class StripeRefresh(TeamContextPermissionMixin, RedirectView):
     """
     Redirect to Stripe connect page.
     """
@@ -894,7 +912,7 @@ class StripeRefresh(TeamContextMixin, RedirectView):
         )
 
 
-class StripeReturn(TeamContextMixin, RedirectView):
+class StripeReturn(TeamContextPermissionMixin, RedirectView):
     """
     Check if Stripe account has been properly created, redirect accordingly.
     """
@@ -952,11 +970,12 @@ class StripeReturn(TeamContextMixin, RedirectView):
         )
 
 
-class StripeDelete(TeamContextMixin, TemplateView):
+class StripeDelete(TeamContextPermissionMixin, TemplateView):
     """
     Delete a connected Stripe account
     """
     template_name = "dashboard_organizer/stripe_delete.html"
+    permissions_required = ["manage_payment_details"]
 
     def post(self, *args, **kwargs):
         """

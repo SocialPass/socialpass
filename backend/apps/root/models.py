@@ -11,7 +11,7 @@ import stripe
 from autoslug import AutoSlugField
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
@@ -67,6 +67,12 @@ class Team(DBModel):
     Represents the 'umbrella' model for event organization
     Each user belongs to one or more teams, and each event belongs to a single team.
     """
+
+    class Meta:
+        permissions = [
+            ("manage_member_permissions", "Can manage team members' permissions"),
+            ("manage_payment_details", "Can view, change and manage team payment details")
+        ]
 
     # keys
     members = models.ManyToManyField("User", through="Membership", blank=False)
@@ -159,11 +165,16 @@ class Membership(DBModel):
     class Meta:
         unique_together = ("team", "user")
 
+    class GroupChoices(models.TextChoices):
+        ADMIN = "ADMIN", _("Admin")
+        MEMBER = "MEMBER", _("Live")
+
     # keys
     team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(
         "root.User", on_delete=models.CASCADE, blank=True, null=True
     )
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"{self.team.name}-{self.user.email}"

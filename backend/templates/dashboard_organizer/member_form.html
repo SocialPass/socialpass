@@ -1,5 +1,5 @@
 {% extends "bases/base_primary.html" %}
-{% load static get_theme_value get_user_primary_email %}
+{% load static get_theme_value get_user_primary_email group_has_perms %}
 
 {% block head_title %}Manage Members - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
@@ -50,6 +50,10 @@
 								<i class="fa-solid fa-user text-primary me-5"></i>
 								{{ member.user.email }}
 							</p>
+							<p class="d-flex align-items-center ps-15 ms-auto">
+								{{ member.group }}
+							</p>
+							{% if current_membership|group_has_perms:'manage_members' %}
 							<div class="d-flex align-items-center ps-15 ms-auto">
 								{% if member.user != request.user %}
 									<a href="{% url 'dashboard_organizer:team_member_delete' team_public_id=current_team.public_id member_pk=member.id %}" class="btn btn-sm btn-square text-danger" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-breakpoint="md" data-hm-title="Remove member from your team">
@@ -60,6 +64,7 @@
 									<span class="fs-base-n2">(You)</span>
 								{% endif %}
 							</div>
+							{% endif %}
 						</div>
 					{% endfor %}
 					{% for invite in current_team.invite_set.all %}

@@ -69,8 +69,10 @@ class Team(DBModel):
     """
 
     class Meta:
+        # NOTE
+        # Renaming these is a cumbersome process. Tread lightly.
         permissions = [
-            ("manage_member_permissions", "Can manage team members' permissions"),
+            ("manage_members", "Can add and remove team members as well as their group"),
             ("manage_payment_details", "Can view, change and manage team payment details")
         ]
 

@@ -49,13 +49,19 @@ class TeamContextPermissionMixin(UserPassesTestMixin, ContextMixin):
 
     def check_active_membership(self):
         try:
-            user_membership = Membership.objects.select_related("team").get(
-                team__public_id=self.kwargs["team_public_id"],
-                user__id=self.request.user.id,
+            user_membership = (
+                Membership.objects
+                .select_related("team", "group")
+                #.prefetch_related("group__permissions")
+                .get(
+                    team__public_id=self.kwargs["team_public_id"],
+                    user__id=self.request.user.id,
+                )
             )
             self.membership = user_membership
             self.team = user_membership.team
-        except Exception:
+        except Exception as e:
+            print(e)
             user_membership = False
 
         return self.request.user.is_authenticated and user_membership
@@ -63,7 +69,6 @@ class TeamContextPermissionMixin(UserPassesTestMixin, ContextMixin):
     def check_group_permissions(self):
         membership = self.membership
         permissions_required = self.permissions_required
-        print('hello')
         if not permissions_required:
             return True
         if membership and membership.group:

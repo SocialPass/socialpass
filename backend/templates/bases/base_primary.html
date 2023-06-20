@@ -1,5 +1,5 @@
 {% extends "bases/base.html" %}
-{% load static get_preferred_color_scheme get_user_primary_email get_other_teams get_sidebar_active_status get_theme_value %}
+{% load static get_preferred_color_scheme get_user_primary_email get_other_teams get_sidebar_active_status get_theme_value group_has_perms %}
 
 {% block html_class %}socialpass-dashboard {% get_preferred_color_scheme %}{% endblock html_class %}
 
@@ -282,6 +282,7 @@
 								<span class="ms-10">Manage Members</span>
 							</a>
 						</li>
+						{% if current_membership|group_has_perms:'manage_payment_details' %}
 						<li>
 							<a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
 								<span class="ws-25">
@@ -290,6 +291,7 @@
 								<span class="ms-10">Payment Details</span>
 							</a>
 						</li>
+						{% endif %}
 						<li>
 							<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}#add-member" class="dropdown-item d-flex align-items-center">
 								<span class="ws-25">
@@ -367,12 +369,14 @@
 					</span>
 					<span class="ms-5">Manage Members</span>
 				</a>
+				{% if current_membership|group_has_perms:'manage_payment_details' %}
 				<a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'payment-details' %}">
 					<span class="ws-25 flex-shrink-0">
 						<i class="fa-regular fa-money-check-dollar"></i>
 					</span>
 					<span class="ms-5">Payment Details</span>
 				</a>
+				{% endif %}
 			</div>
 			<!-- Team end -->
 		{% else %}

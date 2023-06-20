@@ -50,6 +50,7 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
                 team__public_id=self.kwargs["team_public_id"],
                 user__id=self.request.user.id,
             )
+            self.membership = user_membership
             self.team = user_membership.team
         except Exception:
             user_membership = False
@@ -67,6 +68,7 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(dict(current_team=self.team))
+        context.update(dict(current_membership=self.membership))
         return context
 
 
@@ -824,22 +826,11 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
         )
 
 
-class PaymentDetailView(TeamContextMixin, View):
+class PaymentDetailView(TeamContextMixin, TemplateView):
     """
     Connect and manage Stripe account.
     """
-
-    def get(self, *args, **kwargs):
-        """
-        Override GET view to return the template
-        """
-
-        context = self.get_context_data(**kwargs)
-        return render(
-            self.request, "dashboard_organizer/payment_detail.html", {
-                "current_team": context["current_team"],
-            }
-        )
+    template_name = "dashboard_organizer/payment_detail.html"
 
     def post(self, *args, **kwargs):
         """
@@ -978,22 +969,11 @@ class StripeReturn(TeamContextMixin, RedirectView):
         )
 
 
-class StripeDelete(TeamContextMixin, View):
+class StripeDelete(TeamContextMixin, TemplateView):
     """
     Delete a connected Stripe account
     """
-
-    def get(self, *args, **kwargs):
-        """
-        Override GET view to return the template
-        """
-
-        context = self.get_context_data(**kwargs)
-        return render(
-            self.request, "dashboard_organizer/stripe_delete.html", {
-                "current_team": context["current_team"],
-            }
-        )
+    template_name = "dashboard_organizer/stripe_delete.html"
 
     def post(self, *args, **kwargs):
         """

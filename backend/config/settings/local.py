@@ -62,9 +62,6 @@ DEBUG_TOOLBAR_CONFIG = {
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
 INTERNAL_IPS = ["127.0.0.1", "10.0.2.2", "0.0.0.0", "localhost"]
 
-hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
-
 # Media
 # ------------------------------------------------------------------------------
 # NOTE: This is only for local or development testing.

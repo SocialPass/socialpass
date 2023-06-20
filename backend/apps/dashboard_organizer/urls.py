@@ -36,7 +36,12 @@ urlpatterns = [
         name="team_members",
     ),
     path(
-        "team-members/<uuid:team_public_id>/<int:member_pk>/",
+        "team-members/set-group/<uuid:team_public_id>/<int:member_pk>/",
+        views.TeamMemberUpdateGroupView.as_view(),
+        name="team_member_set_group",
+    ),
+    path(
+        "team-members/delete/<uuid:team_public_id>/<int:member_pk>/",
         views.TeamMemberDeleteView.as_view(),
         name="team_member_delete",
     ),

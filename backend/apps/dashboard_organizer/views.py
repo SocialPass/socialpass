@@ -8,7 +8,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView, View
@@ -60,8 +60,7 @@ class TeamContextPermissionMixin(UserPassesTestMixin, ContextMixin):
             )
             self.membership = user_membership
             self.team = user_membership.team
-        except Exception as e:
-            print(e)
+        except Exception:
             user_membership = False
 
         return self.request.user.is_authenticated and user_membership
@@ -296,6 +295,35 @@ class TeamMemberManageView(TeamContextPermissionMixin, FormView):
         instance.save()
         instance.send_invitation(self.request)
         return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Team members updated successfully."
+        )
+        return reverse(
+            "dashboard_organizer:team_members", args=(self.kwargs["team_public_id"],)
+        )
+
+class TeamMemberUpdateGroupView(TeamContextPermissionMixin, View):
+    """
+    Manage a team's members.
+    """
+    permissions_required = ["manage_members"]
+
+    def post(self, *args, **kwargs):
+        # Get member to update and group to update with
+        try:
+            member = Membership.objects.get(pk=kwargs.get("member_pk"))
+            group = Group.objects.get(name=self.request.POST.get("group"))
+        except Exception as e:
+            raise Http404
+
+        # OK
+        # Update member
+        member.group = group
+        member.save()
+        return HttpResponse(status=200)
+
 
     def get_success_url(self):
         messages.add_message(

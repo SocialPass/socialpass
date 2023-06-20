@@ -436,7 +436,9 @@
 <!-- Page wrapper end -->
 
 {% if current_team %}
+	<!-- TODO: Swap with local packages -->
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+	<script src="https://unpkg.com/htmx.org@1.9.2"></script>
 	<script type="text/javascript">
 		var currentTeamThemeValue = document.getElementById("current_team_theme").value;
 		if (currentTeamThemeValue !== "None") {

@@ -50,9 +50,29 @@
 								<i class="fa-solid fa-user text-primary me-5"></i>
 								{{ member.user.email }}
 							</p>
+							{% if current_membership|group_has_perms:'manage_members' and member.user != request.user %}
+								<select
+								name="group"
+								class="d-flex align-items-center ps-15 ms-auto"
+								hx-include="[name='group']"
+								hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+								hx-swap="none"
+								hx-post="{% url 'dashboard_organizer:team_member_set_group' team_public_id=current_team.public_id member_pk=member.id %}">
+									{% for group in member.GroupChoices %}
+									<option
+									{% if member.group.name == group %}
+									selected
+									{%endif%}
+									value={{group}}>
+									{{ group }}
+									</option>
+									{% endfor %}
+								</select>
+							{% else %}
 							<p class="d-flex align-items-center ps-15 ms-auto">
 								{{ member.group }}
 							</p>
+							{% endif %}
 							<div class="d-flex align-items-center ps-15 ms-auto">
 								{% if member.user != request.user %}
 								{% if current_membership|group_has_perms:'manage_members' %}

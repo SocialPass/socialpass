@@ -73,29 +73,6 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         return context
 
 
-class RequireLiveEventMixin:
-    """
-    Mixin to require successful 'LIVE' event
-    """
-
-    def dispatch(self, request, *args, **kwargs):
-        event = self.get_object()
-        if not isinstance(event, Event):
-            raise RuntimeError(
-                "get_object must return an Event when using RequireLiveEventMixin"
-            )
-        if event.state != Event.StateStatus.LIVE:
-            messages.add_message(
-                self.request,
-                messages.INFO,
-                "This event is not live yet. \
-                Please complete the creation process.",
-            )
-            return redirect("dashboard_organizer:event_update", **self.kwargs)
-
-        return super().dispatch(request, *args, **kwargs)
-
-
 class UserDetailView(TemplateView):
     """
     Returns the details of the logged in user.

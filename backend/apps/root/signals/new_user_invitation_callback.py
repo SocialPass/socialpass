@@ -1,5 +1,6 @@
 from allauth.account.signals import user_signed_up
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.dispatch import receiver
 
 from apps.root.models import Invite, Membership
@@ -22,7 +23,9 @@ def new_user_invitation_callback(request, user, **kwargs):
     for invite in invites:
         if invite.team:
             membership, created = Membership.objects.get_or_create(
-                team=invite.team, user=user
+                team=invite.team,
+                user=user,
+                group=Group.objects.get(name=Membership.GroupChoices.MEMBER)
             )
             # update invite membership if created
             invite.membership = membership

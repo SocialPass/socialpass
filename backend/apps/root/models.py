@@ -1275,34 +1275,42 @@ class CheckoutItem(DBModel):
         unit_amount = price_per_ticket_cents * self.quantity
         return unit_amount
 
-    def create_tickets(self):
+    @property
+    def calculated_party_size(self):
         """
-        create Tickets and relate to the checkout_item
-        the amount of tickets created will be the same as
-        the quantity defined in the related checkout_item
-
-        also check overflow and mark if necessary
+        Calculates party size on a few factors
+        - extra_party + 1 (Indicates attendee + their number of guests)
+        - self.extra_party vs self.ticket_tier.allowed_guests (Handle any overflow)
         """
         extra_party = self.extra_party
         if extra_party > self.ticket_tier.allowed_guests:
             extra_party = self.ticket_tier.allowed_guests
 
+        return extra_party + 1
+
+    def create_tickets(self):
+        """
+        create Tickets and relate to the checkout_item
+        the amount of tickets created will be the same as
+        the quantity defined in the related checkout_item
+        also check overflow and mark if necessary
+        """
         ticket_keys = {
             "checkout_session": self.checkout_session,
             "event": self.checkout_session.event,
             "ticket_tier": self.ticket_tier,
             "checkout_item": self,
-            "party_size": extra_party + 1,
+            "party_size": self.calculated_party_size,
         }
         tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
 
         # check overflow
-        tickets_total_people = (extra_party + 1) * self.quantity
+        tickets_total_people = self.calculated_party_size * self.quantity
         if tickets_total_people > self.ticket_tier.availability:
             self.is_overflow = True
             self.save()
 
-        # creat tickets
+        # create tickets
         Ticket.objects.bulk_create(tickets)
 
 

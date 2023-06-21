@@ -30,5 +30,5 @@ django-model-utils==4.3.1  # https://github.com/jazzband/django-model-utils
 django-silk==5.0.3 # https://github.com/jazzband/django-silk
 django-storages[boto3]==1.13.2  # https://github.com/jschneier/django-storages
 django-money==3.0.0 # https://github.com/django-money/django-money
-drf-yasg==1.21.5  # https://github.com/axnsan12/drf-yasg/
+drf-yasg==1.21.6  # https://github.com/axnsan12/drf-yasg/
 whitenoise==6.4.0 # https://github.com/evansd/whitenoise/

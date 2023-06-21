@@ -32,7 +32,6 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     TierFree,
-    TierFiat,
 )
 
 User = auth.get_user_model()
@@ -704,9 +703,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
         # validate tier_asset_ownership
         # if exists, save tier_fiat to TicketTierForm instance
-        tier_fiat = TierFiatForm(
-            self.form_data, prefix="tier_fiat_form"
-        )
+        tier_fiat = TierFiatForm(self.form_data, prefix="tier_fiat_form")
         if tier_fiat.is_valid():
             tier_fiat.save()
             form.instance.tier_fiat = tier_fiat.instance
@@ -836,9 +833,11 @@ class PaymentDetailView(TeamContextMixin, View):
 
         context = self.get_context_data(**kwargs)
         return render(
-            self.request, "dashboard_organizer/payment_detail.html", {
+            self.request,
+            "dashboard_organizer/payment_detail.html",
+            {
                 "current_team": context["current_team"],
-            }
+            },
         )
 
     def post(self, *args, **kwargs):
@@ -862,8 +861,10 @@ class PaymentDetailView(TeamContextMixin, View):
         if not current_team.tmp_stripe_account_id:
             try:
                 stripe_account = stripe.Account.create(
-                    type="express", # Express Account
-                    settings={"payouts": {"schedule": {"interval": "manual"}}} # Manual Payouts
+                    type="express",  # Express Account
+                    settings={
+                        "payouts": {"schedule": {"interval": "manual"}}
+                    },  # Manual Payouts
                 )
             except Exception:
                 rollbar.report_exc_info()
@@ -915,8 +916,7 @@ class StripeRefresh(TeamContextMixin, RedirectView):
             "Something went wrong. Please try again.",
         )
         return reverse(
-            "dashboard_organizer:payment_detail",
-            args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:payment_detail", args=(self.kwargs["team_public_id"],)
         )
 
 
@@ -934,14 +934,12 @@ class StripeReturn(TeamContextMixin, RedirectView):
         if current_team.is_stripe_connected:
             return reverse(
                 "dashboard_organizer:payment_detail",
-                args=(self.kwargs["team_public_id"],)
+                args=(self.kwargs["team_public_id"],),
             )
 
         # Get Stripe account
         try:
-            stripe_account = stripe.Account.retrieve(
-                current_team.tmp_stripe_account_id
-            )
+            stripe_account = stripe.Account.retrieve(current_team.tmp_stripe_account_id)
         except Exception:
             rollbar.report_exc_info()
             messages.add_message(
@@ -951,7 +949,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
             )
             return reverse(
                 "dashboard_organizer:payment_detail",
-                args=(self.kwargs["team_public_id"],)
+                args=(self.kwargs["team_public_id"],),
             )
 
         # Make sure details have been submitted
@@ -973,8 +971,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
 
         # Return redirect URL
         return reverse(
-            "dashboard_organizer:payment_detail",
-            args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:payment_detail", args=(self.kwargs["team_public_id"],)
         )
 
 
@@ -990,9 +987,11 @@ class StripeDelete(TeamContextMixin, View):
 
         context = self.get_context_data(**kwargs)
         return render(
-            self.request, "dashboard_organizer/stripe_delete.html", {
+            self.request,
+            "dashboard_organizer/stripe_delete.html",
+            {
                 "current_team": context["current_team"],
-            }
+            },
         )
 
     def post(self, *args, **kwargs):

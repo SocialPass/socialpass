@@ -12,8 +12,8 @@ urlpatterns = [
     ),
     path("teams/", staff_member_required(views.TeamListView.as_view()), name="teams"),
     path(
-    	"overflow-sessions/",
-    	staff_member_required(views.OverflowSessionsListView.as_view()),
-    	name="overflow_sessions"
+        "overflow-sessions/",
+        staff_member_required(views.OverflowSessionsListView.as_view()),
+        name="overflow_sessions",
     ),
 ]

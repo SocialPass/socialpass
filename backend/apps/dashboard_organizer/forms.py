@@ -215,7 +215,9 @@ class TierFiatForm(forms.ModelForm):
 
     class Meta:
         model = TierFiat
-        fields = ["price_per_ticket",]
+        fields = [
+            "price_per_ticket",
+        ]
         widgets = {
             "price_per_ticket": forms.TextInput(
                 attrs={"placeholder": "Price of one ticket"}

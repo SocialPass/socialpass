@@ -111,7 +111,7 @@ class CheckoutPageOne(DetailView):
         checkout_type = self.kwargs.get("checkout_type", "")
         if not checkout_type:
             for key, value in availability.items():
-                if value == True:
+                if value is True:
                     checkout_type = key
                     break
 
@@ -328,8 +328,14 @@ class CheckoutFiat(DetailView):
 
     def get_object(self):
         self.object = (
-            CheckoutSession.objects.select_related("event", "event__team", "tx_fiat",)
-            .prefetch_related("checkoutitem_set",)
+            CheckoutSession.objects.select_related(
+                "event",
+                "event__team",
+                "tx_fiat",
+            )
+            .prefetch_related(
+                "checkoutitem_set",
+            )
             .get(public_id=self.kwargs["checkout_session_public_id"])
         )
         if not self.object:
@@ -404,10 +410,12 @@ class CheckoutFiat(DetailView):
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
                 )
-            stripe_line_items.append({
-                "price": price["id"],
-                "quantity": 1,
-            })
+            stripe_line_items.append(
+                {
+                    "price": price["id"],
+                    "quantity": 1,
+                }
+            )
 
         # Create Stripe session using API
         try:
@@ -423,7 +431,7 @@ class CheckoutFiat(DetailView):
                 },
                 success_url=checkout_session.stripe_checkout_success_link,
                 cancel_url=checkout_session.stripe_checkout_cancel_link,
-                expires_at=int(time.time()) + 1800, # 30 minutes from now
+                expires_at=int(time.time()) + 1800,  # 30 minutes from now
             )
         except Exception:
             rollbar.report_exc_info()
@@ -480,7 +488,10 @@ class StripeCheckoutCancel(RedirectView):
         )
         return reverse(
             "checkout:checkout_fiat",
-            args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)
+            args=(
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            ),
         )
 
 
@@ -519,7 +530,10 @@ class StripeCheckoutSuccess(RedirectView):
             )
             return reverse(
                 "checkout:checkout_fiat",
-                args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)
+                args=(
+                    self.kwargs["event_slug"],
+                    self.kwargs["checkout_session_public_id"],
+                ),
             )
 
         # OK
@@ -528,7 +542,10 @@ class StripeCheckoutSuccess(RedirectView):
         checkout_session.tx_fiat.process()
         return reverse(
             "checkout:checkout_success",
-            args=(self.kwargs["event_slug"], self.kwargs["checkout_session_public_id"],)
+            args=(
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            ),
         )
 
 

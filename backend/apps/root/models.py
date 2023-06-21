@@ -39,7 +39,9 @@ from apps.root.exceptions import (
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
 from apps.root.utils import get_expiration_datetime, get_random_passcode
+
 stripe.api_key = settings.STRIPE_API_KEY
+
 
 class DBModel(TimeStampedModel):
     """
@@ -139,7 +141,7 @@ class Team(DBModel):
     def stripe_express_dashboard_link(self):
         if self.stripe_account_id:
             login_link = stripe.Account.create_login_link(
-              self.stripe_account_id,
+                self.stripe_account_id,
             )
             return login_link.url
 
@@ -616,8 +618,8 @@ class Event(DBModel):
             "EUR": "€",
             "CNY": "¥",
             "INR": "₹",
-            "BDT": "৳", # Bangladesh
-            "VND": "₫", # Vietnam
+            "BDT": "৳",  # Bangladesh
+            "VND": "₫",  # Vietnam
         }
         return CURRENCY_SYMBOLS.get(self.fiat_currency, self.fiat_currency + " ")
 
@@ -1109,10 +1111,10 @@ class CheckoutSession(DBModel):
         """
         items = self.checkoutitem_set.all()
         application_fee_amount = 0
-        per_ticket = .04
+        per_ticket = 0.04
         flat_fee = 200
         for i in items:
-            application_fee_amount += ((i.unit_amount * per_ticket) + flat_fee)
+            application_fee_amount += (i.unit_amount * per_ticket) + flat_fee
         application_fee_amount = round(application_fee_amount)
         return application_fee_amount
 
@@ -1267,7 +1269,7 @@ class CheckoutItem(DBModel):
     @property
     def unit_amount(self):
         if not self.ticket_tier.tier_fiat:
-            return 'N/A'
+            return "N/A"
 
         price_per_ticket_cents = self.ticket_tier.tier_fiat.price_per_ticket_cents
         unit_amount = price_per_ticket_cents * self.quantity

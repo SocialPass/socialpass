@@ -183,7 +183,8 @@ class OverflowSessionsListView(ListView):
     template_name = "dashboard_staff/list_overflow_sessions.html"
 
     def get_queryset(self):
-        return CheckoutSession.objects.select_related("event").prefetch_related(
-            "checkoutitem_set",
-            "checkoutitem_set__ticket_tier"
-        ).filter(checkoutitem__is_overflow=True)
+        return (
+            CheckoutSession.objects.select_related("event")
+            .prefetch_related("checkoutitem_set", "checkoutitem_set__ticket_tier")
+            .filter(checkoutitem__is_overflow=True)
+        )

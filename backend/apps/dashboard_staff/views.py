@@ -4,7 +4,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.db.models.functions import ExtractWeek
 from django.db.models import Avg, F, Count
-from apps.root.models import Event, Team, User, Ticket
+from apps.root.models import Event, Team, User, Ticket, CheckoutSession
 
 
 class StatsPageView(TemplateView):
@@ -175,3 +175,15 @@ class TeamListView(ListView):
     paginate_by = 25
     ordering = ["-modified"]
     template_name = "dashboard_staff/list_teams.html"
+
+
+class OverflowSessionsListView(ListView):
+    model = CheckoutSession
+    paginate_by = 25
+    template_name = "dashboard_staff/list_overflow_sessions.html"
+
+    def get_queryset(self):
+        return CheckoutSession.objects.select_related("event").prefetch_related(
+            "checkoutitem_set",
+            "checkoutitem_set__ticket_tier"
+        ).filter(checkoutitem__is_overflow=True)

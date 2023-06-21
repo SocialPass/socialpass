@@ -44,33 +44,38 @@
 		<!-- Content wrapper start -->
 		<div class="content-wrapper ws-960 mw-100 min-vh-100 mx-auto d-flex flex-column">
 			<!-- Navbar start -->
-			<nav class="content d-flex align-items-center px-20 bg-white-lm bg-dark-very-light-dm rounded my-10">
-				<!-- Branding start -->
-				<a href="{% url 'dashboard_staff:stats' %}" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
-					<div class="ws-75">
-						<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
-					</div>
-					<div class="text-strong ms-10 d-none d-sm-block">
-						<div class="fs-base-p4">
-							SocialPass
+			<nav class="content d-md-flex align-items-center px-20 bg-white-lm bg-dark-very-light-dm rounded my-10">
+				<div class="d-flex align-items-center">
+					<!-- Branding start -->
+					<a href="{% url 'dashboard_staff:stats' %}" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+						<div class="ws-75">
+							<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Icon" class="d-block w-100 h-auto">
 						</div>
-						<div class="fs-base-n4 lh-1 fw-normal">
-							Internal Dashboard
+						<div class="text-strong ms-10 d-none d-sm-block">
+							<div class="fs-base-p4">
+								SocialPass
+							</div>
+							<div class="fs-base-n4 lh-1 fw-normal">
+								Internal Dashboard
+							</div>
 						</div>
-					</div>
-				</a>
-				<!-- Branding end -->
+					</a>
+					<!-- Branding end -->
 
-				<!-- Dark mode toggle start -->
-				<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
-					<i class="fa-solid fa-moon"></i>
-					<span class="visually-hidden">Toggle dark mode</span>
-				</button>
-				<!-- Dark mode toggle end -->
+					<!-- Dark mode toggle start -->
+					<button type="button" class="btn btn-sm btn-square btn-rounded ms-20" data-hm-toggle="dark-mode">
+						<i class="fa-solid fa-moon"></i>
+						<span class="visually-hidden">Toggle dark mode</span>
+					</button>
+					<!-- Dark mode toggle end -->
+				</div>
 
 				<!-- Links start -->
-				<a href="{% url 'dashboard_staff:events' %}" class="fw-bold antialiased me-20 ms-auto">Events</a>
-				<a href="{% url 'dashboard_staff:teams' %}" class="fw-bold antialiased">Teams</a>
+				<div class="d-flex align-items-center ms-auto pb-15 pb-md-0">
+					<a href="{% url 'dashboard_staff:events' %}" class="fw-bold antialiased me-20">Events</a>
+					<a href="{% url 'dashboard_staff:teams' %}" class="fw-bold antialiased me-20">Teams</a>
+					<a href="{% url 'dashboard_staff:overflow_sessions' %}" class="fw-bold antialiased">Overflow sessions</a>
+				</div>
 				<!-- Links end -->
 			</nav>
 			<!-- Navbar end -->

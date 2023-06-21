@@ -1,0 +1,72 @@
+{% extends "dashboard_staff/base.html" %}
+{% load static %}
+
+{% block content %}
+{% for obj in object_list %}
+<!-- Item card start -->
+<div class="card border-transparent my-10 p-10">
+	<h3 class="fs-base fw-400 mt-0 mb-5">
+		<strong>ID: </strong>{{ obj.public_id }}
+	</h3>
+	<div>
+		<strong>Created: </strong>{{ obj.created }}<br />
+		{% if obj.tx_fiat %}
+			<strong>Total Price: </strong>{{ obj.event.fiat_currency_symbol }}{{ obj.total_price }}
+		{% endif %}
+	</div>
+	{% for item in obj.checkoutitem_set.all %}
+		<div class="pt-15 mt-15 border-top">
+			<h6 class="fw-700 m-0 fs-base d-flex align-items-center">
+				<span>{{ item.ticket_tier.ticket_type }}</span>
+				<span class="ps-10 fw-normal">
+					&times; {{ item.quantity }}
+				</span>
+				{% if item.is_overflow %}
+					<span class="badge badge-danger ms-10 fw-bold fs-base-n4">OVERFLOW</span>
+				{% endif %}
+			</h6>
+			{% if obj.tx_fiat %}
+				<div>
+					Price &times; 1 &mdash; {{ object.event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
+				</div>
+			{% endif %}
+			<div class="fs-base-n2 mt-5 text-muted">
+				Allowed Guest(s):
+				{{ item.extra_party }}
+			</div>
+		</div>
+	{% endfor %}
+</div>
+<!-- Item card end -->
+{% endfor %}
+
+<!-- Pagination start -->
+<div class="card border-transparent my-10 p-10 fs-base-n2 d-flex align-items-center">
+	<div>
+		{% if page_obj.has_previous %}
+		<a class="btn btn-sm text-base" href="?page={{ page_obj.previous_page_number }}">
+			<strong class="antialiased">Prev</strong>
+		</a>
+		{% else %}
+		<button class="btn btn-sm" disabled="disabled">
+			<strong class="antialiased">Prev</strong>
+		</button>
+		{% endif %}
+	</div>
+	<div class="ms-auto">
+		Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+	</div>
+	<div class="ms-auto">
+		{% if page_obj.has_next %}
+		<a class="btn btn-sm text-base" href="?page={{ page_obj.next_page_number }}">
+			<strong class="antialiased">Next</strong>
+		</a>
+		{% else %}
+		<button class="btn btn-sm" disabled="disabled">
+			<strong class="antialiased">Next</strong>
+		</button>
+		{% endif %}
+	</div>
+</div>
+<!-- Pagination end -->
+{% endblock %}

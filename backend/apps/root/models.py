@@ -1327,12 +1327,11 @@ class TxFiat(DBModel):
     def __str__(self) -> str:
         return f"TxFiat {self.public_id}"
 
-    def process(self, checkout_session=None):
+    def process(self):
         """
         Go through the states.
         """
-        if not checkout_session:
-            checkout_session = self.checkoutsession
+        checkout_session = self.checkoutsession
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
 
@@ -1544,7 +1543,7 @@ class TxAssetOwnership(DBModel):
         checkout_session.tx_asset_ownership.token_id = list(tiers_token_ids)
         checkout_session.tx_asset_ownership.save()
 
-    def process(self, checkout_session=None):
+    def process(self):
         """
         1. Get/Set checkout_session (avoid duplicate queries)
         2. Set checkout_session as processing
@@ -1552,11 +1551,8 @@ class TxAssetOwnership(DBModel):
         4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
         5. OK
         """
-        # Get/Set checkout_session (avoid duplicate queries)
-        if not checkout_session:
-            checkout_session = self.checkoutsession
-
         # Set checkout_session as processing
+        checkout_session = self.checkoutsession
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
 
@@ -1586,12 +1582,11 @@ class TxFree(DBModel):
     def __str__(self) -> str:
         return f"TxFree {self.public_id}"
 
-    def process(self, checkout_session=None):
+    def process(self):
         """
         Go through the states, only stop to check for issued emails.
         """
-        if not checkout_session:
-            checkout_session = self.checkoutsession
+        checkout_session = self.checkoutsession
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
 

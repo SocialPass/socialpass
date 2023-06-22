@@ -116,6 +116,27 @@ class Team(DBModel):
             return False
 
     @property
+    def stripe_account_payouts_enabled(self):
+        status = {
+            "details_submitted": False,
+            "payouts_enabled": False,
+        }
+
+        # Query Stripe API to get updated status
+        if self.is_stripe_connected:
+            try:
+                stripe_account = stripe.Account.retrieve(self.stripe_account_id)
+                status["details_submitted"] = stripe_account["details_submitted"]
+                status["payouts_enabled"] = stripe_account["payouts_enabled"]
+            except Exception as e:
+                print("STRIPE ERROR: " + str(e))
+                rollbar.report_message("STRIPE ERROR: " + str(e))
+
+        # OK
+        # Return status
+        return status
+
+    @property
     def stripe_refresh_link(self):
         domain = Site.objects.all().first().domain
         url = reverse(

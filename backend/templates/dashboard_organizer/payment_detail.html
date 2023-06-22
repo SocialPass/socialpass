@@ -51,8 +51,43 @@
 						Stripe Account Connected
 					</h2>
 					<p class="fs-base-n2 mt-5">
-						The following Stripe account is connected to your team. You can now start creating fiat tiers and accept payments!
+						The following Stripe account is connected to your team.
 					</p>
+					{% with status=current_team.stripe_account_payouts_enabled %}
+						{% if status.details_submitted and status.payouts_enabled %}
+							<div class="alert alert-success border-0 text-base fs-base-n2" role="alert">
+								<div class="mb-10">
+									<strong>You can now create fiat ticket tiers and accept payments!</strong>
+								</div>
+								<div class="d-flex align-items-center mt-5">
+									<i class="fa-solid fa-check-circle text-success-dim-lm text-success-light-dm ws-25"></i>
+									Details submitted
+								</div>
+								<div class="d-flex align-items-center mt-5">
+									<i class="fa-solid fa-check-circle text-success-dim-lm text-success-light-dm ws-25"></i>
+									Payouts enabled
+								</div>
+							</div>
+						{% else %}
+							<div class="alert alert-danger border-0 text-base fs-base-n2" role="alert">
+								<div class="mb-10">
+									<strong>Your account can't accept payouts yet! Please correct the following issues in your Stripe Dashboard.</strong>
+								</div>
+								{% if not status.details_submitted %}
+									<div class="d-flex align-items-center mt-5">
+										<i class="fa-solid fa-times-circle text-danger-dim-lm text-danger-light-dm ws-25"></i>
+										Details submitted
+									</div>
+								{% endif %}
+								{% if not status.payouts_enabled %}
+									<div class="d-flex align-items-center mt-5">
+										<i class="fa-solid fa-times-circle text-danger-dim-lm text-danger-light-dm ws-25"></i>
+										Payouts enabled
+									</div>
+								{% endif %}
+							</div>
+						{% endif %}
+					{% endwith %}
 					<div class="form-group">
 						<label class="form-label">Account ID</label>
 						<input class="form-control" value="{{ current_team.stripe_account_id }}" readonly>

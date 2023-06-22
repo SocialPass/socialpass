@@ -684,11 +684,12 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     def dispatch(self, request, *args, **kwargs):
         team = Team.objects.get(public_id=self.kwargs["team_public_id"])
-        if not team.is_stripe_connected:
+        stripe_status = team.stripe_account_payouts_enabled
+        if not (stripe_status["details_submitted"] and stripe_status["payouts_enabled"]):
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Please connect your Stripe account first.",
+                "Please connect your Stripe account first and make sure you can accept payouts.",
             )
             return redirect(
                 "dashboard_organizer:payment_detail",

@@ -689,7 +689,8 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Please connect your Stripe account first and make sure you can accept payouts.",
+                "Please connect your Stripe account first and make sure you "
+                "can accept payouts.",
             )
             return redirect(
                 "dashboard_organizer:payment_detail",

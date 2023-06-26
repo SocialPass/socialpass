@@ -70,9 +70,6 @@
 				<div class="form-group">
 					{{ form.cover_image|as_crispy_field }}
 				</div>
-				{% with input=form.organizer %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
 				{% with input=form.description %}
 					<div class="form-group">
 						<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>

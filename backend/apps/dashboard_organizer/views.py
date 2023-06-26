@@ -396,6 +396,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+        form.instance.organizer = context["current_team"].name
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -429,6 +430,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+        form.instance.organizer = context["current_team"].name
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):

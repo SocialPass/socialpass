@@ -352,7 +352,7 @@ class Event(DBModel):
     organizer = models.CharField(
         max_length=255,
         help_text="Name or brand or community organizing the event.",
-        blank=False,
+        blank=True,
         default="",
     )
     description = models.TextField(

@@ -74,7 +74,6 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = [
             "title",
-            "organizer",
             "description",
             "start_date",
             "end_date",
@@ -90,9 +89,6 @@ class EventForm(forms.ModelForm):
 
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
-            "organizer": forms.TextInput(
-                attrs={"placeholder": "Name of Brand or Community organizing the event"}
-            ),
             "start_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",
                 attrs={

@@ -349,12 +349,6 @@ class Event(DBModel):
         help_text="Brief name for your event. Must be unique!",
         blank=False,
     )
-    organizer = models.CharField(
-        max_length=255,
-        help_text="Name or brand or community organizing the event.",
-        blank=True,
-        default="",
-    )
     description = models.TextField(
         help_text="A short description of your event.",
         blank=False,

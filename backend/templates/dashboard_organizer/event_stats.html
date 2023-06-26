@@ -255,7 +255,7 @@
 <!-- Content card end -->
 
 <script>
-	const socialpassLinkMessage = "Join {{event.organizer}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}"
+	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}"
 	const twitterShareAnchor = document.getElementById("twitter-share")
 	const facebookShareAnchor = document.getElementById("facebook-share")
   	const emailShareAnchor = document.getElementById("email-share")

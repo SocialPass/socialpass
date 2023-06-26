@@ -31,7 +31,7 @@ const TicketList = (props) => {
 						<div>{ticket.created}</div>
 						<div className='fw-700 text-primary mt-5'>Ticket Type:</div>
 						<div>{ticket.ticket_tier.ticket_type}</div>
-						{ticket.redeemed ? (
+						{ticket.redeemed_at ? (
 							<>
 								<div className='fw-700 text-primary mt-5'>Redeemed:</div>
 								<div>{ticket.redeemed_at}</div>

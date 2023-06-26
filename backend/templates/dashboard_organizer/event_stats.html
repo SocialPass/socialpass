@@ -186,7 +186,6 @@
 							<th>Party Size</th>
 							<th><i class="fa-light fa-calendar"></i> Ordered At</th>
 							<th><i class="fa-light fa-calendar"></i> Redeemed At</th>
-							<th>Redeemed</th>
 							<th>Session ID</th>
 							<th>Ticket ID</th>
 						</tr>
@@ -210,14 +209,11 @@
 									{% format_to_event_timezone ticket.created ticket.timezone %}
 								</td>
 								<td>
-									{% if ticket.redeemed %}
+									{% if ticket.redeemed_at %}
 										{% format_to_event_timezone ticket.redeemed_at ticket.timezone %}
 									{% else %}
-										N/A
+										Not yet redeemed
 									{% endif %}
-								</td>
-								<td>
-									{{ ticket.redeemed }}
 								</td>
 								<td>
 									{{ ticket.checkout_session }}

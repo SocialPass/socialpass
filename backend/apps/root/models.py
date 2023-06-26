@@ -596,7 +596,7 @@ class Event(DBModel):
 
     @property
     def tickets_redeemed(self):
-        return Ticket.objects.filter(event=self, redeemed=True).count()
+        return Ticket.objects.filter(event=self, redeemed_at__isnull=False).count()
 
     @property
     def quantity_total_sold(self):
@@ -606,7 +606,7 @@ class Event(DBModel):
 
     @property
     def quantity_total_redeemed(self):
-        redeemed = Ticket.objects.filter(event=self, redeemed=True)
+        redeemed = Ticket.objects.filter(event=self, redeemed_at__isnull=False)
         redeemed_with_party = redeemed.aggregate(models.Sum("party_size"))[
             "party_size__sum"
         ]
@@ -681,7 +681,6 @@ class Ticket(DBModel):
     # Ticket access info
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
-    redeemed = models.BooleanField(default=False, blank=False, null=False)
     redeemed_at = models.DateTimeField(blank=True, null=True)
     redeemed_by = models.ForeignKey(
         "TicketRedemptionKey", on_delete=models.SET_NULL, blank=True, null=True
@@ -695,7 +694,7 @@ class Ticket(DBModel):
     ):
         """Redeems a ticket."""
         # Check if redeemed
-        if self.redeemed:
+        if self.redeemed_at:
             raise AlreadyRedeemedError({"redeemed": "Ticket is already redeemed."})
 
         # # Check if redemption key was passed
@@ -710,7 +709,6 @@ class Ticket(DBModel):
                 {"event": "Event does not match redemption key"}
             )
 
-        self.redeemed = True
         self.redeemed_at = timezone.now()
         self.redeemed_by = redemption_access_key
         self.save()

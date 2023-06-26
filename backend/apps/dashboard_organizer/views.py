@@ -684,7 +684,9 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     def dispatch(self, request, *args, **kwargs):
         team = Team.objects.get(public_id=self.kwargs["team_public_id"])
         stripe_status = team.stripe_account_payouts_enabled
-        if not (stripe_status["details_submitted"] and stripe_status["payouts_enabled"]):
+        if not (
+            stripe_status["details_submitted"] and stripe_status["payouts_enabled"]
+        ):
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -826,6 +828,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
     """
     Connect and manage Stripe account.
     """
+
     template_name = "dashboard_organizer/payment_detail.html"
 
     def post(self, *args, **kwargs):
@@ -967,6 +970,7 @@ class StripeDelete(TeamContextMixin, TemplateView):
     """
     Delete a connected Stripe account
     """
+
     template_name = "dashboard_organizer/stripe_delete.html"
 
     def post(self, *args, **kwargs):

@@ -576,7 +576,6 @@ class EventStatsView(TeamContextMixin, DetailView):
                     "ticket_id": str(ticket.public_id),
                     "ticket_tier": ticket.ticket_tier.ticket_type,
                     "created": ticket.created,
-                    "redeemed": ticket.redeemed,
                     "redeemed_at": ticket.redeemed_at,
                     "checkout_session": str(ticket.checkout_session.public_id),
                     "customer_name": ticket.checkout_session.name,

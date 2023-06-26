@@ -126,4 +126,15 @@ urlpatterns = [
         views.TicketTierDeleteView.as_view(),
         name="ticket_tier_delete",
     ),
+    # Scanning
+    path(
+        "scanner/<uuid:redemption_key>/",
+        views.EventScanner.as_view(),
+        name="scanner",
+    ),
+    path(
+        "scanner-2/<uuid:redemption_key>/",
+        views.EventScanner2.as_view(),
+        name="scanner2",
+    ),
 ]

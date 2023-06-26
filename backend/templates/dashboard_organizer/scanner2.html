@@ -1,0 +1,52 @@
+{% extends 'bases/base.html' %}
+
+{% block body %}
+<body>
+	<div id="root">
+	   <div class="content-wrapper">
+		  <div class="page-wrapper">
+			 <div class="content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column">
+				<div class="position-relative d-flex bg-content align-items-center justify-content-center overflow-hidden">
+			   		<div id="qr-reader" style="width:500px"></div>
+				   	<div id="qr-reader-results"></div>
+				   	<a href="{% url 'dashboard_organizer:scanner' object.public_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10"><i class="fa-solid fa-arrow-left"></i><span class="visually-hidden">Go Back</span></a>
+				</div>
+				<div class="py-10 px-10"><button class="btn btn-secondary btn-block rounded-3 shadow mt-0"><strong class="antialiased">Redeem Manually</strong></button></div>
+				<div class="mt-auto">
+				   <div class="content-wrapper px-20">
+					  <h1 class="fw-700 fs-base-p6 mt-0">test</h1>
+					  <div class="mt-10"><i class="fa-regular fa-clock me-5"></i>Wednesday, June 28 | 10:58AM</div>
+					  <div class="row mt-5 fs-base-n2">
+						 <div class="col-6 pe-5">
+							<div class="bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100"><strong class="antialiased">Attendees: 11</strong></div>
+						 </div>
+						 <div class="col-6 ps-5">
+							<div class="bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100"><strong class="antialiased">Check-Ins: 0</strong></div>
+						 </div>
+					  </div>
+				   </div>
+				</div>
+				<div class="content text-center mt-auto mb-10"><span class="fs-base-n2 opacity-75"> © 2022, SP Tech Inc. All rights reserved </span></div>
+			 </div>
+		  </div>
+	   </div>
+	   <div style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none;"></div>
+	</div>
+</body>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+	const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+		console.log(decodedText, decodedResult)
+	};
+	const qrCodeErrorCallback = (decodedText, decodedResult) => {
+		console.log('error')
+	};
+
+	const qrScanner = new Html5Qrcode("qr-reader", true);
+	const config = { fps: 1 };
+    const didStart = qrScanner
+		.start({ facingMode: "user" }, config, qrCodeSuccessCallback, qrCodeErrorCallback)
+		.then(() => true);
+
+</script>
+{% endblock %}

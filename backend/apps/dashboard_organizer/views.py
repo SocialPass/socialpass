@@ -30,6 +30,7 @@ from apps.root.models import (
     Membership,
     Team,
     Ticket,
+    TicketRedemptionKey,
     TicketTier,
     TierFree,
 )
@@ -993,3 +994,34 @@ class StripeDelete(TeamContextMixin, TemplateView):
             "dashboard_organizer:payment_detail",
             self.kwargs["team_public_id"],
         )
+
+
+class EventScanner(DetailView):
+    model = TicketRedemptionKey
+    slug_field = "public_id"
+    slug_url_kwarg = "redemption_key"
+    template_name = "dashboard_organizer/scanner.html"
+
+
+class EventScanner2(DetailView):
+    model = TicketRedemptionKey
+    slug_field = "public_id"
+    slug_url_kwarg = "redemption_key"
+    template_name = "dashboard_organizer/scanner2.html"
+
+    def post(self, *args, **kwargs):
+        # Retrieve ticket
+        try:
+            ticket = Ticket.objects.get(embed_code=embed_code, event=self.object.event)
+        except Ticket.DoesNotExist:
+            return
+
+        # Redeem ticket
+        try:
+            ticket.redeem_ticket(self.redemption_access_key)
+        except exceptions.ForbiddenRedemptionError:
+            return
+        except exceptions.AlreadyRedeemedError:
+            return
+
+        return self

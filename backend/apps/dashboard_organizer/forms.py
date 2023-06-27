@@ -182,13 +182,18 @@ class TierAssetOwnershipForm(forms.ModelForm):
             "balance_required",
             "network",
             "token_address",
+            "token_id",
         ]
         widgets = {
             "token_address": forms.TextInput(
                 attrs={"placeholder": "Example: 0xb79...79268"}
             ),
+            "token_id": forms.TextInput(
+                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
+            ),
             "balance_required": forms.NumberInput(attrs={"min": 1}),
         }
+        labels = {"token_id": "Token IDs (Optional)"}
 
     def clean_token_address(self):
         token_address = self.cleaned_data["token_address"]

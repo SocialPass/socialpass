@@ -20,6 +20,15 @@
 					<button type="button" class="btn btn-sm btn-square btn-rounded ms-auto" data-hm-toggle="dark-mode"><i class="fa-solid fa-moon"></i><span class="visually-hidden">Toggle dark mode</span></button>
 				 </nav>
 				<div class="position-relative d-flex bg-content align-items-center justify-content-center overflow-hidden">
+					<input
+					  	type="text"
+					  	name="embed_code"
+					  	id="qr-reader-input"
+						hx-trigger="change throttle:3s"
+						hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+						hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
+						>
+					</input>
 			   		<div id="qr-reader" style="width:500px"></div>
 				   	<div id="qr-reader-results"></div>
 				   	<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10"><i class="fa-solid fa-arrow-left"></i><span class="visually-hidden">Go Back</span></a>
@@ -43,15 +52,6 @@
 			 </div>
 		  </div>
 	   </div>
-	  <input
-	  	type="text"
-	  	name="embed_code"
-	  	id="qr-reader-input"
-		hx-trigger="change throttle:3s"
-		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
-		>
-		</input>
 	</div>
 </body>
 <!-- TODO: USE LOCAL COPY -->

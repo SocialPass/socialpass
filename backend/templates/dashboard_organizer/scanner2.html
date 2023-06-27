@@ -43,22 +43,34 @@
 			 </div>
 		  </div>
 	   </div>
-	   <div style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none;"></div>
+	  <input
+	  	type="text"
+	  	name="embed_code"
+	  	id="qr-reader-input"
+		hx-trigger="change throttle:3s"
+		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
+		>
+		</input>
 	</div>
 </body>
+<!-- TODO: USE LOCAL COPY -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 <script>
 	const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-		console.log(decodedText, decodedResult)
-	};
-	const qrCodeErrorCallback = (decodedText, decodedResult) => {
-		console.log('error')
+		// get element
+		const inputElement = document.getElementById("qr-reader-input");
+
+		// Update element and trigger change event
+		inputElement.value = decodedText;
+		htmx.trigger(inputElement, 'change');
 	};
 
-	const qrScanner = new Html5Qrcode("qr-reader", true);
+	const qrScanner = new Html5Qrcode("qr-reader", false);
 	const config = { fps: 1 };
     const didStart = qrScanner
-		.start({ facingMode: "user" }, config, qrCodeSuccessCallback, qrCodeErrorCallback)
+		.start({ facingMode: "user" }, config, qrCodeSuccessCallback)
 		.then(() => true);
 
 </script>

@@ -1,4 +1,5 @@
 {% extends 'bases/base.html' %}
+{% load static %}
 
 {% block body %}
 <body>
@@ -6,22 +7,34 @@
 	   <div class="content-wrapper">
 		  <div class="page-wrapper">
 			 <div class="content-wrapper ws-600 mw-100 min-vh-100 mx-auto d-flex flex-column">
+				 <nav class="d-flex align-items-center px-20 my-5 mx-10 bg-content rounded-3 shadow-lg">
+					<a href="#" class="d-flex align-items-center link-reset text-decoration-none fw-bold user-select-none">
+					   <div class="ws-75">
+						   <img src="{% static 'images/SocialPass-Icon.svg' %}" class="w-100 pe-none" alt="SocialPass Logo">
+					   </div>
+					   <div class="text-strong ms-10">
+						  <div class="fs-base-p4">SocialPass</div>
+						  <div class="fs-base-n4 lh-1 fw-normal">Ticket Scanner</div>
+					   </div>
+					</a>
+					<button type="button" class="btn btn-sm btn-square btn-rounded ms-auto" data-hm-toggle="dark-mode"><i class="fa-solid fa-moon"></i><span class="visually-hidden">Toggle dark mode</span></button>
+				 </nav>
 				<div class="position-relative d-flex bg-content align-items-center justify-content-center overflow-hidden">
 			   		<div id="qr-reader" style="width:500px"></div>
 				   	<div id="qr-reader-results"></div>
-				   	<a href="{% url 'dashboard_organizer:scanner' object.public_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10"><i class="fa-solid fa-arrow-left"></i><span class="visually-hidden">Go Back</span></a>
+				   	<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10"><i class="fa-solid fa-arrow-left"></i><span class="visually-hidden">Go Back</span></a>
 				</div>
 				<div class="py-10 px-10"><button class="btn btn-secondary btn-block rounded-3 shadow mt-0"><strong class="antialiased">Redeem Manually</strong></button></div>
 				<div class="mt-auto">
 				   <div class="content-wrapper px-20">
 					  <h1 class="fw-700 fs-base-p6 mt-0">test</h1>
-					  <div class="mt-10"><i class="fa-regular fa-clock me-5"></i>Wednesday, June 28 | 10:58AM</div>
+					  <div class="mt-10"><i class="fa-regular fa-clock me-5"></i>{{object.start_date}}</div>
 					  <div class="row mt-5 fs-base-n2">
 						 <div class="col-6 pe-5">
-							<div class="bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100"><strong class="antialiased">Attendees: 11</strong></div>
+							<div class="bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100"><strong class="antialiased">Attendees: {{object.quantity_total_sold}}</strong></div>
 						 </div>
 						 <div class="col-6 ps-5">
-							<div class="bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100"><strong class="antialiased">Check-Ins: 0</strong></div>
+							<div class="bg-secondary text-on-secondary rounded-3 px-15 py-10 h-100"><strong class="antialiased">Check-Ins: {{object.quantity_total_redeemed}}</strong></div>
 						 </div>
 					  </div>
 				   </div>

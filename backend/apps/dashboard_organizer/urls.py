@@ -128,12 +128,12 @@ urlpatterns = [
     ),
     # Scanning
     path(
-        "scanner/<uuid:redemption_key>/",
+        "scanner/<uuid:scanner_id>/",
         views.EventScanner.as_view(),
         name="scanner",
     ),
     path(
-        "scanner-2/<uuid:redemption_key>/",
+        "scanner-2/<uuid:scanner_id>/",
         views.EventScanner2.as_view(),
         name="scanner2",
     ),

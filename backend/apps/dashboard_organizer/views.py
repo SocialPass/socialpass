@@ -997,15 +997,15 @@ class StripeDelete(TeamContextMixin, TemplateView):
 
 class EventScanner(DetailView):
     model = Event
-    slug_field = "redemption_key"
-    slug_url_kwarg = "redemption_key"
+    slug_field = "scanner_id"
+    slug_url_kwarg = "scanner_id"
     template_name = "dashboard_organizer/scanner.html"
 
 
 class EventScanner2(DetailView):
     model = Event
-    slug_field = "redemption_key"
-    slug_url_kwarg = "redemption_key"
+    slug_field = "scanner_id"
+    slug_url_kwarg = "scanner_id"
     template_name = "dashboard_organizer/scanner2.html"
 
     def post(self, *args, **kwargs):

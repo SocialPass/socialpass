@@ -1,4 +1,5 @@
 import secrets
+import uuid
 
 import rollbar
 import stripe
@@ -10,6 +11,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView, SingleObjectMixin
@@ -1001,7 +1004,7 @@ class EventScanner(DetailView):
     slug_url_kwarg = "scanner_id"
     template_name = "dashboard_organizer/scanner.html"
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class EventScanner2(DetailView):
     model = Event
     slug_field = "scanner_id"
@@ -1009,18 +1012,33 @@ class EventScanner2(DetailView):
     template_name = "dashboard_organizer/scanner2.html"
 
     def post(self, *args, **kwargs):
+        # Set event object
+        self.object = self.get_object()
+
+        # Get embed code & Check for valid UUID
+        print(self.request.POST)
+        embed_code = self.request.POST.get("embed_code")
+        if not embed_code:
+            print("No ticket embed_code provided")
+            raise Http404("No ticket embed_code provided")
+        try:
+            embed_code = uuid.UUID(str(embed_code))
+        except ValueError:
+            print("Invalid UUID")
+            raise Http404("Invalid UUID")
+
         # Retrieve ticket
         try:
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
-            return
+            print("Ticket does not exist")
+            raise Http404("Ticket does not exist")
 
         # Redeem ticket
         try:
-            ticket.redeem_ticket(self.object.redemption_access_key)
+            ticket.redeem_ticket(self.object.scanner_id)
         except exceptions.ForbiddenRedemptionError:
-            return
+            print("Ticket does not exist")
+            raise Http404("Ticket does not exist")
         except exceptions.AlreadyRedeemedError:
-            return
-
-        return self
+           raise Http404("Ticket already redeemed")

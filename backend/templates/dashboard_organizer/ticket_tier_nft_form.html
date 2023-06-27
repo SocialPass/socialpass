@@ -101,9 +101,19 @@
 					{% with tier_asset_ownership_form.balance_required as input %}
 						{% include 'components/forms_inputs/input.html' %}
 					{% endwith %}
-					{% with tier_asset_ownership_form.token_id as input %}
-						{% include 'components/forms_inputs/input.html' %}
-					{% endwith %}
+					<details class="collapse-panel">
+						<summary class="collapse-header">
+							<strong>Optional fields (not required)</strong>
+							<br />
+						    <span class="hidden-collapse-open text-muted fs-base-n2">Click to see</span>
+						    <span class="hidden-collapse-closed text-muted fs-base-n2">Click to hide</span>
+						</summary>
+						<div class="collapse-content">
+							{% with tier_asset_ownership_form.token_id as input %}
+								{% include 'components/forms_inputs/input.html' %}
+							{% endwith %}
+						</div>
+					</details>
 					<!-- Checkout methods end -->
 
 					<!-- Submit button start -->

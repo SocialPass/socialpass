@@ -937,6 +937,7 @@ class TierAssetOwnership(DBModel):
         choices=NetworkChoices.choices,
         default=NetworkChoices.ETH,
         blank=False,
+        help_text="Which blockchain is your NFT collection on?",
     )
     asset_type = models.CharField(
         max_length=50,
@@ -948,13 +949,19 @@ class TierAssetOwnership(DBModel):
         default=1,
         blank=False,
         null=False,
+        help_text="The number of NFTs required to claim your ticket tier."
     )
-    token_address = models.CharField(max_length=42, blank=False, default="")
+    token_address = models.CharField(
+        max_length=42,
+        blank=False,
+        default="",
+        help_text="What is the contract address of your NFT collection?",
+    )
     token_id = ArrayField(
         models.IntegerField(),
         null=True,
         blank=True,
-        help_text="Please enter a list of token ID(s) separated by commas.",
+        help_text="Which specific token IDs of the NFT collection are required?",
     )
     issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
 

@@ -47,7 +47,10 @@ class TeamForm(forms.ModelForm):
                 attrs={"placeholder": "A short description of your team", "rows": 3}
             ),
         }
-        labels = {"image": "Set Team Image"}
+        labels = {
+            "description": "Description (Optional)",
+            "image": "Set Team Image (Optional)",
+        }
 
 
 def get_country_choices():

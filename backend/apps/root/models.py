@@ -78,8 +78,8 @@ class Team(DBModel):
     image = models.ImageField(
         help_text="A brand image for your team. Please make sure the image is "
         "square, non-transparent, and ideally in the PNG format.",
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         height_field=None,
         width_field=None,
         upload_to="team__image",

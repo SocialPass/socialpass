@@ -11,8 +11,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView, SingleObjectMixin
@@ -1006,7 +1004,6 @@ class EventScanner(DetailView):
     template_name = "dashboard_organizer/scanner.html"
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class EventScanner2(DetailView):
     model = Event
     slug_field = "scanner_id"

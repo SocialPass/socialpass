@@ -676,20 +676,20 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
-    def redeem_ticket(self, redemption_access_key):
+    def redeem_ticket(self, scanner_id):
         """Redeems a ticket."""
         # Check if redeemed
         if self.redeemed_at:
             raise AlreadyRedeemedError({"redeemed": "Ticket is already redeemed."})
 
         # # Check if redemption key was passed
-        if not redemption_access_key:
+        if not scanner_id:
             raise ForbiddenRedemptionError(
-                {"redemption_access_key": "Access key was not passed in"}
+                {"scanner_id": "Access key was not passed in"}
             )
 
         # Check if match on redemption access key
-        if self.event.redemption_access_key != redemption_access_key:
+        if self.event.scanner_id != scanner_id:
             raise ForbiddenRedemptionError(
                 {"event": "Event does not match redemption key"}
             )

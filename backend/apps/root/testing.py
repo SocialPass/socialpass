@@ -80,9 +80,6 @@ class BaseModelScaffold:
             event=self.event,
             ticket_tier=self.ticket_tier,
         )
-        # TODO: Improve returning access keys (currently just URL format)
-        self.redemption_access_key = self.event.ticketredemptionkey_set.first()
-        self.access_key = self.redemption_access_key.public_id
 
 
 class BaseTestCaseWrapper(BaseModelScaffold, TestCase):

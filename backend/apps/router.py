@@ -30,10 +30,6 @@ urlpatterns += static(
 )  # type: ignore
 urlpatterns += [path(settings.ADMIN_URL, admin.site.urls)]
 
-# DRF API URLs
-urlpatterns += [
-    path("api/scanner/v1/", include("apps.api_scanner.urls")),
-]
 
 # SITEMAPS URLs
 sitemaps = {
@@ -69,31 +65,6 @@ is_local = (
 if is_local:
     # Static files
     urlpatterns += staticfiles_urlpatterns()  # type: ignore
-
-    # OpenAPI Schema
-    schema_view = get_schema_view(
-        openapi.Info(
-            title="SocialPass API",
-            default_version="v1",
-            description="Test description",
-            terms_of_service="https://www.google.com/policies/terms/",
-            contact=openapi.Contact(email="contact@snippets.local"),
-            license=openapi.License(name="BSD License"),
-        ),
-        public=True,
-    )
-
-    # SwaggerUI
-    urlpatterns += [
-        path(
-            "swagger/",
-            schema_view.with_ui("swagger", cache_timeout=0),
-            name="schema-swagger-ui",
-        ),
-        path(
-            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
-        ),
-    ]
 
     # Django Debug Toolbar
     if "debug_toolbar" in settings.INSTALLED_APPS:

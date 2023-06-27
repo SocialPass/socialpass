@@ -162,12 +162,10 @@
 											The following is the link to the scanner for this event.
 										</p>
 										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
-											{% with event_scanner_url=event.scanner_url %}
-												<a href="{{ event_scanner_url }}" class="fw-bold antialiased" target="_blank">
-													<i class="fa-regular fa-external-link"></i>
-													<span class="content-to-copy ms-5">{{ event_scanner_url }}</span>
-												</a>
-											{% endwith %}
+											<a href="{% url 'dashboard_organizer:scanner' event.public_id %}" class="fw-bold antialiased" target="_blank">
+												<i class="fa-regular fa-external-link"></i>
+												<span class="content-to-copy ms-5">{% url 'dashboard_organizer:scanner' event.public_id %}</span>
+											</a>
 										</div>
 										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
 											<i class="fa-regular fa-link-simple"></i>

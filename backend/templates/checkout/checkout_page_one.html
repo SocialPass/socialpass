@@ -15,7 +15,13 @@
 	<!-- Team image start -->
 	<div class="position-absolute z-1 top-100 start-50 translate-middle px-content">
 		<div class="ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden">
-			<img src="{{ event.team.image.url }}" class="d-block w-100 h-auto" alt="Team image">
+			{% if event.team.image %}
+				<img src="{{ event.team.image.url }}" class="d-block w-100 h-auto" alt="Team image">
+			{% else %}
+				<div class="rounded-circle d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0" style="width: 125%; height: 125%;">
+					<span class="text-uppercase fs-base-p8 fw-bold">{{ event.team.name|slice:"0:1" }}</span>
+				</div>
+			{% endif %}
 		</div>
 	</div>
 	<!-- Team image end -->

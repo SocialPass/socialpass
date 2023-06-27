@@ -101,6 +101,9 @@
 					{% with tier_asset_ownership_form.balance_required as input %}
 						{% include 'components/forms_inputs/input.html' %}
 					{% endwith %}
+					{% with tier_asset_ownership_form.token_id as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
 					<!-- Checkout methods end -->
 
 					<!-- Submit button start -->

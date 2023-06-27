@@ -90,14 +90,11 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "corsheaders",
     "crispy_forms",
     "crispy_bootstrap5",
     "django_fsm_log",
     "django_quill",
     "djmoney",
-    "rest_framework",
-    "rest_framework.authtoken",
     "storages",
     "silk",
 ]
@@ -154,7 +151,6 @@ AUTH_PASSWORD_VALIDATORS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "silk.middleware.SilkyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -295,31 +291,8 @@ ACCOUNT_LOGOUT_ON_GET = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html?highlight=ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION#configuration
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
-# django-rest-framework
-# -------------------------------------------------------------------------------
-# django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_PARSER_CLASSES": ("rest_framework.parsers.JSONParser",),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 100,
-    "EXCEPTION_HANDLER": "rollbar.contrib.django_rest_framework.post_exception_handler",
-    "DEFAULT_THROTTLE_RATES": {"anon": "1000/day", "user": "1000/day"},
-}
-REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ["rest_framework.renderers.JSONRenderer"]
-
 # Your stuff...
 # ------------------------------------------------------------------------------
-# django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_ALLOWED_ORIGINS = env.list(
-    "CORS_ALLOWED_ORIGINS", default=["http://localhost:6006"]
-)
-CORS_URLS_REGEX = r"^/api/.*$"
-CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
-
 
 # Django Silk  - https://github.com/jazzband/django-silk
 # ------------------------------------------------------------------------------

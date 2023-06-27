@@ -1,7 +1,6 @@
 import json
 import uuid
 from datetime import date, timedelta
-from typing import Optional
 
 import jwt
 import pytz

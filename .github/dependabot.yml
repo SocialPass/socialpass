@@ -1,10 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /frontend/scanner-app
-    schedule:
-      interval: weekly
-      day: "sunday"
   - package-ecosystem: pip
     directory: /backend
     schedule:

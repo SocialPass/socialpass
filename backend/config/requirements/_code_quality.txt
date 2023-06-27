@@ -2,7 +2,6 @@
 # ------------------------------------------------------------------------------
 black==23.3.0 # https://github.com/psf/black
 django-stubs[compatible-mypy]==1.11.0 # https://github.com/typeddjango/django-stubs
-djangorestframework-stubs[compatible-mypy]==1.6.0 # https://github.com/typeddjango/djangorestframework-stubs
 pylint-django==2.5.3 # https://github.com/PyCQA/pylint-django
 mypy==0.950 # https://github.com/python/mypy
 ruff==0.0.270 # https://github.com/charliermarsh/ruff

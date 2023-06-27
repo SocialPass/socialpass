@@ -36,6 +36,7 @@ from apps.root.models import (
     TicketTier,
     TierFree,
 )
+from apps.root import exceptions
 
 User = auth.get_user_model()
 
@@ -1004,7 +1005,8 @@ class EventScanner(DetailView):
     slug_url_kwarg = "scanner_id"
     template_name = "dashboard_organizer/scanner.html"
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+@method_decorator(csrf_exempt, name="dispatch")
 class EventScanner2(DetailView):
     model = Event
     slug_field = "scanner_id"
@@ -1041,4 +1043,4 @@ class EventScanner2(DetailView):
             print("Ticket does not exist")
             raise Http404("Ticket does not exist")
         except exceptions.AlreadyRedeemedError:
-           raise Http404("Ticket already redeemed")
+            raise Http404("Ticket already redeemed")

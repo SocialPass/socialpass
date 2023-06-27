@@ -404,6 +404,9 @@ class Event(DBModel):
     is_featured_top = models.BooleanField(default=False)
     slug = AutoSlugField(populate_from="title", null=True, unique=True)
 
+    # Scanner Info
+    scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
+
     def __str__(self):
         return f"{self.team} - {self.title}"
 
@@ -494,7 +497,6 @@ class Event(DBModel):
         try:
             ctx = {
                 "event": self,
-                "scanner_url": self.scanner_url,
             }
             emails = []
             memberships = Membership.objects.select_related("user").filter(
@@ -534,8 +536,6 @@ class Event(DBModel):
         - Create ticket scanner object
         - Handle Google event class
         """
-        # - Create ticket scanner object
-        TicketRedemptionKey.objects.get_or_create(event=self)
         # - Handle Google event class
         if not ignore_google_api:
             google_event_class_id = self.handle_google_event_class()
@@ -543,10 +543,6 @@ class Event(DBModel):
                 raise GoogleWalletAPIRequestError(
                     "Something went wrong while handling the Google event class."
                 )
-
-    @property
-    def scanner_url(self):
-        return TicketRedemptionKey.objects.filter(event=self).first().scanner_url
 
     @property
     def has_ended(self):
@@ -676,16 +672,11 @@ class Ticket(DBModel):
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     redeemed_at = models.DateTimeField(blank=True, null=True)
-    redeemed_by = models.ForeignKey(
-        "TicketRedemptionKey", on_delete=models.SET_NULL, blank=True, null=True
-    )
 
     def __str__(self):
         return f"Ticket List (Ticketed Event: {self.event.title})"
 
-    def redeem_ticket(
-        self, redemption_access_key: Optional["TicketRedemptionKey"] = None
-    ):
+    def redeem_ticket(self, redemption_access_key):
         """Redeems a ticket."""
         # Check if redeemed
         if self.redeemed_at:
@@ -698,15 +689,14 @@ class Ticket(DBModel):
             )
 
         # Check if match on redemption access key
-        if self.event.id != redemption_access_key.event.id:
+        if self.event.redemption_access_key != redemption_access_key:
             raise ForbiddenRedemptionError(
                 {"event": "Event does not match redemption key"}
             )
 
+        # Redeem & save
         self.redeemed_at = timezone.now()
-        self.redeemed_by = redemption_access_key
         self.save()
-        return self
 
     def get_google_ticket_url(self):
         """
@@ -750,34 +740,6 @@ class Ticket(DBModel):
             print("APPLE WALLET ERROR: " + str(e))
             rollbar.report_message("APPLE WALLET ERROR: " + str(e))
             return False
-
-
-class TicketRedemptionKey(DBModel):
-    """
-    Represents a unique ID for ticket scanning purposes
-    This model allows for multiple scanner ID's to be issued, as well as ID revocation
-    """
-
-    class Meta:
-        unique_together = (
-            "event",
-            "name",
-        )
-
-    # Keys
-    event = models.ForeignKey(
-        "Event",
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-
-    # Basic info
-    name = models.CharField(max_length=255, default="Default", blank=False, null=False)
-
-    @property
-    def scanner_url(self):
-        return f"{settings.SCANNER_BASE_URL}/{self.public_id}"
 
 
 class TicketTier(DBModel):

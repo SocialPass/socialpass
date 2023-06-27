@@ -12,7 +12,6 @@ from apps.root.models import (
     Membership,
     Team,
     Ticket,
-    TicketRedemptionKey,
     TicketTier,
     TierAssetOwnership,
     TierBlockchain,
@@ -104,11 +103,6 @@ class EventAdmin(CustomDBAdmin):
 @admin.register(Ticket)
 class TicketAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display + ["checkout_item", "embed_code"]
-
-
-@admin.register(TicketRedemptionKey)
-class TicketRedemptionKeyAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
 
 
 @admin.register(TicketTier)

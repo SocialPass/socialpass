@@ -2,29 +2,9 @@
 
 {% block content %}
 <p>
-	Your event <strong>{{ event.title }}</strong> is live on SocialPass! You can use the scanner app to scan your guest's tickets and let them in:
-</p>
-<div style="
-	text-align: center;
-	margin: 16px 0;
-	padding: 16px;
-	background-color: #ecf0f1;
-	border-radius: 6px;"
->
-	<a href="{{ scanner_url }}" style="
-		text-decoration: none;
-		font-weight: 600;
-		font-size: 16px;
-		display: inline-block;
-		padding: 10px 24px;
-		color: #fff;
-		background-color: #3995b8;
-		border-radius: 6px;"
-	>
-		Scanner App
-	</a>
-</div>
-<p>
-	You can also find stats, embeds, and more on the dashboard.
+	Your event <strong>{{ event.title }}</strong> is live on SocialPass!
+	You can also find stats, embeds, the check-in app and more on the dashboard.
+
+	{% url "dashboard_organizer:event_stats" event.team.public.id event.pk %}
 </p>
 {% endblock %}

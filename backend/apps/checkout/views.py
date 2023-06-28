@@ -19,7 +19,14 @@ from django.views.generic import View
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import DetailView
 
-from apps.root.models import CheckoutSession, CheckoutItem, Event, Ticket
+from apps.root.models import (
+    CheckoutSession,
+    CheckoutItem,
+    Event,
+    Ticket,
+    Team,
+    Membership,
+)
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
 
 from .forms import (
@@ -47,17 +54,33 @@ class CheckoutPageOne(DetailView):
     template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
-        self.object = Event.objects.prefetch_related(
+        self.object = Event.objects.select_related("team").prefetch_related(
             "tickettier_set",
             "tickettier_set__tier_free",
             "tickettier_set__tier_asset_ownership",
-        ).get(slug=self.kwargs["event_slug"], state=Event.StateStatus.LIVE)
+        ).get(slug=self.kwargs["event_slug"])
         if not self.object:
             raise Http404()
         return self.object
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+
+        # Check if user is part of team or not
+        is_team_member = False
+        try:
+            user_membership = Membership.objects.select_related("team").get(
+                team__public_id=self.object.team.public_id,
+                user__id=self.request.user.id,
+            )
+        except Exception:
+            user_membership = False
+        is_team_member = self.request.user.is_authenticated and user_membership
+
+        # If user is NOT team member, we make sure event is live
+        if not is_team_member:
+            if self.object.state != Event.StateStatus.LIVE:
+                raise Http404()
 
         # Get all ticket tiers and set up holder lists and availabilities
         tiers_all = self.object.tickettier_set.all()
@@ -141,6 +164,7 @@ class CheckoutPageOne(DetailView):
         context["tier_types_count"] = tier_types_count
         context["availability"] = availability
         context["checkout_type"] = checkout_type
+        context["is_team_member"] = is_team_member
         return context
 
     @transaction.atomic

@@ -4,6 +4,13 @@
 {% block head_title %}{{ event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
 
 {% block content %}
+{% if is_team_member and not request.GET.view_as_attendee %}
+	<div class="alert alert-primary border-0 rounded-0 m-0 text-base text-center fs-base-n2" role="alert">
+		You are viewing this page as an organizer.
+		<a href="?view_as_attendee=True" class="fw-bold antialiased">View as attendee &rarr;</a>
+	</div>
+{% endif %}
+
 <!-- Header start -->
 <div class="position-relative">
 	<!-- Event cover image start -->
@@ -36,6 +43,12 @@
 	<h6 class="text-strong fs-base fw-700 m-0">
 		{{ event.team.name }}
 		{% if event.team.is_verified %}<i class="fa-solid fa-badge-check text-primary ms-5"></i>{% endif %}
+		{% if is_team_member and not request.GET.view_as_attendee %}
+			<a href="{% url 'dashboard_organizer:team_update' event.team.public_id %}" class="fw-bold antialiased ms-5 text-decoration-none" data-hm-toggle="tooltip" data-hm-title="Edit team information (only you can see this)">
+				<i class="fa-light fa-edit"></i>
+				<span class="visually-hidden">Edit team information</span>
+			</a>
+		{% endif %}
 	</h6>
 </div>
 <!-- Team name end -->
@@ -50,7 +63,17 @@
 	<!-- Title and description start -->
 	<div class="col-md-7">
 		<div class="content mt-20 mb-0">
-			<h1 class="text-strong fw-700 display-6 m-0 text-break">{{ event.title }}</h1>
+			{% if is_team_member and not request.GET.view_as_attendee %}
+				<div class="mb-10">
+					<a href="{% url 'dashboard_organizer:event_update' event.team.public_id event.id %}" class="fw-bold antialiased ms-5 text-decoration-none" data-hm-toggle="tooltip" data-hm-title="Only you can see this">
+						<i class="fa-light fa-edit me-5"></i>
+						Edit event
+					</a>
+				</div>
+			{% endif %}
+			<h1 class="text-strong fw-700 display-6 m-0 text-break">
+				{{ event.title }}
+			</h1>
 			<div id="desc-cont" class="my-20 overflow-hidden position-relative max-h-250">
 				{{ event.description_html | safe }}
 				<div id="desc-read" class="d-none position-absolute bottom-0 start-0 w-100 text-center pb-10">

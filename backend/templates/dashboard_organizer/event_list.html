@@ -212,6 +212,37 @@
 								</div>
 							</div>
 						</div>
+					{% else %}
+						<div class="mt-5">
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-external-link"></i>
+									<strong class="antialiased ms-5">Preview</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">Preview</div>
+										<p class="text-muted mt-0">
+											You can preview this event using the following link. Note, only you will be able to see it.
+										</p>
+										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+											<a href="{% url 'checkout:checkout_one' event.slug %}" class="fw-bold antialiased" target="_blank">
+												<i class="fa-regular fa-external-link"></i>
+												<span class="content-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}</span>
+											</a>
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
+											<i class="fa-regular fa-link-simple"></i>
+											<strong class="antialiased ms-5">Copy Link</strong>
+										</button>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
+						</div>
 					{% endif %}
 				</div>
 				<!-- Name, date, location end -->

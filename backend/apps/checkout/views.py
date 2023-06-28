@@ -24,7 +24,6 @@ from apps.root.models import (
     CheckoutItem,
     Event,
     Ticket,
-    Team,
     Membership,
 )
 from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError

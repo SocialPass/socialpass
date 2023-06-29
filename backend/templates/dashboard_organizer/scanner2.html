@@ -2,6 +2,15 @@
 {% load static %}
 
 {% block content %}
+<style>
+#fade-me-in.htmx-added {
+  opacity: 0;
+}
+#fade-me-in {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+</style>
 <div class="mt-auto">
 	<div class="content position-relative bg-content rounded-3 overflow-hidden shadow-lg">
 		<div id="qr-reader" class="w-100 h-auto" style="min-height: 100px;"></div>
@@ -21,6 +30,7 @@
 		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
 		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
 		hx-target="#results"
+		hx-trigger="submit throttle:0.5s"
 	>
 		<label class="form-label" for="qr-reader-input">QR Reader Input</label>
 		<div class="input-group">

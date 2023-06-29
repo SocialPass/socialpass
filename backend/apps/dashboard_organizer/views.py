@@ -1048,4 +1048,6 @@ class EventScanner2(DetailView):
             return render(self.request, template_name="dashboard_organizer/scanner_error.html")
 
         # OK
-        return render(self.request, template_name="dashboard_organizer/scanner_success.html")
+        context = super().get_context_data(**kwargs)
+        context['ticket'] = ticket
+        return render(self.request, template_name="dashboard_organizer/scanner_success.html", context=context)

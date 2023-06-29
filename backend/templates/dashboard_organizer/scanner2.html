@@ -4,7 +4,7 @@
 {% block content %}
 <div class="mt-auto">
 	<div class="content position-relative d-flex bg-content align-items-center justify-content-center rounded-3 overflow-hidden shadow-lg">
-		<div id="qr-reader" style="width: 500px;"></div>
+		<div id="qr-reader" class="w-100 h-auto"></div>
 		<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10">
 			<i class="fa-solid fa-arrow-left"></i>
 			<span class="visually-hidden">Go Back</span>

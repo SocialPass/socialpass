@@ -1041,7 +1041,7 @@ class EventScanner2(DetailView):
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
             return HttpResponse(
-                f"<div class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
+                f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
                 f"   <i class='fa-solid fa-times-circle me-5'></i>"
                 f"   Invalid!"
                 f"</div>"
@@ -1051,14 +1051,14 @@ class EventScanner2(DetailView):
             ticket.redeem_ticket(self.object.scanner_id)
         except exceptions.ForbiddenRedemptionError:
             return HttpResponse(
-                f"<div class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
+                f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
                 f"   <i class='fa-solid fa-times-circle me-5'></i>"
                 f"   Invalid!"
                 f"</div>"
             )
         except exceptions.AlreadyRedeemedError:
             return HttpResponse(
-                f"<div class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
+                f"<div id='fade-me-in' class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
                 f"   <i class='fa-solid fa-check-circle me-5'></i>"
                 f"   Already scanned!"
                 f"   <div class='fw-normal fs-base-n2'>Party Size: {ticket.party_size}</div>"
@@ -1066,7 +1066,7 @@ class EventScanner2(DetailView):
             )
 
         return HttpResponse(
-            f"<div class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
+            f"<div id='fade-me-in' class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
             f"   <i class='fa-solid fa-check-circle me-5'></i>"
             f"   Successfully scanned!"
             f"   <div class='fw-normal fs-base-n2'>Party Size: {ticket.party_size}</div>"

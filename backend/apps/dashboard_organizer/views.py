@@ -1025,16 +1025,23 @@ class EventScanner2(DetailView):
         self.object = self.get_object()
 
         # Get embed code & Check for valid UUID
-        print(self.request.POST)
         embed_code = self.request.POST.get("embed_code")
         if not embed_code:
-            print("No ticket embed_code provided")
-            raise Http404("No ticket embed_code provided")
+            return HttpResponse(
+                f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
+                f"   <i class='fa-solid fa-times-circle me-5'></i>"
+                f"   Invalid!"
+                f"</div>"
+            )
         try:
             embed_code = uuid.UUID(str(embed_code))
         except ValueError:
-            print("Invalid UUID")
-            raise Http404("Invalid UUID")
+           return HttpResponse(
+               f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
+               f"   <i class='fa-solid fa-times-circle me-5'></i>"
+               f"   Invalid!"
+               f"</div>"
+           )
 
         # Retrieve ticket
         try:

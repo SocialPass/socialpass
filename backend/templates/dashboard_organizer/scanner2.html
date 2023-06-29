@@ -12,40 +12,8 @@
 }
 </style>
 <div class="mt-auto">
-	<div class="content position-relative bg-content rounded-3 overflow-hidden shadow-lg">
-		<div id="qr-reader" class="w-100 h-auto" style="min-height: 100px;"></div>
-		<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10">
-			<i class="fa-solid fa-arrow-left"></i>
-			<span class="visually-hidden">Go Back</span>
-		</a>
-		<div id="results">
-			<div class="px-20 py-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm text-center">
-				<i class="fa-regular fa-barcode-read fa-beat-fade me-5"></i>
-				<strong>Scanning...</strong>
-			</div>
-		</div>
-	</div>
-	<form
-		class="card rounded-3 shadow-lg border-0 p-20"
-		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
-		hx-target="#results"
-		hx-trigger="submit throttle:0.5s"
-	>
-		<label class="form-label" for="qr-reader-input">QR Reader Input</label>
-		<div class="input-group">
-			<input
-				type="text"
-				name="embed_code"
-				id="qr-reader-input"
-				class="form-control"
-				placeholder="QR Reader Input"
-				required
-			>
-			<button id="qr-submit" type="submit" class="btn btn-primary fw-bold antialiased">Submit</button>
-		</div>
-	</form>
-	<div class="content text-on-primary">
+	<!-- Event Info -->
+	<div class="content text-on-primary mt-0">
 		<h1 class="fw-700 fs-base-p10 mt-0">
 			{{ object.title }}
 		</h1>
@@ -67,7 +35,41 @@
 			</div>
 		</div>
 	</div>
-	<!-- Audio Files -->
+	<div class="content position-relative bg-content rounded-3 overflow-hidden shadow-lg">
+		<!-- QR Reader -->
+		<div id="qr-reader" class="w-100 h-auto" style="min-height: 100px;"></div>
+		<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10">
+			<i class="fa-solid fa-arrow-left"></i>
+			<span class="visually-hidden">Go Back</span>
+		</a>
+		<div id="results">
+			<div class="px-20 py-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm text-center">
+				<i class="fa-regular fa-barcode-read fa-beat-fade me-5"></i>
+				<strong>Scanning...</strong>
+			</div>
+		</div>
+	</div>
+	<!-- HTMX Form -->
+	<form
+		class="card rounded-3 shadow-lg border-0 p-20"
+		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
+		hx-target="#results"
+		hx-trigger="submit throttle:0.5s"
+	>
+		<label class="form-label" for="qr-reader-input">QR Reader Input</label>
+		<div class="input-group">
+			<input
+				type="text"
+				name="embed_code"
+				id="qr-reader-input"
+				class="form-control"
+				placeholder="QR Reader Input"
+				required
+			>
+			<button id="qr-submit" type="submit" class="btn btn-primary fw-bold antialiased">Submit</button>
+		</div>
+	</form>
 </div>
 {% endblock %}
 

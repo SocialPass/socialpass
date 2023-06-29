@@ -1027,55 +1027,25 @@ class EventScanner2(DetailView):
         # Get embed code & Check for valid UUID
         embed_code = self.request.POST.get("embed_code")
         if not embed_code:
-            return HttpResponse(
-                f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
-                f"   <i class='fa-solid fa-times-circle me-5'></i>"
-                f"   Invalid!"
-                f"</div>"
-            )
+            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
         try:
             embed_code = uuid.UUID(str(embed_code))
         except ValueError:
-           return HttpResponse(
-               f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
-               f"   <i class='fa-solid fa-times-circle me-5'></i>"
-               f"   Invalid!"
-               f"</div>"
-           )
+           return render(self.request, template_name="dashboard_organizer/scanner_error.html")
 
         # Retrieve ticket
         try:
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
-            return HttpResponse(
-                f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
-                f"   <i class='fa-solid fa-times-circle me-5'></i>"
-                f"   Invalid!"
-                f"</div>"
-            )
+            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
+
         # Redeem ticket
         try:
             ticket.redeem_ticket(self.object.scanner_id)
         except exceptions.ForbiddenRedemptionError:
-            return HttpResponse(
-                f"<div id='fade-me-in' class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
-                f"   <i class='fa-solid fa-times-circle me-5'></i>"
-                f"   Invalid!"
-                f"</div>"
-            )
+            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
         except exceptions.AlreadyRedeemedError:
-            return HttpResponse(
-                f"<div id='fade-me-in' class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
-                f"   <i class='fa-solid fa-check-circle me-5'></i>"
-                f"   Already scanned!"
-                f"   <div class='fw-normal fs-base-n2'>Party Size: {ticket.party_size}</div>"
-                f"</div>"
-            )
+            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
 
-        return HttpResponse(
-            f"<div id='fade-me-in' class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
-            f"   <i class='fa-solid fa-check-circle me-5'></i>"
-            f"   Successfully scanned!"
-            f"   <div class='fw-normal fs-base-n2'>Party Size: {ticket.party_size}</div>"
-            f"</div>"
-        )
+        # OK
+        return render(self.request, template_name="dashboard_organizer/scanner_success.html")

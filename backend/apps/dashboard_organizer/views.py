@@ -1040,14 +1040,16 @@ class EventScanner2(DetailView):
         try:
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
-            print("Ticket does not exist")
-            raise Http404("Ticket does not exist")
-
+            return HttpResponse(
+                f"<div class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
+                f"   <i class='fa-solid fa-times-circle me-5'></i>"
+                f"   Invalid!"
+                f"</div>"
+            )
         # Redeem ticket
         try:
             ticket.redeem_ticket(self.object.scanner_id)
         except exceptions.ForbiddenRedemptionError:
-            print("Ticket does not exist")
             return HttpResponse(
                 f"<div class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
                 f"   <i class='fa-solid fa-times-circle me-5'></i>"

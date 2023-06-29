@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView, View
@@ -1048,6 +1048,25 @@ class EventScanner2(DetailView):
             ticket.redeem_ticket(self.object.scanner_id)
         except exceptions.ForbiddenRedemptionError:
             print("Ticket does not exist")
-            raise Http404("Ticket does not exist")
+            return HttpResponse(
+                f"<div class='bg-danger text-on-danger fw-bold text-center px-20 py-10'>"
+                f"   <i class='fa-solid fa-times-circle me-5'></i>"
+                f"   Invalid!"
+                f"</div>"
+            )
         except exceptions.AlreadyRedeemedError:
-            raise Http404("Ticket already redeemed")
+            return HttpResponse(
+                f"<div class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
+                f"   <i class='fa-solid fa-check-circle me-5'></i>"
+                f"   Already scanned!"
+                f"   <div class='fw-normal fs-base-n2'>Party Size: {ticket.party_size}</div>"
+                f"</div>"
+            )
+
+        return HttpResponse(
+            f"<div class='bg-success text-on-success fw-bold text-center px-20 py-10'>"
+            f"   <i class='fa-solid fa-check-circle me-5'></i>"
+            f"   Successfully scanned!"
+            f"   <div class='fw-normal fs-base-n2'>Party Size: {ticket.party_size}</div>"
+            f"</div>"
+        )

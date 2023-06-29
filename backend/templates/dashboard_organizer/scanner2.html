@@ -3,27 +3,38 @@
 
 {% block content %}
 <div class="mt-auto">
-	<div class="content position-relative d-flex bg-content align-items-center justify-content-center rounded-3 overflow-hidden shadow-lg">
-		<div id="qr-reader" class="w-100 h-auto"></div>
+	<div class="content position-relative bg-content rounded-3 overflow-hidden shadow-lg">
+		<div id="qr-reader" class="w-100 h-auto" style="min-height: 100px;"></div>
 		<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-square btn-rounded border-transparent shadow position-absolute top-0 start-0 m-10">
 			<i class="fa-solid fa-arrow-left"></i>
 			<span class="visually-hidden">Go Back</span>
 		</a>
+		<div id="results">
+			<div class="px-20 py-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm text-center">
+				<i class="fa-regular fa-barcode-read fa-beat-fade me-5"></i>
+				<strong>Scanning...</strong>
+			</div>
+		</div>
 	</div>
-	<div class="card rounded-3 shadow-lg border-0 p-20">
+	<form
+		class="card rounded-3 shadow-lg border-0 p-20"
+		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
+		hx-target="#results"
+	>
 		<label class="form-label" for="qr-reader-input">QR Reader Input</label>
-		<input
-			type="text"
-			name="embed_code"
-			id="qr-reader-input"
-			hx-trigger="change throttle:3s"
-			hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-			hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
-			class="form-control"
-			placeholder="QR Reader Input"
-		>
-		<div id="qr-reader-results"></div>
-	</div>
+		<div class="input-group">
+			<input
+				type="text"
+				name="embed_code"
+				id="qr-reader-input"
+				class="form-control"
+				placeholder="QR Reader Input"
+				required
+			>
+			<button id="qr-submit" type="submit" class="btn btn-primary fw-bold antialiased">Submit</button>
+		</div>
+	</form>
 	<div class="content text-on-primary">
 		<h1 class="fw-700 fs-base-p10 mt-0">
 			{{ object.title }}
@@ -54,13 +65,14 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 <script>
-	const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-		// get element
-		const inputElement = document.getElementById("qr-reader-input");
+	// get elements
+	const qrInput = document.getElementById("qr-reader-input");
+	const qrSubmit = document.getElementById("qr-submit");
 
-		// Update element and trigger change event
-		inputElement.value = decodedText;
-		htmx.trigger(inputElement, 'change');
+	// update element and submit
+	const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+		qrInput.value = decodedText;
+		qrSubmit.click();
 	};
 
 	const qrScanner = new Html5Qrcode("qr-reader", false);

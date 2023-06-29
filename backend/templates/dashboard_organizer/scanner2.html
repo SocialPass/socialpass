@@ -4,11 +4,11 @@
 {% block content %}
 <style>
 #fade-me-in.htmx-added {
-  opacity: 0;
+  opacity: 1;
 }
 #fade-me-in {
-  opacity: 1;
-  transition: opacity 0.5s ease-in;
+  opacity: 0;
+  transition: opacity 0.5s ease-out 0.5s;
 }
 </style>
 <div class="mt-auto">
@@ -30,7 +30,7 @@
 		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
 		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
 		hx-target="#results"
-		hx-trigger="submit throttle:0.5s"
+		hx-trigger="submit throttle:0.3s"
 	>
 		<label class="form-label" for="qr-reader-input">QR Reader Input</label>
 		<div class="input-group">

@@ -30,7 +30,7 @@
 		hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
 		hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
 		hx-target="#results"
-		hx-trigger="submit throttle:0.3s"
+		hx-trigger="submit throttle:0.5s"
 	>
 		<label class="form-label" for="qr-reader-input">QR Reader Input</label>
 		<div class="input-group">
@@ -67,13 +67,13 @@
 			</div>
 		</div>
 	</div>
+	<!-- Audio Files -->
 </div>
 {% endblock %}
 
 {% block extra_body %}
-<!-- TODO: USE LOCAL COPY -->
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-<script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'js/html5-qrcode.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
 <script>
 	// Setup
 	// Get elements, setup callback
@@ -91,5 +91,12 @@
     const didStart = qrScanner
 		.start({ facingMode: "user" }, config, qrCodeSuccessCallback)
 		.then(() => true);
+
+	// audio event
+	htmx.on('htmx:afterSwap', function(event) {
+		var audio = document.getElementById('myAudio');
+		audio.muted = false;
+		audio.play();
+	});
 </script>
 {% endblock %}

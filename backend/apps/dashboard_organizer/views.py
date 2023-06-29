@@ -1003,12 +1003,22 @@ class EventScanner(DetailView):
     slug_url_kwarg = "scanner_id"
     template_name = "dashboard_organizer/scanner.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=self.object.team))
+        return context
+
 
 class EventScanner2(DetailView):
     model = Event
     slug_field = "scanner_id"
     slug_url_kwarg = "scanner_id"
     template_name = "dashboard_organizer/scanner2.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=self.object.team))
+        return context
 
     def post(self, *args, **kwargs):
         # Set event object

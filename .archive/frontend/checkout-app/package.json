@@ -54,7 +54,7 @@
     "rome": "12.0.0",
     "ts-node": "^10.5.0",
     "typescript": "^5.0.4",
-    "vite": "4.2.1"
+    "vite": "4.2.3"
   },
   "resolutions": {
     "ethereumjs-abi": "https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz"

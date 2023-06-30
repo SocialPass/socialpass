@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView, View
@@ -1028,28 +1028,46 @@ class EventScanner2(DetailView):
         # Get embed code & Check for valid UUID
         embed_code = self.request.POST.get("embed_code")
         if not embed_code:
-            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
+            return render(
+                self.request, template_name="dashboard_organizer/scanner_error.html"
+            )
         try:
             embed_code = uuid.UUID(str(embed_code))
         except ValueError:
-           return render(self.request, template_name="dashboard_organizer/scanner_error.html")
+            return render(
+                self.request, template_name="dashboard_organizer/scanner_error.html"
+            )
 
         # Retrieve ticket
         try:
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
-            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
+            return render(
+                self.request, template_name="dashboard_organizer/scanner_error.html"
+            )
 
         # Redeem ticket
         try:
             ticket.redeem_ticket(self.object.scanner_id)
         except exceptions.ForbiddenRedemptionError:
             context["message"] = "Not an authorized scanner!"
-            return render(self.request, template_name="dashboard_organizer/scanner_error.html", context=context)
+            return render(
+                self.request,
+                template_name="dashboard_organizer/scanner_error.html",
+                context=context,
+            )
         except exceptions.AlreadyRedeemedError:
             context["message"] = "Ticket already scanned!"
-            return render(self.request, template_name="dashboard_organizer/scanner_error.html", context=context)
+            return render(
+                self.request,
+                template_name="dashboard_organizer/scanner_error.html",
+                context=context,
+            )
 
         # OK
-        context['ticket'] = ticket
-        return render(self.request, template_name="dashboard_organizer/scanner_success.html", context=context)
+        context["ticket"] = ticket
+        return render(
+            self.request,
+            template_name="dashboard_organizer/scanner_success.html",
+            context=context,
+        )

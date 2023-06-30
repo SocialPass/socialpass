@@ -4,7 +4,7 @@ argon2-cffi==21.3.0 # https://github.com/hynek/argon2-cffi
 boto3==1.26.153 # https://github.com/boto/boto3
 eth-account==0.9.0 # https://github.com/ethereum/eth-account
 eth-utils==2.1.1 # https://github.com/ethereum/eth-utils
-Faker==18.10.1 # https://github.com/joke2k/faker
+Faker==18.11.2 # https://github.com/joke2k/faker
 google-api-python-client==2.88.0 # https://github.com/googleapis/google-api-python-client
 model-bakery==1.12.0 # https://github.com/model-bakers/model_bakery
 Pillow==9.5.0 # https://github.com/python-pillow/Pillow

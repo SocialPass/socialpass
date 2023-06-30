@@ -2,6 +2,15 @@
 {% load static %}
 
 {% block content %}
+<style>
+	#fade-me-in.htmx-added {
+	   opacity: 0;
+	 }
+	 #fade-me-in {
+	   opacity: 1;
+	   transition: opacity 0.5s ease-in;
+	 }
+</style>
 <div class="mt-auto">
 	<!-- Event Info -->
 	<div class="content text-on-primary mt-0">

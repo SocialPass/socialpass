@@ -1023,6 +1023,7 @@ class EventScanner2(DetailView):
     def post(self, *args, **kwargs):
         # Set event object
         self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
 
         # Get embed code & Check for valid UUID
         embed_code = self.request.POST.get("embed_code")
@@ -1043,11 +1044,12 @@ class EventScanner2(DetailView):
         try:
             ticket.redeem_ticket(self.object.scanner_id)
         except exceptions.ForbiddenRedemptionError:
-            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
+            context["message"] = "Not an authorized scanner!"
+            return render(self.request, template_name="dashboard_organizer/scanner_error.html", context=context)
         except exceptions.AlreadyRedeemedError:
-            return render(self.request, template_name="dashboard_organizer/scanner_error.html")
+            context["message"] = "Ticket already scanned!"
+            return render(self.request, template_name="dashboard_organizer/scanner_error.html", context=context)
 
         # OK
-        context = super().get_context_data(**kwargs)
         context['ticket'] = ticket
         return render(self.request, template_name="dashboard_organizer/scanner_success.html", context=context)

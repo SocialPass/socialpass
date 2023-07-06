@@ -178,6 +178,7 @@
 .btn-link:active,
 .btn-link:focus-visible {
 	background-color: var(--bs-primary-bg-subtle);
+	border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25);
 	text-decoration: none;
 }
 

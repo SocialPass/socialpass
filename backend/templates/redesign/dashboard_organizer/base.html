@@ -1,4 +1,4 @@
-{% load static i18n get_debug_status get_user_primary_email get_theme_value %}
+{% load static i18n get_debug_status get_user_primary_email get_theme_value get_other_teams %}
 
 <!DOCTYPE html>
 {% get_debug_status as debug %}
@@ -40,9 +40,24 @@
 
 		<!-- Custom styles -->
 		<style type="text/css">
+			#sidebar {
+				width: 320px;
+				max-width: 100%;
+				border-right: 0;
+			}
+
 			@media (min-width: 1200px) {
 				body {
-					padding-left: 300px;
+					padding-left: 320px;
+				}
+
+				#sidebar {
+					position: fixed;
+					top: 0;
+					left: 0;
+					height: 100%;
+					background-color: var(--bs-content-bg) !important;
+					overflow-y: auto;
 				}
 			}
 		</style>
@@ -66,47 +81,120 @@
 		{% block body %}{% endblock body %}
 
 		<!-- Sidebar start -->
-		<div class="offcanvas-xl offcanvas-start position-fixed top-0 start-0 h-100 border-end specific-w-xl-300" tabindex="-1" id="sidebar">
-		  <div class="offcanvas-header d-xl-flex">
-		    <a class="navbar-brand" href="#">
-      <img src="..." alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
-      SocialPass
-    </a>
-		    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-		  </div>
-		  <div class="offcanvas-body">
-		  	Hello
-		  </div>
+		<div class="offcanvas-xl offcanvas-start" tabindex="-1" id="sidebar">
+			<div class="offcanvas-header d-flex align-items-center justify-content-start border-bottom border-secondary border-opacity-25" style="height: 68px;">
+				<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block me-auto">
+				<button type="button" class="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" style="width: 37px;">
+					<i class="fa-solid fa-moon"></i>
+				</button>
+				<button type="button" class="btn-close d-xl-none ms-2" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#sidebar"></button>
+			</div>
+			<div class="offcanvas-body p-3 flex-column">
+				<div class="dropdown-center w-100">
+					<button class="btn btn-secondary btn-lg d-flex align-items-center w-100 text-body bg-primary-subtle border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+						{% if current_team.image %}
+						<div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden my-2" style="width: 40px; height: 40px;">
+							<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
+						</div>
+						{% else %}
+						<div class="rounded-circle d-flex align-items-center justify-content-center text-bg-primary flex-shrink-0 my-2" style="width: 40px; height: 40px;">
+							<span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+						</div>
+						{% endif %}
+						<h6 class="mb-0 mx-3 text-truncate">{{ current_team.name }}</h6>
+						<i class="fa-light fa-angle-down ms-auto"></i>
+					</button>
+					<ul class="dropdown-menu w-100">
+						<li><h6 class="dropdown-header">{% trans "Switch Teams..." %}</h6></li>
+						{% get_other_teams current_team.public_id as other_teams %}
+						{% if other_teams|length > 0 %}
+						{% for team in other_teams %}
+						<li>
+							<a href="{% url 'dashboard_organizer:event_list' team.public_id %}" class="dropdown-item text-truncate">
+								{{ team.name }}
+							</a>
+						</li>
+						{% endfor %}
+						{% else %}
+						<li><span class="dropdown-item-text text-body-secondary">None found</span></li>
+						{% endif %}
+						<li><hr class="dropdown-divider"></li>
+						<li>
+							<a href="{% url 'dashboard_organizer:team_create' %}" class="dropdown-item d-flex align-items-center fw-bold text-primary-emphasis">
+								<i class="fa-light fa-plus-circle specific-w-25 flex-shrink-0"></i>
+								{% trans "Create Team" %}
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="text-body-secondary text-uppercase mt-4">
+					<small>{% trans "Events Manager" %}</small>
+				</div>
+				<a href="{% url 'dashboard_organizer:event_create' current_team.public_id %}" class="btn btn-link d-flex align-items-center w-100 mt-2 text-start">
+					<i class="fa-light fa-plus-circle flex-shrink-0" style="width: 32px;"></i>
+					{% trans "Create an Event" %}
+				</a>
+				<a href="{% url 'dashboard_organizer:event_list' current_team.public_id %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+					<i class="fa-light fa-party-horn flex-shrink-0" style="width: 32px;"></i>
+					{% trans "Events" %}
+				</a>
+				<div class="text-body-secondary text-uppercase mt-4">
+					<small>{% trans "Team Manager" %}</small>
+				</div>
+				<a href="{% url 'dashboard_organizer:team_detail' current_team.public_id %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+					<i class="fa-light fa-cog flex-shrink-0" style="width: 32px;"></i>
+					{% trans "Team Details" %}
+				</a>
+				<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+					<i class="fa-light fa-users flex-shrink-0" style="width: 32px;"></i>
+					{% trans "Manage Members" %}
+				</a>
+				<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+					<i class="fa-light fa-wallet flex-shrink-0" style="width: 32px;"></i>
+					{% trans "Payment Details" %}
+				</a>
+				<div class="text-body-secondary text-uppercase mt-4">
+					<small>{% trans "Support" %}</small>
+				</div>
+				<a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+					<i class="fa-light fa-question-circle flex-shrink-0" style="width: 32px;"></i>
+					{% trans "Help Center" %}
+				</a>
+				<a href="https://blog.socialpass.io/" target="_blank" rel="noreferrer" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+					<i class="fa-light fa-edit flex-shrink-0" style="width: 32px;"></i>
+					{% trans "Blog" %}
+				</a>
+			</div>
 		</div>
 		<!-- Sidebar end -->
 
 		<!-- Navbar start -->
-		<div class="px-3 py-1 py-xl-3 border-bottom border-secondary border-opacity-25">
-			<div class="container g-0 d-flex align-items-center">
-				<button class="btn btn-link d-xl-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Toggle sidebar">
-				  	<i class="fa-solid fa-bars"></i>
+		<div class="px-3 border-bottom border-secondary border-opacity-25" style="height: 68px;">
+			<div class="container g-0 d-flex align-items-center h-100">
+				<button class="btn btn-link px-0 d-xl-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Toggle sidebar" style="width: 37px;">
+					<i class="fa-solid fa-bars"></i>
 				</button>
-				<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass logo" height="52" class="d-block d-xl-none me-3">
+				<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Logo" height="52" class="d-block d-xl-none me-3">
 				<h5 class="mb-0 me-3 d-none d-md-block text-truncate">
 					{% block navbar_title %}{% endblock navbar_title %}
 				</h5>
 				<div class="dropdown ms-auto">
-				  	<button class="btn btn-primary rounded-pill" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="My account">
-				  		<i class="fa-solid fa-user"></i>
-				  	</button>
-				  	<ul class="dropdown-menu dropdown-menu-end">
-				  		<li>
-				  			<div class="dropdown-item-text">
-					  			<h6 class="mb-0 text-truncate">
-					  				{{ request.user.username }}
-					  			</h6>
+					<button class="btn btn-primary rounded-pill px-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="My account" style="width: 37px;">
+						<i class="fa-solid fa-user"></i>
+					</button>
+					<ul class="dropdown-menu dropdown-menu-end">
+						<li>
+							<div class="dropdown-item-text">
+								<h6 class="mb-0 text-truncate">
+									{{ request.user.username }}
+								</h6>
 								<p class="text-body-secondary mb-0 text-truncate">
 									<small>{% get_user_primary_email %}</small>
 								</p>
 							</div>
-				  		</li>
-				  		<li><hr class="dropdown-divider"></li>
-				  		<li>
+						</li>
+						<li><hr class="dropdown-divider"></li>
+						<li>
 							<a href="{% url 'account_change_password' %}" class="dropdown-item d-flex align-items-center">
 								<i class="fa-light fa-key specific-w-25 flex-shrink-0"></i>
 								{% trans "Change Password" %}
@@ -125,7 +213,7 @@
 								{% trans "Sign Out" %}
 							</a>
 						</li>
-				  	</ul>
+					</ul>
 				</div>
 			</div>
 		</div>

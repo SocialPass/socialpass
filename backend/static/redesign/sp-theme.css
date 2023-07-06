@@ -142,7 +142,7 @@
 	--bs-action-sm-padding-x: 0.5rem;
 	--bs-action-sm-padding-y: 0.25rem;
 	--bs-action-lg-padding-x: 0.75rem;
-	--bs-action-lg-padding-y: 0.4375rem;
+	--bs-action-lg-padding-y: 0.5rem;
 
 	/* Form */
 
@@ -177,8 +177,8 @@
 .btn-link:hover,
 .btn-link:active,
 .btn-link:focus-visible {
-	background-color: var(--bs-primary-bg-subtle);
-	border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25);
+	background-color: var(--bs-primary-bg-subtle) !important;
+	border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25) !important;
 	text-decoration: none;
 }
 

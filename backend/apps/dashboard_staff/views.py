@@ -124,7 +124,7 @@ class StatsPageView(TemplateView):
 
         ## Attendees (Tickets Scanned)
         attendees_weekly = list(
-            Ticket.objects.filter(redeemed=True)
+            Ticket.objects.filter(redeemed_at__isnull=False)
             .annotate(week=ExtractWeek("created"))
             .values("week")
             .annotate(total=Count("id"))

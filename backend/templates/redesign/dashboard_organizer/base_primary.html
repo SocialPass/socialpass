@@ -1,0 +1,446 @@
+{% extends "bases/base.html" %}
+{% load static get_preferred_color_scheme get_user_primary_email get_other_teams get_sidebar_active_status get_theme_value %}
+
+{% block html_class %}socialpass-dashboard {% get_preferred_color_scheme %}{% endblock html_class %}
+
+{% block extra_head %}
+<!-- Custom styles -->
+
+<style type="text/css">
+	:root {
+		--sidebar-width: 28rem;
+	}
+
+	.sidebar-header-link {
+		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+		border-bottom: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+
+	.dark-mode .sidebar-header-link {
+		border-top-color: transparent;
+	}
+
+	.sidebar-copyright {
+		border-top: var(--base-border-width) var(--base-border-style) hsla(var(--white-color-hsl), 0.15);
+	}
+
+	.ws-260 {
+		width: 26rem !important;
+	}
+
+	@media (min-width: 993px) {
+		.border-lg-end {
+			border-right: var(--base-border-width) var(--base-border-style) var(--border-color) !important;
+		}
+	}
+
+	.list-table th:first-child,
+	.list-table td:first-child {
+		padding-left: var(--content-and-card-spacing);
+	}
+
+	.list-table th:last-child,
+	.list-table td:last-child {
+		padding-right: var(--content-and-card-spacing);
+	}
+
+	#gmap-container .panel {
+		background-color: var(--content-bg-color);
+	}
+
+	.asteriskField {
+		display: none;
+	}
+
+	.event-list-item:hover {
+		background-color: var(--primary-color-very-light);
+	}
+
+	.dark-mode .event-list-item:hover {
+		background-color: var(--primary-color-very-dim);
+	}
+
+	/* Image on forms */
+
+	#div_id_cover_image,
+	#div_id_image {
+		margin-bottom: 2rem;
+	}
+
+	#div_id_cover_image .input-group,
+	#div_id_image .input-group {
+		margin-bottom: 1rem;
+	}
+
+	#div_id_cover_image .input-group .input-group-text,
+	#div_id_cover_image .input-group .form-control,
+	#div_id_cover_image .input-group .text-break,
+	#div_id_image .input-group .input-group-text,
+	#div_id_image .input-group .form-control,
+	#div_id_image .input-group .text-break {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* Tabs */
+
+	:root {
+		--tab-item-horizontal-margin: 0;
+
+		--tab-link-padding: 1.2rem;
+		--tab-link-border-width: 0 0 var(--base-border-width) 0;
+		--tab-link-border-radius: var(--base-border-radius) var(--base-border-radius) 0 0;
+
+		--tab-link-active-bg-color: var(--primary-color-very-light);
+	}
+
+	.dark-mode {
+		--tab-link-active-bg-color: var(--primary-color-very-dim);
+	}
+</style>
+
+{% if request.resolver_match.url_name == 'event_create' or request.resolver_match.url_name == 'event_update' %}
+	{{ form.media }}
+	<!-- Quill CSS overrides -->
+	<link href="{% static 'quill-text-editor/quill.snow.css' %}" rel="stylesheet">
+{% endif %}
+
+{% endblock extra_head %}
+
+{% block body %}
+<!-- Modals start -->
+<div class="modal" tabindex="-1" id="discord-support-ticket-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<button class="btn close" aria-label="Close" data-hm-dismiss="modal">&times;</button>
+			<div class="ws-50 hs-50 d-flex align-items-center justify-content-center text-white rounded-circle mx-auto fs-base-p12" style="background-color: #7289d9;">
+				<i class="fa-brands fa-discord"></i>
+			</div>
+			<h5 class="modal-title text-center mt-20">Support Ticket</h5>
+			<p class="text-center">
+				Need help? Please use the following link to create a ticket on the <code>#support-ticket</code> channel in our Discord server.
+			</p>
+			<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+				<a href="https://discord.com/channels/1062852686015369289/1063885474294403112" class="fw-bold antialiased" target="_blank">
+					<i class="fa-regular fa-external-link"></i>
+					<span class="ms-5">https://discord.com/channels/1062852686015369289/1063885474294403112</span>
+				</a>
+			</div>
+			<p class="text-center">
+				Once the ticket has been created, our team will reach out to you ASAP.
+			</p>
+		</div>
+	</div>
+</div>
+{% block modals %}{% endblock modals %}
+<!-- Modals end -->
+
+<!-- Page wrapper start -->
+<div class="page-wrapper with-navbar with-sidebar" data-hm-sidebar-type="overlayed-md-down">
+	<!-- Sticky alerts start -->
+	<div class="sticky-alerts">
+		{% include "bases/toast_messages.html" %}
+		{% block sticky_alerts %}{% endblock sticky_alerts %}
+	</div>
+	<!-- Sticky alerts end -->
+
+	<!-- Navbar start -->
+	<div class="navbar d-flex align-items-center px-15 py-10">
+		<!-- Sidebar toggle start -->
+		<button type="button" class="btn btn-primary btn-sm btn-square me-20 d-md-none" data-hm-toggle="sidebar">
+			<i class="fa-regular fa-bars"></i>
+			<span class="visually-hidden">Toggle sidebar</span>
+		</button>
+		<!-- Sidebar toggle end -->
+
+		<!-- Branding start -->
+		<img src="{% get_theme_value 'logo' %}" class="h-100 flex-shrink-0 pe-none me-20" alt="Brand Logo">
+		<!-- Branding end -->
+
+		<!-- Navbar breadcrumb start -->
+		<div class="flex-shrink-0 d-none d-sm-block">
+			{% get_theme_value "brand_name" %}
+			<i class="fa-regular fa-angle-right mx-10"></i>
+			{% block navbar_breadcrumb %}{% endblock navbar_breadcrumb %}
+		</div>
+		<!-- Navbar breadcrumb end -->
+
+		<!-- Navbar controls start -->
+		<div class="ms-auto d-flex align-items-center">
+			<!-- Home page link start -->
+			<a href="{% url 'marketing:index' %}" class="btn btn-primary btn-sm btn-rounded me-10">
+				<strong class="antialiased"><span class="d-none d-sm-inline">Go to </span>Home</strong>
+				<i class="fa-regular fa-external-link-alt ms-5"></i>
+			</a>
+			<!-- Home page link end -->
+
+			<!-- Dark mode toggle start -->
+			<button type="button" class="btn btn-primary btn-sm btn-square me-10" data-hm-toggle="dark-mode">
+				<i class="fa-solid fa-moon"></i>
+				<span class="visually-hidden">Toggle dark mode</span>
+			</button>
+			<!-- Dark mode toggle end -->
+
+			<!-- User dropdown start -->
+			<div class="dropdown with-arrow">
+				<button type="button" class="btn btn-secondary btn-sm btn-square btn-rounded" id="user-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+					<i class="fa-solid fa-user"></i>
+					<span class="visually-hidden">Toggle user dropdown</span>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end rounded-3 ws-250 p-10" aria-labelledby="user-dropdown-toggle">
+					<li class="dropdown-content d-flex align-items-center">
+						<div class="ws-50 hs-50 rounded-circle d-flex align-items-center justify-content-center bg-secondary text-on-secondary flex-shrink-0">
+							<span class="text-uppercase fs-base-p8 fw-bold">{{ request.user.username|slice:"0:1" }}</span>
+						</div>
+						<div class="ps-20 overflow-hidden">
+							<h6 class="fs-base-p2 m-0 text-truncate">{{ request.user.username }}</h6>
+							<p class="text-muted fs-base-n2 m-0 text-truncate">{% get_user_primary_email %}</p>
+						</div>
+					</li>
+					<li class="dropdown-divider"></li>
+					<li>
+						<a href="{% url 'account_change_password' %}" class="dropdown-item d-flex align-items-center">
+							<span class="ws-25">
+								<i class="fa-regular fa-key"></i>
+							</span>
+							<span class="ms-10">Change Password</span>
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'account_email' %}" class="dropdown-item d-flex align-items-center">
+							<span class="ws-25">
+								<i class="fa-regular fa-envelope"></i>
+							</span>
+							<span class="ms-10">Manage Emails</span>
+						</a>
+					</li>
+					<li class="dropdown-divider"></li>
+					<li class="dropdown-content">
+						<a href="{% url 'account_logout' %}" class="btn btn-danger btn-block">
+							<i class="fa-regular fa-sign-out"></i>
+							<span class="ms-5">Sign Out</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!-- User dropdown end -->
+		</div>
+		<!-- Navbar controls end -->
+	</div>
+	<!-- Navbar end -->
+
+	<!-- Sidebar start -->
+	<nav class="sidebar">
+		{% if current_team %}
+			<!-- Current team theme start -->
+			<input type="hidden" id="current_team_theme" name="variable" value="{{ current_team.theme }}">
+			<!-- Current team theme end -->
+
+			<!-- Sidebar team dropdown start -->
+			<div class="sidebar-menu mt-0">
+				<div class="dropdown w-100">
+					<a href="#" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20" id="team-dropdown-toggle" data-hm-toggle="dropdown" aria-expanded="false">
+						<div class="overflow-hidden">
+							<h6 class="fs-base-p6 m-0 text-truncate fw-700">{{ current_team.name }}</h6>
+							<p class="fs-base-n2 mt-5 mb-0 text-truncate">{% get_user_primary_email %}</p>
+						</div>
+						<div class="text-end flex-shrink-0 ws-25 ms-auto">
+							<i class="fa-regular fa-angle-down"></i>
+						</div>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-center rounded-3 ws-260 p-10" aria-labelledby="team-dropdown-toggle">
+						<li class="dropdown-content d-flex align-items-center">
+							{% if current_team.image %}
+								<div class="ws-50 hs-50 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
+									<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
+								</div>
+							{% else %}
+								<div class="ws-50 hs-50 rounded-2 d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0">
+									<span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+								</div>
+							{% endif %}
+							<div class="ps-20 overflow-hidden">
+								<h6 class="fs-base-p2 m-0 text-truncate">{{ current_team.name }}</h6>
+								<p class="text-muted fs-base-n2 m-0 text-truncate">{% get_user_primary_email %}</p>
+							</div>
+						</li>
+						<li class="dropdown-divider"></li>
+						<li>
+							<a href="{% url 'dashboard_organizer:team_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-flag"></i>
+								</span>
+								<span class="ms-10">Team Details</span>
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-lock"></i>
+								</span>
+								<span class="ms-10">Manage Members</span>
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-money-check-dollar"></i>
+								</span>
+								<span class="ms-10">Payment Details</span>
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}#add-member" class="dropdown-item d-flex align-items-center">
+								<span class="ws-25">
+									<i class="fa-regular fa-user-plus"></i>
+								</span>
+								<span class="ms-10">Add Member</span>
+							</a>
+						</li>
+						<li class="dropdown-divider"></li>
+						{% get_other_teams current_team.public_id as other_teams %}
+						{% if other_teams|length > 0 %}
+							<li class="dropdown-header fs-base-n2">
+								<i class="fa-regular fa-arrows-repeat text-primary me-5"></i>
+								Switch Team
+							</li>
+							{% for team in other_teams %}
+								<li>
+									<a href="{% url 'dashboard_organizer:event_list' team.public_id %}" class="dropdown-item text-truncate">
+										{{ team.name }}
+									</a>
+								</li>
+							{% endfor %}
+						{% endif %}
+						<li class="dropdown-content">
+							<a href="{% url 'dashboard_organizer:team_create' %}" class="btn btn-primary btn-block">
+								<i class="fa-solid fa-plus"></i>
+								<span class="ms-5">Create Team</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- Sidebar team dropdown end -->
+
+			<!-- Events manager start -->
+			<div class="sidebar-menu">
+				<div class="position-relative">
+					<h6 class="sidebar-title fs-base-n2">
+						Events Manager
+					</h6>
+					<a href="{% url 'dashboard_organizer:event_create' current_team.public_id %}" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Create Event" data-hm-breakpoint="md">
+						<i class="fa-solid fa-plus"></i>
+						<span class="visually-hidden">Create Event</span>
+					</a>
+				</div>
+				<a href="{% url 'dashboard_organizer:event_list' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'events' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-calendar"></i>
+					</span>
+					<span class="ms-5">Events</span>
+				</a>
+			</div>
+			<!-- Events manager end -->
+
+			<!-- Team start -->
+			<div class="sidebar-menu mt-40">
+				<div class="position-relative">
+					<h6 class="sidebar-title fs-base-n2">
+						Team
+					</h6>
+					<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}#add-member" class="btn btn-alt btn-sm lh-1 p-5 me-10 position-absolute top-50 end-0 translate-y-middle" data-hm-toggle="tooltip" data-hm-placement="start" data-hm-title="Add Member" data-hm-breakpoint="md">
+						<i class="fa-solid fa-plus"></i>
+						<span class="visually-hidden">Add Member</span>
+					</a>
+				</div>
+				<a href="{% url 'dashboard_organizer:team_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'team-details' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-flag"></i>
+					</span>
+					<span class="ms-5">Team Details</span>
+				</a>
+				<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-members' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-lock"></i>
+					</span>
+					<span class="ms-5">Manage Members</span>
+				</a>
+				<a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'payment-details' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-money-check-dollar"></i>
+					</span>
+					<span class="ms-5">Payment Details</span>
+				</a>
+			</div>
+			<!-- Team end -->
+		{% else %}
+			<!-- Sidebar main dashboard link start -->
+			<div class="sidebar-menu mt-0">
+				<a href="{% url 'dashboard_organizer:dashboard_redirect' %}" class="sidebar-link sidebar-header-link d-flex align-items-center hs-100 py-15 pe-20">
+					<div class="me-15">
+						<i class="fa-regular fa-angle-left"></i>
+					</div>
+					<div class="overflow-hidden">
+						<h6 class="fs-base-p6 m-0 text-truncate fw-700">Events Manager</h6>
+						<p class="fs-base-n2 mt-5 mb-0 text-truncate">Go back to main dashboard</p>
+					</div>
+				</a>
+			</div>
+			<!-- Sidebar main dashboard link end -->
+
+			<!-- Account start -->
+			<div class="sidebar-menu">
+				<h6 class="sidebar-title fs-base-n2">
+					Account
+				</h6>
+				<a href="{% url 'account_change_password' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'change-password' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-key"></i>
+					</span>
+					<span class="ms-5">Change Password</span>
+				</a>
+				<a href="{% url 'account_email' %}" class="sidebar-link d-flex align-items-center {% get_sidebar_active_status 'manage-emails' %}">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-envelope"></i>
+					</span>
+					<span class="ms-5">Manage Emails</span>
+				</a>
+			</div>
+			<!-- Account end -->
+		{% endif %}
+	</nav>
+	<!-- Sidebar end -->
+
+	<!-- Content wrapper start -->
+	<div class="content-wrapper min-vh-100 d-flex flex-column">
+		<!-- Main container start -->
+		<div class="py-content pt-0">
+			{% block content %}{% endblock content %}
+		</div>
+		<!-- Main container end -->
+
+		<!-- Footer start -->
+		<div class="px-content fs-base-n4 mt-auto border-top border-bottom-0 border-start-0 border-end-0 border-dotted hs-50 d-flex align-items-center justify-content-end">
+			&copy; {% now "Y" %}, SocialPass. All rights reserved
+		</div>
+		<!-- Footer end -->
+	</div>
+	<!-- Content wrapper end -->
+</div>
+<!-- Page wrapper end -->
+
+{% if current_team %}
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+	<script type="text/javascript">
+		var currentTeamThemeValue = document.getElementById("current_team_theme").value;
+		if (currentTeamThemeValue !== "None") {
+			var currentTeamTheme = JSON.parse(currentTeamThemeValue.replace(/'/g, '"'));
+			Cookies.set("whiteLabelTheme", JSON.stringify(currentTeamTheme));
+		} else {
+			Cookies.remove("whiteLabelTheme");
+		}
+	</script>
+{% endif %}
+{% endblock body %}

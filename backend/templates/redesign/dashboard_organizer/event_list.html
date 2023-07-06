@@ -1,0 +1,6 @@
+{% extends "redesign/dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email %}
+
+{% block head_title %}{% trans "Events" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}{% trans "Events by" %} <span class="text-primary-emphasis">{{ current_team }}</span>{% endblock navbar_title %}

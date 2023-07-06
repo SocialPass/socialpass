@@ -351,7 +351,7 @@ class EventListView(TeamContextMixin, ListView):
     paginate_by = 15
     ordering = ["-modified"]
     context_object_name = "events"
-    template_name = "dashboard_organizer/event_list.html"
+    template_name = "redesign/dashboard_organizer/event_list.html"
 
     def get(self, *args, **kwargs):
         qs = self.get_queryset()

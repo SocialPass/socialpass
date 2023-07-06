@@ -1,0 +1,229 @@
+/**
+ * ----------------------------------------------------------------------------
+ * [ Color palette ]
+ * ----------------------------------------------------------------------------
+ */
+
+:root,
+[data-bs-theme=light] {
+	/* SocialPass turquoise */
+
+	--sp-turquoise-hue: 198;
+	--sp-turquoise-saturation: 45%;
+	--sp-turquoise-100-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 90%;
+	--sp-turquoise-200-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 80%;
+	--sp-turquoise-300-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 70%;
+	--sp-turquoise-400-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 60%;
+	--sp-turquoise-500-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 50%;
+	--sp-turquoise-600-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 40%;
+	--sp-turquoise-700-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 30%;
+	--sp-turquoise-800-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 20%;
+	--sp-turquoise-900-hsl: var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 10%;
+	--sp-turquoise-100: hsl(var(--sp-turquoise-100-hsl));
+	--sp-turquoise-200: hsl(var(--sp-turquoise-200-hsl));
+	--sp-turquoise-300: hsl(var(--sp-turquoise-300-hsl));
+	--sp-turquoise-400: hsl(var(--sp-turquoise-400-hsl));
+	--sp-turquoise-500: hsl(var(--sp-turquoise-500-hsl));
+	--sp-turquoise-600: hsl(var(--sp-turquoise-600-hsl));
+	--sp-turquoise-700: hsl(var(--sp-turquoise-700-hsl));
+	--sp-turquoise-800: hsl(var(--sp-turquoise-800-hsl));
+	--sp-turquoise-900: hsl(var(--sp-turquoise-900-hsl));
+	--sp-turquoise-hsl: var(--sp-turquoise-500-hsl);
+	--sp-turquoise: hsl(var(--sp-turquoise-hsl));
+	--sp-turquoise-foreground-hsl: var(--bs-white-hsl);
+	--sp-turquoise-foreground: hsl(var(--sp-turquoise-foreground-hsl));
+	--sp-turquoise-text-emphasis-hsl: var(--sp-turquoise-600-hsl);
+	--sp-turquoise-text-emphasis: hsl(var(--sp-turquoise-text-emphasis-hsl));
+	--sp-turquoise-hover-bg: var(--sp-turquoise-600);
+	--sp-turquoise-active-bg: var(--sp-turquoise-700);
+	--sp-turquoise-bg-subtle: hsl(var(--sp-turquoise-hue), var(--sp-turquoise-saturation), 95%);
+	--sp-turquoise-border-subtle: var(--sp-turquoise-400);
+	--sp-turquoise-checkbox-svg: var(--bs-checkbox-svg-light);
+	--sp-turquoise-dash-svg: var(--bs-dash-svg-light);
+	--sp-turquoise-radio-svg: var(--bs-radio-svg-light);
+	--sp-turquoise-switch-svg: var(--bs-switch-svg-light);
+
+	/* Primary */
+
+	--bs-primary-hue: var(--sp-turquoise-hue);
+	--bs-primary-saturation: var(--sp-turquoise-saturation);
+	--bs-primary-100-hsl: var(--sp-turquoise-100-hsl);
+	--bs-primary-200-hsl: var(--sp-turquoise-200-hsl);
+	--bs-primary-300-hsl: var(--sp-turquoise-300-hsl);
+	--bs-primary-400-hsl: var(--sp-turquoise-400-hsl);
+	--bs-primary-500-hsl: var(--sp-turquoise-500-hsl);
+	--bs-primary-600-hsl: var(--sp-turquoise-600-hsl);
+	--bs-primary-700-hsl: var(--sp-turquoise-700-hsl);
+	--bs-primary-800-hsl: var(--sp-turquoise-800-hsl);
+	--bs-primary-900-hsl: var(--sp-turquoise-900-hsl);
+	--bs-primary-100: var(--sp-turquoise-100);
+	--bs-primary-200: var(--sp-turquoise-200);
+	--bs-primary-300: var(--sp-turquoise-300);
+	--bs-primary-400: var(--sp-turquoise-400);
+	--bs-primary-500: var(--sp-turquoise-500);
+	--bs-primary-600: var(--sp-turquoise-600);
+	--bs-primary-700: var(--sp-turquoise-700);
+	--bs-primary-800: var(--sp-turquoise-800);
+	--bs-primary-900: var(--sp-turquoise-900);
+	--bs-primary-hsl: var(--sp-turquoise-hsl);
+	--bs-primary: var(--sp-turquoise);
+	--bs-primary-foreground-hsl: var(--sp-turquoise-foreground-hsl);
+	--bs-primary-foreground: var(--sp-turquoise-foreground);
+	--bs-primary-text-emphasis-hsl: var(--sp-turquoise-text-emphasis-hsl);
+	--bs-primary-text-emphasis: var(--sp-turquoise-text-emphasis);
+	--bs-primary-hover-bg: var(--sp-turquoise-hover-bg);
+	--bs-primary-active-bg: var(--sp-turquoise-active-bg);
+	--bs-primary-bg-subtle: var(--sp-turquoise-bg-subtle);
+	--bs-primary-border-subtle: var(--sp-turquoise-border-subtle);
+	--bs-primary-checkbox-svg: var(--sp-turquoise-checkbox-svg);
+	--bs-primary-dash-svg: var(--sp-turquoise-dash-svg);
+	--bs-primary-radio-svg: var(--sp-turquoise-radio-svg);
+	--bs-primary-switch-svg: var(--sp-turquoise-switch-svg);
+}
+
+[data-bs-theme=dark] {
+	/* SocialPass turquoise */
+
+	--sp-turquoise-text-emphasis-hsl: var(--sp-turquoise-400-hsl);
+	--sp-turquoise-text-emphasis: hsl(var(--sp-turquoise-text-emphasis-hsl));
+	--sp-turquoise-bg-subtle: hsl(var(--sp-turquoise-hue), calc(var(--sp-turquoise-saturation)/3), 15%);
+	--sp-turquoise-border-subtle: var(--sp-turquoise-600);
+
+	/* Primary */
+
+	--bs-primary-text-emphasis-hsl: var(--sp-turquoise-text-emphasis-hsl);
+	--bs-primary-text-emphasis: var(--sp-turquoise-text-emphasis);
+	--bs-primary-bg-subtle: var(--sp-turquoise-bg-subtle);
+	--bs-primary-border-subtle: var(--sp-turquoise-border-subtle);
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Variables ]
+ * ----------------------------------------------------------------------------
+ */
+
+@font-face {
+	font-family: "Averta";
+	src: url("AvertaRegular.otf");
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: "Averta";
+	src: url("AvertaBold.otf");
+	font-weight: bold;
+}
+
+:root,
+[data-bs-theme=light] {
+	/* Font family */
+
+	--bs-font-sans-serif: "Averta", sans-serif;
+
+	/* Font size */
+
+	--bs-font-size-base: 1rem;
+	--bs-font-size-sm: 0.875rem;
+	--bs-font-size-lg: 1.125rem;
+	--bs-relative-font-size-sm: 0.875em; 	/* 14px */
+	--bs-relative-font-size-xs: 0.75em; 	/* 12px */
+	--bs-relative-font-size-2xs: 0.625em; 	/* 10px */
+	--bs-relative-font-size-3xs: 0.5em; 	/* 8px */
+	--bs-relative-font-size-4xs: 0.375em; 	/* 6px */
+	--bs-relative-font-size-5xs: 0.25em; 	/* 4px */
+	--bs-relative-font-size-6xs: 0.125em; 	/* 2px */
+	--bs-relative-font-size-7xs: 0.075em; 	/* 1px */
+
+	/* Action (used as needed in buttons, inputs, menu items, page links, etc.) */
+
+	--bs-action-padding-x: 0.625rem;
+	--bs-action-padding-y: 0.375rem;
+	--bs-action-sm-padding-x: 0.5rem;
+	--bs-action-sm-padding-y: 0.25rem;
+	--bs-action-lg-padding-x: 0.75rem;
+	--bs-action-lg-padding-y: 0.4375rem;
+
+	/* Form */
+
+	--bs-form-focus-border-color: var(--bs-primary-border-subtle);
+	--bs-form-check-focus-border-color: var(--bs-primary-border-subtle);
+}
+
+[data-bs-theme=dark] {
+	/* Action (used as needed in buttons, inputs, menu items, page links, etc.) */
+
+	--bs-action-border-color: var(--bs-border-color);
+
+	/* Contextual buttons */
+
+	--bs-ctx-btn-border-color: transparent;
+	--bs-ctx-btn-bg-clip: border-box;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Buttons ]
+ * ----------------------------------------------------------------------------
+ */
+
+.btn {
+	font-weight: bold;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.btn-link,
+.btn-link:hover,
+.btn-link:active,
+.btn-link:focus-visible {
+	background-color: var(--bs-primary-bg-subtle);
+	text-decoration: none;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Form ]
+ * ----------------------------------------------------------------------------
+ */
+
+/* Floating labels */
+
+.form-floating > .form-control,
+.form-floating > .form-control-plaintext,
+.form-floating > .form-select {
+	padding-top: 1.625rem;
+	padding-bottom: 0.625rem;
+}
+
+.form-floating > .form-control::-moz-placeholder,
+.form-floating > .form-control-plaintext::-moz-placeholder {
+	color: var(--bs-tertiary-color);
+}
+
+.form-floating > .form-control::placeholder,
+.form-floating > .form-control-plaintext::placeholder {
+	color: var(--bs-tertiary-color);
+}
+
+.form-floating > .form-control ~ label,
+.form-floating > .form-control-plaintext ~ label,
+.form-floating > .form-select ~ label {
+	color: var(--bs-secondary-color) !important;
+	transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem) !important;
+}
+
+.form-floating > .form-control:-webkit-autofill ~ label {
+	color: var(--bs-secondary-color) !important;
+	transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem) !important;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Dropdowns ]
+ * ----------------------------------------------------------------------------
+ */
+
+.dropdown-menu {
+	border: 0;
+}

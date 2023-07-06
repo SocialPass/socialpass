@@ -1,0 +1,329 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-06 20:48+0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: backend/apps/dashboard_organizer/apps.py:7
+msgid "Dashboard"
+msgstr ""
+
+#: backend/apps/dashboard_organizer/forms.py:26 backend/apps/root/forms.py:51
+msgid "E-mail"
+msgstr ""
+
+#: backend/apps/root/apps.py:7
+msgid "Root"
+msgstr ""
+
+#: backend/apps/root/forms.py:35
+msgid "This e-mail address has already been invited."
+msgstr ""
+
+#: backend/apps/root/forms.py:37
+msgid "This e-mail address has already accepted an invite."
+msgstr ""
+
+#: backend/apps/root/models.py:239
+msgid "accepted"
+msgstr ""
+
+#: backend/apps/root/models.py:242
+msgid "key"
+msgstr ""
+
+#: backend/apps/root/models.py:244
+msgid "sent"
+msgstr ""
+
+#: backend/apps/root/models.py:324
+msgid "Draft"
+msgstr ""
+
+#: backend/apps/root/models.py:325
+msgid "Live"
+msgstr ""
+
+#: backend/apps/root/models.py:869 backend/apps/root/models.py:872
+msgid "Ethereum"
+msgstr ""
+
+#: backend/apps/root/models.py:873
+msgid "Ethereum (Goerli TestNet)"
+msgstr ""
+
+#: backend/apps/root/models.py:874
+msgid "Ethereum (Sepolia TestNet)"
+msgstr ""
+
+#: backend/apps/root/models.py:875
+msgid "Ethereum (Mumbai TestNet)"
+msgstr ""
+
+#: backend/apps/root/models.py:876
+msgid "Polygon"
+msgstr ""
+
+#: backend/apps/root/models.py:877
+msgid "Binance Smart Chain"
+msgstr ""
+
+#: backend/apps/root/models.py:878
+msgid "Binance Smart Chain (TestNet)"
+msgstr ""
+
+#: backend/apps/root/models.py:879
+msgid "Avalanche"
+msgstr ""
+
+#: backend/apps/root/models.py:880
+msgid "Avalanche (TestNet)"
+msgstr ""
+
+#: backend/apps/root/models.py:881
+msgid "Fantom"
+msgstr ""
+
+#: backend/apps/root/models.py:882
+msgid "Cronos"
+msgstr ""
+
+#: backend/apps/root/models.py:883
+msgid "Cronos (TestNet)"
+msgstr ""
+
+#: backend/apps/root/models.py:884
+msgid "Arbitrum"
+msgstr ""
+
+#: backend/apps/root/models.py:887
+msgid "NFT"
+msgstr ""
+
+#: backend/apps/root/models.py:949
+msgid "Valid"
+msgstr ""
+
+#: backend/apps/root/models.py:950
+msgid "Processing"
+msgstr ""
+
+#: backend/apps/root/models.py:951
+msgid "Failed"
+msgstr ""
+
+#: backend/apps/root/models.py:952
+msgid "Completed"
+msgstr ""
+
+#: backend/apps/root/models.py:953
+msgid "Fulfilled"
+msgstr ""
+
+#: backend/apps/root/models.py:956
+msgid "Fiat"
+msgstr ""
+
+#: backend/apps/root/models.py:957
+msgid "Blockchain"
+msgstr ""
+
+#: backend/apps/root/models.py:958
+msgid "Asset Ownership"
+msgstr ""
+
+#: backend/apps/root/models.py:959
+msgid "Free"
+msgstr ""
+
+#: backend/apps/root/models.py:1396
+msgid "An error has ocurred"
+msgstr ""
+
+#: backend/apps/root/models.py:1410
+msgid "Quantity requested exceeds the queried balance. "
+msgstr ""
+
+#: backend/apps/root/models.py:1460
+msgid "Error recovering address"
+msgstr ""
+
+#: backend/apps/root/models.py:1468
+msgid "Address was recovered, but did not match"
+msgstr ""
+
+#: backend/templates/account/account_inactive.html:5
+#: backend/templates/account/account_inactive.html:8
+msgid "Account Inactive"
+msgstr ""
+
+#: backend/templates/account/account_inactive.html:10
+msgid "This account is inactive."
+msgstr ""
+
+#: backend/templates/account/email/base_message.txt:1
+msgid "Hello from SocialPass!"
+msgstr ""
+
+#: backend/templates/account/email/base_message.txt:5
+msgid "Thank you for using SocialPass!"
+msgstr ""
+
+#: backend/templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this e-mail because user %(user_display)s has given your e-"
+"mail address to register an account on SocialPass.\n"
+"\n"
+"To confirm this is correct, go to %(activate_url)s"
+msgstr ""
+
+#: backend/templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your E-mail Address"
+msgstr ""
+
+#: backend/templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"Yoooo! You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+
+#: backend/templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
+
+#: backend/templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset E-mail"
+msgstr ""
+
+#: backend/templates/account/logout.html:5
+msgid "Sign Out - SocialPass"
+msgstr ""
+
+#: backend/templates/account/logout.html:16
+#: backend/templates/account/logout.html:23
+#: backend/templates/redesign/dashboard_organizer/base.html:213
+msgid "Sign Out"
+msgstr "সাইন আউট"
+
+#: backend/templates/account/logout.html:17
+msgid "Are you sure you want to sign out?"
+msgstr ""
+
+#: backend/templates/account/password_set.html:9
+#: backend/templates/account/password_set.html:12
+#: backend/templates/account/password_set.html:17
+msgid "Set Password"
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:5
+#: backend/templates/account/verified_email_required.html:8
+msgid "Verify Your E-mail Address"
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:12
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your e-mail address. "
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:16
+msgid ""
+"We have sent an e-mail to you for\n"
+"verification. Please click on the link inside this e-mail. Please\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:20
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
+msgstr ""
+
+#: backend/templates/redesign/dashboard_organizer/base.html:13
+msgid "Hosting the Next Generation of Events"
+msgstr "নতুন প্রজন্মের ইভেন্ট হোস্টিং"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:108
+msgid "Switch Teams"
+msgstr "দল পাল্টান"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:119
+msgid "None found"
+msgstr "একটিও পাওয়া যায়নি"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:125
+msgid "Create Team"
+msgstr "দল তৈরি করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:131
+msgid "Events Manager"
+msgstr "ইভেন্ট ম্যানেজার"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:135
+msgid "Create an Event"
+msgstr "একটি ইভেন্ট তৈরি করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:139
+#: backend/templates/redesign/dashboard_organizer/event_list.html:4
+msgid "Events"
+msgstr "ইভেন্ট তালিকা"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:142
+msgid "Team Manager"
+msgstr "দলের ম্যানেজার"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:146
+msgid "Team Details"
+msgstr "দলের বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:150
+msgid "Manage Members"
+msgstr "সদস্যদের পরিচালনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:154
+msgid "Payment Details"
+msgstr "পেমেন্ট বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:157
+msgid "Support"
+msgstr ""
+
+#: backend/templates/redesign/dashboard_organizer/base.html:161
+msgid "Help Center"
+msgstr "সাহায্য কেন্দ্র"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:165
+msgid "Blog"
+msgstr "ব্লগ"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:200
+msgid "Change Password"
+msgstr "পাসওয়ার্ড পরিবর্তন করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:206
+msgid "Manage Emails"
+msgstr "ইমেল পরিচালনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:6
+msgid "Events by"
+msgstr "ইভেন্ট তালিকা"

@@ -105,7 +105,7 @@
 						<i class="fa-light fa-angle-down ms-auto"></i>
 					</button>
 					<ul class="dropdown-menu w-100">
-						<li><h6 class="dropdown-header">{% trans "Switch Teams..." %}</h6></li>
+						<li><h6 class="dropdown-header">{% trans "Switch Teams" %}</h6></li>
 						{% get_other_teams current_team.public_id as other_teams %}
 						{% if other_teams|length > 0 %}
 						{% for team in other_teams %}
@@ -169,8 +169,8 @@
 		<!-- Sidebar end -->
 
 		<!-- Navbar start -->
-		<div class="px-3 border-bottom border-secondary border-opacity-25" style="height: 68px;">
-			<div class="container g-0 d-flex align-items-center h-100">
+		<div class="border-bottom border-secondary border-opacity-25" style="height: 68px;">
+			<div class="container px-3 px-sm-4 d-flex align-items-center h-100">
 				<button class="btn btn-link px-0 d-xl-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Toggle sidebar" style="width: 37px;">
 					<i class="fa-solid fa-bars"></i>
 				</button>
@@ -219,8 +219,20 @@
 		</div>
 		<!-- Navbar end -->
 
+		<!-- Content start -->
+		<div class="d-flex flex-column" style="min-height: calc(100vh - 68px);">
+			{% block content %}{% endblock content %}
+		</div>
+		<!-- Content end -->
+
 		<!-- Bootstrap bundle JS -->
 		<script src="{% static 'redesign/bootstrap.bundle.js' %}"></script>
+
+		<script type="text/javascript">
+			/* Enable all tooltips */
+			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+		</script>
 
 		{% if debug %}
 		<script type="text/javascript">

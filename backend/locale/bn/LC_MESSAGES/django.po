@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-06 20:48+0600\n"
+"POT-Creation-Date: 2023-07-10 17:45+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,12 +51,16 @@ msgid "sent"
 msgstr ""
 
 #: backend/apps/root/models.py:324
+#: backend/templates/redesign/dashboard_organizer/event_list.html:27
+#: backend/templates/redesign/dashboard_organizer/event_list.html:94
 msgid "Draft"
-msgstr ""
+msgstr "খসড়া"
 
 #: backend/apps/root/models.py:325
+#: backend/templates/redesign/dashboard_organizer/event_list.html:21
+#: backend/templates/redesign/dashboard_organizer/event_list.html:91
 msgid "Live"
-msgstr ""
+msgstr "লাইভ"
 
 #: backend/apps/root/models.py:869 backend/apps/root/models.py:872
 msgid "Ethereum"
@@ -285,6 +289,8 @@ msgstr "একটি ইভেন্ট তৈরি করুন"
 
 #: backend/templates/redesign/dashboard_organizer/base.html:139
 #: backend/templates/redesign/dashboard_organizer/event_list.html:4
+#: backend/templates/redesign/dashboard_organizer/event_list.html:21
+#: backend/templates/redesign/dashboard_organizer/event_list.html:27
 msgid "Events"
 msgstr "ইভেন্ট তালিকা"
 
@@ -306,7 +312,7 @@ msgstr "পেমেন্ট বিবরণ"
 
 #: backend/templates/redesign/dashboard_organizer/base.html:157
 msgid "Support"
-msgstr ""
+msgstr "সমর্থন"
 
 #: backend/templates/redesign/dashboard_organizer/base.html:161
 msgid "Help Center"
@@ -327,3 +333,64 @@ msgstr "ইমেল পরিচালনা করুন"
 #: backend/templates/redesign/dashboard_organizer/event_list.html:6
 msgid "Events by"
 msgstr "ইভেন্ট তালিকা"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:15
+msgid "All"
+msgstr "সব"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:48
+#, fuzzy
+#| msgid "Events"
+msgid "Event"
+msgstr "ইভেন্ট তালিকা"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:51
+#: backend/templates/redesign/dashboard_organizer/event_list.html:81
+msgid "Sold"
+msgstr "বিক্রি"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:54
+msgid "Status"
+msgstr "স্ট্যাটাস"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:111
+msgid "Edit"
+msgstr "সম্পাদনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:114
+msgid "Tickets"
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:121
+msgid "Public Page"
+msgstr "পাবলিক পেজ"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:127
+msgid "Check-In (Scanner)"
+msgstr "চেক-ইন (স্ক্যানার)"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:134
+msgid "Preview"
+msgstr "পূর্বরূপ"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:140
+msgid "Delete"
+msgstr "মুছে ফেলুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:157
+#: backend/templates/redesign/dashboard_organizer/event_list.html:159
+msgid "Prev"
+msgstr "পূর্ববর্তী"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:163
+msgid "Page"
+msgstr "পৃষ্ঠা"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:163
+msgid "of"
+msgstr "অব"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:167
+#: backend/templates/redesign/dashboard_organizer/event_list.html:169
+msgid "Next"
+msgstr "পরবর্তী"

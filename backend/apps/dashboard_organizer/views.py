@@ -598,7 +598,7 @@ class TicketTierCreateView(TeamContextMixin, TemplateView):
     Select the type of ticket tier to create.
     """
 
-    template_name = "dashboard_organizer/ticket_tier_create.html"
+    template_name = "redesign/dashboard_organizer/ticket_tier_create.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

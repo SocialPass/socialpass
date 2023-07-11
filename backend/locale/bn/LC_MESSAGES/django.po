@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-10 17:45+0600\n"
+"POT-Creation-Date: 2023-07-11 16:28+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,158 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: backend/apps/dashboard_organizer/apps.py:7
-msgid "Dashboard"
-msgstr ""
-
-#: backend/apps/dashboard_organizer/forms.py:26 backend/apps/root/forms.py:51
-msgid "E-mail"
-msgstr ""
-
-#: backend/apps/root/apps.py:7
-msgid "Root"
-msgstr ""
-
-#: backend/apps/root/forms.py:35
-msgid "This e-mail address has already been invited."
-msgstr ""
-
-#: backend/apps/root/forms.py:37
-msgid "This e-mail address has already accepted an invite."
-msgstr ""
-
-#: backend/apps/root/models.py:239
-msgid "accepted"
-msgstr ""
-
-#: backend/apps/root/models.py:242
-msgid "key"
-msgstr ""
-
-#: backend/apps/root/models.py:244
-msgid "sent"
-msgstr ""
-
-#: backend/apps/root/models.py:324
-#: backend/templates/redesign/dashboard_organizer/event_list.html:27
-#: backend/templates/redesign/dashboard_organizer/event_list.html:94
-msgid "Draft"
-msgstr "খসড়া"
-
-#: backend/apps/root/models.py:325
-#: backend/templates/redesign/dashboard_organizer/event_list.html:21
-#: backend/templates/redesign/dashboard_organizer/event_list.html:91
-msgid "Live"
-msgstr "লাইভ"
-
-#: backend/apps/root/models.py:869 backend/apps/root/models.py:872
-msgid "Ethereum"
-msgstr ""
-
-#: backend/apps/root/models.py:873
-msgid "Ethereum (Goerli TestNet)"
-msgstr ""
-
-#: backend/apps/root/models.py:874
-msgid "Ethereum (Sepolia TestNet)"
-msgstr ""
-
-#: backend/apps/root/models.py:875
-msgid "Ethereum (Mumbai TestNet)"
-msgstr ""
-
-#: backend/apps/root/models.py:876
-msgid "Polygon"
-msgstr ""
-
-#: backend/apps/root/models.py:877
-msgid "Binance Smart Chain"
-msgstr ""
-
-#: backend/apps/root/models.py:878
-msgid "Binance Smart Chain (TestNet)"
-msgstr ""
-
-#: backend/apps/root/models.py:879
-msgid "Avalanche"
-msgstr ""
-
-#: backend/apps/root/models.py:880
-msgid "Avalanche (TestNet)"
-msgstr ""
-
-#: backend/apps/root/models.py:881
-msgid "Fantom"
-msgstr ""
-
-#: backend/apps/root/models.py:882
-msgid "Cronos"
-msgstr ""
-
-#: backend/apps/root/models.py:883
-msgid "Cronos (TestNet)"
-msgstr ""
-
-#: backend/apps/root/models.py:884
-msgid "Arbitrum"
-msgstr ""
-
-#: backend/apps/root/models.py:887
-msgid "NFT"
-msgstr ""
-
-#: backend/apps/root/models.py:949
-msgid "Valid"
-msgstr ""
-
-#: backend/apps/root/models.py:950
-msgid "Processing"
-msgstr ""
-
-#: backend/apps/root/models.py:951
-msgid "Failed"
-msgstr ""
-
-#: backend/apps/root/models.py:952
-msgid "Completed"
-msgstr ""
-
-#: backend/apps/root/models.py:953
-msgid "Fulfilled"
-msgstr ""
-
-#: backend/apps/root/models.py:956
-msgid "Fiat"
-msgstr ""
-
-#: backend/apps/root/models.py:957
-msgid "Blockchain"
-msgstr ""
-
-#: backend/apps/root/models.py:958
-msgid "Asset Ownership"
-msgstr ""
-
-#: backend/apps/root/models.py:959
-msgid "Free"
-msgstr ""
-
-#: backend/apps/root/models.py:1396
-msgid "An error has ocurred"
-msgstr ""
-
-#: backend/apps/root/models.py:1410
-msgid "Quantity requested exceeds the queried balance. "
-msgstr ""
-
-#: backend/apps/root/models.py:1460
-msgid "Error recovering address"
-msgstr ""
-
-#: backend/apps/root/models.py:1468
-msgid "Address was recovered, but did not match"
-msgstr ""
 
 #: backend/templates/account/account_inactive.html:5
 #: backend/templates/account/account_inactive.html:8
@@ -338,11 +186,19 @@ msgstr "ইভেন্ট তালিকা"
 msgid "All"
 msgstr "সব"
 
+#: backend/templates/redesign/dashboard_organizer/event_list.html:21
+#: backend/templates/redesign/dashboard_organizer/event_list.html:91
+msgid "Live"
+msgstr "লাইভ"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:27
+#: backend/templates/redesign/dashboard_organizer/event_list.html:94
+msgid "Draft"
+msgstr "খসড়া"
+
 #: backend/templates/redesign/dashboard_organizer/event_list.html:48
-#, fuzzy
-#| msgid "Events"
 msgid "Event"
-msgstr "ইভেন্ট তালিকা"
+msgstr "ইভেন্ট"
 
 #: backend/templates/redesign/dashboard_organizer/event_list.html:51
 #: backend/templates/redesign/dashboard_organizer/event_list.html:81
@@ -394,3 +250,58 @@ msgstr "অব"
 #: backend/templates/redesign/dashboard_organizer/event_list.html:169
 msgid "Next"
 msgstr "পরবর্তী"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6
+msgid "Create"
+msgstr "তৈরি করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6
+msgid "Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:12
+msgid "The Tix"
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:14
+msgid "Create one or multiple ticket tiers."
+msgstr "এক বা একাধিক টিকিটের স্তর তৈরি করুন।"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:25
+msgid "Paid"
+msgstr "পেড"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:26
+msgid "Create a ticket that requires payment"
+msgstr "একটি টিকিট তৈরি করুন যাতে অর্থপ্রদানের প্রয়োজন হয়"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:38
+msgid ""
+"Before you can create paid ticket tiers, you need to connect your Stripe "
+"account to your team."
+msgstr "আপনি পেইড টিকিটের স্তর তৈরি করার আগে, আপনাকে আপনার স্ট্রাইপ অ্যাকাউন্টটি আপনার দলের সাথে সংযুক্ত করতে হবে।"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:40
+msgid "Go to payment details"
+msgstr "পেমেন্টের বিবরণে যান"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:56
+msgid "Free"
+msgstr "বিনামূল্যে"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:57
+msgid "Create free tickets for General Admission"
+msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:71
+msgid "NFT-Gated"
+msgstr "NFT- গেটেড"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:72
+msgid "Reward your holders with some sweet tickets"
+msgstr "আপনার ধারকদের কিছু মিষ্টি টিকিট দিয়ে পুরস্কৃত করুন"
+
+#, fuzzy
+#~| msgid "Tickets"
+#~ msgid "paid ticket tiers"
+#~ msgstr "টিকিট"

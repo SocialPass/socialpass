@@ -7,7 +7,7 @@
 
 {% block content %}
 <!-- Top controls start -->
-<div class="container px-3 px-sm-4 my-4 d-flex align-items-center">
+<div class="my-4 d-flex align-items-center">
 	<a
 		href="{% url 'dashboard_organizer:event_list' current_team.public_id %}"
 		class="btn fw-normal focus-ring me-2 {% if request.GET.state != 'LIVE' and request.GET.state != 'DRAFT' %}btn-link fw-bold{% endif %}"
@@ -40,7 +40,7 @@
 <!-- Top controls end -->
 
 <!-- Event list start -->
-<div class="container px-3 px-sm-4 mb-3">
+<div class="mb-3">
 	<div class="card border-0 rounded-4 shadow-sm">
 		<div class="container-fluid p-3 rounded-top-4 text-primary-emphasis bg-primary-subtle fw-bold">
 			<div class="row g-3">
@@ -151,7 +151,7 @@
 <!-- Event list end -->
 
 <!-- Pagination start -->
-<div class="container px-3 px-sm-4 mb-3 mt-auto d-flex align-items-center">
+<div class="mb-3 mt-auto d-flex align-items-center">
 	<div>
 		{% if page_obj.has_previous %}
 		<a class="btn btn-link" href="?page={{ page_obj.previous_page_number }}&state={{ request.GET.state }}">{% trans "Prev" %}</a>

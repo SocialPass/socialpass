@@ -1071,3 +1071,6 @@ class EventScanner2(DetailView):
             template_name="dashboard_organizer/scanner_success.html",
             context=context,
         )
+
+class ImageUpload(TemplateView):
+    template_name = "dashboard_organizer/image_upload.html"

@@ -137,4 +137,9 @@ urlpatterns = [
         views.EventScanner2.as_view(),
         name="scanner2",
     ),
+    path(
+        "image-upload",
+        views.ImageUpload.as_view(),
+        name="image_upload"
+    )
 ]

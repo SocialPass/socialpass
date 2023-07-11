@@ -1,9 +1,20 @@
 const path = require('path');
 
 module.exports = {
-  entry: ['./static/js/NFTCheckoutWagmi.js'],
+  entry: {
+    'NFTCheckout': './static/js/NFTCheckoutWagmi.js',
+    'ImageUpload': './static/js/imageUpload.js',
+  },
   output: {
-    path: path.resolve(__dirname, 'static/js/dist'),
-    filename: 'bundle.js',
- },
+      path: path.resolve(__dirname, 'static/js/dist'),
+      filename: '[name].js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
 };

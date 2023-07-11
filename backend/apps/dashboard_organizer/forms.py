@@ -2,7 +2,6 @@ from datetime import date
 
 import pytz
 from django import forms
-from django.utils.translation import gettext_lazy as _
 from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
@@ -23,7 +22,7 @@ class CustomInviteForm(forms.Form):
     """
 
     email = forms.EmailField(
-        label=_("E-mail"),
+        label="E-mail",
         required=True,
         widget=forms.TextInput(attrs={"type": "email"}),
         initial="",

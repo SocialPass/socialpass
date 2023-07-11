@@ -22,7 +22,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
-from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
@@ -236,12 +235,10 @@ class Invite(DBModel):
 
     # basic info
     accepted = models.BooleanField(
-        verbose_name=_("accepted"), default=False, blank=False, null=False
+        verbose_name="accepted", default=False, blank=False, null=False
     )
-    key = models.CharField(
-        verbose_name=_("key"), max_length=64, unique=True, blank=False
-    )
-    sent = models.DateTimeField(verbose_name=_("sent"), blank=False, null=True)
+    key = models.CharField(verbose_name="key", max_length=64, unique=True, blank=False)
+    sent = models.DateTimeField(verbose_name="sent", blank=False, null=True)
     email = models.EmailField(
         verbose_name="e-mail address",
         max_length=254,
@@ -321,8 +318,8 @@ class Event(DBModel):
             return self.filter(state=Event.StateStatus.LIVE)
 
     class StateStatus(models.TextChoices):
-        DRAFT = "DRAFT", _("Draft")
-        LIVE = "LIVE", _("Live")
+        DRAFT = "DRAFT", "Draft"
+        LIVE = "LIVE", "Live"
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
@@ -866,25 +863,25 @@ class TierAssetOwnership(DBModel):
     """
 
     class BlockchainChoices(models.TextChoices):
-        ETH = "ETH", _("Ethereum")
+        ETH = "ETH", "Ethereum"
 
     class NetworkChoices(models.IntegerChoices):
-        ETH = 1, _("Ethereum")
-        GOERLI = 5, _("Ethereum (Goerli TestNet)")
-        SEPOLIA = 11155111, _("Ethereum (Sepolia TestNet)")
-        MUMBAI = 80001, _("Ethereum (Mumbai TestNet)")
-        POLYGON = 137, _("Polygon")
-        BSC = 56, _("Binance Smart Chain")
-        BSC_TESTNET = 97, _("Binance Smart Chain (TestNet)")
-        AVAX = 43114, _("Avalanche")
-        AVAX_TESTNET = 43113, _("Avalanche (TestNet)")
-        FANTOM = 250, _("Fantom")
-        CRONOS = 25, _("Cronos")
-        CRONOS_TESTNET = 338, _("Cronos (TestNet)")
-        ARBITRUM = 42161, _("Arbitrum")
+        ETH = 1, "Ethereum"
+        GOERLI = 5, "Ethereum (Goerli TestNet)"
+        SEPOLIA = 11155111, "Ethereum (Sepolia TestNet)"
+        MUMBAI = 80001, "Ethereum (Mumbai TestNet)"
+        POLYGON = 137, "Polygon"
+        BSC = 56, "Binance Smart Chain"
+        BSC_TESTNET = 97, "Binance Smart Chain (TestNet)"
+        AVAX = 43114, "Avalanche"
+        AVAX_TESTNET = 43113, "Avalanche (TestNet)"
+        FANTOM = 250, "Fantom"
+        CRONOS = 25, "Cronos"
+        CRONOS_TESTNET = 338, "Cronos (TestNet)"
+        ARBITRUM = 42161, "Arbitrum"
 
     class AssetChoices(models.TextChoices):
-        NFT = "NFT", _("NFT")
+        NFT = "NFT", "NFT"
 
     blockchain = models.CharField(
         max_length=50,
@@ -908,7 +905,7 @@ class TierAssetOwnership(DBModel):
         default=1,
         blank=False,
         null=False,
-        help_text="The number of NFTs required to claim your ticket tier."
+        help_text="The number of NFTs required to claim your ticket tier.",
     )
     token_address = models.CharField(
         max_length=42,
@@ -946,17 +943,17 @@ class CheckoutSession(DBModel):
     """
 
     class OrderStatus(models.TextChoices):
-        VALID = "VALID", _("Valid")  # Initial State, TX is valid
-        PROCESSING = "PROCESSING", _("Processing")  # TX has been created, processing...
-        FAILED = "FAILED", _("Failed")  # TX has failed
-        COMPLETED = "COMPLETED", _("Completed")  # TX has been completed, fulfill order
-        FULFILLED = "FULFILLED", _("Fulfilled")  # TX has been filled
+        VALID = "VALID", "Valid"  # Initial State, TX is valid
+        PROCESSING = "PROCESSING", "Processing"  # TX has been created, processing...
+        FAILED = "FAILED", "Failed"  # TX has failed
+        COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
+        FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
 
     class TransactionType(models.TextChoices):
-        FIAT = "FIAT", _("Fiat")
-        BLOCKCHAIN = "BLOCKCHAIN", _("Blockchain")
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
-        FREE = "FREE", _("Free")
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
 
     # keys
     event = models.ForeignKey(
@@ -1392,9 +1389,7 @@ class TxAssetOwnership(DBModel):
             response.raise_for_status()
             response = response.json()
         except requests.exceptions.HTTPError:
-            raise TxAssetOwnershipProcessingError(
-                {"message": _("An error has ocurred")}
-            )
+            raise TxAssetOwnershipProcessingError({"message": "An error has ocurred"})
         return response
 
     def _check_balance(self, expected, actual):
@@ -1406,7 +1401,7 @@ class TxAssetOwnership(DBModel):
         if actual < expected:
             raise TxAssetOwnershipProcessingError(
                 {
-                    "quantity": _(
+                    "quantity": (
                         "Quantity requested exceeds the queried balance. "
                         f"Expected Balance: {expected}. "
                         f"Actual Balance: {actual}."
@@ -1457,7 +1452,7 @@ class TxAssetOwnership(DBModel):
         except Exception:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
-                {"wallet_address": _("Error recovering address")}
+                {"wallet_address": "Error recovering address"}
             )
 
         # Successful recovery attempt
@@ -1465,7 +1460,7 @@ class TxAssetOwnership(DBModel):
         if recovered_address != self.wallet_address:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
-                {"wallet_address": _("Address was recovered, but did not match")}
+                {"wallet_address": "Address was recovered, but did not match"}
             )
 
         # Success, mark as verified

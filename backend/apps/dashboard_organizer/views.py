@@ -398,6 +398,11 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+        # Check for uppy_field
+        # Note 1: Uppy uploads file in first request and then submits form, resulting in 2 POST requests. Unsure if can avoid
+        # Note 2: Can this be handled inside of form better?
+        if self.request.FILES.get("uppy_field"):
+            form.instance.cover_image = self.request.FILES.get("uppy_field")
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -431,6 +436,11 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+        # Check for uppy_field
+        # Note 1: Uppy uploads file in first request and then submits form, resulting in 2 POST requests. Unsure if can avoid
+        # Note 2: Can this be handled inside of form better?
+        if self.request.FILES.get("uppy_field"):
+            form.instance.cover_image = self.request.FILES.get("uppy_field")
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):

@@ -1,24 +1,28 @@
 import Uppy from '@uppy/core';
 import Dashboard from '@uppy/dashboard';
+import Form from '@uppy/form';
 import ImageEditor from '@uppy/image-editor';
+import XHR from '@uppy/xhr-upload';
 
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/image-editor/dist/style.min.css';
 
-export function initUppy(target, uploadURL){
+export function initUppy(uploadTarget, formTarget, xhrEndpoint){
+  console.log("INITT", uploadTarget, formTarget, xhrEndpoint);
   const uppy = new Uppy({
     restrictions: {
-      allowedFileTypes: ['image/*']
+      allowedFileTypes: ['image/*'],
+      minNumberOfFiles: 1,
+      maxNumberOfFiles: 1,
     },
     debug: true,
-    autoProceed: true,
-    maxNumberOfFiles: 1,
   })
       .use(Dashboard, {
         autoOpenFileEditor: true,
+        hideUploadButton: true,
         inline: true,
-        target: target,
+        target: uploadTarget,
       })
       .use(ImageEditor, {
         target: Dashboard,
@@ -39,17 +43,17 @@ export function initUppy(target, uploadURL){
           cropWidescreen: false,
           cropWidescreenVertical: false,
         }
+      })
+      .use(Form, {
+          target: formTarget,
+          addResultToForm: true,
+          triggerUploadOnSubmit: true,
+          submitOnSuccess: true
+      })
+      .use(XHR, {
+        endpoint: xhrEndpoint,
+        fieldName: 'uppy_field'
       });
-
-    uppy.on('complete', (result) => {
-      result.successful.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          document.getElementById('id_cover_image').value = event.target.result;
-        };
-        reader.readAsDataURL(file.data);
-      });
-    });
 }
 
 // setup windows

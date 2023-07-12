@@ -67,9 +67,17 @@
 				{% with form.title as input %}
 					{% include 'components/forms_inputs/input.html' %}
 				{% endwith %}
+
+				<!-- Cover Image -->
 				<div class="form-group">
-					{{ form.cover_image|as_crispy_field }}
+					<div id="cover-image-target"></div>
+					{% if object.cover_image %}
+					<div id="cover-image-preview-target" class="d-flex align-items-center justify-content-center rounded-3 overflow-hidden pe-none hs-250 bg-gray-very-light-lm bg-darkgray-very-dim-dm">
+						<img src="{{ event.cover_image.url }}" class="mh-100" alt="{{ event.title }} cover image">
+					</div>
+					{% endif %}
 				</div>
+
 				{% with input=form.description %}
 					<div class="form-group">
 						<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
@@ -170,7 +178,7 @@
 <!-- Image Upload Script -->
 <script src="{% static 'js/dist/imageUpload.js' %}"></script>
 <script>
-	window.initUppy("#div_id_cover_image", "/test")
+	window.initUppy("#cover-image-target", "#event-form", "{{ request.path }}")
 </script>
 
 <!-- Date Validation Script -->

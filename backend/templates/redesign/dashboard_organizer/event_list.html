@@ -10,19 +10,19 @@
 <div class="my-4 d-flex align-items-center">
 	<a
 		href="{% url 'dashboard_organizer:event_list' current_team.public_id %}"
-		class="btn fw-normal focus-ring me-2 {% if request.GET.state != 'LIVE' and request.GET.state != 'DRAFT' %}btn-link fw-bold{% endif %}"
+		class="btn focus-ring me-2 {% if request.GET.state != 'LIVE' and request.GET.state != 'DRAFT' %}btn-link{% endif %}"
 	>
 		{% trans "All" %}
 	</a>
 	<a
 		href="?state=LIVE"
-		class="btn fw-normal focus-ring me-2 {% if request.GET.state == 'LIVE' %}btn-link fw-bold{% endif %}"
+		class="btn focus-ring me-2 {% if request.GET.state == 'LIVE' %}btn-link{% endif %}"
 	>
 		{% trans "Live" %}<span class="d-none d-sm-inline"> {% trans "Events" %}</span>
 	</a>
 	<a
 		href="?state=DRAFT"
-		class="btn fw-normal focus-ring me-2 {% if request.GET.state == 'DRAFT' %}btn-link fw-bold{% endif %}"
+		class="btn focus-ring me-2 {% if request.GET.state == 'DRAFT' %}btn-link{% endif %}"
 	>
 		{% trans "Draft" %}<span class="d-none d-sm-inline"> {% trans "Events" %}</span>
 	</a>

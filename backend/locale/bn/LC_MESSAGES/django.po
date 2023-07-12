@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-11 16:28+0600\n"
+"POT-Creation-Date: 2023-07-12 16:19+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgstr ""
 
 #: backend/templates/account/logout.html:16
 #: backend/templates/account/logout.html:23
-#: backend/templates/redesign/dashboard_organizer/base.html:213
+#: backend/templates/redesign/dashboard_organizer/base.html:223
 msgid "Sign Out"
 msgstr "সাইন আউট"
 
@@ -115,193 +115,259 @@ msgstr ""
 msgid "Hosting the Next Generation of Events"
 msgstr "নতুন প্রজন্মের ইভেন্ট হোস্টিং"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:108
+#: backend/templates/redesign/dashboard_organizer/base.html:118
 msgid "Switch Teams"
 msgstr "দল পাল্টান"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:119
+#: backend/templates/redesign/dashboard_organizer/base.html:129
 msgid "None found"
 msgstr "একটিও পাওয়া যায়নি"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:125
+#: backend/templates/redesign/dashboard_organizer/base.html:135
 msgid "Create Team"
 msgstr "দল তৈরি করুন"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:131
+#: backend/templates/redesign/dashboard_organizer/base.html:141
 msgid "Events Manager"
 msgstr "ইভেন্ট ম্যানেজার"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:135
+#: backend/templates/redesign/dashboard_organizer/base.html:145
 msgid "Create an Event"
 msgstr "একটি ইভেন্ট তৈরি করুন"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:139
+#: backend/templates/redesign/dashboard_organizer/base.html:149
 #: backend/templates/redesign/dashboard_organizer/event_list.html:4
-#: backend/templates/redesign/dashboard_organizer/event_list.html:21
-#: backend/templates/redesign/dashboard_organizer/event_list.html:27
+#: backend/templates/redesign/dashboard_organizer/event_list.html:23
+#: backend/templates/redesign/dashboard_organizer/event_list.html:29
 msgid "Events"
 msgstr "ইভেন্ট তালিকা"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:142
+#: backend/templates/redesign/dashboard_organizer/base.html:152
 msgid "Team Manager"
 msgstr "দলের ম্যানেজার"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:146
+#: backend/templates/redesign/dashboard_organizer/base.html:156
 msgid "Team Details"
 msgstr "দলের বিবরণ"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:150
+#: backend/templates/redesign/dashboard_organizer/base.html:160
 msgid "Manage Members"
 msgstr "সদস্যদের পরিচালনা করুন"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:154
+#: backend/templates/redesign/dashboard_organizer/base.html:164
 msgid "Payment Details"
 msgstr "পেমেন্ট বিবরণ"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:157
+#: backend/templates/redesign/dashboard_organizer/base.html:167
 msgid "Support"
 msgstr "সমর্থন"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:161
+#: backend/templates/redesign/dashboard_organizer/base.html:171
 msgid "Help Center"
 msgstr "সাহায্য কেন্দ্র"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:165
+#: backend/templates/redesign/dashboard_organizer/base.html:175
 msgid "Blog"
 msgstr "ব্লগ"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:200
+#: backend/templates/redesign/dashboard_organizer/base.html:210
 msgid "Change Password"
 msgstr "পাসওয়ার্ড পরিবর্তন করুন"
 
-#: backend/templates/redesign/dashboard_organizer/base.html:206
+#: backend/templates/redesign/dashboard_organizer/base.html:216
 msgid "Manage Emails"
 msgstr "ইমেল পরিচালনা করুন"
 
 #: backend/templates/redesign/dashboard_organizer/event_list.html:6
+#: backend/templates/redesign/dashboard_organizer/event_list.html:8
 msgid "Events by"
 msgstr "ইভেন্ট তালিকা"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:15
+#: backend/templates/redesign/dashboard_organizer/event_list.html:17
 msgid "All"
 msgstr "সব"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:21
-#: backend/templates/redesign/dashboard_organizer/event_list.html:91
+#: backend/templates/redesign/dashboard_organizer/event_list.html:23
+#: backend/templates/redesign/dashboard_organizer/event_list.html:93
 msgid "Live"
 msgstr "লাইভ"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:27
-#: backend/templates/redesign/dashboard_organizer/event_list.html:94
+#: backend/templates/redesign/dashboard_organizer/event_list.html:29
+#: backend/templates/redesign/dashboard_organizer/event_list.html:96
 msgid "Draft"
 msgstr "খসড়া"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:48
+#: backend/templates/redesign/dashboard_organizer/event_list.html:50
 msgid "Event"
 msgstr "ইভেন্ট"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:51
-#: backend/templates/redesign/dashboard_organizer/event_list.html:81
+#: backend/templates/redesign/dashboard_organizer/event_list.html:53
+#: backend/templates/redesign/dashboard_organizer/event_list.html:83
 msgid "Sold"
 msgstr "বিক্রি"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:54
+#: backend/templates/redesign/dashboard_organizer/event_list.html:56
 msgid "Status"
 msgstr "স্ট্যাটাস"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:111
+#: backend/templates/redesign/dashboard_organizer/event_list.html:113
 msgid "Edit"
 msgstr "সম্পাদনা করুন"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:114
+#: backend/templates/redesign/dashboard_organizer/event_list.html:116
 msgid "Tickets"
 msgstr "টিকিট"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:121
+#: backend/templates/redesign/dashboard_organizer/event_list.html:123
 msgid "Public Page"
 msgstr "পাবলিক পেজ"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:127
+#: backend/templates/redesign/dashboard_organizer/event_list.html:129
 msgid "Check-In (Scanner)"
 msgstr "চেক-ইন (স্ক্যানার)"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:134
+#: backend/templates/redesign/dashboard_organizer/event_list.html:136
 msgid "Preview"
 msgstr "পূর্বরূপ"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:140
+#: backend/templates/redesign/dashboard_organizer/event_list.html:142
 msgid "Delete"
 msgstr "মুছে ফেলুন"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:157
 #: backend/templates/redesign/dashboard_organizer/event_list.html:159
+#: backend/templates/redesign/dashboard_organizer/event_list.html:161
 msgid "Prev"
 msgstr "পূর্ববর্তী"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:163
+#: backend/templates/redesign/dashboard_organizer/event_list.html:165
 msgid "Page"
 msgstr "পৃষ্ঠা"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:163
+#: backend/templates/redesign/dashboard_organizer/event_list.html:165
 msgid "of"
 msgstr "অব"
 
-#: backend/templates/redesign/dashboard_organizer/event_list.html:167
 #: backend/templates/redesign/dashboard_organizer/event_list.html:169
+#: backend/templates/redesign/dashboard_organizer/event_list.html:171
 msgid "Next"
 msgstr "পরবর্তী"
 
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6
-msgid "Create"
-msgstr "তৈরি করুন"
-
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6
-msgid "Ticket Tier"
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:4
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:6
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:8
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Ticket Tiers"
 msgstr "টিকিট স্তর"
 
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:12
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:16
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:14
 msgid "The Tix"
 msgstr "টিকিট"
 
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:14
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:18
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:16
 msgid "Create one or multiple ticket tiers."
 msgstr "এক বা একাধিক টিকিটের স্তর তৈরি করুন।"
 
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:25
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:23
+msgid "Add Ticket Tier"
+msgstr "টিকিট স্তর যোগ করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:34
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:27
 msgid "Paid"
 msgstr "পেড"
 
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:26
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:34
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:40
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:46
+msgid "Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:40
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:55
+msgid "Free"
+msgstr "বিনামূল্যে"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:46
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:70
+msgid "NFT-Gated"
+msgstr "NFT- গেটেড"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:59
+#, fuzzy
+#| msgid "Tickets"
+msgid "ticket"
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:70
+msgid "Capacity"
+msgstr "ক্ষমতা"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:78
+#, fuzzy
+#| msgid "Sold"
+msgid "Qty. Sold"
+msgstr "বিক্রি"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:86
+msgid "Max per person"
+msgstr "জনপ্রতি সর্বোচ্চ"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:94
+msgid "Guests per ticket"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:102
+msgid "NFT Requirements"
+msgstr "NFT প্রয়োজনীয়তা"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:105
+msgid "Network"
+msgstr "নেটওয়ার্ক"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:108
+msgid "Token Address"
+msgstr "টোকেন ঠিকানা"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:121
+#, fuzzy
+#| msgid "Tickets"
+msgid "No ticket tiers yet."
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:4
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:8
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Create Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:28
 msgid "Create a ticket that requires payment"
 msgstr "একটি টিকিট তৈরি করুন যাতে অর্থপ্রদানের প্রয়োজন হয়"
 
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:38
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:40
 msgid ""
 "Before you can create paid ticket tiers, you need to connect your Stripe "
 "account to your team."
-msgstr "আপনি পেইড টিকিটের স্তর তৈরি করার আগে, আপনাকে আপনার স্ট্রাইপ অ্যাকাউন্টটি আপনার দলের সাথে সংযুক্ত করতে হবে।"
+msgstr ""
+"আপনি পেইড টিকিটের স্তর তৈরি করার আগে, আপনাকে আপনার স্ট্রাইপ অ্যাকাউন্টটি আপনার "
+"দলের সাথে সংযুক্ত করতে হবে।"
 
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:40
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:42
 msgid "Go to payment details"
 msgstr "পেমেন্টের বিবরণে যান"
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:56
-msgid "Free"
-msgstr "বিনামূল্যে"
-
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:57
 msgid "Create free tickets for General Admission"
 msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:71
-msgid "NFT-Gated"
-msgstr "NFT- গেটেড"
-
-#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:72
 msgid "Reward your holders with some sweet tickets"
 msgstr "আপনার ধারকদের কিছু মিষ্টি টিকিট দিয়ে পুরস্কৃত করুন"
 
-#, fuzzy
-#~| msgid "Tickets"
-#~ msgid "paid ticket tiers"
-#~ msgstr "টিকিট"
+#~ msgid "Create"
+#~ msgstr "তৈরি করুন"

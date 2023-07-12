@@ -3,7 +3,9 @@
 
 {% block head_title %}{% trans "Events" %} - SocialPass{% endblock head_title %}
 
-{% block navbar_title %}{% trans "Events by" %} <span class="text-primary-emphasis">{{ current_team }}</span>{% endblock navbar_title %}
+{% block navbar_title %}{% trans "Events by" %} &mdash; <span class="text-primary-emphasis">{{ current_team }}</span>{% endblock navbar_title %}
+
+{% block navbar_title_2 %}{% trans "Events by" %} &mdash; <span class="text-primary-emphasis">{{ current_team }}</span>{% endblock navbar_title_2 %}
 
 {% block content %}
 <!-- Top controls start -->

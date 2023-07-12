@@ -60,6 +60,16 @@
 					overflow-y: auto;
 				}
 			}
+
+			.content-container {
+				min-height: calc(100vh - 112px);
+			}
+
+			@media (min-width: 768px) {
+				.content-container {
+					min-height: calc(100vh - 85px);
+				}
+			}
 		</style>
 
 		<!-- Google Tag Manager -->
@@ -82,7 +92,7 @@
 
 		<!-- Sidebar start -->
 		<div class="offcanvas-xl offcanvas-start" tabindex="-1" id="sidebar">
-			<div class="offcanvas-header d-flex align-items-center justify-content-start border-bottom border-secondary border-opacity-25" style="height: 68px;">
+			<div class="offcanvas-header d-flex align-items-center justify-content-start" style="height: 68px;">
 				<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block me-auto">
 				<button type="button" class="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" style="width: 37px;">
 					<i class="fa-solid fa-moon"></i>
@@ -169,7 +179,7 @@
 		<!-- Sidebar end -->
 
 		<!-- Navbar start -->
-		<div class="border-bottom border-secondary border-opacity-25" style="height: 68px;">
+		<div class="border-bottom border-secondary border-opacity-25 py-2 py-md-3">
 			<div class="container px-3 px-sm-4 d-flex align-items-center h-100">
 				<button class="btn btn-link px-0 d-xl-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Toggle sidebar" style="width: 37px;">
 					<i class="fa-solid fa-bars"></i>
@@ -216,11 +226,16 @@
 					</ul>
 				</div>
 			</div>
+			<div class="container px-3 px-sm-4 mt-3 d-md-none">
+				<h6>
+					{% block navbar_title_2 %}{% endblock navbar_title_2 %}
+				</h6>
+			</div>
 		</div>
 		<!-- Navbar end -->
 
 		<!-- Content start -->
-		<div class="container px-3 px-sm-4 d-flex flex-column" style="min-height: calc(100vh - 68px);">
+		<div class="container px-3 px-sm-4 d-flex flex-column content-container">
 			{% block content %}{% endblock content %}
 		</div>
 		<!-- Content end -->

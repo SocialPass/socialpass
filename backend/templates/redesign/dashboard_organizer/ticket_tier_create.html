@@ -3,7 +3,9 @@
 
 {% block head_title %}{% trans "Create Ticket Tier" %} - SocialPass{% endblock head_title %}
 
-{% block navbar_title %}{% trans "Create" %} <span class="text-primary-emphasis">{% trans "Ticket Tier" %}</span>{% endblock navbar_title %}
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Create Ticket Tier" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Create Ticket Tier" %}{% endblock navbar_title_2 %}
 
 {% block content %}
 <!-- Ticket tier create links start -->

@@ -492,6 +492,32 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
+    @transition(field=state, target=StateStatus.DRAFT)
+    def _transition_draft(self):
+        """
+        This function handles state transition to DRAFT
+        Side effects include
+        -
+        """
+        pass
+
+    @transition(field=state, target=StateStatus.LIVE)
+    def _transition_live(self, ignore_google_api=False):
+        """
+        This function handles state transition from DRAFT to LIVE
+        Side effects include
+        - Create ticket scanner object
+        - Handle Google event class
+        - Send success emails
+        """
+        # - Handle Google event class
+        if not ignore_google_api:
+            google_event_class_id = self.handle_google_event_class()
+            if not google_event_class_id:
+                raise GoogleWalletAPIRequestError(
+                    "Something went wrong while handling the Google event class."
+                )
+
         # Send emails to team members (fail silently)
         try:
             ctx = {
@@ -518,30 +544,6 @@ class Event(DBModel):
             print("EMAIL ERROR: " + str(e))
             rollbar.report_message("EMAIL ERROR: " + str(e))
 
-    @transition(field=state, target=StateStatus.DRAFT)
-    def _transition_draft(self):
-        """
-        This function handles state transition to DRAFT
-        Side effects include
-        -
-        """
-        pass
-
-    @transition(field=state, target=StateStatus.LIVE)
-    def _transition_live(self, ignore_google_api=False):
-        """
-        This function handles state transition from DRAFT to LIVE
-        Side effects include
-        - Create ticket scanner object
-        - Handle Google event class
-        """
-        # - Handle Google event class
-        if not ignore_google_api:
-            google_event_class_id = self.handle_google_event_class()
-            if not google_event_class_id:
-                raise GoogleWalletAPIRequestError(
-                    "Something went wrong while handling the Google event class."
-                )
 
     @property
     def has_ended(self):

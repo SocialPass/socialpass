@@ -444,7 +444,7 @@ class EventTicketsView(TeamContextMixin, DetailView):
 
     model = Event
     context_object_name = "event"
-    template_name = "dashboard_organizer/event_tickets.html"
+    template_name = "redesign/dashboard_organizer/event_ticket_tiers.html"
 
     def get_object(self):
         return (

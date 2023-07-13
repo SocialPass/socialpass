@@ -2,6 +2,7 @@ from datetime import date
 
 import pytz
 from django import forms
+from django.utils.translation import gettext as _
 from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
@@ -164,13 +165,32 @@ class TicketTierForm(forms.ModelForm):
         fields = ["ticket_type", "capacity", "max_per_person", "allowed_guests"]
         widgets = {
             "ticket_type": forms.TextInput(
-                attrs={"placeholder": "A short name for this type of ticket"}
+                attrs={
+                    "placeholder": _("Short name for free ticket tier e.g. General Admission")
+                }
             ),
-            "capacity": forms.NumberInput(attrs={"min": 1}),
-            "max_per_person": forms.NumberInput(attrs={"min": 1}),
-            "allowed_guests": forms.NumberInput(attrs={"min": 0}),
+            "capacity": forms.NumberInput(
+                attrs={
+                    "min": 1
+                }
+            ),
+            "max_per_person": forms.NumberInput(
+                attrs={
+                    "min": 1
+                }
+            ),
+            "allowed_guests": forms.NumberInput(
+                attrs={
+                    "min": 0
+                }
+            ),
         }
-        labels = {"ticket_type": "Name of ticket tier"}
+        labels = {
+            "ticket_type": _("Name of ticket tier"),
+            "capacity": _("Capacity"),
+            "max_per_person": _("Max per person"),
+            "allowed_guests": _("Max guest(s) allowed per ticket"),
+        }
 
 
 class TierAssetOwnershipForm(forms.ModelForm):

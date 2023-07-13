@@ -776,7 +776,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
     form_class = TicketTierForm
     model = TicketTier
     pk_url_kwarg = "pk"
-    template_name = "dashboard_organizer/ticket_tier_update_form.html"
+    template_name = "redesign/dashboard_organizer/ticket_tier_update.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -461,7 +461,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
     """
 
     model = Event
-    template_name = "dashboard_organizer/event_go_live.html"
+    template_name = "redesign/dashboard_organizer/event_go_live.html"
     object = None
 
     def get_object(self):

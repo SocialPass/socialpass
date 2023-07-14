@@ -19,16 +19,12 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: backend/apps/dashboard_organizer/forms.py:169
-#, fuzzy
-#| msgid "Create free tickets for General Admission"
 msgid "Short name for free ticket tier e.g. General Admission"
 msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
 
 #: backend/apps/dashboard_organizer/forms.py:189
-#, fuzzy
-#| msgid "Tickets"
 msgid "Name of ticket tier"
-msgstr "টিকিট"
+msgstr "টিকিটের স্তরের নাম"
 
 #: backend/apps/dashboard_organizer/forms.py:190
 #: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:70
@@ -41,10 +37,8 @@ msgid "Max per person"
 msgstr "জনপ্রতি সর্বোচ্চ"
 
 #: backend/apps/dashboard_organizer/forms.py:192
-#, fuzzy
-#| msgid "Guests per ticket"
 msgid "Max guest(s) allowed per ticket"
-msgstr "টিকিট প্রতি অতিথি"
+msgstr "প্রতি টিকিটে সর্বাধিক অতিথি(দের) অনুমোদিত"
 
 #: backend/templates/account/account_inactive.html:5
 #: backend/templates/account/account_inactive.html:8
@@ -449,34 +443,24 @@ msgstr "আপনার ধারকদের কিছু মিষ্টি �
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:6
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:8
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:19
-#, fuzzy
-#| msgid "Ticket Tier"
 msgid "Update Ticket Tier"
-msgstr "টিকিট স্তর"
+msgstr "টিকিট স্তর আপডেট করুন"
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:21
-#, fuzzy
-#| msgid "Add Ticket Tier"
 msgid "Editing ticket tier"
-msgstr "টিকিট স্তর যোগ করুন"
+msgstr "টিকিটের স্তর সম্পাদনা করা হচ্ছে "
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:44
-#, fuzzy
-#| msgid "Team Details"
 msgid "Ticket Details"
-msgstr "দলের বিবরণ"
+msgstr "টিকিটের বিবরণ"
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:64
-#, fuzzy
-#| msgid "Guests per ticket"
 msgid "Allowed Guests (per ticket)"
 msgstr "টিকিট প্রতি অতিথি"
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:74
-#, fuzzy
-#| msgid "Ticket Tier"
 msgid "Save Ticket Tier"
-msgstr "টিকিট স্তর"
+msgstr "জমা"
 
 #~ msgid "Create"
 #~ msgstr "তৈরি করুন"

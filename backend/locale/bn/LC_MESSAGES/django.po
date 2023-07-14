@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-12 16:19+0600\n"
+"POT-Creation-Date: 2023-07-14 16:03+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: backend/apps/dashboard_organizer/forms.py:169
+#, fuzzy
+#| msgid "Create free tickets for General Admission"
+msgid "Short name for free ticket tier e.g. General Admission"
+msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
+
+#: backend/apps/dashboard_organizer/forms.py:189
+#, fuzzy
+#| msgid "Tickets"
+msgid "Name of ticket tier"
+msgstr "টিকিট"
+
+#: backend/apps/dashboard_organizer/forms.py:190
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:70
+msgid "Capacity"
+msgstr "ক্ষমতা"
+
+#: backend/apps/dashboard_organizer/forms.py:191
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:86
+msgid "Max per person"
+msgstr "জনপ্রতি সর্বোচ্চ"
+
+#: backend/apps/dashboard_organizer/forms.py:192
+#, fuzzy
+#| msgid "Guests per ticket"
+msgid "Max guest(s) allowed per ticket"
+msgstr "টিকিট প্রতি অতিথি"
 
 #: backend/templates/account/account_inactive.html:5
 #: backend/templates/account/account_inactive.html:8
@@ -178,6 +206,70 @@ msgstr "পাসওয়ার্ড পরিবর্তন করুন"
 msgid "Manage Emails"
 msgstr "ইমেল পরিচালনা করুন"
 
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:4
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:6
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:8
+msgid "Go Live"
+msgstr "লাইভ যান"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:15
+msgid "Event is live!"
+msgstr "ইভেন্ট লাইভ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:17
+msgid "This event is live. Check the public page and scanner link!"
+msgstr "এই ইভেন্ট লাইভ. পাবলিক পেজ এবং স্ক্যানার লিঙ্ক চেক করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:20
+msgid "Let’s Publish this Event!"
+msgstr "ইভেন্ট প্রকাশ করা যাক"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:22
+msgid "If everything looks good, hit go live!"
+msgstr "সবকিছু ভাল দেখায়, লাইভ যান"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:37
+msgid "Start"
+msgstr "শুরু"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:40
+msgid "End"
+msgstr "শেষ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:43
+msgid "Timezone"
+msgstr "সময় অঞ্চল"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:48
+msgid "Address"
+msgstr "ঠিকানা"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:54
+msgid "Live Event"
+msgstr "লাইভ ইভেন্ট"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:59
+msgid "Draft Event"
+msgstr "খসড়া ইভেন্ট"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:76
+#: backend/templates/redesign/dashboard_organizer/event_list.html:123
+msgid "Public Page"
+msgstr "পাবলিক পেজ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:80
+#: backend/templates/redesign/dashboard_organizer/event_list.html:129
+msgid "Check-In (Scanner)"
+msgstr "চেক-ইন (স্ক্যানার)"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:88
+msgid "Preview Event"
+msgstr "পূর্বরূপ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:91
+msgid "Go Live!"
+msgstr "লাইভ যান"
+
 #: backend/templates/redesign/dashboard_organizer/event_list.html:6
 #: backend/templates/redesign/dashboard_organizer/event_list.html:8
 msgid "Events by"
@@ -217,14 +309,6 @@ msgstr "সম্পাদনা করুন"
 #: backend/templates/redesign/dashboard_organizer/event_list.html:116
 msgid "Tickets"
 msgstr "টিকিট"
-
-#: backend/templates/redesign/dashboard_organizer/event_list.html:123
-msgid "Public Page"
-msgstr "পাবলিক পেজ"
-
-#: backend/templates/redesign/dashboard_organizer/event_list.html:129
-msgid "Check-In (Scanner)"
-msgstr "চেক-ইন (স্ক্যানার)"
 
 #: backend/templates/redesign/dashboard_organizer/event_list.html:136
 msgid "Preview"
@@ -301,19 +385,11 @@ msgstr "NFT- গেটেড"
 msgid "ticket"
 msgstr "টিকিট"
 
-#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:70
-msgid "Capacity"
-msgstr "ক্ষমতা"
-
 #: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:78
 #, fuzzy
 #| msgid "Sold"
 msgid "Qty. Sold"
 msgstr "বিক্রি"
-
-#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:86
-msgid "Max per person"
-msgstr "জনপ্রতি সর্বোচ্চ"
 
 #: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:94
 msgid "Guests per ticket"
@@ -368,6 +444,39 @@ msgstr "সাধারণ ভর্তির জন্য বিনামূল
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:71
 msgid "Reward your holders with some sweet tickets"
 msgstr "আপনার ধারকদের কিছু মিষ্টি টিকিট দিয়ে পুরস্কৃত করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:4
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:6
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:8
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:19
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Update Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:21
+#, fuzzy
+#| msgid "Add Ticket Tier"
+msgid "Editing ticket tier"
+msgstr "টিকিট স্তর যোগ করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:44
+#, fuzzy
+#| msgid "Team Details"
+msgid "Ticket Details"
+msgstr "দলের বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:64
+#, fuzzy
+#| msgid "Guests per ticket"
+msgid "Allowed Guests (per ticket)"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:74
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Save Ticket Tier"
+msgstr "টিকিট স্তর"
 
 #~ msgid "Create"
 #~ msgstr "তৈরি করুন"

@@ -18,7 +18,7 @@ stripe==5.4.0 #https://github.com/stripe/stripe-python/
 git+https://github.com/SPTech-Group/django-quill-editor
 git+https://github.com/SPTech-Group/passbook.git
 crispy-bootstrap5==0.7 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
-django==4.2.2  # https://www.djangoproject.com/
+django==4.2.3  # https://www.djangoproject.com/
 django-autoslug==1.9.9 # https://github.com/justinmayer/django-autoslug
 django-allauth==0.54.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.0 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers

@@ -249,7 +249,7 @@ class TeamDetailView(TeamContextMixin, TemplateView):
     Returns the details of the logged in user's team.
     """
 
-    template_name = "dashboard_organizer/team_detail.html"
+    template_name = "redesign/dashboard_organizer/team_details.html"
 
 
 class TeamMemberManageView(TeamContextMixin, FormView):

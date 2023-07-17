@@ -1,0 +1,51 @@
+{% extends "redesign/dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email %}
+
+{% block head_title %}{% trans "Team Details" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}{% trans "Team" %} <span class="text-primary-emphasis">{% trans "Details" %}</span>{% endblock navbar_title %}
+
+{% block navbar_title_2 %}{% trans "Team" %} <span class="text-primary-emphasis">{% trans "Details" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+<!-- Team information start -->
+<div class="mb-3 mt-4">
+	<h1 class="h5">{% trans "Team Information" %}</h1>
+	<div class="card border-0 rounded-4 shadow-sm">
+		<div class="card-body px-lg-5 py-lg-4">
+			<div class="row">
+				<div class="col-lg d-flex align-items-center">
+					{% if current_team.image %}
+						<div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden specific-w-50 specific-h-50 specific-w-sm-75 specific-h-sm-75">
+							<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
+						</div>
+					{% else %}
+						<div class="rounded-circle d-flex align-items-center justify-content-center text-bg-primary flex-shrink-0 specific-w-50 specific-h-50 specific-w-sm-75 specific-h-sm-75">
+							<span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+						</div>
+					{% endif %}
+					<div class="ps-4">
+						<h2 class="h5">{{ current_team.name }}</h2>
+						{% if current_team.description %}
+							<p class="mb-0 text-body-secondary">
+								{{ current_team.description }}
+							</p>
+						{% else %}
+							<p class="mb-0 text-body-secondary">
+								{% trans "Your team does not have a description." %}
+							</p>
+						{% endif %}
+					</div>
+				</div>
+				<div class="col-lg-auto text-lg-end mt-3 mt-lg-0 align-self-center">
+					<a href="{% url 'dashboard_organizer:team_update' current_team.public_id %}" class="btn btn-link rounded-pill" aria-label="Edit Team">
+						<i class="fa-solid fa-edit"></i>
+						<span class="ms-1 d-lg-none">{% trans "Edit Team" %}</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Team information end -->
+{% endblock content %}

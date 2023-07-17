@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-14 16:03+0600\n"
+"POT-Creation-Date: 2023-07-17 16:37+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -169,10 +169,12 @@ msgid "Team Manager"
 msgstr "দলের ম্যানেজার"
 
 #: backend/templates/redesign/dashboard_organizer/base.html:156
+#: backend/templates/redesign/dashboard_organizer/team_details.html:4
 msgid "Team Details"
 msgstr "দলের বিবরণ"
 
 #: backend/templates/redesign/dashboard_organizer/base.html:160
+#: backend/templates/redesign/dashboard_organizer/team_details.html:77
 msgid "Manage Members"
 msgstr "সদস্যদের পরিচালনা করুন"
 
@@ -406,6 +408,36 @@ msgstr "টোকেন ঠিকানা"
 #| msgid "Tickets"
 msgid "No ticket tiers yet."
 msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:6
+#: backend/templates/redesign/dashboard_organizer/team_details.html:8
+msgid "Team"
+msgstr "দলের"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:6
+#: backend/templates/redesign/dashboard_organizer/team_details.html:8
+msgid "Details"
+msgstr "বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:13
+msgid "Team Information"
+msgstr "দলের তথ্য"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:35
+msgid "Your team does not have a description."
+msgstr "আপনার দলের একটি বিবরণ নেই।"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:43
+msgid "Edit Team"
+msgstr "দল সম্পাদনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:54
+msgid "Team Members"
+msgstr "দলের সদস্যরা"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:67
+msgid "You"
+msgstr "আপনি"
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:4
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6

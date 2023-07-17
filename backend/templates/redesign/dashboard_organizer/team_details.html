@@ -48,4 +48,38 @@
 	</div>
 </div>
 <!-- Team information end -->
+
+<!-- Team members start -->
+<div class="mb-3 mt-4">
+	<h2 class="h5">{% trans "Team Members" %} | {{ current_team.members.count }}</h2>
+	<div class="card border-0 rounded-4 shadow-sm">
+		<div class="card-body px-lg-5 py-lg-4">
+			<div class="row">
+				<div class="col-lg px-3">
+					<div class="row row-cols-auto justify-content-center justify-content-lg-start g-3">
+						{% for membership in memberships %}
+							<div class="col" style="max-width: 300px;">
+								<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
+									<span class="text-uppercase h4 m-0">{{ membership.user.username|slice:"0:1" }}</span>
+								</div>
+								<div class="h5 mt-3 mb-0 text-center text-truncate">
+									{{ membership.user.username }}
+									{% if request.user.username ==  membership.user.username %}(You){% endif %}
+								</div>
+								<div class="text-center text-truncate">{{ membership.user.email }}</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="col-lg-auto text-lg-end mt-3 mt-lg-0 align-self-center ps-lg-4">
+					<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}" class="btn btn-link rounded-pill" aria-label="Manage Members">
+						<i class="fa-solid fa-edit"></i>
+						<span class="ms-1 d-lg-none">{% trans "Manage Members" %}</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Team members end -->
 {% endblock content %}

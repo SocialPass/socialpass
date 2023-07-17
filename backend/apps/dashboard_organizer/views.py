@@ -251,6 +251,11 @@ class TeamDetailView(TeamContextMixin, TemplateView):
 
     template_name = "redesign/dashboard_organizer/team_details.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["memberships"] = Membership.objects.filter(team=context["current_team"])
+        return context
+
 
 class TeamMemberManageView(TeamContextMixin, FormView):
     """

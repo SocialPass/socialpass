@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-17 16:37+0600\n"
+"POT-Creation-Date: 2023-07-18 18:25+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,25 +18,29 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: backend/apps/dashboard_organizer/forms.py:169
+#: backend/apps/dashboard_organizer/forms.py:26
+msgid "Email Address"
+msgstr "ইমেইল"
+
+#: backend/apps/dashboard_organizer/forms.py:174
 msgid "Short name for free ticket tier e.g. General Admission"
 msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
 
-#: backend/apps/dashboard_organizer/forms.py:189
+#: backend/apps/dashboard_organizer/forms.py:194
 msgid "Name of ticket tier"
 msgstr "টিকিটের স্তরের নাম"
 
-#: backend/apps/dashboard_organizer/forms.py:190
+#: backend/apps/dashboard_organizer/forms.py:195
 #: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:70
 msgid "Capacity"
 msgstr "ক্ষমতা"
 
-#: backend/apps/dashboard_organizer/forms.py:191
+#: backend/apps/dashboard_organizer/forms.py:196
 #: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:86
 msgid "Max per person"
 msgstr "জনপ্রতি সর্বোচ্চ"
 
-#: backend/apps/dashboard_organizer/forms.py:192
+#: backend/apps/dashboard_organizer/forms.py:197
 msgid "Max guest(s) allowed per ticket"
 msgstr "প্রতি টিকিটে সর্বাধিক অতিথি(দের) অনুমোদিত"
 
@@ -174,6 +178,7 @@ msgid "Team Details"
 msgstr "দলের বিবরণ"
 
 #: backend/templates/redesign/dashboard_organizer/base.html:160
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:4
 #: backend/templates/redesign/dashboard_organizer/team_details.html:77
 msgid "Manage Members"
 msgstr "সদস্যদের পরিচালনা করুন"
@@ -409,6 +414,38 @@ msgstr "টোকেন ঠিকানা"
 msgid "No ticket tiers yet."
 msgstr "টিকিট"
 
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:6
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:8
+msgid "Manage"
+msgstr "পরিচালনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:6
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:8
+msgid "Members"
+msgstr "সদস্যদের"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:13
+#: backend/templates/redesign/dashboard_organizer/team_details.html:54
+msgid "Team Members"
+msgstr "দলের সদস্যরা"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:29
+#: backend/templates/redesign/dashboard_organizer/team_details.html:67
+msgid "You"
+msgstr "আপনি"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:41
+msgid "Invite Sent"
+msgstr "আমন্ত্রণ পাঠানো"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:55
+msgid "Invite Team Members"
+msgstr "দলের সদস্যদের আমন্ত্রণ"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:75
+msgid "Send Invite"
+msgstr "আমন্ত্রণ পাঠান"
+
 #: backend/templates/redesign/dashboard_organizer/team_details.html:6
 #: backend/templates/redesign/dashboard_organizer/team_details.html:8
 msgid "Team"
@@ -430,14 +467,6 @@ msgstr "আপনার দলের একটি বিবরণ নেই।"
 #: backend/templates/redesign/dashboard_organizer/team_details.html:43
 msgid "Edit Team"
 msgstr "দল সম্পাদনা করুন"
-
-#: backend/templates/redesign/dashboard_organizer/team_details.html:54
-msgid "Team Members"
-msgstr "দলের সদস্যরা"
-
-#: backend/templates/redesign/dashboard_organizer/team_details.html:67
-msgid "You"
-msgstr "আপনি"
 
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:4
 #: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6

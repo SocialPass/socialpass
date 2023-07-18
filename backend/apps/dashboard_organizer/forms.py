@@ -23,9 +23,14 @@ class CustomInviteForm(forms.Form):
     """
 
     email = forms.EmailField(
-        label="E-mail",
+        label=_("Email Address"),
         required=True,
-        widget=forms.TextInput(attrs={"type": "email"}),
+        widget=forms.TextInput(
+            attrs={
+                "type": "email",
+                "placeholder": "JohnDoe@gmail.com",
+            }
+        ),
         initial="",
     )
 

@@ -263,7 +263,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
     """
 
     form_class = CustomInviteForm
-    template_name = "dashboard_organizer/member_form.html"
+    template_name = "redesign/dashboard_organizer/manage_members.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

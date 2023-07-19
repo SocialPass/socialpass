@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-18 18:25+0600\n"
+"POT-Creation-Date: 2023-07-19 17:06+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -207,6 +207,33 @@ msgstr "পাসওয়ার্ড পরিবর্তন করুন"
 msgid "Manage Emails"
 msgstr "ইমেল পরিচালনা করুন"
 
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:4
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:6
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:8
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:14
+msgid "Delete Event"
+msgstr "ইভেন্ট মুছুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:16
+msgid "Please confirm the deletion of your event."
+msgstr "আপনার ইভেন্ট মুছে ফেলা নিশ্চিত করুন৷"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:25
+msgid ""
+"You're about to remove the following event. Please note, once this action is "
+"confirmed, it cannot be undone."
+msgstr "আপনি নিম্নলিখিত ইভেন্টটি সরাতে চলেছেন৷ অনুগ্রহ করে মনে রাখবেন, একবার এই ক্রিয়াটি নিশ্চিত হয়ে গেলে, এটি পূর্বাবস্থায় ফেরানো যাবে না৷"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:33
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:34
+msgid "Cancel"
+msgstr "বাতিল"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:34
+#: backend/templates/redesign/dashboard_organizer/event_list.html:142
+msgid "Delete"
+msgstr "মুছে ফেলুন"
+
 #: backend/templates/redesign/dashboard_organizer/event_go_live.html:4
 #: backend/templates/redesign/dashboard_organizer/event_go_live.html:6
 #: backend/templates/redesign/dashboard_organizer/event_go_live.html:8
@@ -314,10 +341,6 @@ msgstr "টিকিট"
 #: backend/templates/redesign/dashboard_organizer/event_list.html:136
 msgid "Preview"
 msgstr "পূর্বরূপ"
-
-#: backend/templates/redesign/dashboard_organizer/event_list.html:142
-msgid "Delete"
-msgstr "মুছে ফেলুন"
 
 #: backend/templates/redesign/dashboard_organizer/event_list.html:159
 #: backend/templates/redesign/dashboard_organizer/event_list.html:161
@@ -445,6 +468,32 @@ msgstr "দলের সদস্যদের আমন্ত্রণ"
 #: backend/templates/redesign/dashboard_organizer/manage_members.html:75
 msgid "Send Invite"
 msgstr "আমন্ত্রণ পাঠান"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:4
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:14
+msgid "Remove Member"
+msgstr "সদস্য সরান"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:6
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:8
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:35
+msgid "Remove"
+msgstr "সরান"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:6
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:8
+msgid "Member"
+msgstr "সদস্যদের"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:16
+msgid "Please confirm the removal of your team member."
+msgstr "আপনার দলের সদস্য অপসারণ নিশ্চিত করুন৷"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:29
+msgid ""
+"You're about to remove this team member. Please note, once this action is "
+"confirmed, it cannot be undone."
+msgstr "আপনি এই দলের সদস্যকে সরাতে চলেছেন৷ অনুগ্রহ করে মনে রাখবেন, একবার এই ক্রিয়াটি নিশ্চিত হয়ে গেলে, এটি পূর্বাবস্থায় ফেরানো যাবে না৷"
 
 #: backend/templates/redesign/dashboard_organizer/team_details.html:6
 #: backend/templates/redesign/dashboard_organizer/team_details.html:8

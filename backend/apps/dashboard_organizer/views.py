@@ -314,7 +314,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     object: Membership  # Mypy typing
     model = Membership
     pk_url_kwarg = "member_pk"
-    template_name = "dashboard_organizer/member_delete.html"
+    template_name = "redesign/dashboard_organizer/member_delete.html"
 
     def get_success_url(self):
         messages.add_message(

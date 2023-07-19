@@ -359,10 +359,6 @@ b {
     color: #1da1f2 !important;
 }
 
-.text-discord {
-    color: #5865f2 !important;
-}
-
 .text-telegram {
     color: #0088cc !important;
 }
@@ -462,10 +458,6 @@ b {
         hsla(var(--secondary-color-hsl), 0.1),
         hsla(var(--tertiary-color-hsl), 0.1)
     ) !important;
-}
-
-.bg-discord {
-    background-color: #5865f2 !important;
 }
 
 .bg-telegram {

@@ -14,6 +14,12 @@
 		<div class="ps-20">
 			<div class="fw-bold fs-base-p4">{{obj.name}}</div>
 			<div>{{obj.created}}</div>
+			<ul class="ms-0 ps-0">
+				Team Members:
+			{% for member in obj.members.all %}
+				<li>{{member.username}}: <a href="mailto:{{member.email}}">{{member.email}}</a></li>
+			{% endfor %}
+			</ul>
 		</div>
 	</div>
 </div>

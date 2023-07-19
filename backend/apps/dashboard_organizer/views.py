@@ -530,7 +530,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     object: Event  # Mypy typing
     model = Event
-    template_name = "dashboard_organizer/event_delete.html"
+    template_name = "redesign/dashboard_organizer/event_delete.html"
 
     def get_object(self):
         return Event.objects.get(

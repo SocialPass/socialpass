@@ -978,7 +978,7 @@ class StripeDelete(TeamContextMixin, TemplateView):
     Delete a connected Stripe account
     """
 
-    template_name = "dashboard_organizer/stripe_delete.html"
+    template_name = "redesign/dashboard_organizer/stripe_delete.html"
 
     def post(self, *args, **kwargs):
         """

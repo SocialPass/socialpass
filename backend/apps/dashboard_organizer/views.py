@@ -816,7 +816,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
 
     object: TicketTier  # Mypy typing
     model = TicketTier
-    template_name = "dashboard_organizer/ticket_tier_delete.html"
+    template_name = "redesign/dashboard_organizer/ticket_tier_delete.html"
 
     def get_object(self):
         return TicketTier.objects.get(

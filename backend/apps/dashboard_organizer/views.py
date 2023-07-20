@@ -836,7 +836,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
     Connect and manage Stripe account.
     """
 
-    template_name = "dashboard_organizer/payment_detail.html"
+    template_name = "redesign/dashboard_organizer/payment_details.html"
 
     def post(self, *args, **kwargs):
         """

@@ -11,6 +11,11 @@ urlpatterns = [
         name="get_tickets",
     ),
     path(
+        "event-2/<uuid:event_uuid_slug>/",
+        views.CheckoutPageOne.as_view(),
+        name="checkout_one",
+    ),
+    path(
         "event/<slug:event_slug>/",
         views.CheckoutPageOne.as_view(),
         name="checkout_one",

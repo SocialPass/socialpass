@@ -53,11 +53,21 @@ class CheckoutPageOne(DetailView):
     template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
-        self.object = Event.objects.select_related("team").prefetch_related(
-            "tickettier_set",
-            "tickettier_set__tier_free",
-            "tickettier_set__tier_asset_ownership",
-        ).get(slug=self.kwargs["event_slug"])
+        # Handle default checkout
+        if self.kwargs.get('event_slug'):
+            self.object = Event.objects.select_related("team").prefetch_related(
+                "tickettier_set",
+                "tickettier_set__tier_free",
+                "tickettier_set__tier_asset_ownership",
+            ).get(slug=self.kwargs["event_slug"])
+        # Handle Migrated Checkout
+        # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
+        if self.kwargs.get('event_uuid_slug'):
+            self.object = Event.objects.select_related("team").prefetch_related(
+                "tickettier_set",
+                "tickettier_set__tier_free",
+                "tickettier_set__tier_asset_ownership",
+            ).get(public_id=self.kwargs["event_uuid_slug"])
         if not self.object:
             raise Http404()
         return self.object

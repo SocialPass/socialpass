@@ -333,7 +333,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
     form_class = TeamForm
     model = Team
     pk_url_kwarg = "team_public_id"
-    template_name = "dashboard_organizer/team_form.html"
+    template_name = "redesign/dashboard_organizer/team_update.html"
 
     def get_object(self):
         return self.team

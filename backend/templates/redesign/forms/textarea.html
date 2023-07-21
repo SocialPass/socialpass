@@ -11,9 +11,7 @@
         {% for k,v in input.field.widget.attrs.items %}
             {{ k }}="{{ v }}"
         {% endfor %}
-    >
-        {% if input.value %}{{ input.value }}{% endif %}
-    </textarea>
+    >{% if input.value %}{{ input.value }}{% endif %}</textarea>
     <label for="{{ input.id_for_label }}">{{ input.label }}</label>
 </div>
 {% if input.errors %}

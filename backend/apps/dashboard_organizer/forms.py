@@ -47,14 +47,28 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ["name", "description", "image"]
         widgets = {
-            "name": forms.TextInput(attrs={"placeholder": "Name of your team"}),
+            "name": forms.TextInput(
+                attrs={
+                    "placeholder": _("Name of your team")
+                }
+            ),
             "description": forms.Textarea(
-                attrs={"placeholder": "A short description of your team", "rows": 3}
+                attrs={
+                    "placeholder": _("A short description of your team"),
+                    "rows": 3,
+                }
             ),
         }
         labels = {
-            "description": "Description (Optional)",
-            "image": "Set Team Image (Optional)",
+            "name": _("Name"),
+            "description": _("Description"),
+            "image": _("Team Image"),
+        }
+        help_texts = {
+            "image": _(
+                "A brand image for your team. Please make sure the image is "
+                "square, non-transparent, and ideally in the PNG format."
+            ),
         }
 
 

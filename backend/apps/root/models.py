@@ -13,6 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -353,14 +354,14 @@ class Event(DBModel):
     cover_image = models.ImageField(
         help_text="A banner image for your event. Please make sure the image "
         "is a high quality landscape image, ideally 960 x 720 pixels (4:3).",
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         upload_to="event__cover_image",
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     end_date = models.DateTimeField(
         help_text="When your event will end (optional).",
@@ -380,21 +381,21 @@ class Event(DBModel):
     timezone = models.CharField(
         verbose_name="time zone",
         max_length=30,
-        blank=False,
+        blank=True,
         default="",
     )
     # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=False, default="")
+    address_1 = models.CharField(max_length=255, blank=True, default="")
     # The street/location address (part 2)
     address_2 = models.CharField(max_length=255, blank=True, default="")
     # The city
-    city = models.CharField(max_length=255, blank=False, default="")
+    city = models.CharField(max_length=255, blank=True, default="")
     # The ISO 3166-2 2- or 3-character region code
     region = models.CharField(max_length=4, blank=True, default="")
     # The postal code
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=False, default="")
+    country = models.CharField(max_length=2, blank=True, default="")
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)
@@ -554,7 +555,7 @@ class Event(DBModel):
         "address_1, address_2, city, country, postal_code" joined
         """
         if not self.city and not self.address_1:
-            return ""
+            return "Not set"
 
         # add postal code to city if exists
         if self.postal_code:
@@ -630,6 +631,13 @@ class Event(DBModel):
         }
         return CURRENCY_SYMBOLS.get(self.fiat_currency, self.fiat_currency + " ")
 
+    @property
+    def cover_image_url(self):
+        if self.cover_image:
+            return self.cover_image.url
+        else:
+            return staticfiles_storage.url("images/event_cover_placeholder.jpg")
+    
 
 class Ticket(DBModel):
     """

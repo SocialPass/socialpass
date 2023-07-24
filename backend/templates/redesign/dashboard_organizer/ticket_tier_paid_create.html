@@ -72,10 +72,12 @@
 
 					<br /><br />
 					<h4 class="mb-lg-4">{% trans "Set Ticket Price" %} &mdash; {{ event.fiat_currency }} ({{ event.currency_symbol }})</h4>
-					<div class="mb-3">
-						{% with tier_fiat_form.price_per_ticket as input %}
-							{% include "redesign/forms/input.html" %}
-						{% endwith %}
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with tier_fiat_form.price_per_ticket as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
 					</div>
 
 					<div class="text-end mt-3">

@@ -19,6 +19,7 @@ from django.views.generic.list import ListView
 
 from apps.dashboard_organizer.forms import (
     CustomInviteForm,
+    EventCreateForm,
     EventForm,
     TeamForm,
     TicketTierForm,
@@ -391,8 +392,8 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """
 
     model = Event
-    form_class = EventForm
-    template_name = "dashboard_organizer/event_form.html"
+    form_class = EventCreateForm
+    template_name = "redesign/dashboard_organizer/event_create.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -410,7 +411,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse(
-            "dashboard_organizer:event_tickets",
+            "dashboard_organizer:event_update",
             args=(self.kwargs["team_public_id"], self.object.pk),
         )
 

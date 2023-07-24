@@ -72,6 +72,36 @@ class TeamForm(forms.ModelForm):
         }
 
 
+class EventCreateForm(forms.ModelForm):
+    """
+    Event create form
+    """
+
+    class Meta:
+        model = Event
+        fields = [
+            "title",
+            "description",
+            "cover_image",
+        ]
+        widgets = {
+            "title": forms.TextInput(
+                attrs={
+                    "placeholder": _("Your Event Name Here"),
+                }
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "placeholder": _(
+                        "Short description here. Let the people know what’s "
+                        "going on with this event!"
+                    ),
+                    "rows": 3,
+                }
+            ),
+        }
+
+
 def get_country_choices():
     """
     Return choices for country where value is the country code

@@ -676,7 +676,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "dashboard_organizer/ticket_tier_fiat_form.html"
+    template_name = "redesign/dashboard_organizer/ticket_tier_paid_create.html"
     form_data = None
 
     def get_context_data(self, **kwargs):
@@ -747,7 +747,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "dashboard_organizer/ticket_tier_free_form.html"
+    template_name = "redesign/dashboard_organizer/ticket_tier_free_create.html"
     form_data = None
 
     def get_context_data(self, **kwargs):

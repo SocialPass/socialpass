@@ -287,6 +287,11 @@ class TierFiatForm(forms.ModelForm):
         ]
         widgets = {
             "price_per_ticket": forms.TextInput(
-                attrs={"placeholder": "Price of one ticket"}
+                attrs={
+                    "placeholder": _("Price of one ticket"),
+                }
             ),
+        }
+        labels = {
+            "price_per_ticket": _("Price/ticket"),
         }

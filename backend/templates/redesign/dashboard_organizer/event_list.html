@@ -119,7 +119,10 @@
 								<a href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Edit" %}</a>
 							</li>
 							<li>
-								<a href="{% url 'dashboard_organizer:event_tickets' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Tickets" %}</a>
+								<a href="{% url 'dashboard_organizer:event_tickets' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Ticket Tiers" %}</a>
+							</li>
+							<li>
+								<a href="{% url 'dashboard_organizer:event_go_live' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Party Time!" %}</a>
 							</li>
 							<li><div class="dropdown-divider"></div></li>
 							{% if event.state == event.StateStatus.LIVE %}

@@ -257,14 +257,18 @@ class TierAssetOwnershipForm(forms.ModelForm):
         ]
         widgets = {
             "token_address": forms.TextInput(
-                attrs={"placeholder": "Example: 0xb79...79268"}
+                attrs={"placeholder": _("e.g. 0xb53...4394n")}
             ),
             "token_id": forms.TextInput(
-                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
+                attrs={"placeholder": _("e.g. 1,2,3,4,5")}
             ),
             "balance_required": forms.NumberInput(attrs={"min": 1}),
         }
-        labels = {"token_id": "Token IDs (Optional)"}
+        labels = {
+            "token_address": _("NFT Collection Token Address"),
+            "balance_required": _("Balance Required"),
+            "token_id": _("OPTIONAL: Token IDs Required")
+        }
 
     def clean_token_address(self):
         token_address = self.cleaned_data["token_address"]

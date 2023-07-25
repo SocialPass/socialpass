@@ -621,7 +621,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "dashboard_organizer/ticket_tier_nft_form.html"
+    template_name = "redesign/dashboard_organizer/ticket_tier_nft_create.html"
     form_data = None
 
     def get_context_data(self, **kwargs):

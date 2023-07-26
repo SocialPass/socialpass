@@ -127,6 +127,7 @@ class EventForm(forms.ModelForm):
         fields = [
             "title",
             "description",
+            "cover_image",
             "start_date",
             "end_date",
             "timezone",
@@ -135,12 +136,15 @@ class EventForm(forms.ModelForm):
             "city",
             "postal_code",
             "country",
-            "cover_image",
             "google_class_id",
         ]
 
         widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
+            "title": forms.TextInput(
+                attrs={
+                    "placeholder": _("Your Event Name Here"),
+                }
+            ),
             "start_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",
                 attrs={
@@ -148,6 +152,7 @@ class EventForm(forms.ModelForm):
                     "class": "form-control",
                     "type": "datetime-local",
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
+                    "required": True,
                 },
             ),
             "end_date": forms.DateTimeInput(
@@ -159,22 +164,49 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "address_1": forms.TextInput(attrs={"placeholder": "Name of venue"}),
-            "address_2": forms.TextInput(
+            "address_1": forms.TextInput(
                 attrs={
-                    "placeholder": str(
-                        "Street and number, P.O. box, apartment, suite, unit, "
-                        "building, floor, etc."
-                    ),
+                    "placeholder": _("Name of Venue"),
                     "required": True,
                 }
             ),
-            "city": forms.TextInput(attrs={"placeholder": "City name"}),
-            "postal_code": forms.TextInput(attrs={"placeholder": "Postal code"}),
+            "address_2": forms.TextInput(
+                attrs={
+                    "placeholder": _("12345 Party Street"),
+                    "required": True,
+                }
+            ),
+            "city": forms.TextInput(
+                attrs={
+                    "placeholder": _("City"),
+                    "required": True,
+                }
+            ),
+            "state": forms.TextInput(
+                attrs={
+                    "placeholder": _("State"),
+                    "required": True,
+                }
+            ),
+            "postal_code": forms.TextInput(
+                attrs={
+                    "placeholder": _("Zip Code"),
+                    "required": True,
+                }
+            ),
         }
         labels = {
-            "address_1": "Name of venue",
-            "address_2": "Address of venue",
+            "title": _("Title"),
+            "description": _("Description"),
+            "start_date": _("Start Date"),
+            "end_date": _("End Date"),
+            "timezone": _("Timezone"),
+            "address_1": _("Name of Venue"),
+            "address_2": _("Address"),
+            "city": _("City"),
+            "state": _("State"),
+            "postal_code": _("Zip Code"),
+            "country": _("Country"),
         }
 
     def __init__(self, *args, **kwargs):

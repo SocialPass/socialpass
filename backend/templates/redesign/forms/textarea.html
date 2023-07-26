@@ -12,7 +12,7 @@
             {{ k }}="{{ v }}"
         {% endfor %}
     >{% if input.value %}{{ input.value }}{% endif %}</textarea>
-    <label for="{{ input.id_for_label }}">{{ input.label }}</label>
+    <label for="{{ input.id_for_label }}">{{ input.label }}{% if input.field.required or "required" in input.field.widget.attrs %}*{% endif %}</label>
 </div>
 {% if input.errors %}
     <ul class="text-danger-emphasis fw-bold mt-3">

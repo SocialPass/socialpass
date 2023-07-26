@@ -425,7 +425,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     slug_field = "pk"
     slug_url_kwarg = "pk"
     form_class = EventForm
-    template_name = "dashboard_organizer/event_form.html"
+    template_name = "redesign/dashboard_organizer/event_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

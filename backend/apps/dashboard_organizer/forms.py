@@ -152,7 +152,7 @@ class EventForm(forms.ModelForm):
                     "class": "form-control",
                     "type": "datetime-local",
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
-                    "required": True,
+                    "required": "required",
                 },
             ),
             "end_date": forms.DateTimeInput(
@@ -167,31 +167,31 @@ class EventForm(forms.ModelForm):
             "address_1": forms.TextInput(
                 attrs={
                     "placeholder": _("Name of Venue"),
-                    "required": True,
+                    "required": "required",
                 }
             ),
             "address_2": forms.TextInput(
                 attrs={
                     "placeholder": _("12345 Party Street"),
-                    "required": True,
+                    "required": "required",
                 }
             ),
             "city": forms.TextInput(
                 attrs={
                     "placeholder": _("City"),
-                    "required": True,
+                    "required": "required",
                 }
             ),
             "state": forms.TextInput(
                 attrs={
                     "placeholder": _("State"),
-                    "required": True,
+                    "required": "required",
                 }
             ),
             "postal_code": forms.TextInput(
                 attrs={
                     "placeholder": _("Zip Code"),
-                    "required": True,
+                    "required": "required",
                 }
             ),
         }

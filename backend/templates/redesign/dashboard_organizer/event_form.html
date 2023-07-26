@@ -1,0 +1,129 @@
+{% extends "redesign/dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email %}
+
+{% block head_title %}{% trans "Edit Event Details" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Edit Event Details" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Edit Event Details" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+{% include "redesign/components/event_flow_header.html" with step="1" %}
+<!-- Ticket tier form start -->
+<div class="row mt-4 mb-3">
+	<div class="col-lg-8 mx-auto">
+		<h1 class="h3 mb-0">{% trans "Edit Event Details" %}</h1>
+		<p class="text-body-secondary">
+			{% trans "Edit & update event any information." %}
+		</p>
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body px-lg-5 py-lg-4">
+				<form method="POST">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="mb-0">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					<h4 class="mb-lg-4">{% trans "Location of Event" %}</h4>
+					<div class="mb-3">
+						{% with form.address_1 as input %}
+							{% include "redesign/forms/input.html" %}
+						{% endwith %}
+					</div>
+					<div class="mb-3">
+						{% with form.address_2 as input %}
+							{% include "redesign/forms/input.html" %}
+						{% endwith %}
+					</div>
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with form.city as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.postal_code as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.country as input %}
+								{% include "redesign/forms/select.html" %}
+							{% endwith %}
+						</div>
+					</div>
+
+					<br /><br />
+					<h4 class="mb-lg-4">{% trans "Time of Event" %}</h4>
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with form.start_date as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.end_date as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+							<div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
+								The end date must come after the start date.
+							</div>
+						</div>
+						<div class="col-lg-6">
+							{% with form.timezone as input %}
+								{% include "redesign/forms/select.html" %}
+							{% endwith %}
+						</div>
+					</div>
+
+					<div class="text-end mt-3">
+						<button type="submit" class="btn btn-primary">{% trans "Save & Continue" %}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Ticket tier form end -->
+{% endblock content %}
+
+{% block extra_body %}
+<!-- Date Validation Script -->
+<script>
+	var startDateInput = document.getElementById("id_start_date");
+	var endDateInput = document.getElementById("id_end_date");
+	var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
+
+	function dateValidate(e) {
+		var startDateVal = startDateInput.value;
+		var endDateVal = endDateInput.value;
+
+		endDateExtraFeedback.classList.add("d-none");
+		endDateInput.classList.remove("is-invalid");
+
+		if (startDateVal && endDateVal) {
+			var startDate = new Date(startDateVal);
+			var endDate = new Date(endDateVal);
+
+			if (startDate >= endDate) {
+				endDateExtraFeedback.classList.remove("d-none");
+				endDateInput.classList.add("is-invalid");
+			}
+		}
+	}
+
+	startDateInput.addEventListener("change", dateValidate);
+	endDateInput.addEventListener("change", dateValidate);
+</script>
+{% endblock extra_body %}

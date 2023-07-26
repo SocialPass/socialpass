@@ -8,6 +8,7 @@
 {% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Create Paid Ticket Tier" %}{% endblock navbar_title_2 %}
 
 {% block content %}
+{% include "redesign/components/event_flow_header.html" with step="2" %}
 <!-- Ticket tier form start -->
 <div class="row mt-4 mb-3">
 	<div class="col-lg-8 mx-auto">

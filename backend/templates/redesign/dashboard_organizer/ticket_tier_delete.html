@@ -8,6 +8,7 @@
 {% block navbar_title_2 %}<span class="text-primary-emphasis">{{ object.event.title }}</span> &mdash; {% trans "Delete Ticket Tier" %}{% endblock navbar_title_2 %}
 
 {% block content %}
+{% include "redesign/components/event_flow_header.html" with step="2" event=object.event %}
 <!-- Deletion start -->
 <div class="row mt-4 mb-3">
 	<div class="col-lg-8 mx-auto">

@@ -80,7 +80,8 @@
 			}
 
 			.cover-img-input .form-label,
-			.cover-img-input .form-text {
+			.cover-img-input .form-text,
+			.cover-img-input .input-group {
 				display: none;
 			}
 
@@ -104,6 +105,12 @@
 		<!-- Start of socialpasshelp Zendesk Widget script -->
 		<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=9c4c9c07-9f42-4625-8100-b004629cf654"> </script>
 		<!-- End of socialpasshelp Zendesk Widget script -->
+
+		{% if request.resolver_match.url_name == 'event_update' %}
+			{{ form.media }}
+			<!-- Quill CSS overrides -->
+			<link href="{% static 'quill-text-editor/quill.snow.new.css' %}" rel="stylesheet">
+		{% endif %}
 
 		{% block extra_head %}{% endblock extra_head %}
 	</head>

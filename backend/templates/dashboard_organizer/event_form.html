@@ -17,6 +17,12 @@
 {% endif %}
 {% endblock %}
 
+{% block extra_head %}
+	{{ form.media }}
+	<!-- Quill CSS overrides -->
+	<link href="{% static 'quill-text-editor/quill.snow.css' %}" rel="stylesheet">
+{% endblock extra_head %}
+
 {% block content %}
 <!-- Header start -->
 {% include 'components/event_details_page_header.html' %}

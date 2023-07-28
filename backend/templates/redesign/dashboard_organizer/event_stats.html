@@ -75,6 +75,20 @@
 					<i class="fa-light fa-external-link text-primary-emphasis me-1"></i>
 					Share Event
 				</h6>
+				<div class="d-flex align-items-center flex-wrap">
+					<a href="{% url 'checkout:checkout_one' event.slug %}" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Public Page" aria-label="Public Page">
+						<i class="fa-solid fa-external-link h6 m-0"></i>
+					</a>
+					<a href="#" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center text-white rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Facebook Share" aria-label="Facebook Share" id="facebook-share" style="background-color: #4267b2;">
+						<i class="fa-brands fa-facebook-f"></i>
+					</a>
+					<a href="#" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center text-white rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Twitter Share" aria-label="Twitter Share" id="twitter-share" style="background-color: #1da1f2;">
+						<i class="fa-brands fa-twitter"></i>
+					</a>
+					<a href="#" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center text-bg-primary rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Email Share" aria-label="Email Share" id="email-share">
+						<i class="fa-solid fa-envelope"></i>
+					</a>
+				</div>
 			</div>
 		</div>
 		<div class="card border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1 mt-3">
@@ -133,45 +147,14 @@
 	</div>
 </div>
 <!-- Event stats end -->
+
+<script>
+	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}"
+	const twitterShareAnchor = document.getElementById("twitter-share")
+	const facebookShareAnchor = document.getElementById("facebook-share")
+  	const emailShareAnchor = document.getElementById("email-share")
+  	twitterShareAnchor.href = `https://twitter.com/share?url=${socialpassLinkMessage}`
+  	facebookShareAnchor.href = `http://www.facebook.com/sharer/sharer.php?u=${socialpassLinkMessage}`
+  	emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
+</script>
 {% endblock content %}
-
-{% block extra_body %}
-	<!-- Go live button processing state -->
-	<script type="text/javascript">
-		function goLive(event) {
-			event.target.classList.add("disabled");
-			event.target.innerHTML = [
-		        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`,
-		        `<span class="ms-1">Processing...</span>`,
-		    ].join("");
-		}
-	</script>
-
-	<!-- Confetti animation -->
-	{% if event.state == event.StateStatus.LIVE and request.GET.is_success == "True" %}
-		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
-		<script type="text/javascript">
-		    setTimeout(function() {
-		        confetti({
-		            particleCount: 100,
-		            spread: 70,
-		            origin: { y: 0.6 }
-		        });
-		    }, 1000);
-		    setTimeout(function() {
-		        confetti({
-		            particleCount: 100,
-		            spread: 70,
-		            origin: { x: 0.2, y: 0.9 }
-		        });
-		    }, 1500);
-		    setTimeout(function() {
-		        confetti({
-		            particleCount: 100,
-		            spread: 70,
-		            origin: { x: 0.8, y: 0.9 }
-		        });
-		    }, 2000);
-		</script>
-	{% endif %}
-{% endblock %}

@@ -40,7 +40,7 @@
 									{% if event.start_date %}
 										{{ event.start_date }}
 									{% else %}
-										Not set
+										{% trans "Not set" %}
 									{% endif %}
 								</span>
 								{% if event.end_date %}
@@ -53,7 +53,7 @@
 									{% if event.timezone %}
 										{{ event.timezone }}
 									{% else %}
-										Not set
+										{% trans "Not set" %}
 									{% endif %}
 								</span>
 							</div>

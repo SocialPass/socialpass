@@ -74,7 +74,7 @@
 								{% if event.start_date %}
 									{{ event.start_date }}
 								{% else %}
-									Not set
+									{% trans "Not set" %}
 								{% endif %}
 							</span>
 						</div>
@@ -115,6 +115,10 @@
 							<i class="fa-solid fa-ellipsis-vertical"></i>
 						</button>
 						<ul class="dropdown-menu dropdown-menu-end">
+							<li>
+								<a href="{% url 'dashboard_organizer:event_stats' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Details" %}</a>
+							</li>
+							<li><div class="dropdown-divider"></div></li>
 							<li>
 								<a href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Edit" %}</a>
 							</li>

@@ -28,7 +28,7 @@
 									{% if event.start_date %}
 										{{ event.start_date }}
 									{% else %}
-										Not set
+										{% trans "Not set" %}
 									{% endif %}
 								</span>
 								{% if event.end_date %}
@@ -41,7 +41,7 @@
 									{% if event.timezone %}
 										{{ event.timezone }}
 									{% else %}
-										Not set
+										{% trans "Not set" %}
 									{% endif %}
 								</span>
 							</div>
@@ -73,7 +73,7 @@
 			<div class="card-body">
 				<h6>
 					<i class="fa-light fa-external-link text-primary-emphasis me-1"></i>
-					Share Event
+					{% trans "Share Event" %}
 				</h6>
 				<div class="d-flex align-items-center flex-wrap">
 					<a href="{% url 'checkout:checkout_one' event.slug %}" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Public Page" aria-label="Public Page">
@@ -95,12 +95,12 @@
 			<div class="card-body">
 				<h6>
 					<i class="fa-light fa-barcode-read text-primary-emphasis me-1"></i>
-					Scan Tickets
+					{% trans "Scan Tickets" %}
 				</h6>
 				<p>
-					Access the scanning portal below to start scanning tickets.
+					{% trans "Access the scanning portal below to start scanning tickets." %}
 				</p>
-				<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="btn btn-primary w-100 d-block">Start Scanning</a>
+				<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="btn btn-primary w-100 d-block">{% trans "Start Scanning" %}</a>
 			</div>
 		</div>
 	</div>
@@ -114,7 +114,7 @@
 				</div>
 				<div>
 					<div class="h5 m-0">{{ tickets|length }}</div>
-					<div>Tickets Sold</div>
+					<div>{% trans "Tickets Sold" %}</div>
 				</div>
 			</div>
 		</div>
@@ -127,7 +127,7 @@
 				</div>
 				<div>
 					<div class="h5 m-0">{{ event.quantity_total_sold }}</div>
-					<div>Attendees (+ Guests)</div>
+					<div>{% trans "Attendees (+ Guests)" %}</div>
 				</div>
 			</div>
 		</div>
@@ -140,7 +140,7 @@
 				</div>
 				<div>
 					<div class="h5 m-0">{{ event.quantity_total_redeemed }}</div>
-					<div>Check-Ins</div>
+					<div>{% trans "Check-Ins" %}</div>
 				</div>
 			</div>
 		</div>

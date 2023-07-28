@@ -1,5 +1,5 @@
 {% extends "redesign/dashboard_organizer/base.html" %}
-{% load static i18n get_theme_value get_user_primary_email %}
+{% load static i18n get_theme_value get_user_primary_email format_to_event_timezone %}
 
 {% block head_title %}{% trans "Event Details" %} - SocialPass{% endblock head_title %}
 
@@ -146,6 +146,76 @@
 		</div>
 	</div>
 </div>
+<div class="card border-0 rounded-4 shadow-sm mb-3">
+	<div class="card-body d-md-flex align-items-center">
+		<h5 class="m-0">
+			<i class="fa-light fa-ticket me-1 text-primary-emphasis"></i>
+			Sold Tickets List
+		</h5>
+		{% if tickets|length > 0 %}
+			<div class="mt-2 mt-md-0 flex-shrink-0 ps-md-2 ms-auto">
+				<button class="btn btn-primary btn-sm rounded-pill" onClick="downloadTableAsCSV()">
+				<i class="fa-regular fa-download me-1"></i>
+					Download CSV
+				</button>
+			</div>
+		{% endif %}
+	</div>
+	{% if tickets|length > 0 %}
+		<div class="table-responsive">
+		    <table class="table" id="stats-table">
+		        <thead class="bg-primary-subtle text-primary-emphasis">
+		            <tr>
+		                <th>Ticket Tier</th>
+		                <th>Customer Name</th>
+		                <th>Wallet Address</th>
+		                <th>Party Size</th>
+		                <th><i class="fa-light fa-calendar"></i> Ordered At</th>
+		                <th><i class="fa-light fa-calendar"></i> Redeemed At</th>
+		                <th>Session ID</th>
+		                <th>Ticket ID</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            {% for ticket in tickets %}
+			            <tr>
+			                <td>
+			                    {{ ticket.ticket_tier }}
+			                </td>
+			                <td>
+			                    {{ ticket.customer_name }}
+			                </td>
+			                <td>
+			                    {{ ticket.wallet_address }}
+			                </td>
+			                <td>
+			                    {{ ticket.party_size }}
+			                </td>
+			                <td>
+			                    {% format_to_event_timezone ticket.created ticket.timezone %}
+			                </td>
+			                <td>
+			                    {% if ticket.redeemed_at %}
+			                    {% format_to_event_timezone ticket.redeemed_at ticket.timezone %}
+			                    {% else %}
+			                    Not yet redeemed
+			                    {% endif %}
+			                </td>
+			                <td>
+			                    {{ ticket.checkout_session }}
+			                </td>
+			                <td>
+			                    {{ ticket.ticket_id }}
+			                </td>
+			            </tr>
+		            {% endfor %}
+		        </tbody>
+		    </table>
+		</div>
+	{% else %}
+		<div class="card-body text-center">No tickets yet.</div>
+	{% endif%}
+</div>
 <!-- Event stats end -->
 
 <script>
@@ -156,5 +226,31 @@
   	twitterShareAnchor.href = `https://twitter.com/share?url=${socialpassLinkMessage}`
   	facebookShareAnchor.href = `http://www.facebook.com/sharer/sharer.php?u=${socialpassLinkMessage}`
   	emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
+</script>
+
+<!-- Table to CSV -->
+<script>
+	function downloadTableAsCSV() {
+	  	// Get the table element with the ID "stats-table"
+	  	const table = document.querySelector('#stats-table');
+
+	  	// Get the headers and data rows
+	  	const headers = Array.from(table.querySelectorAll('th')).map(th => `"${th.innerText}"`);
+	  	const rows = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+			Array.from(tr.querySelectorAll('td')).map(td => `"${td.innerText}"`)
+	  	);
+
+	  	// Combine the headers and rows into a CSV string
+	  	const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+
+	  	// Create a download link and click it
+	  	const downloadLink = document.createElement('a');
+	  	downloadLink.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`;
+	  	const eventName = `{{event.title}}`
+	  	downloadLink.download = `${eventName}-Stats.csv`;
+	  	document.body.appendChild(downloadLink);
+	  	downloadLink.click();
+	  	document.body.removeChild(downloadLink);
+	}
 </script>
 {% endblock content %}

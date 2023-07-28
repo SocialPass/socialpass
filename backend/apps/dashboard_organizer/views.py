@@ -594,7 +594,11 @@ class EventStatsView(TeamContextMixin, DetailView):
         context["tickets"] = results
 
         # Tickets redeemed
+<<<<<<< HEAD
         context["tickets_redeemed"] = event.tickets_redeemed
+=======
+        context["tickets_redeemed"] = event.ticket_set.filter(redeemed_at__isnull=False).all()
+>>>>>>> master
 
         return context
 

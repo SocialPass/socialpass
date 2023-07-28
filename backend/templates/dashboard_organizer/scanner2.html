@@ -91,7 +91,7 @@
 	const qrScanner = new Html5Qrcode("qr-reader", false);
 	const config = { fps: 1 };
     const didStart = qrScanner
-		.start({ facingMode: "user" }, config, qrCodeSuccessCallback)
+		.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
 		.then(() => true);
 
 	// audio event

@@ -136,7 +136,7 @@
 										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
 											<a href="{% url 'checkout:checkout_one' event.slug %}" class="fw-bold antialiased" target="_blank">
 												<i class="fa-regular fa-external-link"></i>
-												<span class="content-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}</span>
+												<span class="content-to-copy ms-5">{{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}</span>
 											</a>
 										</div>
 										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
@@ -164,7 +164,7 @@
 										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
 											<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="fw-bold antialiased" target="_blank">
 												<i class="fa-regular fa-external-link"></i>
-												<span class="content-to-copy ms-5">{% url 'dashboard_organizer:scanner' event.scanner_id %}</span>
+												<span class="content-to-copy ms-5">{{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}</span>
 											</a>
 										</div>
 										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
@@ -226,7 +226,7 @@
 										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
 											<a href="{% url 'checkout:checkout_one' event.slug %}" class="fw-bold antialiased" target="_blank">
 												<i class="fa-regular fa-external-link"></i>
-												<span class="content-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}</span>
+												<span class="content-to-copy ms-5">{{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}</span>
 											</a>
 										</div>
 										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">

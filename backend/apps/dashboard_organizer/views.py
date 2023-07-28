@@ -551,7 +551,7 @@ class EventStatsView(TeamContextMixin, DetailView):
     """
 
     model = Event
-    template_name = "dashboard_organizer/event_stats.html"
+    template_name = "redesign/dashboard_organizer/event_stats.html"
     object = None
 
     def get_object(self):
@@ -594,7 +594,7 @@ class EventStatsView(TeamContextMixin, DetailView):
         context["tickets"] = results
 
         # Tickets redeemed
-        context["tickets_redeemed"] = event.ticket_set.filter(redeemed=True).all()
+        context["tickets_redeemed"] = event.tickets_redeemed
 
         return context
 

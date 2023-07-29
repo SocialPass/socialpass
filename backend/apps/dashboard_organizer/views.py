@@ -479,6 +479,19 @@ class EventGoLiveView(TeamContextMixin, DetailView):
 
     def get(self, *args, **kwargs):
         event = self.get_object()
+        has_fields, missing_fields = event.has_required_fields
+        if not has_fields:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                "Your event is missing some information.",
+            )
+            # TODO: Pass form field validation
+            return redirect(
+                "dashboard_organizer:event_update",
+                self.kwargs["team_public_id"],
+                event.pk,
+            )
         if event.tickettier_set.count() < 1:
             messages.add_message(
                 self.request,

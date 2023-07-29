@@ -640,6 +640,27 @@ class Event(DBModel):
         else:
             return staticfiles_storage.url("images/event_cover_placeholder.jpg")
 
+    @property
+    def has_required_fields(self):
+        missing_fields = []
+        required_fields = {
+            "self.title": self.title,
+            "self.description": self.description,
+            "self.start_date": self.start_date,
+            "self.timezone": self.timezone,
+            "self.address_1": self.address_1,
+            "self.address_2": self.address_2,
+            "self.city": self.city,
+            "self.postal_code": self.postal_code,
+            "self.country": self.country,
+        }
+        for k, v in required_fields.items():
+            if v is None:
+                missing_fields.append(k)
+        if missing_fields:
+            return False, missing_fields
+        return True, []
+
 
 class Ticket(DBModel):
     """

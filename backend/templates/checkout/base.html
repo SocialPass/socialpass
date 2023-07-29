@@ -35,7 +35,7 @@
 		<meta property="og:url" content="{{ request.build_absolute_uri }}">
 		<meta property="og:title" content="{{ object.title }}">
 		<meta property="og:description" content="Date & Time: {{ object.start_date }} | Location: {{ object.localized_address_display }} | Get your tickets now!">
-		<meta property="og:image" content="{{ object.cover_image.url }}">
+		<meta property="og:image" content="{{ object.cover_image_url }}">
 
 		<!-- Google Tag Manager -->
 		{% if not debug %}

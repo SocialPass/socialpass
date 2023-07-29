@@ -12,10 +12,10 @@
 
 				  {% if event.cover_image.height > event.cover_image.width %}
 					  <!-- Portrait -->
-					  <img src="{{ event.cover_image.url }}" class="w-auto h-100" alt="{{ event.title }} cover image">
+					  <img src="{{ event.cover_image_url }}" class="w-auto h-100" alt="{{ event.title }} cover image">
 				  {% else %}
 					  <!-- Landscape -->
-					  <img src="{{ event.cover_image.url }}" class="w-100 h-auto" alt="{{ event.title }} cover image">
+					  <img src="{{ event.cover_image_url }}" class="w-100 h-auto" alt="{{ event.title }} cover image">
 				  {% endif %}
         {% endif %}
 			</div>

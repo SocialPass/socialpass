@@ -639,7 +639,7 @@ class Event(DBModel):
             return self.cover_image.url
         else:
             return staticfiles_storage.url("images/event_cover_placeholder.jpg")
-    
+
 
 class Ticket(DBModel):
     """

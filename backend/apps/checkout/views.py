@@ -79,7 +79,7 @@ class CheckoutPageOne(DetailView):
                 ).get(pk=self.kwargs["event_pk_slug"])
         except Event.DoesNotExist:
             raise Http404()
-        except:
+        except Exception:
             rollbar.report_exc_info()
             raise Http404()
 

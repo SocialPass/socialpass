@@ -14,7 +14,7 @@
         {% endfor %}
     >
         {% for x, y in input.field.choices %}
-            <option value="{{ x }}"{% if form.fields.customer.value == x %} selected{% endif %}>{{ y }}</option>
+            <option value="{{ x }}"{% if input.value == x %} selected{% endif %}>{{ y }}</option>
         {% endfor %}
     </select>
     <label for="{{ input.id_for_label }}">{{ input.label }}{% if input.field.required or "required" in input.field.widget.attrs %}*{% endif %}</label>

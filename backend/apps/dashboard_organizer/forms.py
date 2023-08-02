@@ -243,6 +243,14 @@ class EventForm(forms.ModelForm):
                 self.initial["end_date"] = self.instance.end_date.strftime(
                     "%Y-%m-%dT%H:%M"
                 )
+            if self.instance.sales_start:
+                self.initial["sales_start"] = self.instance.sales_start.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.sales_end:
+                self.initial["sales_end"] = self.instance.sales_end.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
 
     def clean_google_class_id(self, *args, **kwargs):
         """

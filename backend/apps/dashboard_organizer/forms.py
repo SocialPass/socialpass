@@ -137,6 +137,8 @@ class EventForm(forms.ModelForm):
             "postal_code",
             "country",
             "google_class_id",
+            "sales_start",
+            "sales_end"
         ]
 
         widgets = {
@@ -194,12 +196,32 @@ class EventForm(forms.ModelForm):
                     "required": "required",
                 }
             ),
+            "sales_start": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_start",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
+                },
+            ),
+            "sales_end": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_end",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
+                },
+            ),
         }
         labels = {
             "title": _("Title"),
             "description": _("Description"),
-            "start_date": _("Start Date"),
-            "end_date": _("End Date"),
+            "start_date": _("Event Start"),
+            "end_date": _("Event End"),
+            "sales_start": _("Ticket Sales Start"),
+            "sales_end": _("Ticket Sales End"),
             "timezone": _("Timezone"),
             "address_1": _("Name of Venue"),
             "address_2": _("Address"),

@@ -400,6 +400,16 @@ class Event(DBModel):
     # Publish info
     is_featured_top = models.BooleanField(default=False)
     slug = AutoSlugField(populate_from="title", null=True, unique=True)
+    sales_start = models.DateTimeField(
+        help_text="When your event sales will start (optional).",
+        blank=True,
+        null=True,
+    )
+    sales_end = models.DateTimeField(
+        help_text="When your event sales will end (optional).",
+        blank=True,
+        null=True,
+    )
 
     # Scanner Info
     scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)

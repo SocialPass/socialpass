@@ -118,6 +118,19 @@
 							</div>
 						</div>
 						<div class="col-lg-6">
+							{% with form.sales_start as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.sales_end as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+							<div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
+								The sales end date must come after the sales start date.
+							</div>
+						</div>
+						<div class="col-lg-6">
 							{% with form.timezone as input %}
 								{% include "redesign/forms/select.html" %}
 							{% endwith %}

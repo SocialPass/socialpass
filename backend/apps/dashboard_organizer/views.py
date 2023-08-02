@@ -1075,10 +1075,11 @@ class EventScanner2(DetailView):
                 context=context,
             )
         except exceptions.AlreadyRedeemedError:
+            context["ticket"] = ticket
             context["message"] = "Ticket already scanned!"
             return render(
                 self.request,
-                template_name="dashboard_organizer/scanner_error.html",
+                template_name="dashboard_organizer/scanner_warning.html",
                 context=context,
             )
 

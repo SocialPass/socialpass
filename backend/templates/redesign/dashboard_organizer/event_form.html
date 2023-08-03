@@ -119,28 +119,29 @@
 								{% include "redesign/forms/input.html" %}
 							{% endwith %}
 							<div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
-								The event end date must come after the start date.
+								{% trans "The event end date must come after the start date." %}
 							</div>
 						</div>
-						<p>
-						  <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-ticket-sales" aria-expanded="false" aria-controls="collapsed-ticket-sales">
-							Schedule Ticket Sales (Optional)
-						  </button>
-						</p>
+						<div class="mt-3">
+						  	<button class="btn btn-link w-100 text-start d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-ticket-sales" aria-expanded="false" aria-controls="collapsed-ticket-sales">
+								{% trans "Schedule Ticket Sales (Optional)" %}
+								<i class="fa-light fa-angle-down ms-auto"></i>
+						  	</button>
+						</div>
 						<div class="collapse row m-0 p-0 g-3" id="collapsed-ticket-sales">
-						  <div class="col-lg-6">
-							  {% with form.sales_start as input %}
-								  {% include "redesign/forms/input.html" %}
-							  {% endwith %}
-						  </div>
-						  <div class="col-lg-6">
-							  {% with form.sales_end as input %}
-								  {% include "redesign/forms/input.html" %}
-							  {% endwith %}
-							  <div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
-								  The sales end date must come after the sales start date.
-							  </div>
-						  </div>
+						  	<div class="col-lg-6">
+								{% with form.sales_start as input %}
+								  	{% include "redesign/forms/input.html" %}
+							  	{% endwith %}
+						  	</div>
+						  	<div class="col-lg-6">
+							  	{% with form.sales_end as input %}
+									{% include "redesign/forms/input.html" %}
+							  	{% endwith %}
+							  	<div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
+							  		{% trans "The sales end date must come after the sales start date." %}
+							  	</div>
+						  	</div>
 						</div>
 					</div>
 

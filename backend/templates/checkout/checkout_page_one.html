@@ -74,6 +74,20 @@
 			<h1 class="text-strong fw-700 display-6 m-0 text-break">
 				{{ event.title }}
 			</h1>
+			{% if sales_status == "UPCOMING" %}
+				<div class="alert alert-primary text-base px-20 py-10 rounded-3 border-dotted" role="alert">
+					<i class="fa-light fa-calendars me-5"></i>
+					<strong>Ticket Sales Start:</strong>
+					<br />
+					{{ sales_start }} {{ event.timezone }}
+					<div class="row border-top pt-10 mt-10">
+						<div class="col" id="days"></div>
+					    <div class="col" id="hours"></div>
+					    <div class="col" id="mins"></div>
+					    <div class="col" id="secs"></div>
+					</div>
+				</div>
+			{% endif %}
 			<div id="desc-cont" class="my-20 overflow-hidden position-relative max-h-250">
 				{{ event.description_html | safe }}
 				<div id="desc-read" class="d-none position-absolute bottom-0 start-0 w-100 text-center pb-10">
@@ -290,7 +304,7 @@
 						{% include 'components/forms_inputs/input.html' %}
 					{% endwith %}
 					<button type="button" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" disabled>
-						<strong class="antialiased">Get Tickets</strong>
+						<strong class="antialiased">Ticket Sales Not Open</strong>
 					</button>
 				</div>
 			{% endif %}
@@ -323,4 +337,39 @@
 	}
 </script>
 <script src="{% static 'js/TicketSelector.js' %}"></script>
+
+{% if sales_status == "UPCOMING" %}
+<script>
+    // The data/time we want to countdown to
+    var countDownDate = new Date("{{ sales_start_for_countdown }}").getTime();
+
+    // Run countdownIntervalFunc every second
+    var countdownIntervalFunc = setInterval(function() {
+
+    var now = new Date().getTime();
+    var timeleft = countDownDate - now;
+        
+    // Calculating the days, hours, minutes and seconds left
+    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+        
+    // Result is output to the specific element
+    document.getElementById("days").innerHTML = `<div class="h3 lh-1 text-primary m-0">${days}</div>days`
+    document.getElementById("hours").innerHTML = `<div class="h3 lh-1 text-primary m-0">${hours}</div>hours`
+    document.getElementById("mins").innerHTML = `<div class="h3 lh-1 text-primary m-0">${minutes}</div>minutes` 
+    document.getElementById("secs").innerHTML = `<div class="h3 lh-1 text-primary m-0">${seconds}</div>seconds`
+        
+    // Countdown is over
+    if (timeleft < 0) {
+        clearInterval(countdownIntervalFunc);
+	        document.getElementById("days").innerHTML = ""
+	        document.getElementById("hours").innerHTML = "" 
+	        document.getElementById("mins").innerHTML = ""
+	        document.getElementById("secs").innerHTML = ""
+	    }
+    }, 1000);
+</script>
+{% endif %}
 {% endblock extra_body %}

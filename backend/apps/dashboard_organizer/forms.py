@@ -202,7 +202,6 @@ class EventForm(forms.ModelForm):
                     "id": "sales_start",
                     "class": "form-control",
                     "type": "datetime-local",
-                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
             "sales_end": forms.DateTimeInput(
@@ -211,7 +210,6 @@ class EventForm(forms.ModelForm):
                     "id": "sales_end",
                     "class": "form-control",
                     "type": "datetime-local",
-                    "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
         }

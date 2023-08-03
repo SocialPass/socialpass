@@ -1,8 +1,10 @@
+from datetime import datetime
 from io import BytesIO
 import base64
 import datetime
 import json
 import jwt
+import pytz
 import qrcode
 import rollbar
 import stripe
@@ -170,6 +172,34 @@ class CheckoutPageOne(DetailView):
         elif checkout_type == "ASSET_OWNERSHIP":
             tiers_active = tiers_asset_ownership
 
+        # Handle ticket sales
+
+        # Init
+        now = datetime.datetime.now(pytz.timezone(self.object.timezone))
+        sales_start = datetime.datetime(1900, 1, 1).astimezone(
+            pytz.timezone(self.object.timezone)
+        ) # Way back in the past
+        sales_end = datetime.datetime(3000, 1, 1).astimezone(
+            pytz.timezone(self.object.timezone)
+        ) # Way forward in the future
+        sales_status = "OPEN"
+
+        # Set actual dates if they exist (with timezone)
+        if self.object.sales_start:
+            sales_start = self.object.sales_start.astimezone(
+                pytz.timezone(self.object.timezone)
+            )
+        if self.object.sales_end:
+            sales_end = self.object.sales_end.astimezone(
+                pytz.timezone(self.object.timezone)
+            )
+
+        # Check status
+        if now < sales_start:
+            sales_status = "UPCOMING"
+        elif now > sales_end:
+            sales_status = "OVER"
+
         # Set everything to context
         context["form"] = CheckoutForm(
             initial={
@@ -187,6 +217,8 @@ class CheckoutPageOne(DetailView):
         context["availability"] = availability
         context["checkout_type"] = checkout_type
         context["is_team_member"] = is_team_member
+        context["sales_start"] = sales_start
+        context["sales_status"] = sales_status
         return context
 
     @transaction.atomic

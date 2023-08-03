@@ -263,20 +263,37 @@
 				<i class="fa-regular fa-info-circle me-5 text-primary"></i>
 				We only require your email to deliver your tickets in a secure way. <strong>No account</strong> is created without your consent.
 			</div>
-			<form class="checkout-form position-relative" method="POST">
-				{% csrf_token %}
-				{{ form.ticket_tier_data }}
-				{{ form.checkout_type }}
-				{% with form.name as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				{% with form.email as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
-					<strong class="antialiased">Get Tickets</strong>
-				</button>
-			</form>
+			{% if sales_status == "OPEN" %}
+				<form class="checkout-form position-relative" method="POST">
+					{% csrf_token %}
+					{{ form.ticket_tier_data }}
+					{{ form.checkout_type }}
+					{% with form.name as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with form.email as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
+						<strong class="antialiased">Get Tickets</strong>
+					</button>
+				</form>
+			{% else %}
+				<!-- Not a form, can't be submitted -->
+				<div class="checkout-form position-relative">
+					{{ form.ticket_tier_data }}
+					{{ form.checkout_type }}
+					{% with form.name as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with form.email as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					<button type="button" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" disabled>
+						<strong class="antialiased">Get Tickets</strong>
+					</button>
+				</div>
+			{% endif %}
 			<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="ticket-tier-error-message">
 				Please select at least one ticket tier to continue.
 			</div>

@@ -173,26 +173,18 @@ class CheckoutPageOne(DetailView):
             tiers_active = tiers_asset_ownership
 
         # Handle ticket sales
-
-        # Init
-        now = datetime.datetime.now(pytz.timezone(self.object.timezone))
-        sales_start = datetime.datetime(1900, 1, 1).astimezone(
-            pytz.timezone(self.object.timezone)
-        ) # Way back in the past
-        sales_end = datetime.datetime(3000, 1, 1).astimezone(
-            pytz.timezone(self.object.timezone)
-        ) # Way forward in the future
         sales_status = "OPEN"
+        now = datetime.datetime.now(pytz.timezone(self.object.timezone))
+        # Way back / forward in the past
+        sales_start = datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
+        sales_end = datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
 
         # Set actual dates if they exist (with timezone)
+        # Note: Use now.tzinfo for timezone compatibility
         if self.object.sales_start:
-            sales_start = self.object.sales_start.astimezone(
-                pytz.timezone(self.object.timezone)
-            )
+            sales_start = self.object.sales_start.replace(tzinfo=now.tzinfo)
         if self.object.sales_end:
-            sales_end = self.object.sales_end.astimezone(
-                pytz.timezone(self.object.timezone)
-            )
+            sales_end = self.object.sales_end.replace(tzinfo=now.tzinfo)
 
         # Check status
         if now < sales_start:
@@ -217,10 +209,7 @@ class CheckoutPageOne(DetailView):
         context["availability"] = availability
         context["checkout_type"] = checkout_type
         context["is_team_member"] = is_team_member
-        context["sales_start"] = sales_start
-        context["sales_start_for_countdown"] = sales_start.strftime(
-            "%b %d, %Y %H:%m:%s %Z"
-        )
+        context["sales_start_with_tzinfo"] = sales_start
         context["sales_status"] = sales_status
         return context
 

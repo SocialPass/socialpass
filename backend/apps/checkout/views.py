@@ -210,9 +210,6 @@ class CheckoutPageOne(DetailView):
         context["checkout_type"] = checkout_type
         context["is_team_member"] = is_team_member
         context["sales_start_with_tzinfo"] = sales_start
-        context["sales_start_for_timer"] = sales_start.strftime(
-            "%b %d, %Y %H:%m:%s %Z"
-        )
         context["sales_status"] = sales_status
         return context
 

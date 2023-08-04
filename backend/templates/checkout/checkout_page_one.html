@@ -348,7 +348,7 @@
 {% if sales_status == "UPCOMING" %}
 <script>
 	// The data/time we want to countdown to
-    var countDownDate = new Date("{{ sales_start_for_timer }}").getTime();
+    var countDownDate = new Date("{{ sales_start_with_tzinfo.isoformat }}").getTime();
 
 	// Run countdownIntervalFunc every second
     var countdownIntervalFunc = setInterval(function() {

@@ -81,16 +81,16 @@
 					<br />
 					{{ event.sales_start }} {{ event.timezone }}
 					<div class="row border-top pt-10 mt-10">
-						<div class="col">
+						<div class="col-6 col-sm-3">
 							<div class="h3 lh-1 text-primary m-0" id="days">...</div>days
 						</div>
-					    <div class="col">
+					    <div class="col-6 col-sm-3">
 							<div class="h3 lh-1 text-primary m-0" id="hours">...</div>hours
 						</div>
-					    <div class="col">
+					    <div class="col-6 col-sm-3 mt-10 mt-sm-0">
 							<div class="h3 lh-1 text-primary m-0" id="mins">...</div>minutes
 						</div>
-					    <div class="col">
+					    <div class="col-6 col-sm-3 mt-10 mt-sm-0">
 							<div class="h3 lh-1 text-primary m-0" id="secs">...</div>seconds
 						</div>
 					</div>
@@ -348,40 +348,38 @@
 {% if sales_status == "UPCOMING" %}
 <script>
 	// The data/time we want to countdown to
-	var countDownDate = new Date("{{ sales_start_with_tzinfo.isoformat }}").getTime();
-	var now = new Date().getTime();
+    var countDownDate = new Date("{{ sales_start_for_timer }}").getTime();
 
-	// Only run if countdown date is in the future
-	if (now < countDownDate){
-		// Run countdownIntervalFunc every second
-		var countdownIntervalFunc = setInterval(function() {
-		var timeleft = countDownDate - now;
+	// Run countdownIntervalFunc every second
+    var countdownIntervalFunc = setInterval(function() {
+		var now = new Date().getTime();
+    	var timeleft = countDownDate - now;
 
-		// Calculating the days, hours, minutes and seconds left
-		var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-		var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-		var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-		var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+	    // Calculating the days, hours, minutes and seconds left
+	    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+	    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+	    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
 
-		// Result is output to the specific element
-		document.getElementById("days").innerHTML = `${days}`
-		document.getElementById("hours").innerHTML = `${hours}`
-		document.getElementById("mins").innerHTML = `${minutes}`
-		document.getElementById("secs").innerHTML = `${seconds}`
+	    // Result is output to the specific element
+	   	document.getElementById("days").innerHTML = `${days}`;
+		document.getElementById("hours").innerHTML = `${hours}`;
+		document.getElementById("mins").innerHTML = `${minutes}`;
+		document.getElementById("secs").innerHTML = `${seconds}`;
 
-		// Countdown is over
-		if (timeleft < 0) {
-			// Clear interval
-			clearInterval(countdownIntervalFunc);
-			// Reset UI
+	    // Countdown is over
+	    if (timeleft < 0) {
+	    	// Clear interval
+	        clearInterval(countdownIntervalFunc);
+
+	        // Reset UI
 			// TODO: Hide countdown timer, play confetti, refresh page
-			document.getElementById("days").innerHTML = ""
-			document.getElementById("hours").innerHTML = ""
-			document.getElementById("mins").innerHTML = ""
-			document.getElementById("secs").innerHTML = ""
-			}
-		}, 1000);
-	}
+		    document.getElementById("days").innerHTML = "";
+		    document.getElementById("hours").innerHTML = "";
+		    document.getElementById("mins").innerHTML = "";
+		    document.getElementById("secs").innerHTML = "";
+		}
+    }, 1000);
 </script>
 {% endif %}
 {% endblock extra_body %}

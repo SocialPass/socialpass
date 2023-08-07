@@ -5,3 +5,4 @@ django-stubs[compatible-mypy]==1.11.0 # https://github.com/typeddjango/django-st
 pylint-django==2.5.3 # https://github.com/PyCQA/pylint-django
 mypy==0.950 # https://github.com/python/mypy
 ruff==0.0.270 # https://github.com/charliermarsh/ruff
+types-requests

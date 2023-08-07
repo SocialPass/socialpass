@@ -15,7 +15,7 @@
 <div class="position-relative">
 	<!-- Event cover image start -->
 	<div class="d-flex align-items-center justify-content-center w-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none" style="max-height: 200px;">
-		<img src="{{ event.cover_image.url }}" class="w-100 h-auto" alt="Cover image">
+		<img src="{{ event.cover_image_url }}" class="w-100 h-auto" alt="Cover image">
 	</div>
 	<!-- Event cover image end -->
 
@@ -74,6 +74,28 @@
 			<h1 class="text-strong fw-700 display-6 m-0 text-break">
 				{{ event.title }}
 			</h1>
+			{% if sales_status == "UPCOMING" %}
+				<div class="alert alert-primary text-base px-20 py-10 rounded-3 border-dotted" role="alert">
+					<i class="fa-light fa-calendars me-5"></i>
+					<strong>Ticket Sales Start:</strong>
+					<br />
+					{{ event.sales_start }} {{ event.timezone }}
+					<div class="row border-top pt-10 mt-10">
+						<div class="col-6 col-sm-3">
+							<div class="h3 lh-1 text-primary m-0" id="days">...</div>days
+						</div>
+					    <div class="col-6 col-sm-3">
+							<div class="h3 lh-1 text-primary m-0" id="hours">...</div>hours
+						</div>
+					    <div class="col-6 col-sm-3 mt-10 mt-sm-0">
+							<div class="h3 lh-1 text-primary m-0" id="mins">...</div>minutes
+						</div>
+					    <div class="col-6 col-sm-3 mt-10 mt-sm-0">
+							<div class="h3 lh-1 text-primary m-0" id="secs">...</div>seconds
+						</div>
+					</div>
+				</div>
+			{% endif %}
 			<div id="desc-cont" class="my-20 overflow-hidden position-relative max-h-250">
 				{{ event.description_html | safe }}
 				<div id="desc-read" class="d-none position-absolute bottom-0 start-0 w-100 text-center pb-10">
@@ -263,20 +285,37 @@
 				<i class="fa-regular fa-info-circle me-5 text-primary"></i>
 				We only require your email to deliver your tickets in a secure way. <strong>No account</strong> is created without your consent.
 			</div>
-			<form class="checkout-form position-relative" method="POST">
-				{% csrf_token %}
-				{{ form.ticket_tier_data }}
-				{{ form.checkout_type }}
-				{% with form.name as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				{% with form.email as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
-					<strong class="antialiased">Get Tickets</strong>
-				</button>
-			</form>
+			{% if sales_status == "OPEN" %}
+				<form class="checkout-form position-relative" method="POST">
+					{% csrf_token %}
+					{{ form.ticket_tier_data }}
+					{{ form.checkout_type }}
+					{% with form.name as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with form.email as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
+						<strong class="antialiased">Get Tickets</strong>
+					</button>
+				</form>
+			{% else %}
+				<!-- Not a form, can't be submitted -->
+				<div class="checkout-form position-relative">
+					{{ form.ticket_tier_data }}
+					{{ form.checkout_type }}
+					{% with form.name as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					{% with form.email as input %}
+						{% include 'components/forms_inputs/input.html' %}
+					{% endwith %}
+					<button type="button" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" disabled>
+						<strong class="antialiased">Ticket Sales Not Open</strong>
+					</button>
+				</div>
+			{% endif %}
 			<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="ticket-tier-error-message">
 				Please select at least one ticket tier to continue.
 			</div>
@@ -306,4 +345,41 @@
 	}
 </script>
 <script src="{% static 'js/TicketSelector.js' %}"></script>
+{% if sales_status == "UPCOMING" %}
+<script>
+	// The data/time we want to countdown to
+    var countDownDate = new Date("{{ sales_start_with_tzinfo.isoformat }}").getTime();
+
+	// Run countdownIntervalFunc every second
+    var countdownIntervalFunc = setInterval(function() {
+		var now = new Date().getTime();
+    	var timeleft = countDownDate - now;
+
+	    // Calculating the days, hours, minutes and seconds left
+	    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+	    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+	    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+
+	    // Result is output to the specific element
+	   	document.getElementById("days").innerHTML = `${days}`;
+		document.getElementById("hours").innerHTML = `${hours}`;
+		document.getElementById("mins").innerHTML = `${minutes}`;
+		document.getElementById("secs").innerHTML = `${seconds}`;
+
+	    // Countdown is over
+	    if (timeleft < 0) {
+	    	// Clear interval
+	        clearInterval(countdownIntervalFunc);
+
+	        // Reset UI
+			// TODO: Hide countdown timer, play confetti, refresh page
+		    document.getElementById("days").innerHTML = "";
+		    document.getElementById("hours").innerHTML = "";
+		    document.getElementById("mins").innerHTML = "";
+		    document.getElementById("secs").innerHTML = "";
+		}
+    }, 1000);
+</script>
+{% endif %}
 {% endblock extra_body %}

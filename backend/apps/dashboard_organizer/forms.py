@@ -2,7 +2,7 @@ from datetime import date
 
 import pytz
 from django import forms
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
@@ -23,9 +23,14 @@ class CustomInviteForm(forms.Form):
     """
 
     email = forms.EmailField(
-        label=_("E-mail"),
+        label=_("Email Address"),
         required=True,
-        widget=forms.TextInput(attrs={"type": "email"}),
+        widget=forms.TextInput(
+            attrs={
+                "type": "email",
+                "placeholder": "JohnDoe@gmail.com",
+            }
+        ),
         initial="",
     )
 
@@ -42,14 +47,58 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ["name", "description", "image"]
         widgets = {
-            "name": forms.TextInput(attrs={"placeholder": "Name of your team"}),
+            "name": forms.TextInput(
+                attrs={
+                    "placeholder": _("Name of your team")
+                }
+            ),
             "description": forms.Textarea(
-                attrs={"placeholder": "A short description of your team", "rows": 3}
+                attrs={
+                    "placeholder": _("A short description of your team"),
+                    "rows": 3,
+                }
             ),
         }
         labels = {
-            "description": "Description (Optional)",
-            "image": "Set Team Image (Optional)",
+            "name": _("Name"),
+            "description": _("Description"),
+            "image": _("Team Image"),
+        }
+        help_texts = {
+            "image": _(
+                "A brand image for your team. Please make sure the image is "
+                "square, non-transparent, and ideally in the PNG format."
+            ),
+        }
+
+
+class EventCreateForm(forms.ModelForm):
+    """
+    Event create form
+    """
+
+    class Meta:
+        model = Event
+        fields = [
+            "title",
+            "description",
+            "cover_image",
+        ]
+        widgets = {
+            "title": forms.TextInput(
+                attrs={
+                    "placeholder": _("Your Event Name Here"),
+                }
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "placeholder": _(
+                        "Short description here. Let the people know what’s "
+                        "going on with this event!"
+                    ),
+                    "rows": 3,
+                }
+            ),
         }
 
 
@@ -78,6 +127,7 @@ class EventForm(forms.ModelForm):
         fields = [
             "title",
             "description",
+            "cover_image",
             "start_date",
             "end_date",
             "timezone",
@@ -86,12 +136,17 @@ class EventForm(forms.ModelForm):
             "city",
             "postal_code",
             "country",
-            "cover_image",
             "google_class_id",
+            "sales_start",
+            "sales_end"
         ]
 
         widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Be clear and descriptive"}),
+            "title": forms.TextInput(
+                attrs={
+                    "placeholder": _("Your Event Name Here"),
+                }
+            ),
             "start_date": forms.DateTimeInput(
                 format="%Y-%m-%dT%H:%M",
                 attrs={
@@ -99,6 +154,7 @@ class EventForm(forms.ModelForm):
                     "class": "form-control",
                     "type": "datetime-local",
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
+                    "required": "required",
                 },
             ),
             "end_date": forms.DateTimeInput(
@@ -110,22 +166,67 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "address_1": forms.TextInput(attrs={"placeholder": "Name of venue"}),
-            "address_2": forms.TextInput(
+            "address_1": forms.TextInput(
                 attrs={
-                    "placeholder": str(
-                        "Street and number, P.O. box, apartment, suite, unit, "
-                        "building, floor, etc."
-                    ),
-                    "required": True,
+                    "placeholder": _("Name of Venue"),
+                    "required": "required",
                 }
             ),
-            "city": forms.TextInput(attrs={"placeholder": "City name"}),
-            "postal_code": forms.TextInput(attrs={"placeholder": "Postal code"}),
+            "address_2": forms.TextInput(
+                attrs={
+                    "placeholder": _("12345 Party Street"),
+                    "required": "required",
+                }
+            ),
+            "city": forms.TextInput(
+                attrs={
+                    "placeholder": _("City"),
+                    "required": "required",
+                }
+            ),
+            "state": forms.TextInput(
+                attrs={
+                    "placeholder": _("State"),
+                    "required": "required",
+                }
+            ),
+            "postal_code": forms.TextInput(
+                attrs={
+                    "placeholder": _("Zip Code"),
+                    "required": "required",
+                }
+            ),
+            "sales_start": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_start",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "sales_end": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_end",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
         }
         labels = {
-            "address_1": "Name of venue",
-            "address_2": "Address of venue",
+            "title": _("Title"),
+            "description": _("Description"),
+            "start_date": _("Event Start"),
+            "end_date": _("Event End"),
+            "sales_start": _("Ticket Sales Start"),
+            "sales_end": _("Ticket Sales End"),
+            "timezone": _("Timezone"),
+            "address_1": _("Name of Venue"),
+            "address_2": _("Address"),
+            "city": _("City"),
+            "state": _("State"),
+            "postal_code": _("Zip Code"),
+            "country": _("Country"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -138,6 +239,14 @@ class EventForm(forms.ModelForm):
                 )
             if self.instance.end_date:
                 self.initial["end_date"] = self.instance.end_date.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.sales_start:
+                self.initial["sales_start"] = self.instance.sales_start.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.sales_end:
+                self.initial["sales_end"] = self.instance.sales_end.strftime(
                     "%Y-%m-%dT%H:%M"
                 )
 
@@ -165,13 +274,32 @@ class TicketTierForm(forms.ModelForm):
         fields = ["ticket_type", "capacity", "max_per_person", "allowed_guests"]
         widgets = {
             "ticket_type": forms.TextInput(
-                attrs={"placeholder": "A short name for this type of ticket"}
+                attrs={
+                    "placeholder": _("Short name for free ticket tier e.g. General Admission")
+                }
             ),
-            "capacity": forms.NumberInput(attrs={"min": 1}),
-            "max_per_person": forms.NumberInput(attrs={"min": 1}),
-            "allowed_guests": forms.NumberInput(attrs={"min": 0}),
+            "capacity": forms.NumberInput(
+                attrs={
+                    "min": 1
+                }
+            ),
+            "max_per_person": forms.NumberInput(
+                attrs={
+                    "min": 1
+                }
+            ),
+            "allowed_guests": forms.NumberInput(
+                attrs={
+                    "min": 0
+                }
+            ),
         }
-        labels = {"ticket_type": "Name of ticket tier"}
+        labels = {
+            "ticket_type": _("Name of ticket tier"),
+            "capacity": _("Capacity"),
+            "max_per_person": _("Max per person"),
+            "allowed_guests": _("Max guest(s) allowed per ticket"),
+        }
 
 
 class TierAssetOwnershipForm(forms.ModelForm):
@@ -189,14 +317,18 @@ class TierAssetOwnershipForm(forms.ModelForm):
         ]
         widgets = {
             "token_address": forms.TextInput(
-                attrs={"placeholder": "Example: 0xb79...79268"}
+                attrs={"placeholder": _("e.g. 0xb53...4394n")}
             ),
             "token_id": forms.TextInput(
-                attrs={"placeholder": "Example: 1, 2, 3, 4, 5"}
+                attrs={"placeholder": _("e.g. 1,2,3,4,5")}
             ),
             "balance_required": forms.NumberInput(attrs={"min": 1}),
         }
-        labels = {"token_id": "Token IDs (Optional)"}
+        labels = {
+            "token_address": _("NFT Collection Token Address"),
+            "balance_required": _("Balance Required"),
+            "token_id": _("OPTIONAL: Token IDs Required")
+        }
 
     def clean_token_address(self):
         token_address = self.cleaned_data["token_address"]
@@ -218,7 +350,14 @@ class TierFiatForm(forms.ModelForm):
             "price_per_ticket",
         ]
         widgets = {
-            "price_per_ticket": forms.TextInput(
-                attrs={"placeholder": "Price of one ticket"}
+            "price_per_ticket": forms.NumberInput(
+                attrs={
+                    "placeholder": _("Price of one ticket"),
+                    "step": "0.01",
+                    "min": "0.01",
+                }
             ),
+        }
+        labels = {
+            "price_per_ticket": _("Price/ticket"),
         }

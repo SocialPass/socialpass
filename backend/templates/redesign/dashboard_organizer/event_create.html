@@ -1,0 +1,126 @@
+{% extends "redesign/dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
+
+{% block head_title %}{% trans "Create Event" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}{% trans "Create" %} <span class="text-primary-emphasis">{% trans "Event" %}</span>{% endblock navbar_title %}
+
+{% block navbar_title_2 %}{% trans "Create" %} <span class="text-primary-emphasis">{% trans "Event" %}</span>{% endblock navbar_title_2 %}
+
+{% block content %}
+<!-- Create event form start -->
+<div class="row mt-4 mb-3">
+	<input type="hidden" value="{% static 'images/event_cover_placeholder.jpg' %}" id="cover-img-placeholder">
+	<form class="col-lg-8 mx-auto" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		<h1 class="h3 mb-0">{% trans "The Fun Stuff" %}</h1>
+		<p class="text-body-secondary">
+			{% trans "Name your event, add your cover image, and give a brief description to your event. You can make detailed edits later." %}
+		</p>
+		<div class="card border-0 rounded-4 shadow-sm overflow-hidden mb-3">
+			<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center" style="max-height: 300px;">
+				<img src="{% static 'images/event_cover_placeholder.jpg' %}" alt="Background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);" id="cover-img-bg">
+				<img src="{% static 'images/event_cover_placeholder.jpg' %}" class="img-fluid position-relative z-1" alt="Cover image" id="cover-img-preview">
+				<div class="cover-img-input position-absolute top-0 end-0 z-1">
+					{% with form.cover_image as input %}
+						{{ input|as_crispy_field }}
+					{% endwith %}
+				</div>
+			</div>
+			<div class="card-body">
+				{% if form.non_field_errors %}
+					<div class="alert alert-danger" role="alert">
+						<ul class="mb-0">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				{% for input in form.hidden_fields %}
+					{{ input }}
+				{% endfor %}
+				<div class="mb-1">
+					{% with form.title as input %}
+						<input
+					        type="{{ input.field.widget.input_type }}"
+					        name="{{ input.html_name }}"
+					        value="{{ input.value|default_if_none:'' }}"
+					        {% if input.field.widget.input_type != "hidden" %}
+					            class="form-control fs-3 fw-bold bg-transparent border-0 {% if input.errors %}is-invalid{% endif %}"
+					            id="{{ input.auto_id }}"
+					        {% endif %}
+					        {% if input.field.required %}
+					            required="required"
+					        {% endif %}
+					        {% if input.field.widget.input_type == "datetime-local" %}
+					            onfocus="this.showPicker()"
+					        {% endif %}
+					        {% for k,v in input.field.widget.attrs.items %}
+					            {{ k }}="{{ v }}"
+					        {% endfor %}
+					    >
+					    {% if input.errors %}
+						    <ul class="text-danger-emphasis fw-bold mt-3">
+						        {% for error in input.errors %}
+						            <li>{{ error }}</li>
+						        {% endfor %}
+						    </ul>
+						{% endif %}
+					{% endwith %}
+				</div>
+				<div>
+					{% with form.description as input %}
+						<textarea
+					        name="{{ input.name }}"
+					        {% if input.field.widget.input_type != "hidden" %}
+					            class="form-control bg-transparent border-0 {% if input.errors %}is-invalid{% endif %}"
+					            id="{{ input.auto_id }}"
+					        {% endif %}
+					        {% if input.field.required %}
+					            required="required"
+					        {% endif %}
+					        {% for k,v in input.field.widget.attrs.items %}
+					            {{ k }}="{{ v }}"
+					        {% endfor %}
+					    >{% if input.value %}{{ input.value }}{% endif %}</textarea>
+					    {% if input.errors %}
+						    <ul class="text-danger-emphasis fw-bold mt-3">
+						        {% for error in input.errors %}
+						            <li>{{ error }}</li>
+						        {% endfor %}
+						    </ul>
+						{% endif %}
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+		<div class="text-end">
+			<button type="submit" class="btn btn-primary btn-lg px-3">
+				{% trans "Save & Continue" %}
+			</button>
+		</div>
+	</form>
+</div>
+<!-- Create event form end -->
+{% endblock content %}
+
+{% block extra_body %}
+<script type="text/javascript">
+	const coverImgPlaceholder = document.getElementById("cover-img-placeholder").value;
+	const coverImgBg = document.getElementById("cover-img-bg");
+	const coverImgPreview = document.getElementById("cover-img-preview");
+	const coverImgInput = document.getElementById("id_cover_image");
+	coverImgInput.addEventListener("change", function(event) {
+		const [file] = coverImgInput.files;
+		if (file) {
+			coverImgBg.src = URL.createObjectURL(file);
+			coverImgPreview.src = URL.createObjectURL(file);
+		}
+		else {
+			coverImgBg.src = coverImgPlaceholder;
+			coverImgPreview.src = coverImgPlaceholder;
+		}
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,576 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-19 17:06+0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: backend/apps/dashboard_organizer/forms.py:26
+msgid "Email Address"
+msgstr "ইমেইল"
+
+#: backend/apps/dashboard_organizer/forms.py:174
+msgid "Short name for free ticket tier e.g. General Admission"
+msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
+
+#: backend/apps/dashboard_organizer/forms.py:194
+msgid "Name of ticket tier"
+msgstr "টিকিটের স্তরের নাম"
+
+#: backend/apps/dashboard_organizer/forms.py:195
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:70
+msgid "Capacity"
+msgstr "ক্ষমতা"
+
+#: backend/apps/dashboard_organizer/forms.py:196
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:86
+msgid "Max per person"
+msgstr "জনপ্রতি সর্বোচ্চ"
+
+#: backend/apps/dashboard_organizer/forms.py:197
+msgid "Max guest(s) allowed per ticket"
+msgstr "প্রতি টিকিটে সর্বাধিক অতিথি(দের) অনুমোদিত"
+
+#: backend/templates/account/account_inactive.html:5
+#: backend/templates/account/account_inactive.html:8
+msgid "Account Inactive"
+msgstr ""
+
+#: backend/templates/account/account_inactive.html:10
+msgid "This account is inactive."
+msgstr ""
+
+#: backend/templates/account/email/base_message.txt:1
+msgid "Hello from SocialPass!"
+msgstr ""
+
+#: backend/templates/account/email/base_message.txt:5
+msgid "Thank you for using SocialPass!"
+msgstr ""
+
+#: backend/templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this e-mail because user %(user_display)s has given your e-"
+"mail address to register an account on SocialPass.\n"
+"\n"
+"To confirm this is correct, go to %(activate_url)s"
+msgstr ""
+
+#: backend/templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your E-mail Address"
+msgstr ""
+
+#: backend/templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"Yoooo! You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+
+#: backend/templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
+
+#: backend/templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset E-mail"
+msgstr ""
+
+#: backend/templates/account/logout.html:5
+msgid "Sign Out - SocialPass"
+msgstr ""
+
+#: backend/templates/account/logout.html:16
+#: backend/templates/account/logout.html:23
+#: backend/templates/redesign/dashboard_organizer/base.html:223
+msgid "Sign Out"
+msgstr "সাইন আউট"
+
+#: backend/templates/account/logout.html:17
+msgid "Are you sure you want to sign out?"
+msgstr ""
+
+#: backend/templates/account/password_set.html:9
+#: backend/templates/account/password_set.html:12
+#: backend/templates/account/password_set.html:17
+msgid "Set Password"
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:5
+#: backend/templates/account/verified_email_required.html:8
+msgid "Verify Your E-mail Address"
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:12
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your e-mail address. "
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:16
+msgid ""
+"We have sent an e-mail to you for\n"
+"verification. Please click on the link inside this e-mail. Please\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+
+#: backend/templates/account/verified_email_required.html:20
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
+msgstr ""
+
+#: backend/templates/redesign/dashboard_organizer/base.html:13
+msgid "Hosting the Next Generation of Events"
+msgstr "নতুন প্রজন্মের ইভেন্ট হোস্টিং"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:118
+msgid "Switch Teams"
+msgstr "দল পাল্টান"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:129
+msgid "None found"
+msgstr "একটিও পাওয়া যায়নি"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:135
+msgid "Create Team"
+msgstr "দল তৈরি করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:141
+msgid "Events Manager"
+msgstr "ইভেন্ট ম্যানেজার"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:145
+msgid "Create an Event"
+msgstr "একটি ইভেন্ট তৈরি করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:149
+#: backend/templates/redesign/dashboard_organizer/event_list.html:4
+#: backend/templates/redesign/dashboard_organizer/event_list.html:23
+#: backend/templates/redesign/dashboard_organizer/event_list.html:29
+msgid "Events"
+msgstr "ইভেন্ট তালিকা"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:152
+msgid "Team Manager"
+msgstr "দলের ম্যানেজার"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:156
+#: backend/templates/redesign/dashboard_organizer/team_details.html:4
+msgid "Team Details"
+msgstr "দলের বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:160
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:4
+#: backend/templates/redesign/dashboard_organizer/team_details.html:77
+msgid "Manage Members"
+msgstr "সদস্যদের পরিচালনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:164
+msgid "Payment Details"
+msgstr "পেমেন্ট বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:167
+msgid "Support"
+msgstr "সমর্থন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:171
+msgid "Help Center"
+msgstr "সাহায্য কেন্দ্র"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:175
+msgid "Blog"
+msgstr "ব্লগ"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:210
+msgid "Change Password"
+msgstr "পাসওয়ার্ড পরিবর্তন করুন"
+
+#: backend/templates/redesign/dashboard_organizer/base.html:216
+msgid "Manage Emails"
+msgstr "ইমেল পরিচালনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:4
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:6
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:8
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:14
+msgid "Delete Event"
+msgstr "ইভেন্ট মুছুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:16
+msgid "Please confirm the deletion of your event."
+msgstr "আপনার ইভেন্ট মুছে ফেলা নিশ্চিত করুন৷"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:25
+msgid ""
+"You're about to remove the following event. Please note, once this action is "
+"confirmed, it cannot be undone."
+msgstr "আপনি নিম্নলিখিত ইভেন্টটি সরাতে চলেছেন৷ অনুগ্রহ করে মনে রাখবেন, একবার এই ক্রিয়াটি নিশ্চিত হয়ে গেলে, এটি পূর্বাবস্থায় ফেরানো যাবে না৷"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:33
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:34
+msgid "Cancel"
+msgstr "বাতিল"
+
+#: backend/templates/redesign/dashboard_organizer/event_delete.html:34
+#: backend/templates/redesign/dashboard_organizer/event_list.html:142
+msgid "Delete"
+msgstr "মুছে ফেলুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:4
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:6
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:8
+msgid "Go Live"
+msgstr "লাইভ যান"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:15
+msgid "Event is live!"
+msgstr "ইভেন্ট লাইভ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:17
+msgid "This event is live. Check the public page and scanner link!"
+msgstr "এই ইভেন্ট লাইভ. পাবলিক পেজ এবং স্ক্যানার লিঙ্ক চেক করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:20
+msgid "Let’s Publish this Event!"
+msgstr "ইভেন্ট প্রকাশ করা যাক"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:22
+msgid "If everything looks good, hit go live!"
+msgstr "সবকিছু ভাল দেখায়, লাইভ যান"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:37
+msgid "Start"
+msgstr "শুরু"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:40
+msgid "End"
+msgstr "শেষ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:43
+msgid "Timezone"
+msgstr "সময় অঞ্চল"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:48
+msgid "Address"
+msgstr "ঠিকানা"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:54
+msgid "Live Event"
+msgstr "লাইভ ইভেন্ট"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:59
+msgid "Draft Event"
+msgstr "খসড়া ইভেন্ট"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:76
+#: backend/templates/redesign/dashboard_organizer/event_list.html:123
+msgid "Public Page"
+msgstr "পাবলিক পেজ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:80
+#: backend/templates/redesign/dashboard_organizer/event_list.html:129
+msgid "Check-In (Scanner)"
+msgstr "চেক-ইন (স্ক্যানার)"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:88
+msgid "Preview Event"
+msgstr "পূর্বরূপ"
+
+#: backend/templates/redesign/dashboard_organizer/event_go_live.html:91
+msgid "Go Live!"
+msgstr "লাইভ যান"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:6
+#: backend/templates/redesign/dashboard_organizer/event_list.html:8
+msgid "Events by"
+msgstr "ইভেন্ট তালিকা"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:17
+msgid "All"
+msgstr "সব"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:23
+#: backend/templates/redesign/dashboard_organizer/event_list.html:93
+msgid "Live"
+msgstr "লাইভ"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:29
+#: backend/templates/redesign/dashboard_organizer/event_list.html:96
+msgid "Draft"
+msgstr "খসড়া"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:50
+msgid "Event"
+msgstr "ইভেন্ট"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:53
+#: backend/templates/redesign/dashboard_organizer/event_list.html:83
+msgid "Sold"
+msgstr "বিক্রি"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:56
+msgid "Status"
+msgstr "স্ট্যাটাস"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:113
+msgid "Edit"
+msgstr "সম্পাদনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:116
+msgid "Tickets"
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:136
+msgid "Preview"
+msgstr "পূর্বরূপ"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:159
+#: backend/templates/redesign/dashboard_organizer/event_list.html:161
+msgid "Prev"
+msgstr "পূর্ববর্তী"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:165
+msgid "Page"
+msgstr "পৃষ্ঠা"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:165
+msgid "of"
+msgstr "অব"
+
+#: backend/templates/redesign/dashboard_organizer/event_list.html:169
+#: backend/templates/redesign/dashboard_organizer/event_list.html:171
+msgid "Next"
+msgstr "পরবর্তী"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:4
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:6
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:8
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Ticket Tiers"
+msgstr "টিকিট স্তর"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:16
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:14
+msgid "The Tix"
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:18
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:16
+msgid "Create one or multiple ticket tiers."
+msgstr "এক বা একাধিক টিকিটের স্তর তৈরি করুন।"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:23
+msgid "Add Ticket Tier"
+msgstr "টিকিট স্তর যোগ করুন"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:34
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:27
+msgid "Paid"
+msgstr "পেড"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:34
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:40
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:46
+msgid "Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:40
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:55
+msgid "Free"
+msgstr "বিনামূল্যে"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:46
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:70
+msgid "NFT-Gated"
+msgstr "NFT- গেটেড"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:59
+#, fuzzy
+#| msgid "Tickets"
+msgid "ticket"
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:78
+#, fuzzy
+#| msgid "Sold"
+msgid "Qty. Sold"
+msgstr "বিক্রি"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:94
+msgid "Guests per ticket"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:102
+msgid "NFT Requirements"
+msgstr "NFT প্রয়োজনীয়তা"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:105
+msgid "Network"
+msgstr "নেটওয়ার্ক"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:108
+msgid "Token Address"
+msgstr "টোকেন ঠিকানা"
+
+#: backend/templates/redesign/dashboard_organizer/event_ticket_tiers.html:121
+#, fuzzy
+#| msgid "Tickets"
+msgid "No ticket tiers yet."
+msgstr "টিকিট"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:6
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:8
+msgid "Manage"
+msgstr "পরিচালনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:6
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:8
+msgid "Members"
+msgstr "সদস্যদের"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:13
+#: backend/templates/redesign/dashboard_organizer/team_details.html:54
+msgid "Team Members"
+msgstr "দলের সদস্যরা"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:29
+#: backend/templates/redesign/dashboard_organizer/team_details.html:67
+msgid "You"
+msgstr "আপনি"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:41
+msgid "Invite Sent"
+msgstr "আমন্ত্রণ পাঠানো"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:55
+msgid "Invite Team Members"
+msgstr "দলের সদস্যদের আমন্ত্রণ"
+
+#: backend/templates/redesign/dashboard_organizer/manage_members.html:75
+msgid "Send Invite"
+msgstr "আমন্ত্রণ পাঠান"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:4
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:14
+msgid "Remove Member"
+msgstr "সদস্য সরান"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:6
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:8
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:35
+msgid "Remove"
+msgstr "সরান"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:6
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:8
+msgid "Member"
+msgstr "সদস্যদের"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:16
+msgid "Please confirm the removal of your team member."
+msgstr "আপনার দলের সদস্য অপসারণ নিশ্চিত করুন৷"
+
+#: backend/templates/redesign/dashboard_organizer/member_delete.html:29
+msgid ""
+"You're about to remove this team member. Please note, once this action is "
+"confirmed, it cannot be undone."
+msgstr "আপনি এই দলের সদস্যকে সরাতে চলেছেন৷ অনুগ্রহ করে মনে রাখবেন, একবার এই ক্রিয়াটি নিশ্চিত হয়ে গেলে, এটি পূর্বাবস্থায় ফেরানো যাবে না৷"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:6
+#: backend/templates/redesign/dashboard_organizer/team_details.html:8
+msgid "Team"
+msgstr "দলের"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:6
+#: backend/templates/redesign/dashboard_organizer/team_details.html:8
+msgid "Details"
+msgstr "বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:13
+msgid "Team Information"
+msgstr "দলের তথ্য"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:35
+msgid "Your team does not have a description."
+msgstr "আপনার দলের একটি বিবরণ নেই।"
+
+#: backend/templates/redesign/dashboard_organizer/team_details.html:43
+msgid "Edit Team"
+msgstr "দল সম্পাদনা করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:4
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:6
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:8
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Create Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:28
+msgid "Create a ticket that requires payment"
+msgstr "একটি টিকিট তৈরি করুন যাতে অর্থপ্রদানের প্রয়োজন হয়"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:40
+msgid ""
+"Before you can create paid ticket tiers, you need to connect your Stripe "
+"account to your team."
+msgstr ""
+"আপনি পেইড টিকিটের স্তর তৈরি করার আগে, আপনাকে আপনার স্ট্রাইপ অ্যাকাউন্টটি আপনার "
+"দলের সাথে সংযুক্ত করতে হবে।"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:42
+msgid "Go to payment details"
+msgstr "পেমেন্টের বিবরণে যান"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:56
+msgid "Create free tickets for General Admission"
+msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_create.html:71
+msgid "Reward your holders with some sweet tickets"
+msgstr "আপনার ধারকদের কিছু মিষ্টি টিকিট দিয়ে পুরস্কৃত করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:4
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:6
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:8
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:19
+msgid "Update Ticket Tier"
+msgstr "টিকিট স্তর আপডেট করুন"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:21
+msgid "Editing ticket tier"
+msgstr "টিকিটের স্তর সম্পাদনা করা হচ্ছে "
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:44
+msgid "Ticket Details"
+msgstr "টিকিটের বিবরণ"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:64
+msgid "Allowed Guests (per ticket)"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: backend/templates/redesign/dashboard_organizer/ticket_tier_update.html:74
+msgid "Save Ticket Tier"
+msgstr "জমা"
+
+#~ msgid "Create"
+#~ msgstr "তৈরি করুন"

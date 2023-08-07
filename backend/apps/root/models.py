@@ -13,6 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -22,7 +23,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
-from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
@@ -236,12 +236,10 @@ class Invite(DBModel):
 
     # basic info
     accepted = models.BooleanField(
-        verbose_name=_("accepted"), default=False, blank=False, null=False
+        verbose_name="accepted", default=False, blank=False, null=False
     )
-    key = models.CharField(
-        verbose_name=_("key"), max_length=64, unique=True, blank=False
-    )
-    sent = models.DateTimeField(verbose_name=_("sent"), blank=False, null=True)
+    key = models.CharField(verbose_name="key", max_length=64, unique=True, blank=False)
+    sent = models.DateTimeField(verbose_name="sent", blank=False, null=True)
     email = models.EmailField(
         verbose_name="e-mail address",
         max_length=254,
@@ -321,8 +319,8 @@ class Event(DBModel):
             return self.filter(state=Event.StateStatus.LIVE)
 
     class StateStatus(models.TextChoices):
-        DRAFT = "DRAFT", _("Draft")
-        LIVE = "LIVE", _("Live")
+        DRAFT = "DRAFT", "Draft"
+        LIVE = "LIVE", "Live"
 
     # Queryset manager
     objects = EventQuerySet.as_manager()
@@ -356,14 +354,14 @@ class Event(DBModel):
     cover_image = models.ImageField(
         help_text="A banner image for your event. Please make sure the image "
         "is a high quality landscape image, ideally 960 x 720 pixels (4:3).",
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         upload_to="event__cover_image",
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     end_date = models.DateTimeField(
         help_text="When your event will end (optional).",
@@ -383,25 +381,35 @@ class Event(DBModel):
     timezone = models.CharField(
         verbose_name="time zone",
         max_length=30,
-        blank=False,
+        blank=True,
         default="",
     )
     # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=False, default="")
+    address_1 = models.CharField(max_length=255, blank=True, default="")
     # The street/location address (part 2)
     address_2 = models.CharField(max_length=255, blank=True, default="")
     # The city
-    city = models.CharField(max_length=255, blank=False, default="")
+    city = models.CharField(max_length=255, blank=True, default="")
     # The ISO 3166-2 2- or 3-character region code
     region = models.CharField(max_length=4, blank=True, default="")
     # The postal code
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=False, default="")
+    country = models.CharField(max_length=2, blank=True, default="")
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)
     slug = AutoSlugField(populate_from="title", null=True, unique=True)
+    sales_start = models.DateTimeField(
+        help_text="When your event sales will start (optional).",
+        blank=True,
+        null=True,
+    )
+    sales_end = models.DateTimeField(
+        help_text="When your event sales will end (optional).",
+        blank=True,
+        null=True,
+    )
 
     # Scanner Info
     scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
@@ -559,7 +567,7 @@ class Event(DBModel):
         "address_1, address_2, city, country, postal_code" joined
         """
         if not self.city and not self.address_1:
-            return ""
+            return "Not set"
 
         # add postal code to city if exists
         if self.postal_code:
@@ -634,6 +642,34 @@ class Event(DBModel):
             "VND": "₫",  # Vietnam
         }
         return CURRENCY_SYMBOLS.get(self.fiat_currency, self.fiat_currency + " ")
+
+    @property
+    def cover_image_url(self):
+        if self.cover_image:
+            return self.cover_image.url
+        else:
+            return staticfiles_storage.url("images/event_cover_placeholder.jpg")
+
+    @property
+    def has_required_fields(self):
+        missing_fields = []
+        required_fields = {
+            "self.title": self.title,
+            "self.description": self.description,
+            "self.start_date": self.start_date,
+            "self.timezone": self.timezone,
+            "self.address_1": self.address_1,
+            "self.address_2": self.address_2,
+            "self.city": self.city,
+            "self.postal_code": self.postal_code,
+            "self.country": self.country,
+        }
+        for k, v in required_fields.items():
+            if v is None:
+                missing_fields.append(k)
+        if missing_fields:
+            return False, missing_fields
+        return True, []
 
 
 class Ticket(DBModel):
@@ -868,25 +904,25 @@ class TierAssetOwnership(DBModel):
     """
 
     class BlockchainChoices(models.TextChoices):
-        ETH = "ETH", _("Ethereum")
+        ETH = "ETH", "Ethereum"
 
     class NetworkChoices(models.IntegerChoices):
-        ETH = 1, _("Ethereum")
-        GOERLI = 5, _("Ethereum (Goerli TestNet)")
-        SEPOLIA = 11155111, _("Ethereum (Sepolia TestNet)")
-        MUMBAI = 80001, _("Ethereum (Mumbai TestNet)")
-        POLYGON = 137, _("Polygon")
-        BSC = 56, _("Binance Smart Chain")
-        BSC_TESTNET = 97, _("Binance Smart Chain (TestNet)")
-        AVAX = 43114, _("Avalanche")
-        AVAX_TESTNET = 43113, _("Avalanche (TestNet)")
-        FANTOM = 250, _("Fantom")
-        CRONOS = 25, _("Cronos")
-        CRONOS_TESTNET = 338, _("Cronos (TestNet)")
-        ARBITRUM = 42161, _("Arbitrum")
+        ETH = 1, "Ethereum"
+        GOERLI = 5, "Ethereum (Goerli TestNet)"
+        SEPOLIA = 11155111, "Ethereum (Sepolia TestNet)"
+        MUMBAI = 80001, "Ethereum (Mumbai TestNet)"
+        POLYGON = 137, "Polygon"
+        BSC = 56, "Binance Smart Chain"
+        BSC_TESTNET = 97, "Binance Smart Chain (TestNet)"
+        AVAX = 43114, "Avalanche"
+        AVAX_TESTNET = 43113, "Avalanche (TestNet)"
+        FANTOM = 250, "Fantom"
+        CRONOS = 25, "Cronos"
+        CRONOS_TESTNET = 338, "Cronos (TestNet)"
+        ARBITRUM = 42161, "Arbitrum"
 
     class AssetChoices(models.TextChoices):
-        NFT = "NFT", _("NFT")
+        NFT = "NFT", "NFT"
 
     blockchain = models.CharField(
         max_length=50,
@@ -910,7 +946,7 @@ class TierAssetOwnership(DBModel):
         default=1,
         blank=False,
         null=False,
-        help_text="The number of NFTs required to claim your ticket tier."
+        help_text="The number of NFTs required to claim your ticket tier.",
     )
     token_address = models.CharField(
         max_length=42,
@@ -948,17 +984,17 @@ class CheckoutSession(DBModel):
     """
 
     class OrderStatus(models.TextChoices):
-        VALID = "VALID", _("Valid")  # Initial State, TX is valid
-        PROCESSING = "PROCESSING", _("Processing")  # TX has been created, processing...
-        FAILED = "FAILED", _("Failed")  # TX has failed
-        COMPLETED = "COMPLETED", _("Completed")  # TX has been completed, fulfill order
-        FULFILLED = "FULFILLED", _("Fulfilled")  # TX has been filled
+        VALID = "VALID", "Valid"  # Initial State, TX is valid
+        PROCESSING = "PROCESSING", "Processing"  # TX has been created, processing...
+        FAILED = "FAILED", "Failed"  # TX has failed
+        COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
+        FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
 
     class TransactionType(models.TextChoices):
-        FIAT = "FIAT", _("Fiat")
-        BLOCKCHAIN = "BLOCKCHAIN", _("Blockchain")
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", _("Asset Ownership")
-        FREE = "FREE", _("Free")
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
 
     # keys
     event = models.ForeignKey(
@@ -1394,9 +1430,7 @@ class TxAssetOwnership(DBModel):
             response.raise_for_status()
             response = response.json()
         except requests.exceptions.HTTPError:
-            raise TxAssetOwnershipProcessingError(
-                {"message": _("An error has ocurred")}
-            )
+            raise TxAssetOwnershipProcessingError({"message": "An error has ocurred"})
         return response
 
     def _check_balance(self, expected, actual):
@@ -1408,7 +1442,7 @@ class TxAssetOwnership(DBModel):
         if actual < expected:
             raise TxAssetOwnershipProcessingError(
                 {
-                    "quantity": _(
+                    "quantity": (
                         "Quantity requested exceeds the queried balance. "
                         f"Expected Balance: {expected}. "
                         f"Actual Balance: {actual}."
@@ -1459,7 +1493,7 @@ class TxAssetOwnership(DBModel):
         except Exception:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
-                {"wallet_address": _("Error recovering address")}
+                {"wallet_address": "Error recovering address"}
             )
 
         # Successful recovery attempt
@@ -1467,7 +1501,7 @@ class TxAssetOwnership(DBModel):
         if recovered_address != self.wallet_address:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
-                {"wallet_address": _("Address was recovered, but did not match")}
+                {"wallet_address": "Address was recovered, but did not match"}
             )
 
         # Success, mark as verified

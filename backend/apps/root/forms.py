@@ -1,6 +1,4 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
-
 from apps.root.models import Invite
 
 
@@ -32,10 +30,8 @@ class CleanEmailMixin:
         email = self.cleaned_data["email"]
 
         errors = {
-            "already_invited": _("This e-mail address has already been" " invited."),
-            "already_accepted": _(
-                "This e-mail address has already" " accepted an invite.",
-            ),
+            "already_invited": "This e-mail address has already been invited.",
+            "already_accepted": "This e-mail address has already accepted an invite.",
         }
         try:
             self.validate_invitation(email)
@@ -48,7 +44,7 @@ class CleanEmailMixin:
 
 class InviteAdminAddForm(forms.ModelForm, CleanEmailMixin):
     email = forms.EmailField(
-        label=_("E-mail"),
+        label="E-mail",
         required=True,
         widget=forms.TextInput(attrs={"type": "email", "size": "30"}),
     )

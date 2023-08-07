@@ -1,8 +1,10 @@
+from datetime import datetime
 from io import BytesIO
 import base64
 import datetime
 import json
 import jwt
+import pytz
 import qrcode
 import rollbar
 import stripe
@@ -79,9 +81,9 @@ class CheckoutPageOne(DetailView):
                 ).get(pk=self.kwargs["event_pk_slug"])
         except Event.DoesNotExist:
             raise Http404()
-        except:
+        except Exception:
             rollbar.report_exc_info()
-
+            raise Http404()
 
         return self.object
 
@@ -170,6 +172,26 @@ class CheckoutPageOne(DetailView):
         elif checkout_type == "ASSET_OWNERSHIP":
             tiers_active = tiers_asset_ownership
 
+        # Handle ticket sales
+        sales_status = "OPEN"
+        now = datetime.datetime.now(pytz.timezone(self.object.timezone))
+        # Way back / forward in the past
+        sales_start = datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
+        sales_end = datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
+
+        # Set actual dates if they exist (with timezone)
+        # Note: Use now.tzinfo for timezone compatibility
+        if self.object.sales_start:
+            sales_start = self.object.sales_start.replace(tzinfo=now.tzinfo)
+        if self.object.sales_end:
+            sales_end = self.object.sales_end.replace(tzinfo=now.tzinfo)
+
+        # Check status
+        if now < sales_start:
+            sales_status = "UPCOMING"
+        elif now > sales_end:
+            sales_status = "OVER"
+
         # Set everything to context
         context["form"] = CheckoutForm(
             initial={
@@ -187,6 +209,8 @@ class CheckoutPageOne(DetailView):
         context["availability"] = availability
         context["checkout_type"] = checkout_type
         context["is_team_member"] = is_team_member
+        context["sales_start_with_tzinfo"] = sales_start
+        context["sales_status"] = sales_status
         return context
 
     @transaction.atomic

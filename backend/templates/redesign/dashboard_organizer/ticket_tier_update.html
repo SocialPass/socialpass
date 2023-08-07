@@ -1,0 +1,83 @@
+{% extends "redesign/dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email %}
+
+{% block head_title %}{% trans "Update Ticket Tier" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Update Ticket Tier" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Update Ticket Tier" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+{% include "redesign/components/event_flow_header.html" with step="2" %}
+<!-- Ticket tier form start -->
+<div class="row mt-4 mb-3">
+	<div class="col-lg-8 mx-auto">
+		<div class="d-flex align-items-center mb-3">
+			<a href="{% url 'dashboard_organizer:event_tickets' current_team.public_id event.pk %}" aria-label="Go Back">
+				<i class="fa-solid fa-arrow-left h4 m-0"></i>
+			</a>
+			<div class="ps-4">
+				<h1 class="h3 mb-0">{% trans "Update Ticket Tier" %}</h1>
+				<p class="text-body-secondary mb-0">
+					{% trans "Editing ticket tier" %} &mdash; <strong>{{ object.ticket_type }}</strong>
+				</p>
+			</div>
+		</div>
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body px-lg-5 py-lg-4">
+				<form method="POST">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="mb-0">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					<h4 class="mb-lg-4">{% trans "Ticket Details" %}</h4>
+					<div class="mb-3">
+						{% with form.ticket_type as input %}
+							{% include "redesign/forms/input.html" %}
+						{% endwith %}
+					</div>
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with form.capacity as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.max_per_person as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+					</div>
+
+					<br /><br />
+					<h4 class="mb-lg-4">{% trans "Allowed Guests (per ticket)" %}</h4>
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with form.allowed_guests as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+					</div>
+
+					<div class="text-end mt-3">
+						<button type="submit" class="btn btn-primary">{% trans "Save Ticket Tier" %}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Ticket tier form end -->
+{% endblock content %}

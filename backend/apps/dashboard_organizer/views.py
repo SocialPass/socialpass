@@ -1019,7 +1019,7 @@ class EventScanner(DetailView):
     model = Event
     slug_field = "scanner_id"
     slug_url_kwarg = "scanner_id"
-    template_name = "dashboard_organizer/scanner.html"
+    template_name = "redesign/scanner/scanner.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1031,7 +1031,7 @@ class EventScanner2(DetailView):
     model = Event
     slug_field = "scanner_id"
     slug_url_kwarg = "scanner_id"
-    template_name = "dashboard_organizer/scanner2.html"
+    template_name = "redesign/scanner/scanner2.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1047,13 +1047,13 @@ class EventScanner2(DetailView):
         embed_code = self.request.POST.get("embed_code")
         if not embed_code:
             return render(
-                self.request, template_name="dashboard_organizer/scanner_error.html"
+                self.request, template_name="redesign/scanner/scanner_error.html"
             )
         try:
             embed_code = uuid.UUID(str(embed_code))
         except ValueError:
             return render(
-                self.request, template_name="dashboard_organizer/scanner_error.html"
+                self.request, template_name="redesign/scanner/scanner_error.html"
             )
 
         # Retrieve ticket
@@ -1061,7 +1061,7 @@ class EventScanner2(DetailView):
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
             return render(
-                self.request, template_name="dashboard_organizer/scanner_error.html"
+                self.request, template_name="redesign/scanner/scanner_error.html"
             )
 
         # Redeem ticket
@@ -1071,7 +1071,7 @@ class EventScanner2(DetailView):
             context["message"] = "Not an authorized scanner!"
             return render(
                 self.request,
-                template_name="dashboard_organizer/scanner_error.html",
+                template_name="redesign/scanner/scanner_error.html",
                 context=context,
             )
         except exceptions.AlreadyRedeemedError:
@@ -1079,7 +1079,7 @@ class EventScanner2(DetailView):
             context["message"] = "Ticket already scanned!"
             return render(
                 self.request,
-                template_name="dashboard_organizer/scanner_warning.html",
+                template_name="redesign/scanner/scanner_warning.html",
                 context=context,
             )
 
@@ -1087,6 +1087,6 @@ class EventScanner2(DetailView):
         context["ticket"] = ticket
         return render(
             self.request,
-            template_name="dashboard_organizer/scanner_success.html",
+            template_name="redesign/scanner/scanner_success.html",
             context=context,
         )

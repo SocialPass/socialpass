@@ -1,0 +1,9 @@
+{% i18n load static %}
+<div id="fade-me-in" class="text-bg-success fw-bold text-center px-3 py-2">
+	<i class="fa-solid fa-check-circle me-1"></i>
+	{% trans "Successfully scanned!" %}
+	<div class="fw-normal">
+		{% trans "Party Size:" %} {{ticket.party_size}}
+	</div>
+</div>
+<audio id="myAudio" src="{% static 'sounds/success.wav' %}"/>

@@ -1,0 +1,106 @@
+{% extends 'redesign/scanner/base_scanner.html' %}
+{% load i18n static %}
+
+{% block extra_head %}
+<style>
+	#fade-me-in.htmx-added {
+		opacity: 0;
+	}
+	
+	#fade-me-in {
+		opacity: 1;
+		transition: opacity 0.25s ease-in;
+	}
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="mt-auto py-3">
+	<div class="card border-0 rounded-4 shadow">
+		<div class="card-body">
+			<h1 class="h4 text-primary-emphasis mt-0">
+				{{ object.title }}
+			</h1>
+			<div><i class="fa-regular fa-clock me-1"></i> {{ object.start_date }}</div>
+			<div class="row mt-3">
+				<div class="col">
+					<div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
+						<strong class="antialiased">{% trans "Attendees:" %} <br class="d-sm-none" />{{ object.quantity_total_sold }}</strong>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
+						<strong class="antialiased">{% trans "Check-Ins:" %} <br class="d-sm-none" />{{ object.quantity_total_redeemed }}</strong>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="position-relative rounded-3 overflow-hidden shadow my-3" style="background-color: var(--bs-content-bg);">
+		<!-- QR Reader -->
+		<div id="qr-reader" class="w-100 h-auto" style="min-height: 100px;"></div>
+		<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-secondary border-0 shadow position-absolute top-0 start-0 m-1" aria-label="Go Back">
+			<i class="fa-solid fa-arrow-left"></i>
+		</a>
+		<div id="results">
+			<div class="px-3 py-2 bg-secondary-subtle text-center">
+				<i class="fa-regular fa-barcode-read fa-beat-fade me-1"></i>
+				<strong>{% trans "Scanning..." %}</strong>
+			</div>
+		</div>
+	</div>
+	<!-- HTMX Form -->
+	<div class="card border-0 rounded-4 shadow">
+		<div class="card-body">
+			<form
+				hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+				hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
+				hx-target="#results"
+				hx-trigger="submit throttle:0.5s"
+			>
+				<label class="form-label" for="qr-reader-input">{% trans "QR Reader Input" %}</label>
+				<div class="input-group">
+					<input
+						type="text"
+						name="embed_code"
+						id="qr-reader-input"
+						class="form-control"
+						placeholder="{% trans 'QR Reader Input' %}"
+						required
+					>
+					<button id="qr-submit" type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript" src="{% static 'js/html5-qrcode.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
+<script>
+	// Setup
+	// Get elements, setup callback
+	const qrInput = document.getElementById("qr-reader-input");
+	const qrSubmit = document.getElementById("qr-submit");
+	const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+		qrInput.value = decodedText;
+		qrSubmit.click();
+	};
+
+	// Init scanner
+	const qrScanner = new Html5Qrcode("qr-reader", false);
+	const config = { fps: 1 };
+    const didStart = qrScanner
+		.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+		.then(() => true);
+
+	// audio event
+	htmx.on('htmx:afterSwap', function(event) {
+		var audio = document.getElementById('myAudio');
+		audio.muted = false;
+		audio.play();
+	});
+</script>
+{% endblock %}

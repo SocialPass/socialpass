@@ -133,8 +133,13 @@ urlpatterns = [
         name="scanner",
     ),
     path(
+        "scanner-stats/<uuid:scanner_id>/",
+        views.EventScannerStats.as_view(),
+        name="scanner_stats",
+    ),
+    path(
         "scanner-2/<uuid:scanner_id>/",
         views.EventScanner2.as_view(),
         name="scanner2",
-    ),
+    )
 ]

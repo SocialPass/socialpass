@@ -1026,6 +1026,25 @@ class EventScanner(DetailView):
         context.update(dict(current_team=self.object.team))
         return context
 
+class EventScannerStats(DetailView):
+    model = Event
+    slug_field = "scanner_id"
+    slug_url_kwarg = "scanner_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=self.object.team))
+        return context
+
+    def get(self, *args, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        return render(
+            self.request,
+            template_name="redesign/scanner/scanner_stats.html",
+            context=context,
+        )
+
 
 class EventScanner2(DetailView):
     model = Event

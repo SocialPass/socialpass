@@ -174,8 +174,10 @@ class CheckoutPageOne(DetailView):
 
         # Handle ticket sales
         sales_status = "OPEN"
-        now = datetime.datetime.now(pytz.timezone(self.object.timezone))
-        # Way back / forward in the past
+        if self.object.timezone:
+            now = datetime.datetime.now(pytz.timezone(self.object.timezone))
+        else:
+            now = datetime.datetime.now(pytz.utc)
         sales_start = datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
         sales_end = datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
 

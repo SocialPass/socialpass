@@ -9,7 +9,7 @@
 		{% with request.user.membership_set.all as memberships %}
 			{% if memberships.count > 0 %}
 				<p>
-					<a href="{% url 'dashboard_organizer:dashboard_redirect' %}"><i class="fa-light fa-arrow-left me-1"></i>Back to dashboard</a>
+					<a href="{% url 'dashboard_organizer:dashboard_redirect' %}"><i class="fa-light fa-arrow-left me-1"></i>{% trans "Back to dashboard" %}</a>
 				</p>
 			{% endif %}
 		{% endwith %}

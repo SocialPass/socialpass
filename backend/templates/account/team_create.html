@@ -1,94 +1,57 @@
-{% extends "bases/base_secondary.html" %}
+{% extends "redesign/auth/base.html" %}
+{% load account static i18n crispy_forms_tags %}
 
-{% load account crispy_forms_tags %}
-
-{% block head_title %}Create Team - SocialPass{% endblock %}
+{% block head_title %}{% trans "Create Team" %}- SocialPass{% endblock %}
 
 {% block inner %}
-{% with request.user.membership_set.all as memberships %}
-	{% if memberships.count > 0 %}
-		<p class="mb-5">
-			<a href="{% url 'dashboard_organizer:dashboard_redirect' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Back to dashboard</a>
+<div class="card border-0 rounded-4 shadow-sm">
+	<div class="card-body p-lg-4">
+		{% with request.user.membership_set.all as memberships %}
+			{% if memberships.count > 0 %}
+				<p>
+					<a href="{% url 'dashboard_organizer:dashboard_redirect' %}"><i class="fa-light fa-arrow-left me-1"></i>Back to dashboard</a>
+				</p>
+			{% endif %}
+		{% endwith %}
+		<h1 class="h3 mb-0">{% trans "Create Team" %}</h1>
+		<p class="text-body-secondary">
+			{% trans "Use the form below to create your very own team and get started with SocialPass." %}
 		</p>
-		<h1 class="fsr-3 text-strong fw-700 mt-0">Create Team</h1>
-	{% else %}
-		<h1 class="fsr-3 text-strong fw-700">Create Team</h1>
-	{% endif %}
-{% endwith %}
-<p>
-	Use the form below to create your very own team and get started with SocialPass.
-</p>
-
-<!-- Form start -->
-<form method="POST" enctype="multipart/form-data">
-	{% csrf_token %}
-
-	{% if form.non_field_errors %}
-		<div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
-			<ul class="unordered-list bullet-reset m-0">
-				{% for error in form.non_field_errors %}
-					<li>{{ error|escape }}</li>
-				{% endfor %}
-			</ul>
-		</div>
-	{% endif %}
-
-	{% for input in form.hidden_fields %}
-		{{ input }}
-	{% endfor %}
-
-	{% for input in form.visible_fields %}
-		<div class="form-group">
-			{% if input.name == "name" %}
-				<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
-				<input
-					type="{{ input.field.widget.input_type }}"
-					name="{{ input.name }}"
-					value="{{ input.value|default_if_none:'' }}"
-					{% if input.field.widget.input_type != "hidden" %}
-						class="form-control {% if input.errors %}is-invalid{% endif %}"
-						id="{{ input.auto_id }}"
-					{% endif %}
-					{% if input.field.required %}
-						required="required"
-					{% endif %}
-					{% for k,v in input.field.widget.attrs.items %}
-						{{ k }}="{{ v }}"
-					{% endfor %}
-					autofocus="true"
-				/>
-			{% elif input.name == "description" %}
-				<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
-				<textarea
-					name="{{ input.name }}"
-					{% if input.field.widget.input_type != "hidden" %}
-						class="form-control {% if input.errors %}is-invalid{% endif %}"
-						id="{{ input.auto_id }}"
-					{% endif %}
-					{% if input.field.required %}
-						required="required"
-					{% endif %}
-					{% for k,v in input.field.widget.attrs.items %}
-						{{ k }}="{{ v }}"
-					{% endfor %}
-					>{% if input.value %}{{ input.value }}{% endif %}</textarea>
-			{% elif input.name == "image" %}
+		<form method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			{% if form.non_field_errors %}
+				<div class="alert alert-danger" role="alert">
+					<ul class="mb-0">
+						{% for error in form.non_field_errors %}
+							<li>{{ error|escape }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+			{% for input in form.hidden_fields %}
+				{{ input }}
+			{% endfor %}
+			<h4 class="h5">{% trans "Team Name" %}</h4>
+			<div class="mb-3">
+				{% with form.name as input %}
+					{% include "redesign/forms/input.html" %}
+				{% endwith %}
+			</div>
+			<br />
+			<h4 class="h5">{% trans "Description & Image (Optional)" %}</h4>
+			<div class="mb-3">
+				{% with form.description as input %}
+					{% include "redesign/forms/textarea.html" %}
+				{% endwith %}
+			</div>
+			{% with form.image as input %}
 				{{ input|as_crispy_field }}
-			{% endif %}
-
-			{% if input.errors %}
-				<ul class="unordered-list bullet-reset mt-5 text-danger subpixel-antialiased">
-					{% for error in input.errors %}
-						<li>{{ error }}</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
-		</div>
-	{% endfor %}
-	<div class="form-group">
-		<button class="btn btn-primary btn-block" type="submit">Create Team</button>
+			{% endwith %}
+			<div class="text-end mt-3">
+				<button type="submit" class="btn btn-primary w-100 d-block">{% trans "Create Team" %}</button>
+			</div>
+		</form>
 	</div>
-</form>
-<!-- Form end -->
+</div>
 {% endblock %}
 

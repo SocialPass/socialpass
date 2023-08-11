@@ -1,15 +1,18 @@
-{% extends "bases/base_secondary.html" %}
+{% extends "redesign/auth/base.html" %}
+{% load account static i18n crispy_forms_tags %}
 
-{% load account %}
-
-{% block head_title %}Verify Your E-mail Address - SocialPass{% endblock %}
+{% block head_title %}{% trans "Verify Your E-mail Address" %}- SocialPass{% endblock %}
 
 {% block inner %}
-<p class="mb-5">
-	<a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Sign In</a>
-</p>
-<h1 class="fsr-3 text-strong fw-700">Verify Your E-mail Address</h1>
-<p>
-	We have sent an e-mail to you for verification. Follow the link provided to verify your account.
-</p>
+<div class="card border-0 rounded-4 shadow-sm">
+	<div class="card-body p-lg-4">
+		<p>
+			<a href="{% url 'account_login' %}"><i class="fa-light fa-arrow-left me-1"></i>Sign In</a>
+		</p>
+		<h1 class="h3 mb-0">{% trans "Verify Your E-mail Address" %}</h1>
+		<p class="text-body-secondary">
+			{% trans "We have sent an e-mail to you for verification. Follow the link provided to verify your account." %}
+		</p>
+	</div>
+</div>
 {% endblock %}

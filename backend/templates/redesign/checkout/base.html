@@ -1,0 +1,185 @@
+{% load static i18n get_debug_status get_theme_value get_color_mode %}
+
+<!DOCTYPE html>
+{% get_debug_status as debug %}
+<html lang="en" class="{% block html_class %}{% endblock %}" spellcheck="false" data-bs-theme="{% get_color_mode %}">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- Title -->
+		<title>{% block head_title %}SocialPass - {% trans "Hosting the Next Generation of Events" %}{% endblock head_title %}</title>
+
+		<!-- Fav icon -->
+		<link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
+
+		<!-- Halfmoon CSS -->
+		<link href="{% static 'redesign/halfmoon.css' %}" rel="stylesheet" />
+
+		<!-- SocialPass CSS theme -->
+		<link href="{% static 'redesign/sp-theme.css' %}" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+
+		<!-- SEO -->
+		<meta name="description" content="{{ object.description }}">
+		<meta name="author" content="{{ object.team.name }}">
+		<meta property="url" content="{{ request.build_absolute_uri }}">
+		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting, fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="article">
+		<meta property="og:url" content="{{ request.build_absolute_uri }}">
+		<meta property="og:title" content="{{ object.title }}">
+		<meta property="og:description" content="Date & Time: {{ object.start_date }} | Location: {{ object.localized_address_display }} | Get your tickets now!">
+		<meta property="og:image" content="{{ object.cover_image_url }}">
+
+		<!-- Google Tag Manager -->
+		{% if not debug %}
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
+			<script>
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+				gtag('config', 'G-FQKKDVZZVX');
+			</script>
+		{% endif %}
+
+		<!-- Start of sociapass support Widget -->
+		<script>
+		  	(function(d,t) {
+				var BASE_URL="https://support.socialpass.io";
+				var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+				g.src=BASE_URL+"/packs/js/sdk.js";
+				g.defer = true;
+				g.async = true;
+				s.parentNode.insertBefore(g,s);
+				g.onload=function(){
+			  		window.chatwootSDK.run({
+						websiteToken: 'YCzxapxfua4vyELnoZ68v5Dm',
+						baseUrl: BASE_URL
+			  		})
+				}
+		  	})(document,"script");
+		</script>
+		<!-- End of sociapass support Widget -->
+
+		<!-- Custom styles -->
+		<style type="text/css">
+
+		</style>
+
+		{% block extra_head %}{% endblock extra_head %}
+	</head>
+
+	{% with request.resolver_match.url_name as url_name %}
+	<body class="bg-body-secondary">
+		{% block body %}{% endblock body %}
+
+		<!-- Navbar start -->
+		<div class="d-flex align-items-center px-3 px-sm-4 py-2">
+			<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block">
+			<button type="button" class="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" style="width: 37px;" onclick="toggleDarkMode()">
+				<i class="fa-solid fa-moon"></i>
+			</button>
+			<a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer" class="ms-auto">{% trans "Need Help?" %}</a>
+		</div>
+		{% if is_team_member and not request.GET.view_as_attendee %}
+			<div class="alert alert-primary border-0 rounded-0 px-3 px-sm-4 m-0 d-md-flex align-items-md-center" role="alert">
+				{% trans "You are viewing this page as an organizer." %}
+				<div class="d-flex ms-md-auto mt-1 mt-md-0">
+					<a href="{% url 'dashboard_organizer:team_update' event.team.public_id %}">{% trans "Edit Event" %}</a>
+					<span class="vr mx-2"></span>
+					<a href="?view_as_attendee=True">{% trans "View as Attendee" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
+				</div>
+			</div>
+		{% endif %}
+		{% include "redesign/components/django_messages.html" %}
+		<!-- Navbar end -->
+
+		<!-- Content start -->
+		<div class="container-xl px-3 px-sm-4 my-3 my-sm-4 mw-100" style="width: 920px;">
+			{% block content %}{% endblock %}
+		</div>
+		<!-- Content end -->
+
+		<!-- Bootstrap bundle JS -->
+		<script src="{% static 'redesign/bootstrap.bundle.js' %}"></script>
+
+		<script type="text/javascript">
+			/* Enable all tooltips */
+			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+			/* Setting cookie */
+			function setCookie(name, value, days) {
+			    var expires = "";
+			    if (days) {
+			        var date = new Date();
+			        date.setTime(date.getTime() + (days*24*60*60*1000));
+			        expires = "; expires=" + date.toUTCString();
+			    }
+			    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+			}
+
+			/* Toggle dark mode */
+			function toggleDarkMode() {
+				var preference = document.documentElement.getAttribute("data-bs-theme");
+				if (!preference) {
+					document.documentElement.setAttribute("data-bs-theme", "dark");
+				}
+				else {
+					if (preference === "light") {
+						document.documentElement.setAttribute("data-bs-theme", "dark");
+					} else {
+						document.documentElement.setAttribute("data-bs-theme", "light");
+					}
+				}
+
+				setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
+			}
+		</script>
+
+		{% if debug %}
+		<script type="text/javascript">
+			/**
+			 * Handle the keydown event (only on debug mode).
+			 *
+			 * This is used to create the dark mode and sidebar toggle shortcuts.
+			 * These shortcuts are very useful for testing.
+			 */
+			document.addEventListener("keydown", function (event) {
+				if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+					event = event || window.event;
+
+					if (!(event.ctrlKey || event.metaKey)) {
+						// Toggle dark mode when [shift] + [D] keys are pressed
+						if (event.shiftKey && event.which == 68) {
+							if (
+								document.documentElement.getAttribute(
+									"data-bs-theme"
+								) === "light"
+							) {
+								document.documentElement.setAttribute(
+									"data-bs-theme",
+									"dark"
+								);
+							} else {
+								document.documentElement.setAttribute(
+									"data-bs-theme",
+									"light"
+								);
+							}
+						}
+					}
+				}
+			});
+		</script>
+		{% endif %}
+
+		{% block extra_body %}{% endblock extra_body %}
+	</body>
+	{% endwith %}
+</html>

@@ -52,7 +52,7 @@ class CheckoutPageOne(DetailView):
     """
 
     model = Event
-    template_name = "checkout/checkout_page_one.html"
+    template_name = "redesign/checkout/checkout_page_one.html"
 
     def get_object(self):
         # Handle default checkout

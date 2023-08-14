@@ -68,7 +68,21 @@
 
 		<!-- Custom styles -->
 		<style type="text/css">
+			/* Description */
 
+			#desc-cont p > br {
+				display: none;
+			}
+
+			#desc-read {
+				padding-top: 120px;
+				background-image: linear-gradient(transparent, var(--bs-content-bg));
+				border-bottom: 1px solid var(--bs-border-color);
+			}
+
+			.max-h-200 {
+				max-height: 200px !important;
+			}
 		</style>
 
 		{% block extra_head %}{% endblock extra_head %}
@@ -100,7 +114,7 @@
 		<!-- Navbar end -->
 
 		<!-- Content start -->
-		<div class="container-xl px-3 px-sm-4 my-3 my-sm-4 mw-100" style="width: 920px;">
+		<div class="container-xl px-3 px-sm-4 my-3 my-sm-4 mw-100" style="width: 1080px;">
 			{% block content %}{% endblock %}
 		</div>
 		<!-- Content end -->

@@ -33,8 +33,109 @@
 	</div>
 	<!-- Team image and name end -->
 
-	<div class="p-3 p-sm-4">
-			
+	<!-- Event name, description, dates, location start -->
+	<div class="p-3 p-sm-4 mt-3">
+		<div class="container-fluid overflow-hidden">
+			<div class="row g-3">
+				<div class="col-lg-6">
+					<h1 class="text-body-emphasis display-6 m-0 text-break">
+						{{ event.title }}
+					</h1>
+					<div id="desc-cont" class="my-3 overflow-hidden position-relative max-h-200">
+						{{ event.description_html | safe }}
+						<div id="desc-read" class="d-none position-absolute bottom-0 start-0 w-100 text-center pb-1">
+							<button
+								type="button"
+								class="btn btn-link"
+								onclick="(function(){
+									document.getElementById('desc-cont').classList.remove('overflow-hidden');
+									document.getElementById('desc-cont').classList.remove('max-h-200');
+									document.getElementById('desc-read').classList.add('d-none');
+									return false;
+								})();return false;"
+							>
+								Read More
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 ps-lg-4">
+					<div class="container-fluid overflow-hidden g-0">
+						<div class="row g-3">
+							<div class="col-sm-6">
+								<div class="d-flex align-items-center">
+									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-calendars fs-6 text-primary-emphasis"></i>
+									</div>
+									<strong class="text-primary-emphasis ms-3">{% trans "Date & Time" %}</strong>
+								</div>
+								<div class="mt-2">
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Start" %}:</strong>
+										{% if event.start_date %}
+											{{ event.start_date }}
+										{% else %}
+											{% trans "Not set" %}
+										{% endif %}
+									</span>
+									{% if event.end_date %}
+										<br />
+										<span class="text-body-secondary"><strong class="text-body">{% trans "End" %}:</strong> {{ event.end_date }}</span>
+									{% endif %}
+									<br />
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Timezone" %}:</strong>
+										{% if event.timezone %}
+											{{ event.timezone }}
+										{% else %}
+											{% trans "Not set" %}
+										{% endif %}
+									</span>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="d-flex align-items-center">
+									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-location-dot fs-6 text-primary-emphasis"></i>
+									</div>
+									<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
+								</div>
+								<div class="mt-2">
+									<span class="text-body-secondary">{{ event.localized_address_display }}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mt-3">
+						{% if sales_status == "OPEN" %}
+							<div class="alert alert-primary text-primary-emphasis d-flex align-items-center fw-bold">
+								<i class="fa-light fa-check me-3"></i>
+								Tickets available! Please select the tickets you want to purchase.
+							</div>
+						{% elif sales_status == "UPCOMING" %}
+							<div class="alert alert-warning text-warning-emphasis d-flex align-items-center fw-bold">
+								<i class="fa-light fa-times me-3"></i>
+								Stay tuned! Tickets are going live soon. See the timer below. 
+							</div>
+						{% elif sales_status == "OVER" %}
+							<div class="alert alert-danger text-warning-danger d-flex align-items-center fw-bold">
+								<i class="fa-light fa-times me-3"></i>
+								Sorry! Tickets are not available for this event.
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
+	<!-- Event name, description, dates, location end -->
 </div>
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript">
+	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
+		document.getElementById("desc-read").classList.remove("d-none");
+	}
+</script>
 {% endblock %}

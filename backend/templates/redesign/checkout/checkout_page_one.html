@@ -237,6 +237,7 @@
 			</div>
 			<!-- Type selectors end -->
 
+			<!-- Ticket tiers start -->
 			<div class="tiers-container {% if checkout_type == 'FREE' %}d-block{% endif %}" id="tiers-FREE">
 				{% with tiers_free as tiers %}
 					{% include 'redesign/checkout/ticket_tiers.html' %}
@@ -252,6 +253,7 @@
 					{% include 'redesign/checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
+			<!-- Ticket tiers start -->
 		</div>
 		<!-- Ticket tiers end -->
 

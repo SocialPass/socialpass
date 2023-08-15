@@ -137,7 +137,7 @@
 			}
 
 			.ticket-tier-input:disabled + .ticket-tier-label {
-				background-color: var(--bs-body-bg);
+				background-color: var(--bs-secondary-bg);
 				border-color: var(--bs-border-color);
 				cursor: not-allowed;
 			}
@@ -184,6 +184,18 @@
 
 			.ticket-tier-input[type=radio]:not(:focus) + .ticket-tier-label {
 				box-shadow: var(--bs-box-shadow-sm);
+			}
+
+			/* Input group */
+
+			.input-group-pill > *:first-child {
+				border-top-left-radius: var(--bs-border-radius-pill);
+				border-bottom-left-radius: var(--bs-border-radius-pill);
+			}
+
+			.input-group-pill > *:last-child {
+				border-top-right-radius: var(--bs-border-radius-pill);
+				border-bottom-right-radius: var(--bs-border-radius-pill);
 			}
 
 			/* Description */

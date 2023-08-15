@@ -1,3 +1,4 @@
+{% load i18n %}
 {% for tier in tiers %}
     <div class="ticket-tier mb-3">
         <input
@@ -31,13 +32,13 @@
                     <p class="m-0">
                         {% if tier.availability < 1 %}
                             <strong class="text-danger-emphasis">
-                                <i class="fa-light fa-ban me-1"></i> Sold out!
+                                <i class="fa-light fa-ban me-1"></i> {% trans "Sold out!" %}
                             </strong>
                         {% else %}
-                            {{ tier.availability }} available
+                            {{ tier.availability }} {% trans "available" %}
                             {% if tier.allowed_guests > 0 %}
                                 <span>
-                                    | + {{ tier.allowed_guests }} Guest(s) Allowed
+                                    | + {{ tier.allowed_guests }} {% trans "Guest(s) Allowed" %}
                                 </span>
                             {% endif %}
                         {% endif %}
@@ -50,7 +51,7 @@
                         <button class="btn btn-secondary specific-w-25 px-0" onclick="addAmount(this)">+</button>
                     </div>
                     <div class="text-body-secondary text-center mt-1" style="font-size: var(--bs-font-size-sm);">
-                        Max {{ tier.max_per_person }} per person
+                        {% trans "Max per person:" %} {{ tier.max_per_person }}
                     </div>
                 </div>
             </div>
@@ -58,11 +59,11 @@
                 <div class="border-top mt-2 pt-2">
                     <div class="rounded-pill px-3 py-2 bg-primary-subtle border border-primary lh-sm d-inline-block mt-2">
                         <i class="fa-light fa-tag me-1"></i>
-                        <strong>Price: FREE</strong>
+                        <strong>{% trans "Price: FREE" %}</strong>
                     </div>
                     <div class="text-body-secondary mt-3 d-flex align-items-start">
                         <i class="fa-light fa-info-circle me-2 mt-1 flex-shrink-0"></i>
-                        Tickets are first come, first served.
+                        {% trans "Tickets are first come, first served." %}
                     </div>
                 </div>
             {% endif %}
@@ -70,37 +71,37 @@
                 <div class="border-top mt-2 pt-2">
                     <div class="rounded-pill px-3 py-2 bg-primary-subtle border border-primary lh-sm d-inline-block mt-2">
                         <i class="fa-light fa-tag me-1"></i>
-                        <strong>Price &times; 1: </strong> {{ tier.event.currency_symbol }}{{ tier.tier_fiat.price_per_ticket }}
+                        <strong>{% trans "Price" %} &times; 1: </strong> {{ tier.event.currency_symbol }}{{ tier.tier_fiat.price_per_ticket }}
                     </div>
                     <div class="text-body-secondary mt-3 d-flex align-items-start">
                         <i class="fa-light fa-info-circle me-2 mt-1 flex-shrink-0"></i>
-                        Purchase with debit, credit, or Apple Pay.
+                        {% trans "Purchase with debit, credit, or Apple Pay." %}
                     </div>
                 </div>
             {% endif %}
             {% if tier.tier_asset_ownership %}
                 <div class="border-top mt-2 pt-2">
-                    <div>Free for all holders of the following:</div>
+                    <div>{% trans "Free for all holders of the following:" %}</div>
                     <div class="row mt-2">
                         <div class="col-6 text-truncate">
-                            <strong>Blockchain</strong>
+                            <strong>{% trans "Blockchain" %}</strong>
                             <br />
                             {{ tier.tier_asset_ownership.blockchain }}
                         </div>
                         <div class="col-6 text-truncate">
-                            <strong>Network</strong>
+                            <strong>{% trans "Network" %}</strong>
                             <br />
                             {{ tier.tier_asset_ownership.get_network_display }}
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-6 text-truncate">
-                            <strong>Asset Type</strong>
+                            <strong>{% trans "Asset Type" %}</strong>
                             <br />
                             <i class="fa-light fa-hexagon-image"></i> {{ tier.tier_asset_ownership.asset_type }}
                         </div>
                         <div class="col-6 text-truncate">
-                            <strong>Token Address</strong>
+                            <strong>{% trans "Token Address" %}</strong>
                             <br />
                             {{ tier.tier_asset_ownership.token_address }}
                         </div>
@@ -111,9 +112,9 @@
                 <div class="ticket-tier-guest ticket-tier-controls border-top mt-2 pt-3">
                     <div class="d-sm-flex align-items-center">
                         <div>
-                            <div class="fw-bold">Extra Guest(s) - Free</div>
+                            <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>
                             <div class="lh-sm" style="font-size: var(--bs-font-size-sm);">
-                                Please set the number of guest(s) you want to bring.
+                                {% trans "Please set the number of guest(s) you want to bring." %}
                             </div>
                         </div>
                         <div class="ms-auto mt-2 mt-sm-0">
@@ -125,8 +126,7 @@
                         </div>
                     </div>
                     <div class="border-top text-end mt-3 pt-2">
-                        <strong>Total:</strong> <span class="ticket-tier-total-selected">1</span> (Quantity + Quantity
-                        &times; Guests)
+                        <strong>{% trans "Total" %}:</strong> <span class="ticket-tier-total-selected">1</span> {% trans "(Quantity + Quantity × Guests)" %}
                     </div>
                 </div>
             {% endif %}

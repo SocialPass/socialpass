@@ -172,6 +172,75 @@
 	</div>
 {% endif %}
 <!-- Countdown timer end -->
+
+<!-- Tickets and form start -->
+<div class="container-fluid g-0 my-3 my-sm-4">
+	<div class="row g-3 g-sm-4">
+		<div class="col-lg-7">x</div>
+		<div class="col-lg-5">
+			<div class="card border-0 rounded-4 shadow-sm overflow-hidden">
+				<div class="card-body">
+					<div class="alert alert-primary mb-3" role="alert" style="font-size: var(--bs-font-size-sm);">
+						<i class="fa-light fa-info-circle me-1 text-primary-emphasis"></i>
+						We only require your email to deliver your tickets in a secure way. <strong>No account</strong> is created without your consent.
+					</div>
+					{% if sales_status == "OPEN" %}
+						<form class="position-relative" method="POST">
+							{% csrf_token %}
+							{{ form.ticket_tier_data }}
+							{{ form.checkout_type }}
+							<div class="mb-3">
+								{% with form.name as input %}
+									{% include "redesign/forms/input.html" %}
+								{% endwith %}
+							</div>
+							<div class="mb-3">
+								{% with form.email as input %}
+									{% include "redesign/forms/input.html" %}
+								{% endwith %}
+							</div>
+							<button type="submit" class="btn btn-primary btn-lg d-block w-100" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
+								Get Tickets
+							</button>
+						</form>
+					{% else %}
+						<!-- Not a form, can't be submitted -->
+						<div class="position-relative">
+							{{ form.ticket_tier_data }}
+							{{ form.checkout_type }}
+							<div class="mb-3">
+								{% with form.name as input %}
+									{% include "redesign/forms/input.html" %}
+								{% endwith %}
+							</div>
+							<div class="mb-3">
+								{% with form.email as input %}
+									{% include "redesign/forms/input.html" %}
+								{% endwith %}
+							</div>
+							<button type="button" class="btn btn-primary btn-lg d-block w-100" disabled>
+								Ticket Sales Not Open
+							</button>
+						</div>
+					{% endif %}
+					<div class="text-danger-emphasis fw-bold mt-2 d-none" role="alert" id="ticket-tier-error-message">
+						Please select at least one ticket tier to continue.
+					</div>
+					<p class="mt-3">
+						<strong>Total Price</strong>
+						&mdash;
+						<span id="total-price" data-fiat-currency="{{ event.currency_symbol }}">N/A</span>
+					</p>
+					<hr />
+					<p class="text-body-secondary mb-0" style="font-size: var(--bs-font-size-sm);">
+						You're also agreeing to our <a href="#" class="fw-bold" target="_blank" rel="noreferrer">Terms of Use<i class="fa-light fa-external-link mx-1"></i></a> by clicking on the above button.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Tickets and form end -->
 {% endblock %}
 
 {% block extra_body %}
@@ -180,6 +249,7 @@
 		document.getElementById("desc-read").classList.remove("d-none");
 	}
 </script>
+<script src="{% static 'js/TicketSelector.js' %}"></script>
 {% if sales_status == "UPCOMING" %}
 	<script>
 		// The data/time we want to countdown to

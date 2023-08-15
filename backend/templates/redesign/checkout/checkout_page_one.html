@@ -176,7 +176,86 @@
 <!-- Tickets and form start -->
 <div class="container-fluid g-0 my-3 my-sm-4">
 	<div class="row g-3 g-sm-4">
-		<div class="col-lg-7">x</div>
+		<!-- Ticket tiers start -->
+		<div class="col-lg-7">
+			<!-- Type selectors start -->
+			<div class="ticket-tier-group mb-3">
+				{% if tiers_fiat|length > 0 %}
+					<div class="ticket-tier">
+						<input
+							type="radio"
+							class="ticket-tier-input"
+							name="payment-type"
+							id="FIAT"
+							value="FIAT"
+							{% if checkout_type == "FIAT" %}checked{% endif %}
+							onchange="tierTypeOnchange(this)"
+						>
+						<label for="FIAT" class="ticket-tier-label">
+							<h6 class="m-0">
+								<i class="fa-solid fa-money-check-dollar me-1 opacity-75"></i> Paid
+							</h6>
+						</label>
+					</div>
+				{% endif %}
+				{% if tiers_asset_ownership|length > 0 %}
+					<div class="ticket-tier">
+						<input
+							type="radio"
+							class="ticket-tier-input"
+							name="payment-type"
+							id="ASSET_OWNERSHIP"
+							value="ASSET_OWNERSHIP"
+							{% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
+							onchange="tierTypeOnchange(this)"
+						>
+						<label for="ASSET_OWNERSHIP" class="ticket-tier-label">
+							<h6 class="m-0">
+								<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i> NFT
+							</h6>
+						</label>
+					</div>
+				{% endif %}
+				{% if tiers_free|length > 0 %}
+					<div class="ticket-tier">
+						<input
+							type="radio"
+							class="ticket-tier-input"
+							name="payment-type"
+							id="FREE"
+							value="FREE"
+							{% if checkout_type == "FREE" %}checked{% endif %}
+							onchange="tierTypeOnchange(this)"
+						>
+						<label for="FREE" class="ticket-tier-label">
+							<h6 class="m-0">
+								<i class="fa-solid fa-party-horn me-1 opacity-75"></i> Free
+							</h6>
+						</label>
+					</div>
+				{% endif %}
+			</div>
+			<!-- Type selectors end -->
+
+			<div class="tiers-container {% if checkout_type == 'FREE' %}d-block{% endif %}" id="tiers-FREE">
+				{% with tiers_free as tiers %}
+					{% include 'redesign/checkout/ticket_tiers.html' %}
+				{% endwith %}
+			</div>
+			<div class="tiers-container {% if checkout_type == 'FIAT' %}d-block{% endif %}" id="tiers-FIAT">
+				{% with tiers_fiat as tiers %}
+					{% include 'redesign/checkout/ticket_tiers.html' %}
+				{% endwith %}
+			</div>
+			<div class="tiers-container {% if checkout_type == 'ASSET_OWNERSHIP' %}d-block{% endif %}" id="tiers-ASSET_OWNERSHIP">
+				{% with tiers_asset_ownership as tiers %}
+					{% include 'redesign/checkout/ticket_tiers.html' %}
+				{% endwith %}
+			</div>
+		</div>
+		<!-- Ticket tiers end -->
+
+		<!-- Form start -->
 		<div class="col-lg-5">
 			<div class="card border-0 rounded-4 shadow-sm overflow-hidden">
 				<div class="card-body">
@@ -238,6 +317,7 @@
 				</div>
 			</div>
 		</div>
+		<!-- Form end -->
 	</div>
 </div>
 <!-- Tickets and form end -->

@@ -68,6 +68,124 @@
 
 		<!-- Custom styles -->
 		<style type="text/css">
+			/* Ticket tier (checkbox or radio) */
+
+			.tiers-container {
+				display: none;
+			}
+
+			.ticket-tier {
+				position: relative;
+				display: block;
+			}
+
+			.ticket-tier-input {
+				position: absolute;
+				opacity: 0;
+				height: 0;
+				width: 0;
+			}
+
+			.ticket-tier-label {
+				position: relative;
+				display: block;
+				height: 100%;
+				cursor: pointer;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+
+				padding: 16px 24px;
+				background-color: var(--bs-content-bg);
+				border: var(--bs-border-width) solid var(--bs-primary-border-subtle);
+				border-radius: var(--bs-border-radius-xl);
+			}
+
+			@media (max-width: 576px) {
+				.ticket-tier-label {
+					padding: 16px;
+				}
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label {
+				background-color: var(--bs-primary-bg-subtle);
+				z-index: 1;
+			}
+
+			.ticket-tier-check {
+				display: none;
+				margin-right: 5px;
+				color: var(--bs-primary-text-emphasis);
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-check {
+				display: inline;
+			}
+
+			.ticket-tier-uncheck {
+				margin-right: 5px;
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-uncheck {
+				display: none;
+			}
+
+			.ticket-tier-input:focus + .ticket-tier-label {
+				box-shadow: 0 0 0 4px hsla(var(--bs-primary-hsl), 0.25);
+				z-index: 2;
+			}
+
+			.ticket-tier-input:disabled + .ticket-tier-label {
+				background-color: var(--bs-body-bg);
+				border-color: var(--bs-border-color);
+				cursor: not-allowed;
+			}
+
+			.ticket-tier-input:disabled + .ticket-tier-label .ticket-tier-controls {
+				display: none;
+			}
+
+			.ticket-tier-input + .ticket-tier-label .ticket-tier-guest {
+				display: none;
+			}
+
+			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-guest {
+				display: block;
+			}
+
+			/* Ticket tier group and radio */
+
+			.ticket-tier-group {
+				display: flex;
+				vertical-align: middle;
+			}
+
+			.ticket-tier-group > .ticket-tier {
+				flex: 1 1 auto;
+			}
+
+			.ticket-tier-group > .ticket-tier:not(:first-child) > .ticket-tier-label {
+				margin-left: 8px;
+			}
+
+			.ticket-tier-group > .ticket-tier:not(:last-child) > .ticket-tier-label {
+				margin-right: 8px;
+			}
+
+			.ticket-tier-input[type=radio] + .ticket-tier-label {
+				border: 0;
+			}
+
+			.ticket-tier-input[type=radio]:checked + .ticket-tier-label {
+				color: var(--bs-primary-foreground);
+				background-color: var(--bs-primary);
+			}
+
+			.ticket-tier-input[type=radio]:not(:focus) + .ticket-tier-label {
+				box-shadow: var(--bs-box-shadow-sm);
+			}
+
 			/* Description */
 
 			#desc-cont p > br {

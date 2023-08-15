@@ -44,7 +44,7 @@
                     </p>
                 </div>
                 <div class="ticket-tier-controls ms-auto mt-2 mt-sm-0">
-                    <div class="input-group input-group-sm specific-w-100 mx-auto">
+                    <div class="input-group input-group-sm input-group-pill specific-w-100 mx-auto">
                         <button class="btn btn-secondary specific-w-25 px-0" onclick="subtractAmount(this)">-</button>
                         <input type="text" class="ticket-tier-amount form-control text-center" readonly value="0">
                         <button class="btn btn-secondary specific-w-25 px-0" onclick="addAmount(this)">+</button>
@@ -55,49 +55,37 @@
                 </div>
             </div>
             {% if tier.tier_free %}
-                <div class="border-top mt-2 pt-2 fs-base-n2">
-                    <div class="fs-base-n2 rounded-pill py-5 px-10 border border-primary lh-sm bg-primary-very-light-lm bg-primary-very-dim-dm d-inline-block my-5">
-                        <i class="fa-light fa-tag me-5"></i>
+                <div class="border-top mt-2 pt-2">
+                    <div class="rounded-pill px-3 py-2 bg-primary-subtle border border-primary lh-sm d-inline-block mt-2">
+                        <i class="fa-light fa-tag me-1"></i>
                         <strong>Price: FREE</strong>
                     </div>
-                    <div class="text-muted mt-5 fs-base-n2 d-flex align-items-start">
-                        <i class="fa-light fa-info-circle me-10 mt-5 flex-shrink-0"></i>
-                        You can claim this ticket as long as it is available in terms of quantity. First come, first served!
+                    <div class="text-body-secondary mt-3 d-flex align-items-start">
+                        <i class="fa-light fa-info-circle me-2 mt-1 flex-shrink-0"></i>
+                        Tickets are first come, first served.
                     </div>
                 </div>
             {% endif %}
             {% if tier.tier_fiat %}
                 <div class="border-top mt-2 pt-2">
-                    <div class="fs-base-n2 rounded-pill py-5 px-10 border border-primary lh-sm bg-primary-very-light-lm bg-primary-very-dim-dm d-inline-block my-5">
-                        <i class="fa-light fa-tag me-5"></i>
+                    <div class="rounded-pill px-3 py-2 bg-primary-subtle border border-primary lh-sm d-inline-block mt-2">
+                        <i class="fa-light fa-tag me-1"></i>
                         <strong>Price &times; 1: </strong> {{ tier.event.currency_symbol }}{{ tier.tier_fiat.price_per_ticket }}
                     </div>
-                    <div class="text-muted mt-5 fs-base-n2 d-flex align-items-start">
-                        <i class="fa-light fa-info-circle me-10 mt-5 flex-shrink-0"></i>
-                        You can buy this ticket by paying using traditional, fiat currency.
+                    <div class="text-body-secondary mt-3 d-flex align-items-start">
+                        <i class="fa-light fa-info-circle me-2 mt-1 flex-shrink-0"></i>
+                        Purchase with debit, credit, or Apple Pay.
                     </div>
                 </div>
             {% endif %}
             {% if tier.tier_asset_ownership %}
-                <div class="border-top mt-2 pt-2 fs-base-n2">
+                <div class="border-top mt-2 pt-2">
                     <div>Free for all holders of the following:</div>
-                    <div class="row mt-10">
+                    <div class="row mt-2">
                         <div class="col-6 text-truncate">
                             <strong>Blockchain</strong>
                             <br />
-                            {% if tier.tier_asset_ownership.blockchain == "ETH" %}
-                                <div class="d-flex align-items-center">
-                                    <img
-                                        src="https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png"
-                                        alt="Ethereum"
-                                        class="d-block me-5"
-                                        height="16"
-                                        >
-                                    Ethereum
-                                </div>
-                            {% else %}
-                                {{ tier.tier_asset_ownership.blockchain }}
-                            {% endif %}
+                            {{ tier.tier_asset_ownership.blockchain }}
                         </div>
                         <div class="col-6 text-truncate">
                             <strong>Network</strong>
@@ -105,7 +93,7 @@
                             {{ tier.tier_asset_ownership.get_network_display }}
                         </div>
                     </div>
-                    <div class="row mt-10">
+                    <div class="row mt-2">
                         <div class="col-6 text-truncate">
                             <strong>Asset Type</strong>
                             <br />
@@ -120,23 +108,23 @@
                 </div>
             {% endif %}
             {% if tier.allowed_guests > 0 %}
-                <div class="ticket-tier-guest ticket-tier-controls border-top mt-10 pt-10">
+                <div class="ticket-tier-guest ticket-tier-controls border-top mt-2 pt-3">
                     <div class="d-sm-flex align-items-center">
                         <div>
                             <div class="fw-bold">Extra Guest(s) - Free</div>
-                            <div class="fs-base-n4 lh-sm">
+                            <div class="lh-sm" style="font-size: var(--bs-font-size-sm);">
                                 Please set the number of guest(s) you want to bring.
                             </div>
                         </div>
-                        <div class="ms-auto mt-10 mt-sm-0">
-                            <div class="input-group input-group-sm input-group-pill ws-100 mx-auto">
-                                <button class="btn ws-25 px-0" onclick="subtractExtraParty(this)">-</button>
+                        <div class="ms-auto mt-2 mt-sm-0">
+                            <div class="input-group input-group-sm input-group-pill specific-w-100 mx-auto">
+                                <button class="btn btn-secondary specific-w-25 px-0" onclick="subtractExtraParty(this)">-</button>
                                 <input type="text" class="ticket-tier-extra-party form-control text-center" readonly value="0">
-                                <button class="btn ws-25 px-0" onclick="addExtraParty(this)">+</button>
+                                <button class="btn btn-secondary specific-w-25 px-0" onclick="addExtraParty(this)">+</button>
                             </div>
                         </div>
                     </div>
-                    <div class="border-top text-end mt-15 pt-10 fs-base-n2">
+                    <div class="border-top text-end mt-3 pt-2">
                         <strong>Total:</strong> <span class="ticket-tier-total-selected">1</span> (Quantity + Quantity
                         &times; Guests)
                     </div>

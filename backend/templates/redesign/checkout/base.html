@@ -230,16 +230,7 @@
 			</button>
 			<a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer" class="ms-auto">{% trans "Need Help?" %}</a>
 		</div>
-		{% if is_team_member and not request.GET.view_as_attendee %}
-			<div class="alert alert-primary border-0 rounded-0 px-3 px-sm-4 m-0 d-md-flex align-items-md-center" role="alert">
-				{% trans "You are viewing this page as an organizer." %}
-				<div class="d-flex ms-md-auto mt-1 mt-md-0">
-					<a href="{% url 'dashboard_organizer:team_update' event.team.public_id %}">{% trans "Edit Event" %}</a>
-					<span class="vr mx-2"></span>
-					<a href="?view_as_attendee=True">{% trans "View as Attendee" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
-				</div>
-			</div>
-		{% endif %}
+		{% block navbar %}{% endblock %}
 		{% include "redesign/components/django_messages.html" %}
 		<!-- Navbar end -->
 

@@ -625,7 +625,7 @@ class CheckoutPageSuccess(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
     slug_url_kwarg = "checkout_session_public_id"
-    template_name = "checkout/checkout_page_success.html"
+    template_name = "redesign/checkout/checkout_page_success.html"
 
     def get_object(self):
         self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(

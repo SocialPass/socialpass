@@ -293,7 +293,7 @@
 									{% include "redesign/forms/input.html" %}
 								{% endwith %}
 							</div>
-							<button type="submit" class="btn btn-primary btn-lg d-block w-100" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
+							<button type="submit" class="btn btn-info btn-lg d-block w-100" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
 								{% trans "Get Tickets" %}
 							</button>
 						</form>
@@ -312,7 +312,7 @@
 									{% include "redesign/forms/input.html" %}
 								{% endwith %}
 							</div>
-							<button type="button" class="btn btn-primary btn-lg d-block w-100" disabled>
+							<button type="button" class="btn btn-info btn-lg d-block w-100" disabled>
 								{% trans "Ticket Sales Not Open" %}
 							</button>
 						</div>

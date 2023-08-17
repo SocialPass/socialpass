@@ -6,9 +6,13 @@
 {% block content %}
 <div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
 	<!-- Cover image start -->
-	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-200">
+	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-250">
 		<img src="{{ object.event.cover_image_url }}" alt="{{ object.event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
 		<img src="{{ object.event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ object.event.title }} cover image">
+		<div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-end p-3 p-sm-4" style="background-image: linear-gradient(transparent, black);">
+			<h2 class="m-0">{{ object.event.title }}</h2>
+			<h6 class="m-0">{% trans "By" %} {{ object.event.team.name }}</h6>
+		</div>
 	</div>
 	<!-- Cover image start -->
 
@@ -24,25 +28,48 @@
 					<p class="mt-1">
 						{% trans "You made it! We've generated your ticket(s) for the event. You can get them on this page, or in the email we sent you at" %} <a href="mailto:{{ object.email }}">{{ object.email }}</a>.
 					</p>
-					<h6 class="mt-3">
+					<h6 class="mt-3 border-bottom pb-3">
 						{% trans "Event Summary" %}
 					</h6>
-					<table class="table">
-						<tbody>
-							<tr>
-								<th>{% trans "Name" %}</th>
-								<td>{{ object.event.title }}</td>
-							</tr>
-							<tr>
-								<th>{% trans "Date" %}</th>
-								<td>{{ object.event.start_date }}</td>
-							</tr>
-							<tr>
-								<th>{% trans "Location" %}</th>
-								<td>{{ object.event.localized_address_display }}</td>
-							</tr>
-						</tbody>
-					</table>
+					<h5 class="mt-3">{{ object.event.title }}</h5>
+					<div class="d-flex align-items-center mt-3">
+						<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+							<i class="fa-solid fa-calendars fs-6 text-primary-emphasis"></i>
+						</div>
+						<strong class="text-primary-emphasis ms-3">{% trans "Date & Time" %}</strong>
+					</div>
+					<div class="mt-2">
+						<span class="text-body-secondary">
+							<strong class="text-body">{% trans "Start" %}:</strong>
+							{% if object.event.start_date %}
+								{{ object.event.start_date }}
+							{% else %}
+								{% trans "Not set" %}
+							{% endif %}
+						</span>
+						{% if object.event.end_date %}
+							<br />
+							<span class="text-body-secondary"><strong class="text-body">{% trans "End" %}:</strong> {{ object.event.end_date }}</span>
+						{% endif %}
+						<br />
+						<span class="text-body-secondary">
+							<strong class="text-body">{% trans "Timezone" %}:</strong>
+							{% if object.event.timezone %}
+								{{ object.event.timezone }}
+							{% else %}
+								{% trans "Not set" %}
+							{% endif %}
+						</span>
+					</div>
+					<div class="d-flex align-items-center mt-3">
+						<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+							<i class="fa-solid fa-location-dot fs-6 text-primary-emphasis"></i>
+						</div>
+						<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
+					</div>
+					<div class="mt-2 border-bottom pb-3">
+						<span class="text-body-secondary">{{ object.event.localized_address_display }}</span>
+					</div>
 					<div class="alert alert-primary mt-3 text-primary-emphasis fw-bold d-flex align-items-center" role="alert">
 						<i class="fa-light fa-check me-2"></i>
 						{% trans "Your tickets have been sent to your email address." %}
@@ -80,8 +107,8 @@
 					<p class="text-body-secondary">
 						{% trans "Want to buy more tickets?" %}
 					</p>
-					<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-link btn-lg d-block w-100">
-						<i class="fa-regular fa-rotate-right me-1"></i>
+					<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-info btn-lg d-block w-100">
+						<i class="fa-solid fa-rotate-right me-1"></i>
 						{% trans "Order Again" %}
 					</a>
 				</div>

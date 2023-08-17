@@ -285,7 +285,7 @@ class CheckoutPageTwo(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
     slug_url_kwarg = "checkout_session_public_id"
-    template_name = "checkout/checkout_page_two.html"
+    template_name = "redesign/checkout/checkout_page_two.html"
 
     def get_object(self):
         self.object = (

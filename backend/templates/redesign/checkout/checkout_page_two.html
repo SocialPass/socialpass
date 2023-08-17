@@ -1,0 +1,120 @@
+{% extends "redesign/checkout/base.html" %}
+{% load static i18n get_theme_value %}
+
+{% block head_title %}{{ object.event.title }} - SocialPass{% endblock head_title %}
+
+{% block content %}
+<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
+	<!-- Cover image start -->
+	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-250">
+		<img src="{{ object.event.cover_image_url }}" alt="{{ object.event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
+		<img src="{{ object.event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ object.event.title }} cover image">
+		<div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-end p-3 p-sm-4" style="background-image: linear-gradient(transparent, black);">
+			<h2 class="m-0">{{ object.event.title }}</h2>
+			<h6 class="m-0">{% trans "By" %} {{ object.event.team.name }}</h6>
+		</div>
+	</div>
+	<!-- Cover image start -->
+
+	<!-- Checkout start -->
+	<div class="p-3 p-sm-4 mt-3">
+		<div class="container-fluid overflow-hidden">
+			<div class="row g-3">
+				<div class="col-lg-7">
+					{% if object.tx_type == "FREE" %}
+						<h1 class="text-body-emphasis display-6 m-0 text-break">
+							<i class="fa-light fa-party-horn text-primary-emphasis me-2"></i>
+							{% trans "Complete Free Checkout" %}
+						</h1>
+						<p class="mt-2">
+							{% trans "You are about to checkout with FREE ticket(s) only. Please take note of the following:" %}
+						</p>
+						<ul>
+							<li>
+								{% trans "FREE tickets require no payment/verfication. The only constraint is the	availability at checkout." %}
+							</li>
+							<li>
+								{% trans "Due to the above point, event organizers may give less priority to free tickets in the case of capacity issues." %}
+							</li>
+						</ul>
+						<p>
+							{% trans "If all of that sounds good, please click on the" %} <strong>{% trans "Continue" %}</strong> {% trans "button to get your ticket(s)." %}
+						</p>
+					{% endif %}
+				</div>
+				<div class="col-lg-5 ps-lg-4">
+					<div class="bg-secondary-subtle p-3 border border-secondary border-opacity-25" style="border-style: dotted !important;">
+						<div class="d-flex align-items-center">
+							<h6 class="m-0">{% trans "Summary" %}</h6>
+							<div class="ms-auto">
+								<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}">{% trans "Edit" %}</a>
+							</div>
+						</div>
+						{% for item in checkout_items %}
+							<!-- Order item start -->
+							<div class="pt-3 mt-3 border-top">
+								<h6 class="m-0 d-flex align-items-center">
+									<span>{{ item.ticket_tier.ticket_type }}</span>
+									<span class="ms-auto ps-1 fw-normal">
+										&times; {{ item.quantity }}
+									</span>
+								</h6>
+								<div class="mt-1 text-body-secondary" style="font-size: var(--bs-font-size-sm);">
+									{% trans "Allowed Guest(s):" %}
+									{{ item.ticket_tier.allowed_guests }}
+								</div>
+							</div>
+							<!-- Order item end -->
+						{% endfor %}
+					</div>
+					<h6 class="mt-4 mb-0">
+						{% trans "Confirm Order" %}
+					</h6>
+					<hr>
+					<form class="checkout-form my-3" id="asset_ownership_form" method="POST">
+						{% csrf_token %}
+						{% if object.tx_type == "ASSET_OWNERSHIP" %}
+							{{ form.wallet_address }}
+							{{ form.signed_message }}
+						{% endif %}
+						<div class="mb-3">
+							{% with form.name as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="mb-3">
+							{% with form.email as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+						<button
+							id="checkout-submit-btn"
+							type="submit"
+							{% if object.tx_type == "ASSET_OWNERSHIP" %}
+								onclick="signWallet(message, event)"
+							{% endif %}
+							class="btn btn-info btn-lg d-block w-100"
+						>
+							{% trans "Get Tickets" %}
+						</button>
+						<div class="text-danger-emphasis fw-bold mt-2 d-none" role="alert" id="wallet-address-error-message">
+							{% trans "Please connect your wallet first!" %}
+						</div>
+						<div class="text-danger-emphasis fw-bold d-none" role="alert" id="wallet-signature-error-message">
+							{% trans "Please sign the message with your wallet address to continue." %}
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Checkout end -->
+</div>
+{% endblock content %}
+
+{% block extra_body %}
+<script src="{% static 'js/dist/bundle.js' %}"></script>
+<script>
+	const message = `{{object.tx_asset_ownership.unsigned_message}}`
+</script>
+{% endblock extra_body %}

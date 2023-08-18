@@ -396,7 +396,7 @@ class CheckoutFiat(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
     slug_url_kwarg = "checkout_session_public_id"
-    template_name = "checkout/checkout_fiat.html"
+    template_name = "redesign/checkout/checkout_paid.html"
 
     def get_object(self):
         self.object = (

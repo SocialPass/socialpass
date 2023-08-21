@@ -664,7 +664,7 @@ class GetTickets(View):
 
         return render(
             self.request,
-            "checkout/get_tickets_passcode.html",
+            "redesign/checkout/get_tickets_passcode.html",
             {
                 "current_team": checkout_session.event.team,
                 "checkout_session": checkout_session,
@@ -761,4 +761,4 @@ class GetTickets(View):
                 passcode will be valid for only 10 minutes.",
             )
 
-        return render(self.request, f"checkout/{template_name}", ctx)
+        return render(self.request, f"redesign/checkout/{template_name}", ctx)

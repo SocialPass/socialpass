@@ -1,0 +1,64 @@
+{% extends "redesign/checkout/base.html" %}
+{% load static i18n get_theme_value %}
+
+{% block head_title %}{% trans "Get Tickets" %} - SocialPass{% endblock head_title %}
+
+{% block messages %}{% endblock %}
+
+{% block content %}
+<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
+	<!-- Cover image start -->
+	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-250">
+		<img src="{{ checkout_session.event.cover_image_url }}" alt="{{ checkout_session.event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
+		<img src="{{ checkout_session.event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ checkout_session.event.title }} cover image">
+		<div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-end p-3 p-sm-4" style="background-image: linear-gradient(transparent, black);">
+			<h2 class="m-0">{{ checkout_session.event.title }}</h2>
+			<h6 class="m-0">{% trans "By" %} {{ checkout_session.event.team.name }}</h6>
+		</div>
+	</div>
+	<!-- Cover image start -->
+
+	{% include "redesign/components/django_messages.html" %}
+
+	<!-- Form start -->
+	<div class="p-3 p-sm-4 mt-3">
+		<div class="container-fluid overflow-hidden">
+			<div class="row g-3">
+				<div class="col-xl-6 col-lg-8 col-md-8 mx-auto">
+					<h1 class="text-body-emphasis display-6 m-0 text-break">
+						{% trans "Get Tickets" %}
+					</h1>
+					<p class="mt-1">
+						{% trans "We've sent a passcode over to your email address" %} ({{ checkout_session.email|make_list|first }}*****@*****{{ checkout_session.email|make_list|last }}). {% trans "Please enter this passcode to download your tickets." %}
+					</p>
+					<form method="post">
+						{% csrf_token %}
+						<div class="mb-3">
+							{% with input=passcode_form.passcode %}
+								{% include 'redesign/forms/input.html' %}
+							{% endwith %}
+						</div>
+						<div class="mb-3">
+							<button class="btn btn-primary d-block w-100" type="submit" name="passcode_submit">{% trans "Submit" %}</button>
+						</div>
+					</form>
+					<hr />
+					<form method="post">
+						{% csrf_token %}
+						<p class="text-body-secondary">
+							{% trans "If you haven't received your passcode (or would like to create another one), click on the following button." %}
+						</p>
+						<div class="mb-3">
+							<button class="btn btn-secondary d-block w-100" type="submit" name="resend_passcode">
+								<i class="fa-solid fa-rotate-right me-1"></i>
+								{% trans "Resend Passcode" %}
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Form end -->
+</div>
+{% endblock content %}

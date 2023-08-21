@@ -231,7 +231,7 @@
 			<a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer" class="ms-auto">{% trans "Need Help?" %}</a>
 		</div>
 		{% block navbar %}{% endblock %}
-		{% include "redesign/components/django_messages.html" %}
+		{% block messages %}{% include "redesign/components/django_messages.html" %}{% endblock %}
 		<!-- Navbar end -->
 
 		<!-- Content start -->

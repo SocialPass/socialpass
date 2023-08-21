@@ -1,9 +1,62 @@
-{% extends "redesign/checkout/base.html" %}
+{% extends "redesign/checkout/tickets_base.html" %}
 {% load static i18n get_theme_value %}
 
 {% block head_title %}{% trans "Get Tickets" %} - SocialPass{% endblock head_title %}
 
-{% block messages %}{% endblock %}
+{% block tickets %}
+{% for ticket in tickets %}
+	<div class="d-none specific-w-600 min-vh-100 mx-auto d-flex flex-column p-3" id="{{ ticket.object.public_id }}-container">
+		<h5 class="m-0">
+			<span id="{{ ticket.object.public_id }}-indicator" class="me-1">
+				<i class="fa-light fa-circle-notch fa-spin"></i>
+			</span>
+			{% trans "Downloading Ticket" %} ...
+		</h5>
+		<p class="text-body-secondary mt-1">
+			{% trans "Please hold tight as we create your ticket image and prepare it for download." %}
+		</p>
+		<div class="specific-w-500 p-4 mx-auto" id="{{ ticket.object.public_id }}">
+			<div class="p-4 rounded-5 text-bg-info antialiased">
+				<div class="d-flex justify-content-center pb-3">
+					<div class="d-flex align-items-center">
+						<img src="{% get_theme_value 'ticket_logo' %}" alt="SocialPass Icon" width="48" class="d-block me-2">
+						<strong class="fs-3 m-0">SocialPass</strong>
+					</div>
+				</div>
+				<h3>{{ checkout_session.event.title }}</h3>
+				<div class="mt-3 fw-bold">
+					{% trans "Ticket Type:" %}
+				</div>
+				<div class="mt-1">
+					{{ ticket.object.ticket_tier.ticket_type }}
+					{% if ticket.object.ticket_tier.tier_free %}
+						| {% trans "FREE" %}
+					{% endif %}
+					{% if ticket.object.party_size > 1 %}
+						| {% trans "Party Size:" %} {{ ticket.object.party_size }}
+					{% endif %}
+				</div>
+				<div class="mt-3 fw-bold">
+					{% trans "Date & Time:" %}
+				</div>
+				<div class="mt-1">
+					{{ checkout_session.event.start_date }}
+				</div>
+				<div class="mt-3 fw-bold">
+					{% trans "Location:" %}
+				</div>
+				<div class="mt-1">
+					{{ checkout_session.event.localized_address_display }}
+				</div>
+				<div class="specific-w-200 specific-h-200 mx-auto mt-4 mb-1">
+					<img src="{{ ticket.qrcode }}" class="w-100 h-100" alt="QR Code" />
+				</div>
+				<div class="text-center">{{ ticket.object.embed_code }}</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+{% endblock %}
 
 {% block content %}
 <div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">

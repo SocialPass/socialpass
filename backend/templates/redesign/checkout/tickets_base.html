@@ -24,16 +24,16 @@
 		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
 
 		<!-- SEO -->
-		<meta name="description" content="Date & Time: {{ object.start_date }} | Location: {{ object.localized_address_display }} | Get your tickets now!">
-		<meta name="author" content="{{ object.team.name }}">
+		<meta name="description" content="Enter your passcode to get your tickets.">
+		<meta name="author" content="{{ current_team.name }}">
 		<meta property="url" content="{{ request.build_absolute_uri }}">
 		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting, fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
 
 		<!-- Open Graph -->
 		<meta property="og:type" content="article">
 		<meta property="og:url" content="{{ request.build_absolute_uri }}">
-		<meta property="og:title" content="{{ object.title }}">
-		<meta property="og:description" content="Date & Time: {{ object.start_date }} | Location: {{ object.localized_address_display }} | Get your tickets now!">
+		<meta property="og:title" content="Get Tickets">
+		<meta property="og:description" content="Enter your passcode to get your tickets.">
 		<meta property="og:image" content="{{ object.cover_image_url }}">
 
 		<!-- Google Tag Manager -->
@@ -68,151 +68,7 @@
 
 		<!-- Custom styles -->
 		<style type="text/css">
-			/* Ticket tier (checkbox or radio) */
 
-			.tiers-container {
-				display: none;
-			}
-
-			.ticket-tier {
-				position: relative;
-				display: block;
-			}
-
-			.ticket-tier-input {
-				position: absolute;
-				opacity: 0;
-				height: 0;
-				width: 0;
-			}
-
-			.ticket-tier-label {
-				position: relative;
-				display: block;
-				height: 100%;
-				cursor: pointer;
-				-webkit-user-select: none;
-				-moz-user-select: none;
-				-ms-user-select: none;
-				user-select: none;
-
-				padding: 16px 24px;
-				background-color: var(--bs-content-bg);
-				border: var(--bs-border-width) solid var(--bs-primary-border-subtle);
-				border-radius: var(--bs-border-radius-xl);
-			}
-
-			@media (max-width: 576px) {
-				.ticket-tier-label {
-					padding: 16px;
-				}
-			}
-
-			.ticket-tier-input:checked + .ticket-tier-label {
-				background-color: var(--bs-primary-bg-subtle);
-				z-index: 1;
-			}
-
-			.ticket-tier-check {
-				display: none;
-				margin-right: 5px;
-				color: var(--bs-primary-text-emphasis);
-			}
-
-			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-check {
-				display: inline;
-			}
-
-			.ticket-tier-uncheck {
-				margin-right: 5px;
-			}
-
-			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-uncheck {
-				display: none;
-			}
-
-			.ticket-tier-input:focus + .ticket-tier-label {
-				box-shadow: 0 0 0 4px hsla(var(--bs-primary-hsl), 0.25);
-				z-index: 2;
-			}
-
-			.ticket-tier-input:disabled + .ticket-tier-label {
-				background-color: var(--bs-secondary-bg);
-				border-color: var(--bs-border-color);
-				cursor: not-allowed;
-			}
-
-			.ticket-tier-input:disabled + .ticket-tier-label .ticket-tier-controls {
-				display: none;
-			}
-
-			.ticket-tier-input + .ticket-tier-label .ticket-tier-guest {
-				display: none;
-			}
-
-			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-guest {
-				display: block;
-			}
-
-			/* Ticket tier group and radio */
-
-			.ticket-tier-group {
-				display: flex;
-				vertical-align: middle;
-			}
-
-			.ticket-tier-group > .ticket-tier {
-				flex: 1 1 auto;
-			}
-
-			.ticket-tier-group > .ticket-tier:not(:first-child) > .ticket-tier-label {
-				margin-left: 8px;
-			}
-
-			.ticket-tier-group > .ticket-tier:not(:last-child) > .ticket-tier-label {
-				margin-right: 8px;
-			}
-
-			.ticket-tier-input[type=radio] + .ticket-tier-label {
-				border: 0;
-			}
-
-			.ticket-tier-input[type=radio]:checked + .ticket-tier-label {
-				color: var(--bs-primary-foreground);
-				background-color: var(--bs-primary);
-			}
-
-			.ticket-tier-input[type=radio]:not(:focus) + .ticket-tier-label {
-				box-shadow: var(--bs-box-shadow-sm);
-			}
-
-			/* Input group */
-
-			.input-group-pill > *:first-child {
-				border-top-left-radius: var(--bs-border-radius-pill);
-				border-bottom-left-radius: var(--bs-border-radius-pill);
-			}
-
-			.input-group-pill > *:last-child {
-				border-top-right-radius: var(--bs-border-radius-pill);
-				border-bottom-right-radius: var(--bs-border-radius-pill);
-			}
-
-			/* Description */
-
-			#desc-cont p > br {
-				display: none;
-			}
-
-			#desc-read {
-				padding-top: 120px;
-				background-image: linear-gradient(transparent, var(--bs-content-bg));
-				border-bottom: 1px solid var(--bs-border-color);
-			}
-
-			.max-h-200 {
-				max-height: 200px !important;
-			}
 		</style>
 
 		{% block extra_head %}{% endblock extra_head %}
@@ -220,25 +76,27 @@
 
 	{% with request.resolver_match.url_name as url_name %}
 	<body class="bg-body-secondary">
-		{% block body %}{% endblock body %}
+		{% block tickets %}{% endblock %}
 
-		<!-- Navbar start -->
-		<div class="d-flex align-items-center px-3 px-sm-4 py-2">
-			<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block">
-			<button type="button" class="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" style="width: 37px;" onclick="toggleDarkMode()">
-				<i class="fa-solid fa-moon"></i>
-			</button>
-			<a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer" class="ms-auto">{% trans "Need Help?" %}</a>
-		</div>
-		{% block navbar %}{% endblock %}
-		{% block messages %}{% include "redesign/components/django_messages.html" %}{% endblock %}
-		<!-- Navbar end -->
+		<!-- Main container start -->
+		<div id="main-container">
+			<!-- Navbar start -->
+			<div class="d-flex align-items-center px-3 px-sm-4 py-2">
+				<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block">
+				<button type="button" class="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" style="width: 37px;" onclick="toggleDarkMode()">
+					<i class="fa-solid fa-moon"></i>
+				</button>
+				<a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer" class="ms-auto">{% trans "Need Help?" %}</a>
+			</div>
+			<!-- Navbar end -->
 
-		<!-- Content start -->
-		<div class="container-xl px-3 px-sm-4 mw-100" style="width: 1080px;">
-			{% block content %}{% endblock %}
+			<!-- Content start -->
+			<div class="container-xl px-3 px-sm-4 mw-100" style="width: 1080px;">
+				{% block content %}{% endblock %}
+			</div>
+			<!-- Content end -->
 		</div>
-		<!-- Content end -->
+		<!-- Main container end -->
 
 		<!-- Bootstrap bundle JS -->
 		<script src="{% static 'redesign/bootstrap.bundle.js' %}"></script>

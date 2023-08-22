@@ -76,12 +76,43 @@
 	<!-- Content start -->
 	<div class="p-3 p-sm-4 mt-3">
 		{% if checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
-			<h1 class="text-body-emphasis display-6 m-0 text-break">
-				{% trans "Get Tickets" %} &times; {{ tickets|length }}
-			</h1>
-			<p class="mt-1">
-				{% trans "The following ticket(s) were generated for you. You can save a ticket as PNG by clicking on the download button, or use one of your Google or Apple wallets." %}
-			</p>
+			<div class="container-fluid overflow-hidden g-0">
+				<div class="row g-3">
+					<div class="col-lg-7">
+						<p class="text-body-secondary mb-1">
+							<strong>{% trans "Session ID (for support)" %}:</strong>
+							{{ checkout_session.public_id }}
+						</p>
+						<h1 class="text-body-emphasis display-6 m-0 text-break">
+							{% trans "Get Tickets" %} &times; {{ tickets|length }}
+						</h1>
+						<p class="mt-1">
+							{% trans "The following ticket(s) were generated for you. You can save a ticket as PNG by clicking on the download button, or use one of your Google or Apple wallets." %}
+						</p>
+					</div>
+					<div class="col-lg-5 ps-lg-4">
+						<div class="bg-secondary-subtle p-3 border border-secondary border-opacity-25" style="border-style: dotted !important;">
+							<h6>{% trans "Receipt" %}</h6>
+							{% for item in checkout_items %}
+								<!-- Order item start -->
+								<div class="pt-3 mt-3 border-top">
+									<h6 class="m-0 d-flex align-items-center">
+										<span>{{ item.ticket_tier.ticket_type }}</span>
+										<span class="ms-auto ps-1 fw-normal">
+											&times; {{ item.quantity }}
+										</span>
+									</h6>
+									<div class="mt-1 text-body-secondary" style="font-size: var(--bs-font-size-sm);">
+										{% trans "Allowed Guest(s):" %}
+										{{ item.ticket_tier.allowed_guests }}
+									</div>
+								</div>
+								<!-- Order item end -->
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
 			{% for ticket in tickets %}
 				<div class="border p-4 my-3" style="border-style: dotted !important;">
 					<h2 class="text-body-emphasis display-6 fs-3 m-0">
@@ -100,7 +131,15 @@
 									<strong class="text-primary-emphasis ms-3">{% trans "Ticket Type" %}</strong>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">{{ ticket.object.ticket_tier.ticket_type }}</span>
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Name" %}:</strong>
+										{{ ticket.object.ticket_tier.ticket_type }}
+									</span>
+									<br />
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Party Size" %}:</strong>
+										{{ ticket.object.party_size }}
+									</span>
 								</div>
 							</div>
 							<div class="col-sm-6 col-lg-4">

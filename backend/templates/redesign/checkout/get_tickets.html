@@ -15,7 +15,7 @@
 		<p class="text-body-secondary mt-1">
 			{% trans "Please hold tight as we create your ticket image and prepare it for download." %}
 		</p>
-		<div class="specific-w-500 p-4 mx-auto" id="{{ ticket.object.public_id }}">
+		<div class="specific-w-500 p-3 mx-auto" id="{{ ticket.object.public_id }}">
 			<div class="p-4 rounded-5 text-bg-info antialiased">
 				<div class="d-flex justify-content-center pb-3">
 					<div class="d-flex align-items-center">
@@ -73,45 +73,189 @@
 
 	{% include "redesign/components/django_messages.html" %}
 
-	<!-- Form start -->
+	<!-- Content start -->
 	<div class="p-3 p-sm-4 mt-3">
-		<div class="container-fluid overflow-hidden">
-			<div class="row g-3">
-				<div class="col-xl-6 col-lg-8 col-md-8 mx-auto">
-					<h1 class="text-body-emphasis display-6 m-0 text-break">
-						{% trans "Get Tickets" %}
-					</h1>
-					<p class="mt-1">
-						{% trans "We've sent a passcode over to your email address" %} ({{ checkout_session.email|make_list|first }}*****@*****{{ checkout_session.email|make_list|last }}). {% trans "Please enter this passcode to download your tickets." %}
+		{% if checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
+			<h1 class="text-body-emphasis display-6 m-0 text-break">
+				{% trans "Get Tickets" %} &times; {{ tickets|length }}
+			</h1>
+			<p class="mt-1">
+				{% trans "The following ticket(s) were generated for you. You can save a ticket as PNG by clicking on the download button, or use one of your Google or Apple wallets." %}
+			</p>
+			{% for ticket in tickets %}
+				<div class="border p-4 my-3" style="border-style: dotted !important;">
+					<h2 class="text-body-emphasis display-6 fs-3 m-0">
+						{% trans "Ticket" %} # {{ forloop.counter }}
+					</h2>
+					<p class="text-body-secondary mt-1 text-truncate">
+						{{ ticket.object.public_id }}
 					</p>
-					<form method="post">
-						{% csrf_token %}
-						<div class="mb-3">
-							{% with input=passcode_form.passcode %}
-								{% include 'redesign/forms/input.html' %}
-							{% endwith %}
+					<div class="container-fluid overflow-hidden g-0">
+						<div class="row g-3">
+							<div class="col-sm-6 col-lg-4">
+								<div class="d-flex align-items-center">
+									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-ticket fs-6 text-primary-emphasis"></i>
+									</div>
+									<strong class="text-primary-emphasis ms-3">{% trans "Ticket Type" %}</strong>
+								</div>
+								<div class="mt-2">
+									<span class="text-body-secondary">{{ ticket.object.ticket_tier.ticket_type }}</span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-lg-4">
+								<div class="d-flex align-items-center">
+									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-calendars fs-6 text-primary-emphasis"></i>
+									</div>
+									<strong class="text-primary-emphasis ms-3">{% trans "Date & Time" %}</strong>
+								</div>
+								<div class="mt-2">
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Start" %}:</strong>
+										{% if checkout_session.event.start_date %}
+											{{ checkout_session.event.start_date }}
+										{% else %}
+											{% trans "Not set" %}
+										{% endif %}
+									</span>
+									{% if checkout_session.event.end_date %}
+										<br />
+										<span class="text-body-secondary"><strong class="text-body">{% trans "End" %}:</strong> {{ checkout_session.event.end_date }}</span>
+									{% endif %}
+									<br />
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Timezone" %}:</strong>
+										{% if checkout_session.event.timezone %}
+											{{ checkout_session.event.timezone }}
+										{% else %}
+											{% trans "Not set" %}
+										{% endif %}
+									</span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-lg-4">
+								<div class="d-flex align-items-center">
+									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-location-dot fs-6 text-primary-emphasis"></i>
+									</div>
+									<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
+								</div>
+								<div class="mt-2">
+									<span class="text-body-secondary">{{ checkout_session.event.localized_address_display }}</span>
+								</div>
+							</div>
 						</div>
-						<div class="mb-3">
-							<button class="btn btn-primary d-block w-100" type="submit" name="passcode_submit">{% trans "Submit" %}</button>
+					</div>
+					<div class="container-fluid g-0 mt-4">
+						<div class="row g-3 justify-content-center">
+							<div class="col-sm-6 col-lg-4">
+								<button class="download-btn btn btn-info rounded-pill d-block w-100 h-100 d-flex align-items-center px-3" data-target="{{ ticket.object.public_id }}">
+									<div class="flex-shrink-0 me-3">
+										<i class="fa-light fa-download"></i>
+									</div>
+									<div class="lh-sm text-start">
+										{% trans "Direct" %}
+										<br />
+										{% trans "Download" %}
+									</div>
+								</button>
+							</div>
+							{% if ticket.google_ticket.exists %}
+								<div class="col-sm-6 col-lg-4">
+									<a href="{{ ticket.google_ticket.save_url }}" target="_blank" rel="noopener" class="btn btn-secondary rounded-pill d-block w-100 h-100 d-flex align-items-center px-3">
+										<div class="flex-shrink-0 me-3">
+											<img src="{% static 'images/google-wallet.svg' %}" alt="Google Wallet" class="d-block specific-h-25" />
+										</div>
+										<div class="lh-sm text-start">
+											{% trans "Add to" %}
+											<br />
+											{% trans "Google Wallet" %}
+										</div>
+									</a>
+								</div>
+							{% endif %}
+							{% if ticket.apple_ticket.exists %}
+								<div class="col-sm-6 col-lg-4">
+									<a href="data:application/vnd.apple.pkpass;base64,{{ ticket.apple_ticket.bytes }}" download="{{ ticket.object.public_id }} [{{ ticket.object.event.title }}].pkpass" class="btn btn-secondary rounded-pill d-block w-100 h-100 d-flex align-items-center px-3">
+										<div class="flex-shrink-0 me-3">
+											<img src="{% static 'images/apple-wallet.svg' %}" alt="Apple Wallet" class="d-block specific-h-25" />
+										</div>
+										<div class="lh-sm text-start">
+											{% trans "Add to" %}
+											<br />
+											{% trans "Apple Wallet" %}
+										</div>
+									</a>
+								</div>
+							{% endif %}
 						</div>
-					</form>
-					<hr />
-					<form method="post">
-						{% csrf_token %}
-						<p class="text-body-secondary">
-							{% trans "If you haven't received your passcode (or would like to create another one), click on the following button." %}
-						</p>
-						<div class="mb-3">
-							<button class="btn btn-secondary d-block w-100" type="submit" name="resend_passcode">
-								<i class="fa-solid fa-rotate-right me-1"></i>
-								{% trans "Resend Passcode" %}
-							</button>
-						</div>
-					</form>
+					</div>
 				</div>
-			</div>
-		</div>
+			{% endfor %}
+		{% else %}
+			<h1 class="text-body-emphasis display-6 m-0 text-break">
+				{% trans "Processing Checkout..." %}
+			</h1>
+			<p class="mt-1">
+				{% trans "We are processing your order and generating your ticket(s). Please come back to this page after some time." %}
+			</p>
+		{% endif %}
 	</div>
-	<!-- Form end -->
+	<!-- Content end -->
 </div>
 {% endblock content %}
+
+{% block extra_body %}
+<!-- PNG Generation -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script type="text/javascript">
+	var getCanvas; // Global variable
+
+	$(".download-btn").on("click", function (event) {
+		// Get the proper target
+		var target = event.target;
+		if (target.matches(".download-btn *")) {
+			target = target.closest(".download-btn");
+		}
+		var ticketID = target.getAttribute("data-target");
+
+		// Reset indicator
+		$("#" + ticketID + "-indicator").html(
+			"<i class='fa-light fa-circle-notch fa-spin'></i>"
+		);
+
+		// Hide main container, show ticket container and scroll to top
+		$("#main-container").addClass("d-none");
+		$("#" + ticketID + "-container").removeClass("d-none");
+		window.scrollTo({ top: 0 });
+
+		// Download the ticket
+		var element = $("#" + ticketID);
+		html2canvas(element, {
+			onrendered: function (canvas) {
+				getCanvas = canvas;
+				var imgageData = getCanvas.toDataURL("image/png");
+				var a = document.createElement("a");
+				a.href = imgageData; // Image Base64 Goes here
+				a.download = ticketID + ".png"; // File name Here
+				a.click(); // Downloaded file
+			},
+		});
+
+		// Change indicator after 2 seconds
+		setTimeout(function () {
+			$("#" + ticketID + "-indicator").html(
+				"<i class='fa-regular fa-check text-success'></i>"
+			);
+		}, 2000);
+
+		// Show main container, hide ticket container after 3 seconds
+		setTimeout(function () {
+			$("#main-container").removeClass("d-none");
+			$("#" + ticketID + "-container").addClass("d-none");
+		}, 3000);
+	});
+</script>
+{% endblock extra_body %}

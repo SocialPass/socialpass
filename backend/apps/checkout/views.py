@@ -707,6 +707,9 @@ class GetTickets(View):
                     # validation was successful, so we send over the tickets
                     # and change the template
                     template_name = "get_tickets.html"
+                    ctx["checkout_items"] = checkout_session.checkoutitem_set.select_related(
+                        "ticket_tier", "ticket_tier__tier_fiat"
+                    ).all()
                     tickets = Ticket.objects.select_related("ticket_tier").filter(
                         checkout_session=checkout_session
                     )

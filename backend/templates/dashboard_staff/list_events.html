@@ -29,6 +29,12 @@
 			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Location</div>
 			{{obj.localized_address_display}}
 		</div>
+		<div class="col-sm-4 mt-10">
+			<div class="fw-bold"><i class="fa-light fa-calendar"></i> Live Event</div>
+			<a target="_blank" href="{% url 'checkout:checkout_one' obj.slug %}">{% url 'checkout:checkout_one' obj.slug %}</a>
+		</div>
+
+
 	</div>
 </div>
 <!-- Item card end -->

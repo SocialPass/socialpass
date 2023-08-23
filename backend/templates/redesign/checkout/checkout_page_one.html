@@ -192,62 +192,64 @@
 		<!-- Ticket tiers start -->
 		<div class="col-lg-7">
 			<!-- Type selectors start -->
-			<div class="ticket-tier-group mb-3">
-				{% if tiers_fiat|length > 0 %}
-					<div class="ticket-tier">
-						<input
-							type="radio"
-							class="ticket-tier-input"
-							name="payment-type"
-							id="FIAT"
-							value="FIAT"
-							{% if checkout_type == "FIAT" %}checked{% endif %}
-							onchange="tierTypeOnchange(this)"
-						>
-						<label for="FIAT" class="ticket-tier-label">
-							<h6 class="m-0">
-								<i class="fa-solid fa-money-check-dollar me-1 opacity-75"></i> {% trans "Paid" %}
-							</h6>
-						</label>
-					</div>
-				{% endif %}
-				{% if tiers_asset_ownership|length > 0 %}
-					<div class="ticket-tier">
-						<input
-							type="radio"
-							class="ticket-tier-input"
-							name="payment-type"
-							id="ASSET_OWNERSHIP"
-							value="ASSET_OWNERSHIP"
-							{% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
-							onchange="tierTypeOnchange(this)"
-						>
-						<label for="ASSET_OWNERSHIP" class="ticket-tier-label">
-							<h6 class="m-0">
-								<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i> {% trans "NFT" %}
-							</h6>
-						</label>
-					</div>
-				{% endif %}
-				{% if tiers_free|length > 0 %}
-					<div class="ticket-tier">
-						<input
-							type="radio"
-							class="ticket-tier-input"
-							name="payment-type"
-							id="FREE"
-							value="FREE"
-							{% if checkout_type == "FREE" %}checked{% endif %}
-							onchange="tierTypeOnchange(this)"
-						>
-						<label for="FREE" class="ticket-tier-label">
-							<h6 class="m-0">
-								<i class="fa-solid fa-party-horn me-1 opacity-75"></i> {% trans "Free" %}
-							</h6>
-						</label>
-					</div>
-				{% endif %}
-			</div>
+			{% if tier_types_count > 1 %}
+				<div class="ticket-tier-group mb-3">
+					{% if tiers_fiat|length > 0 %}
+						<div class="ticket-tier">
+							<input
+								type="radio"
+								class="ticket-tier-input"
+								name="payment-type"
+								id="FIAT"
+								value="FIAT"
+								{% if checkout_type == "FIAT" %}checked{% endif %}
+								onchange="tierTypeOnchange(this)"
+							>
+							<label for="FIAT" class="ticket-tier-label">
+								<h6 class="m-0">
+									<i class="fa-solid fa-money-check-dollar me-1 opacity-75"></i> {% trans "Paid" %}
+								</h6>
+							</label>
+						</div>
+					{% endif %}
+					{% if tiers_asset_ownership|length > 0 %}
+						<div class="ticket-tier">
+							<input
+								type="radio"
+								class="ticket-tier-input"
+								name="payment-type"
+								id="ASSET_OWNERSHIP"
+								value="ASSET_OWNERSHIP"
+								{% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
+								onchange="tierTypeOnchange(this)"
+							>
+							<label for="ASSET_OWNERSHIP" class="ticket-tier-label">
+								<h6 class="m-0">
+									<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i> {% trans "NFT" %}
+								</h6>
+							</label>
+						</div>
+					{% endif %}
+					{% if tiers_free|length > 0 %}
+						<div class="ticket-tier">
+							<input
+								type="radio"
+								class="ticket-tier-input"
+								name="payment-type"
+								id="FREE"
+								value="FREE"
+								{% if checkout_type == "FREE" %}checked{% endif %}
+								onchange="tierTypeOnchange(this)"
+							>
+							<label for="FREE" class="ticket-tier-label">
+								<h6 class="m-0">
+									<i class="fa-solid fa-party-horn me-1 opacity-75"></i> {% trans "Free" %}
+								</h6>
+							</label>
+						</div>
+					{% endif %}
+				</div>
+			{% endif %}
 			<!-- Type selectors end -->
 
 			<!-- Ticket tiers start -->

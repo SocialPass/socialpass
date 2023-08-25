@@ -1,5 +1,7 @@
 {% load i18n %}
 {% for tier in tiers %}
+    <!-- Hide the 'hidden tiers' from general public -->
+    {% if tier.hidden == False or is_team_member and not request.GET.view_as_attendee %}
     <div class="ticket-tier mb-3">
         <input
             id="{{ tier.public_id }}"
@@ -132,4 +134,5 @@
             {% endif %}
         </label>
     </div>
+    {% endif %}
 {% endfor %}

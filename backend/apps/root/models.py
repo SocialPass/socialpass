@@ -844,6 +844,12 @@ class TicketTier(DBModel):
         blank=False,
         null=False,
     )
+    hidden = models.BooleanField(
+        default=False,
+        blank=False,
+        null=False,
+        help_text="Whether or not this tier is hidden from the public"
+    )
 
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"

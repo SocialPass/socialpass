@@ -124,6 +124,10 @@ class CheckoutPageOne(DetailView):
 
         # Populate holder lists with correct tiers and update availability
         for tier in tiers_all:
+            # hide hidden tiers from general public
+            if tier.hidden and (not is_team_member or self.request.GET.get('view_as_attendee')):
+                continue
+
             if tier.tier_free:
                 tiers_free.append(tier)
                 if tier.availability > 0:

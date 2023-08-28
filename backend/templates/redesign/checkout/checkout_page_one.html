@@ -1,7 +1,7 @@
 {% extends "redesign/checkout/base.html" %}
 {% load static i18n get_theme_value %}
 
-{% block head_title %}{{ event.title }} - SocialPass{% endblock head_title %}
+{% block head_title %}{{ event.title }} - {% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
 {% block navbar %}
 {% if is_team_member and not request.GET.view_as_attendee %}

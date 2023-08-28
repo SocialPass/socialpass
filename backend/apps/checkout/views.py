@@ -217,6 +217,7 @@ class CheckoutPageOne(DetailView):
         context["is_team_member"] = is_team_member
         context["sales_start_with_tzinfo"] = sales_start
         context["sales_status"] = sales_status
+        context["current_team"] = self.object.team
         return context
 
     @transaction.atomic

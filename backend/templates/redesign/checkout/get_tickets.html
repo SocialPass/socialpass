@@ -1,7 +1,7 @@
 {% extends "redesign/checkout/tickets_base.html" %}
 {% load static i18n get_theme_value %}
 
-{% block head_title %}{% trans "Get Tickets" %} - SocialPass{% endblock head_title %}
+{% block head_title %}{% trans "Get Tickets" %} - {% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
 {% block tickets %}
 {% for ticket in tickets %}

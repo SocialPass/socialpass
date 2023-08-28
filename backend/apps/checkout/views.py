@@ -58,7 +58,7 @@ class CheckoutPageOne(DetailView):
         # Handle default checkout
         try:
             if self.kwargs.get('event_slug'):
-                self.object = Event.objects.select_related("team").prefetch_related(
+                self.object = Event.objects.select_related("team", "team__whitelabel").prefetch_related(
                     "tickettier_set",
                     "tickettier_set__tier_free",
                     "tickettier_set__tier_asset_ownership",
@@ -66,7 +66,7 @@ class CheckoutPageOne(DetailView):
             # Handle Migrated Checkout (react app)
             # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
             if self.kwargs.get('event_uuid_slug'):
-                self.object = Event.objects.select_related("team").prefetch_related(
+                self.object = Event.objects.select_related("team", "team__whitelabel").prefetch_related(
                     "tickettier_set",
                     "tickettier_set__tier_free",
                     "tickettier_set__tier_asset_ownership",
@@ -74,7 +74,7 @@ class CheckoutPageOne(DetailView):
             # Handle Migrated Checkout (redirect to react app)
             # Limit id to <1000 to only catch early events launched on the react app
             if self.kwargs.get('event_pk_slug') and self.kwargs['event_pk_slug'] < 1000:
-                self.object = Event.objects.select_related("team").prefetch_related(
+                self.object = Event.objects.select_related("team", "team__whitelabel").prefetch_related(
                     "tickettier_set",
                     "tickettier_set__tier_free",
                     "tickettier_set__tier_asset_ownership",
@@ -294,7 +294,11 @@ class CheckoutPageTwo(DetailView):
 
     def get_object(self):
         self.object = (
-            CheckoutSession.objects.select_related("event")
+            CheckoutSession.objects.select_related(
+                "event",
+                "event__team",
+                "event__team__whitelabel",
+            )
             .prefetch_related("checkoutitem_set")
             .get(public_id=self.kwargs["checkout_session_public_id"])
         )
@@ -317,6 +321,7 @@ class CheckoutPageTwo(DetailView):
             context["form"] = CheckoutFormAssetOwnership(
                 initial={"name": self.object.name, "email": self.object.email}
             )
+        context["current_team"] = self.object.event.team
         return context
 
     def get(self, *args, **kwargs):
@@ -408,6 +413,7 @@ class CheckoutFiat(DetailView):
             CheckoutSession.objects.select_related(
                 "event",
                 "event__team",
+                "event__team__whitelabel",
                 "tx_fiat",
             )
             .prefetch_related(
@@ -431,6 +437,7 @@ class CheckoutFiat(DetailView):
         context["form"] = CheckoutFormFiat(
             initial={"name": self.object.name, "email": self.object.email}
         )
+        context["current_team"] = self.object.event.team
         return context
 
     def get(self, *args, **kwargs):
@@ -633,7 +640,11 @@ class CheckoutPageSuccess(DetailView):
     template_name = "redesign/checkout/checkout_page_success.html"
 
     def get_object(self):
-        self.object = CheckoutSession.objects.prefetch_related("checkoutitem_set").get(
+        self.object = CheckoutSession.objects.select_related(
+            "event",
+            "event__team",
+            "event__team__whitelabel",
+        ).prefetch_related("checkoutitem_set").get(
             public_id=self.kwargs["checkout_session_public_id"],
             tx_status=CheckoutSession.OrderStatus.FULFILLED,
         )
@@ -644,6 +655,7 @@ class CheckoutPageSuccess(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["checkout_items"] = self.object.checkoutitem_set.all()
+        context["current_team"] = self.object.event.team
         return context
 
 
@@ -654,7 +666,11 @@ class GetTickets(View):
 
     def get_object(self):
         try:
-            return CheckoutSession.objects.select_related("event").get(
+            return CheckoutSession.objects.select_related(
+                "event",
+                "event__team",
+                "event__team__whitelabel",
+            ).get(
                 public_id=self.kwargs["checkout_session_public_id"],
             )
         except Exception:

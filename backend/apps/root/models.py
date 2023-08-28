@@ -63,6 +63,30 @@ class User(AbstractUser):
     """
 
 
+class WhiteLabel(DBModel):
+    """
+    A model used to store all of the information required for white-labeling a 
+    team.
+    """
+    brand_name = models.CharField(max_length=255, blank=True)
+    logo = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="whitelabel__logo",
+    )
+    favicon = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="whitelabel__favicon",
+    )
+    css = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return self.brand_name
+
 class Team(DBModel):
     """
     Represents the 'umbrella' model for event organization
@@ -86,6 +110,12 @@ class Team(DBModel):
     description = models.TextField(blank=True, default="")
     theme = models.JSONField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+    whitelabel = models.OneToOneField(
+        WhiteLabel,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
 
     # stripe
     tmp_stripe_account_id = models.CharField(

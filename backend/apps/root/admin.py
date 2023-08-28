@@ -21,6 +21,7 @@ from apps.root.models import (
     TxBlockchain,
     TxFiat,
     TxFree,
+    WhiteLabel,
 )
 
 User = get_user_model()
@@ -172,4 +173,9 @@ class TxAssetOwnershipAdmin(CustomDBAdmin):
 
 @admin.register(TxFree)
 class TxFreeAdmin(CustomDBAdmin):
+    list_display = CustomDBAdmin.list_display
+
+
+@admin.register(WhiteLabel)
+class WhiteLabelAdmin(CustomDBAdmin):
     list_display = CustomDBAdmin.list_display

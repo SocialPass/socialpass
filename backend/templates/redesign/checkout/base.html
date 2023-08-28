@@ -222,6 +222,23 @@
 		{% if current_team.whitelabel.css %}
 			<style type="text/css">
 				{{ current_team.whitelabel.css }}
+				{% if current_team.whitelabel.font_regular and current_team.whitelabel.font_bold %}
+					@font-face {
+						font-family: "Custom";
+						src: url("{{ current_team.whitelabel.font_regular.url }}");
+						font-weight: normal;
+					}
+
+					@font-face {
+						font-family: "Custom";
+						src: url("{{ current_team.whitelabel.font_bold.url }}");
+						font-weight: bold;
+					}
+
+					:root {
+						--bs-body-font-family: "Custom";
+					}
+				{% endif %}
 			</style>
 		{% endif %}
 

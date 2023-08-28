@@ -80,6 +80,16 @@ class WhiteLabel(DBModel):
         upload_to="whitelabel__favicon",
     )
     css = models.TextField(blank=True, default="")
+    font_regular = models.FileField(
+        blank=True,
+        null=True,
+        upload_to="whitelabel__font",
+    )
+    font_bold = models.FileField(
+        blank=True,
+        null=True,
+        upload_to="whitelabel__font",
+    )
 
     def __str__(self):
         """

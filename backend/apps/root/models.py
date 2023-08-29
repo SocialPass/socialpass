@@ -1487,7 +1487,6 @@ class TxAssetOwnership(DBModel):
                 if int(nft["token_id"]) not in existing_ids
             ]
             actual = len(filtered_by_issued_ids)
-            breakpoint()
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
                     {

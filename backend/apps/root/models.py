@@ -74,7 +74,7 @@ class WhiteLabel(DBModel):
         null=True,
         upload_to="whitelabel__logo",
     )
-    ticket_logo = models.ImageField(
+    ticket_logo = models.FileField( # FileField to support SVGs
         blank=True,
         null=True,
         upload_to="whitelabel__logo",

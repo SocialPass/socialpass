@@ -10,8 +10,9 @@ from passbook.models import (
     Location,
     Pass,
 )
-from pathlib import Path
-
+import requests
+import tempfile
+import os
 
 class AppleTicket:
     """
@@ -152,7 +153,21 @@ class AppleTicket:
             if whitelabel.ticket_bg_color:
                 self.background_color = whitelabel.ticket_bg_color
             if whitelabel.ticket_logo_apple:
-                self.icon = Path(whitelabel.ticket_logo_apple.url)
+                if settings.DEBUG:
+                    url = f"http://localhost:8000{whitelabel.ticket_logo_apple.url}"
+                else:
+                    url = whitelabel.ticket_logo_apple.url
+
+                response = requests.get(url)
+                if response.status_code == 200:
+                    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                        temp_file.write(response.content)
+                        temp_file_path = temp_file.name
+                else:
+                    pass
+
+                # Now set self.icon using the temp file path
+                self.icon = temp_file_path
 
         self.description = event.title
         self.serial_number = str(ticket.public_id)

@@ -1411,23 +1411,6 @@ class TxAssetOwnership(DBModel):
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 
-    def _check_balance(self, expected, actual):
-        """
-        Ensure wallet has sufficient balance for tier (balance_required * quantity)
-        Raise exception on insufficient balance
-        """
-
-        if actual < expected:
-            raise TxAssetOwnershipProcessingError(
-                {
-                    "quantity": (
-                        "Quantity requested exceeds the queried balance. "
-                        f"Expected Balance: {expected}. "
-                        f"Actual Balance: {actual}."
-                    )
-                }
-            )
-
     def _check_against_issued_ids(self, tier_asset_ownership, expected, result):
         """
         Filter against already-issued token ID's (tier.issued_token_id's)
@@ -1527,7 +1510,16 @@ class TxAssetOwnership(DBModel):
                 actual = len(api_response["result"])
             else:
                 actual = 0
-            self._check_balance(expected=expected, actual=actual)
+            if actual < expected:
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "quantity": (
+                            "Quantity requested exceeds the queried balance. "
+                            f"Expected Balance: {expected}. "
+                            f"Actual Balance: {actual}."
+                        )
+                    }
+                )
 
             # 3b. Filter for already-issued token ID's (tier.issued_token_id)
             filtered_by_issued_ids = self._check_against_issued_ids(

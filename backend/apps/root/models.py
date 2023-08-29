@@ -965,7 +965,7 @@ class TierAssetOwnership(DBModel):
         blank=True,
         help_text="Which specific token IDs of the NFT collection are required?",
     )
-    issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
+    deprecated_issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"
@@ -1395,8 +1395,7 @@ class TxAssetOwnership(DBModel):
     is_wallet_address_verified = models.BooleanField(
         default=False, blank=False, null=False
     )
-    error_message = models.CharField(max_length=1024, blank=True, default="")
-    token_id = ArrayField(models.IntegerField(), blank=True, default=list)
+    issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
@@ -1410,32 +1409,6 @@ class TxAssetOwnership(DBModel):
             f"\n\nTimestamp: {self.created.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)}"
         )
-
-    def _check_against_issued_ids(self, tier_asset_ownership, expected, result):
-        """
-        Filter against already-issued token ID's (tier.issued_token_id's)
-        Raise exception on insufficient unique token ID's
-        """
-
-        filtered_by_issued_ids = [
-            data
-            for data in result
-            if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
-        ]
-        actual = len(filtered_by_issued_ids)
-        if actual < expected:
-            # TODO: if actual < expected here, we may need to call API again
-            # This is because there can be paginated results
-            raise TxAssetOwnershipProcessingError(
-                {
-                    "issued_token_id": (
-                        f"Could not find enough NFT's. "
-                        f"Expected unique NFT's: {expected}. "
-                        f"Actual unique NFT's: {actual}."
-                    )
-                }
-            )
-        return filtered_by_issued_ids
 
     def _process_wallet_address(self, checkout_session=None):
         """
@@ -1470,27 +1443,8 @@ class TxAssetOwnership(DBModel):
         self.save()
 
     def _process_asset_ownership(self, checkout_session=None):
-        """
-        Process asset ownership
-        - On success: Mark session as completed, call CheckoutSession.fulfill()
-        - On error: Raise TxProccessingError, with conflicing checkout item ID
-        1. Loop over CheckoutItem's
-        2. Format & make API call for each CheckoutItem and its respective tier
-        3. Verify API response
-            a Ensure wallet has sufficient balance for tier (balance_required * quantity)
-            b Filter for already-issued token ID's (tier.issued_token_id)
-            c Prep token ID list for bulk update
-        4. Finished.
-            a. Bulk update tier_asset_ownership.issued_token_id
-            b. Save Token ID's alongside TxAssetOwnershop
-        """
-        # Globals
-        ticket_tiers_with_ids = {}
-        tiers_token_ids = set()
-
-        # 1. Loop over CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
-            # 2. Format & make API call for each CheckoutItem and its respective tier
+            # 1. Format & make API call for each CheckoutItem
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             params = {
                 "chain": hex(tier_asset_ownership.network),
@@ -1504,7 +1458,7 @@ class TxAssetOwnership(DBModel):
                 params=params,
             )
 
-            # 3a. Check if wallet has balance
+            # 2. Check if wallet has required balance
             expected = tier_asset_ownership.balance_required * item.quantity
             if api_response.get("result"):
                 actual = len(api_response["result"])
@@ -1521,33 +1475,36 @@ class TxAssetOwnership(DBModel):
                     }
                 )
 
-            # 3b. Filter for already-issued token ID's (tier.issued_token_id)
-            filtered_by_issued_ids = self._check_against_issued_ids(
-                tier_asset_ownership=tier_asset_ownership,
-                expected=expected,
-                result=api_response["result"],
-            )
-
-            # 3c. Prep token ID list for bulk update
-            token_ids = [
-                int(data.get("token_id"))
-                for data in filtered_by_issued_ids
-                if data.get("token_id")
+            # 3. Filter against issued_token_ids
+            existing_ids = [
+                value for sublist in TxAssetOwnership.objects.filter(
+                    checkoutsession__event=checkout_session.event,
+                ).values_list('issued_token_id', flat=True)
+                for value in sublist
             ]
-            ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
+            filtered_by_issued_ids = [
+                nft
+                for nft in api_response["result"]
+                if int(nft["token_id"]) not in existing_ids
+            ]
+            actual = len(filtered_by_issued_ids)
+            if actual < expected:
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "issued_token_id": (
+                            f"Could not find enough NFT's. "
+                            f"Expected unique NFT's: {expected}. "
+                            f"Actual unique NFT's: {actual}."
+                        )
+                    }
+                )
+            filtered_by_expected = [
+                int(nft["token_id"])
+                for nft in filtered_by_issued_ids[:expected]
+            ]
 
-        # 4. Finished.
-        # 4a. Bulk update tier_asset_ownership.issued_token_id
-        tier_asset_ownership_list = []
-        for t in ticket_tiers_with_ids:
-            t.issued_token_id += ticket_tiers_with_ids[t]
-            tier_asset_ownership_list.append(t)
-        TierAssetOwnership.objects.bulk_update(
-            tier_asset_ownership_list, ["issued_token_id"]
-        )
-
-        # 4b. Save Token ID's alongside TxAssetOwnership
-        checkout_session.tx_asset_ownership.token_id = list(tiers_token_ids)
+        # 4. OK - Save issued_token_ids
+        checkout_session.tx_asset_ownership.issued_token_id = filtered_by_expected
         checkout_session.tx_asset_ownership.save()
 
     def process(self):
@@ -1569,10 +1526,7 @@ class TxAssetOwnership(DBModel):
             self._process_asset_ownership(checkout_session=checkout_session)
         except Exception as e:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            checkout_session.tx_asset_ownership.error_message = str(e)
             checkout_session.save()
-            checkout_session.tx_asset_ownership.save()
-            print(e)
             raise e
 
         # OK

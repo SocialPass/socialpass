@@ -1394,7 +1394,7 @@ class TxAssetOwnership(DBModel):
     is_wallet_address_verified = models.BooleanField(
         default=False, blank=False, null=False
     )
-    issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
+    redeemed_nfts = models.JSONField(default=list)
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
@@ -1474,37 +1474,36 @@ class TxAssetOwnership(DBModel):
                     }
                 )
 
-            # 3. Filter against issued_token_ids
-            existing_ids = [
-                value for sublist in TxAssetOwnership.objects.filter(
-                    checkoutsession__event=checkout_session.event,
-                ).values_list('issued_token_id', flat=True)
-                for value in sublist
-            ]
+            # 3. Filter against redeemed_nfts
+            existing_ids = set(
+                int(i.get("token_id"))
+                for nfts in TxAssetOwnership.objects.filter(checkoutsession__event=checkout_session.event)
+                .values_list("redeemed_nfts", flat=True)
+                for i in nfts
+            )
             filtered_by_issued_ids = [
                 nft
                 for nft in api_response["result"]
                 if int(nft["token_id"]) not in existing_ids
             ]
             actual = len(filtered_by_issued_ids)
+            breakpoint()
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
                     {
-                        "issued_token_id": (
+                        "redeemed_nfts": (
                             f"Could not find enough NFT's. "
                             f"Expected unique NFT's: {expected}. "
                             f"Actual unique NFT's: {actual}."
                         )
                     }
                 )
-            filtered_by_expected = [
-                int(nft["token_id"])
-                for nft in filtered_by_issued_ids[:expected]
-            ]
+            filtered_by_expected = filtered_by_issued_ids[:expected]
 
-        # 4. OK - Save issued_token_ids
-        checkout_session.tx_asset_ownership.issued_token_id = filtered_by_expected
-        checkout_session.tx_asset_ownership.save()
+        # 4. OK - Save redeemed_nfts
+        for i in filtered_by_expected:
+            self.redeemed_nfts.append(i)
+        self.save()
 
     def process(self):
         """

@@ -1556,7 +1556,6 @@ class TxFree(DBModel):
             checkoutsession__event=checkout_session.event,
             issued_email=checkout_session.email
         )
-        breakpoint()
         if duplicate_emails:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()

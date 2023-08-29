@@ -96,6 +96,8 @@ class WhiteLabel(DBModel):
         null=True,
         upload_to="whitelabel__font",
     )
+    ticket_bg_color = models.CharField(max_length=255, blank=True)
+    ticket_text_color = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         """

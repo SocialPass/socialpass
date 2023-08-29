@@ -28,6 +28,7 @@ from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
+from moralis import evm_api
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
@@ -1412,33 +1413,6 @@ class TxAssetOwnership(DBModel):
             f"\nOne-Time Code: {str(self.public_id)}"
         )
 
-    def _call_moralis_api(self, tier_asset_ownership):
-        """
-        Format & make API call for each CheckoutItem and its respective tier
-        raise HTTPError if status code error
-        """
-
-        chain = hex(tier_asset_ownership.network)
-        token_address = tier_asset_ownership.token_address
-        api_url = (
-            f"https://deep-index.moralis.io/api/v2/{self.wallet_address}/nft"
-            f"?chain={chain}"
-            f"&token_addresses={token_address}"
-            f"&format=decimal"
-            f"&disable_total=false"
-        )
-        headers = {
-            "accept": "application/json",
-            "X-API-Key": settings.MORALIS_API_KEY,
-        }
-        response = requests.get(api_url, headers=headers)
-        try:
-            response.raise_for_status()
-            response = response.json()
-        except requests.exceptions.HTTPError:
-            raise TxAssetOwnershipProcessingError({"message": "An error has ocurred"})
-        return response
-
     def _check_balance(self, expected, actual):
         """
         Ensure wallet has sufficient balance for tier (balance_required * quantity)
@@ -1537,13 +1511,27 @@ class TxAssetOwnership(DBModel):
         for item in checkout_session.checkoutitem_set.all():
             # 2. Format & make API call for each CheckoutItem and its respective tier
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
-            api_response = self._call_moralis_api(
-                tier_asset_ownership=tier_asset_ownership
+            params = {
+              "chain": hex(tier_asset_ownership.network),
+              "format": "decimal",
+              "media_items": True,
+              "address": self.wallet_address,
+              "token_addresses": [
+                  tier_asset_ownership.token_address
+              ]
+            }
+            api_response = evm_api.nft.get_wallet_nfts(
+              api_key=settings.MORALIS_API_KEY,
+              params=params,
             )
 
             # 3a. Check if wallet has balance
             expected = tier_asset_ownership.balance_required * item.quantity
-            self._check_balance(expected=expected, actual=api_response["total"])
+            if api_response.get("result"):
+                actual = len(api_response["result"])
+            else:
+                actual = 0
+            self._check_balance(expected=expected, actual=actual)
 
             # 3b. Filter for already-issued token ID's (tier.issued_token_id)
             filtered_by_issued_ids = self._check_against_issued_ids(

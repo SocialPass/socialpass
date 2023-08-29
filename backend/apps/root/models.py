@@ -74,6 +74,12 @@ class WhiteLabel(DBModel):
         null=True,
         upload_to="whitelabel__logo",
     )
+    ticket_logo = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="whitelabel__logo",
+    )
+    ticket_logo_url = models.URLField(max_length=255, blank=True)
     favicon = models.ImageField(
         blank=True,
         null=True,

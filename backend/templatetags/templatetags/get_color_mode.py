@@ -11,6 +11,6 @@ def get_color_mode(context):
         result = request.COOKIES.get("colorMode", "")
 
     if result:
-    	return result
+        return result
     else:
-    	return "light"
+        return "light"

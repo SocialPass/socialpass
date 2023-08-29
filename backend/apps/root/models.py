@@ -4,7 +4,6 @@ from datetime import date, timedelta
 
 import jwt
 import pytz
-import requests
 import rollbar
 import stripe
 from autoslug import AutoSlugField
@@ -553,7 +552,6 @@ class Event(DBModel):
             print("EMAIL ERROR: " + str(e))
             rollbar.report_message("EMAIL ERROR: " + str(e))
 
-
     @property
     def has_ended(self):
         if self.end_date:
@@ -849,7 +847,7 @@ class TicketTier(DBModel):
         default=False,
         blank=False,
         null=False,
-        help_text="Whether or not this tier is hidden from the public"
+        help_text="Whether or not this tier is hidden from the public",
     )
 
     def __str__(self):
@@ -1512,17 +1510,15 @@ class TxAssetOwnership(DBModel):
             # 2. Format & make API call for each CheckoutItem and its respective tier
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
             params = {
-              "chain": hex(tier_asset_ownership.network),
-              "format": "decimal",
-              "media_items": True,
-              "address": self.wallet_address,
-              "token_addresses": [
-                  tier_asset_ownership.token_address
-              ]
+                "chain": hex(tier_asset_ownership.network),
+                "format": "decimal",
+                "media_items": True,
+                "address": self.wallet_address,
+                "token_addresses": [tier_asset_ownership.token_address],
             }
             api_response = evm_api.nft.get_wallet_nfts(
-              api_key=settings.MORALIS_API_KEY,
-              params=params,
+                api_key=settings.MORALIS_API_KEY,
+                params=params,
             )
 
             # 3a. Check if wallet has balance

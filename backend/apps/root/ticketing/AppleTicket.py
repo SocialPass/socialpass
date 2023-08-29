@@ -10,6 +10,7 @@ from passbook.models import (
     Location,
     Pass,
 )
+from pathlib import Path
 
 
 class AppleTicket:
@@ -130,7 +131,6 @@ class AppleTicket:
 
     def generate_pass_from_ticket(self, ticket):
         event = ticket.event
-        theme = event.team.theme or {}
 
         if not event.localized_address_display:
             raise Exception(
@@ -138,13 +138,21 @@ class AppleTicket:
             )
 
         self.org_name = event.team.name
-        self.label_color = theme.get("ticket_text_color", "rgb(255,255,255)")
-        self.background_color = theme.get("ticket_bg_color", "rgb(239,124,78)")
-        self.foreground_color = theme.get("ticket_text_color", "rgb(255,255,255)")
-        if "ticket_logo_apple" in theme:
-            self.icon = settings.ROOT_DIR / "static" / theme.get("ticket_logo_apple")
-        else:
-            self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
+        self.label_color = "rgb(255,255,255)"
+        self.background_color = "rgb(239,124,78)"
+        self.foreground_color = "rgb(255,255,255)"
+        self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
+
+        # White-labeling Apple ticket
+        if event.team.whitelabel:
+            whitelabel = event.team.whitelabel
+            if whitelabel.ticket_text_color:
+                self.label_color = whitelabel.ticket_text_color
+                self.foreground_color = whitelabel.ticket_text_color
+            if whitelabel.ticket_bg_color:
+                self.background_color = whitelabel.ticket_bg_color
+            if whitelabel.ticket_logo_apple:
+                self.icon = Path(whitelabel.ticket_logo_apple.url)
 
         self.description = event.title
         self.serial_number = str(ticket.public_id)

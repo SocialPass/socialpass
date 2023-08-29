@@ -110,13 +110,23 @@ class GoogleTicket:
         payload = GoogleTicket.get_event_class_payload(event_obj)
 
         # Add branding attributes to the payload
-        # White-labeling is handled here if needed
-        theme = event_obj.team.theme or {}
-        payload["issuerName"] = theme.get("ticket_brand_name", issuer_name)
-        payload["hexBackgroundColor"] = theme.get("ticket_bg_color", hex_bg_color)
+        payload["issuerName"] = issuer_name
+        payload["hexBackgroundColor"] = hex_bg_color
         payload["logo"] = {
-            "sourceUri": {"uri": theme.get("ticket_logo_google", logo_uri)}
+            "sourceUri": {"uri": logo_uri}
         }
+
+        # White-labeling
+        if event_obj.team.whitelabel:
+            whitelabel = event_obj.team.whitelabel
+            if whitelabel.brand_name:
+                payload["issuerName"] = whitelabel.brand_name
+            if whitelabel.ticket_bg_color:
+                payload["hexBackgroundColor"] = whitelabel.ticket_bg_color
+            if whitelabel.ticket_logo_google:
+                payload["logo"] = {
+                    "sourceUri": {"uri": whitelabel.ticket_logo_google}
+                }
 
         # Insert or update the ticket class
         if is_insert:

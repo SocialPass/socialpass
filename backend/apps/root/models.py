@@ -4,7 +4,6 @@ from datetime import date, timedelta
 
 import jwt
 import pytz
-import requests
 import rollbar
 import stripe
 from autoslug import AutoSlugField
@@ -28,6 +27,7 @@ from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
+from moralis import evm_api
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
@@ -605,7 +605,6 @@ class Event(DBModel):
             print("EMAIL ERROR: " + str(e))
             rollbar.report_message("EMAIL ERROR: " + str(e))
 
-
     @property
     def has_ended(self):
         if self.end_date:
@@ -901,7 +900,7 @@ class TicketTier(DBModel):
         default=False,
         blank=False,
         null=False,
-        help_text="Whether or not this tier is hidden from the public"
+        help_text="Whether or not this tier is hidden from the public",
     )
 
     def __str__(self):
@@ -1019,7 +1018,7 @@ class TierAssetOwnership(DBModel):
         blank=True,
         help_text="Which specific token IDs of the NFT collection are required?",
     )
-    issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
+    deprecated_issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"TierAssetOwnership {self.public_id}"
@@ -1029,8 +1028,7 @@ class TierFree(DBModel):
     """
     Represents a free tier for an event ticket
     """
-
-    issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
+    deprecated_issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"TierFree {self.public_id}"
@@ -1449,8 +1447,7 @@ class TxAssetOwnership(DBModel):
     is_wallet_address_verified = models.BooleanField(
         default=False, blank=False, null=False
     )
-    error_message = models.CharField(max_length=1024, blank=True, default="")
-    token_id = ArrayField(models.IntegerField(), blank=True, default=list)
+    redeemed_nfts = models.JSONField(default=list)
 
     def __str__(self) -> str:
         return f"TxAssetOwnership {self.public_id}"
@@ -1464,76 +1461,6 @@ class TxAssetOwnership(DBModel):
             f"\n\nTimestamp: {self.created.strftime('%s')}"
             f"\nOne-Time Code: {str(self.public_id)}"
         )
-
-    def _call_moralis_api(self, tier_asset_ownership):
-        """
-        Format & make API call for each CheckoutItem and its respective tier
-        raise HTTPError if status code error
-        """
-
-        chain = hex(tier_asset_ownership.network)
-        token_address = tier_asset_ownership.token_address
-        api_url = (
-            f"https://deep-index.moralis.io/api/v2/{self.wallet_address}/nft"
-            f"?chain={chain}"
-            f"&token_addresses={token_address}"
-            f"&format=decimal"
-            f"&disable_total=false"
-        )
-        headers = {
-            "accept": "application/json",
-            "X-API-Key": settings.MORALIS_API_KEY,
-        }
-        response = requests.get(api_url, headers=headers)
-        try:
-            response.raise_for_status()
-            response = response.json()
-        except requests.exceptions.HTTPError:
-            raise TxAssetOwnershipProcessingError({"message": "An error has ocurred"})
-        return response
-
-    def _check_balance(self, expected, actual):
-        """
-        Ensure wallet has sufficient balance for tier (balance_required * quantity)
-        Raise exception on insufficient balance
-        """
-
-        if actual < expected:
-            raise TxAssetOwnershipProcessingError(
-                {
-                    "quantity": (
-                        "Quantity requested exceeds the queried balance. "
-                        f"Expected Balance: {expected}. "
-                        f"Actual Balance: {actual}."
-                    )
-                }
-            )
-
-    def _check_against_issued_ids(self, tier_asset_ownership, expected, result):
-        """
-        Filter against already-issued token ID's (tier.issued_token_id's)
-        Raise exception on insufficient unique token ID's
-        """
-
-        filtered_by_issued_ids = [
-            data
-            for data in result
-            if int(data["token_id"]) not in tier_asset_ownership.issued_token_id
-        ]
-        actual = len(filtered_by_issued_ids)
-        if actual < expected:
-            # TODO: if actual < expected here, we may need to call API again
-            # This is because there can be paginated results
-            raise TxAssetOwnershipProcessingError(
-                {
-                    "issued_token_id": (
-                        f"Could not find enough NFT's. "
-                        f"Expected unique NFT's: {expected}. "
-                        f"Actual unique NFT's: {actual}."
-                    )
-                }
-            )
-        return filtered_by_issued_ids
 
     def _process_wallet_address(self, checkout_session=None):
         """
@@ -1568,64 +1495,67 @@ class TxAssetOwnership(DBModel):
         self.save()
 
     def _process_asset_ownership(self, checkout_session=None):
-        """
-        Process asset ownership
-        - On success: Mark session as completed, call CheckoutSession.fulfill()
-        - On error: Raise TxProccessingError, with conflicing checkout item ID
-        1. Loop over CheckoutItem's
-        2. Format & make API call for each CheckoutItem and its respective tier
-        3. Verify API response
-            a Ensure wallet has sufficient balance for tier (balance_required * quantity)
-            b Filter for already-issued token ID's (tier.issued_token_id)
-            c Prep token ID list for bulk update
-        4. Finished.
-            a. Bulk update tier_asset_ownership.issued_token_id
-            b. Save Token ID's alongside TxAssetOwnershop
-        """
-        # Globals
-        ticket_tiers_with_ids = {}
-        tiers_token_ids = set()
-
-        # 1. Loop over CheckoutItem's
         for item in checkout_session.checkoutitem_set.all():
-            # 2. Format & make API call for each CheckoutItem and its respective tier
+            # 1. Format & make API call for each CheckoutItem
             tier_asset_ownership = item.ticket_tier.tier_asset_ownership
-            api_response = self._call_moralis_api(
-                tier_asset_ownership=tier_asset_ownership
+            params = {
+                "chain": hex(tier_asset_ownership.network),
+                "format": "decimal",
+                "media_items": True,
+                "address": self.wallet_address,
+                "token_addresses": [tier_asset_ownership.token_address],
+            }
+            api_response = evm_api.nft.get_wallet_nfts(
+                api_key=settings.MORALIS_API_KEY,
+                params=params,
             )
 
-            # 3a. Check if wallet has balance
+            # 2. Check if wallet has required balance
             expected = tier_asset_ownership.balance_required * item.quantity
-            self._check_balance(expected=expected, actual=api_response["total"])
+            if api_response.get("result"):
+                actual = len(api_response["result"])
+            else:
+                actual = 0
+            if actual < expected:
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "quantity": (
+                            "Quantity requested exceeds the queried balance. "
+                            f"Expected Balance: {expected}. "
+                            f"Actual Balance: {actual}."
+                        )
+                    }
+                )
 
-            # 3b. Filter for already-issued token ID's (tier.issued_token_id)
-            filtered_by_issued_ids = self._check_against_issued_ids(
-                tier_asset_ownership=tier_asset_ownership,
-                expected=expected,
-                result=api_response["result"],
+            # 3. Filter against redeemed_nfts
+            existing_ids = set(
+                int(i.get("token_id"))
+                for nfts in TxAssetOwnership.objects.filter(checkoutsession__event=checkout_session.event)
+                .values_list("redeemed_nfts", flat=True)
+                for i in nfts
             )
-
-            # 3c. Prep token ID list for bulk update
-            token_ids = [
-                int(data.get("token_id"))
-                for data in filtered_by_issued_ids
-                if data.get("token_id")
+            filtered_by_issued_ids = [
+                nft
+                for nft in api_response["result"]
+                if int(nft["token_id"]) not in existing_ids
             ]
-            ticket_tiers_with_ids[tier_asset_ownership] = token_ids[:expected]
+            actual = len(filtered_by_issued_ids)
+            if actual < expected:
+                raise TxAssetOwnershipProcessingError(
+                    {
+                        "redeemed_nfts": (
+                            f"Could not find enough NFT's. "
+                            f"Expected unique NFT's: {expected}. "
+                            f"Actual unique NFT's: {actual}."
+                        )
+                    }
+                )
+            filtered_by_expected = filtered_by_issued_ids[:expected]
 
-        # 4. Finished.
-        # 4a. Bulk update tier_asset_ownership.issued_token_id
-        tier_asset_ownership_list = []
-        for t in ticket_tiers_with_ids:
-            t.issued_token_id += ticket_tiers_with_ids[t]
-            tier_asset_ownership_list.append(t)
-        TierAssetOwnership.objects.bulk_update(
-            tier_asset_ownership_list, ["issued_token_id"]
-        )
-
-        # 4b. Save Token ID's alongside TxAssetOwnership
-        checkout_session.tx_asset_ownership.token_id = list(tiers_token_ids)
-        checkout_session.tx_asset_ownership.save()
+        # 4. OK - Save redeemed_nfts
+        for i in filtered_by_expected:
+            self.redeemed_nfts.append(i)
+        self.save()
 
     def process(self):
         """
@@ -1646,10 +1576,7 @@ class TxAssetOwnership(DBModel):
             self._process_asset_ownership(checkout_session=checkout_session)
         except Exception as e:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            checkout_session.tx_asset_ownership.error_message = str(e)
             checkout_session.save()
-            checkout_session.tx_asset_ownership.save()
-            print(e)
             raise e
 
         # OK
@@ -1662,6 +1589,7 @@ class TxFree(DBModel):
     """
     Represents a free checkout transaction
     """
+    issued_email = models.EmailField(blank=True)
 
     def __str__(self) -> str:
         return f"TxFree {self.public_id}"
@@ -1674,19 +1602,21 @@ class TxFree(DBModel):
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
         checkout_session.save()
 
-        # Check for issued emails
-        for item in checkout_session.checkoutitem_set.all():
-            if checkout_session.email in item.ticket_tier.tier_free.issued_emails:
-                checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-                checkout_session.save()
-                raise Exception(
-                    "This email has already been used for this ticket tier."
-                )
-            else:
-                item.ticket_tier.tier_free.issued_emails.append(checkout_session.email)
-                item.ticket_tier.tier_free.save()
+        # Check for duplicate emails
+        duplicate_emails = TxFree.objects.filter(
+            checkoutsession__event=checkout_session.event,
+            issued_email=checkout_session.email
+        )
+        if duplicate_emails:
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.save()
+            raise Exception(
+                "This email has already been used for this ticket tier."
+            )
 
         # OK
+        checkout_session.tx_free.issued_email = checkout_session.email
         checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        self.save()
         checkout_session.save()
         checkout_session.fulfill()

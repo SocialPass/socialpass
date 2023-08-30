@@ -47,11 +47,7 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ["name", "description", "image"]
         widgets = {
-            "name": forms.TextInput(
-                attrs={
-                    "placeholder": _("Name of your team")
-                }
-            ),
+            "name": forms.TextInput(attrs={"placeholder": _("Name of your team")}),
             "description": forms.Textarea(
                 attrs={
                     "placeholder": _("A short description of your team"),
@@ -138,7 +134,7 @@ class EventForm(forms.ModelForm):
             "country",
             "google_class_id",
             "sales_start",
-            "sales_end"
+            "sales_end",
         ]
 
         widgets = {
@@ -275,24 +271,14 @@ class TicketTierForm(forms.ModelForm):
         widgets = {
             "ticket_type": forms.TextInput(
                 attrs={
-                    "placeholder": _("Short name for free ticket tier e.g. General Admission")
+                    "placeholder": _(
+                        "Short name for free ticket tier e.g. General Admission"
+                    )
                 }
             ),
-            "capacity": forms.NumberInput(
-                attrs={
-                    "min": 1
-                }
-            ),
-            "max_per_person": forms.NumberInput(
-                attrs={
-                    "min": 1
-                }
-            ),
-            "allowed_guests": forms.NumberInput(
-                attrs={
-                    "min": 0
-                }
-            ),
+            "capacity": forms.NumberInput(attrs={"min": 1}),
+            "max_per_person": forms.NumberInput(attrs={"min": 1}),
+            "allowed_guests": forms.NumberInput(attrs={"min": 0}),
         }
         labels = {
             "ticket_type": _("Name of ticket tier"),
@@ -319,15 +305,13 @@ class TierAssetOwnershipForm(forms.ModelForm):
             "token_address": forms.TextInput(
                 attrs={"placeholder": _("e.g. 0xb53...4394n")}
             ),
-            "token_id": forms.TextInput(
-                attrs={"placeholder": _("e.g. 1,2,3,4,5")}
-            ),
+            "token_id": forms.TextInput(attrs={"placeholder": _("e.g. 1,2,3,4,5")}),
             "balance_required": forms.NumberInput(attrs={"min": 1}),
         }
         labels = {
             "token_address": _("NFT Collection Token Address"),
             "balance_required": _("Balance Required"),
-            "token_id": _("OPTIONAL: Token IDs Required")
+            "token_id": _("OPTIONAL: Token IDs Required"),
         }
 
     def clean_token_address(self):

@@ -1026,6 +1026,7 @@ class EventScanner(DetailView):
         context.update(dict(current_team=self.object.team))
         return context
 
+
 class EventScannerStats(DetailView):
     model = Event
     slug_field = "scanner_id"

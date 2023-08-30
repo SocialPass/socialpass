@@ -1,5 +1,5 @@
 {% extends "redesign/checkout/base.html" %}
-{% load static i18n get_theme_value %}
+{% load static i18n %}
 
 {% block head_title %}{{ object.event.title }} - {% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 

@@ -62,7 +62,7 @@
 				hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
 				hx-post="{% url 'dashboard_organizer:scanner2' object.scanner_id %}"
 				hx-target="#results"
-				hx-trigger="submit throttle:0.69s"
+				hx-trigger="submit"
 			>
 				<label class="form-label" for="qr-reader-input">{% trans "QR Reader Input" %}</label>
 				<div class="input-group">
@@ -75,6 +75,7 @@
 						required
 					>
 					<button id="qr-submit" type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+					<button id="qr-reset" type="button" onclick="resetQr()" class="btn btn-outline-danger btn-sm ms-2" disabled>{% trans "Reset" %}</button>
 				</div>
 			</form>
 		</div>
@@ -90,10 +91,21 @@
 	// Get elements, setup callback
 	const qrInput = document.getElementById("qr-reader-input");
 	const qrSubmit = document.getElementById("qr-submit");
+	const qrResults = document.getElementById("results");
 	const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-		qrInput.value = decodedText;
-		qrSubmit.click();
+		// prevent re-scanning of same ticket
+		if (qrInput.value !== decodedText){
+			qrInput.value = decodedText;
+			qrSubmit.disabled = false;
+			qrSubmit.click();
+		}
 	};
+
+	const resetQr = () => {
+		qrInput.value = '';
+		qrResults.innerHTML = '';
+		qrSubmit.disabled = true;
+	}
 
 	// Init scanner
 	const qrScanner = new Html5Qrcode("qr-reader", false);

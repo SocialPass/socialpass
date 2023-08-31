@@ -65,7 +65,7 @@ class User(AbstractUser):
 
 class WhiteLabel(DBModel):
     """
-    A model used to store all of the information required for white-labeling a 
+    A model used to store all of the information required for white-labeling a
     team.
     """
     brand_name = models.CharField(max_length=255, blank=True)

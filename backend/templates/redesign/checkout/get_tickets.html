@@ -19,10 +19,10 @@
 			<div class="p-4 rounded-5 text-bg-info antialiased">
 				<div class="d-flex justify-content-center pb-3">
 					<div class="d-flex align-items-center">
-						{% if current_team.whitelabel.ticket_logo %}
-							<img src="{{ current_team.whitelabel.ticket_logo.url }}" alt="Brand Logo" height="48" class="d-block me-2">
+						{% if not current_team.whitelabel.ticket_logo %}
+							<div style="background-image: url('{{ current_team.whitelabel.ticket_logo.url }}'); width:48px; height: 48px;background-repeat:no-repeat;background-size:contain;background-position: center center;" class="d-block me-2"></div>
 						{% else %}
-							<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="48" class="d-block me-2">
+							<div style="background-image: url('{% static 'images/SVG-05.svg' %}'); width:150px; height: 48px;background-repeat:no-repeat;background-size:contain;background-position: center center;" class="d-block me-2"></div>
 						{% endif %}
 						<strong style="font-size: 28px;">
 							{% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}
@@ -278,7 +278,7 @@
 
 		// Download the ticket
 		html2canvas(document.querySelector("#" + ticketID), {
-			scale:2,
+			scale:10,
 			useCORS: true
 		}).then(canvas => {
 			console.log(canvas)

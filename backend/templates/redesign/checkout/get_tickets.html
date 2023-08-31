@@ -279,6 +279,7 @@
 		// Download the ticket
 		var element = $("#" + ticketID);
 		html2canvas(element, {
+			useCORS: true,
 			onrendered: function (canvas) {
 				getCanvas = canvas;
 				var imgageData = getCanvas.toDataURL("image/png");

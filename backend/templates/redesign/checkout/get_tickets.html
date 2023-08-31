@@ -254,7 +254,7 @@
 {% block extra_body %}
 <!-- PNG Generation -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script type="text/javascript">
 	var getCanvas; // Global variable
 
@@ -277,17 +277,16 @@
 		window.scrollTo({ top: 0 });
 
 		// Download the ticket
-		var element = $("#" + ticketID);
-		html2canvas(element, {
-			useCORS: true,
-			onrendered: function (canvas) {
-				getCanvas = canvas;
-				var imgageData = getCanvas.toDataURL("image/png");
-				var a = document.createElement("a");
-				a.href = imgageData; // Image Base64 Goes here
-				a.download = ticketID + ".png"; // File name Here
-				a.click(); // Downloaded file
-			},
+		html2canvas(document.querySelector("#" + ticketID), {
+			scale:2,
+			useCORS: true
+		}).then(canvas => {
+			console.log(canvas)
+			var imgageData = canvas.toDataURL("image/png");
+			var a = document.createElement("a");
+			a.href = imgageData; // Image Base64 Goes here
+			a.download = ticketID + ".png"; // File name Here
+			a.click(); // Downloaded file
 		});
 
 		// Change indicator after 2 seconds
@@ -301,7 +300,7 @@
 		setTimeout(function () {
 			$("#main-container").removeClass("d-none");
 			$("#" + ticketID + "-container").addClass("d-none");
-		}, 3000);
+		}, 30000);
 	});
 </script>
 {% endblock extra_body %}

@@ -137,3 +137,13 @@ ROLLBAR = {
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+# CORS-HEADERS
+# ------------------------------------------------------------------------------
+CORS_ALLOWED_ORIGINS = [
+    AWS_S3_ENDPOINT_URL
+]
+CORS_ALLOW_METHODS = (
+    "GET",
+)
+CORS_URLS_REGEX = fr"^/{AWS_STORAGE_BUCKET_NAME}/.*$"

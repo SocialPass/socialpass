@@ -19,10 +19,26 @@
 			<div class="p-4 rounded-5 text-bg-info antialiased">
 				<div class="d-flex justify-content-center pb-3">
 					<div class="d-flex align-items-center">
-						{% if not current_team.whitelabel.ticket_logo %}
-							<div style="background-image: url('{{ current_team.whitelabel.ticket_logo.url }}'); width:48px; height: 48px;background-repeat:no-repeat;background-size:contain;background-position: center center;" class="d-block me-2"></div>
+						{% if current_team.whitelabel.ticket_logo %}
+							<div 
+								class="specific-w-75 specific-h-75 overflow-hidden d-block me-2" 
+								style="
+									background-image: url('{{ current_team.whitelabel.ticket_logo.url }}');
+									background-repeat: no-repeat;
+									background-size: contain;
+									background-position: center center;
+								"
+							></div>
 						{% else %}
-							<div style="background-image: url('{% static 'images/SVG-05.svg' %}'); width:150px; height: 48px;background-repeat:no-repeat;background-size:contain;background-position: center center;" class="d-block me-2"></div>
+							<div 
+								class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
+								style="
+									background-image: url('{% static 'images/SocialPass-Icon-White.svg' %}');
+									background-repeat: no-repeat;
+									background-size: contain;
+									background-position: center center;
+								"
+							></div>
 						{% endif %}
 						<strong style="font-size: 28px;">
 							{% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}
@@ -278,7 +294,7 @@
 
 		// Download the ticket
 		html2canvas(document.querySelector("#" + ticketID), {
-			scale:10,
+			scale: 2,
 			useCORS: true
 		}).then(canvas => {
 			console.log(canvas)
@@ -289,18 +305,18 @@
 			a.click(); // Downloaded file
 		});
 
-		// Change indicator after 2 seconds
+		// Change indicator after 3 seconds
 		setTimeout(function () {
 			$("#" + ticketID + "-indicator").html(
 				"<i class='fa-regular fa-check text-success'></i>"
 			);
-		}, 2000);
+		}, 3000);
 
-		// Show main container, hide ticket container after 3 seconds
+		// Show main container, hide ticket container after 5 seconds
 		setTimeout(function () {
 			$("#main-container").removeClass("d-none");
 			$("#" + ticketID + "-container").addClass("d-none");
-		}, 30000);
+		}, 5000);
 	});
 </script>
 {% endblock extra_body %}

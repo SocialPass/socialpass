@@ -293,7 +293,7 @@
 		window.scrollTo({ top: 0 });
 
 		// Download the ticket
-		var element = $("#" + ticketID);
+		var element = document.getElementById(`"#${ticketID}`)
 		html2canvas(element, {
 			scale: 2,
 			useCORS: true

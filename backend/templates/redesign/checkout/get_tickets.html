@@ -294,7 +294,7 @@
 
 		// Download the ticket
 		var element = $("#" + ticketID);
-		html2canvas(document.querySelector(element), {
+		html2canvas(element, {
 			scale: 2,
 			useCORS: true
 		}).then(canvas => {

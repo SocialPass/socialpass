@@ -20,8 +20,8 @@
 				<div class="d-flex justify-content-center pb-3">
 					<div class="d-flex align-items-center">
 						{% if current_team.whitelabel.ticket_logo %}
-							<div 
-								class="specific-w-75 specific-h-75 overflow-hidden d-block me-2" 
+							<div
+								class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
 								style="
 									background-image: url('{{ current_team.whitelabel.ticket_logo.url }}');
 									background-repeat: no-repeat;
@@ -30,7 +30,7 @@
 								"
 							></div>
 						{% else %}
-							<div 
+							<div
 								class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
 								style="
 									background-image: url('{% static 'images/SocialPass-Icon-White.svg' %}');
@@ -293,7 +293,8 @@
 		window.scrollTo({ top: 0 });
 
 		// Download the ticket
-		html2canvas(document.querySelector("#" + ticketID), {
+		var element = $("#" + ticketID);
+		html2canvas(document.querySelector(element), {
 			scale: 2,
 			useCORS: true
 		}).then(canvas => {

@@ -916,7 +916,10 @@ class TicketTier(DBModel):
 
     @cached_property
     def availability(self):
-        return self.capacity - self.quantity_sold
+        # HOTFIX: USE RAW TICKET COUNT WITHOUT GUESTS
+        tickets = Ticket.objects.filter(ticket_tier=self)
+        return self.capacity - tickets.count()
+        # return self.capacity - self.quantity_sold
 
 
 class TierFiat(DBModel):

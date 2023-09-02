@@ -21,7 +21,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.utils.functional import cached_property
 from django_fsm import FSMField, transition
 from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
@@ -906,7 +905,7 @@ class TicketTier(DBModel):
     def __str__(self):
         return f"TicketTier {self.ticket_type}-{self.public_id}"
 
-    @cached_property
+    @property
     def quantity_sold(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         tickets_with_party = tickets.aggregate(models.Sum("party_size"))[
@@ -914,12 +913,12 @@ class TicketTier(DBModel):
         ]
         return tickets_with_party or 0
 
-    @cached_property
+    @property
     def quantity_sold_without_party(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return tickets.count()
 
-    @cached_property
+    @property
     def availability(self):
         # HOTFIX: USE RAW TICKET COUNT WITHOUT GUESTS
         tickets = Ticket.objects.filter(ticket_tier=self)

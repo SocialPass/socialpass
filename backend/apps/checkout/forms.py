@@ -56,8 +56,8 @@ class CheckoutForm(forms.Form):
                         )
 
                     # 2. Amount
-                    total_selected = amount + (amount * extra_party)
-                    available = tier.capacity - tier.quantity_sold
+                    total_selected = amount
+                    available = tier.capacity - tier.quantity_sold_without_party
                     if total_selected > available:
                         raise ValidationError(f"Only {available} is available.")
 

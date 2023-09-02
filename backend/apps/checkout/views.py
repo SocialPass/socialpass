@@ -246,6 +246,7 @@ class CheckoutPageOne(DetailView):
 
         # Something went wrong, so we show error message
         if not form.is_valid():
+            rollbar.report_message("CHECKOUT ERROR: " + str(form.errors))
             messages.add_message(
                 self.request,
                 messages.ERROR,

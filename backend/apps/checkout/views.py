@@ -208,7 +208,8 @@ class CheckoutPageOne(DetailView):
         # Check status
         if now < sales_start:
             sales_status = "UPCOMING"
-        elif now > sales_end:
+        # Note: Check if sales are over OR none of the items are available
+        elif now > sales_end or True not in availability.values():
             sales_status = "OVER"
 
         # Set everything to context

@@ -915,6 +915,11 @@ class TicketTier(DBModel):
         return tickets_with_party or 0
 
     @cached_property
+    def quantity_sold_without_party(self):
+        tickets = Ticket.objects.filter(ticket_tier=self)
+        return tickets.count()
+
+    @cached_property
     def availability(self):
         # HOTFIX: USE RAW TICKET COUNT WITHOUT GUESTS
         tickets = Ticket.objects.filter(ticket_tier=self)

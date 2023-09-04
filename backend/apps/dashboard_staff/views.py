@@ -1,5 +1,11 @@
+from io import BytesIO
+import base64
 import datetime
 import statistics
+import qrcode
+from django.http import Http404
+from django.shortcuts import render
+from django.views.generic import View
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.db.models.functions import ExtractWeek
@@ -188,3 +194,68 @@ class OverflowSessionsListView(ListView):
             .prefetch_related("checkoutitem_set", "checkoutitem_set__ticket_tier")
             .filter(checkoutitem__is_overflow=True)
         )
+
+class CheckoutSessionListView(ListView):
+    model = CheckoutSession
+    paginate_by = 25
+    template_name = "dashboard_staff/list_sessions.html"
+
+    def get_queryset(self):
+        return (
+            CheckoutSession.objects.select_related("event")
+            .prefetch_related("checkoutitem_set", "checkoutitem_set__ticket_tier")
+            .filter(tx_status=CheckoutSession.OrderStatus.FULFILLED)
+        )
+
+class CheckoutSessionTicketDownloadView(View):
+    """
+    Get tickets for a checkout session
+    """
+
+    def get_object(self):
+        try:
+            return CheckoutSession.objects.select_related(
+                "event",
+                "event__team",
+                "event__team__whitelabel",
+            ).get(
+                public_id=self.kwargs["checkout_session_public_id"],
+            )
+        except Exception as e:
+            print(e)
+            raise Http404()
+
+
+    def get(self, *args, **kwargs):
+        """
+        override get view to handle passcode
+        """
+        checkout_session = self.get_object()
+        ctx = {
+            "current_team": checkout_session.event.team,
+            "checkout_session": checkout_session,
+        }
+        ctx[
+            "checkout_items"
+        ] = checkout_session.checkoutitem_set.select_related(
+            "ticket_tier", "ticket_tier__tier_fiat"
+        ).all()
+        tickets = Ticket.objects.select_related("ticket_tier").filter(
+            checkout_session=checkout_session
+        )
+        ctx["tickets"] = []
+        for ticket in tickets:
+            # QR code
+            img = qrcode.make(ticket.embed_code)
+            stream = BytesIO()
+            img.save(stream, format="PNG")
+
+            # Add ticket to context
+            ctx["tickets"].append(
+                {
+                    "object": ticket,
+                    "qrcode": "data:image/png;base64,"
+                    + base64.b64encode(stream.getvalue()).decode("utf-8"),
+                }
+            )
+        return render(self.request, f"redesign/checkout/get_tickets.html", ctx)

@@ -16,4 +16,14 @@ urlpatterns = [
         staff_member_required(views.OverflowSessionsListView.as_view()),
         name="overflow_sessions",
     ),
+    path(
+        "sessions/",
+        staff_member_required(views.CheckoutSessionListView.as_view()),
+        name="sessions",
+    ),
+    path(
+        "get-tickets/<uuid:checkout_session_public_id>",
+        staff_member_required(views.CheckoutSessionTicketDownloadView.as_view()),
+        name="get_tickets",
+    ),
 ]

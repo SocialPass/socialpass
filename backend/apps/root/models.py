@@ -1557,6 +1557,27 @@ class TxAssetOwnership(DBModel):
                         )
                     }
                 )
+
+            # 4. OPTIONAL: Filter against TierAssetOwnership.token_id
+            if tier_asset_ownership.token_id:
+                filtered_by_tier_level_ids = [
+                    nft
+                    for nft in filtered_by_issued_ids
+                    if int(nft["token_id"]) in tier_asset_ownership.token_id
+                ]
+                actual = len(filtered_by_tier_level_ids)
+                if actual < expected:
+                    raise TxAssetOwnershipProcessingError(
+                        {
+                            "token_id": (
+                                f"Did not find correct token ID(s). "
+                                f"Expected one of possible token ID(s): {tier_asset_ownership.token_id}. "
+                            )
+                        }
+                    )
+
+            # OK
+            # Note: Array slice to the length expected
             filtered_by_expected = filtered_by_issued_ids[:expected]
 
         # 4. OK - Save redeemed_nfts

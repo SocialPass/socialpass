@@ -34,6 +34,7 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
     TxAssetOwnershipProcessingError,
+    TxFreeProcessingError
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
 from apps.root.utils import get_expiration_datetime, get_random_passcode
@@ -1586,8 +1587,11 @@ class TxAssetOwnership(DBModel):
         try:
             self._process_wallet_address(checkout_session=checkout_session)
             self._process_asset_ownership(checkout_session=checkout_session)
+        except TxAssetOwnershipProcessingError as e:
+            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
+            checkout_session.save()
+            raise e
         except Exception as e:
-            rollbar.report_exc_info()
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
             raise e
@@ -1624,7 +1628,9 @@ class TxFree(DBModel):
         if duplicate_emails:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
-            raise Exception("This email has already been used for this ticket tier.")
+            raise TxFreeProcessingError({
+                "email": f"The email ({checkout_session.email}) has already been used for this ticket tier."
+            })
 
         # OK
         checkout_session.tx_free.issued_email = checkout_session.email

@@ -391,7 +391,7 @@ class CheckoutPageTwo(DetailView):
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                str(e),
+                "An unexpected error occurred. Please try again later, or contact support if the issue persists."
             )
             return redirect(
                 "checkout:checkout_two",

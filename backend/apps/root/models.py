@@ -1541,43 +1541,42 @@ class TxAssetOwnership(DBModel):
                         )
                     }
                 )
+            # OK
+            filtered_by_expected = filtered_by_issued_ids[:expected]
 
             # 4. OPTIONAL: Filter against TierAssetOwnership.token_id
             if tier_asset_ownership.token_id:
-                filtered_by_tier_level_ids = [
+                filtered_by_explicit_ids = [
                     nft
                     for nft in filtered_by_issued_ids
                     if int(nft["token_id"]) in tier_asset_ownership.token_id
                 ]
-                actual = len(filtered_by_tier_level_ids)
+                actual = len(filtered_by_explicit_ids)
                 if actual < expected:
+                    nfts_left = [
+                        nft
+                        for nft in tier_asset_ownership.token_id
+                        if nft not in existing_ids
+                    ]
                     raise TxAssetOwnershipProcessingError(
                         {
                             "token_id": (
                                 "Did not find correct token ID(s). "
                                 "Expected one of possible token ID(s): "
-                                f"{tier_asset_ownership.token_id}."
+                                f"{nfts_left}."
                             )
                         }
                     )
+                # OK
+                filtered_by_expected = filtered_by_explicit_ids[:expected]
 
-            # OK
-            # Note: Array slice to the length expected
-            filtered_by_expected = filtered_by_issued_ids[:expected]
 
-        # 4. OK - Save redeemed_nfts
-        for i in filtered_by_expected:
-            self.redeemed_nfts.append(i)
+
+        # 4. OK - Set redeemed NFTs & Save
+        self.redeemed_nfts = filtered_by_expected
         self.save()
 
     def process(self):
-        """
-        1. Get/Set checkout_session (avoid duplicate queries)
-        2. Set checkout_session as processing
-        3. Process wallet address / signature
-        4. Process Asset Ownership (via CheckoutSession.CheckouItem's)
-        5. OK
-        """
         # Set checkout_session as processing
         checkout_session = self.checkoutsession
         checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
@@ -1588,6 +1587,7 @@ class TxAssetOwnership(DBModel):
             self._process_wallet_address(checkout_session=checkout_session)
             self._process_asset_ownership(checkout_session=checkout_session)
         except Exception as e:
+            rollbar.report_exc_info()
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
             raise e

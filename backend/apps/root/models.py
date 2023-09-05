@@ -61,19 +61,23 @@ class User(AbstractUser):
     Currently blank but allows for easier migration in the future
     """
 
+    def __str__(self):
+        return f"User: {self.email}"
+
 
 class WhiteLabel(DBModel):
     """
     A model used to store all of the information required for white-labeling a
     team.
     """
+
     brand_name = models.CharField(max_length=255, blank=True)
     logo = models.ImageField(
         blank=True,
         null=True,
         upload_to="whitelabel__logo",
     )
-    ticket_logo = models.FileField( # FileField to support SVGs
+    ticket_logo = models.FileField(  # FileField to support SVGs
         blank=True,
         null=True,
         upload_to="whitelabel__logo",
@@ -107,7 +111,8 @@ class WhiteLabel(DBModel):
         """
         return string representation of model
         """
-        return self.brand_name
+        return f"WhiteLabel: {self.brand_name}"
+
 
 class Team(DBModel):
     """
@@ -158,6 +163,12 @@ class Team(DBModel):
         default="",
         help_text="Connected Stripe account country.",
     )
+
+    def __str__(self):
+        """
+        return string representation of model
+        """
+        return f"Team: {self.name}"
 
     @property
     def is_stripe_connected(self):
@@ -217,12 +228,6 @@ class Team(DBModel):
             )
             return login_link.url
 
-    def __str__(self):
-        """
-        return string representation of model
-        """
-        return self.name
-
 
 class Membership(DBModel):
     """
@@ -240,7 +245,7 @@ class Membership(DBModel):
     )
 
     def __str__(self):
-        return f"{self.team.name}-{self.user.email}"
+        return f"Membership: {self.user.email}<>{self.team.name}"
 
 
 class Invite(DBModel):
@@ -300,6 +305,11 @@ class Invite(DBModel):
     )
     archived_email = models.EmailField(blank=True, null=True)
 
+    def __str__(self):
+        if self.team:
+            return f"Invite: {self.email}<>{self.team.name}"
+        return f"Invite: {self.email}"
+
     @classmethod
     def create(cls, email, inviter=None, **kwargs):
         key = get_random_string(64).lower()
@@ -336,16 +346,6 @@ class Invite(DBModel):
         self.sent = timezone.now()
         self.save()
 
-        # Makes sense call a signal by now?
-
-    def __str__(self):
-        """
-        return string representation of model
-        """
-        if self.team:
-            return f"{self.team.name}-{self.email}"
-        return self.email
-
 
 class Event(DBModel):
     """
@@ -353,29 +353,9 @@ class Event(DBModel):
     This event supports multiple states as well as multiple ticker tiers.
     """
 
-    class EventQuerySet(models.QuerySet):
-        """
-        Event model queryset manager
-        """
-
-        def filter_inactive(self):
-            """
-            inactive events (not live)
-            """
-            return self.filter(~models.Q(state=Event.StateStatus.LIVE))
-
-        def filter_active(self):
-            """
-            active events (live)
-            """
-            return self.filter(state=Event.StateStatus.LIVE)
-
     class StateStatus(models.TextChoices):
         DRAFT = "DRAFT", "Draft"
         LIVE = "LIVE", "Live"
-
-    # Queryset manager
-    objects = EventQuerySet.as_manager()
 
     # Keys
     user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=False, null=True)
@@ -467,7 +447,7 @@ class Event(DBModel):
     scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
 
     def __str__(self):
-        return f"{self.team} - {self.title}"
+        return f"Event: {self.title}"
 
     def get_absolute_url(self):
         if self.state == Event.StateStatus.DRAFT:
@@ -762,7 +742,7 @@ class Ticket(DBModel):
     redeemed_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"Ticket List (Ticketed Event: {self.event.title})"
+        return f"Ticket: {str(self.id)}"
 
     def redeem_ticket(self, scanner_id):
         """Redeems a ticket."""
@@ -903,7 +883,7 @@ class TicketTier(DBModel):
     )
 
     def __str__(self):
-        return f"TicketTier {self.ticket_type}-{self.public_id}"
+        return f"TicketTier: {self.ticket_type}"
 
     @property
     def quantity_sold(self):
@@ -942,7 +922,7 @@ class TierFiat(DBModel):
     )
 
     def __str__(self) -> str:
-        return f"TierFiat {self.public_id}"
+        return f"TierFiat: {self.public_id}"
 
     @property
     def price_per_ticket_cents(self):
@@ -956,7 +936,7 @@ class TierBlockchain(DBModel):
     """
 
     def __str__(self) -> str:
-        return f"TierBlockchain {self.public_id}"
+        return f"TierBlockchain: {self.public_id}"
 
 
 class TierAssetOwnership(DBModel):
@@ -1025,20 +1005,23 @@ class TierAssetOwnership(DBModel):
         blank=True,
         help_text="Which specific token IDs of the NFT collection are required?",
     )
-    deprecated_issued_token_id = ArrayField(models.IntegerField(), blank=True, default=list)
+    deprecated_issued_token_id = ArrayField(
+        models.IntegerField(), blank=True, default=list
+    )
 
     def __str__(self) -> str:
-        return f"TierAssetOwnership {self.public_id}"
+        return f"TierAssetOwnership: {self.public_id}"
 
 
 class TierFree(DBModel):
     """
     Represents a free tier for an event ticket
     """
+
     deprecated_issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
 
     def __str__(self) -> str:
-        return f"TierFree {self.public_id}"
+        return f"TierFree: {self.public_id}"
 
 
 class CheckoutSession(DBModel):
@@ -1117,7 +1100,7 @@ class CheckoutSession(DBModel):
     passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
 
     def __str__(self):
-        return self.name
+        return f"CheckoutSession: {self.email}"
 
     @property
     def get_tickets_link(self):
@@ -1347,7 +1330,7 @@ class CheckoutItem(DBModel):
     is_overflow = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"CheckoutItem {self.public_id}"
+        return f"CheckoutItem: {str(self.id)}"
 
     @property
     def unit_amount(self):
@@ -1416,7 +1399,7 @@ class TxFiat(DBModel):
     stripe_line_items = models.JSONField(blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"TxFiat {self.public_id}"
+        return f"TxFiat: {self.public_id}"
 
     def process(self):
         """
@@ -1438,7 +1421,7 @@ class TxBlockchain(DBModel):
     """
 
     def __str__(self) -> str:
-        return f"TxBlockchain {self.public_id}"
+        return f"TxBlockchain: {self.public_id}"
 
     def process(self, *args, **kwargs):
         pass
@@ -1457,7 +1440,7 @@ class TxAssetOwnership(DBModel):
     redeemed_nfts = models.JSONField(default=list)
 
     def __str__(self) -> str:
-        return f"TxAssetOwnership {self.public_id}"
+        return f"TxAssetOwnership: {self.public_id}"
 
     @property
     def unsigned_message(self):
@@ -1537,8 +1520,9 @@ class TxAssetOwnership(DBModel):
             # 3. Filter against redeemed_nfts
             existing_ids = set(
                 int(i.get("token_id"))
-                for nfts in TxAssetOwnership.objects.filter(checkoutsession__event=checkout_session.event)
-                .values_list("redeemed_nfts", flat=True)
+                for nfts in TxAssetOwnership.objects.filter(
+                    checkoutsession__event=checkout_session.event
+                ).values_list("redeemed_nfts", flat=True)
                 for i in nfts
             )
             filtered_by_issued_ids = [
@@ -1570,8 +1554,9 @@ class TxAssetOwnership(DBModel):
                     raise TxAssetOwnershipProcessingError(
                         {
                             "token_id": (
-                                f"Did not find correct token ID(s). "
-                                f"Expected one of possible token ID(s): {tier_asset_ownership.token_id}. "
+                                "Did not find correct token ID(s). "
+                                "Expected one of possible token ID(s): "
+                                f"{tier_asset_ownership.token_id}."
                             )
                         }
                     )
@@ -1617,10 +1602,11 @@ class TxFree(DBModel):
     """
     Represents a free checkout transaction
     """
+
     issued_email = models.EmailField(blank=True)
 
     def __str__(self) -> str:
-        return f"TxFree {self.public_id}"
+        return f"TxFree: {self.public_id}"
 
     def process(self):
         """
@@ -1633,14 +1619,12 @@ class TxFree(DBModel):
         # Check for duplicate emails
         duplicate_emails = TxFree.objects.filter(
             checkoutsession__event=checkout_session.event,
-            issued_email=checkout_session.email
+            issued_email=checkout_session.email,
         )
         if duplicate_emails:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
-            raise Exception(
-                "This email has already been used for this ticket tier."
-            )
+            raise Exception("This email has already been used for this ticket tier.")
 
         # OK
         checkout_session.tx_free.issued_email = checkout_session.email

@@ -195,6 +195,7 @@ class OverflowSessionsListView(ListView):
             .filter(checkoutitem__is_overflow=True)
         )
 
+
 class CheckoutSessionListView(ListView):
     model = CheckoutSession
     paginate_by = 25
@@ -206,6 +207,7 @@ class CheckoutSessionListView(ListView):
             .prefetch_related("checkoutitem_set", "checkoutitem_set__ticket_tier")
             .filter(tx_status=CheckoutSession.OrderStatus.FULFILLED)
         )
+
 
 class CheckoutSessionTicketDownloadView(View):
     """
@@ -225,7 +227,6 @@ class CheckoutSessionTicketDownloadView(View):
             print(e)
             raise Http404()
 
-
     def get(self, *args, **kwargs):
         """
         override get view to handle passcode
@@ -235,9 +236,7 @@ class CheckoutSessionTicketDownloadView(View):
             "current_team": checkout_session.event.team,
             "checkout_session": checkout_session,
         }
-        ctx[
-            "checkout_items"
-        ] = checkout_session.checkoutitem_set.select_related(
+        ctx["checkout_items"] = checkout_session.checkoutitem_set.select_related(
             "ticket_tier", "ticket_tier__tier_fiat"
         ).all()
         tickets = Ticket.objects.select_related("ticket_tier").filter(
@@ -258,4 +257,4 @@ class CheckoutSessionTicketDownloadView(View):
                     + base64.b64encode(stream.getvalue()).decode("utf-8"),
                 }
             )
-        return render(self.request, f"redesign/checkout/get_tickets.html", ctx)
+        return render(self.request, "redesign/checkout/get_tickets.html", ctx)

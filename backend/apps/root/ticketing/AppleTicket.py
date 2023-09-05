@@ -12,7 +12,7 @@ from passbook.models import (
 )
 import requests
 import tempfile
-import os
+
 
 class AppleTicket:
     """

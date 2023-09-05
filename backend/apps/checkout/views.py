@@ -655,13 +655,17 @@ class CheckoutPageSuccess(DetailView):
     template_name = "redesign/checkout/checkout_page_success.html"
 
     def get_object(self):
-        self.object = CheckoutSession.objects.select_related(
-            "event",
-            "event__team",
-            "event__team__whitelabel",
-        ).prefetch_related("checkoutitem_set").get(
-            public_id=self.kwargs["checkout_session_public_id"],
-            tx_status=CheckoutSession.OrderStatus.FULFILLED,
+        self.object = (
+            CheckoutSession.objects.select_related(
+                "event",
+                "event__team",
+                "event__team__whitelabel",
+            )
+            .prefetch_related("checkoutitem_set")
+            .get(
+                public_id=self.kwargs["checkout_session_public_id"],
+                tx_status=CheckoutSession.OrderStatus.FULFILLED,
+            )
         )
         if not self.object:
             raise Http404

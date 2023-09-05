@@ -2,7 +2,6 @@ from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django_fsm_log.admin import StateLogInline
-
 from apps.root.forms import InviteAdminAddForm, InviteAdminChangeForm
 from apps.root.models import (
     CheckoutItem,
@@ -14,11 +13,9 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     TierAssetOwnership,
-    TierBlockchain,
     TierFiat,
     TierFree,
     TxAssetOwnership,
-    TxBlockchain,
     TxFiat,
     TxFree,
     WhiteLabel,
@@ -27,49 +24,45 @@ from apps.root.models import (
 User = get_user_model()
 
 
-# Custom Classes
-class MembershipInline(admin.TabularInline):
-    model = Team.members.through
-
-
 class CustomDBAdmin(admin.ModelAdmin):
+    """
+    Reusable Class providing the default fields
+    """
+
     list_display = ["public_id", "created", "modified"]
 
 
-# Admin registrations
-@admin.register(User)
-class CustomUserAdmin(UserAdmin):
-    inlines = [
-        MembershipInline,
-    ]
+@admin.register(CheckoutItem)
+class CheckoutItemAdmin(CustomDBAdmin):
+    list_display = [
+        "__str__",
+        "ticket_tier",
+        "quantity",
+        "extra_party",
+        "is_overflow",
+        "checkout_session",
+    ] + CustomDBAdmin.list_display
+    search_fields = (
+        "checkout_session__name",
+        "checkout_session__email",
+    )
 
 
-@admin.register(Team)
-class TeamAdmin(CustomDBAdmin):
-    inlines = [MembershipInline]
-    exclude = ("members",)
-    list_display = CustomDBAdmin.list_display + ["name"]
-    search_fields = ("name",)
-
-
-@admin.register(Membership)
-class MembershipAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ["user", "team"]
-
-
-@admin.register(Invite)
-class InviteAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ["email", "sent", "accepted"]
-    raw_id_fields = ("inviter",)
-
-    def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            kwargs["form"] = InviteAdminChangeForm
-        else:
-            kwargs["form"] = InviteAdminAddForm
-            kwargs["form"].user = request.user
-            kwargs["form"].request = request
-        return super().get_form(request, obj, **kwargs)
+@admin.register(CheckoutSession)
+class CheckoutSessionAdmin(CustomDBAdmin):
+    list_display = [
+        "__str__",
+        "event",
+        "name",
+        "email",
+        "tx_type",
+        "tx_status",
+    ] + CustomDBAdmin.list_display
+    search_fields = (
+        "event__title",
+        "name",
+        "email",
+    )
 
 
 @admin.register(Event)
@@ -84,12 +77,17 @@ class EventAdmin(CustomDBAdmin):
             i.transition_live()
         messages.success(request, "Event(s) have been transitioned live")
 
-    list_display = CustomDBAdmin.list_display + [
+    list_display = [
+        "__str__",
         "title",
         "user",
         "team",
+        "state",
         "start_date",
-    ]
+        "end_date",
+        "sales_start",
+        "sales_end",
+    ] + CustomDBAdmin.list_display
     search_fields = (
         "title",
         "user__username",
@@ -101,81 +99,132 @@ class EventAdmin(CustomDBAdmin):
     actions = [transition_to_draft, transition_to_live]  # type: ignore
 
 
-@admin.register(Ticket)
-class TicketAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ["checkout_item", "embed_code"]
+@admin.register(Invite)
+class InviteAdmin(CustomDBAdmin):
+    list_display = ["__str__", "email", "sent", "accepted"] + CustomDBAdmin.list_display
+    raw_id_fields = ("inviter",)
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj:
+            kwargs["form"] = InviteAdminChangeForm
+        else:
+            kwargs["form"] = InviteAdminAddForm
+            kwargs["form"].user = request.user
+            kwargs["form"].request = request
+        return super().get_form(request, obj, **kwargs)
+
+
+@admin.register(Membership)
+class MembershipAdmin(CustomDBAdmin):
+    list_display = ["__str__", "user", "team"] + CustomDBAdmin.list_display
+
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    class MembershipInline(admin.TabularInline):
+        model = Team.members.through
+
+    inlines = [
+        MembershipInline,
+    ]
+
+
+@admin.register(Team)
+class TeamAdmin(CustomDBAdmin):
+    class MembershipInline(admin.TabularInline):
+        model = Team.members.through
+
+    inlines = [MembershipInline]
+    exclude = ("members",)
+    list_display = [
+        "__str__",
+        "name",
+        "description",
+        "whitelabel",
+    ] + CustomDBAdmin.list_display
+    search_fields = ("name",)
 
 
 @admin.register(TicketTier)
 class TicketTierAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + [
+    list_display = [
+        "__str__",
         "ticket_type",
         "event",
         "capacity",
         "quantity_sold",
         "max_per_person",
-    ]
-    search_fields = ("event__title",)
+    ] + CustomDBAdmin.list_display
+    search_fields = (
+        "ticket_type",
+        "event__title",
+    )
 
 
-@admin.register(TierFiat)
-class TierFiatAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
-
-
-@admin.register(TierBlockchain)
-class TierBlockchainAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
+@admin.register(Ticket)
+class TicketAdmin(CustomDBAdmin):
+    list_display = [
+        "__str__",
+        "event",
+        "ticket_tier",
+        "party_size",
+        "checkout_session",
+        "embed_code",
+        "redeemed_at",
+    ] + CustomDBAdmin.list_display
 
 
 @admin.register(TierAssetOwnership)
 class TierAssetOwnershipAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
+    list_display = [
+        "__str__",
+        "tickettier",
+        "blockchain",
+        "network",
+        "asset_type",
+        "balance_required",
+        "token_address",
+        "token_id",
+    ] + CustomDBAdmin.list_display
+    search_fields = ("tickettier__ticket_type",)
+
+
+@admin.register(TierFiat)
+class TierFiatAdmin(CustomDBAdmin):
+    list_display = [
+        "__str__",
+        "tickettier",
+    ] + CustomDBAdmin.list_display
+    search_fields = ("tickettier__ticket_type",)
 
 
 @admin.register(TierFree)
 class TierFreeAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
-
-
-@admin.register(CheckoutSession)
-class CheckoutSessionAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + [
-        "name",
-        "email",
-    ]
-    search_fields = ("event__title",)
-
-
-@admin.register(CheckoutItem)
-class CheckoutItemAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + [
-        "quantity",
-        "ticket_tier",
-    ]
-    search_fields = ("checkout_session__name",)
+    list_display = [
+        "__str__",
+        "tickettier",
+    ] + CustomDBAdmin.list_display
+    search_fields = ("tickettier__ticket_type",)
 
 
 @admin.register(TxFiat)
 class TxFiatAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
-
-
-@admin.register(TxBlockchain)
-class TxBlockchainAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
+    list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
+    search_fields = ("checkoutsession__email",)
 
 
 @admin.register(TxAssetOwnership)
 class TxAssetOwnershipAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
+    list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
+    search_fields = ("checkoutsession__email",)
 
 
 @admin.register(TxFree)
 class TxFreeAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
+    list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
+    search_fields = ("checkoutsession__email",)
 
 
 @admin.register(WhiteLabel)
 class WhiteLabelAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display
+    list_display = ["__str__", "brand_name"] + CustomDBAdmin.list_display

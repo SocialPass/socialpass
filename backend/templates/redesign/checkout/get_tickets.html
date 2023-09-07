@@ -137,6 +137,12 @@
 			</div>
 			{% for ticket in tickets %}
 				<div class="border p-4 my-3" style="border-style: dotted !important;">
+					{% if ticket.object.ticket_tier.additional_information_html %}
+					<div class="alert alert-primary col-12">
+						<strong>Message from the organizer:</strong>
+						<p>{{ticket.object.ticket_tier.additional_information_html | safe}}</p>
+					</div>
+					{% endif %}
 					<h2 class="text-body-emphasis display-6 fs-3 m-0">
 						{% trans "Ticket" %} # {{ forloop.counter }}
 					</h2>

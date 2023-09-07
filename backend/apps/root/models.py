@@ -882,6 +882,11 @@ class TicketTier(DBModel):
         null=False,
         help_text="Whether or not this tier is hidden from the public",
     )
+    additional_information = models.TextField(
+        blank=True,
+        default="",
+        help_text="Additional information for this tier provided by the host.",
+    )
 
     def __str__(self):
         return f"TicketTier: {self.ticket_type}"
@@ -905,6 +910,15 @@ class TicketTier(DBModel):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return self.capacity - tickets.count()
         # return self.capacity - self.quantity_sold
+
+    @property
+    def additional_information_html(self):
+        additional_information_html = ""
+        try:
+            additional_information_html = json.loads(self.additional_information)["html"]
+        except Exception:
+            pass
+        return additional_information_html
 
 
 class TierFiat(DBModel):

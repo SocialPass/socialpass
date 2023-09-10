@@ -4,7 +4,7 @@ argon2-cffi==21.3.0 # https://github.com/hynek/argon2-cffi
 boto3==1.28.44 # https://github.com/boto/boto3
 eth-account==0.9.0 # https://github.com/ethereum/eth-account
 eth-utils==2.2.0 # https://github.com/ethereum/eth-utils
-google-api-python-client==2.95.0 # https://github.com/googleapis/google-api-python-client
+google-api-python-client==2.98.0 # https://github.com/googleapis/google-api-python-client
 model-bakery==1.13.0 # https://github.com/model-bakers/model_bakery
 Pillow==9.5.0 # https://github.com/python-pillow/Pillow
 pytz==2023.3 # https://github.com/stub42/pytz.git

@@ -1199,7 +1199,7 @@ class CheckoutSession(DBModel):
         application_fee_amount = round(application_fee_amount)
         return application_fee_amount
 
-    def send_confirmation_email(self):
+    def send_confirmation_email(self, custom_message=None):
         """
         send the confirmation link to the attendee's email
         """
@@ -1207,6 +1207,7 @@ class CheckoutSession(DBModel):
             "event": self.event,
             "tickets_link": self.get_tickets_link,
             "passcode": self.passcode,
+            "custom_message": custom_message
         }
         msg_plain = render_to_string("ticket/email/checkout_message.txt", ctx)
         msg_html = render_to_string("ticket/email/checkout.html", ctx)

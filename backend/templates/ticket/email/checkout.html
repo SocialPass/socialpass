@@ -1,6 +1,11 @@
 {% extends "account/email/base_message.html" %}
 
 {% block content %}
+{% if custom_message %}
+<p>
+	{{ custom_message }}
+</p>
+{% endif %}
 <p>
 	Thank you for purchasing ticket(s) for <strong>{{ event.title }}</strong> on SocialPass. Please go to the following link to download your ticket(s):
 </p>

@@ -2,7 +2,7 @@
 
 {% block content %}
 {% if custom_message %}
-<div style="text-align: center; margin: 16px 0; padding: 16px; background-color: #ecf0f1; border-radius: 6px;">
+<div style="margin: 16px 0; padding: 16px; background-color: #ecf0f1; border-radius: 6px;">
 	<p>A Message From SocialPass</p>
 	<p>
 		{{ custom_message }}
@@ -12,13 +12,7 @@
 <p>
 	Thank you for purchasing ticket(s) for <strong>{{ event.title }}</strong> on SocialPass. Please go to the following link to download your ticket(s):
 </p>
-<div style="
-	text-align: center;
-	margin: 16px 0;
-	padding: 16px;
-	background-color: #ecf0f1;
-	border-radius: 6px;"
->
+<div style="text-align: center; margin: 16px 0; padding: 16px; border-radius: 6px;">
 	<a href="{{ tickets_link }}" style="
 		text-decoration: none;
 		font-weight: 600;

@@ -13,4 +13,4 @@ def get_expiration_datetime():
     """
     Get current datetime + 10 minutes
     """
-    return timezone.now() + timezone.timedelta(minutes=10)
+    return timezone.now() + timezone.timedelta(hours=24)

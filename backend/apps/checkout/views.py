@@ -734,7 +734,8 @@ class GetTickets(View):
                 entered_passcode = passcode_form.cleaned_data["passcode"].lower()
                 if (
                     actual_passcode != entered_passcode
-                    or checkout_session.passcode_expiration < timezone.now()
+                    # PATCH: Removed expiry check for pudgy event
+                    # or checkout_session.passcode_expiration < timezone.now()
                 ):
                     # validation was unsuccessful, so we show error message
                     messages.add_message(
@@ -803,7 +804,7 @@ class GetTickets(View):
                 self.request,
                 messages.SUCCESS,
                 "Passcode sent to your email address. Please note, this \
-                passcode will be valid for only 10 minutes.",
+                passcode will be valid for only 24 hours.",
             )
 
         return render(self.request, f"redesign/checkout/{template_name}", ctx)

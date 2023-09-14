@@ -105,7 +105,7 @@
 		<!--  Hero section start -->
 		<section class="min-vh-100 d-flex flex-column" id="hero">
 			<nav class="navbar navbar-expand-md">
-			  	<div class="container-xxl px-3 px-sm-4">
+			  	<div class="container-xxl px-3 px-sm-4 px-xxl-5">
 			    	<a class="navbar-brand d-flex align-items-center" href="{% url 'marketing:index' %}">
 			      		<img src="{% static 'images/SVG-05.svg' %}" alt="Logo" height="60" class="d-block">
 			    	</a>
@@ -143,7 +143,7 @@
 			    	</div>
 			  	</div>
 			</nav>
-			<div class="container-xxl px-3 px-sm-4 py-5 my-auto">
+			<div class="container-xxl px-3 px-sm-4 px-xxl-5 py-5 my-auto">
 				<h1 class="display-3 fw-normal text-body-emphasis">
 					Any event. Any ticket.<br />
 					<span class="fw-bold text-info">Anywhere.</span>
@@ -155,7 +155,7 @@
 					<a href="{% url 'dashboard_organizer:dashboard_redirect' %}" class="btn btn-primary btn-lg">Create an Event</a>
 				</div>
 			</div>
-			<div class="container-xxl px-3 px-sm-4 pt-4 pb-5 g-0">
+			<div class="container-xxl px-3 px-sm-4 px-xxl-5 pt-4 pb-5 g-0">
 				<div class="row g-4 g-xl-5 justify-content-center">
 					<div class="col-sm-6 col-lg-4">
 						<div class="card rounded-4 h-100 border-0 shadow-lg">
@@ -209,7 +209,7 @@
 
 		<!-- First info section start -->
 		<section>
-			<div class="container-xxl px-3 px-sm-4 py-5 g-0">
+			<div class="container-xxl px-3 px-sm-4 px-xxl-5 py-5 g-0">
 				<div class="row g-4 g-xl-5 py-5">
 					<div class="col-lg-6 align-self-center">
 						<h2 class="text-primary-emphasis">
@@ -290,7 +290,7 @@
 
 		<!-- Enterprise section start -->
 		<section id="enterprise">
-			<div class="container-xxl px-3 px-sm-4 py-5 g-0">
+			<div class="container-xxl px-3 px-sm-4 px-xxl-5 py-5 g-0">
 				<div class="row g-4 g-xl-5 py-5">
 					<div class="col-lg-6 align-self-center">
 						<h2 class="text-primary-emphasis">
@@ -318,9 +318,83 @@
 		</section>
 		<!-- Enterprise section end -->
 
+		<!-- Second info section start -->
+		<section>
+			<div class="container-xxl px-3 px-sm-4 px-xxl-5 py-5 g-0">
+				<div class="row g-4 g-xl-5 py-5">
+					<div class="col-lg-6 align-self-center">
+						<h2 class="text-primary-emphasis">
+							Sell Out More Than <span class="text-info">Once</span>
+						</h2>
+						<p>
+							Ensuring that every fan, regardless of their location or time zone, gets a fair shot at tickets.
+						</p>
+						<h4 class="text-primary-emphasis mt-4 d-flex">
+							<i class="fa-solid fa-clock flex-shrink-0 me-1" style="width: 36px;"></i>
+							Timed Ticketing
+						</h4>
+						<p class="text-body-secondary mb-0">
+							No more missed opportunities for guests. Release batches of tickets in different time zones. 
+						</p>
+					</div>
+					<div class="col-lg-6 align-self-center d-flex align-items-center justify-content-center order-lg-first">
+						<img src="{% static 'images/landing-image-4.png' %}" alt="Landing image" class="img-fluid">
+					</div>
+				</div>
+				<div class="row g-4 g-xl-5 py-5">
+					<div class="col-lg-6 align-self-center">
+						<h2 class="text-primary-emphasis">
+							Goodbye Clunky <span class="text-info">Devices</span>
+						</h2>
+						<p>
+							Your events are fortified with distinctive QR codes. Simply access the scan link from your host dashboard to check attendees in at the door. No downloads required. 
+						</p>
+						<h4 class="text-primary-emphasis mt-4 d-flex">
+							<i class="fa-solid fa-barcode-read flex-shrink-0 me-1" style="width: 36px;"></i>
+							Scan from Any Device
+						</h4>
+						<p class="text-body-secondary mb-0">
+							Built on open standards, SocialPass is available across all devices of any make, shape, or size. Whether you’re using Apple, Android, or desktop, we have you covered.
+						</p>
+					</div>
+					<div class="col-lg-6 align-self-center d-flex align-items-center justify-content-center">
+						<img src="{% static 'images/landing-image-5.png' %}" alt="Landing image" class="img-fluid">
+					</div>
+				</div>
+				<div class="row g-4 g-xl-5 py-5">
+					<div class="col-lg-6 align-self-center">
+						<h2 class="text-primary-emphasis">
+							Hello Happy <span class="text-info">Guests</span>
+						</h2>
+						<p>
+							We commit to transparency and simplicity. No spam, no surprises—just a direct connection to your event host. Zero hidden fees, no gimmicks.
+						</p>
+						<h4 class="text-primary-emphasis mt-4 d-flex">
+							<i class="fa-solid fa-grid-2 flex-shrink-0 me-1" style="width: 36px;"></i>
+							Get Tickets with Ease
+						</h4>
+						<p class="text-body-secondary mb-0">
+							Download tickets directly or add to Google or Apple Wallet.
+						</p>
+						<h4 class="text-primary-emphasis mt-4 d-flex">
+							<i class="fa-solid fa-ticket flex-shrink-0 me-1" style="width: 36px;"></i>
+							No Signups Required
+						</h4>
+						<p class="text-body-secondary mb-0">
+							Simply select a ticket and enter your email to recieve it. No signups, no passwords.
+						</p>
+					</div>
+					<div class="col-lg-6 align-self-center d-flex align-items-center justify-content-center order-lg-first">
+						<img src="{% static 'images/landing-image-6.png' %}" alt="Landing image" class="img-fluid">
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- Second info section end -->
+
 		<!-- Footer start -->
 		<footer>
-			<div class="container-xxl px-3 px-sm-4 py-5">
+			<div class="container-xxl px-3 px-sm-4 px-xxl-5 py-5">
 				<h2 class="text-primary-emphasis">
 					Global by <span class="text-info">Nature</span>
 				</h2>
@@ -352,6 +426,15 @@
 			   			</a>
 			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://blog.socialpass.io/" target="_blank" rel="noreferrer">
 							Blog
+			   			</a>
+			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/terms-of-use.pdf' %}" target="_blank" rel="noreferrer">
+							Terms of Use
+			   			</a>
+			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/organizer-terms-and-conditions.pdf' %}" target="_blank" rel="noreferrer">
+							Organizer Terms
+			   			</a>
+			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/privacy-policy.pdf' %}" target="_blank" rel="noreferrer">
+							Privacy Policy
 			   			</a>
 					</div>
 				</div>

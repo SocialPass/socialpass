@@ -48,6 +48,14 @@
 				background-color: hsl(var(--bs-primary-hue), var(--bs-primary-saturation), 10%);
 			}
 
+			#enterprise {
+				background-color: hsl(var(--bs-primary-hue), var(--bs-primary-saturation), 92.5%);
+			}
+
+			[data-bs-theme=dark] #enterprise {
+				background-color: hsl(var(--bs-primary-hue), var(--bs-primary-saturation), 12.5%);
+			}
+
 			@media (min-width: 1200px) {
 				#hero {
 					background-image:
@@ -279,6 +287,36 @@
 			</div>
 		</section>
 		<!-- First info section end -->
+
+		<!-- Enterprise section start -->
+		<section id="enterprise">
+			<div class="container-xxl px-3 px-sm-4 py-5 g-0">
+				<div class="row g-4 g-xl-5 py-5">
+					<div class="col-lg-6 align-self-center">
+						<h2 class="text-primary-emphasis">
+							Enterprise <span class="text-info">Solutions</span>
+						</h2>
+						<p class="mb-0">
+							Every basic event is on us, but for those seeking an elevated experience, we've got premium options ready for you. Featuring white-label options, outstanding personalized support, and much more.
+						</p>
+					</div>
+					<div class="col-lg-6 align-self-center">
+						<div class="d-flex flex-column flex-sm-row mt-lg-4">
+							<a href="{% url 'account_signup' %}" class="btn btn-secondary btn-lg border-0 text-primary-emphasis me-sm-2 mb-2 mb-sm-0 flex-fill">
+								Sign up for Free
+							</a>
+							<button disabled class="btn btn-primary btn-lg border-0 ms-sm-2 mt-2 mt-sm-0 flex-fill">
+								See Pricing
+							</button>
+						</div>
+						<p class="mt-3 mb-0 text-center">
+							Have questions on our Enterprise Solutions? We’re happy to help. <a href="mailto:support@socialpass.io">Contact Us</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- Enterprise section end -->
 
 		<!-- Footer start -->
 		<footer>

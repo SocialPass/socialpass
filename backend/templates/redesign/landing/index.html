@@ -113,7 +113,7 @@
 			      		<span class="navbar-toggler-icon"></span>
 			    	</button>
 			    	<div class="collapse navbar-collapse" id="navbar-collapse">
-			      		<ul class="navbar-nav mx-md-4">
+			      		<ul class="navbar-nav mx-md-3">
 			      			<!--
 			        		<li class="nav-item">
 			          			<a class="nav-link link-primary" href="#" aria-label="Discord" target="_blank" rel="noreferrer">
@@ -129,17 +129,30 @@
 			          			</a>
 			        		</li>
 			      		</ul>
-			      		<ul class="navbar-nav mx-md-4">
+			      		<ul class="navbar-nav mx-md-3">
 			        		<li class="nav-item">
 			          			<a class="nav-link link-primary" href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer">Docs</a>
 			        		</li>
 			        		<li class="nav-item">
-			          			<a class="nav-link link-primary opacity-75 pe-none">Pricing</a>
+			          			<a href="#" class="nav-link link-primary">Contact</a>
 			        		</li>
 			        		<li class="nav-item">
 			          			<a class="nav-link link-primary" href="https://blog.socialpass.io/" target="_blank" rel="noreferrer">Blog</a>
 			        		</li>
 			      		</ul>
+			      		<div class="d-flex mt-3 mt-md-0">
+			      			{% if user.is_authenticated %}
+								<a href="{% url 'dashboard_organizer:dashboard_redirect' %}" class="btn btn-link">
+									Dashboard
+									<i class="fa-light fa-arrow-right ms-1"></i>
+								</a>
+							{% else %}
+								<a href="{% url 'account_login' %}" class="btn btn-link">
+									Sign In
+									<i class="fa-light fa-arrow-right ms-1"></i>
+								</a>
+							{% endif %}
+			      		</div>
 			    	</div>
 			  	</div>
 			</nav>
@@ -305,12 +318,12 @@
 							<a href="{% url 'account_signup' %}" class="btn btn-secondary btn-lg border-0 text-primary-emphasis me-sm-2 mb-2 mb-sm-0 flex-fill">
 								Sign up for Free
 							</a>
-							<button disabled class="btn btn-primary btn-lg border-0 ms-sm-2 mt-2 mt-sm-0 flex-fill">
-								See Pricing
-							</button>
+							<a href="#" class="btn btn-primary btn-lg border-0 ms-sm-2 mt-2 mt-sm-0 flex-fill">
+								Contact Us
+							</a>
 						</div>
 						<p class="mt-3 mb-0 text-center">
-							Have questions on our Enterprise Solutions? We’re happy to help. <a href="mailto:support@socialpass.io">Contact Us</a>
+							Have questions on our Enterprise Solutions? Just contact us and let us know, we’re always happy to help.
 						</p>
 					</div>
 				</div>
@@ -513,8 +526,8 @@
 			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer">
 							Docs
 			   			</a>
-			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased opacity-75 pe-none">
-							Pricing
+			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="#">
+							Contact
 			   			</a>
 			   			<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://blog.socialpass.io/" target="_blank" rel="noreferrer">
 							Blog

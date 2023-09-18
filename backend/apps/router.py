@@ -14,16 +14,13 @@ from apps.marketing.sitemaps import MarketingSiteMap
 urlpatterns = [
     # Landing Pages / Marketing
     path("", include("apps.marketing.urls")),
-
     # Event Checkout
     path("", include("apps.checkout.urls")),
-
     # User Auth / Organizer Dashboard
     # Note: First path ("dashboard/accounts/") is kept for backwards compatibility
     path("dashboard/accounts/", include("allauth.urls")),
     path("", include("allauth.urls")),
     path("dashboard/", include("apps.dashboard_organizer.urls")),
-
     # Staff Dashboard
     path(settings.STAFF_URL, include("apps.dashboard_staff.urls")),
 ]

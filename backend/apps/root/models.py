@@ -34,7 +34,7 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
     TxAssetOwnershipProcessingError,
-    TxFreeProcessingError
+    TxFreeProcessingError,
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
 from apps.root.utils import get_expiration_datetime, get_random_passcode
@@ -915,7 +915,9 @@ class TicketTier(DBModel):
     def additional_information_html(self):
         additional_information_html = ""
         try:
-            additional_information_html = json.loads(self.additional_information)["html"]
+            additional_information_html = json.loads(self.additional_information)[
+                "html"
+            ]
         except Exception:
             pass
         return additional_information_html
@@ -1207,7 +1209,7 @@ class CheckoutSession(DBModel):
             "event": self.event,
             "tickets_link": self.get_tickets_link,
             "passcode": self.passcode,
-            "custom_message": custom_message
+            "custom_message": custom_message,
         }
         msg_plain = render_to_string("ticket/email/checkout_message.txt", ctx)
         msg_html = render_to_string("ticket/email/checkout.html", ctx)
@@ -1586,8 +1588,6 @@ class TxAssetOwnership(DBModel):
                 # OK
                 filtered_by_expected = filtered_by_explicit_ids[:expected]
 
-
-
         # 4. OK - Set redeemed NFTs & Save
         self.redeemed_nfts = filtered_by_expected
         self.save()
@@ -1643,9 +1643,11 @@ class TxFree(DBModel):
         if duplicate_emails:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
-            raise TxFreeProcessingError({
-                "email": f"The email ({checkout_session.email}) has already been used for this ticket tier."
-            })
+            raise TxFreeProcessingError(
+                {
+                    "email": f"The email ({checkout_session.email}) has already been used for this ticket tier."
+                }
+            )
 
         # OK
         checkout_session.tx_free.issued_email = checkout_session.email

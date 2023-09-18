@@ -386,12 +386,12 @@ class CheckoutPageTwo(DetailView):
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
-        except Exception as e:
+        except Exception:
             rollbar.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "An unexpected error occurred. Please try again later, or contact support if the issue persists."
+                "An unexpected error occurred. Please try again later, or contact support if the issue persists.",
             )
             return redirect(
                 "checkout:checkout_two",
@@ -733,7 +733,8 @@ class GetTickets(View):
                 actual_passcode = checkout_session.passcode.lower()
                 entered_passcode = passcode_form.cleaned_data["passcode"].lower()
                 if (
-                    actual_passcode != entered_passcode
+                    actual_passcode
+                    != entered_passcode
                     # PATCH: Removed expiry check for pudgy event
                     # or checkout_session.passcode_expiration < timezone.now()
                 ):

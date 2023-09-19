@@ -276,21 +276,26 @@ LOGGING = {
 
 # django-allauth
 # ------------------------------------------------------------------------------
-# ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "apps.root.adapters.SocialAccountAdapter"
+
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 SOCIALACCOUNT_FORMS = {"signup": "apps.root.forms.UserSocialSignupForm"}
+
 # https://django-allauth.readthedocs.io/en/latest/views.html#logout-account-logout
 ACCOUNT_LOGOUT_ON_GET = True
+
 # https://django-allauth.readthedocs.io/en/latest/configuration.html?highlight=ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION#configuration
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
+# https://django-allauth.readthedocs.io/en/latest/account/advanced.html
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 # Your stuff...
 # ------------------------------------------------------------------------------

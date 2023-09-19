@@ -17,7 +17,7 @@
 			<ul class="ms-0 ps-0">
 				Team Members:
 			{% for member in obj.members.all %}
-				<li>{{member.username}}: <a href="mailto:{{member.email}}">{{member.email}}</a></li>
+				<li>{{member.email}}: <a href="mailto:{{member.email}}">{{member.email}}</a></li>
 			{% endfor %}
 			</ul>
 		</div>

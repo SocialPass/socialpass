@@ -7,8 +7,6 @@ app_name = "dashboard_organizer"
 urlpatterns = [
     # General redirect
     path("", views.RedirectToTeamView.as_view(), name="dashboard_redirect"),
-    # User Accounts
-    path("accounts/info/", views.UserDetailView.as_view(), name="user_detail"),
     # Team
     path(
         "team-create/",

@@ -121,6 +121,13 @@ class MembershipAdmin(CustomDBAdmin):
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    list_display = [
+        "email",
+        "username",
+        "is_staff",
+        "is_active",
+        "date_joined"
+    ]
     class MembershipInline(admin.TabularInline):
         model = Team.members.through
 

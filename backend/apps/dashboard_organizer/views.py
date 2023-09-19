@@ -95,14 +95,6 @@ class RequireLiveEventMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class UserDetailView(TemplateView):
-    """
-    Returns the details of the logged in user.
-    """
-
-    template_name = "account/detail.html"
-
-
 class TeamCreateView(LoginRequiredMixin, CreateView):
     """
     Creates a new team.

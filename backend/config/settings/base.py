@@ -292,7 +292,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 # https://django-allauth.readthedocs.io/en/latest/account/advanced.html
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# Note: Allows for email-only auth
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

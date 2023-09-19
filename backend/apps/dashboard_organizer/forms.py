@@ -47,25 +47,26 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ["name", "description", "image"]
         widgets = {
-            "name": forms.TextInput(attrs={"placeholder": _("Name of your team")}),
-            "description": forms.Textarea(
-                attrs={
-                    "placeholder": _("A short description of your team"),
-                    "rows": 3,
-                }
-            ),
+           "name": forms.TextInput(attrs={"placeholder": _("Event Planner Company")}),
+           "description": forms.Textarea(
+               attrs={
+                   "placeholder": _("Your premier event planning company specializing in unforgettable experiences."),
+                   "rows": 3,
+               }
+           ),
         }
         labels = {
-            "name": _("Name"),
-            "description": _("Description"),
-            "image": _("Team Image"),
+           "name": _("Name"),
+           "description": _("Description"),
+           "image": _("Profile Image"),
         }
         help_texts = {
-            "image": _(
-                "A brand image for your team. Please make sure the image is "
-                "square, non-transparent, and ideally in the PNG format."
-            ),
+           "image": _(
+               "A personal image for your profile. Please make sure the image is "
+               "square, non-transparent, and ideally in the PNG format."
+           ),
         }
+
 
 
 class EventCreateForm(forms.ModelForm):

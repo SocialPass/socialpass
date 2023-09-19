@@ -1,7 +1,7 @@
 {% extends "redesign/auth/base.html" %}
 {% load account static i18n crispy_forms_tags %}
 
-{% block head_title %}{% trans "Create Team" %} - SocialPass{% endblock %}
+{% block head_title %}{% trans "Create Profile" %} - SocialPass{% endblock %}
 
 {% block inner %}
 <div class="card border-0 rounded-4 shadow-sm">
@@ -13,9 +13,9 @@
 				</p>
 			{% endif %}
 		{% endwith %}
-		<h1 class="h3 mb-0">{% trans "Create Team" %}</h1>
+		<h1 class="h3 mb-0">{% trans "Create Profile" %}</h1>
 		<p class="text-body-secondary">
-			{% trans "Use the form below to create your very own team and get started with SocialPass." %}
+			{% trans "Use the form below to create your very own profile and get started with SocialPass." %}
 		</p>
 		<form method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
@@ -31,7 +31,7 @@
 			{% for input in form.hidden_fields %}
 				{{ input }}
 			{% endfor %}
-			<h4 class="h5">{% trans "Team Name" %}</h4>
+			<h4 class="h5">{% trans "Profile Name" %}</h4>
 			<div class="mb-3">
 				{% with form.name as input %}
 					{% include "redesign/forms/input.html" %}
@@ -48,7 +48,7 @@
 				{{ input|as_crispy_field }}
 			{% endwith %}
 			<div class="text-end mt-3">
-				<button type="submit" class="btn btn-primary w-100 d-block">{% trans "Create Team" %}</button>
+				<button type="submit" class="btn btn-primary w-100 d-block">{% trans "Create Profile" %}</button>
 			</div>
 		</form>
 	</div>

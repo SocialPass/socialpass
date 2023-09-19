@@ -240,11 +240,8 @@
 						<li>
 							<div class="dropdown-item-text">
 								<h6 class="mb-0 text-truncate">
-									{{ request.user.username }}
+									{% get_user_primary_email %}
 								</h6>
-								<p class="text-body-secondary mb-0 text-truncate">
-									<small>{% get_user_primary_email %}</small>
-								</p>
 							</div>
 						</li>
 						<li><hr class="dropdown-divider"></li>

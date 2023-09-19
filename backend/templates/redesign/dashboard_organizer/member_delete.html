@@ -18,12 +18,11 @@
 		<div class="card border-0 rounded-4 shadow-sm">
 			<div class="card-body px-lg-5 py-lg-4">
 				<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto position-relative">
-					<span class="text-uppercase h4 m-0">{{ object.user.username|slice:"0:1" }}</span>
+					<span class="text-uppercase h4 m-0">{{ object.user.email|slice:"0:1" }}</span>
 				</div>
 				<div class="h5 mt-3 mb-0 text-center text-truncate">
-					{{ object.user.username }}
+					{{ object.user.email }}
 				</div>
-				<div class="text-center text-truncate">{{ object.user.email }}</div>
 				<div class="specific-w-300 mw-100 mx-auto mt-3 text-center">
 					<p class="text-body-secondary">
 						{% trans "You're about to remove this team member. Please note, once this action is confirmed, it cannot be undone." %}

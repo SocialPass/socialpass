@@ -11,12 +11,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Use version 4 of the checkout action
         with:
-          fetch-depth: 0
+          ref: staging  # Specify the branch to checkout
 
       - name: Push to Staging Branch
         run: |
-          git checkout origin/staging
-          git merge --ff-only origin/master
-          git push origin origin/staging
+          git pull origin master  # Pull the latest changes from 'master'
+          git push origin staging  # Push the changes to 'staging'

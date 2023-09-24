@@ -307,7 +307,6 @@ SILKY_URL = env("SILKY_URL")
 
 # INTERNAL
 # ------------------------------------------------------------------------------
-SCANNER_BASE_URL = env("SCANNER_BASE_URL")
 STAFF_URL = env("STAFF_URL")
 
 # MORALIS

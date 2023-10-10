@@ -1,5 +1,5 @@
 {% extends "redesign/dashboard_organizer/base.html" %}
-{% load static i18n get_theme_value get_user_primary_email %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
 
 {% block head_title %}{% trans "Create Free Ticket Tier" %} - SocialPass{% endblock head_title %}
 
@@ -69,6 +69,17 @@
 								{% include "redesign/forms/input.html" %}
 							{% endwith %}
 						</div>
+					</div>
+
+					<br /><br />
+					<h4 class="mb-lg-4">{% trans "Extra Information" %}</h4>
+					<div class="mt-3">
+						{% with form.additional_information as input %}
+							{% include "redesign/forms/textarea.html" %}
+						{% endwith %}
+					</div>
+					<div class="sp-checkbox-container mt-3">
+						{{ form.hidden | as_crispy_field }}
 					</div>
 
 					<div class="text-end mt-3">

@@ -22,6 +22,10 @@
 		<a href="{% url 'dashboard_organizer:scanner' object.scanner_id %}" class="btn btn-secondary border-0 shadow position-absolute top-0 start-0 m-1" aria-label="Go Back">
 			<i class="fa-solid fa-arrow-left"></i>
 		</a>
+		<div class="d-inline-flex align-items-center bg-body-secondary shadow position-absolute top-0 end-0 m-1 px-2 py-1 rounded">
+			<span class="me-1" style="font-size: 12px;">{% trans "Last scan" %}:</span>
+			<span class="specific-w-25 d-inline-block text-center fs-6" id="last-scan">N/A</span>
+		</div>
 		<div id="results">
 			<div class="px-3 py-2 bg-secondary-subtle text-center">
 				<i class="fa-regular fa-barcode-read fa-beat-fade me-1"></i>
@@ -128,7 +132,19 @@
 			audio.play();
 
 			// Reload stats
-			htmx.trigger(scannerStats, "reload-stats")
+			htmx.trigger(scannerStats, "reload-stats");
+
+			// Reset notification after 4 seconds
+			setTimeout(function() {
+				document.getElementById("last-scan").innerHTML = document.getElementById("fade-me-in").getAttribute("data-scan-indicator");
+				document.getElementById("results").innerHTML = `
+					<div class="px-3 py-2 bg-secondary-subtle text-center">
+						<i class="fa-regular fa-barcode-read fa-beat-fade me-1"></i>
+						<strong>Scanning...</strong>
+					</div>
+				`;
+				document.getElementById("qr-reader-input").value = "";
+			}, 4000);
 		}
 	});
 </script>

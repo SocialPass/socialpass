@@ -4,9 +4,17 @@ FROM python:3.11
 # Set the working directory to /app/.
 WORKDIR /app/
 
-# Create and activate a virtual environment.
-RUN python -m venv venv
-RUN . venv/bin/activate
+# Define a build-time ARG for DJANGO_SETTINGS_MODULE
+ARG DJANGO_SETTINGS_MODULE
+
+# Set the DJANGO_SETTINGS_MODULE environment variable
+ENV DJANGO_SETTINGS_MODULE $DJANGO_SETTINGS_MODULE
+
+# Echo the value of DJANGO_SETTINGS_MODULE
+RUN echo "DJANGO_SETTINGS_MODULE is set to: $DJANGO_SETTINGS_MODULE"
+
+# ENVs
+ENV DJANGO_SETTINGS_MODULE=config.settings.production
 
 # Copy the Python requirements files to the container.
 COPY /backend/config/requirements/production.txt /app/production.txt
@@ -15,16 +23,13 @@ COPY /backend/config/requirements/base.txt /app/base.txt
 # Copy your entire codebase, including the Django project, to the container.
 COPY /backend /app/
 
-# Update pip and install Python dependencies within the virtual environment.
+# Update pip and install Python dependencies.
 RUN pip install --upgrade pip
 RUN pip install -r production.txt
 
-# Change directory for a specific RUN command.
-WORKDIR /app/
-
-# Run Django migrations && collectstatic within the virtual environment.
+# Run Django migrations and collectstatic.
 RUN python manage.py migrate
 RUN python manage.py collectstatic --no-input
 
-# Specify how to run your Django application using Gunicorn within the virtual environment.
+# Specify how to run your Django application using Gunicorn.
 CMD ["gunicorn", "config.wsgi:application", "--worker-tmp-dir", "/dev/shm"]

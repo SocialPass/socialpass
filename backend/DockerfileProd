@@ -5,23 +5,26 @@ FROM python:3.11
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE config.settings.production
 
-# Set the working directory to /code/.
-WORKDIR /code/
+# Set the working directory to /app/.
+WORKDIR /app/
 
 # Create and activate a virtual environment.
 RUN python -m venv venv
 RUN . venv/bin/activate
 
-# Copy the Python requirements files and the entire codebase.
-COPY config/requirements/production.txt config/requirements/base.txt /code/
-COPY . /code/
+# Copy the Python requirements files to the container.
+COPY /backend/config/requirements/production.txt /app/production.txt
+COPY /backend/config/requirements/base.txt /app/base.txt
+
+# Copy your entire codebase, including the Django project, to the container.
+COPY /backend /app/
 
 # Update pip and install Python dependencies within the virtual environment.
 RUN pip install --upgrade pip
 RUN pip install -r production.txt
 
 # Change directory for a specific RUN command.
-WORKDIR /code/backend
+WORKDIR /app/
 
 # Run Django migrations within the virtual environment.
 RUN python manage.py migrate

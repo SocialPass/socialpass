@@ -8,19 +8,23 @@ ENV DJANGO_SETTINGS_MODULE config.settings.production
 # Set the working directory to /code/.
 WORKDIR /code/
 
+# Create and activate a virtual environment.
+RUN python -m venv venv
+RUN . venv/bin/activate
+
 # Copy the Python requirements files and the entire codebase.
 COPY config/requirements/production.txt config/requirements/base.txt /code/
 COPY . /code/
 
-# Update pip and install Python dependencies.
+# Update pip and install Python dependencies within the virtual environment.
 RUN pip install --upgrade pip
 RUN pip install -r production.txt
 
 # Change directory for a specific RUN command.
 WORKDIR /code/backend
 
-# Run a command in the new working directory.
+# Run Django migrations within the virtual environment.
 RUN python manage.py migrate
 
-# Specify how to run your Django application using Gunicorn.
+# Specify how to run your Django application using Gunicorn within the virtual environment.
 CMD ["gunicorn", "config.wsgi:application", "--worker-tmp-dir", "/dev/shm"]

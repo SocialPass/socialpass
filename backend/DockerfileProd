@@ -26,8 +26,9 @@ RUN pip install -r production.txt
 # Change directory for a specific RUN command.
 WORKDIR /app/
 
-# Run Django migrations within the virtual environment.
-# RUN python manage.py migrate
+# Run Django migrations && collectstatic within the virtual environment.
+RUN python manage.py migrate
+RUN python manage.py collectstatic --no-input
 
 # Specify how to run your Django application using Gunicorn within the virtual environment.
 CMD ["gunicorn", "config.wsgi:application", "--worker-tmp-dir", "/dev/shm"]

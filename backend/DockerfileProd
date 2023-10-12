@@ -1,0 +1,20 @@
+# Use a Python 3.11 base image from the bullseye tag.
+FROM python:3.11
+
+# Set environment variables.
+ENV PYTHONUNBUFFERED 1
+ENV DJANGO_SETTINGS_MODULE config.settings.production
+
+# Set the working directory to /code/.
+WORKDIR /code/
+
+# Copy the Python requirements files.
+COPY config/requirements/production.txt /code/production.txt
+COPY config/requirements/base.txt /code/base.txt
+
+# Update pip and install Python dependencies.
+RUN pip install --upgrade pip
+RUN pip install -r production.txt
+
+# Copy your Django project to the container.
+COPY . /code/

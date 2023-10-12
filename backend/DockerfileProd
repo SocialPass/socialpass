@@ -4,17 +4,8 @@ FROM python:3.11
 # Set the working directory to /app/.
 WORKDIR /app/
 
-# Define a build-time ARG for DJANGO_SETTINGS_MODULE
-ARG DJANGO_SETTINGS_MODULE
-
-# Set the DJANGO_SETTINGS_MODULE environment variable
-ENV DJANGO_SETTINGS_MODULE $DJANGO_SETTINGS_MODULE
-
-# Echo the value of DJANGO_SETTINGS_MODULE
-RUN echo "DJANGO_SETTINGS_MODULE is set to: $DJANGO_SETTINGS_MODULE"
-
 # ENVs
-ENV DJANGO_SETTINGS_MODULE=config.settings.production
+ENV DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 
 # Copy the Python requirements files to the container.
 COPY /backend/config/requirements/production.txt /app/production.txt

@@ -74,7 +74,7 @@
 										<span class="text-body-secondary fw-normal"> | {% trans "Click to disconnect" %}</span>
 									</div>
 									<div class="specific-w-25 specific-h-25 ms-auto flex-shrink-0">
-										<img src="..." alt="Logo" class="w-auto h-100">
+										<img alt="Logo" class="w-auto h-100">
 									</div>
 								</button>
 							</div>
@@ -189,13 +189,13 @@
 {% block extra_body %}
 <script type="importmap">
   {
-	  "imports": {
-		  "viem": "https://unpkg.com/viem/@^0.3.36/",
-		  "@wagmi/core": "https://unpkg.com/@wagmi/core@^1.0.5/"
-	  }
+	"imports": {
+	  "viem": "https://unpkg.com/viem/@^0.3.36/",
+	  "@wagmi/core": "https://unpkg.com/@wagmi/core@^1.0.5/"
+	}
   }
 </script>
-<script src="{% static 'js/NFTCheckoutWagmi.js' %}"></script>
+<script type="module" src="{% static 'js/NFTCheckoutWagmi.js' %}"></script>
 <script>
 	const message = `{{object.tx_asset_ownership.unsigned_message}}`
 </script>

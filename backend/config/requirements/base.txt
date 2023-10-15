@@ -4,6 +4,7 @@ argon2-cffi==23.1.0 # https://github.com/hynek/argon2-cffi
 boto3==1.28.62 # https://github.com/boto/boto3
 celery==5.3.4 # https://github.com/celery/celery
 eth-account==0.9.0 # https://github.com/ethereum/eth-account
+django-redis==5.4.0 # https://github.com/jazzband/django-redis
 eth-utils==2.2.1 # https://github.com/ethereum/eth-utils
 gevent==23.9.1 # https://github.com/gevent/gevent
 google-api-python-client==2.99.0 # https://github.com/googleapis/google-api-python-client

@@ -6,6 +6,9 @@ SHELL := /bin/bash
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
+activate: ## active venv
+	echo "source backend/venv/bin/activate"
+
 lint: ## Lint backend repo
 	(source backend/venv/bin/activate; cd backend; black --exclude ".*\/(migrations|venv|node_modules|staticfiles)\/.*" .; mypy .; ruff .;)
 

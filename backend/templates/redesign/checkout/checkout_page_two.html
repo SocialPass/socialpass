@@ -187,7 +187,15 @@
 {% endblock content %}
 
 {% block extra_body %}
-<script src="{% static 'js/dist/bundle.js' %}"></script>
+<script type="importmap">
+  {
+	  "imports": {
+		  "viem": "https://unpkg.com/viem/@^0.3.36/",
+		  "@wagmi/core": "https://unpkg.com/@wagmi/core@^1.0.5/"
+	  }
+  }
+</script>
+<script src="{% static 'js/NFTCheckoutWagmi.js' %}"></script>
 <script>
 	const message = `{{object.tx_asset_ownership.unsigned_message}}`
 </script>

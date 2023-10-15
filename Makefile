@@ -10,7 +10,7 @@ lint: ## Lint backend repo
 	(source backend/venv/bin/activate; cd backend; black --exclude ".*\/(migrations|venv|node_modules|staticfiles)\/.*" .; mypy .; ruff .;)
 
 collect: ## collectstatic backend
-	(source backend/venv/bin/activate; cd backend; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)
+	(source backend/venv/bin/activate; cd backend; ./manage.py collectstatic --no-input)
 
 install: ## Install requirements
 	(source backend/venv/bin/activate; cd backend; pip3 install -r config/requirements/local.txt)

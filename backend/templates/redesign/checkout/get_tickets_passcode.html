@@ -19,8 +19,26 @@
 	{% include "redesign/components/django_messages.html" %}
 
 	<!-- Form start -->
-	<div class="p-3 p-sm-4 mt-3">
-		<div class="container-fluid overflow-hidden">
+	<div class="p-3 p-sm-4 mt-3 position-relative">
+		{% if request.GET.passcode %}
+			<div class="position-relative z-2">
+				<div class="specific-w-400 mw-100 mx-auto py-4">
+					<h3 class="m-0">
+						<span id="process-indicator" class="me-1">
+							<i class="fa-light fa-circle-notch fa-spin"></i>
+						</span>
+						{% trans "Processing Tickets" %} ...
+					</h3>
+					<p class="text-body-secondary mt-1">
+						{% trans "Please hold tight as we prepare your tickets and make them ready for download." %}
+					</p>
+					<div class="progress specific-h-25" role="status" aria-label="Loading">
+						<div class="progress-bar placeholder-wave text-bg-info" style="width: 100%;"></div>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+		<div class="container-fluid overflow-hidden {% if request.GET.passcode %}position-absolute top-0 start-0 z-1 invisible{% endif %}">
 			<div class="row g-3">
 				<div class="col-xl-6 col-lg-8 col-md-8 mx-auto">
 					<h1 class="text-body-emphasis display-6 m-0 text-break">
@@ -37,7 +55,7 @@
 							{% endwith %}
 						</div>
 						<div class="mb-3">
-							<button class="btn btn-primary d-block w-100" type="submit" name="passcode_submit">{% trans "Submit" %}</button>
+							<button class="btn btn-primary d-block w-100" type="submit" name="passcode_submit" id="passcode_submit_btn">{% trans "Submit" %}</button>
 						</div>
 					</form>
 					<hr />
@@ -60,3 +78,23 @@
 	<!-- Form end -->
 </div>
 {% endblock content %}
+
+{% block extra_body %}
+{% if request.GET.passcode %}
+	<script type="text/javascript">
+		document.getElementById("id_passcode")
+			.value = "{{ request.GET.passcode }}";
+
+		// Show check indicator to user after 2.5 seconds
+		setTimeout(function() {
+			document.getElementById("process-indicator")
+				.innerHTML = "<i class='fa-regular fa-check'></i>";
+		}, 2500);
+
+		// POST and redirect after 3 seconds (less jarring than sudden redirect)
+		setTimeout(function() {
+			document.getElementById("passcode_submit_btn").click();
+		}, 3000);
+	</script>
+{% endif %}
+{% endblock extra_body %}

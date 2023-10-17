@@ -402,9 +402,10 @@ class CheckoutPageTwo(DetailView):
         # OK
         # Redirect on success
         return redirect(
-            "checkout:checkout_success",
-            self.object.event.slug,
-            self.object.public_id,
+            reverse(
+                "checkout:get_tickets",
+                args=(self.kwargs["checkout_session_public_id"],),
+            ) + f"?passcode={self.object.passcode}&is_checkout_flow=True"
         )
 
 
@@ -596,7 +597,7 @@ class StripeCheckoutCancel(RedirectView):
 
 class StripeCheckoutSuccess(RedirectView):
     """
-    Redirect to checkout success
+    Redirect to tickets page
     """
 
     def get_redirect_url(self, *args, **kwargs):
@@ -637,15 +638,12 @@ class StripeCheckoutSuccess(RedirectView):
 
         # OK
         # Process transaction
-        # Redirect to checkout success
+        # Redirect to tickets page
         checkout_session.tx_fiat.process()
         return reverse(
-            "checkout:checkout_success",
-            args=(
-                self.kwargs["event_slug"],
-                self.kwargs["checkout_session_public_id"],
-            ),
-        )
+            "checkout:get_tickets",
+            args=(self.kwargs["checkout_session_public_id"],),
+        ) + f"?passcode={checkout_session.passcode}&is_checkout_flow=True"
 
 
 class CheckoutPageSuccess(DetailView):

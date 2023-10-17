@@ -592,6 +592,7 @@ class EventStatsView(TeamContextMixin, DetailView):
                     "redeemed_at": ticket.redeemed_at,
                     "checkout_session": str(ticket.checkout_session.public_id),
                     "customer_name": ticket.checkout_session.name,
+                    "customer_email": ticket.checkout_session.email,
                     "wallet_address": wallet_address,
                     "party_size": ticket.party_size,
                 }

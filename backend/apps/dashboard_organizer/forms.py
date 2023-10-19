@@ -357,3 +357,22 @@ class TierFiatForm(forms.ModelForm):
         labels = {
             "price_per_ticket": _("Price/ticket"),
         }
+
+
+class RSVPCreateTicketsForm(forms.Form):
+    """
+    Bulk tickets create form for the RSVP system.
+    """
+    ticket_tier = forms.ModelChoiceField(queryset=TicketTier.objects.none())
+    customer_names = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"placeholder": _("John Doe, Jane Doe, Jack Gates")}
+        ),
+    )
+    customer_emails = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": _("john@example.com, jane@example.com, jack.example.com")
+            }
+        ),
+    )

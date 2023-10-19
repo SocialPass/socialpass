@@ -25,6 +25,7 @@ from apps.dashboard_organizer.forms import (
     TicketTierForm,
     TierAssetOwnershipForm,
     TierFiatForm,
+    RSVPCreateTicketsForm,
 )
 from apps.root.models import (
     Event,
@@ -1102,4 +1103,60 @@ class EventScanner2(DetailView):
             self.request,
             template_name="redesign/scanner/scanner_success.html",
             context=context,
+        )
+
+
+class RSVPTicketsView(TeamContextMixin, DetailView):
+    """
+    Show the RSVP tickets (and CTAs) for an event.
+    """
+
+    model = Event
+    context_object_name = "event"
+    template_name = "redesign/dashboard_organizer/event_ticket_tiers.html"
+
+    def get_object(self):
+        return (
+            Event.objects.prefetch_related("tickettier_set__tier_asset_ownership")
+            .prefetch_related("tickettier_set__tier_blockchain")
+            .prefetch_related("tickettier_set__tier_fiat")
+            .get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"])
+        )
+
+
+class RSVPCreateTicketsView(TeamContextMixin, FormView):
+    """
+    Bulk create tickets using the RSVP system.
+    """
+
+    template_name = "redesign/dashboard_organizer/rsvp_create_tickets.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+    def get_form(self, form_class=None):
+        form = RSVPCreateTicketsForm()
+        form.fields["ticket_tier"].queryset = TicketTier.objects.filter(
+            event__pk=self.kwargs["event_pk"]
+        )
+        return form
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        # TODO: Create sessons, items, and tickets manually
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "RSVP tickets created successfully."
+        )
+        return reverse(
+            "dashboard_organizer:rsvp_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"],)
         )

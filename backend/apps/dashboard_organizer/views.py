@@ -1130,6 +1130,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
     """
 
     template_name = "redesign/dashboard_organizer/rsvp_create_tickets.html"
+    form_class = RSVPCreateTicketsForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1139,7 +1140,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         return context
 
     def get_form(self, form_class=None):
-        form = RSVPCreateTicketsForm()
+        form = super().get_form()
         form.fields["ticket_tier"].queryset = TicketTier.objects.filter(
             event__pk=self.kwargs["event_pk"]
         )
@@ -1149,6 +1150,18 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         context = self.get_context_data(**kwargs)
 
         # TODO: Create sessons, items, and tickets manually
+        names = form.cleaned_data["customer_names"].split(",")
+        emails = form.cleaned_data["customer_emails"].split(",")
+
+        # TODO: Strip names and emails of leading and trailing whitespace
+        if len(names) != len(emails):
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Please make sure the customer names and emails are valid CSV, "
+                "and that each list has equal number of items."
+            )
+            return super().form_invalid(form)
 
         return super().form_valid(form)
 

@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -35,6 +36,8 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     TierFree,
+    CheckoutSession,
+    CheckoutItem,
 )
 from apps.root import exceptions
 
@@ -1149,11 +1152,10 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        # TODO: Create sessons, items, and tickets manually
+        # Create sessons, items, and tickets manually
         names = form.cleaned_data["customer_names"].split(",")
         emails = form.cleaned_data["customer_emails"].split(",")
 
-        # TODO: Strip names and emails of leading and trailing whitespace
         if len(names) != len(emails):
             messages.add_message(
                 self.request,
@@ -1162,6 +1164,23 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                 "and that each list has equal number of items."
             )
             return super().form_invalid(form)
+
+        for i in range(len(names)):
+            try:
+                with transaction.atomic():
+                    checkout_session = CheckoutSession.objects.create(
+                        event=context["event"],
+                        name=names[i].strip(),
+                        email=emails[i].strip(),
+                    )
+                    checkout_item = CheckoutItem.objects.create(
+                        ticket_tier=form.cleaned_data["ticket_tier"],
+                        checkout_session=checkout_session,
+                        quantity=1,
+                    )
+                    checkout_session.fulfill()
+            except Exception:
+                pass
 
         return super().form_valid(form)
 

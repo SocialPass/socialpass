@@ -237,6 +237,7 @@ class TxFreeAdmin(CustomDBAdmin):
 class WhiteLabelAdmin(CustomDBAdmin):
     list_display = ["__str__", "brand_name"] + CustomDBAdmin.list_display
 
+
 @admin.register(RSVPBatch)
 class RSVPBatchAdmin(CustomDBAdmin):
     list_display = ["__str__", "event"] + CustomDBAdmin.list_display

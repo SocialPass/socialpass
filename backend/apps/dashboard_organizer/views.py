@@ -1109,22 +1109,24 @@ class EventScanner2(DetailView):
         )
 
 
-class RSVPTicketsView(TeamContextMixin, DetailView):
+class RSVPTicketsView(TeamContextMixin, TemplateView):
     """
     Show the RSVP tickets (and CTAs) for an event.
     """
 
-    model = Event
-    context_object_name = "event"
-    template_name = "redesign/dashboard_organizer/event_ticket_tiers.html"
+    template_name = "redesign/dashboard_organizer/rsvp_tickets.html"
 
-    def get_object(self):
-        return (
-            Event.objects.prefetch_related("tickettier_set__tier_asset_ownership")
-            .prefetch_related("tickettier_set__tier_blockchain")
-            .prefetch_related("tickettier_set__tier_fiat")
-            .get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"])
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
+        context["rsvp_batches"] = RSVPBatch.objects.prefetch_related(
+            "checkoutsession_set"
+        ).filter(
+            event=context["event"]
+        ).order_by("-created")
+        return context
 
 
 class RSVPCreateTicketsView(TeamContextMixin, FormView):

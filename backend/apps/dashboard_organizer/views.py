@@ -38,6 +38,7 @@ from apps.root.models import (
     TierFree,
     CheckoutSession,
     CheckoutItem,
+    RSVPBatch,
 )
 from apps.root import exceptions
 
@@ -1164,11 +1165,15 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
             )
             return super().form_invalid(form)
 
+        rsvp_batch = RSVPBatch.objects.create(
+            event=context["event"],
+        )
         for i in range(len(names)):
             try:
                 with transaction.atomic():
                     checkout_session = CheckoutSession.objects.create(
                         event=context["event"],
+                        rsvp_batch=rsvp_batch,
                         name=names[i].strip(),
                         email=emails[i].strip(),
                     )

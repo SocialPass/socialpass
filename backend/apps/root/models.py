@@ -1091,6 +1091,12 @@ class CheckoutSession(DBModel):
         blank=True,
         null=True,
     )
+    rsvp_batch = models.ForeignKey(
+        "RSVPBatch",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
 
     # basic info
     tx_type = models.CharField(
@@ -1655,3 +1661,19 @@ class TxFree(DBModel):
         self.save()
         checkout_session.save()
         checkout_session.fulfill()
+
+
+class RSVPBatch(DBModel):
+    """
+    Represents a batch of tickets created using the RSVP system
+    """
+
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+
+    def __str__(self) -> str:
+        return f"RSVPBatch: {self.public_id}"

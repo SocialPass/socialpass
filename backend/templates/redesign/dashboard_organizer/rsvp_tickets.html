@@ -23,33 +23,46 @@
 		        <span class="ms-1 d-none d-sm-inline">{% trans "Create" %}</span>
 			</a>
 		</div>
-		{% for rsvp_batch in rsvp_batches.all %}
-			<div class="card border-0 rounded-4 shadow-sm mb-3">
-				<div class="card-body">
-					<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
-						{% trans "RSVP Batch" %}
-					</span>
-					<h6 class="text-body-secondary mb-0 mt-3 fw-normal">
-						{{ rsvp_batch.public_id }}
-					</h5>
-					<p class="text-body-secondary mt-1">
-						<strong class="text-body">
-							<i class="fa-light fa-clock me-1"></i>
-							{% trans "Created" %}:
-						</strong>
-						{{ rsvp_batch.created }}
-					</p>
-					<div>
-						<h1 class="d-inline-block text-primary-emphasis m-0">
-							{{ rsvp_batch.checkoutsession_set.count }}
-						</h1>
-						<p class="d-inline-block text-body-secondary m-0">
-							{% trans "Ticket(s) Created" %}
+		{% if rsvp_batches.count > 0 %}
+			{% for rsvp_batch in rsvp_batches.all %}
+				<div class="card border-0 rounded-4 shadow-sm mb-3">
+					<div class="card-body">
+						<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+							{% trans "RSVP Batch" %}
+						</span>
+						<h6 class="text-body-secondary mb-0 mt-3 fw-normal">
+							{{ rsvp_batch.public_id }}
+						</h5>
+						<p class="text-body-secondary mt-1">
+							<strong class="text-body">
+								<i class="fa-light fa-clock me-1"></i>
+								{% trans "Created" %}:
+							</strong>
+							{{ rsvp_batch.created }}
 						</p>
+						<div>
+							<h1 class="d-inline-block text-primary-emphasis m-0">
+								{{ rsvp_batch.checkoutsession_set.count }}
+							</h1>
+							<p class="d-inline-block text-body-secondary m-0">
+								{% trans "Ticket(s) Created" %}
+							</p>
+						</div>
 					</div>
 				</div>
+			{% endfor %}
+		{% else %}
+			<div class="card border-0 rounded-4 shadow-sm">
+				<div class="card-body">
+					<div class="mx-auto specific-w-200">
+						<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+					</div>
+					<p class="text-body-secondary text-center">
+						{% trans "No RSVP batches yet." %}
+					</p>
+				</div>
 			</div>
-		{% endfor %}
+		{% endif %}
 	</div>
 </div>
 <!-- Ticket tier form end -->

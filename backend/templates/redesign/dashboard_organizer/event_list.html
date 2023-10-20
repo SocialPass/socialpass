@@ -152,6 +152,10 @@
 							{% endif %}
 							<li><div class="dropdown-divider"></div></li>
 							<li>
+								<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.public_id event.pk %}" class="dropdown-item">{% trans "RSVP" %}</a>
+							</li>
+							<li><div class="dropdown-divider"></div></li>
+							<li>
 								<a href="{% url 'dashboard_organizer:event_delete' current_team.public_id event.pk %}" class="dropdown-item text-danger-emphasis fw-bold">{% trans "Delete" %}</a>
 							</li>
 						</ul>

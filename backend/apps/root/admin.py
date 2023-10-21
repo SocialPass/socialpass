@@ -43,10 +43,15 @@ class CheckoutItemAdmin(CustomDBAdmin):
         "is_overflow",
         "checkout_session",
     ] + CustomDBAdmin.list_display
-    search_fields = (
+    search_fields = [
         "checkout_session__name",
         "checkout_session__email",
-    )
+    ]
+    list_select_related = [
+        "ticket_tier",
+        "checkout_session"
+    ]
+    raw_id_fields = []
 
 
 @admin.register(CheckoutSession)
@@ -59,11 +64,20 @@ class CheckoutSessionAdmin(CustomDBAdmin):
         "tx_type",
         "tx_status",
     ] + CustomDBAdmin.list_display
-    search_fields = (
+    search_fields = [
         "event__title",
         "name",
         "email",
-    )
+    ]
+    list_select_related = [
+        "event",
+    ]
+    raw_id_fields = [
+        "tx_free",
+        "tx_fiat",
+        "tx_blockchain",
+        "tx_asset_ownership"
+    ]
 
 
 @admin.register(Event)
@@ -89,14 +103,21 @@ class EventAdmin(CustomDBAdmin):
         "sales_start",
         "sales_end",
     ] + CustomDBAdmin.list_display
-    search_fields = (
+    search_fields = [
         "title",
         "user__username",
         "team__name",
-    )
+    ]
+    list_select_related = [
+        "user",
+        "team"
+    ]
+    raw_id_fields = [
+        "user",
+        "team"
+    ]
     inlines = [StateLogInline]
     readonly_fields = ["state"]
-
     actions = [transition_to_draft, transition_to_live]  # type: ignore
 
 
@@ -118,6 +139,14 @@ class InviteAdmin(CustomDBAdmin):
 @admin.register(Membership)
 class MembershipAdmin(CustomDBAdmin):
     list_display = ["__str__", "user", "team"] + CustomDBAdmin.list_display
+    list_select_related = [
+        "user",
+        "team"
+    ]
+    raw_id_fields = [
+        "user",
+        "team"
+    ]
 
 
 @admin.register(User)
@@ -150,7 +179,7 @@ class TeamAdmin(CustomDBAdmin):
         "description",
         "whitelabel",
     ] + CustomDBAdmin.list_display
-    search_fields = ("name",)
+    search_fields = ["name"]
 
 
 @admin.register(TicketTier)
@@ -163,10 +192,16 @@ class TicketTierAdmin(CustomDBAdmin):
         "quantity_sold",
         "max_per_person",
     ] + CustomDBAdmin.list_display
-    search_fields = (
+    search_fields = [
         "ticket_type",
         "event__title",
-    )
+    ]
+    list_select_related = [
+        "event",
+    ]
+    raw_id_fields = [
+        "event",
+    ]
 
 
 @admin.register(Ticket)
@@ -180,6 +215,16 @@ class TicketAdmin(CustomDBAdmin):
         "embed_code",
         "redeemed_at",
     ] + CustomDBAdmin.list_display
+    list_select_related = [
+        "event",
+        "ticket_tier",
+        "checkout_session",
+    ]
+    raw_id_fields = [
+       "event",
+       "ticket_tier",
+       "checkout_session",
+    ]
 
 
 @admin.register(TierAssetOwnership)
@@ -195,6 +240,9 @@ class TierAssetOwnershipAdmin(CustomDBAdmin):
         "token_id",
     ] + CustomDBAdmin.list_display
     search_fields = ("tickettier__ticket_type",)
+    list_select_related = [
+        "tickettier",
+    ]
 
 
 @admin.register(TierFiat)
@@ -204,6 +252,10 @@ class TierFiatAdmin(CustomDBAdmin):
         "tickettier",
     ] + CustomDBAdmin.list_display
     search_fields = ("tickettier__ticket_type",)
+    list_select_related = [
+        "tickettier",
+    ]
+
 
 
 @admin.register(TierFree)
@@ -213,24 +265,36 @@ class TierFreeAdmin(CustomDBAdmin):
         "tickettier",
     ] + CustomDBAdmin.list_display
     search_fields = ("tickettier__ticket_type",)
+    list_select_related = [
+        "tickettier",
+    ]
 
 
 @admin.register(TxFiat)
 class TxFiatAdmin(CustomDBAdmin):
     list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
     search_fields = ("checkoutsession__email",)
+    list_select_related = [
+        "checkoutsession",
+    ]
 
 
 @admin.register(TxAssetOwnership)
 class TxAssetOwnershipAdmin(CustomDBAdmin):
     list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
     search_fields = ("checkoutsession__email",)
+    list_select_related = [
+        "checkoutsession",
+    ]
 
 
 @admin.register(TxFree)
 class TxFreeAdmin(CustomDBAdmin):
     list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
     search_fields = ("checkoutsession__email",)
+    list_select_related = [
+        "checkoutsession",
+    ]
 
 
 @admin.register(WhiteLabel)

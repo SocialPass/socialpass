@@ -1155,43 +1155,23 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        # Create sessons, items, and tickets manually
-        names = form.cleaned_data["customer_names"].split(",")
-        emails = form.cleaned_data["customer_emails"].split(",")
-
-        # Names and emails should be the same number
-        if len(names) != len(emails):
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                "Please make sure the customer names and emails are valid CSV, "
-                "and that each list has equal number of items."
-            )
-            return super().form_invalid(form)
-
-        # Each email should be valid
-        for email in emails:
-            try:
-                validate_email(email.strip())
-            except Exception:
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "Please make sure each email address is valid."
-                )
-                return super().form_invalid(form)
-
+        # Create RSVPBatch object
         rsvp_batch = RSVPBatch.objects.create(
             event=context["event"],
         )
-        for i in range(len(names)):
+
+        emails = form.cleaned_data["customer_emails"].split(",")
+        for email in emails:
             try:
+                # Validate Email
+                validate_email(email.strip())
+
+                # Create checkout session, items, and fulfill session
                 with transaction.atomic():
                     checkout_session = CheckoutSession.objects.create(
                         event=context["event"],
                         rsvp_batch=rsvp_batch,
-                        name=names[i].strip(),
-                        email=emails[i].strip(),
+                        email=email.strip(),
                     )
                     checkout_item = CheckoutItem.objects.create(
                         ticket_tier=form.cleaned_data["ticket_tier"],
@@ -1199,8 +1179,14 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         quantity=1,
                     )
                     checkout_session.fulfill()
-            except Exception:
-                pass
+            except Exception as e:
+                print(e)
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Please make sure each email address is valid."
+                )
+                return super().form_invalid(form)
 
         return super().form_valid(form)
 

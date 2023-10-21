@@ -26,6 +26,6 @@ django-fsm==2.8.1 # https://github.com/viewflow/django-fsm
 django-fsm-log==3.1.0 # https://github.com/jazzband/django-fsm-log
 django-model-utils==4.3.1  # https://github.com/jazzband/django-model-utils
 django-silk==5.0.4 # https://github.com/jazzband/django-silk
-django-storages[boto3]==1.14.1  # https://github.com/jschneier/django-storages
+django-storages[boto3]==1.14.2  # https://github.com/jschneier/django-storages
 django-money==3.3.0 # https://github.com/django-money/django-money
 whitenoise==6.6.0 # https://github.com/evansd/whitenoise/

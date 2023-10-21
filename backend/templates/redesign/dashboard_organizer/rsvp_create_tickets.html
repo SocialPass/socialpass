@@ -49,15 +49,10 @@
 					</div>
 
 					<br /><br />
-					<h4>{% trans "Customer Names and Emails" %}</h4>
+					<h4>{% trans "Customer Emails" %}</h4>
 					<p class="text-body-secondary mb-lg-4">
-						{% trans "Please enter a list of customer names and email addresses as CSV (Comma Separated Values)." %}
+						{% trans "Please enter a list of customer email addresses as CSV (Comma Separated Values)." %}
 					</p>
-					<div class="mb-3">
-						{% with form.customer_names as input %}
-							{% include "redesign/forms/input.html" %}
-						{% endwith %}
-					</div>
 					<div class="mb-3">
 						{% with form.customer_emails as input %}
 							{% include "redesign/forms/input.html" %}

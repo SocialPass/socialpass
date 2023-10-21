@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.validators import validate_email
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -1158,6 +1159,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         names = form.cleaned_data["customer_names"].split(",")
         emails = form.cleaned_data["customer_emails"].split(",")
 
+        # Names and emails should be the same number
         if len(names) != len(emails):
             messages.add_message(
                 self.request,
@@ -1166,6 +1168,18 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                 "and that each list has equal number of items."
             )
             return super().form_invalid(form)
+
+        # Each email should be valid
+        for email in emails:
+            try:
+                validate_email(email.strip())
+            except Exception:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Please make sure each email address is valid."
+                )
+                return super().form_invalid(form)
 
         rsvp_batch = RSVPBatch.objects.create(
             event=context["event"],

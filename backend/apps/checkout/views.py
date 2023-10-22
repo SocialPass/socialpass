@@ -78,6 +78,7 @@ class CheckoutPageOne(DetailView):
                     )
                     .get(public_id=self.kwargs["event_uuid_slug"])
                 )
+            # TODO: This should be handled at DNS level ideally, and be deprecated
             # Handle Migrated Checkout (redirect to react app)
             # Limit id to <1000 to only catch early events launched on the react app
             if self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:

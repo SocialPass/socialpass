@@ -62,6 +62,7 @@ class CheckoutPageOne(DetailView):
                     .prefetch_related(
                         "tickettier_set",
                         "tickettier_set__tier_free",
+                        "tickettier_set__tier_fiat",
                         "tickettier_set__tier_asset_ownership",
                     )
                     .get(slug=self.kwargs["event_slug"])
@@ -74,6 +75,7 @@ class CheckoutPageOne(DetailView):
                     .prefetch_related(
                         "tickettier_set",
                         "tickettier_set__tier_free",
+                        "tickettier_set__tier_fiat",
                         "tickettier_set__tier_asset_ownership",
                     )
                     .get(public_id=self.kwargs["event_uuid_slug"])
@@ -87,6 +89,7 @@ class CheckoutPageOne(DetailView):
                     .prefetch_related(
                         "tickettier_set",
                         "tickettier_set__tier_free",
+                        "tickettier_set__tier_fiat",
                         "tickettier_set__tier_asset_ownership",
                     )
                     .get(pk=self.kwargs["event_pk_slug"])
@@ -102,118 +105,34 @@ class CheckoutPageOne(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        # Check if user is part of team or not
-        is_team_member = False
-        try:
-            user_membership = Membership.objects.select_related("team").get(
-                team__public_id=self.object.team.public_id,
-                user__id=self.request.user.id,
-            )
-        except Exception:
-            user_membership = False
-        is_team_member = self.request.user.is_authenticated and user_membership
-
+        # Check if team member
         # If user is NOT team member, we make sure event is live
+        is_team_member = self.request.user.is_authenticated and Membership.objects.filter(
+            team__public_id=self.object.team.public_id, user=self.request.user
+        ).exists()
         if not is_team_member:
             if self.object.state != Event.StateStatus.LIVE:
                 raise Http404()
 
-        # Get all ticket tiers and set up holder lists and availabilities
-        tiers_all = self.object.tickettier_set.all()
-        (
-            tiers_active,
-            tiers_free,
-            tiers_fiat,
-            tiers_blockchain,
-            tiers_asset_ownership,
-        ) = ([] for i in range(5))
-        availability = {
-            "FIAT": False,
-            "ASSET_OWNERSHIP": False,
-            "BLOCKCHAIN": False,
-            "FREE": False,
-        }
-
-        # Populate holder lists with correct tiers and update availability
-        for tier in tiers_all:
-            # hide hidden tiers from general public
-            if tier.hidden and (
-                not is_team_member or self.request.GET.get("view_as_attendee")
-            ):
-                continue
-
-            if tier.tier_free:
-                tiers_free.append(tier)
-                if tier.availability > 0:
-                    availability["FREE"] = True
-            if tier.tier_fiat:
-                tiers_fiat.append(tier)
-                if tier.availability > 0:
-                    availability["FIAT"] = True
-            if tier.tier_blockchain:
-                tiers_blockchain.append(tier)
-                if tier.availability > 0:
-                    availability["BLOCKCHAIN"] = True
-            if tier.tier_asset_ownership:
-                tiers_asset_ownership.append(tier)
-                if tier.availability > 0:
-                    availability["ASSET_OWNERSHIP"] = True
-
-        # Determine how many types of tiers are available
-        tier_types_count = 0
-        if len(tiers_free) > 0:
-            tier_types_count += 1
-        if len(tiers_fiat) > 0:
-            tier_types_count += 1
-        if len(tiers_blockchain) > 0:
-            tier_types_count += 1
-        if len(tiers_asset_ownership) > 0:
-            tier_types_count += 1
-
-        # If checkout type not given (default),
-        # we prioritize Fiat < NFTs < Crypto < Free
-        # see above `availability` dictionary for ordering
-        checkout_type = self.kwargs.get("checkout_type", "")
-        if not checkout_type:
-            for key, value in availability.items():
-                if value is True:
-                    checkout_type = key
-                    break
-
-        # Set tiers active
-        if checkout_type == "FREE":
-            tiers_active = tiers_free
-        elif checkout_type == "FIAT":
-            tiers_active = tiers_fiat
-        elif checkout_type == "BLOCKCHAIN":
-            tiers_active = tiers_blockchain
-        elif checkout_type == "ASSET_OWNERSHIP":
-            tiers_active = tiers_asset_ownership
-
-        # Handle ticket sales
-        sales_status = "OPEN"
-        if self.object.timezone:
-            now = datetime.datetime.now(pytz.timezone(self.object.timezone))
-        else:
-            now = datetime.datetime.now(pytz.utc)
-        sales_start = datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
-        sales_end = datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
-
-        # Set actual dates if they exist (with timezone)
-        # Note: Use now.tzinfo for timezone compatibility
-        if self.object.sales_start:
-            sales_start = self.object.sales_start.replace(tzinfo=now.tzinfo)
-        if self.object.sales_end:
-            sales_end = self.object.sales_end.replace(tzinfo=now.tzinfo)
-
-        # Check status
+        # Handle Ticket Sales Start / Sales End
+        # Determine the sales status of an event based on its sales start and end times.
+        now = datetime.datetime.now(pytz.timezone(self.object.timezone) if self.object.timezone else pytz.utc)
+        sales_start = self.object.sales_start.replace(tzinfo=now.tzinfo) if self.object.sales_start else datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
+        sales_end = self.object.sales_end.replace(tzinfo=now.tzinfo) if self.object.sales_end else datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
         if now < sales_start:
             sales_status = "UPCOMING"
-        # Note: Check if sales are over OR none of the items are available
-        elif now > sales_end or True not in availability.values():
+        elif now > sales_end:
             sales_status = "OVER"
+        else:
+            sales_status = "OPEN"
 
         # Set everything to context
+        checkout_type = "fix"
+        context["checkout_type"] = checkout_type
+        context["current_team"] = self.object.team
+        context["is_team_member"] = is_team_member
+        context["sales_start_with_tzinfo"] = sales_start
+        context["sales_status"] = sales_status
         context["form"] = CheckoutForm(
             initial={
                 "checkout_type": checkout_type,
@@ -221,18 +140,6 @@ class CheckoutPageOne(DetailView):
                 "email": self.request.GET.get("email", ""),
             }
         )
-        context["tiers_active"] = tiers_active
-        context["tiers_free"] = tiers_free
-        context["tiers_fiat"] = tiers_fiat
-        context["tiers_blockchain"] = tiers_blockchain
-        context["tiers_asset_ownership"] = tiers_asset_ownership
-        context["tier_types_count"] = tier_types_count
-        context["availability"] = availability
-        context["checkout_type"] = checkout_type
-        context["is_team_member"] = is_team_member
-        context["sales_start_with_tzinfo"] = sales_start
-        context["sales_status"] = sales_status
-        context["current_team"] = self.object.team
         return context
 
     @transaction.atomic

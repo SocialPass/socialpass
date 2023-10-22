@@ -200,6 +200,7 @@
 								name="payment-type"
 								id="FIAT"
 								value="FIAT"
+								{% if event.ticket_tier_counts.fiat_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "FIAT" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
@@ -216,6 +217,7 @@
 								name="payment-type"
 								id="ASSET_OWNERSHIP"
 								value="ASSET_OWNERSHIP"
+								{% if event.ticket_tier_counts.asset_ownership_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
@@ -232,6 +234,7 @@
 								name="payment-type"
 								id="FREE"
 								value="FREE"
+								{% if event.ticket_tier_counts.free_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "FREE" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>

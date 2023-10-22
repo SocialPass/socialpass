@@ -16,7 +16,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -703,6 +703,18 @@ class Event(DBModel):
         if missing_fields:
             return False, missing_fields
         return True, []
+
+    @cached_property
+    def ticket_tier_counts(self):
+        return TicketTier.objects.filter(event_id=self.id).values(
+            'event_id'
+        ).annotate(
+            fiat_count=Count('tier_fiat', filter=Q(tier_fiat__isnull=False)),
+            blockchain_count=Count('tier_blockchain', filter=Q(tier_blockchain__isnull=False)),
+            asset_ownership_count=Count('tier_asset_ownership', filter=Q(tier_asset_ownership__isnull=False)),
+            free_count=Count('tier_free', filter=Q(tier_free__isnull=False)),
+        ).get()
+
 
 
 class Ticket(DBModel):

@@ -126,8 +126,22 @@ class CheckoutPageOne(DetailView):
         else:
             sales_status = "OPEN"
 
+        # Handle checkout type
+        # If checkout type not given, we prioritize Fiat < NFTs < Crypto < Free
+        checkout_type = self.kwargs.get("checkout_type", "")
+        if not checkout_type:
+            if self.object.ticket_tier_counts["fiat_count"] > 0:
+                checkout_type = "FIAT"
+            elif self.object.ticket_tier_counts["asset_ownership_count"] > 0:
+                checkout_type = "ASSET_OWNERSHIP"
+            elif self.object.ticket_tier_counts["blockchain_count"] > 0:
+                checkout_type = "BLOCKCHAIN"
+            elif self.object.ticket_tier_counts["free_count"] > 0:
+                checkout_type = "FREE"
+            else:
+                checkout_type = "FREE"
+
         # Set everything to context
-        checkout_type = "fix"
         context["checkout_type"] = checkout_type
         context["current_team"] = self.object.team
         context["is_team_member"] = is_team_member

@@ -4,7 +4,7 @@
 {% block head_title %}{{ event.title }} - {% if event.team.whitelabel.brand_name %}{{ event.team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
 {% block navbar %}
-{% if is_team_member and not request.GET.view_as_attendee %}
+{% if is_team_member %}
 	<div class="alert alert-primary border-0 rounded-0 px-3 px-sm-4 m-0 d-md-flex align-items-md-center" role="alert">
 		{% trans "You are viewing this page as an organizer." %}
 		<div class="d-flex ms-md-auto mt-1 mt-md-0">

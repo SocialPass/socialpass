@@ -110,6 +110,7 @@ class CheckoutPageOne(DetailView):
         is_team_member = self.request.user.is_authenticated and Membership.objects.filter(
             team__public_id=self.object.team.public_id, user=self.request.user
         ).exists()
+        is_team_member = is_team_member and not self.request.GET.get("view_as_attendee")
         if not is_team_member:
             if self.object.state != Event.StateStatus.LIVE:
                 raise Http404()

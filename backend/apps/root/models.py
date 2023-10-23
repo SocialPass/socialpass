@@ -1121,6 +1121,7 @@ class CheckoutSession(DBModel):
     )
     passcode = models.CharField(max_length=6, default=get_random_passcode)
     passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
+    is_waiting_list = models.BooleanField(default=False)
 
     def __str__(self):
         return f"CheckoutSession: {self.email}"
@@ -1317,6 +1318,21 @@ class CheckoutSession(DBModel):
         self.create_items_tickets()
         self.send_confirmation_email()
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        self.save()
+
+    def set_is_waiting_list(self):
+        """
+        Check if there is ticket overflow for checkout session and set field 
+        """
+        is_waiting_list = False
+        checkout_items = CheckoutItem.objects.select_related(
+            "ticket_tier",
+        ).filter(checkout_session=self)
+        for item in checkout_items:
+            tickets_total_people = item.calculated_party_size * item.quantity
+            if tickets_total_people > item.ticket_tier.availability:
+                is_waiting_list = True
+        self.is_waiting_list = is_waiting_list
         self.save()
 
 

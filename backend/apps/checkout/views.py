@@ -369,6 +369,26 @@ class CheckoutPageTwo(DetailView):
             )
 
         # Form is valid, continue...
+
+        # Make sure there is no ticket overflow
+        is_waiting_list = self.object.check_is_waiting_list()
+        if is_waiting_list:
+            self.object.is_waiting_list = True
+            self.object.save()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "We're sorry, not enough ticket(s) are available. However, you "
+                "are on a waiting list, so please be on the lookout for an email. "
+                "The organizers may decide to send you ticket(s) depending on the "
+                "availability."
+            )
+            return redirect(
+                "checkout:checkout_two",
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
+
         # Finalize / process transaction and handle exceptions
         try:
             self.object.finalize_transaction(form_data=form)
@@ -486,6 +506,25 @@ class CheckoutFiat(DetailView):
             )
 
         # Form is valid, continue...
+
+        # Make sure there is no ticket overflow
+        is_waiting_list = self.object.check_is_waiting_list()
+        if is_waiting_list:
+            self.object.is_waiting_list = True
+            self.object.save()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "We're sorry, not enough ticket(s) are available. However, you "
+                "are on a waiting list, so please be on the lookout for an email. "
+                "The organizers may decide to send you ticket(s) depending on the "
+                "availability."
+            )
+            return redirect(
+                "checkout:checkout_fiat",
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
 
         # Create line items using Stripe PRICES API
         stripe_line_items = []

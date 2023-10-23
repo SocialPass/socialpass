@@ -1320,9 +1320,9 @@ class CheckoutSession(DBModel):
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.save()
 
-    def set_is_waiting_list(self):
+    def check_is_waiting_list(self):
         """
-        Check if there is ticket overflow for checkout session and set field 
+        Check if there is ticket overflow for checkout session
         """
         is_waiting_list = False
         checkout_items = CheckoutItem.objects.select_related(
@@ -1332,8 +1332,7 @@ class CheckoutSession(DBModel):
             tickets_total_people = item.calculated_party_size * item.quantity
             if tickets_total_people > item.ticket_tier.availability:
                 is_waiting_list = True
-        self.is_waiting_list = is_waiting_list
-        self.save()
+        return is_waiting_list
 
 
 class CheckoutItem(DBModel):

@@ -905,14 +905,6 @@ class TicketTier(DBModel):
         return f"TicketTier: {self.ticket_type}"
 
     @cached_property
-    def quantity_sold(self):
-        tickets = Ticket.objects.filter(ticket_tier=self)
-        tickets_with_party = tickets.aggregate(models.Sum("party_size"))[
-            "party_size__sum"
-        ]
-        return tickets_with_party or 0
-
-    @cached_property
     def quantity_sold_without_party(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return tickets.count()

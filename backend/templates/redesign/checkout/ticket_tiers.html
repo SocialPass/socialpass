@@ -2,8 +2,7 @@
 {% for tier in tiers %}
 
 <!-- Handle tier filtering -->
-{% with tier_hidden=tier.hidden %}
-{% if not tier_hidden or tier.hidden and is_team_member %}
+{% if not tier.hidden or tier.hidden and is_team_member %}
 {% if tier_type == "tiers-FREE" and tier.tier_free or tier_type == "tiers-FIAT" and tier.tier_fiat or tier_type == "tiers-ASSET_OWNERSHIP" and tier.tier_asset_ownership %}
 <div class="ticket-tier mb-3">
     <input
@@ -23,7 +22,7 @@
     <label for="{{ tier.public_id }}" class="ticket-tier-label">
         <div class="d-sm-flex align-items-center">
             <div class="pe-sm-3">
-                <h5 class="mb-1">
+                <h5 class="mb-1 text-truncate">
                     {% if tier.availability > 0 %}
                         <span class="ticket-tier-uncheck">
                             <i class="fa-light fa-square"></i>
@@ -139,5 +138,4 @@
 </div>
 {% endif %}
 {% endif %}
-{% endwith %}
 {% endfor %}

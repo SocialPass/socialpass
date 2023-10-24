@@ -114,7 +114,7 @@
 							{% trans "Get Tickets" %} &times; {{ tickets|length }}
 						</h1>
 						<p class="mt-1">
-							{% trans "The following ticket(s) were generated for you. You can save a ticket as PNG by clicking on the download button, or use one of your Google or Apple wallets." %}
+							{% trans "The following ticket(s) were generated for you. You can save a ticket as PNG by clicking on the download button, or your Google wallet." %}
 						</p>
 					</div>
 					<div class="col-lg-5 ps-lg-4">
@@ -251,6 +251,7 @@
 									</a>
 								</div>
 							{% endif %}
+							<!--
 							{% if ticket.apple_ticket.exists %}
 								<div class="col-sm-6 col-lg-4">
 									<a href="data:application/vnd.apple.pkpass;base64,{{ ticket.apple_ticket.bytes }}" download="{{ ticket.object.public_id }} [{{ ticket.object.event.title }}].pkpass" class="btn btn-secondary rounded-pill d-block w-100 h-100 d-flex align-items-center px-3">
@@ -265,6 +266,7 @@
 									</a>
 								</div>
 							{% endif %}
+							-->
 						</div>
 					</div>
 				</div>

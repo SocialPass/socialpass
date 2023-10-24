@@ -40,7 +40,6 @@ class CheckoutItemAdmin(CustomDBAdmin):
         "ticket_tier",
         "quantity",
         "extra_party",
-        "is_overflow",
         "checkout_session",
     ] + CustomDBAdmin.list_display
     search_fields = [

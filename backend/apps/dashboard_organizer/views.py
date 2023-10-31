@@ -1141,9 +1141,10 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["event"] = Event.objects.get(
+        context["event"] = Event.objects.prefetch_related("tickettier_set").get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
+        context["ticket_tiers"] = context["event"].tickettier_set.all()
         return context
 
     def get_form(self, form_class=None):
@@ -1178,6 +1179,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         ticket_tier=form.cleaned_data["ticket_tier"],
                         checkout_session=checkout_session,
                         quantity=1,
+                        extra_party=form.cleaned_data["allowed_guests"],
                     )
                     checkout_session.fulfill()
             except Exception as e:

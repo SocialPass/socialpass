@@ -364,6 +364,15 @@ class RSVPCreateTicketsForm(forms.Form):
     Bulk tickets create form for the RSVP system.
     """
     ticket_tier = forms.ModelChoiceField(queryset=TicketTier.objects.none())
+    allowed_guests = forms.IntegerField(
+        widget=forms.NumberInput(
+            attrs={
+                "min": 0,
+                "max": 100,
+            }
+        ),
+        initial=0,
+    )
     customer_emails = forms.CharField(
         widget=forms.TextInput(
             attrs={

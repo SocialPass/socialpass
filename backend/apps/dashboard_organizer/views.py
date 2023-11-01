@@ -28,6 +28,7 @@ from apps.dashboard_organizer.forms import (
     TierAssetOwnershipForm,
     TierFiatForm,
     RSVPCreateTicketsForm,
+    MessageBatchForm,
 )
 from apps.root.models import (
     Event,
@@ -1222,3 +1223,42 @@ class MessageBatchesView(TeamContextMixin, TemplateView):
             event=context["event"]
         ).order_by("-created")
         return context
+
+
+class MessageBatchCreateView(TeamContextMixin, CreateView):
+    """
+    Create a message batch object
+    """
+
+    model = MessageBatch
+    form_class = MessageBatchForm
+    template_name = "redesign/dashboard_organizer/message_batch_create.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+    def get_form(self, form_class=None):
+        form = super().get_form()
+        form.fields["ticket_tier"].queryset = TicketTier.objects.filter(
+            event__pk=self.kwargs["event_pk"]
+        )
+        return form
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        # form.instance.send_emails()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Messages sent successfully."
+        )
+        return reverse(
+            "dashboard_organizer:message_batches",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"],)
+        )

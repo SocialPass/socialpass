@@ -1251,7 +1251,7 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        # form.instance.send_emails()
+        form.instance.send_emails()
         return super().form_valid(form)
 
     def get_success_url(self):

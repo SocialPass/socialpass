@@ -9,6 +9,7 @@ from eth_utils import is_address
 from apps.root.models import (
     Event,
     Invite,
+    MessageBatch,
     Team,
     TicketTier,
     TierAssetOwnership,
@@ -380,3 +381,23 @@ class RSVPCreateTicketsForm(forms.Form):
             }
         ),
     )
+
+
+class MessageBatchForm(forms.ModelForm):
+    """
+    Form to create a message batch
+    """
+
+    class Meta:
+        model = MessageBatch
+        fields = ["ticket_tier", "subject", "message"]
+        widgets = {
+           "subject": forms.TextInput(attrs={"placeholder": _("Subject of the email")}),
+           "message": forms.Textarea(
+               attrs={
+                   "placeholder": _("Message of the email"),
+                   "rows": 3,
+               }
+           ),
+        }
+        

@@ -1713,3 +1713,19 @@ class MessageBatch(DBModel):
 
     def __str__(self) -> str:
         return f"MessageBatch: {self.public_id}"
+
+    def send_emails(self):
+        emails = []
+        tickets = Ticket.objects.select_related("checkout_session").filter(
+            event=self.event, ticket_tier=self.ticket_tier
+        )
+        for ticket in tickets:
+            emails.append(ticket.checkout_session.email)
+        emails = list(set(emails))
+        self.total_recipients = len(emails)
+        send_mail(
+            "[SocialPass] " + self.subject,
+            self.message,
+            "tickets-no-reply@socialpass.io",
+            emails
+        )

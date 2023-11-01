@@ -33,6 +33,7 @@ from apps.root.models import (
     Event,
     Invite,
     Membership,
+    MessageBatch,
     Team,
     Ticket,
     TicketTier,
@@ -1201,3 +1202,23 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
             "dashboard_organizer:rsvp_tickets",
             args=(self.kwargs["team_public_id"], self.kwargs["event_pk"],)
         )
+
+
+class MessageBatchesView(TeamContextMixin, TemplateView):
+    """
+    Show the message batches (and CTAs) for an event.
+    """
+
+    template_name = "redesign/dashboard_organizer/message_batches.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        context["message_batches"] = MessageBatch.objects.select_related(
+            "ticket_tier"
+        ).filter(
+            event=context["event"]
+        ).order_by("-created")
+        return context

@@ -1685,3 +1685,31 @@ class RSVPBatch(DBModel):
 
     def __str__(self) -> str:
         return f"RSVPBatch: {self.public_id}"
+
+
+class MessageBatch(DBModel):
+    """
+    Represents a batch of messages sent to ticket holders of a particular tier.
+    """
+
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+    ticket_tier = models.ForeignKey(
+        "TicketTier",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+    subject = models.CharField(max_length=255, blank=False)
+    message = models.TextField(blank=False)
+    total_recipients = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)]
+    )
+
+    def __str__(self) -> str:
+        return f"MessageBatch: {self.public_id}"

@@ -144,6 +144,8 @@ class Team(DBModel):
         blank=True,
         null=True,
     )
+    allow_rsvp = models.BooleanField(default=False)
+    allow_messaging = models.BooleanField(default=False)
 
     # stripe
     tmp_stripe_account_id = models.CharField(

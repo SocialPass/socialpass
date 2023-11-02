@@ -1122,6 +1122,11 @@ class RSVPTicketsView(TeamContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Make sure team has correct permission
+        if not context["current_team"].allow_rsvp:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
@@ -1143,6 +1148,11 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Make sure team has correct permission
+        if not context["current_team"].allow_rsvp:
+            raise Http404
+
         context["event"] = Event.objects.prefetch_related("tickettier_set").get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
@@ -1214,6 +1224,11 @@ class MessageBatchesView(TeamContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Make sure team has correct permission
+        if not context["current_team"].allow_messaging:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
@@ -1236,6 +1251,11 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Make sure team has correct permission
+        if not context["current_team"].allow_messaging:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )

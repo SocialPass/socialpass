@@ -33,7 +33,7 @@
 						<h6 class="text-body-secondary mb-0 mt-3 fw-normal">
 							{{ rsvp_batch.public_id }}
 						</h5>
-						<p class="text-body-secondary mt-1">
+						<p class="text-body-secondary mt-3 mb-0">
 							<strong class="text-body">
 								<i class="fa-light fa-clock me-1"></i>
 								{% trans "Created" %}:
@@ -46,6 +46,24 @@
 							</h1>
 							<p class="d-inline-block text-body-secondary m-0">
 								{% trans "Ticket(s) Created" %}
+							</p>
+						</div>
+						<div class="mt-3 p-3 rounded bg-body-secondary overflow-y-auto" style="max-height: 200px;">
+							<div class="fw-bold text-danger-emphasis">{% trans "Fail:" %}</div>
+							<p class="text-body-secondary mb-2">
+								{% if rsvp_batch.failure_list %}
+									{{ rsvp_batch.failure_list }}
+								{% else %}
+									---
+								{% endif %}
+							</p>
+							<div class="fw-bold text-success-emphasis">{% trans "Success:" %}</div>
+							<p class="text-body-secondary mb-0">
+								{% if rsvp_batch.success_list %}
+									{{ rsvp_batch.success_list }}
+								{% else %}
+									---
+								{% endif %}
 							</p>
 						</div>
 					</div>

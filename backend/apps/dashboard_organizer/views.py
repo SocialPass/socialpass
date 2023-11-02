@@ -1174,13 +1174,35 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
             event=context["event"],
         )
 
+        # Limit to 100 emails per batch
         emails = form.cleaned_data["customer_emails"].split(",")
+        if len(emails) > 100:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Only up to 100 emails are allowed per batch."
+            )
+            return super().form_invalid(form)
+
+        # Validate all emails
         for email in emails:
             try:
-                # Validate Email
                 validate_email(email.strip())
+            except Exception as e:
+                print(e)
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Please make sure each email address is valid."
+                )
+                return super().form_invalid(form)
 
-                # Create checkout session, items, and fulfill session
+        # Create checkout session, items, and fulfill session
+        # Also track success and failure
+        success_list = []
+        failure_list = []
+        for email in emails:
+            try:
                 with transaction.atomic():
                     checkout_session = CheckoutSession.objects.create(
                         event=context["event"],
@@ -1194,14 +1216,13 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         extra_party=form.cleaned_data["allowed_guests"],
                     )
                     checkout_session.fulfill()
+                success_list.append(email)
             except Exception as e:
                 print(e)
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "Please make sure each email address is valid."
-                )
-                return super().form_invalid(form)
+                failure_list.append(email)
+        rsvp_batch.success_list = ", ".join(map(str, success_list))
+        rsvp_batch.failure_list = ", ".join(map(str, failure_list))
+        rsvp_batch.save()
 
         return super().form_valid(form)
 

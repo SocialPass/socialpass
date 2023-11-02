@@ -1684,6 +1684,8 @@ class RSVPBatch(DBModel):
         blank=False,
         null=False,
     )
+    success_list = models.TextField(blank=True)
+    failure_list = models.TextField(blank=True)
 
     def __str__(self) -> str:
         return f"RSVPBatch: {self.public_id}"

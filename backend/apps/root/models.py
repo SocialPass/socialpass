@@ -125,7 +125,8 @@ class Team(DBModel):
     members = models.ManyToManyField("User", through="Membership", blank=False)
 
     # basic info
-    name = models.CharField(max_length=255, blank=False)
+    name = models.CharField(max_length=255, blank=False, unique=True)
+    slug = AutoSlugField(populate_from="name", null=True, unique=True)
     image = models.ImageField(
         help_text="A brand image for your team. Please make sure the image is "
         "square, non-transparent, and ideally in the PNG format.",
@@ -377,7 +378,6 @@ class Event(DBModel):
     # Basic Info
     title = models.CharField(
         max_length=255,
-        unique=True,
         help_text="Brief name for your event. Must be unique!",
         blank=False,
     )
@@ -434,7 +434,7 @@ class Event(DBModel):
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)
-    slug = AutoSlugField(populate_from="title", null=True, unique=True)
+    slug = AutoSlugField(populate_from="title", null=True)
     sales_start = models.DateTimeField(
         help_text="When your event sales will start (optional).",
         blank=True,
@@ -448,6 +448,9 @@ class Event(DBModel):
 
     # Scanner Info
     scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
+
+    class Meta:
+        unique_together = ("team", "title",)
 
     def __str__(self):
         return f"Event: {self.title}"

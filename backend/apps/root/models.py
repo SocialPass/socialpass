@@ -450,7 +450,7 @@ class Event(DBModel):
     scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
 
     class Meta:
-        unique_together = ("team", "title",)
+        unique_together = [["team", "title"], ["team", "slug"]]
 
     def __str__(self):
         return f"Event: {self.title}"

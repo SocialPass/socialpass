@@ -1171,6 +1171,7 @@ class CheckoutSession(DBModel):
         url = reverse(
             "checkout:stripe_checkout_cancel",
             args=[
+                self.event.team.slug,
                 self.event.slug,
                 self.public_id,
                 token,
@@ -1189,6 +1190,7 @@ class CheckoutSession(DBModel):
         url = reverse(
             "checkout:stripe_checkout_success",
             args=[
+                self.event.team.slug,
                 self.event.slug,
                 self.public_id,
                 token,

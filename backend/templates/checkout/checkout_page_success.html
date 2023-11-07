@@ -107,7 +107,7 @@
 			<p class="fs-base-n2">
 				Want to buy more tickets?
 			</p>
-			<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-lg btn-block px-20 py-10 fs-base text-base">
+			<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-lg btn-block px-20 py-10 fs-base text-base">
 				<i class="fa-solid fa-rotate-right me-5"></i>
 				<strong class="antialiased">Order Again</strong>
 			</a>

@@ -56,7 +56,7 @@ class CheckoutPageOne(DetailView):
     def get_object(self):
         # Handle default checkout
         try:
-            if self.kwargs.get("event_slug"):
+            if self.kwargs.get("team_slug") and self.kwargs.get("event_slug"):
                 self.object = (
                     Event.objects.select_related("team")
                     .prefetch_related(
@@ -64,11 +64,14 @@ class CheckoutPageOne(DetailView):
                         "tickettier_set__tier_free",
                         "tickettier_set__tier_asset_ownership",
                     )
-                    .get(slug=self.kwargs["event_slug"])
+                    .get(
+                        team__slug=self.kwargs["team_slug"],
+                        slug=self.kwargs["event_slug"]
+                    )
                 )
             # Handle Migrated Checkout (react app)
             # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
-            if self.kwargs.get("event_uuid_slug"):
+            elif self.kwargs.get("event_uuid_slug"):
                 self.object = (
                     Event.objects.select_related("team")
                     .prefetch_related(
@@ -80,7 +83,7 @@ class CheckoutPageOne(DetailView):
                 )
             # Handle Migrated Checkout (redirect to react app)
             # Limit id to <1000 to only catch early events launched on the react app
-            if self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
+            elif self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
                 self.object = (
                     Event.objects.select_related("team")
                     .prefetch_related(
@@ -254,6 +257,7 @@ class CheckoutPageOne(DetailView):
             )
             return redirect(
                 "checkout:checkout_one",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
             )
 
@@ -281,12 +285,14 @@ class CheckoutPageOne(DetailView):
         if checkout_session.tx_type == CheckoutSession.TransactionType.FIAT:
             return redirect(
                 "checkout:checkout_fiat",
+                self.object.team.slug,
                 self.object.slug,
                 checkout_session.public_id,
             )
         else:
             return redirect(
                 "checkout:checkout_two",
+                self.object.team.slug,
                 self.object.slug,
                 checkout_session.public_id,
             )
@@ -364,6 +370,7 @@ class CheckoutPageTwo(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -385,6 +392,7 @@ class CheckoutPageTwo(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -403,6 +411,7 @@ class CheckoutPageTwo(DetailView):
                     )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -415,6 +424,7 @@ class CheckoutPageTwo(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -501,6 +511,7 @@ class CheckoutFiat(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -522,6 +533,7 @@ class CheckoutFiat(DetailView):
             )
             return redirect(
                 "checkout:checkout_fiat",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -546,6 +558,7 @@ class CheckoutFiat(DetailView):
                 )
                 return redirect(
                     "checkout:checkout_fiat",
+                    self.kwargs["team_slug"],
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
                 )
@@ -581,6 +594,7 @@ class CheckoutFiat(DetailView):
             )
             return redirect(
                 "checkout:checkout_fiat",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -628,6 +642,7 @@ class StripeCheckoutCancel(RedirectView):
         return reverse(
             "checkout:checkout_fiat",
             args=(
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             ),
@@ -670,6 +685,7 @@ class StripeCheckoutSuccess(RedirectView):
             return reverse(
                 "checkout:checkout_fiat",
                 args=(
+                    self.kwargs["team_slug"],
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
                 ),

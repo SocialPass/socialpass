@@ -27,7 +27,7 @@
 
 	<!-- Back button start -->
 	<div class="position-absolute z-1 bottom-0 start-0 px-content py-20">
-		<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-rounded ps-5 d-flex align-items-center">
+		<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-rounded ps-5 d-flex align-items-center">
 			<div class="ws-25 hs-25 bg-secondary text-on-secondary rounded-circle d-flex align-items-center justify-content-center">
 				<i class="fa-regular fa-arrow-left"></i>
 			</div>
@@ -174,7 +174,7 @@
 
 					<!-- Edit button start -->
 					<div class="ms-auto">
-						<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="fw-bold antialiased">Edit</a>
+						<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="fw-bold antialiased">Edit</a>
 					</div>
 					<!-- Edit button end -->
 				</div>

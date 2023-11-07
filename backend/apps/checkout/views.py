@@ -93,7 +93,7 @@ class CheckoutPageOneRedirect(RedirectView):
             raise Http404()
         
         return reverse(
-            "checkout:checkout_page_one",
+            "checkout:checkout_one",
             args=(
                 event.team.slug,
                 event.slug,
@@ -102,7 +102,7 @@ class CheckoutPageOneRedirect(RedirectView):
 
 
 class CheckoutPageOne(DetailView):
-    """
+    """a
     Checkout page one (start of flow)
 
     GET

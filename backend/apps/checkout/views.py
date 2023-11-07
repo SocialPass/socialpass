@@ -36,6 +36,68 @@ from .forms import (
     CheckoutFormAssetOwnership,
     CheckoutFormFiat,
 )
+from .old_events_slug_to_pk import OLD_EVENTS_SLUG_TO_PK
+
+
+class CheckoutPageOneRedirect(RedirectView):
+    """
+    Redirect to checkout page one. Used for preserving old URLs.
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        try:
+            if (
+                self.kwargs.get("event_slug") and 
+                self.kwargs.get("event_slug") in OLD_EVENTS_SLUG_TO_PK
+            ):
+                event = (
+                    Event.objects.select_related("team")
+                    .prefetch_related(
+                        "tickettier_set",
+                        "tickettier_set__tier_free",
+                        "tickettier_set__tier_asset_ownership",
+                    )
+                    .get(
+                        pk=OLD_EVENTS_SLUG_TO_PK[self.kwargs.get("event_slug")]
+                    )
+                )
+            # Handle Migrated Checkout (react app)
+            # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
+            elif self.kwargs.get("event_uuid_slug"):
+                event = (
+                    Event.objects.select_related("team")
+                    .prefetch_related(
+                        "tickettier_set",
+                        "tickettier_set__tier_free",
+                        "tickettier_set__tier_asset_ownership",
+                    )
+                    .get(public_id=self.kwargs["event_uuid_slug"])
+                )
+            # Handle Migrated Checkout (redirect to react app)
+            # Limit id to <1000 to only catch early events launched on the react app
+            elif self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
+                event = (
+                    Event.objects.select_related("team")
+                    .prefetch_related(
+                        "tickettier_set",
+                        "tickettier_set__tier_free",
+                        "tickettier_set__tier_asset_ownership",
+                    )
+                    .get(pk=self.kwargs["event_pk_slug"])
+                )
+        except Event.DoesNotExist:
+            raise Http404()
+        except Exception:
+            rollbar.report_exc_info()
+            raise Http404()
+        
+        return reverse(
+            "checkout:checkout_page_one",
+            args=(
+                event.team.slug,
+                event.slug,
+            ),
+        )
 
 
 class CheckoutPageOne(DetailView):

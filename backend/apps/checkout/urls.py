@@ -5,24 +5,7 @@ from . import views
 app_name = "checkout"
 
 urlpatterns = [
-    path(
-        "event-2/<uuid:event_uuid_slug>/",
-        views.CheckoutPageOne.as_view(),
-        name="checkout_one",
-    ),
-    path(
-        "events/<int:event_pk_slug>/<slug:extra>/",
-        views.CheckoutPageOne.as_view(),
-        name="checkout_one",
-    ),
-
-
-
-
-
-
-
-
+    # Main checkout flow
     path(
         "<slug:team_slug>/<slug:event_slug>/",
         views.CheckoutPageOne.as_view(),
@@ -58,11 +41,28 @@ urlpatterns = [
         views.CheckoutPageSuccess.as_view(),
         name="checkout_success",
     ),
-    
+
     # Tickets download
     path(
         "get-tickets/<uuid:checkout_session_public_id>",
         views.GetTickets.as_view(),
         name="get_tickets",
+    ),
+
+    # Preserve old URLs
+    path(
+        "event/<slug:event_slug>/",
+        views.CheckoutPageOneRedirect.as_view(),
+        name="checkout_one_redirect",
+    ),
+    path(
+        "event-2/<uuid:event_uuid_slug>/",
+        views.CheckoutPageOneRedirect.as_view(),
+        name="checkout_one_redirect",
+    ),
+    path(
+        "events/<int:event_pk_slug>/<slug:extra>/",
+        views.CheckoutPageOneRedirect.as_view(),
+        name="checkout_one_redirect",
     ),
 ]

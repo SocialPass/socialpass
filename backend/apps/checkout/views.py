@@ -46,6 +46,7 @@ class CheckoutPageOneRedirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         try:
+            # Handle existing events on production as of 7th Nov, 2023
             if (
                 self.kwargs.get("event_slug") and 
                 self.kwargs.get("event_slug") in OLD_EVENTS_SLUG_TO_PK
@@ -118,43 +119,18 @@ class CheckoutPageOne(DetailView):
     def get_object(self):
         # Handle default checkout
         try:
-            if self.kwargs.get("team_slug") and self.kwargs.get("event_slug"):
-                self.object = (
-                    Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
-                    )
-                    .get(
-                        team__slug=self.kwargs["team_slug"],
-                        slug=self.kwargs["event_slug"]
-                    )
+            self.object = (
+                Event.objects.select_related("team")
+                .prefetch_related(
+                    "tickettier_set",
+                    "tickettier_set__tier_free",
+                    "tickettier_set__tier_asset_ownership",
                 )
-            # Handle Migrated Checkout (react app)
-            # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
-            elif self.kwargs.get("event_uuid_slug"):
-                self.object = (
-                    Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
-                    )
-                    .get(public_id=self.kwargs["event_uuid_slug"])
+                .get(
+                    team__slug=self.kwargs["team_slug"],
+                    slug=self.kwargs["event_slug"]
                 )
-            # Handle Migrated Checkout (redirect to react app)
-            # Limit id to <1000 to only catch early events launched on the react app
-            elif self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
-                self.object = (
-                    Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
-                    )
-                    .get(pk=self.kwargs["event_pk_slug"])
-                )
+            )
         except Event.DoesNotExist:
             raise Http404()
         except Exception:

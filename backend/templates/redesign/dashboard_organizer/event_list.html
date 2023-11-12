@@ -131,7 +131,7 @@
 							<li><div class="dropdown-divider"></div></li>
 							{% if event.state == event.StateStatus.LIVE %}
 							<li>
-								<a href="{% url 'checkout:checkout_one' event.slug %}" class="dropdown-item d-flex align-items-center" target="_blank">
+								<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="dropdown-item d-flex align-items-center" target="_blank">
 									<i class="fa-light fa-external-link specific-w-25 flex-shrink-0"></i>
 									{% trans "Public Page" %}
 								</a>
@@ -144,17 +144,26 @@
 							</li>
 							{% else %}
 							<li>
-								<a href="{% url 'checkout:checkout_one' event.slug %}" class="dropdown-item d-flex align-items-center" target="_blank">
+								<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="dropdown-item d-flex align-items-center" target="_blank">
 									<i class="fa-light fa-external-link specific-w-25 flex-shrink-0"></i>
 									{% trans "Preview" %}
 								</a>
 							</li>
 							{% endif %}
 							<li><div class="dropdown-divider"></div></li>
-							<li>
-								<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.public_id event.pk %}" class="dropdown-item">{% trans "RSVP" %}</a>
-							</li>
-							<li><div class="dropdown-divider"></div></li>
+							{% if current_team.allow_rsvp %}
+								<li>
+									<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.public_id event.pk %}" class="dropdown-item">{% trans "RSVP" %}</a>
+								</li>
+							{% endif %}
+							{% if current_team.allow_messaging %}
+								<li>
+									<a href="{% url 'dashboard_organizer:message_batches' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Message ticket holders" %}</a>
+								</li>
+							{% endif %}
+							{% if current_team.allow_rsvp or current_team.allow_messaging %}
+								<li><div class="dropdown-divider"></div></li>
+							{% endif %}
 							<li>
 								<a href="{% url 'dashboard_organizer:event_delete' current_team.public_id event.pk %}" class="dropdown-item text-danger-emphasis fw-bold">{% trans "Delete" %}</a>
 							</li>

@@ -28,11 +28,13 @@ from apps.dashboard_organizer.forms import (
     TierAssetOwnershipForm,
     TierFiatForm,
     RSVPCreateTicketsForm,
+    MessageBatchForm,
 )
 from apps.root.models import (
     Event,
     Invite,
     Membership,
+    MessageBatch,
     Team,
     Ticket,
     TicketTier,
@@ -1120,6 +1122,11 @@ class RSVPTicketsView(TeamContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Make sure team has correct permission
+        if not context["current_team"].allow_rsvp:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
@@ -1141,9 +1148,15 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["event"] = Event.objects.get(
+
+        # Make sure team has correct permission
+        if not context["current_team"].allow_rsvp:
+            raise Http404
+
+        context["event"] = Event.objects.prefetch_related("tickettier_set").get(
             pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
         )
+        context["ticket_tiers"] = context["event"].tickettier_set.all()
         return context
 
     def get_form(self, form_class=None):
@@ -1161,13 +1174,35 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
             event=context["event"],
         )
 
+        # Limit to 100 emails per batch
         emails = form.cleaned_data["customer_emails"].split(",")
+        if len(emails) > 100:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Only up to 100 emails are allowed per batch."
+            )
+            return super().form_invalid(form)
+
+        # Validate all emails
         for email in emails:
             try:
-                # Validate Email
                 validate_email(email.strip())
+            except Exception as e:
+                print(e)
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Please make sure each email address is valid."
+                )
+                return super().form_invalid(form)
 
-                # Create checkout session, items, and fulfill session
+        # Create checkout session, items, and fulfill session
+        # Also track success and failure
+        success_list = []
+        failure_list = []
+        for email in emails:
+            try:
                 with transaction.atomic():
                     checkout_session = CheckoutSession.objects.create(
                         event=context["event"],
@@ -1178,16 +1213,16 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         ticket_tier=form.cleaned_data["ticket_tier"],
                         checkout_session=checkout_session,
                         quantity=1,
+                        extra_party=form.cleaned_data["allowed_guests"],
                     )
                     checkout_session.fulfill()
+                success_list.append(email)
             except Exception as e:
                 print(e)
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "Please make sure each email address is valid."
-                )
-                return super().form_invalid(form)
+                failure_list.append(email)
+        rsvp_batch.success_list = ", ".join(map(str, success_list))
+        rsvp_batch.failure_list = ", ".join(map(str, failure_list))
+        rsvp_batch.save()
 
         return super().form_valid(form)
 
@@ -1197,5 +1232,74 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         )
         return reverse(
             "dashboard_organizer:rsvp_tickets",
+            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"],)
+        )
+
+
+class MessageBatchesView(TeamContextMixin, TemplateView):
+    """
+    Show the message batches (and CTAs) for an event.
+    """
+
+    template_name = "redesign/dashboard_organizer/message_batches.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Make sure team has correct permission
+        if not context["current_team"].allow_messaging:
+            raise Http404
+
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        context["message_batches"] = MessageBatch.objects.select_related(
+            "ticket_tier"
+        ).filter(
+            event=context["event"]
+        ).order_by("-created")
+        return context
+
+
+class MessageBatchCreateView(TeamContextMixin, CreateView):
+    """
+    Create a message batch object
+    """
+
+    model = MessageBatch
+    form_class = MessageBatchForm
+    template_name = "redesign/dashboard_organizer/message_batch_create.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Make sure team has correct permission
+        if not context["current_team"].allow_messaging:
+            raise Http404
+
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+        )
+        return context
+
+    def get_form(self, form_class=None):
+        form = super().get_form()
+        form.fields["ticket_tier"].queryset = TicketTier.objects.filter(
+            event__pk=self.kwargs["event_pk"]
+        )
+        return form
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        form.instance.event = context["event"]
+        form.instance.send_emails()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Messages sent successfully."
+        )
+        return reverse(
+            "dashboard_organizer:message_batches",
             args=(self.kwargs["team_public_id"], self.kwargs["event_pk"],)
         )

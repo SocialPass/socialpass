@@ -9,6 +9,7 @@ from apps.root.models import (
     Event,
     Invite,
     Membership,
+    MessageBatch,
     RSVPBatch,
     Team,
     Ticket,
@@ -40,7 +41,6 @@ class CheckoutItemAdmin(CustomDBAdmin):
         "ticket_tier",
         "quantity",
         "extra_party",
-        "is_overflow",
         "checkout_session",
     ] + CustomDBAdmin.list_display
     search_fields = [
@@ -305,3 +305,7 @@ class WhiteLabelAdmin(CustomDBAdmin):
 @admin.register(RSVPBatch)
 class RSVPBatchAdmin(CustomDBAdmin):
     list_display = ["__str__", "event"] + CustomDBAdmin.list_display
+
+@admin.register(MessageBatch)
+class MessageBatchAdmin(CustomDBAdmin):
+    list_display = ["__str__", "event", "ticket_tier"] + CustomDBAdmin.list_display

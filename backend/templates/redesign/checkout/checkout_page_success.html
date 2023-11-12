@@ -107,7 +107,7 @@
 					<p class="text-body-secondary">
 						{% trans "Want to buy more tickets?" %}
 					</p>
-					<a href="{% url 'checkout:checkout_one' object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-info btn-lg d-block w-100">
+					<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?name={{ object.name }}&email={{ object.email }}" class="btn btn-info btn-lg d-block w-100">
 						<i class="fa-solid fa-rotate-right me-1"></i>
 						{% trans "Order Again" %}
 					</a>

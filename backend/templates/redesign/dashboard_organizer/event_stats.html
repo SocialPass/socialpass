@@ -76,7 +76,7 @@
 					{% trans "Share Event" %}
 				</h6>
 				<div class="d-flex align-items-center flex-wrap">
-					<a href="{% url 'checkout:checkout_one' event.slug %}" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Public Page" aria-label="Public Page">
+					<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Public Page" aria-label="Public Page">
 						<i class="fa-solid fa-external-link h6 m-0"></i>
 					</a>
 					<a href="#" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center text-white rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Facebook Share" aria-label="Facebook Share" id="facebook-share" style="background-color: #4267b2;">
@@ -215,7 +215,7 @@
 <!-- Event stats end -->
 
 <script>
-	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.slug %}"
+	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}"
 	const twitterShareAnchor = document.getElementById("twitter-share")
 	const facebookShareAnchor = document.getElementById("facebook-share")
   	const emailShareAnchor = document.getElementById("email-share")

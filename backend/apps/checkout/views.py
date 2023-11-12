@@ -36,10 +36,73 @@ from .forms import (
     CheckoutFormAssetOwnership,
     CheckoutFormFiat,
 )
+from .old_events_slug_to_pk import OLD_EVENTS_SLUG_TO_PK
+
+
+class CheckoutPageOneRedirect(RedirectView):
+    """
+    Redirect to checkout page one. Used for preserving old URLs.
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        try:
+            # Handle existing events on production as of 7th Nov, 2023
+            if (
+                self.kwargs.get("event_slug") and
+                self.kwargs.get("event_slug") in OLD_EVENTS_SLUG_TO_PK
+            ):
+                event = (
+                    Event.objects.select_related("team")
+                    .prefetch_related(
+                        "tickettier_set",
+                        "tickettier_set__tier_free",
+                        "tickettier_set__tier_asset_ownership",
+                    )
+                    .get(
+                        pk=OLD_EVENTS_SLUG_TO_PK[self.kwargs.get("event_slug")]
+                    )
+                )
+            # Handle Migrated Checkout (react app)
+            # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
+            elif self.kwargs.get("event_uuid_slug"):
+                event = (
+                    Event.objects.select_related("team")
+                    .prefetch_related(
+                        "tickettier_set",
+                        "tickettier_set__tier_free",
+                        "tickettier_set__tier_asset_ownership",
+                    )
+                    .get(public_id=self.kwargs["event_uuid_slug"])
+                )
+            # Handle Migrated Checkout (redirect to react app)
+            # Limit id to <1000 to only catch early events launched on the react app
+            elif self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
+                event = (
+                    Event.objects.select_related("team")
+                    .prefetch_related(
+                        "tickettier_set",
+                        "tickettier_set__tier_free",
+                        "tickettier_set__tier_asset_ownership",
+                    )
+                    .get(pk=self.kwargs["event_pk_slug"])
+                )
+        except Event.DoesNotExist:
+            raise Http404()
+        except Exception:
+            rollbar.report_exc_info()
+            raise Http404()
+
+        return reverse(
+            "checkout:checkout_one",
+            args=(
+                event.team.slug,
+                event.slug,
+            ),
+        )
 
 
 class CheckoutPageOne(DetailView):
-    """
+    """a
     Checkout page one (start of flow)
 
     GET
@@ -56,44 +119,18 @@ class CheckoutPageOne(DetailView):
     def get_object(self):
         # Handle default checkout
         try:
-            if self.kwargs.get("event_slug"):
-                self.object = (
-                    Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_fiat",
-                        "tickettier_set__tier_asset_ownership",
-                    )
-                    .get(slug=self.kwargs["event_slug"])
+            self.object = (
+                Event.objects.select_related("team")
+                .prefetch_related(
+                    "tickettier_set",
+                    "tickettier_set__tier_free",
+                    "tickettier_set__tier_asset_ownership",
                 )
-            # Handle Migrated Checkout (react app)
-            # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
-            if self.kwargs.get("event_uuid_slug"):
-                self.object = (
-                    Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_fiat",
-                        "tickettier_set__tier_asset_ownership",
-                    )
-                    .get(public_id=self.kwargs["event_uuid_slug"])
+                .get(
+                    team__slug=self.kwargs["team_slug"],
+                    slug=self.kwargs["event_slug"]
                 )
-            # TODO: This should be handled at DNS level ideally, and be deprecated
-            # Handle Migrated Checkout (redirect to react app)
-            # Limit id to <1000 to only catch early events launched on the react app
-            if self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
-                self.object = (
-                    Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_fiat",
-                        "tickettier_set__tier_asset_ownership",
-                    )
-                    .get(pk=self.kwargs["event_pk_slug"])
-                )
+            )
         except Event.DoesNotExist:
             raise Http404()
         except Exception:
@@ -177,6 +214,7 @@ class CheckoutPageOne(DetailView):
             )
             return redirect(
                 "checkout:checkout_one",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
             )
 
@@ -204,12 +242,14 @@ class CheckoutPageOne(DetailView):
         if checkout_session.tx_type == CheckoutSession.TransactionType.FIAT:
             return redirect(
                 "checkout:checkout_fiat",
+                self.object.team.slug,
                 self.object.slug,
                 checkout_session.public_id,
             )
         else:
             return redirect(
                 "checkout:checkout_two",
+                self.object.team.slug,
                 self.object.slug,
                 checkout_session.public_id,
             )
@@ -287,11 +327,33 @@ class CheckoutPageTwo(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
 
         # Form is valid, continue...
+
+        # Make sure there is no ticket overflow
+        is_waiting_list = self.object.check_is_waiting_list()
+        if is_waiting_list:
+            self.object.is_waiting_list = True
+            self.object.save()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "We're sorry, not enough ticket(s) are available. However, you "
+                "are on a waiting list, so please be on the lookout for an email. "
+                "The organizers may decide to send you ticket(s) depending on the "
+                "availability."
+            )
+            return redirect(
+                "checkout:checkout_two",
+                self.kwargs["team_slug"],
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
+
         # Finalize / process transaction and handle exceptions
         try:
             self.object.finalize_transaction(form_data=form)
@@ -306,6 +368,7 @@ class CheckoutPageTwo(DetailView):
                     )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -318,6 +381,7 @@ class CheckoutPageTwo(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -404,11 +468,32 @@ class CheckoutFiat(DetailView):
             )
             return redirect(
                 "checkout:checkout_two",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
 
         # Form is valid, continue...
+
+        # Make sure there is no ticket overflow
+        is_waiting_list = self.object.check_is_waiting_list()
+        if is_waiting_list:
+            self.object.is_waiting_list = True
+            self.object.save()
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "We're sorry, not enough ticket(s) are available. However, you "
+                "are on a waiting list, so please be on the lookout for an email. "
+                "The organizers may decide to send you ticket(s) depending on the "
+                "availability."
+            )
+            return redirect(
+                "checkout:checkout_fiat",
+                self.kwargs["team_slug"],
+                self.kwargs["event_slug"],
+                self.kwargs["checkout_session_public_id"],
+            )
 
         # Create line items using Stripe PRICES API
         stripe_line_items = []
@@ -430,6 +515,7 @@ class CheckoutFiat(DetailView):
                 )
                 return redirect(
                     "checkout:checkout_fiat",
+                    self.kwargs["team_slug"],
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
                 )
@@ -465,6 +551,7 @@ class CheckoutFiat(DetailView):
             )
             return redirect(
                 "checkout:checkout_fiat",
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
@@ -512,6 +599,7 @@ class StripeCheckoutCancel(RedirectView):
         return reverse(
             "checkout:checkout_fiat",
             args=(
+                self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             ),
@@ -554,6 +642,7 @@ class StripeCheckoutSuccess(RedirectView):
             return reverse(
                 "checkout:checkout_fiat",
                 args=(
+                    self.kwargs["team_slug"],
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
                 ),

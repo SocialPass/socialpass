@@ -134,6 +134,16 @@ urlpatterns = [
         views.RSVPCreateTicketsView.as_view(),
         name="rsvp_create_tickets",
     ),
+    path(
+        "events/message-batches/<uuid:team_public_id>/<int:event_pk>/",
+        views.MessageBatchesView.as_view(),
+        name="message_batches",
+    ),
+    path(
+        "events/message-batch-create/<uuid:team_public_id>/<int:event_pk>/",
+        views.MessageBatchCreateView.as_view(),
+        name="message_batch_create",
+    ),
     # Scanning
     path(
         "scanner/<uuid:scanner_id>/",

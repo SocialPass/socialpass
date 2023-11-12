@@ -1,7 +1,7 @@
 # General
 # ------------------------------------------------------------------------------
 argon2-cffi==23.1.0 # https://github.com/hynek/argon2-cffi
-boto3==1.28.63 # https://github.com/boto/boto3
+boto3==1.28.73 # https://github.com/boto/boto3
 eth-account==0.9.0 # https://github.com/ethereum/eth-account
 eth-utils==2.2.1 # https://github.com/ethereum/eth-utils
 google-api-python-client==2.99.0 # https://github.com/googleapis/google-api-python-client
@@ -20,12 +20,12 @@ crispy-bootstrap5==0.7 # https://github.com/django-crispy-forms/crispy-bootstrap
 django==4.2.6  # https://www.djangoproject.com/
 django-autoslug==1.9.9 # https://github.com/justinmayer/django-autoslug
 django-allauth==0.57.0  # https://github.com/pennersr/django-allauth
-django-crispy-forms==2.0 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
+django-crispy-forms==2.1 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.11.2 # https://github.com/joke2k/django-environ
 django-fsm==2.8.1 # https://github.com/viewflow/django-fsm
 django-fsm-log==3.1.0 # https://github.com/jazzband/django-fsm-log
 django-model-utils==4.3.1  # https://github.com/jazzband/django-model-utils
 django-silk==5.0.4 # https://github.com/jazzband/django-silk
-django-storages[boto3]==1.14.1  # https://github.com/jschneier/django-storages
+django-storages[boto3]==1.14.2  # https://github.com/jschneier/django-storages
 django-money==3.3.0 # https://github.com/django-money/django-money
 whitenoise==6.6.0 # https://github.com/evansd/whitenoise/

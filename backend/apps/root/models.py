@@ -126,7 +126,8 @@ class Team(DBModel):
     members = models.ManyToManyField("User", through="Membership", blank=False)
 
     # basic info
-    name = models.CharField(max_length=255, blank=False)
+    name = models.CharField(max_length=255, blank=False, unique=True)
+    slug = AutoSlugField(populate_from="name", null=True, unique=True)
     image = models.ImageField(
         help_text="A brand image for your team. Please make sure the image is "
         "square, non-transparent, and ideally in the PNG format.",
@@ -145,6 +146,8 @@ class Team(DBModel):
         blank=True,
         null=True,
     )
+    allow_rsvp = models.BooleanField(default=False)
+    allow_messaging = models.BooleanField(default=False)
 
     # stripe
     tmp_stripe_account_id = models.CharField(
@@ -376,7 +379,6 @@ class Event(DBModel):
     # Basic Info
     title = models.CharField(
         max_length=255,
-        unique=True,
         help_text="Brief name for your event. Must be unique!",
         blank=False,
     )
@@ -433,7 +435,7 @@ class Event(DBModel):
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)
-    slug = AutoSlugField(populate_from="title", null=True, unique=True)
+    slug = AutoSlugField(populate_from="title", null=True)
     sales_start = models.DateTimeField(
         help_text="When your event sales will start (optional).",
         blank=True,
@@ -447,6 +449,9 @@ class Event(DBModel):
 
     # Scanner Info
     scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
+
+    class Meta:
+        unique_together = [["team", "title"], ["team", "slug"]]
 
     def __str__(self):
         return f"Event: {self.title}"
@@ -1124,6 +1129,7 @@ class CheckoutSession(DBModel):
     )
     passcode = models.CharField(max_length=6, default=get_random_passcode)
     passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
+    is_waiting_list = models.BooleanField(default=False)
 
     def __str__(self):
         return f"CheckoutSession: {self.email}"
@@ -1168,6 +1174,7 @@ class CheckoutSession(DBModel):
         url = reverse(
             "checkout:stripe_checkout_cancel",
             args=[
+                self.event.team.slug,
                 self.event.slug,
                 self.public_id,
                 token,
@@ -1186,6 +1193,7 @@ class CheckoutSession(DBModel):
         url = reverse(
             "checkout:stripe_checkout_success",
             args=[
+                self.event.team.slug,
                 self.event.slug,
                 self.public_id,
                 token,
@@ -1322,6 +1330,20 @@ class CheckoutSession(DBModel):
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.save()
 
+    def check_is_waiting_list(self):
+        """
+        Check if there is ticket overflow for checkout session
+        """
+        is_waiting_list = False
+        checkout_items = CheckoutItem.objects.select_related(
+            "ticket_tier",
+        ).filter(checkout_session=self)
+        for item in checkout_items:
+            tickets_total_people = item.calculated_party_size * item.quantity
+            if tickets_total_people > item.ticket_tier.availability:
+                is_waiting_list = True
+        return is_waiting_list
+
 
 class CheckoutItem(DBModel):
     """
@@ -1354,7 +1376,6 @@ class CheckoutItem(DBModel):
         default=0,
         validators=[MinValueValidator(0)],
     )
-    is_overflow = models.BooleanField(default=False)
 
     def __str__(self):
         return f"CheckoutItem: {str(self.id)}"
@@ -1396,12 +1417,6 @@ class CheckoutItem(DBModel):
             "party_size": self.calculated_party_size,
         }
         tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
-
-        # check overflow
-        tickets_total_people = self.calculated_party_size * self.quantity
-        if tickets_total_people > self.ticket_tier.availability:
-            self.is_overflow = True
-            self.save()
 
         # create tickets
         Ticket.objects.bulk_create(tickets)
@@ -1677,6 +1692,52 @@ class RSVPBatch(DBModel):
         blank=False,
         null=False,
     )
+    success_list = models.TextField(blank=True)
+    failure_list = models.TextField(blank=True)
 
     def __str__(self) -> str:
         return f"RSVPBatch: {self.public_id}"
+
+
+class MessageBatch(DBModel):
+    """
+    Represents a batch of messages sent to ticket holders of a particular tier.
+    """
+
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+    ticket_tier = models.ForeignKey(
+        "TicketTier",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+    subject = models.CharField(max_length=255, blank=False)
+    message = models.TextField(blank=False)
+    total_recipients = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)]
+    )
+
+    def __str__(self) -> str:
+        return f"MessageBatch: {self.public_id}"
+
+    def send_emails(self):
+        emails = []
+        tickets = Ticket.objects.select_related("checkout_session").filter(
+            event=self.event, ticket_tier=self.ticket_tier
+        )
+        for ticket in tickets:
+            emails.append(ticket.checkout_session.email)
+        emails = list(set(emails))
+        self.total_recipients = len(emails)
+        send_mail(
+            "[SocialPass] " + self.subject,
+            self.message,
+            "tickets-no-reply@socialpass.io",
+            emails
+        )

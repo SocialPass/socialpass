@@ -24,6 +24,9 @@
 		</div>
 		<div class="card border-0 rounded-4 shadow-sm">
 			<div class="card-body px-lg-5 py-lg-4">
+				{% for ticket_tier in ticket_tiers %}
+					<input type="hidden" id="ticket_tier_{{ ticket_tier.id }}" value="{{ ticket_tier.allowed_guests }}">
+				{% endfor %}
 				<form method="POST">
 					{% csrf_token %}
 
@@ -47,9 +50,14 @@
 							{% include "redesign/forms/select.html" %}
 						{% endwith %}
 					</div>
+					<div class="mb-3">
+						{% with form.allowed_guests as input %}
+							{% include "redesign/forms/input.html" %}
+						{% endwith %}
+					</div>
 
 					<br /><br />
-					<h4>{% trans "Customer Emails" %}</h4>
+					<h4>{% trans "Customer Emails (max 100 per batch)" %}</h4>
 					<p class="text-body-secondary mb-lg-4">
 						{% trans "Please enter a list of customer email addresses as CSV (Comma Separated Values)." %}
 					</p>
@@ -69,3 +77,17 @@
 </div>
 <!-- Ticket tier form end -->
 {% endblock content %}
+
+{% block extra_body %}
+<script type="text/javascript">
+	var ticketTier = document.getElementById("id_ticket_tier");
+	var allowedGuests = document.getElementById("id_allowed_guests");
+	ticketTier.addEventListener("change", function() {
+    	allowedGuests.value = 0;
+    	var selectedTier = document.getElementById("ticket_tier_" + ticketTier.value);
+    	if (selectedTier) {
+    		allowedGuests.setAttribute("max", selectedTier.value);
+    	}
+	});
+</script>
+{% endblock extra_body %}

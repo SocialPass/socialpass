@@ -27,7 +27,7 @@
 					<form class="text-center" method="post">
 						{% csrf_token %}
 						{{ form }}
-						<a href="{% url 'dashboard_organizer:payment_detail' current_team.public_id %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
+						<a href="{% url 'dashboard_organizer:payment_detail' current_team.slug %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
 						<button type="submit" class="btn btn-danger ms-2 px-3">{% trans "Delete" %}</button>
 					</form>
 				</div>

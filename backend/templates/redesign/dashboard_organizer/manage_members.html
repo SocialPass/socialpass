@@ -19,7 +19,7 @@
 						<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto position-relative">
 							<span class="text-uppercase h4 m-0">{{ membership.user.email|slice:"0:1" }}</span>
 							{% if membership.user != request.user %}
-								<a href="{% url 'dashboard_organizer:team_member_delete' team_public_id=current_team.public_id member_pk=membership.id %}" class="btn btn-danger btn-sm rounded-pill position-absolute top-0 start-100 translate-middle px-0 mt-3 me-4" aria-label="Remove Member" style="width: 31px;">
+								<a href="{% url 'dashboard_organizer:team_member_delete' team_slug=current_team.slug member_pk=membership.id %}" class="btn btn-danger btn-sm rounded-pill position-absolute top-0 start-100 translate-middle px-0 mt-3 me-4" aria-label="Remove Member" style="width: 31px;">
 									<i class="fa-solid fa-times"></i>
 								</a>
 							{% endif %}

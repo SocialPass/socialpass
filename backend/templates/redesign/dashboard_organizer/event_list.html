@@ -11,7 +11,7 @@
 <!-- Top controls start -->
 <div class="my-4 d-flex align-items-center">
 	<a
-		href="{% url 'dashboard_organizer:event_list' current_team.public_id %}"
+		href="{% url 'dashboard_organizer:event_list' current_team.slug %}"
 		class="btn focus-ring me-2 {% if request.GET.state != 'LIVE' and request.GET.state != 'DRAFT' %}btn-link{% endif %}"
 	>
 		{% trans "All" %}
@@ -29,7 +29,7 @@
 		{% trans "Draft" %}<span class="d-none d-sm-inline"> {% trans "Events" %}</span>
 	</a>
 	<a
-		href="{% url 'dashboard_organizer:event_create' current_team.public_id %}"
+		href="{% url 'dashboard_organizer:event_create' current_team.slug %}"
 		class="btn btn-primary rounded-circle px-0 ms-auto"
 		data-bs-toggle="tooltip"
 		data-bs-title="Create Event"
@@ -116,17 +116,17 @@
 						</button>
 						<ul class="dropdown-menu dropdown-menu-end">
 							<li>
-								<a href="{% url 'dashboard_organizer:event_stats' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Details" %}</a>
+								<a href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}" class="dropdown-item">{% trans "Details" %}</a>
 							</li>
 							<li><div class="dropdown-divider"></div></li>
 							<li>
-								<a href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Edit" %}</a>
+								<a href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}" class="dropdown-item">{% trans "Edit" %}</a>
 							</li>
 							<li>
-								<a href="{% url 'dashboard_organizer:event_tickets' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Ticket Tiers" %}</a>
+								<a href="{% url 'dashboard_organizer:event_tickets' current_team.slug event.pk %}" class="dropdown-item">{% trans "Ticket Tiers" %}</a>
 							</li>
 							<li>
-								<a href="{% url 'dashboard_organizer:event_go_live' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Party Time!" %}</a>
+								<a href="{% url 'dashboard_organizer:event_go_live' current_team.slug event.pk %}" class="dropdown-item">{% trans "Party Time!" %}</a>
 							</li>
 							<li><div class="dropdown-divider"></div></li>
 							{% if event.state == event.StateStatus.LIVE %}
@@ -153,19 +153,19 @@
 							<li><div class="dropdown-divider"></div></li>
 							{% if current_team.allow_rsvp %}
 								<li>
-									<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.public_id event.pk %}" class="dropdown-item">{% trans "RSVP" %}</a>
+									<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.slug event.pk %}" class="dropdown-item">{% trans "RSVP" %}</a>
 								</li>
 							{% endif %}
 							{% if current_team.allow_messaging %}
 								<li>
-									<a href="{% url 'dashboard_organizer:message_batches' current_team.public_id event.pk %}" class="dropdown-item">{% trans "Message ticket holders" %}</a>
+									<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" class="dropdown-item">{% trans "Message ticket holders" %}</a>
 								</li>
 							{% endif %}
 							{% if current_team.allow_rsvp or current_team.allow_messaging %}
 								<li><div class="dropdown-divider"></div></li>
 							{% endif %}
 							<li>
-								<a href="{% url 'dashboard_organizer:event_delete' current_team.public_id event.pk %}" class="dropdown-item text-danger-emphasis fw-bold">{% trans "Delete" %}</a>
+								<a href="{% url 'dashboard_organizer:event_delete' current_team.slug event.pk %}" class="dropdown-item text-danger-emphasis fw-bold">{% trans "Delete" %}</a>
 							</li>
 						</ul>
 					</div>

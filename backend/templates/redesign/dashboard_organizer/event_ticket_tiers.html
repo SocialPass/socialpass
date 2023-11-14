@@ -19,7 +19,7 @@
 					{% trans "Create one or multiple ticket tiers." %}
 				</p>
 			</div>
-			<a href="{% url 'dashboard_organizer:ticket_tier_create' current_team.public_id event.pk %}" class="btn btn-link ms-auto" aria-label="Add Ticket Tier">
+			<a href="{% url 'dashboard_organizer:ticket_tier_create' current_team.slug event.pk %}" class="btn btn-link ms-auto" aria-label="Add Ticket Tier">
 				<i class="fa-solid fa-plus"></i>
 		        <span class="ms-1 d-none d-sm-inline">{% trans "Add Ticket Tier" %}</span>
 			</a>
@@ -47,10 +47,10 @@
 						{% trans "NFT-Gated" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
 					</span>
 					{% endif %}
-					<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-link rounded-circle px-0 ms-auto" aria-label="Edit" style="width: 37px;">
+					<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.slug ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-link rounded-circle px-0 ms-auto" aria-label="Edit" style="width: 37px;">
 						<i class="fa-solid fa-edit"></i>
 					</a>
-					<a href="{% url 'dashboard_organizer:ticket_tier_delete' current_team.public_id ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger rounded-circle px-0 ms-2" aria-label="Delete" style="width: 37px;">
+					<a href="{% url 'dashboard_organizer:ticket_tier_delete' current_team.slug ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger rounded-circle px-0 ms-2" aria-label="Delete" style="width: 37px;">
 						<i class="fa-solid fa-trash-can"></i>
 					</a>
 				</div>

@@ -18,7 +18,7 @@
 					{% trans "The following Stripe account is connected to your team." %}
 				</p>
 			</div>
-			<a href="{% url 'dashboard_organizer:stripe_delete' current_team.public_id %}" class="btn btn-danger ms-auto" aria-label="Remove Stripe Account">
+			<a href="{% url 'dashboard_organizer:stripe_delete' current_team.slug %}" class="btn btn-danger ms-auto" aria-label="Remove Stripe Account">
 				<i class="fa-solid fa-trash-can"></i>
 		        <span class="ms-1 d-none d-sm-inline">{% trans "Remove Stripe Account" %}</span>
 			</a>

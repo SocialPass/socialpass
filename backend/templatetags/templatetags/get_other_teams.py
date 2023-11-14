@@ -6,7 +6,7 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def get_other_teams(context, excluded_public_id):
+def get_other_teams(context, excluded_slug):
     request = context["request"]
     other_teams = []
 
@@ -14,7 +14,7 @@ def get_other_teams(context, excluded_public_id):
         user__id=request.user.id
     ):
         team = membership.team
-        if team.public_id != excluded_public_id:
-            other_teams.append({"public_id": team.public_id, "name": team.name})
+        if team.slug != excluded_slug:
+            other_teams.append({"slug": team.slug, "name": team.name})
 
     return other_teams

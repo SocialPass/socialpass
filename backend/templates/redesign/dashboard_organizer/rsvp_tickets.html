@@ -18,7 +18,7 @@
 					{% trans "List of RSVP ticket batches" %} &mdash; <strong>{{ event.title }}</strong>
 				</p>
 			</div>
-			<a href="{% url 'dashboard_organizer:rsvp_create_tickets' current_team.public_id event.pk %}" class="btn btn-link ms-auto" aria-label="Create">
+			<a href="{% url 'dashboard_organizer:rsvp_create_tickets' current_team.slug event.pk %}" class="btn btn-link ms-auto" aria-label="Create">
 				<i class="fa-solid fa-plus"></i>
 		        <span class="ms-1 d-none d-sm-inline">{% trans "Create" %}</span>
 			</a>

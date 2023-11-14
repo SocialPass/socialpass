@@ -31,7 +31,7 @@
 					<form class="text-center" method="post">
 						{% csrf_token %}
 						{{ form }}
-						<a href="{% url 'dashboard_organizer:event_tickets' current_team.public_id object.event.pk %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
+						<a href="{% url 'dashboard_organizer:event_tickets' current_team.slug object.event.pk %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
 						<button type="submit" class="btn btn-danger ms-2 px-3">{% trans "Delete" %}</button>
 					</form>
 				</div>

@@ -8,7 +8,7 @@
 	<div class="alert alert-primary border-0 rounded-0 px-3 px-sm-4 m-0 d-md-flex align-items-md-center" role="alert">
 		{% trans "You are viewing this page as an organizer." %}
 		<div class="d-flex ms-md-auto mt-1 mt-md-0">
-			<a href="{% url 'dashboard_organizer:event_update' event.team.public_id event.pk %}">{% trans "Edit Event" %}</a>
+			<a href="{% url 'dashboard_organizer:event_update' event.team.slug event.pk %}">{% trans "Edit Event" %}</a>
 			<span class="vr mx-2"></span>
 			<a href="?view_as_attendee=True">{% trans "View as Attendee" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
 		</div>

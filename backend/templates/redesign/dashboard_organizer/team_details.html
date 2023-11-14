@@ -38,7 +38,7 @@
 					</div>
 				</div>
 				<div class="col-lg-auto text-center text-lg-end mt-3 mt-lg-0 align-self-center">
-					<a href="{% url 'dashboard_organizer:team_update' current_team.public_id %}" class="btn btn-link rounded-pill" aria-label="Edit Team">
+					<a href="{% url 'dashboard_organizer:team_update' current_team.slug %}" class="btn btn-link rounded-pill" aria-label="Edit Team">
 						<i class="fa-solid fa-edit"></i>
 						<span class="ms-1 d-lg-none">{% trans "Edit Team" %}</span>
 					</a>
@@ -77,7 +77,7 @@
 					</div>
 				</div>
 				<div class="col-lg-auto text-center text-lg-end mt-3 mt-lg-0 align-self-center ps-lg-4">
-					<a href="{% url 'dashboard_organizer:team_members' current_team.public_id %}" class="btn btn-link rounded-pill" aria-label="Manage Members">
+					<a href="{% url 'dashboard_organizer:team_members' current_team.slug %}" class="btn btn-link rounded-pill" aria-label="Manage Members">
 						<i class="fa-solid fa-edit"></i>
 						<span class="ms-1 d-lg-none">{% trans "Manage Members" %}</span>
 					</a>

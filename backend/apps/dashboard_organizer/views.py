@@ -51,13 +51,13 @@ User = auth.get_user_model()
 class TeamContextMixin(UserPassesTestMixin, ContextMixin):
     """
     Common context used site-wide
-    Used to set current_team from team_public_id
+    Used to set current_team from team_slug
     """
 
     def test_func(self):
         try:
             user_membership = Membership.objects.select_related("team").get(
-                team__public_id=self.kwargs["team_public_id"],
+                team__slug=self.kwargs["team_slug"],
                 user__id=self.request.user.id,
             )
             self.team = user_membership.team
@@ -119,7 +119,7 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
         )
         return reverse(
             "dashboard_organizer:event_list",
-            args=(self.object.public_id,),
+            args=(self.object.slug,),
         )
 
 
@@ -138,7 +138,7 @@ class RedirectToTeamView(RedirectView):
             membership = Membership.objects.filter(user=self.request.user).last()
             if membership:
                 return reverse(
-                    "dashboard_organizer:event_list", args=(membership.team.public_id,)
+                    "dashboard_organizer:event_list", args=(membership.team.slug,)
                 )
             else:
                 return reverse("dashboard_organizer:team_create")
@@ -303,7 +303,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse(
-            "dashboard_organizer:team_members", args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:team_members", args=(self.kwargs["team_slug"],)
         )
 
 
@@ -322,7 +322,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
             self.request, messages.SUCCESS, "Team members updated successfully."
         )
         return reverse(
-            "dashboard_organizer:team_members", args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:team_members", args=(self.kwargs["team_slug"],)
         )
 
 
@@ -333,7 +333,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
 
     form_class = TeamForm
     model = Team
-    pk_url_kwarg = "team_public_id"
+    pk_url_kwarg = "team_slug"
     template_name = "redesign/dashboard_organizer/team_update.html"
 
     def get_object(self):
@@ -344,7 +344,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
         return reverse(
-            "dashboard_organizer:team_detail", args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:team_detail", args=(self.kwargs["team_slug"],)
         )
 
 
@@ -367,13 +367,13 @@ class EventListView(TeamContextMixin, ListView):
             )
             return redirect(
                 "dashboard_organizer:event_create",
-                self.kwargs["team_public_id"],
+                self.kwargs["team_slug"],
             )
         return super(EventListView, self).get(*args, **kwargs)
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.filter(team__public_id=self.kwargs["team_public_id"])
+        qs = qs.filter(team__slug=self.kwargs["team_slug"])
 
         query_title = self.request.GET.get("title", "")
         if query_title:
@@ -412,7 +412,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     def get_success_url(self, *args, **kwargs):
         return reverse(
             "dashboard_organizer:event_update",
-            args=(self.kwargs["team_public_id"], self.object.pk),
+            args=(self.kwargs["team_slug"], self.object.pk),
         )
 
 
@@ -457,7 +457,7 @@ class EventTicketsView(TeamContextMixin, DetailView):
             Event.objects.prefetch_related("tickettier_set__tier_asset_ownership")
             .prefetch_related("tickettier_set__tier_blockchain")
             .prefetch_related("tickettier_set__tier_fiat")
-            .get(pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"])
+            .get(pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"])
         )
 
 
@@ -473,7 +473,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
     def get_object(self):
         if not self.object:
             self.object = Event.objects.get(
-                pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+                pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
             )
         return self.object
 
@@ -489,7 +489,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
             # TODO: Pass form field validation
             return redirect(
                 "dashboard_organizer:event_update",
-                self.kwargs["team_public_id"],
+                self.kwargs["team_slug"],
                 event.pk,
             )
         if event.tickettier_set.count() < 1:
@@ -500,7 +500,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
             )
             return redirect(
                 "dashboard_organizer:ticket_tier_create",
-                self.kwargs["team_public_id"],
+                self.kwargs["team_slug"],
                 event.pk,
             )
         else:
@@ -529,7 +529,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
             reverse(
                 "dashboard_organizer:event_go_live",
                 kwargs={
-                    "team_public_id": self.kwargs["team_public_id"],
+                    "team_slug": self.kwargs["team_slug"],
                     "pk": event.pk,
                 },
             )
@@ -548,13 +548,13 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     def get_object(self):
         return Event.objects.get(
-            pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
         )
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted.")
         return reverse(
-            "dashboard_organizer:event_list", args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:event_list", args=(self.kwargs["team_slug"],)
         )
 
 
@@ -570,7 +570,7 @@ class EventStatsView(TeamContextMixin, DetailView):
     def get_object(self):
         if not self.object:
             self.object = Event.objects.get(
-                pk=self.kwargs["pk"], team__public_id=self.kwargs["team_public_id"]
+                pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
             )
         return self.object
 
@@ -622,7 +622,7 @@ class TicketTierCreateView(TeamContextMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         return context
 
@@ -640,7 +640,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         context["tier_asset_ownership_form"] = TierAssetOwnershipForm(
             prefix="tier_asset_ownership_form", data=self.form_data
@@ -678,7 +678,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
     def get_success_url(self, *args, **kwargs):
         return reverse(
             "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+            args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),
         )
 
 
@@ -695,7 +695,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         context["tier_fiat_form"] = TierFiatForm(
             prefix="tier_fiat_form", data=self.form_data
@@ -703,7 +703,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        team = Team.objects.get(public_id=self.kwargs["team_public_id"])
+        team = Team.objects.get(slug=self.kwargs["team_slug"])
         stripe_status = team.stripe_account_payouts_enabled
         if not (
             stripe_status["details_submitted"] and stripe_status["payouts_enabled"]
@@ -716,7 +716,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
             )
             return redirect(
                 "dashboard_organizer:payment_detail",
-                self.kwargs["team_public_id"],
+                self.kwargs["team_slug"],
             )
         return super().dispatch(request, *args, **kwargs)
 
@@ -749,7 +749,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     def get_success_url(self, *args, **kwargs):
         return reverse(
             "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+            args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),
         )
 
 
@@ -766,7 +766,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         return context
 
@@ -783,7 +783,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     def get_success_url(self, *args, **kwargs):
         return reverse(
             "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+            args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),
         )
 
 
@@ -800,7 +800,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         return context
 
@@ -819,7 +819,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(self.request, messages.SUCCESS, "Ticket has been edited.")
         return reverse(
             "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+            args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),
         )
 
 
@@ -834,14 +834,14 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
 
     def get_object(self):
         return TicketTier.objects.get(
-            pk=self.kwargs["pk"], event__team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["pk"], event__team__slug=self.kwargs["team_slug"]
         )
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
         return reverse(
             "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"]),
+            args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),
         )
 
 
@@ -865,7 +865,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
         if current_team.is_stripe_connected:
             return redirect(
                 "dashboard_organizer:payment_detail",
-                self.kwargs["team_public_id"],
+                self.kwargs["team_slug"],
             )
 
         # Temporary Stripe account ID does not exist
@@ -887,7 +887,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
                 )
                 return redirect(
                     "dashboard_organizer:payment_detail",
-                    self.kwargs["team_public_id"],
+                    self.kwargs["team_slug"],
                 )
             current_team.tmp_stripe_account_id = stripe_account["id"]
             current_team.save()
@@ -909,7 +909,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
             )
             return redirect(
                 "dashboard_organizer:payment_detail",
-                self.kwargs["team_public_id"],
+                self.kwargs["team_slug"],
             )
 
         # Redirect user to Stripe so that they can fill out the form
@@ -928,7 +928,7 @@ class StripeRefresh(TeamContextMixin, RedirectView):
             "Something went wrong. Please try again.",
         )
         return reverse(
-            "dashboard_organizer:payment_detail", args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:payment_detail", args=(self.kwargs["team_slug"],)
         )
 
 
@@ -946,7 +946,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
         if current_team.is_stripe_connected:
             return reverse(
                 "dashboard_organizer:payment_detail",
-                args=(self.kwargs["team_public_id"],),
+                args=(self.kwargs["team_slug"],),
             )
 
         # Get Stripe account
@@ -961,7 +961,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
             )
             return reverse(
                 "dashboard_organizer:payment_detail",
-                args=(self.kwargs["team_public_id"],),
+                args=(self.kwargs["team_slug"],),
             )
 
         # Make sure details have been submitted
@@ -983,7 +983,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
 
         # Return redirect URL
         return reverse(
-            "dashboard_organizer:payment_detail", args=(self.kwargs["team_public_id"],)
+            "dashboard_organizer:payment_detail", args=(self.kwargs["team_slug"],)
         )
 
 
@@ -1012,7 +1012,7 @@ class StripeDelete(TeamContextMixin, TemplateView):
         )
         return redirect(
             "dashboard_organizer:payment_detail",
-            self.kwargs["team_public_id"],
+            self.kwargs["team_slug"],
         )
 
 
@@ -1128,7 +1128,7 @@ class RSVPTicketsView(TeamContextMixin, TemplateView):
             raise Http404
 
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         context["rsvp_batches"] = RSVPBatch.objects.prefetch_related(
             "checkoutsession_set"
@@ -1154,7 +1154,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
             raise Http404
 
         context["event"] = Event.objects.prefetch_related("tickettier_set").get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         context["ticket_tiers"] = context["event"].tickettier_set.all()
         return context
@@ -1232,7 +1232,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         )
         return reverse(
             "dashboard_organizer:rsvp_tickets",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"],)
+            args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
         )
 
 
@@ -1251,7 +1251,7 @@ class MessageBatchesView(TeamContextMixin, TemplateView):
             raise Http404
 
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         context["message_batches"] = MessageBatch.objects.select_related(
             "ticket_tier"
@@ -1278,7 +1278,7 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
             raise Http404
 
         context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__public_id=self.kwargs["team_public_id"]
+            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
         return context
 
@@ -1301,5 +1301,5 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         )
         return reverse(
             "dashboard_organizer:message_batches",
-            args=(self.kwargs["team_public_id"], self.kwargs["event_pk"],)
+            args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
         )

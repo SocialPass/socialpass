@@ -144,20 +144,20 @@ urlpatterns = [
         views.MessageBatchCreateView.as_view(),
         name="message_batch_create",
     ),
-    # Scanning
+    # Scanner
     path(
         "scanner/<uuid:scanner_id>/",
         views.EventScanner.as_view(),
         name="scanner",
     ),
     path(
-        "scanner-stats/<uuid:scanner_id>/",
-        views.EventScannerStats.as_view(),
-        name="scanner_stats",
-    ),
-    path(
-        "scanner-2/<uuid:scanner_id>/",
+        "scanner/<uuid:scanner_id>/scan-tickets/",
         views.EventScanner2.as_view(),
         name="scanner2",
+    ),
+    path(
+        "scanner/<uuid:scanner_id>/stats/",
+        views.EventScannerStats.as_view(),
+        name="scanner_stats",
     ),
 ]

@@ -1,10 +1,10 @@
 {% extends "redesign/checkout/base.html" %}
 {% load static i18n %}
 
-{% block head_title %}{{ event.title }} - {% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
+{% block head_title %}{{ event.title }} - {% if event.team.whitelabel.brand_name %}{{ event.team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
 {% block navbar %}
-{% if is_team_member and not request.GET.view_as_attendee %}
+{% if is_team_member %}
 	<div class="alert alert-primary border-0 rounded-0 px-3 px-sm-4 m-0 d-md-flex align-items-md-center" role="alert">
 		{% trans "You are viewing this page as an organizer." %}
 		<div class="d-flex ms-md-auto mt-1 mt-md-0">
@@ -192,9 +192,7 @@
 		<!-- Ticket tiers start -->
 		<div class="col-lg-7">
 			<!-- Type selectors start -->
-			{% if tier_types_count > 1 %}
 				<div class="ticket-tier-group mb-3">
-					{% if tiers_fiat|length > 0 %}
 						<div class="ticket-tier">
 							<input
 								type="radio"
@@ -202,6 +200,7 @@
 								name="payment-type"
 								id="FIAT"
 								value="FIAT"
+								{% if event.ticket_tier_counts.fiat_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "FIAT" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
@@ -211,8 +210,6 @@
 								</h6>
 							</label>
 						</div>
-					{% endif %}
-					{% if tiers_asset_ownership|length > 0 %}
 						<div class="ticket-tier">
 							<input
 								type="radio"
@@ -220,6 +217,7 @@
 								name="payment-type"
 								id="ASSET_OWNERSHIP"
 								value="ASSET_OWNERSHIP"
+								{% if event.ticket_tier_counts.asset_ownership_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
@@ -229,8 +227,6 @@
 								</h6>
 							</label>
 						</div>
-					{% endif %}
-					{% if tiers_free|length > 0 %}
 						<div class="ticket-tier">
 							<input
 								type="radio"
@@ -238,6 +234,7 @@
 								name="payment-type"
 								id="FREE"
 								value="FREE"
+								{% if event.ticket_tier_counts.free_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "FREE" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
@@ -247,27 +244,27 @@
 								</h6>
 							</label>
 						</div>
-					{% endif %}
 				</div>
-			{% endif %}
 			<!-- Type selectors end -->
 
 			<!-- Ticket tiers start -->
+			{% with event.tickettier_set.all as tiers %}
 			<div class="tiers-container {% if checkout_type == 'FREE' %}d-block{% endif %}" id="tiers-FREE">
-				{% with tiers_free as tiers %}
+				{% with "tiers-FREE" as tier_type %}
 					{% include 'redesign/checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
 			<div class="tiers-container {% if checkout_type == 'FIAT' %}d-block{% endif %}" id="tiers-FIAT">
-				{% with tiers_fiat as tiers %}
+				{% with "tiers-FIAT" as tier_type %}
 					{% include 'redesign/checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
 			<div class="tiers-container {% if checkout_type == 'ASSET_OWNERSHIP' %}d-block{% endif %}" id="tiers-ASSET_OWNERSHIP">
-				{% with tiers_asset_ownership as tiers %}
+				{% with "tiers-ASSET_OWNERSHIP" as tier_type %}
 					{% include 'redesign/checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
+			{% endwith %}
 			<!-- Ticket tiers start -->
 		</div>
 		<!-- Ticket tiers end -->

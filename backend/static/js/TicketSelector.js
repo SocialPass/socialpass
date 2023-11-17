@@ -157,6 +157,24 @@ function tierTypeOnchange(tierTypeInput) {
 			selectedTiers[i].dispatchEvent(new Event("change"));
 		}
 	}
+
+	// Persist checkout type
+	// We use try block to make sure app keeps functioning without this minor feature
+	// Some browsers may not support URL parameter parsing
+	try {
+  		var queryString = window.location.search;
+		var urlParams = new URLSearchParams(queryString);
+		var paramName = urlParams.get("name", "");
+		var paramEmail = urlParams.get("email", "");
+		var newParams = "?checkout_type=" + tierTypeInput.value;
+		if (paramName) {
+			newParams += "&name=" + paramName;
+		}
+		if (paramEmail) {
+			newParams += "&email=" + paramEmail;
+		}
+		window.history.replaceState(null, null, newParams);
+	} catch (e) {}
 }
 
 function submitForm(event) {
@@ -176,3 +194,18 @@ function submitForm(event) {
 		}
 	}
 }
+
+// Honor persisted checkout type
+// We use try block to make sure app keeps functioning without this minor feature
+// Some browsers may not support URL parameter parsing
+
+document.addEventListener("DOMContentLoaded", (event) => {
+	try {
+  		var queryString = window.location.search;
+		var urlParams = new URLSearchParams(queryString);
+		var paramCheckoutType = urlParams.get("checkout_type", "");
+		if (paramCheckoutType) {
+			document.getElementById(paramCheckoutType).click();
+		}
+	} catch (e) {}
+});

@@ -16,11 +16,12 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.functional import cached_property
 from django_fsm import FSMField, transition
 from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
@@ -708,6 +709,18 @@ class Event(DBModel):
             return False, missing_fields
         return True, []
 
+    @cached_property
+    def ticket_tier_counts(self):
+        return TicketTier.objects.filter(event_id=self.id).values(
+            'event_id'
+        ).annotate(
+            fiat_count=Count('tier_fiat', filter=Q(tier_fiat__isnull=False)),
+            blockchain_count=Count('tier_blockchain', filter=Q(tier_blockchain__isnull=False)),
+            asset_ownership_count=Count('tier_asset_ownership', filter=Q(tier_asset_ownership__isnull=False)),
+            free_count=Count('tier_free', filter=Q(tier_free__isnull=False)),
+        ).get()
+
+
 
 class Ticket(DBModel):
     """
@@ -896,25 +909,15 @@ class TicketTier(DBModel):
     def __str__(self):
         return f"TicketTier: {self.ticket_type}"
 
-    @property
-    def quantity_sold(self):
-        tickets = Ticket.objects.filter(ticket_tier=self)
-        tickets_with_party = tickets.aggregate(models.Sum("party_size"))[
-            "party_size__sum"
-        ]
-        return tickets_with_party or 0
-
-    @property
+    @cached_property
     def quantity_sold_without_party(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return tickets.count()
 
-    @property
+    @cached_property
     def availability(self):
-        # HOTFIX: USE RAW TICKET COUNT WITHOUT GUESTS
         tickets = Ticket.objects.filter(ticket_tier=self)
         return self.capacity - tickets.count()
-        # return self.capacity - self.quantity_sold
 
     @property
     def additional_information_html(self):

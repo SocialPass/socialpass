@@ -19,7 +19,7 @@ git+https://github.com/SPTech-Group/passbook.git
 crispy-bootstrap5==0.7 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==4.2.6  # https://www.djangoproject.com/
 django-autoslug==1.9.9 # https://github.com/justinmayer/django-autoslug
-django-allauth==0.57.0  # https://github.com/pennersr/django-allauth
+django-allauth==0.58.2  # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.1 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.11.2 # https://github.com/joke2k/django-environ
 django-fsm==2.8.1 # https://github.com/viewflow/django-fsm

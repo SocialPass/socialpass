@@ -442,6 +442,12 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     def get_success_message(self, *args, **kwargs):
         return "Your event has been updated successfully."
 
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard_organizer:event_tickets",
+            args=(self.kwargs["team_slug"], self.object.pk),
+        )
+
 
 class EventTicketsView(TeamContextMixin, DetailView):
     """
@@ -1245,7 +1251,7 @@ class MessageBatchesView(TeamContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         # Make sure team has correct permission
         if not context["current_team"].allow_messaging:
             raise Http404

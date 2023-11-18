@@ -26,6 +26,11 @@
                 This tier is <strong>hidden from the public</strong>. You're seeing it because you're viewing this page as an organizer.
             </div>
         {% endif %}
+        {% if tier.additional_information != "" %}
+            <div class="alert alert-primary bg-primary bg-opacity-25 border-0" role="alert" style="font-size: var(--bs-font-size-sm);">
+            {{tier.additional_information|linebreaks}}
+            </div>
+        {% endif %}
         <div class="d-sm-flex align-items-center">
             <div class="pe-sm-3">
                 <h5 class="mb-1 text-truncate">

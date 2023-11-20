@@ -48,7 +48,7 @@ const modal = createWeb3Modal({
 })
 
 
-export function signWallet(message, event) {
+export async function signWallet(message, event) {
 	event.preventDefault();
 
 	// Remove error messages
@@ -69,7 +69,7 @@ export function signWallet(message, event) {
 
 	// Sign message
 	try {
-		const signature = signMessage({
+		const signature = await signMessage({
 			message: message,
 		});
 		document.getElementById("id_signed_message").value = signature;

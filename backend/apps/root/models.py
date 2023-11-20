@@ -1508,7 +1508,8 @@ class TxAssetOwnership(DBModel):
             recovered_address = Account.recover_message(
                 _msg, signature=self.signed_message
             )
-        except Exception:
+        except Exception as e:
+            print(e, _msg, self.signed_message)
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
                 {"wallet_address": "Error recovering address"}

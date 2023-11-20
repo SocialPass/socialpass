@@ -27,8 +27,8 @@
             </div>
         {% endif %}
         {% if tier.additional_information != "" %}
-            <div class="alert alert-primary bg-primary bg-opacity-25 border-0" role="alert" style="font-size: var(--bs-font-size-sm);">
-            {{tier.additional_information|linebreaks}}
+            <div class="alert alert-primary bg-primary bg-opacity-25 border-0 ticket-tier-additional-info" role="alert" style="font-size: var(--bs-font-size-sm);">
+                {{tier.additional_information|linebreaks}}
             </div>
         {% endif %}
         <div class="d-sm-flex align-items-center">

@@ -1,7 +1,6 @@
 import { CoinbaseWalletConnector } from "@wagmi/core/connectors/coinbaseWallet";
 import { LedgerConnector } from "@wagmi/connectors/ledger";
 import { MetaMaskConnector } from "@wagmi/core/connectors/metaMask";
-import { SafeConnector } from "@wagmi/connectors/safe";
 import { WalletConnectConnector } from "@wagmi/core/connectors/walletConnect";
 import { publicProvider } from "@wagmi/core/providers/public";
 import { watchAccount } from "@wagmi/core";
@@ -32,13 +31,6 @@ const config = createConfig({
 			options: {
 				appName: "socialpass.io",
 				//jsonRpcUrl: 'https://eth-mainnet.alchemyapi.io/v2/yourAlchemyId',
-			},
-		}),
-		new SafeConnector({
-			chains,
-			options: {
-				allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
-				debug: false,
 			},
 		}),
 		new LedgerConnector({

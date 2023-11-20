@@ -34,6 +34,7 @@ from apps.root.exceptions import (
     EventStateTranstionError,
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
+    TxCreationError,
     TxAssetOwnershipProcessingError,
     TxFreeProcessingError,
 )
@@ -1256,8 +1257,12 @@ class CheckoutSession(DBModel):
 
     def create_transaction(self):
         """
-        Responsible for creating the correct transaction based on tx_status
+        Responsible for creating the correct transaction based on transaction type
+        Note: If checkout session is already fulfilled, throw error
         """
+        if self.tx_status == CheckoutSession.OrderStatus.COMPLETED or self.tx_status == CheckoutSession.OrderStatus.FULFILLED:
+            raise TxCreationError("Checkout session already completed!")
+
         match self.tx_type:
             case CheckoutSession.TransactionType.FREE:
                 tx = TxFree.objects.create()
@@ -1526,19 +1531,20 @@ class TxAssetOwnership(DBModel):
         # TEMP
         # Last, check if same wallet has already redeemed for this event
         # This is to prevent one person grabbing multiple tickets
-        existing_wallets = TxAssetOwnership.objects.filter(
-            checkoutsession__event=checkout_session.event,
-            wallet_address=recovered_address
-        ).exclude(
-            checkoutsession__tx_status=CheckoutSession.OrderStatus.FAILED,
-        ).exclude(
-            checkoutsession__tx_status=CheckoutSession.OrderStatus.VALID,
-        )
-        print(existing_wallets)
-        if existing_wallets:
-           raise TxAssetOwnershipProcessingError(
-               {"wallet_address": "Address has already redeemed tickets for this event."}
-           )
+        try:
+            existing_wallets = CheckoutSession.objects.filter(
+                Q(tx_status=CheckoutSession.OrderStatus.FULFILLED) |
+                Q(tx_status=CheckoutSession.OrderStatus.COMPLETED),
+                event=checkout_session.event,
+                tx_asset_ownership__wallet_address=self.wallet_address,
+            )
+            if existing_wallets:
+                raise TxAssetOwnershipProcessingError(
+                   {"wallet_address": "Address has already redeemed tickets for this event."}
+                )
+        except Exception as e:
+            print(e)
+            raise e
 
         # Success, mark as verified
         self.is_wallet_address_verified = True

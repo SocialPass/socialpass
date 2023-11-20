@@ -9,7 +9,8 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "@wagmi/core": "^1.0.5",
-    "viem": "^0.3.36"
+    "@wagmi/core": "^1.4.7",
+    "@web3modal/wagmi": "^3.3.2",
+    "viem": "^1.19.4"
   }
 }

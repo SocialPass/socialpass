@@ -27,7 +27,11 @@ from apps.root.models import (
     Ticket,
     Membership,
 )
-from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
+from apps.root.exceptions import (
+    TxAssetOwnershipProcessingError,
+    TxFreeProcessingError,
+    TxCreationError
+)
 
 from .forms import (
     PasscodeForm,
@@ -307,8 +311,20 @@ class CheckoutPageTwo(DetailView):
         override get to call create_transaction for each attempt
         """
         response = super().get(*args, **kwargs)
-        self.object.create_transaction()
-        return response
+        try:
+            self.object.create_transaction()
+            return response
+        except TxCreationError as e:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                str(e),
+            )
+            return redirect(
+                "checkout:checkout_one",
+                self.kwargs["team_slug"],
+                self.kwargs["event_slug"]
+            )
 
     @transaction.atomic
     def post(self, *args, **kwargs):

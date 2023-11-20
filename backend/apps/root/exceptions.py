@@ -27,3 +27,7 @@ class TxFreeProcessingError(BaseValidationError):
 
 class GoogleWalletAPIRequestError(BaseValidationError):
     pass
+
+
+class TxCreationError(BaseValidationError):
+    pass

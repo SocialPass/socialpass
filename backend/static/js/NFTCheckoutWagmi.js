@@ -36,7 +36,15 @@ const wagmiConfig = createConfig({
   publicClient
 })
 // 3. Create modal
-const modal = createWeb3Modal({ wagmiConfig, projectId, chains })
+const modal = createWeb3Modal({
+	wagmiConfig,
+	projectId,
+	chains,
+	themeVariables: {
+		'--w3m-font-family': 'var(--bs-body-font-family)',
+		'--w3m-accent': 'var(--bs-primary)',
+	},
+})
 
 
 export function signWallet(message, event) {

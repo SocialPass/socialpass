@@ -1508,7 +1508,8 @@ class TxAssetOwnership(DBModel):
             recovered_address = Account.recover_message(
                 _msg, signature=self.signed_message
             )
-        except Exception:
+        except Exception as e:
+            print(e, _msg, self.signed_message)
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
                 {"wallet_address": "Error recovering address"}
@@ -1521,6 +1522,18 @@ class TxAssetOwnership(DBModel):
             raise TxAssetOwnershipProcessingError(
                 {"wallet_address": "Address was recovered, but did not match"}
             )
+
+        # Last, check if other wallets have
+        # This is to prevent one person grabbing multiple tickets
+        existing_wallets = TxAssetOwnership.objects.filter(
+            checkoutsession__event=checkout_session.event,
+            checkoutsession__tx_status=CheckoutSession.OrderStatus.FULFILLED,
+            wallet_address=recovered_address
+        )
+        if existing_wallets:
+           raise TxAssetOwnershipProcessingError(
+               {"wallet_address": "Address has already redeemed tickets for this event."}
+           )
 
         # Success, mark as verified
         self.is_wallet_address_verified = True

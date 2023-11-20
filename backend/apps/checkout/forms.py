@@ -45,6 +45,12 @@ class CheckoutForm(forms.Form):
         ticket_tier_data = json.loads(cleaned_data["ticket_tier_data"])
         for item in ticket_tier_data:
             for tier in self.tiers_all:
+
+                # TEMP: Disallow more than one tier being selected for art-basel (cannot select big+lil)
+                # Note: Some long-term fix of "exclusive tiers" will be useful (i.e., A disallows B)
+                if len(self.tiers_all) > 1 and tier.event.slug == "art-basel":
+                    raise ValidationError("Only 1 tier allowed per person")
+
                 if int(item["id"]) == tier.id:
                     amount = int(item["amount"])
                     extra_party = int(item["extra_party"])

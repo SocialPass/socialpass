@@ -210,7 +210,7 @@ class CheckoutPageOne(DetailView):
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Something went wrong. Please try again.",
+                '\n'.join(form.errors.get('__all__')) if '__all__' in form.errors else "Something went wrong"
             )
             return redirect(
                 "checkout:checkout_one",

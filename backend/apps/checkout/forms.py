@@ -48,7 +48,7 @@ class CheckoutForm(forms.Form):
 
                 # TEMP: Disallow more than one tier being selected for art-basel (cannot select big+lil)
                 # Note: Some long-term fix of "exclusive tiers" will be useful (i.e., A disallows B)
-                if len(self.tiers_all) > 1 and tier.event.pk == 105:
+                if len(self.tiers_all) > 2 and tier.event.pk == 105:
                     raise ValidationError("Only 1 tier allowed per person")
 
                 if int(item["id"]) == tier.id:

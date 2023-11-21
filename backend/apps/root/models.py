@@ -1523,23 +1523,6 @@ class TxAssetOwnership(DBModel):
                 {"wallet_address": "Address was recovered, but did not match"}
             )
 
-        # TEMP
-        # Last, check if same wallet has already redeemed for this event
-        # This is to prevent one person grabbing multiple tickets
-        existing_wallets = TxAssetOwnership.objects.filter(
-            checkoutsession__event=checkout_session.event,
-            wallet_address=recovered_address
-        ).exclude(
-            checkoutsession__tx_status=CheckoutSession.OrderStatus.FAILED,
-        ).exclude(
-            checkoutsession__tx_status=CheckoutSession.OrderStatus.VALID,
-        )
-        print(existing_wallets)
-        if existing_wallets:
-           raise TxAssetOwnershipProcessingError(
-               {"wallet_address": "Address has already redeemed tickets for this event."}
-           )
-
         # Success, mark as verified
         self.is_wallet_address_verified = True
         self.save()

@@ -264,7 +264,9 @@
 			{% if current_team.whitelabel.logo %}
 				<img src="{{ current_team.whitelabel.logo.url }}" alt="Brand Logo" height="60" class="d-block">
 			{% else %}
-				<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block">
+				<a href="{% url 'marketing:index' %}" class="d-block" target="_blank" rel="noreferrer">
+					<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block">
+				</a>
 			{% endif %}
 			<button type="button" class="btn btn-link rounded-pill px-0 ms-2" aria-label="Toggle dark mode" style="width: 37px;" onclick="toggleDarkMode()">
 				<i class="fa-solid fa-moon"></i>
@@ -278,6 +280,35 @@
 		<!-- Content start -->
 		<div class="container-xl px-3 px-sm-4 mw-100" style="width: 1080px;">
 			{% block content %}{% endblock %}
+			<!-- Footer start -->
+			<footer class="mt-3 pt-3 pb-4 border-top">
+				<div class="navbar justify-content-center">
+					<a class="navbar-brand d-flex align-items-center m-0" href="{% url 'marketing:index' %}">
+				      	<img src="{% static 'images/SVG-05.svg' %}" alt="Logo" height="48" class="d-block">
+				    </a>
+				</div>
+				<div class="text-center">
+			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer">
+						Docs
+			   		</a>
+			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://calendly.com/_kevin/socialpass" target="_blank" rel="noreferrer">
+						Contact
+			   		</a>
+			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://blog.socialpass.io/" target="_blank" rel="noreferrer">
+						Blog
+			   		</a>
+			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/terms-of-use.pdf' %}" target="_blank" rel="noreferrer">
+						Terms of Use
+			   		</a>
+			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/organizer-terms-and-conditions.pdf' %}" target="_blank" rel="noreferrer">
+						Organizer Terms
+			   		</a>
+			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/privacy-policy.pdf' %}" target="_blank" rel="noreferrer">
+						Privacy Policy
+			   		</a>
+				</div>
+			</footer>
+			<!-- Footer end -->
 		</div>
 		<!-- Content end -->
 

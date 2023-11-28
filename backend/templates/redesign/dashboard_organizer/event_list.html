@@ -158,12 +158,13 @@
 							{% endif %}
 							{% if current_team.allow_messaging %}
 								<li>
-									<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" class="dropdown-item">{% trans "Message ticket holders" %}</a>
+									<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" class="dropdown-item">{% trans "Message Ticket Holders" %}</a>
 								</li>
 							{% endif %}
-							{% if current_team.allow_rsvp or current_team.allow_messaging %}
-								<li><div class="dropdown-divider"></div></li>
-							{% endif %}
+							<li>
+								<a href="{% url 'dashboard_organizer:manual_attendees' current_team.slug event.pk %}" class="dropdown-item">{% trans "VIP List" %}</a>
+							</li>
+							<li><div class="dropdown-divider"></div></li>
 							<li>
 								<a href="{% url 'dashboard_organizer:event_delete' current_team.slug event.pk %}" class="dropdown-item text-danger-emphasis fw-bold">{% trans "Delete" %}</a>
 							</li>

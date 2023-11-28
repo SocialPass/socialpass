@@ -1,0 +1,63 @@
+{% extends "redesign/dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
+
+{% block head_title %}{% trans "Add Attendees to VIP List" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Add Attendees to VIP List" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Add Attendees to VIP List" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+<!-- Form start -->
+<div class="row mt-4 mb-3">
+	<div class="col-lg-8 mx-auto">
+		<div class="d-flex align-items-center mb-3">
+			<a href="{% url 'dashboard_organizer:manual_attendees' current_team.slug event.pk %}" aria-label="Go Back">
+				<i class="fa-solid fa-arrow-left h4 m-0"></i>
+			</a>
+			<div class="ps-4">
+				<h1 class="h3 mb-0">{% trans "Add Attendees to VIP List" %}</h1>
+				<p class="text-body-secondary mb-0">
+					{% trans "Use the following form to add attendees to the VIP list" %} &mdash; <strong>{{ event.title }}</strong>
+				</p>
+			</div>
+		</div>
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body px-lg-5 py-lg-4">
+				<form method="POST">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="mb-0">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					<h4>{% trans "Names or Emails" %}</h4>
+					<p class="text-body-secondary mb-lg-4">
+						{% trans "Please enter a list of names or email addresses as CSV (Comma Separated Values) for your attendees. You can mix and match names and emails in the same batch." %}
+					</p>
+					<div class="mb-3">
+						{% with form.names_or_emails as input %}
+							{% include "redesign/forms/input.html" %}
+						{% endwith %}
+					</div>
+
+					<div class="text-end mt-3">
+						<button type="submit" class="btn btn-primary">{% trans "Add Attendees to VIP List" %}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Form end -->
+{% endblock content %}

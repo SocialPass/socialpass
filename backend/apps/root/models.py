@@ -1742,3 +1742,21 @@ class MessageBatch(DBModel):
             "tickets-no-reply@socialpass.io",
             emails
         )
+
+
+class ManualAttendee(DBModel):
+    """
+    Represents a person on the VIP list for an event.
+    """
+
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+    )
+    name_or_email = models.CharField(max_length=255, blank=False)
+    redeemed_at = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"ManualAttendee: {self.public_id}"

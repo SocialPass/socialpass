@@ -2,9 +2,9 @@
 {% load i18n static %}
 
 {% block content %}
-<div class="mt-auto py-3">
+<div class="py-3">
 	<div class="card border-0 rounded-4 shadow">
-		<div class="card-body border-bottom">
+		<div class="card-body">
 			<div class="d-flex align-items-center mb-2">
 				<a href="{% url 'dashboard_organizer:scanner2' event.scanner_id %}" class="btn btn-secondary btn-sm me-2" aria-label="Go Back" data-bs-toggle="tooltip" data-bs-title="Go Back">
 					<i class="fa-light fa-arrow-left"></i>
@@ -13,11 +13,9 @@
 					{% trans "Manual Check-In" %}
 				</h1>
 			</div>
-			<p class="text-body-secondary m-0">
+			<p class="text-body-secondary">
 				{% trans "Use the following form to search and manually check-in VIP list members and ticket holders." %}
 			</p>
-		</div>
-		<div class="card-body border-bottom">
 			<form>
 				<div class="input-group">
 					<input type="text" name="search" class="form-control" value="{{ request.GET.search }}" placeholder="Search using name or email" required>
@@ -35,7 +33,7 @@
 				</p>
 			</div>
 		{% else %}
-			<div class="card-header">
+			<div class="card-header px-4">
 			    <ul class="nav nav-tabs card-header-tabs" role="tablist">
 			      	<li class="nav-item">
 			        	<button
@@ -81,7 +79,29 @@
 						tabindex="0"
 					>
 						{% if manual_attendees.count > 0 %}
-
+							{% for manual_attendee in manual_attendees %}
+								<div class="pt-2 {% if not forloop.first %}mt-2 border-top{% endif %}">
+									<div class="d-flex align-items-center">	
+										<div class="text-break fw-bold">{{ manual_attendee.name_or_email}}</div>
+										{% if manual_attendee.redeemed_at %}
+											<div class="ms-auto">
+												<button type="button" class="btn btn-secondary btn-sm specific-w-100" disabled>{% trans "Checked-In" %}</button>
+											</div>
+										{% else %}
+											<form class="ms-auto">
+												<button type="submit" class="btn btn-primary btn-sm specific-w-100">{% trans "Check-In" %}</button>
+											</form>
+										{% endif %}
+									</div>
+									{% if manual_attendee.redeemed_at %}
+										<div class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">
+											<i class="fa-light fa-clock me-1"></i>
+											<strong>{% trans "Redeemed at" %}:</strong>
+											{{ manual_attendee.redeemed_at }}
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
 						{% else %}
 							<div class="mx-auto specific-w-200">
 								<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">

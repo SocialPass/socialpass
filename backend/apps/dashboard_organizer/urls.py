@@ -170,4 +170,9 @@ urlpatterns = [
         views.EventScannerStats.as_view(),
         name="scanner_stats",
     ),
+    path(
+        "scanner/<uuid:scanner_id>/manual-check-in/",
+        views.EventScannerManualCheckIn.as_view(),
+        name="scanner_manual_check_in",
+    ),
 ]

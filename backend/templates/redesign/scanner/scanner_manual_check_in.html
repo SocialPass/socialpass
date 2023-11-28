@@ -1,0 +1,117 @@
+{% extends 'redesign/scanner/base_scanner.html' %}
+{% load i18n static %}
+
+{% block content %}
+<div class="mt-auto py-3">
+	<div class="card border-0 rounded-4 shadow">
+		<div class="card-body border-bottom">
+			<div class="d-flex align-items-center mb-2">
+				<a href="{% url 'dashboard_organizer:scanner2' event.scanner_id %}" class="btn btn-secondary btn-sm me-2" aria-label="Go Back" data-bs-toggle="tooltip" data-bs-title="Go Back">
+					<i class="fa-light fa-arrow-left"></i>
+				</a>
+				<h1 class="h4 text-primary-emphasis m-0">
+					{% trans "Manual Check-In" %}
+				</h1>
+			</div>
+			<p class="text-body-secondary m-0">
+				{% trans "Use the following form to search and manually check-in VIP list members and ticket holders." %}
+			</p>
+		</div>
+		<div class="card-body border-bottom">
+			<form>
+				<div class="input-group">
+					<input type="text" name="search" class="form-control" value="{{ request.GET.search }}" placeholder="Search using name or email" required>
+					<button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+				</div>
+			</form>
+		</div>
+		{% if manual_attendees.count < 1 and tickets.count < 1 %}
+			<div class="card-body">
+				<div class="mx-auto specific-w-200">
+					<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+				</div>
+				<p class="text-body-secondary text-center">
+					{% trans "Sorry, we could not find any attendees. Try searching with a different name or email." %}
+				</p>
+			</div>
+		{% else %}
+			<div class="card-header">
+			    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+			      	<li class="nav-item">
+			        	<button
+			        		type="button"
+			        		class="nav-link {% if manual_attendees.count > 0 %}active{% endif %}"
+			        		id="nav-vip-list-tab"
+			        		data-bs-toggle="tab"
+			        		data-bs-target="#nav-vip-list"
+			        		role="tab"
+			        		aria-controls="nav-vip-list"
+			        		{% if manual_attendees.count > 0 %}
+			        			aria-selected="true"
+			        		{% endif %}
+			        	>
+			        		{% trans "VIP List" %} ({{ manual_attendees.count }})
+			        	</button>
+			      	</li>
+			      	<li class="nav-item">
+			        	<button
+			        		type="button"
+			        		class="nav-link {% if not manual_attendees.count > 0 %}active{% endif %}"
+			        		id="nav-tickets-tab"
+			        		data-bs-toggle="tab"
+			        		data-bs-target="#nav-tickets"
+			        		role="tab"
+			        		aria-controls="nav-tickets"
+			        		{% if not manual_attendees.count > 0 %}
+			        			aria-selected="true"
+			        		{% endif %}
+			        	>
+			        		{% trans "Tickets" %} ({{ tickets.count }})
+			        	</button>
+			      	</li>
+			    </ul>
+			</div>
+			<div class="card-body">
+				<div class="tab-content">
+					<div
+						class="tab-pane fade {% if manual_attendees.count > 0 %}show active{% endif %}"
+						id="nav-vip-list"
+						role="tabpanel"
+						aria-labelledby="nav-vip-list-tab"
+						tabindex="0"
+					>
+						{% if manual_attendees.count > 0 %}
+
+						{% else %}
+							<div class="mx-auto specific-w-200">
+								<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+							</div>
+							<p class="text-body-secondary text-center">
+								{% trans "Nothing found." %}
+							</p>
+						{% endif %}
+					</div>
+					<div
+						class="tab-pane fade {% if not manual_attendees.count > 0 %}show active{% endif %}"
+						id="nav-tickets"
+						role="tabpanel"
+						aria-labelledby="nav-tickets-tab"
+						tabindex="0"
+					>
+						{% if tickets.count > 0 %}
+
+						{% else %}
+							<div class="mx-auto specific-w-200">
+								<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+							</div>
+							<p class="text-body-secondary text-center">
+								{% trans "Nothing found." %}
+							</p>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

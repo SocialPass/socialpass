@@ -623,6 +623,16 @@ class EventStatsView(TeamContextMixin, DetailView):
 
         # Tickets redeemed
         context["tickets_redeemed"] = event.tickets_redeemed
+
+        # VIP list
+        context["manual_attendees"] = ManualAttendee.objects.filter(
+            event=context["event"]
+        ).order_by("-created")
+        context["manual_attendees_redeemed_count"] = 0
+        for manual_attendee in context["manual_attendees"]:
+            if manual_attendee.redeemed_at:
+                context["manual_attendees_redeemed_count"] += 1
+                
         return context
 
 

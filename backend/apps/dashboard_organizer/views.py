@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.validators import validate_email
 from django.db import transaction
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -626,7 +627,7 @@ class EventStatsView(TeamContextMixin, DetailView):
         for manual_attendee in context["manual_attendees"]:
             if manual_attendee.redeemed_at:
                 context["manual_attendees_redeemed_count"] += 1
-                
+
         return context
 
 
@@ -1130,6 +1131,39 @@ class EventScanner2(DetailView):
             context=context,
         )
 
+
+class EventScannerManualCheckIn(DetailView):
+    model = Event
+    slug_field = "scanner_id"
+    slug_url_kwarg = "scanner_id"
+    template_name = "redesign/scanner/scanner_manual_check_in.html"
+
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=self.object.team))
+
+        # Empty state
+        if not self.request.GET.get("search"):
+            context["tickets"] = []
+            context["manual_attendees"] = []
+            return context
+
+        # Search for tickets
+        context["tickets"] = self.object.ticket_set.select_related(
+            "checkout_session"
+        ).filter(
+            Q(checkout_session__name__icontains=self.request.GET.get("search")) | 
+            Q(checkout_session__email__icontains=self.request.GET.get("search"))
+        ).order_by("-created")
+
+        # Search for manual attendees
+        context["manual_attendees"] = ManualAttendee.objects.filter(
+            event=self.object,
+            name_or_email__icontains=self.request.GET.get("search"),
+        )
+
+        return context
 
 class RSVPTicketsView(TeamContextMixin, TemplateView):
     """

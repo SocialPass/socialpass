@@ -1155,13 +1155,13 @@ class EventScannerManualCheckIn(DetailView):
         ).filter(
             Q(checkout_session__name__icontains=self.request.GET.get("search")) | 
             Q(checkout_session__email__icontains=self.request.GET.get("search"))
-        ).order_by("-created")
+        ).order_by("-redeemed_at")
 
         # Search for manual attendees
         context["manual_attendees"] = ManualAttendee.objects.filter(
             event=self.object,
             name_or_email__icontains=self.request.GET.get("search"),
-        )
+        ).order_by("-redeemed_at")
 
         return context
 

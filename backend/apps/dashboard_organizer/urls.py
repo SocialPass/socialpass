@@ -144,6 +144,16 @@ urlpatterns = [
         views.MessageBatchCreateView.as_view(),
         name="message_batch_create",
     ),
+    path(
+        "<slug:team_slug>/events/<int:event_pk>/vip-list/",
+        views.ManualAttendeesView.as_view(),
+        name="manual_attendees",
+    ),
+    path(
+        "<slug:team_slug>/events/<int:event_pk>/vip-list-add-attendees/",
+        views.ManualAttendeesCreateView.as_view(),
+        name="manual_attendees_create",
+    ),
     # Scanner
     path(
         "scanner/<uuid:scanner_id>/",

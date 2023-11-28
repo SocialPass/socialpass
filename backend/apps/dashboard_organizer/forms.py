@@ -364,6 +364,7 @@ class RSVPCreateTicketsForm(forms.Form):
     """
     Bulk tickets create form for the RSVP system.
     """
+
     ticket_tier = forms.ModelChoiceField(queryset=TicketTier.objects.none())
     allowed_guests = forms.IntegerField(
         widget=forms.NumberInput(
@@ -401,3 +402,17 @@ class MessageBatchForm(forms.ModelForm):
            ),
         }
         
+
+class ManualAttendeesForm(forms.Form):
+    """
+    Bulk create manual attendees.
+    """
+
+    names_or_emails = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": _("John Doe, jane@example.com, Jack, kevin@example.com")
+            }
+        ),
+    )
+    

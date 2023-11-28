@@ -1,0 +1,82 @@
+{% extends "redesign/dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags format_to_event_timezone %}
+
+{% block head_title %}{% trans "VIP List" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "VIP List" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "VIP List" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+<div class="row mt-4 mb-3">
+	<div class="col-lg-8 mx-auto">
+		<div class="d-flex align-items-center mb-3">
+			<div class="pe-3">
+				<h1 class="h3 mb-0">{% trans "VIP List" %}</h1>
+				<p class="text-body-secondary mb-0">
+					{% trans "Attendees on the VIP list" %} &mdash; <strong>{{ event.title }}</strong>
+				</p>
+			</div>
+			<a href="{% url 'dashboard_organizer:manual_attendees_create' current_team.slug event.pk %}" class="btn btn-link ms-auto" aria-label="Add Attendees">
+				<i class="fa-solid fa-plus"></i>
+		        <span class="ms-1 d-none d-sm-inline">{% trans "Add Attendees" %}</span>
+			</a>
+		</div>
+		{% if manual_attendees.count > 0 %}
+			<div class="card border-0 rounded-4 shadow-sm mb-3">
+				<div class="card-body border-bottom d-flex align-items-center">
+					<span><strong>{% trans "Total" %}:</strong> {{ manual_attendees.count }}</span>
+					<div class="vr mx-2"></div>
+					<span><strong>{% trans "Redeemed" %}:</strong> {{ manual_attendees_redeemed_count }}</span>
+					<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" target="_blank" class="ms-auto">
+						{% trans "Scanner" %}<i class="fa-light fa-external-link ms-1"></i>
+					</a>
+				</div>
+				<div class="table-responsive text-nowrap">
+				    <table class="table mb-0">
+				        <thead class="bg-primary-subtle text-primary-emphasis">
+				            <tr>
+				                <th>{% trans "Name or Email" %}</th>
+				                <th>{% trans "Redeemed?" %}</th>
+				                <th><i class="fa-light fa-calendar"></i> {% trans "Redeemed At" %}</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+				        	{% for manual_attendee in manual_attendees %}
+				        		<tr>
+				        			<td {% if forloop.last %}class="border-bottom-0"{% endif %}>{{ manual_attendee.name_or_email }}</td>
+				        			<td {% if forloop.last %}class="border-bottom-0"{% endif %}>
+				        				{% if manual_attendee.redeemed_at %}
+					                    	<i class="fa-light fa-check-circle text-success-emphasis me-1"></i> Yes
+					                    {% else %}
+					                    	---
+					                    {% endif %}
+				        			</td>
+				        			<td {% if forloop.last %}class="border-bottom-0"{% endif %}>
+					                    {% if manual_attendee.redeemed_at %}
+					                    	{% format_to_event_timezone manual_attendee.redeemed_at event.timezone %}
+					                    {% else %}
+					                    	---
+					                    {% endif %}
+					                </td>
+				        		</tr>
+				        	{% endfor %}
+				        </tbody>
+				    </table>
+				</div>
+			</div>
+		{% else %}
+			<div class="card border-0 rounded-4 shadow-sm">
+				<div class="card-body">
+					<div class="mx-auto specific-w-200">
+						<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+					</div>
+					<p class="text-body-secondary text-center">
+						{% trans "No attendees yet." %}
+					</p>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock content %}

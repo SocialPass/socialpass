@@ -8,6 +8,7 @@ from apps.root.models import (
     CheckoutSession,
     Event,
     Invite,
+    ManualAttendee,
     Membership,
     MessageBatch,
     RSVPBatch,
@@ -306,6 +307,12 @@ class WhiteLabelAdmin(CustomDBAdmin):
 class RSVPBatchAdmin(CustomDBAdmin):
     list_display = ["__str__", "event"] + CustomDBAdmin.list_display
 
+
 @admin.register(MessageBatch)
 class MessageBatchAdmin(CustomDBAdmin):
     list_display = ["__str__", "event", "ticket_tier"] + CustomDBAdmin.list_display
+
+
+@admin.register(ManualAttendee)
+class ManualAttendeeAdmin(CustomDBAdmin):
+    list_display = ["__str__", "event"] + CustomDBAdmin.list_display

@@ -282,10 +282,6 @@ class CheckoutPageTwo(DetailView):
         )
         if not self.object:
             raise Http404
-        # Check if expired or not
-        expiration = self.object.created + datetime.timedelta(minutes=15)
-        if timezone.now() > expiration:
-            raise Http404
         return super().get_object()
 
     def get_context_data(self, *args, **kwargs):
@@ -308,6 +304,21 @@ class CheckoutPageTwo(DetailView):
         """
         response = super().get(*args, **kwargs)
         self.object.create_transaction()
+
+        # Check if expired or not
+        expiration = self.object.created + datetime.timedelta(minutes=15)
+        if timezone.now() > expiration:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Your session has expired. Please try again.",
+            )
+            return redirect(
+                "checkout:checkout_one",
+                self.kwargs["team_slug"],
+                self.kwargs["event_slug"],
+            )
+
         return response
 
     @transaction.atomic
@@ -426,10 +437,6 @@ class CheckoutFiat(DetailView):
         )
         if not self.object:
             raise Http404
-        # Check if expired or not
-        expiration = self.object.created + datetime.timedelta(minutes=15)
-        if timezone.now() > expiration:
-            raise Http404
         return super().get_object()
 
     def get_context_data(self, *args, **kwargs):
@@ -449,6 +456,21 @@ class CheckoutFiat(DetailView):
         """
         response = super().get(*args, **kwargs)
         self.object.create_transaction()
+
+        # Check if expired or not
+        expiration = self.object.created + datetime.timedelta(minutes=15)
+        if timezone.now() > expiration:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Your session has expired. Please try again.",
+            )
+            return redirect(
+                "checkout:checkout_one",
+                self.kwargs["team_slug"],
+                self.kwargs["event_slug"],
+            )
+            
         return response
 
     def post(self, *args, **kwargs):

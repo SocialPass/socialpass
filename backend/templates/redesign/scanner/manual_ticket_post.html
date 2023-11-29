@@ -1,0 +1,9 @@
+{% load i18n %}
+{% if ticket.redeemed_at %}
+	<span class="btn btn-secondary btn-sm specific-w-100 disabled pe-none">{% trans "Checked-In" %}</span>
+{% else %}
+	<div>	
+		<button type="submit" class="btn btn-primary btn-sm d-block specific-w-100">{% trans "Check-In" %}</button>
+		<div class="specific-w-100 text-center text-danger-emphasis fw-bold" style="font-size: 10px;">{% trans "Try again" %}</div>
+	</div>
+{% endif %}

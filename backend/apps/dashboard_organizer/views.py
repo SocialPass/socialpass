@@ -1145,8 +1145,8 @@ class EventScannerManualCheckIn(DetailView):
 
         # Empty state
         if not self.request.GET.get("search"):
-            context["tickets"] = []
-            context["manual_attendees"] = []
+            context["tickets"] = Ticket.objects.none()
+            context["manual_attendees"] = ManualAttendee.objects.none()
             return context
 
         # Search for tickets
@@ -1164,6 +1164,58 @@ class EventScannerManualCheckIn(DetailView):
         ).order_by("-redeemed_at")
 
         return context
+
+
+class EventScannerManualAttendeePost(DetailView):
+    model = Event
+    slug_field = "scanner_id"
+    slug_url_kwarg = "scanner_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=self.object.team))
+        return context
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context["manual_attendee"] = ManualAttendee.objects.get(
+            event=self.object,
+            pk=self.kwargs["manual_attendee_pk"],
+        )
+        context["manual_attendee"].redeem()
+        return render(
+            self.request,
+            template_name="redesign/scanner/manual_attendee_post.html",
+            context=context,
+        )
+
+
+
+class EventScannerManualTicketPost(DetailView):
+    model = Event
+    slug_field = "scanner_id"
+    slug_url_kwarg = "scanner_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(dict(current_team=self.object.team))
+        return context
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context["ticket"] = Ticket.objects.get(
+            event=self.object,
+            pk=self.kwargs["ticket_pk"],
+        )
+        context["ticket"].redeem_ticket(self.kwargs["scanner_id"])
+        return render(
+            self.request,
+            template_name="redesign/scanner/manual_ticket_post.html",
+            context=context,
+        )
+
 
 class RSVPTicketsView(TeamContextMixin, TemplateView):
     """

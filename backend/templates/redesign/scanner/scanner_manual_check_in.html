@@ -2,7 +2,7 @@
 {% load i18n static %}
 
 {% block content %}
-<div class="py-3">
+<div class="mt-auto py-3">
 	<div class="card border-0 rounded-4 shadow">
 		<div class="card-body">
 			<div class="d-flex align-items-center mb-2">
@@ -23,16 +23,7 @@
 				</div>
 			</form>
 		</div>
-		{% if manual_attendees.count < 1 and tickets.count < 1 %}
-			<div class="card-body">
-				<div class="mx-auto specific-w-200">
-					<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
-				</div>
-				<p class="text-body-secondary text-center">
-					{% trans "Sorry, we could not find any attendees. Try searching with a different name or email." %}
-				</p>
-			</div>
-		{% else %}
+		{% if request.GET.search %}
 			<div class="card-header px-4">
 			    <ul class="nav nav-tabs card-header-tabs" role="tablist">
 			      	<li class="nav-item">
@@ -85,11 +76,16 @@
 										<div class="text-break fw-bold">{{ manual_attendee.name_or_email}}</div>
 										{% if manual_attendee.redeemed_at %}
 											<div class="ms-auto">
-												<button type="button" class="btn btn-secondary btn-sm specific-w-100" disabled>{% trans "Checked-In" %}</button>
+												<span class="btn btn-secondary btn-sm d-block specific-w-100 disabled pe-none">{% trans "Checked-In" %}</span>
 											</div>
 										{% else %}
-											<form class="ms-auto">
-												<button type="submit" class="btn btn-primary btn-sm specific-w-100">{% trans "Check-In" %}</button>
+											<form
+												class="ms-auto"
+												hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+												hx-post="{% url 'dashboard_organizer:scanner_manual_attendee_post' object.scanner_id manual_attendee.pk %}"
+												hx-trigger="submit"
+											>
+												<button type="submit" class="btn btn-primary btn-sm d-block specific-w-100">{% trans "Check-In" %}</button>
 											</form>
 										{% endif %}
 									</div>
@@ -119,7 +115,38 @@
 						tabindex="0"
 					>
 						{% if tickets.count > 0 %}
-
+							{% for ticket in tickets %}
+								<div class="pt-2 {% if not forloop.first %}mt-2 border-top{% endif %}">
+									<div class="d-flex align-items-center">
+										<div class="lh-sm">
+											<div class="text-break fw-bold">{{ ticket.checkout_session.name }}</div>
+											<div class="text-break" style="font-size: var(--bs-font-size-sm);">{{ ticket.checkout_session.email }}</div>
+											<div class="text-break text-body-secondary" style="font-size: var(--bs-font-size-sm);">{{ ticket.ticket_tier.ticket_type }}</div>
+										</div>
+										{% if ticket.redeemed_at %}
+											<div class="ms-auto">
+												<span class="btn btn-secondary btn-sm d-block specific-w-100 disabled pe-none">{% trans "Checked-In" %}</span>
+											</div>
+										{% else %}
+											<form
+												class="ms-auto"
+												hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+												hx-post="{% url 'dashboard_organizer:scanner_manual_ticket_post' object.scanner_id ticket.pk %}"
+												hx-trigger="submit"
+											>
+												<button type="submit" class="btn btn-primary btn-sm d-block specific-w-100">{% trans "Check-In" %}</button>
+											</form>
+										{% endif %}
+									</div>
+									{% if ticket.redeemed_at %}
+										<div class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">
+											<i class="fa-light fa-clock me-1"></i>
+											<strong>{% trans "Redeemed at" %}:</strong>
+											{{ ticket.redeemed_at }}
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
 						{% else %}
 							<div class="mx-auto specific-w-200">
 								<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
@@ -134,4 +161,8 @@
 		{% endif %}
 	</div>
 </div>
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
 {% endblock %}

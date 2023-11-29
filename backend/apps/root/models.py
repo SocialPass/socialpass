@@ -1760,3 +1760,7 @@ class ManualAttendee(DBModel):
 
     def __str__(self) -> str:
         return f"ManualAttendee: {self.public_id}"
+
+    def redeem(self):
+        self.redeemed_at = timezone.now()
+        self.save()

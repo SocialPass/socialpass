@@ -596,8 +596,13 @@ class EventStatsView(TeamContextMixin, DetailView):
                 wallet_address = (
                     ticket.checkout_session.tx_asset_ownership.wallet_address
                 )
+                redeemed_nfts = [
+                    nft['token_id'] for nft
+                    in ticket.checkout_session.tx_asset_ownership.redeemed_nfts
+                ]
             else:
                 wallet_address = None
+                redeemed_nfts = None
             results.append(
                 {
                     "ticket_id": str(ticket.public_id),
@@ -608,6 +613,7 @@ class EventStatsView(TeamContextMixin, DetailView):
                     "customer_name": ticket.checkout_session.name,
                     "customer_email": ticket.checkout_session.email,
                     "wallet_address": wallet_address,
+                    "redeemed_nfts": redeemed_nfts,
                     "party_size": ticket.party_size,
                 }
             )

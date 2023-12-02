@@ -9,7 +9,7 @@ Pillow==10.0.1 # https://github.com/python-pillow/Pillow
 pytz==2023.3.post1 # https://github.com/stub42/pytz.git
 qrcode==7.4.2 # https://github.com/lincolnloop/python-qrcode
 rollbar==1.0.0 #https://github.com/rollbar/pyrollbar/
-stripe==5.5.0 #https://github.com/stripe/stripe-python/
+stripe==7.7.0 #https://github.com/stripe/stripe-python/
 moralis==0.1.39 #https://github.com/MoralisWeb3/Moralis-Python-SDK
 
 # Django

@@ -1,6 +1,7 @@
 from datetime import date
 
 import pytz
+import zoneinfo
 from django import forms
 from django.utils.translation import gettext as _
 from django_quill.forms import QuillFormField
@@ -117,7 +118,7 @@ class EventForm(forms.ModelForm):
     """
 
     description = QuillFormField()
-    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+    timezone = forms.ChoiceField(choices=[(x, x) for x in sorted(zoneinfo.available_timezones())])
     country = forms.ChoiceField(choices=get_country_choices())
 
     class Meta:
@@ -401,7 +402,7 @@ class MessageBatchForm(forms.ModelForm):
                }
            ),
         }
-        
+
 
 class ManualAttendeesForm(forms.Form):
     """
@@ -415,4 +416,3 @@ class ManualAttendeesForm(forms.Form):
             }
         ),
     )
-    

@@ -181,7 +181,7 @@ class CheckoutPageOne(DetailView):
 
         # Set everything to context
         context["checkout_type"] = checkout_type
-        context["current_team"] = self.object.team
+        context["organizer_team"] = self.object.team
         context["is_team_member"] = is_team_member
         context["sales_start_with_tzinfo"] = sales_start
         context["sales_status"] = sales_status
@@ -295,7 +295,7 @@ class CheckoutPageTwo(DetailView):
             context["form"] = CheckoutFormAssetOwnership(
                 initial={"name": self.object.name, "email": self.object.email}
             )
-        context["current_team"] = self.object.event.team
+        context["organizer_team"] = self.object.event.team
         return context
 
     def get(self, *args, **kwargs):
@@ -447,7 +447,7 @@ class CheckoutFiat(DetailView):
         context["form"] = CheckoutFormFiat(
             initial={"name": self.object.name, "email": self.object.email}
         )
-        context["current_team"] = self.object.event.team
+        context["organizer_team"] = self.object.event.team
         return context
 
     def get(self, *args, **kwargs):
@@ -706,7 +706,7 @@ class CheckoutPageSuccess(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["checkout_items"] = self.object.checkoutitem_set.all()
-        context["current_team"] = self.object.event.team
+        context["organizer_team"] = self.object.event.team
         return context
 
 
@@ -738,7 +738,7 @@ class GetTickets(View):
             self.request,
             "redesign/checkout/get_tickets_passcode.html",
             {
-                "current_team": checkout_session.event.team,
+                "organizer_team": checkout_session.event.team,
                 "checkout_session": checkout_session,
                 "passcode_form": passcode_form,
             },
@@ -752,7 +752,7 @@ class GetTickets(View):
         passcode_form = PasscodeForm()
         template_name = "get_tickets_passcode.html"
         ctx = {
-            "current_team": checkout_session.event.team,
+            "organizer_team": checkout_session.event.team,
             "checkout_session": checkout_session,
             "passcode_form": passcode_form,
         }

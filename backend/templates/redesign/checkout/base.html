@@ -9,11 +9,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<!-- Title -->
-		<title>{% block head_title %}{% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %} - {% trans "Hosting the Next Generation of Events" %}{% endblock head_title %}</title>
+		<title>{% block head_title %}{% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %} - {% trans "Hosting the Next Generation of Events" %}{% endblock head_title %}</title>
 
 		<!-- Fav icon -->
-		{% if current_team.whitelabel.favicon %}
-			<link rel="icon" href="{{ current_team.whitelabel.favicon.url }}">
+		{% if organizer_team.whitelabel.favicon %}
+			<link rel="icon" href="{{ organizer_team.whitelabel.favicon.url }}">
 		{% else %}
 			<link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
 		{% endif %}
@@ -229,19 +229,19 @@
 			}
 		</style>
 
-		{% if current_team.whitelabel.css %}
+		{% if organizer_team.whitelabel.css %}
 			<style type="text/css">
-				{{ current_team.whitelabel.css }}
-				{% if current_team.whitelabel.font_regular and current_team.whitelabel.font_bold %}
+				{{ organizer_team.whitelabel.css }}
+				{% if organizer_team.whitelabel.font_regular and organizer_team.whitelabel.font_bold %}
 					@font-face {
 						font-family: "Custom";
-						src: url("{{ current_team.whitelabel.font_regular.url }}");
+						src: url("{{ organizer_team.whitelabel.font_regular.url }}");
 						font-weight: normal;
 					}
 
 					@font-face {
 						font-family: "Custom";
-						src: url("{{ current_team.whitelabel.font_bold.url }}");
+						src: url("{{ organizer_team.whitelabel.font_bold.url }}");
 						font-weight: bold;
 					}
 
@@ -261,9 +261,9 @@
 
 		<!-- Navbar start -->
 		<div class="d-flex align-items-center px-3 px-sm-4 py-2">
-			{% if current_team.whitelabel.logo %}
+			{% if organizer_team.whitelabel.logo %}
 				<div class="d-flex align-items-center">
-					<img src="{{ current_team.whitelabel.logo.url }}" alt="Brand Logo" height="60" class="d-block flex-shrink-0">
+					<img src="{{ organizer_team.whitelabel.logo.url }}" alt="Brand Logo" height="60" class="d-block flex-shrink-0">
 					<span class="specific-w-25 mx-1 text-center">
 						<i class="fa-light fa-times"></i>
 					</span>

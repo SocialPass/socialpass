@@ -1,7 +1,7 @@
 {% extends "redesign/checkout/tickets_base.html" %}
 {% load static i18n %}
 
-{% block head_title %}{% trans "Get Tickets" %} - {% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
+{% block head_title %}{% trans "Get Tickets" %} - {% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
 {% block tickets %}
 {% for ticket in tickets %}
@@ -19,11 +19,11 @@
 			<div class="p-4 rounded-5 text-bg-info antialiased">
 				<div class="d-flex justify-content-center pb-3">
 					<div class="d-flex align-items-center">
-						{% if current_team.whitelabel.ticket_logo %}
+						{% if organizer_team.whitelabel.ticket_logo %}
 							<div
 								class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
 								style="
-									background-image: url('{{ current_team.whitelabel.ticket_logo.url }}');
+									background-image: url('{{ organizer_team.whitelabel.ticket_logo.url }}');
 									background-repeat: no-repeat;
 									background-size: contain;
 									background-position: center center;
@@ -41,7 +41,7 @@
 							></div>
 						{% endif %}
 						<strong style="font-size: 28px;">
-							{% if current_team.whitelabel.brand_name %}{{ current_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}
+							{% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}
 						</strong>
 					</div>
 				</div>

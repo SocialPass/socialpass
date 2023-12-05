@@ -1,5 +1,5 @@
-import pytz
 from django import template
+from zoneinfo import ZoneInfo
 
 register = template.Library()
 
@@ -8,7 +8,7 @@ register = template.Library()
 def format_to_event_timezone(dt, event_tz):
     formatted = dt
     try:
-        formatted = dt.astimezone(pytz.timezone(event_tz))
+        formatted = dt.astimezone(ZoneInfo(event_tz))
     except Exception:
         pass
 

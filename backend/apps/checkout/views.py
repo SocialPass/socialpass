@@ -1,9 +1,9 @@
 from io import BytesIO
+from zoneinfo import ZoneInfo
 import base64
 import datetime
 import json
 import jwt
-import pytz
 import qrcode
 import rollbar
 import stripe
@@ -154,7 +154,7 @@ class CheckoutPageOne(DetailView):
 
         # Handle Ticket Sales Start / Sales End
         # Determine the sales status of an event based on its sales start and end times.
-        now = datetime.datetime.now(pytz.timezone(self.object.timezone) if self.object.timezone else pytz.utc)
+        now = datetime.datetime.now(ZoneInfo(self.object.timezone) if self.object.timezone else ZoneInfo("UTC"))
         sales_start = self.object.sales_start.replace(tzinfo=now.tzinfo) if self.object.sales_start else datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
         sales_end = self.object.sales_end.replace(tzinfo=now.tzinfo) if self.object.sales_end else datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
         if now < sales_start:

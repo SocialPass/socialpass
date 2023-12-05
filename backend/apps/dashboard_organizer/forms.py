@@ -1,4 +1,3 @@
-import pytz
 import zoneinfo
 from datetime import date
 from django import forms
@@ -6,6 +5,7 @@ from django.utils.translation import gettext as _
 from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
+from apps.root.countries import COUNTRIES
 from apps.root.models import (
     Event,
     Invite,
@@ -106,7 +106,7 @@ def get_country_choices():
     """
 
     choices = []
-    for i in pytz.country_names.items():
+    for i in COUNTRIES.items():
         choices.append((i[0], i[1]))
     return choices
 

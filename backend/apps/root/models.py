@@ -3,7 +3,6 @@ import uuid
 from datetime import date, timedelta
 
 import jwt
-import pytz
 import rollbar
 import stripe
 from autoslug import AutoSlugField
@@ -29,6 +28,7 @@ from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
 from moralis import evm_api
 
+from apps.root.countries import COUNTRIES
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     EventStateTranstionError,
@@ -616,7 +616,7 @@ class Event(DBModel):
         address_fields = [
             self.address_1,
             city,
-            pytz.country_names[self.country],
+            COUNTRIES[self.country],
         ]
 
         # add address_2 to second list position if exists

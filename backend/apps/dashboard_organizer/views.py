@@ -1066,6 +1066,16 @@ class EventScannerStats(DetailView):
     def get(self, *args, **kwargs):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
+
+        # VIP list
+        context["manual_attendees_total"] = ManualAttendee.objects.filter(
+            event=self.object,
+        ).count()
+        context["manual_attendees_redeemed"] = ManualAttendee.objects.filter(
+            event=self.object,
+            redeemed_at__isnull=False,
+        ).count()
+
         return render(
             self.request,
             template_name="redesign/scanner/scanner_stats.html",
@@ -1082,6 +1092,16 @@ class EventScanner2(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(dict(current_team=self.object.team))
+        
+        # VIP list
+        context["manual_attendees_total"] = ManualAttendee.objects.filter(
+            event=self.object,
+        ).count()
+        context["manual_attendees_redeemed"] = ManualAttendee.objects.filter(
+            event=self.object,
+            redeemed_at__isnull=False,
+        ).count()
+
         return context
 
     def post(self, *args, **kwargs):

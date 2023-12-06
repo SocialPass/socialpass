@@ -33,6 +33,8 @@ class CustomDBAdmin(admin.ModelAdmin):
     """
 
     list_display = ["public_id", "created", "modified"]
+    sortable_by = ["public_id", "created", "modified"]
+    list_per_page = 20
 
 
 @admin.register(CheckoutItem)
@@ -207,6 +209,7 @@ class TicketTierAdmin(CustomDBAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(CustomDBAdmin):
+    list_per_page = 5
     list_display = [
         "__str__",
         "event",
@@ -216,6 +219,11 @@ class TicketAdmin(CustomDBAdmin):
         "embed_code",
         "redeemed_at",
     ] + CustomDBAdmin.list_display
+    search_fields = [
+        "event__title",
+        "checkout_session__name",
+        "checkout_session__email",
+    ]
     list_select_related = [
         "event",
         "ticket_tier",

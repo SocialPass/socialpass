@@ -71,6 +71,7 @@ class CheckoutSessionAdmin(CustomDBAdmin):
         "event__title",
         "name",
         "email",
+        "public_id"
     ]
     list_select_related = [
         "event",

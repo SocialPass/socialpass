@@ -34,8 +34,7 @@ class CustomDBAdmin(admin.ModelAdmin):
 
     list_display = ["public_id", "created", "modified"]
     sortable_by = ["public_id", "created", "modified"]
-    list_per_page = 20
-
+    list_per_page = 10
 
 @admin.register(CheckoutItem)
 class CheckoutItemAdmin(CustomDBAdmin):

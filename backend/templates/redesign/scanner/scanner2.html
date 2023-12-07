@@ -15,7 +15,7 @@
 {% endblock extra_head %}
 
 {% block content %}
-<div class="mt-auto py-3">
+<div class="mt-auto py-3 position-relative">
 	<div class="position-relative rounded-3 overflow-hidden shadow" style="background-color: var(--bs-content-bg);">
 		<!-- QR Reader -->
 		<div id="qr-reader" class="w-100 h-auto" style="min-height: 100px;"></div>
@@ -33,11 +33,7 @@
 			</div>
 		</div>
 	</div>
-	<a href="{% url 'dashboard_organizer:scanner_manual_check_in' object.scanner_id %}" class="btn btn-primary btn-lg shadow d-block w-100 my-4">
-		{% trans "Manual Check-In" %}
-		<i class="fa-light fa-arrow-right ms-1"></i>
-	</a>
-	<div class="card border-0 rounded-4 shadow my-3">
+	<div class="card border-0 rounded-4 shadow my-4">
 		<div
 			hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
 			hx-get="{% url 'dashboard_organizer:scanner_stats' object.scanner_id %}"
@@ -77,9 +73,13 @@
 			</div>
 		</div>
 	</div>
+	<a href="{% url 'dashboard_organizer:scanner_manual_check_in' object.scanner_id %}" class="btn btn-primary btn-lg shadow d-block w-100">
+		{% trans "Manual Check-In" %}
+		<i class="fa-light fa-arrow-right ms-1"></i>
+	</a>
 	<!-- HTMX Form -->
-	<div class="card border-0 rounded-4 shadow">
-		<button type="button" class="btn focus-ring d-flex align-items-center justify-content-between px-3 py-3" data-bs-toggle="collapse" data-bs-target="#qr-input-collapse" aria-expanded="false" aria-controls="qr-input-collapse">
+	<div class="card border-0 rounded-4 shadow position-absolute z-n1 pe-none opacity-0">
+		<button type="button" class="btn focus-ring d-flex align-items-center justify-content-between px-3 py-3" data-bs-toggle="collapse" data-bs-target="#qr-input-collapse" aria-expanded="false" aria-controls="qr-input-collapse" tabindex="-1">
 			{% trans "QR Reader Input" %} <i class="fa-light fa-angle-down"></i>
 		</button>
 		<div class="collapse" id="qr-input-collapse">
@@ -98,9 +98,10 @@
 							class="form-control"
 							placeholder="{% trans 'QR Reader Input' %}"
 							required
+							tabindex="-1"
 						>
-						<button id="qr-submit" type="submit" class="btn btn-primary rounded-end">{% trans "Submit" %}</button>
-						<button id="qr-reset" type="button" onclick="resetQr()" class="btn btn-outline-danger ms-2 rounded" disabled>{% trans "Reset" %}</button>
+						<button id="qr-submit" type="submit" class="btn btn-primary rounded-end" tabindex="-1">{% trans "Submit" %}</button>
+						<button id="qr-reset" type="button" onclick="resetQr()" class="btn btn-outline-danger ms-2 rounded" disabled tabindex="-1">{% trans "Reset" %}</button>
 					</div>
 				</form>
 			</div>

@@ -35,7 +35,7 @@ class CustomDBAdmin(admin.ModelAdmin):
     list_display = ["public_id", "created", "modified"]
     sortable_by = ["public_id", "created", "modified"]
     ordering = ["-modified"]
-    list_per_page = 10
+    list_per_page = 1
 
 @admin.register(CheckoutItem)
 class CheckoutItemAdmin(CustomDBAdmin):
@@ -209,7 +209,6 @@ class TicketTierAdmin(CustomDBAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(CustomDBAdmin):
-    list_per_page = 5
     list_display = [
         "__str__",
         "event",

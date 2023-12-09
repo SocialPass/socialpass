@@ -72,7 +72,7 @@
 						{% if manual_attendees.count > 0 %}
 							{% for manual_attendee in manual_attendees %}
 								<div class="pt-2 {% if not forloop.first %}mt-2 border-top{% endif %}">
-									<div class="d-flex align-items-center">	
+									<div class="d-flex align-items-center">
 										<div class="text-break fw-bold">{{ manual_attendee.name_or_email}}</div>
 										{% if manual_attendee.redeemed_at %}
 											<div class="ms-auto">
@@ -121,6 +121,7 @@
 										<div class="lh-sm">
 											<div class="text-break fw-bold">{{ ticket.checkout_session.name }}</div>
 											<div class="text-break" style="font-size: var(--bs-font-size-sm);">{{ ticket.checkout_session.email }}</div>
+											<div class="text-break" style="font-size: var(--bs-font-size-sm);">{{ ticket.party_size }}</div>
 											<div class="text-break text-body-secondary" style="font-size: var(--bs-font-size-sm);">{{ ticket.ticket_tier.ticket_type }}</div>
 										</div>
 										{% if ticket.redeemed_at %}

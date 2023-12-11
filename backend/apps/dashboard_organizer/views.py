@@ -1304,13 +1304,13 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
             event=context["event"],
         )
 
-        # Limit to 100 emails per batch
+        # Limit to 30 emails per batch
         emails = form.cleaned_data["customer_emails"].split(",")
-        if len(emails) > 100:
+        if len(emails) > 30:
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Only up to 100 emails are allowed per batch."
+                "Only up to 30 emails are allowed per batch."
             )
             return super().form_invalid(form)
 
@@ -1327,7 +1327,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                 )
                 return super().form_invalid(form)
 
-        # Create checkout session, items, and fulfill session
+        # Create checkout session and items
         # Also track success and failure
         success_list = []
         failure_list = []
@@ -1345,7 +1345,6 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         quantity=1,
                         extra_party=form.cleaned_data["allowed_guests"],
                     )
-                    checkout_session.fulfill()
                 success_list.append(email)
             except Exception as e:
                 print(e)
@@ -1353,6 +1352,12 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         rsvp_batch.success_list = ", ".join(map(str, success_list))
         rsvp_batch.failure_list = ", ".join(map(str, failure_list))
         rsvp_batch.save()
+
+        # Fulfill checkout sessions once everything has been set up
+        # Querying again, we ensure we get the correct public IDs for the emails
+        checkout_sessions = CheckoutSession.objects.filter(rsvp_batch=rsvp_batch)
+        for checkout_session in checkout_sessions:
+            checkout_session.fulfill()
 
         return super().form_valid(form)
 

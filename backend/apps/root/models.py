@@ -763,6 +763,10 @@ class Ticket(DBModel):
     def __str__(self):
         return f"Ticket: {str(self.id)}"
 
+    @property
+    def extra_party(self):
+        return self.party_size - 1
+
     def redeem_ticket(self, scanner_id):
         """Redeems a ticket."""
         # Check if redeemed

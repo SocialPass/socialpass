@@ -172,7 +172,8 @@ class AppleTicket:
         self.description = event.title
         self.serial_number = str(ticket.public_id)
         self.set_barcode(str(ticket.embed_code))
-        # TODO when latitude/longitude support is added
+        # FUTURE
+        # when latitude/longitude support is added
         # self.set_location_list(event.lat, event.long)
 
         ticket_type = ticket.ticket_tier.ticket_type

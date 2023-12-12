@@ -73,8 +73,6 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         if not self.request.user.is_authenticated:
             return LoginRequiredMixin.handle_no_permission(self)
         else:
-            # TODO: Should this be 403?
-            # Unsure if that exposes security concern
             raise Http404
 
     def get_context_data(self, **kwargs):
@@ -495,7 +493,6 @@ class EventGoLiveView(TeamContextMixin, DetailView):
                 messages.WARNING,
                 "Your event is missing some information.",
             )
-            # TODO: Pass form field validation
             return redirect(
                 "dashboard_organizer:event_update",
                 self.kwargs["team_slug"],
@@ -1092,7 +1089,7 @@ class EventScanner2(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(dict(current_team=self.object.team))
-        
+
         # VIP list
         context["manual_attendees_total"] = ManualAttendee.objects.filter(
             event=self.object,
@@ -1179,7 +1176,7 @@ class EventScannerManualCheckIn(DetailView):
         context["tickets"] = self.object.ticket_set.select_related(
             "checkout_session"
         ).filter(
-            Q(checkout_session__name__icontains=self.request.GET.get("search")) | 
+            Q(checkout_session__name__icontains=self.request.GET.get("search")) |
             Q(checkout_session__email__icontains=self.request.GET.get("search"))
         ).order_by("-redeemed_at")
 

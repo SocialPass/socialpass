@@ -470,7 +470,7 @@ class CheckoutFiat(DetailView):
                 self.kwargs["team_slug"],
                 self.kwargs["event_slug"],
             )
-            
+
         return response
 
     def post(self, *args, **kwargs):
@@ -764,12 +764,7 @@ class GetTickets(View):
             if passcode_form.is_valid():
                 actual_passcode = checkout_session.passcode.lower()
                 entered_passcode = passcode_form.cleaned_data["passcode"].lower()
-                if (
-                    actual_passcode
-                    != entered_passcode
-                    # PATCH: Removed expiry check for pudgy event
-                    # or checkout_session.passcode_expiration < timezone.now()
-                ):
+                if actual_passcode != entered_passcode:
                     # validation was unsuccessful, so we show error message
                     messages.add_message(
                         self.request,

@@ -148,7 +148,7 @@
 
 <!-- Countdown timer start -->
 {% if sales_status == "UPCOMING" %}
-	<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
+	<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4" id="countdown-timer">
 		<div class="p-3 p-sm-4">
 			<div class="container-fluid overflow-hidden">
 				<div class="row g-3 g-sm-4 align-items-center">
@@ -182,6 +182,22 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+	</div>
+	<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4 d-none" id="ticket-sales-has-started">
+		<div class="p-3 p-sm-4">
+			<div class="d-flex align-items-center justify-content-center">
+				<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+					<i class="fa-solid fa-party-horn fs-6 text-primary-emphasis"></i>
+				</div>
+				<strong class="text-primary-emphasis ms-3">{% trans "Ticket Sales Has Started!" %}</strong>
+			</div>
+			<div class="mt-2 text-center">
+				<span class="text-body-secondary">
+					<i class="fa-light fa-circle-notch fa-spin me-1"></i>
+					{% trans "Re-loading page automatically" %}...
+				</span>
 			</div>
 		</div>
 	</div>
@@ -378,6 +394,13 @@
 			    document.getElementById("hours").innerHTML = "";
 			    document.getElementById("mins").innerHTML = "";
 			    document.getElementById("secs").innerHTML = "";
+			    document.getElementById("countdown-timer").classList.add("d-none");
+			    document.getElementById("ticket-sales-has-started").classList.remove("d-none");
+
+			    // Re-load page after 3 seconds
+			    setInterval(function() {
+			    	location.reload();
+			    }, 3000);
 			}
 	    }, 1000);
 	</script>

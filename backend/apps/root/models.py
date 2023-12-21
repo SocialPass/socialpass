@@ -638,7 +638,7 @@ class Event(DBModel):
         return Ticket.objects.filter(event=self).count()
 
     @property
-    def tickets_redeemed(self):
+    def tickets_scanned_count(self):
         return Ticket.objects.filter(event=self, redeemed_at__isnull=False).count()
 
     @property

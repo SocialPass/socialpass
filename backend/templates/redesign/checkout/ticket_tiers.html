@@ -12,7 +12,7 @@
         class="ticket-tier-input"
         data-pk="{{ tier.id }}"
         data-max-per-person="{{ tier.max_per_person }}"
-        data-availability="{{ tier.availability }}"
+        data-availability="{{ tier.tickets_available }}"
         data-amount="0"
         data-extra-party="0"
         data-allowed-guests="{{ tier.allowed_guests }}"
@@ -34,7 +34,7 @@
         <div class="d-sm-flex align-items-center">
             <div class="pe-sm-3">
                 <h5 class="mb-1 text-truncate">
-                    {% if tier.availability > 0 %}
+                    {% if tier.tickets_available > 0 %}
                         <span class="ticket-tier-uncheck">
                             <i class="fa-light fa-square"></i>
                         </span>
@@ -45,12 +45,12 @@
                     {{ tier.ticket_type }}
                 </h5>
                 <p class="m-0">
-                    {% if tier.availability < 1 %}
+                    {% if tier.tickets_available < 1 %}
                         <strong class="text-danger-emphasis">
                             <i class="fa-light fa-ban me-1"></i> {% trans "Sold out!" %}
                         </strong>
                     {% else %}
-                        {{ tier.availability }} {% trans "available" %}
+                        {{ tier.tickets_available }} {% trans "available" %}
                         {% if tier.allowed_guests > 0 %}
                             <span>
                                 | + {{ tier.allowed_guests }} {% trans "Guest(s) Allowed" %}

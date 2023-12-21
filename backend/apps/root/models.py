@@ -931,7 +931,7 @@ class TicketTier(DBModel):
         return tickets.count()
 
     @cached_property
-    def availability(self):
+    def tickets_available(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return self.capacity - tickets.count()
 
@@ -1356,7 +1356,7 @@ class CheckoutSession(DBModel):
         ).filter(checkout_session=self)
         for item in checkout_items:
             tickets_total_people = item.calculated_party_size * item.quantity
-            if tickets_total_people > item.ticket_tier.availability:
+            if tickets_total_people > item.ticket_tier.tickets_available:
                 is_waiting_list = True
         return is_waiting_list
 

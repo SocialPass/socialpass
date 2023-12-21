@@ -411,6 +411,12 @@ class Event(DBModel):
         default="USD",
         choices=CURRENCY_CHOICES,
     )
+    event_capacity = models.IntegerField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(1)],
+        help_text="Denotes the total capacity for the venue, across all ticket tiers.",
+    )
 
     # Location info
     # timezone of event
@@ -897,6 +903,12 @@ class TicketTier(DBModel):
         help_text="Maximum number of guests allowed for one ticket.",
         blank=False,
         null=False,
+    )
+    guest_supply = models.IntegerField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(1)],
+        help_text="Denotes the total guest capacity.",
     )
     hidden = models.BooleanField(
         default=False,

@@ -193,7 +193,7 @@ class TicketTierAdmin(CustomDBAdmin):
         "ticket_type",
         "event",
         "capacity",
-        "quantity_sold_without_party",
+        "tickets_sold_count",
         "max_per_person",
     ] + CustomDBAdmin.list_display
     search_fields = [

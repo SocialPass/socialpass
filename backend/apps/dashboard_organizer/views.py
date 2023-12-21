@@ -827,7 +827,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        tickets_count = self.object.quantity_sold_without_party
+        tickets_count = self.object.tickets_sold_count
         if form.cleaned_data["capacity"] < tickets_count:
             form.add_error(
                 "capacity",

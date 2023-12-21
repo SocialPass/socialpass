@@ -620,7 +620,7 @@ class EventStatsView(TeamContextMixin, DetailView):
         context["tickets"] = results
 
         # Tickets redeemed
-        context["tickets_redeemed"] = event.tickets_redeemed
+        context["tickets_scanned_count"] = event.tickets_scanned_count
 
         # VIP list
         context["manual_attendees"] = ManualAttendee.objects.filter(

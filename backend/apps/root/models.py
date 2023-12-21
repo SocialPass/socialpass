@@ -634,7 +634,7 @@ class Event(DBModel):
         return localized_address_display
 
     @property
-    def tickets_total(self):
+    def tickets_sold_count(self):
         return Ticket.objects.filter(event=self).count()
 
     @property

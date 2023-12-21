@@ -907,7 +907,7 @@ class TicketTier(DBModel):
     guest_supply = models.IntegerField(
         blank=True,
         null=True,
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(0)],
         help_text="Denotes the total guest capacity.",
     )
     hidden = models.BooleanField(

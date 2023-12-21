@@ -411,7 +411,7 @@ class Event(DBModel):
         default="USD",
         choices=CURRENCY_CHOICES,
     )
-    event_capacity = models.IntegerField(
+    total_capacity = models.IntegerField(
         blank=True,
         null=True,
         validators=[MinValueValidator(1)],

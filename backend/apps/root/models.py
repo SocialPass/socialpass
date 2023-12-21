@@ -935,6 +935,10 @@ class TicketTier(DBModel):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return self.capacity - tickets.count()
 
+    @cached_property
+    def tickets_sold_minus_available(self):
+        return self.tickets_sold_count - self.tickets_available
+
     @property
     def additional_information_html(self):
         additional_information_html = ""

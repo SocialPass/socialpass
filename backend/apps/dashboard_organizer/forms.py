@@ -280,7 +280,7 @@ class TicketTierForm(forms.ModelForm):
         model = TicketTier
         fields = [
             "ticket_type", "capacity", "max_per_person", "allowed_guests",
-            "hidden", "additional_information",
+            "guest_supply", "hidden", "additional_information",
         ]
         widgets = {
             "ticket_type": forms.TextInput(
@@ -293,6 +293,12 @@ class TicketTierForm(forms.ModelForm):
             "capacity": forms.NumberInput(attrs={"min": 1}),
             "max_per_person": forms.NumberInput(attrs={"min": 1}),
             "allowed_guests": forms.NumberInput(attrs={"min": 0}),
+            "guest_supply": forms.NumberInput(
+                attrs={
+                    "min": 0,
+                    "placeholder": _("Total number of guests allowed."),
+                }
+            ),
             "additional_information": forms.TextInput(
                 attrs={
                     "placeholder": _(

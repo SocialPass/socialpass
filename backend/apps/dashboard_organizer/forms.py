@@ -139,6 +139,7 @@ class EventForm(forms.ModelForm):
             "google_class_id",
             "sales_start",
             "sales_end",
+            "total_capacity",
         ]
 
         widgets = {
@@ -211,6 +212,12 @@ class EventForm(forms.ModelForm):
                     "class": "form-control",
                     "type": "datetime-local",
                 },
+            ),
+            "total_capacity": forms.NumberInput(
+                attrs={
+                    "min": 1,
+                    "placeholder": _("Total Venue Capacity"),
+                }
             ),
         }
         labels = {

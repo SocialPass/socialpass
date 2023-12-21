@@ -145,6 +145,19 @@
 						</div>
 					</div>
 
+					<br /><br />
+					<h4>{% trans "Total Venue Capacity" %}</h4>
+					<p class="text-body-secondary mb-lg-4">
+						{% trans "When set, our system will make sure that the total number of people attending (ticket holders + guests) does not exceed this number." %}
+					</p>
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with form.total_capacity as input %}
+								{% include "redesign/forms/input.html" %}
+							{% endwith %}
+						</div>
+					</div>
+
 					<div class="text-end mt-3">
 						<button type="submit" class="btn btn-primary">{% trans "Save & Continue" %}</button>
 					</div>

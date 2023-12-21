@@ -50,7 +50,7 @@
 					{% trans "Event" %}
 				</div>
 				<div class="col-lg-2 d-none d-lg-flex">
-					{% trans "Sold" %}
+					{% trans "Tickets Sold" %}
 				</div>
 				<div class="col-lg-2 d-none d-lg-flex">
 					{% trans "Status" %}
@@ -86,9 +86,9 @@
 				</div>
 				<div class="col-4 col-lg-2">
 					<span class="d-lg-none text-primary-emphasis fw-bold">
-						{% trans "Sold" %}:
+						{% trans "Tickets Sold" %}:
 					</span>
-					{{ event.attendees_count }}
+					{{ event.tickets_sold_count }}
 				</div>
 				<div class="col-6 col-lg-2 text-center text-lg-start">
 					<span class="d-lg-none text-primary-emphasis fw-bold">

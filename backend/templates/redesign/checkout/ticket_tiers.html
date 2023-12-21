@@ -7,7 +7,7 @@
 <div class="ticket-tier mb-3">
     <input
         id="{{ tier.public_id }}"
-        {% if tier.capacity <= tier.quantity_sold_without_party %}disabled{% endif %}
+        {% if tier.capacity <= tier.tickets_sold_count %}disabled{% endif %}
         type="checkbox"
         class="ticket-tier-input"
         data-pk="{{ tier.id }}"

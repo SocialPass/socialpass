@@ -926,7 +926,7 @@ class TicketTier(DBModel):
         return f"TicketTier: {self.ticket_type}"
 
     @cached_property
-    def quantity_sold_without_party(self):
+    def tickets_sold_count(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return tickets.count()
 

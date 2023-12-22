@@ -345,6 +345,26 @@ class CheckoutPageTwo(DetailView):
 
         # Form is valid, continue...
 
+        # Make sure event venue capacity is not exceeded
+        if self.object.event.total_capacity:
+            new_attendees_count = self.object.event.attendees_count
+            for item in self.object.checkoutitem_set.all():
+                new_attendees_count += item.quantity + (item.quantity * item.extra_party)
+            if new_attendees_count > self.object.event.total:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "Your order exceeds the total venue capacity for the event. "
+                    "Please try changing your order, or contact the organizer if "
+                    "you think something is wrong."
+                )
+                return redirect(
+                    "checkout:checkout_two",
+                    self.kwargs["team_slug"],
+                    self.kwargs["event_slug"],
+                    self.kwargs["checkout_session_public_id"],
+                )
+
         # Make sure there is no ticket overflow
         is_waiting_list = self.object.check_is_waiting_list()
         if is_waiting_list:

@@ -346,11 +346,12 @@ class CheckoutPageTwo(DetailView):
         # Form is valid, continue...
 
         # Make sure event venue capacity is not exceeded
+        checkout_items = self.object.checkoutitem_set.all()
         if self.object.event.total_capacity:
             new_attendees_count = self.object.event.attendees_count
-            for item in self.object.checkoutitem_set.all():
+            for item in checkout_items:
                 new_attendees_count += item.quantity + (item.quantity * item.extra_party)
-            if new_attendees_count > self.object.event.total:
+            if new_attendees_count > self.object.event.total_capacity:
                 messages.add_message(
                     self.request,
                     messages.ERROR,
@@ -363,6 +364,26 @@ class CheckoutPageTwo(DetailView):
                     self.kwargs["team_slug"],
                     self.kwargs["event_slug"],
                     self.kwargs["checkout_session_public_id"],
+                )
+
+        # Make sure none of the tiers' guests exceed the supply
+        for item in checkout_items:
+            new_guest_count = item.ticket_tier.guest_count + item.extra_party
+            if item.ticket_tier.guest_supply and new_guest_count > item.ticket_tier.guest_supply:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    "For one or more tiers, the number of guests exceeds the "
+                    "allotted guest supply. Please try again."
+                )
+                return redirect(
+                    reverse(
+                        "checkout:checkout_one",
+                        args=(
+                            self.kwargs["team_slug"],
+                            self.kwargs["event_slug"],
+                        ),
+                    ) + f"?name={self.object.name}&email={self.object.email}"
                 )
 
         # Make sure there is no ticket overflow

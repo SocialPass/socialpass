@@ -940,7 +940,7 @@ class TicketTier(DBModel):
         return self.tickets_sold_count - self.tickets_available
 
     @property
-    def guest_count(self):
+    def guests_count(self):
         sold = Ticket.objects.filter(ticket_tier=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"] or 0
         return sold_with_party - sold.count()

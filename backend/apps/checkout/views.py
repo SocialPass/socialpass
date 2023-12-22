@@ -368,8 +368,8 @@ class CheckoutPageTwo(DetailView):
 
         # Make sure none of the tiers' guests exceed the supply
         for item in checkout_items:
-            new_guest_count = item.ticket_tier.guest_count + item.extra_party
-            if item.ticket_tier.guest_supply and new_guest_count > item.ticket_tier.guest_supply:
+            new_guests_count = item.ticket_tier.guests_count + item.extra_party
+            if item.ticket_tier.guest_supply and new_guests_count > item.ticket_tier.guest_supply:
                 messages.add_message(
                     self.request,
                     messages.ERROR,

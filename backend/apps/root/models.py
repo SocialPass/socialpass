@@ -1359,8 +1359,7 @@ class CheckoutSession(DBModel):
             "ticket_tier",
         ).filter(checkout_session=self)
         for item in checkout_items:
-            tickets_total_people = item.calculated_party_size * item.quantity
-            if tickets_total_people > item.ticket_tier.tickets_available:
+            if item.quantity > item.ticket_tier.tickets_available:
                 is_waiting_list = True
         return is_waiting_list
 

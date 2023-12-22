@@ -125,21 +125,20 @@
         {% endif %}
         {% if tier.allowed_guests > 0 %}
             <div class="ticket-tier-guest ticket-tier-controls border-top mt-2 pt-3">
-                <div class="d-sm-flex align-items-center">
-                    <div>
-                        <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>
-                        <div class="lh-sm" style="font-size: var(--bs-font-size-sm);">
-                            {% trans "Please set the number of guest(s) you want to bring." %}
+                {% if tier.guest_supply %}
+                    {% if tier.guests_count >= tier.guest_supply %}
+                        <div>
+                            <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>
+                            <div class="lh-sm text-danger-emphasis fw-bold" style="font-size: var(--bs-font-size-sm);">
+                                {% trans "The guest supply allotment for this tier is full." %}
+                            </div>
                         </div>
-                    </div>
-                    <div class="ms-auto mt-2 mt-sm-0">
-                        <div class="input-group input-group-sm input-group-pill specific-w-100 mx-auto">
-                            <button class="btn btn-secondary specific-w-25 px-0" onclick="subtractExtraParty(this)">-</button>
-                            <input type="text" class="ticket-tier-extra-party form-control text-center" readonly value="0">
-                            <button class="btn btn-secondary specific-w-25 px-0" onclick="addExtraParty(this)">+</button>
-                        </div>
-                    </div>
-                </div>
+                    {% else %}
+                        {% include "redesign/checkout/ticket_tiers_guest.html" %}
+                    {% endif %}
+                {% else %}
+                    {% include "redesign/checkout/ticket_tiers_guest.html" %}
+                {% endif %}
                 <div class="border-top text-end mt-3 pt-2">
                     <strong>{% trans "Total" %}:</strong> <span class="ticket-tier-total-selected">1</span> {% trans "(Quantity + Quantity × Guests)" %}
                 </div>

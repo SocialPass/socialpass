@@ -17,6 +17,9 @@
         data-extra-party="0"
         data-allowed-guests="{{ tier.allowed_guests }}"
         data-price-per-ticket="{{ tier.tier_fiat.price_per_ticket }}"
+        {% if tier.guests_available %}
+            data-guests-available="{{ tier.guests_available }}"
+        {% endif %}
         onchange="tierOnchange(this)"
     >
     <label for="{{ tier.public_id }}" class="ticket-tier-label">
@@ -129,7 +132,7 @@
                     {% if tier.guests_count >= tier.guest_supply %}
                         <div>
                             <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>
-                            <div class="lh-sm text-danger-emphasis fw-bold" style="font-size: var(--bs-font-size-sm);">
+                            <div class="lh-sm text-danger-emphasis fw-bold">
                                 {% trans "The guest supply allotment for this tier is full." %}
                             </div>
                         </div>
@@ -140,7 +143,7 @@
                     {% include "redesign/checkout/ticket_tiers_guest.html" %}
                 {% endif %}
                 <div class="border-top text-center text-sm-end mt-3 pt-2">
-                    <strong>{% trans "# of Attendees + Guests" %}:</strong> <span class="ticket-tier-total-selected">1</span> {% trans "(Quantity + Quantity × Guests)" %}
+                    <strong>{% trans "Total # of guests" %}:</strong> <span class="ticket-tier-total-guests">0</span> {% trans "(Quantity × Guests)" %}
                 </div>
             </div>
         {% endif %}

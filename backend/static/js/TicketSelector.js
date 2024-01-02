@@ -51,10 +51,9 @@ function updateTier(tier) {
 	try {
 		tierLabel.querySelector(".ticket-tier-extra-party").value =
 			tier.getAttribute("data-extra-party");
-		tierLabel.querySelector(".ticket-tier-total-selected").innerHTML =
-			Number(tier.getAttribute("data-amount")) +
+		tierLabel.querySelector(".ticket-tier-total-guests").innerHTML =
 			Number(tier.getAttribute("data-amount")) *
-				Number(tier.getAttribute("data-extra-party"));
+			Number(tier.getAttribute("data-extra-party"));
 	} catch (e) {}
 	updateTierData();
 }
@@ -92,7 +91,14 @@ function addAmount(button) {
 	var extraParty = Number(tierInput.getAttribute("data-extra-party"));
 	var availability = Number(tierInput.getAttribute("data-availability"));
 	var maxPerPerson = Number(tierInput.getAttribute("data-max-per-person"));
-	var newAmount = amount + 1
+	var newAmount = amount + 1;
+	var newTotalGuests = newAmount * extraParty;
+
+	if (tierInput.hasAttribute("data-guests-available")) {
+		if (newTotalGuests > tierInput.getAttribute("data-guests-available")) {
+			return;
+		}
+	}
 
 	if (amount === 0) {
 		tierInput.checked = true;
@@ -127,6 +133,13 @@ function addExtraParty(button) {
 	var extraParty = Number(tierInput.getAttribute("data-extra-party"));
 	var availability = Number(tierInput.getAttribute("data-availability"));
 	var allowedGuests = Number(tierInput.getAttribute("data-allowed-guests"));
+	var newTotalGuests = amount * (extraParty + 1);
+
+	if (tierInput.hasAttribute("data-guests-available")) {
+		if (newTotalGuests > tierInput.getAttribute("data-guests-available")) {
+			return;
+		}
+	}
 
 	if (extraParty < allowedGuests) {
 		tierInput.setAttribute("data-extra-party", extraParty + 1);

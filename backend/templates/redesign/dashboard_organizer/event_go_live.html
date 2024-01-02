@@ -31,6 +31,19 @@
 				</div>
 				<div class="col-sm-7">
 					<div class="card-body p-4">
+						<div class="mb-4">
+							{% if event.state == event.StateStatus.LIVE %}
+								<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+									<i class="fa-solid fa-circle-small fa-beat-fade me-1"></i>
+									{% trans "Live Event" %}
+								</span>
+							{% else %}
+								<span class="px-3 py-2 rounded-pill fw-bold bg-secondary-subtle text-secondary-emphasis me-3">
+									<i class="fa-light fa-pencil me-1"></i>
+									{% trans "Draft Event" %}
+								</span>
+							{% endif %}
+						</div>
 						<h2 class="h4 mb-4">{{ event.title }}</h2>
 						<div class="d-flex align-items-start mb-2">
 							<i class="fa-light fa-calendars specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
@@ -62,51 +75,34 @@
 							<i class="fa-light fa-location-dot specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
 							<span class="text-body-secondary"><strong class="text-body">{% trans "Address" %}:</strong> {{ event.localized_address_display }}</span>
 						</div>
-						<div class="mt-4">
-							{% if event.state == event.StateStatus.LIVE %}
-								<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
-									<i class="fa-solid fa-circle-small fa-beat-fade me-1"></i>
-									{% trans "Live Event" %}
-								</span>
-							{% else %}
-								<span class="px-3 py-2 rounded-pill fw-bold bg-secondary-subtle text-secondary-emphasis me-3">
-									<i class="fa-light fa-pencil me-1"></i>
-									{% trans "Draft Event" %}
-								</span>
-							{% endif %}
-						</div>
+						{% if event.state == event.StateStatus.LIVE %}
+							<div class="mt-4">
+								<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="btn btn-link btn-lg d-flex align-items-center w-100 mb-2" target="_blank">
+									{% trans "Public Page" %}
+									<i class="fa-light fa-external-link ms-auto"></i>
+								</a>
+								<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="btn btn-link btn-lg d-flex align-items-center w-100" target="_blank">
+									{% trans "Check-In (Scanner)" %}
+									<i class="fa-light fa-qrcode ms-auto"></i>
+								</a>
+							</div>
+						{% else %}
+							<form method="post" class="mt-4">
+								{% csrf_token %}
+								<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="btn btn-link btn-lg d-flex align-items-center w-100 mb-2" target="_blank">
+									{% trans "Preview Event" %}
+									<i class="fa-light fa-external-link ms-auto"></i>
+								</a>
+								<button type="submit" class="btn btn-primary btn-lg d-flex align-items-center w-100" onclick="goLive(event)">
+									{% trans "Go Live!" %}
+									<i class="fa-light fa-party-horn ms-auto"></i>
+								</button>
+							</form>
+						{% endif %}
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
-
-<div class="row mt-auto mb-3">
-	<div class="col-lg-8 mx-auto">
-		{% if event.state == event.StateStatus.LIVE %}
-			<div class="text-end">
-				<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="btn btn-link btn-lg" target="_blank">
-					<i class="fa-light fa-external-link me-1"></i>
-					{% trans "Public Page" %}
-				</a>
-				<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="btn btn-link btn-lg ms-2" target="_blank">
-					<i class="fa-light fa-qrcode me-1"></i>
-					{% trans "Check-In (Scanner)" %}
-				</a>
-			</div>
-		{% else %}
-			<form method="post" class="text-end">
-				{% csrf_token %}
-				<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="btn btn-link btn-lg" target="_blank">
-					<i class="fa-light fa-external-link me-1"></i>
-					{% trans "Preview Event" %}
-				</a>
-				<button type="submit" class="btn btn-primary btn-lg px-3 ms-2" onclick="goLive(event)">
-					{% trans "Go Live!" %}
-				</button>
-			</form>
-		{% endif %}
 	</div>
 </div>
 <!-- Go live content end -->

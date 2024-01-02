@@ -139,8 +139,8 @@
                 {% else %}
                     {% include "redesign/checkout/ticket_tiers_guest.html" %}
                 {% endif %}
-                <div class="border-top text-end mt-3 pt-2">
-                    <strong>{% trans "Total" %}:</strong> <span class="ticket-tier-total-selected">1</span> {% trans "(Quantity + Quantity × Guests)" %}
+                <div class="border-top text-center text-sm-end mt-3 pt-2">
+                    <strong>{% trans "# of Attendees + Guests" %}:</strong> <span class="ticket-tier-total-selected">1</span> {% trans "(Quantity + Quantity × Guests)" %}
                 </div>
             </div>
         {% endif %}

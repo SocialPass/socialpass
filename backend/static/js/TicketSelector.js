@@ -92,15 +92,15 @@ function addAmount(button) {
 	var extraParty = Number(tierInput.getAttribute("data-extra-party"));
 	var availability = Number(tierInput.getAttribute("data-availability"));
 	var maxPerPerson = Number(tierInput.getAttribute("data-max-per-person"));
-	var totalSelected = amount + 1 + (amount + 1) * extraParty;
+	var newAmount = amount + 1
 
 	if (amount === 0) {
 		tierInput.checked = true;
 		tierInput.dispatchEvent(new Event("change"));
 	} else {
 		if (amount < maxPerPerson) {
-			if (totalSelected <= availability) {
-				tierInput.setAttribute("data-amount", amount + 1);
+			if (newAmount <= availability) {
+				tierInput.setAttribute("data-amount", newAmount);
 				updateTier(tierInput);
 			}
 		}
@@ -127,13 +127,10 @@ function addExtraParty(button) {
 	var extraParty = Number(tierInput.getAttribute("data-extra-party"));
 	var availability = Number(tierInput.getAttribute("data-availability"));
 	var allowedGuests = Number(tierInput.getAttribute("data-allowed-guests"));
-	var totalSelected = amount + amount * (extraParty + 1);
 
 	if (extraParty < allowedGuests) {
-		if (totalSelected <= availability) {
-			tierInput.setAttribute("data-extra-party", extraParty + 1);
-			updateTier(tierInput);
-		}
+		tierInput.setAttribute("data-extra-party", extraParty + 1);
+		updateTier(tierInput);
 	}
 }
 

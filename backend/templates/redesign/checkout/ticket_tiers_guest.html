@@ -2,8 +2,9 @@
 <div class="d-sm-flex align-items-center">
     <div>
         <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>
-        <div class="lh-sm" style="font-size: var(--bs-font-size-sm);">
-            {% trans "Please set the number of guest(s) you want to bring." %}
+        <div class="lh-sm">
+            {% if tier.guests_available %}{{ tier.guests_available }} {% trans "available" %} | {% endif %}
+            {% trans "Set the number of guest(s) per ticket." %}
         </div>
     </div>
     <div class="ms-auto mt-2 mt-sm-0">

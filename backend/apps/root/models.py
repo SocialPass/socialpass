@@ -946,6 +946,13 @@ class TicketTier(DBModel):
         return sold_with_party - sold.count()
 
     @property
+    def guests_available(self):
+        if self.guest_supply:
+            return self.guest_supply - self.guests_count
+        else:
+            return False
+
+    @property
     def additional_information_html(self):
         additional_information_html = ""
         try:

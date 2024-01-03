@@ -1,21 +1,22 @@
-{% extends "bases/base_secondary.html" %}
-{% load static %}
+{% extends "redesign/dashboard_organizer/base_simple.html" %}
+{% load static i18n %}
 
-{% block head_title %}Too Many Requests - SocialPass{% endblock %}
+{% block head_title %}{% trans "Too many requests" %} - SocialPass{% endblock %}
 
-{% block sidebar_content %}
-<div class="ws-400 mw-100 d-flex align-items-center justify-content-center mx-auto p-10">
+{% block content %}
+<div class="specific-w-400 mw-100 d-flex align-items-center justify-content-center mx-auto p-1">
     <img src="{% static 'images/illustrations/something_went_wrong.svg' %}" alt="something_went_wrong" class="img-fluid">
 </div>
-{% endblock sidebar_content %}
-
-{% block inner %}
-<h1 class="display-1 text-strong fw-700">429</h1>
-<p>
-    <strong>Too Many Requests</strong>
-    Sorry, but too many requests have been sent from this client. Please try again later.
+<h1 class="text-center display-1">429</h1>
+<h2 class="text-center fs-4">{% trans "Too many requests" %}</h2>
+<p class="text-center">
+    {% if exception %}
+        {{ exception }}
+    {% else %}
+    	{% trans "Sorry, but too many requests have been sent from this client. Please try again later." %}
+    {% endif %}
 </p>
-<p>
-    <a href="{% url 'dashboard_organizer:dashboard_redirect' %}" class="fw-bold"><i class="fa-solid fa-arrow-left me-5"></i> Go back to dashboard</a>
+<p class="text-center">
+    <a href="https://calendly.com/siesta-markets-front-office/socialpass-catchup" target="_blank" rel="noreferrer">{% trans "Contact Us" %}</a>
 </p>
 {% endblock %}

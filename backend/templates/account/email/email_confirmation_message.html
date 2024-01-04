@@ -1,5 +1,4 @@
 {% extends "account/email/base_message.html" %}
-
 {% load account %}
 
 {% block content %}
@@ -10,24 +9,7 @@
 <p>
 	To confirm this is correct, go to the following link:
 </p>
-<div style="
-	text-align: center;
-	margin: 16px 0;
-	padding: 16px;
-	background-color: #ecf0f1;
-	border-radius: 6px;"
->
-	<a href="{{ activate_url }}" style="
-		text-decoration: none;
-		font-weight: 600;
-		font-size: 16px;
-		display: inline-block;
-		padding: 10px 24px;
-		color: #fff;
-		background-color: #3995b8;
-		border-radius: 6px;"
-	>
-		Confirm Account
-	</a>
-</div>
+<p style="margin-bottom: 0">
+	<a href="{{ activate_url }}">{{ activate_url }}</a>
+</p>
 {% endblock %}

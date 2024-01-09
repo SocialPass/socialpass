@@ -1100,6 +1100,7 @@ class CheckoutSession(DBModel):
         BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
         FREE = "FREE", "Free"
+        RSVP = "RSVP", "RSVP"
 
     # keys
     event = models.ForeignKey(

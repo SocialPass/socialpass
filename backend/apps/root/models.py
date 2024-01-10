@@ -926,6 +926,17 @@ class TicketTier(DBModel):
         return f"TicketTier: {self.ticket_type}"
 
     @cached_property
+    def tx_type(self):
+        if self.tier_fiat:
+            return CheckoutSession.TransactionType.FIAT
+        elif self.tier_blockchain:
+            return CheckoutSession.TransactionType.BLOCKCHAIN
+        elif self.tier_asset_ownership:
+            return CheckoutSession.TransactionType.ASSET_OWNERSHIP
+        elif self.tier_free:
+            return CheckoutSession.TransactionType.FREE
+
+    @cached_property
     def tickets_sold_count(self):
         tickets = Ticket.objects.filter(ticket_tier=self)
         return tickets.count()
@@ -1100,7 +1111,6 @@ class CheckoutSession(DBModel):
         BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
         FREE = "FREE", "Free"
-        RSVP = "RSVP", "RSVP"
 
     # keys
     event = models.ForeignKey(

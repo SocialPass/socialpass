@@ -1335,7 +1335,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         event=context["event"],
                         rsvp_batch=rsvp_batch,
                         email=email.strip(),
-                        tx_type=CheckoutSession.TransactionType.RSVP,
+                        tx_type=form.cleaned_data["ticket_tier"].tx_type,
                     )
                     checkout_item = CheckoutItem.objects.create(
                         ticket_tier=form.cleaned_data["ticket_tier"],

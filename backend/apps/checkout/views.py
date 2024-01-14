@@ -255,20 +255,17 @@ class CheckoutPageOne(DetailView):
             )
 
 
-class CheckoutPageTwo(DetailView):
+class CheckoutPageTwoBase(DetailView):
     """
-    GET
-    Fetch Checkout Session
-    Fetch Checkout Items
-
-    POST
-    Process Checkout Session (and related TX, etc.)
+    Base class for handling FREE, NFT, and FIAT checkout sessions.
     """
 
     model = CheckoutSession
     slug_field = "public_id"
     slug_url_kwarg = "checkout_session_public_id"
-    template_name = "redesign/checkout/checkout_page_two.html"
+
+    def get_template_names(self):
+        raise NotImplementedError
 
     def get_object(self):
         self.object = (
@@ -284,17 +281,18 @@ class CheckoutPageTwo(DetailView):
             raise Http404
         return super().get_object()
 
+    def get_form_class(self):
+        raise NotImplementedError
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["checkout_items"] = self.object.checkoutitem_set.all()
-        if self.object.tx_type == CheckoutSession.TransactionType.FREE:
-            context["form"] = CheckoutFormFree(
-                initial={"name": self.object.name, "email": self.object.email}
-            )
-        elif self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-            context["form"] = CheckoutFormAssetOwnership(
-                initial={"name": self.object.name, "email": self.object.email}
-            )
+        context["checkout_items"] = self.object.checkoutitem_set.select_related(
+            "ticket_tier", "ticket_tier__tier_fiat", "ticket_tier__tier_free",
+            "ticket_tier__tier_asset_ownership",
+        ).all()
+        context["form"] = self.get_form_class()(
+            initial={"name": self.object.name, "email": self.object.email}
+        )
         context["organizer_team"] = self.object.event.team
         return context
 
@@ -321,27 +319,17 @@ class CheckoutPageTwo(DetailView):
 
         return response
 
-    @transaction.atomic
-    def post(self, *args, **kwargs):
+    def validate_post(self):
         self.get_object()
-        if self.object.tx_type == CheckoutSession.TransactionType.FREE:
-            form = CheckoutFormFree(self.request.POST)
-        elif self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-            form = CheckoutFormAssetOwnership(self.request.POST)
+        form = self.get_form_class()(self.request.POST)
 
         # Something went wrong, so we show error message
         if not form.is_valid():
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                "Something went wrong. Please try again.",
-            )
-            return redirect(
-                "checkout:checkout_two",
-                self.kwargs["team_slug"],
-                self.kwargs["event_slug"],
-                self.kwargs["checkout_session_public_id"],
-            )
+            return {
+                "is_error": True,
+                "error_message": "Something went wrong. Please try again.",
+                "form": form,
+            }
 
         # Form is valid, continue...
 
@@ -352,59 +340,92 @@ class CheckoutPageTwo(DetailView):
             for item in checkout_items:
                 new_attendees_count += item.quantity + (item.quantity * item.extra_party)
             if new_attendees_count > self.object.event.total_capacity:
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "Your order exceeds the total venue capacity for the event. "
-                    "Please try changing your order, or contact the organizer if "
-                    "you think something is wrong."
-                )
-                return redirect(
-                    "checkout:checkout_two",
-                    self.kwargs["team_slug"],
-                    self.kwargs["event_slug"],
-                    self.kwargs["checkout_session_public_id"],
-                )
+                return {
+                    "is_error": True,
+                    "error_message": str(
+                        "Your order exceeds the total venue capacity for the "
+                        "event. Please try changing your order, or contact the "
+                        "organizer if you think something is wrong."
+                    ),
+                    "form": form,
+                }
 
         # Make sure none of the tiers' guests exceed the supply
         for item in checkout_items:
             new_guests_count = item.ticket_tier.guests_count + item.extra_party
             if item.ticket_tier.guest_supply and new_guests_count > item.ticket_tier.guest_supply:
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "For one or more tiers, the number of guests exceeds the "
-                    "allotted guest supply. Please try again."
-                )
-                return redirect(
-                    reverse(
-                        "checkout:checkout_one",
-                        args=(
-                            self.kwargs["team_slug"],
-                            self.kwargs["event_slug"],
-                        ),
-                    ) + f"?name={self.object.name}&email={self.object.email}"
-                )
+                return {
+                    "is_error": True,
+                    "error_message": str(
+                        "For one or more tiers, the number of guests exceeds the "
+                        "allotted guest supply. Please try again."
+                    ),
+                    "form": form,
+                }
 
         # Make sure there is no ticket overflow
         is_waiting_list = self.object.check_is_waiting_list()
         if is_waiting_list:
             self.object.is_waiting_list = True
             self.object.save()
+            return {
+                "is_error": True,
+                "error_message": str(
+                    "We're sorry, not enough ticket(s) are available. However, "
+                    "you are on a waiting list, so please be on the lookout for "
+                    "an email. The organizers may decide to send you ticket(s) "
+                    "depending on the availability."
+                ),
+                "form": form,
+            }
+
+        return {
+            "is_error": False,
+            "error_message": "",
+            "form": form,
+        }
+
+
+class CheckoutPageTwo(CheckoutPageTwoBase):
+    """
+    Handle FREE and NFT checkout sessions.
+    """
+
+    def get_template_names(self):
+        return ["redesign/checkout/checkout_page_two.html",]
+
+    def get_form_class(self):
+        if self.object.tx_type == CheckoutSession.TransactionType.FREE:
+            return CheckoutFormFree
+        else:
+            return CheckoutFormAssetOwnership
+
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        self.get_object()
+
+        # Validate POST request, redirect if needed
+        validate_post = self.validate_post()
+        if validate_post["is_error"]:
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "We're sorry, not enough ticket(s) are available. However, you "
-                "are on a waiting list, so please be on the lookout for an email. "
-                "The organizers may decide to send you ticket(s) depending on the "
-                "availability."
+                validate_post["error_message"]
             )
             return redirect(
-                "checkout:checkout_two",
-                self.kwargs["team_slug"],
-                self.kwargs["event_slug"],
-                self.kwargs["checkout_session_public_id"],
+                reverse(
+                    "checkout:checkout_one",
+                    args=(
+                        self.kwargs["team_slug"],
+                        self.kwargs["event_slug"],
+                    ),
+                ) + f"?name={self.object.name}&email={self.object.email}"
             )
+
+        # Set local variables
+        form = validate_post["form"]
+        context = self.get_context_data()
+        checkout_session = self.get_object()
 
         # Finalize / process transaction and handle exceptions
         try:
@@ -448,115 +469,45 @@ class CheckoutPageTwo(DetailView):
         )
 
 
-class CheckoutFiat(DetailView):
+class CheckoutFiat(CheckoutPageTwoBase):
     """
-    GET
-    Fetch Checkout Session
-    Fetch Checkout Items
-
-    POST
-    Process Fiat Checkout Session
+    Handle FIAT checkout sessions.
     """
 
-    model = CheckoutSession
-    slug_field = "public_id"
-    slug_url_kwarg = "checkout_session_public_id"
-    template_name = "redesign/checkout/checkout_paid.html"
+    def get_template_names(self):
+        return ["redesign/checkout/checkout_paid.html",]
 
-    def get_object(self):
-        self.object = (
-            CheckoutSession.objects.select_related(
-                "event",
-                "event__team",
-                "event__team__whitelabel",
-                "tx_fiat",
-            )
-            .prefetch_related(
-                "checkoutitem_set",
-            )
-            .get(public_id=self.kwargs["checkout_session_public_id"])
-        )
-        if not self.object:
-            raise Http404
-        return super().get_object()
+    def get_form_class(self):
+        return CheckoutFormFiat
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["checkout_items"] = self.object.checkoutitem_set.select_related(
-            "ticket_tier", "ticket_tier__tier_fiat"
-        ).all()
-        context["form"] = CheckoutFormFiat(
-            initial={"name": self.object.name, "email": self.object.email}
-        )
-        context["organizer_team"] = self.object.event.team
-        return context
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        self.get_object()
 
-    def get(self, *args, **kwargs):
-        """
-        override get to call create_transaction for each attempt
-        """
-        response = super().get(*args, **kwargs)
-        self.object.create_transaction()
-
-        # Check if expired or not
-        expiration = self.object.created + datetime.timedelta(minutes=15)
-        if timezone.now() > expiration:
+        # Validate POST request, redirect if needed
+        validate_post = self.validate_post()
+        if validate_post["is_error"]:
             messages.add_message(
                 self.request,
                 messages.ERROR,
-                "Your session has expired. Please try again.",
+                validate_post["error_message"]
             )
             return redirect(
-                "checkout:checkout_one",
-                self.kwargs["team_slug"],
-                self.kwargs["event_slug"],
+                reverse(
+                    "checkout:checkout_one",
+                    args=(
+                        self.kwargs["team_slug"],
+                        self.kwargs["event_slug"],
+                    ),
+                ) + f"?name={self.object.name}&email={self.object.email}"
             )
 
-        return response
-
-    def post(self, *args, **kwargs):
-        self.get_object()
+        # Set local variables
+        form = validate_post["form"]
         context = self.get_context_data()
         checkout_session = self.get_object()
         tx_fiat = checkout_session.tx_fiat
-        form = CheckoutFormFiat(self.request.POST)
         stripe.api_key = settings.STRIPE_API_KEY
-
-        # Something went wrong, so we show error message
-        if not form.is_valid():
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                "Something went wrong. Please try again.",
-            )
-            return redirect(
-                "checkout:checkout_two",
-                self.kwargs["team_slug"],
-                self.kwargs["event_slug"],
-                self.kwargs["checkout_session_public_id"],
-            )
-
-        # Form is valid, continue...
-
-        # Make sure there is no ticket overflow
-        is_waiting_list = self.object.check_is_waiting_list()
-        if is_waiting_list:
-            self.object.is_waiting_list = True
-            self.object.save()
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                "We're sorry, not enough ticket(s) are available. However, you "
-                "are on a waiting list, so please be on the lookout for an email. "
-                "The organizers may decide to send you ticket(s) depending on the "
-                "availability."
-            )
-            return redirect(
-                "checkout:checkout_fiat",
-                self.kwargs["team_slug"],
-                self.kwargs["event_slug"],
-                self.kwargs["checkout_session_public_id"],
-            )
 
         # Create line items using Stripe PRICES API
         stripe_line_items = []

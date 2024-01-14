@@ -136,7 +136,7 @@
 
 	// Init scanner
 	const qrScanner = new Html5Qrcode("qr-reader", false);
-	const config = { fps: 10, qrbox: 200 };
+	const config = { fps: 10, qrbox: 250 };
     const didStart = qrScanner
 		.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
 		.then(() => true);

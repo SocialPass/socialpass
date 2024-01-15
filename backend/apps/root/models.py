@@ -1518,7 +1518,7 @@ class TxAssetOwnership(DBModel):
     """
 
     wallet_address = models.CharField(max_length=42, blank=False, default="")
-    signed_message = models.CharField(max_length=255, blank=False, default="")
+    signed_message = models.TextField(blank=False, default="")
     is_wallet_address_verified = models.BooleanField(
         default=False, blank=False, null=False
     )

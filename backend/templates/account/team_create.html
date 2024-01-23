@@ -1,4 +1,4 @@
-{% extends "redesign/auth/base.html" %}
+{% extends "account/base.html" %}
 {% load account static i18n crispy_forms_tags %}
 
 {% block head_title %}{% trans "Create Profile" %} - SocialPass{% endblock %}
@@ -34,14 +34,14 @@
 			<h4 class="h5">{% trans "Profile Name" %}</h4>
 			<div class="mb-3">
 				{% with form.name as input %}
-					{% include "redesign/forms/input.html" %}
+					{% include "forms/input.html" %}
 				{% endwith %}
 			</div>
 			<br />
 			<h4 class="h5">{% trans "Description & Image (Optional)" %}</h4>
 			<div class="mb-3">
 				{% with form.description as input %}
-					{% include "redesign/forms/textarea.html" %}
+					{% include "forms/textarea.html" %}
 				{% endwith %}
 			</div>
 			{% with form.image as input %}

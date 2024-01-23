@@ -1,0 +1,89 @@
+{% extends "dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
+
+{% block head_title %}{% trans "RSVP Ticket Batches" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "RSVP Ticket Batches" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "RSVP Ticket Batches" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+<!-- Ticket tier form start -->
+<div class="row mt-4 mb-3">
+	<div class="col-lg-8 mx-auto">
+		<div class="d-flex align-items-center mb-3">
+			<div class="pe-3">
+				<h1 class="h3 mb-0">{% trans "RSVP Ticket Batches" %}</h1>
+				<p class="text-body-secondary mb-0">
+					{% trans "List of RSVP ticket batches" %} &mdash; <strong>{{ event.title }}</strong>
+				</p>
+			</div>
+			<a href="{% url 'dashboard_organizer:rsvp_create_tickets' current_team.slug event.pk %}" class="btn btn-link ms-auto" aria-label="Create">
+				<i class="fa-solid fa-plus"></i>
+		        <span class="ms-1 d-none d-sm-inline">{% trans "Create" %}</span>
+			</a>
+		</div>
+		{% if rsvp_batches.count > 0 %}
+			{% for rsvp_batch in rsvp_batches.all %}
+				{% if rsvp_batch.success_list or rsvp_batch.failure_list %}
+					<div class="card border-0 rounded-4 shadow-sm mb-3">
+						<div class="card-body">
+							<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+								{% trans "RSVP Batch" %}
+							</span>
+							<h6 class="text-body-secondary mb-0 mt-3 fw-normal">
+								{{ rsvp_batch.public_id }}
+							</h5>
+							<p class="text-body-secondary mt-3 mb-0">
+								<strong class="text-body">
+									<i class="fa-light fa-clock me-1"></i>
+									{% trans "Created" %}:
+								</strong>
+								{{ rsvp_batch.created }}
+							</p>
+							<div>
+								<h1 class="d-inline-block text-primary-emphasis m-0">
+									{{ rsvp_batch.checkoutsession_set.count }}
+								</h1>
+								<p class="d-inline-block text-body-secondary m-0">
+									{% trans "Ticket(s) Created" %}
+								</p>
+							</div>
+							<div class="mt-3 p-3 rounded bg-body-secondary overflow-y-auto" style="max-height: 200px;">
+								<div class="fw-bold text-danger-emphasis">{% trans "Fail:" %}</div>
+								<p class="text-body-secondary mb-2">
+									{% if rsvp_batch.failure_list %}
+										{{ rsvp_batch.failure_list }}
+									{% else %}
+										---
+									{% endif %}
+								</p>
+								<div class="fw-bold text-success-emphasis">{% trans "Success:" %}</div>
+								<p class="text-body-secondary mb-0">
+									{% if rsvp_batch.success_list %}
+										{{ rsvp_batch.success_list }}
+									{% else %}
+										---
+									{% endif %}
+								</p>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<div class="card border-0 rounded-4 shadow-sm">
+				<div class="card-body">
+					<div class="mx-auto specific-w-200">
+						<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+					</div>
+					<p class="text-body-secondary text-center">
+						{% trans "No RSVP batches yet." %}
+					</p>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</div>
+<!-- Ticket tier form end -->
+{% endblock content %}

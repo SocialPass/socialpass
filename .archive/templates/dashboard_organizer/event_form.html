@@ -1,0 +1,220 @@
+{% extends 'bases/base_primary.html' %}
+{% load static get_theme_value i18n crispy_forms_tags %}
+
+{% block head_title %}
+{% if request.resolver_match.url_name == 'event_create' %}
+	Create Event
+{% else %}
+	{{ event.title }}
+{% endif %} - {% get_theme_value "brand_name" %}
+{% endblock head_title %}
+
+{% block navbar_breadcrumb %}
+{% if url_name == 'event_create' %}
+	Create Event
+{% else %}
+	Event Details
+{% endif %}
+{% endblock %}
+
+{% block extra_head %}
+	{{ form.media }}
+	<!-- Quill CSS overrides -->
+	<link href="{% static 'quill-text-editor/quill.snow.css' %}" rel="stylesheet">
+{% endblock extra_head %}
+
+{% block content %}
+<!-- Header start -->
+{% include 'components/event_details_page_header.html' %}
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	{% include 'components/event_details_card_header.html' %}
+	<!-- Card header end -->
+
+	<!-- Main form start -->
+	<form class="row" enctype="multipart/form-data" method="post" id="event-form">
+		{% csrf_token %}
+		<!-- Main content start -->
+		<div class="col-lg-9 col-xl-7 mx-auto">
+			<div class="content">
+				{% if form.errors %}
+					<div class="text-danger fw-bold antialiased">
+						The following things went wrong when submitting the form. If an issue persists, please contact us via our support chat.
+					</div>
+				{% endif %}
+
+				{% if form.non_field_errors %}
+					<div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
+						<ul class="unordered-list bullet-reset m-0">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+
+				{% for input in form.hidden_fields %}
+					{{ input }}
+				{% endfor %}
+
+				<!-- Basic information start -->
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="basic-information">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-ballot-check"></i>
+					</span>
+					Basic Information
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Name your event, add your cover image, and tell event-goers why they should come. Add details that highlight what makes it unique.
+				</p>
+				{% with form.title as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				<div class="form-group">
+					{{ form.cover_image|as_crispy_field }}
+				</div>
+				{% with input=form.description %}
+					<div class="form-group">
+						<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+						{{ input }}
+					    <div class="form-text">
+					        Describe your event by adding in details, content, and links.
+					    </div>
+					    {% if input.errors %}
+					        <ul class="invalid-feedback">
+					            {% for error in input.errors %}
+					                <li>{{ error }}</li>
+					            {% endfor %}
+					        </ul>
+					    {% endif %}
+					</div>
+				{% endwith %}
+				<!-- Basic information end -->
+
+				<!-- Location start -->
+				<br />
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="location">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-location-dot"></i>
+					</span>
+					Location
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Help people in the area discover your event and let attendees know where to show up.
+				</p>
+				{% with form.address_1 as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with form.address_2 as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with form.city as input %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				<div class="form-row row-eq-spacing">
+					<div class="col-6">
+						{% with form.postal_code as input %}
+							{% include 'components/forms_inputs/input.html' %}
+						{% endwith %}
+					</div>
+					<div class="col-6">
+						<div class="form-group">
+							{{ form.country|as_crispy_field }}
+						</div>
+					</div>
+				</div>
+				<!-- Location end -->
+
+				<!-- Date and time start -->
+				<br />
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="date-and-time">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-clock"></i>
+					</span>
+					Date and Time
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5">
+					Tell event-goers when your event starts and ends so they can make plans to attend.
+				</p>
+				{% with input=form.start_date %}
+					{% include 'components/forms_inputs/input.html' %}
+				{% endwith %}
+				{% with input=form.end_date %}
+					{% include 'components/forms_inputs/input.html' %}
+					<div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
+						The end date must come after the start date.
+					</div>
+				{% endwith %}
+				<div class="form-group">
+					{{ form.timezone|as_crispy_field }}
+				</div>
+				<!-- Date and time end -->
+
+				<!-- Submit button start -->
+				<hr />
+				<div class="form-group text-end">
+					<button type="submit" class="btn btn-primary">Save Event</button>
+				</div>
+				<!-- Submit button end -->
+			</div>
+		</div>
+		<!-- Main content end -->
+	</form>
+	<!-- Main form end -->
+
+
+</div>
+<!-- Content card end -->
+
+<!-- Date Validation Script -->
+<script>
+	var startDateInput = document.getElementById("id_start_date");
+	var endDateInput = document.getElementById("id_end_date");
+	var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
+
+	function dateValidate(e) {
+		var startDateVal = startDateInput.value;
+		var endDateVal = endDateInput.value;
+
+		endDateExtraFeedback.classList.add("d-none");
+		endDateInput.classList.remove("is-invalid");
+
+		if (startDateVal && endDateVal) {
+			var startDate = new Date(startDateVal);
+			var endDate = new Date(endDateVal);
+
+			if (startDate >= endDate) {
+				endDateExtraFeedback.classList.remove("d-none");
+				endDateInput.classList.add("is-invalid");
+			}
+		}
+	}
+
+	startDateInput.addEventListener("change", dateValidate);
+	endDateInput.addEventListener("change", dateValidate);
+</script>
+
+{% if url_name == 'event_create' %}
+	<!-- Set Default Timezone and Country Script -->
+	<script>
+		try {
+			document.getElementById(
+				"id_timezone"
+			).value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		} catch (error) {
+			console.log(error);
+		}
+
+		// Default set to US
+		try {
+			document.getElementById("id_country").value = "US";
+		} catch (error) {
+			console.log(error);
+		}
+	</script>
+{% endif %}
+
+{% endblock %}

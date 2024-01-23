@@ -1,0 +1,10 @@
+{% extends "account/email/base_message.html" %}
+
+{% block content %}
+<p>
+	Your event <strong>{{ event.title }}</strong> is live on SocialPass!
+	You can also find stats, embeds, the check-in app and more on the dashboard.
+
+	{% url "dashboard_organizer:event_stats" event.team.public_id event.pk %}
+</p>
+{% endblock %}

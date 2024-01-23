@@ -1,182 +1,216 @@
 {% extends "checkout/base.html" %}
-{% load static get_theme_value %}
+{% load static i18n %}
 
-{% block head_title %}{{ event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
+{% block head_title %}{{ event.title }} - {% if event.team.whitelabel.brand_name %}{{ event.team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
-{% block content %}
-{% if is_team_member and not request.GET.view_as_attendee %}
-	<div class="alert alert-primary border-0 rounded-0 m-0 text-base text-center fs-base-n2" role="alert">
-		You are viewing this page as an organizer.
-		<a href="?view_as_attendee=True" class="fw-bold antialiased">View as attendee &rarr;</a>
+{% block navbar %}
+{% if is_team_member %}
+	<div class="alert alert-primary border-0 rounded-0 px-3 px-sm-4 m-0 d-md-flex align-items-md-center" role="alert">
+		{% trans "You are viewing this page as an organizer." %}
+		<div class="d-flex ms-md-auto mt-1 mt-md-0">
+			<a href="{% url 'dashboard_organizer:event_update' event.team.slug event.pk %}">{% trans "Edit Event" %}</a>
+			{% if event.state == event.StateStatus.LIVE %}
+			<span class="vr mx-2"></span>
+			<a href="?view_as_attendee=True">{% trans "View as Attendee" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
+			{% endif %}
+		</div>
 	</div>
 {% endif %}
+{% endblock %}
 
-<!-- Header start -->
-<div class="position-relative">
-	<!-- Event cover image start -->
-	<div class="d-flex align-items-center justify-content-center w-100 bg-gray-very-light-lm bg-darkgray-very-dim-dm overflow-hidden pe-none" style="max-height: 200px;">
-		<img src="{{ event.cover_image_url }}" class="w-100 h-auto" alt="Cover image">
+{% block content %}
+<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
+	<!-- Cover image start -->
+	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center h-auto">
+		<img src="{{ event.cover_image_url }}" alt="{{ event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
+		<img src="{{ event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ event.title }} cover image">
 	</div>
-	<!-- Event cover image end -->
+	<!-- Cover image start -->
 
-	<!-- Team image start -->
-	<div class="position-absolute z-1 top-100 start-50 translate-middle px-content">
-		<div class="ws-75 hs-75 rounded-circle border border-5 border-blend d-flex align-items-center justify-content-center overflow-hidden">
+	<!-- Team image and name start -->
+	<div class="position-relative z-1" style="margin-top: -37px;">
+		<div class="specific-w-75 specific-h-75 rounded-circle border border-5 d-flex align-items-center justify-content-center overflow-hidden mx-auto" style="border-color: var(--bs-content-bg) !important;">
 			{% if event.team.image %}
 				<img src="{{ event.team.image.url }}" class="d-block w-100 h-auto" alt="Team image">
 			{% else %}
-				<div class="rounded-circle d-flex align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm border flex-shrink-0" style="width: 125%; height: 125%;">
-					<span class="text-uppercase fs-base-p8 fw-bold">{{ event.team.name|slice:"0:1" }}</span>
+				<div class="rounded-circle d-flex align-items-center justify-content-center bg-secondary-subtle flex-shrink-0" style="width: 125%; height: 125%;">
+					<span class="text-uppercase fs-3 m-0 lh-1 fw-bold">{{ event.team.name|slice:"0:1" }}</span>
 				</div>
 			{% endif %}
 		</div>
-	</div>
-	<!-- Team image end -->
-</div>
-<!-- Header end -->
-
-<!-- Team name start -->
-<div class="px-content pt-40 text-center">
-	<p class="text-muted mt-5 mb-0">
-		Hosted By
-	</p>
-	<h6 class="text-strong fs-base fw-700 m-0">
-		{{ event.team.name }}
-		{% if event.team.is_verified %}<i class="fa-solid fa-badge-check text-primary ms-5"></i>{% endif %}
-		{% if is_team_member and not request.GET.view_as_attendee %}
-			<a href="{% url 'dashboard_organizer:team_update' event.team.public_id %}" class="fw-bold antialiased ms-5 text-decoration-none" data-hm-toggle="tooltip" data-hm-title="Edit team information (only you can see this)">
-				<i class="fa-light fa-edit"></i>
-				<span class="visually-hidden">Edit team information</span>
-			</a>
-		{% endif %}
-	</h6>
-</div>
-<!-- Team name end -->
-
-<!-- Messages start -->
-<div class="px-content">
-	{% include "checkout/messages.html" %}
-</div>
-<!-- Messages end -->
-
-<div class="row">
-	<!-- Title and description start -->
-	<div class="col-md-7">
-		<div class="content mt-20 mb-0">
-			{% if is_team_member and not request.GET.view_as_attendee %}
-				<div class="mb-10">
-					<a href="{% url 'dashboard_organizer:event_update' event.team.public_id event.id %}" class="fw-bold antialiased ms-5 text-decoration-none" data-hm-toggle="tooltip" data-hm-title="Only you can see this">
-						<i class="fa-light fa-edit me-5"></i>
-						Edit event
-					</a>
-				</div>
+		<h6 class="mt-1 mb-0 text-center">
+			<span class="fw-normal">{% trans "Hosted By" %}</span>
+			<span class="text-primary-emphasis">{{ event.team.name }}</span>
+			{% if event.team.is_verified %}
+				<i class="fa-solid fa-badge-check text-primary ms-1"></i>
 			{% endif %}
-			<h1 class="text-strong fw-700 display-6 m-0 text-break">
-				{{ event.title }}
-			</h1>
-			{% if sales_status == "UPCOMING" %}
-				<div class="alert alert-primary text-base px-20 py-10 rounded-3 border-dotted" role="alert">
-					<i class="fa-light fa-calendars me-5"></i>
-					<strong>Ticket Sales Start:</strong>
-					<br />
-					{{ event.sales_start }} {{ event.timezone }}
-					<div class="row border-top pt-10 mt-10">
-						<div class="col-6 col-sm-3">
-							<div class="h3 lh-1 text-primary m-0" id="days">...</div>days
-						</div>
-					    <div class="col-6 col-sm-3">
-							<div class="h3 lh-1 text-primary m-0" id="hours">...</div>hours
-						</div>
-					    <div class="col-6 col-sm-3 mt-10 mt-sm-0">
-							<div class="h3 lh-1 text-primary m-0" id="mins">...</div>minutes
-						</div>
-					    <div class="col-6 col-sm-3 mt-10 mt-sm-0">
-							<div class="h3 lh-1 text-primary m-0" id="secs">...</div>seconds
+		</h6>
+	</div>
+	<!-- Team image and name end -->
+
+	<!-- Event name, description, dates, location start -->
+	<div class="p-3 p-sm-4 mt-3">
+		<div class="container-fluid overflow-hidden">
+			<div class="row g-3">
+				<div class="col-lg-6">
+					<h1 class="text-body-emphasis display-6 m-0 text-break">
+						{{ event.title }}
+					</h1>
+					<div id="desc-cont" class="my-3 overflow-hidden position-relative max-h-200">
+						{{ event.description_html | safe }}
+						<div id="desc-read" class="d-none position-absolute bottom-0 start-0 w-100 text-center pb-1">
+							<button
+								type="button"
+								class="btn btn-link"
+								onclick="(function(){
+									document.getElementById('desc-cont').classList.remove('overflow-hidden');
+									document.getElementById('desc-cont').classList.remove('max-h-200');
+									document.getElementById('desc-read').classList.add('d-none');
+									return false;
+								})();return false;"
+							>
+								{% trans "Read More" %}
+							</button>
 						</div>
 					</div>
 				</div>
-			{% endif %}
-			<div id="desc-cont" class="my-20 overflow-hidden position-relative max-h-250">
-				{{ event.description_html | safe }}
-				<div id="desc-read" class="d-none position-absolute bottom-0 start-0 w-100 text-center pb-10">
-					<button
-						type="button"
-						class="btn btn-rounded"
-						onclick="(function(){
-							document.getElementById('desc-cont').classList.remove('overflow-hidden');
-							document.getElementById('desc-cont').classList.remove('max-h-250');
-							document.getElementById('desc-read').classList.add('d-none');
-							return false;
-						})();return false;"
-					>
-						Read More
-					</button>
+				<div class="col-lg-6 ps-lg-4">
+					<div class="container-fluid overflow-hidden g-0">
+						<div class="row g-3">
+							<div class="col-sm-6">
+								<div class="d-flex align-items-center">
+									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-calendars fs-6 text-primary-emphasis"></i>
+									</div>
+									<strong class="text-primary-emphasis ms-3">{% trans "Date & Time" %}</strong>
+								</div>
+								<div class="mt-2">
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Start" %}:</strong>
+										{% if event.start_date %}
+											{{ event.start_date }}
+										{% else %}
+											{% trans "Not set" %}
+										{% endif %}
+									</span>
+									{% if event.end_date %}
+										<br />
+										<span class="text-body-secondary"><strong class="text-body">{% trans "End" %}:</strong> {{ event.end_date }}</span>
+									{% endif %}
+									<br />
+									<span class="text-body-secondary">
+										<strong class="text-body">{% trans "Timezone" %}:</strong>
+										{% if event.timezone %}
+											{{ event.timezone }}
+										{% else %}
+											{% trans "Not set" %}
+										{% endif %}
+									</span>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="d-flex align-items-center">
+									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-location-dot fs-6 text-primary-emphasis"></i>
+									</div>
+									<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
+								</div>
+								<div class="mt-2">
+									<span class="text-body-secondary">{{ event.localized_address_display }}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mt-3">
+						{% if sales_status == "OPEN" %}
+							<div class="alert alert-primary text-primary-emphasis d-flex align-items-center fw-bold">
+								<i class="fa-light fa-check me-3"></i>
+								{% trans "Tickets available! Please select the tickets you want to purchase." %}
+							</div>
+						{% elif sales_status == "UPCOMING" %}
+							<div class="alert alert-warning text-warning-emphasis d-flex align-items-center fw-bold">
+								<i class="fa-light fa-times me-3"></i>
+								{% trans "Stay tuned! Tickets are going live soon. See the timer below." %}
+							</div>
+						{% elif sales_status == "OVER" %}
+							<div class="alert alert-danger text-warning-danger d-flex align-items-center fw-bold">
+								<i class="fa-light fa-times me-3"></i>
+								{% trans "Sorry! Tickets are not available for this event." %}
+							</div>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- Title and description end -->
+	<!-- Event name, description, dates, location end -->
+</div>
 
-	<!-- Date and location start -->
-	<div class="col-md-5">
-		<div class="content pt-10 pt-md-30 my-0 position-md-sticky top-0 start-0">
-			<div class="d-flex align-items-center">
-				<div class="ws-25 flex-shrink-0">
-					<i class="fa-light fa-calendars"></i>
-				</div>
-				<div class="fw-bold">
-					Date &mdash; {{ event.timezone }}
+<!-- Countdown timer start -->
+{% if sales_status == "UPCOMING" %}
+	<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4" id="countdown-timer">
+		<div class="p-3 p-sm-4">
+			<div class="container-fluid overflow-hidden">
+				<div class="row g-3 g-sm-4 align-items-center">
+					<div class="col-lg-4">
+						<div class="d-flex align-items-center">
+							<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+								<i class="fa-solid fa-clock fs-6 text-primary-emphasis"></i>
+							</div>
+							<strong class="text-primary-emphasis ms-3">{% trans "Ticket Sales Start" %}</strong>
+						</div>
+						<div class="mt-2">
+							<span class="text-body-secondary">{{ event.sales_start }} {{ event.timezone }}</span>
+						</div>
+					</div>
+					<div class="col-lg-8">
+						<div class="container-fluid overflow-hidden g-0">
+							<div class="row g-3">
+								<div class="col-6 col-sm-3 text-center">
+									<div class="h3 lh-1 text-primary-emphasis m-0 rounded bg-primary-subtle px-3 py-2" id="days">...</div>{% trans "days" %}
+								</div>
+							    <div class="col-6 col-sm-3 text-center">
+									<div class="h3 lh-1 text-primary-emphasis m-0 rounded bg-primary-subtle px-3 py-2" id="hours">...</div>{% trans "hours" %}
+								</div>
+							    <div class="col-6 col-sm-3 text-center">
+									<div class="h3 lh-1 text-primary-emphasis m-0 rounded bg-primary-subtle px-3 py-2" id="mins">...</div>{% trans "minutes" %}
+								</div>
+							    <div class="col-6 col-sm-3 text-center">
+									<div class="h3 lh-1 text-primary-emphasis m-0 rounded bg-primary-subtle px-3 py-2" id="secs">...</div>{% trans "seconds" %}
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<p class="text-muted mt-5 mb-0">
-				<strong class="text-base">Start:</strong> {{ event.start_date }}
-			</p>
-			{% if event.end_date %}
-				<p class="text-muted mt-5 mb-0">
-					<strong class="text-base">End:</strong> {{ event.end_date }}
-				</p>
-			{% endif %}
-			<div class="d-flex align-items-center mt-15">
-				<div class="ws-25 flex-shrink-0">
-					<i class="fa-light fa-location-dot"></i>
+		</div>
+	</div>
+	<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4 d-none" id="ticket-sales-has-started">
+		<div class="p-3 p-sm-4">
+			<div class="d-flex align-items-center justify-content-center">
+				<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+					<i class="fa-solid fa-party-horn fs-6 text-primary-emphasis"></i>
 				</div>
-				<div class="fw-bold">Location</div>
+				<strong class="text-primary-emphasis ms-3">{% trans "Ticket Sales Has Started!" %}</strong>
 			</div>
-			<p class="text-muted mt-5 mb-0">
-				{{ event.localized_address_display }}
-			</p>
+			<div class="mt-2 text-center">
+				<span class="text-body-secondary">
+					<i class="fa-light fa-circle-notch fa-spin me-1"></i>
+					{% trans "Re-loading page automatically" %}...
+				</span>
+			</div>
 		</div>
 	</div>
-	<!-- Date and location end -->
+{% endif %}
+<!-- Countdown timer end -->
 
-	<!-- Alerts start -->
-	<div class="col-12">
-		<div class="content mb-0">
-			{% if availability.FREE or availability.FIAT or availability.BLOCKCHAIN or availability.ASSET_OWNERSHIP %}
-				<div class="alert alert-primary m-0 text-primary-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
-					<i class="fa-regular fa-check me-15"></i>
-					<p class="m-0">
-						Tickets available! Please select the tickets you want to purchase.
-					</p>
-				</div>
-			{% else %}
-				<div class="alert alert-danger m-0 text-danger-dim-lm px-20 py-10 fw-bold rounded-2 d-flex align-items-center" role="alert">
-					<i class="fa-regular fa-times me-15"></i>
-					<p class="m-0">
-						Sorry! Tickets are not available for this event.
-					</p>
-				</div>
-			{% endif %}
-		</div>
-	</div>
-	<!-- Alerts end -->
-
-	<!-- Checkout type selector start -->
-	{% if tier_types_count > 1 %}
-		<div class="col-12">
-			<div class="content mb-0">
-				<div class="ticket-tier-group">
-					{% if tiers_fiat|length > 0 %}
+<!-- Tickets and form start -->
+<div class="container-fluid g-0 my-3 my-sm-4">
+	<div class="row g-3 g-sm-4">
+		<!-- Ticket tiers start -->
+		<div class="col-lg-7">
+			<!-- Type selectors start -->
+				<div class="ticket-tier-group mb-3">
 						<div class="ticket-tier">
 							<input
 								type="radio"
@@ -184,23 +218,16 @@
 								name="payment-type"
 								id="FIAT"
 								value="FIAT"
+								{% if event.ticket_tier_counts.fiat_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "FIAT" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
 							<label for="FIAT" class="ticket-tier-label">
-								<h6 class="fw-700 m-0 fs-base">
-									<span class="ticket-tier-uncheck">
-										<i class="fa-light fa-money-check-dollar"></i>
-									</span>
-									<span class="ticket-tier-check">
-										<i class="fa-light fa-money-check-dollar"></i>
-									</span>
-									Fiat
+								<h6 class="m-0">
+									<i class="fa-solid fa-money-check-dollar me-1 opacity-75"></i> {% trans "Paid" %}
 								</h6>
 							</label>
 						</div>
-					{% endif %}
-					{% if tiers_asset_ownership|length > 0 %}
 						<div class="ticket-tier">
 							<input
 								type="radio"
@@ -208,23 +235,16 @@
 								name="payment-type"
 								id="ASSET_OWNERSHIP"
 								value="ASSET_OWNERSHIP"
+								{% if event.ticket_tier_counts.asset_ownership_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
 							<label for="ASSET_OWNERSHIP" class="ticket-tier-label">
-								<h6 class="fw-700 m-0 fs-base">
-									<span class="ticket-tier-uncheck">
-										<i class="fa-light fa-hexagon-image"></i>
-									</span>
-									<span class="ticket-tier-check">
-										<i class="fa-light fa-hexagon-image"></i>
-									</span>
-									NFTs
+								<h6 class="m-0">
+									<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i> {% trans "NFT" %}
 								</h6>
 							</label>
 						</div>
-					{% endif %}
-					{% if tiers_free|length > 0 %}
 						<div class="ticket-tier">
 							<input
 								type="radio"
@@ -232,111 +252,108 @@
 								name="payment-type"
 								id="FREE"
 								value="FREE"
+								{% if event.ticket_tier_counts.free_count == 0 %}disabled="true"{% endif %}
 								{% if checkout_type == "FREE" %}checked{% endif %}
 								onchange="tierTypeOnchange(this)"
 							>
 							<label for="FREE" class="ticket-tier-label">
-								<h6 class="fw-700 m-0 fs-base">
-									<span class="ticket-tier-uncheck">
-										<i class="fa-light fa-party-horn"></i>
-									</span>
-									<span class="ticket-tier-check">
-										<i class="fa-light fa-party-horn"></i>
-									</span>
-									Free
+								<h6 class="m-0">
+									<i class="fa-solid fa-party-horn me-1 opacity-75"></i> {% trans "Free" %}
 								</h6>
 							</label>
 						</div>
-					{% endif %}
 				</div>
-			</div>
-		</div>
-	{% endif %}
-	<!-- Checkout type selector end -->
-</div>
+			<!-- Type selectors end -->
 
-<div class="row">
-	<!-- Ticket tiers start -->
-	<div class="col-md-7">
-		<div class="content me-md-0">
+			<!-- Ticket tiers start -->
+			{% with event.tickettier_set.all as tiers %}
 			<div class="tiers-container {% if checkout_type == 'FREE' %}d-block{% endif %}" id="tiers-FREE">
-				{% with tiers_free as tiers %}
+				{% with "tiers-FREE" as tier_type %}
 					{% include 'checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
 			<div class="tiers-container {% if checkout_type == 'FIAT' %}d-block{% endif %}" id="tiers-FIAT">
-				{% with tiers_fiat as tiers %}
+				{% with "tiers-FIAT" as tier_type %}
 					{% include 'checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
 			<div class="tiers-container {% if checkout_type == 'ASSET_OWNERSHIP' %}d-block{% endif %}" id="tiers-ASSET_OWNERSHIP">
-				{% with tiers_asset_ownership as tiers %}
+				{% with "tiers-ASSET_OWNERSHIP" as tier_type %}
 					{% include 'checkout/ticket_tiers.html' %}
 				{% endwith %}
 			</div>
+			{% endwith %}
+			<!-- Ticket tiers start -->
 		</div>
-	</div>
-	<!-- Ticket tiers end -->
+		<!-- Ticket tiers end -->
 
-	<!-- Form start -->
-	<div class="col-md-5">
-		<div class="px-content pt-md-30 position-md-sticky top-0 start-0">
-			<div class="alert alert-primary text-base fs-base-n4 p-5 mt-0" role="alert">
-				<i class="fa-regular fa-info-circle me-5 text-primary"></i>
-				We only require your email to deliver your tickets in a secure way. <strong>No account</strong> is created without your consent.
-			</div>
-			{% if sales_status == "OPEN" %}
-				<form class="checkout-form position-relative" method="POST">
-					{% csrf_token %}
-					{{ form.ticket_tier_data }}
-					{{ form.checkout_type }}
-					{% with form.name as input %}
-						{% include 'components/forms_inputs/input.html' %}
-					{% endwith %}
-					{% with form.email as input %}
-						{% include 'components/forms_inputs/input.html' %}
-					{% endwith %}
-					<button type="submit" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
-						<strong class="antialiased">Get Tickets</strong>
-					</button>
-				</form>
-			{% else %}
-				<!-- Not a form, can't be submitted -->
-				<div class="checkout-form position-relative">
-					{{ form.ticket_tier_data }}
-					{{ form.checkout_type }}
-					{% with form.name as input %}
-						{% include 'components/forms_inputs/input.html' %}
-					{% endwith %}
-					{% with form.email as input %}
-						{% include 'components/forms_inputs/input.html' %}
-					{% endwith %}
-					<button type="button" class="btn btn-secondary btn-lg fsr-6 btn-block mt-15" disabled>
-						<strong class="antialiased">Ticket Sales Not Open</strong>
-					</button>
+		<!-- Form start -->
+		<div class="col-lg-5">
+			<div class="card border-0 rounded-4 shadow-sm overflow-hidden">
+				<div class="card-body">
+					<div class="alert alert-primary mb-3" role="alert" style="font-size: var(--bs-font-size-sm);">
+						<i class="fa-light fa-info-circle me-1 text-primary-emphasis"></i>
+						{% trans "We only require your email to deliver your tickets in a secure way. No account is created." %}
+					</div>
+					{% if sales_status == "OPEN" %}
+						<form class="position-relative" method="POST">
+							{% csrf_token %}
+							{{ form.ticket_tier_data }}
+							{{ form.checkout_type }}
+							<div class="mb-3">
+								{% with form.name as input %}
+									{% include "forms/input.html" %}
+								{% endwith %}
+							</div>
+							<div class="mb-3">
+								{% with form.email as input %}
+									{% include "forms/input.html" %}
+								{% endwith %}
+							</div>
+							<button type="submit" class="btn btn-info btn-lg d-block w-100" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
+								{% trans "Get Tickets" %}
+							</button>
+						</form>
+					{% else %}
+						<!-- Not a form, can't be submitted -->
+						<div class="position-relative">
+							{{ form.ticket_tier_data }}
+							{{ form.checkout_type }}
+							<div class="mb-3">
+								{% with form.name as input %}
+									{% include "forms/input.html" %}
+								{% endwith %}
+							</div>
+							<div class="mb-3">
+								{% with form.email as input %}
+									{% include "forms/input.html" %}
+								{% endwith %}
+							</div>
+							<button type="button" class="btn btn-info btn-lg d-block w-100" disabled>
+								{% trans "Ticket Sales Not Open" %}
+							</button>
+						</div>
+					{% endif %}
+					<div class="text-danger-emphasis fw-bold mt-2 d-none" role="alert" id="ticket-tier-error-message">
+						{% trans "Please select at least one ticket tier to continue." %}
+					</div>
+					<p class="mt-3">
+						<strong>{% trans "Total Price" %}</strong>
+						&mdash;
+						<span id="total-price" data-fiat-currency="{{ event.currency_symbol }}">{% trans "N/A" %}</span>
+					</p>
+					<hr />
+					<p class="text-body-secondary mb-0" style="font-size: var(--bs-font-size-sm);">
+						{% trans "By clicking on the above button, you're also agreeing to our" %} <a href="#" class="fw-bold" target="_blank" rel="noreferrer">{% trans "Terms of Use" %}<i class="fa-light fa-external-link mx-1"></i></a>
+					</p>
 				</div>
-			{% endif %}
-			<div class="text-danger fw-bold fs-base-n2 mt-10 lh-sm d-none" role="alert" id="ticket-tier-error-message">
-				Please select at least one ticket tier to continue.
 			</div>
-			<p>
-				<strong>Total Price</strong>
-				&mdash;
-				<span id="total-price" data-fiat-currency="{{ event.currency_symbol }}">N/A</span>
-			</p>
-			<hr />
-			<p class="text-muted fs-base-n4">
-				You're also agreeing to our
-				<a href="#" class="fw-bold" target="_blank" rel="noreferrer">
-					Terms of Use <i class="fa-regular fa-external-link"></i>
-				</a>
-				by clicking on the above button.
-			</p>
 		</div>
+		<!-- Form end -->
 	</div>
-	<!-- Form end -->
 </div>
-{% endblock content %}
+<!-- Tickets and form end -->
+{% endblock %}
 
 {% block extra_body %}
 <script type="text/javascript">
@@ -346,39 +363,46 @@
 </script>
 <script src="{% static 'js/TicketSelector.js' %}"></script>
 {% if sales_status == "UPCOMING" %}
-<script>
-	// The data/time we want to countdown to
-    var countDownDate = new Date("{{ sales_start_with_tzinfo.isoformat }}").getTime();
+	<script>
+		// The data/time we want to countdown to
+	    var countDownDate = new Date("{{ sales_start_with_tzinfo.isoformat }}").getTime();
 
-	// Run countdownIntervalFunc every second
-    var countdownIntervalFunc = setInterval(function() {
-		var now = new Date().getTime();
-    	var timeleft = countDownDate - now;
+		// Run countdownIntervalFunc every second
+	    var countdownIntervalFunc = setInterval(function() {
+			var now = new Date().getTime();
+	    	var timeleft = countDownDate - now;
 
-	    // Calculating the days, hours, minutes and seconds left
-	    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-	    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-	    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-	    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+		    // Calculating the days, hours, minutes and seconds left
+		    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+		    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+		    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
 
-	    // Result is output to the specific element
-	   	document.getElementById("days").innerHTML = `${days}`;
-		document.getElementById("hours").innerHTML = `${hours}`;
-		document.getElementById("mins").innerHTML = `${minutes}`;
-		document.getElementById("secs").innerHTML = `${seconds}`;
+		    // Result is output to the specific element
+		   	document.getElementById("days").innerHTML = `${days}`;
+			document.getElementById("hours").innerHTML = `${hours}`;
+			document.getElementById("mins").innerHTML = `${minutes}`;
+			document.getElementById("secs").innerHTML = `${seconds}`;
 
-	    // Countdown is over
-	    if (timeleft < 0) {
-	    	// Clear interval
-	        clearInterval(countdownIntervalFunc);
+		    // Countdown is over
+		    if (timeleft < 0) {
+		    	// Clear interval
+		        clearInterval(countdownIntervalFunc);
 
-	        // Reset UI
-		    document.getElementById("days").innerHTML = "";
-		    document.getElementById("hours").innerHTML = "";
-		    document.getElementById("mins").innerHTML = "";
-		    document.getElementById("secs").innerHTML = "";
-		}
-    }, 1000);
-</script>
+		        // Reset UI
+			    document.getElementById("days").innerHTML = "";
+			    document.getElementById("hours").innerHTML = "";
+			    document.getElementById("mins").innerHTML = "";
+			    document.getElementById("secs").innerHTML = "";
+			    document.getElementById("countdown-timer").classList.add("d-none");
+			    document.getElementById("ticket-sales-has-started").classList.remove("d-none");
+
+			    // Re-load page after 3 seconds
+			    setInterval(function() {
+			    	location.reload();
+			    }, 3000);
+			}
+	    }, 1000);
+	</script>
 {% endif %}
-{% endblock extra_body %}
+{% endblock %}

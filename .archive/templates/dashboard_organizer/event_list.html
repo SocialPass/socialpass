@@ -1,0 +1,351 @@
+{% extends "bases/base_primary.html" %}
+{% load static get_theme_value get_user_primary_email format_address %}
+
+{% block head_title %}Events - {% get_theme_value "brand_name" %}{% endblock head_title %}
+
+{% block navbar_breadcrumb %}Events{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-flex h-100">
+		<div class="pe-15 align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">Events</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				List of events created by <strong>{{ current_team.name }}</strong>.
+			</p>
+		</div>
+		<div class="ms-auto align-self-center">
+			<a href="{% url 'dashboard_organizer:event_create' current_team.public_id %}" class="btn btn-primary">
+				<i class="fa-solid fa-plus"></i>
+				<span class="ms-5 d-none d-sm-inline">Create</span>
+			</a>
+		</div>
+	</div>
+</div>
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<form method="GET" class="row border-bottom">
+		<div class="col-sm-5">
+			<div class="px-card py-10">
+				<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+					Events - # Total {{ paginator.count }}
+				</span>
+			</div>
+		</div>
+		<div class="col-sm-7 col-lg-5 offset-lg-2">
+			<!-- Start search form -->
+			<div class="px-card pt-0 pt-sm-10 pb-10">
+				<div class="input-group input-group-sm position-relative">
+					<label class="position-absolute top-50 start-0 translate-y-middle text-primary-dim-lm text-primary-light-dm z-10 ps-10 pe-5" for="state-select">
+						<i class="fa-regular fa-bars-sort"></i>
+					</label>
+					<select id="state-select" class="form-select flex-reset ws-100 ws-sm-150 ps-30" name="state" onchange="this.form.submit()" style="border-top-left-radius: var(--rounded-pill-border-radius); border-bottom-left-radius: var(--rounded-pill-border-radius);">
+						{% if request.GET.state == "LIVE" %}
+							<option value="">All</option>
+							<option value="LIVE" selected="selected">Live</option>
+							<option value="DRAFT">Draft</option>
+						{% elif request.GET.state == "DRAFT" %}
+							<option value="">All</option>
+							<option value="LIVE">Live</option>
+							<option value="DRAFT" selected="selected">Draft</option>
+						{% else %}
+							<option value="" selected="selected">All</option>
+							<option value="LIVE">Live</option>
+							<option value="DRAFT">Draft</option>
+						{% endif %}
+					</select>
+					<input type="text" class="form-control" name="title" placeholder="Search by name" value="{{ request.GET.title }}">
+					<button class="btn text-primary-dim-lm text-primary-light-dm pe-10" type="submit" style="border-top-right-radius: var(--rounded-pill-border-radius); border-bottom-right-radius: var(--rounded-pill-border-radius);">
+						<i class="fa-solid fa-search"></i>
+						<span class="visually-hidden">Search</span>
+					</button>
+				</div>
+			</div>
+			<!-- End Search Form -->
+		</div>
+	</form>
+	<!-- Card header end -->
+
+	<!-- Main content start -->
+	{% if paginator.count > 0 %}
+		<!-- Event list header start -->
+		<div class="fs-base-n2 fw-bold px-content py-10 lh-sm d-none d-sm-flex align-items-center border-bottom">
+			<div class="ws-100 me-20">Status</div>
+			<div class="flex-grow-1">Event</div>
+		</div>
+		<!-- Event list header end -->
+		{% for event in events %}
+			<!-- Event item start -->
+			<div class="event-list-item d-sm-flex align-items-center px-content py-10 {% if not forloop.last %}border-bottom{% endif %}">
+				<!-- Status indicator start -->
+				<div class="ws-sm-100 me-sm-20 flex-shrink-0">
+					<div class="ws-75 hs-75 border border-dotted overflow-hidden d-flex flex-column align-items-center justify-content-center bg-gray-very-light-lm bg-darkgray-very-dim-dm position-relative pt-20 mx-auto mx-sm-0 {% if event.has_ended %}border-danger-dim-lm border-danger-light-dm{% else %}{% if event.state == event.StateStatus.LIVE %}border-success-dim-lm border-success-light-dm{% endif %}{% endif %}">
+						<div class="position-absolute w-100 top-0 start-0 text-center fw-bold fs-base-n4 bg-gray-light-lm bg-darkgray-dim-dm d-flex align-items-center px-5 text-uppercase">
+							{% if event.has_ended %}
+								<i class="fa-solid fa-circle-small text-danger me-5"></i>
+								{% if event.state != event.StateStatus.LIVE %}
+									<i class="fa-regular fa-pencil text-muted me-5"></i>
+								{% endif %}
+								<span class="ms-auto">End</span>
+							{% else %}
+								{% if event.state == event.StateStatus.LIVE %}
+									<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
+									<span class="ms-auto">Live</span>
+								{% else %}
+									<i class="fa-regular fa-pencil text-muted me-5"></i>
+									<span class="ms-auto">Draft</span>
+								{% endif %}
+							{% endif %}
+						</div>
+						<div class="fw-bold text-uppercase">{{ event.start_date|date:"M" }}</div>
+						<div class="text-muted font-monospace">{{ event.start_date.day }}</div>
+					</div>
+				</div>
+				<!-- Status indicator end -->
+
+				<!-- Name, date, location start -->
+				<div class="py-10 py-sm-0 me-sm-20 flex-grow-1">
+					<div>
+						<a href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}" class="fw-bold antialiased">{{ event.title }}</a>
+					</div>
+					<div class="fs-base-n2 mt-5">
+						<strong>Date: </strong>
+						<span class="text-muted">{{ event.start_date }}</span>
+					</div>
+					<div class="fs-base-n2">
+						<strong>Location: </strong>
+						<span class="text-muted">{{ event.localized_address_display }}</span>
+					</div>
+					{% if event.state == event.StateStatus.LIVE %}
+						<div class="mt-5">
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-external-link"></i>
+									<strong class="antialiased ms-5">Public Page</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">Public Page Link</div>
+										<p class="text-muted mt-0">
+											When sharing the event link, please use the following  for the best SEO/SMO support.
+										</p>
+										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+											<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="fw-bold antialiased" target="_blank">
+												<i class="fa-regular fa-external-link"></i>
+												<span class="content-to-copy ms-5">{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}</span>
+											</a>
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
+											<i class="fa-regular fa-link-simple"></i>
+											<strong class="antialiased ms-5">Copy Link</strong>
+										</button>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-qrcode"></i>
+									<strong class="antialiased ms-5">Check-In</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">Scanner Link</div>
+										<p class="text-muted mt-0">
+											The following is the link to the scanner for this event.
+										</p>
+										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+											<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="fw-bold antialiased" target="_blank">
+												<i class="fa-regular fa-external-link"></i>
+												<span class="content-to-copy ms-5">{{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}</span>
+											</a>
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
+											<i class="fa-regular fa-link-simple"></i>
+											<strong class="antialiased ms-5">Copy Link</strong>
+										</button>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-rectangle-code"></i>
+									<strong class="antialiased ms-5">Embed</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">
+											<code>&lt;iframe&gt;</code> embed
+										</div>
+										<p class="text-muted mt-0">
+											Copy and paste the following code to embed this event on your website.
+										</p>
+										<div class="p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1 overflow-x-auto text-nowrap">
+											<code class="content-to-copy bg-transparent m-0 p-0">&lt;iframe src="{{request.get_host}}{% url 'checkout:checkout_one' event.team.slug event.slug %}" style="display: block; border: 0; max-width:
+												100%;" name="SocialPass Event" scrolling="yes" frameborder="1" marginheight="0px" marginwidth="0px" height="645px" width="860px" allowfullscreen&gt;&lt;/iframe&gt;</code>
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
+											<i class="fa-regular fa-link-simple"></i>
+											<strong class="antialiased ms-5">Copy Code</strong>
+										</button>
+										<p class="text-muted mt-5 mb-0 fs-base-n2 text-center">
+											<a href="https://codepen.io/tahmid-hm-dev/pen/yLxLYYd" target="_blank" rel="noopener" class="fw-bold antialiased"><i class="fa-brands fa-codepen me-5"></i> CodePen Demo/Code</a>
+										</p>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
+						</div>
+					{% else %}
+						<div class="mt-5">
+							<div class="dropdown with-arrow">
+								<button type="button" class="btn btn-sm text-base lh-1" data-hm-toggle="dropdown" aria-expanded="false">
+									<i class="fa-regular fa-external-link"></i>
+									<strong class="antialiased ms-5">Preview</strong>
+								</button>
+								<div class="dropdown-menu ws-250">
+									<div class="dropdown-content fs-base-n2">
+										<div class="fw-bold">Preview</div>
+										<p class="text-muted mt-0">
+											You can preview this event using the following link. Note, only you will be able to see it.
+										</p>
+										<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+											<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="fw-bold antialiased" target="_blank">
+												<i class="fa-regular fa-external-link"></i>
+												<span class="content-to-copy ms-5">{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}</span>
+											</a>
+										</div>
+										<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyToClipboard(event, this)">
+											<i class="fa-regular fa-link-simple"></i>
+											<strong class="antialiased ms-5">Copy Link</strong>
+										</button>
+									</div>
+									<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+										<i class="fa-regular fa-check"></i>
+										Copied!
+									</span>
+								</div>
+							</div>
+						</div>
+					{% endif %}
+				</div>
+				<!-- Name, date, location end -->
+
+				<!-- CTAs start -->
+				<div class="d-flex align-items-center flex-row flex-sm-column flex-lg-row flex-shrink-0">
+					<a class="w-sm-100 w-lg-auto btn btn-sm btn-primary" href="{% url 'dashboard_organizer:event_update' current_team.public_id event.pk %}">
+						<i class="fa-solid fa-edit me-5"></i>
+						Edit
+					</a>
+					{% if event.has_ended or event.state == event.StateStatus.LIVE %}
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard_organizer:event_stats' current_team.public_id event.pk %}">
+							<i class="fa-regular fa-sack-dollar me-5"></i>
+							<strong class="antialiased">Stats</strong>
+						</a>
+					{% else %}
+						<a class="ws-sm-100 ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-base" href="{% url 'dashboard_organizer:event_go_live' current_team.public_id event.pk %}">
+							<i class="fa-solid fa-circle-small fa-beat-fade text-success me-5"></i>
+							<strong class="antialiased">Go Live</strong>
+						</a>
+					{% endif %}
+					<!--
+					<a class="w-sm-100 w-lg-auto ms-5 ms-sm-0 ms-lg-5 mt-sm-5 mt-lg-0 btn btn-sm text-danger" href="{% url 'dashboard_organizer:event_delete' current_team.public_id event.pk %}">
+						<i class="fa-regular fa-trash-can"></i>
+						<span class="visually-hidden">Delete</span>
+					</a>
+					-->
+				</div>
+				<!-- CTAs end -->
+			</div>
+			<!-- Event item end -->
+		{% endfor %}
+	{% else %}
+		<div class="content text-center">
+			<div class="ws-200 mw-100 mx-auto">
+				<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+			</div>
+			<div class="ws-400 mw-100 mx-auto">
+				<h5>Nothing found</h5>
+				<p>
+					We could find any events to show you at this moment. Please try creating one first.
+				</p>
+			</div>
+		</div>
+	{% endif %}
+	<!-- Main content end -->
+
+	<!-- Card footer start -->
+	<div class="px-card py-10 border-top fs-base-n2 d-flex align-items-center">
+		<div>
+			{% if page_obj.has_previous %}
+				<a class="btn btn-sm text-base" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
+					<strong class="antialiased">Prev</strong>
+				</a>
+			{% else %}
+				<button class="btn btn-sm" disabled="disabled">
+					<strong class="antialiased">Prev</strong>
+				</button>
+			{% endif %}
+		</div>
+		<div class="ms-auto">
+			Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+		</div>
+		<div class="ms-auto">
+			{% if page_obj.has_next %}
+				<a class="btn btn-sm text-base" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}&state={{ request.GET.state }}">
+					<strong class="antialiased">Next</strong>
+				</a>
+			{% else %}
+				<button class="btn btn-sm" disabled="disabled">
+					<strong class="antialiased">Next</strong>
+				</button>
+			{% endif %}
+		</div>
+	</div>
+	<!-- Card footer end -->
+</div>
+<!-- Content card end -->
+
+<!-- Copy button -->
+<script>
+	function copyToClipboard(e, copyBtn) {
+		// Get the content to copy
+		var contentToCopy = copyBtn.closest(".dropdown-menu").querySelector(
+			".content-to-copy"
+		);
+
+		// Copy code to clipboard
+		var range = document.createRange();
+		range.selectNode(contentToCopy);
+		window.getSelection().removeAllRanges();
+		window.getSelection().addRange(range);
+		document.execCommand("copy");
+		window.getSelection().removeAllRanges();
+
+		// Show/hide confirmation
+		var successPrompt = copyBtn.closest(".dropdown-menu").querySelector(
+			".success-prompt"
+		);
+		successPrompt.classList.remove("d-none");
+		setTimeout(function() {
+			successPrompt.classList.add("d-none");
+		}, 2000);
+
+		e.preventDefault();
+	}
+</script>
+{% endblock content %}

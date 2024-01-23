@@ -1,174 +1,175 @@
-{% extends 'bases/base_primary.html' %}
-{% load static get_theme_value i18n crispy_forms_tags %}
+{% extends "dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
 
-{% block head_title %}
-{% if request.resolver_match.url_name == 'event_create' %}
-	Create Event
-{% else %}
-	{{ event.title }}
-{% endif %} - {% get_theme_value "brand_name" %}
-{% endblock head_title %}
+{% block head_title %}{% trans "Edit Event Details" %} - SocialPass{% endblock head_title %}
 
-{% block navbar_breadcrumb %}
-{% if url_name == 'event_create' %}
-	Create Event
-{% else %}
-	Event Details
-{% endif %}
-{% endblock %}
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Edit Event Details" %}{% endblock navbar_title %}
 
-{% block extra_head %}
-	{{ form.media }}
-	<!-- Quill CSS overrides -->
-	<link href="{% static 'quill-text-editor/quill.snow.css' %}" rel="stylesheet">
-{% endblock extra_head %}
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Edit Event Details" %}{% endblock navbar_title_2 %}
 
 {% block content %}
-<!-- Header start -->
-{% include 'components/event_details_page_header.html' %}
-<!-- Header end -->
+{% include "components/event_flow_header.html" with step="1" %}
+<!-- Ticket tier form start -->
+<div class="row mt-4 mb-3">
+	<div class="col-lg-8 mx-auto">
+		<h1 class="h3 mb-0">{% trans "Edit Event Details" %}</h1>
+		<p class="text-body-secondary">
+			{% trans "Edit & update event any information." %}
+		</p>
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body px-lg-5 py-lg-4">
+				<input type="hidden" value="{{ event.cover_image_url }}" id="cover-img-placeholder">
+				<form method="POST" enctype="multipart/form-data" id="event-form">
+					{% csrf_token %}
 
-<!-- Content card start -->
-<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
-	<!-- Card header start -->
-	{% include 'components/event_details_card_header.html' %}
-	<!-- Card header end -->
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="mb-0">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
 
-	<!-- Main form start -->
-	<form class="row" enctype="multipart/form-data" method="post" id="event-form">
-		{% csrf_token %}
-		<!-- Main content start -->
-		<div class="col-lg-9 col-xl-7 mx-auto">
-			<div class="content">
-				{% if form.errors %}
-					<div class="text-danger fw-bold antialiased">
-						The following things went wrong when submitting the form. If an issue persists, please contact us via our support chat.
-					</div>
-				{% endif %}
-
-				{% if form.non_field_errors %}
-					<div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
-						<ul class="unordered-list bullet-reset m-0">
-							{% for error in form.non_field_errors %}
-								<li>{{ error|escape }}</li>
-							{% endfor %}
-						</ul>
-					</div>
-				{% endif %}
-
-				{% for input in form.hidden_fields %}
-					{{ input }}
-				{% endfor %}
-
-				<!-- Basic information start -->
-				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="basic-information">
-					<span class="ws-25 me-10 text-primary">
-						<i class="fa-light fa-ballot-check"></i>
-					</span>
-					Basic Information
-				</h3>
-				<p class="text-muted fs-base-n2 mt-5">
-					Name your event, add your cover image, and tell event-goers why they should come. Add details that highlight what makes it unique.
-				</p>
-				{% with form.title as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				<div class="form-group">
-					{{ form.cover_image|as_crispy_field }}
-				</div>
-				{% with input=form.description %}
-					<div class="form-group">
-						<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+					{% for input in form.hidden_fields %}
 						{{ input }}
-					    <div class="form-text">
-					        Describe your event by adding in details, content, and links.
-					    </div>
-					    {% if input.errors %}
-					        <ul class="invalid-feedback">
-					            {% for error in input.errors %}
-					                <li>{{ error }}</li>
-					            {% endfor %}
-					        </ul>
-					    {% endif %}
-					</div>
-				{% endwith %}
-				<!-- Basic information end -->
+					{% endfor %}
 
-				<!-- Location start -->
-				<br />
-				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="location">
-					<span class="ws-25 me-10 text-primary">
-						<i class="fa-light fa-location-dot"></i>
-					</span>
-					Location
-				</h3>
-				<p class="text-muted fs-base-n2 mt-5">
-					Help people in the area discover your event and let attendees know where to show up.
-				</p>
-				{% with form.address_1 as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				{% with form.address_2 as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				{% with form.city as input %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				<div class="form-row row-eq-spacing">
-					<div class="col-6">
-						{% with form.postal_code as input %}
-							{% include 'components/forms_inputs/input.html' %}
-						{% endwith %}
-					</div>
-					<div class="col-6">
-						<div class="form-group">
-							{{ form.country|as_crispy_field }}
+					<h4 class="mb-lg-4">{% trans "Banner, Title, and Description" %}</h4>
+					<div class="row g-4">
+						<div class="col-md-6">
+							<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center rounded-4" style="max-height: 300px;">
+								<img src="{{ event.cover_image_url }}" alt="{{ event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);" id="cover-img-bg">
+								<img src="{{ event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ event.title }} cover image" id="cover-img-preview">
+								<div class="cover-img-input position-absolute top-0 end-0 z-1">
+									{% with form.cover_image as input %}
+										{{ input|as_crispy_field }}
+									{% endwith %}
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 align-self-center">
+							<div>
+								{% with form.title as input %}
+									{% include "forms/input.html" %}
+								{% endwith %}
+							</div>
 						</div>
 					</div>
-				</div>
-				<!-- Location end -->
+					{% with input=form.description %}
+						<div class="mt-3">
+							<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
+							{{ input }}
+						    {% if input.errors %}
+						        <ul class="invalid-feedback">
+						            {% for error in input.errors %}
+						                <li>{{ error }}</li>
+						            {% endfor %}
+						        </ul>
+						    {% endif %}
+						</div>
+					{% endwith %}
 
-				<!-- Date and time start -->
-				<br />
-				<h3 class="fs-base-p4 mb-0 d-flex align-items-center" id="date-and-time">
-					<span class="ws-25 me-10 text-primary">
-						<i class="fa-light fa-clock"></i>
-					</span>
-					Date and Time
-				</h3>
-				<p class="text-muted fs-base-n2 mt-5">
-					Tell event-goers when your event starts and ends so they can make plans to attend.
-				</p>
-				{% with input=form.start_date %}
-					{% include 'components/forms_inputs/input.html' %}
-				{% endwith %}
-				{% with input=form.end_date %}
-					{% include 'components/forms_inputs/input.html' %}
-					<div class="invalid-feedback mb-20 d-none" id="end-date-extra-feedback">
-						The end date must come after the start date.
+					<br /><br />
+					<h4 class="mb-lg-4">{% trans "Location of Event" %}</h4>
+					<div class="mb-3">
+						{% with form.address_1 as input %}
+							{% include "forms/input.html" %}
+						{% endwith %}
 					</div>
-				{% endwith %}
-				<div class="form-group">
-					{{ form.timezone|as_crispy_field }}
-				</div>
-				<!-- Date and time end -->
+					<div class="mb-3">
+						{% with form.address_2 as input %}
+							{% include "forms/input.html" %}
+						{% endwith %}
+					</div>
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with form.city as input %}
+								{% include "forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.postal_code as input %}
+								{% include "forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.country as input %}
+								{% include "forms/select.html" %}
+							{% endwith %}
+						</div>
+					</div>
 
-				<!-- Submit button start -->
-				<hr />
-				<div class="form-group text-end">
-					<button type="submit" class="btn btn-primary">Save Event</button>
-				</div>
-				<!-- Submit button end -->
+					<br /><br />
+					<h4 class="mb-lg-4">{% trans "Time of Event" %}</h4>
+					<div class="row g-3">
+						<div class="col-lg-12">
+							{% with form.timezone as input %}
+								{% include "forms/select.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.start_date as input %}
+								{% include "forms/input.html" %}
+							{% endwith %}
+						</div>
+						<div class="col-lg-6">
+							{% with form.end_date as input %}
+								{% include "forms/input.html" %}
+							{% endwith %}
+							<div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
+								{% trans "The event end date must come after the start date." %}
+							</div>
+						</div>
+						<div class="mt-3">
+						  	<button class="btn btn-link w-100 text-start d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-ticket-sales" aria-expanded="false" aria-controls="collapsed-ticket-sales">
+								{% trans "Schedule Ticket Sales (Optional)" %}
+								<i class="fa-light fa-angle-down ms-auto"></i>
+						  	</button>
+						</div>
+						<div class="collapse row m-0 p-0 g-3" id="collapsed-ticket-sales">
+						  	<div class="col-lg-6">
+								{% with form.sales_start as input %}
+								  	{% include "forms/input.html" %}
+							  	{% endwith %}
+						  	</div>
+						  	<div class="col-lg-6">
+							  	{% with form.sales_end as input %}
+									{% include "forms/input.html" %}
+							  	{% endwith %}
+							  	<div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
+							  		{% trans "The sales end date must come after the sales start date." %}
+							  	</div>
+						  	</div>
+						</div>
+					</div>
+
+					<br /><br />
+					<h4>{% trans "Total Venue Capacity" %}</h4>
+					<p class="text-body-secondary mb-lg-4">
+						{% trans "When set, our system will make sure that the total number of people attending (ticket holders + guests) does not exceed this number." %}
+					</p>
+					<div class="row g-3">
+						<div class="col-lg-6">
+							{% with form.total_capacity as input %}
+								{% include "forms/input.html" %}
+							{% endwith %}
+						</div>
+					</div>
+
+					<div class="text-end mt-3">
+						<button type="submit" class="btn btn-primary">{% trans "Save & Continue" %}</button>
+					</div>
+				</form>
 			</div>
 		</div>
-		<!-- Main content end -->
-	</form>
-	<!-- Main form end -->
-
-
+	</div>
 </div>
-<!-- Content card end -->
+<!-- Ticket tier form end -->
+{% endblock content %}
 
+{% block extra_body %}
 <!-- Date Validation Script -->
 <script>
 	var startDateInput = document.getElementById("id_start_date");
@@ -197,24 +198,22 @@
 	endDateInput.addEventListener("change", dateValidate);
 </script>
 
-{% if url_name == 'event_create' %}
-	<!-- Set Default Timezone and Country Script -->
-	<script>
-		try {
-			document.getElementById(
-				"id_timezone"
-			).value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		} catch (error) {
-			console.log(error);
+<!-- Cover Image Script -->
+<script type="text/javascript">
+	const coverImgPlaceholder = document.getElementById("cover-img-placeholder").value;
+	const coverImgBg = document.getElementById("cover-img-bg");
+	const coverImgPreview = document.getElementById("cover-img-preview");
+	const coverImgInput = document.getElementById("id_cover_image");
+	coverImgInput.addEventListener("change", function(event) {
+		const [file] = coverImgInput.files;
+		if (file) {
+			coverImgBg.src = URL.createObjectURL(file);
+			coverImgPreview.src = URL.createObjectURL(file);
 		}
-
-		// Default set to US
-		try {
-			document.getElementById("id_country").value = "US";
-		} catch (error) {
-			console.log(error);
+		else {
+			coverImgBg.src = coverImgPlaceholder;
+			coverImgPreview.src = coverImgPlaceholder;
 		}
-	</script>
-{% endif %}
-
-{% endblock %}
+	});
+</script>
+{% endblock extra_body %}

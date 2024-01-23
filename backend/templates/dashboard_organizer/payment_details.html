@@ -1,0 +1,130 @@
+{% extends "dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email %}
+
+{% block head_title %}{% trans "Payment Details" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{% trans "Payment" %}</span> {% trans "Details" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{% trans "Payment" %}</span> {% trans "Details" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+<!-- Payment details start -->
+<div class="mb-3 mt-4">
+	{% if current_team.is_stripe_connected %}
+		<div class="d-flex align-items-center mb-3">
+			<div class="pe-3">
+				<h1 class="h3 mb-0">{% trans "Stripe Account Connected" %}</h1>
+				<p class="text-body-secondary mb-0">
+					{% trans "The following Stripe account is connected to your team." %}
+				</p>
+			</div>
+			<a href="{% url 'dashboard_organizer:stripe_delete' current_team.slug %}" class="btn btn-danger ms-auto" aria-label="Remove Stripe Account">
+				<i class="fa-solid fa-trash-can"></i>
+		        <span class="ms-1 d-none d-sm-inline">{% trans "Remove Stripe Account" %}</span>
+			</a>
+		</div>
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body px-lg-5 py-lg-4">
+				<div class="row g-3 align-items-center justify-content-sm-between mb-3">
+					<div class="col-sm d-flex align-items-center">
+						<div class="specific-w-75 specific-h-75 flex-shrink-0 d-flex align-items-center justify-content-center rounded text-white" style="background-color: #5433ff; font-size: 32px;">
+							<i class="fa-brands fa-stripe-s"></i>
+						</div>
+						<div class="ps-3">
+							<div class="text-truncate">
+								<strong>{% trans "Stripe ID" %}:</strong>
+								{{ current_team.stripe_account_id }}
+							</div>
+							<div class="text-truncate">
+								<strong>{% trans "Country" %}:</strong>
+								{{ current_team.stripe_account_country }}
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-auto text-center">
+						<a href="{{ current_team.stripe_express_dashboard_link }}" class="btn btn-primary">
+							{% trans "Manage" %}
+						</a>
+					</div>
+				</div>
+				{% with status=current_team.stripe_account_payouts_enabled %}
+					{% if status.details_submitted and status.payouts_enabled %}
+						<div class="alert alert-success border-0 m-0" role="alert">
+							<div class="mb-2">
+								{% trans "You can now create paid ticket tiers and accept payments!" %}
+							</div>
+							<div class="d-flex align-items-center mt-1">
+								<i class="fa-solid fa-check-circle text-success-emphasis specific-w-25"></i>
+								{% trans "Details submitted" %}
+							</div>
+							<div class="d-flex align-items-center mt-1">
+								<i class="fa-solid fa-check-circle text-success-emphasis specific-w-25"></i>
+								{% trans "Payouts enabled" %}
+							</div>
+						</div>
+					{% else %}
+						<div class="alert alert-danger border-0 m-0" role="alert">
+							<div class="mb-2">
+								{% trans "Your account can't accept payouts yet! Please correct the following issues in your Stripe Dashboard." %}
+							</div>
+							{% if not status.details_submitted %}
+								<div class="d-flex align-items-center mt-1">
+									<i class="fa-solid fa-times-circle text-danger-emphasis specific-w-25"></i>
+									{% trans "Details submitted" %}
+								</div>
+							{% endif %}
+							{% if not status.payouts_enabled %}
+								<div class="d-flex align-items-center mt-1">
+									<i class="fa-solid fa-times-circle text-danger-emphasis specific-w-25"></i>
+									{% trans "Payouts enabled" %}
+								</div>
+							{% endif %}
+						</div>
+					{% endif %}
+				{% endwith %}
+			</div>
+		</div>
+	{% else %}
+		<div class="d-flex align-items-center mb-3">
+			<div class="pe-3">
+				<h1 class="h3 mb-0">{% trans "Host Events & Make Money" %}</h1>
+				<p class="text-body-secondary mb-0">
+					{% trans "Sell tickets easily with a Stripe account. We only take a x% fee for every ticket sold." %}
+				</p>
+			</div>
+			<form class="ms-auto" method="post">
+				{% csrf_token %}
+				{{ form }}
+				<button type="submit" class="btn btn-primary" onclick="post(this)" aria-label="Add Stripe Account">
+					<i class="fa-solid fa-plus"></i>
+		        	<span class="ms-1 d-none d-sm-inline">{% trans "Add Stripe Account" %}</span>
+				</button>
+			</form>
+		</div>
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body px-lg-5 py-lg-4">
+				<div class="mx-auto specific-w-200">
+					<img src="{% static 'images/payment_empty.png' %}" alt="empty" class="d-block img-fluid">
+				</div>
+				<p class="text-body-secondary text-center">
+					{% trans "No Stripe account connected." %}
+				</p>
+			</div>
+		</div>
+	{% endif %}
+</div>
+<!-- Payment details end -->
+{% endblock content %}
+
+{% block extra_body %}
+	<!-- Connect Stripe button processing state -->
+	<script type="text/javascript">
+		function post(button) {
+			button.classList.add("disabled");
+			button.innerHTML = [
+		        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`,
+		        `<span class="d-none d-sm-inline ms-1">Processing...</span>`,
+		    ].join("");
+		}
+	</script>
+{% endblock %}

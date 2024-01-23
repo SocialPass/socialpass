@@ -193,13 +193,13 @@
 
 @font-face {
 	font-family: "Averta";
-	src: url("AvertaRegular.otf");
+	src: url("../fonts/AvertaRegular.otf");
 	font-weight: normal;
 }
 
 @font-face {
 	font-family: "Averta";
-	src: url("AvertaBold.otf");
+	src: url("../fonts/AvertaBold.otf");
 	font-weight: bold;
 }
 

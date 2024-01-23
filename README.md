@@ -54,18 +54,6 @@ git clone git@github.com:nftylabs/socialpass.git
 cd socialpass
 ```
 
-## Run with docker and docker-compose
-```bash
-# Build Containers
-make build
-
-# Run Migrations (if necessary)
-make migrate
-
-# Run Containers
-make up
-```
-
 ## Run with pyenv
 ```bash
 # Install python 3.10.5 version
@@ -88,9 +76,8 @@ pyenv activate socialpass
 # Install development dependencies
 pip install -r backend/config/requirements/local.txt
 
-# Run postgres image
-# Alternatively, running a postgres server locally also works
-docker run -d --name database -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data postgres
+# Run Postgres server locally and create database with creds from settings
+...
 
 # Run Migrations (if necessary)
 python backend/manage.py migrate
@@ -103,11 +90,6 @@ python backend/manage.py runserver
 
 ```bash
 ## EXTRA COMMANDS
-# To stop postgres container
-docker stop database
-
-# To start postgres container
-docker start database
 
 # pre-populate database
 # possible prefixes = --events (number of events), --tickets (number of tickets) and --user-default (create or not dummy user)

@@ -38,39 +38,3 @@ test: ## Test backend repo
 
 turtle: ## Run shell_plus
 	(source backend/venv/bin/activate; cd backend; ./manage.py shell_plus)
-
-#
-# DOCKER COMMANDS
-#
-docker-build: ## docker build
-	docker-compose build
-
-docker-clean: ## docker build
-	docker-compose build --no-cache
-
-docker-collect: ## collectstatic backend
-	docker-compose run web python backend/manage.py collectstatic --no-input
-
-docker-migration: ## Create backend migrations
-	docker-compose run web python backend/manage.py makemigrations
-
-docker-migrate: ## Migrate backend migrations
-	docker-compose run web python backend/manage.py migrate
-
-docker-nuke: ## BEWARE. THIS WILL DESTROY ALL DOCKER IMAGES AND CONTAINERS ON HOST MACHINE
-	docker rmi -f $(docker images -aq) && docker rm -vf $(docker ps -aq)
-
-docker-populate: ## Populate DB
-	docker-compose run web python backend/manage.py populate_db
-
-docker-superuser: ## Create backend superuser
-	docker-compose run web python backend/manage.py createsuperuser
-
-docker-test: ## Test backend repo
-	docker-compose run web python backend/manage.py test --settings=config.settings.test
-
-docker-turtle: ## backend shell plus
-	docker-compose run web python backend/manage.py shell_plus
-
-docker-up: ## docker up
-	docker-compose up

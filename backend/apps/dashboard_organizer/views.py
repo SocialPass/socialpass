@@ -399,7 +399,13 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
+        self.initial["team"] = context["current_team"].pk
         return context
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["team"] = self.team
+        return initial
 
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)

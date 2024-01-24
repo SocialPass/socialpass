@@ -36,6 +36,8 @@
 						{{ input }}
 					{% endfor %}
 
+					<div>{{ form.team.as_hidden }}</div>
+
 					<h4 class="mb-lg-4">{% trans "Banner, Title, and Description" %}</h4>
 					<div class="row g-4">
 						<div class="col-md-6">
@@ -61,13 +63,13 @@
 						<div class="mt-3">
 							<label class="form-label" for="{{ input.id_for_label }}">{{ input.label }}</label>
 							{{ input }}
-						    {% if input.errors %}
-						        <ul class="invalid-feedback">
-						            {% for error in input.errors %}
-						                <li>{{ error }}</li>
-						            {% endfor %}
-						        </ul>
-						    {% endif %}
+							{% if input.errors %}
+								<ul class="invalid-feedback">
+									{% for error in input.errors %}
+										<li>{{ error }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
 						</div>
 					{% endwith %}
 
@@ -123,25 +125,25 @@
 							</div>
 						</div>
 						<div class="mt-3">
-						  	<button class="btn btn-link w-100 text-start d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-ticket-sales" aria-expanded="false" aria-controls="collapsed-ticket-sales">
+							  <button class="btn btn-link w-100 text-start d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-ticket-sales" aria-expanded="false" aria-controls="collapsed-ticket-sales">
 								{% trans "Schedule Ticket Sales (Optional)" %}
 								<i class="fa-light fa-angle-down ms-auto"></i>
-						  	</button>
+							  </button>
 						</div>
 						<div class="collapse row m-0 p-0 g-3" id="collapsed-ticket-sales">
-						  	<div class="col-lg-6">
+							  <div class="col-lg-6">
 								{% with form.sales_start as input %}
-								  	{% include "forms/input.html" %}
-							  	{% endwith %}
-						  	</div>
-						  	<div class="col-lg-6">
-							  	{% with form.sales_end as input %}
+									  {% include "forms/input.html" %}
+								  {% endwith %}
+							  </div>
+							  <div class="col-lg-6">
+								  {% with form.sales_end as input %}
 									{% include "forms/input.html" %}
-							  	{% endwith %}
-							  	<div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
-							  		{% trans "The sales end date must come after the sales start date." %}
-							  	</div>
-						  	</div>
+								  {% endwith %}
+								  <div class="text-danger-emphasis d-none" id="end-date-extra-feedback">
+									  {% trans "The sales end date must come after the sales start date." %}
+								  </div>
+							  </div>
 						</div>
 					</div>
 

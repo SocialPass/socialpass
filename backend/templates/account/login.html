@@ -1,4 +1,4 @@
-{% extends "redesign/auth/base.html" %}
+{% extends "account/base.html" %}
 {% load account static i18n %}
 
 {% block head_title %}{% trans "Sign In" %} - SocialPass{% endblock %}
@@ -31,12 +31,12 @@
 			{% endfor %}
 			<div class="mb-3">
 				{% with form.login as input %}
-					{% include "redesign/forms/input.html" %}
+					{% include "forms/input.html" %}
 				{% endwith %}
 			</div>
 			<div class="mb-3">
 				{% with form.password as input %}
-					{% include "redesign/forms/input.html" %}
+					{% include "forms/input.html" %}
 				{% endwith %}
 			</div>
 			<div class="container-fluid g-0 mb-3">

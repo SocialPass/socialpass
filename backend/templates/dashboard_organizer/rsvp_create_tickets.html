@@ -1,0 +1,93 @@
+{% extends "dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
+
+{% block head_title %}{% trans "Create RSVP Tickets" %} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Create RSVP Tickets" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Create RSVP Tickets" %}{% endblock navbar_title_2 %}
+
+{% block content %}
+<!-- Ticket tier form start -->
+<div class="row mt-4 mb-3">
+	<div class="col-lg-8 mx-auto">
+		<div class="d-flex align-items-center mb-3">
+			<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.slug event.pk %}" aria-label="Go Back">
+				<i class="fa-solid fa-arrow-left h4 m-0"></i>
+			</a>
+			<div class="ps-4">
+				<h1 class="h3 mb-0">{% trans "Create RSVP Tickets" %}</h1>
+				<p class="text-body-secondary mb-0">
+					{% trans "Use the following form to create RSVP tickets" %} &mdash; <strong>{{ event.title }}</strong>
+				</p>
+			</div>
+		</div>
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body px-lg-5 py-lg-4">
+				{% for ticket_tier in ticket_tiers %}
+					<input type="hidden" id="ticket_tier_{{ ticket_tier.id }}" value="{{ ticket_tier.allowed_guests }}">
+				{% endfor %}
+				<form method="POST">
+					{% csrf_token %}
+
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="mb-0">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+
+					<h4 class="mb-lg-4">{% trans "Ticket Tier" %}</h4>
+					<div class="mb-3">
+						{% with form.ticket_tier as input %}
+							{% include "forms/select.html" %}
+						{% endwith %}
+					</div>
+					<div class="mb-3">
+						{% with form.allowed_guests as input %}
+							{% include "forms/input.html" %}
+						{% endwith %}
+					</div>
+
+					<br /><br />
+					<h4>{% trans "Customer Emails (max 30 per batch)" %}</h4>
+					<p class="text-body-secondary mb-lg-4">
+						{% trans "Please enter a list of customer email addresses as CSV (Comma Separated Values)." %}
+					</p>
+					<div class="mb-3">
+						{% with form.customer_emails as input %}
+							{% include "forms/input.html" %}
+						{% endwith %}
+					</div>
+
+					<div class="text-end mt-3">
+						<button type="submit" class="btn btn-primary">{% trans "Create RSVP Tickets" %}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Ticket tier form end -->
+{% endblock content %}
+
+{% block extra_body %}
+<script type="text/javascript">
+	var ticketTier = document.getElementById("id_ticket_tier");
+	var allowedGuests = document.getElementById("id_allowed_guests");
+	ticketTier.addEventListener("change", function() {
+    	allowedGuests.value = 0;
+    	var selectedTier = document.getElementById("ticket_tier_" + ticketTier.value);
+    	if (selectedTier) {
+    		allowedGuests.setAttribute("max", selectedTier.value);
+    	}
+	});
+</script>
+{% endblock extra_body %}

@@ -1,250 +1,241 @@
-{% extends "bases/base_primary.html" %}
-{% load static get_theme_value format_address format_to_event_timezone %}
+{% extends "dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email format_to_event_timezone %}
 
-{% block head_title %}{{ event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
+{% block head_title %}{% trans "Event Details" %} - SocialPass{% endblock head_title %}
 
-{% block navbar_breadcrumb %}Event Stats{% endblock %}
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Event Details" %}{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Event Details" %}{% endblock navbar_title_2 %}
 
 {% block content %}
-<!-- Header start -->
-<div class="border-bottom hs-md-100">
-	<div class="p-content d-md-flex h-100">
-		<div class="align-self-center">
-			<h1 class="content-title m-0 fs-base-p6">{{ event.title }}</h1>
-			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
-				See stats, history, orders, and check-in history of your event.
-			</p>
+<!-- Event stats start -->
+<div class="row mt-4 mb-3 g-3">
+	<div class="col-lg-8 d-lg-flex flex-lg-column align-self-lg-stretch">
+		<div class="card border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1">
+			<div class="row g-0 h-sm-100">
+				<div class="col-sm-5 position-relative overflow-hidden d-flex align-items-center justify-content-center">
+					<img src="{{ event.cover_image_url }}" alt="{{ event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
+					<img src="{{ event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ event.title }} cover image">
+				</div>
+				<div class="col-sm-7 align-self-center">
+					<div class="card-body p-4">
+						<h2 class="h4 mb-4">{{ event.title }}</h2>
+						<div class="d-flex align-items-start mb-2">
+							<i class="fa-light fa-calendars specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
+							<div>
+								<span class="text-body-secondary">
+									<strong class="text-body">{% trans "Start" %}:</strong>
+									{% if event.start_date %}
+										{{ event.start_date }}
+									{% else %}
+										{% trans "Not set" %}
+									{% endif %}
+								</span>
+								{% if event.end_date %}
+									<br />
+									<span class="text-body-secondary"><strong class="text-body">{% trans "End" %}:</strong> {{ event.end_date }}</span>
+								{% endif %}
+								<br />
+								<span class="text-body-secondary">
+									<strong class="text-body">{% trans "Timezone" %}:</strong>
+									{% if event.timezone %}
+										{{ event.timezone }}
+									{% else %}
+										{% trans "Not set" %}
+									{% endif %}
+								</span>
+							</div>
+						</div>
+						<div class="d-flex align-items-start">
+							<i class="fa-light fa-location-dot specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
+							<span class="text-body-secondary"><strong class="text-body">{% trans "Address" %}:</strong> {{ event.localized_address_display }}</span>
+						</div>
+						<div class="mt-4">
+							{% if event.state == event.StateStatus.LIVE %}
+								<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+									<i class="fa-solid fa-circle-small fa-beat-fade me-1"></i>
+									{% trans "Live Event" %}
+								</span>
+							{% else %}
+								<span class="px-3 py-2 rounded-pill fw-bold bg-secondary-subtle text-secondary-emphasis me-3">
+									<i class="fa-light fa-pencil me-1"></i>
+									{% trans "Draft Event" %}
+								</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div class="ms-auto align-self-center mt-10 mt-md-0">
-			<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="btn btn-primary" target="_blank">
-				<i class="fa-solid fa-external-link me-5"></i>
-				Public Page
-			</a>
+	</div>
+	<div class="col-lg-4 d-lg-flex flex-lg-column align-self-lg-stretch">
+		<div class="card border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1">
+			<div class="card-body">
+				<h6>
+					<i class="fa-light fa-external-link text-primary-emphasis me-1"></i>
+					{% trans "Share Event" %}
+				</h6>
+				<div class="d-flex align-items-center flex-wrap">
+					<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Public Page" aria-label="Public Page">
+						<i class="fa-solid fa-external-link h6 m-0"></i>
+					</a>
+					<a href="#" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center text-white rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Facebook Share" aria-label="Facebook Share" id="facebook-share" style="background-color: #4267b2;">
+						<i class="fa-brands fa-facebook-f"></i>
+					</a>
+					<a href="#" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center text-white rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Twitter Share" aria-label="Twitter Share" id="twitter-share" style="background-color: #1da1f2;">
+						<i class="fa-brands fa-twitter"></i>
+					</a>
+					<a href="#" class="d-block specific-w-50 specific-h-50 d-flex align-items-center justify-content-center text-bg-primary rounded-circle  text-decoration-none flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-title="Email Share" aria-label="Email Share" id="email-share">
+						<i class="fa-solid fa-envelope"></i>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="card border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1 mt-3">
+			<div class="card-body">
+				<h6>
+					<i class="fa-light fa-barcode-read text-primary-emphasis me-1"></i>
+					{% trans "Scan Tickets" %}
+				</h6>
+				<p>
+					{% trans "Access the scanning portal below to start scanning tickets." %}
+				</p>
+				<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="btn btn-primary w-100 d-block">{% trans "Start Scanning" %}</a>
+			</div>
 		</div>
 	</div>
 </div>
-<!-- Header end -->
-
-<!-- Content card start -->
-<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
-	<!-- Card header start -->
-	<div class="px-card py-10 border-bottom">
-		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
-			Event Stats
-		</span>
+<div class="row g-3 mb-3 justify-content-center">
+	<div class="col-sm-6 col-lg-4 align-self-center">
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body d-flex align-items-center">
+				<div class="specific-w-75 specific-h-75 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0 me-3">
+					<i class="fa-solid fa-ticket h3 m-0"></i>
+				</div>
+				<div>
+					<div class="h5 m-0">{{ tickets|length }}</div>
+					<div>{% trans "Tickets Sold" %}</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<!-- Card header end -->
-
-	<!-- Main content start -->
-	<div class="row row-eq-spacing-lg">
-		<!-- Event cover image start -->
-		<div class="col-lg-5 align-self-center">
-			<div class="content">
-				<div class="d-flex align-items-center justify-content-center rounded-3 overflow-hidden pe-none hs-250 bg-gray-very-light-lm bg-darkgray-very-dim-dm">
-					<img src="{{ event.cover_image_url }}" class="mh-100" alt="{{ event.title }} cover image">
+	<div class="col-sm-6 col-lg-4 align-self-center">
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body d-flex align-items-center">
+				<div class="specific-w-75 specific-h-75 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0 me-3">
+					<i class="fa-solid fa-users h3 m-0"></i>
 				</div>
-				<div class="mt-10 d-flex align-items-center">
-					<div class="dropdown with-arrow">
-						<button type="button" class="btn btn-sm text-base me-5" data-hm-toggle="dropdown" aria-expanded="false">
-							<strong class="antialiased">Copy</strong>
-							<i class="fa-regular fa-link-simple"></i>
-						</button>
-						<div class="dropdown-menu ws-250">
-							<div class="dropdown-content fs-base-n2">
-								<div class="fw-bold">Public Page Link</div>
-								<p class="text-muted mt-0">
-									When sharing the event link, please use the following  for the best SEO/SMO support.
-								</p>
-								<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
-									<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="fw-bold antialiased" target="_blank">
-										<i class="fa-regular fa-external-link"></i>
-										<span class="link-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}</span>
-									</a>
-								</div>
-								<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
-									<i class="fa-regular fa-link-simple"></i>
-									<strong class="antialiased ms-5">Copy Link</strong>
-								</button>
-							</div>
-							<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
-								<i class="fa-regular fa-check"></i>
-								Copied!
-							</span>
-						</div>
-					</div>
-					<strong class="ms-auto me-10">
-						<i class="fa-regular fa-share me-5"></i>
-						Share:
-					</strong>
-					<a href="#" class="btn btn-square btn-sm text-base me-5" id="twitter-share">
-						<i class="fa-brands fa-twitter"></i>
-						<span class="visually-hidden">Twitter</span>
-					</a>
-					<a href="#" class="btn btn-square btn-sm text-base me-5" id="facebook-share">
-						<i class="fa-brands fa-facebook-f"></i>
-						<span class="visually-hidden">Facebook</span>
-					</a>
-					<a href="#" class="btn btn-square btn-sm text-base me-5" id="email-share">
-						<i class="fa-regular fa-envelope"></i>
-						<span class="visually-hidden">Email</span>
-					</a>
+				<div>
+					<div class="h5 m-0">{{ event.attendees_count }}</div>
+					<div>{% trans "Attendees (+ Guests)" %}</div>
 				</div>
 			</div>
 		</div>
-		<!-- Event cover image end -->
-
-		<!-- Event information start -->
-		<div class="col-lg-7 align-self-center">
-			<div class="content">
-				<h3 class="fs-base-p6 m-0">{{ event.title }}</h3>
-				<div class="mt-20 d-flex align-items-center">
-					<span class="ws-25 flex-shrink-0">
-						<i class="fa-regular fa-clock"></i>
-					</span>
-					<span>
-						<strong>Date & Time:</strong>
-						<span class="text-muted">{{ event.start_date }}</span>
-					</span>
-				</div>
-				<div class="mt-5 d-flex align-items-center">
-					<span class="ws-25 flex-shrink-0">
-						<i class="fa-regular fa-location-dot"></i>
-					</span>
-					<span>
-						<strong>Location:</strong>
-						<span class="text-muted">{{ event.localized_address_display }}</span>
-					</span>
-				</div>
-				<div class="mt-20">
-					<table class="table">
-						<caption>Stat Totals</caption>
-						<tbody>
-							<tr>
-								<th>Tickets</th>
-								<td>{{ tickets|length }}</td>
-							</tr>
-							<tr>
-								<th>Check-Ins</th>
-								<td>{{ tickets_scanned_count|length }}</td>
-							</tr>
-							<tr>
-								<th>
-									Total Attendees
-									<br />
-									<span class="fs-base-n2 text-muted fw-400">(Tickets + Guests)</span>
-								</th>
-								<td>{{ event.attendees_count }}</td>
-							</tr>
-							<tr>
-								<th>
-									Total Check-Ins
-									<br />
-									<span class="fs-base-n2 text-muted fw-400">(Tickets + Guests)</span>
-								</th>
-								<td>{{ event.attendees_scanned_count }}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-		<!-- Event information end -->
 	</div>
-	<!-- Main content end -->
-
-	<!-- Ticket history start -->
-	<div class="content">
-		<div class="d-md-flex align-items-center">
-			<div>
-				<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
-					<span class="ws-25 me-10 text-primary">
-						<i class="fa-light fa-ticket"></i>
-					</span>
-					Ticket List
-				</h3>
-				<p class="text-muted fs-base-n2 mt-5 mb-0">
-					List of tickets that have been purchased for this event.
-				</p>
-			</div>
-			{% if tickets|length >= 0 %}
-				<div class="mt-10 mt-md-0 flex-shrink-0 ps-md-10 ms-auto">
-					<button class="btn btn-primary btn-sm rounded-pill" onClick="downloadTableAsCSV()">
-						<i class="fa-regular fa-download me-5"></i>
-						Download CSV
-					</button>
+	<div class="col-sm-6 col-lg-4 align-self-center">
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body d-flex align-items-center">
+				<div class="specific-w-75 specific-h-75 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0 me-3">
+					<i class="fa-solid fa-face-viewfinder h3 m-0"></i>
 				</div>
-			{% endif %}
+				<div>
+					<div class="h5 m-0">{{ event.attendees_scanned_count }}</div>
+					<div>{% trans "Check-Ins" %}</div>
+				</div>
+			</div>
 		</div>
-		{% if tickets|length >= 0 %}
-			<div class="card mx-0 overflow-y-auto p-0 table-responsive scroll-shadow-content-x">
-				<table class="table fs-base-n2" id="stats-table">
-					<thead>
-						<tr>
-							<th>Ticket Tier</th>
-							<th>Customer Name</th>
-							<th>Wallet Address</th>
-							<th>Party Size</th>
-							<th><i class="fa-light fa-calendar"></i> Ordered At</th>
-							<th><i class="fa-light fa-calendar"></i> Redeemed At</th>
-							<th>Session ID</th>
-							<th>Ticket ID</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for ticket in tickets %}
-							<tr>
-								<td>
-									{{ ticket.ticket_tier }}
-								</td>
-								<td>
-									{{ ticket.customer_name }}
-								</td>
-								<td>
-									{{ ticket.wallet_address }}
-								</td>
-								<td>
-									{{ ticket.party_size }}
-								</td>
-								<td>
-									{% format_to_event_timezone ticket.created ticket.timezone %}
-								</td>
-								<td>
-									{% if ticket.redeemed_at %}
-										{% format_to_event_timezone ticket.redeemed_at ticket.timezone %}
-									{% else %}
-										Not yet redeemed
-									{% endif %}
-								</td>
-								<td>
-									{{ ticket.checkout_session }}
-								</td>
-								<td>
-									{{ ticket.ticket_id }}
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+	</div>
+</div>
+<div class="card border-0 rounded-4 shadow-sm mb-3">
+	<div class="card-body">
+		<h5>
+			{% trans "VIP List" %}
+			<small class="text-body-secondary fw-normal">{% trans "(Attendees on the VIP list)" %}</small>
+		</h5>
+		<div class="d-sm-flex align-items-center">
+			<span><strong>{% trans "Total" %}:</strong> {{ manual_attendees.count }}</span>
+			<div class="vr mx-2"></div>
+			<span><strong>{% trans "Redeemed" %}:</strong> {{ manual_attendees_redeemed_count }}</span>
+			<div class="vr mx-2 d-none d-sm-block"></div>
+			<div class="mt-1 mt-sm-0">
+				<a href="{% url 'dashboard_organizer:manual_attendees' current_team.slug event.pk %}">
+					{% trans "Go to VIP List" %}<i class="fa-light fa-arrow-right ms-1"></i>
+				</a>
 			</div>
-		{% else %}
-			<div class="card mx-0 text-center">
-				<div class="ws-150 mw-100 mx-auto">
-					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
-				</div>
-				<div class="ws-400 mw-100 mx-auto">
-					<h5>Nothing found</h5>
-					<p class="mb-0">
-						This event has no tickets at this moment. Please wait for some time and check back on this page.
-					</p>
-				</div>
+		</div>
+	</div>
+</div>
+<div class="card border-0 rounded-4 shadow-sm mb-3">
+	<div class="card-body d-md-flex align-items-center">
+		<h5 class="m-0">
+			<i class="fa-light fa-ticket me-1 text-primary-emphasis"></i>
+			{% trans "Sold Tickets List" %}
+		</h5>
+		{% if tickets|length > 0 %}
+			<div class="mt-2 mt-md-0 flex-shrink-0 ps-md-2 ms-auto">
+				<button class="btn btn-primary btn-sm rounded-pill" onClick="downloadTableAsCSV()">
+				<i class="fa-regular fa-download me-1"></i>
+					{% trans "Download CSV" %}
+				</button>
 			</div>
 		{% endif %}
 	</div>
-	<!-- Ticket history end -->
-
-
+	{% if tickets|length > 0 %}
+		<div class="table-responsive text-nowrap">
+		    <table class="table" id="stats-table">
+		        <thead class="bg-primary-subtle text-primary-emphasis">
+		            <tr>
+		                <th>Ticket Tier</th>
+		                <th>Customer Name</th>
+		                <th>Customer Email</th>
+		                <th>Wallet Address</th>
+						<th>NFT ID(s)</th>
+		                <th>Party Size</th>
+		                <th><i class="fa-light fa-calendar"></i> Ordered At</th>
+		                <th><i class="fa-light fa-calendar"></i> Redeemed At</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            {% for ticket in tickets %}
+			            <tr>
+			                <td>
+			                    {{ ticket.ticket_tier }}
+			                </td>
+			                <td>
+			                    {{ ticket.customer_name }}
+			                </td>
+			                <td>
+			                    {{ ticket.customer_email }}
+			                </td>
+			                <td>
+			                    {{ ticket.wallet_address }}
+			                </td>
+							<td>
+								{{ ticket.redeemed_nfts }}
+							</td>
+			                <td>
+			                    {{ ticket.party_size }}
+			                </td>
+			                <td>
+			                    {% format_to_event_timezone ticket.created ticket.timezone %}
+			                </td>
+			                <td>
+			                    {% if ticket.redeemed_at %}
+			                    {% format_to_event_timezone ticket.redeemed_at ticket.timezone %}
+			                    {% else %}
+			                    Not yet redeemed
+			                    {% endif %}
+			                </td>
+			            </tr>
+		            {% endfor %}
+		        </tbody>
+		    </table>
+		</div>
+	{% else %}
+		<div class="card-body text-center">No tickets yet.</div>
+	{% endif%}
 </div>
-<!-- Content card end -->
+<!-- Event stats end -->
 
 <script>
 	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}"
@@ -256,60 +247,29 @@
   	emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
 </script>
 
-<!-- Scanner link copy button -->
-<script>
-	function copyLink(e, copyBtn) {
-		// Get the link block
-		var linkBlock = copyBtn.closest(".dropdown-menu").querySelector(
-			".link-to-copy"
-		);
-
-		// Copy code to clipboard
-		var range = document.createRange();
-		range.selectNode(linkBlock);
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(range);
-		document.execCommand("copy");
-		window.getSelection().removeAllRanges();
-
-		// Show/hide confirmation
-		var successPrompt = copyBtn.closest(".dropdown-menu").querySelector(
-			".success-prompt"
-		);
-		successPrompt.classList.remove("d-none");
-		setTimeout(function() {
-			successPrompt.classList.add("d-none");
-		}, 2000);
-
-		e.preventDefault();
-	}
-</script>
-
 <!-- Table to CSV -->
 <script>
 	function downloadTableAsCSV() {
-	  // Get the table element with the ID "stats-table"
-	  const table = document.querySelector('#stats-table');
+	  	// Get the table element with the ID "stats-table"
+	  	const table = document.querySelector('#stats-table');
 
-	  // Get the headers and data rows
-	  const headers = Array.from(table.querySelectorAll('th')).map(th => `"${th.innerText}"`);
-	  const rows = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
-		Array.from(tr.querySelectorAll('td')).map(td => `"${td.innerText}"`)
-	  );
+	  	// Get the headers and data rows
+	  	const headers = Array.from(table.querySelectorAll('th')).map(th => `"${th.innerText}"`);
+	  	const rows = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+			Array.from(tr.querySelectorAll('td')).map(td => `"${td.innerText}"`)
+	  	);
 
-	  // Combine the headers and rows into a CSV string
-	  const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+	  	// Combine the headers and rows into a CSV string
+	  	const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
 
-	  // Create a download link and click it
-	  const downloadLink = document.createElement('a');
-	  downloadLink.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`;
-	  const eventName = `{{event.title}}`
-	  downloadLink.download = `${eventName}-Stats.csv`;
-	  document.body.appendChild(downloadLink);
-	  downloadLink.click();
-	  document.body.removeChild(downloadLink);
+	  	// Create a download link and click it
+	  	const downloadLink = document.createElement('a');
+	  	downloadLink.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`;
+	  	const eventName = `{{event.title}}`
+	  	downloadLink.download = `${eventName}-Stats.csv`;
+	  	document.body.appendChild(downloadLink);
+	  	downloadLink.click();
+	  	document.body.removeChild(downloadLink);
 	}
-
-
 </script>
 {% endblock content %}

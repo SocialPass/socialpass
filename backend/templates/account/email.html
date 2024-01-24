@@ -1,4 +1,4 @@
-{% extends "redesign/dashboard_organizer/base_simple.html" %}
+{% extends "dashboard_organizer/base_simple.html" %}
 {% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
 
 {% block head_title %}{% trans "Manage Emails" %} - SocialPass{% endblock head_title %}
@@ -90,7 +90,7 @@
 			{% endfor %}
 			{% for input in form.visible_fields %}
 				<div class="mb-3">
-					{% include "redesign/forms/input.html" %}
+					{% include "forms/input.html" %}
 				</div>
 			{% endfor %}
 			<div class="text-end mt-3">

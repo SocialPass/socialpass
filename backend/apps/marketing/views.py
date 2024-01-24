@@ -3,7 +3,7 @@ from apps.root.models import Event
 
 
 class MarketingIndex(TemplateView):
-    template_name = "redesign/landing/index.html"
+    template_name = "landing/index.html"
 
     def get_context_data(self, **kwargs):
         """

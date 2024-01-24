@@ -251,7 +251,7 @@ class TeamDetailView(TeamContextMixin, TemplateView):
     Returns the details of the logged in user's team.
     """
 
-    template_name = "redesign/dashboard_organizer/team_details.html"
+    template_name = "dashboard_organizer/team_details.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -265,7 +265,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
     """
 
     form_class = CustomInviteForm
-    template_name = "redesign/dashboard_organizer/manage_members.html"
+    template_name = "dashboard_organizer/manage_members.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -316,7 +316,7 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
     object: Membership  # Mypy typing
     model = Membership
     pk_url_kwarg = "member_pk"
-    template_name = "redesign/dashboard_organizer/member_delete.html"
+    template_name = "dashboard_organizer/member_delete.html"
 
     def get_success_url(self):
         messages.add_message(
@@ -335,7 +335,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
     form_class = TeamForm
     model = Team
     pk_url_kwarg = "team_slug"
-    template_name = "redesign/dashboard_organizer/team_update.html"
+    template_name = "dashboard_organizer/team_update.html"
 
     def get_object(self):
         return self.team
@@ -358,7 +358,7 @@ class EventListView(TeamContextMixin, ListView):
     paginate_by = 15
     ordering = ["-modified"]
     context_object_name = "events"
-    template_name = "redesign/dashboard_organizer/event_list.html"
+    template_name = "dashboard_organizer/event_list.html"
 
     def get(self, *args, **kwargs):
         qs = self.get_queryset()
@@ -394,7 +394,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
 
     model = Event
     form_class = EventCreateForm
-    template_name = "redesign/dashboard_organizer/event_create.html"
+    template_name = "dashboard_organizer/event_create.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -432,7 +432,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     slug_field = "pk"
     slug_url_kwarg = "pk"
     form_class = EventForm
-    template_name = "redesign/dashboard_organizer/event_form.html"
+    template_name = "dashboard_organizer/event_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -463,7 +463,7 @@ class EventTicketsView(TeamContextMixin, DetailView):
 
     model = Event
     context_object_name = "event"
-    template_name = "redesign/dashboard_organizer/event_ticket_tiers.html"
+    template_name = "dashboard_organizer/event_ticket_tiers.html"
 
     def get_object(self):
         return (
@@ -480,7 +480,7 @@ class EventGoLiveView(TeamContextMixin, DetailView):
     """
 
     model = Event
-    template_name = "redesign/dashboard_organizer/event_go_live.html"
+    template_name = "dashboard_organizer/event_go_live.html"
     object = None
 
     def get_object(self):
@@ -556,7 +556,7 @@ class EventDeleteView(TeamContextMixin, DeleteView):
 
     object: Event  # Mypy typing
     model = Event
-    template_name = "redesign/dashboard_organizer/event_delete.html"
+    template_name = "dashboard_organizer/event_delete.html"
 
     def get_object(self):
         return Event.objects.get(
@@ -576,7 +576,7 @@ class EventStatsView(TeamContextMixin, DetailView):
     """
 
     model = Event
-    template_name = "redesign/dashboard_organizer/event_stats.html"
+    template_name = "dashboard_organizer/event_stats.html"
     object = None
 
     def get_object(self):
@@ -645,7 +645,7 @@ class TicketTierCreateView(TeamContextMixin, TemplateView):
     Select the type of ticket tier to create.
     """
 
-    template_name = "redesign/dashboard_organizer/ticket_tier_create.html"
+    template_name = "dashboard_organizer/ticket_tier_create.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -662,7 +662,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "redesign/dashboard_organizer/ticket_tier_nft_create.html"
+    template_name = "dashboard_organizer/ticket_tier_nft_create.html"
     form_data = None
 
     def get_context_data(self, **kwargs):
@@ -717,7 +717,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "redesign/dashboard_organizer/ticket_tier_paid_create.html"
+    template_name = "dashboard_organizer/ticket_tier_paid_create.html"
     form_data = None
 
     def get_context_data(self, **kwargs):
@@ -788,7 +788,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     model = TicketTier
     form_class = TicketTierForm
-    template_name = "redesign/dashboard_organizer/ticket_tier_free_create.html"
+    template_name = "dashboard_organizer/ticket_tier_free_create.html"
     form_data = None
 
     def get_context_data(self, **kwargs):
@@ -823,7 +823,7 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
     form_class = TicketTierForm
     model = TicketTier
     pk_url_kwarg = "pk"
-    template_name = "redesign/dashboard_organizer/ticket_tier_update.html"
+    template_name = "dashboard_organizer/ticket_tier_update.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -858,7 +858,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
 
     object: TicketTier  # Mypy typing
     model = TicketTier
-    template_name = "redesign/dashboard_organizer/ticket_tier_delete.html"
+    template_name = "dashboard_organizer/ticket_tier_delete.html"
 
     def get_object(self):
         return TicketTier.objects.get(
@@ -878,7 +878,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
     Connect and manage Stripe account.
     """
 
-    template_name = "redesign/dashboard_organizer/payment_details.html"
+    template_name = "dashboard_organizer/payment_details.html"
 
     def post(self, *args, **kwargs):
         """
@@ -1020,7 +1020,7 @@ class StripeDelete(TeamContextMixin, TemplateView):
     Delete a connected Stripe account
     """
 
-    template_name = "redesign/dashboard_organizer/stripe_delete.html"
+    template_name = "dashboard_organizer/stripe_delete.html"
 
     def post(self, *args, **kwargs):
         """
@@ -1048,7 +1048,7 @@ class EventScanner(DetailView):
     model = Event
     slug_field = "scanner_id"
     slug_url_kwarg = "scanner_id"
-    template_name = "redesign/scanner/scanner.html"
+    template_name = "scanner/scanner.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1081,7 +1081,7 @@ class EventScannerStats(DetailView):
 
         return render(
             self.request,
-            template_name="redesign/scanner/scanner_stats.html",
+            template_name="scanner/scanner_stats.html",
             context=context,
         )
 
@@ -1090,7 +1090,7 @@ class EventScanner2(DetailView):
     model = Event
     slug_field = "scanner_id"
     slug_url_kwarg = "scanner_id"
-    template_name = "redesign/scanner/scanner2.html"
+    template_name = "scanner/scanner2.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1116,13 +1116,13 @@ class EventScanner2(DetailView):
         embed_code = self.request.POST.get("embed_code")
         if not embed_code:
             return render(
-                self.request, template_name="redesign/scanner/scanner_error.html"
+                self.request, template_name="scanner/scanner_error.html"
             )
         try:
             embed_code = uuid.UUID(str(embed_code))
         except ValueError:
             return render(
-                self.request, template_name="redesign/scanner/scanner_error.html"
+                self.request, template_name="scanner/scanner_error.html"
             )
 
         # Retrieve ticket
@@ -1130,7 +1130,7 @@ class EventScanner2(DetailView):
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
             return render(
-                self.request, template_name="redesign/scanner/scanner_error.html"
+                self.request, template_name="scanner/scanner_error.html"
             )
 
         # Redeem ticket
@@ -1140,7 +1140,7 @@ class EventScanner2(DetailView):
             context["message"] = "Not an authorized scanner!"
             return render(
                 self.request,
-                template_name="redesign/scanner/scanner_error.html",
+                template_name="scanner/scanner_error.html",
                 context=context,
             )
         except exceptions.AlreadyRedeemedError:
@@ -1148,7 +1148,7 @@ class EventScanner2(DetailView):
             context["message"] = "Ticket already scanned!"
             return render(
                 self.request,
-                template_name="redesign/scanner/scanner_warning.html",
+                template_name="scanner/scanner_warning.html",
                 context=context,
             )
 
@@ -1156,7 +1156,7 @@ class EventScanner2(DetailView):
         context["ticket"] = ticket
         return render(
             self.request,
-            template_name="redesign/scanner/scanner_success.html",
+            template_name="scanner/scanner_success.html",
             context=context,
         )
 
@@ -1165,7 +1165,7 @@ class EventScannerManualCheckIn(DetailView):
     model = Event
     slug_field = "scanner_id"
     slug_url_kwarg = "scanner_id"
-    template_name = "redesign/scanner/scanner_manual_check_in.html"
+    template_name = "scanner/scanner_manual_check_in.html"
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
@@ -1215,7 +1215,7 @@ class EventScannerManualAttendeePost(DetailView):
         context["manual_attendee"].redeem()
         return render(
             self.request,
-            template_name="redesign/scanner/manual_attendee_post.html",
+            template_name="scanner/manual_attendee_post.html",
             context=context,
         )
 
@@ -1241,7 +1241,7 @@ class EventScannerManualTicketPost(DetailView):
         context["ticket"].redeem_ticket(self.kwargs["scanner_id"])
         return render(
             self.request,
-            template_name="redesign/scanner/manual_ticket_post.html",
+            template_name="scanner/manual_ticket_post.html",
             context=context,
         )
 
@@ -1251,7 +1251,7 @@ class RSVPTicketsView(TeamContextMixin, TemplateView):
     Show the RSVP tickets (and CTAs) for an event.
     """
 
-    template_name = "redesign/dashboard_organizer/rsvp_tickets.html"
+    template_name = "dashboard_organizer/rsvp_tickets.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1276,7 +1276,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
     Bulk create tickets using the RSVP system.
     """
 
-    template_name = "redesign/dashboard_organizer/rsvp_create_tickets.html"
+    template_name = "dashboard_organizer/rsvp_create_tickets.html"
     form_class = RSVPCreateTicketsForm
 
     def get_context_data(self, **kwargs):
@@ -1380,7 +1380,7 @@ class MessageBatchesView(TeamContextMixin, TemplateView):
     Show the message batches (and CTAs) for an event.
     """
 
-    template_name = "redesign/dashboard_organizer/message_batches.html"
+    template_name = "dashboard_organizer/message_batches.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1407,7 +1407,7 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
 
     model = MessageBatch
     form_class = MessageBatchForm
-    template_name = "redesign/dashboard_organizer/message_batch_create.html"
+    template_name = "dashboard_organizer/message_batch_create.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1449,7 +1449,7 @@ class ManualAttendeesView(TeamContextMixin, TemplateView):
     Show the manual attendees for an event.
     """
 
-    template_name = "redesign/dashboard_organizer/manual_attendees.html"
+    template_name = "dashboard_organizer/manual_attendees.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1471,7 +1471,7 @@ class ManualAttendeesCreateView(TeamContextMixin, FormView):
     Bulk create manual attendees.
     """
 
-    template_name = "redesign/dashboard_organizer/manual_attendees_create.html"
+    template_name = "dashboard_organizer/manual_attendees_create.html"
     form_class = ManualAttendeesForm
 
     def get_context_data(self, **kwargs):

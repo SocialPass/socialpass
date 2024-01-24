@@ -257,4 +257,4 @@ class CheckoutSessionTicketDownloadView(View):
                     + base64.b64encode(stream.getvalue()).decode("utf-8"),
                 }
             )
-        return render(self.request, "redesign/checkout/get_tickets.html", ctx)
+        return render(self.request, "checkout/get_tickets.html", ctx)

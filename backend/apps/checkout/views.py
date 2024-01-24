@@ -114,7 +114,7 @@ class CheckoutPageOne(DetailView):
     """
 
     model = Event
-    template_name = "redesign/checkout/checkout_page_one.html"
+    template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
         # Handle default checkout
@@ -392,7 +392,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
     """
 
     def get_template_names(self):
-        return ["redesign/checkout/checkout_page_two.html",]
+        return ["checkout/checkout_page_two.html",]
 
     def get_form_class(self):
         if self.object.tx_type == CheckoutSession.TransactionType.FREE:
@@ -475,7 +475,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
     """
 
     def get_template_names(self):
-        return ["redesign/checkout/checkout_paid.html",]
+        return ["checkout/checkout_paid.html",]
 
     def get_form_class(self):
         return CheckoutFormFiat
@@ -676,7 +676,7 @@ class CheckoutPageSuccess(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
     slug_url_kwarg = "checkout_session_public_id"
-    template_name = "redesign/checkout/checkout_page_success.html"
+    template_name = "checkout/checkout_page_success.html"
 
     def get_object(self):
         self.object = (
@@ -728,7 +728,7 @@ class GetTickets(View):
 
         return render(
             self.request,
-            "redesign/checkout/get_tickets_passcode.html",
+            "checkout/get_tickets_passcode.html",
             {
                 "organizer_team": checkout_session.event.team,
                 "checkout_session": checkout_session,
@@ -827,4 +827,4 @@ class GetTickets(View):
                 passcode will be valid for only 24 hours.",
             )
 
-        return render(self.request, f"redesign/checkout/{template_name}", ctx)
+        return render(self.request, f"checkout/{template_name}", ctx)

@@ -1,0 +1,315 @@
+{% extends "bases/base_primary.html" %}
+{% load static get_theme_value format_address format_to_event_timezone %}
+
+{% block head_title %}{{ event.title }} - {% get_theme_value "brand_name" %}{% endblock head_title %}
+
+{% block navbar_breadcrumb %}Event Stats{% endblock %}
+
+{% block content %}
+<!-- Header start -->
+<div class="border-bottom hs-md-100">
+	<div class="p-content d-md-flex h-100">
+		<div class="align-self-center">
+			<h1 class="content-title m-0 fs-base-p6">{{ event.title }}</h1>
+			<p class="text-muted mt-5 mt-5 mb-0 fs-base-n2">
+				See stats, history, orders, and check-in history of your event.
+			</p>
+		</div>
+		<div class="ms-auto align-self-center mt-10 mt-md-0">
+			<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="btn btn-primary" target="_blank">
+				<i class="fa-solid fa-external-link me-5"></i>
+				Public Page
+			</a>
+		</div>
+	</div>
+</div>
+<!-- Header end -->
+
+<!-- Content card start -->
+<div class="card rounded-0 border-top-transparent border-start-0 border-end-0 p-0 m-0">
+	<!-- Card header start -->
+	<div class="px-card py-10 border-bottom">
+		<span class="d-inline-block bg-primary-very-light-lm bg-primary-very-dim-dm border-start border-primary border-2 px-10 py-5 fs-base-n2 fw-bold">
+			Event Stats
+		</span>
+	</div>
+	<!-- Card header end -->
+
+	<!-- Main content start -->
+	<div class="row row-eq-spacing-lg">
+		<!-- Event cover image start -->
+		<div class="col-lg-5 align-self-center">
+			<div class="content">
+				<div class="d-flex align-items-center justify-content-center rounded-3 overflow-hidden pe-none hs-250 bg-gray-very-light-lm bg-darkgray-very-dim-dm">
+					<img src="{{ event.cover_image_url }}" class="mh-100" alt="{{ event.title }} cover image">
+				</div>
+				<div class="mt-10 d-flex align-items-center">
+					<div class="dropdown with-arrow">
+						<button type="button" class="btn btn-sm text-base me-5" data-hm-toggle="dropdown" aria-expanded="false">
+							<strong class="antialiased">Copy</strong>
+							<i class="fa-regular fa-link-simple"></i>
+						</button>
+						<div class="dropdown-menu ws-250">
+							<div class="dropdown-content fs-base-n2">
+								<div class="fw-bold">Public Page Link</div>
+								<p class="text-muted mt-0">
+									When sharing the event link, please use the following  for the best SEO/SMO support.
+								</p>
+								<div class="text-truncate p-10 bg-gray-very-light-lm bg-darkgray-very-dim-dm rounded my-10 lh-1">
+									<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="fw-bold antialiased" target="_blank">
+										<i class="fa-regular fa-external-link"></i>
+										<span class="link-to-copy ms-5">{{ request.scheme }}://{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}</span>
+									</a>
+								</div>
+								<button class="btn btn-sm fs-base btn-block text-base mb-5" onclick="copyLink(event, this)">
+									<i class="fa-regular fa-link-simple"></i>
+									<strong class="antialiased ms-5">Copy Link</strong>
+								</button>
+							</div>
+							<span class="d-none badge badge-success success-prompt fw-bold antialiased position-absolute top-0 end-0 z-1">
+								<i class="fa-regular fa-check"></i>
+								Copied!
+							</span>
+						</div>
+					</div>
+					<strong class="ms-auto me-10">
+						<i class="fa-regular fa-share me-5"></i>
+						Share:
+					</strong>
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="twitter-share">
+						<i class="fa-brands fa-twitter"></i>
+						<span class="visually-hidden">Twitter</span>
+					</a>
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="facebook-share">
+						<i class="fa-brands fa-facebook-f"></i>
+						<span class="visually-hidden">Facebook</span>
+					</a>
+					<a href="#" class="btn btn-square btn-sm text-base me-5" id="email-share">
+						<i class="fa-regular fa-envelope"></i>
+						<span class="visually-hidden">Email</span>
+					</a>
+				</div>
+			</div>
+		</div>
+		<!-- Event cover image end -->
+
+		<!-- Event information start -->
+		<div class="col-lg-7 align-self-center">
+			<div class="content">
+				<h3 class="fs-base-p6 m-0">{{ event.title }}</h3>
+				<div class="mt-20 d-flex align-items-center">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-clock"></i>
+					</span>
+					<span>
+						<strong>Date & Time:</strong>
+						<span class="text-muted">{{ event.start_date }}</span>
+					</span>
+				</div>
+				<div class="mt-5 d-flex align-items-center">
+					<span class="ws-25 flex-shrink-0">
+						<i class="fa-regular fa-location-dot"></i>
+					</span>
+					<span>
+						<strong>Location:</strong>
+						<span class="text-muted">{{ event.localized_address_display }}</span>
+					</span>
+				</div>
+				<div class="mt-20">
+					<table class="table">
+						<caption>Stat Totals</caption>
+						<tbody>
+							<tr>
+								<th>Tickets</th>
+								<td>{{ tickets|length }}</td>
+							</tr>
+							<tr>
+								<th>Check-Ins</th>
+								<td>{{ tickets_scanned_count|length }}</td>
+							</tr>
+							<tr>
+								<th>
+									Total Attendees
+									<br />
+									<span class="fs-base-n2 text-muted fw-400">(Tickets + Guests)</span>
+								</th>
+								<td>{{ event.attendees_count }}</td>
+							</tr>
+							<tr>
+								<th>
+									Total Check-Ins
+									<br />
+									<span class="fs-base-n2 text-muted fw-400">(Tickets + Guests)</span>
+								</th>
+								<td>{{ event.attendees_scanned_count }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<!-- Event information end -->
+	</div>
+	<!-- Main content end -->
+
+	<!-- Ticket history start -->
+	<div class="content">
+		<div class="d-md-flex align-items-center">
+			<div>
+				<h3 class="fs-base-p4 mb-0 d-flex align-items-center">
+					<span class="ws-25 me-10 text-primary">
+						<i class="fa-light fa-ticket"></i>
+					</span>
+					Ticket List
+				</h3>
+				<p class="text-muted fs-base-n2 mt-5 mb-0">
+					List of tickets that have been purchased for this event.
+				</p>
+			</div>
+			{% if tickets|length >= 0 %}
+				<div class="mt-10 mt-md-0 flex-shrink-0 ps-md-10 ms-auto">
+					<button class="btn btn-primary btn-sm rounded-pill" onClick="downloadTableAsCSV()">
+						<i class="fa-regular fa-download me-5"></i>
+						Download CSV
+					</button>
+				</div>
+			{% endif %}
+		</div>
+		{% if tickets|length >= 0 %}
+			<div class="card mx-0 overflow-y-auto p-0 table-responsive scroll-shadow-content-x">
+				<table class="table fs-base-n2" id="stats-table">
+					<thead>
+						<tr>
+							<th>Ticket Tier</th>
+							<th>Customer Name</th>
+							<th>Wallet Address</th>
+							<th>Party Size</th>
+							<th><i class="fa-light fa-calendar"></i> Ordered At</th>
+							<th><i class="fa-light fa-calendar"></i> Redeemed At</th>
+							<th>Session ID</th>
+							<th>Ticket ID</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for ticket in tickets %}
+							<tr>
+								<td>
+									{{ ticket.ticket_tier }}
+								</td>
+								<td>
+									{{ ticket.customer_name }}
+								</td>
+								<td>
+									{{ ticket.wallet_address }}
+								</td>
+								<td>
+									{{ ticket.party_size }}
+								</td>
+								<td>
+									{% format_to_event_timezone ticket.created ticket.timezone %}
+								</td>
+								<td>
+									{% if ticket.redeemed_at %}
+										{% format_to_event_timezone ticket.redeemed_at ticket.timezone %}
+									{% else %}
+										Not yet redeemed
+									{% endif %}
+								</td>
+								<td>
+									{{ ticket.checkout_session }}
+								</td>
+								<td>
+									{{ ticket.ticket_id }}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<div class="card mx-0 text-center">
+				<div class="ws-150 mw-100 mx-auto">
+					<img src="{% static 'images/illustrations/empty.svg' %}" alt="empty" class="w-100 h-auto">
+				</div>
+				<div class="ws-400 mw-100 mx-auto">
+					<h5>Nothing found</h5>
+					<p class="mb-0">
+						This event has no tickets at this moment. Please wait for some time and check back on this page.
+					</p>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	<!-- Ticket history end -->
+
+
+</div>
+<!-- Content card end -->
+
+<script>
+	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}"
+	const twitterShareAnchor = document.getElementById("twitter-share")
+	const facebookShareAnchor = document.getElementById("facebook-share")
+  	const emailShareAnchor = document.getElementById("email-share")
+  	twitterShareAnchor.href = `https://twitter.com/share?url=${socialpassLinkMessage}`
+  	facebookShareAnchor.href = `http://www.facebook.com/sharer/sharer.php?u=${socialpassLinkMessage}`
+  	emailShareAnchor.href = `mailto:?body=${socialpassLinkMessage}`
+</script>
+
+<!-- Scanner link copy button -->
+<script>
+	function copyLink(e, copyBtn) {
+		// Get the link block
+		var linkBlock = copyBtn.closest(".dropdown-menu").querySelector(
+			".link-to-copy"
+		);
+
+		// Copy code to clipboard
+		var range = document.createRange();
+		range.selectNode(linkBlock);
+		window.getSelection().removeAllRanges();
+		window.getSelection().addRange(range);
+		document.execCommand("copy");
+		window.getSelection().removeAllRanges();
+
+		// Show/hide confirmation
+		var successPrompt = copyBtn.closest(".dropdown-menu").querySelector(
+			".success-prompt"
+		);
+		successPrompt.classList.remove("d-none");
+		setTimeout(function() {
+			successPrompt.classList.add("d-none");
+		}, 2000);
+
+		e.preventDefault();
+	}
+</script>
+
+<!-- Table to CSV -->
+<script>
+	function downloadTableAsCSV() {
+	  // Get the table element with the ID "stats-table"
+	  const table = document.querySelector('#stats-table');
+
+	  // Get the headers and data rows
+	  const headers = Array.from(table.querySelectorAll('th')).map(th => `"${th.innerText}"`);
+	  const rows = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+		Array.from(tr.querySelectorAll('td')).map(td => `"${td.innerText}"`)
+	  );
+
+	  // Combine the headers and rows into a CSV string
+	  const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+
+	  // Create a download link and click it
+	  const downloadLink = document.createElement('a');
+	  downloadLink.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`;
+	  const eventName = `{{event.title}}`
+	  downloadLink.download = `${eventName}-Stats.csv`;
+	  document.body.appendChild(downloadLink);
+	  downloadLink.click();
+	  document.body.removeChild(downloadLink);
+	}
+
+
+</script>
+{% endblock content %}

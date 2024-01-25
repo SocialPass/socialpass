@@ -152,12 +152,28 @@
 						<p>{{ticket.object.ticket_tier.additional_information_html | safe}}</p>
 					</div>
 					{% endif %}
-					<h2 class="text-body-emphasis display-6 fs-3 m-0">
-						{% trans "Ticket" %} # {{ forloop.counter }}
-					</h2>
-					<p class="text-body-secondary mt-1 text-truncate">
-						{{ ticket.object.public_id }}
-					</p>
+					<div class="row g-3 mb-4">
+						<div class="col-sm">
+							<h2 class="text-body-emphasis fs-4 m-0">
+								{% trans "Ticket" %} # {{ forloop.counter }}
+							</h2>
+							<p class="text-body-secondary m-0 text-break" style="font-size: 14px;">
+								{{ ticket.object.public_id }}
+							</p>
+						</div>
+						<div class="col-sm">
+							<button class="download-btn btn btn-secondary btn-sm d-flex align-items-center ps-2 pe-3 ms-sm-auto" data-target="{{ ticket.object.public_id }}">
+								<div class="flex-shrink-0 me-3">
+									<i class="fa-light fa-image"></i>
+								</div>
+								<div class="lh-sm text-start">
+									{% trans "Download Ticket" %}
+									<br />
+									<small class="text-body-secondary">{% trans "(as PNG)" %}</small>
+								</div>
+							</button>
+						</div>
+					</div>
 					<div class="container-fluid overflow-hidden g-0">
 						<div class="row g-3">
 							<div class="col-sm-6 col-lg-4">
@@ -225,18 +241,6 @@
 					</div>
 					<div class="container-fluid g-0 mt-4">
 						<div class="row g-3 justify-content-center">
-							<div class="col-sm-6 col-lg-4">
-								<button class="download-btn btn btn-info rounded-pill d-block w-100 h-100 d-flex align-items-center px-3" data-target="{{ ticket.object.public_id }}">
-									<div class="flex-shrink-0 me-3">
-										<i class="fa-light fa-download"></i>
-									</div>
-									<div class="lh-sm text-start">
-										{% trans "Direct" %}
-										<br />
-										{% trans "Download" %}
-									</div>
-								</button>
-							</div>
 							{% if ticket.google_ticket.exists %}
 								<div class="col-sm-6 col-lg-4">
 									<a href="{{ ticket.google_ticket.save_url }}" target="_blank" rel="noopener" class="btn btn-secondary rounded-pill d-block w-100 h-100 d-flex align-items-center px-3">
@@ -251,7 +255,6 @@
 									</a>
 								</div>
 							{% endif %}
-							<!--
 							{% if ticket.apple_ticket.exists %}
 								<div class="col-sm-6 col-lg-4">
 									<a href="data:application/vnd.apple.pkpass;base64,{{ ticket.apple_ticket.bytes }}" download="{{ ticket.object.public_id }} [{{ ticket.object.event.title }}].pkpass" class="btn btn-secondary rounded-pill d-block w-100 h-100 d-flex align-items-center px-3">
@@ -266,7 +269,6 @@
 									</a>
 								</div>
 							{% endif %}
-							-->
 						</div>
 					</div>
 				</div>

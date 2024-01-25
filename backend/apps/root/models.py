@@ -196,7 +196,6 @@ class Team(DBModel):
                 status["details_submitted"] = stripe_account["details_submitted"]
                 status["payouts_enabled"] = stripe_account["payouts_enabled"]
             except Exception as e:
-                print("STRIPE ERROR: " + str(e))
                 rollbar.report_message("STRIPE ERROR: " + str(e))
 
         # OK
@@ -493,8 +492,7 @@ class Event(DBModel):
             self.google_class_id = json.loads(response.text)["id"]
             return self.google_class_id
         else:
-            print("GOOGLE WALLET ERROR: " + response.text)
-            rollbar.report_message("GOOGLE WALLET ERROR: " + response.text)
+            rollbar.report_message("handle_google_event_class ERROR: " + response.text)
             return False
 
     def clean_handle_google_event_class(self, *args, **kwargs):
@@ -594,7 +592,6 @@ class Event(DBModel):
                 html_message=msg_html,
             )
         except Exception as e:
-            print("EMAIL ERROR: " + str(e))
             rollbar.report_message("EMAIL ERROR: " + str(e))
 
     @property
@@ -822,8 +819,7 @@ class Ticket(DBModel):
                 self.save()
             else:
                 # Error while making API request
-                print("GOOGLE WALLET ERROR: " + response.text)
-                rollbar.report_message("GOOGLE WALLET ERROR: " + response.text)
+                rollbar.report_message("get_google_ticket_url ERROR: " + response.text)
                 return False
 
         # Create the save URL and return
@@ -844,7 +840,6 @@ class Ticket(DBModel):
             return _pass.get_bytes()
         except Exception as e:
             # Error while getting the pass
-            print("APPLE WALLET ERROR: " + str(e))
             rollbar.report_message("APPLE WALLET ERROR: " + str(e))
             return False
 
@@ -1562,7 +1557,7 @@ class TxAssetOwnership(DBModel):
                 _msg, signature=self.signed_message
             )
         except Exception as e:
-            print(e, _msg, self.signed_message)
+            rollbar.report_message("TxAssetOwnershipProcessingError ERROR: " + str(e))
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
                 {"wallet_address": "Error recovering address"}

@@ -206,12 +206,14 @@ class CheckoutPageOne(DetailView):
 
         # Something went wrong, so we show error message
         if not form.is_valid():
-            rollbar.report_message("CHECKOUT ERROR: " + str(form.errors))
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                '\n'.join(form.errors.get('__all__')) if '__all__' in form.errors else "Something went wrong"
-            )
+            rollbar.report_message("CHECKOUT ERROR: " + str(form.errors.as_json()))
+            for k, v in json.loads(form.errors.as_json()).items():
+                for error in v:
+                    messages.add_message(
+                        self.request,
+                        messages.ERROR,
+                        error["message"]
+                    )
             return redirect(
                 "checkout:checkout_one",
                 self.kwargs["team_slug"],

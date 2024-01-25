@@ -37,12 +37,17 @@ class CheckoutForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean(self):
+        # Check valid JSON format
         cleaned_data = super().clean()
+        ticket_tier_data = json.loads(cleaned_data["ticket_tier_data"])
+        if not isinstance(ticket_tier_data, list):
+            raise ValidationError(
+                f"Something went wrong."
+            )
 
         # Clean Form Inputs against Ticket Tier Data
         # Max Per Person, Amount, Extra Party
         # Note: Recursion to avoid duplicate queries
-        ticket_tier_data = json.loads(cleaned_data["ticket_tier_data"])
         for item in ticket_tier_data:
             for tier in self.tiers_all:
                 if int(item["id"]) == tier.id:

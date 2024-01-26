@@ -177,13 +177,6 @@ class Team(DBModel):
         return f"Team: {self.name}"
 
     @property
-    def is_stripe_connected(self):
-        if self.stripe_account_id:
-            return True
-        else:
-            return False
-
-    @property
     def stripe_account_payouts_enabled(self):
         status = {
             "details_submitted": False,
@@ -191,7 +184,7 @@ class Team(DBModel):
         }
 
         # Query Stripe API to get updated status
-        if self.is_stripe_connected:
+        if self.stripe_account_id:
             try:
                 stripe_account = stripe.Account.retrieve(self.stripe_account_id)
                 status["details_submitted"] = stripe_account["details_submitted"]

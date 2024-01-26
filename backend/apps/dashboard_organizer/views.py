@@ -890,7 +890,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
         stripe.api_key = settings.STRIPE_API_KEY
 
         # Stripe account already connected
-        if current_team.is_stripe_connected:
+        if current_team.stripe_account_id:
             return redirect(
                 "dashboard_organizer:payment_detail",
                 self.kwargs["team_slug"],
@@ -971,7 +971,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
         stripe.api_key = settings.STRIPE_API_KEY
 
         # Stripe account already connected
-        if current_team.is_stripe_connected:
+        if current_team.stripe_account_id:
             return reverse(
                 "dashboard_organizer:payment_detail",
                 args=(self.kwargs["team_slug"],),

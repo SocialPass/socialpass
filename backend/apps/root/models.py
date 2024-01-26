@@ -15,7 +15,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
+from django.db.models.functions import Round
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -773,15 +774,16 @@ class Ticket(DBModel):
 
     # Ticket access info
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
+    extra_party = models.GeneratedField(
+        expression=F("party_size") - 1,
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     redeemed_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"Ticket: {str(self.id)}"
-
-    @property
-    def extra_party(self):
-        return self.party_size - 1
 
     def redeem_ticket(self, scanner_id):
         """Redeems a ticket."""
@@ -999,13 +1001,14 @@ class TierFiat(DBModel):
         blank=False,
         null=False,
     )
+    price_per_ticket_cents = models.GeneratedField(
+        expression=Round(F("price_per_ticket") * 100),
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
 
     def __str__(self) -> str:
         return f"TierFiat: {self.public_id}"
-
-    @property
-    def price_per_ticket_cents(self):
-        return round(self.price_per_ticket * 100)
 
 
 class TierBlockchain(DBModel):

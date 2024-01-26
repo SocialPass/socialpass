@@ -698,6 +698,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
         # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
+        form.instance.tx_type = TicketTier.TransactionType.ASSET_OWNERSHIP
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -769,6 +770,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
+        form.instance.tx_type = TicketTier.TransactionType.FIAT
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -803,6 +805,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         form.instance.tier_free = TierFree.objects.create()
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
+        form.instance.tx_type = TicketTier.TransactionType.FREE
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -1334,6 +1337,12 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         # Also track success and failure
         success_list = []
         failure_list = []
+
+        # Make sure ticket tiers created before tx_type was DB field works properly
+        ticket_tier = form.cleaned_data["ticket_tier"]
+        if not ticket_tier.tx_type:
+            ticket_tier.generate_tx_type()
+
         for email in emails:
             try:
                 with transaction.atomic():
@@ -1341,10 +1350,10 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         event=context["event"],
                         rsvp_batch=rsvp_batch,
                         email=email.strip(),
-                        tx_type=form.cleaned_data["ticket_tier"].tx_type,
+                        tx_type=ticket_tier.tx_type,
                     )
                     checkout_item = CheckoutItem.objects.create(
-                        ticket_tier=form.cleaned_data["ticket_tier"],
+                        ticket_tier=ticket_tier,
                         checkout_session=checkout_session,
                         quantity=1,
                         extra_party=form.cleaned_data["allowed_guests"],

@@ -850,6 +850,12 @@ class TicketTier(DBModel):
     This tier contains details for a ticket, ++ pricing and payment method information.
     """
 
+    class TransactionType(models.TextChoices):
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
+
     # keys
     event = models.ForeignKey(
         "Event",
@@ -883,6 +889,12 @@ class TicketTier(DBModel):
     )
 
     # basic info
+    tx_type = models.CharField(
+        max_length=50,
+        choices=TransactionType.choices,
+        default="",
+        blank=True,
+    )
     ticket_type = models.CharField(
         max_length=255,
         blank=False,
@@ -930,16 +942,21 @@ class TicketTier(DBModel):
     def __str__(self):
         return f"TicketTier: {self.ticket_type}"
 
-    @cached_property
-    def tx_type(self):
+    def generate_tx_type(self):
+        """
+        This method serves to make sure ticket tiers created before tx_type was a 
+        database field will still continue to work properly (mainly for creating 
+        RSVP tickets).
+        """
         if self.tier_fiat:
-            return CheckoutSession.TransactionType.FIAT
+            self.tx_type = TicketTier.TransactionType.FIAT
         elif self.tier_blockchain:
-            return CheckoutSession.TransactionType.BLOCKCHAIN
+            self.tx_type = TicketTier.TransactionType.BLOCKCHAIN
         elif self.tier_asset_ownership:
-            return CheckoutSession.TransactionType.ASSET_OWNERSHIP
+            self.tx_type = TicketTier.TransactionType.ASSET_OWNERSHIP
         elif self.tier_free:
-            return CheckoutSession.TransactionType.FREE
+            self.tx_type = TicketTier.TransactionType.FREE
+        self.save()
 
     @cached_property
     def tickets_sold_count(self):

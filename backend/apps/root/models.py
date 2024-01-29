@@ -491,11 +491,13 @@ class Event(DBModel):
             rollbar.report_message("GOOGLE WALLET ERROR: " + response.text)
             return False
 
-    def clean_handle_google_event_class(self, *args, **kwargs):
+    def clean(self, *args, **kwargs):
         """
-        clean the handling of the Google event class
+        clean method
+        runs all clean_* methods
         """
-        # we do this only for LIVE events to reduce the number of API requests
+
+        # clean the handling of the Google event class
         if self.state == Event.StateStatus.LIVE:
             google_event_class_id = self.handle_google_event_class()
             if not google_event_class_id:
@@ -503,12 +505,6 @@ class Event(DBModel):
                     "Something went wrong while handling the Google event class."
                 )
 
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_handle_google_event_class()
         return super().clean(*args, **kwargs)
 
     def transition_draft(self, save=True):

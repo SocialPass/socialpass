@@ -486,7 +486,7 @@ class Event(DBModel):
             self.google_class_id = json.loads(response.text)["id"]
             return self.google_class_id
         else:
-            rollbar.report_message("GOOGLE WALLET ERROR: " + response.text)
+            rollbar.report_message("handle_google_event_class ERROR: " + response.text)
             return False
 
     def clean(self, *args, **kwargs):
@@ -810,7 +810,7 @@ class Ticket(DBModel):
                 self.save()
             else:
                 # Error while making API request
-                rollbar.report_message("GOOGLE WALLET ERROR: " + response.text)
+                rollbar.report_message("get_google_ticket_url ERROR: " + response.text)
                 return False
 
         # Create the save URL and return
@@ -1566,7 +1566,7 @@ class TxAssetOwnership(DBModel):
                 _msg, signature=self.signed_message
             )
         except Exception as e:
-            rollbar.report_message("WALLET ADDRESS RECOVERY ERROR: " + e)
+            rollbar.report_message("TxAssetOwnershipProcessingError ERROR: " + str(e))
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
                 {"wallet_address": "Error recovering address"}

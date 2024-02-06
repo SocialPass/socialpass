@@ -240,12 +240,20 @@ class CheckoutPageOne(DetailView):
         # OK
         # Redirect on success
         if checkout_session.tx_type == CheckoutSession.TransactionType.FIAT:
-            return redirect(
-                "checkout:checkout_fiat",
-                self.object.team.slug,
-                self.object.slug,
-                checkout_session.public_id,
-            )
+            if not self.object.waiting_queue_enabled:
+                return redirect(
+                    "checkout:checkout_fiat",
+                    self.object.team.slug,
+                    self.object.slug,
+                    checkout_session.public_id,
+                )
+            else:
+                checkout_session.is_waiting_list = True
+                checkout_session.save()
+                return redirect(
+                    "checkout:joined_waiting_queue",
+                    checkout_session.public_id,
+                )
         else:
             return redirect(
                 "checkout:checkout_two",
@@ -333,6 +341,14 @@ class CheckoutPageTwoBase(DetailView):
 
         # Form is valid, continue...
 
+        # If waiting queue is enabled, we ignore everything and return the form
+        if self.object.event.waiting_queue_enabled:
+            return {
+                "is_error": False,
+                "error_message": "",
+                "form": form,
+            }
+
         # Make sure event venue capacity is not exceeded
         checkout_items = self.object.checkoutitem_set.all()
         if self.object.event.total_capacity:
@@ -364,7 +380,7 @@ class CheckoutPageTwoBase(DetailView):
                 }
 
         # Make sure there is no ticket overflow
-        is_waiting_list = self.object.check_is_waiting_list()
+        is_waiting_list = self.object.check_is_ticket_overflow()
         if is_waiting_list:
             self.object.is_waiting_list = True
             self.object.save()
@@ -420,6 +436,16 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                         self.kwargs["event_slug"],
                     ),
                 ) + f"?name={self.object.name}&email={self.object.email}"
+            )
+
+        # If waiting queue is enabled, we ignore everything
+        # And redirect to the waiting queue success page
+        if self.object.event.waiting_queue_enabled:
+            self.object.is_waiting_list = True
+            self.object.save()
+            return redirect(
+                "checkout:joined_waiting_queue",
+                self.kwargs["checkout_session_public_id"],
             )
 
         # Set local variables
@@ -828,3 +854,31 @@ class GetTickets(View):
             )
 
         return render(self.request, f"checkout/{template_name}", ctx)
+
+
+class JoinedWaitingQueue(DetailView):
+    model = CheckoutSession
+    slug_field = "public_id"
+    slug_url_kwarg = "checkout_session_public_id"
+    template_name = "checkout/joined_waiting_queue.html"
+
+    def get_object(self):
+        self.object = (
+            CheckoutSession.objects.select_related(
+                "event",
+                "event__team",
+                "event__team__whitelabel",
+            )
+            .get(
+                public_id=self.kwargs["checkout_session_public_id"],
+            )
+        )
+        if not self.object:
+            raise Http404
+        return super().get_object()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["checkout_items"] = self.object.checkoutitem_set.all()
+        context["organizer_team"] = self.object.event.team
+        return context

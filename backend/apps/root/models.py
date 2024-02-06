@@ -725,7 +725,9 @@ class Event(DBModel):
             free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
         ).get()
 
-
+    @property
+    def waiting_queue_enabled(self):
+        return True
 
 
 class Ticket(DBModel):
@@ -1393,7 +1395,7 @@ class CheckoutSession(DBModel):
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.save()
 
-    def check_is_waiting_list(self):
+    def check_is_ticket_overflow(self):
         """
         Check if there is ticket overflow for checkout session
         """

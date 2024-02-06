@@ -15,7 +15,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
+from django.db.models.functions import Round
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -176,13 +177,6 @@ class Team(DBModel):
         return f"Team: {self.name}"
 
     @property
-    def is_stripe_connected(self):
-        if self.stripe_account_id:
-            return True
-        else:
-            return False
-
-    @property
     def stripe_account_payouts_enabled(self):
         status = {
             "details_submitted": False,
@@ -190,7 +184,7 @@ class Team(DBModel):
         }
 
         # Query Stripe API to get updated status
-        if self.is_stripe_connected:
+        if self.stripe_account_id:
             try:
                 stripe_account = stripe.Account.retrieve(self.stripe_account_id)
                 status["details_submitted"] = stripe_account["details_submitted"]
@@ -495,11 +489,13 @@ class Event(DBModel):
             rollbar.report_message("handle_google_event_class ERROR: " + response.text)
             return False
 
-    def clean_handle_google_event_class(self, *args, **kwargs):
+    def clean(self, *args, **kwargs):
         """
-        clean the handling of the Google event class
+        clean method
+        runs all clean_* methods
         """
-        # we do this only for LIVE events to reduce the number of API requests
+
+        # clean the handling of the Google event class
         if self.state == Event.StateStatus.LIVE:
             google_event_class_id = self.handle_google_event_class()
             if not google_event_class_id:
@@ -507,12 +503,6 @@ class Event(DBModel):
                     "Something went wrong while handling the Google event class."
                 )
 
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        self.clean_handle_google_event_class()
         return super().clean(*args, **kwargs)
 
     def transition_draft(self, save=True):
@@ -770,15 +760,16 @@ class Ticket(DBModel):
 
     # Ticket access info
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
+    extra_party = models.GeneratedField(
+        expression=F("party_size") - 1,
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
     embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
     redeemed_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"Ticket: {str(self.id)}"
-
-    @property
-    def extra_party(self):
-        return self.party_size - 1
 
     def redeem_ticket(self, scanner_id):
         """Redeems a ticket."""
@@ -850,6 +841,12 @@ class TicketTier(DBModel):
     This tier contains details for a ticket, ++ pricing and payment method information.
     """
 
+    class TransactionType(models.TextChoices):
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
+
     # keys
     event = models.ForeignKey(
         "Event",
@@ -883,6 +880,12 @@ class TicketTier(DBModel):
     )
 
     # basic info
+    tx_type = models.CharField(
+        max_length=50,
+        choices=TransactionType.choices,
+        default="",
+        blank=True,
+    )
     ticket_type = models.CharField(
         max_length=255,
         blank=False,
@@ -930,16 +933,21 @@ class TicketTier(DBModel):
     def __str__(self):
         return f"TicketTier: {self.ticket_type}"
 
-    @cached_property
-    def tx_type(self):
+    def generate_tx_type(self):
+        """
+        This method serves to make sure ticket tiers created before tx_type was a
+        database field will still continue to work properly (mainly for creating
+        RSVP tickets).
+        """
         if self.tier_fiat:
-            return CheckoutSession.TransactionType.FIAT
+            self.tx_type = TicketTier.TransactionType.FIAT
         elif self.tier_blockchain:
-            return CheckoutSession.TransactionType.BLOCKCHAIN
+            self.tx_type = TicketTier.TransactionType.BLOCKCHAIN
         elif self.tier_asset_ownership:
-            return CheckoutSession.TransactionType.ASSET_OWNERSHIP
+            self.tx_type = TicketTier.TransactionType.ASSET_OWNERSHIP
         elif self.tier_free:
-            return CheckoutSession.TransactionType.FREE
+            self.tx_type = TicketTier.TransactionType.FREE
+        self.save()
 
     @cached_property
     def tickets_sold_count(self):
@@ -994,13 +1002,14 @@ class TierFiat(DBModel):
         blank=False,
         null=False,
     )
+    price_per_ticket_cents = models.GeneratedField(
+        expression=Round(F("price_per_ticket") * 100),
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
 
     def __str__(self) -> str:
         return f"TierFiat: {self.public_id}"
-
-    @property
-    def price_per_ticket_cents(self):
-        return round(self.price_per_ticket * 100)
 
 
 class TierBlockchain(DBModel):

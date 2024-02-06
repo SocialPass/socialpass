@@ -10,7 +10,7 @@
 {% block content %}
 <!-- Payment details start -->
 <div class="mb-3 mt-4">
-	{% if current_team.is_stripe_connected %}
+	{% if current_team.stripe_account_id %}
 		<div class="d-flex align-items-center mb-3">
 			<div class="pe-3">
 				<h1 class="h3 mb-0">{% trans "Stripe Account Connected" %}</h1>

@@ -438,6 +438,12 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 ) + f"?name={self.object.name}&email={self.object.email}"
             )
 
+        # Set local variables and finalize transaction
+        form = validate_post["form"]
+        context = self.get_context_data()
+        checkout_session = self.get_object()
+        self.object.finalize_transaction(form_data=form)
+
         # If waiting queue is enabled, we ignore everything
         # And redirect to the waiting queue success page
         if self.object.event.waiting_queue_enabled:
@@ -448,14 +454,8 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 self.kwargs["checkout_session_public_id"],
             )
 
-        # Set local variables
-        form = validate_post["form"]
-        context = self.get_context_data()
-        checkout_session = self.get_object()
-
-        # Finalize / process transaction and handle exceptions
+        # Process transaction and handle exceptions
         try:
-            self.object.finalize_transaction(form_data=form)
             self.object.process_transaction()
         except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
             for key, value in e.message_dict.items():

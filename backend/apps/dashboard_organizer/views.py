@@ -8,11 +8,14 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
@@ -1558,7 +1561,9 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
 
     def get_object(self):
         if not self.object:
-            self.object = CheckoutSession.objects.get(
+            self.object = CheckoutSession.objects.select_related(
+                "event", "event__team",
+            ).get(
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
                 pk=self.kwargs["checkout_session_pk"],
@@ -1580,8 +1585,42 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
 
         # Move session from waiting queue to attendee list
         if self.object.tx_type == CheckoutSession.TransactionType.FIAT:
-            # TODO: Handle FIAT waiting queue
-            pass
+            # Send email with payment link
+            domain = Site.objects.all().first().domain
+            url = reverse(
+                "checkout:checkout_fiat",
+                args=[
+                    self.object.event.team.slug,
+                    self.object.event.slug,
+                    self.object.public_id,
+                ],
+            )
+            ctx = {
+                "event": self.object.event,
+                "payment_link": domain + url,
+            }
+            msg_subject = str(
+                "[SocialPass] Complete payment to get tickets - " + 
+                self.object.event.title
+            )
+            msg_plain = render_to_string(
+                "dashboard_organizer/email/wq_complete_payment_message.txt", ctx
+            )
+            msg_html = render_to_string(
+                "dashboard_organizer/email/wq_complete_payment.html", ctx
+            )
+            send_mail(
+                msg_subject,
+                msg_plain,
+                "tickets-no-reply@socialpass.io",
+                [self.object.email,],
+                html_message=msg_html,
+            )
+
+            # Update session to make sure expiration is skipped
+            # This is also used to handle UI on dashboard
+            self.object.skip_expiration = True
+            self.object.save()
         else:
             try:
                 self.object.process_transaction()

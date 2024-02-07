@@ -49,6 +49,13 @@
 										{% trans "Fulfilled" %}
 									</span>
 								</div>
+							{% elif checkout_session.tx_type == "FIAT" and checkout_session.skip_expiration %}
+								<div class="ms-auto">
+									<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
+										{% trans "Waiting..." %}
+									</span>
+									<div class="specific-w-100 text-center text-primary-emphasis fw-bold mt-1" style="font-size: 10px;">{% trans "Payment link sent" %}</div>
+								</div>
 							{% else %}
 								<form
 									class="ms-auto"

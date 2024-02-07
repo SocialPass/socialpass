@@ -964,8 +964,8 @@ class TicketTier(DBModel):
         return self.capacity - tickets.count()
 
     @cached_property
-    def tickets_sold_minus_available(self):
-        return self.tickets_sold_count - self.tickets_available
+    def tickets_sold_exceeding_capacity(self):
+        return abs(int(self.capacity - self.tickets_sold_count))
 
     @property
     def guests_count(self):

@@ -74,7 +74,7 @@
 						<div class="col">
 							<div class="fw-bold text-primary-emphasis h5 mb-0">
 								{% if ticket_tier.tickets_sold_count > ticket_tier.capacity %}
-									{{ ticket_tier.capacity }} + {{ ticket_tier.tickets_sold_minus_available }}
+									{{ ticket_tier.capacity }} + {{ ticket_tier.tickets_sold_exceeding_capacity }}
 									<span data-bs-toggle="tooltip" data-bs-title="This exceeds capacity because of the use of the RSVP or waiting queue systems.">*</span>
 								{% else %}
 									{{ ticket_tier.tickets_sold_count }}

@@ -349,7 +349,8 @@ class CheckoutPageTwoBase(DetailView):
         # Form is valid, continue...
 
         # If waiting queue is enabled, we ignore everything and return the form
-        if self.object.event.waiting_queue_enabled:
+        # We do the same if skip_validation is True (for FIAT waiting queue sessions)
+        if self.object.event.waiting_queue_enabled or self.object.skip_validation:
             return {
                 "is_error": False,
                 "error_message": "",

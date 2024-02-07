@@ -49,7 +49,7 @@
 										{% trans "Fulfilled" %}
 									</span>
 								</div>
-							{% elif checkout_session.tx_type == "FIAT" and checkout_session.skip_expiration %}
+							{% elif checkout_session.tx_type == "FIAT" and checkout_session.skip_validation %}
 								<div class="ms-auto">
 									<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
 										{% trans "Waiting..." %}

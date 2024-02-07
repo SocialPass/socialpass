@@ -306,7 +306,7 @@ class CheckoutPageTwoBase(DetailView):
 
     def is_expired(self):
         self.object = self.get_object()
-        if self.object.skip_expiration:
+        if self.object.skip_validation:
             return False
         else:
             expiration = self.object.created + datetime.timedelta(minutes=15)

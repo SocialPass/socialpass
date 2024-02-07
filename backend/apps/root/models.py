@@ -1193,10 +1193,10 @@ class CheckoutSession(DBModel):
     passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
     is_waiting_list = models.BooleanField(default=False)
 
-    # When set, this overrides the expiration check
+    # When set, this overrides the expiration and validation check
     # Used when customers need to complete waiting queue flow for FIAT tickets
     # We may need this in other places, so we use a generic name
-    skip_expiration = models.BooleanField(default=False)
+    skip_validation = models.BooleanField(default=False)
 
     def __str__(self):
         return f"CheckoutSession: {self.email}"

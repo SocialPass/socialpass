@@ -1619,7 +1619,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
 
             # Update session to make sure expiration is skipped
             # This is also used to handle UI on dashboard
-            self.object.skip_expiration = True
+            self.object.skip_validation = True
             self.object.save()
         else:
             try:

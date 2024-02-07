@@ -1562,9 +1562,10 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
                 pk=self.kwargs["checkout_session_pk"],
-                tx_status=CheckoutSession.OrderStatus.VALID,
                 is_waiting_list=True,
             )
+            if self.object.tx_status == CheckoutSession.OrderStatus.FULFILLED:
+                raise Http404
         return self.object
 
     def post(self, *args, **kwargs):

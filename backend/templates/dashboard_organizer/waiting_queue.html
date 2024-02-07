@@ -22,7 +22,7 @@
 		</form>
 		{% if waiting_queue.count > 0 %}
 			{% for checkout_session in waiting_queue %}
-				<div class="card border-0 rounded-4 shadow-sm mb-3">
+				<div class="card border-0 rounded-4 mb-3 waiting-queue-card">
 					<div class="card-body">
 						<div class="d-flex align-items-center mb-3">
 							{% if checkout_session.tx_type == "FIAT" %}
@@ -45,7 +45,7 @@
 							{% endif %}
 							{% if checkout_session.tx_status == "FULFILLED" %}
 								<div class="ms-auto">
-									<span class="btn btn-secondary d-block specific-w-100 disabled pe-none">
+									<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-fulfilled">
 										{% trans "Fulfilled" %}
 									</span>
 								</div>
@@ -56,7 +56,7 @@
 									hx-post="{% url 'dashboard_organizer:waiting_queue_post' current_team.slug event.pk checkout_session.pk %}"
 									hx-trigger="submit"
 								>
-									<button type="submit" class="btn btn-primary d-block specific-w-100 fulfill-button">
+									<button type="submit" class="btn btn-primary d-block specific-w-100 wq-fulfill-button">
 										<i class="fa-solid fa-tickets me-1"></i>
 										{% trans "Fulfill" %}
 									</button>
@@ -146,7 +146,7 @@
 {% block extra_body %}
 <script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
 <script type="text/javascript">
-	let fulfillButtons = document.querySelectorAll(".fulfill-button");
+	let fulfillButtons = document.querySelectorAll(".wq-fulfill-button");
 	for (let i = 0; i < fulfillButtons.length; i++) {
 		fulfillButtons[i].addEventListener("click", (e) => {
 			e.target.classList.add("disabled");

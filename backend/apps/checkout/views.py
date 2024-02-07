@@ -304,6 +304,14 @@ class CheckoutPageTwoBase(DetailView):
         context["organizer_team"] = self.object.event.team
         return context
 
+    def is_expired(self):
+        self.object = self.get_object()
+        if self.object.skip_expiration:
+            return False
+        else:
+            expiration = self.object.created + datetime.timedelta(minutes=15)
+            return timezone.now() > expiration
+
     def get(self, *args, **kwargs):
         """
         override get to call create_transaction for each attempt
@@ -312,8 +320,7 @@ class CheckoutPageTwoBase(DetailView):
         self.object.create_transaction()
 
         # Check if expired or not
-        expiration = self.object.created + datetime.timedelta(minutes=15)
-        if timezone.now() > expiration:
+        if self.is_expired():
             messages.add_message(
                 self.request,
                 messages.ERROR,

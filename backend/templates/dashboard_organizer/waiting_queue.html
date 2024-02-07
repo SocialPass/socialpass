@@ -43,10 +43,25 @@
 									{% trans "NFT-Gated" %}
 								</span>
 							{% endif %}
-							<a href="#" class="btn btn-link ms-auto">
-								<i class="fa-light fa-check me-1"></i>
-								{% trans "Fulfill" %}
-							</a>
+							{% if checkout_session.tx_status == "FULFILLED" %}
+								<div class="ms-auto">
+									<span class="btn btn-secondary d-block specific-w-100 disabled pe-none">
+										{% trans "Fulfilled" %}
+									</span>
+								</div>
+							{% else %}
+								<form
+									class="ms-auto"
+									hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+									hx-post="{% url 'dashboard_organizer:waiting_queue_post' current_team.slug event.pk checkout_session.pk %}"
+									hx-trigger="submit"
+								>
+									<button type="submit" class="btn btn-primary d-block specific-w-100 fulfill-button">
+										<i class="fa-solid fa-tickets me-1"></i>
+										{% trans "Fulfill" %}
+									</button>
+								</form>
+							{% endif %}
 						</div>
 						<div class="fw-bold text-body-secondary">
 							{% trans "Created:" %}
@@ -127,3 +142,18 @@
 	</div>
 </div>
 {% endblock content %}
+
+{% block extra_body %}
+<script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
+<script type="text/javascript">
+	let fulfillButtons = document.querySelectorAll(".fulfill-button");
+	for (let i = 0; i < fulfillButtons.length; i++) {
+		fulfillButtons[i].addEventListener("click", (e) => {
+			e.target.classList.add("disabled");
+			e.target.classList.add("pe-none");
+			e.target.setAttribute("tabindex", "-1");
+			e.target.innerHTML = "<i class='fa-light fa-circle-notch fa-spin'></i>";
+		});
+	}
+</script>
+{% endblock %}

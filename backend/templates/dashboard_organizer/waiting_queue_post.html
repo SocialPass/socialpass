@@ -1,0 +1,14 @@
+{% load i18n %}
+{% if object.tx_status == "FULFILLED" %}
+	<span class="btn btn-secondary specific-w-100 disabled pe-none">
+		{% trans "Fulfilled" %}
+	</span>
+{% else %}
+	<div>
+		<button type="submit" class="btn btn-primary d-block specific-w-100 fulfill-button">
+			<i class="fa-solid fa-tickets me-1"></i>
+			{% trans "Fulfill" %}
+		</button>
+		<div class="specific-w-100 text-center text-danger-emphasis fw-bold" style="font-size: 10px;">{% trans "Try again" %}</div>
+	</div>
+{% endif %}

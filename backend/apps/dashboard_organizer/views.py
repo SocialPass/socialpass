@@ -1223,7 +1223,6 @@ class EventScannerManualAttendeePost(DetailView):
         )
 
 
-
 class EventScannerManualTicketPost(DetailView):
     model = Event
     slug_field = "scanner_id"
@@ -1551,3 +1550,40 @@ class WaitingQueueView(TeamContextMixin, ListView):
             team__slug=self.kwargs["team_slug"],
         )
         return context
+
+
+class WaitingQueuePostView(TeamContextMixin, DetailView):
+    model = CheckoutSession
+    object = None
+
+    def get_object(self):
+        if not self.object:
+            self.object = CheckoutSession.objects.get(
+                event__pk=self.kwargs["event_pk"],
+                event__team__slug=self.kwargs["team_slug"],
+                pk=self.kwargs["checkout_session_pk"],
+                is_waiting_list=True,
+            )
+            if self.object.tx_status == CheckoutSession.OrderStatus.FULFILLED:
+                raise Http404
+        return self.object
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+
+        # Move session from waiting queue to attendee list
+        if self.object.tx_type == CheckoutSession.TransactionType.FIAT:
+            # TODO: Handle FIAT waiting queue
+            pass
+        else:
+            try:
+                self.object.process_transaction()
+            except Exception:
+                rollbar.report_exc_info()
+
+        return render(
+            self.request,
+            template_name="dashboard_organizer/waiting_queue_post.html",
+            context=context,
+        )

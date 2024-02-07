@@ -1564,13 +1564,19 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 pk=self.kwargs["checkout_session_pk"],
                 is_waiting_list=True,
             )
-            if self.object.tx_status == CheckoutSession.OrderStatus.FULFILLED:
-                raise Http404
         return self.object
 
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
+
+        # If session is not valid, we simply return (error on template)
+        if self.object.tx_status != CheckoutSession.OrderStatus.VALID:
+            return render(
+                self.request,
+                template_name="dashboard_organizer/waiting_queue_post.html",
+                context=context,
+            )
 
         # Move session from waiting queue to attendee list
         if self.object.tx_type == CheckoutSession.TransactionType.FIAT:

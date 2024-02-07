@@ -63,23 +63,23 @@
 								</form>
 							{% endif %}
 						</div>
-						<div class="fw-bold text-body-secondary">
+						<div class="fw-bold">
+							{% trans "Customer:" %}
+							<span class="fw-normal">{{ checkout_session.name }} | <a href="mailto:{{ checkout_session.email }}" class="text-decoration-none">{{ checkout_session.email }}</a></span>
+						</div>
+						<div class="fw-bold text-body-secondary" style="font-size: var(--bs-font-size-sm);">
+							{% trans "ID:" %}
+							<span class="fw-normal">{{ checkout_session.public_id }}</span>
+						</div>
+						<div class="fw-bold text-body-secondary" style="font-size: var(--bs-font-size-sm);">
 							{% trans "Created:" %}
 							<span class="fw-normal">{{ checkout_session.created }}</span>
-						</div>
-						<div class="fw-bold">
-							{% trans "Name:" %}
-							<span class="fw-normal">{{ checkout_session.name }}</span>
-						</div>
-						<div class="fw-bold">
-							{% trans "Email:" %}
-							<span class="fw-normal">{{ checkout_session.email }}</span>
 						</div>
 						<hr />
 						<div>
 							<div class="text-primary-emphasis h6">
 								<i class="fa-light fa-cart-shopping me-1"></i>
-								{% trans "Checkout Data" %}
+								{% trans "Checkout Data:" %}
 							</div>
 							{% for item in checkout_session.checkoutitem_set.all %}
 								<!-- Order item start -->
@@ -149,6 +149,9 @@
 	let fulfillButtons = document.querySelectorAll(".wq-fulfill-button");
 	for (let i = 0; i < fulfillButtons.length; i++) {
 		fulfillButtons[i].addEventListener("click", (e) => {
+			if (document.activeElement === e.target) {
+				document.activeElement.blur();
+			}
 			e.target.classList.add("disabled");
 			e.target.classList.add("pe-none");
 			e.target.setAttribute("tabindex", "-1");

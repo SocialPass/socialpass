@@ -387,17 +387,12 @@ class CheckoutPageTwoBase(DetailView):
                 }
 
         # Make sure there is no ticket overflow
-        is_waiting_list = self.object.check_is_ticket_overflow()
-        if is_waiting_list:
-            self.object.is_waiting_list = True
-            self.object.save()
+        if self.object.check_is_ticket_overflow():
             return {
                 "is_error": True,
                 "error_message": str(
-                    "We're sorry, not enough ticket(s) are available. However, "
-                    "you are on a waiting list, so please be on the lookout for "
-                    "an email. The organizers may decide to send you ticket(s) "
-                    "depending on the availability."
+                    "We're sorry, not enough ticket(s) are available. Perhaps they "
+                    "sold out as you were completing the checkout process."
                 ),
                 "form": form,
             }

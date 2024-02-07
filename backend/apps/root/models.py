@@ -1401,14 +1401,14 @@ class CheckoutSession(DBModel):
         """
         Check if there is ticket overflow for checkout session
         """
-        is_waiting_list = False
+        is_ticket_overflow = False
         checkout_items = CheckoutItem.objects.select_related(
             "ticket_tier",
         ).filter(checkout_session=self)
         for item in checkout_items:
             if item.quantity > item.ticket_tier.tickets_available:
-                is_waiting_list = True
-        return is_waiting_list
+                is_ticket_overflow = True
+        return is_ticket_overflow
 
 
 class CheckoutItem(DBModel):

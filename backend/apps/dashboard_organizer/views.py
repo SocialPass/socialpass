@@ -1509,3 +1509,45 @@ class ManualAttendeesCreateView(TeamContextMixin, FormView):
             "dashboard_organizer:manual_attendees",
             args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
         )
+
+
+class WaitingQueueView(TeamContextMixin, ListView):
+    """
+    Show the checkout sessions in the waiting queue, and allow organizers to 
+    bump them up to the attendee list (and issue tickets) as needed.
+    """
+
+    model = CheckoutSession
+    paginate_by = 15
+    ordering = ["-created"]
+    context_object_name = "waiting_queue"
+    template_name = "dashboard_organizer/waiting_queue.html"
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.prefetch_related("checkoutitem_set")
+
+        if self.request.GET.get("search"):
+            qs = qs.filter(
+                Q(name__icontains=self.request.GET.get("search")) |
+                Q(email__icontains=self.request.GET.get("search")),
+                event__pk=self.kwargs["event_pk"],
+                event__team__slug=self.kwargs["team_slug"],
+                is_waiting_list=True,
+            )
+        else:
+            qs = qs.filter(
+                event__pk=self.kwargs["event_pk"],
+                event__team__slug=self.kwargs["team_slug"],
+                is_waiting_list=True,
+            )
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = Event.objects.get(
+            pk=self.kwargs["event_pk"],
+            team__slug=self.kwargs["team_slug"],
+        )
+        return context

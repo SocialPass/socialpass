@@ -411,6 +411,7 @@ class Event(DBModel):
         validators=[MinValueValidator(1)],
         help_text="Denotes the total capacity for the venue, across all ticket tiers.",
     )
+    waiting_queue_enabled = models.BooleanField(default=False)
 
     # Location info
     # timezone of event
@@ -724,10 +725,6 @@ class Event(DBModel):
             asset_ownership_count=Count("tier_asset_ownership", filter=Q(tier_asset_ownership__isnull=False)),
             free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
         ).get()
-
-    @property
-    def waiting_queue_enabled(self):
-        return True
 
 
 class Ticket(DBModel):

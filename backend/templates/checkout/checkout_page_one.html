@@ -23,7 +23,7 @@
 	<!-- Cover image start -->
 	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center h-auto">
 		<img src="{{ event.cover_image_url }}" alt="{{ event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
-		<img src="{{ event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ event.title }} cover image">
+		<img src="{{ event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ event.title }} cover image" style="max-height: 60vh;">
 	</div>
 	<!-- Cover image start -->
 
@@ -79,25 +79,28 @@
 						<div class="row g-3">
 							<div class="col-sm-6">
 								<div class="d-flex align-items-center">
-									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
-										<i class="fa-solid fa-calendars fs-6 text-primary-emphasis"></i>
+									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
+										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">
+											{{ event.start_date|date:"b" }}
+										</div>
+										<div class="text-primary-emphasis fw-bold mt-1">
+											{{ event.start_date|date:"d" }}
+										</div>
 									</div>
-									<strong class="text-primary-emphasis ms-3">{% trans "Date & Time" %}</strong>
+									<div class="ms-3">
+										<div class="fw-bold">
+											{{ event.start_date.date }}
+										</div>
+										<div class="text-body-secondary">
+											{{ event.start_date.time }}
+										</div>
+									</div>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">
-										<strong class="text-body">{% trans "Start" %}:</strong>
-										{% if event.start_date %}
-											{{ event.start_date }}
-										{% else %}
-											{% trans "Not set" %}
-										{% endif %}
-									</span>
 									{% if event.end_date %}
-										<br />
 										<span class="text-body-secondary"><strong class="text-body">{% trans "End" %}:</strong> {{ event.end_date }}</span>
+										<br />
 									{% endif %}
-									<br />
 									<span class="text-body-secondary">
 										<strong class="text-body">{% trans "Timezone" %}:</strong>
 										{% if event.timezone %}
@@ -109,14 +112,27 @@
 								</div>
 							</div>
 							<div class="col-sm-6">
-								<div class="d-flex align-items-center">
-									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
-										<i class="fa-solid fa-location-dot fs-6 text-primary-emphasis"></i>
+								<div class="d-flex align-items-center position-relative">
+									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
+										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">MAP</div>
+										<div class="mt-1 text-primary">
+											<i class="fa-solid fa-location-dot"></i>
+										</div>
 									</div>
-									<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
+									<div class="ms-3">
+										<div class="fw-bold">
+											{{ event.address_1 }}
+										</div>
+										<div style="font-size: var(--bs-font-size-sm);">
+											<a href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
+												Open in map
+												<i class="fa-regular fa-external-link ms-1"></i>
+											</a>
+										</div>
+									</div>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">{{ event.localized_address_display }}</span>
+									<span class="text-body-secondary">{{ event.localized_address_display_without_venue }}</span>
 								</div>
 							</div>
 						</div>
@@ -291,10 +307,6 @@
 		<div class="col-lg-5">
 			<div class="card border-0 rounded-4 shadow-sm overflow-hidden">
 				<div class="card-body">
-					<div class="alert alert-primary mb-3" role="alert" style="font-size: var(--bs-font-size-sm);">
-						<i class="fa-light fa-info-circle me-1 text-primary-emphasis"></i>
-						{% trans "We only require your email to deliver your tickets in a secure way. No account is created." %}
-					</div>
 					{% if sales_status == "OPEN" %}
 						<form class="position-relative" method="POST">
 							{% csrf_token %}

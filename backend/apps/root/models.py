@@ -497,13 +497,7 @@ class Event(DBModel):
         """
 
         # clean the handling of the Google event class
-        if self.state == Event.StateStatus.LIVE:
-            google_event_class_id = self.handle_google_event_class()
-            if not google_event_class_id:
-                raise GoogleWalletAPIRequestError(
-                    "Something went wrong while handling the Google event class."
-                )
-
+        
         return super().clean(*args, **kwargs)
 
     def transition_draft(self, save=True):
@@ -520,7 +514,7 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
-    def transition_live(self, save=True, ignore_google_api=False):
+    def transition_live(self, save=True, ignore_google_api=True):
         """
         wrapper around _transition_live
         allows for saving after transition
@@ -620,6 +614,17 @@ class Event(DBModel):
         # join fields
         localized_address_display = ", ".join(address_fields)
         return localized_address_display
+
+    @property
+    def localized_address_display_without_venue(self):
+        """
+        returns localized_address_display without venue
+        so this is till the first comma in the string
+        """
+        localized_address_display = self.localized_address_display
+        return localized_address_display[
+            (localized_address_display.index(",") + 1):
+        ].strip()
 
     @property
     def tickets_sold_count(self):

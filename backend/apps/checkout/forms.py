@@ -61,10 +61,12 @@ class CheckoutForm(forms.Form):
                         )
 
                     # 2. Amount
-                    total_selected = amount
-                    available = tier.capacity - tier.tickets_sold_count
-                    if total_selected > available:
-                        raise ValidationError(f"Only {available} is available.")
+                    # Don't check if waiting queue is enabled
+                    if not self.event.waiting_queue_enabled:
+                        total_selected = amount
+                        available = tier.capacity - tier.tickets_sold_count
+                        if total_selected > available:
+                            raise ValidationError(f"Only {available} is available.")
 
                     # 3. Extra Party
                     if extra_party > tier.allowed_guests:

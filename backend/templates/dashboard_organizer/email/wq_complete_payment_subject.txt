@@ -1,1 +1,0 @@
-[SocialPass] Complete payment to get tickets - {{ event.title }}

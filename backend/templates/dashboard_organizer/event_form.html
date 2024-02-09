@@ -160,15 +160,6 @@
 						</div>
 					</div>
 
-					<br /><br />
-					<h4>{% trans "Waiting Queue" %}</h4>
-					<p class="text-body-secondary mb-lg-4">
-						{% trans "When set, customers will join a waitlist, instead of getting actual tickets. You can bump them up as needed to the attendee list (and issue tickets) via the dashboard." %}
-					</p>
-					<div class="sp-checkbox-container mt-3">
-						{{ form.waiting_queue_enabled | as_crispy_field }}
-					</div>
-
 					<div class="text-end mt-3">
 						<button type="submit" class="btn btn-primary">{% trans "Save & Continue" %}</button>
 					</div>

@@ -154,16 +154,6 @@ urlpatterns = [
         views.ManualAttendeesCreateView.as_view(),
         name="manual_attendees_create",
     ),
-    path(
-        "<slug:team_slug>/events/<int:event_pk>/waiting-queue/",
-        views.WaitingQueueView.as_view(),
-        name="waiting_queue",
-    ),
-    path(
-        "<slug:team_slug>/events/<int:event_pk>/waiting-queue-post/<int:checkout_session_pk>/",
-        views.WaitingQueuePostView.as_view(),
-        name="waiting_queue_post",
-    ),
     # Scanner
     path(
         "scanner/<uuid:scanner_id>/",

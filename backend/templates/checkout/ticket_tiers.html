@@ -7,23 +7,17 @@
 <div class="ticket-tier mb-3">
     <input
         id="{{ tier.public_id }}"
-        {% if not tier.event.waiting_queue_enabled %}
-            {% if tier.capacity <= tier.tickets_sold_count %}disabled{% endif %}
-        {% endif %}
+        {% if tier.capacity <= tier.tickets_sold_count %}disabled{% endif %}
         type="checkbox"
         class="ticket-tier-input"
         data-pk="{{ tier.id }}"
         data-max-per-person="{{ tier.max_per_person }}"
-        {% if not tier.event.waiting_queue_enabled %}
-            data-availability="{{ tier.tickets_available }}"
-        {% else %}
-            data-availability="{{ tier.max_per_person }}"
-        {% endif %}
+        data-availability="{{ tier.tickets_available }}"
         data-amount="0"
         data-extra-party="0"
         data-allowed-guests="{{ tier.allowed_guests }}"
         data-price-per-ticket="{{ tier.tier_fiat.price_per_ticket }}"
-        {% if tier.guests_available and not tier.event.waiting_queue_enabled %}
+        {% if tier.guests_available %}
             data-guests-available="{{ tier.guests_available }}"
         {% endif %}
         onchange="tierOnchange(this)"
@@ -43,7 +37,7 @@
         <div class="d-sm-flex align-items-center">
             <div class="pe-sm-3">
                 <h5 class="mb-1 text-truncate">
-                    {% if tier.tickets_available > 0 or tier.event.waiting_queue_enabled %}
+                    {% if tier.tickets_available > 0 %}
                         <span class="ticket-tier-uncheck">
                             <i class="fa-light fa-square"></i>
                         </span>
@@ -54,21 +48,12 @@
                     {{ tier.ticket_type }}
                 </h5>
                 <p class="m-0">
-                    {% if not tier.event.waiting_queue_enabled %}
-                        {% if tier.tickets_available < 1 %}
-                            <strong class="text-danger-emphasis">
-                                <i class="fa-light fa-ban me-1"></i> {% trans "Sold out!" %}
-                            </strong>
-                        {% else %}
-                            {{ tier.tickets_available }} {% trans "available" %}
-                            {% if tier.allowed_guests > 0 %}
-                                <span>
-                                    | + {{ tier.allowed_guests }} {% trans "Guest(s) Allowed" %}
-                                </span>
-                            {% endif %}
-                        {% endif %}
+                    {% if tier.tickets_available < 1 %}
+                        <strong class="text-danger-emphasis">
+                            <i class="fa-light fa-ban me-1"></i> {% trans "Sold out!" %}
+                        </strong>
                     {% else %}
-                        {% trans "Available" %}
+                        {{ tier.tickets_available }} {% trans "available" %}
                         {% if tier.allowed_guests > 0 %}
                             <span>
                                 | + {{ tier.allowed_guests }} {% trans "Guest(s) Allowed" %}
@@ -143,7 +128,7 @@
         {% endif %}
         {% if tier.allowed_guests > 0 %}
             <div class="ticket-tier-guest ticket-tier-controls border-top mt-2 pt-3">
-                {% if tier.guest_supply and not tier.event.waiting_queue_enabled %}
+                {% if tier.guest_supply %}
                     {% if tier.guests_count >= tier.guest_supply %}
                         <div>
                             <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>

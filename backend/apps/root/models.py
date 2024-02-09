@@ -935,6 +935,9 @@ class TicketTier(DBModel):
         help_text="Additional information for this tier provided by the host.",
     )
 
+    class Meta:
+        ordering = ("-modified",)
+
     def __str__(self):
         return f"TicketTier: {self.ticket_type}"
 

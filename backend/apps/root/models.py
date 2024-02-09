@@ -410,7 +410,6 @@ class Event(DBModel):
         validators=[MinValueValidator(1)],
         help_text="Denotes the total capacity for the venue, across all ticket tiers.",
     )
-    waiting_queue_enabled = models.BooleanField(default=False)
 
     # Location info
     # timezone of event
@@ -729,6 +728,8 @@ class Event(DBModel):
         ).get()
 
 
+
+
 class Ticket(DBModel):
     """
     Represents a ticket to an event
@@ -964,8 +965,8 @@ class TicketTier(DBModel):
         return self.capacity - tickets.count()
 
     @cached_property
-    def tickets_sold_exceeding_capacity(self):
-        return abs(int(self.capacity - self.tickets_sold_count))
+    def tickets_sold_minus_available(self):
+        return self.tickets_sold_count - self.tickets_available
 
     @property
     def guests_count(self):
@@ -1193,11 +1194,6 @@ class CheckoutSession(DBModel):
     passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
     is_waiting_list = models.BooleanField(default=False)
 
-    # When set, this overrides the expiration and validation check
-    # Used when customers need to complete waiting queue flow for FIAT tickets
-    # We may need this in other places, so we use a generic name
-    skip_validation = models.BooleanField(default=False)
-
     def __str__(self):
         return f"CheckoutSession: {self.email}"
 
@@ -1397,18 +1393,18 @@ class CheckoutSession(DBModel):
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.save()
 
-    def check_is_ticket_overflow(self):
+    def check_is_waiting_list(self):
         """
         Check if there is ticket overflow for checkout session
         """
-        is_ticket_overflow = False
+        is_waiting_list = False
         checkout_items = CheckoutItem.objects.select_related(
             "ticket_tier",
         ).filter(checkout_session=self)
         for item in checkout_items:
             if item.quantity > item.ticket_tier.tickets_available:
-                is_ticket_overflow = True
-        return is_ticket_overflow
+                is_waiting_list = True
+        return is_waiting_list
 
 
 class CheckoutItem(DBModel):

@@ -8,14 +8,11 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.sites.models import Site
-from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
@@ -1226,6 +1223,7 @@ class EventScannerManualAttendeePost(DetailView):
         )
 
 
+
 class EventScannerManualTicketPost(DetailView):
     model = Event
     slug_field = "scanner_id"
@@ -1510,125 +1508,4 @@ class ManualAttendeesCreateView(TeamContextMixin, FormView):
         return reverse(
             "dashboard_organizer:manual_attendees",
             args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
-        )
-
-
-class WaitingQueueView(TeamContextMixin, ListView):
-    """
-    Show the checkout sessions in the waiting queue, and allow organizers to 
-    bump them up to the attendee list (and issue tickets) as needed.
-    """
-
-    model = CheckoutSession
-    paginate_by = 15
-    ordering = ["-created"]
-    context_object_name = "waiting_queue"
-    template_name = "dashboard_organizer/waiting_queue.html"
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.prefetch_related("checkoutitem_set")
-
-        if self.request.GET.get("search"):
-            qs = qs.filter(
-                Q(name__icontains=self.request.GET.get("search")) |
-                Q(email__icontains=self.request.GET.get("search")),
-                event__pk=self.kwargs["event_pk"],
-                event__team__slug=self.kwargs["team_slug"],
-                is_waiting_list=True,
-            )
-        else:
-            qs = qs.filter(
-                event__pk=self.kwargs["event_pk"],
-                event__team__slug=self.kwargs["team_slug"],
-                is_waiting_list=True,
-            )
-
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"],
-            team__slug=self.kwargs["team_slug"],
-        )
-        return context
-
-
-class WaitingQueuePostView(TeamContextMixin, DetailView):
-    model = CheckoutSession
-    object = None
-
-    def get_object(self):
-        if not self.object:
-            self.object = CheckoutSession.objects.select_related(
-                "event", "event__team",
-            ).get(
-                event__pk=self.kwargs["event_pk"],
-                event__team__slug=self.kwargs["team_slug"],
-                pk=self.kwargs["checkout_session_pk"],
-                is_waiting_list=True,
-            )
-        return self.object
-
-    def post(self, *args, **kwargs):
-        self.object = self.get_object()
-        context = super().get_context_data(**kwargs)
-
-        # If session is not valid, we simply return (error on template)
-        if self.object.tx_status != CheckoutSession.OrderStatus.VALID:
-            return render(
-                self.request,
-                template_name="dashboard_organizer/waiting_queue_post.html",
-                context=context,
-            )
-
-        # Move session from waiting queue to attendee list
-        if self.object.tx_type == CheckoutSession.TransactionType.FIAT:
-            # Send email with payment link
-            domain = Site.objects.all().first().domain
-            url = reverse(
-                "checkout:checkout_fiat",
-                args=[
-                    self.object.event.team.slug,
-                    self.object.event.slug,
-                    self.object.public_id,
-                ],
-            )
-            ctx = {
-                "event": self.object.event,
-                "payment_link": domain + url,
-            }
-            msg_subject = str(
-                "[SocialPass] Complete payment to get tickets - " + 
-                self.object.event.title
-            )
-            msg_plain = render_to_string(
-                "dashboard_organizer/email/wq_complete_payment_message.txt", ctx
-            )
-            msg_html = render_to_string(
-                "dashboard_organizer/email/wq_complete_payment.html", ctx
-            )
-            send_mail(
-                msg_subject,
-                msg_plain,
-                "tickets-no-reply@socialpass.io",
-                [self.object.email,],
-                html_message=msg_html,
-            )
-
-            # Update session to make sure expiration and validation is skipped
-            # This is also used to handle UI on dashboard
-            self.object.skip_validation = True
-            self.object.save()
-        else:
-            try:
-                self.object.process_transaction()
-            except Exception:
-                rollbar.report_exc_info()
-
-        return render(
-            self.request,
-            template_name="dashboard_organizer/waiting_queue_post.html",
-            context=context,
         )

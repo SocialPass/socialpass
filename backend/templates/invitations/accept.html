@@ -1,21 +1,19 @@
-{% extends "bases/base_secondary.html" %}
+{% extends "account/base.html" %}
 
-{% load account %}
+{% load account i18n %}
 
-{% block head_title %}Accept Invitation - SocialPass{% endblock %}
+{% block head_title %}{% trans "Accept Invitation" %} - SocialPass{% endblock %}
 
 {% block inner %}
-<p class="mb-5">
-    <a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Sign In</a>
-</p>
-<h1 class="fsr-3 text-strong fw-700 mt-0">Accept Invitation</h1>
 <p>
-    Confirm the invitation to <a href="mailto:{{ invitation.email }}" class="fw-bold">{{invitation.email}}</a>{% if invitation.team %} from <strong>{{invitation.team.name}}</strong>{% endif %}.
+    <a href="{% url 'account_login' %}"><i class="fa-regular fa-arrow-left me-1"></i>{% trans "Sign In" %}</a>
 </p>
-
+<h1 class="fs-3">{% trans "Accept Invitation" %}</h1>
+<p>
+    {% trans "You've been invited to the" %} <strong>{{ invitation.team.name }}</strong> {% trans "team. Click on the button to confirm the invitation for the following email: " %}<a href="mailto:{{ invitation.email }}">{{ invitation.email }}</a>.
+</p>
 <form method="POST" action="{% url 'dashboard_organizer:team_accept_invite' request.resolver_match.kwargs.key %}">
     {% csrf_token %}
-
     {% if form.non_field_errors %}
         <div class="alert alert-danger text-danger px-15 py-10 subpixel-antialiased" role="alert">
             <ul class="unordered-list bullet-reset m-0">
@@ -25,11 +23,10 @@
             </ul>
         </div>
     {% endif %}
-
     <div class="form-group">
-        <button class="btn btn-primary btn-block" type="submit">
-            <i class="fa-regular fa-check-circle me-5"></i>
-            Accept Invitation
+        <button class="btn btn-primary d-block w-100" type="submit">
+            <i class="fa-regular fa-check-circle me-1"></i>
+            {% trans "Accept Invitation" %}
         </button>
     </div>
 </form>

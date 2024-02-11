@@ -963,8 +963,7 @@ class TicketTier(DBModel):
 
     @cached_property
     def tickets_available(self):
-        tickets = Ticket.objects.filter(ticket_tier=self)
-        return self.capacity - tickets.count()
+        return self.capacity - self.tickets_sold_count
 
     @cached_property
     def tickets_sold_minus_available(self):

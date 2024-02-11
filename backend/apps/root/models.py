@@ -496,7 +496,7 @@ class Event(DBModel):
         """
 
         # clean the handling of the Google event class
-        
+
         return super().clean(*args, **kwargs)
 
     def transition_draft(self, save=True):
@@ -959,8 +959,7 @@ class TicketTier(DBModel):
 
     @cached_property
     def tickets_sold_count(self):
-        tickets = Ticket.objects.filter(ticket_tier=self)
-        return tickets.count()
+        return Ticket.objects.filter(ticket_tier=self).count()
 
     @cached_property
     def tickets_available(self):

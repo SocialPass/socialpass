@@ -505,7 +505,7 @@ class Event(DBModel):
                 raise GoogleWalletAPIRequestError(
                     "Something went wrong while handling the Google event class."
                 )
-        
+
         return super().clean(*args, **kwargs)
 
     def transition_draft(self, save=True):
@@ -966,13 +966,11 @@ class TicketTier(DBModel):
 
     @cached_property
     def tickets_sold_count(self):
-        tickets = Ticket.objects.filter(ticket_tier=self)
-        return tickets.count()
+        return Ticket.objects.filter(ticket_tier=self).count()
 
     @cached_property
     def tickets_available(self):
-        tickets = Ticket.objects.filter(ticket_tier=self)
-        return self.capacity - tickets.count()
+        return self.capacity - self.tickets_sold_count
 
     @cached_property
     def tickets_sold_exceeding_capacity(self):

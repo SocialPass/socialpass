@@ -164,6 +164,9 @@
 							<li>
 								<a href="{% url 'dashboard_organizer:manual_attendees' current_team.slug event.pk %}" class="dropdown-item">{% trans "VIP List" %}</a>
 							</li>
+							<li>
+								<a href="{% url 'dashboard_organizer:waiting_queue' current_team.slug event.pk %}" class="dropdown-item">{% trans "Waiting Queue" %}</a>
+							</li>
 							<li><div class="dropdown-divider"></div></li>
 							<li>
 								<a href="{% url 'dashboard_organizer:event_delete' current_team.slug event.pk %}" class="dropdown-item text-danger-emphasis fw-bold">{% trans "Delete" %}</a>

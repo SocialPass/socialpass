@@ -138,10 +138,12 @@ class EventForm(forms.ModelForm):
             "city",
             "postal_code",
             "country",
+            "hide_address",
             "google_class_id",
             "sales_start",
             "sales_end",
             "total_capacity",
+            "waiting_queue_enabled",
         ]
 
         widgets = {
@@ -236,6 +238,8 @@ class EventForm(forms.ModelForm):
             "state": _("State"),
             "postal_code": _("Zip Code"),
             "country": _("Country"),
+            "hide_address": _("Hide Address (except for ticket holders)"),
+            "waiting_queue_enabled": _("Enable Waiting Queue"),
         }
 
     def __init__(self, *args, **kwargs):

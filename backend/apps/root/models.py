@@ -410,6 +410,7 @@ class Event(DBModel):
         validators=[MinValueValidator(1)],
         help_text="Denotes the total capacity for the venue, across all ticket tiers.",
     )
+    waiting_queue_enabled = models.BooleanField(default=False)
 
     # Location info
     # timezone of event
@@ -431,6 +432,8 @@ class Event(DBModel):
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
     country = models.CharField(max_length=2, blank=True, default="")
+    # Hide address (except for ticket holders)
+    hide_address = models.BooleanField(default=False)
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)
@@ -496,6 +499,12 @@ class Event(DBModel):
         """
 
         # clean the handling of the Google event class
+        if self.state == Event.StateStatus.LIVE:
+            google_event_class_id = self.handle_google_event_class()
+            if not google_event_class_id:
+                raise GoogleWalletAPIRequestError(
+                    "Something went wrong while handling the Google event class."
+                )
 
         return super().clean(*args, **kwargs)
 
@@ -513,7 +522,7 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
-    def transition_live(self, save=True, ignore_google_api=True):
+    def transition_live(self, save=True, ignore_google_api=False):
         """
         wrapper around _transition_live
         allows for saving after transition
@@ -726,8 +735,6 @@ class Event(DBModel):
             asset_ownership_count=Count("tier_asset_ownership", filter=Q(tier_asset_ownership__isnull=False)),
             free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
         ).get()
-
-
 
 
 class Ticket(DBModel):
@@ -966,8 +973,8 @@ class TicketTier(DBModel):
         return self.capacity - self.tickets_sold_count
 
     @cached_property
-    def tickets_sold_minus_available(self):
-        return self.tickets_sold_count - self.tickets_available
+    def tickets_sold_exceeding_capacity(self):
+        return abs(int(self.capacity - self.tickets_sold_count))
 
     @property
     def guests_count(self):
@@ -1195,6 +1202,11 @@ class CheckoutSession(DBModel):
     passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
     is_waiting_list = models.BooleanField(default=False)
 
+    # When set, this overrides the expiration and validation check
+    # Used when customers need to complete waiting queue flow for FIAT tickets
+    # We may need this in other places, so we use a generic name
+    skip_validation = models.BooleanField(default=False)
+
     def __str__(self):
         return f"CheckoutSession: {self.email}"
 
@@ -1394,18 +1406,18 @@ class CheckoutSession(DBModel):
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.save()
 
-    def check_is_waiting_list(self):
+    def check_is_ticket_overflow(self):
         """
         Check if there is ticket overflow for checkout session
         """
-        is_waiting_list = False
+        is_ticket_overflow = False
         checkout_items = CheckoutItem.objects.select_related(
             "ticket_tier",
         ).filter(checkout_session=self)
         for item in checkout_items:
             if item.quantity > item.ticket_tier.tickets_available:
-                is_waiting_list = True
-        return is_waiting_list
+                is_ticket_overflow = True
+        return is_ticket_overflow
 
 
 class CheckoutItem(DBModel):

@@ -9,7 +9,7 @@ class MarketingSiteMap(sitemaps.Sitemap):
     """
 
     def items(self):
-        return ["marketing:index", "marketing:index_host"]
+        return ["marketing:index"]
 
     def location(self, item):
         return reverse(item)

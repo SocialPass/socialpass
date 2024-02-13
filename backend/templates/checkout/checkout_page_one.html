@@ -114,25 +114,40 @@
 							<div class="col-sm-6">
 								<div class="d-flex align-items-center position-relative">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
-										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">MAP</div>
+										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">{% trans "MAP" %}</div>
 										<div class="mt-1 text-primary">
 											<i class="fa-solid fa-location-dot"></i>
 										</div>
 									</div>
 									<div class="ms-3">
-										<div class="fw-bold">
-											{{ event.address_1 }}
-										</div>
-										<div style="font-size: var(--bs-font-size-sm);">
-											<a href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
-												Open in map
-												<i class="fa-regular fa-external-link ms-1"></i>
-											</a>
-										</div>
+										{% if not event.hide_address %}
+											<div class="fw-bold">
+												{{ event.address_1 }}
+											</div>
+											<div style="font-size: var(--bs-font-size-sm);">
+												<a href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
+													{% trans "Open in map" %}
+													<i class="fa-regular fa-external-link ms-1"></i>
+												</a>
+											</div>
+										{% else %}
+											<div class="fw-bold">
+												{% trans "Address" %}
+											</div>
+											<div class="text-body-secondary">
+												{% trans "Hidden" %}
+											</div>
+										{% endif %}
 									</div>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">{{ event.localized_address_display_without_venue }}</span>
+									<span class="text-body-secondary">
+										{% if not event.hide_address %}
+											{{ event.localized_address_display_without_venue }}
+										{% else %}
+											{% trans "Address will only be provided to ticket holders." %}
+										{% endif %}
+									</span>
 								</div>
 							</div>
 						</div>

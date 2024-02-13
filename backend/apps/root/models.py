@@ -432,6 +432,8 @@ class Event(DBModel):
     postal_code = models.CharField(max_length=12, blank=True, default="")
     # The ISO 3166-1 2-character international code for the country
     country = models.CharField(max_length=2, blank=True, default="")
+    # Hide address (except for ticket holders)
+    hide_address = models.BooleanField(default=False)
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)
@@ -497,6 +499,12 @@ class Event(DBModel):
         """
 
         # clean the handling of the Google event class
+        if self.state == Event.StateStatus.LIVE:
+            google_event_class_id = self.handle_google_event_class()
+            if not google_event_class_id:
+                raise GoogleWalletAPIRequestError(
+                    "Something went wrong while handling the Google event class."
+                )
         
         return super().clean(*args, **kwargs)
 
@@ -514,7 +522,7 @@ class Event(DBModel):
         except Exception as e:
             raise EventStateTranstionError({"state": str(e)})
 
-    def transition_live(self, save=True, ignore_google_api=True):
+    def transition_live(self, save=True, ignore_google_api=False):
         """
         wrapper around _transition_live
         allows for saving after transition

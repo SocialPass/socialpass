@@ -242,12 +242,20 @@ class CheckoutPageOne(DetailView):
         # OK
         # Redirect on success
         if checkout_session.tx_type == CheckoutSession.TransactionType.FIAT:
-            return redirect(
-                "checkout:checkout_fiat",
-                self.object.team.slug,
-                self.object.slug,
-                checkout_session.public_id,
-            )
+            if not self.object.waiting_queue_enabled:
+                return redirect(
+                    "checkout:checkout_fiat",
+                    self.object.team.slug,
+                    self.object.slug,
+                    checkout_session.public_id,
+                )
+            else:
+                checkout_session.is_waiting_list = True
+                checkout_session.save()
+                return redirect(
+                    "checkout:joined_waiting_queue",
+                    checkout_session.public_id,
+                )
         else:
             return redirect(
                 "checkout:checkout_two",
@@ -298,6 +306,14 @@ class CheckoutPageTwoBase(DetailView):
         context["organizer_team"] = self.object.event.team
         return context
 
+    def is_expired(self):
+        self.object = self.get_object()
+        if self.object.skip_validation:
+            return False
+        else:
+            expiration = self.object.created + datetime.timedelta(minutes=15)
+            return timezone.now() > expiration
+
     def get(self, *args, **kwargs):
         """
         override get to call create_transaction for each attempt
@@ -306,8 +322,7 @@ class CheckoutPageTwoBase(DetailView):
         self.object.create_transaction()
 
         # Check if expired or not
-        expiration = self.object.created + datetime.timedelta(minutes=15)
-        if timezone.now() > expiration:
+        if self.is_expired():
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -334,6 +349,15 @@ class CheckoutPageTwoBase(DetailView):
             }
 
         # Form is valid, continue...
+
+        # If waiting queue is enabled, we ignore everything and return the form
+        # We do the same if skip_validation is True (for FIAT waiting queue sessions)
+        if self.object.event.waiting_queue_enabled or self.object.skip_validation:
+            return {
+                "is_error": False,
+                "error_message": "",
+                "form": form,
+            }
 
         # Make sure event venue capacity is not exceeded
         checkout_items = self.object.checkoutitem_set.all()
@@ -366,17 +390,12 @@ class CheckoutPageTwoBase(DetailView):
                 }
 
         # Make sure there is no ticket overflow
-        is_waiting_list = self.object.check_is_waiting_list()
-        if is_waiting_list:
-            self.object.is_waiting_list = True
-            self.object.save()
+        if self.object.check_is_ticket_overflow():
             return {
                 "is_error": True,
                 "error_message": str(
-                    "We're sorry, not enough ticket(s) are available. However, "
-                    "you are on a waiting list, so please be on the lookout for "
-                    "an email. The organizers may decide to send you ticket(s) "
-                    "depending on the availability."
+                    "We're sorry, not enough ticket(s) are available. Perhaps they "
+                    "sold out as you were completing the checkout process."
                 ),
                 "form": form,
             }
@@ -424,14 +443,24 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 ) + f"?name={self.object.name}&email={self.object.email}"
             )
 
-        # Set local variables
+        # Set local variables and finalize transaction
         form = validate_post["form"]
         context = self.get_context_data()
         checkout_session = self.get_object()
+        self.object.finalize_transaction(form_data=form)
 
-        # Finalize / process transaction and handle exceptions
+        # If waiting queue is enabled, we ignore everything
+        # And redirect to the waiting queue success page
+        if self.object.event.waiting_queue_enabled:
+            self.object.is_waiting_list = True
+            self.object.save()
+            return redirect(
+                "checkout:joined_waiting_queue",
+                self.kwargs["checkout_session_public_id"],
+            )
+
+        # Process transaction and handle exceptions
         try:
-            self.object.finalize_transaction(form_data=form)
             self.object.process_transaction()
         except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
             for key, value in e.message_dict.items():
@@ -830,3 +859,31 @@ class GetTickets(View):
             )
 
         return render(self.request, f"checkout/{template_name}", ctx)
+
+
+class JoinedWaitingQueue(DetailView):
+    model = CheckoutSession
+    slug_field = "public_id"
+    slug_url_kwarg = "checkout_session_public_id"
+    template_name = "checkout/joined_waiting_queue.html"
+
+    def get_object(self):
+        self.object = (
+            CheckoutSession.objects.select_related(
+                "event",
+                "event__team",
+                "event__team__whitelabel",
+            )
+            .get(
+                public_id=self.kwargs["checkout_session_public_id"],
+            )
+        )
+        if not self.object:
+            raise Http404
+        return super().get_object()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["checkout_items"] = self.object.checkoutitem_set.all()
+        context["organizer_team"] = self.object.event.team
+        return context

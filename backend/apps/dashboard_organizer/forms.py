@@ -142,6 +142,7 @@ class EventForm(forms.ModelForm):
             "sales_start",
             "sales_end",
             "total_capacity",
+            "waiting_queue_enabled",
         ]
 
         widgets = {
@@ -236,6 +237,7 @@ class EventForm(forms.ModelForm):
             "state": _("State"),
             "postal_code": _("Zip Code"),
             "country": _("Country"),
+            "waiting_queue_enabled": _("Enable Waiting Queue"),
         }
 
     def __init__(self, *args, **kwargs):

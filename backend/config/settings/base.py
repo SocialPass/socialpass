@@ -94,7 +94,6 @@ THIRD_PARTY_APPS = [
     "django_quill",
     "djmoney",
     "storages",
-    "silk",
 ]
 
 LOCAL_APPS = [
@@ -149,7 +148,6 @@ AUTH_PASSWORD_VALIDATORS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "silk.middleware.SilkyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -296,16 +294,6 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 # Your stuff...
-# ------------------------------------------------------------------------------
-
-# Django Silk  - https://github.com/jazzband/django-silk
-# ------------------------------------------------------------------------------
-SILKY_PYTHON_PROFILER = True
-SILKY_URL = env("SILKY_URL")
-SILKY_MAX_REQUEST_BODY_SIZE = -1  # Silk takes anything <0 as no limit
-SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # If response body>1024 bytes, ignore
-SILKY_INTERCEPT_PERCENT = 1 # log only 1% of requests
-
 # INTERNAL
 # ------------------------------------------------------------------------------
 STAFF_URL = env("STAFF_URL")

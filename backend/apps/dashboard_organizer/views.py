@@ -250,7 +250,7 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         return redirect(self.redirect_url)
 
 
-class InvitationDetailView(DetailView):
+class InvitationDetailView(View):
     """
     Allows a user to accept an invitation, either by logging in, or by 
     creating a new account.
@@ -258,13 +258,39 @@ class InvitationDetailView(DetailView):
     Much of the conditional logic is handled in the template.
     """
 
-    model = Invitation
-    context_object_name = "invitation"
-    template_name = "invitations/invitation_detail.html"
-
     def get_object(self):
         return Invitation.objects.select_related("team").get(
             public_id=self.kwargs["invitation_public_id"]
+        )
+
+    def get(self, *args, **kwargs):
+        context = {}
+
+        # Get invitation
+        try:
+            invitation = self.get_object()
+        except Exception:
+            raise Http404
+        context["invitation"] = invitation
+
+        # Stash email address
+        DefaultAccountAdapter().stash_verified_email(
+            self.request, invitation.email
+        )
+
+        # Check if user has the correct email (if they are logged in)
+        email_belongs_to_user = False
+        if self.request.user.is_authenticated:
+            for emailaddress in self.request.user.emailaddress_set.all():
+                if invitation.email == emailaddress.email and emailaddress.verified:
+                    email_belongs_to_user = True
+                    break
+        context["email_belongs_to_user"] = email_belongs_to_user
+        
+        return render(
+            self.request,
+            template_name="invitations/invitation_detail.html",
+            context=context,
         )
 
 

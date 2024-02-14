@@ -293,6 +293,31 @@ class InvitationDetailView(View):
             context=context,
         )
 
+    def post(self, *args, **kwargs):
+        # Get invitation
+        try:
+            invitation = self.get_object()
+        except Exception:
+            raise Http404
+
+        # Create membership
+        membership = Membership.objects.create(
+            team=invitation.team,
+            user=self.request.user,
+        )
+
+        # Update invitation, save, and redirect
+        invitation.membership = membership
+        invitation.accepted = True
+        invitation.save()
+        messages.add_message(
+            self.request, messages.SUCCESS, "Invitation accepted."
+        )
+        return redirect(
+            "dashboard_organizer:event_list",
+            invitation.team.slug,
+        )
+
 
 class TeamDetailView(TeamContextMixin, TemplateView):
     """

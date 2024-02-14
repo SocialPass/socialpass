@@ -152,8 +152,8 @@ class InvitationAdmin(CustomDBAdmin):
         "membership",
     ]
     search_fields = [
-        "inviter",
-        "team",
+        "inviter__email",
+        "team__name",
         "email",
     ]
 

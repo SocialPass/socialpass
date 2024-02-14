@@ -364,6 +364,9 @@ class Invitation(DBModel):
     def __str__(self):
         return f"Invitation: {self.email}<>{self.team.name}"
 
+    def send_invitation(self, request, **kwargs):
+        pass
+
 
 class Event(DBModel):
     """

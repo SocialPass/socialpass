@@ -24,7 +24,7 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 
 from apps.dashboard_organizer.forms import (
-    CustomInviteForm,
+    InvitationForm,
     EventCreateForm,
     EventForm,
     TeamForm,
@@ -38,6 +38,7 @@ from apps.dashboard_organizer.forms import (
 from apps.root.models import (
     Event,
     Invite,
+    Invitation,
     Membership,
     MessageBatch,
     Team,
@@ -267,7 +268,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
     Manage a team's members.
     """
 
-    form_class = CustomInviteForm
+    form_class = InvitationForm
     template_name = "dashboard_organizer/manage_members.html"
 
     def get_context_data(self, **kwargs):
@@ -286,15 +287,15 @@ class TeamMemberManageView(TeamContextMixin, FormView):
             messages.add_message(self.request, messages.ERROR, "Already a member.")
             return super().form_invalid(form)
 
-        # Delete existing invites (if they exist)
-        invites = Invite.objects.filter(
+        # Delete existing invitations (if they exist)
+        invitations = Invitation.objects.filter(
             email=form.cleaned_data.get("email"),
             team=context["current_team"],
         )
-        for invite in invites:
-            invite.delete()
+        for invitation in invitations:
+            invitation.delete()
 
-        # Create new invite
+        # Create new invitation
         instance = form.save(email=form.cleaned_data.get("email"))
         instance.team = context["current_team"]
         instance.inviter = self.request.user

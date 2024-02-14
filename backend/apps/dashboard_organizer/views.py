@@ -250,6 +250,24 @@ class TeamAcceptInviteView(SingleObjectMixin, View):
         return redirect(self.redirect_url)
 
 
+class InvitationDetailView(DetailView):
+    """
+    Allows a user to accept an invitation, either by logging in, or by 
+    creating a new account.
+
+    Much of the conditional logic is handled in the template.
+    """
+
+    model = Invitation
+    context_object_name = "invitation"
+    template_name = "invitations/invitation_detail.html"
+
+    def get_object(self):
+        return Invitation.objects.select_related("team").get(
+            public_id=self.kwargs["invitation_public_id"]
+        )
+
+
 class TeamDetailView(TeamContextMixin, TemplateView):
     """
     Returns the details of the logged in user's team.

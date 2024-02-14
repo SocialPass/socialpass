@@ -1,36 +1,27 @@
-{% extends "account/email/base_message.html" %}
-
-{% block content %}
-{% if team %}
-	<p>
-		You have been invited to join <em>{{ team }}</em> on SocialPass.
-	</p>
-{% else %}
-	<p>
-		You have been invited to join SocialPass.
-	</p>
-{% endif %}
-<p>
-	If you'd like to join, please go to the following link:
-</p>
 <div style="
-	text-align: center;
-	margin: 16px 0;
-	padding: 16px;
-	background-color: #ecf0f1;
-	border-radius: 6px;"
->
-	<a href="{{ invite_url }}" style="
-		text-decoration: none;
-		font-weight: 600;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 		font-size: 16px;
-		display: inline-block;
-		padding: 10px 24px;
-		color: #fff;
-		background-color: #3995b8;
-		border-radius: 6px;"
-	>
-		Accept Invitation
-	</a>
+		line-height: 1.5;
+		padding: 24px;
+		width: 500px;
+		max-width: 100%;
+		margin-left: auto;
+		margin-right: auto;
+	"
+>	
+	<div style="text-align: center; margin-bottom: 24px;">
+		<img src="https://res.cloudinary.com/nfty-labs/image/upload/v1704373191/socialpass-logo_hnegmd_2_r4hf4t.png" style="display: block;" height="32">
+	</div>
+	<p>
+		You have been invited to join <strong>{{ team.name }}</strong> on SocialPass.
+	</p>
+	<p>
+		If you'd like to join, please go to the following link:
+	</p>
+	<p>
+		<a href="{{ invitation_url }}">{{ invitation_url }}</a>
+	</p>
+	<p style="text-align: right; margin-bottom: 0;">
+		&copy; {% now "Y" %}, SocialPass
+	</p>
 </div>
-{% endblock %}

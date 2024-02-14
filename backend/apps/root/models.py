@@ -364,8 +364,27 @@ class Invitation(DBModel):
     def __str__(self):
         return f"Invitation: {self.email}<>{self.team.name}"
 
+    @property
+    def is_expired(self):
+        if timezone.now() > (self.created + timezone.timedelta(days=30)):
+            return True
+        else:
+            return False
+    
     def send_invitation(self, request, **kwargs):
-        pass
+        invitation_url = reverse(
+            "dashboard_organizer:invitation_detail", args=[self.public_id]
+        )
+        invitation_url = request.build_absolute_uri(invitation_url)
+        ctx = kwargs
+        ctx.update(
+            {
+                "team": self.team,
+                "invitation_url": invitation_url,
+            },
+        )
+        email_template = "invitations/email/email_invite"
+        DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
 
 
 class Event(DBModel):

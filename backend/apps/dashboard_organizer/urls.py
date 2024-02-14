@@ -19,6 +19,11 @@ urlpatterns = [
         name="team_accept_invite",
     ),
     path(
+        "team/invitation-detail/<uuid:invitation_public_id>/",
+        views.InvitationDetailView.as_view(),
+        name="invitation_detail",
+    ),
+    path(
         "<slug:team_slug>/team-detail/",
         views.TeamDetailView.as_view(),
         name="team_detail",

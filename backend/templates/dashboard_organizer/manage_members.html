@@ -42,9 +42,15 @@
 							<div class="rounded-circle d-flex align-items-center justify-content-center text-secondary-emphasis bg-secondary-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
 								<i class="fa-light fa-user h4 m-0"></i>
 							</div>
-							<div class="h5 mt-3 mb-0 text-center text-truncate">
-								{% trans "Invitation Sent" %}
-							</div>
+							{% if not invitation.is_expired %}
+								<div class="h5 mt-3 mb-0 text-center text-truncate">
+									{% trans "Invitation Sent" %}
+								</div>
+							{% else %}
+								<div class="h6 mt-3 mb-0 text-center text-truncate text-danger-emphasis">
+									{% trans "Expired (Invite again)" %}
+								</div>
+							{% endif %}
 							<div class="text-center text-truncate">{{ invitation.email }}</div>
 						</div>
 					{% endif %}

@@ -8,6 +8,7 @@ from apps.root.models import (
     CheckoutSession,
     Event,
     Invite,
+    Invitation,
     ManualAttendee,
     Membership,
     MessageBatch,
@@ -138,6 +139,23 @@ class InviteAdmin(CustomDBAdmin):
             kwargs["form"].user = request.user
             kwargs["form"].request = request
         return super().get_form(request, obj, **kwargs)
+
+
+@admin.register(Invitation)
+class InvitationAdmin(CustomDBAdmin):
+    list_display = [
+        "__str__", "inviter", "team", "email", "accepted"
+    ] + CustomDBAdmin.list_display
+    list_select_related = [
+        "inviter",
+        "team",
+        "membership",
+    ]
+    search_fields = [
+        "inviter",
+        "team",
+        "email",
+    ]
 
 
 @admin.register(Membership)

@@ -345,6 +345,26 @@ class Invite(DBModel):
         self.save()
 
 
+class Invitation(DBModel):
+    """
+    Represents an invitation to join a respective team.
+    """
+
+    # Keys
+    inviter = models.ForeignKey("User", on_delete=models.CASCADE)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE)
+    membership = models.ForeignKey(
+        "Membership", on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    # Basic info
+    accepted = models.BooleanField(default=False)
+    email = models.EmailField(max_length=255)
+
+    def __str__(self):
+        return f"Invitation: {self.email}<>{self.team.name}"
+
+
 class Event(DBModel):
     """
     Represents an event on SocialPass

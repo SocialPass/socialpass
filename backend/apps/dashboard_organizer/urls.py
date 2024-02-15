@@ -14,9 +14,9 @@ urlpatterns = [
         name="team_create",
     ),
     path(
-        "team/accept-invite/<str:key>/",
-        views.TeamAcceptInviteView.as_view(),
-        name="team_accept_invite",
+        "team/invitation-detail/<uuid:invitation_public_id>/",
+        views.InvitationDetailView.as_view(),
+        name="invitation_detail",
     ),
     path(
         "<slug:team_slug>/team-detail/",

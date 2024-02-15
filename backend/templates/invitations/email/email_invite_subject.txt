@@ -1,8 +1,1 @@
-{% load i18n %}
-{% autoescape off %}
-{% if team %}
-Invitation to join '{{team}}'
-{% else %}
-Invitation to join
-{% endif %}
-{% endautoescape %}
+[SocialPass] Invitation to join {{ team.name }}

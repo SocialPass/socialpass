@@ -1,14 +1,3 @@
-{% load i18n %}
-{% autoescape off %}
+You have been invited to join {{ team.name }} on SocialPass.
 
-Hello,
-
-{% if team %}
-You ({{ email }}) have been invited to join '{{ team }}' on SocialPass
-{% else %}
-You ({{ email }}) have been invited to join SocialPass
-{% endif %}
-
-If you'd like to join, please go to {{ invite_url }}
-
-{% endautoescape %}
+If you'd like to join, please go to the following link: {{ invitation_url }}

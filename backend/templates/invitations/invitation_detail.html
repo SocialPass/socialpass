@@ -1,0 +1,73 @@
+{% extends "account/base.html" %}
+{% load account static i18n %}
+
+{% block head_title %}{% trans "Invitation to " %}{{ invitation.team.name }} - SocialPass{% endblock %}
+
+{% block inner %}
+<div class="card border-0 rounded-4 shadow-sm">
+	<div class="card-body p-lg-4">
+		<h1 class="h3">
+			{% if invitation.accepted %}
+				{% trans "Invitation already accepted" %}
+			{% elif invitation.is_expired %}
+				{% trans "Invitation has expired" %}
+			{% else %}
+				{% trans "Invitation to " %}<span class="text-primary-emphasis">{{ invitation.team.name }}</span>
+			{% endif %}
+		</h1>
+		{% if invitation.accepted %}
+			<p class="text-body-secondary mb-0">
+				{% trans "The invitation has already been accepted. Please go to your dashboard to start managing your events." %}
+			</p>
+		{% elif invitation.is_expired %}
+			<p class="text-body-secondary mb-0">
+				{% trans "The invitation has already expired. Please request another one from the sender." %}
+			</p>
+		{% else %}
+			<p>
+				{% trans "You " %}(<a href="mailto:{{ invitation.email }}" class="text-decoration-none">{{ invitation.email }}</a>){% trans " have been invited to join the " %}<strong>{{ invitation.team.name }}</strong> {% trans "team." %}
+			</p>
+			{% if request.user.is_authenticated %}
+				{% if email_belongs_to_user %}
+					<p>
+						{% trans "Please accept this invitation by clicking on the following button." %}
+					</p>
+					<form method="post">
+						{% csrf_token %}
+						<button type="submit" class="btn btn-primary d-block w-100 px-3 py-2 d-flex align-items-center text-start">
+							{% trans "Accept invitation" %}
+							<i class="fa-solid fa-check-circle ms-auto"></i>
+						</button>
+					</form>
+				{% else %}
+					<p>
+						{% trans "The invited email does not belong to the account you're currently logged into. Consider signing out first." %}
+					</p>
+					<a href="{% url 'account_logout' %}?next=/dashboard/team/invitation-detail/{{ invitation.public_id }}/" class="btn btn-secondary text-danger-emphasis fw-bold antialiased d-block w-100 px-3 py-2 d-flex align-items-center text-start">
+						{% trans "Sign out" %}
+						<i class="fa-solid fa-sign-out ms-auto"></i>
+					</a>
+				{% endif %}
+			{% else %}
+				{% if not account_exists %}
+					<p>
+						{% trans "If you want to accept this invitation, you will need to create an account first." %}
+					</p>
+					<a href="{% url 'account_signup' %}?next=/dashboard/team/invitation-detail/{{ invitation.public_id }}/" class="btn btn-primary d-block w-100 px-3 py-2 d-flex align-items-center text-start">
+						{% trans "Sign up to create account" %}
+						<i class="fa-solid fa-angle-right ms-auto"></i>
+					</a>
+				{% else %}
+					<p>
+						{% trans "If you want to accept this invitation, you will need to login to your existing account." %}
+					</p>
+					<a href="{% url 'account_login' %}?email={{ invitation.email }}&next=/dashboard/team/invitation-detail/{{ invitation.public_id }}/" class="btn btn-link d-block w-100 px-3 py-2 d-flex align-items-center text-start">
+						{% trans "Login to existing account" %}
+						<i class="fa-solid fa-angle-right ms-auto"></i>
+					</a>
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

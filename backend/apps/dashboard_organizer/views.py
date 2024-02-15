@@ -4,6 +4,7 @@ import uuid
 import rollbar
 import stripe
 from allauth.account.adapter import DefaultAccountAdapter
+from allauth.account.admin import EmailAddress
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -24,7 +25,7 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 
 from apps.dashboard_organizer.forms import (
-    CustomInviteForm,
+    InvitationForm,
     EventCreateForm,
     EventForm,
     TeamForm,
@@ -37,7 +38,7 @@ from apps.dashboard_organizer.forms import (
 )
 from apps.root.models import (
     Event,
-    Invite,
+    Invitation,
     Membership,
     MessageBatch,
     Team,
@@ -150,103 +151,101 @@ class RedirectToTeamView(RedirectView):
             return reverse("account_login")
 
 
-class TeamAcceptInviteView(SingleObjectMixin, View):
+class InvitationDetailView(View):
     """
-    Inherited AcceptInvite from beekeeper-invitations
+    Allows a user to accept an invitation, either by logging in, or by 
+    creating a new account.
+
+    Much of the conditional logic is handled in the template.
     """
 
-    def get_queryset(self):
-        return Invite.objects.all()
-
-    def get_signup_redirect(self):
-        return "account_signup"
-
-    def get_object(self, queryset=None):
-        if queryset is None:
-            queryset = self.get_queryset()
-        try:
-            return queryset.get(key=self.kwargs["key"].lower())
-        except Invite.DoesNotExist:
-            return None
-
-    def accept_invite(self, invitation, request):
-        """
-        Class method for accepting invite
-        """
-        invitation.accepted = True
-        invitation.archived_email = invitation.email
-        invitation.email = f"{secrets.token_urlsafe(12)}{invitation.archived_email}"
-        invitation.save()
-        DefaultAccountAdapter().stash_verified_email(
-            self.request, invitation.archived_email
+    def get_object(self):
+        return Invitation.objects.select_related("team").get(
+            public_id=self.kwargs["invitation_public_id"]
         )
-        # If team, add success message
-        if invitation.team:
-            messages.add_message(
-                self.request,
-                messages.SUCCESS,
-                f"Invitation to '{invitation.team.name}' accepted",
-            )
+
+    def email_belongs_to_user(self, user, invitation):
+        if user.is_authenticated:
+            for emailaddress in user.emailaddress_set.all():
+                if invitation.email == emailaddress.email and emailaddress.verified:
+                    return True
+        return False
 
     def get(self, *args, **kwargs):
-        """
-        Override post view for more general-specific accept invite view
-        """
-        # Get object
-        self.object = invitation = self.get_object()
+        context = {}
 
-        # Error checks
-        # Error conditions are: no key, expired key or already accepted
-        if not invitation or (invitation and (invitation.key_expired())):
-            return render(self.request, "invitations/invalid.html")
-        if invitation.accepted:
-            return render(self.request, "invitations/already_accepted.html")
+        # Get invitation
+        try:
+            invitation = self.get_object()
+        except Exception:
+            raise Http404
+        context["invitation"] = invitation
 
+        # Stash email address
+        DefaultAccountAdapter().stash_verified_email(
+            self.request, invitation.email
+        )
+
+        # Check if email belongs to user
+        context["email_belongs_to_user"] = self.email_belongs_to_user(
+            self.request.user, invitation
+        )
+
+        # Check if user account exists or not
+        # We check for verified email because if that exists, then user account 
+        # also exists
+        account_exists = False
+        if EmailAddress.objects.filter(
+            email=invitation.email, verified=True
+        ).exists():
+            account_exists = True
+        context["account_exists"] = account_exists
+        
         return render(
-            self.request, "invitations/accept.html", {"invitation": invitation}
+            self.request,
+            template_name="invitations/invitation_detail.html",
+            context=context,
         )
 
     def post(self, *args, **kwargs):
-        """
-        Override post view for more general-specific accept invite view
-        """
-        # Get object
-        self.object = invitation = self.get_object()
+        # Get invitation
+        try:
+            invitation = self.get_object()
+        except Exception:
+            raise Http404
 
-        # Error checks
-        # Error conditions are: no key, expired key or already accepted
-        if not invitation or (invitation and (invitation.key_expired())):
-            return render(self.request, "invitations/invalid.html")
-        if invitation.accepted:
-            return render(self.request, "invitations/already_accepted.html")
+        # Validate again
+        # Generic error message because we don't expect this to happen under
+        # any normal circumstances. The GET method would handle proper messaging
+        # via the template
+        if (invitation.accepted or 
+            invitation.is_expired or 
+            not self.email_belongs_to_user(self.request.user, invitation)):
+            messages.add_message(
+                self.request, messages.ERROR, "Something went wrong."
+            )
+            return redirect(
+                "dashboard_organizer:invitation_detail",
+                invitation.public_id,
+            )
 
-        # The invitation is valid.
-        # Mark it as accepted now if ACCEPT_INVITE_AFTER_SIGNUP is False.
-        self.accept_invite(
-            invitation=invitation,
-            request=self.request,
+        # Create membership
+        membership = Membership.objects.create(
+            team=invitation.team,
+            user=self.request.user,
         )
 
-        # The invitation has been accepted.
-        # Check if user exists for redirect url and membership creation purposes
-        try:
-            user = User.objects.get(email__iexact=invitation.archived_email)
-            self.redirect_url = reverse("account_login")
-        except User.DoesNotExist:
-            user = None
-            self.redirect_url = reverse("account_signup")
-
-        # Everything finalized
-        # Try to create a membership if possible
-        if user and invitation.team:
-            membership, created = Membership.objects.get_or_create(
-                team=invitation.team, user=user
-            )
-            if created:
-                invitation.membership = membership
-                invitation.save()
-
-        return redirect(self.redirect_url)
+        # Update invitation, save, and redirect
+        invitation.membership = membership
+        invitation.accepted = True
+        invitation.save()
+        messages.add_message(
+            self.request, messages.SUCCESS, "Invitation accepted."
+        )
+        return redirect(
+            "dashboard_organizer:event_list",
+            invitation.team.slug,
+        )
 
 
 class TeamDetailView(TeamContextMixin, TemplateView):
@@ -267,7 +266,7 @@ class TeamMemberManageView(TeamContextMixin, FormView):
     Manage a team's members.
     """
 
-    form_class = CustomInviteForm
+    form_class = InvitationForm
     template_name = "dashboard_organizer/manage_members.html"
 
     def get_context_data(self, **kwargs):
@@ -286,15 +285,15 @@ class TeamMemberManageView(TeamContextMixin, FormView):
             messages.add_message(self.request, messages.ERROR, "Already a member.")
             return super().form_invalid(form)
 
-        # Delete existing invites (if they exist)
-        invites = Invite.objects.filter(
+        # Delete existing invitations (if they exist)
+        invitations = Invitation.objects.filter(
             email=form.cleaned_data.get("email"),
             team=context["current_team"],
         )
-        for invite in invites:
-            invite.delete()
+        for invitation in invitations:
+            invitation.delete()
 
-        # Create new invite
+        # Create new invitation
         instance = form.save(email=form.cleaned_data.get("email"))
         instance.team = context["current_team"]
         instance.inviter = self.request.user

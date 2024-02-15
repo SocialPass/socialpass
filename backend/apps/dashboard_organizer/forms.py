@@ -8,7 +8,7 @@ from eth_utils import is_address
 from apps.root.countries import COUNTRIES
 from apps.root.models import (
     Event,
-    Invite,
+    Invitation,
     MessageBatch,
     Team,
     TicketTier,
@@ -18,7 +18,7 @@ from apps.root.models import (
 from apps.root.exceptions import GoogleWalletAPIRequestError
 
 
-class CustomInviteForm(forms.Form):
+class InvitationForm(forms.Form):
     """
     Invite users to team
     """
@@ -36,7 +36,7 @@ class CustomInviteForm(forms.Form):
     )
 
     def save(self, email):
-        return Invite.create(email=email)
+        return Invitation(email=email)
 
 
 class TeamForm(forms.ModelForm):

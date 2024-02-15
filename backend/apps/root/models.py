@@ -246,103 +246,46 @@ class Membership(DBModel):
         return f"Membership: {self.user.email}<>{self.team.name}"
 
 
-class Invite(DBModel):
+class Invitation(DBModel):
     """
-    Represents an invite to join a respective team.
-    This invite can be sent to an existing user, or a new user.
+    Represents an invitation to join a respective team.
     """
-
-    class InviteQuerySet(models.QuerySet):
-        """
-        Invite model queryset manager
-        """
-
-        def all_expired(self):
-            """
-            expired invites
-            """
-            return self.filter(self.expired_q())
-
-        def all_valid(self):
-            """
-            invites sent and not expired
-            """
-            return self.exclude(self.expired_q())
-
-        def expired_q(self):
-            sent_threshold = timezone.now() - timedelta(days=3)
-            q = Q(accepted=True) | Q(sent__lt=sent_threshold)
-            return q
-
-    # Queryset manager
-    objects = InviteQuerySet.as_manager()
 
     # Keys
-    inviter = models.ForeignKey(
-        "User",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
+    inviter = models.ForeignKey("User", on_delete=models.CASCADE)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE)
     membership = models.ForeignKey(
         "Membership", on_delete=models.CASCADE, blank=True, null=True
     )
 
-    # basic info
-    accepted = models.BooleanField(
-        verbose_name="accepted", default=False, blank=False, null=False
-    )
-    key = models.CharField(verbose_name="key", max_length=64, unique=True, blank=False)
-    sent = models.DateTimeField(verbose_name="sent", blank=False, null=True)
-    email = models.EmailField(
-        verbose_name="e-mail address",
-        max_length=254,
-        blank=False,
-        null=False,
-    )
-    archived_email = models.EmailField(blank=True, null=True)
+    # Basic info
+    accepted = models.BooleanField(default=False)
+    email = models.EmailField(max_length=255)
 
     def __str__(self):
-        if self.team:
-            return f"Invite: {self.email}<>{self.team.name}"
-        return f"Invite: {self.email}"
+        return f"Invitation: {self.email}<>{self.team.name}"
 
-    @classmethod
-    def create(cls, email, inviter=None, **kwargs):
-        key = get_random_string(64).lower()
-        instance = cls._default_manager.create(
-            email=email, key=key, inviter=inviter, **kwargs
-        )
-        return instance
-
-    def key_expired(self):
-        expiration_date = self.sent + timedelta(
-            days=3,
-        )
-        return expiration_date <= timezone.now()
-
+    @property
+    def is_expired(self):
+        if timezone.now() > (self.created + timezone.timedelta(days=30)):
+            return True
+        else:
+            return False
+    
     def send_invitation(self, request, **kwargs):
-        current_site = Site.objects.all().first()
-        invite_url = reverse("dashboard_organizer:team_accept_invite", args=[self.key])
-        invite_url = request.build_absolute_uri(invite_url)
+        invitation_url = reverse(
+            "dashboard_organizer:invitation_detail", args=[self.public_id]
+        )
+        invitation_url = request.build_absolute_uri(invitation_url)
         ctx = kwargs
         ctx.update(
             {
                 "team": self.team,
-                "invite_url": invite_url,
-                "site_name": current_site.name,
-                "email": self.email,
-                "key": self.key,
-                "inviter": self.inviter,
+                "invitation_url": invitation_url,
             },
         )
-
         email_template = "invitations/email/email_invite"
-
         DefaultAccountAdapter().send_mail(email_template, self.email, ctx)
-        self.sent = timezone.now()
-        self.save()
 
 
 class Event(DBModel):

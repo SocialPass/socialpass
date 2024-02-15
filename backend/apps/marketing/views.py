@@ -18,10 +18,10 @@ class MarketingIndex(TemplateView):
         context.update({"featured_event": featured_event})
         return context
 
-
+"""
 class MarketingHostIndex(TemplateView):
     template_name = "marketing/landing/index_host.html"
-
+"""
 
 """
 class EventDiscoveryBrowse(ListView):

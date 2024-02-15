@@ -37,7 +37,6 @@ from apps.dashboard_organizer.forms import (
 )
 from apps.root.models import (
     Event,
-    Invite,
     Invitation,
     Membership,
     MessageBatch,
@@ -149,105 +148,6 @@ class RedirectToTeamView(RedirectView):
                 return reverse("dashboard_organizer:team_create")
         else:
             return reverse("account_login")
-
-
-class TeamAcceptInviteView(SingleObjectMixin, View):
-    """
-    Inherited AcceptInvite from beekeeper-invitations
-    """
-
-    def get_queryset(self):
-        return Invite.objects.all()
-
-    def get_signup_redirect(self):
-        return "account_signup"
-
-    def get_object(self, queryset=None):
-        if queryset is None:
-            queryset = self.get_queryset()
-        try:
-            return queryset.get(key=self.kwargs["key"].lower())
-        except Invite.DoesNotExist:
-            return None
-
-    def accept_invite(self, invitation, request):
-        """
-        Class method for accepting invite
-        """
-        invitation.accepted = True
-        invitation.archived_email = invitation.email
-        invitation.email = f"{secrets.token_urlsafe(12)}{invitation.archived_email}"
-        invitation.save()
-        DefaultAccountAdapter().stash_verified_email(
-            self.request, invitation.archived_email
-        )
-        # If team, add success message
-        if invitation.team:
-            messages.add_message(
-                self.request,
-                messages.SUCCESS,
-                f"Invitation to '{invitation.team.name}' accepted",
-            )
-
-    def get(self, *args, **kwargs):
-        """
-        Override post view for more general-specific accept invite view
-        """
-        # Get object
-        self.object = invitation = self.get_object()
-
-        # Error checks
-        # Error conditions are: no key, expired key or already accepted
-        if not invitation or (invitation and (invitation.key_expired())):
-            return render(self.request, "invitations/invalid.html")
-        if invitation.accepted:
-            return render(self.request, "invitations/already_accepted.html")
-
-        return render(
-            self.request, "invitations/accept.html", {"invitation": invitation}
-        )
-
-    def post(self, *args, **kwargs):
-        """
-        Override post view for more general-specific accept invite view
-        """
-        # Get object
-        self.object = invitation = self.get_object()
-
-        # Error checks
-        # Error conditions are: no key, expired key or already accepted
-        if not invitation or (invitation and (invitation.key_expired())):
-            return render(self.request, "invitations/invalid.html")
-        if invitation.accepted:
-            return render(self.request, "invitations/already_accepted.html")
-
-        # The invitation is valid.
-        # Mark it as accepted now if ACCEPT_INVITE_AFTER_SIGNUP is False.
-        self.accept_invite(
-            invitation=invitation,
-            request=self.request,
-        )
-
-        # The invitation has been accepted.
-        # Check if user exists for redirect url and membership creation purposes
-        try:
-            user = User.objects.get(email__iexact=invitation.archived_email)
-            self.redirect_url = reverse("account_login")
-        except User.DoesNotExist:
-            user = None
-            self.redirect_url = reverse("account_signup")
-
-        # Everything finalized
-        # Try to create a membership if possible
-        if user and invitation.team:
-            membership, created = Membership.objects.get_or_create(
-                team=invitation.team, user=user
-            )
-            if created:
-                invitation.membership = membership
-                invitation.save()
-
-        return redirect(self.redirect_url)
 
 
 class InvitationDetailView(View):

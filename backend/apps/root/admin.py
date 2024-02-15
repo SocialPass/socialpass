@@ -2,12 +2,10 @@ from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django_fsm_log.admin import StateLogInline
-from apps.root.forms import InviteAdminAddForm, InviteAdminChangeForm
 from apps.root.models import (
     CheckoutItem,
     CheckoutSession,
     Event,
-    Invite,
     Invitation,
     ManualAttendee,
     Membership,
@@ -124,21 +122,6 @@ class EventAdmin(CustomDBAdmin):
     inlines = [StateLogInline]
     readonly_fields = ["state"]
     actions = [transition_to_draft, transition_to_live]  # type: ignore
-
-
-@admin.register(Invite)
-class InviteAdmin(CustomDBAdmin):
-    list_display = ["__str__", "email", "sent", "accepted"] + CustomDBAdmin.list_display
-    raw_id_fields = ("inviter",)
-
-    def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            kwargs["form"] = InviteAdminChangeForm
-        else:
-            kwargs["form"] = InviteAdminAddForm
-            kwargs["form"].user = request.user
-            kwargs["form"].request = request
-        return super().get_form(request, obj, **kwargs)
 
 
 @admin.register(Invitation)

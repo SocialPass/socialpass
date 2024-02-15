@@ -7,6 +7,8 @@ class MarketingSiteMap(sitemaps.Sitemap):
     """
     class to define static pages on event marketing app
     """
+    changefreq = "monthly"
+    priority = 1.0
 
     def items(self):
         return ["marketing:index"]

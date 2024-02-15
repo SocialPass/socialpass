@@ -1,5 +1,5 @@
 User-agent: *
-Disallow:
+Disallow: /dashboard
 
 Host: socialpass.io
 Sitemap: https://socialpass.io/sitemap.xml

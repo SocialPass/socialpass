@@ -4,6 +4,7 @@ import uuid
 import rollbar
 import stripe
 from allauth.account.adapter import DefaultAccountAdapter
+from allauth.account.admin import EmailAddress
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -189,6 +190,16 @@ class InvitationDetailView(View):
         context["email_belongs_to_user"] = self.email_belongs_to_user(
             self.request.user, invitation
         )
+
+        # Check if user account exists or not
+        # We check for verified email because if that exists, then user account 
+        # also exists
+        account_exists = False
+        if EmailAddress.objects.filter(
+            email=invitation.email, verified=True
+        ).exists():
+            account_exists = True
+        context["account_exists"] = account_exists
         
         return render(
             self.request,

@@ -49,17 +49,23 @@
 					</a>
 				{% endif %}
 			{% else %}
-				<p>
-					{% trans "If you want to accept this invitation, you will need to create an account, or login to an existing one that has this email set." %}
-				</p>
-				<a href="{% url 'account_signup' %}?next=/dashboard/team/invitation-detail/{{ invitation.public_id }}/" class="btn btn-primary d-block w-100 px-3 py-2 d-flex align-items-center text-start mb-3">
-					{% trans "Sign up to create account" %}
-					<i class="fa-solid fa-angle-right ms-auto"></i>
-				</a>
-				<a href="{% url 'account_login' %}?next=/dashboard/team/invitation-detail/{{ invitation.public_id }}/" class="btn btn-link d-block w-100 px-3 py-2 d-flex align-items-center text-start">
-					{% trans "Login to existing one" %}
-					<i class="fa-solid fa-angle-right ms-auto"></i>
-				</a>
+				{% if not account_exists %}
+					<p>
+						{% trans "If you want to accept this invitation, you will need to create an account first." %}
+					</p>
+					<a href="{% url 'account_signup' %}?next=/dashboard/team/invitation-detail/{{ invitation.public_id }}/" class="btn btn-primary d-block w-100 px-3 py-2 d-flex align-items-center text-start">
+						{% trans "Sign up to create account" %}
+						<i class="fa-solid fa-angle-right ms-auto"></i>
+					</a>
+				{% else %}
+					<p>
+						{% trans "If you want to accept this invitation, you will need to login to your existing account." %}
+					</p>
+					<a href="{% url 'account_login' %}?email={{ invitation.email }}&next=/dashboard/team/invitation-detail/{{ invitation.public_id }}/" class="btn btn-link d-block w-100 px-3 py-2 d-flex align-items-center text-start">
+						{% trans "Login to existing account" %}
+						<i class="fa-solid fa-angle-right ms-auto"></i>
+					</a>
+				{% endif %}
 			{% endif %}
 		{% endif %}
 	</div>

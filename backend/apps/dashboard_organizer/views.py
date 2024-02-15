@@ -263,6 +263,13 @@ class InvitationDetailView(View):
             public_id=self.kwargs["invitation_public_id"]
         )
 
+    def email_belongs_to_user(self, user, invitation):
+        if user.is_authenticated:
+            for emailaddress in user.emailaddress_set.all():
+                if invitation.email == emailaddress.email and emailaddress.verified:
+                    return True
+        return False
+
     def get(self, *args, **kwargs):
         context = {}
 
@@ -278,14 +285,10 @@ class InvitationDetailView(View):
             self.request, invitation.email
         )
 
-        # Check if user has the correct email (if they are logged in)
-        email_belongs_to_user = False
-        if self.request.user.is_authenticated:
-            for emailaddress in self.request.user.emailaddress_set.all():
-                if invitation.email == emailaddress.email and emailaddress.verified:
-                    email_belongs_to_user = True
-                    break
-        context["email_belongs_to_user"] = email_belongs_to_user
+        # Check if email belongs to user
+        context["email_belongs_to_user"] = self.email_belongs_to_user(
+            self.request.user, invitation
+        )
         
         return render(
             self.request,
@@ -299,6 +302,21 @@ class InvitationDetailView(View):
             invitation = self.get_object()
         except Exception:
             raise Http404
+
+        # Validate again
+        # Generic error message because we don't expect this to happen under
+        # any normal circumstances. The GET method would handle proper messaging
+        # via the template
+        if (invitation.accepted or 
+            invitation.is_expired or 
+            not self.email_belongs_to_user(self.request.user, invitation)):
+            messages.add_message(
+                self.request, messages.ERROR, "Something went wrong."
+            )
+            return redirect(
+                "dashboard_organizer:invitation_detail",
+                invitation.public_id,
+            )
 
         # Create membership
         membership = Membership.objects.create(

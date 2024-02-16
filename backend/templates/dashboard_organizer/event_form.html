@@ -58,6 +58,15 @@
 								{% endwith %}
 							</div>
 						</div>
+						<div class="col-12">
+							<div class="alert alert-primary" role="alert" style="font-size: var(--bs-font-size-sm);">
+								<p class="mb-0">
+									<i class="fa-solid fa-info-circle text-primary-emphasis me-1"></i>
+									{% trans "The banner image is flexible, but ideally it should be" %} <strong>1320 &times; 480 px</strong>{% trans ". In case of important content (such as sponsors), please leave a space of " %} <strong>40px</strong> {% trans "at the bottom of the image to make space for the team image." %}
+									<a href="https://res.cloudinary.com/nfty-labs/image/upload/v1708085807/Screen_Shot_2024-02-16_at_6.16.31_PM_b3jtz7.png" target="_blank" rel="noreferrer">{% trans "See Reference" %}<i class="fa-regular fa-external-link ms-1"></i></a>
+								</p>
+							</div>
+						</div>
 					</div>
 					{% with input=form.description %}
 						<div class="mt-3">

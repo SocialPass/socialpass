@@ -153,7 +153,7 @@ class RedirectToTeamView(RedirectView):
 
 class InvitationDetailView(View):
     """
-    Allows a user to accept an invitation, either by logging in, or by 
+    Allows a user to accept an invitation, either by logging in, or by
     creating a new account.
 
     Much of the conditional logic is handled in the template.
@@ -192,7 +192,7 @@ class InvitationDetailView(View):
         )
 
         # Check if user account exists or not
-        # We check for verified email because if that exists, then user account 
+        # We check for verified email because if that exists, then user account
         # also exists
         account_exists = False
         if EmailAddress.objects.filter(
@@ -200,7 +200,7 @@ class InvitationDetailView(View):
         ).exists():
             account_exists = True
         context["account_exists"] = account_exists
-        
+
         return render(
             self.request,
             template_name="invitations/invitation_detail.html",
@@ -218,8 +218,8 @@ class InvitationDetailView(View):
         # Generic error message because we don't expect this to happen under
         # any normal circumstances. The GET method would handle proper messaging
         # via the template
-        if (invitation.accepted or 
-            invitation.is_expired or 
+        if (invitation.accepted or
+            invitation.is_expired or
             not self.email_belongs_to_user(self.request.user, invitation)):
             messages.add_message(
                 self.request, messages.ERROR, "Something went wrong."
@@ -1514,7 +1514,7 @@ class ManualAttendeesCreateView(TeamContextMixin, FormView):
 
 class WaitingQueueView(TeamContextMixin, ListView):
     """
-    Show the checkout sessions in the waiting queue, and allow organizers to 
+    Show the checkout sessions in the waiting queue, and allow organizers to
     bump them up to the attendee list (and issue tickets) as needed.
     """
 
@@ -1586,6 +1586,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
         if self.object.tx_type == CheckoutSession.TransactionType.FIAT:
             # Send email with payment link
             domain = Site.objects.all().first().domain
+            domain = f"https://{domain}"
             url = reverse(
                 "checkout:checkout_fiat",
                 args=[
@@ -1599,7 +1600,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 "payment_link": domain + url,
             }
             msg_subject = str(
-                "[SocialPass] Complete payment to get tickets - " + 
+                "[SocialPass] Complete payment to get tickets - " +
                 self.object.event.title
             )
             msg_plain = render_to_string(

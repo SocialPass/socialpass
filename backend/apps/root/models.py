@@ -199,6 +199,7 @@ class Team(DBModel):
     @property
     def stripe_refresh_link(self):
         domain = Site.objects.all().first().domain
+        domain = f"https://{domain}"
         url = reverse(
             "dashboard_organizer:stripe_refresh",
             args=[
@@ -210,6 +211,7 @@ class Team(DBModel):
     @property
     def stripe_return_link(self):
         domain = Site.objects.all().first().domain
+        domain = f"https://{domain}"
         url = reverse(
             "dashboard_organizer:stripe_return",
             args=[
@@ -271,7 +273,7 @@ class Invitation(DBModel):
             return True
         else:
             return False
-    
+
     def send_invitation(self, request, **kwargs):
         invitation_url = reverse(
             "dashboard_organizer:invitation_detail", args=[self.public_id]
@@ -1159,6 +1161,7 @@ class CheckoutSession(DBModel):
         get link to get the tickets for this session
         """
         domain = Site.objects.all().first().domain
+        domain = f"https://{domain}"
         url = reverse(
             "checkout:get_tickets",
             args=[
@@ -1185,6 +1188,7 @@ class CheckoutSession(DBModel):
     @property
     def stripe_checkout_cancel_link(self):
         domain = Site.objects.all().first().domain
+        domain = f"https://{domain}"
         token = jwt.encode(
             {"public_id": str(self.public_id)},
             settings.STRIPE_API_KEY,
@@ -1204,6 +1208,7 @@ class CheckoutSession(DBModel):
     @property
     def stripe_checkout_success_link(self):
         domain = Site.objects.all().first().domain
+        domain = f"https://{domain}"
         token = jwt.encode(
             {"public_id": str(self.public_id)},
             settings.STRIPE_API_KEY,

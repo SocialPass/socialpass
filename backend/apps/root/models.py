@@ -203,7 +203,7 @@ class Team(DBModel):
         url = reverse(
             "dashboard_organizer:stripe_refresh",
             args=[
-                self.public_id,
+                self.slug,
             ],
         )
         return domain + url
@@ -215,7 +215,7 @@ class Team(DBModel):
         url = reverse(
             "dashboard_organizer:stripe_return",
             args=[
-                self.public_id,
+                self.slug,
             ],
         )
         return domain + url

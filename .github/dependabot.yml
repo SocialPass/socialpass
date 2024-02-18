@@ -1,7 +1,5 @@
-# Basic set up for three package managers
 version: 2
 updates:
-  # Python / Django Backend
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:

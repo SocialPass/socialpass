@@ -330,7 +330,9 @@
 				<div class="card-body">
 					{% if sales_status == "OPEN" %}
 						<form class="position-relative" method="POST">
+							{% if event.state == "LIVE" %}
 							{% csrf_token %}
+							{% endif %}
 							{{ form.ticket_tier_data }}
 							{{ form.checkout_type }}
 							<div class="mb-3">

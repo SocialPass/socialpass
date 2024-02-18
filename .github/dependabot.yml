@@ -6,4 +6,4 @@ updates:
     directory: "/backend"
     schedule:
       interval: "weekly"
-      day: "saturday"
+    open-pull-requests-limit: 10

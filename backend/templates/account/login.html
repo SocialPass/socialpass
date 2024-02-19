@@ -1,5 +1,5 @@
 {% extends "account/base.html" %}
-{% load account static i18n %}
+{% load account socialaccount static i18n %}
 
 {% block head_title %}{% trans "Sign In" %} - SocialPass{% endblock %}
 
@@ -11,10 +11,15 @@
 				{% trans "Please sign in to your account to continue." %}
 			</div>
 		{% endif %}
-		<h1 class="h3 mb-0">{% trans "Sign In" %}</h1>
-		<p class="text-body-secondary">
-			{% trans "Please enter your credentials to sign in to your account." %}
-		</p>
+		<h1 class="h3 mb-4">{% trans "Sign In" %}</h1>
+		<a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3" href="{% provider_login_url 'google' %}">
+			<img src="{% static 'images/g-logo.svg' %}" alt="Google" height="28px" class="d-block w-auto me-2">
+			{% trans "Sign in with Google" %}
+		</a>
+		<div class="position-relative my-4 opacity-50">
+			<hr />
+			<div class="position-absolute top-50 start-50 translate-middle px-3 text-body-secondary" style="background-color: var(--bs-content-bg);">{% trans "OR" %}</div>
+		</div>
 		<form class="login" method="POST" action="{% url 'account_login' %}">
 			{% csrf_token %}
 			{% if form.non_field_errors %}

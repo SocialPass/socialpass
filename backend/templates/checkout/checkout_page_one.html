@@ -328,11 +328,9 @@
 		<div class="col-lg-5">
 			<div class="card border-0 rounded-4 shadow-sm overflow-hidden">
 				<div class="card-body">
-					{% if sales_status == "OPEN" %}
+					{% if sales_status == "OPEN" and event.state == "LIVE" %}
 						<form class="position-relative" method="POST">
-							{% if event.state == "LIVE" %}
 							{% csrf_token %}
-							{% endif %}
 							{{ form.ticket_tier_data }}
 							{{ form.checkout_type }}
 							<div class="mb-3">

@@ -148,9 +148,6 @@ class CheckoutPageOne(DetailView):
             team__public_id=self.object.team.public_id, user=self.request.user
         ).exists()
         is_team_member = is_team_member and not self.request.GET.get("view_as_attendee")
-        if not is_team_member:
-            if self.object.state != Event.StateStatus.LIVE:
-                raise Http404()
 
         # Handle Ticket Sales Start / Sales End
         # Determine the sales status of an event based on its sales start and end times.

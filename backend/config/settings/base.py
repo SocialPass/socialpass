@@ -90,7 +90,6 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "crispy_forms",
     "crispy_bootstrap5",
-    "django_fsm_log",
     "django_quill",
     "djmoney",
     "storages",

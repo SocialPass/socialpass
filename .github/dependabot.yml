@@ -1,9 +1,8 @@
-# Basic set up for three package managers
 version: 2
 updates:
-  # Python / Django Backend
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:
       interval: "weekly"
-      day: "saturday"
+    open-pull-requests-limit: 10
+    labels: [ ]

@@ -1,7 +1,6 @@
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from django_fsm_log.admin import StateLogInline
 from apps.root.models import (
     CheckoutItem,
     CheckoutSession,
@@ -119,7 +118,6 @@ class EventAdmin(CustomDBAdmin):
         "user",
         "team"
     ]
-    inlines = [StateLogInline]
     readonly_fields = ["state"]
     actions = [transition_to_draft, transition_to_live]  # type: ignore
 

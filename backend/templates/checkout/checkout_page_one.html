@@ -1,5 +1,5 @@
 {% extends "checkout/base.html" %}
-{% load static i18n %}
+{% load static i18n event_date_range_for_calendar %}
 
 {% block head_title %}{{ event.title }} - {% if event.team.whitelabel.brand_name %}{{ event.team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
@@ -53,6 +53,7 @@
 		<div class="container-fluid overflow-hidden">
 			<div class="row g-3">
 				<div class="col-lg-6">
+					<input type="hidden" value="{% event_date_range_for_calendar event %}" id="date-range-for-calendar">
 					<h1 class="text-body-emphasis display-6 m-0 text-break">
 						{{ event.title }}
 					</h1>
@@ -78,7 +79,7 @@
 					<div class="container-fluid overflow-hidden g-0">
 						<div class="row g-3">
 							<div class="col-sm-6">
-								<div class="d-flex align-items-center">
+								<div class="d-flex align-items-center position-relative">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
 										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">
 											{{ event.start_date|date:"b" }}
@@ -87,12 +88,15 @@
 											{{ event.start_date|date:"d" }}
 										</div>
 									</div>
-									<div class="ms-3">
-										<div class="fw-bold">
-											{{ event.start_date.date }}
+									<div class="ms-3" style="font-size: var(--bs-font-size-sm);">
+										<div class="fw-bold lh-sm text-capitalize">
+											{{ event.start_date.date|date:"b d, Y, " }}{{ event.start_date.time }}
 										</div>
-										<div class="text-body-secondary">
-											{{ event.start_date.time }}
+										<div>
+											<a href="https://calendar.google.com/calendar/r/eventedit?text={{ event.title }}{% if not event.hide_address %}&location={{ event.localized_address_display }}{% endif %}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer" id="add-to-calendar">
+												{% trans "Add to Calendar" %}
+												<i class="fa-regular fa-plus-circle ms-1"></i>
+											</a>
 										</div>
 									</div>
 								</div>
@@ -115,23 +119,23 @@
 								<div class="d-flex align-items-center position-relative">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
 										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">{% trans "MAP" %}</div>
-										<div class="mt-1 text-primary">
+										<div class="text-primary">
 											<i class="fa-solid fa-location-dot"></i>
 										</div>
 									</div>
-									<div class="ms-3">
+									<div class="ms-3" style="font-size: var(--bs-font-size-sm);">
 										{% if not event.hide_address %}
-											<div class="fw-bold">
+											<div class="fw-bold lh-sm text-capitalize">
 												{{ event.address_1 }}
 											</div>
-											<div style="font-size: var(--bs-font-size-sm);">
+											<div>
 												<a href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
 													{% trans "Open in map" %}
 													<i class="fa-regular fa-external-link ms-1"></i>
 												</a>
 											</div>
 										{% else %}
-											<div class="fw-bold">
+											<div class="fw-bold lh-sm text-capitalize">
 												{% trans "Address" %}
 											</div>
 											<div class="text-body-secondary">
@@ -442,4 +446,33 @@
 	    }, 1000);
 	</script>
 {% endif %}
+<script type="text/javascript">
+	function formatDate (inputDate, format)  {
+    	if (!inputDate) return "";
+    	const padZero = (value) => (value < 10 ? `0${value}` : `${value}`);
+    	const parts = {
+        	yyyy: inputDate.getFullYear(),
+        	MM: padZero(inputDate.getMonth() + 1),
+        	dd: padZero(inputDate.getDate()),
+        	HH: padZero(inputDate.getHours()),
+        	hh: padZero(inputDate.getHours() > 12 ? inputDate.getHours() - 12 : inputDate.getHours()),
+        	mm: padZero(inputDate.getMinutes()),
+        	ss: padZero(inputDate.getSeconds()),
+        	tt: inputDate.getHours() < 12 ? "AM" : "PM"
+    	};
+    	return format.replace(/yyyy|MM|dd|HH|hh|mm|ss|tt/g, (match) => parts[match]);
+	}
+	const dateRangeForCalendar = document.getElementById("date-range-for-calendar").value.split("|");
+	const startDate = new Date(new Date(dateRangeForCalendar[0]).toLocaleString(
+		"en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
+	));
+	const endDate = new Date(new Date(dateRangeForCalendar[1]).toLocaleString(
+		"en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
+	));
+	const addToCalendar = document.getElementById("add-to-calendar");
+	addToCalendar.setAttribute(
+		"href",
+		addToCalendar.getAttribute("href") + `&dates=${formatDate(startDate, "yyyyMMddTHHmmss")}/${formatDate(endDate, "yyyyMMddTHHmmss")}`
+	);
+</script>
 {% endblock %}

@@ -195,8 +195,8 @@
 						<div class="row g-3">
 							<div class="col-sm-6 col-lg-4">
 								<div class="d-flex align-items-center">
-									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
-										<i class="fa-solid fa-ticket fs-6 text-primary-emphasis"></i>
+									<div class="specific-w-50 specific-h-50 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
+										<i class="fa-solid fa-ticket text-primary-emphasis"></i>
 									</div>
 									<strong class="text-primary-emphasis ms-3">{% trans "Ticket Type" %}</strong>
 								</div>
@@ -212,27 +212,33 @@
 									</span>
 								</div>
 							</div>
-							<div class="col-sm-6 col-lg-4">
-								<div class="d-flex align-items-center">
-									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
-										<i class="fa-solid fa-calendars fs-6 text-primary-emphasis"></i>
+							<div class="col-lg-4 col-sm-6">
+								<div class="d-flex align-items-center position-relative">
+									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
+										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">
+											{{ checkout_session.event.start_date|date:"b" }}
+										</div>
+										<div class="text-primary-emphasis fw-bold mt-1">
+											{{ checkout_session.event.start_date|date:"d" }}
+										</div>
 									</div>
-									<strong class="text-primary-emphasis ms-3">{% trans "Date & Time" %}</strong>
+									<div class="ms-3" style="font-size: var(--bs-font-size-sm);">
+										<div class="fw-bold lh-sm text-capitalize">
+											{{ checkout_session.event.start_date.date|date:"b d, Y, " }}{{ checkout_session.event.start_date.time }}
+										</div>
+										<div>
+											<a href="https://calendar.google.com/calendar/r/eventedit?text={{ checkout_session.event.title }}{% if not checkout_session.event.hide_address %}&location={{ checkout_session.event.localized_address_display }}{% endif %}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer" id="add-to-calendar">
+												{% trans "Add to Calendar" %}
+												<i class="fa-regular fa-plus-circle ms-1"></i>
+											</a>
+										</div>
+									</div>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">
-										<strong class="text-body">{% trans "Start" %}:</strong>
-										{% if checkout_session.event.start_date %}
-											{{ checkout_session.event.start_date }}
-										{% else %}
-											{% trans "Not set" %}
-										{% endif %}
-									</span>
 									{% if checkout_session.event.end_date %}
-										<br />
 										<span class="text-body-secondary"><strong class="text-body">{% trans "End" %}:</strong> {{ checkout_session.event.end_date }}</span>
+										<br />
 									{% endif %}
-									<br />
 									<span class="text-body-secondary">
 										<strong class="text-body">{% trans "Timezone" %}:</strong>
 										{% if checkout_session.event.timezone %}
@@ -243,15 +249,43 @@
 									</span>
 								</div>
 							</div>
-							<div class="col-sm-6 col-lg-4">
-								<div class="d-flex align-items-center">
-									<div class="specific-w-25 specific-h-25 flex-shrink-0 d-flex align-items-center justify-content-center bg-primary-subtle rounded">
-										<i class="fa-solid fa-location-dot fs-6 text-primary-emphasis"></i>
+							<div class="col-lg-4 col-sm-6">
+								<div class="d-flex align-items-center position-relative">
+									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
+										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">{% trans "MAP" %}</div>
+										<div class="text-primary">
+											<i class="fa-solid fa-location-dot"></i>
+										</div>
 									</div>
-									<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
+									<div class="ms-3" style="font-size: var(--bs-font-size-sm);">
+										{% if not checkout_session.event.hide_address %}
+											<div class="fw-bold lh-sm text-capitalize">
+												{{ checkout_session.event.address_1 }}
+											</div>
+											<div>
+												<a href="https://www.google.com/maps/search/?api=1&query={{ checkout_session.event.localized_address_display }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
+													{% trans "Open in map" %}
+													<i class="fa-regular fa-external-link ms-1"></i>
+												</a>
+											</div>
+										{% else %}
+											<div class="fw-bold lh-sm text-capitalize">
+												{% trans "Address" %}
+											</div>
+											<div class="text-body-secondary">
+												{% trans "Hidden" %}
+											</div>
+										{% endif %}
+									</div>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">{{ checkout_session.event.localized_address_display }}</span>
+									<span class="text-body-secondary">
+										{% if not checkout_session.event.hide_address %}
+											{{ checkout_session.event.localized_address_display_without_venue }}
+										{% else %}
+											{% trans "Address will only be provided to ticket holders." %}
+										{% endif %}
+									</span>
 								</div>
 							</div>
 						</div>
@@ -304,6 +338,9 @@
 {% endblock content %}
 
 {% block extra_body %}
+<!-- Add to Calendar JS -->
+<script src="{% static 'js/addToCalendar.js' %}"</script>
+
 <!-- PNG Generation -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

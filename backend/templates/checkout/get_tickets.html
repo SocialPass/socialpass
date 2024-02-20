@@ -228,7 +228,7 @@
 											{{ checkout_session.event.start_date.date|date:"b d, Y, " }}{{ checkout_session.event.start_date.time }}
 										</div>
 										<div>
-											<a href="https://calendar.google.com/calendar/r/eventedit?text={{ checkout_session.event.title }}{% if not checkout_session.event.hide_address %}&location={{ checkout_session.event.localized_address_display }}{% endif %}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer" id="add-to-calendar">
+											<a onclick="generateICSFileOnClick()" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer" id="add-to-calendar">
 												{% trans "Add to Calendar" %}
 												<i class="fa-regular fa-plus-circle ms-1"></i>
 											</a>
@@ -340,6 +340,10 @@
 
 {% block extra_body %}
 <!-- Add to Calendar JS -->
+<script>
+	const eventTitle = "{{ checkout_session.event.title }}"
+	const eventLocation = "{{ checkout_session.event.localized_address_display }}";
+</script>
 <script src="{% static 'js/addToCalendar.js' %}"</script>
 
 <!-- PNG Generation -->

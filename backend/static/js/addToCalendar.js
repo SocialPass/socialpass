@@ -1,36 +1,50 @@
 /**
- * Add to Calendar JS
+ * Generate ICS File
  *
  * By SocialPass, All rights reserved
  */
-
-function formatDate (inputDate, format)  {
-	if (!inputDate) return "";
-	const padZero = (value) => (value < 10 ? `0${value}` : `${value}`);
-	const parts = {
-		yyyy: inputDate.getFullYear(),
-		MM: padZero(inputDate.getMonth() + 1),
-		dd: padZero(inputDate.getDate()),
-		HH: padZero(inputDate.getHours()),
-		hh: padZero(inputDate.getHours() > 12 ? inputDate.getHours() - 12 : inputDate.getHours()),
-		mm: padZero(inputDate.getMinutes()),
-		ss: padZero(inputDate.getSeconds()),
-		tt: inputDate.getHours() < 12 ? "AM" : "PM"
+function generateICSFile(startDate, endDate, eventTitle, eventLocation) {
+	const formatICSDate = (date) => {
+		const padZero = (value) => (value < 10 ? `0${value}` : `${value}`);
+		return `${date.getFullYear()}${padZero(date.getMonth() + 1)}${padZero(date.getDate())}T${padZero(date.getHours())}${padZero(date.getMinutes())}${padZero(date.getSeconds())}Z`;
 	};
-	return format.replace(/yyyy|MM|dd|HH|hh|mm|ss|tt/g, (match) => parts[match]);
+
+	const formattedStartDate = formatICSDate(startDate);
+	const formattedEndDate = formatICSDate(endDate);
+
+	const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${formattedStartDate}
+DTEND:${formattedEndDate}
+SUMMARY:${eventTitle}
+LOCATION:${eventLocation}
+END:VEVENT
+END:VCALENDAR`;
+
+	const blob = new Blob([icsContent], { type: 'text/calendar' });
+	const filename = `${eventTitle}.ics`;
+	if (window.navigator.msSaveOrOpenBlob) {
+		window.navigator.msSaveOrOpenBlob(blob, filename);
+	} else {
+		const link = document.createElement('a');
+		link.href = window.URL.createObjectURL(blob);
+		link.setAttribute('download', filename);
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
 }
-if (document.getElementById("date-range-for-calendar").value) {
-	const dateRangeForCalendar = document.getElementById("date-range-for-calendar").value.split("|");
-	const startDate = new Date(new Date(dateRangeForCalendar[0]).toLocaleString(
-		"en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
-	));
-	const endDate = new Date(new Date(dateRangeForCalendar[1]).toLocaleString(
-		"en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
-	));
-	const addToCalendar = document.getElementById("add-to-calendar");
-	addToCalendar.setAttribute(
-		"href",
-		addToCalendar.getAttribute("href") +
-		`&dates=${formatDate(startDate, "yyyyMMddTHHmmss")}/${formatDate(endDate, "yyyyMMddTHHmmss")}`
-	);
+
+function generateICSFileOnClick() {
+	if (document.getElementById("date-range-for-calendar").value) {
+		const dateRangeForCalendar = document.getElementById("date-range-for-calendar").value.split("|");
+		const startDate = new Date(new Date(dateRangeForCalendar[0]).toLocaleString(
+			"en-US", { timeZone: 'UTC' } // Convert start date to UTC
+		));
+		const endDate = new Date(new Date(dateRangeForCalendar[1]).toLocaleString(
+			"en-US", { timeZone: 'UTC' } // Convert end date to UTC
+		));
+		generateICSFile(startDate, endDate, eventTitle, eventLocation);
+	}
 }

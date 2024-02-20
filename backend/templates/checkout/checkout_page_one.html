@@ -93,7 +93,7 @@
 											{{ event.start_date.date|date:"b d, Y, " }}{{ event.start_date.time }}
 										</div>
 										<div>
-											<a href="https://calendar.google.com/calendar/r/eventedit?text={{ event.title }}{% if not event.hide_address %}&location={{ event.localized_address_display }}{% endif %}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer" id="add-to-calendar">
+											<a onclick="generateICSFileOnClick()" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer" id="add-to-calendar">
 												{% trans "Add to Calendar" %}
 												<i class="fa-regular fa-plus-circle ms-1"></i>
 											</a>
@@ -397,13 +397,17 @@
 {% endblock %}
 
 {% block extra_body %}
-<script type="text/javascript">
-	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
-		document.getElementById("desc-read").classList.remove("d-none");
-	}
-</script>
+<!-- Ticket Selector -->
 <script src="{% static 'js/TicketSelector.js' %}"></script>
+
+<!-- Add to Calendar JS -->
+<script>
+	const eventTitle = "{{ event.title }}"
+	const eventLocation = "{{ event.localized_address_display }}";
+</script>
 <script src="{% static 'js/addToCalendar.js' %}"</script>
+
+<!-- Sales Timer -->
 {% if sales_status == "UPCOMING" %}
 	<script>
 		// The data/time we want to countdown to
@@ -447,4 +451,11 @@
 	    }, 1000);
 	</script>
 {% endif %}
+
+<!-- Dynamic description -->
+<script type="text/javascript">
+	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
+		document.getElementById("desc-read").classList.remove("d-none");
+	}
+</script>
 {% endblock %}

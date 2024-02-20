@@ -88,6 +88,7 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "crispy_forms",
     "crispy_bootstrap5",
     "django_quill",
@@ -120,6 +121,23 @@ AUTH_USER_MODEL = "root.User"
 LOGIN_REDIRECT_URL = "dashboard_organizer:dashboard_redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
+# https://docs.allauth.org/en/latest/socialaccount/index.html
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": "949645827365-rok4geldv705aoi0qaccn1qigg8g8gtq.apps.googleusercontent.com",
+            "secret": env("GOOGLE_OAUTH_CLIENT_SECRET"),
+            "key": ""
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        }
+    }
+}
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -274,12 +292,6 @@ LOGGING = {
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "apps.root.adapters.SocialAccountAdapter"
-
-# https://django-allauth.readthedocs.io/en/latest/forms.html
-SOCIALACCOUNT_FORMS = {"signup": "apps.root.forms.UserSocialSignupForm"}
-
 # https://django-allauth.readthedocs.io/en/latest/views.html#logout-account-logout
 ACCOUNT_LOGOUT_ON_GET = True
 
@@ -290,7 +302,10 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # Note: Allows for email-only auth
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+# https://docs.allauth.org/en/latest/socialaccount/configuration.html
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Your stuff...
 # INTERNAL

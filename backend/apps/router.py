@@ -16,10 +16,10 @@ urlpatterns = [
     path("", include("apps.marketing.urls")),
     # Event Checkout
     path("", include("apps.checkout.urls")),
-    # User Auth / Organizer Dashboard
-    # Note: First path ("dashboard/accounts/") is kept for backwards compatibility
-    path("dashboard/accounts/", include("allauth.urls")),
-    path("", include("allauth.urls")),
+    # User Auth
+    path("accounts/", include("allauth.urls")),
+    path("accounts/", include("allauth.socialaccount.urls")),
+    # Organizer Dashboard
     path("dashboard/", include("apps.dashboard_organizer.urls")),
     # Staff Dashboard
     path(settings.STAFF_URL, include("apps.dashboard_staff.urls")),

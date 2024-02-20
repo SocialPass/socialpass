@@ -1,15 +1,20 @@
 {% extends "account/base.html" %}
-{% load account static i18n %}
+{% load account socialaccount static i18n %}
 
 {% block head_title %}{% trans "Sign Up" %} - SocialPass{% endblock %}
 
 {% block inner %}
 <div class="card border-0 rounded-4 shadow-sm">
 	<div class="card-body p-lg-4">
-		<h1 class="h3 mb-0">{% trans "Sign Up" %}</h1>
-		<p class="text-body-secondary">
-			{% trans "Please fill out the following form to sign up and create your account." %}
-		</p>
+		<h1 class="h3 mb-4">{% trans "Sign Up" %}</h1>
+		<a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3" href="{% provider_login_url 'google' %}">
+			<img src="{% static 'images/g-logo.svg' %}" alt="Google" height="28px" class="d-block w-auto me-2">
+			{% trans "Sign up with Google" %}
+		</a>
+		<div class="position-relative my-4 opacity-50">
+			<hr />
+			<div class="position-absolute top-50 start-50 translate-middle px-3 text-body-secondary" style="background-color: var(--bs-content-bg);">{% trans "OR" %}</div>
+		</div>
 		<form class="signup" method="POST" action="{% url 'account_signup' %}">
 			{% csrf_token %}
 			{% if form.non_field_errors %}

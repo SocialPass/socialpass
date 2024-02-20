@@ -1,5 +1,5 @@
 {% extends "checkout/tickets_base.html" %}
-{% load static i18n %}
+{% load static i18n event_date_range_for_calendar %}
 
 {% block head_title %}{% trans "Get Tickets" %} - {% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
@@ -213,6 +213,7 @@
 								</div>
 							</div>
 							<div class="col-lg-4 col-sm-6">
+								<input type="hidden" value="{% event_date_range_for_calendar checkout_session.event %}" id="date-range-for-calendar">
 								<div class="d-flex align-items-center position-relative">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
 										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">

@@ -2,7 +2,7 @@
 {% for tier in tiers %}
 
 <!-- Handle tier filtering -->
-{% if not tier.hidden or tier.hidden and is_team_member %}
+{% if not tier.hidden %}
 {% if tier_type == "tiers-FREE" and tier.tier_free or tier_type == "tiers-FIAT" and tier.tier_fiat or tier_type == "tiers-ASSET_OWNERSHIP" and tier.tier_asset_ownership %}
 <div class="ticket-tier mb-3">
     <input
@@ -29,12 +29,6 @@
         onchange="tierOnchange(this)"
     >
     <label for="{{ tier.public_id }}" class="ticket-tier-label">
-        {% if tier.hidden %}
-            <div class="alert alert-primary bg-primary bg-opacity-25 border-0" role="alert" style="font-size: var(--bs-font-size-sm);">
-                <i class="fa-light fa-eye-slash me-1"></i>
-                This tier is <strong>hidden from the public</strong>. You're seeing it because you're viewing this page as an organizer.
-            </div>
-        {% endif %}
         {% if tier.additional_information != "" %}
             <div class="alert alert-primary bg-primary bg-opacity-25 border-0 ticket-tier-additional-info" role="alert" style="font-size: var(--bs-font-size-sm);">
                 {{tier.additional_information|linebreaks}}

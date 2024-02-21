@@ -664,22 +664,25 @@ class Event(DBModel):
     @cached_property
     def ticket_tier_counts(self):
         # Get & check for existing tiers
-        tiers = TicketTier.objects.filter(event_id=self.id).values('event_id')
+        tiers = TicketTier.objects.filter(event_id=self.id, hidden=False).values('event_id')
         if not tiers:
             return {
                 "fiat_count": 0,
                 "blockchain_count": 0,
                 "asset_ownership_count": 0,
-                "free_count": 0
+                "free_count": 0,
+                "total_count": 0
             }
 
         # Return tiers with annotated counts
-        return tiers.annotate(
+        tier_counts = tiers.annotate(
             fiat_count=Count("tier_fiat", filter=Q(tier_fiat__isnull=False)),
             blockchain_count=Count("tier_blockchain", filter=Q(tier_blockchain__isnull=False)),
             asset_ownership_count=Count("tier_asset_ownership", filter=Q(tier_asset_ownership__isnull=False)),
             free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
         ).get()
+        tier_counts["total_count"] = sum(tier_counts.values())
+        return tier_counts
 
 
 class Ticket(DBModel):

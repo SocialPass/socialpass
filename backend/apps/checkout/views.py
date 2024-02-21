@@ -174,7 +174,7 @@ class CheckoutPageOne(DetailView):
             elif self.object.ticket_tier_counts["free_count"] > 0:
                 checkout_type = "FREE"
             else:
-                checkout_type = "FREE"
+                checkout_type = None
 
         # Set everything to context
         context["checkout_type"] = checkout_type

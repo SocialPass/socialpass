@@ -335,13 +335,6 @@
 {% endblock content %}
 
 {% block extra_body %}
-<!-- Add to Calendar JS -->
-<script>
-	const eventTitle = "{{ checkout_session.event.title }}"
-	const eventLocation = "{{ checkout_session.event.localized_address_display }}";
-</script>
-<script src="{% static 'js/addToCalendar.js' %}"></script>
-
 <!-- PNG Generation -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -422,4 +415,11 @@
 		}, 2000);
 	</script>
 {% endif %}
+
+<!-- Add to Calendar JS -->
+<script>
+	const eventTitle = "{{ checkout_session.event.title }}"
+	const eventLocation = "{{ checkout_session.event.localized_address_display }}";
+</script>
+<script src="{% static 'js/addToCalendar.js' %}"></script>
 {% endblock extra_body %}

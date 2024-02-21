@@ -92,10 +92,10 @@
 					{% trans "Sell tickets easily with a Stripe account. We only take a x% fee for every ticket sold." %}
 				</p>
 			</div>
-			<form class="ms-auto" method="post">
+			<form class="ms-auto" method="post" onsubmit="stripeBtn.disabled = true; return true;">
 				{% csrf_token %}
 				{{ form }}
-				<button type="submit" class="btn btn-primary" onclick="post(this)" aria-label="Add Stripe Account">
+				<button type="submit" name="stripeBtn" class="btn btn-primary" aria-label="Add Stripe Account">
 					<i class="fa-solid fa-plus"></i>
 		        	<span class="ms-1 d-none d-sm-inline">{% trans "Add Stripe Account" %}</span>
 				</button>
@@ -115,16 +115,3 @@
 </div>
 <!-- Payment details end -->
 {% endblock content %}
-
-{% block extra_body %}
-	<!-- Connect Stripe button processing state -->
-	<script type="text/javascript">
-		function post(button) {
-			button.classList.add("disabled");
-			button.innerHTML = [
-		        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`,
-		        `<span class="d-none d-sm-inline ms-1">Processing...</span>`,
-		    ].join("");
-		}
-	</script>
-{% endblock %}

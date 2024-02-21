@@ -93,7 +93,7 @@
 											{{ event.start_date.date|date:"b d, Y, " }}{{ event.start_date.time }}
 										</div>
 										<div>
-											<a onclick="generateICSFileOnClick()" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer" id="add-to-calendar">
+											<a href="#!" onclick="generateICSFileOnClick()" class="stretched-link text-decoration-none" id="add-to-calendar">
 												{% trans "Add to Calendar" %}
 												<i class="fa-regular fa-plus-circle ms-1"></i>
 											</a>
@@ -405,7 +405,7 @@
 	const eventTitle = "{{ event.title }}"
 	const eventLocation = "{{ event.localized_address_display }}";
 </script>
-<script src="{% static 'js/addToCalendar.js' %}"</script>
+<script src="{% static 'js/addToCalendar.js' %}"></script>
 
 <!-- Sales Timer -->
 {% if sales_status == "UPCOMING" %}

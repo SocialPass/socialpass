@@ -159,7 +159,7 @@ class CheckoutPageOne(DetailView):
         elif now > sales_end:
             sales_status = "OVER"
         else:
-            sales_status = "OPEN"
+            sales_status = None
 
         # Handle checkout type
         # If checkout type not given, we prioritize Fiat < NFTs < Crypto < Free

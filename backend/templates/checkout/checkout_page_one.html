@@ -31,6 +31,7 @@
 	<div class="p-3 p-sm-4 mt-3">
 		<div class="container-fluid overflow-hidden">
 			<div class="row g-3">
+
 				<!-- Team image and name start -->
 				<div class="d-flex align-items-center mb-2f">
 					<div class="specific-w-50 specific-h-50 rounded overflow-hidden" style="border-color: var(--bs-content-bg) !important;">
@@ -52,6 +53,7 @@
 				</div>
 				<hr/>
 				<!-- Team image and name end -->
+
 				<div class="col-lg-6">
 					<h1 class="text-body-emphasis display-6 m-0 text-break">
 						{{ event.title }}
@@ -78,7 +80,7 @@
 					<div class="container-fluid overflow-hidden g-0">
 						<div class="row g-3">
 							<div class="col-sm-6">
-								<div class="d-flex align-items-center">
+								<div class="d-flex align-items-start">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
 										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">
 											{{ event.start_date|date:"b" }}
@@ -112,7 +114,7 @@
 								</div>
 							</div>
 							<div class="col-sm-6">
-								<div class="d-flex align-items-center position-relative">
+								<div class="d-flex align-items-start">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
 										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">{% trans "MAP" %}</div>
 										<div class="mt-1 text-primary">
@@ -123,12 +125,6 @@
 										{% if not event.hide_address %}
 											<div class="fw-bold">
 												{{ event.address_1 }}
-											</div>
-											<div style="font-size: var(--bs-font-size-sm);">
-												<a href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
-													{% trans "Open in map" %}
-													<i class="fa-regular fa-external-link ms-1"></i>
-												</a>
 											</div>
 										{% else %}
 											<div class="fw-bold">
@@ -143,7 +139,7 @@
 								<div class="mt-2">
 									<span class="text-body-secondary">
 										{% if not event.hide_address %}
-											{{ event.localized_address_display_without_venue }}
+										<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display_without_venue }}">{{ event.localized_address_display_without_venue }}</a>
 										{% else %}
 											{% trans "Address will only be provided to ticket holders." %}
 										{% endif %}

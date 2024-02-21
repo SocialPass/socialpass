@@ -6,7 +6,7 @@
 function generateICSFile(startDate, endDate, eventTitle, eventLocation) {
 	const formatICSDate = (date) => {
 		const padZero = (value) => (value < 10 ? `0${value}` : `${value}`);
-		return `${date.getFullYear()}${padZero(date.getMonth() + 1)}${padZero(date.getDate())}T${padZero(date.getHours())}${padZero(date.getMinutes())}${padZero(date.getSeconds())}Z`;
+		return `${date.getFullYear()}${padZero(date.getMonth() + 1)}${padZero(date.getDate())}T${padZero(date.getHours())}${padZero(date.getMinutes())}${padZero(date.getSeconds())}`;
 	};
 
 	const formattedStartDate = formatICSDate(startDate);
@@ -40,10 +40,10 @@ function generateICSFileOnClick() {
 	if (document.getElementById("date-range-for-calendar").value) {
 		const dateRangeForCalendar = document.getElementById("date-range-for-calendar").value.split("|");
 		const startDate = new Date(new Date(dateRangeForCalendar[0]).toLocaleString(
-			"en-US", { timeZone: 'UTC' } // Convert start date to UTC
+			"en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
 		));
 		const endDate = new Date(new Date(dateRangeForCalendar[1]).toLocaleString(
-			"en-US", { timeZone: 'UTC' } // Convert end date to UTC
+			"en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
 		));
 		generateICSFile(startDate, endDate, eventTitle, eventLocation);
 	}

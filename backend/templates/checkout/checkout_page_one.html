@@ -28,12 +28,12 @@
 	<!-- Cover image start -->
 
 	<!-- Event name, description, dates, location start -->
-	<div class="p-3 p-sm-4 mt-3">
+	<div class="p-3 p-sm-4">
 		<div class="container-fluid overflow-hidden">
 			<div class="row g-3">
 
 				<!-- Team image and name start -->
-				<div class="d-flex align-items-center mb-2f">
+				<div class="col-12 d-flex align-items-center">
 					<div class="specific-w-50 specific-h-50 rounded overflow-hidden" style="border-color: var(--bs-content-bg) !important;">
 						{% if event.team.image %}
 							<img src="{{ event.team.image.url }}" class="d-block w-100 h-auto" alt="Team image">
@@ -43,15 +43,17 @@
 							</div>
 						{% endif %}
 					</div>
-					<h6 class="ms-2">
+					<div class="ms-3">
 						<span class="fw-normal">{% trans "Hosted By" %}</span>
-						<span class="text-primary-emphasis">{{ event.team.name }}</span>
+						<span class="text-primary-emphasis fw-bold">{{ event.team.name }}</span>
 						{% if event.team.is_verified %}
 							<i class="fa-solid fa-badge-check text-primary ms-1"></i>
 						{% endif %}
-					</h6>
+					</div>
 				</div>
-				<hr/>
+				<div class="col-12">
+					<hr/>
+				</div>
 				<!-- Team image and name end -->
 
 				<div class="col-lg-6">
@@ -269,7 +271,8 @@
 							>
 							<label for="ASSET_OWNERSHIP" class="ticket-tier-label">
 								<h6 class="m-0">
-									<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i> {% trans "Token-Gated" %}
+									<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i>
+									<span class="text-nowrap">{% trans "Token-Gated" %}</span>
 								</h6>
 							</label>
 						</div>

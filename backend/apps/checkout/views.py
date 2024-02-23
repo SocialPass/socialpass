@@ -206,6 +206,8 @@ class CheckoutPageOne(DetailView):
             )
 
         # Form is valid, continue...
+        # Create session, checkout items, and transaction
+
         # Create checkout session
         checkout_session = CheckoutSession.objects.create(
             event=self.object,

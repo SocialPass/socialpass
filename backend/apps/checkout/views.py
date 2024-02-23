@@ -322,7 +322,6 @@ class CheckoutPageTwoBase(DetailView):
         return context
 
     def validate_post(self):
-        self.get_object()
         form = self.get_form_class()(self.request.POST)
 
         # Something went wrong, so we show error message

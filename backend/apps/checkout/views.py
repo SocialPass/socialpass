@@ -248,7 +248,7 @@ class CheckoutPageOne(DetailView):
                 self.object.slug,
                 checkout_session.public_id,
             )
-        # Handle standard checkout (Asset ownership, Free)
+        # Handle standard checkout (NFT, FREE)
         else:
             return redirect(
                 "checkout:checkout_two",

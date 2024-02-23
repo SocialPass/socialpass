@@ -322,6 +322,9 @@ class CheckoutPageTwoBase(DetailView):
         return context
 
     def validate_post(self):
+        # Get object
+        self.get_object()
+
         # Validate form
         form = self.get_form_class()(self.request.POST)
         if not form.is_valid():
@@ -407,8 +410,6 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
 
     @transaction.atomic
     def post(self, *args, **kwargs):
-        self.get_object()
-
         # Validate POST request, redirect if needed
         validate_post = self.validate_post()
         if validate_post["is_error"]:
@@ -499,8 +500,6 @@ class CheckoutFiat(CheckoutPageTwoBase):
 
     @transaction.atomic
     def post(self, *args, **kwargs):
-        self.get_object()
-
         # Validate POST request, redirect if needed
         validate_post = self.validate_post()
         if validate_post["is_error"]:

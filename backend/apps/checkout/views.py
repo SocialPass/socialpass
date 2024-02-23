@@ -183,15 +183,13 @@ class CheckoutPageOne(DetailView):
 
     @transaction.atomic
     def post(self, *args, **kwargs):
-        # Setup form
+        # Validate form
         self.get_object()
         form = CheckoutForm(
             self.request.POST,
             event=self.object,
             tiers_all=self.object.tickettier_set.all(),
         )
-
-        # Something went wrong, so we show error message
         if not form.is_valid():
             rollbar.report_message("CHECKOUT ERROR: " + str(form.errors.as_json()))
             for k, v in json.loads(form.errors.as_json()).items():
@@ -322,9 +320,8 @@ class CheckoutPageTwoBase(DetailView):
         return context
 
     def validate_post(self):
+        # Validate form
         form = self.get_form_class()(self.request.POST)
-
-        # Something went wrong, so we show error message
         if not form.is_valid():
             return {
                 "is_error": True,

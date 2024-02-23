@@ -330,7 +330,9 @@ class CheckoutPageTwoBase(DetailView):
             }
 
         # Form is valid, continue...
+        # Handle both cases: waitlist logic or standard checkout logic
 
+        # Waitlist logic
         # If waiting queue is enabled, we ignore everything and return the form
         # We do the same if skip_validation is True (for FIAT waiting queue sessions)
         if self.object.event.waiting_queue_enabled or self.object.skip_validation:
@@ -340,6 +342,7 @@ class CheckoutPageTwoBase(DetailView):
                 "form": form,
             }
 
+        # Standard checkout
         # Make sure event venue capacity is not exceeded
         checkout_items = self.object.checkoutitem_set.all()
         if self.object.event.total_capacity:
@@ -356,7 +359,6 @@ class CheckoutPageTwoBase(DetailView):
                     ),
                     "form": form,
                 }
-
         # Make sure none of the tiers' guests exceed the supply
         for item in checkout_items:
             new_guests_count = item.ticket_tier.guests_count + item.extra_party
@@ -369,7 +371,6 @@ class CheckoutPageTwoBase(DetailView):
                     ),
                     "form": form,
                 }
-
         # Make sure there is no ticket overflow
         if self.object.check_is_ticket_overflow():
             return {

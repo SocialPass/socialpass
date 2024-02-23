@@ -273,6 +273,16 @@ class CheckoutPageTwoBase(DetailView):
     def get_template_names(self):
         raise NotImplementedError
 
+    def get_form_class(self):
+        raise NotImplementedError
+
+    def is_expired(self):
+        if self.object.skip_validation:
+            return False
+        else:
+            expiration = self.object.created + datetime.timedelta(minutes=15)
+            return timezone.now() > expiration
+
     def get_object(self):
         self.object = (
             CheckoutSession.objects.select_related(
@@ -287,9 +297,6 @@ class CheckoutPageTwoBase(DetailView):
             raise Http404
         return super().get_object()
 
-    def get_form_class(self):
-        raise NotImplementedError
-
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["checkout_items"] = self.object.checkoutitem_set.select_related(
@@ -301,15 +308,6 @@ class CheckoutPageTwoBase(DetailView):
         )
         context["organizer_team"] = self.object.event.team
         return context
-
-    def is_expired(self):
-        self.object = self.get_object()
-        print(self.object)
-        if self.object.skip_validation:
-            return False
-        else:
-            expiration = self.object.created + datetime.timedelta(minutes=15)
-            return timezone.now() > expiration
 
     def get(self, *args, **kwargs):
         """

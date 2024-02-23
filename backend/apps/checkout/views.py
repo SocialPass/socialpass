@@ -19,7 +19,6 @@ from django.utils import timezone
 from django.views.generic import View
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import DetailView
-
 from apps.root.models import (
     CheckoutSession,
     CheckoutItem,
@@ -27,16 +26,18 @@ from apps.root.models import (
     Ticket,
     Membership,
 )
-from apps.root.exceptions import TxAssetOwnershipProcessingError, TxFreeProcessingError
-
-from .forms import (
+from apps.root.exceptions import (
+    TxAssetOwnershipProcessingError,
+    TxFreeProcessingError
+)
+from apps.checkout.forms import (
     PasscodeForm,
     CheckoutForm,
     CheckoutFormFree,
     CheckoutFormAssetOwnership,
     CheckoutFormFiat,
 )
-from .old_events_slug_to_pk import OLD_EVENTS_SLUG_TO_PK
+from apps.checkout.old_events_slug_to_pk import OLD_EVENTS_SLUG_TO_PK
 
 
 class CheckoutPageOneRedirect(RedirectView):

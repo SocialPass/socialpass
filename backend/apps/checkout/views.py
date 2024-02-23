@@ -428,7 +428,6 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         # Set local variables and finalize transaction
         form = validate_post["form"]
         context = self.get_context_data()
-        checkout_session = self.get_object()
         self.object.finalize_transaction(form_data=form)
 
         # If waiting queue is enabled, we ignore everything
@@ -518,8 +517,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
         # Set local variables
         form = validate_post["form"]
         context = self.get_context_data()
-        checkout_session = self.get_object()
-        tx_fiat = checkout_session.tx_fiat
+        tx_fiat = self.object.tx_fiat
         stripe.api_key = settings.STRIPE_API_KEY
 
         # Create line items using Stripe PRICES API
@@ -528,7 +526,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
             try:
                 price = stripe.Price.create(
                     unit_amount=item.unit_amount,
-                    currency=checkout_session.event.fiat_currency.lower(),
+                    currency=self.object.event.fiat_currency.lower(),
                     product_data={
                         "name": f"{item.ticket_tier.ticket_type} × {item.quantity}",
                     },
@@ -556,17 +554,17 @@ class CheckoutFiat(CheckoutPageTwoBase):
         # Create Stripe session using API
         try:
             session = stripe.checkout.Session.create(
-                customer_email=checkout_session.email,
+                customer_email=self.object.email,
                 mode="payment",
                 line_items=stripe_line_items,
                 payment_intent_data={
-                    "application_fee_amount": checkout_session.application_fee_amount,
+                    "application_fee_amount": self.object.application_fee_amount,
                     "transfer_data": {
-                        "destination": checkout_session.event.team.stripe_account_id
+                        "destination": self.object.event.team.stripe_account_id
                     },
                 },
-                success_url=checkout_session.stripe_checkout_success_link,
-                cancel_url=checkout_session.stripe_checkout_cancel_link,
+                success_url=self.object.stripe_checkout_success_link,
+                cancel_url=self.object.stripe_checkout_cancel_link,
                 expires_at=int(time.time()) + 1800,  # 30 minutes from now
             )
         except Exception:

@@ -288,6 +288,7 @@ class CheckoutPageTwoBase(DetailView):
                 "event",
                 "event__team",
                 "event__team__whitelabel",
+                "tx_asset_ownership"
             )
             .prefetch_related("checkoutitem_set")
             .get(public_id=self.kwargs["checkout_session_public_id"])

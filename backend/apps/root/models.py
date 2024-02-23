@@ -1315,25 +1315,6 @@ class CheckoutSession(DBModel):
             case _:
                 pass
 
-    def finalize_transaction(self, form_data):
-        """
-        Responsible for finalizing transaction info based on form_data supplied
-        """
-        match self.tx_type:
-            case CheckoutSession.TransactionType.FREE:
-                pass
-            case CheckoutSession.TransactionType.FIAT:
-                pass
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                pass
-            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                tx = self.tx_asset_ownership
-                tx.wallet_address = form_data.cleaned_data["wallet_address"]
-                tx.signed_message = form_data.cleaned_data["signed_message"]
-                tx.save()
-            case _:
-                pass
-
     def process_transaction(self):
         """
         Responsible for processing the correct transaction based on tx_type

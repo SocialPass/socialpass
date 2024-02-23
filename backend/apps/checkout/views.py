@@ -427,10 +427,13 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 ) + f"?name={self.object.name}&email={self.object.email}"
             )
 
-        # Set local variables and finalize transaction
-        form = validate_post["form"]
-        context = self.get_context_data()
-        self.object.finalize_transaction(form_data=form)
+        # Set NFT-specific form fields
+        if self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+            tx = self.object.tx_asset_ownership
+            form = validate_post["form"]
+            tx.wallet_address = form.cleaned_data["wallet_address"]
+            tx.signed_message = form.cleaned_data["signed_message"]
+            tx.save()
 
         # If waiting queue is enabled, we ignore everything
         # And redirect to the waiting queue success page

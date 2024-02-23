@@ -402,7 +402,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
     def get_form_class(self):
         if self.object.tx_type == CheckoutSession.TransactionType.FREE:
             return CheckoutFormFree
-        else:
+        if self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
             return CheckoutFormAssetOwnership
 
     @transaction.atomic

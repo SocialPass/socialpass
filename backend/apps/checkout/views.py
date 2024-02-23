@@ -111,7 +111,7 @@ class CheckoutPageOne(DetailView):
     Form to enter name and email
 
     POST
-    Create checkout session + items
+    Create checkout session + items + transaction
     Handle redirect based on checkout session type
     """
 
@@ -224,6 +224,8 @@ class CheckoutPageOne(DetailView):
                 quantity=int(item["amount"]),
                 extra_party=int(item["extra_party"]),
             )
+        # Create transaction
+        checkout_session.create_transaction()
 
         # OK, Handle redirect cases
         # Handle case where checkout is FIAT and is waiting queue checkout
@@ -318,15 +320,6 @@ class CheckoutPageTwoBase(DetailView):
         )
         context["organizer_team"] = self.object.event.team
         return context
-
-    def get(self, *args, **kwargs):
-        """
-        override get to call create_transaction for each attempt
-        """
-        response = super().get(*args, **kwargs)
-        self.object.create_transaction()
-
-        return response
 
     def validate_post(self):
         self.get_object()

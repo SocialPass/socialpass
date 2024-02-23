@@ -292,6 +292,19 @@ class CheckoutPageTwoBase(DetailView):
         )
         if not self.object:
             raise Http404
+
+        # Check if expired or not
+        if self.is_expired():
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Your session has expired. Please try again.",
+            )
+            return redirect(
+                "checkout:checkout_one",
+                self.kwargs["team_slug"],
+                self.kwargs["event_slug"],
+            )
         return self.object
 
     def get_context_data(self, *args, **kwargs):
@@ -312,19 +325,6 @@ class CheckoutPageTwoBase(DetailView):
         """
         response = super().get(*args, **kwargs)
         self.object.create_transaction()
-
-        # Check if expired or not
-        if self.is_expired():
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                "Your session has expired. Please try again.",
-            )
-            return redirect(
-                "checkout:checkout_one",
-                self.kwargs["team_slug"],
-                self.kwargs["event_slug"],
-            )
 
         return response
 

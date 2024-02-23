@@ -102,7 +102,7 @@ class CheckoutPageOneRedirect(RedirectView):
 
 
 class CheckoutPageOne(DetailView):
-    """a
+    """
     Checkout page one (start of flow)
 
     GET
@@ -111,39 +111,31 @@ class CheckoutPageOne(DetailView):
 
     POST
     Create checkout session + items
+    Handle redirect based on checkout session type
     """
 
     model = Event
     template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
-        # Handle default checkout
         try:
-            self.object = (
-                Event.objects.select_related("team")
-                .prefetch_related(
-                    "tickettier_set",
-                    "tickettier_set__tier_free",
-                    "tickettier_set__tier_asset_ownership",
-                )
-                .get(
-                    team__slug=self.kwargs["team_slug"],
-                    slug=self.kwargs["event_slug"]
-                )
+            self.object = Event.objects.select_related("team").prefetch_related(
+                "tickettier_set",
+                "tickettier_set__tier_free",
+                "tickettier_set__tier_asset_ownership",
+            ).get(
+                team__slug=self.kwargs["team_slug"],
+                slug=self.kwargs["event_slug"]
             )
+            return self.object
         except Event.DoesNotExist:
             raise Http404()
         except Exception:
             rollbar.report_exc_info()
             raise Http404()
 
-        return self.object
-
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
         # Check if team member
-        # If user is NOT team member, we make sure event is live
         is_team_member = self.request.user.is_authenticated and Membership.objects.filter(
             team__public_id=self.object.team.public_id, user=self.request.user
         ).exists()
@@ -176,7 +168,8 @@ class CheckoutPageOne(DetailView):
             else:
                 checkout_type = None
 
-        # Set everything to context
+        # OK, set everything to context
+        context = super().get_context_data(*args, **kwargs)
         context["checkout_type"] = checkout_type
         context["organizer_team"] = self.object.team
         context["is_team_member"] = is_team_member
@@ -225,7 +218,6 @@ class CheckoutPageOne(DetailView):
             name=form.cleaned_data["name"],
             email=form.cleaned_data["email"],
         )
-
         # Create checkout items
         ticket_tier_data = json.loads(form.cleaned_data["ticket_tier_data"])
         for item in ticket_tier_data:
@@ -236,23 +228,30 @@ class CheckoutPageOne(DetailView):
                 extra_party=int(item["extra_party"]),
             )
 
-        # OK
-        # Redirect on success
-        if checkout_session.tx_type == CheckoutSession.TransactionType.FIAT:
-            if not self.object.waiting_queue_enabled:
-                return redirect(
-                    "checkout:checkout_fiat",
-                    self.object.team.slug,
-                    self.object.slug,
-                    checkout_session.public_id,
-                )
-            else:
-                checkout_session.is_waiting_list = True
-                checkout_session.save()
-                return redirect(
-                    "checkout:joined_waiting_queue",
-                    checkout_session.public_id,
-                )
+        # OK, Handle redirect cases
+        # Handle case where checkout is FIAT and is waiting queue checkout
+        if (
+            checkout_session.tx_type == CheckoutSession.TransactionType.FIAT
+            and self.object.waiting_queue_enabled
+        ):
+            checkout_session.is_waiting_list = True
+            checkout_session.save()
+            return redirect(
+                "checkout:joined_waiting_queue",
+                checkout_session.public_id,
+            )
+        # Handle case where checkout is FIAT and is standard checkout
+        elif (
+            checkout_session.tx_type == CheckoutSession.TransactionType.FIAT
+            and not self.object.waiting_queue_enabled
+        ):
+            return redirect(
+                "checkout:checkout_fiat",
+                self.object.team.slug,
+                self.object.slug,
+                checkout_session.public_id,
+            )
+        # Handle standard checkout (Asset ownership, Free)
         else:
             return redirect(
                 "checkout:checkout_two",
@@ -305,6 +304,7 @@ class CheckoutPageTwoBase(DetailView):
 
     def is_expired(self):
         self.object = self.get_object()
+        print(self.object)
         if self.object.skip_validation:
             return False
         else:

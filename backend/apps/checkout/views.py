@@ -118,21 +118,17 @@ class CheckoutPageOne(DetailView):
     template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
-        try:
-            self.object = Event.objects.select_related("team").prefetch_related(
-                "tickettier_set",
-                "tickettier_set__tier_free",
-                "tickettier_set__tier_asset_ownership",
-            ).get(
-                team__slug=self.kwargs["team_slug"],
-                slug=self.kwargs["event_slug"]
-            )
-            return self.object
-        except Event.DoesNotExist:
-            raise Http404()
-        except Exception:
-            rollbar.report_exc_info()
-            raise Http404()
+        self.object = Event.objects.select_related("team").prefetch_related(
+            "tickettier_set",
+            "tickettier_set__tier_free",
+            "tickettier_set__tier_asset_ownership",
+        ).get(
+            team__slug=self.kwargs["team_slug"],
+            slug=self.kwargs["event_slug"]
+        )
+        if not self.object:
+            raise Http404
+        return self.object
 
     def get_context_data(self, *args, **kwargs):
         # Check if team member
@@ -295,7 +291,7 @@ class CheckoutPageTwoBase(DetailView):
         )
         if not self.object:
             raise Http404
-        return super().get_object()
+        return self.object
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

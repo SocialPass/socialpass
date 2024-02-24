@@ -1768,12 +1768,17 @@ class MessageBatch(DBModel):
             emails.append(ticket.checkout_session.email)
         emails = list(set(emails))
         self.total_recipients = len(emails)
-        send_mail(
-            "[SocialPass] " + self.subject,
-            self.message,
-            "tickets-no-reply@socialpass.io",
-            emails
-        )
+
+        # Send emails individually
+        # TODO: Look into send_mass_mail(), 
+        # even though it does not support HTML natively
+        for email in emails:
+            send_mail(
+                "[SocialPass] " + self.subject,
+                self.message,
+                "tickets-no-reply@socialpass.io",
+                [email,]
+            )
 
 
 class ManualAttendee(DBModel):

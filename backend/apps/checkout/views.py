@@ -435,13 +435,11 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         try:
             self.object.process_transaction(form_data=validate_post["form"])
         except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
-            for key, value in e.message_dict.items():
-                for message in value:
-                    messages.add_message(
-                        self.request,
-                        messages.ERROR,
-                        str(message),
-                    )
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                e
+            )
             return redirect(
                 "checkout:checkout_two",
                 self.kwargs["team_slug"],

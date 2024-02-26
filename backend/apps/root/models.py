@@ -1513,17 +1513,14 @@ class TxAssetOwnership(DBModel):
         except Exception as e:
             rollbar.report_message("TxAssetOwnershipProcessingError ERROR: " + str(e))
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            raise TxAssetOwnershipProcessingError(
-                {"wallet_address": "Error recovering address"}
-            )
+            raise TxAssetOwnershipProcessingError("Error recovering wallet address")
 
         # Successful recovery attempt
         # Now check if addresses match
         if recovered_address != self.wallet_address:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
-                {"wallet_address": "Address was recovered, but did not match"}
-            )
+                "Address was recovered, but did not match")
 
         # Success, mark as verified
         self.is_wallet_address_verified = True
@@ -1553,13 +1550,11 @@ class TxAssetOwnership(DBModel):
                 actual = 0
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
-                    {
-                        "quantity": (
-                            "Quantity requested exceeds the queried balance. "
-                            f"Expected Balance: {expected}. "
-                            f"Actual Balance: {actual}."
-                        )
-                    }
+                    (
+                    "Quantity requested exceeds the queried balance. "
+                    f"Expected Balance: {expected}. "
+                    f"Actual Balance: {actual}."
+                    )
                 )
 
             # 3. Filter against redeemed_nfts
@@ -1580,13 +1575,11 @@ class TxAssetOwnership(DBModel):
             actual = len(filtered_by_issued_ids)
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
-                    {
-                        "redeemed_nfts": (
-                            f"Could not find enough NFT's. "
-                            f"Expected unique NFT's: {expected}. "
-                            f"Actual unique NFT's: {actual}."
-                        )
-                    }
+                    (
+                        f"Could not find enough NFT's. "
+                        f"Expected unique NFT's: {expected}. "
+                        f"Actual unique NFT's: {actual}."
+                    )
                 )
             # OK
             filtered_by_expected = filtered_by_issued_ids[:expected]
@@ -1606,13 +1599,11 @@ class TxAssetOwnership(DBModel):
                         if nft not in existing_ids
                     ]
                     raise TxAssetOwnershipProcessingError(
-                        {
-                            "token_id": (
-                                "Did not find correct token ID(s). "
-                                "Expected one of possible token ID(s): "
-                                f"{nfts_left}."
-                            )
-                        }
+                        (
+                            "Did not find correct token ID(s). "
+                            "Expected one of possible token ID(s): "
+                            f"{nfts_left}."
+                        )
                     )
                 # OK
                 filtered_by_expected = filtered_by_explicit_ids[:expected]
@@ -1672,11 +1663,7 @@ class TxFree(DBModel):
         if duplicate_emails:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
-            raise TxFreeProcessingError(
-                {
-                    "email": f"The email ({checkout_session.email}) has already been used for this ticket tier."
-                }
-            )
+            raise TxFreeProcessingError(f"The email ({checkout_session.email}) has already been used for this ticket tier.")
 
         # OK
         checkout_session.tx_free.issued_email = checkout_session.email

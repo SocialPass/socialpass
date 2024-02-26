@@ -1665,10 +1665,10 @@ class TxFree(DBModel):
             checkout_session.save()
             raise TxFreeProcessingError(f"The email ({checkout_session.email}) has already been used for this ticket tier.")
 
-        # OK
-        checkout_session.tx_free.issued_email = checkout_session.email
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        # OK - Save TX and fulfill session
+        self.issued_email = checkout_session.email
         self.save()
+        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
         checkout_session.save()
         checkout_session.fulfill()
 

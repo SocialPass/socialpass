@@ -12,6 +12,7 @@ import time
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import Prefetch
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -286,7 +287,17 @@ class CheckoutPageTwoBase(DetailView):
                 "tx_fiat",
                 "tx_asset_ownership"
             )
-            .prefetch_related("checkoutitem_set")
+            .prefetch_related(
+                Prefetch(
+                    "checkoutitem_set",
+                    queryset=CheckoutItem.objects.select_related(
+                        "ticket_tier",
+                        "ticket_tier__tier_fiat",
+                        "ticket_tier__tier_free",
+                        "ticket_tier__tier_asset_ownership",
+                    )
+                )
+            )
             .get(public_id=self.kwargs["checkout_session_public_id"])
         )
         if not self.object:
@@ -295,10 +306,6 @@ class CheckoutPageTwoBase(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["checkout_items"] = self.object.checkoutitem_set.select_related(
-            "ticket_tier", "ticket_tier__tier_fiat", "ticket_tier__tier_free",
-            "ticket_tier__tier_asset_ownership",
-        ).all()
         context["form"] = self.get_form_class()(
             initial={"name": self.object.name, "email": self.object.email}
         )

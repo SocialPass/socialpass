@@ -930,20 +930,20 @@ class TicketTier(DBModel):
     def tickets_sold_exceeding_capacity(self):
         return abs(int(self.capacity - self.tickets_sold_count))
 
-    @property
+    @cached_property
     def guests_count(self):
         sold = Ticket.objects.filter(ticket_tier=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"] or 0
-        return sold_with_party - sold.count()
+        return sold_with_party - self.tickets_sold_count
 
-    @property
+    @cached_property
     def guests_available(self):
         if self.guest_supply:
             return self.guest_supply - self.guests_count
         else:
             return False
 
-    @property
+    @cached_property
     def additional_information_html(self):
         additional_information_html = ""
         try:

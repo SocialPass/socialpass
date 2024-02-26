@@ -1562,6 +1562,7 @@ class TxAssetOwnership(DBModel):
                 int(i.get("token_id"))
                 for nfts in TxAssetOwnership.objects.filter(
                     checkoutsession__event=checkout_session.event,
+                    redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
                 ).values_list("redeemed_nfts", flat=True)
                 for i in nfts
             )

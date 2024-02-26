@@ -281,6 +281,9 @@ class CheckoutPageTwoBase(DetailView):
                 "event",
                 "event__team",
                 "event__team__whitelabel",
+                "tx_free",
+                "tx_blockchain",
+                "tx_fiat",
                 "tx_asset_ownership"
             )
             .prefetch_related("checkoutitem_set")

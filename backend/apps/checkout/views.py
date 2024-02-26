@@ -365,8 +365,9 @@ class CheckoutPageTwoBase(DetailView):
                     ),
                     "form": form,
                 }
-        # Make sure none of the tiers' guests exceed the supply
+        # Verify each checkout item in the checkout session
         for item in checkout_items:
+            # Make sure none of the item's guests exceed the tier's supply
             new_guests_count = item.ticket_tier.guests_count + item.extra_party
             if item.ticket_tier.guest_supply and new_guests_count > item.ticket_tier.guest_supply:
                 return {
@@ -377,16 +378,17 @@ class CheckoutPageTwoBase(DetailView):
                     ),
                     "form": form,
                 }
-        # Make sure there is no ticket overflow
-        if self.object.check_is_ticket_overflow():
-            return {
-                "is_error": True,
-                "error_message": str(
-                    "We're sorry, not enough ticket(s) are available. Perhaps they "
-                    "sold out as you were completing the checkout process."
-                ),
-                "form": form,
-            }
+            # Make sure there is no ticket overflow
+            if item.quantity > item.ticket_tier.tickets_available:
+                return {
+                    "is_error": True,
+                    "error_message": str(
+                        "We're sorry, not enough ticket(s) are available. Perhaps they "
+                        "sold out as you were completing the checkout process."
+                    ),
+                    "form": form,
+                }
+
         # OK
         return {
             "is_error": False,

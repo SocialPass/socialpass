@@ -431,14 +431,6 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 ) + f"?name={self.object.name}&email={self.object.email}"
             )
 
-        # Set NFT-specific form fields
-        if self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-            tx = self.object.tx_asset_ownership
-            form = validate_post["form"]
-            tx.wallet_address = form.cleaned_data["wallet_address"]
-            tx.signed_message = form.cleaned_data["signed_message"]
-            tx.save()
-
         # If waiting queue is enabled, we ignore everything
         # And redirect to the waiting queue success page
         if self.object.event.waiting_queue_enabled:
@@ -451,7 +443,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
 
         # Process transaction and handle exceptions
         try:
-            self.object.process_transaction()
+            self.object.process_transaction(form_data=validate_post["form"])
         except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
             for key, value in e.message_dict.items():
                 for message in value:

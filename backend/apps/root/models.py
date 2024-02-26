@@ -1315,11 +1315,10 @@ class CheckoutSession(DBModel):
             case _:
                 pass
 
-    def process_transaction(self):
+    def process_transaction(self, form_data):
         """
         Responsible for processing the correct transaction based on tx_type
         """
-        # Process specific TX
         match self.tx_type:
             case CheckoutSession.TransactionType.FREE:
                 self.tx_free.process()
@@ -1328,6 +1327,9 @@ class CheckoutSession(DBModel):
             case CheckoutSession.TransactionType.BLOCKCHAIN:
                 self.tx_blockchain.process()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+                self.tx_asset_ownership.wallet_address = form_data.cleaned_data["wallet_address"]
+                self.tx_asset_ownership.signed_message = form_data.cleaned_data["signed_message"]
+                self.tx_asset_ownership.save()
                 self.tx_asset_ownership.process()
             case _:
                 pass
@@ -1564,7 +1566,8 @@ class TxAssetOwnership(DBModel):
             existing_ids = set(
                 int(i.get("token_id"))
                 for nfts in TxAssetOwnership.objects.filter(
-                    checkoutsession__event=checkout_session.event
+                    checkoutsession__event=checkout_session.event,
+                    redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
                 ).values_list("redeemed_nfts", flat=True)
                 for i in nfts
             )
@@ -1573,6 +1576,7 @@ class TxAssetOwnership(DBModel):
                 for nft in api_response["result"]
                 if int(nft["token_id"]) not in existing_ids
             ]
+            print(existing_ids, actual)
             actual = len(filtered_by_issued_ids)
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(

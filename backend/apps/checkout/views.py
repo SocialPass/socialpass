@@ -275,13 +275,6 @@ class CheckoutPageTwoBase(DetailView):
     def get_form_class(self):
         raise NotImplementedError
 
-    def is_expired(self):
-        if self.object.skip_validation:
-            return False
-        else:
-            expiration = self.object.created + datetime.timedelta(minutes=15)
-            return timezone.now() > expiration
-
     def get_object(self):
         self.object = (
             CheckoutSession.objects.select_related(
@@ -295,19 +288,6 @@ class CheckoutPageTwoBase(DetailView):
         )
         if not self.object:
             raise Http404
-
-        # Check if expired or not
-        if self.is_expired():
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                "Your session has expired. Please try again.",
-            )
-            return redirect(
-                "checkout:checkout_one",
-                self.kwargs["team_slug"],
-                self.kwargs["event_slug"],
-            )
         return self.object
 
     def get_context_data(self, *args, **kwargs):

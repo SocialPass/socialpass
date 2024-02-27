@@ -91,7 +91,10 @@
 								<!-- Order item start -->
 								<div class="{% if not forloop.last %}border-bottom border-secondary border-opacity-25 pb-2 mb-2{% endif %}" style="font-size: var(--bs-font-size-sm);">
 									<div class="fw-bold d-flex align-items-center">
-										<span>{{ item.ticket_tier.ticket_type }}</span>
+										<span class="{% if item.ticket_tier.is_archived %}text-danger-emphasis{% endif %}">
+											{{ item.ticket_tier.ticket_type }}
+											{% if item.ticket_tier.is_archived %}({% trans "Archived" %}){% endif %}
+										</span>
 										<span class="ms-auto ps-1 fw-normal">
 											&times; {{ item.quantity }}
 										</span>

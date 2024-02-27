@@ -898,7 +898,7 @@ class TicketTier(DBModel):
     is_archived = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ("-modified",)
+        ordering = ("is_archived", "-modified",)
 
     def __str__(self):
         return f"TicketTier: {self.ticket_type}"

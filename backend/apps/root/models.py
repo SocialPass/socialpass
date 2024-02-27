@@ -888,13 +888,14 @@ class TicketTier(DBModel):
         default=False,
         blank=False,
         null=False,
-        help_text="Whether or not this tickets available are hidden from public",
+        help_text="Whether or not the tickets available for this tier is hidden from the public",
     )
     additional_information = models.TextField(
         blank=True,
         default="",
         help_text="Additional information for this tier provided by the host.",
     )
+    is_archived = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("-modified",)

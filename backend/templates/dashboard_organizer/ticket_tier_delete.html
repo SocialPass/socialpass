@@ -18,23 +18,40 @@
 		</p>
 		<div class="card border-0 rounded-4 shadow-sm">
 			<div class="card-body px-lg-5 py-lg-4">
-				<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
-					<i class="fa-light fa-trash-can h4 m-0"></i>
-				</div>
-				<div class="specific-w-300 mw-100 mx-auto mt-3 text-center">
-					<p class="text-body-secondary">
-						{% trans "You're about to delete the following ticket tier. Please note, once this action is confirmed, it cannot be undone." %}
-					</p>
-					<p>
-						<strong class="text-primary-emphasis">{{ object.ticket_type }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
-					</p>
-					<form class="text-center" method="post">
-						{% csrf_token %}
-						{{ form }}
-						<a href="{% url 'dashboard_organizer:event_tickets' current_team.slug object.event.pk %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
-						<button type="submit" class="btn btn-danger ms-2 px-3">{% trans "Delete" %}</button>
-					</form>
-				</div>
+				{% if has_sales %}
+					<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
+						<i class="fa-light fa-ban h4 m-0"></i>
+					</div>
+					<div class="specific-w-300 mw-100 mx-auto mt-3 text-center">
+						<p class="text-body-secondary">
+							{% trans "This ticket tier cannot be deleted. Tickets have been issued, or there are sessions in the waitlist with this tier." %}
+						</p>
+						<p>
+							<strong class="text-primary-emphasis">{{ object.ticket_type }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
+						</p>
+						<div class="text-center">
+							<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.slug object.event.pk object.pk %}#extra-information" class="btn btn-secondary me-2">{% trans "Edit to hide from public" %}</a>
+						</div>
+					</div>
+				{% else %}
+					<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
+						<i class="fa-light fa-trash-can h4 m-0"></i>
+					</div>
+					<div class="specific-w-300 mw-100 mx-auto mt-3 text-center">
+						<p class="text-body-secondary">
+							{% trans "You're about to delete the following ticket tier. Please note, once this action is confirmed, it cannot be undone." %}
+						</p>
+						<p>
+							<strong class="text-primary-emphasis">{{ object.ticket_type }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
+						</p>
+						<form class="text-center" method="post">
+							{% csrf_token %}
+							{{ form }}
+							<a href="{% url 'dashboard_organizer:event_tickets' current_team.slug object.event.pk %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
+							<button type="submit" class="btn btn-danger ms-2 px-3">{% trans "Delete" %}</button>
+						</form>
+					</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>

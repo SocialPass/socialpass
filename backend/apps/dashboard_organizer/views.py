@@ -866,12 +866,54 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
     template_name = "dashboard_organizer/ticket_tier_delete.html"
 
     def get_object(self):
-        return TicketTier.objects.get(
-            pk=self.kwargs["pk"], event__team__slug=self.kwargs["team_slug"]
+        return TicketTier.objects.prefetch_related(
+            "ticket_set",
+            "checkoutitem_set",
+            "checkoutitem_set__checkout_session"
+        ).get(
+            pk=self.kwargs["pk"],
+            event__team__slug=self.kwargs["team_slug"]
         )
 
+    def has_sales(self):
+        self.object = self.get_object()
+        tickets_count = self.object.ticket_set.count()
+        has_waitlist_session = False
+        for checkout_item in self.object.checkoutitem_set.all():
+            if checkout_item.checkout_session.is_waiting_list:
+                has_waitlist_session = True
+                break
+        if tickets_count > 0 or has_waitlist_session:
+            return True
+        return False
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["has_sales"] = self.has_sales()
+        return context
+
+    def form_valid(self, form, **kwargs):
+        if self.has_sales():
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "This ticket tier cannot be deleted. Tickets have been issued, "
+                "or there are sessions in the waitlist with this tier."
+            )
+            return redirect(
+                "dashboard_organizer:ticket_tier_delete",
+                self.kwargs["team_slug"],
+                self.kwargs["event_pk"],
+                self.kwargs["pk"],
+            )
+        return super().form_valid(form)
+
     def get_success_url(self):
-        messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Ticket has been deleted."
+        )
         return reverse(
             "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),

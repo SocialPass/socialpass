@@ -2,7 +2,7 @@
 {% for tier in tiers %}
 
 <!-- Handle tier filtering -->
-{% if not tier.hidden %}
+{% if not tier.hidden and not tier.is_archived %}
 {% if tier_type == "tiers-FREE" and tier.tier_free or tier_type == "tiers-FIAT" and tier.tier_fiat or tier_type == "tiers-ASSET_OWNERSHIP" and tier.tier_asset_ownership %}
 <div class="ticket-tier mb-3">
     <input

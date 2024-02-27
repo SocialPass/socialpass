@@ -1,29 +1,29 @@
 {% extends "dashboard_organizer/base.html" %}
 {% load static i18n get_theme_value get_user_primary_email %}
 
-{% block head_title %}{% trans "Delete Ticket Tier" %} - SocialPass{% endblock head_title %}
+{% block head_title %}{% trans "Archive Ticket Tier" %} - SocialPass{% endblock head_title %}
 
-{% block navbar_title %}<span class="text-primary-emphasis">{{ object.event.title }}</span> &mdash; {% trans "Delete Ticket Tier" %}{% endblock navbar_title %}
+{% block navbar_title %}<span class="text-primary-emphasis">{{ object.event.title }}</span> &mdash; {% trans "Archive Ticket Tier" %}{% endblock navbar_title %}
 
-{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ object.event.title }}</span> &mdash; {% trans "Delete Ticket Tier" %}{% endblock navbar_title_2 %}
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ object.event.title }}</span> &mdash; {% trans "Archive Ticket Tier" %}{% endblock navbar_title_2 %}
 
 {% block content %}
 {% include "components/event_flow_header.html" with step="2" event=object.event %}
 <!-- Deletion start -->
 <div class="row mt-4 mb-3">
 	<div class="col-lg-8 mx-auto">
-		<h1 class="h3 mb-0">{% trans "Delete Ticket Tier" %}</h1>
+		<h1 class="h3 mb-0">{% trans "Archive Ticket Tier" %}</h1>
 		<p class="text-body-secondary">
-			{% trans "Please confirm the deletion of your ticket tier." %}
+			{% trans "Please confirm the archivation of your ticket tier." %}
 		</p>
 		<div class="card border-0 rounded-4 shadow-sm">
 			<div class="card-body px-lg-5 py-lg-4">
 				<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
 					<i class="fa-light fa-trash-can h4 m-0"></i>
 				</div>
-				<div class="specific-w-300 mw-100 mx-auto mt-3 text-center">
+				<div class="specific-w-400 mw-100 mx-auto mt-3 text-center">
 					<p class="text-body-secondary">
-						{% trans "You're about to delete the following ticket tier. Please note, once this action is confirmed, it cannot be undone." %}
+						{% trans "You're about to permanently archive the following ticket tier and remove it from public use. Please note, once this action is confirmed, it cannot be undone." %}
 					</p>
 					<p>
 						<strong class="text-primary-emphasis">{{ object.ticket_type }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
@@ -32,7 +32,7 @@
 						{% csrf_token %}
 						{{ form }}
 						<a href="{% url 'dashboard_organizer:event_tickets' current_team.slug object.event.pk %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
-						<button type="submit" class="btn btn-danger ms-2 px-3">{% trans "Delete" %}</button>
+						<button type="submit" class="btn btn-danger ms-2 px-3">{% trans "Archive" %}</button>
 					</form>
 				</div>
 			</div>

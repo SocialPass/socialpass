@@ -21,7 +21,7 @@ def get_sidebar_active_status(context, key):
             "ticket_tier_fiat_create",
             "ticket_tier_free_create",
             "ticket_tier_update",
-            "ticket_tier_delete",
+            "ticket_tier_archive",
         ]:
             return "active"
     elif key == "team-details":

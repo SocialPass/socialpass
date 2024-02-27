@@ -856,25 +856,33 @@ class TicketTierUpdateView(TeamContextMixin, UpdateView):
         )
 
 
-class TicketTierDeleteView(TeamContextMixin, DeleteView):
+class TicketTierArchiveView(TeamContextMixin, DetailView):
     """
-    Delete an event's ticket tier.
+    Archive an event's ticket tier.
     """
 
     object: TicketTier  # Mypy typing
     model = TicketTier
-    template_name = "dashboard_organizer/ticket_tier_delete.html"
+    template_name = "dashboard_organizer/ticket_tier_archive.html"
 
     def get_object(self):
         return TicketTier.objects.get(
             pk=self.kwargs["pk"], event__team__slug=self.kwargs["team_slug"]
         )
 
-    def get_success_url(self):
-        messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
-        return reverse(
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.is_archived = True
+        self.object.save()
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Ticket tier has been archived."
+        )
+        return redirect(
             "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),
+            self.kwargs["team_slug"],
+            self.kwargs["event_pk"],
         )
 
 

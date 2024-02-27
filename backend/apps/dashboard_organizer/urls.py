@@ -120,9 +120,9 @@ urlpatterns = [
         name="ticket_tier_update",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/tickets/<int:pk>/delete/",
-        views.TicketTierDeleteView.as_view(),
-        name="ticket_tier_delete",
+        "<slug:team_slug>/events/<int:event_pk>/tickets/<int:pk>/archive/",
+        views.TicketTierArchiveView.as_view(),
+        name="ticket_tier_archive",
     ),
     path(
         "<slug:team_slug>/events/<int:event_pk>/rsvp-tickets/",

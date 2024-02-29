@@ -314,7 +314,20 @@ class CheckoutPageTwoBase(DetailView):
 
     def validate_post(self):
         # Get object
+        # Also validate transaction status to avoid resubmission
         self.get_object()
+        if self.object.tx_status in [
+            CheckoutSession.OrderStatus.PROCESSING,
+            CheckoutSession.OrderStatus.COMPLETED,
+            CheckoutSession.OrderStatus.FULFILLED
+        ]:
+            return {
+                "is_error": True,
+                "error_message": str(
+                    f"Your checkout is already processing. Please check for confirmation at {self.object.email}."
+                ),
+                "form": None,
+            }
 
         # Validate form
         form = self.get_form_class()(self.request.POST)

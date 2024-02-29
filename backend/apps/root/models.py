@@ -1279,13 +1279,21 @@ class CheckoutSession(DBModel):
         self.passcode_expiration = get_expiration_datetime()
         self.save()
 
-    def create_items_tickets(self):
+    def create_tickets(self):
         """
-        call `CheckoutItem.create_tickets()` method for all
-        related checkout_item objects
+        Create Tickets for all related checkout_item objects and bulk insert into the database.
         """
+        tickets_to_create = []
         for checkout_item in self.checkoutitem_set.all():
-            checkout_item.create_tickets()
+            ticket_keys = {
+                "checkout_session": checkout_item.checkout_session,
+                "event": checkout_item.checkout_session.event,
+                "ticket_tier": checkout_item.ticket_tier,
+                "checkout_item": checkout_item,
+                "party_size": checkout_item.calculated_party_size,
+            }
+            tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
+        Ticket.objects.bulk_create(tickets_to_create)
 
     def create_transaction(self):
         """
@@ -1341,7 +1349,7 @@ class CheckoutSession(DBModel):
         - send confirmation email
         - mark as fullfilled
         """
-        self.create_items_tickets()
+        self.create_tickets()
         self.send_confirmation_email()
         self.tx_status = CheckoutSession.OrderStatus.FULFILLED
         self.save()
@@ -1403,25 +1411,6 @@ class CheckoutItem(DBModel):
             extra_party = self.ticket_tier.allowed_guests
 
         return extra_party + 1
-
-    def create_tickets(self):
-        """
-        create Tickets and relate to the checkout_item
-        the amount of tickets created will be the same as
-        the quantity defined in the related checkout_item
-        also check overflow and mark if necessary
-        """
-        ticket_keys = {
-            "checkout_session": self.checkout_session,
-            "event": self.checkout_session.event,
-            "ticket_tier": self.ticket_tier,
-            "checkout_item": self,
-            "party_size": self.calculated_party_size,
-        }
-        tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
-
-        # create tickets
-        Ticket.objects.bulk_create(tickets)
 
 
 class TxFiat(DBModel):

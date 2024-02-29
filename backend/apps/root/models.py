@@ -1560,18 +1560,19 @@ class TxAssetOwnership(DBModel):
             # 3. Filter against redeemed_nfts
             existing_ids = set(
                 int(i.get("token_id"))
-                for nfts in TxAssetOwnership.objects.filter(
-                    checkoutsession__event=checkout_session.event,
-                    redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
-                ).values_list("redeemed_nfts", flat=True)
+                for nfts in CheckoutItem.objects.filter(
+                    checkout_session__event=checkout_session.event,
+                    ticket_tier__tier_asset_ownership=tier_asset_ownership,
+                    checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
+                ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
                 for i in nfts
             )
+            print(existing_ids)
             filtered_by_issued_ids = [
                 nft
                 for nft in api_response["result"]
                 if int(nft["token_id"]) not in existing_ids
             ]
-            print(existing_ids, actual)
             actual = len(filtered_by_issued_ids)
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
@@ -1729,7 +1730,7 @@ class MessageBatch(DBModel):
         self.total_recipients = len(emails)
 
         # Send emails individually
-        # TODO: Look into send_mass_mail(), 
+        # TODO: Look into send_mass_mail(),
         # even though it does not support HTML natively
         for email in emails:
             send_mail(

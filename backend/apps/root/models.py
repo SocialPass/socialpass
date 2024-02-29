@@ -1345,14 +1345,20 @@ class CheckoutSession(DBModel):
     def fulfill(self):
         """
         Fullfil an order related to a checkout session
-        - create tickets
-        - send confirmation email
-        - mark as fullfilled
         """
-        self.create_tickets()
-        self.send_confirmation_email()
-        self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        # Mark as COMPLETED, awaiting final fulfillment
+        self.tx_status = CheckoutSession.OrderStatus.COMPLETED
         self.save()
+
+        # Create tickets, send confirmation email, and set as FULFILLED
+        # Also wrap in try/catch for better error reporting
+        try:
+            self.create_tickets()
+            self.send_confirmation_email()
+            self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+            self.save()
+        except Exception:
+            rollbar.report_exc_info()
 
 
 class CheckoutItem(DBModel):
@@ -1443,8 +1449,6 @@ class TxFiat(DBModel):
         checkout_session.save()
 
         # OK
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        checkout_session.save()
         checkout_session.fulfill()
 
 
@@ -1621,9 +1625,7 @@ class TxAssetOwnership(DBModel):
             checkout_session.save()
             raise e
 
-        # OK
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        checkout_session.save()
+        # OK - Fulfill checkout session
         checkout_session.fulfill()
 
 
@@ -1658,8 +1660,6 @@ class TxFree(DBModel):
         # OK - Save TX and fulfill session
         self.issued_email = checkout_session.email
         self.save()
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        checkout_session.save()
         checkout_session.fulfill()
 
 

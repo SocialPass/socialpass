@@ -522,7 +522,8 @@ class CheckoutFiat(CheckoutPageTwoBase):
 
         # Create line items using Stripe PRICES API
         stripe_line_items = []
-        for item in context["checkout_items"]:
+        checkout_items = self.object.checkoutitem_set.all()
+        for item in checkout_items:
             try:
                 price = stripe.Price.create(
                     unit_amount=item.unit_amount,

@@ -1560,7 +1560,6 @@ class TxAssetOwnership(DBModel):
                 ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
                 for i in nfts
             )
-            print(existing_ids)
             filtered_by_issued_ids = [
                 nft
                 for nft in api_response["result"]
@@ -1575,7 +1574,6 @@ class TxAssetOwnership(DBModel):
                         f"Actual unique NFT's: {actual}."
                     )
                 )
-            # OK
             filtered_by_expected = filtered_by_issued_ids[:expected]
 
             # 4. OPTIONAL: Filter against TierAssetOwnership.token_id

@@ -1600,8 +1600,10 @@ class TxAssetOwnership(DBModel):
                 # OK
                 filtered_by_expected = filtered_by_explicit_ids[:expected]
 
-        # 4. OK - Set redeemed NFTs & Save
-        self.redeemed_nfts = filtered_by_expected
+            # 4. Set redeemed_nfts
+            self.redeemed_nfts += filtered_by_expected
+
+        # 5. OK - Save
         self.save()
 
     def process(self):

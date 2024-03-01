@@ -459,7 +459,8 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 self.kwargs["event_slug"],
                 self.kwargs["checkout_session_public_id"],
             )
-        except Exception:
+        except Exception as e:
+            print(e)
             rollbar.report_exc_info()
             messages.add_message(
                 self.request,

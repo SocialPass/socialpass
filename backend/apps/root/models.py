@@ -1519,10 +1519,10 @@ class TxAssetOwnership(DBModel):
         self.is_wallet_address_verified = True
         self.save()
 
-    def _process_delegate_ownership(self, checkout_session=None):
+    def _process_delegate_ownership(self, wallet_address=None, tier_asset_ownership=None):
         # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket. You can do this the following ways:
         import requests
-        url = f"https://api.delegate.xyz/registry/v2/{tier_asset_ownership.token_address}?chainId={tier_asset_ownership.network}"
+        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier_asset_ownership.network}"
         response = requests.get(url)
         incomingDelegations = response.json()
 
@@ -1540,87 +1540,100 @@ class TxAssetOwnership(DBModel):
 
     def _process_asset_ownership(self, checkout_session=None):
         for item in checkout_session.checkoutitem_set.all():
-            # 1. Format & make API call for each CheckoutItem
-            tier_asset_ownership = item.ticket_tier.tier_asset_ownership
-            params = {
-                "chain": hex(tier_asset_ownership.network),
-                "format": "decimal",
-                "media_items": True,
-                "address": self.wallet_address,
-                "token_addresses": [tier_asset_ownership.token_address],
-            }
-            api_response = evm_api.nft.get_wallet_nfts(
-                api_key=settings.MORALIS_API_KEY,
-                params=params,
-            )
-
-            # 2. Check if wallet has required balance
-            expected = tier_asset_ownership.balance_required * item.quantity
-            if api_response.get("result"):
-                actual = len(api_response["result"])
+            # Set wallet addresses
+            # Either single address, or list of delegated wallets
+            if True:
+                wallets = self._process_delegate_ownership(
+                    wallet_address=self.wallet_address,
+                    tier_asset_ownership=item.ticket_tier.tier_asset_ownership
+                )
+                if not wallets:
+                    raise TxAssetOwnershipProcessingError("No delegated wallets found.")
             else:
-                actual = 0
-            if actual < expected:
-                raise TxAssetOwnershipProcessingError(
-                    (
-                    "Quantity requested exceeds the queried balance. "
-                    f"Expected Balance: {expected}. "
-                    f"Actual Balance: {actual}."
-                    )
+                wallets = [self.wallet_address]
+
+            for wallet in wallets:
+                # Format & make API call for each CheckoutItem
+                tier_asset_ownership = item.ticket_tier.tier_asset_ownership
+                params = {
+                    "chain": hex(tier_asset_ownership.network),
+                    "format": "decimal",
+                    "media_items": True,
+                    "address": wallet,
+                    "token_addresses": [tier_asset_ownership.token_address],
+                }
+                api_response = evm_api.nft.get_wallet_nfts(
+                    api_key=settings.MORALIS_API_KEY,
+                    params=params,
                 )
 
-            # 3. Filter against redeemed_nfts
-            existing_ids = set(
-                int(i.get("token_id"))
-                for nfts in CheckoutItem.objects.filter(
-                    checkout_session__event=checkout_session.event,
-                    ticket_tier__tier_asset_ownership=tier_asset_ownership,
-                    checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
-                ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
-                for i in nfts
-            )
-            filtered_by_issued_ids = [
-                nft
-                for nft in api_response["result"]
-                if int(nft["token_id"]) not in existing_ids
-            ]
-            actual = len(filtered_by_issued_ids)
-            if actual < expected:
-                raise TxAssetOwnershipProcessingError(
-                    (
-                        f"Could not find enough NFT's. "
-                        f"Expected unique NFT's: {expected}. "
-                        f"Actual unique NFT's: {actual}."
-                    )
-                )
-            filtered_by_expected = filtered_by_issued_ids[:expected]
-
-            # 4. OPTIONAL: Filter against TierAssetOwnership.token_id
-            if tier_asset_ownership.token_id:
-                filtered_by_explicit_ids = [
-                    nft
-                    for nft in filtered_by_issued_ids
-                    if int(nft["token_id"]) in tier_asset_ownership.token_id
-                ]
-                actual = len(filtered_by_explicit_ids)
+                # Check if wallet has required balance
+                expected = tier_asset_ownership.balance_required * item.quantity
+                if api_response.get("result"):
+                    actual = len(api_response["result"])
+                else:
+                    actual = 0
                 if actual < expected:
-                    nfts_left = [
-                        nft
-                        for nft in tier_asset_ownership.token_id
-                        if nft not in existing_ids
-                    ]
                     raise TxAssetOwnershipProcessingError(
                         (
-                            "Did not find correct token ID(s). "
-                            "Expected one of possible token ID(s): "
-                            f"{nfts_left}."
+                        "Quantity requested exceeds the queried balance. "
+                        f"Expected Balance: {expected}. "
+                        f"Actual Balance: {actual}."
                         )
                     )
-                # OK
-                filtered_by_expected = filtered_by_explicit_ids[:expected]
 
-            # 4. Set redeemed_nfts
-            self.redeemed_nfts += filtered_by_expected
+                # Filter against redeemed_nfts
+                existing_ids = set(
+                    int(i.get("token_id"))
+                    for nfts in CheckoutItem.objects.filter(
+                        checkout_session__event=checkout_session.event,
+                        ticket_tier__tier_asset_ownership=tier_asset_ownership,
+                        checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
+                    ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
+                    for i in nfts
+                )
+                filtered_by_issued_ids = [
+                    nft
+                    for nft in api_response["result"]
+                    if int(nft["token_id"]) not in existing_ids
+                ]
+                actual = len(filtered_by_issued_ids)
+                if actual < expected:
+                    raise TxAssetOwnershipProcessingError(
+                        (
+                            f"Could not find enough NFT's. "
+                            f"Expected unique NFT's: {expected}. "
+                            f"Actual unique NFT's: {actual}."
+                        )
+                    )
+                filtered_by_expected = filtered_by_issued_ids[:expected]
+
+                # OPTIONAL: Filter against TierAssetOwnership.token_id
+                if tier_asset_ownership.token_id:
+                    filtered_by_explicit_ids = [
+                        nft
+                        for nft in filtered_by_issued_ids
+                        if int(nft["token_id"]) in tier_asset_ownership.token_id
+                    ]
+                    actual = len(filtered_by_explicit_ids)
+                    if actual < expected:
+                        nfts_left = [
+                            nft
+                            for nft in tier_asset_ownership.token_id
+                            if nft not in existing_ids
+                        ]
+                        raise TxAssetOwnershipProcessingError(
+                            (
+                                "Did not find correct token ID(s). "
+                                "Expected one of possible token ID(s): "
+                                f"{nfts_left}."
+                            )
+                        )
+                    # OK
+                    filtered_by_expected = filtered_by_explicit_ids[:expected]
+
+                # Set redeemed_nfts
+                self.redeemed_nfts += filtered_by_expected
 
         # 5. OK - Save
         self.save()

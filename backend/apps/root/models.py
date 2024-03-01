@@ -12,7 +12,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.core.mail import send_mail
+from django.core.mail import send_mail, send_mass_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q, Count, F
@@ -1769,16 +1769,15 @@ class MessageBatch(DBModel):
         emails = list(set(emails))
         self.total_recipients = len(emails)
 
-        # Send emails individually
-        # TODO: Look into send_mass_mail(), 
-        # even though it does not support HTML natively
-        for email in emails:
-            send_mail(
-                "[SocialPass] " + self.subject,
-                self.message,
-                "tickets-no-reply@socialpass.io",
-                [email,]
-            )
+        # Send mass emails
+        # This function opens a connection to the mail server only once
+        messages = [(
+            "[SocialPass] " + self.subject,
+            self.message,
+            "tickets-no-reply@socialpass.io",
+            [email]
+        ) for email in emails]
+        send_mass_mail(messages)
 
 
 class ManualAttendee(DBModel):

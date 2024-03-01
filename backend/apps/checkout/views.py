@@ -434,6 +434,9 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 ) + f"?name={self.object.name}&email={self.object.email}"
             )
 
+        # Finalize transaction using form data
+        self.object.finalize_transaction(form_data=validate_post["form"])
+
         # If waiting queue is enabled, we ignore everything
         # And redirect to the waiting queue success page
         if self.object.event.waiting_queue_enabled:
@@ -446,7 +449,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
 
         # Process transaction and handle exceptions
         try:
-            self.object.process_transaction(form_data=validate_post["form"])
+            self.object.process_transaction()
         except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
             messages.add_message(
                 self.request,

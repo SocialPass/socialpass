@@ -86,7 +86,7 @@
 								<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.tx_type }}&name={{ object.name }}&email={{ object.email }}">{% trans "Edit" %}</a>
 							</div>
 						</div>
-						{% for item in checkout_items %}
+						{% for item in object.checkoutitem_set.all %}
 							<!-- Order item start -->
 							<div class="pt-3 mt-3 border-top">
 								<h6 class="m-0 d-flex align-items-center">

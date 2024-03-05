@@ -199,7 +199,7 @@ class Team(DBModel):
     @property
     def stripe_refresh_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"https://{domain}"
+        domain = f"http://{domain}" # http works in local, converted to https on prod
         url = reverse(
             "dashboard_organizer:stripe_refresh",
             args=[
@@ -211,7 +211,7 @@ class Team(DBModel):
     @property
     def stripe_return_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"https://{domain}"
+        domain = f"http://{domain}" # http works in local, converted to https on prod
         url = reverse(
             "dashboard_organizer:stripe_return",
             args=[
@@ -930,20 +930,20 @@ class TicketTier(DBModel):
     def tickets_sold_exceeding_capacity(self):
         return abs(int(self.capacity - self.tickets_sold_count))
 
-    @property
+    @cached_property
     def guests_count(self):
         sold = Ticket.objects.filter(ticket_tier=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"] or 0
-        return sold_with_party - sold.count()
+        return sold_with_party - self.tickets_sold_count
 
-    @property
+    @cached_property
     def guests_available(self):
         if self.guest_supply:
             return self.guest_supply - self.guests_count
         else:
             return False
 
-    @property
+    @cached_property
     def additional_information_html(self):
         additional_information_html = ""
         try:
@@ -1156,7 +1156,7 @@ class CheckoutSession(DBModel):
     passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
     is_waiting_list = models.BooleanField(default=False)
 
-    # When set, this overrides the expiration and validation check
+    # When set, this overrides  validation check
     # Used when customers need to complete waiting queue flow for FIAT tickets
     # We may need this in other places, so we use a generic name
     skip_validation = models.BooleanField(default=False)
@@ -1170,7 +1170,7 @@ class CheckoutSession(DBModel):
         get link to get the tickets for this session
         """
         domain = Site.objects.all().first().domain
-        domain = f"https://{domain}"
+        domain = f"http://{domain}" # http works in local, converted to https on prod
         url = reverse(
             "checkout:get_tickets",
             args=[
@@ -1197,7 +1197,7 @@ class CheckoutSession(DBModel):
     @property
     def stripe_checkout_cancel_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"https://{domain}"
+        domain = f"http://{domain}" # http works in local, converted to https on prod
         token = jwt.encode(
             {"public_id": str(self.public_id)},
             settings.STRIPE_API_KEY,
@@ -1217,7 +1217,7 @@ class CheckoutSession(DBModel):
     @property
     def stripe_checkout_success_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"https://{domain}"
+        domain = f"http://{domain}" # http works in local, converted to https on prod
         token = jwt.encode(
             {"public_id": str(self.public_id)},
             settings.STRIPE_API_KEY,
@@ -1279,13 +1279,21 @@ class CheckoutSession(DBModel):
         self.passcode_expiration = get_expiration_datetime()
         self.save()
 
-    def create_items_tickets(self):
+    def create_tickets(self):
         """
-        call `CheckoutItem.create_tickets()` method for all
-        related checkout_item objects
+        Create Tickets for all related checkout_item objects and bulk insert into the database.
         """
+        tickets_to_create = []
         for checkout_item in self.checkoutitem_set.all():
-            checkout_item.create_tickets()
+            ticket_keys = {
+                "checkout_session": checkout_item.checkout_session,
+                "event": checkout_item.checkout_session.event,
+                "ticket_tier": checkout_item.ticket_tier,
+                "checkout_item": checkout_item,
+                "party_size": checkout_item.calculated_party_size,
+            }
+            tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
+        Ticket.objects.bulk_create(tickets_to_create)
 
     def create_transaction(self):
         """
@@ -1317,7 +1325,7 @@ class CheckoutSession(DBModel):
 
     def finalize_transaction(self, form_data):
         """
-        Responsible for finalizing transaction info based on form_data supplied
+        Responsible for finalizing transaction using the form_data
         """
         match self.tx_type:
             case CheckoutSession.TransactionType.FREE:
@@ -1327,10 +1335,9 @@ class CheckoutSession(DBModel):
             case CheckoutSession.TransactionType.BLOCKCHAIN:
                 pass
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                tx = self.tx_asset_ownership
-                tx.wallet_address = form_data.cleaned_data["wallet_address"]
-                tx.signed_message = form_data.cleaned_data["signed_message"]
-                tx.save()
+                self.tx_asset_ownership.wallet_address = form_data.cleaned_data["wallet_address"]
+                self.tx_asset_ownership.signed_message = form_data.cleaned_data["signed_message"]
+                self.tx_asset_ownership.save()
             case _:
                 pass
 
@@ -1338,7 +1345,6 @@ class CheckoutSession(DBModel):
         """
         Responsible for processing the correct transaction based on tx_type
         """
-        # Process specific TX
         match self.tx_type:
             case CheckoutSession.TransactionType.FREE:
                 self.tx_free.process()
@@ -1354,27 +1360,20 @@ class CheckoutSession(DBModel):
     def fulfill(self):
         """
         Fullfil an order related to a checkout session
-        - create tickets
-        - send confirmation email
-        - mark as fullfilled
         """
-        self.create_items_tickets()
-        self.send_confirmation_email()
-        self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+        # Mark as COMPLETED, awaiting final fulfillment
+        self.tx_status = CheckoutSession.OrderStatus.COMPLETED
         self.save()
 
-    def check_is_ticket_overflow(self):
-        """
-        Check if there is ticket overflow for checkout session
-        """
-        is_ticket_overflow = False
-        checkout_items = CheckoutItem.objects.select_related(
-            "ticket_tier",
-        ).filter(checkout_session=self)
-        for item in checkout_items:
-            if item.quantity > item.ticket_tier.tickets_available:
-                is_ticket_overflow = True
-        return is_ticket_overflow
+        # Create tickets, send confirmation email, and set as FULFILLED
+        # Also wrap in try/catch for better error reporting
+        try:
+            self.create_tickets()
+            self.send_confirmation_email()
+            self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+            self.save()
+        except Exception:
+            rollbar.report_exc_info()
 
 
 class CheckoutItem(DBModel):
@@ -1434,25 +1433,6 @@ class CheckoutItem(DBModel):
 
         return extra_party + 1
 
-    def create_tickets(self):
-        """
-        create Tickets and relate to the checkout_item
-        the amount of tickets created will be the same as
-        the quantity defined in the related checkout_item
-        also check overflow and mark if necessary
-        """
-        ticket_keys = {
-            "checkout_session": self.checkout_session,
-            "event": self.checkout_session.event,
-            "ticket_tier": self.ticket_tier,
-            "checkout_item": self,
-            "party_size": self.calculated_party_size,
-        }
-        tickets = [Ticket(**ticket_keys) for _ in range(self.quantity)]
-
-        # create tickets
-        Ticket.objects.bulk_create(tickets)
-
 
 class TxFiat(DBModel):
     """
@@ -1484,8 +1464,6 @@ class TxFiat(DBModel):
         checkout_session.save()
 
         # OK
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        checkout_session.save()
         checkout_session.fulfill()
 
 
@@ -1543,17 +1521,14 @@ class TxAssetOwnership(DBModel):
         except Exception as e:
             rollbar.report_message("TxAssetOwnershipProcessingError ERROR: " + str(e))
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            raise TxAssetOwnershipProcessingError(
-                {"wallet_address": "Error recovering address"}
-            )
+            raise TxAssetOwnershipProcessingError("Error recovering wallet address")
 
         # Successful recovery attempt
         # Now check if addresses match
         if recovered_address != self.wallet_address:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             raise TxAssetOwnershipProcessingError(
-                {"wallet_address": "Address was recovered, but did not match"}
-            )
+                "Address was recovered, but did not match")
 
         # Success, mark as verified
         self.is_wallet_address_verified = True
@@ -1583,23 +1558,24 @@ class TxAssetOwnership(DBModel):
                 actual = 0
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
-                    {
-                        "quantity": (
-                            "Quantity requested exceeds the queried balance. "
-                            f"Expected Balance: {expected}. "
-                            f"Actual Balance: {actual}."
-                        )
-                    }
+                    (
+                    "Quantity requested exceeds the queried balance. "
+                    f"Expected Balance: {expected}. "
+                    f"Actual Balance: {actual}."
+                    )
                 )
 
             # 3. Filter against redeemed_nfts
             existing_ids = set(
                 int(i.get("token_id"))
-                for nfts in TxAssetOwnership.objects.filter(
-                    checkoutsession__event=checkout_session.event
-                ).values_list("redeemed_nfts", flat=True)
+                for nfts in CheckoutItem.objects.filter(
+                    checkout_session__event=checkout_session.event,
+                    ticket_tier__tier_asset_ownership=tier_asset_ownership,
+                    checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
+                ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
                 for i in nfts
             )
+            print(existing_ids)
             filtered_by_issued_ids = [
                 nft
                 for nft in api_response["result"]
@@ -1608,13 +1584,11 @@ class TxAssetOwnership(DBModel):
             actual = len(filtered_by_issued_ids)
             if actual < expected:
                 raise TxAssetOwnershipProcessingError(
-                    {
-                        "redeemed_nfts": (
-                            f"Could not find enough NFT's. "
-                            f"Expected unique NFT's: {expected}. "
-                            f"Actual unique NFT's: {actual}."
-                        )
-                    }
+                    (
+                        f"Could not find enough NFT's. "
+                        f"Expected unique NFT's: {expected}. "
+                        f"Actual unique NFT's: {actual}."
+                    )
                 )
             # OK
             filtered_by_expected = filtered_by_issued_ids[:expected]
@@ -1634,13 +1608,11 @@ class TxAssetOwnership(DBModel):
                         if nft not in existing_ids
                     ]
                     raise TxAssetOwnershipProcessingError(
-                        {
-                            "token_id": (
-                                "Did not find correct token ID(s). "
-                                "Expected one of possible token ID(s): "
-                                f"{nfts_left}."
-                            )
-                        }
+                        (
+                            "Did not find correct token ID(s). "
+                            "Expected one of possible token ID(s): "
+                            f"{nfts_left}."
+                        )
                     )
                 # OK
                 filtered_by_expected = filtered_by_explicit_ids[:expected]
@@ -1668,9 +1640,7 @@ class TxAssetOwnership(DBModel):
             checkout_session.save()
             raise e
 
-        # OK
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        checkout_session.save()
+        # OK - Fulfill checkout session
         checkout_session.fulfill()
 
 
@@ -1700,17 +1670,11 @@ class TxFree(DBModel):
         if duplicate_emails:
             checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
             checkout_session.save()
-            raise TxFreeProcessingError(
-                {
-                    "email": f"The email ({checkout_session.email}) has already been used for this ticket tier."
-                }
-            )
+            raise TxFreeProcessingError(f"The email ({checkout_session.email}) has already been used for this ticket tier.")
 
-        # OK
-        checkout_session.tx_free.issued_email = checkout_session.email
-        checkout_session.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        # OK - Save TX and fulfill session
+        self.issued_email = checkout_session.email
         self.save()
-        checkout_session.save()
         checkout_session.fulfill()
 
 

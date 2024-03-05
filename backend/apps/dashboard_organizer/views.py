@@ -1628,7 +1628,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
         if self.object.tx_type == CheckoutSession.TransactionType.FIAT:
             # Send email with payment link
             domain = Site.objects.all().first().domain
-            domain = f"https://{domain}"
+            domain = f"http://{domain}" # http works in local, converted to https on prod
             url = reverse(
                 "checkout:checkout_fiat",
                 args=[

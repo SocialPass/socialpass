@@ -13,8 +13,8 @@ moralis==0.1.39 #https://github.com/MoralisWeb3/Moralis-Python-SDK
 
 # Django
 # ------------------------------------------------------------------------------
-git+https://github.com/SPTech-Group/django-quill-editor
-git+https://github.com/SPTech-Group/passbook.git
+git+https://github.com/SocialPass/django-quill-editor
+git+https://github.com/SocialPass/passbook.git
 crispy-bootstrap5==2024.2 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==5.0.3  # https://www.djangoproject.com/
 django-autoslug==1.9.9 # https://github.com/justinmayer/django-autoslug

@@ -1337,6 +1337,7 @@ class CheckoutSession(DBModel):
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 self.tx_asset_ownership.wallet_address = form_data.cleaned_data["wallet_address"]
                 self.tx_asset_ownership.signed_message = form_data.cleaned_data["signed_message"]
+                self.tx_asset_ownership.delegated_wallet = form_data.cleaned_data["delegated_wallet"]
                 self.tx_asset_ownership.save()
             case _:
                 pass
@@ -1489,6 +1490,9 @@ class TxAssetOwnership(DBModel):
     is_wallet_address_verified = models.BooleanField(
         default=False, blank=False, null=False
     )
+    delegated_wallet = models.BooleanField(
+        default=False, blank=False, null=False
+    )
     redeemed_nfts = models.JSONField(default=list)
 
     def __str__(self) -> str:
@@ -1556,7 +1560,7 @@ class TxAssetOwnership(DBModel):
         for item in checkout_session.checkoutitem_set.all():
             # Set wallet addresses
             # Either single address, or list of delegated wallets
-            if True:
+            if self.delegated_wallet:
                 wallets = self._process_delegate_ownership(
                     wallet_address=self.wallet_address,
                     tier_asset_ownership=item.ticket_tier.tier_asset_ownership

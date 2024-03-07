@@ -1554,6 +1554,7 @@ class TxAssetOwnership(DBModel):
         # 3. OK
         # Get all the NFT's of each unique from address in the above list and return
         delegated_wallets = set(delegation['to'] for delegation in filteredDelegations)
+
         return delegated_wallets
 
     def _process_asset_ownership(self, checkout_session=None):
@@ -1577,7 +1578,7 @@ class TxAssetOwnership(DBModel):
                     "chain": hex(tier_asset_ownership.network),
                     "format": "decimal",
                     "media_items": True,
-                    "address": self.wallet_address,
+                    "address": wallet,
                     "token_addresses": [tier_asset_ownership.token_address],
                 }
                 api_response = evm_api.nft.get_wallet_nfts(

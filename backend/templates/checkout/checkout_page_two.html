@@ -125,9 +125,19 @@
 						</div>
 						<!-- Delegate -->
 						{% if object.tx_type == "ASSET_OWNERSHIP" %}
-						<div class="sp-checkbox-container my-3 d-flex align-items-center">
-							{{ form.delegated_wallet | as_crispy_field }}
-							<img src="{% static 'images/delegate.png' %}" height="25" width="25" alt="Delegate">
+						<div class="mb-3 p-3 pb-0 rounded border border-secondary border-opacity-25">
+							<label class="d-flex align-items-start" for="{{ form.delegated_wallet.id_for_label }}">
+								<img src="{% static 'images/delegate.png' %}" height="24px" width="24px" alt="Delegate" class="d-block me-3 flex-shrink-0">
+								<div>
+									<div class="fw-bold">Delegate</div>
+									<div class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">{% trans "Check the following to use a delegated wallet to verify asset ownership:" %}</div>
+								</div>
+							</label>
+							<div class="text-center mt-2">
+								<div class="sp-checkbox-container d-inline-block">
+									{{ form.delegated_wallet | as_crispy_field }}
+								</div>
+							</div>
 						</div>
 						{% endif %}
 						<!-- End Delegate -->

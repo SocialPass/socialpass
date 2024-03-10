@@ -1574,7 +1574,7 @@ class TxAssetOwnership(DBModel):
                 wallets = [self.wallet_address]
 
             for wallet in wallets:
-                # 1. Format & make API call for each CheckoutItem
+                # Format & make API lookup
                 tier_asset_ownership = item.ticket_tier.tier_asset_ownership
                 params = {
                     "chain": hex(tier_asset_ownership.network),
@@ -1588,7 +1588,7 @@ class TxAssetOwnership(DBModel):
                     params=params,
                 )
 
-                # 2. Check if wallet has required balance
+                # Check if wallet has required balance
                 expected = tier_asset_ownership.balance_required * item.quantity
                 if api_response.get("result"):
                     actual = len(api_response["result"])
@@ -1606,7 +1606,7 @@ class TxAssetOwnership(DBModel):
                     else:
                         continue
 
-                # 3. Filter against redeemed_nfts
+                # Check if wallet has un-redeemed NFTs
                 existing_ids = set(
                     int(i.get("token_id"))
                     for nfts in CheckoutItem.objects.filter(
@@ -1633,33 +1633,10 @@ class TxAssetOwnership(DBModel):
                         )
                     else:
                         continue
+
                 # OK
                 filtered_by_expected += filtered_by_issued_ids[:expected]
                 break
-
-                # 4. OPTIONAL: Filter against TierAssetOwnership.token_id
-                if tier_asset_ownership.token_id:
-                    filtered_by_explicit_ids = [
-                        nft
-                        for nft in filtered_by_issued_ids
-                        if int(nft["token_id"]) in tier_asset_ownership.token_id
-                    ]
-                    actual = len(filtered_by_explicit_ids)
-                    if actual < expected:
-                        nfts_left = [
-                            nft
-                            for nft in tier_asset_ownership.token_id
-                            if nft not in existing_ids
-                        ]
-                        raise TxAssetOwnershipProcessingError(
-                            (
-                                "Did not find correct token ID(s). "
-                                "Expected one of possible token ID(s): "
-                                f"{nfts_left}."
-                            )
-                        )
-                    # OK
-                    filtered_by_expected += filtered_by_explicit_ids[:expected]
 
         # 4. OK - Set redeemed NFTs & Save
         self.redeemed_nfts = filtered_by_expected

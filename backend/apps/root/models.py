@@ -1554,6 +1554,8 @@ class TxAssetOwnership(DBModel):
 
         # Get all the NFT's of each unique from address in the above list and return
         delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
+        if not delegated_wallets:
+            raise TxAssetOwnershipProcessingError("No delegated wallets found.")
 
         # OK
         return delegated_wallets
@@ -1567,8 +1569,6 @@ class TxAssetOwnership(DBModel):
                     wallet_address=self.wallet_address,
                     tier_asset_ownership=item.ticket_tier.tier_asset_ownership
                  )
-                if not wallets:
-                    raise TxAssetOwnershipProcessingError("No delegated wallets found.")
             else:
                 wallets = [self.wallet_address]
 

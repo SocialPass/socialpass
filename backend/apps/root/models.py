@@ -1595,13 +1595,16 @@ class TxAssetOwnership(DBModel):
                 else:
                     actual = 0
                 if actual < expected:
-                    raise TxAssetOwnershipProcessingError(
-                        (
-                        "Quantity requested exceeds the queried balance. "
-                        f"Expected Balance: {expected}. "
-                        f"Actual Balance: {actual}."
+                    if wallet == wallets[-1]:
+                        raise TxAssetOwnershipProcessingError(
+                            (
+                            "Quantity requested exceeds the queried balance. "
+                            f"Expected Balance: {expected}. "
+                            f"Actual Balance: {actual}."
+                            )
                         )
-                    )
+                    else:
+                        continue
 
                 # 3. Filter against redeemed_nfts
                 existing_ids = set(
@@ -1620,15 +1623,19 @@ class TxAssetOwnership(DBModel):
                 ]
                 actual = len(filtered_by_issued_ids)
                 if actual < expected:
-                    raise TxAssetOwnershipProcessingError(
-                        (
-                            f"Could not find enough NFT's. "
-                            f"Expected unique NFT's: {expected}. "
-                            f"Actual unique NFT's: {actual}."
+                    if wallet == wallets[-1]:
+                        raise TxAssetOwnershipProcessingError(
+                            (
+                                f"Could not find enough NFT's. "
+                                f"Expected unique NFT's: {expected}. "
+                                f"Actual unique NFT's: {actual}."
+                            )
                         )
-                    )
+                    else:
+                        continue
                 # OK
                 filtered_by_expected += filtered_by_issued_ids[:expected]
+                break
 
                 # 4. OPTIONAL: Filter against TierAssetOwnership.token_id
                 if tier_asset_ownership.token_id:

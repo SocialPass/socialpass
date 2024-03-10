@@ -1561,6 +1561,7 @@ class TxAssetOwnership(DBModel):
         return delegated_wallets
 
     def _process_asset_ownership(self, checkout_session=None):
+        filtered_by_expected = []
         for item in checkout_session.checkoutitem_set.all():
             # Set wallet addresses
             # Either single address, or list of delegated wallets
@@ -1627,7 +1628,7 @@ class TxAssetOwnership(DBModel):
                         )
                     )
                 # OK
-                filtered_by_expected = filtered_by_issued_ids[:expected]
+                filtered_by_expected += filtered_by_issued_ids[:expected]
 
                 # 4. OPTIONAL: Filter against TierAssetOwnership.token_id
                 if tier_asset_ownership.token_id:
@@ -1651,7 +1652,7 @@ class TxAssetOwnership(DBModel):
                             )
                         )
                     # OK
-                    filtered_by_expected = filtered_by_explicit_ids[:expected]
+                    filtered_by_expected += filtered_by_explicit_ids[:expected]
 
         # 4. OK - Set redeemed NFTs & Save
         self.redeemed_nfts = filtered_by_expected

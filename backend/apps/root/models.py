@@ -1553,7 +1553,7 @@ class TxAssetOwnership(DBModel):
 
         # 3. OK
         # Get all the NFT's of each unique from address in the above list and return
-        delegated_wallets = set(delegation['to'] for delegation in filteredDelegations)
+        delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
 
         return delegated_wallets
 

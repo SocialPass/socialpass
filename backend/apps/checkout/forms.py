@@ -92,6 +92,7 @@ class CheckoutFormFree(forms.Form):
 class CheckoutFormAssetOwnership(forms.Form):
     wallet_address = forms.CharField(widget=forms.HiddenInput())
     signed_message = forms.CharField(widget=forms.HiddenInput())
+    delegated_wallet = forms.BooleanField(required=False, label="Use delegated wallet")
     name = forms.CharField(
         widget=forms.TextInput(attrs={"placeholder": "Name", "readonly": "readonly"}),
     )

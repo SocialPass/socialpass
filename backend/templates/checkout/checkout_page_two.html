@@ -1,5 +1,5 @@
 {% extends "checkout/base.html" %}
-{% load static i18n %}
+{% load static i18n crispy_forms_tags %}
 
 {% block head_title %}{{ object.event.title }} - {% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
 
@@ -123,6 +123,24 @@
 								{% include "forms/input.html" %}
 							{% endwith %}
 						</div>
+						<!-- Delegate -->
+						{% if object.tx_type == "ASSET_OWNERSHIP" %}
+						<div class="mb-3 p-3 pb-0 rounded border border-secondary border-opacity-25">
+							<label class="d-flex align-items-start" for="{{ form.delegated_wallet.id_for_label }}">
+								<img src="{% static 'images/delegate.png' %}" height="24px" width="24px" alt="Delegate" class="d-block me-3 flex-shrink-0">
+								<div>
+									<div class="fw-bold">Delegate</div>
+									<div class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">{% trans "Check the following to use a delegated wallet to verify asset ownership:" %}</div>
+								</div>
+							</label>
+							<div class="text-center mt-2">
+								<div class="sp-checkbox-container d-inline-block">
+									{{ form.delegated_wallet | as_crispy_field }}
+								</div>
+							</div>
+						</div>
+						{% endif %}
+						<!-- End Delegate -->
 						<button
 							id="checkout-submit-btn"
 							type="submit"

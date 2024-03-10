@@ -1558,7 +1558,7 @@ class TxAssetOwnership(DBModel):
             raise TxAssetOwnershipProcessingError("No delegated wallets found.")
 
         # OK
-        return delegated_wallets
+        return list(delegated_wallets)
 
     def _process_asset_ownership(self, checkout_session=None):
         filtered_by_expected = []

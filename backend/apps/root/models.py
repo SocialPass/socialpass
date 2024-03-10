@@ -1539,7 +1539,7 @@ class TxAssetOwnership(DBModel):
         self.save()
 
     def _process_delegate_ownership(self, wallet_address=None, tier_asset_ownership=None):
-        # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket. You can do this the following ways:
+        # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
         import requests
         url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier_asset_ownership.network}"
         response = requests.get(url)

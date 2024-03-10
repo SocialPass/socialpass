@@ -1544,6 +1544,7 @@ class TxAssetOwnership(DBModel):
         url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier_asset_ownership.network}"
         response = requests.get(url)
         incomingDelegations = response.json()
+        delegated_wallets = []
 
         # 2. Filter out these delegations to only include the NFT Contact you are looking to claim tickets for.
         filteredDelegations = [delegation for delegation in incomingDelegations if
@@ -1551,10 +1552,10 @@ class TxAssetOwnership(DBModel):
         (delegation['type'] == "CONTRACT" and delegation['contract'] == tier_asset_ownership.token_address) or
         (delegation['type'] == "ERC721" and delegation['contract'] == tier_asset_ownership.token_address)]
 
-        # 3. OK
         # Get all the NFT's of each unique from address in the above list and return
         delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
 
+        # OK
         return delegated_wallets
 
     def _process_asset_ownership(self, checkout_session=None):

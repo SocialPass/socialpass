@@ -1381,11 +1381,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         success_list = []
         failure_list = []
 
-        # Make sure ticket tiers created before tx_type was DB field works properly
         ticket_tier = form.cleaned_data["ticket_tier"]
-        if not ticket_tier.tx_type:
-            ticket_tier.generate_tx_type()
-
         for email in emails:
             try:
                 with transaction.atomic():

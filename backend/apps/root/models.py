@@ -902,22 +902,6 @@ class TicketTier(DBModel):
     def __str__(self):
         return f"TicketTier: {self.name}"
 
-    def generate_tx_type(self):
-        """
-        This method serves to make sure ticket tiers created before tx_type was a
-        database field will still continue to work properly (mainly for creating
-        RSVP tickets).
-        """
-        if self.tier_fiat:
-            self.tx_type = TicketTier.TransactionType.FIAT
-        elif self.tier_blockchain:
-            self.tx_type = TicketTier.TransactionType.BLOCKCHAIN
-        elif self.tier_asset_ownership:
-            self.tx_type = TicketTier.TransactionType.ASSET_OWNERSHIP
-        elif self.tier_free:
-            self.tx_type = TicketTier.TransactionType.FREE
-        self.save()
-
     @cached_property
     def tickets_sold_count(self):
         return Ticket.objects.filter(ticket_tier=self).count()

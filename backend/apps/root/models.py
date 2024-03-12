@@ -801,7 +801,7 @@ class TicketTier(DBModel):
     This tier contains details for a ticket, ++ pricing and payment method information.
     """
 
-    class TransactionType(models.TextChoices):
+    class Category(models.TextChoices):
         FIAT = "FIAT", "Fiat"
         BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
@@ -842,7 +842,7 @@ class TicketTier(DBModel):
     # basic info
     tx_type = models.CharField(
         max_length=50,
-        choices=TransactionType.choices,
+        choices=Category.choices,
         default="",
         blank=True,
     )

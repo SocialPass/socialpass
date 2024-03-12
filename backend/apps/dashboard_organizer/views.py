@@ -700,7 +700,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
         # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        form.instance.tx_type = TicketTier.TransactionType.ASSET_OWNERSHIP
+        form.instance.tx_type = TicketTier.Category.ASSET_OWNERSHIP
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -772,7 +772,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        form.instance.tx_type = TicketTier.TransactionType.FIAT
+        form.instance.tx_type = TicketTier.Category.FIAT
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -807,7 +807,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         form.instance.tier_free = TierFree.objects.create()
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        form.instance.tx_type = TicketTier.TransactionType.FREE
+        form.instance.tx_type = TicketTier.Category.FREE
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):

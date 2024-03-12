@@ -67,16 +67,6 @@
 				-webkit-backdrop-filter: blur(8px);
 			}
 
-			.content-container {
-				min-height: calc(100vh - 112px);
-			}
-
-			@media (min-width: 768px) {
-				.content-container {
-					min-height: calc(100vh - 85px);
-				}
-			}
-
 			.event-list-link:hover {
 				background-color: var(--bs-secondary-bg);
 			}
@@ -206,7 +196,7 @@
 						<li>
 							<a href="{% url 'dashboard_organizer:team_create' %}" class="dropdown-item d-flex align-items-center text-primary-emphasis fw-bold antialiased">
 								{% trans "Create new Team" %}
-								<i class="fa-regular fa-arrow-right flex-shrink-0 ms-auto"></i>
+								<i class="fa-regular fa-plus flex-shrink-0 ms-auto"></i>
 							</a>
 						</li>
 					</ul>
@@ -215,8 +205,8 @@
 					<small>{% trans "Events Manager" %}</small>
 				</div>
 				<a href="{% url 'dashboard_organizer:event_create' current_team.slug %}" class="btn btn-primary d-flex align-items-center w-100 mt-2 text-start">
-					<span class="ms-1">{% trans "Create an Event" %}</span>
-					<i class="fa-regular fa-arrow-right flex-shrink-0 ms-auto me-1"></i>
+					<span class="ms-1">{% trans "Create Event" %}</span>
+					<i class="fa-regular fa-plus flex-shrink-0 ms-auto me-1"></i>
 				</a>
 				<a href="{% url 'dashboard_organizer:event_list' current_team.slug %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
 					<i class="fa-light fa-party-horn flex-shrink-0" style="width: 32px;"></i>
@@ -306,7 +296,7 @@
 
 		<!-- Content start -->
 		{% include "components/django_messages.html" %}
-		<div class="container px-3 px-sm-4 d-flex flex-column content-container">
+		<div class="container px-3 px-sm-4 d-flex flex-column">
 			{% block content %}{% endblock content %}
 		</div>
 		<!-- Content end -->

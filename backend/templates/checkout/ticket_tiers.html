@@ -59,7 +59,7 @@
                                 <i class="fa-light fa-ban me-1"></i> {% trans "Sold out!" %}
                             </strong>
                         {% else %}
-                            {% if not tier.hidden_tickets %}
+                            {% if not tier.hidden_availability %}
                                 {{ tier.tickets_available }} {% trans "available" %}
                             {% endif %}
                         {% endif %}

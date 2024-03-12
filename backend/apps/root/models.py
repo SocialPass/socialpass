@@ -884,11 +884,11 @@ class TicketTier(DBModel):
         null=False,
         help_text="Whether or not this tier is hidden from the public",
     )
-    hidden_tickets = models.BooleanField(
+    hidden_availability = models.BooleanField(
         default=False,
         blank=False,
         null=False,
-        help_text="Whether or not this tickets available are hidden from public",
+        help_text="Whether or not to hide the number of available tickets from the public.",
     )
     additional_information = models.TextField(
         blank=True,

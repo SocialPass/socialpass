@@ -362,28 +362,12 @@ class EventListView(TeamContextMixin, ListView):
     context_object_name = "events"
     template_name = "dashboard_organizer/event_list.html"
 
-    def get(self, *args, **kwargs):
-        qs = self.get_queryset()
-        if qs.count() < 1:
-            messages.add_message(
-                self.request, messages.INFO, "Let's create an event to get started!"
-            )
-            return redirect(
-                "dashboard_organizer:event_create",
-                self.kwargs["team_slug"],
-            )
-        return super(EventListView, self).get(*args, **kwargs)
-
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(team__slug=self.kwargs["team_slug"])
 
-        query_title = self.request.GET.get("title", "")
-        if query_title:
-            qs = qs.filter(title__icontains=query_title)
-
         query_state = self.request.GET.get("state", "")
-        if query_state:
+        if query_state == "LIVE" or query_state == "DRAFT":
             qs = qs.filter(state=query_state)
 
         return qs

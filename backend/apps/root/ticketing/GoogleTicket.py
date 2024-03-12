@@ -152,11 +152,11 @@ class GoogleTicket:
         )
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
 
-        ticket_type = ticket_obj.ticket_tier.ticket_type
+        name = ticket_obj.ticket_tier.name
         if ticket_obj.ticket_tier.tier_free:
-            ticket_type += " | FREE"
+            name += " | FREE"
         if ticket_obj.party_size > 1:
-            ticket_type += f" | Party Size: {ticket_obj.party_size}"
+            name += f" | Party Size: {ticket_obj.party_size}"
 
         payload = {
             "id": ticket_id,
@@ -165,7 +165,7 @@ class GoogleTicket:
             "ticketType": {
                 "defaultValue": {
                     "language": "en-us",
-                    "value": ticket_type,
+                    "value": name,
                 }
             },
             "barcode": {"type": "QR_CODE", "value": str(ticket_obj.embed_code)},

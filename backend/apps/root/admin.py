@@ -189,14 +189,14 @@ class TeamAdmin(CustomDBAdmin):
 class TicketTierAdmin(CustomDBAdmin):
     list_display = [
         "__str__",
-        "ticket_type",
+        "name",
         "event",
         "capacity",
         "tickets_sold_count",
         "max_per_person",
     ] + CustomDBAdmin.list_display
     search_fields = [
-        "ticket_type",
+        "name",
         "event__title",
     ]
     list_select_related = [
@@ -247,7 +247,7 @@ class TierAssetOwnershipAdmin(CustomDBAdmin):
         "token_address",
         "token_id",
     ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__ticket_type",)
+    search_fields = ("tickettier__name",)
     list_select_related = [
         "tickettier",
     ]
@@ -259,7 +259,7 @@ class TierFiatAdmin(CustomDBAdmin):
         "__str__",
         "tickettier",
     ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__ticket_type",)
+    search_fields = ("tickettier__name",)
     list_select_related = [
         "tickettier",
     ]
@@ -272,7 +272,7 @@ class TierFreeAdmin(CustomDBAdmin):
         "__str__",
         "tickettier",
     ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__ticket_type",)
+    search_fields = ("tickettier__name",)
     list_select_related = [
         "tickettier",
     ]

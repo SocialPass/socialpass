@@ -846,7 +846,7 @@ class TicketTier(DBModel):
         default="",
         blank=True,
     )
-    ticket_type = models.CharField(
+    name = models.CharField(
         max_length=255,
         blank=False,
         help_text="A short descriptive label for your ticket tier.",
@@ -900,7 +900,7 @@ class TicketTier(DBModel):
         ordering = ("-modified",)
 
     def __str__(self):
-        return f"TicketTier: {self.ticket_type}"
+        return f"TicketTier: {self.name}"
 
     def generate_tx_type(self):
         """

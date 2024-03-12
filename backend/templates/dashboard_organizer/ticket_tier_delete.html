@@ -27,7 +27,7 @@
 							{% trans "This ticket tier cannot be deleted. Tickets have been issued, or there are sessions in the waitlist with this tier." %}
 						</p>
 						<p>
-							<strong class="text-primary-emphasis">{{ object.ticket_type }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
+							<strong class="text-primary-emphasis">{{ object.name }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
 						</p>
 						<div class="text-center">
 							{% if object.hidden_from_public %}
@@ -46,7 +46,7 @@
 							{% trans "You're about to delete the following ticket tier. Please note, once this action is confirmed, it cannot be undone." %}
 						</p>
 						<p>
-							<strong class="text-primary-emphasis">{{ object.ticket_type }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
+							<strong class="text-primary-emphasis">{{ object.name }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
 						</p>
 						<form class="text-center" method="post">
 							{% csrf_token %}

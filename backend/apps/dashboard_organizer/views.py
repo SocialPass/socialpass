@@ -614,7 +614,7 @@ class EventStatsView(TeamContextMixin, DetailView):
             results.append(
                 {
                     "ticket_id": str(ticket.public_id),
-                    "ticket_tier": ticket.ticket_tier.ticket_type,
+                    "ticket_tier": ticket.ticket_tier.name,
                     "created": ticket.created,
                     "redeemed_at": ticket.redeemed_at,
                     "checkout_session": str(ticket.checkout_session.public_id),

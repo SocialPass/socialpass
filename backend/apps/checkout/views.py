@@ -532,7 +532,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
                     unit_amount=item.unit_amount,
                     currency=self.object.event.fiat_currency.lower(),
                     product_data={
-                        "name": f"{item.ticket_tier.ticket_type} × {item.quantity}",
+                        "name": f"{item.ticket_tier.name} × {item.quantity}",
                     },
                 )
             except Exception:

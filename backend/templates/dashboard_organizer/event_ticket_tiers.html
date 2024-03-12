@@ -60,7 +60,7 @@
 					</a>
 				</div>
 				<h6>
-					{{ ticket_tier.ticket_type }}
+					{{ ticket_tier.name }}
 					{% if ticket_tier.tier_fiat %}
 					<span class="fw-normal"> | {{ event.currency_symbol }}{{ ticket_tier.tier_fiat.price_per_ticket }}/{% trans "ticket" %}</span>
 					{% endif %}

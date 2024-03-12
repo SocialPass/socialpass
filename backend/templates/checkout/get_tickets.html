@@ -50,7 +50,7 @@
 					{% trans "Ticket Type:" %}
 				</div>
 				<div class="mt-1">
-					{{ ticket.object.ticket_tier.ticket_type }}
+					{{ ticket.object.ticket_tier.name }}
 					{% if ticket.object.ticket_tier.tier_free %}
 						| {% trans "FREE" %}
 					{% endif %}
@@ -145,7 +145,7 @@
 								<!-- Order item start -->
 								<div class="pt-3 mt-3 border-top">
 									<h6 class="m-0 d-flex align-items-center">
-										<span>{{ item.ticket_tier.ticket_type }}</span>
+										<span>{{ item.ticket_tier.name }}</span>
 										<span class="ms-auto ps-1 fw-normal">
 											&times; {{ item.quantity }}
 										</span>
@@ -203,7 +203,7 @@
 								<div class="mt-2">
 									<span class="text-body-secondary">
 										<strong class="text-body">{% trans "Name" %}:</strong>
-										{{ ticket.object.ticket_tier.ticket_type }}
+										{{ ticket.object.ticket_tier.name }}
 									</span>
 									<br />
 									<span class="text-body-secondary">

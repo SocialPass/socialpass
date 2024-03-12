@@ -286,7 +286,7 @@ class TicketTierForm(forms.ModelForm):
         model = TicketTier
         fields = [
             "ticket_type", "capacity", "max_per_person", "allowed_guests",
-            "guest_supply", "hidden", "hidden_availability", "additional_information",
+            "guest_supply", "hidden_from_public", "hidden_availability", "additional_information",
         ]
         widgets = {
             "ticket_type": forms.TextInput(
@@ -318,7 +318,7 @@ class TicketTierForm(forms.ModelForm):
             "capacity": _("Capacity"),
             "max_per_person": _("Max per person"),
             "allowed_guests": _("Max guest(s) allowed per ticket"),
-            "hidden": _("Hide tier from public"),
+            "hidden_from_public": _("Hide tier from public"),
             "hidden_availability": _("Hide tickets available from public"),
         }
 

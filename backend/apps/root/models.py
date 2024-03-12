@@ -878,7 +878,7 @@ class TicketTier(DBModel):
         validators=[MinValueValidator(0)],
         help_text="Denotes the total guest capacity.",
     )
-    hidden = models.BooleanField(
+    hidden_from_public = models.BooleanField(
         default=False,
         blank=False,
         null=False,

@@ -30,7 +30,7 @@
 							<strong class="text-primary-emphasis">{{ object.ticket_type }}</strong> &mdash; <strong>{{ object.event.title }}</strong>
 						</p>
 						<div class="text-center">
-							{% if object.hidden %}
+							{% if object.hidden_from_public %}
 								<a href="{% url 'dashboard_organizer:event_tickets' current_team.slug object.event.pk %}" class="btn btn-secondary me-2">{% trans "Go back" %}</a>
 							{% else %}
 								<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.slug object.event.pk object.pk %}#extra-information" class="btn btn-secondary me-2">{% trans "Edit to hide from public" %}</a>

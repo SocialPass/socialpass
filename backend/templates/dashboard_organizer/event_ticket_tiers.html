@@ -26,10 +26,10 @@
 		</div>
 		{% if event.tickettier_set.count > 0 %}
 		{% for ticket_tier in event.tickettier_set.all %}
-		<div class="card border-0 rounded-4 shadow-sm mb-3 {% if ticket_tier.hidden %}bg-secondary bg-opacity-10{% endif %}">
+		<div class="card border-0 rounded-4 shadow-sm mb-3 {% if ticket_tier.hidden_from_public %}bg-secondary bg-opacity-10{% endif %}">
 			<div class="card-body">
 				<div class="d-flex align-items-center mb-3">
-					{% if ticket_tier.hidden %}
+					{% if ticket_tier.hidden_from_public %}
 					<span class="px-3 py-2 rounded-pill fw-bold bg-secondary-subtle text-secondary-emphasis me-2" data-bs-toggle="tooltip" data-bs-title="Hidden from public">
 						<i class="fa-solid fa-eye-slash"></i>
 					</span>

@@ -1,0 +1,118 @@
+{% load i18n %}
+<div class="container-lg px-3 px-sm-4 d-none d-sm-block">
+	<ul class="nav nav-underline">
+		<li class="nav-item">
+			<a
+				href="#"
+				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
+				{% if false %}aria-current="true"{% endif %}
+			>
+				{% trans "Overview" %}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a
+				href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}"
+				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_stats' %}active{% endif %}"
+				{% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}
+			>
+				{% trans "Stats" %}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a
+				href="#"
+				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
+				{% if false %}aria-current="true"{% endif %}
+			>
+				{% trans "Waitlist" %}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a
+				href="#"
+				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
+				{% if false %}aria-current="true"{% endif %}
+			>
+				{% trans "RSVP" %}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a
+				href="#"
+				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
+				{% if false %}aria-current="true"{% endif %}
+			>
+				{% trans "Messaging" %}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a
+				href="#"
+				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
+				{% if false %}aria-current="true"{% endif %}
+			>
+				{% trans "Promote" %}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a
+				href="#"
+				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
+				{% if false %}aria-current="true"{% endif %}
+			>
+				{% trans "Check-in" %}<span class="d-none d-md-inline"> {% trans "Guests" %}</span>
+			</a>
+		</li>
+	</ul>
+</div>
+<div class="container-lg px-3 px-sm-4 pb-2 d-sm-none">
+	<button type="button" class="btn btn-secondary d-flex align-items-center w-100" data-bs-toggle="collapse" data-bs-target="#tabs-collapse" aria-expanded="false" aria-controls="tabs-collapse">
+		{% if false %}
+		{% elif request.resolver_match.url_name == 'event_stats' %}
+			{% trans "Stats" %}
+		{% endif %}
+		<i class="fa-regular fa-angle-down ms-auto"></i>
+	</button>
+	<div class="collapse" id="tabs-collapse">
+		<div class="mt-2">
+			<ul class="list-unstyled text-body mb-0">
+				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
+					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Overview" %}
+					</a>
+				</li>
+				<li class="mb-2" {% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}>
+					<a href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_stats' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Stats" %}
+					</a>
+				</li>
+				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
+					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Waitlist" %}
+					</a>
+				</li>
+				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
+					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "RSVP" %}
+					</a>
+				</li>
+				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
+					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Messaging" %}
+					</a>
+				</li>
+				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
+					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Promote" %}
+					</a>
+				</li>
+				<li {% if false %}aria-current="true"{% endif %}>
+					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Check-In Guests" %}
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

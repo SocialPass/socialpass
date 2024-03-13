@@ -87,7 +87,7 @@
 							</span>
 							{{ event.tickets_sold_count }}
 						</div>
-						<a href="#" class="btn btn-sm text-body-secondary focus-ring rounded-pill flex-shrink-0 ms-auto stretched-link">
+						<a href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}" class="btn btn-sm text-body-secondary focus-ring rounded-pill flex-shrink-0 ms-auto stretched-link">
 							{% trans "Manage" %}
 							<i class="fa-light fa-angle-right ms-1"></i>
 						</a>

@@ -970,6 +970,9 @@ class TicketTier(DBModel):
         db_persist=True,
     )
 
+    # Category fields - Free
+    deprecated_issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
+
     class Meta:
         ordering = ("-modified",)
 

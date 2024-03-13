@@ -878,7 +878,7 @@ class TicketTier(DBModel):
         help_text="Additional information for this tier provided by the host.",
     )
 
-    # Category fields
+    # Category field
     class Category(models.TextChoices):
         FIAT = "FIAT", "Fiat"
         BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"

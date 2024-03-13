@@ -799,13 +799,6 @@ class TicketTier(DBModel):
     Represents a ticker tier for a respective ticket.
     This tier contains details for a ticket, ++ pricing and payment method information.
     """
-
-    class Category(models.TextChoices):
-        FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
-        FREE = "FREE", "Free"
-
     # keys
     event = models.ForeignKey(
         "Event",
@@ -833,6 +826,11 @@ class TicketTier(DBModel):
     )
 
     # Ticket information
+    class Category(models.TextChoices):
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
     category = models.CharField(
         max_length=50,
         choices=Category.choices,

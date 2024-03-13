@@ -680,9 +680,9 @@ class Event(DBModel):
 
         tier_counts = tiers.annotate(
             fiat_count=Count("tier_fiat", filter=Q(tier_fiat__isnull=False)),
-            free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
         ).get()
         tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
+        tier_counts["free_count"] = tiers.filter(category=TicketTier.Category.FREE).count()
         tier_counts["total_count"] = sum(tier_counts.values())
         return tier_counts
 
@@ -811,12 +811,6 @@ class TicketTier(DBModel):
     )
     tier_fiat = models.OneToOneField(
         "TierFiat",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tier_free = models.OneToOneField(
-        "TierFree",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -1035,17 +1029,6 @@ class TierFiat(DBModel):
 
     def __str__(self) -> str:
         return f"TierFiat: {self.public_id}"
-
-
-class TierFree(DBModel):
-    """
-    Represents a free tier for an event ticket
-    """
-
-    deprecated_issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
-
-    def __str__(self) -> str:
-        return f"TierFree: {self.public_id}"
 
 
 class CheckoutSession(DBModel):

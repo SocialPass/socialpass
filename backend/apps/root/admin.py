@@ -14,7 +14,6 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     TierFiat,
-    TierFree,
     TxAssetOwnership,
     TxFiat,
     TxFree,
@@ -236,19 +235,6 @@ class TicketAdmin(CustomDBAdmin):
 
 @admin.register(TierFiat)
 class TierFiatAdmin(CustomDBAdmin):
-    list_display = [
-        "__str__",
-        "tickettier",
-    ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__name",)
-    list_select_related = [
-        "tickettier",
-    ]
-
-
-
-@admin.register(TierFree)
-class TierFreeAdmin(CustomDBAdmin):
     list_display = [
         "__str__",
         "tickettier",

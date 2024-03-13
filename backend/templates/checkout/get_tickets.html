@@ -51,7 +51,7 @@
 				</div>
 				<div class="mt-1">
 					{{ ticket.object.ticket_tier.name }}
-					{% if ticket.object.ticket_tier.tier_free %}
+					{% if ticket.object.ticket_tier.category == ticket.object.ticket_tier.Category.FREE %}
 						| {% trans "FREE" %}
 					{% endif %}
 					{% if ticket.object.party_size > 1 %}

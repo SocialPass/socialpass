@@ -177,7 +177,7 @@ class AppleTicket:
         # self.set_location_list(event.lat, event.long)
 
         name = ticket.ticket_tier.name
-        if ticket.ticket_tier.tier_free:
+        if ticket.ticket_tier.category == ticket.ticket_tier.Category.FREE:
             name += " | FREE"
         if ticket.party_size > 1:
             name += f" | Party Size: {ticket.party_size}"

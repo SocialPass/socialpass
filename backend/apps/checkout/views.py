@@ -55,10 +55,7 @@ class CheckoutPageOneRedirect(RedirectView):
             ):
                 event = (
                     Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                    )
+                    .prefetch_related("tickettier_set")
                     .get(
                         pk=OLD_EVENTS_SLUG_TO_PK[self.kwargs.get("event_slug")]
                     )
@@ -68,10 +65,7 @@ class CheckoutPageOneRedirect(RedirectView):
             elif self.kwargs.get("event_uuid_slug"):
                 event = (
                     Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                    )
+                    .prefetch_related("tickettier_set")
                     .get(public_id=self.kwargs["event_uuid_slug"])
                 )
             # Handle Migrated Checkout (redirect to react app)
@@ -79,10 +73,7 @@ class CheckoutPageOneRedirect(RedirectView):
             elif self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
                 event = (
                     Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                    )
+                    .prefetch_related("tickettier_set")
                     .get(pk=self.kwargs["event_pk_slug"])
                 )
         except Event.DoesNotExist:
@@ -118,8 +109,7 @@ class CheckoutPageOne(DetailView):
 
     def get_object(self):
         self.object = Event.objects.select_related("team").prefetch_related(
-            "tickettier_set",
-            "tickettier_set__tier_free",
+            "tickettier_set"
         ).get(
             team__slug=self.kwargs["team_slug"],
             slug=self.kwargs["event_slug"]
@@ -289,7 +279,6 @@ class CheckoutPageTwoBase(DetailView):
                     queryset=CheckoutItem.objects.select_related(
                         "ticket_tier",
                         "ticket_tier__tier_fiat",
-                        "ticket_tier__tier_free",
                     )
                 )
             )

@@ -3,7 +3,7 @@
 
 <!-- Handle tier filtering -->
 {% if not tier.hidden_from_public %}
-{% if tier_type == "tiers-FREE" and tier.tier_free or tier_type == "tiers-FIAT" and tier.tier_fiat or tier_type == "tiers-ASSET_OWNERSHIP" and tier.category == tier.Category.ASSET_OWNERSHIP %}
+{% if tier_type == "tiers-FREE" and tier.category == tier.Category.FREE or tier_type == "tiers-FIAT" and tier.tier_fiat or tier_type == "tiers-ASSET_OWNERSHIP" and tier.category == tier.Category.ASSET_OWNERSHIP %}
 <div class="ticket-tier mb-3">
     <input
         id="{{ tier.public_id }}"

@@ -44,7 +44,6 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
-    TierFree,
     CheckoutSession,
     CheckoutItem,
     RSVPBatch,
@@ -771,7 +770,6 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     model = TicketTier
     form_class = TicketTierForm
     template_name = "dashboard_organizer/ticket_tier_free_create.html"
-    form_data = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -781,8 +779,6 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         return context
 
     def form_valid(self, form, **kwargs):
-        self.form_data = form.data
-        form.instance.tier_free = TierFree.objects.create()
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
         form.instance.category = TicketTier.Category.FREE

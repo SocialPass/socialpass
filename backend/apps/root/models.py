@@ -840,7 +840,7 @@ class TicketTier(DBModel):
     )
 
     # basic info
-    tx_type = models.CharField(
+    category = models.CharField(
         max_length=50,
         choices=Category.choices,
         default="",

@@ -700,7 +700,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
         # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        form.instance.tx_type = TicketTier.Category.ASSET_OWNERSHIP
+        form.instance.category = TicketTier.Category.ASSET_OWNERSHIP
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -772,7 +772,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        form.instance.tx_type = TicketTier.Category.FIAT
+        form.instance.category = TicketTier.Category.FIAT
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -807,7 +807,7 @@ class TicketTierFreeCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         form.instance.tier_free = TierFree.objects.create()
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        form.instance.tx_type = TicketTier.Category.FREE
+        form.instance.category = TicketTier.Category.FREE
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -1389,7 +1389,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         event=context["event"],
                         rsvp_batch=rsvp_batch,
                         email=email.strip(),
-                        tx_type=ticket_tier.tx_type,
+                        tx_type=ticket_tier.category,
                     )
                     checkout_item = CheckoutItem.objects.create(
                         ticket_tier=ticket_tier,

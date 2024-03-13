@@ -98,7 +98,7 @@
 									</div>
 									{% if checkout_session.tx_type == "FIAT" %}
 										<div>
-											{% trans "Price" %} &times; 1 &mdash; {{ event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
+											{% trans "Price" %} &times; 1 &mdash; {{ event.currency_symbol }}{{ item.ticket_tier.price_per_ticket  }}
 										</div>
 									{% endif %}
 									<div class="text-body-secondary">

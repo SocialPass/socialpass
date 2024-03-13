@@ -237,7 +237,7 @@ class CheckoutSessionTicketDownloadView(View):
             "checkout_session": checkout_session,
         }
         ctx["checkout_items"] = checkout_session.checkoutitem_set.select_related(
-            "ticket_tier", "ticket_tier__tier_fiat"
+            "ticket_tier"
         ).all()
         tickets = Ticket.objects.select_related("ticket_tier").filter(
             checkout_session=checkout_session

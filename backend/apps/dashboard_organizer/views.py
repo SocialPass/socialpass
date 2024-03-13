@@ -705,9 +705,6 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
-        context["tier_fiat_form"] = TierFiatForm(
-            prefix="tier_fiat_form", data=self.form_data
-        )
         return context
 
     def dispatch(self, request, *args, **kwargs):
@@ -729,24 +726,6 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form, **kwargs):
-        # set form.data to self
-        # this is reused in get_context_data to preserve entries / content
-        self.form_data = form.data
-
-        # validate tier_fiat
-        # if exists, save tier_fiat to TicketTierForm instance
-        tier_fiat = TierFiatForm(self.form_data, prefix="tier_fiat_form")
-        if tier_fiat.is_valid():
-            tier_fiat.save()
-            form.instance.tier_fiat = tier_fiat.instance
-        else:
-            messages.add_message(
-                self.request, messages.ERROR, "The Fiat fields are not valid"
-            )
-            return super().form_invalid(form)
-
-        # add event data to TicketTierForm from context
-        # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
         form.instance.category = TicketTier.Category.FIAT

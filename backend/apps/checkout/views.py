@@ -276,10 +276,7 @@ class CheckoutPageTwoBase(DetailView):
             .prefetch_related(
                 Prefetch(
                     "checkoutitem_set",
-                    queryset=CheckoutItem.objects.select_related(
-                        "ticket_tier",
-                        "ticket_tier__tier_fiat",
-                    )
+                    queryset=CheckoutItem.objects.select_related("ticket_tier")
                 )
             )
             .get(public_id=self.kwargs["checkout_session_public_id"])
@@ -769,9 +766,7 @@ class GetTickets(View):
                     template_name = "get_tickets.html"
                     ctx[
                         "checkout_items"
-                    ] = checkout_session.checkoutitem_set.select_related(
-                        "ticket_tier", "ticket_tier__tier_fiat"
-                    ).all()
+                    ] = checkout_session.checkoutitem_set.select_related("ticket_tier").all()
                     tickets = Ticket.objects.select_related("ticket_tier").filter(
                         checkout_session=checkout_session
                     )

@@ -13,7 +13,6 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
-    TierFiat,
     TxAssetOwnership,
     TxFiat,
     TxFree,
@@ -230,18 +229,6 @@ class TicketAdmin(CustomDBAdmin):
        "event",
        "ticket_tier",
        "checkout_session",
-    ]
-
-
-@admin.register(TierFiat)
-class TierFiatAdmin(CustomDBAdmin):
-    list_display = [
-        "__str__",
-        "tickettier",
-    ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__name",)
-    list_select_related = [
-        "tickettier",
     ]
 
 

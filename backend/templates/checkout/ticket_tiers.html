@@ -3,7 +3,7 @@
 
 <!-- Handle tier filtering -->
 {% if not tier.hidden_from_public %}
-{% if tier_type == "tiers-FREE" and tier.category == tier.Category.FREE or tier_type == "tiers-FIAT" and tier.tier_fiat or tier_type == "tiers-ASSET_OWNERSHIP" and tier.category == tier.Category.ASSET_OWNERSHIP %}
+{% if tier_type == "tiers-FREE" and tier.category == tier.Category.FREE or tier_type == "tiers-FIAT" and tier.category == tier.Category.FIAT or tier_type == "tiers-ASSET_OWNERSHIP" and tier.category == tier.Category.ASSET_OWNERSHIP %}
 <div class="ticket-tier mb-3">
     <input
         id="{{ tier.public_id }}"
@@ -22,7 +22,7 @@
         data-amount="0"
         data-extra-party="0"
         data-allowed-guests="{{ tier.allowed_guests }}"
-        data-price-per-ticket="{{ tier.tier_fiat.price_per_ticket }}"
+        data-price-per-ticket="{{ tier.price_per_ticket }}"
         {% if tier.guests_available and not tier.event.waiting_queue_enabled %}
             data-guests-available="{{ tier.guests_available }}"
         {% endif %}
@@ -87,11 +87,12 @@
         <!-- End Tickets Available Information -->
 
         <!-- Fiat price label -->
-        {% if tier.tier_fiat %}
+        {% if tier.category == tier.Category.FIAT %}
             <div class="border-top mt-2 pt-2">
                 <div class="rounded-pill px-3 py-2 bg-primary-subtle border border-primary lh-sm d-inline-block mt-2">
                     <i class="fa-light fa-tag me-1"></i>
-                    <strong>{% trans "Price" %} &times; 1: </strong> {{ tier.event.currency_symbol }}{{ tier.tier_fiat.price_per_ticket }}
+                    <strong>{% trans "Price" %} &times; 1: </strong>
+                    {{ tier.event.currency_symbol }}{{ tier.price_per_ticket }}
                 </div>
                 <div class="text-body-secondary mt-3 d-flex align-items-start">
                     <i class="fa-light fa-info-circle me-2 mt-1 flex-shrink-0"></i>

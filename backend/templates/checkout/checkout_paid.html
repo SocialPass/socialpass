@@ -50,7 +50,9 @@
 									</span>
 								</h6>
 								<div>
-									{% trans "Price" %} &times; 1 &mdash; {{ object.event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
+									{% trans "Price" %} &times; 1 &mdash;
+									{{ object.event.currency_symbol }}
+									{{ item.ticket_tier.price_per_ticket  }}
 								</div>
 								<div class="mt-1 text-body-secondary" style="font-size: var(--bs-font-size-sm);">
 									{% trans "Allowed Guest(s):" %}

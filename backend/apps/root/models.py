@@ -674,13 +674,8 @@ class Event(DBModel):
                 "total_count": 0
             }
 
-
-
         # Return tiers with annotated counts
-
-        tier_counts = tiers.annotate(
-            fiat_count=Count("tier_fiat", filter=Q(tier_fiat__isnull=False)),
-        ).get()
+        tier_counts["fiat_count"] = tiers.filter(category=TicketTier.Category.FIAT).count()
         tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
         tier_counts["free_count"] = tiers.filter(category=TicketTier.Category.FREE).count()
         tier_counts["total_count"] = sum(tier_counts.values())
@@ -808,12 +803,6 @@ class TicketTier(DBModel):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-    )
-    tier_fiat = models.OneToOneField(
-        "TierFiat",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
     )
 
     # Ticket information fields
@@ -1007,30 +996,6 @@ class TicketTier(DBModel):
         return additional_information_html
 
 
-class TierFiat(DBModel):
-    """
-    Represents a fiat-based tier for an event ticket
-    Holds payment processing fields specific to a fiat payment
-    """
-
-    price_per_ticket = models.DecimalField(
-        max_digits=19,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        help_text="Price of one ticket for this tier.",
-        blank=False,
-        null=False,
-    )
-    price_per_ticket_cents = models.GeneratedField(
-        expression=Round(F("price_per_ticket") * 100),
-        output_field=models.IntegerField(),
-        db_persist=True,
-    )
-
-    def __str__(self) -> str:
-        return f"TierFiat: {self.public_id}"
-
-
 class CheckoutSession(DBModel):
     """
     Represents a time-limited checkout session (aka 'cart') for an event organizer
@@ -1141,11 +1106,9 @@ class CheckoutSession(DBModel):
     def total_price(self):
         if self.tx_fiat:
             total_price = 0
-            checkout_items = CheckoutItem.objects.select_related(
-                "ticket_tier", "ticket_tier__tier_fiat"
-            ).filter(checkout_session=self)
+            checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(checkout_session=self)
             for item in checkout_items:
-                tier_price = item.ticket_tier.tier_fiat.price_per_ticket
+                tier_price = item.ticket_tier.price_per_ticket
                 total_price += item.quantity * tier_price
             return total_price
         else:
@@ -1371,10 +1334,10 @@ class CheckoutItem(DBModel):
 
     @property
     def unit_amount(self):
-        if not self.ticket_tier.tier_fiat:
+        if not self.ticket_tier.category == TicketTier.Category.FIAT:
             return "N/A"
 
-        price_per_ticket_cents = self.ticket_tier.tier_fiat.price_per_ticket_cents
+        price_per_ticket_cents = self.ticket_tier.price_per_ticket_cents
         unit_amount = price_per_ticket_cents * self.quantity
         return unit_amount
 

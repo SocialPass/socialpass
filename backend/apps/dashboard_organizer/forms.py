@@ -12,7 +12,6 @@ from apps.root.models import (
     MessageBatch,
     Team,
     TicketTier,
-    TierFiat,
 )
 from apps.root.exceptions import GoogleWalletAPIRequestError
 
@@ -329,9 +328,7 @@ class TierAssetOwnershipForm(TicketTierForm):
 
     class Meta:
         model = TicketTier
-        fields = [
-            "name", "capacity", "max_per_person", "allowed_guests",
-            "guest_supply", "hidden_from_public", "hidden_availability", "additional_information",
+        fields = TicketTierForm.Meta.fields + [
             "balance_required",
             "network",
             "token_address",
@@ -359,14 +356,14 @@ class TierAssetOwnershipForm(TicketTierForm):
         return token_address
 
 
-class TierFiatForm(forms.ModelForm):
+class TierFiatForm(TicketTierForm):
     """
     Ticket tier fiat form
     """
 
     class Meta:
-        model = TierFiat
-        fields = [
+        model = TicketTier
+        fields = TicketTierForm.Meta.fields + [
             "price_per_ticket",
         ]
         widgets = {

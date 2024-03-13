@@ -34,7 +34,7 @@
 						<i class="fa-solid fa-eye-slash"></i>
 					</span>
 					{% endif %}
-					{% if ticket_tier.tier_fiat %}
+					{% if ticket_tier.category == ticket_tier.Category.FIAT %}
 					<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
 						<i class="fa-light fa-money-check-dollar me-1"></i>
 						{% trans "Paid" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
@@ -61,8 +61,12 @@
 				</div>
 				<h6>
 					{{ ticket_tier.name }}
-					{% if ticket_tier.tier_fiat %}
-					<span class="fw-normal"> | {{ event.currency_symbol }}{{ ticket_tier.tier_fiat.price_per_ticket }}/{% trans "ticket" %}</span>
+					{% if ticket_tier.category == ticket_tier.Category.FIAT %}
+					<span class="fw-normal"> |
+						{{ event.currency_symbol }}
+						{{ ticket_tier.price_per_ticket }}/
+						{% trans "ticket" %}
+					</span>
 					{% endif %}
 				</h6>
 				<hr />

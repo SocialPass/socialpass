@@ -26,7 +26,9 @@
 			</h6>
 			{% if obj.tx_fiat %}
 				<div>
-					Price &times; 1 &mdash; {{ object.event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
+					Price &times; 1 &mdash;
+					{{ object.event.currency_symbol }}
+					{{ item.ticket_tier.price_per_ticket  }}
 				</div>
 			{% endif %}
 			<div class="mt-1 text-body-secondary">

@@ -865,6 +865,68 @@ class TicketTier(DBModel):
         help_text="Denotes the total guest capacity.",
     )
 
+    # Ticket Information - Asset Ownership
+    class BlockchainChoices(models.TextChoices):
+        ETH = "ETH", "Ethereum"
+
+    class NetworkChoices(models.IntegerChoices):
+        ETH = 1, "Ethereum"
+        GOERLI = 5, "Ethereum (Goerli TestNet)"
+        SEPOLIA = 11155111, "Ethereum (Sepolia TestNet)"
+        MUMBAI = 80001, "Ethereum (Mumbai TestNet)"
+        POLYGON = 137, "Polygon"
+        BSC = 56, "Binance Smart Chain"
+        BSC_TESTNET = 97, "Binance Smart Chain (TestNet)"
+        AVAX = 43114, "Avalanche"
+        AVAX_TESTNET = 43113, "Avalanche (TestNet)"
+        FANTOM = 250, "Fantom"
+        CRONOS = 25, "Cronos"
+        CRONOS_TESTNET = 338, "Cronos (TestNet)"
+        ARBITRUM = 42161, "Arbitrum"
+
+    class AssetChoices(models.TextChoices):
+        NFT = "NFT", "NFT"
+
+    blockchain = models.CharField(
+        max_length=50,
+        choices=BlockchainChoices.choices,
+        default=BlockchainChoices.ETH,
+        blank=False,
+    )
+    network = models.IntegerField(
+        choices=NetworkChoices.choices,
+        default=NetworkChoices.ETH,
+        blank=False,
+        help_text="Which blockchain is your NFT collection on?",
+    )
+    asset_type = models.CharField(
+        max_length=50,
+        choices=AssetChoices.choices,
+        default=AssetChoices.NFT,
+        blank=False,
+    )
+    balance_required = models.IntegerField(
+        default=1,
+        blank=False,
+        null=False,
+        help_text="The number of NFTs required to claim your ticket tier.",
+    )
+    token_address = models.CharField(
+        max_length=42,
+        blank=False,
+        default="",
+        help_text="What is the contract address of your NFT collection?",
+    )
+    token_id = ArrayField(
+        models.IntegerField(),
+        null=True,
+        blank=True,
+        help_text="Which specific token IDs of the NFT collection are required?",
+    )
+    deprecated_issued_token_id = ArrayField(
+        models.IntegerField(), blank=True, default=list
+    )
+
     # Display information
     name = models.CharField(
         max_length=255,

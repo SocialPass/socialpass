@@ -677,7 +677,6 @@ class Event(DBModel):
         # Return tiers with annotated counts
         tier_counts = tiers.annotate(
             fiat_count=Count("tier_fiat", filter=Q(tier_fiat__isnull=False)),
-            blockchain_count=Count("tier_blockchain", filter=Q(tier_blockchain__isnull=False)),
             asset_ownership_count=Count("tier_asset_ownership", filter=Q(tier_asset_ownership__isnull=False)),
             free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
         ).get()
@@ -820,12 +819,6 @@ class TicketTier(DBModel):
         blank=True,
         null=True,
     )
-    tier_blockchain = models.OneToOneField(
-        "TierBlockchain",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
     tier_asset_ownership = models.OneToOneField(
         "TierAssetOwnership",
         on_delete=models.SET_NULL,
@@ -963,16 +956,6 @@ class TierFiat(DBModel):
 
     def __str__(self) -> str:
         return f"TierFiat: {self.public_id}"
-
-
-class TierBlockchain(DBModel):
-    """
-    Represents a blockchain-based tier for an event ticket
-    Holds payment processing fields specific to a blockchain payment
-    """
-
-    def __str__(self) -> str:
-        return f"TierBlockchain: {self.public_id}"
 
 
 class TierAssetOwnership(DBModel):

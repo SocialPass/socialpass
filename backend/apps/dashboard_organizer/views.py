@@ -470,7 +470,6 @@ class EventTicketsView(TeamContextMixin, DetailView):
     def get_object(self):
         return (
             Event.objects.prefetch_related("tickettier_set__tier_asset_ownership")
-            .prefetch_related("tickettier_set__tier_blockchain")
             .prefetch_related("tickettier_set__tier_fiat")
             .get(pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"])
         )

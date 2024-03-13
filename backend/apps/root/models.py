@@ -940,7 +940,7 @@ class TicketTier(DBModel):
     )
     token_address = models.CharField(
         max_length=42,
-        blank=False,
+        blank=True,
         default="",
         help_text="What is the contract address of your NFT collection?",
     )

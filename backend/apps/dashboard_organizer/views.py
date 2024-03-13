@@ -617,6 +617,23 @@ class EventStatsView(TeamContextMixin, DetailView):
         return context
 
 
+class EventCheckInGuests(TeamContextMixin, DetailView):
+    """
+    Show link to the event scanner, and copy on how to use it
+    """
+
+    model = Event
+    template_name = "dashboard_organizer/event_check_in_guests.html"
+    object = None
+
+    def get_object(self):
+        if not self.object:
+            self.object = Event.objects.get(
+                pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
+            )
+        return self.object
+
+
 class TicketTierCreateView(TeamContextMixin, TemplateView):
     """
     Select the type of ticket tier to create.

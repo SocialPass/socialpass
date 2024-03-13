@@ -336,6 +336,24 @@
 
 				setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
 			}
+
+			// Copy to clipboard
+			function copyToClipboard(copyBtn, target) {
+				const range = document.createRange();
+				range.selectNode(target);
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+				document.execCommand("copy");
+				window.getSelection().removeAllRanges();
+
+				// Show confirmation
+				copyBtn.innerHTML = "Copied!";
+
+				// Hide confirmation after 2 seconds
+				setTimeout(function () {
+					copyBtn.innerHTML = "Copy";
+				}, 2000);
+			}
 		</script>
 
 		{% if debug %}

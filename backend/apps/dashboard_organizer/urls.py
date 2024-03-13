@@ -95,6 +95,11 @@ urlpatterns = [
         name="event_stats",
     ),
     path(
+        "<slug:team_slug>/events/<int:pk>/check-in-guests/",
+        views.EventCheckInGuests.as_view(),
+        name="event_check_in_guests",
+    ),
+    path(
         "<slug:team_slug>/events/<int:event_pk>/tickets/create/",
         views.TicketTierCreateView.as_view(),
         name="ticket_tier_create",

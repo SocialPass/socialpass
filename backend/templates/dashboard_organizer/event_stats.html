@@ -1,9 +1,9 @@
 {% extends "dashboard_organizer/base.html" %}
 {% load static i18n get_theme_value get_user_primary_email format_to_event_timezone %}
 
-{% block head_title %}{% trans "Event Stats" %} - SocialPass{% endblock head_title %}
+{% block head_title %}{% trans "Event Details" %} - SocialPass{% endblock head_title %}
 
-{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Stats" %}{% endblock navbar_title %}
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title %}
 
 {% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title_2 %}
 

@@ -57,9 +57,9 @@
 		</li>
 		<li class="nav-item">
 			<a
-				href="#"
-				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
-				{% if false %}aria-current="true"{% endif %}
+				href="{% url 'dashboard_organizer:event_check_in_guests' current_team.slug event.pk %}"
+				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_check_in_guests' %}active{% endif %}"
+				{% if request.resolver_match.url_name == 'event_check_in_guests' %}aria-current="true"{% endif %}
 			>
 				{% trans "Check-in" %}<span class="d-none d-md-inline"> {% trans "Guests" %}</span>
 			</a>
@@ -71,6 +71,8 @@
 		{% if false %}
 		{% elif request.resolver_match.url_name == 'event_stats' %}
 			{% trans "Stats" %}
+		{% elif request.resolver_match.url_name == 'event_check_in_guests' %}
+			{% trans "Check-in Guests" %}
 		{% endif %}
 		<i class="fa-regular fa-angle-down ms-auto"></i>
 	</button>
@@ -107,9 +109,9 @@
 						{% trans "Promote" %}
 					</a>
 				</li>
-				<li {% if false %}aria-current="true"{% endif %}>
-					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
-						{% trans "Check-In Guests" %}
+				<li {% if request.resolver_match.url_name == 'event_check_in_guests' %}aria-current="true"{% endif %}>
+					<a href="{% url 'dashboard_organizer:event_check_in_guests' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_check_in_guests' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Check-in Guests" %}
 					</a>
 				</li>
 			</ul>

@@ -468,10 +468,9 @@ class EventTicketsView(TeamContextMixin, DetailView):
     template_name = "dashboard_organizer/event_ticket_tiers.html"
 
     def get_object(self):
-        return (
-            Event.objects.prefetch_related("tickettier_set__tier_asset_ownership")
-            .prefetch_related("tickettier_set__tier_fiat")
-            .get(pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"])
+        return Event.objects.get(
+            pk=self.kwargs["pk"],
+            team__slug=self.kwargs["team_slug"]
         )
 
 
@@ -662,7 +661,7 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
     """
 
     model = TicketTier
-    form_class = TicketTierForm
+    form_class = TierAssetOwnershipForm
     template_name = "dashboard_organizer/ticket_tier_nft_create.html"
     form_data = None
 
@@ -671,35 +670,15 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
-        context["tier_asset_ownership_form"] = TierAssetOwnershipForm(
-            prefix="tier_asset_ownership_form", data=self.form_data
-        )
         return context
 
     def form_valid(self, form, **kwargs):
-        # set form.data to self
-        # this is reused in get_context_data to preserve entries / content
-        self.form_data = form.data
-
-        # validate tier_asset_ownership
-        # if exists, save tier_asset_ownership to TicketTierForm instance
-        tier_asset_ownership = TierAssetOwnershipForm(
-            self.form_data, prefix="tier_asset_ownership_form"
-        )
-        if tier_asset_ownership.is_valid():
-            tier_asset_ownership.save()
-            form.instance.tier_asset_ownership = tier_asset_ownership.instance
-        else:
-            messages.add_message(
-                self.request, messages.ERROR, "The Asset Ownership fields are not valid"
-            )
-            return super().form_invalid(form)
-
         # add event data to TicketTierForm from context
         # validate TicketTierForm
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
         form.instance.category = TicketTier.Category.ASSET_OWNERSHIP
+
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -755,7 +734,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
         # this is reused in get_context_data to preserve entries / content
         self.form_data = form.data
 
-        # validate tier_asset_ownership
+        # validate tier_fiat
         # if exists, save tier_fiat to TicketTierForm instance
         tier_fiat = TierFiatForm(self.form_data, prefix="tier_fiat_form")
         if tier_fiat.is_valid():

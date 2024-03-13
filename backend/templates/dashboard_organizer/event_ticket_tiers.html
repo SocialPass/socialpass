@@ -46,7 +46,7 @@
 						{% trans "Free" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
 					</span>
 					{% endif %}
-					{% if ticket_tier.tier_asset_ownership %}
+					{% if ticket_tier.category == ticket_tier.Category.ASSET_OWNERSHIP %}
 					<span class="px-3 py-2 rounded-pill fw-bold bg-info-subtle text-info-emphasis me-3">
 						<i class="fa-light fa-hexagon-vertical-nft me-1"></i>
 						{% trans "NFT-Gated" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
@@ -119,16 +119,16 @@
 						</div>
 					</div>
 				</div>
-				{% if ticket_tier.tier_asset_ownership %}
+				{% if ticket_tier.category == ticket_tier.Category.ASSET_OWNERSHIP %}
 				<hr />
 				<div class="text-primary-emphasis h6">
 					{% trans "NFT Requirements" %}
 				</div>
 				<div class="text-truncate">
-					<strong>{% trans "Network" %}</strong>: {{ ticket_tier.tier_asset_ownership.get_network_display }}
+					<strong>{% trans "Network" %}</strong>: {{ ticket_tier.get_network_display }}
 				</div>
 				<div class="text-truncate">
-					<strong>{% trans "Token Address" %}</strong>: {{ ticket_tier.tier_asset_ownership.token_address }}
+					<strong>{% trans "Token Address" %}</strong>: {{ ticket_tier.token_address }}
 				</div>
 				{% endif %}
 			</div>

@@ -58,7 +58,6 @@ class CheckoutPageOneRedirect(RedirectView):
                     .prefetch_related(
                         "tickettier_set",
                         "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
                     )
                     .get(
                         pk=OLD_EVENTS_SLUG_TO_PK[self.kwargs.get("event_slug")]
@@ -72,7 +71,6 @@ class CheckoutPageOneRedirect(RedirectView):
                     .prefetch_related(
                         "tickettier_set",
                         "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
                     )
                     .get(public_id=self.kwargs["event_uuid_slug"])
                 )
@@ -84,7 +82,6 @@ class CheckoutPageOneRedirect(RedirectView):
                     .prefetch_related(
                         "tickettier_set",
                         "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
                     )
                     .get(pk=self.kwargs["event_pk_slug"])
                 )
@@ -123,7 +120,6 @@ class CheckoutPageOne(DetailView):
         self.object = Event.objects.select_related("team").prefetch_related(
             "tickettier_set",
             "tickettier_set__tier_free",
-            "tickettier_set__tier_asset_ownership",
         ).get(
             team__slug=self.kwargs["team_slug"],
             slug=self.kwargs["event_slug"]
@@ -294,7 +290,6 @@ class CheckoutPageTwoBase(DetailView):
                         "ticket_tier",
                         "ticket_tier__tier_fiat",
                         "ticket_tier__tier_free",
-                        "ticket_tier__tier_asset_ownership",
                     )
                 )
             )

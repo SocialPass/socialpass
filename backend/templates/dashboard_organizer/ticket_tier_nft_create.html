@@ -106,22 +106,22 @@
 					<h4 class="mb-lg-4">{% trans "Required NFT Details" %}</h4>
 					<div class="row g-3">
 						<div class="col-lg-6">
-							{% with tier_asset_ownership_form.network as input %}
+							{% with form.network as input %}
 								{% include "forms/select.html" %}
 							{% endwith %}
 						</div>
 						<div class="col-lg-6">
-							{% with tier_asset_ownership_form.token_address as input %}
+							{% with form.token_address as input %}
 								{% include "forms/input.html" %}
 							{% endwith %}
 						</div>
 						<div class="col-lg-6">
-							{% with tier_asset_ownership_form.balance_required as input %}
+							{% with form.balance_required as input %}
 								{% include "forms/input.html" %}
 							{% endwith %}
 						</div>
 						<div class="col-lg-6">
-							{% with tier_asset_ownership_form.token_id as input %}
+							{% with form.token_id as input %}
 								{% include "forms/input.html" %}
 							{% endwith %}
 						</div>
@@ -136,6 +136,9 @@
 					</div>
 					<div class="sp-checkbox-container mt-3">
 						{{ form.hidden_from_public | as_crispy_field }}
+					</div>
+					<div class="sp-checkbox-container mt-3">
+						{{ form.hidden_availability | as_crispy_field }}
 					</div>
 
 					<div class="text-end mt-3">

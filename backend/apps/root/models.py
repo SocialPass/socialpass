@@ -674,12 +674,15 @@ class Event(DBModel):
                 "total_count": 0
             }
 
+
+
         # Return tiers with annotated counts
+
         tier_counts = tiers.annotate(
             fiat_count=Count("tier_fiat", filter=Q(tier_fiat__isnull=False)),
-            asset_ownership_count=Count("tier_asset_ownership", filter=Q(tier_asset_ownership__isnull=False)),
             free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
         ).get()
+        tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
         tier_counts["total_count"] = sum(tier_counts.values())
         return tier_counts
 
@@ -808,12 +811,6 @@ class TicketTier(DBModel):
     )
     tier_fiat = models.OneToOneField(
         "TierFiat",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tier_asset_ownership = models.OneToOneField(
-        "TierAssetOwnership",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -1038,80 +1035,6 @@ class TierFiat(DBModel):
 
     def __str__(self) -> str:
         return f"TierFiat: {self.public_id}"
-
-
-class TierAssetOwnership(DBModel):
-    """
-    Represents a asset ownership based tier for an event ticket
-    Holds details specific to an asset ownership verification
-
-    Note: These choices are modeled off the moralis API:
-    https://docs.moralis.io/reference/evm-api-overview
-    """
-
-    class BlockchainChoices(models.TextChoices):
-        ETH = "ETH", "Ethereum"
-
-    class NetworkChoices(models.IntegerChoices):
-        ETH = 1, "Ethereum"
-        GOERLI = 5, "Ethereum (Goerli TestNet)"
-        SEPOLIA = 11155111, "Ethereum (Sepolia TestNet)"
-        MUMBAI = 80001, "Ethereum (Mumbai TestNet)"
-        POLYGON = 137, "Polygon"
-        BSC = 56, "Binance Smart Chain"
-        BSC_TESTNET = 97, "Binance Smart Chain (TestNet)"
-        AVAX = 43114, "Avalanche"
-        AVAX_TESTNET = 43113, "Avalanche (TestNet)"
-        FANTOM = 250, "Fantom"
-        CRONOS = 25, "Cronos"
-        CRONOS_TESTNET = 338, "Cronos (TestNet)"
-        ARBITRUM = 42161, "Arbitrum"
-
-    class AssetChoices(models.TextChoices):
-        NFT = "NFT", "NFT"
-
-    blockchain = models.CharField(
-        max_length=50,
-        choices=BlockchainChoices.choices,
-        default=BlockchainChoices.ETH,
-        blank=False,
-    )
-    network = models.IntegerField(
-        choices=NetworkChoices.choices,
-        default=NetworkChoices.ETH,
-        blank=False,
-        help_text="Which blockchain is your NFT collection on?",
-    )
-    asset_type = models.CharField(
-        max_length=50,
-        choices=AssetChoices.choices,
-        default=AssetChoices.NFT,
-        blank=False,
-    )
-    balance_required = models.IntegerField(
-        default=1,
-        blank=False,
-        null=False,
-        help_text="The number of NFTs required to claim your ticket tier.",
-    )
-    token_address = models.CharField(
-        max_length=42,
-        blank=False,
-        default="",
-        help_text="What is the contract address of your NFT collection?",
-    )
-    token_id = ArrayField(
-        models.IntegerField(),
-        null=True,
-        blank=True,
-        help_text="Which specific token IDs of the NFT collection are required?",
-    )
-    deprecated_issued_token_id = ArrayField(
-        models.IntegerField(), blank=True, default=list
-    )
-
-    def __str__(self) -> str:
-        return f"TierAssetOwnership: {self.public_id}"
 
 
 class TierFree(DBModel):
@@ -1589,10 +1512,10 @@ class TxAssetOwnership(DBModel):
         self.is_wallet_address_verified = True
         self.save()
 
-    def _process_delegate_ownership(self, wallet_address=None, tier_asset_ownership=None):
+    def _process_delegate_ownership(self, wallet_address=None, tier=None):
         # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
         import requests
-        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier_asset_ownership.network}"
+        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
         response = requests.get(url)
         incomingDelegations = response.json()
         delegated_wallets = []
@@ -1600,8 +1523,8 @@ class TxAssetOwnership(DBModel):
         # 2. Filter out these delegations to only include the NFT Contact you are looking to claim tickets for.
         filteredDelegations = [delegation for delegation in incomingDelegations if
         delegation['type'] == "ALL" or
-        (delegation['type'] == "CONTRACT" and delegation['contract'] == tier_asset_ownership.token_address) or
-        (delegation['type'] == "ERC721" and delegation['contract'] == tier_asset_ownership.token_address)]
+        (delegation['type'] == "CONTRACT" and delegation['contract'] == tier.token_address) or
+        (delegation['type'] == "ERC721" and delegation['contract'] == tier.token_address)]
 
         # Get all the NFT's of each unique from address in the above list and return
         delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
@@ -1614,25 +1537,25 @@ class TxAssetOwnership(DBModel):
     def _process_asset_ownership(self, checkout_session=None):
         filtered_by_expected = []
         for item in checkout_session.checkoutitem_set.all():
+            ticket_tier = item.ticket_tier
             # Set wallet addresses
             # Either single address, or list of delegated wallets
             if self.delegated_wallet:
                 wallets = self._process_delegate_ownership(
                     wallet_address=self.wallet_address,
-                    tier_asset_ownership=item.ticket_tier.tier_asset_ownership
+                    tier=ticket_tier
                  )
             else:
                 wallets = [self.wallet_address]
 
             for wallet in wallets:
                 # Format & make API lookup
-                tier_asset_ownership = item.ticket_tier.tier_asset_ownership
                 params = {
-                    "chain": hex(tier_asset_ownership.network),
+                    "chain": hex(ticket_tier.network),
                     "format": "decimal",
                     "media_items": True,
                     "address": wallet,
-                    "token_addresses": [tier_asset_ownership.token_address],
+                    "token_addresses": [ticket_tier.token_address],
                 }
                 api_response = evm_api.nft.get_wallet_nfts(
                     api_key=settings.MORALIS_API_KEY,
@@ -1640,7 +1563,7 @@ class TxAssetOwnership(DBModel):
                 )
 
                 # Check if wallet has required balance
-                expected = tier_asset_ownership.balance_required * item.quantity
+                expected = ticket_tier.balance_required * item.quantity
                 if api_response.get("result"):
                     actual = len(api_response["result"])
                 else:
@@ -1662,8 +1585,10 @@ class TxAssetOwnership(DBModel):
                     int(i.get("token_id"))
                     for nfts in CheckoutItem.objects.filter(
                         checkout_session__event=checkout_session.event,
-                        ticket_tier__tier_asset_ownership=tier_asset_ownership,
-                        checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
+                        ticket_tier=ticket_tier,
+                        checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{
+                            "token_address": ticket_tier.token_address.lower()
+                        }]
                     ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
                     for i in nfts
                 )

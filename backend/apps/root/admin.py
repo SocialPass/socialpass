@@ -13,7 +13,6 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
-    TierAssetOwnership,
     TierFiat,
     TierFree,
     TxAssetOwnership,
@@ -232,24 +231,6 @@ class TicketAdmin(CustomDBAdmin):
        "event",
        "ticket_tier",
        "checkout_session",
-    ]
-
-
-@admin.register(TierAssetOwnership)
-class TierAssetOwnershipAdmin(CustomDBAdmin):
-    list_display = [
-        "__str__",
-        "tickettier",
-        "blockchain",
-        "network",
-        "asset_type",
-        "balance_required",
-        "token_address",
-        "token_id",
-    ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__name",)
-    list_select_related = [
-        "tickettier",
     ]
 
 

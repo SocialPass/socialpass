@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("root", "0118_migrate_tier_free"),
+        ("root", "0118_migrate_tier_fiat"),
     ]
 
     operations = [

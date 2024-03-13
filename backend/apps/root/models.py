@@ -799,7 +799,7 @@ class TicketTier(DBModel):
     Represents a ticker tier for a respective ticket.
     This tier contains details for a ticket, ++ pricing and payment method information.
     """
-    # keys
+    # key fields
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
@@ -825,18 +825,7 @@ class TicketTier(DBModel):
         null=True,
     )
 
-    # Ticket information
-    class Category(models.TextChoices):
-        FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
-        FREE = "FREE", "Free"
-    category = models.CharField(
-        max_length=50,
-        choices=Category.choices,
-        default="",
-        blank=True,
-    )
+    # Ticket information fields
     capacity = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1)],
@@ -865,7 +854,45 @@ class TicketTier(DBModel):
         help_text="Denotes the total guest capacity.",
     )
 
-    # Ticket Information - Asset Ownership
+    # Display fields
+    name = models.CharField(
+        max_length=255,
+        blank=False,
+        help_text="A short descriptive label for your ticket tier.",
+    )
+    hidden_from_public = models.BooleanField(
+        default=False,
+        blank=False,
+        null=False,
+        help_text="Whether or not this tier is hidden from the public",
+    )
+    hidden_availability = models.BooleanField(
+        default=False,
+        blank=False,
+        null=False,
+        help_text="Whether or not to hide the number of available tickets from the public.",
+    )
+    additional_information = models.TextField(
+        blank=True,
+        default="",
+        help_text="Additional information for this tier provided by the host.",
+    )
+
+    # Category fields
+    class Category(models.TextChoices):
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
+
+    category = models.CharField(
+        max_length=50,
+        choices=Category.choices,
+        default="",
+        blank=True,
+    )
+
+    # Category fields - Asset Ownership
     class BlockchainChoices(models.TextChoices):
         ETH = "ETH", "Ethereum"
 
@@ -925,30 +952,6 @@ class TicketTier(DBModel):
     )
     deprecated_issued_token_id = ArrayField(
         models.IntegerField(), blank=True, default=list
-    )
-
-    # Display information
-    name = models.CharField(
-        max_length=255,
-        blank=False,
-        help_text="A short descriptive label for your ticket tier.",
-    )
-    hidden_from_public = models.BooleanField(
-        default=False,
-        blank=False,
-        null=False,
-        help_text="Whether or not this tier is hidden from the public",
-    )
-    hidden_availability = models.BooleanField(
-        default=False,
-        blank=False,
-        null=False,
-        help_text="Whether or not to hide the number of available tickets from the public.",
-    )
-    additional_information = models.TextField(
-        blank=True,
-        default="",
-        help_text="Additional information for this tier provided by the host.",
     )
 
     class Meta:

@@ -839,17 +839,12 @@ class TicketTier(DBModel):
         null=True,
     )
 
-    # basic info
+    # Ticket information
     category = models.CharField(
         max_length=50,
         choices=Category.choices,
         default="",
         blank=True,
-    )
-    name = models.CharField(
-        max_length=255,
-        blank=False,
-        help_text="A short descriptive label for your ticket tier.",
     )
     capacity = models.IntegerField(
         default=1,
@@ -877,6 +872,13 @@ class TicketTier(DBModel):
         null=True,
         validators=[MinValueValidator(0)],
         help_text="Denotes the total guest capacity.",
+    )
+
+    # Display information
+    name = models.CharField(
+        max_length=255,
+        blank=False,
+        help_text="A short descriptive label for your ticket tier.",
     )
     hidden_from_public = models.BooleanField(
         default=False,

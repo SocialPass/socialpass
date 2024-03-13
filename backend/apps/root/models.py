@@ -664,7 +664,7 @@ class Event(DBModel):
     @cached_property
     def ticket_tier_counts(self):
         # Get & check for existing tiers
-        tiers = TicketTier.objects.filter(event_id=self.id, hidden=False).values('event_id')
+        tiers = TicketTier.objects.filter(event_id=self.id, hidden_from_public=False).values('event_id')
         if not tiers:
             return {
                 "fiat_count": 0,

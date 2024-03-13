@@ -954,6 +954,22 @@ class TicketTier(DBModel):
         models.IntegerField(), blank=True, default=list
     )
 
+    # Category fields - Fiat
+    price_per_ticket = models.DecimalField(
+        max_digits=19,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        help_text="Price of one ticket for this tier.",
+        default=0,
+        blank=False,
+        null=False,
+    )
+    price_per_ticket_cents = models.GeneratedField(
+        expression=Round(F("price_per_ticket") * 100),
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
+
     class Meta:
         ordering = ("-modified",)
 

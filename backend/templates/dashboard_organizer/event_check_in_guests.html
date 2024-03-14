@@ -12,15 +12,21 @@
 {% endblock sticky_navbar_tabs %}
 
 {% block content %}
-<div class="card border-0 rounded-4 shadow-sm mt-4 mb-3 specific-w-600 mw-100 mx-auto">
+<div class="mw-100 mx-auto my-3" style="width: 720px;">
+	<h1 class="h3 mb-0">{% trans "Check-in Guests" %}</h1>
+	<p class="text-body-secondary mb-0">
+		{% trans "Use the scanner app to scan your customers' tickets." %}
+	</p>
+</div>
+<div class="card border-0 rounded-4 shadow-sm mb-3 mw-100 mx-auto" style="width: 720px;">
 	<div class="card-body p-sm-4">
 		<div class="d-flex align-items-start mb-4">
-			<div class="specific-w-50 specific-h-50 specific-w-sm-75 specific-h-sm-75 flex-shrink-0 d-flex align-items-center justify-content-center text-primary-emphasis bg-primary-subtle rounded-circle">
+			<div class="specific-w-50 specific-h-50 flex-shrink-0 d-flex align-items-center justify-content-center text-primary-emphasis bg-primary-subtle rounded">
 				<i class="fa-solid fa-face-viewfinder fs-4"></i>
 			</div>
 			<div class="ms-3 ms-sm-4">
 				<h5>
-					{% trans "Check-in Guests" %}
+					{% trans "Scanner App" %}
 				</h5>
 				<p class="text-body-secondary">
 					{% trans "Want to scan your customers' tickets and check them into the event? Please go to the following link to use the" %} <strong class="text-body">{% trans "scanner app" %}</strong> {% trans "and do exactly that:" %}

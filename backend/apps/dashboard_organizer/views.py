@@ -617,7 +617,24 @@ class EventStatsView(TeamContextMixin, DetailView):
         return context
 
 
-class EventCheckInGuests(TeamContextMixin, DetailView):
+class EventPromoteView(TeamContextMixin, DetailView):
+    """
+    Show public link, sharing, embed, etc.
+    """
+
+    model = Event
+    template_name = "dashboard_organizer/event_promote.html"
+    object = None
+
+    def get_object(self):
+        if not self.object:
+            self.object = Event.objects.get(
+                pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
+            )
+        return self.object
+
+
+class EventCheckInGuestsView(TeamContextMixin, DetailView):
     """
     Show link to the event scanner, and copy on how to use it
     """

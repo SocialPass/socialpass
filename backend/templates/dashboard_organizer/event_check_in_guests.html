@@ -28,7 +28,7 @@
 			</div>
 		</div>
 		<div class="bg-secondary-subtle py-2 px-3 rounded d-flex align-items-center mb-4">
-			<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="d-block text-decoration-none text-truncate me-3" target="_blank" id="scanner-link">{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}</a>
+			<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="d-block text-decoration-none text-truncate me-3 fw-bold antialiased" target="_blank" id="scanner-link">{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}</a>
 			<button type="button" class="btn btn-secondary btn-sm flex-shrink-0 specific-w-75 ms-auto" onclick="copyToClipboard(this, document.getElementById('scanner-link'));">Copy</button>
 		</div>
 		<div class="alert alert-primary text-primary-emphasis mb-0" role="alert">

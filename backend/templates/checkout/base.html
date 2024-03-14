@@ -42,7 +42,9 @@
 		<meta property="og:url" content="{{ request.build_absolute_uri }}">
 		<meta property="og:title" content="{{ object.title }}">
 		{% if not object.hide_address %}
-		<meta property="og:description" content="Date & Time: {{ object.start_date }} | Location: {{ object.localized_address_display }} | Get your tickets now!">
+			<meta property="og:description" content="Date & Time: {{ object.start_date }} | Location: {{ object.localized_address_display }} | Get your tickets now!">
+		{% else %}
+			<meta property="og:description" content="Date & Time: {{ object.start_date }} | Get your tickets now!">
 		{% endif %}
 		<meta property="og:image" content="{{ object.cover_image_url }}">
 

@@ -79,12 +79,12 @@
 						{% trans "Customer:" %}
 						<span class="fw-normal">{{ checkout_session.name }} | <a href="mailto:{{ checkout_session.email }}" class="text-decoration-none">{{ checkout_session.email }}</a></span>
 					</div>
-					<div class="fw-bold text-body-secondary" style="font-size: var(--bs-font-size-sm);">
-						{% trans "ID:" %}
+					<div class="fw-bold text-body-secondary mt-2" style="font-size: var(--bs-font-size-sm);">
+						<span class="text-body">{% trans "ID:" %}</span>
 						<span class="fw-normal">{{ checkout_session.public_id }}</span>
 					</div>
 					<div class="fw-bold text-body-secondary" style="font-size: var(--bs-font-size-sm);">
-						{% trans "Created:" %}
+						<span class="text-body">{% trans "Created:" %}</span>
 						<span class="fw-normal">{{ checkout_session.created }}</span>
 					</div>
 					<hr />

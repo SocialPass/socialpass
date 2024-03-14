@@ -1,76 +1,76 @@
 {% extends "dashboard_organizer/base.html" %}
 {% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
 
-{% block head_title %}{% trans "Send Message" %} - SocialPass{% endblock head_title %}
+{% block head_title %}{% trans "Compose Message" %} | {{ event.title }} - SocialPass{% endblock head_title %}
 
-{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Send Message" %}{% endblock navbar_title %}
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title %}
 
-{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Send Message" %}{% endblock navbar_title_2 %}
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title_2 %}
+
+{% block sticky_navbar_tabs %}
+{% include "dashboard_organizer/event_details_tabs.html" %}
+{% endblock sticky_navbar_tabs %}
 
 {% block content %}
-<!-- Ticket tier form start -->
-<div class="row mt-4 mb-3">
-	<div class="col-lg-8 mx-auto">
-		<div class="d-flex align-items-center mb-3">
-			<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" aria-label="Go Back">
-				<i class="fa-solid fa-arrow-left h4 m-0"></i>
-			</a>
-			<div class="ps-4">
-				<h1 class="h3 mb-0">{% trans "Send Message" %}</h1>
-				<p class="text-body-secondary mb-0">
-					{% trans "Use the following form to send a message to ticket holders for a particular tier" %} &mdash; <strong>{{ event.title }}</strong>
-				</p>
-			</div>
+<div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
+	<div class="mb-3 d-flex align-items-start">
+		<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" class="text-decoration-none flex-shrink-0" aria-label="Go Back">
+		    <i class="fa-solid fa-arrow-left"></i>
+		</a>
+		<div class="ms-3">
+			<h1 class="h3 mb-0">{% trans "Compose Message" %}</h1>
+			<p class="text-body-secondary mb-0">
+				{% trans "Send an email to ticket holders of a particular tier." %}
+			</p>
 		</div>
-		<div class="card border-0 rounded-4 shadow-sm">
-			<div class="card-body px-lg-5 py-lg-4">
-				<form method="POST">
-					{% csrf_token %}
+	</div>
+	<div class="card border-0 rounded-4 shadow-sm">
+		<div class="card-body px-lg-5 py-lg-4">
+			<form method="POST">
+				{% csrf_token %}
 
-					{% if form.non_field_errors %}
-						<div class="alert alert-danger" role="alert">
-							<ul class="mb-0">
-								{% for error in form.non_field_errors %}
-									<li>{{ error|escape }}</li>
-								{% endfor %}
-							</ul>
-						</div>
-					{% endif %}
-
-					{% for input in form.hidden_fields %}
-						{{ input }}
-					{% endfor %}
-
-					<h4 class="mb-lg-4">{% trans "Ticket Tier" %}</h4>
-					<div class="mb-3">
-						{% with form.ticket_tier as input %}
-							{% include "forms/select.html" %}
-						{% endwith %}
+				{% if form.non_field_errors %}
+					<div class="alert alert-danger" role="alert">
+						<ul class="mb-0">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
 					</div>
+				{% endif %}
 
-					<br /><br />
-					<h4>{% trans "Email Content" %}</h4>
-					<p class="text-body-secondary mb-lg-4">
-						{% trans "Please enter the subject and message you want to send." %}
-					</p>
-					<div class="mb-3">
-						{% with form.subject as input %}
-							{% include "forms/input.html" %}
-						{% endwith %}
-					</div>
-					<div class="mb-3">
-						{% with form.message as input %}
-							{% include "forms/textarea.html" %}
-						{% endwith %}
-					</div>
+				{% for input in form.hidden_fields %}
+					{{ input }}
+				{% endfor %}
 
-					<div class="text-end mt-3">
-						<button type="submit" class="btn btn-primary">{% trans "Send Message" %}</button>
-					</div>
-				</form>
-			</div>
+				<h4 class="mb-lg-4">{% trans "Ticket Tier" %}</h4>
+				<div class="mb-3">
+					{% with form.ticket_tier as input %}
+						{% include "forms/select.html" %}
+					{% endwith %}
+				</div>
+
+				<br /><br />
+				<h4>{% trans "Email Content" %}</h4>
+				<p class="text-body-secondary mb-lg-4">
+					{% trans "Please enter the subject and message you want to send." %}
+				</p>
+				<div class="mb-3">
+					{% with form.subject as input %}
+						{% include "forms/input.html" %}
+					{% endwith %}
+				</div>
+				<div class="mb-3">
+					{% with form.message as input %}
+						{% include "forms/textarea.html" %}
+					{% endwith %}
+				</div>
+
+				<div class="text-end mt-3">
+					<button type="submit" class="btn btn-primary">{% trans "Send Emails" %}</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
-<!-- Ticket tier form end -->
 {% endblock content %}

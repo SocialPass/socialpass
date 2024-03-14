@@ -39,9 +39,9 @@
 		</li>
 		<li class="nav-item">
 			<a
-				href="#"
-				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
-				{% if false %}aria-current="true"{% endif %}
+				href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}"
+				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}active{% endif %}"
+				{% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}aria-current="true"{% endif %}
 			>
 				{% trans "Messaging" %}
 			</a>
@@ -73,6 +73,8 @@
 			{% trans "Stats" %}
 		{% elif request.resolver_match.url_name == 'waiting_queue' %}
 			{% trans "Waitlist" %}
+		{% elif request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}
+			{% trans "Messaging" %}
 		{% elif request.resolver_match.url_name == 'event_promote' %}
 			{% trans "Promote" %}
 		{% elif request.resolver_match.url_name == 'event_check_in_guests' %}
@@ -103,8 +105,8 @@
 						{% trans "RSVP" %}
 					</a>
 				</li>
-				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
-					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+				<li class="mb-2" {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}aria-current="true"{% endif %}>
+					<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}text-primary-emphasis fw-bold antialiased{% endif %}">
 						{% trans "Messaging" %}
 					</a>
 				</li>

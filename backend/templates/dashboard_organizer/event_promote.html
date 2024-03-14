@@ -20,7 +20,7 @@
 </div>
 <div class="card border-0 rounded-4 shadow-sm mb-3 mw-100 mx-auto" style="width: 720px;">
 	<div class="card-body p-sm-4">
-		<div class="d-flex align-items-center mb-3">
+		<div class="d-flex mb-3">
 			<div class="specific-w-50 specific-h-50 flex-shrink-0 d-flex align-items-center justify-content-center text-primary-emphasis bg-primary-subtle rounded">
 				<i class="fa-solid fa-external-link fs-5"></i>
 			</div>
@@ -37,7 +37,7 @@
 			<a href="{% url 'checkout:checkout_one' event.team.slug event.slug %}" class="d-block text-decoration-none text-truncate me-3 fw-bold antialiased" target="_blank" id="public-link">{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}</a>
 			<button type="button" class="btn btn-secondary btn-sm flex-shrink-0 specific-w-75 ms-auto" onclick="copyToClipboard(this, document.getElementById('public-link'));">Copy</button>
 		</div>
-		<div class="d-flex align-items-center mb-3">
+		<div class="d-flex mb-3">
 			<div class="specific-w-50 specific-h-50 flex-shrink-0 d-flex align-items-center justify-content-center text-primary-emphasis bg-primary-subtle rounded">
 				<i class="fa-solid fa-share fs-5"></i>
 			</div>

@@ -135,7 +135,7 @@ urlpatterns = [
         name="ticket_tier_delete",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/rsvp-tickets/",
+        "<slug:team_slug>/events/<int:event_pk>/rsvp/",
         views.RSVPTicketsView.as_view(),
         name="rsvp_tickets",
     ),

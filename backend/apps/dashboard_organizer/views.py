@@ -361,28 +361,12 @@ class EventListView(TeamContextMixin, ListView):
     context_object_name = "events"
     template_name = "dashboard_organizer/event_list.html"
 
-    def get(self, *args, **kwargs):
-        qs = self.get_queryset()
-        if qs.count() < 1:
-            messages.add_message(
-                self.request, messages.INFO, "Let's create an event to get started!"
-            )
-            return redirect(
-                "dashboard_organizer:event_create",
-                self.kwargs["team_slug"],
-            )
-        return super(EventListView, self).get(*args, **kwargs)
-
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(team__slug=self.kwargs["team_slug"])
 
-        query_title = self.request.GET.get("title", "")
-        if query_title:
-            qs = qs.filter(title__icontains=query_title)
-
         query_state = self.request.GET.get("state", "")
-        if query_state:
+        if query_state == "LIVE" or query_state == "DRAFT":
             qs = qs.filter(state=query_state)
 
         return qs
@@ -627,16 +611,41 @@ class EventStatsView(TeamContextMixin, DetailView):
         # Tickets redeemed
         context["tickets_scanned_count"] = event.tickets_scanned_count
 
-        # VIP list
-        context["manual_attendees"] = ManualAttendee.objects.filter(
-            event=context["event"]
-        ).order_by("-created")
-        context["manual_attendees_redeemed_count"] = 0
-        for manual_attendee in context["manual_attendees"]:
-            if manual_attendee.redeemed_at:
-                context["manual_attendees_redeemed_count"] += 1
-
         return context
+
+
+class EventPromoteView(TeamContextMixin, DetailView):
+    """
+    Show public link, sharing, embed, etc.
+    """
+
+    model = Event
+    template_name = "dashboard_organizer/event_promote.html"
+    object = None
+
+    def get_object(self):
+        if not self.object:
+            self.object = Event.objects.get(
+                pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
+            )
+        return self.object
+
+
+class EventCheckInGuestsView(TeamContextMixin, DetailView):
+    """
+    Show link to the event scanner, and copy on how to use it
+    """
+
+    model = Event
+    template_name = "dashboard_organizer/event_check_in_guests.html"
+    object = None
+
+    def get_object(self):
+        if not self.object:
+            self.object = Event.objects.get(
+                pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
+            )
+        return self.object
 
 
 class TicketTierCreateView(TeamContextMixin, TemplateView):

@@ -1,82 +1,98 @@
 {% extends "dashboard_organizer/base.html" %}
 {% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
 
-{% block head_title %}{% trans "Message Batches" %} - SocialPass{% endblock head_title %}
+{% block head_title %}{% trans "Messaging" %} | {{ event.title }} - SocialPass{% endblock head_title %}
 
-{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Message Batches" %}{% endblock navbar_title %}
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title %}
 
-{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Message Batches" %}{% endblock navbar_title_2 %}
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title_2 %}
+
+{% block sticky_navbar_tabs %}
+{% include "dashboard_organizer/event_details_tabs.html" %}
+{% endblock sticky_navbar_tabs %}
 
 {% block content %}
-<!-- Ticket tier form start -->
-<div class="row mt-4 mb-3">
-	<div class="col-lg-8 mx-auto">
-		<div class="d-flex align-items-center mb-3">
-			<div class="pe-3">
-				<h1 class="h3 mb-0">{% trans "Message Batches" %}</h1>
-				<p class="text-body-secondary mb-0">
-					{% trans "List of message batches (sent to ticket holders)" %} &mdash; <strong>{{ event.title }}</strong>
+<div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
+	<div class="mb-3 d-flex align-items-start">
+		<div class="me-3">
+			<h1 class="h3 mb-0">{% trans "Messaging" %}</h1>
+			<p class="text-body-secondary mb-0">
+				{% trans "Send emails to ticket holders." %}
+			</p>
+		</div>
+		<a href="{% url 'dashboard_organizer:message_batch_create' current_team.slug event.pk %}" class="btn btn-primary ms-auto flex-shrink-0">
+		    {% trans "Compose" %}
+		    <i class="fa-solid fa-send ms-1"></i>
+		</a>
+	</div>
+	{% if message_batches.count > 0 %}
+		{% for message_batch in message_batches.all %}
+			<div class="card border-0 rounded-4 shadow-sm mb-3">
+				<div class="card-body">
+					<div>
+						{% if message_batch.ticket_tier.category == message_batch.ticket_tier.Category.FIAT %}
+							<span class="d-inline-block px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+								<i class="fa-light fa-money-check-dollar me-1"></i>
+								{% trans "Ticket:" %}
+								{{ message_batch.ticket_tier.name }}
+							</span>
+						{% endif %}
+						{% if message_batch.ticket_tier.category == message_batch.ticket_tier.Category.FREE %}
+							<span class="d-inline-block px-3 py-2 rounded-pill fw-bold bg-warning-subtle text-warning-emphasis me-3">
+								<i class="fa-light fa-gift me-1"></i>
+								{% trans "Ticket:" %}
+								{{ message_batch.ticket_tier.name }}
+							</span>
+						{% endif %}
+						{% if message_batch.ticket_tier.category == message_batch.ticket_tier.Category.ASSET_OWNERSHIP %}
+							<span class="d-inline-block px-3 py-2 rounded-pill fw-bold bg-info-subtle text-info-emphasis me-3">
+								<i class="fa-light fa-hexagon-vertical-nft me-1"></i>
+								{% trans "Ticket:" %}
+								{{ message_batch.ticket_tier.name }}
+							</span>
+						{% endif %}
+					</div>
+					<p class="text-body-secondary mt-3 mb-0">
+						<strong class="text-body">
+							{% trans "ID" %}:
+						</strong>
+						{{ message_batch.public_id }}
+					</p>
+					<p class="text-body-secondary">
+						<strong class="text-body">
+							{% trans "Sent" %}:
+						</strong>
+						{{ message_batch.created }}
+					</p>
+					<div class="mb-2">
+						<div class="h1 d-inline-block text-primary-emphasis m-0">
+							{{ message_batch.total_recipients }}
+						</div>
+						<p class="d-inline-block text-body-secondary m-0">
+							{% trans "Email(s) Sent" %}
+						</p>
+					</div>
+					<div class="p-3 rounded bg-body-secondary">
+						<div class="fw-bold">{% trans "Subject:" %}</div>
+						<p class="text-body-secondary mb-2">{{ message_batch.subject }}</p>
+						<div class="fw-bold">{% trans "Message:" %}</div>
+						<p class="text-body-secondary mb-0">{{ message_batch.message }}</p>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body">
+				<div class="mx-auto specific-w-200">
+					<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+				</div>
+				<div class="h4 text-center">{% trans "No messages found" %}</div>
+				<p class="text-body-secondary text-center specific-w-250 mw-100 mx-auto">
+					{% trans "Could not find anything. Why not compose one?" %}
 				</p>
 			</div>
-			<a href="{% url 'dashboard_organizer:message_batch_create' current_team.slug event.pk %}" class="btn btn-link ms-auto" aria-label="Create">
-				<i class="fa-solid fa-plus"></i>
-		        <span class="ms-1 d-none d-sm-inline">{% trans "Create" %}</span>
-			</a>
 		</div>
-		{% if message_batches.count > 0 %}
-			{% for message_batch in message_batches.all %}
-				<div class="card border-0 rounded-4 shadow-sm mb-3">
-					<div class="card-body">
-						<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
-							{% trans "Message Batch" %}
-						</span>
-						<h6 class="text-body-secondary mb-0 mt-3 fw-normal">
-							{{ message_batch.public_id }}
-						</h5>
-						<p class="text-body-secondary mt-3 mb-0">
-							<strong class="text-body">
-								<i class="fa-light fa-clock me-1"></i>
-								{% trans "Sent" %}:
-							</strong>
-							{{ message_batch.created }}
-						</p>
-						<p class="text-body-secondary mt-1">
-							<strong class="text-body">
-								<i class="fa-light fa-ticket me-1"></i>
-								{% trans "Ticket Tier" %}:
-							</strong>
-							{{ message_batch.ticket_tier.name }}
-						</p>
-						<div>
-							<h1 class="d-inline-block text-primary-emphasis m-0">
-								{{ message_batch.total_recipients }}
-							</h1>
-							<p class="d-inline-block text-body-secondary m-0">
-								{% trans "Message(s) Sent" %}
-							</p>
-						</div>
-						<div class="mt-3 p-3 rounded bg-body-secondary">
-							<div class="fw-bold">{% trans "Subject:" %}</div>
-							<p class="text-body-secondary mb-2">{{ message_batch.subject }}</p>
-							<div class="fw-bold">{% trans "Message:" %}</div>
-							<p class="text-body-secondary mb-0">{{ message_batch.message }}</p>
-						</div>
-					</div>
-				</div>
-			{% endfor %}
-		{% else %}
-			<div class="card border-0 rounded-4 shadow-sm">
-				<div class="card-body">
-					<div class="mx-auto specific-w-200">
-						<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
-					</div>
-					<p class="text-body-secondary text-center">
-						{% trans "No message batches yet." %}
-					</p>
-				</div>
-			</div>
-		{% endif %}
-	</div>
+	{% endif %}
 </div>
-<!-- Ticket tier form end -->
 {% endblock content %}

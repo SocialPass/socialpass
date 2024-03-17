@@ -61,14 +61,14 @@
 				}
 			}
 
-			.content-container {
-				min-height: calc(100vh - 112px);
+			.sticky-navbar {
+				background-color: hsla(var(--bs-secondary-bg-hsl), 0.75);
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
 			}
 
-			@media (min-width: 768px) {
-				.content-container {
-					min-height: calc(100vh - 85px);
-				}
+			.event-list-link:hover {
+				background-color: hsla(var(--bs-primary-hsl), 0.05);
 			}
 
 			.cover-img-input {
@@ -194,9 +194,9 @@
 						{% endif %}
 						<li><hr class="dropdown-divider"></li>
 						<li>
-							<a href="{% url 'dashboard_organizer:team_create' %}" class="dropdown-item d-flex align-items-center fw-bold text-primary-emphasis">
-								<i class="fa-light fa-plus-circle specific-w-25 flex-shrink-0"></i>
-								{% trans "Create Team" %}
+							<a href="{% url 'dashboard_organizer:team_create' %}" class="dropdown-item d-flex align-items-center text-primary-emphasis fw-bold antialiased">
+								{% trans "Create new Team" %}
+								<i class="fa-regular fa-plus flex-shrink-0 ms-auto"></i>
 							</a>
 						</li>
 					</ul>
@@ -204,9 +204,9 @@
 				<div class="text-body-secondary text-uppercase mt-4">
 					<small>{% trans "Events Manager" %}</small>
 				</div>
-				<a href="{% url 'dashboard_organizer:event_create' current_team.slug %}" class="btn btn-link d-flex align-items-center w-100 mt-2 text-start">
-					<i class="fa-light fa-plus-circle flex-shrink-0" style="width: 32px;"></i>
-					{% trans "Create an Event" %}
+				<a href="{% url 'dashboard_organizer:event_create' current_team.slug %}" class="btn btn-primary d-flex align-items-center w-100 mt-2 text-start">
+					<span class="ms-1">{% trans "Create Event" %}</span>
+					<i class="fa-regular fa-plus flex-shrink-0 ms-auto me-1"></i>
 				</a>
 				<a href="{% url 'dashboard_organizer:event_list' current_team.slug %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
 					<i class="fa-light fa-party-horn flex-shrink-0" style="width: 32px;"></i>
@@ -242,29 +242,32 @@
 		</div>
 		<!-- Sidebar end -->
 
-		<!-- Navbar start -->
-		<div class="border-bottom border-secondary border-opacity-25 py-2 py-md-3">
-			<div class="container px-3 px-sm-4 d-flex align-items-center h-100">
-				<button class="btn btn-link px-0 d-xl-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Toggle sidebar" style="width: 37px;">
+		<!-- Navbars start -->
+		<div class="sticky-navbar sticky-top border-bottom border-secondary border-opacity-10 pt-2 pt-md-3">
+			<div class="container-lg px-3 px-sm-4 pb-2 pb-md-3 d-flex align-items-center">
+				<button class="btn btn-link flex-shrink-0 px-0 me-2 d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Toggle sidebar" style="width: 37px;">
 					<i class="fa-solid fa-bars"></i>
 				</button>
-				<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Logo" height="52" class="d-block d-xl-none me-3">
-				<h5 class="mb-0 me-3 d-none d-md-block text-truncate">
+				<div class="flex-shrink-0 me-2 d-xl-none">
+					<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Logo" height="44" class="d-block">
+				</div>
+				<div class="h5 lh-sm mb-0 me-2 d-none d-md-block">
 					{% block navbar_title %}{% endblock navbar_title %}
-				</h5>
+				</div>
+				<div class="h6 lh-sm mb-0 me-2 d-md-none">
+					{% block navbar_title_2 %}{% endblock navbar_title_2 %}
+				</div>
 				<div class="dropdown ms-auto">
-					<button class="btn btn-primary rounded-pill px-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="My account" style="width: 37px;">
+					<button class="btn btn-link rounded-pill px-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="My account" style="width: 37px;">
 						<i class="fa-solid fa-user"></i>
 					</button>
 					<ul class="dropdown-menu dropdown-menu-end">
 						<li>
 							<div class="dropdown-item-text">
-								<h6 class="mb-0 text-truncate">
-									{% get_user_primary_email %}
-								</h6>
+								<h6 class="mb-0 text-truncate">{% get_user_primary_email %}</h6>
 							</div>
 						</li>
-						<li><hr class="dropdown-divider"></li>
+						<li><hr class="dropdown-divider" /></li>
 						<li>
 							<a href="{% url 'account_change_password' %}" class="dropdown-item d-flex align-items-center">
 								<i class="fa-light fa-key specific-w-25 flex-shrink-0"></i>
@@ -277,7 +280,7 @@
 								{% trans "Manage Emails" %}
 							</a>
 						</li>
-						<li><hr class="dropdown-divider"></li>
+						<li><hr class="dropdown-divider" /></li>
 						<li>
 							<a href="{% url 'account_logout' %}" class="dropdown-item d-flex align-items-center fw-bold text-danger-emphasis">
 								<i class="fa-light fa-sign-out specific-w-25 flex-shrink-0"></i>
@@ -287,17 +290,13 @@
 					</ul>
 				</div>
 			</div>
-			<div class="container px-3 px-sm-4 mt-3 d-md-none">
-				<h6>
-					{% block navbar_title_2 %}{% endblock navbar_title_2 %}
-				</h6>
-			</div>
+			{% block sticky_navbar_tabs %}{% endblock sticky_navbar_tabs %}
 		</div>
-		<!-- Navbar end -->
+		<!-- Navbars end -->
 
 		<!-- Content start -->
 		{% include "components/django_messages.html" %}
-		<div class="container px-3 px-sm-4 d-flex flex-column content-container">
+		<div class="container-lg px-3 px-sm-4 d-flex flex-column">
 			{% block content %}{% endblock content %}
 		</div>
 		<!-- Content end -->
@@ -336,6 +335,24 @@
 				}
 
 				setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
+			}
+
+			// Copy to clipboard
+			function copyToClipboard(copyBtn, target) {
+				const range = document.createRange();
+				range.selectNode(target);
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+				document.execCommand("copy");
+				window.getSelection().removeAllRanges();
+
+				// Show confirmation
+				copyBtn.innerHTML = "Copied!";
+
+				// Hide confirmation after 2 seconds
+				setTimeout(function () {
+					copyBtn.innerHTML = "Copy";
+				}, 2000);
 			}
 		</script>
 

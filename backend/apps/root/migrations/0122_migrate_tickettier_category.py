@@ -9,13 +9,14 @@ def set_category_based_on_o2o(apps, schema_editor):
 
     # loop over ticket tiers, set category
     # skip if already existing category
+    # Note: import TicketTier from actual apps.root as to access .Category
+    from apps.root.models import TicketTier
     for tier in ticket_tiers:
         if tier.category:
             continue
 
 
         # set tier category
-        from apps.root.models import TicketTier
         if tier.tier_free:
             tier.category = TicketTier.Category.FREE
         elif tier.tier_fiat:

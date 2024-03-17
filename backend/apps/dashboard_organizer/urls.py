@@ -95,6 +95,16 @@ urlpatterns = [
         name="event_stats",
     ),
     path(
+        "<slug:team_slug>/events/<int:pk>/promote/",
+        views.EventPromoteView.as_view(),
+        name="event_promote",
+    ),
+    path(
+        "<slug:team_slug>/events/<int:pk>/check-in-guests/",
+        views.EventCheckInGuestsView.as_view(),
+        name="event_check_in_guests",
+    ),
+    path(
         "<slug:team_slug>/events/<int:event_pk>/tickets/create/",
         views.TicketTierCreateView.as_view(),
         name="ticket_tier_create",
@@ -125,7 +135,7 @@ urlpatterns = [
         name="ticket_tier_delete",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/rsvp-tickets/",
+        "<slug:team_slug>/events/<int:event_pk>/rsvp/",
         views.RSVPTicketsView.as_view(),
         name="rsvp_tickets",
     ),
@@ -135,12 +145,12 @@ urlpatterns = [
         name="rsvp_create_tickets",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/message-batches/",
+        "<slug:team_slug>/events/<int:event_pk>/messaging/",
         views.MessageBatchesView.as_view(),
         name="message_batches",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/message-batch-create/",
+        "<slug:team_slug>/events/<int:event_pk>/message-compose/",
         views.MessageBatchCreateView.as_view(),
         name="message_batch_create",
     ),
@@ -155,12 +165,12 @@ urlpatterns = [
         name="manual_attendees_create",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/waiting-queue/",
+        "<slug:team_slug>/events/<int:event_pk>/waitlist/",
         views.WaitingQueueView.as_view(),
         name="waiting_queue",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/waiting-queue-post/<int:checkout_session_pk>/",
+        "<slug:team_slug>/events/<int:event_pk>/waitlist-post/<int:checkout_session_pk>/",
         views.WaitingQueuePostView.as_view(),
         name="waiting_queue_post",
     ),

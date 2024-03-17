@@ -1,0 +1,54 @@
+{% extends "dashboard_organizer/base.html" %}
+{% load static i18n get_theme_value get_user_primary_email format_to_event_timezone %}
+
+{% block head_title %}{% trans "Check-in Guests" %} | {{ event.title }} - SocialPass{% endblock head_title %}
+
+{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title %}
+
+{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title_2 %}
+
+{% block sticky_navbar_tabs %}
+{% include "dashboard_organizer/event_details_tabs.html" %}
+{% endblock sticky_navbar_tabs %}
+
+{% block content %}
+<div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
+	<h1 class="h3 mb-0">{% trans "Check-in Guests" %}</h1>
+	<p class="text-body-secondary mb-0">
+		{% trans "Use the scanner app to scan your customers' tickets." %}
+	</p>
+</div>
+<div class="card border-0 rounded-4 shadow-sm mb-3 mw-100 mx-auto" style="width: 720px;">
+	<div class="card-body p-sm-4">
+		<div class="d-flex align-items-start mb-4">
+			<div class="specific-w-50 specific-h-50 flex-shrink-0 d-flex align-items-center justify-content-center text-primary-emphasis bg-primary-subtle rounded">
+				<i class="fa-solid fa-face-viewfinder fs-4"></i>
+			</div>
+			<div class="ms-3 ms-sm-4">
+				<h5>
+					{% trans "Scanner App" %}
+				</h5>
+				<p class="text-body-secondary">
+					{% trans "Want to scan your customers' tickets and check them into the event? Please go to the following link to use the" %} <strong class="text-body">{% trans "scanner app" %}</strong> {% trans "and do exactly that:" %}
+				</p>
+			</div>
+		</div>
+		<div class="bg-secondary-subtle py-2 px-3 rounded d-flex align-items-center mb-4">
+			<a href="{% url 'dashboard_organizer:scanner' event.scanner_id %}" class="d-block text-decoration-none text-truncate me-3 fw-bold antialiased" target="_blank" id="scanner-link">{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}</a>
+			<button type="button" class="btn btn-secondary btn-sm flex-shrink-0 specific-w-75 ms-auto" onclick="copyToClipboard(this, document.getElementById('scanner-link'));">Copy</button>
+		</div>
+		<div class="alert alert-primary text-primary-emphasis mb-0" role="alert">
+			<h6>
+				<i class="fa-solid fa-question-circle me-1"></i>
+				{% trans "How to use the scanner:" %}
+			</h6>
+			<ul class="mb-0">
+				<li>{% trans "Go to the scanner app link (found above)" %}</li>
+				<li>{% trans "Give permission to use the camera" %}</li>
+				<li>{% trans "When someone presents their tickets, point the camera at the QR code (making sure the QR code is inside the box)" %}</li>
+				<li>{% trans "On successful scans, you should see a green notification box pop-up to let you know that the check-in worked" %}</li>
+			</ul>
+		</div>
+	</div>
+</div>
+{% endblock content %}

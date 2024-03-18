@@ -429,7 +429,8 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
 
         # Process transaction and handle exceptions
         try:
-            self.object.process_transaction()
+            self.object.process_session()
+            self.object.fulfill_session()
         except (AssetOwnershipCheckoutError, FreeCheckoutError) as e:
             messages.add_message(
                 self.request,
@@ -658,7 +659,8 @@ class StripeCheckoutSuccess(RedirectView):
         # OK
         # Process transaction
         # Redirect to tickets page
-        checkout_session.process()
+        checkout_session.process_session()
+        checkout_session.fulfill_session()
         return reverse(
             "checkout:get_tickets",
             args=(self.kwargs["checkout_session_public_id"],),

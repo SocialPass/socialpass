@@ -1210,7 +1210,7 @@ class CheckoutSession(DBModel):
             tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
         Ticket.objects.bulk_create(tickets_to_create)
 
-    def process_transaction(self):
+    def process_session(self):
         """
         Responsible for processing the correct transaction based on tx_type
         """
@@ -1224,7 +1224,7 @@ class CheckoutSession(DBModel):
             case _:
                 pass
 
-    def fulfill(self):
+    def fulfill_session(self):
         """
         Fullfil an order related to a checkout session
         """
@@ -1249,8 +1249,6 @@ class CheckoutSession(DBModel):
         self.tx_status = CheckoutSession.OrderStatus.PROCESSING
         self.save()
 
-        # OK
-        self.fulfill()
 
     def process_free(self):
         """
@@ -1269,9 +1267,6 @@ class CheckoutSession(DBModel):
             self.save()
             raise FreeCheckoutError(f"The email ({self.email}) has already been used for this ticket tier.")
 
-        # OK - Save TX and fulfill session
-        self.save()
-        self.fulfill()
 
     def _process_wallet_address(self):
         """
@@ -1426,9 +1421,6 @@ class CheckoutSession(DBModel):
             self.tx_status = CheckoutSession.OrderStatus.FAILED
             self.save()
             raise e
-
-        # OK - Fulfill checkout session
-        self.fulfill()
 
 
 class CheckoutItem(DBModel):

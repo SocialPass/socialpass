@@ -1370,7 +1370,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         # Querying again, we ensure we get the correct public IDs for the emails
         checkout_sessions = CheckoutSession.objects.filter(rsvp_batch=rsvp_batch)
         for checkout_session in checkout_sessions:
-            checkout_session.fulfill()
+            checkout_session.fulfill_session()
 
         return super().form_valid(form)
 
@@ -1622,7 +1622,8 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
             self.object.save()
         else:
             try:
-                self.object.process_transaction()
+                self.object.process_session()
+                self.object.fulfill_session()
             except Exception:
                 rollbar.report_exc_info()
 

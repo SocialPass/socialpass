@@ -14,7 +14,6 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     TxAssetOwnership,
-    TxFree,
     WhiteLabel,
 )
 
@@ -71,7 +70,6 @@ class CheckoutSessionAdmin(CustomDBAdmin):
         "event",
     ]
     raw_id_fields = [
-        "tx_free",
         "tx_asset_ownership"
     ]
 
@@ -231,15 +229,6 @@ class TicketAdmin(CustomDBAdmin):
 
 @admin.register(TxAssetOwnership)
 class TxAssetOwnershipAdmin(CustomDBAdmin):
-    list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
-    search_fields = ("checkoutsession__email",)
-    list_select_related = [
-        "checkoutsession",
-    ]
-
-
-@admin.register(TxFree)
-class TxFreeAdmin(CustomDBAdmin):
     list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
     search_fields = ("checkoutsession__email",)
     list_select_related = [

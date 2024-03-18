@@ -36,7 +36,7 @@ from apps.root.exceptions import (
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
     TxAssetOwnershipProcessingError,
-    TxFreeProcessingError,
+    FreeCheckoutError,
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
 from apps.root.utils import get_random_passcode
@@ -1028,12 +1028,6 @@ class CheckoutSession(DBModel):
         blank=True,
         null=True,
     )
-    tx_free = models.OneToOneField(
-        "TxFree",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
     rsvp_batch = models.ForeignKey(
         "RSVPBatch",
         on_delete=models.SET_NULL,
@@ -1217,11 +1211,6 @@ class CheckoutSession(DBModel):
         Responsible for creating the correct transaction based on tx_status
         """
         match self.tx_type:
-            case CheckoutSession.TransactionType.FREE:
-                tx = TxFree.objects.create()
-                self.tx_free = tx
-                self.tx_status = CheckoutSession.OrderStatus.VALID
-                self.save()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 tx = TxAssetOwnership.objects.create()
                 self.tx_asset_ownership = tx
@@ -1255,7 +1244,7 @@ class CheckoutSession(DBModel):
         """
         match self.tx_type:
             case CheckoutSession.TransactionType.FREE:
-                self.tx_free.process()
+                self.process_free()
             case CheckoutSession.TransactionType.FIAT:
                 self.process_fiat()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
@@ -1289,6 +1278,27 @@ class CheckoutSession(DBModel):
         self.save()
 
         # OK
+        self.fulfill()
+
+    def process_free(self):
+        """
+        Go through the states, only stop to check for issued emails.
+        """
+        self.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        self.save()
+
+        # Check for duplicate emails
+        duplicate_emails = CheckoutSession.objects.filter(
+            event=self.event,
+            email=self.email,
+        )
+        if duplicate_emails:
+            self.tx_status = CheckoutSession.OrderStatus.FAILED
+            self.save()
+            raise FreeCheckoutError(f"The email ({self.email}) has already been used for this ticket tier.")
+
+        # OK - Save TX and fulfill session
+        self.save()
         self.fulfill()
 
 
@@ -1534,40 +1544,6 @@ class TxAssetOwnership(DBModel):
             raise e
 
         # OK - Fulfill checkout session
-        checkout_session.fulfill()
-
-
-class TxFree(DBModel):
-    """
-    Represents a free checkout transaction
-    """
-
-    issued_email = models.EmailField(blank=True)
-
-    def __str__(self) -> str:
-        return f"TxFree: {self.public_id}"
-
-    def process(self):
-        """
-        Go through the states, only stop to check for issued emails.
-        """
-        checkout_session = self.checkoutsession
-        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
-        checkout_session.save()
-
-        # Check for duplicate emails
-        duplicate_emails = TxFree.objects.filter(
-            checkoutsession__event=checkout_session.event,
-            issued_email=checkout_session.email,
-        )
-        if duplicate_emails:
-            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            checkout_session.save()
-            raise TxFreeProcessingError(f"The email ({checkout_session.email}) has already been used for this ticket tier.")
-
-        # OK - Save TX and fulfill session
-        self.issued_email = checkout_session.email
-        self.save()
         checkout_session.fulfill()
 
 

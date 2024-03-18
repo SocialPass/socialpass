@@ -29,7 +29,7 @@ from apps.root.models import (
 )
 from apps.root.exceptions import (
     TxAssetOwnershipProcessingError,
-    TxFreeProcessingError
+    FreeCheckoutError
 )
 from apps.checkout.forms import (
     PasscodeForm,
@@ -268,7 +268,6 @@ class CheckoutPageTwoBase(DetailView):
                 "event",
                 "event__team",
                 "event__team__whitelabel",
-                "tx_free",
                 "tx_asset_ownership"
             )
             .prefetch_related(
@@ -429,7 +428,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         # Process transaction and handle exceptions
         try:
             self.object.process_transaction()
-        except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
+        except (TxAssetOwnershipProcessingError, FreeCheckoutError) as e:
             messages.add_message(
                 self.request,
                 messages.ERROR,

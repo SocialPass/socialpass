@@ -704,7 +704,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     """
 
     model = TicketTier
-    form_class = TicketTierForm
+    form_class = TierFiatForm
     template_name = "dashboard_organizer/ticket_tier_paid_create.html"
     form_data = None
 

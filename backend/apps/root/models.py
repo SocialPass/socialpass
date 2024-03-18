@@ -1075,6 +1075,20 @@ class CheckoutSession(DBModel):
     # We may need this in other places, so we use a generic name
     skip_validation = models.BooleanField(default=False)
 
+    # TX Type Fields - Fiat
+    stripe_session_id = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Stripe checkout session ID.",
+    )
+    stripe_session_url = models.TextField(
+        blank=True,
+        default="",
+        help_text="Stripe checkout session URL.",
+    )
+    stripe_line_items = models.JSONField(blank=True, null=True)
+
     def __str__(self):
         return f"CheckoutSession: {self.email}"
 

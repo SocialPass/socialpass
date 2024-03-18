@@ -173,6 +173,6 @@
 {% block extra_body %}
 <script src="{% static 'js/dist/bundle.js' %}"></script>
 <script>
-	const message = `{{object.tx_asset_ownership.unsigned_message}}`
+	const message = `{{object.unsigned_message}}`
 </script>
 {% endblock extra_body %}

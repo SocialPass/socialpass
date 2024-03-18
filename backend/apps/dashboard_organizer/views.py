@@ -577,17 +577,16 @@ class EventStatsView(TeamContextMixin, DetailView):
         tickets = Ticket.objects.select_related(
             "ticket_tier",
             "checkout_session",
-            "checkout_session__tx_asset_ownership",
         ).filter(event=event)
         results = []
         for ticket in tickets:
-            if ticket.checkout_session.tx_asset_ownership:
+            if ticket.checkout_session.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 wallet_address = (
-                    ticket.checkout_session.tx_asset_ownership.wallet_address
+                    ticket.checkout_session.wallet_address
                 )
                 redeemed_nfts = [
                     nft['token_id'] for nft
-                    in ticket.checkout_session.tx_asset_ownership.redeemed_nfts
+                    in ticket.checkout_session.redeemed_nfts
                 ]
             else:
                 wallet_address = None

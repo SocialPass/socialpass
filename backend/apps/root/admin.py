@@ -13,9 +13,6 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
-    TierAssetOwnership,
-    TierFiat,
-    TierFree,
     TxAssetOwnership,
     TxFiat,
     TxFree,
@@ -189,14 +186,14 @@ class TeamAdmin(CustomDBAdmin):
 class TicketTierAdmin(CustomDBAdmin):
     list_display = [
         "__str__",
-        "ticket_type",
+        "name",
         "event",
         "capacity",
         "tickets_sold_count",
         "max_per_person",
     ] + CustomDBAdmin.list_display
     search_fields = [
-        "ticket_type",
+        "name",
         "event__title",
     ]
     list_select_related = [
@@ -232,49 +229,6 @@ class TicketAdmin(CustomDBAdmin):
        "event",
        "ticket_tier",
        "checkout_session",
-    ]
-
-
-@admin.register(TierAssetOwnership)
-class TierAssetOwnershipAdmin(CustomDBAdmin):
-    list_display = [
-        "__str__",
-        "tickettier",
-        "blockchain",
-        "network",
-        "asset_type",
-        "balance_required",
-        "token_address",
-        "token_id",
-    ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__ticket_type",)
-    list_select_related = [
-        "tickettier",
-    ]
-
-
-@admin.register(TierFiat)
-class TierFiatAdmin(CustomDBAdmin):
-    list_display = [
-        "__str__",
-        "tickettier",
-    ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__ticket_type",)
-    list_select_related = [
-        "tickettier",
-    ]
-
-
-
-@admin.register(TierFree)
-class TierFreeAdmin(CustomDBAdmin):
-    list_display = [
-        "__str__",
-        "tickettier",
-    ] + CustomDBAdmin.list_display
-    search_fields = ("tickettier__ticket_type",)
-    list_select_related = [
-        "tickettier",
     ]
 
 

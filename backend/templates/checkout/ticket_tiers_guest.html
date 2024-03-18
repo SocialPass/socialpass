@@ -3,7 +3,7 @@
     <div>
         <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>
         <div class="lh-sm">
-            {% if not tier.hidden_tickets %}
+            {% if not tier.hidden_availability %}
             {% if tier.guests_available %}{{ tier.guests_available }} {% trans "available" %} | {% endif %}
             {% endif %}
             {% trans "Set the number of guest(s) per ticket." %}

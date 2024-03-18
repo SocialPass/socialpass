@@ -54,7 +54,7 @@ class AppleTicket:
         return value.encode("UTF-8").decode("unicode_escape")
 
     def set_event_ticket_info(
-        self, start_date: str, event_title: str, ticket_type: str, event_location: str
+        self, start_date: str, event_title: str, name: str, event_location: str
     ):
         """
         set EventTicket infos.
@@ -63,10 +63,10 @@ class AppleTicket:
         self.event_info.headerFields.append(date_field)
         self.event_info.addPrimaryField("name", event_title, "EVENT")
         self.event_info.addSecondaryField("where", event_location, "WHERE")
-        self.event_info.addAuxiliaryField("ticket type", ticket_type, "TICKET TYPE")
+        self.event_info.addAuxiliaryField("ticket type", name, "TICKET TYPE")
         self.event_info.addBackField("name", event_title, "EVENT")
         self.event_info.addBackField("where", event_location, "WHERE")
-        self.event_info.addBackField("ticket type", ticket_type, "TICKET TYPE")
+        self.event_info.addBackField("ticket type", name, "TICKET TYPE")
 
     def set_barcode(self, link: str, _format: BarcodeFormat = BarcodeFormat.QR):
         """
@@ -176,16 +176,16 @@ class AppleTicket:
         # when latitude/longitude support is added
         # self.set_location_list(event.lat, event.long)
 
-        ticket_type = ticket.ticket_tier.ticket_type
-        if ticket.ticket_tier.tier_free:
-            ticket_type += " | FREE"
+        name = ticket.ticket_tier.name
+        if ticket.ticket_tier.category == ticket.ticket_tier.Category.FREE:
+            name += " | FREE"
         if ticket.party_size > 1:
-            ticket_type += f" | Party Size: {ticket.party_size}"
+            name += f" | Party Size: {ticket.party_size}"
 
         self.set_event_ticket_info(
             event.start_date.strftime("%d %B, %Y"),
             event.title,
-            ticket_type,
+            name,
             event.localized_address_display,
         )
         self.generate_pass()

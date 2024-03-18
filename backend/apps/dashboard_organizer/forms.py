@@ -12,8 +12,6 @@ from apps.root.models import (
     MessageBatch,
     Team,
     TicketTier,
-    TierAssetOwnership,
-    TierFiat,
 )
 from apps.root.exceptions import GoogleWalletAPIRequestError
 
@@ -285,11 +283,11 @@ class TicketTierForm(forms.ModelForm):
     class Meta:
         model = TicketTier
         fields = [
-            "ticket_type", "capacity", "max_per_person", "allowed_guests",
-            "guest_supply", "hidden", "hidden_tickets", "additional_information",
+            "name", "capacity", "max_per_person", "allowed_guests",
+            "guest_supply", "hidden_from_public", "hidden_availability", "additional_information",
         ]
         widgets = {
-            "ticket_type": forms.TextInput(
+            "name": forms.TextInput(
                 attrs={
                     "placeholder": _(
                         "Short name for free ticket tier e.g. General Admission"
@@ -314,23 +312,23 @@ class TicketTierForm(forms.ModelForm):
             ),
         }
         labels = {
-            "ticket_type": _("Name of ticket tier"),
+            "name": _("Name of ticket tier"),
             "capacity": _("Capacity"),
             "max_per_person": _("Max per person"),
             "allowed_guests": _("Max guest(s) allowed per ticket"),
-            "hidden": _("Hide tier from public"),
-            "hidden_tickets": _("Hide tickets available from public"),
+            "hidden_from_public": _("Hide tier from public"),
+            "hidden_availability": _("Hide tickets available from public"),
         }
 
 
-class TierAssetOwnershipForm(forms.ModelForm):
+class TierAssetOwnershipForm(TicketTierForm):
     """
     Ticket tier asset ownership form
     """
 
     class Meta:
-        model = TierAssetOwnership
-        fields = [
+        model = TicketTier
+        fields = TicketTierForm.Meta.fields + [
             "balance_required",
             "network",
             "token_address",
@@ -358,14 +356,14 @@ class TierAssetOwnershipForm(forms.ModelForm):
         return token_address
 
 
-class TierFiatForm(forms.ModelForm):
+class TierFiatForm(TicketTierForm):
     """
     Ticket tier fiat form
     """
 
     class Meta:
-        model = TierFiat
-        fields = [
+        model = TicketTier
+        fields = TicketTierForm.Meta.fields + [
             "price_per_ticket",
         ]
         widgets = {

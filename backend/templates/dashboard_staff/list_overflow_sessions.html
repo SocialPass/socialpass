@@ -16,14 +16,16 @@
 	{% for item in obj.checkoutitem_set.all %}
 		<div class="pt-3 mt-3 border-top">
 			<h6 class="d-flex align-items-center">
-				<span>{{ item.ticket_tier.ticket_type }}</span>
+				<span>{{ item.ticket_tier.name }}</span>
 				<span class="ps-1 fw-normal">
 					&times; {{ item.quantity }}
 				</span>
 			</h6>
 			{% if obj.tx_fiat %}
 				<div>
-					Price &times; 1 &mdash; {{ object.event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
+					Price &times; 1 &mdash;
+					{{ object.event.currency_symbol }}
+					{{ item.ticket_tier.price_per_ticket  }}
 				</div>
 			{% endif %}
 			<div class="mt-1 text-body-secondary">

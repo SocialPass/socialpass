@@ -664,7 +664,7 @@ class Event(DBModel):
     @cached_property
     def ticket_tier_counts(self):
         # Get & check for existing tiers
-        tiers = TicketTier.objects.filter(event_id=self.id, hidden=False).values('event_id')
+        tiers = TicketTier.objects.filter(event_id=self.id, hidden_from_public=False).values('event_id')
         if not tiers:
             return {
                 "fiat_count": 0,
@@ -675,12 +675,9 @@ class Event(DBModel):
             }
 
         # Return tiers with annotated counts
-        tier_counts = tiers.annotate(
-            fiat_count=Count("tier_fiat", filter=Q(tier_fiat__isnull=False)),
-            blockchain_count=Count("tier_blockchain", filter=Q(tier_blockchain__isnull=False)),
-            asset_ownership_count=Count("tier_asset_ownership", filter=Q(tier_asset_ownership__isnull=False)),
-            free_count=Count("tier_free", filter=Q(tier_free__isnull=False)),
-        ).get()
+        tier_counts["fiat_count"] = tiers.filter(category=TicketTier.Category.FIAT).count()
+        tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
+        tier_counts["free_count"] = tiers.filter(category=TicketTier.Category.FREE).count()
         tier_counts["total_count"] = sum(tier_counts.values())
         return tier_counts
 
@@ -800,53 +797,16 @@ class TicketTier(DBModel):
     Represents a ticker tier for a respective ticket.
     This tier contains details for a ticket, ++ pricing and payment method information.
     """
-
-    class TransactionType(models.TextChoices):
-        FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
-        FREE = "FREE", "Free"
-
-    # keys
+    # key fields
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
     )
-    tier_fiat = models.OneToOneField(
-        "TierFiat",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tier_blockchain = models.OneToOneField(
-        "TierBlockchain",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tier_asset_ownership = models.OneToOneField(
-        "TierAssetOwnership",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tier_free = models.OneToOneField(
-        "TierFree",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
 
-    # basic info
-    tx_type = models.CharField(
-        max_length=50,
-        choices=TransactionType.choices,
-        default="",
-        blank=True,
-    )
-    ticket_type = models.CharField(
+    # Ticket information fields
+    name = models.CharField(
         max_length=255,
         blank=False,
         help_text="A short descriptive label for your ticket tier.",
@@ -878,17 +838,19 @@ class TicketTier(DBModel):
         validators=[MinValueValidator(0)],
         help_text="Denotes the total guest capacity.",
     )
-    hidden = models.BooleanField(
+
+    # Display fields
+    hidden_from_public = models.BooleanField(
         default=False,
         blank=False,
         null=False,
         help_text="Whether or not this tier is hidden from the public",
     )
-    hidden_tickets = models.BooleanField(
+    hidden_availability = models.BooleanField(
         default=False,
         blank=False,
         null=False,
-        help_text="Whether or not this tickets available are hidden from public",
+        help_text="Whether or not to hide the number of available tickets from the public.",
     )
     additional_information = models.TextField(
         blank=True,
@@ -896,108 +858,21 @@ class TicketTier(DBModel):
         help_text="Additional information for this tier provided by the host.",
     )
 
-    class Meta:
-        ordering = ("-modified",)
+    # Category field
+    class Category(models.TextChoices):
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
 
-    def __str__(self):
-        return f"TicketTier: {self.ticket_type}"
-
-    def generate_tx_type(self):
-        """
-        This method serves to make sure ticket tiers created before tx_type was a
-        database field will still continue to work properly (mainly for creating
-        RSVP tickets).
-        """
-        if self.tier_fiat:
-            self.tx_type = TicketTier.TransactionType.FIAT
-        elif self.tier_blockchain:
-            self.tx_type = TicketTier.TransactionType.BLOCKCHAIN
-        elif self.tier_asset_ownership:
-            self.tx_type = TicketTier.TransactionType.ASSET_OWNERSHIP
-        elif self.tier_free:
-            self.tx_type = TicketTier.TransactionType.FREE
-        self.save()
-
-    @cached_property
-    def tickets_sold_count(self):
-        return Ticket.objects.filter(ticket_tier=self).count()
-
-    @cached_property
-    def tickets_available(self):
-        return self.capacity - self.tickets_sold_count
-
-    @cached_property
-    def tickets_sold_exceeding_capacity(self):
-        return abs(int(self.capacity - self.tickets_sold_count))
-
-    @cached_property
-    def guests_count(self):
-        sold = Ticket.objects.filter(ticket_tier=self)
-        sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"] or 0
-        return sold_with_party - self.tickets_sold_count
-
-    @cached_property
-    def guests_available(self):
-        if self.guest_supply:
-            return self.guest_supply - self.guests_count
-        else:
-            return False
-
-    @cached_property
-    def additional_information_html(self):
-        additional_information_html = ""
-        try:
-            additional_information_html = json.loads(self.additional_information)[
-                "html"
-            ]
-        except Exception:
-            pass
-        return additional_information_html
-
-
-class TierFiat(DBModel):
-    """
-    Represents a fiat-based tier for an event ticket
-    Holds payment processing fields specific to a fiat payment
-    """
-
-    price_per_ticket = models.DecimalField(
-        max_digits=19,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        help_text="Price of one ticket for this tier.",
-        blank=False,
-        null=False,
-    )
-    price_per_ticket_cents = models.GeneratedField(
-        expression=Round(F("price_per_ticket") * 100),
-        output_field=models.IntegerField(),
-        db_persist=True,
+    category = models.CharField(
+        max_length=50,
+        choices=Category.choices,
+        default="",
+        blank=True,
     )
 
-    def __str__(self) -> str:
-        return f"TierFiat: {self.public_id}"
-
-
-class TierBlockchain(DBModel):
-    """
-    Represents a blockchain-based tier for an event ticket
-    Holds payment processing fields specific to a blockchain payment
-    """
-
-    def __str__(self) -> str:
-        return f"TierBlockchain: {self.public_id}"
-
-
-class TierAssetOwnership(DBModel):
-    """
-    Represents a asset ownership based tier for an event ticket
-    Holds details specific to an asset ownership verification
-
-    Note: These choices are modeled off the moralis API:
-    https://docs.moralis.io/reference/evm-api-overview
-    """
-
+    # Category fields - Asset Ownership
     class BlockchainChoices(models.TextChoices):
         ETH = "ETH", "Ethereum"
 
@@ -1045,7 +920,7 @@ class TierAssetOwnership(DBModel):
     )
     token_address = models.CharField(
         max_length=42,
-        blank=False,
+        blank=True,
         default="",
         help_text="What is the contract address of your NFT collection?",
     )
@@ -1059,19 +934,66 @@ class TierAssetOwnership(DBModel):
         models.IntegerField(), blank=True, default=list
     )
 
-    def __str__(self) -> str:
-        return f"TierAssetOwnership: {self.public_id}"
+    # Category fields - Fiat
+    price_per_ticket = models.DecimalField(
+        max_digits=19,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        help_text="Price of one ticket for this tier.",
+        default=0,
+        blank=False,
+        null=False,
+    )
+    price_per_ticket_cents = models.GeneratedField(
+        expression=Round(F("price_per_ticket") * 100),
+        output_field=models.IntegerField(),
+        db_persist=True,
+    )
 
-
-class TierFree(DBModel):
-    """
-    Represents a free tier for an event ticket
-    """
-
+    # Category fields - Free
     deprecated_issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
 
-    def __str__(self) -> str:
-        return f"TierFree: {self.public_id}"
+    class Meta:
+        ordering = ("-modified",)
+
+    def __str__(self):
+        return f"TicketTier: {self.name}"
+
+    @cached_property
+    def tickets_sold_count(self):
+        return Ticket.objects.filter(ticket_tier=self).count()
+
+    @cached_property
+    def tickets_available(self):
+        return self.capacity - self.tickets_sold_count
+
+    @cached_property
+    def tickets_sold_exceeding_capacity(self):
+        return abs(int(self.capacity - self.tickets_sold_count))
+
+    @cached_property
+    def guests_count(self):
+        sold = Ticket.objects.filter(ticket_tier=self)
+        sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"] or 0
+        return sold_with_party - self.tickets_sold_count
+
+    @cached_property
+    def guests_available(self):
+        if self.guest_supply:
+            return self.guest_supply - self.guests_count
+        else:
+            return False
+
+    @cached_property
+    def additional_information_html(self):
+        additional_information_html = ""
+        try:
+            additional_information_html = json.loads(self.additional_information)[
+                "html"
+            ]
+        except Exception:
+            pass
+        return additional_information_html
 
 
 class CheckoutSession(DBModel):
@@ -1184,11 +1106,9 @@ class CheckoutSession(DBModel):
     def total_price(self):
         if self.tx_fiat:
             total_price = 0
-            checkout_items = CheckoutItem.objects.select_related(
-                "ticket_tier", "ticket_tier__tier_fiat"
-            ).filter(checkout_session=self)
+            checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(checkout_session=self)
             for item in checkout_items:
-                tier_price = item.ticket_tier.tier_fiat.price_per_ticket
+                tier_price = item.ticket_tier.price_per_ticket
                 total_price += item.quantity * tier_price
             return total_price
         else:
@@ -1414,10 +1334,10 @@ class CheckoutItem(DBModel):
 
     @property
     def unit_amount(self):
-        if not self.ticket_tier.tier_fiat:
+        if not self.ticket_tier.category == TicketTier.Category.FIAT:
             return "N/A"
 
-        price_per_ticket_cents = self.ticket_tier.tier_fiat.price_per_ticket_cents
+        price_per_ticket_cents = self.ticket_tier.price_per_ticket_cents
         unit_amount = price_per_ticket_cents * self.quantity
         return unit_amount
 
@@ -1538,10 +1458,10 @@ class TxAssetOwnership(DBModel):
         self.is_wallet_address_verified = True
         self.save()
 
-    def _process_delegate_ownership(self, wallet_address=None, tier_asset_ownership=None):
+    def _process_delegate_ownership(self, wallet_address=None, tier=None):
         # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
         import requests
-        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier_asset_ownership.network}"
+        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
         response = requests.get(url)
         incomingDelegations = response.json()
         delegated_wallets = []
@@ -1549,8 +1469,8 @@ class TxAssetOwnership(DBModel):
         # 2. Filter out these delegations to only include the NFT Contact you are looking to claim tickets for.
         filteredDelegations = [delegation for delegation in incomingDelegations if
         delegation['type'] == "ALL" or
-        (delegation['type'] == "CONTRACT" and delegation['contract'] == tier_asset_ownership.token_address) or
-        (delegation['type'] == "ERC721" and delegation['contract'] == tier_asset_ownership.token_address)]
+        (delegation['type'] == "CONTRACT" and delegation['contract'] == tier.token_address) or
+        (delegation['type'] == "ERC721" and delegation['contract'] == tier.token_address)]
 
         # Get all the NFT's of each unique from address in the above list and return
         delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
@@ -1563,25 +1483,25 @@ class TxAssetOwnership(DBModel):
     def _process_asset_ownership(self, checkout_session=None):
         filtered_by_expected = []
         for item in checkout_session.checkoutitem_set.all():
+            ticket_tier = item.ticket_tier
             # Set wallet addresses
             # Either single address, or list of delegated wallets
             if self.delegated_wallet:
                 wallets = self._process_delegate_ownership(
                     wallet_address=self.wallet_address,
-                    tier_asset_ownership=item.ticket_tier.tier_asset_ownership
+                    tier=ticket_tier
                  )
             else:
                 wallets = [self.wallet_address]
 
             for wallet in wallets:
                 # Format & make API lookup
-                tier_asset_ownership = item.ticket_tier.tier_asset_ownership
                 params = {
-                    "chain": hex(tier_asset_ownership.network),
+                    "chain": hex(ticket_tier.network),
                     "format": "decimal",
                     "media_items": True,
                     "address": wallet,
-                    "token_addresses": [tier_asset_ownership.token_address],
+                    "token_addresses": [ticket_tier.token_address],
                 }
                 api_response = evm_api.nft.get_wallet_nfts(
                     api_key=settings.MORALIS_API_KEY,
@@ -1589,7 +1509,7 @@ class TxAssetOwnership(DBModel):
                 )
 
                 # Check if wallet has required balance
-                expected = tier_asset_ownership.balance_required * item.quantity
+                expected = ticket_tier.balance_required * item.quantity
                 if api_response.get("result"):
                     actual = len(api_response["result"])
                 else:
@@ -1611,8 +1531,10 @@ class TxAssetOwnership(DBModel):
                     int(i.get("token_id"))
                     for nfts in CheckoutItem.objects.filter(
                         checkout_session__event=checkout_session.event,
-                        ticket_tier__tier_asset_ownership=tier_asset_ownership,
-                        checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{"token_address": tier_asset_ownership.token_address.lower()}]
+                        ticket_tier=ticket_tier,
+                        checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{
+                            "token_address": ticket_tier.token_address.lower()
+                        }]
                     ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
                     for i in nfts
                 )

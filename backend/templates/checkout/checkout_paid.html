@@ -44,13 +44,15 @@
 							<!-- Order item start -->
 							<div class="pt-3 mt-3 border-top">
 								<h6 class="m-0 d-flex align-items-center">
-									<span>{{ item.ticket_tier.ticket_type }}</span>
+									<span>{{ item.ticket_tier.name }}</span>
 									<span class="ms-auto ps-1 fw-normal">
 										&times; {{ item.quantity }}
 									</span>
 								</h6>
 								<div>
-									{% trans "Price" %} &times; 1 &mdash; {{ object.event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
+									{% trans "Price" %} &times; 1 &mdash;
+									{{ object.event.currency_symbol }}
+									{{ item.ticket_tier.price_per_ticket  }}
 								</div>
 								<div class="mt-1 text-body-secondary" style="font-size: var(--bs-font-size-sm);">
 									{% trans "Allowed Guest(s):" %}

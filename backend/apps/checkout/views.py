@@ -55,11 +55,7 @@ class CheckoutPageOneRedirect(RedirectView):
             ):
                 event = (
                     Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
-                    )
+                    .prefetch_related("tickettier_set")
                     .get(
                         pk=OLD_EVENTS_SLUG_TO_PK[self.kwargs.get("event_slug")]
                     )
@@ -69,11 +65,7 @@ class CheckoutPageOneRedirect(RedirectView):
             elif self.kwargs.get("event_uuid_slug"):
                 event = (
                     Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
-                    )
+                    .prefetch_related("tickettier_set")
                     .get(public_id=self.kwargs["event_uuid_slug"])
                 )
             # Handle Migrated Checkout (redirect to react app)
@@ -81,11 +73,7 @@ class CheckoutPageOneRedirect(RedirectView):
             elif self.kwargs.get("event_pk_slug") and self.kwargs["event_pk_slug"] < 1000:
                 event = (
                     Event.objects.select_related("team")
-                    .prefetch_related(
-                        "tickettier_set",
-                        "tickettier_set__tier_free",
-                        "tickettier_set__tier_asset_ownership",
-                    )
+                    .prefetch_related("tickettier_set")
                     .get(pk=self.kwargs["event_pk_slug"])
                 )
         except Event.DoesNotExist:
@@ -121,9 +109,7 @@ class CheckoutPageOne(DetailView):
 
     def get_object(self):
         self.object = Event.objects.select_related("team").prefetch_related(
-            "tickettier_set",
-            "tickettier_set__tier_free",
-            "tickettier_set__tier_asset_ownership",
+            "tickettier_set"
         ).get(
             team__slug=self.kwargs["team_slug"],
             slug=self.kwargs["event_slug"]
@@ -290,12 +276,7 @@ class CheckoutPageTwoBase(DetailView):
             .prefetch_related(
                 Prefetch(
                     "checkoutitem_set",
-                    queryset=CheckoutItem.objects.select_related(
-                        "ticket_tier",
-                        "ticket_tier__tier_fiat",
-                        "ticket_tier__tier_free",
-                        "ticket_tier__tier_asset_ownership",
-                    )
+                    queryset=CheckoutItem.objects.select_related("ticket_tier")
                 )
             )
             .get(public_id=self.kwargs["checkout_session_public_id"])
@@ -532,7 +513,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
                     unit_amount=item.unit_amount,
                     currency=self.object.event.fiat_currency.lower(),
                     product_data={
-                        "name": f"{item.ticket_tier.ticket_type} × {item.quantity}",
+                        "name": f"{item.ticket_tier.name} × {item.quantity}",
                     },
                 )
             except Exception:
@@ -785,9 +766,7 @@ class GetTickets(View):
                     template_name = "get_tickets.html"
                     ctx[
                         "checkout_items"
-                    ] = checkout_session.checkoutitem_set.select_related(
-                        "ticket_tier", "ticket_tier__tier_fiat"
-                    ).all()
+                    ] = checkout_session.checkoutitem_set.select_related("ticket_tier").all()
                     tickets = Ticket.objects.select_related("ticket_tier").filter(
                         checkout_session=checkout_session
                     )

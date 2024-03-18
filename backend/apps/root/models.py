@@ -1261,7 +1261,8 @@ class CheckoutSession(DBModel):
         duplicate_emails = CheckoutSession.objects.filter(
             event=self.event,
             email=self.email,
-        )
+            tx_status=CheckoutSession.OrderStatus.FULFILLED
+        ).exclude(id=self.id)
         if duplicate_emails:
             self.tx_status = CheckoutSession.OrderStatus.FAILED
             self.save()

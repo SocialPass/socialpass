@@ -1022,12 +1022,6 @@ class CheckoutSession(DBModel):
         blank=False,
         null=False,
     )
-    tx_fiat = models.OneToOneField(
-        "TxFiat",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
     tx_asset_ownership = models.OneToOneField(
         "TxAssetOwnership",
         on_delete=models.SET_NULL,
@@ -1115,7 +1109,7 @@ class CheckoutSession(DBModel):
 
     @property
     def total_price(self):
-        if self.tx_fiat:
+        if self.tx_type == CheckoutSession.TransactionType.FIAT:
             total_price = 0
             checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(checkout_session=self)
             for item in checkout_items:
@@ -1228,11 +1222,6 @@ class CheckoutSession(DBModel):
                 self.tx_free = tx
                 self.tx_status = CheckoutSession.OrderStatus.VALID
                 self.save()
-            case CheckoutSession.TransactionType.FIAT:
-                tx = TxFiat.objects.create()
-                self.tx_fiat = tx
-                self.tx_status = CheckoutSession.OrderStatus.VALID
-                self.save()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 tx = TxAssetOwnership.objects.create()
                 self.tx_asset_ownership = tx
@@ -1268,7 +1257,7 @@ class CheckoutSession(DBModel):
             case CheckoutSession.TransactionType.FREE:
                 self.tx_free.process()
             case CheckoutSession.TransactionType.FIAT:
-                self.tx_fiat.process()
+                self.process_fiat()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 self.tx_asset_ownership.process()
             case _:
@@ -1291,6 +1280,16 @@ class CheckoutSession(DBModel):
             self.save()
         except Exception:
             rollbar.report_exc_info()
+
+    def process_fiat(self):
+        """
+        Go through the states.
+        """
+        self.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        self.save()
+
+        # OK
+        self.fulfill()
 
 
 class CheckoutItem(DBModel):
@@ -1349,39 +1348,6 @@ class CheckoutItem(DBModel):
             extra_party = self.ticket_tier.allowed_guests
 
         return extra_party + 1
-
-
-class TxFiat(DBModel):
-    """
-    Represents a checkout transaction via fiat payment
-    """
-
-    stripe_session_id = models.CharField(
-        max_length=255,
-        blank=True,
-        default="",
-        help_text="Stripe checkout session ID.",
-    )
-    stripe_session_url = models.TextField(
-        blank=True,
-        default="",
-        help_text="Stripe checkout session URL.",
-    )
-    stripe_line_items = models.JSONField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"TxFiat: {self.public_id}"
-
-    def process(self):
-        """
-        Go through the states.
-        """
-        checkout_session = self.checkoutsession
-        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
-        checkout_session.save()
-
-        # OK
-        checkout_session.fulfill()
 
 
 class TxAssetOwnership(DBModel):

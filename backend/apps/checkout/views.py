@@ -269,7 +269,6 @@ class CheckoutPageTwoBase(DetailView):
                 "event__team",
                 "event__team__whitelabel",
                 "tx_free",
-                "tx_fiat",
                 "tx_asset_ownership"
             )
             .prefetch_related(
@@ -500,7 +499,6 @@ class CheckoutFiat(CheckoutPageTwoBase):
         # Set local variables
         form = validate_post["form"]
         context = self.get_context_data()
-        tx_fiat = self.object.tx_fiat
         stripe.api_key = settings.STRIPE_API_KEY
 
         # Create line items using Stripe PRICES API
@@ -566,14 +564,14 @@ class CheckoutFiat(CheckoutPageTwoBase):
             )
 
         # Store the Stripe data in transaction and save
-        tx_fiat.stripe_line_items = stripe_line_items
-        tx_fiat.stripe_session_id = session["id"]
-        tx_fiat.stripe_session_url = session["url"]
-        tx_fiat.save()
+        self.object.stripe_line_items = stripe_line_items
+        self.object.stripe_session_id = session["id"]
+        self.object.stripe_session_url = session["url"]
+        self.object.save()
 
         # OK
         # Redirect to Stripe checkout
-        return redirect(tx_fiat.stripe_session_url)
+        return redirect(self.object.stripe_session_url)
 
 
 class StripeCheckoutCancel(RedirectView):
@@ -622,7 +620,7 @@ class StripeCheckoutSuccess(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         # Get object
-        checkout_session = CheckoutSession.objects.select_related("tx_fiat").get(
+        checkout_session = CheckoutSession.objects.get(
             public_id=self.kwargs["checkout_session_public_id"]
         )
         if not checkout_session:
@@ -640,7 +638,7 @@ class StripeCheckoutSuccess(RedirectView):
         # Verify using Stripe's API (triple verification)
         stripe.api_key = settings.STRIPE_API_KEY
         stripe_session = stripe.checkout.Session.retrieve(
-            checkout_session.tx_fiat.stripe_session_id
+            checkout_session.stripe_session_id
         )
         if not stripe_session["payment_status"] == "paid":
             messages.add_message(
@@ -660,7 +658,7 @@ class StripeCheckoutSuccess(RedirectView):
         # OK
         # Process transaction
         # Redirect to tickets page
-        checkout_session.tx_fiat.process()
+        checkout_session.process()
         return reverse(
             "checkout:get_tickets",
             args=(self.kwargs["checkout_session_public_id"],),

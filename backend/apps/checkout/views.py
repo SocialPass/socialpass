@@ -100,7 +100,7 @@ class CheckoutPageOne(DetailView):
     Form to enter name and email
 
     POST
-    Create checkout session + items + transaction
+    Create checkout session + items
     Handle redirect based on checkout session type
     """
 
@@ -211,10 +211,8 @@ class CheckoutPageOne(DetailView):
                 quantity=int(item["amount"]),
                 extra_party=int(item["extra_party"]),
             )
-        # Create transaction
-        checkout_session.create_transaction()
 
-        # OK, Handle redirect cases
+        # Handle redirect cases
         # Handle case where checkout is FIAT and is waiting queue checkout
         if (
             checkout_session.tx_type == CheckoutSession.TransactionType.FIAT
@@ -412,7 +410,12 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
             )
 
         # Finalize transaction using form data
-        self.object.finalize_transaction(form_data=validate_post["form"])
+        form_data = validate_post["form"]
+        if self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+            self.object.wallet_address = form_data.cleaned_data["wallet_address"]
+            self.object.signed_message = form_data.cleaned_data["signed_message"]
+            self.object.delegated_wallet = form_data.cleaned_data["delegated_wallet"]
+            self.object.save()
 
         # If waiting queue is enabled, we ignore everything
         # And redirect to the waiting queue success page
@@ -495,7 +498,6 @@ class CheckoutFiat(CheckoutPageTwoBase):
             )
 
         # Set local variables
-        form = validate_post["form"]
         context = self.get_context_data()
         stripe.api_key = settings.STRIPE_API_KEY
 

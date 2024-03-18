@@ -1210,33 +1210,6 @@ class CheckoutSession(DBModel):
             tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
         Ticket.objects.bulk_create(tickets_to_create)
 
-    def create_transaction(self):
-        """
-        Responsible for creating the correct transaction based on tx_status
-        """
-        match self.tx_type:
-            case _:
-                pass
-
-    def finalize_transaction(self, form_data):
-        """
-        Responsible for finalizing transaction using the form_data
-        """
-        match self.tx_type:
-            case CheckoutSession.TransactionType.FREE:
-                pass
-            case CheckoutSession.TransactionType.FIAT:
-                pass
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                pass
-            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                self.wallet_address = form_data.cleaned_data["wallet_address"]
-                self.signed_message = form_data.cleaned_data["signed_message"]
-                self.delegated_wallet = form_data.cleaned_data["delegated_wallet"]
-                self.save()
-            case _:
-                pass
-
     def process_transaction(self):
         """
         Responsible for processing the correct transaction based on tx_type

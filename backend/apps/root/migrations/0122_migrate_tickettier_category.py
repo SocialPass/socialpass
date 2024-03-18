@@ -15,7 +15,6 @@ def set_category_based_on_o2o(apps, schema_editor):
         if tier.category:
             continue
 
-
         # set tier category
         if tier.tier_free:
             tier.category = TicketTier.Category.FREE
@@ -27,14 +26,6 @@ def set_category_based_on_o2o(apps, schema_editor):
         # save tier
         tier.save()
 
-def reverse_set_category_based_on_o2o(apps, schema_editor):
-    TicketTier = apps.get_model('root', 'TicketTier')
-
-    # Set fields back to their default values
-    TicketTier.objects.all().update(
-        category=TicketTier._meta.get_field('category').get_default(),
-    )
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -44,6 +35,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             set_category_based_on_o2o,
-            reverse_code=reverse_set_category_based_on_o2o
+            reverse_code=migrations.RunPython.noop
         )
     ]

@@ -20,15 +20,6 @@ def copy_data_from_tier_fiat(apps, schema_editor):
         # save tier
         tier.save()
 
-def reverse_copy_data_from_tier_fiat(apps, schema_editor):
-    TicketTier = apps.get_model('root', 'TicketTier')
-
-    # Set fields back to their default values
-    TicketTier.objects.all().update(
-        price_per_ticket=TicketTier._meta.get_field('price_per_ticket').get_default(),
-        price_per_ticket_cents=TicketTier._meta.get_field('price_per_ticket_cents').get_default()
-    )
-
 class Migration(migrations.Migration):
     dependencies = [
         ("root", "0117_tickettier_price_per_ticket_and_more"),
@@ -37,6 +28,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             copy_data_from_tier_fiat,
-            reverse_code=reverse_copy_data_from_tier_fiat
+            reverse_code=migrations.RunPython.noop
         )
     ]

@@ -25,19 +25,6 @@ def copy_data_from_tier_asset_ownership(apps, schema_editor):
         # save tier
         tier.save()
 
-def reverse_copy_data_from_tier_asset_ownership(apps, schema_editor):
-    TicketTier = apps.get_model('root', 'TicketTier')
-
-    # Set fields back to their default values
-    TicketTier.objects.all().update(
-        blockchain=TicketTier._meta.get_field('blockchain').get_default(),
-        network=TicketTier._meta.get_field('network').get_default(),
-        balance_required=TicketTier._meta.get_field('balance_required').get_default(),
-        token_address=TicketTier._meta.get_field('token_address').get_default(),
-        token_id=TicketTier._meta.get_field('token_id').get_default(),
-        deprecated_issued_token_id=TicketTier._meta.get_field('deprecated_issued_token_id').get_default(),
-    )
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -47,6 +34,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             copy_data_from_tier_asset_ownership,
-            reverse_code=reverse_copy_data_from_tier_asset_ownership
+            reverse_code=migrations.RunPython.noop
         )
     ]

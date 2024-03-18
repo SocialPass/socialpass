@@ -19,14 +19,6 @@ def copy_data_from_tier_free(apps, schema_editor):
         # save tier
         tier.save()
 
-def reverse_copy_data_from_tier_free(apps, schema_editor):
-    TicketTier = apps.get_model('root', 'TicketTier')
-
-    # Set fields back to their default values
-    TicketTier.objects.all().update(
-        deprecated_issued_emails=TicketTier._meta.get_field('deprecated_issued_emails').get_default(),
-    )
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -36,6 +28,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             copy_data_from_tier_free,
-            reverse_code=reverse_copy_data_from_tier_free
+            reverse_code=migrations.RunPython.noop
         )
     ]

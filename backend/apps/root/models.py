@@ -1015,7 +1015,7 @@ class CheckoutSession(DBModel):
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
         FREE = "FREE", "Free"
 
-    # keys
+    # Key fields
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
@@ -1053,7 +1053,10 @@ class CheckoutSession(DBModel):
         null=True,
     )
 
-    # basic info
+    # Checkout session information fields
+    name = models.CharField(max_length=255, blank=False)
+    email = models.EmailField(max_length=255, blank=False, null=False)
+    passcode = models.CharField(max_length=6, default=get_random_passcode)
     tx_type = models.CharField(
         max_length=50,
         choices=TransactionType.choices,
@@ -1066,17 +1069,7 @@ class CheckoutSession(DBModel):
         default=OrderStatus.VALID,
         blank=False,
     )
-    name = models.CharField(max_length=255, blank=False)
-    email = models.EmailField(max_length=255, blank=False, null=False)
-    cost = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        blank=True,
-        null=False,
-    )
-    passcode = models.CharField(max_length=6, default=get_random_passcode)
     is_waiting_list = models.BooleanField(default=False)
-
     # When set, this overrides  validation check
     # Used when customers need to complete waiting queue flow for FIAT tickets
     # We may need this in other places, so we use a generic name

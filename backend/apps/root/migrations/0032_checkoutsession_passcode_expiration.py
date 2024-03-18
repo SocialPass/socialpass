@@ -2,6 +2,7 @@
 
 import apps.root.models
 from django.db import migrations, models
+from django.utils import timezone
 
 def get_expiration_datetime():
     """

@@ -39,7 +39,7 @@ from apps.root.exceptions import (
     TxFreeProcessingError,
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
-from apps.root.utils import get_expiration_datetime, get_random_passcode
+from apps.root.utils import get_random_passcode
 
 stripe.api_key = settings.STRIPE_API_KEY
 
@@ -1075,7 +1075,6 @@ class CheckoutSession(DBModel):
         null=False,
     )
     passcode = models.CharField(max_length=6, default=get_random_passcode)
-    passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
     is_waiting_list = models.BooleanField(default=False)
 
     # When set, this overrides  validation check
@@ -1190,14 +1189,6 @@ class CheckoutSession(DBModel):
             [self.email],
             html_message=msg_html,
         )
-
-    def refresh_passcode(self):
-        """
-        refresh passcode and its expiration
-        """
-        self.passcode = get_random_passcode()
-        self.passcode_expiration = get_expiration_datetime()
-        self.save()
 
     def create_tickets(self):
         """

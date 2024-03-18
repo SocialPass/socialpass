@@ -812,7 +812,6 @@ class GetTickets(View):
 
         # refresh passcode and send email
         elif "resend_passcode" in self.request.POST:
-            checkout_session.refresh_passcode()
             checkout_session.send_confirmation_email()
             messages.add_message(
                 self.request,

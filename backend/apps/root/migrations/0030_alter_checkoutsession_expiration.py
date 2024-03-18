@@ -5,6 +5,13 @@ from django.db import migrations, models
 import apps.root.models
 
 
+def get_expiration_datetime():
+    """
+    Get current datetime + 10 minutes
+    """
+    return timezone.now() + timezone.timedelta(hours=24)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -16,7 +23,7 @@ class Migration(migrations.Migration):
             model_name="checkoutsession",
             name="expiration",
             field=models.DateTimeField(
-                blank=True, default=apps.root.models.get_expiration_datetime, null=True
+                blank=True, default=get_expiration_datetime, null=True
             ),
         ),
     ]

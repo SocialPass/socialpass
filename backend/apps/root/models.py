@@ -1028,12 +1028,6 @@ class CheckoutSession(DBModel):
         blank=True,
         null=True,
     )
-    tx_blockchain = models.OneToOneField(
-        "TxBlockchain",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
     tx_asset_ownership = models.OneToOneField(
         "TxAssetOwnership",
         on_delete=models.SET_NULL,
@@ -1228,11 +1222,6 @@ class CheckoutSession(DBModel):
                 self.tx_fiat = tx
                 self.tx_status = CheckoutSession.OrderStatus.VALID
                 self.save()
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                tx = TxBlockchain.objects.create()
-                self.tx_blockchain = tx
-                self.tx_status = CheckoutSession.OrderStatus.VALID
-                self.save()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 tx = TxAssetOwnership.objects.create()
                 self.tx_asset_ownership = tx
@@ -1269,8 +1258,6 @@ class CheckoutSession(DBModel):
                 self.tx_free.process()
             case CheckoutSession.TransactionType.FIAT:
                 self.tx_fiat.process()
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                self.tx_blockchain.process()
             case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
                 self.tx_asset_ownership.process()
             case _:
@@ -1384,18 +1371,6 @@ class TxFiat(DBModel):
 
         # OK
         checkout_session.fulfill()
-
-
-class TxBlockchain(DBModel):
-    """
-    Represents a checkout transaction via blockchain payment
-    """
-
-    def __str__(self) -> str:
-        return f"TxBlockchain: {self.public_id}"
-
-    def process(self, *args, **kwargs):
-        pass
 
 
 class TxAssetOwnership(DBModel):

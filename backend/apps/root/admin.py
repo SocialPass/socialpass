@@ -74,7 +74,6 @@ class CheckoutSessionAdmin(CustomDBAdmin):
     raw_id_fields = [
         "tx_free",
         "tx_fiat",
-        "tx_blockchain",
         "tx_asset_ownership"
     ]
 

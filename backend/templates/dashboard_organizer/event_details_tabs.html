@@ -28,24 +28,28 @@
 				{% trans "Waitlist" %}
 			</a>
 		</li>
-		<li class="nav-item">
-			<a
-				href="{% url 'dashboard_organizer:rsvp_tickets' current_team.slug event.pk %}"
-				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}active{% endif %}"
-				{% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}aria-current="true"{% endif %}
-			>
-				{% trans "RSVP" %}
-			</a>
-		</li>
-		<li class="nav-item">
-			<a
-				href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}"
-				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}active{% endif %}"
-				{% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}aria-current="true"{% endif %}
-			>
-				{% trans "Messaging" %}
-			</a>
-		</li>
+		{% if current_team.allow_rsvp %}
+			<li class="nav-item">
+				<a
+					href="{% url 'dashboard_organizer:rsvp_tickets' current_team.slug event.pk %}"
+					class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}active{% endif %}"
+					{% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}aria-current="true"{% endif %}
+				>
+					{% trans "RSVP" %}
+				</a>
+			</li>
+		{% endif %}
+		{% if current_team.allow_messaging %}
+			<li class="nav-item">
+				<a
+					href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}"
+					class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}active{% endif %}"
+					{% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}aria-current="true"{% endif %}
+				>
+					{% trans "Messaging" %}
+				</a>
+			</li>
+		{% endif %}
 		<li class="nav-item">
 			<a
 				href="{% url 'dashboard_organizer:event_promote' current_team.slug event.pk %}"
@@ -102,16 +106,20 @@
 						{% trans "Waitlist" %}
 					</a>
 				</li>
-				<li class="mb-2" {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}aria-current="true"{% endif %}>
-					<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}text-primary-emphasis fw-bold antialiased{% endif %}">
-						{% trans "RSVP" %}
-					</a>
-				</li>
-				<li class="mb-2" {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}aria-current="true"{% endif %}>
-					<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}text-primary-emphasis fw-bold antialiased{% endif %}">
-						{% trans "Messaging" %}
-					</a>
-				</li>
+				{% if current_team.allow_rsvp %}
+					<li class="mb-2" {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}aria-current="true"{% endif %}>
+						<a href="{% url 'dashboard_organizer:rsvp_tickets' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+							{% trans "RSVP" %}
+						</a>
+					</li>
+				{% endif %}
+				{% if current_team.allow_messaging %}
+					<li class="mb-2" {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}aria-current="true"{% endif %}>
+						<a href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+							{% trans "Messaging" %}
+						</a>
+					</li>
+				{% endif %}
 				<li class="mb-2" {% if request.resolver_match.url_name == 'event_promote' %}aria-current="true"{% endif %}>
 					<a href="{% url 'dashboard_organizer:event_promote' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_promote' %}text-primary-emphasis fw-bold antialiased{% endif %}">
 						{% trans "Promote" %}

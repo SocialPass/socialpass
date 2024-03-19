@@ -67,6 +67,10 @@
 				-webkit-backdrop-filter: blur(8px);
 			}
 
+			.content-container :target {
+				scroll-margin-top: 140px;
+			}
+
 			.event-list-link:hover {
 				background-color: hsla(var(--bs-primary-hsl), 0.05);
 			}
@@ -87,6 +91,22 @@
 
 			.cover-img-input * {
 				border-color: transparent !important;
+			}
+
+			.vertical-form-group > .form-floating:not(:first-child) {
+				margin-top: -1px;
+			}
+
+			.vertical-form-group > .form-floating:not(:last-child) > .form-control,
+			.vertical-form-group > .form-floating:not(:last-child) > .form-select {
+				border-bottom-left-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			.vertical-form-group > .form-floating:not(:first-child) > .form-control,
+			.vertical-form-group > .form-floating:not(:first-child) > .form-select {
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
 			}
 
 			.sp-checkbox-container .form-check-input {
@@ -296,7 +316,7 @@
 
 		<!-- Content start -->
 		{% include "components/django_messages.html" %}
-		<div class="container-lg px-3 px-sm-4 d-flex flex-column">
+		<div class="container-lg px-3 px-sm-4 d-flex flex-column content-container">
 			{% block content %}{% endblock content %}
 		</div>
 		<!-- Content end -->

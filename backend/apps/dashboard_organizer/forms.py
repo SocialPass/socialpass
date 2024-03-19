@@ -275,6 +275,64 @@ class EventForm(forms.ModelForm):
                     )
 
 
+class TicketingSetupForm(forms.ModelForm):
+    """
+    Event ticketing setup form
+    """
+
+    class Meta:
+        model = Event
+        fields = [
+            "sales_start",
+            "sales_end",
+            "total_capacity",
+            "waiting_queue_enabled",
+        ]
+
+        widgets = {
+            "sales_start": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_start",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "sales_end": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_end",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "total_capacity": forms.NumberInput(
+                attrs={
+                    "min": 1,
+                    "placeholder": _("Total Venue Capacity"),
+                }
+            ),
+        }
+        labels = {
+            "sales_start": _("Ticket Sales Start"),
+            "sales_end": _("Ticket Sales End"),
+            "waiting_queue_enabled": _("Turn on Waitlist"),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make sure the edit form populates with the start and end dates
+        if self.instance.pk:
+            if self.instance.sales_start:
+                self.initial["sales_start"] = self.instance.sales_start.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.sales_end:
+                self.initial["sales_end"] = self.instance.sales_end.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+
+
 class TicketTierForm(forms.ModelForm):
     """
     Ticket tier form
@@ -335,16 +393,22 @@ class TierAssetOwnershipForm(TicketTierForm):
             "token_id",
         ]
         widgets = {
-            "token_address": forms.TextInput(
-                attrs={"placeholder": _("e.g. 0xb53...4394n")}
-            ),
-            "token_id": forms.TextInput(attrs={"placeholder": _("e.g. 1,2,3,4,5")}),
-            "balance_required": forms.NumberInput(attrs={"min": 1}),
+            **TicketTierForm.Meta.widgets,
+            **{
+                "token_address": forms.TextInput(
+                    attrs={"placeholder": _("e.g. 0xb53...4394n")}
+                ),
+                "token_id": forms.TextInput(attrs={"placeholder": _("e.g. 1,2,3,4,5")}),
+                "balance_required": forms.NumberInput(attrs={"min": 1}),
+            }
         }
         labels = {
-            "token_address": _("NFT Collection Token Address"),
-            "balance_required": _("Balance Required"),
-            "token_id": _("OPTIONAL: Token IDs Required"),
+            **TicketTierForm.Meta.labels,
+            **{
+                "token_address": _("NFT Collection Token Address"),
+                "balance_required": _("Balance Required"),
+                "token_id": _("OPTIONAL: Token IDs Required"),
+            }
         }
 
     def clean_token_address(self):
@@ -367,16 +431,22 @@ class TierFiatForm(TicketTierForm):
             "price_per_ticket",
         ]
         widgets = {
-            "price_per_ticket": forms.NumberInput(
-                attrs={
-                    "placeholder": _("Price of one ticket"),
-                    "step": "0.01",
-                    "min": "0.01",
-                }
-            ),
+            **TicketTierForm.Meta.widgets,
+            **{
+                "price_per_ticket": forms.NumberInput(
+                    attrs={
+                        "placeholder": _("Price of one ticket"),
+                        "step": "0.01",
+                        "min": "0.01",
+                    }
+                ),
+            }
         }
         labels = {
-            "price_per_ticket": _("Price/ticket"),
+            **TicketTierForm.Meta.labels,
+            **{
+                "price_per_ticket": _("Price/ticket"),
+            }
         }
 
 

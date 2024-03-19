@@ -1015,14 +1015,6 @@ class CheckoutSession(DBModel):
     Represents a time-limited checkout session (aka 'cart') for an event organizer
     This model holds the relations to cart items for checkout purposes
     """
-
-    class OrderStatus(models.TextChoices):
-        VALID = "VALID", "Valid"  # Initial State, TX is valid
-        PROCESSING = "PROCESSING", "Processing"  # TX has been created, processing...
-        FAILED = "FAILED", "Failed"  # TX has failed
-        COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
-        FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
-
     # Key fields
     event = models.ForeignKey(
         "Event",
@@ -1042,12 +1034,21 @@ class CheckoutSession(DBModel):
     email = models.EmailField(max_length=255, blank=False, null=False)
     passcode = models.CharField(max_length=6, default=get_random_passcode)
 
+    # Session Status fields
+    class OrderStatus(models.TextChoices):
+        VALID = "VALID", "Valid"  # Initial State, TX is valid
+        PROCESSING = "PROCESSING", "Processing"  # TX has been created, processing...
+        FAILED = "FAILED", "Failed"  # TX has failed
+        COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
+        FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
     tx_status = models.CharField(
         max_length=50,
         choices=OrderStatus.choices,
         default=OrderStatus.VALID,
         blank=False,
     )
+
+
     is_waiting_list = models.BooleanField(default=False)
     # When set, this overrides  validation check
     # Used when customers need to complete waiting queue flow for FIAT tickets

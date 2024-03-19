@@ -390,10 +390,9 @@ class Event(DBModel):
         default=GeographyType.MANUAL,
     )
     geo_address = models.TextField(default="")
-    geo_place_id = models.CharField(default="")
-    geo_description = models.TextField(default="")
-    geo_latitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
-    geo_longitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
+    geo_place_id = models.CharField(default="", blank=True)
+    geo_latitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
+    geo_longitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
 
     # Publish info
     is_featured_top = models.BooleanField(default=False)

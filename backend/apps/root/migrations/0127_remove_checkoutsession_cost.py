@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("root", "0126_remove_checkoutsession_passcode_expiration"),
+        ("root", "0126_event_geo_address_event_geo_latitude_and_more"),
     ]
 
     operations = [

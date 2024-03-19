@@ -293,7 +293,6 @@ class CheckoutPageTwoBase(DetailView):
         self.get_object()
         if self.object.order_status in [
             CheckoutSession.OrderStatus.PROCESSING,
-            CheckoutSession.OrderStatus.COMPLETED,
             CheckoutSession.OrderStatus.FULFILLED
         ]:
             return {

@@ -1036,10 +1036,9 @@ class CheckoutSession(DBModel):
 
     # Session Status field
     class OrderStatus(models.TextChoices):
-        VALID = "VALID", "Valid"  # Initial State, TX is valid
-        PROCESSING = "PROCESSING", "Processing"  # TX has been created, processing...
+        VALID = "VALID", "Valid"  # Initial State. Session is valid.
+        PROCESSING = "PROCESSING", "Processing"  # Session has entered processing
         FAILED = "FAILED", "Failed"  # TX has failed
-        COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
         FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
     order_status = models.CharField(
         max_length=50,
@@ -1248,14 +1247,9 @@ class CheckoutSession(DBModel):
 
     def fulfill_session(self):
         """
-        Fullfil an order related to a checkout session
-        """
-        # Mark as COMPLETED, awaiting final fulfillment
-        self.order_status = CheckoutSession.OrderStatus.COMPLETED
-        self.save()
-
         # Create tickets, send confirmation email, and set as FULFILLED
         # Also wrap in try/catch for better error reporting
+        """
         try:
             self.create_tickets()
             self.send_confirmation_email()

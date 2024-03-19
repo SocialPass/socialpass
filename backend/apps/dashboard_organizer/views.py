@@ -832,6 +832,8 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
             "ticket_set",
             "checkoutitem_set",
             "checkoutitem_set__checkout_session"
+        ).select_related(
+            "event"
         ).get(
             pk=self.kwargs["pk"],
             event__team__slug=self.kwargs["team_slug"]
@@ -851,6 +853,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["event"] = self.object.event
         context["has_sales"] = self.has_sales()
         return context
 

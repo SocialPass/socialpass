@@ -1,10 +1,10 @@
 {% load i18n %}
-<div class="container-lg px-3 px-sm-4 d-none d-sm-block">
+<div class="container-lg px-3 px-sm-4 d-none d-md-block">
 	<ul class="nav nav-underline">
 		<li class="nav-item">
 			<a
 				href="#"
-				class="nav-link px-md-2 fw-bold antialiased {% if false %}active{% endif %}"
+				class="nav-link px-lg-2 fw-bold antialiased {% if false %}active{% endif %}"
 				{% if false %}aria-current="true"{% endif %}
 			>
 				{% trans "Overview" %}
@@ -12,8 +12,17 @@
 		</li>
 		<li class="nav-item">
 			<a
+				href="{% url 'dashboard_organizer:event_tickets' current_team.slug event.pk %}"
+				class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_tickets' or request.resolver_match.url_name == 'ticket_tier_delete' %}active{% endif %}"
+				{% if request.resolver_match.url_name == 'event_tickets' or request.resolver_match.url_name == 'ticket_tier_delete' %}aria-current="true"{% endif %}
+			>
+				{% trans "Ticketing" %}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a
 				href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}"
-				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_stats' %}active{% endif %}"
+				class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_stats' %}active{% endif %}"
 				{% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}
 			>
 				{% trans "Stats" %}
@@ -22,7 +31,7 @@
 		<li class="nav-item">
 			<a
 				href="{% url 'dashboard_organizer:waiting_queue' current_team.slug event.pk %}"
-				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'waiting_queue' %}active{% endif %}"
+				class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'waiting_queue' %}active{% endif %}"
 				{% if request.resolver_match.url_name == 'waiting_queue' %}aria-current="true"{% endif %}
 			>
 				{% trans "Waitlist" %}
@@ -32,7 +41,7 @@
 			<li class="nav-item">
 				<a
 					href="{% url 'dashboard_organizer:rsvp_tickets' current_team.slug event.pk %}"
-					class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}active{% endif %}"
+					class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}active{% endif %}"
 					{% if request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}aria-current="true"{% endif %}
 				>
 					{% trans "RSVP" %}
@@ -43,7 +52,7 @@
 			<li class="nav-item">
 				<a
 					href="{% url 'dashboard_organizer:message_batches' current_team.slug event.pk %}"
-					class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}active{% endif %}"
+					class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}active{% endif %}"
 					{% if request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}aria-current="true"{% endif %}
 				>
 					{% trans "Messaging" %}
@@ -53,7 +62,7 @@
 		<li class="nav-item">
 			<a
 				href="{% url 'dashboard_organizer:event_promote' current_team.slug event.pk %}"
-				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_promote' %}active{% endif %}"
+				class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_promote' %}active{% endif %}"
 				{% if request.resolver_match.url_name == 'event_promote' %}aria-current="true"{% endif %}
 			>
 				{% trans "Promote" %}
@@ -62,17 +71,19 @@
 		<li class="nav-item">
 			<a
 				href="{% url 'dashboard_organizer:event_check_in_guests' current_team.slug event.pk %}"
-				class="nav-link px-md-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_check_in_guests' %}active{% endif %}"
+				class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_check_in_guests' %}active{% endif %}"
 				{% if request.resolver_match.url_name == 'event_check_in_guests' %}aria-current="true"{% endif %}
 			>
-				{% trans "Check-in" %}<span class="d-none d-md-inline"> {% trans "Guests" %}</span>
+				{% trans "Check-in Guests" %}
 			</a>
 		</li>
 	</ul>
 </div>
-<div class="container-lg px-3 px-sm-4 pb-2 d-sm-none">
+<div class="container-lg px-3 px-sm-4 pb-2 d-md-none">
 	<button type="button" class="btn btn-secondary d-flex align-items-center w-100" data-bs-toggle="collapse" data-bs-target="#tabs-collapse" aria-expanded="false" aria-controls="tabs-collapse">
 		{% if false %}
+		{% elif request.resolver_match.url_name == 'event_tickets' or request.resolver_match.url_name == 'ticket_tier_delete' %}
+			{% trans "Ticketing" %}
 		{% elif request.resolver_match.url_name == 'event_stats' %}
 			{% trans "Stats" %}
 		{% elif request.resolver_match.url_name == 'waiting_queue' %}
@@ -94,6 +105,11 @@
 				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
 					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
 						{% trans "Overview" %}
+					</a>
+				</li>
+				<li class="mb-2" {% if request.resolver_match.url_name == 'event_tickets' or request.resolver_match.url_name == 'ticket_tier_delete' %}aria-current="true"{% endif %}>
+					<a href="{% url 'dashboard_organizer:event_tickets' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_tickets' or request.resolver_match.url_name == 'ticket_tier_delete' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+						{% trans "Ticketing" %}
 					</a>
 				</li>
 				<li class="mb-2" {% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}>

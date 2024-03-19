@@ -12,165 +12,45 @@
 {% endblock sticky_navbar_tabs %}
 
 {% block content %}
-<div class="row mt-4 mb-3">
-	<div class="col-lg-7">
-		<div class="d-flex align-items-start mb-3">
-			<div class="me-3">
-				<h1 class="h3 mb-0" id="ticket-tiers">{% trans "Ticket Tiers" %}</h1>
-				<p class="text-body-secondary mb-0">
-					{% trans "Manage your ticket tiers." %}
-				</p>
-			</div>
-			<div class="dropdown ms-auto flex-shrink-0">
-				<button type="button" class="btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
-			    	{% trans "Create" %}
-			    	<i class="fa-solid fa-plus ms-1"></i>
-				</button>
-				<ul class="dropdown-menu dropdown-menu-end">
-					<li>
-						<h6 class="dropdown-header">{% trans "Create Ticket Tier" %}</h6>
-					</li>
-					<li>
-						<a href="{% url 'dashboard_organizer:ticket_tier_free_create' current_team.slug event.pk  %}" class="dropdown-item"><i class="fa-light fa-gift text-warning-emphasis specific-w-25"></i> {% trans "Free" %}</a>
-					</li>
-					<li>
-						<a href="{% url 'dashboard_organizer:ticket_tier_nft_create' current_team.slug event.pk  %}" class="dropdown-item"><i class="fa-light fa-hexagon-vertical-nft text-info-emphasis specific-w-25"></i> {% trans "NFT-Gated" %}</a>
-					</li>
-					<li>
-						<a href="{% url 'dashboard_organizer:ticket_tier_fiat_create' current_team.slug event.pk  %}" class="dropdown-item"><i class="fa-light fa-money-check-dollar text-success-emphasis specific-w-25"></i> {% trans "Paid" %}</a>
-					</li>
-				</ul>
-			</div>
+<div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
+	<div class="d-flex align-items-start mb-3">
+		<div class="me-3">
+			<h1 class="h3 mb-0" id="ticket-tiers">{% trans "Ticketing" %}</h1>
+			<p class="text-body-secondary mb-0">
+				{% trans "Manage your ticket tiers and ticketing preferences." %}
+			</p>
 		</div>
-		{% if event.tickettier_set.count > 0 %}
-			{% for ticket_tier in event.tickettier_set.all %}
-				<div class="card border-0 rounded-4 shadow-sm mb-3 {% if ticket_tier.hidden_from_public %}bg-secondary bg-opacity-10{% endif %}">
-					<div class="card-body">
-						<div class="d-flex align-items-center mb-3">
-							{% if ticket_tier.hidden_from_public %}
-								<span class="px-3 py-2 rounded-pill fw-bold bg-secondary-subtle text-secondary-emphasis me-2" data-bs-toggle="tooltip" data-bs-title="Hidden from public">
-									<i class="fa-solid fa-eye-slash"></i>
-								</span>
-							{% endif %}
-							{% if ticket_tier.category == ticket_tier.Category.FIAT %}
-								<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
-									<i class="fa-light fa-money-check-dollar me-1"></i>
-									{% trans "Paid" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
-								</span>
-							{% endif %}
-							{% if ticket_tier.category == ticket_tier.Category.FREE %}
-								<span class="px-3 py-2 rounded-pill fw-bold bg-warning-subtle text-warning-emphasis me-3">
-									<i class="fa-light fa-gift me-1"></i>
-									{% trans "Free" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
-								</span>
-							{% endif %}
-							{% if ticket_tier.category == ticket_tier.Category.ASSET_OWNERSHIP %}
-								<span class="px-3 py-2 rounded-pill fw-bold bg-info-subtle text-info-emphasis me-3">
-									<i class="fa-light fa-hexagon-vertical-nft me-1"></i>
-									{% trans "NFT-Gated" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
-								</span>
-							{% endif %}
-							<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.slug ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-link rounded-circle px-0 ms-auto" aria-label="Edit" style="width: 37px;">
-								<i class="fa-solid fa-edit"></i>
-							</a>
-							<a href="{% url 'dashboard_organizer:ticket_tier_delete' current_team.slug ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger rounded-circle px-0 ms-2" aria-label="Delete" style="width: 37px;">
-								<i class="fa-solid fa-trash-can"></i>
-							</a>
-						</div>
-						<h6>
-							{{ ticket_tier.name }}
-							{% if ticket_tier.category == ticket_tier.Category.FIAT %}
-								<span class="fw-normal"> |
-									{{ event.currency_symbol }}{{ ticket_tier.price_per_ticket }}/{% trans "ticket" %}
-								</span>
-							{% endif %}
-						</h6>
-						<hr />
-						<div class="container-fluid g-0">
-							<div class="row row-cols-2 row-cols-lg-5 g-3">
-								<div class="col">
-									<div class="fw-bold text-primary-emphasis h5 mb-0">
-										{{ ticket_tier.capacity }}
-									</div>
-									<div class="fw-bold text-body-secondary">
-										<small>{% trans "Capacity" %}</small>
-									</div>
-								</div>
-								<div class="col">
-									<div class="fw-bold text-primary-emphasis h5 mb-0">
-										{% if ticket_tier.tickets_sold_count > ticket_tier.capacity %}
-											{{ ticket_tier.capacity }} + {{ ticket_tier.tickets_sold_exceeding_capacity }}<span data-bs-toggle="tooltip" data-bs-title="This exceeds capacity because of the use of the RSVP or waiting queue systems.">*</span>
-										{% else %}
-											{{ ticket_tier.tickets_sold_count }}
-										{% endif %}
-									</div>
-									<div class="fw-bold text-body-secondary">
-										<small>{% trans "Tickets Sold" %}</small>
-									</div>
-								</div>
-								<div class="col">
-									<div class="fw-bold text-primary-emphasis h5 mb-0">
-										{{ ticket_tier.max_per_person }}
-									</div>
-									<div class="fw-bold text-body-secondary">
-										<small>{% trans "Max per person" %}</small>
-									</div>
-								</div>
-								<div class="col">
-									<div class="fw-bold text-primary-emphasis h5 mb-0">
-										{{ ticket_tier.allowed_guests }}
-									</div>
-									<div class="fw-bold text-body-secondary">
-										<small>{% trans "Guests per tkt" %}</small>
-									</div>
-								</div>
-								<div class="col">
-									<div class="fw-bold text-primary-emphasis h5 mb-0">
-										{% if ticket_tier.guest_supply %}
-											{{ ticket_tier.guest_supply }}
-										{% else %}
-											{% trans "N/A" %}
-										{% endif %}
-									</div>
-									<div class="fw-bold text-body-secondary">
-										<small>{% trans "Guest supply" %}</small>
-									</div>
-								</div>
-							</div>
-						</div>
-						{% if ticket_tier.category == ticket_tier.Category.ASSET_OWNERSHIP %}
-							<hr />
-							<div class="text-primary-emphasis h6">
-								{% trans "NFT Requirements" %}
-							</div>
-							<div class="text-truncate">
-								<strong>{% trans "Network" %}</strong>: {{ ticket_tier.get_network_display }}
-							</div>
-							<div class="text-truncate">
-								<strong>{% trans "Token Address" %}</strong>: {{ ticket_tier.token_address }}
-							</div>
-						{% endif %}
-					</div>
-				</div>
-			{% endfor %}
-		{% else %}
-			<div class="card border-0 rounded-4 shadow-sm">
-				<div class="card-body">
-					<div class="mx-auto specific-w-200">
-						<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
-					</div>
-					<div class="h4 text-center">{% trans "No Ticket Tiers" %}</div>
-					<p class="text-body-secondary text-center specific-w-300 mw-100 mx-auto">
-						{% trans "No ticket tiers have been created yet. Why not create one?" %}
-					</p>
-				</div>
-			</div>
-		{% endif %}
+		<div class="dropdown ms-auto flex-shrink-0">
+			<button type="button" class="btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+				{% trans "Create" %}
+				<i class="fa-solid fa-plus ms-1"></i>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-end">
+				<li>
+					<h6 class="dropdown-header">{% trans "Create Ticket Tier" %}</h6>
+				</li>
+				<li>
+					<a href="{% url 'dashboard_organizer:ticket_tier_free_create' current_team.slug event.pk  %}" class="dropdown-item"><i class="fa-light fa-gift text-warning-emphasis specific-w-25"></i> {% trans "Free" %}</a>
+				</li>
+				<li>
+					<a href="{% url 'dashboard_organizer:ticket_tier_nft_create' current_team.slug event.pk  %}" class="dropdown-item"><i class="fa-light fa-hexagon-vertical-nft text-info-emphasis specific-w-25"></i> {% trans "NFT-Gated" %}</a>
+				</li>
+				<li>
+					<a href="{% url 'dashboard_organizer:ticket_tier_fiat_create' current_team.slug event.pk  %}" class="dropdown-item"><i class="fa-light fa-money-check-dollar text-success-emphasis specific-w-25"></i> {% trans "Paid" %}</a>
+				</li>
+			</ul>
+		</div>
 	</div>
-	<div class="col-lg-5 ps-lg-4">
-		<div class="card bg-primary-subtle rounded-0 border border-primary" style="border-style: dotted !important;">
-			<div class="card-body">
-				<h2 class="h5 mb-4" id="ticketing-preferences">{% trans "Ticketing Preferences" %}</h2>
+	<button class="btn btn-link btn-lg w-100 text-start d-flex align-items-center mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#ticketing-preferences" {% if request.GET.showprefs %}aria-expanded="true"{% else %}aria-expanded="false"{% endif %} aria-controls="ticketing-preferences">
+		<div>
+			{% trans "Ticketing Preferences" %}
+			<div class="fw-normal fs-6">{% trans "Click to show/hide" %}</div>
+		</div>
+		<i class="fa-light fa-angle-down ms-auto"></i>
+	</button>
+	<div class="collapse {% if request.GET.showprefs %}show{% endif %}" id="ticketing-preferences">
+		<div class="card border-0 rounded-4 shadow-sm mb-3">
+			<div class="card-body p-lg-4">
 				<form method="POST">
 					{% csrf_token %}
 					{% if form.non_field_errors %}
@@ -185,20 +65,25 @@
 					{% for input in form.hidden_fields %}
 						{{ input }}
 					{% endfor %}
+					<h6 class="mb-2">
+						{% trans "Schedule Sales" %}
+					</h6>
 					<div class="mb-3">
 						{% with form.sales_start as input %}
-						  	{% include "forms/input.html" %}
+							{% include "forms/input.html" %}
 						{% endwith %}
 					</div>
 					<div class="mb-4">
 						{% with form.sales_end as input %}
 							{% include "forms/input.html" %}
 						{% endwith %}
-				  	</div>
+					</div>
 					<h6 class="mb-2">
 						{% trans "Total Venue Capacity" %}
-						<i class="fa-regular fa-question-circle ms-1" data-bs-toggle="tooltip" data-bs-title="When set, our system will make sure that the total number of people attending (ticket holders + guests) does not exceed this number."></i>
 					</h6>
+					<p class="text-body-secondary">
+						{% trans "When set, our system will make sure that the total number of people attending (ticket holders + guests) does not exceed this number." %}
+					</p>
 					<div class="mb-4">
 						{% with form.total_capacity as input %}
 							{% include "forms/input.html" %}
@@ -206,8 +91,10 @@
 					</div>
 					<h6 class="mb-2">
 						{% trans "Waitlist" %}
-						<i class="fa-regular fa-question-circle ms-1" data-bs-toggle="tooltip" data-bs-title="When set, customers will join a waitlist, instead of getting actual tickets. You can bump them up as needed to the attendee list (and issue tickets) via the dashboard."></i>
 					</h6>
+					<p class="text-body-secondary">
+						{% trans "When set, customers will join a waitlist, instead of getting actual tickets. You can bump them up as needed to the attendee list (and issue tickets) via the dashboard." %}
+					</p>
 					<div class="sp-checkbox-container">
 						{{ form.waiting_queue_enabled | as_crispy_field }}
 					</div>
@@ -218,5 +105,127 @@
 			</div>
 		</div>
 	</div>
+	{% if event.tickettier_set.count > 0 %}
+		{% for ticket_tier in event.tickettier_set.all %}
+			<div class="card border-0 rounded-4 shadow-sm mb-3 {% if ticket_tier.hidden_from_public %}bg-secondary bg-opacity-10{% endif %}">
+				<div class="card-body">
+					<div class="d-flex align-items-center mb-3">
+						{% if ticket_tier.hidden_from_public %}
+							<span class="px-3 py-2 rounded-pill fw-bold bg-secondary-subtle text-secondary-emphasis me-2" data-bs-toggle="tooltip" data-bs-title="Hidden from public">
+								<i class="fa-solid fa-eye-slash"></i>
+							</span>
+						{% endif %}
+						{% if ticket_tier.category == ticket_tier.Category.FIAT %}
+							<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+								<i class="fa-light fa-money-check-dollar me-1"></i>
+								{% trans "Paid" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
+							</span>
+						{% endif %}
+						{% if ticket_tier.category == ticket_tier.Category.FREE %}
+							<span class="px-3 py-2 rounded-pill fw-bold bg-warning-subtle text-warning-emphasis me-3">
+								<i class="fa-light fa-gift me-1"></i>
+								{% trans "Free" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
+							</span>
+						{% endif %}
+						{% if ticket_tier.category == ticket_tier.Category.ASSET_OWNERSHIP %}
+							<span class="px-3 py-2 rounded-pill fw-bold bg-info-subtle text-info-emphasis me-3">
+								<i class="fa-light fa-hexagon-vertical-nft me-1"></i>
+								{% trans "NFT-Gated" %}<span class="d-none d-sm-inline"> {% trans "Ticket Tier" %}</span>
+							</span>
+						{% endif %}
+						<a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.slug ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-link rounded-circle px-0 ms-auto" aria-label="Edit" style="width: 37px;">
+							<i class="fa-solid fa-edit"></i>
+						</a>
+						<a href="{% url 'dashboard_organizer:ticket_tier_delete' current_team.slug ticket_tier.event.pk ticket_tier.pk %}" class="btn btn-danger rounded-circle px-0 ms-2" aria-label="Delete" style="width: 37px;">
+							<i class="fa-solid fa-trash-can"></i>
+						</a>
+					</div>
+					<h6>
+						{{ ticket_tier.name }}
+						{% if ticket_tier.category == ticket_tier.Category.FIAT %}
+							<span class="fw-normal"> | {{ event.currency_symbol }}{{ ticket_tier.price_per_ticket }}/{% trans "ticket" %}</span>
+						{% endif %}
+					</h6>
+					<hr />
+					<div class="container-fluid g-0">
+						<div class="row row-cols-2 row-cols-lg-5 g-3">
+							<div class="col">
+								<div class="fw-bold text-primary-emphasis h5 mb-0">
+									{{ ticket_tier.capacity }}
+								</div>
+								<div class="fw-bold text-body-secondary">
+									<small>{% trans "Capacity" %}</small>
+								</div>
+							</div>
+							<div class="col">
+								<div class="fw-bold text-primary-emphasis h5 mb-0">
+									{% if ticket_tier.tickets_sold_count > ticket_tier.capacity %}
+										{{ ticket_tier.capacity }} + {{ ticket_tier.tickets_sold_exceeding_capacity }}<span data-bs-toggle="tooltip" data-bs-title="This exceeds capacity because of the use of the RSVP or waiting queue systems.">*</span>
+									{% else %}
+										{{ ticket_tier.tickets_sold_count }}
+									{% endif %}
+								</div>
+								<div class="fw-bold text-body-secondary">
+									<small>{% trans "Tickets Sold" %}</small>
+								</div>
+							</div>
+							<div class="col">
+								<div class="fw-bold text-primary-emphasis h5 mb-0">
+									{{ ticket_tier.max_per_person }}
+								</div>
+								<div class="fw-bold text-body-secondary">
+									<small>{% trans "Max per person" %}</small>
+								</div>
+							</div>
+							<div class="col">
+								<div class="fw-bold text-primary-emphasis h5 mb-0">
+									{{ ticket_tier.allowed_guests }}
+								</div>
+								<div class="fw-bold text-body-secondary">
+									<small>{% trans "Guests per tkt" %}</small>
+								</div>
+							</div>
+							<div class="col">
+								<div class="fw-bold text-primary-emphasis h5 mb-0">
+									{% if ticket_tier.guest_supply %}
+										{{ ticket_tier.guest_supply }}
+									{% else %}
+										{% trans "N/A" %}
+									{% endif %}
+								</div>
+								<div class="fw-bold text-body-secondary">
+									<small>{% trans "Guest supply" %}</small>
+								</div>
+							</div>
+						</div>
+					</div>
+					{% if ticket_tier.category == ticket_tier.Category.ASSET_OWNERSHIP %}
+						<hr />
+						<div class="text-primary-emphasis h6">
+							{% trans "NFT Requirements" %}
+						</div>
+						<div class="text-truncate">
+							<strong>{% trans "Network" %}</strong>: {{ ticket_tier.get_network_display }}
+						</div>
+						<div class="text-truncate">
+							<strong>{% trans "Token Address" %}</strong>: {{ ticket_tier.token_address }}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<div class="card border-0 rounded-4 shadow-sm">
+			<div class="card-body">
+				<div class="mx-auto specific-w-200">
+					<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
+				</div>
+				<div class="h4 text-center">{% trans "No Ticket Tiers" %}</div>
+				<p class="text-body-secondary text-center specific-w-300 mw-100 mx-auto">
+					{% trans "No ticket tiers have been created yet. Why not create one?" %}
+				</p>
+			</div>
+		</div>
+	{% endif %}
 </div>
 {% endblock content %}

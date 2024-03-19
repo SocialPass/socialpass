@@ -469,7 +469,7 @@ class EventTicketsView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         return reverse(
             "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_slug"], self.object.pk),
-        )
+        ) + "?showprefs=true"
 
 
 class EventGoLiveView(TeamContextMixin, DetailView):

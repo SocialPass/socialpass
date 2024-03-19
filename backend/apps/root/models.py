@@ -380,6 +380,21 @@ class Event(DBModel):
     # Hide address (except for ticket holders)
     hide_address = models.BooleanField(default=False)
 
+    # Location Info (v1)
+    class GeographyType(models.TextChoices):
+        GOOGLE = "GOOGLE", "Google"
+        MANUAL = "MANUAL", "Manual"
+    geo_type = models.CharField(
+        max_length=50,
+        choices=GeographyType.choices,
+        default=GeographyType.MANUAL,
+    )
+    geo_address = models.TextField(default="")
+    geo_place_id = models.CharField(default="")
+    geo_description = models.TextField(default="")
+    geo_latitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
+    geo_longitude = models.DecimalField(null=True, max_digits=9, decimal_places=6)
+
     # Publish info
     is_featured_top = models.BooleanField(default=False)
     slug = AutoSlugField(populate_from="title", null=True)

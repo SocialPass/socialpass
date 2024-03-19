@@ -1,5 +1,5 @@
 {% extends "dashboard_organizer/base.html" %}
-{% load static i18n get_theme_value get_user_primary_email %}
+{% load static i18n get_theme_value get_user_primary_email crispy_forms_tags %}
 
 {% block head_title %}{% trans "Ticketing" %} | {{ event.title }} - SocialPass{% endblock head_title %}
 
@@ -13,7 +13,7 @@
 
 {% block content %}
 <div class="row mt-4 mb-3">
-	<div class="col-lg-8 mx-auto">
+	<div class="col-lg-7">
 		<div class="d-flex align-items-start mb-3">
 			<div class="me-3">
 				<h1 class="h3 mb-0" id="ticket-tiers">{% trans "Ticket Tiers" %}</h1>
@@ -121,7 +121,7 @@
 										{{ ticket_tier.allowed_guests }}
 									</div>
 									<div class="fw-bold text-body-secondary">
-										<small>{% trans "Guests per ticket" %}</small>
+										<small>{% trans "Guests per tkt" %}</small>
 									</div>
 								</div>
 								<div class="col">
@@ -166,6 +166,60 @@
 				</div>
 			</div>
 		{% endif %}
+	</div>
+	<div class="col-lg-5 ps-lg-4">
+		<div class="card bg-primary-subtle rounded-0 border border-primary" style="border-style: dotted !important;">
+			<div class="card-body">
+				<h2 class="h5 mb-0" id="ticketing-preferences">{% trans "Ticketing Preferences" %}</h2>
+				<p class="text-body-secondary">
+					{% trans "Set your preferred ticketing options." %}
+				</p>
+				<form method="POST">
+					{% csrf_token %}
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger" role="alert">
+							<ul class="mb-0">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+					{% for input in form.hidden_fields %}
+						{{ input }}
+					{% endfor %}
+					<div class="mb-3">
+						{% with form.sales_start as input %}
+						  	{% include "forms/input.html" %}
+						{% endwith %}
+					</div>
+					<div class="mb-4">
+						{% with form.sales_end as input %}
+							{% include "forms/input.html" %}
+						{% endwith %}
+				  	</div>
+					<h6>{% trans "Total Venue Capacity" %}</h6>
+					<p class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">
+						{% trans "Our system will make sure that the total number of people (ticket holders + guests) does not exceed this number." %}
+					</p>
+					<div class="mb-4">
+						{% with form.total_capacity as input %}
+							{% include "forms/input.html" %}
+						{% endwith %}
+					</div>
+					<h6>{% trans "Waiting Queue" %}</h6>
+					<p class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">
+						{% trans "When set, customers will join a waitlist, instead of getting actual tickets." %}
+					</p>
+					<div class="sp-checkbox-container">
+						{{ form.waiting_queue_enabled | as_crispy_field }}
+					</div>
+					<div class="text-end">
+						<button type="submit" class="btn btn-primary">{% trans "Save Preferences" %}</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 {% endblock content %}

@@ -28,6 +28,7 @@ from apps.dashboard_organizer.forms import (
     InvitationForm,
     EventCreateForm,
     EventForm,
+    TicketingSetupForm,
     TeamForm,
     TicketTierForm,
     TierAssetOwnershipForm,
@@ -441,19 +442,33 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         )
 
 
-class EventTicketsView(TeamContextMixin, DetailView):
+class EventTicketsView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     """
-    Show the tickets (and CTAs) for an event.
+    Show the tickets (and CTAs) for an event. Also show ticketing preferences 
+    form.
     """
 
     model = Event
-    context_object_name = "event"
+    slug_field = "pk"
+    slug_url_kwarg = "pk"
+    form_class = TicketingSetupForm
     template_name = "dashboard_organizer/event_ticket_tiers.html"
 
     def get_object(self):
-        return Event.objects.get(
+        return Event.objects.prefetch_related(
+            "tickettier_set"
+        ).get(
             pk=self.kwargs["pk"],
             team__slug=self.kwargs["team_slug"]
+        )
+
+    def get_success_message(self, *args, **kwargs):
+        return "Ticketing preferences have been updated."
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse(
+            "dashboard_organizer:event_tickets",
+            args=(self.kwargs["team_slug"], self.object.pk),
         )
 
 

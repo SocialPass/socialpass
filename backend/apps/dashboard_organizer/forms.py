@@ -275,6 +275,64 @@ class EventForm(forms.ModelForm):
                     )
 
 
+class TicketingSetupForm(forms.ModelForm):
+    """
+    Event ticketing setup form
+    """
+
+    class Meta:
+        model = Event
+        fields = [
+            "sales_start",
+            "sales_end",
+            "total_capacity",
+            "waiting_queue_enabled",
+        ]
+
+        widgets = {
+            "sales_start": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_start",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "sales_end": forms.DateTimeInput(
+                format="%Y-%m-%dT%H:%M",
+                attrs={
+                    "id": "sales_end",
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+            ),
+            "total_capacity": forms.NumberInput(
+                attrs={
+                    "min": 1,
+                    "placeholder": _("Total Venue Capacity"),
+                }
+            ),
+        }
+        labels = {
+            "sales_start": _("Ticket Sales Start"),
+            "sales_end": _("Ticket Sales End"),
+            "waiting_queue_enabled": _("Enable Waiting Queue"),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make sure the edit form populates with the start and end dates
+        if self.instance.pk:
+            if self.instance.sales_start:
+                self.initial["sales_start"] = self.instance.sales_start.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+            if self.instance.sales_end:
+                self.initial["sales_end"] = self.instance.sales_end.strftime(
+                    "%Y-%m-%dT%H:%M"
+                )
+
+
 class TicketTierForm(forms.ModelForm):
     """
     Ticket tier form

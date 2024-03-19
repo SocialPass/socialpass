@@ -335,16 +335,22 @@ class TierAssetOwnershipForm(TicketTierForm):
             "token_id",
         ]
         widgets = {
-            "token_address": forms.TextInput(
-                attrs={"placeholder": _("e.g. 0xb53...4394n")}
-            ),
-            "token_id": forms.TextInput(attrs={"placeholder": _("e.g. 1,2,3,4,5")}),
-            "balance_required": forms.NumberInput(attrs={"min": 1}),
+            **TicketTierForm.Meta.widgets,
+            **{
+                "token_address": forms.TextInput(
+                    attrs={"placeholder": _("e.g. 0xb53...4394n")}
+                ),
+                "token_id": forms.TextInput(attrs={"placeholder": _("e.g. 1,2,3,4,5")}),
+                "balance_required": forms.NumberInput(attrs={"min": 1}),
+            }
         }
         labels = {
-            "token_address": _("NFT Collection Token Address"),
-            "balance_required": _("Balance Required"),
-            "token_id": _("OPTIONAL: Token IDs Required"),
+            **TicketTierForm.Meta.labels,
+            **{
+                "token_address": _("NFT Collection Token Address"),
+                "balance_required": _("Balance Required"),
+                "token_id": _("OPTIONAL: Token IDs Required"),
+            }
         }
 
     def clean_token_address(self):

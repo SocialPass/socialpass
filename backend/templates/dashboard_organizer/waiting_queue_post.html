@@ -3,7 +3,7 @@
 	<span class="btn btn-secondary specific-w-100 disabled pe-none wq-fulfilled">
 		{% trans "Fulfilled" %}
 	</span>
-{% elif object.tx_type == "FIAT" and object.skip_validation %}
+{% elif object.session_type == "FIAT" and object.skip_validation %}
 	<div class="ms-auto">
 		<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
 			{% trans "Waiting..." %}

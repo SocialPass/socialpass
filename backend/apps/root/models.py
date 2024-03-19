@@ -1040,16 +1040,16 @@ class CheckoutSession(DBModel):
     # We may need this in other places, so we use a generic name
     skip_validation = models.BooleanField(default=False)
 
-    # TX Type Field
-    class TransactionType(models.TextChoices):
+    # Session Type Field
+    class SessionType(models.TextChoices):
         FIAT = "FIAT", "Fiat"
         BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
         FREE = "FREE", "Free"
-    tx_type = models.CharField(
+    session_type = models.CharField(
         max_length=50,
-        choices=TransactionType.choices,
-        default=TransactionType.FIAT,
+        choices=SessionType.choices,
+        default=SessionType.FIAT,
         blank=False,
     )
 
@@ -1099,7 +1099,7 @@ class CheckoutSession(DBModel):
 
     @property
     def total_price(self):
-        if self.tx_type == CheckoutSession.TransactionType.FIAT:
+        if self.session_type == CheckoutSession.SessionType.FIAT:
             total_price = 0
             checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(checkout_session=self)
             for item in checkout_items:
@@ -1214,14 +1214,14 @@ class CheckoutSession(DBModel):
 
     def process_session(self):
         """
-        Responsible for processing the correct transaction based on tx_type
+        Responsible for processing the correct transaction based on session_type
         """
-        match self.tx_type:
-            case CheckoutSession.TransactionType.FREE:
+        match self.session_type:
+            case CheckoutSession.SessionType.FREE:
                 self.process_free()
-            case CheckoutSession.TransactionType.FIAT:
+            case CheckoutSession.SessionType.FIAT:
                 self.process_fiat()
-            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+            case CheckoutSession.SessionType.ASSET_OWNERSHIP:
                 self.process_asset_ownership()
             case _:
                 pass

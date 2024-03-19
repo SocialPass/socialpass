@@ -198,7 +198,7 @@ class CheckoutPageOne(DetailView):
         # Create checkout session
         checkout_session = CheckoutSession.objects.create(
             event=self.object,
-            tx_type=form.cleaned_data["checkout_type"],
+            session_type=form.cleaned_data["checkout_type"],
             name=form.cleaned_data["name"],
             email=form.cleaned_data["email"],
         )
@@ -215,7 +215,7 @@ class CheckoutPageOne(DetailView):
         # Handle redirect cases
         # Handle case where checkout is FIAT and is waiting queue checkout
         if (
-            checkout_session.tx_type == CheckoutSession.TransactionType.FIAT
+            checkout_session.session_type == CheckoutSession.SessionType.FIAT
             and self.object.waiting_queue_enabled
         ):
             checkout_session.is_waiting_list = True
@@ -226,7 +226,7 @@ class CheckoutPageOne(DetailView):
             )
         # Handle case where checkout is FIAT and is standard checkout
         elif (
-            checkout_session.tx_type == CheckoutSession.TransactionType.FIAT
+            checkout_session.session_type == CheckoutSession.SessionType.FIAT
             and not self.object.waiting_queue_enabled
         ):
             return redirect(
@@ -384,9 +384,9 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         return ["checkout/checkout_page_two.html",]
 
     def get_form_class(self):
-        if self.object.tx_type == CheckoutSession.TransactionType.FREE:
+        if self.object.session_type == CheckoutSession.SessionType.FREE:
             return CheckoutFormFree
-        if self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+        if self.object.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
             return CheckoutFormAssetOwnership
 
     @transaction.atomic
@@ -411,7 +411,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
 
         # Finalize transaction using form data
         form_data = validate_post["form"]
-        if self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+        if self.object.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
             self.object.wallet_address = form_data.cleaned_data["wallet_address"]
             self.object.signed_message = form_data.cleaned_data["signed_message"]
             self.object.delegated_wallet = form_data.cleaned_data["delegated_wallet"]

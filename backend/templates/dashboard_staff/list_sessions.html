@@ -9,7 +9,7 @@
 	<h3 class="h5">ID: {{ obj.public_id }}</h3>
 	<div>
 		<strong>Created: </strong>{{ obj.created }}<br />
-		{% if obj.tx_type == obj.TransactionType.FIAT %}
+		{% if obj.session_type == obj.SessionType.FIAT %}
 			<strong>Total Price: </strong>{{ obj.event.fiat_currency_symbol }}{{ obj.total_price }}
 		{% endif %}
 	</div>
@@ -24,7 +24,7 @@
 					&times; {{ item.quantity }}
 				</span>
 			</h6>
-			{% if obj.tx_type == obj.TransactionType.FIAT %}
+			{% if obj.session_type == obj.SessionType.FIAT %}
 				<div>
 					Price &times; 1 &mdash;
 					{{ object.event.currency_symbol }}

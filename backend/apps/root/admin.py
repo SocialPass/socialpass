@@ -56,7 +56,7 @@ class CheckoutSessionAdmin(CustomDBAdmin):
         "event",
         "name",
         "email",
-        "tx_type",
+        "session_type",
         "tx_status",
     ] + CustomDBAdmin.list_display
     search_fields = [

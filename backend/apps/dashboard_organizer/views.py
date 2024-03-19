@@ -580,7 +580,7 @@ class EventStatsView(TeamContextMixin, DetailView):
         ).filter(event=event)
         results = []
         for ticket in tickets:
-            if ticket.checkout_session.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+            if ticket.checkout_session.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
                 wallet_address = (
                     ticket.checkout_session.wallet_address
                 )
@@ -1350,7 +1350,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         event=context["event"],
                         rsvp_batch=rsvp_batch,
                         email=email.strip(),
-                        tx_type=ticket_tier.category,
+                        session_type=ticket_tier.category,
                     )
                     checkout_item = CheckoutItem.objects.create(
                         ticket_tier=ticket_tier,
@@ -1582,7 +1582,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
             )
 
         # Move session from waiting queue to attendee list
-        if self.object.tx_type == CheckoutSession.TransactionType.FIAT:
+        if self.object.session_type == CheckoutSession.SessionType.FIAT:
             # Send email with payment link
             domain = Site.objects.all().first().domain
             domain = f"http://{domain}" # http works in local, converted to https on prod

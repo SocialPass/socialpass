@@ -11,7 +11,7 @@
 		<img src="{{ object.event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ object.event.title }} cover image">
 		<div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-start p-3 p-sm-4" style="background-image: linear-gradient(transparent, black);">
 			<div>
-				<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.tx_type }}&name={{ object.name }}&email={{ object.email }}" class="btn btn-secondary rounded-pill w-auto">
+				<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}" class="btn btn-secondary rounded-pill w-auto">
 					<i class="fa-light fa-arrow-left me-1"></i>
 					{% trans "Go Back" %}
 				</a>
@@ -36,7 +36,7 @@
 					<h1 class="text-body-emphasis display-6 m-0 text-break">
 						{% trans "Complete Checkout" %}
 					</h1>
-					{% if object.tx_type == "FREE" %}
+					{% if object.session_type == "FREE" %}
 						<p class="mt-2">
 							{% trans "You are about to checkout with FREE ticket(s) only. Please take note of the following:" %}
 						</p>
@@ -51,7 +51,7 @@
 						<p>
 							{% trans "If all of that sounds good, please click on the" %} <strong>{% trans "Continue" %}</strong> {% trans "button to get your ticket(s)." %}
 						</p>
-					{% elif object.tx_type == "ASSET_OWNERSHIP" %}
+					{% elif object.session_type == "ASSET_OWNERSHIP" %}
 						<div class="alert alert-primary pe-none user-select-none mt-3" role="alert">
 							<h6 class="m-0">
 								<i class="fa-light fa-check-square text-primary-emphasis me-1"></i>
@@ -83,7 +83,7 @@
 						<div class="d-flex align-items-center">
 							<h6 class="m-0">{% trans "Summary" %}</h6>
 							<div class="ms-auto">
-								<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.tx_type }}&name={{ object.name }}&email={{ object.email }}">{% trans "Edit" %}</a>
+								<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}">{% trans "Edit" %}</a>
 							</div>
 						</div>
 						{% for item in object.checkoutitem_set.all %}
@@ -109,7 +109,7 @@
 					<hr>
 					<form class="checkout-form my-3" id="asset_ownership_form" method="POST">
 						{% csrf_token %}
-						{% if object.tx_type == "ASSET_OWNERSHIP" %}
+						{% if object.session_type == "ASSET_OWNERSHIP" %}
 							{{ form.wallet_address }}
 							{{ form.signed_message }}
 						{% endif %}
@@ -124,7 +124,7 @@
 							{% endwith %}
 						</div>
 						<!-- Delegate -->
-						{% if object.tx_type == "ASSET_OWNERSHIP" %}
+						{% if object.session_type == "ASSET_OWNERSHIP" %}
 						<div class="mb-3 p-3 pb-0 rounded border border-secondary border-opacity-25">
 							<label class="d-flex align-items-start" for="{{ form.delegated_wallet.id_for_label }}">
 								<img src="{% static 'images/delegate.png' %}" height="24px" width="24px" alt="Delegate" class="d-block me-3 flex-shrink-0">
@@ -144,7 +144,7 @@
 						<button
 							id="checkout-submit-btn"
 							type="submit"
-							{% if object.tx_type == "ASSET_OWNERSHIP" %}
+							{% if object.session_type == "ASSET_OWNERSHIP" %}
 								onclick="signWallet(message, event)"
 							{% endif %}
 							class="btn btn-info btn-lg d-block w-100"

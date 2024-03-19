@@ -16,7 +16,7 @@
 	<div class="col-lg-8 mx-auto">
 		<div class="d-flex align-items-start mb-3">
 			<div class="me-3">
-				<h1 class="h3 mb-0" id="ticket-tiers">{% trans "The Tix" %}</h1>
+				<h1 class="h3 mb-0" id="ticket-tiers">{% trans "Ticket Tiers" %}</h1>
 				<p class="text-body-secondary mb-0">
 					{% trans "Manage your ticket tiers." %}
 				</p>
@@ -81,9 +81,7 @@
 							{{ ticket_tier.name }}
 							{% if ticket_tier.category == ticket_tier.Category.FIAT %}
 								<span class="fw-normal"> |
-									{{ event.currency_symbol }}
-									{{ ticket_tier.price_per_ticket }}/
-									{% trans "ticket" %}
+									{{ event.currency_symbol }}{{ ticket_tier.price_per_ticket }}/{% trans "ticket" %}
 								</span>
 							{% endif %}
 						</h6>
@@ -101,8 +99,7 @@
 								<div class="col">
 									<div class="fw-bold text-primary-emphasis h5 mb-0">
 										{% if ticket_tier.tickets_sold_count > ticket_tier.capacity %}
-											{{ ticket_tier.capacity }} + {{ ticket_tier.tickets_sold_exceeding_capacity }}
-											<span data-bs-toggle="tooltip" data-bs-title="This exceeds capacity because of the use of the RSVP or waiting queue systems.">*</span>
+											{{ ticket_tier.capacity }} + {{ ticket_tier.tickets_sold_exceeding_capacity }}<span data-bs-toggle="tooltip" data-bs-title="This exceeds capacity because of the use of the RSVP or waiting queue systems.">*</span>
 										{% else %}
 											{{ ticket_tier.tickets_sold_count }}
 										{% endif %}

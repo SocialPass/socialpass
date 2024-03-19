@@ -686,7 +686,7 @@ class Event(DBModel):
             "total_count": 0
         }
         if not tiers:
-            return counts
+            return tier_counts
 
         # Return tiers with annotated counts
         tier_counts["fiat_count"] = tiers.filter(category=TicketTier.Category.FIAT).count()

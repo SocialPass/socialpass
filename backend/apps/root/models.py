@@ -1009,12 +1009,6 @@ class CheckoutSession(DBModel):
         COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
         FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
 
-    class TransactionType(models.TextChoices):
-        FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
-        FREE = "FREE", "Free"
-
     # Key fields
     event = models.ForeignKey(
         "Event",
@@ -1033,12 +1027,7 @@ class CheckoutSession(DBModel):
     name = models.CharField(max_length=255, blank=False)
     email = models.EmailField(max_length=255, blank=False, null=False)
     passcode = models.CharField(max_length=6, default=get_random_passcode)
-    tx_type = models.CharField(
-        max_length=50,
-        choices=TransactionType.choices,
-        default=TransactionType.FIAT,
-        blank=False,
-    )
+
     tx_status = models.CharField(
         max_length=50,
         choices=OrderStatus.choices,
@@ -1050,6 +1039,19 @@ class CheckoutSession(DBModel):
     # Used when customers need to complete waiting queue flow for FIAT tickets
     # We may need this in other places, so we use a generic name
     skip_validation = models.BooleanField(default=False)
+
+    # TX Type Field
+    class TransactionType(models.TextChoices):
+        FIAT = "FIAT", "Fiat"
+        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+        FREE = "FREE", "Free"
+    tx_type = models.CharField(
+        max_length=50,
+        choices=TransactionType.choices,
+        default=TransactionType.FIAT,
+        blank=False,
+    )
 
     # TX Type Fields - Fiat
     stripe_session_id = models.CharField(

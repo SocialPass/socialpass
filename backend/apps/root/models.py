@@ -1034,14 +1034,14 @@ class CheckoutSession(DBModel):
     email = models.EmailField(max_length=255, blank=False, null=False)
     passcode = models.CharField(max_length=6, default=get_random_passcode)
 
-    # Session Status fields
+    # Session Status field
     class OrderStatus(models.TextChoices):
         VALID = "VALID", "Valid"  # Initial State, TX is valid
         PROCESSING = "PROCESSING", "Processing"  # TX has been created, processing...
         FAILED = "FAILED", "Failed"  # TX has failed
         COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
         FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
-    tx_status = models.CharField(
+    order_status = models.CharField(
         max_length=50,
         choices=OrderStatus.choices,
         default=OrderStatus.VALID,
@@ -1246,7 +1246,7 @@ class CheckoutSession(DBModel):
         Fullfil an order related to a checkout session
         """
         # Mark as COMPLETED, awaiting final fulfillment
-        self.tx_status = CheckoutSession.OrderStatus.COMPLETED
+        self.order_status = CheckoutSession.OrderStatus.COMPLETED
         self.save()
 
         # Create tickets, send confirmation email, and set as FULFILLED
@@ -1254,7 +1254,7 @@ class CheckoutSession(DBModel):
         try:
             self.create_tickets()
             self.send_confirmation_email()
-            self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+            self.order_status = CheckoutSession.OrderStatus.FULFILLED
             self.save()
         except Exception:
             rollbar.report_exc_info()
@@ -1263,7 +1263,7 @@ class CheckoutSession(DBModel):
         """
         Go through the states.
         """
-        self.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        self.order_status = CheckoutSession.OrderStatus.PROCESSING
         self.save()
 
 
@@ -1271,17 +1271,17 @@ class CheckoutSession(DBModel):
         """
         Go through the states, only stop to check for issued emails.
         """
-        self.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        self.order_status = CheckoutSession.OrderStatus.PROCESSING
         self.save()
 
         # Check for duplicate emails
         duplicate_emails = CheckoutSession.objects.filter(
             event=self.event,
             email=self.email,
-            tx_status=CheckoutSession.OrderStatus.FULFILLED
+            order_status=CheckoutSession.OrderStatus.FULFILLED
         ).exclude(id=self.id)
         if duplicate_emails:
-            self.tx_status = CheckoutSession.OrderStatus.FAILED
+            self.order_status = CheckoutSession.OrderStatus.FAILED
             self.save()
             raise FreeCheckoutError(f"The email ({self.email}) has already been used for this ticket tier.")
 
@@ -1290,7 +1290,7 @@ class CheckoutSession(DBModel):
         """
         Recover a wallet address from the signed_message vs unsigned_message
         - On success: Mark is_wallet_address_verified as True
-        - On error: Raise AssetOwnershipCheckoutError, mark session.tx_status as FAILED
+        - On error: Raise AssetOwnershipCheckoutError, mark session.order_status as FAILED
         Once this wallet address has been verified, set is_wallet_address_verified
         """
         # Recover wallet address
@@ -1302,13 +1302,13 @@ class CheckoutSession(DBModel):
             )
         except Exception as e:
             rollbar.report_message("AssetOwnershipCheckoutError ERROR: " + str(e))
-            self.tx_status = CheckoutSession.OrderStatus.FAILED
+            self.order_status = CheckoutSession.OrderStatus.FAILED
             raise AssetOwnershipCheckoutError("Error recovering wallet address")
 
         # Successful recovery attempt
         # Now check if addresses match
         if recovered_address != self.wallet_address:
-            self.tx_status = CheckoutSession.OrderStatus.FAILED
+            self.order_status = CheckoutSession.OrderStatus.FAILED
             raise AssetOwnershipCheckoutError(
                 "Address was recovered, but did not match")
 
@@ -1424,7 +1424,7 @@ class CheckoutSession(DBModel):
 
     def process_asset_ownership(self):
         # Set session as processing
-        self.tx_status = CheckoutSession.OrderStatus.PROCESSING
+        self.order_status = CheckoutSession.OrderStatus.PROCESSING
         self.save()
 
         # try / catch on process methods
@@ -1432,11 +1432,11 @@ class CheckoutSession(DBModel):
             self._process_wallet_address()
             self._process_asset_ownership()
         except AssetOwnershipCheckoutError as e:
-            self.tx_status = CheckoutSession.OrderStatus.FAILED
+            self.order_status = CheckoutSession.OrderStatus.FAILED
             self.save()
             raise e
         except Exception as e:
-            self.tx_status = CheckoutSession.OrderStatus.FAILED
+            self.order_status = CheckoutSession.OrderStatus.FAILED
             self.save()
             raise e
 

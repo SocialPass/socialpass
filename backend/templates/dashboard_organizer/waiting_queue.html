@@ -49,7 +49,7 @@
 								{% trans "NFT-Gated" %}
 							</span>
 						{% endif %}
-						{% if checkout_session.tx_status == "FULFILLED" %}
+						{% if checkout_session.order_status == "FULFILLED" %}
 							<div class="ms-auto">
 								<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-fulfilled">
 									{% trans "Fulfilled" %}

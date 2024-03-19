@@ -291,7 +291,7 @@ class CheckoutPageTwoBase(DetailView):
         # Get object
         # Also validate transaction status to avoid resubmission
         self.get_object()
-        if self.object.tx_status in [
+        if self.object.order_status in [
             CheckoutSession.OrderStatus.PROCESSING,
             CheckoutSession.OrderStatus.COMPLETED,
             CheckoutSession.OrderStatus.FULFILLED
@@ -683,7 +683,7 @@ class CheckoutPageSuccess(DetailView):
             .prefetch_related("checkoutitem_set")
             .get(
                 public_id=self.kwargs["checkout_session_public_id"],
-                tx_status=CheckoutSession.OrderStatus.FULFILLED,
+                order_status=CheckoutSession.OrderStatus.FULFILLED,
             )
         )
         if not self.object:

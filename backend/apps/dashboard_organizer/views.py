@@ -1574,7 +1574,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         # If session is not valid, we simply return (error on template)
-        if self.object.tx_status != CheckoutSession.OrderStatus.VALID:
+        if self.object.order_status != CheckoutSession.OrderStatus.VALID:
             return render(
                 self.request,
                 template_name="dashboard_organizer/waiting_queue_post.html",

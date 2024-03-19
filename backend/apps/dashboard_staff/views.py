@@ -205,7 +205,7 @@ class CheckoutSessionListView(ListView):
         return (
             CheckoutSession.objects.select_related("event")
             .prefetch_related("checkoutitem_set", "checkoutitem_set__ticket_tier")
-            .filter(tx_status=CheckoutSession.OrderStatus.FULFILLED)
+            .filter(order_status=CheckoutSession.OrderStatus.FULFILLED)
         )
 
 

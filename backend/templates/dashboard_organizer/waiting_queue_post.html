@@ -1,5 +1,5 @@
 {% load i18n %}
-{% if object.tx_status == "FULFILLED" %}
+{% if object.order_status == "FULFILLED" %}
 	<span class="btn btn-secondary specific-w-100 disabled pe-none wq-fulfilled">
 		{% trans "Fulfilled" %}
 	</span>

@@ -1048,12 +1048,17 @@ class CheckoutSession(DBModel):
         blank=False,
     )
 
-
-    is_waiting_list = models.BooleanField(default=False)
-    # When set, this overrides  validation check
-    # Used when customers need to complete waiting queue flow for FIAT tickets
-    # We may need this in other places, so we use a generic name
-    skip_validation = models.BooleanField(default=False)
+    # Waitlist Status field
+    class WaitlistStatus(models.TextChoices):
+        WAITLIST_JOINED = "WAITLIST_JOINED", "Waitlist joined"
+        WAITLIST_APPROVED = "WAITLIST_APPROVED", "Waitlist approved"
+        WAITLIST_REJECTED = "WAITLIST_REJECTED", "Waitlist approved"
+    waitlist_status = models.CharField(
+        max_length=50,
+        choices=WaitlistStatus.choices,
+        default="",
+        blank=False,
+    )
 
     # Session Type Field
     class SessionType(models.TextChoices):

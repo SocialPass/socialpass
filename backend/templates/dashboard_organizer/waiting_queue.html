@@ -55,7 +55,7 @@
 									{% trans "Fulfilled" %}
 								</span>
 							</div>
-						{% elif checkout_session.session_type == "FIAT" and checkout_session.skip_validation %}
+						{% elif checkout_session.session_type == "FIAT" and checkout_session.waitlist_status == checkout_session.WaitlistStatus.WAITLIST_APPROVED %}
 							<div class="ms-auto">
 								<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
 									{% trans "Waiting..." %}

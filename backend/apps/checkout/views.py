@@ -218,7 +218,7 @@ class CheckoutPageOne(DetailView):
             checkout_session.session_type == CheckoutSession.SessionType.FIAT
             and self.object.waiting_queue_enabled
         ):
-            checkout_session.is_waiting_list = True
+            checkout_session.waitlist_status = CheckoutSession.WaitlistStatus.WAITLIST_JOINED
             checkout_session.save()
             return redirect(
                 "checkout:joined_waiting_queue",
@@ -314,12 +314,11 @@ class CheckoutPageTwoBase(DetailView):
             }
 
         # Form is valid, continue...
-        # Handle both cases: waitlist logic or standard checkout logic
+        # Handle both cases: waitlist checkout or standard checkout
 
-        # Waitlist logic
+        # Waitlist checkout
         # If waiting queue is enabled, we ignore everything and return the form
-        # We do the same if skip_validation is True (for FIAT waiting queue sessions)
-        if self.object.event.waiting_queue_enabled or self.object.skip_validation:
+        if self.object.event.waiting_queue_enabled:
             return {
                 "is_error": False,
                 "error_message": "",
@@ -420,7 +419,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         # If waiting queue is enabled, we ignore everything
         # And redirect to the waiting queue success page
         if self.object.event.waiting_queue_enabled:
-            self.object.is_waiting_list = True
+            self.object.waitlist_status = CheckoutSession.WaitlistStatus.WAITLIST_JOINED
             self.object.save()
             return redirect(
                 "checkout:joined_waiting_queue",

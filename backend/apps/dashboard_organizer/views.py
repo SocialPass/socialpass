@@ -841,7 +841,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
         tickets_count = self.object.ticket_set.count()
         has_waitlist_session = False
         for checkout_item in self.object.checkoutitem_set.all():
-            if checkout_item.checkout_session.is_waiting_list:
+            if checkout_item.checkout_session.waitlist_status:
                 has_waitlist_session = True
                 break
         if tickets_count > 0 or has_waitlist_session:
@@ -1531,15 +1531,15 @@ class WaitingQueueView(TeamContextMixin, ListView):
             qs = qs.filter(
                 Q(name__icontains=self.request.GET.get("search")) |
                 Q(email__icontains=self.request.GET.get("search")),
+                ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
-                is_waiting_list=True,
             )
         else:
             qs = qs.filter(
+                ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
-                is_waiting_list=True,
             )
 
         return qs
@@ -1562,10 +1562,10 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
             self.object = CheckoutSession.objects.select_related(
                 "event", "event__team",
             ).get(
+                ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
                 pk=self.kwargs["checkout_session_pk"],
-                is_waiting_list=True,
             )
         return self.object
 
@@ -1581,7 +1581,11 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 context=context,
             )
 
-        # Move session from waiting queue to attendee list
+        # Update waitlist status as approved
+        self.object.waitlist_status = self.object.WaitlistStatus.WAITLIST_APPROVED
+        self.object.save()
+
+        # Process session
         if self.object.session_type == CheckoutSession.SessionType.FIAT:
             # Send email with payment link
             domain = Site.objects.all().first().domain
@@ -1615,11 +1619,6 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 [self.object.email,],
                 html_message=msg_html,
             )
-
-            # Update session to make sure expiration and validation is skipped
-            # This is also used to handle UI on dashboard
-            self.object.skip_validation = True
-            self.object.save()
         else:
             try:
                 self.object.process_session()

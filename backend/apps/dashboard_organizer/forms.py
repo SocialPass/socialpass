@@ -316,7 +316,7 @@ class TicketingSetupForm(forms.ModelForm):
         labels = {
             "sales_start": _("Ticket Sales Start"),
             "sales_end": _("Ticket Sales End"),
-            "waiting_queue_enabled": _("Enable Waiting Queue"),
+            "waiting_queue_enabled": _("Turn on Waitlist"),
         }
 
     def __init__(self, *args, **kwargs):

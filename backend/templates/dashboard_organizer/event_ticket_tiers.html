@@ -170,10 +170,7 @@
 	<div class="col-lg-5 ps-lg-4">
 		<div class="card bg-primary-subtle rounded-0 border border-primary" style="border-style: dotted !important;">
 			<div class="card-body">
-				<h2 class="h5 mb-0" id="ticketing-preferences">{% trans "Ticketing Preferences" %}</h2>
-				<p class="text-body-secondary">
-					{% trans "Set your preferred ticketing options." %}
-				</p>
+				<h2 class="h5 mb-4" id="ticketing-preferences">{% trans "Ticketing Preferences" %}</h2>
 				<form method="POST">
 					{% csrf_token %}
 					{% if form.non_field_errors %}
@@ -198,19 +195,19 @@
 							{% include "forms/input.html" %}
 						{% endwith %}
 				  	</div>
-					<h6>{% trans "Total Venue Capacity" %}</h6>
-					<p class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">
-						{% trans "Our system will make sure that the total number of people (ticket holders + guests) does not exceed this number." %}
-					</p>
+					<h6 class="mb-2">
+						{% trans "Total Venue Capacity" %}
+						<i class="fa-regular fa-question-circle ms-1" data-bs-toggle="tooltip" data-bs-title="When set, our system will make sure that the total number of people attending (ticket holders + guests) does not exceed this number."></i>
+					</h6>
 					<div class="mb-4">
 						{% with form.total_capacity as input %}
 							{% include "forms/input.html" %}
 						{% endwith %}
 					</div>
-					<h6>{% trans "Waiting Queue" %}</h6>
-					<p class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">
-						{% trans "When set, customers will join a waitlist, instead of getting actual tickets." %}
-					</p>
+					<h6 class="mb-2">
+						{% trans "Waitlist" %}
+						<i class="fa-regular fa-question-circle ms-1" data-bs-toggle="tooltip" data-bs-title="When set, customers will join a waitlist, instead of getting actual tickets. You can bump them up as needed to the attendee list (and issue tickets) via the dashboard."></i>
+					</h6>
 					<div class="sp-checkbox-container">
 						{{ form.waiting_queue_enabled | as_crispy_field }}
 					</div>

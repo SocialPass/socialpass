@@ -367,16 +367,22 @@ class TierFiatForm(TicketTierForm):
             "price_per_ticket",
         ]
         widgets = {
-            "price_per_ticket": forms.NumberInput(
-                attrs={
-                    "placeholder": _("Price of one ticket"),
-                    "step": "0.01",
-                    "min": "0.01",
-                }
-            ),
+            **TicketTierForm.Meta.widgets,
+            **{
+                "price_per_ticket": forms.NumberInput(
+                    attrs={
+                        "placeholder": _("Price of one ticket"),
+                        "step": "0.01",
+                        "min": "0.01",
+                    }
+                ),
+            }
         }
         labels = {
-            "price_per_ticket": _("Price/ticket"),
+            **TicketTierForm.Meta.labels,
+            **{
+                "price_per_ticket": _("Price/ticket"),
+            }
         }
 
 

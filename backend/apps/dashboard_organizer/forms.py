@@ -99,17 +99,6 @@ class EventCreateForm(forms.ModelForm):
         }
 
 
-def get_country_choices():
-    """
-    Return choices for country where value is the country code
-    """
-
-    choices = []
-    for i in COUNTRIES.items():
-        choices.append((i[0], i[1]))
-    return choices
-
-
 class EventForm(forms.ModelForm):
     """
     Event form
@@ -119,7 +108,6 @@ class EventForm(forms.ModelForm):
     timezone = forms.ChoiceField(choices=[
         (x, x) for x in sorted(zoneinfo.available_timezones())
     ])
-    country = forms.ChoiceField(choices=get_country_choices())
 
     class Meta:
         model = Event
@@ -131,17 +119,8 @@ class EventForm(forms.ModelForm):
             "start_date",
             "end_date",
             "timezone",
-            "address_1",
-            "address_2",
-            "city",
-            "postal_code",
-            "country",
+            "geo_address",
             "hide_address",
-            "google_class_id",
-            "sales_start",
-            "sales_end",
-            "total_capacity",
-            "waiting_queue_enabled",
         ]
 
         widgets = {
@@ -169,56 +148,10 @@ class EventForm(forms.ModelForm):
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
             ),
-            "address_1": forms.TextInput(
+            "geo_address": forms.TextInput(
                 attrs={
-                    "placeholder": _("Name of Venue"),
+                    "placeholder": _("Start typing to find your venue..."),
                     "required": "required",
-                }
-            ),
-            "address_2": forms.TextInput(
-                attrs={
-                    "placeholder": _("12345 Party Street"),
-                    "required": "required",
-                }
-            ),
-            "city": forms.TextInput(
-                attrs={
-                    "placeholder": _("City"),
-                    "required": "required",
-                }
-            ),
-            "state": forms.TextInput(
-                attrs={
-                    "placeholder": _("State"),
-                    "required": "required",
-                }
-            ),
-            "postal_code": forms.TextInput(
-                attrs={
-                    "placeholder": _("Zip Code"),
-                    "required": "required",
-                }
-            ),
-            "sales_start": forms.DateTimeInput(
-                format="%Y-%m-%dT%H:%M",
-                attrs={
-                    "id": "sales_start",
-                    "class": "form-control",
-                    "type": "datetime-local",
-                },
-            ),
-            "sales_end": forms.DateTimeInput(
-                format="%Y-%m-%dT%H:%M",
-                attrs={
-                    "id": "sales_end",
-                    "class": "form-control",
-                    "type": "datetime-local",
-                },
-            ),
-            "total_capacity": forms.NumberInput(
-                attrs={
-                    "min": 1,
-                    "placeholder": _("Total Venue Capacity"),
                 }
             ),
         }
@@ -227,17 +160,9 @@ class EventForm(forms.ModelForm):
             "description": _("Description"),
             "start_date": _("Event Start"),
             "end_date": _("Event End"),
-            "sales_start": _("Ticket Sales Start"),
-            "sales_end": _("Ticket Sales End"),
             "timezone": _("Timezone"),
-            "address_1": _("Name of Venue"),
-            "address_2": _("Address"),
-            "city": _("City"),
-            "state": _("State"),
-            "postal_code": _("Zip Code"),
-            "country": _("Country"),
-            "hide_address": _("Hide Address (except for ticket holders)"),
-            "waiting_queue_enabled": _("Enable Waiting Queue"),
+            "geo_address": _("Address"),
+            "hide_address": _("Hide Address"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -252,27 +177,6 @@ class EventForm(forms.ModelForm):
                 self.initial["end_date"] = self.instance.end_date.strftime(
                     "%Y-%m-%dT%H:%M"
                 )
-            if self.instance.sales_start:
-                self.initial["sales_start"] = self.instance.sales_start.strftime(
-                    "%Y-%m-%dT%H:%M"
-                )
-            if self.instance.sales_end:
-                self.initial["sales_end"] = self.instance.sales_end.strftime(
-                    "%Y-%m-%dT%H:%M"
-                )
-
-    def clean_google_class_id(self, *args, **kwargs):
-        """
-        clean the handling of the Google event class / clean_google_class_id
-        Note: # we do this only for LIVE events to reduce the number of API requests
-        """
-        if self.instance.pk:
-            if self.instance.state == Event.StateStatus.LIVE:
-                google_event_class_id = self.instance.handle_google_event_class()
-                if not google_event_class_id:
-                    raise GoogleWalletAPIRequestError(
-                        "Something went wrong while handling the Google event class."
-                    )
 
 
 class TicketingSetupForm(forms.ModelForm):

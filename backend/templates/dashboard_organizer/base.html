@@ -161,7 +161,7 @@
 		</script>
 		<!-- End of sociapass support Widget -->
 
-		{% if request.resolver_match.url_name == 'event_update' %}
+		{% if request.resolver_match.url_name == 'event_create' or request.resolver_match.url_name == 'event_update' %}
 			{{ form.media }}
 			<!-- Quill CSS overrides -->
 			<link href="{% static 'quill-text-editor/quill.snow.new.css' %}" rel="stylesheet">

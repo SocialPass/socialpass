@@ -3,9 +3,9 @@
 	<ul class="nav nav-underline">
 		<li class="nav-item">
 			<a
-				href="#"
-				class="nav-link px-lg-2 fw-bold antialiased {% if false %}active{% endif %}"
-				{% if false %}aria-current="true"{% endif %}
+				href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}"
+				class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_update' %}active{% endif %}"
+				{% if request.resolver_match.url_name == 'event_update' %}aria-current="true"{% endif %}
 			>
 				{% trans "Overview" %}
 			</a>
@@ -81,7 +81,8 @@
 </div>
 <div class="container-lg px-3 px-sm-4 pb-2 d-md-none">
 	<button type="button" class="btn btn-secondary d-flex align-items-center w-100" data-bs-toggle="collapse" data-bs-target="#tabs-collapse" aria-expanded="false" aria-controls="tabs-collapse">
-		{% if false %}
+		{% if request.resolver_match.url_name == 'event_update' %}
+			{% trans "Overview" %}
 		{% elif request.resolver_match.url_name == 'event_tickets' or request.resolver_match.url_name == 'ticket_tier_free_create' or request.resolver_match.url_name == 'ticket_tier_fiat_create' or request.resolver_match.url_name == 'ticket_tier_nft_create' or request.resolver_match.url_name == 'ticket_tier_update' or request.resolver_match.url_name == 'ticket_tier_delete' %}
 			{% trans "Ticketing" %}
 		{% elif request.resolver_match.url_name == 'event_stats' %}
@@ -102,8 +103,8 @@
 	<div class="collapse" id="tabs-collapse">
 		<div class="mt-2">
 			<ul class="list-unstyled text-body mb-0">
-				<li class="mb-2" {% if false %}aria-current="true"{% endif %}>
-					<a href="#" class="text-reset text-decoration-none {% if false %}text-primary-emphasis fw-bold antialiased{% endif %}">
+				<li class="mb-2" {% if request.resolver_match.url_name == 'event_update' %}aria-current="true"{% endif %}>
+					<a href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}" class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_update' %}text-primary-emphasis fw-bold antialiased{% endif %}">
 						{% trans "Overview" %}
 					</a>
 				</li>

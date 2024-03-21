@@ -69,6 +69,10 @@
             {{ form.hide_address | as_crispy_field }}
         </div>
     </div>
+    {{ form.geo_type.as_hidden }}
+    {{ form.geo_place_id.as_hidden }}
+    {{ form.geo_latitude.as_hidden }}
+    {{ form.geo_longitude.as_hidden }}
     <h4 class="mt-3 mb-1">{% trans "Description" %}</h4>
     <div class="text-body-secondary mb-3">{% trans "You can add links and sauce up your content to grab your customers' attention." %}</div>
     {% with input=form.description %}

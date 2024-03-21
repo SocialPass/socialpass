@@ -67,4 +67,27 @@
 		}
 	});
 </script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDChv6Fl3rYj_sbx3hEoLbJ1FNO3QAP8Ts&libraries=places"></script>
+<script type="text/javascript">
+	const geoAddress = document.getElementById("id_geo_address");
+	google.maps.event.addDomListener(window, "load", initialize);
+	function initialize() {
+		const autocomplete = new google.maps.places.Autocomplete(geoAddress);
+		autocomplete.addListener("place_changed", function () {
+			const place = autocomplete.getPlace();
+			document.getElementById("id_geo_type").value = "GOOGLE";
+			document.getElementById("id_geo_place_id").value = place.place_id;
+			document.getElementById("id_geo_latitude").value = place.geometry.location.lat().toFixed(6);
+			document.getElementById("id_geo_longitude").value = place.geometry.location.lng().toFixed(6);
+		});
+	}
+	geoAddress.addEventListener("input", function() {
+		if (geoAddress.value === "") {
+			document.getElementById("id_geo_type").value = "MANUAL";
+			document.getElementById("id_geo_place_id").value = "";
+			document.getElementById("id_geo_latitude").value = "";
+			document.getElementById("id_geo_longitude").value = "";
+		}
+	});
+</script>
 {% endblock %}

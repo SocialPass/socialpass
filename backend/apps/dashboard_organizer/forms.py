@@ -119,7 +119,11 @@ class EventForm(forms.ModelForm):
             "start_date",
             "end_date",
             "timezone",
+            "geo_type",
             "geo_address",
+            "geo_place_id",
+            "geo_latitude",
+            "geo_longitude",
             "hide_address",
         ]
 

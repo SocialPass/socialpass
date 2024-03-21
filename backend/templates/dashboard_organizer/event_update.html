@@ -79,7 +79,7 @@
 
 	// disable form on page-load
 	geoAddress.readOnly = true;
-	geoResetBtn.classList.remove("invisible")
+	geoResetBtn.classList.remove("d-none")
 
 	// Google maps initialization / handler
 	const geoMap = document.getElementById("geo_map")
@@ -108,7 +108,7 @@
 
 			// disable form
 			geoAddress.readOnly = true;
-			geoResetBtn.classList.remove("invisible")
+			geoResetBtn.classList.remove("d-none")
 		});
 	}
 	function resetGeoForm(){
@@ -127,7 +127,7 @@
 		geoAddress.readOnly = false;
 
 		// hide button
-		geoResetBtn.classList.add("invisible")
+		geoResetBtn.classList.add("d-none")
 	}
 </script>
 {% endblock %}

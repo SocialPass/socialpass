@@ -77,10 +77,6 @@
 	const geoLongitude = document.getElementById("id_geo_longitude");
 	const geoResetBtn = document.getElementById("reset_geo_form_btn")
 
-	// disable form on page-load
-	geoAddress.readOnly = true;
-	geoResetBtn.classList.remove("d-none")
-
 	// Google maps initialization / handler
 	const geoMap = document.getElementById("geo_map")
 	function initialize() {
@@ -110,7 +106,29 @@
 			geoAddress.readOnly = true;
 			geoResetBtn.classList.remove("d-none")
 		});
+
+		// Handle google address on page load
+		if (geoLatitude.value !== "" && geoLongitude.value !== ""){
+			const position = new google.maps.LatLng(parseFloat(geoLatitude.value),parseFloat(geoLongitude.value));
+			geoMap.style.height = "150px";
+			geoMap.style.width = "100%";
+			var map = new google.maps.Map(geoMap, {
+				mapId: "DEMO_MAP_ID"
+			});
+			map.setCenter(position);
+			map.setZoom(15);
+			var marker = new google.maps.marker.AdvancedMarkerElement({
+				map: map,
+				position: position
+			});
+
+			// disable form
+			geoAddress.readOnly = true;
+			geoResetBtn.classList.remove("d-none")
+		}
 	}
+
+	// Reset geoform button
 	function resetGeoForm(){
 		// Reset form fields
 		geoType.value = "MANUAL";

@@ -18,6 +18,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView, SingleObjectMixin
@@ -26,7 +27,6 @@ from django.views.generic.list import ListView
 
 from apps.dashboard_organizer.forms import (
     InvitationForm,
-    EventCreateForm,
     EventForm,
     TicketingSetupForm,
     TeamForm,
@@ -367,8 +367,10 @@ class EventListView(TeamContextMixin, ListView):
         qs = qs.filter(team__slug=self.kwargs["team_slug"])
 
         query_state = self.request.GET.get("state", "")
-        if query_state == "LIVE" or query_state == "DRAFT":
-            qs = qs.filter(state=query_state)
+        if query_state == "Upcoming":
+            qs = qs.filter(start_date__gt=timezone.now())
+        elif query_state == "Past":
+            qs = qs.filter(start_date__lt=timezone.now())
 
         return qs
 
@@ -379,7 +381,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     """
 
     model = Event
-    form_class = EventCreateForm
+    form_class = EventForm
     template_name = "dashboard_organizer/event_create.html"
 
     def get_context_data(self, **kwargs):
@@ -404,7 +406,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse(
-            "dashboard_organizer:event_update",
+            "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_slug"], self.object.pk),
         )
 
@@ -418,7 +420,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     slug_field = "pk"
     slug_url_kwarg = "pk"
     form_class = EventForm
-    template_name = "dashboard_organizer/event_form.html"
+    template_name = "dashboard_organizer/event_update.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -437,7 +439,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse(
-            "dashboard_organizer:event_tickets",
+            "dashboard_organizer:event_update",
             args=(self.kwargs["team_slug"], self.object.pk),
         )
 

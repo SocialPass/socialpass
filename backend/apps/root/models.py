@@ -559,6 +559,9 @@ class Event(DBModel):
         localized_address_display will be
         "address_1, address_2, city, country, postal_code" joined
         """
+        if self.geo_address:
+            return self.geo_address
+
         if not self.city and not self.address_1:
             return "Not set"
 

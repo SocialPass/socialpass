@@ -479,7 +479,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            raise EventStateTranstionError({"state": str(e)})
+            raise EventStateTranstionError(str(e))
 
     def transition_live(self, save=True, ignore_google_api=False):
         """
@@ -493,7 +493,7 @@ class Event(DBModel):
             if save:
                 self.save()
         except Exception as e:
-            raise EventStateTranstionError({"state": str(e)})
+            raise EventStateTranstionError(str(e))
 
     @transition(field=state, target=StateStatus.DRAFT)
     def _transition_draft(self):
@@ -748,19 +748,15 @@ class Ticket(DBModel):
         """Redeems a ticket."""
         # Check if redeemed
         if self.redeemed_at:
-            raise AlreadyRedeemedError({"redeemed": "Ticket is already redeemed."})
+            raise AlreadyRedeemedError("Ticket is already redeemed.")
 
         # # Check if redemption key was passed
         if not scanner_id:
-            raise ForbiddenRedemptionError(
-                {"scanner_id": "Access key was not passed in"}
-            )
+            raise ForbiddenRedemptionError("Access key was not passed in")
 
         # Check if match on redemption access key
         if self.event.scanner_id != scanner_id:
-            raise ForbiddenRedemptionError(
-                {"event": "Event does not match redemption key"}
-            )
+            raise ForbiddenRedemptionError("Event does not match redemption key")
 
         # Redeem & save
         self.redeemed_at = timezone.now()

@@ -176,7 +176,7 @@ class Team(DBModel):
         """
         return f"Team: {self.name}"
 
-    @property
+    @cached_property
     def stripe_account_payouts_enabled(self):
         status = {
             "details_submitted": False,
@@ -196,7 +196,7 @@ class Team(DBModel):
         # Return status
         return status
 
-    @property
+    @cached_property
     def stripe_refresh_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -208,7 +208,7 @@ class Team(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def stripe_return_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -220,7 +220,7 @@ class Team(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def stripe_express_dashboard_link(self):
         if self.stripe_account_id:
             login_link = stripe.Account.create_login_link(
@@ -267,7 +267,7 @@ class Invitation(DBModel):
     def __str__(self):
         return f"Invitation: {self.email}<>{self.team.name}"
 
-    @property
+    @cached_property
     def is_expired(self):
         if timezone.now() > (self.created + timezone.timedelta(days=30)):
             return True
@@ -546,14 +546,14 @@ class Event(DBModel):
         except Exception as e:
             rollbar.report_message("EMAIL ERROR: " + str(e))
 
-    @property
+    @cached_property
     def has_ended(self):
         if self.end_date:
             return date.today() > self.end_date.date()
         else:
             return False
 
-    @property
+    @cached_property
     def localized_address_display(self):
         """
         localized_address_display will be
@@ -585,7 +585,7 @@ class Event(DBModel):
         localized_address_display = ", ".join(address_fields)
         return localized_address_display
 
-    @property
+    @cached_property
     def localized_address_display_without_venue(self):
         """
         returns localized_address_display without venue
@@ -596,21 +596,21 @@ class Event(DBModel):
             (localized_address_display.index(",") + 1):
         ].strip()
 
-    @property
+    @cached_property
     def tickets_sold_count(self):
         return Ticket.objects.filter(event=self).count()
 
-    @property
+    @cached_property
     def tickets_scanned_count(self):
         return Ticket.objects.filter(event=self, redeemed_at__isnull=False).count()
 
-    @property
+    @cached_property
     def attendees_count(self):
         sold = Ticket.objects.filter(event=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"]
         return sold_with_party or 0
 
-    @property
+    @cached_property
     def attendees_scanned_count(self):
         redeemed = Ticket.objects.filter(event=self, redeemed_at__isnull=False)
         redeemed_with_party = redeemed.aggregate(models.Sum("party_size"))[
@@ -618,7 +618,7 @@ class Event(DBModel):
         ]
         return redeemed_with_party or 0
 
-    @property
+    @cached_property
     def description_html(self):
         description_html = ""
         try:
@@ -627,7 +627,7 @@ class Event(DBModel):
             pass
         return description_html
 
-    @property
+    @cached_property
     def currency_symbol(self):
         """
         Not all currencies will have recognizable symbols. If we just store the
@@ -650,14 +650,14 @@ class Event(DBModel):
         }
         return CURRENCY_SYMBOLS.get(self.fiat_currency, self.fiat_currency + " ")
 
-    @property
+    @cached_property
     def cover_image_url(self):
         if self.cover_image:
             return self.cover_image.url
         else:
             return staticfiles_storage.url("images/event_cover_placeholder.jpg")
 
-    @property
+    @cached_property
     def has_required_fields(self):
         missing_fields = []
         required_fields = {
@@ -1092,7 +1092,7 @@ class CheckoutSession(DBModel):
     def __str__(self):
         return f"CheckoutSession: {self.email}"
 
-    @property
+    @cached_property
     def get_tickets_link(self):
         """
         get link to get the tickets for this session
@@ -1108,7 +1108,7 @@ class CheckoutSession(DBModel):
         tickets_link = domain + url
         return tickets_link
 
-    @property
+    @cached_property
     def total_price(self):
         if self.session_type == CheckoutSession.SessionType.FIAT:
             total_price = 0
@@ -1120,7 +1120,7 @@ class CheckoutSession(DBModel):
         else:
             return "N/A"
 
-    @property
+    @cached_property
     def stripe_checkout_cancel_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -1140,7 +1140,7 @@ class CheckoutSession(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def stripe_checkout_success_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -1160,7 +1160,7 @@ class CheckoutSession(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def application_fee_amount(self):
         """
         application fee that will be requested to be applied to the payment,
@@ -1177,7 +1177,7 @@ class CheckoutSession(DBModel):
         application_fee_amount = round(application_fee_amount)
         return application_fee_amount
 
-    @property
+    @cached_property
     def unsigned_message(self):
         return (
             "Greetings from SocialPass."
@@ -1467,7 +1467,7 @@ class CheckoutItem(DBModel):
     def __str__(self):
         return f"CheckoutItem: {str(self.id)}"
 
-    @property
+    @cached_property
     def unit_amount(self):
         if not self.ticket_tier.category == TicketTier.Category.FIAT:
             return "N/A"
@@ -1476,7 +1476,7 @@ class CheckoutItem(DBModel):
         unit_amount = price_per_ticket_cents * self.quantity
         return unit_amount
 
-    @property
+    @cached_property
     def calculated_party_size(self):
         """
         Calculates party size on a few factors

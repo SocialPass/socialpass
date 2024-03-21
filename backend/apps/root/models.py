@@ -22,7 +22,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
-from django_fsm import FSMField, transition
 from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
 from eth_account.messages import encode_defunct
@@ -292,24 +291,10 @@ class Event(DBModel):
     Represents an event on SocialPass
     This event supports multiple states as well as multiple ticker tiers.
     """
-
-    class StateStatus(models.TextChoices):
-        DRAFT = "DRAFT", "Draft"
-        LIVE = "LIVE", "Live"
-
     # Keys
     user = models.ForeignKey("User", on_delete=models.SET_NULL,  null=True)
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
     google_class_id = models.CharField(max_length=255, blank=True)
-
-    # state
-    state = FSMField(
-        choices=StateStatus.choices,
-        default=StateStatus.DRAFT,
-        protected=True,
-
-
-    )
 
     # Basic Info
     title = models.CharField(
@@ -411,19 +396,6 @@ class Event(DBModel):
     def __str__(self):
         return f"Event: {self.title}"
 
-    def get_absolute_url(self):
-        if self.state == Event.StateStatus.DRAFT:
-            _success_url = "dashboard_organizer:event_update"
-        elif self.state == Event.StateStatus.LIVE:
-            _success_url = "dashboard_organizer:event_update"
-        return reverse(
-            _success_url,
-            args=(
-                self.team.public_id,
-                self.pk,
-            ),
-        )
-
     def handle_google_event_class(self):
         """
         insert/update Google class for event
@@ -450,95 +422,13 @@ class Event(DBModel):
         clean method
         runs all clean_* methods
         """
-
         # clean the handling of the Google event class
-        if self.state == Event.StateStatus.LIVE:
-            google_event_class_id = self.handle_google_event_class()
-            if not google_event_class_id:
-                raise GoogleWalletAPIRequestError(
-                    "Something went wrong while handling the Google event class."
-                )
-
+        google_event_class_id = self.handle_google_event_class()
+        if not google_event_class_id:
+            raise GoogleWalletAPIRequestError(
+                "Something went wrong while handling the Google event class."
+            )
         return super().clean(*args, **kwargs)
-
-    def transition_draft(self, save=True):
-        """
-        wrapper around _transition_draft
-        allows for saving after transition
-        """
-        try:
-            self._transition_draft()
-            # Save unless explicilty told not to
-            # This implies the caller will handle saving post-transition
-            if save:
-                self.save()
-        except Exception as e:
-            raise EventStateTranstionError(str(e))
-
-    def transition_live(self, save=True, ignore_google_api=False):
-        """
-        wrapper around _transition_live
-        allows for saving after transition
-        """
-        try:
-            self._transition_live(ignore_google_api=ignore_google_api)
-            # Save unless explicilty told not to
-            # This implies the caller will handle saving post-transition
-            if save:
-                self.save()
-        except Exception as e:
-            raise EventStateTranstionError(str(e))
-
-    @transition(field=state, target=StateStatus.DRAFT)
-    def _transition_draft(self):
-        """
-        This function handles state transition to DRAFT
-        Side effects include
-        -
-        """
-        pass
-
-    @transition(field=state, target=StateStatus.LIVE)
-    def _transition_live(self, ignore_google_api=False):
-        """
-        This function handles state transition from DRAFT to LIVE
-        Side effects include
-        - Create ticket scanner object
-        - Handle Google event class
-        - Send success emails
-        """
-        # - Handle Google event class
-        if not ignore_google_api:
-            google_event_class_id = self.handle_google_event_class()
-            if not google_event_class_id:
-                raise GoogleWalletAPIRequestError(
-                    "Something went wrong while handling the Google event class."
-                )
-
-        # Send emails to team members (fail silently)
-        try:
-            ctx = {
-                "event": self,
-            }
-            emails = []
-            memberships = Membership.objects.select_related("user").filter(
-                team=self.team
-            )
-            for m in memberships:
-                emails.append(m.user.email)
-            msg_plain = render_to_string(
-                "dashboard_organizer/email/go_live_message.txt", ctx
-            )
-            msg_html = render_to_string("dashboard_organizer/email/go_live.html", ctx)
-            send_mail(
-                "[SocialPass] Your event is live - " + self.title,
-                msg_plain,
-                "tickets-no-reply@socialpass.io",
-                emails,
-                html_message=msg_html,
-            )
-        except Exception as e:
-            rollbar.report_message("EMAIL ERROR: " + str(e))
 
     @cached_property
     def has_ended(self):

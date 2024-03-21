@@ -71,22 +71,11 @@ class CheckoutSessionAdmin(CustomDBAdmin):
 
 @admin.register(Event)
 class EventAdmin(CustomDBAdmin):
-    def transition_to_draft(modeladmin, request, queryset):
-        for i in queryset:
-            i.transition_draft()
-        messages.success(request, "Event(s) have been transitioned live")
-
-    def transition_to_live(modeladmin, request, queryset):
-        for i in queryset:
-            i.transition_live()
-        messages.success(request, "Event(s) have been transitioned live")
-
     list_display = [
         "__str__",
         "title",
         "user",
         "team",
-        "state",
         "start_date",
         "end_date",
         "sales_start",
@@ -105,8 +94,6 @@ class EventAdmin(CustomDBAdmin):
         "user",
         "team"
     ]
-    readonly_fields = ["state"]
-    actions = [transition_to_draft, transition_to_live]  # type: ignore
 
 
 @admin.register(Invitation)

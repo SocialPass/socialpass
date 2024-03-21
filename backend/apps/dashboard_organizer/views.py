@@ -85,29 +85,6 @@ class TeamContextMixin(UserPassesTestMixin, ContextMixin):
         return context
 
 
-class RequireLiveEventMixin:
-    """
-    Mixin to require successful 'LIVE' event
-    """
-
-    def dispatch(self, request, *args, **kwargs):
-        event = self.get_object()
-        if not isinstance(event, Event):
-            raise RuntimeError(
-                "get_object must return an Event when using RequireLiveEventMixin"
-            )
-        if event.state != Event.StateStatus.LIVE:
-            messages.add_message(
-                self.request,
-                messages.INFO,
-                "This event is not live yet. \
-                Please complete the creation process.",
-            )
-            return redirect("dashboard_organizer:event_update", **self.kwargs)
-
-        return super().dispatch(request, *args, **kwargs)
-
-
 class TeamCreateView(LoginRequiredMixin, CreateView):
     """
     Creates a new team.
@@ -474,81 +451,6 @@ class EventTicketsView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         ) + "?showprefs=true"
 
 
-class EventGoLiveView(TeamContextMixin, DetailView):
-    """
-    Show controls to make a team's event go live
-    """
-
-    model = Event
-    template_name = "dashboard_organizer/event_go_live.html"
-    object = None
-
-    def get_object(self):
-        if not self.object:
-            self.object = Event.objects.get(
-                pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
-            )
-        return self.object
-
-    def get(self, *args, **kwargs):
-        event = self.get_object()
-        has_fields, missing_fields = event.has_required_fields
-        if not has_fields:
-            messages.add_message(
-                self.request,
-                messages.WARNING,
-                "Your event is missing some information.",
-            )
-            return redirect(
-                "dashboard_organizer:event_update",
-                self.kwargs["team_slug"],
-                event.pk,
-            )
-        if event.tickettier_set.count() < 1:
-            messages.add_message(
-                self.request,
-                messages.WARNING,
-                "Your event must have at least one ticket tier before going live.",
-            )
-            return redirect(
-                "dashboard_organizer:ticket_tier_create",
-                self.kwargs["team_slug"],
-                event.pk,
-            )
-        else:
-            return super().get(*args, **kwargs)
-
-    def post(self, *args, **kwargs):
-        event = self.get_object()
-        is_success = False
-        if event.state != Event.StateStatus.LIVE:
-            try:
-                event.transition_live()
-                is_success = True
-            except Exception:
-                rollbar.report_exc_info()
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    "Something went wrong, please try again. Contact us if \
-                    this error persists for longer than a few minutes.",
-                )
-            else:
-                messages.add_message(
-                    self.request, messages.SUCCESS, "Event has been made live!"
-                )
-        return redirect(
-            reverse(
-                "dashboard_organizer:event_go_live",
-                kwargs={
-                    "team_slug": self.kwargs["team_slug"],
-                    "pk": event.pk,
-                },
-            )
-            + f"?is_success={str(is_success)}"
-        )
-
-
 class EventDeleteView(TeamContextMixin, DeleteView):
     """
     Delete a team's event
@@ -662,21 +564,6 @@ class EventCheckInGuestsView(TeamContextMixin, DetailView):
                 pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
             )
         return self.object
-
-
-class TicketTierCreateView(TeamContextMixin, TemplateView):
-    """
-    Select the type of ticket tier to create.
-    """
-
-    template_name = "dashboard_organizer/ticket_tier_create.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
-        )
-        return context
 
 
 class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):

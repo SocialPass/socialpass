@@ -80,11 +80,6 @@ urlpatterns = [
         name="event_tickets",
     ),
     path(
-        "<slug:team_slug>/events/<int:pk>/go-live/",
-        views.EventGoLiveView.as_view(),
-        name="event_go_live",
-    ),
-    path(
         "<slug:team_slug>/events/<int:pk>/delete/",
         views.EventDeleteView.as_view(),
         name="event_delete",
@@ -103,11 +98,6 @@ urlpatterns = [
         "<slug:team_slug>/events/<int:pk>/check-in-guests/",
         views.EventCheckInGuestsView.as_view(),
         name="event_check_in_guests",
-    ),
-    path(
-        "<slug:team_slug>/events/<int:event_pk>/tickets/create/",
-        views.TicketTierCreateView.as_view(),
-        name="ticket_tier_create",
     ),
     path(
         "<slug:team_slug>/events/<int:event_pk>/tickets/create/nft/",

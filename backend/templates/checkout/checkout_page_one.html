@@ -9,10 +9,8 @@
 		{% trans "You are viewing this page as an organizer." %}
 		<div class="d-flex ms-md-auto mt-1 mt-md-0">
 			<a href="{% url 'dashboard_organizer:event_update' event.team.slug event.pk %}">{% trans "Edit Event" %}</a>
-			{% if event.state == event.StateStatus.LIVE %}
 			<span class="vr mx-2"></span>
 			<a href="?view_as_attendee=True">{% trans "View as Attendee" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
-			{% endif %}
 		</div>
 	</div>
 {% endif %}
@@ -326,7 +324,7 @@
 		<div class="col-lg-5">
 			<div class="card border-0 rounded-4 shadow-sm overflow-hidden">
 				<div class="card-body">
-					{% if sales_status != "UPCOMING" and sales_status != "OVER" and event.state == "LIVE" %}
+					{% if sales_status != "UPCOMING" and sales_status != "OVER" %}
 						<form class="position-relative" method="POST">
 							{% csrf_token %}
 							{{ form.ticket_tier_data }}
@@ -341,7 +339,7 @@
 									{% include "forms/input.html" %}
 								{% endwith %}
 							</div>
-							<button type="submit" class="btn btn-info btn-lg d-block w-100" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
+							<button type="submit" class="btn btn-info btn-lg d-block w-100" onclick="submitForm(event)">
 								{% if not event.waiting_queue_enabled %}
 									{% trans "Get Tickets" %}
 								{% else %}

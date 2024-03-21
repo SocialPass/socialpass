@@ -374,7 +374,6 @@ class Event(DBModel):
     geo_longitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
 
     # Publish info
-    is_featured_top = models.BooleanField(default=False)
     slug = AutoSlugField(populate_from="title", null=True)
     sales_start = models.DateTimeField(
         help_text="When your event sales will start (optional).",

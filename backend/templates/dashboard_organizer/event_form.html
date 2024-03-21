@@ -66,8 +66,12 @@
             {% endwith %}
         </div>
         <div class="sp-checkbox-container flex-shrink-0">
-            {{ form.hide_address | as_crispy_field }}
+            <button type="button" id="reset_geo_form_btn" class="btn btn-danger invisible" onclick="resetGeoForm()">x</button>
         </div>
+    </div>
+    <div id="geo_map"></div>
+    <div class="sp-checkbox-container flex-shrink-0 mt-2">
+        {{ form.hide_address | as_crispy_field }}
     </div>
     {{ form.geo_type.as_hidden }}
     {{ form.geo_place_id.as_hidden }}

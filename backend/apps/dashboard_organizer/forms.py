@@ -166,7 +166,7 @@ class EventForm(forms.ModelForm):
             "end_date": _("Event End"),
             "timezone": _("Timezone"),
             "geo_address": _("Address"),
-            "hide_address": _("Hide Address"),
+            "hide_address": _("Only allow attendees to see location"),
         }
 
     def __init__(self, *args, **kwargs):

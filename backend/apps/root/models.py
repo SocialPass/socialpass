@@ -1056,7 +1056,7 @@ class CheckoutSession(DBModel):
         max_length=50,
         choices=WaitlistStatus.choices,
         default="",
-        blank=False,
+        blank=True,
     )
 
     # Session Type Field

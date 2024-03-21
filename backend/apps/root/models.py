@@ -124,10 +124,10 @@ class Team(DBModel):
     """
 
     # keys
-    members = models.ManyToManyField("User", through="Membership", blank=False)
+    members = models.ManyToManyField("User", through="Membership")
 
     # basic info
-    name = models.CharField(max_length=255, blank=False, unique=True)
+    name = models.CharField(max_length=255,  unique=True)
     slug = AutoSlugField(populate_from="name", null=True, unique=True)
     image = models.ImageField(
         help_text="A brand image for your team. Please make sure the image is "
@@ -301,8 +301,8 @@ class Event(DBModel):
         LIVE = "LIVE", "Live"
 
     # Keys
-    user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=False, null=True)
-    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=False, null=False)
+    user = models.ForeignKey("User", on_delete=models.SET_NULL,  null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE)
     google_class_id = models.CharField(max_length=255, blank=True, default="")
 
     # state
@@ -310,19 +310,19 @@ class Event(DBModel):
         choices=StateStatus.choices,
         default=StateStatus.DRAFT,
         protected=True,
-        blank=False,
-        null=False,
+
+
     )
 
     # Basic Info
     title = models.CharField(
         max_length=255,
         help_text="Brief name for your event. Must be unique!",
-        blank=False,
+
     )
     description = models.TextField(
         help_text="A short description of your event.",
-        blank=False,
+
         default="",
     )
     cover_image = models.ImageField(
@@ -345,7 +345,7 @@ class Event(DBModel):
     fiat_currency = models.CharField(
         max_length=3,
         help_text="The fiat currency to use for all tickets of this event.",
-        blank=False,
+
         default="USD",
         choices=CURRENCY_CHOICES,
     )
@@ -409,7 +409,7 @@ class Event(DBModel):
     )
 
     # Scanner Info
-    scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
+    scanner_id = models.UUIDField(default=uuid.uuid4)
 
     class Meta:
         unique_together = [["team", "title"], ["team", "slug"]]
@@ -708,26 +708,26 @@ class Ticket(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     checkout_item = models.ForeignKey(
         "CheckoutItem",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     checkout_session = models.ForeignKey(
         "CheckoutSession",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     google_class_id = models.CharField(max_length=255, blank=True, default="")
 
@@ -738,7 +738,7 @@ class Ticket(DBModel):
         output_field=models.IntegerField(),
         db_persist=True,
     )
-    embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
+    embed_code = models.UUIDField(default=uuid.uuid4)
     redeemed_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -813,14 +813,14 @@ class TicketTier(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
 
     # Ticket information fields
     name = models.CharField(
         max_length=255,
-        blank=False,
+
         help_text="A short descriptive label for your ticket tier.",
     )
     capacity = models.IntegerField(
@@ -828,21 +828,21 @@ class TicketTier(DBModel):
         validators=[MinValueValidator(1)],
         help_text="Maximum amount of attendees for your event.",
         blank=True,
-        null=False,
+
     )
     max_per_person = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
         help_text="Maximum amount of tickets per attendee.",
-        blank=False,
-        null=False,
+
+
     )
     allowed_guests = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         help_text="Maximum number of guests allowed for one ticket.",
-        blank=False,
-        null=False,
+
+
     )
     guest_supply = models.IntegerField(
         blank=True,
@@ -854,14 +854,14 @@ class TicketTier(DBModel):
     # Display fields
     hidden_from_public = models.BooleanField(
         default=False,
-        blank=False,
-        null=False,
+
+
         help_text="Whether or not this tier is hidden from the public",
     )
     hidden_availability = models.BooleanField(
         default=False,
-        blank=False,
-        null=False,
+
+
         help_text="Whether or not to hide the number of available tickets from the public.",
     )
     additional_information = models.TextField(
@@ -909,24 +909,24 @@ class TicketTier(DBModel):
         max_length=50,
         choices=BlockchainChoices.choices,
         default=BlockchainChoices.ETH,
-        blank=False,
+
     )
     network = models.IntegerField(
         choices=NetworkChoices.choices,
         default=NetworkChoices.ETH,
-        blank=False,
+
         help_text="Which blockchain is your NFT collection on?",
     )
     asset_type = models.CharField(
         max_length=50,
         choices=AssetChoices.choices,
         default=AssetChoices.NFT,
-        blank=False,
+
     )
     balance_required = models.IntegerField(
         default=1,
-        blank=False,
-        null=False,
+
+
         help_text="The number of NFTs required to claim your ticket tier.",
     )
     token_address = models.CharField(
@@ -952,8 +952,8 @@ class TicketTier(DBModel):
         validators=[MinValueValidator(0)],
         help_text="Price of one ticket for this tier.",
         default=0,
-        blank=False,
-        null=False,
+
+
     )
     price_per_ticket_cents = models.GeneratedField(
         expression=Round(F("price_per_ticket") * 100),
@@ -1016,8 +1016,8 @@ class CheckoutSession(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     rsvp_batch = models.ForeignKey(
         "RSVPBatch",
@@ -1027,8 +1027,8 @@ class CheckoutSession(DBModel):
     )
 
     # Checkout session information fields
-    name = models.CharField(max_length=255, blank=False)
-    email = models.EmailField(max_length=255, blank=False, null=False)
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
     passcode = models.CharField(max_length=6, default=get_random_passcode)
 
     # Session Status field
@@ -1041,7 +1041,7 @@ class CheckoutSession(DBModel):
         max_length=50,
         choices=OrderStatus.choices,
         default=OrderStatus.VALID,
-        blank=False,
+
     )
 
     # Waitlist Status field
@@ -1065,7 +1065,7 @@ class CheckoutSession(DBModel):
         max_length=50,
         choices=SessionType.choices,
         default=SessionType.FIAT,
-        blank=False,
+
     )
 
     # Session Type Fields - Fiat
@@ -1442,14 +1442,14 @@ class CheckoutItem(DBModel):
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     checkout_session = models.ForeignKey(
         "CheckoutSession",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
 
     # basic info
@@ -1457,7 +1457,7 @@ class CheckoutItem(DBModel):
         default=0,
         validators=[MinValueValidator(0)],
         blank=True,
-        null=False,
+
     )
     extra_party = models.IntegerField(
         default=0,
@@ -1498,8 +1498,8 @@ class RSVPBatch(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     success_list = models.TextField(blank=True)
     failure_list = models.TextField(blank=True)
@@ -1516,17 +1516,17 @@ class MessageBatch(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
-    subject = models.CharField(max_length=255, blank=False)
-    message = models.TextField(blank=False)
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
     total_recipients = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)]
@@ -1561,13 +1561,8 @@ class ManualAttendee(DBModel):
     Represents a person on the VIP list for an event.
     """
 
-    event = models.ForeignKey(
-        "Event",
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-    name_or_email = models.CharField(max_length=255, blank=False)
+    event = models.ForeignKey("Event", on_delete=models.CASCADE)
+    name_or_email = models.CharField(max_length=255)
     redeemed_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self) -> str:

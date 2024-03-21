@@ -430,13 +430,6 @@ class Event(DBModel):
         return super().clean(*args, **kwargs)
 
     @cached_property
-    def has_ended(self):
-        if self.end_date:
-            return date.today() > self.end_date.date()
-        else:
-            return False
-
-    @cached_property
     def localized_address_display(self):
         """
         localized_address_display will be

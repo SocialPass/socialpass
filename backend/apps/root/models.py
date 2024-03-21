@@ -35,11 +35,11 @@ from apps.root.exceptions import (
     EventStateTranstionError,
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
-    TxAssetOwnershipProcessingError,
-    TxFreeProcessingError,
+    AssetOwnershipCheckoutError,
+    FreeCheckoutError,
 )
 from apps.root.ticketing import AppleTicket, GoogleTicket
-from apps.root.utils import get_expiration_datetime, get_random_passcode
+from apps.root.utils import get_random_passcode
 
 stripe.api_key = settings.STRIPE_API_KEY
 
@@ -680,21 +680,20 @@ class Event(DBModel):
 
     @cached_property
     def ticket_tier_counts(self):
-        # Get & check for existing tiers
         tiers = TicketTier.objects.filter(event_id=self.id, hidden_from_public=False).values('event_id')
+        tier_counts = {
+            "fiat_count": 0,
+            "free_count": 0,
+            "asset_ownership_count": 0,
+            "total_count": 0
+        }
         if not tiers:
-            return {
-                "fiat_count": 0,
-                "blockchain_count": 0,
-                "asset_ownership_count": 0,
-                "free_count": 0,
-                "total_count": 0
-            }
+            return tier_counts
 
         # Return tiers with annotated counts
         tier_counts["fiat_count"] = tiers.filter(category=TicketTier.Category.FIAT).count()
-        tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
         tier_counts["free_count"] = tiers.filter(category=TicketTier.Category.FREE).count()
+        tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
         tier_counts["total_count"] = sum(tier_counts.values())
         return tier_counts
 
@@ -878,9 +877,8 @@ class TicketTier(DBModel):
     # Category field
     class Category(models.TextChoices):
         FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
         FREE = "FREE", "Free"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
 
     category = models.CharField(
         max_length=50,
@@ -1018,50 +1016,12 @@ class CheckoutSession(DBModel):
     Represents a time-limited checkout session (aka 'cart') for an event organizer
     This model holds the relations to cart items for checkout purposes
     """
-
-    class OrderStatus(models.TextChoices):
-        VALID = "VALID", "Valid"  # Initial State, TX is valid
-        PROCESSING = "PROCESSING", "Processing"  # TX has been created, processing...
-        FAILED = "FAILED", "Failed"  # TX has failed
-        COMPLETED = "COMPLETED", "Completed"  # TX has been completed, fulfill order
-        FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
-
-    class TransactionType(models.TextChoices):
-        FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
-        FREE = "FREE", "Free"
-
-    # keys
+    # Key fields
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-    )
-    tx_fiat = models.OneToOneField(
-        "TxFiat",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tx_blockchain = models.OneToOneField(
-        "TxBlockchain",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tx_asset_ownership = models.OneToOneField(
-        "TxAssetOwnership",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    tx_free = models.OneToOneField(
-        "TxFree",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
     )
     rsvp_batch = models.ForeignKey(
         "RSVPBatch",
@@ -1070,35 +1030,68 @@ class CheckoutSession(DBModel):
         null=True,
     )
 
-    # basic info
-    tx_type = models.CharField(
-        max_length=50,
-        choices=TransactionType.choices,
-        default=TransactionType.FIAT,
-        blank=False,
-    )
-    tx_status = models.CharField(
+    # Checkout session information fields
+    name = models.CharField(max_length=255, blank=False)
+    email = models.EmailField(max_length=255, blank=False, null=False)
+    passcode = models.CharField(max_length=6, default=get_random_passcode)
+
+    # Session Status field
+    class OrderStatus(models.TextChoices):
+        VALID = "VALID", "Valid"  # Initial State. Session is valid.
+        PROCESSING = "PROCESSING", "Processing"  # Session has entered processing
+        FAILED = "FAILED", "Failed"  # TX has failed
+        FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
+    order_status = models.CharField(
         max_length=50,
         choices=OrderStatus.choices,
         default=OrderStatus.VALID,
         blank=False,
     )
-    name = models.CharField(max_length=255, blank=False)
-    email = models.EmailField(max_length=255, blank=False, null=False)
-    cost = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        blank=True,
-        null=False,
-    )
-    passcode = models.CharField(max_length=6, default=get_random_passcode)
-    passcode_expiration = models.DateTimeField(default=get_expiration_datetime)
-    is_waiting_list = models.BooleanField(default=False)
 
-    # When set, this overrides  validation check
-    # Used when customers need to complete waiting queue flow for FIAT tickets
-    # We may need this in other places, so we use a generic name
-    skip_validation = models.BooleanField(default=False)
+    # Waitlist Status field
+    class WaitlistStatus(models.TextChoices):
+        WAITLIST_JOINED = "WAITLIST_JOINED", "Waitlist joined"
+        WAITLIST_APPROVED = "WAITLIST_APPROVED", "Waitlist approved"
+        WAITLIST_REJECTED = "WAITLIST_REJECTED", "Waitlist rejected"
+    waitlist_status = models.CharField(
+        max_length=50,
+        choices=WaitlistStatus.choices,
+        default="",
+        blank=True,
+    )
+
+    # Session Type Field
+    class SessionType(models.TextChoices):
+        FIAT = "FIAT", "Fiat"
+        FREE = "FREE", "Free"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+    session_type = models.CharField(
+        max_length=50,
+        choices=SessionType.choices,
+        default=SessionType.FIAT,
+        blank=False,
+    )
+
+    # Session Type Fields - Fiat
+    stripe_session_id = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Stripe checkout session ID.",
+    )
+    stripe_session_url = models.TextField(
+        blank=True,
+        default="",
+        help_text="Stripe checkout session URL.",
+    )
+    stripe_line_items = models.JSONField(blank=True, null=True)
+
+    # Session Type Fields - Asset Ownership
+    wallet_address = models.CharField(max_length=42, blank=True, default="")
+    signed_message = models.TextField(blank=True, default="")
+    is_wallet_address_verified = models.BooleanField(blank=True, null=True)
+    delegated_wallet = models.BooleanField(blank=True, null=True)
+    redeemed_nfts = models.JSONField(blank=True, default=list)
 
     def __str__(self):
         return f"CheckoutSession: {self.email}"
@@ -1121,7 +1114,7 @@ class CheckoutSession(DBModel):
 
     @property
     def total_price(self):
-        if self.tx_fiat:
+        if self.session_type == CheckoutSession.SessionType.FIAT:
             total_price = 0
             checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(checkout_session=self)
             for item in checkout_items:
@@ -1188,6 +1181,16 @@ class CheckoutSession(DBModel):
         application_fee_amount = round(application_fee_amount)
         return application_fee_amount
 
+    @property
+    def unsigned_message(self):
+        return (
+            "Greetings from SocialPass."
+            "\nSign this message to prove ownership"
+            "\n\nThis IS NOT a trade or transaction"
+            f"\n\nTimestamp: {self.created.strftime('%s')}"
+            f"\nOne-Time Code: {str(self.public_id)}"
+        )
+
     def send_confirmation_email(self, custom_message=None):
         """
         send the confirmation link to the attendee's email
@@ -1208,14 +1211,6 @@ class CheckoutSession(DBModel):
             html_message=msg_html,
         )
 
-    def refresh_passcode(self):
-        """
-        refresh passcode and its expiration
-        """
-        self.passcode = get_random_passcode()
-        self.passcode_expiration = get_expiration_datetime()
-        self.save()
-
     def create_tickets(self):
         """
         Create Tickets for all related checkout_item objects and bulk insert into the database.
@@ -1232,86 +1227,213 @@ class CheckoutSession(DBModel):
             tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
         Ticket.objects.bulk_create(tickets_to_create)
 
-    def create_transaction(self):
+    def process_session(self):
         """
-        Responsible for creating the correct transaction based on tx_status
+        Responsible for processing the correct transaction based on session_type
         """
-        match self.tx_type:
-            case CheckoutSession.TransactionType.FREE:
-                tx = TxFree.objects.create()
-                self.tx_free = tx
-                self.tx_status = CheckoutSession.OrderStatus.VALID
-                self.save()
-            case CheckoutSession.TransactionType.FIAT:
-                tx = TxFiat.objects.create()
-                self.tx_fiat = tx
-                self.tx_status = CheckoutSession.OrderStatus.VALID
-                self.save()
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                tx = TxBlockchain.objects.create()
-                self.tx_blockchain = tx
-                self.tx_status = CheckoutSession.OrderStatus.VALID
-                self.save()
-            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                tx = TxAssetOwnership.objects.create()
-                self.tx_asset_ownership = tx
-                self.tx_status = CheckoutSession.OrderStatus.VALID
-                self.save()
+        match self.session_type:
+            case CheckoutSession.SessionType.FREE:
+                self.process_free()
+            case CheckoutSession.SessionType.FIAT:
+                self.process_fiat()
+            case CheckoutSession.SessionType.ASSET_OWNERSHIP:
+                self.process_asset_ownership()
             case _:
                 pass
 
-    def finalize_transaction(self, form_data):
+    def fulfill_session(self):
         """
-        Responsible for finalizing transaction using the form_data
-        """
-        match self.tx_type:
-            case CheckoutSession.TransactionType.FREE:
-                pass
-            case CheckoutSession.TransactionType.FIAT:
-                pass
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                pass
-            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                self.tx_asset_ownership.wallet_address = form_data.cleaned_data["wallet_address"]
-                self.tx_asset_ownership.signed_message = form_data.cleaned_data["signed_message"]
-                self.tx_asset_ownership.delegated_wallet = form_data.cleaned_data["delegated_wallet"]
-                self.tx_asset_ownership.save()
-            case _:
-                pass
-
-    def process_transaction(self):
-        """
-        Responsible for processing the correct transaction based on tx_type
-        """
-        match self.tx_type:
-            case CheckoutSession.TransactionType.FREE:
-                self.tx_free.process()
-            case CheckoutSession.TransactionType.FIAT:
-                self.tx_fiat.process()
-            case CheckoutSession.TransactionType.BLOCKCHAIN:
-                self.tx_blockchain.process()
-            case CheckoutSession.TransactionType.ASSET_OWNERSHIP:
-                self.tx_asset_ownership.process()
-            case _:
-                pass
-
-    def fulfill(self):
-        """
-        Fullfil an order related to a checkout session
-        """
-        # Mark as COMPLETED, awaiting final fulfillment
-        self.tx_status = CheckoutSession.OrderStatus.COMPLETED
-        self.save()
-
         # Create tickets, send confirmation email, and set as FULFILLED
         # Also wrap in try/catch for better error reporting
+        """
         try:
             self.create_tickets()
             self.send_confirmation_email()
-            self.tx_status = CheckoutSession.OrderStatus.FULFILLED
+            self.order_status = CheckoutSession.OrderStatus.FULFILLED
             self.save()
         except Exception:
             rollbar.report_exc_info()
+
+    def process_fiat(self):
+        """
+        Go through the states.
+        """
+        self.order_status = CheckoutSession.OrderStatus.PROCESSING
+        self.save()
+
+
+    def process_free(self):
+        """
+        Go through the states, only stop to check for issued emails.
+        """
+        self.order_status = CheckoutSession.OrderStatus.PROCESSING
+        self.save()
+
+        # Check for duplicate emails
+        duplicate_emails = CheckoutSession.objects.filter(
+            event=self.event,
+            email=self.email,
+            session_type=CheckoutSession.SessionType.FREE
+        ).exclude(id=self.id)
+        if duplicate_emails:
+            self.order_status = CheckoutSession.OrderStatus.FAILED
+            self.save()
+            raise FreeCheckoutError(f"The email ({self.email}) has already been used for this ticket tier.")
+
+
+    def _process_wallet_address(self):
+        """
+        Recover a wallet address from the signed_message vs unsigned_message
+        - On success: Mark is_wallet_address_verified as True
+        - On error: Raise AssetOwnershipCheckoutError, mark session.order_status as FAILED
+        Once this wallet address has been verified, set is_wallet_address_verified
+        """
+        # Recover wallet address
+        # Handle encoding / decoding exception (usually forgery attempt)
+        try:
+            _msg = encode_defunct(text=self.unsigned_message)
+            recovered_address = Account.recover_message(
+                _msg, signature=self.signed_message
+            )
+        except Exception as e:
+            rollbar.report_message("AssetOwnershipCheckoutError ERROR: " + str(e))
+            self.order_status = CheckoutSession.OrderStatus.FAILED
+            raise AssetOwnershipCheckoutError("Error recovering wallet address")
+
+        # Successful recovery attempt
+        # Now check if addresses match
+        if recovered_address != self.wallet_address:
+            self.order_status = CheckoutSession.OrderStatus.FAILED
+            raise AssetOwnershipCheckoutError(
+                "Address was recovered, but did not match")
+
+        # Success, mark as verified
+        self.is_wallet_address_verified = True
+        self.save()
+
+    def _process_delegate_ownership(self, wallet_address=None, tier=None):
+        # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
+        import requests
+        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
+        response = requests.get(url)
+        incomingDelegations = response.json()
+        delegated_wallets = []
+
+        # 2. Filter out these delegations to only include the NFT Contact you are looking to claim tickets for.
+        filteredDelegations = [delegation for delegation in incomingDelegations if
+        delegation['type'] == "ALL" or
+        (delegation['type'] == "CONTRACT" and delegation['contract'] == tier.token_address) or
+        (delegation['type'] == "ERC721" and delegation['contract'] == tier.token_address)]
+
+        # Get all the NFT's of each unique from address in the above list and return
+        delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
+        if not delegated_wallets:
+            raise AssetOwnershipCheckoutError("No delegated wallets found.")
+
+        # OK
+        return list(delegated_wallets)
+
+    def _process_asset_ownership(self):
+        filtered_by_expected = []
+        for item in self.checkoutitem_set.all():
+            ticket_tier = item.ticket_tier
+            # Set wallet addresses
+            # Either single address, or list of delegated wallets
+            if self.delegated_wallet:
+                wallets = self._process_delegate_ownership(
+                    wallet_address=self.wallet_address,
+                    tier=ticket_tier
+                 )
+            else:
+                wallets = [self.wallet_address]
+
+            for wallet in wallets:
+                # Format & make API lookup
+                params = {
+                    "chain": hex(ticket_tier.network),
+                    "format": "decimal",
+                    "media_items": True,
+                    "address": wallet,
+                    "token_addresses": [ticket_tier.token_address],
+                }
+                api_response = evm_api.nft.get_wallet_nfts(
+                    api_key=settings.MORALIS_API_KEY,
+                    params=params,
+                )
+
+                # Check if wallet has required balance
+                expected = ticket_tier.balance_required * item.quantity
+                if api_response.get("result"):
+                    actual = len(api_response["result"])
+                else:
+                    actual = 0
+                if actual < expected:
+                    if wallet == wallets[-1]:
+                        raise AssetOwnershipCheckoutError(
+                            (
+                            "Quantity requested exceeds the queried balance. "
+                            f"Expected Balance: {expected}. "
+                            f"Actual Balance: {actual}."
+                            )
+                        )
+                    else:
+                        continue
+
+                # Check if wallet has un-redeemed NFTs
+                existing_ids = set(
+                    int(i.get("token_id"))
+                    for nfts in CheckoutItem.objects.filter(
+                        ticket_tier=ticket_tier,
+                        checkout_session__event=self.event,
+                        checkout_session__redeemed_nfts__contains=[{
+                            "token_address": ticket_tier.token_address.lower()
+                        }]
+                    ).values_list("checkout_session__redeemed_nfts", flat=True)
+                    for i in nfts
+                )
+                filtered_by_issued_ids = [
+                    nft
+                    for nft in api_response["result"]
+                    if int(nft["token_id"]) not in existing_ids
+                ]
+                actual = len(filtered_by_issued_ids)
+                if actual < expected:
+                    if wallet == wallets[-1]:
+                        raise AssetOwnershipCheckoutError(
+                            (
+                                f"Could not find enough NFT's. "
+                                f"Expected unique NFT's: {expected}. "
+                                f"Actual unique NFT's: {actual}."
+                            )
+                        )
+                    else:
+                        continue
+
+                # OK
+                filtered_by_expected += filtered_by_issued_ids[:expected]
+                break
+
+        # 4. OK - Set redeemed NFTs & Save
+        self.redeemed_nfts = filtered_by_expected
+        self.save()
+
+    def process_asset_ownership(self):
+        # Set session as processing
+        self.order_status = CheckoutSession.OrderStatus.PROCESSING
+        self.save()
+
+        # try / catch on process methods
+        try:
+            self._process_wallet_address()
+            self._process_asset_ownership()
+        except AssetOwnershipCheckoutError as e:
+            self.order_status = CheckoutSession.OrderStatus.FAILED
+            self.save()
+            raise e
+        except Exception as e:
+            self.order_status = CheckoutSession.OrderStatus.FAILED
+            self.save()
+            raise e
 
 
 class CheckoutItem(DBModel):
@@ -1370,272 +1492,6 @@ class CheckoutItem(DBModel):
             extra_party = self.ticket_tier.allowed_guests
 
         return extra_party + 1
-
-
-class TxFiat(DBModel):
-    """
-    Represents a checkout transaction via fiat payment
-    """
-
-    stripe_session_id = models.CharField(
-        max_length=255,
-        blank=True,
-        default="",
-        help_text="Stripe checkout session ID.",
-    )
-    stripe_session_url = models.TextField(
-        blank=True,
-        default="",
-        help_text="Stripe checkout session URL.",
-    )
-    stripe_line_items = models.JSONField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"TxFiat: {self.public_id}"
-
-    def process(self):
-        """
-        Go through the states.
-        """
-        checkout_session = self.checkoutsession
-        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
-        checkout_session.save()
-
-        # OK
-        checkout_session.fulfill()
-
-
-class TxBlockchain(DBModel):
-    """
-    Represents a checkout transaction via blockchain payment
-    """
-
-    def __str__(self) -> str:
-        return f"TxBlockchain: {self.public_id}"
-
-    def process(self, *args, **kwargs):
-        pass
-
-
-class TxAssetOwnership(DBModel):
-    """
-    Represents a checkout transaction via asset ownership
-    """
-
-    wallet_address = models.CharField(max_length=42, blank=False, default="")
-    signed_message = models.TextField(blank=False, default="")
-    is_wallet_address_verified = models.BooleanField(
-        default=False, blank=False, null=False
-    )
-    delegated_wallet = models.BooleanField(
-        default=False, blank=False, null=False
-    )
-    redeemed_nfts = models.JSONField(default=list)
-
-    def __str__(self) -> str:
-        return f"TxAssetOwnership: {self.public_id}"
-
-    @property
-    def unsigned_message(self):
-        return (
-            "Greetings from SocialPass."
-            "\nSign this message to prove ownership"
-            "\n\nThis IS NOT a trade or transaction"
-            f"\n\nTimestamp: {self.created.strftime('%s')}"
-            f"\nOne-Time Code: {str(self.public_id)}"
-        )
-
-    def _process_wallet_address(self, checkout_session=None):
-        """
-        Recover a wallet address from the signed_message vs unsigned_message
-        - On success: Mark is_wallet_address_verified as True
-        - On error: Raise TxAssetOwnershipProcessingError, mark session.tx_status as FAILED
-        Once this wallet address has been verified, set is_wallet_address_verified
-        """
-        # Recover wallet address
-        # Handle encoding / decoding exception (usually forgery attempt)
-        try:
-            _msg = encode_defunct(text=self.unsigned_message)
-            recovered_address = Account.recover_message(
-                _msg, signature=self.signed_message
-            )
-        except Exception as e:
-            rollbar.report_message("TxAssetOwnershipProcessingError ERROR: " + str(e))
-            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            raise TxAssetOwnershipProcessingError("Error recovering wallet address")
-
-        # Successful recovery attempt
-        # Now check if addresses match
-        if recovered_address != self.wallet_address:
-            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            raise TxAssetOwnershipProcessingError(
-                "Address was recovered, but did not match")
-
-        # Success, mark as verified
-        self.is_wallet_address_verified = True
-        self.save()
-
-    def _process_delegate_ownership(self, wallet_address=None, tier=None):
-        # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
-        import requests
-        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
-        response = requests.get(url)
-        incomingDelegations = response.json()
-        delegated_wallets = []
-
-        # 2. Filter out these delegations to only include the NFT Contact you are looking to claim tickets for.
-        filteredDelegations = [delegation for delegation in incomingDelegations if
-        delegation['type'] == "ALL" or
-        (delegation['type'] == "CONTRACT" and delegation['contract'] == tier.token_address) or
-        (delegation['type'] == "ERC721" and delegation['contract'] == tier.token_address)]
-
-        # Get all the NFT's of each unique from address in the above list and return
-        delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
-        if not delegated_wallets:
-            raise TxAssetOwnershipProcessingError("No delegated wallets found.")
-
-        # OK
-        return list(delegated_wallets)
-
-    def _process_asset_ownership(self, checkout_session=None):
-        filtered_by_expected = []
-        for item in checkout_session.checkoutitem_set.all():
-            ticket_tier = item.ticket_tier
-            # Set wallet addresses
-            # Either single address, or list of delegated wallets
-            if self.delegated_wallet:
-                wallets = self._process_delegate_ownership(
-                    wallet_address=self.wallet_address,
-                    tier=ticket_tier
-                 )
-            else:
-                wallets = [self.wallet_address]
-
-            for wallet in wallets:
-                # Format & make API lookup
-                params = {
-                    "chain": hex(ticket_tier.network),
-                    "format": "decimal",
-                    "media_items": True,
-                    "address": wallet,
-                    "token_addresses": [ticket_tier.token_address],
-                }
-                api_response = evm_api.nft.get_wallet_nfts(
-                    api_key=settings.MORALIS_API_KEY,
-                    params=params,
-                )
-
-                # Check if wallet has required balance
-                expected = ticket_tier.balance_required * item.quantity
-                if api_response.get("result"):
-                    actual = len(api_response["result"])
-                else:
-                    actual = 0
-                if actual < expected:
-                    if wallet == wallets[-1]:
-                        raise TxAssetOwnershipProcessingError(
-                            (
-                            "Quantity requested exceeds the queried balance. "
-                            f"Expected Balance: {expected}. "
-                            f"Actual Balance: {actual}."
-                            )
-                        )
-                    else:
-                        continue
-
-                # Check if wallet has un-redeemed NFTs
-                existing_ids = set(
-                    int(i.get("token_id"))
-                    for nfts in CheckoutItem.objects.filter(
-                        checkout_session__event=checkout_session.event,
-                        ticket_tier=ticket_tier,
-                        checkout_session__tx_asset_ownership__redeemed_nfts__contains=[{
-                            "token_address": ticket_tier.token_address.lower()
-                        }]
-                    ).values_list("checkout_session__tx_asset_ownership__redeemed_nfts", flat=True)
-                    for i in nfts
-                )
-                filtered_by_issued_ids = [
-                    nft
-                    for nft in api_response["result"]
-                    if int(nft["token_id"]) not in existing_ids
-                ]
-                actual = len(filtered_by_issued_ids)
-                if actual < expected:
-                    if wallet == wallets[-1]:
-                        raise TxAssetOwnershipProcessingError(
-                            (
-                                f"Could not find enough NFT's. "
-                                f"Expected unique NFT's: {expected}. "
-                                f"Actual unique NFT's: {actual}."
-                            )
-                        )
-                    else:
-                        continue
-
-                # OK
-                filtered_by_expected += filtered_by_issued_ids[:expected]
-                break
-
-        # 4. OK - Set redeemed NFTs & Save
-        self.redeemed_nfts = filtered_by_expected
-        self.save()
-
-    def process(self):
-        # Set checkout_session as processing
-        checkout_session = self.checkoutsession
-        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
-        checkout_session.save()
-
-        # try / catch on process methods
-        try:
-            self._process_wallet_address(checkout_session=checkout_session)
-            self._process_asset_ownership(checkout_session=checkout_session)
-        except TxAssetOwnershipProcessingError as e:
-            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            checkout_session.save()
-            raise e
-        except Exception as e:
-            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            checkout_session.save()
-            raise e
-
-        # OK - Fulfill checkout session
-        checkout_session.fulfill()
-
-
-class TxFree(DBModel):
-    """
-    Represents a free checkout transaction
-    """
-
-    issued_email = models.EmailField(blank=True)
-
-    def __str__(self) -> str:
-        return f"TxFree: {self.public_id}"
-
-    def process(self):
-        """
-        Go through the states, only stop to check for issued emails.
-        """
-        checkout_session = self.checkoutsession
-        checkout_session.tx_status = CheckoutSession.OrderStatus.PROCESSING
-        checkout_session.save()
-
-        # Check for duplicate emails
-        duplicate_emails = TxFree.objects.filter(
-            checkoutsession__event=checkout_session.event,
-            issued_email=checkout_session.email,
-        )
-        if duplicate_emails:
-            checkout_session.tx_status = CheckoutSession.OrderStatus.FAILED
-            checkout_session.save()
-            raise TxFreeProcessingError(f"The email ({checkout_session.email}) has already been used for this ticket tier.")
-
-        # OK - Save TX and fulfill session
-        self.issued_email = checkout_session.email
-        self.save()
-        checkout_session.fulfill()
 
 
 class RSVPBatch(DBModel):

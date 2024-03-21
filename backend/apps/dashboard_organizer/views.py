@@ -446,7 +446,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
 class EventTicketsView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     """
-    Show the tickets (and CTAs) for an event. Also show ticketing preferences 
+    Show the tickets (and CTAs) for an event. Also show ticketing preferences
     form.
     """
 
@@ -594,17 +594,16 @@ class EventStatsView(TeamContextMixin, DetailView):
         tickets = Ticket.objects.select_related(
             "ticket_tier",
             "checkout_session",
-            "checkout_session__tx_asset_ownership",
         ).filter(event=event)
         results = []
         for ticket in tickets:
-            if ticket.checkout_session.tx_asset_ownership:
+            if ticket.checkout_session.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
                 wallet_address = (
-                    ticket.checkout_session.tx_asset_ownership.wallet_address
+                    ticket.checkout_session.wallet_address
                 )
                 redeemed_nfts = [
                     nft['token_id'] for nft
-                    in ticket.checkout_session.tx_asset_ownership.redeemed_nfts
+                    in ticket.checkout_session.redeemed_nfts
                 ]
             else:
                 wallet_address = None
@@ -861,7 +860,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
         tickets_count = self.object.ticket_set.count()
         has_waitlist_session = False
         for checkout_item in self.object.checkoutitem_set.all():
-            if checkout_item.checkout_session.is_waiting_list:
+            if checkout_item.checkout_session.waitlist_status:
                 has_waitlist_session = True
                 break
         if tickets_count > 0 or has_waitlist_session:
@@ -1371,7 +1370,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         event=context["event"],
                         rsvp_batch=rsvp_batch,
                         email=email.strip(),
-                        tx_type=ticket_tier.category,
+                        session_type=ticket_tier.category,
                     )
                     checkout_item = CheckoutItem.objects.create(
                         ticket_tier=ticket_tier,
@@ -1391,7 +1390,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         # Querying again, we ensure we get the correct public IDs for the emails
         checkout_sessions = CheckoutSession.objects.filter(rsvp_batch=rsvp_batch)
         for checkout_session in checkout_sessions:
-            checkout_session.fulfill()
+            checkout_session.fulfill_session()
 
         return super().form_valid(form)
 
@@ -1552,15 +1551,15 @@ class WaitingQueueView(TeamContextMixin, ListView):
             qs = qs.filter(
                 Q(name__icontains=self.request.GET.get("search")) |
                 Q(email__icontains=self.request.GET.get("search")),
+                ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
-                is_waiting_list=True,
             )
         else:
             qs = qs.filter(
+                ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
-                is_waiting_list=True,
             )
 
         return qs
@@ -1583,10 +1582,10 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
             self.object = CheckoutSession.objects.select_related(
                 "event", "event__team",
             ).get(
+                ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
                 pk=self.kwargs["checkout_session_pk"],
-                is_waiting_list=True,
             )
         return self.object
 
@@ -1594,17 +1593,14 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
 
-        # If session is not valid, we simply return (error on template)
-        if self.object.tx_status != CheckoutSession.OrderStatus.VALID:
-            return render(
-                self.request,
-                template_name="dashboard_organizer/waiting_queue_post.html",
-                context=context,
-            )
+        # Accept non-fiat sessions
+        # Session already processed, so simply fulfill
+        if self.object.session_type != CheckoutSession.SessionType.FIAT:
+            self.object.fulfill_session()
 
-        # Move session from waiting queue to attendee list
-        if self.object.tx_type == CheckoutSession.TransactionType.FIAT:
-            # Send email with payment link
+        # Accept Fiat sessions
+        # Session not processed, so send payment link for them to complete
+        if self.object.session_type == CheckoutSession.SessionType.FIAT:
             domain = Site.objects.all().first().domain
             domain = f"http://{domain}" # http works in local, converted to https on prod
             url = reverse(
@@ -1637,16 +1633,9 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 html_message=msg_html,
             )
 
-            # Update session to make sure expiration and validation is skipped
-            # This is also used to handle UI on dashboard
-            self.object.skip_validation = True
-            self.object.save()
-        else:
-            try:
-                self.object.process_transaction()
-            except Exception:
-                rollbar.report_exc_info()
-
+        # OK. Update waitlist status as approved and return
+        self.object.waitlist_status = self.object.WaitlistStatus.WAITLIST_APPROVED
+        self.object.save()
         return render(
             self.request,
             template_name="dashboard_organizer/waiting_queue_post.html",

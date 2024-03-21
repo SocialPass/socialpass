@@ -97,7 +97,7 @@
 
 	<!-- Content start -->
 	<div class="p-3 p-sm-4 mt-3">
-		{% if checkout_session.tx_status == checkout_session.OrderStatus.FULFILLED %}
+		{% if checkout_session.order_status == checkout_session.OrderStatus.FULFILLED %}
 			<div class="container-fluid overflow-hidden g-0">
 				<div class="row g-3">
 					<div class="col-lg-7">

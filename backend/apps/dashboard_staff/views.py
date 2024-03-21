@@ -183,19 +183,6 @@ class TeamListView(ListView):
     template_name = "dashboard_staff/list_teams.html"
 
 
-class OverflowSessionsListView(ListView):
-    model = CheckoutSession
-    paginate_by = 25
-    template_name = "dashboard_staff/list_overflow_sessions.html"
-
-    def get_queryset(self):
-        return (
-            CheckoutSession.objects.select_related("event")
-            .prefetch_related("checkoutitem_set", "checkoutitem_set__ticket_tier")
-            .filter(is_waiting_list=True)
-        )
-
-
 class CheckoutSessionListView(ListView):
     model = CheckoutSession
     paginate_by = 25
@@ -205,7 +192,7 @@ class CheckoutSessionListView(ListView):
         return (
             CheckoutSession.objects.select_related("event")
             .prefetch_related("checkoutitem_set", "checkoutitem_set__ticket_tier")
-            .filter(tx_status=CheckoutSession.OrderStatus.FULFILLED)
+            .filter(order_status=CheckoutSession.OrderStatus.FULFILLED)
         )
 
 

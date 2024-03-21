@@ -17,10 +17,10 @@ class GoogleWalletAPIRequestError(BaseValidationError):
     pass
 
 # Transaction Exceptions
-class TxAssetOwnershipProcessingError(Exception):
+class AssetOwnershipCheckoutError(Exception):
     pass
 
-class TxFreeProcessingError(Exception):
+class FreeCheckoutError(Exception):
     pass
 
 

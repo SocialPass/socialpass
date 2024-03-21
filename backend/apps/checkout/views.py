@@ -28,8 +28,8 @@ from apps.root.models import (
     Membership,
 )
 from apps.root.exceptions import (
-    TxAssetOwnershipProcessingError,
-    TxFreeProcessingError
+    AssetOwnershipCheckoutError,
+    FreeCheckoutError
 )
 from apps.checkout.forms import (
     PasscodeForm,
@@ -100,7 +100,7 @@ class CheckoutPageOne(DetailView):
     Form to enter name and email
 
     POST
-    Create checkout session + items + transaction
+    Create checkout session + items
     Handle redirect based on checkout session type
     """
 
@@ -145,8 +145,6 @@ class CheckoutPageOne(DetailView):
                 checkout_type = "FIAT"
             elif self.object.ticket_tier_counts["asset_ownership_count"] > 0:
                 checkout_type = "ASSET_OWNERSHIP"
-            elif self.object.ticket_tier_counts["blockchain_count"] > 0:
-                checkout_type = "BLOCKCHAIN"
             elif self.object.ticket_tier_counts["free_count"] > 0:
                 checkout_type = "FREE"
             else:
@@ -193,12 +191,12 @@ class CheckoutPageOne(DetailView):
             )
 
         # Form is valid, continue...
-        # Create session, checkout items, and transaction
+        # Create checkout session and checkout items
 
         # Create checkout session
         checkout_session = CheckoutSession.objects.create(
             event=self.object,
-            tx_type=form.cleaned_data["checkout_type"],
+            session_type=form.cleaned_data["checkout_type"],
             name=form.cleaned_data["name"],
             email=form.cleaned_data["email"],
         )
@@ -211,33 +209,27 @@ class CheckoutPageOne(DetailView):
                 quantity=int(item["amount"]),
                 extra_party=int(item["extra_party"]),
             )
-        # Create transaction
-        checkout_session.create_transaction()
 
-        # OK, Handle redirect cases
-        # Handle case where checkout is FIAT and is waiting queue checkout
-        if (
-            checkout_session.tx_type == CheckoutSession.TransactionType.FIAT
-            and self.object.waiting_queue_enabled
-        ):
-            checkout_session.is_waiting_list = True
-            checkout_session.save()
-            return redirect(
-                "checkout:joined_waiting_queue",
-                checkout_session.public_id,
-            )
-        # Handle case where checkout is FIAT and is standard checkout
-        elif (
-            checkout_session.tx_type == CheckoutSession.TransactionType.FIAT
-            and not self.object.waiting_queue_enabled
-        ):
-            return redirect(
-                "checkout:checkout_fiat",
-                self.object.team.slug,
-                self.object.slug,
-                checkout_session.public_id,
-            )
-        # Handle standard checkout (NFT, FREE)
+        # Handle redirect cases
+        # Handle FIAT checkout
+        if (checkout_session.session_type == CheckoutSession.SessionType.FIAT):
+            # Handle case where checkout is FIAT and is waitlist checkout
+            if self.object.waiting_queue_enabled:
+                checkout_session.waitlist_status = CheckoutSession.WaitlistStatus.WAITLIST_JOINED
+                checkout_session.save()
+                return redirect(
+                    "checkout:joined_waiting_queue",
+                    checkout_session.public_id,
+                )
+            # Handle case where checkout is FIAT and is standard checkout
+            else:
+                return redirect(
+                    "checkout:checkout_fiat",
+                    self.object.team.slug,
+                    self.object.slug,
+                    checkout_session.public_id,
+                )
+        # Handle other checkouts (NFT, FREE)
         else:
             return redirect(
                 "checkout:checkout_two",
@@ -268,10 +260,6 @@ class CheckoutPageTwoBase(DetailView):
                 "event",
                 "event__team",
                 "event__team__whitelabel",
-                "tx_free",
-                "tx_blockchain",
-                "tx_fiat",
-                "tx_asset_ownership"
             )
             .prefetch_related(
                 Prefetch(
@@ -295,11 +283,10 @@ class CheckoutPageTwoBase(DetailView):
 
     def validate_post(self):
         # Get object
-        # Also validate transaction status to avoid resubmission
+        # Also validate order status to avoid resubmission
         self.get_object()
-        if self.object.tx_status in [
+        if self.object.order_status in [
             CheckoutSession.OrderStatus.PROCESSING,
-            CheckoutSession.OrderStatus.COMPLETED,
             CheckoutSession.OrderStatus.FULFILLED
         ]:
             return {
@@ -320,12 +307,11 @@ class CheckoutPageTwoBase(DetailView):
             }
 
         # Form is valid, continue...
-        # Handle both cases: waitlist logic or standard checkout logic
+        # Handle both cases: waitlist checkout or standard checkout
 
-        # Waitlist logic
+        # Waitlist checkout
         # If waiting queue is enabled, we ignore everything and return the form
-        # We do the same if skip_validation is True (for FIAT waiting queue sessions)
-        if self.object.event.waiting_queue_enabled or self.object.skip_validation:
+        if self.object.event.waiting_queue_enabled:
             return {
                 "is_error": False,
                 "error_message": "",
@@ -390,9 +376,9 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         return ["checkout/checkout_page_two.html",]
 
     def get_form_class(self):
-        if self.object.tx_type == CheckoutSession.TransactionType.FREE:
+        if self.object.session_type == CheckoutSession.SessionType.FREE:
             return CheckoutFormFree
-        if self.object.tx_type == CheckoutSession.TransactionType.ASSET_OWNERSHIP:
+        if self.object.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
             return CheckoutFormAssetOwnership
 
     @transaction.atomic
@@ -416,27 +402,19 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
             )
 
         # Finalize transaction using form data
-        self.object.finalize_transaction(form_data=validate_post["form"])
-
-        # If waiting queue is enabled, we ignore everything
-        # And redirect to the waiting queue success page
-        if self.object.event.waiting_queue_enabled:
-            self.object.is_waiting_list = True
+        form_data = validate_post["form"]
+        if self.object.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
+            self.object.wallet_address = form_data.cleaned_data["wallet_address"]
+            self.object.signed_message = form_data.cleaned_data["signed_message"]
+            self.object.delegated_wallet = form_data.cleaned_data["delegated_wallet"]
             self.object.save()
-            return redirect(
-                "checkout:joined_waiting_queue",
-                self.kwargs["checkout_session_public_id"],
-            )
 
-        # Process transaction and handle exceptions
+
+        # Process session and handle exceptions
         try:
-            self.object.process_transaction()
-        except (TxAssetOwnershipProcessingError, TxFreeProcessingError) as e:
-            messages.add_message(
-                self.request,
-                messages.ERROR,
-                e
-            )
+            self.object.process_session()
+        except (AssetOwnershipCheckoutError, FreeCheckoutError) as e:
+            messages.add_message(self.request, messages.ERROR, e)
             return redirect(
                 "checkout:checkout_two",
                 self.kwargs["team_slug"],
@@ -457,8 +435,18 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 self.kwargs["checkout_session_public_id"],
             )
 
-        # OK
-        # Redirect on success
+        # OK. Redirect on success
+        # If waiting queue is enabled, redirect to the waiting queue success page
+        if self.object.event.waiting_queue_enabled:
+            self.object.waitlist_status = CheckoutSession.WaitlistStatus.WAITLIST_JOINED
+            self.object.save()
+            return redirect(
+                "checkout:joined_waiting_queue",
+                self.kwargs["checkout_session_public_id"],
+            )
+
+        # Else, fulfill the session, redirect to the tickets page
+        self.object.fulfill_session()
         return redirect(
             reverse(
                 "checkout:get_tickets",
@@ -499,9 +487,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
             )
 
         # Set local variables
-        form = validate_post["form"]
         context = self.get_context_data()
-        tx_fiat = self.object.tx_fiat
         stripe.api_key = settings.STRIPE_API_KEY
 
         # Create line items using Stripe PRICES API
@@ -566,15 +552,15 @@ class CheckoutFiat(CheckoutPageTwoBase):
                 self.kwargs["checkout_session_public_id"],
             )
 
-        # Store the Stripe data in transaction and save
-        tx_fiat.stripe_line_items = stripe_line_items
-        tx_fiat.stripe_session_id = session["id"]
-        tx_fiat.stripe_session_url = session["url"]
-        tx_fiat.save()
+        # Store the Stripe data in session and save
+        self.object.stripe_line_items = stripe_line_items
+        self.object.stripe_session_id = session["id"]
+        self.object.stripe_session_url = session["url"]
+        self.object.save()
 
         # OK
         # Redirect to Stripe checkout
-        return redirect(tx_fiat.stripe_session_url)
+        return redirect(self.object.stripe_session_url)
 
 
 class StripeCheckoutCancel(RedirectView):
@@ -623,7 +609,7 @@ class StripeCheckoutSuccess(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         # Get object
-        checkout_session = CheckoutSession.objects.select_related("tx_fiat").get(
+        checkout_session = CheckoutSession.objects.get(
             public_id=self.kwargs["checkout_session_public_id"]
         )
         if not checkout_session:
@@ -641,7 +627,7 @@ class StripeCheckoutSuccess(RedirectView):
         # Verify using Stripe's API (triple verification)
         stripe.api_key = settings.STRIPE_API_KEY
         stripe_session = stripe.checkout.Session.retrieve(
-            checkout_session.tx_fiat.stripe_session_id
+            checkout_session.stripe_session_id
         )
         if not stripe_session["payment_status"] == "paid":
             messages.add_message(
@@ -659,9 +645,10 @@ class StripeCheckoutSuccess(RedirectView):
             )
 
         # OK
-        # Process transaction
+        # Process session
         # Redirect to tickets page
-        checkout_session.tx_fiat.process()
+        checkout_session.process_session()
+        checkout_session.fulfill_session()
         return reverse(
             "checkout:get_tickets",
             args=(self.kwargs["checkout_session_public_id"],),
@@ -684,7 +671,7 @@ class CheckoutPageSuccess(DetailView):
             .prefetch_related("checkoutitem_set")
             .get(
                 public_id=self.kwargs["checkout_session_public_id"],
-                tx_status=CheckoutSession.OrderStatus.FULFILLED,
+                order_status=CheckoutSession.OrderStatus.FULFILLED,
             )
         )
         if not self.object:
@@ -812,7 +799,6 @@ class GetTickets(View):
 
         # refresh passcode and send email
         elif "resend_passcode" in self.request.POST:
-            checkout_session.refresh_passcode()
             checkout_session.send_confirmation_email()
             messages.add_message(
                 self.request,

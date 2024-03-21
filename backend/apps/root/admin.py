@@ -13,9 +13,6 @@ from apps.root.models import (
     Team,
     Ticket,
     TicketTier,
-    TxAssetOwnership,
-    TxFiat,
-    TxFree,
     WhiteLabel,
 )
 
@@ -59,8 +56,8 @@ class CheckoutSessionAdmin(CustomDBAdmin):
         "event",
         "name",
         "email",
-        "tx_type",
-        "tx_status",
+        "session_type",
+        "order_status",
     ] + CustomDBAdmin.list_display
     search_fields = [
         "event__title",
@@ -71,13 +68,6 @@ class CheckoutSessionAdmin(CustomDBAdmin):
     list_select_related = [
         "event",
     ]
-    raw_id_fields = [
-        "tx_free",
-        "tx_fiat",
-        "tx_blockchain",
-        "tx_asset_ownership"
-    ]
-
 
 @admin.register(Event)
 class EventAdmin(CustomDBAdmin):
@@ -229,33 +219,6 @@ class TicketAdmin(CustomDBAdmin):
        "event",
        "ticket_tier",
        "checkout_session",
-    ]
-
-
-@admin.register(TxFiat)
-class TxFiatAdmin(CustomDBAdmin):
-    list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
-    search_fields = ("checkoutsession__email",)
-    list_select_related = [
-        "checkoutsession",
-    ]
-
-
-@admin.register(TxAssetOwnership)
-class TxAssetOwnershipAdmin(CustomDBAdmin):
-    list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
-    search_fields = ("checkoutsession__email",)
-    list_select_related = [
-        "checkoutsession",
-    ]
-
-
-@admin.register(TxFree)
-class TxFreeAdmin(CustomDBAdmin):
-    list_display = ["__str__", "checkoutsession"] + CustomDBAdmin.list_display
-    search_fields = ("checkoutsession__email",)
-    list_select_related = [
-        "checkoutsession",
     ]
 
 

@@ -137,7 +137,7 @@ class GoogleTicket:
     @staticmethod
     def create_ticket(ticket_obj):
         """
-        Create a ticket.
+        Create a ticket
         """
         event = ticket_obj.event
         service_account_info = GoogleTicket.get_service_account_info()
@@ -153,7 +153,7 @@ class GoogleTicket:
         url = "https://walletobjects.googleapis.com/walletobjects/v1/eventTicketObject"
 
         name = ticket_obj.ticket_tier.name
-        if ticket.ticket_tier.category == ticket.ticket_tier.Category.FREE:
+        if ticket_obj.ticket_tier.category == ticket_obj.ticket_tier.Category.FREE:
             name += " | FREE"
         if ticket_obj.party_size > 1:
             name += f" | Party Size: {ticket_obj.party_size}"
@@ -176,7 +176,7 @@ class GoogleTicket:
     @staticmethod
     def get_ticket_url(ticket_id):
         """
-        Get the save URL for a Google ticket.
+        Get the save URL for a Google ticket
         """
         service_account_info = GoogleTicket.get_service_account_info()
         claims = {

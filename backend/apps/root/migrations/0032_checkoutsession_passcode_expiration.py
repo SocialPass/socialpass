@@ -2,7 +2,13 @@
 
 import apps.root.models
 from django.db import migrations, models
+from django.utils import timezone
 
+def get_expiration_datetime():
+    """
+    Get current datetime + 10 minutes
+    """
+    return timezone.now() + timezone.timedelta(hours=24)
 
 class Migration(migrations.Migration):
 
@@ -14,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='checkoutsession',
             name='passcode_expiration',
-            field=models.DateTimeField(default=apps.root.models.get_expiration_datetime),
+            field=models.DateTimeField(default=get_expiration_datetime),
         ),
     ]

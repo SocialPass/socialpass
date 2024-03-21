@@ -145,8 +145,6 @@ class CheckoutPageOne(DetailView):
                 checkout_type = "FIAT"
             elif self.object.ticket_tier_counts["asset_ownership_count"] > 0:
                 checkout_type = "ASSET_OWNERSHIP"
-            elif self.object.ticket_tier_counts["blockchain_count"] > 0:
-                checkout_type = "BLOCKCHAIN"
             elif self.object.ticket_tier_counts["free_count"] > 0:
                 checkout_type = "FREE"
             else:

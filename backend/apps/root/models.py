@@ -680,9 +680,8 @@ class Event(DBModel):
         tiers = TicketTier.objects.filter(event_id=self.id, hidden_from_public=False).values('event_id')
         tier_counts = {
             "fiat_count": 0,
-            "blockchain_count": 0,
-            "asset_ownership_count": 0,
             "free_count": 0,
+            "asset_ownership_count": 0,
             "total_count": 0
         }
         if not tiers:
@@ -690,8 +689,8 @@ class Event(DBModel):
 
         # Return tiers with annotated counts
         tier_counts["fiat_count"] = tiers.filter(category=TicketTier.Category.FIAT).count()
-        tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
         tier_counts["free_count"] = tiers.filter(category=TicketTier.Category.FREE).count()
+        tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
         tier_counts["total_count"] = sum(tier_counts.values())
         return tier_counts
 
@@ -875,9 +874,8 @@ class TicketTier(DBModel):
     # Category field
     class Category(models.TextChoices):
         FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
         FREE = "FREE", "Free"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
 
     category = models.CharField(
         max_length=50,
@@ -1062,9 +1060,8 @@ class CheckoutSession(DBModel):
     # Session Type Field
     class SessionType(models.TextChoices):
         FIAT = "FIAT", "Fiat"
-        BLOCKCHAIN = "BLOCKCHAIN", "Blockchain"
-        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
         FREE = "FREE", "Free"
+        ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
     session_type = models.CharField(
         max_length=50,
         choices=SessionType.choices,

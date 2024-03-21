@@ -96,7 +96,7 @@ class WhiteLabel(DBModel):
         null=True,
         upload_to="whitelabel__favicon",
     )
-    css = models.TextField(blank=True, default="")
+    css = models.TextField(blank=True)
     font_regular = models.FileField(
         blank=True,
         null=True,
@@ -138,7 +138,7 @@ class Team(DBModel):
         width_field=None,
         upload_to="team__image",
     )
-    description = models.TextField(blank=True, default="")
+    description = models.TextField(blank=True)
     theme = models.JSONField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     whitelabel = models.OneToOneField(
@@ -154,19 +154,16 @@ class Team(DBModel):
     tmp_stripe_account_id = models.CharField(
         max_length=255,
         blank=True,
-        default="",
         help_text="Temporary Stripe account ID used to create account links.",
     )
     stripe_account_id = models.CharField(
         max_length=255,
         blank=True,
-        default="",
         help_text="Connected Stripe account ID.",
     )
     stripe_account_country = models.CharField(
         max_length=10,
         blank=True,
-        default="",
         help_text="Connected Stripe account country.",
     )
 
@@ -303,7 +300,7 @@ class Event(DBModel):
     # Keys
     user = models.ForeignKey("User", on_delete=models.SET_NULL,  null=True)
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
+    google_class_id = models.CharField(max_length=255, blank=True)
 
     # state
     state = FSMField(
@@ -322,8 +319,6 @@ class Event(DBModel):
     )
     description = models.TextField(
         help_text="A short description of your event.",
-
-        default="",
     )
     cover_image = models.ImageField(
         help_text="A banner image for your event. Please make sure the image "
@@ -363,20 +358,19 @@ class Event(DBModel):
         verbose_name="time zone",
         max_length=30,
         blank=True,
-        default="",
     )
     # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=True, default="")
+    address_1 = models.CharField(max_length=255, blank=True)
     # The street/location address (part 2)
-    address_2 = models.CharField(max_length=255, blank=True, default="")
+    address_2 = models.CharField(max_length=255, blank=True)
     # The city
-    city = models.CharField(max_length=255, blank=True, default="")
+    city = models.CharField(max_length=255, blank=True)
     # The ISO 3166-2 2- or 3-character region code
-    region = models.CharField(max_length=4, blank=True, default="")
+    region = models.CharField(max_length=4, blank=True)
     # The postal code
-    postal_code = models.CharField(max_length=12, blank=True, default="")
+    postal_code = models.CharField(max_length=12, blank=True)
     # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=True, default="")
+    country = models.CharField(max_length=2, blank=True)
     # Hide address (except for ticket holders)
     hide_address = models.BooleanField(default=False)
 
@@ -389,8 +383,8 @@ class Event(DBModel):
         choices=GeographyType.choices,
         default=GeographyType.MANUAL,
     )
-    geo_address = models.TextField(default="")
-    geo_place_id = models.CharField(default="", blank=True)
+    geo_address = models.TextField()
+    geo_place_id = models.CharField(blank=True)
     geo_latitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
     geo_longitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
 
@@ -729,7 +723,7 @@ class Ticket(DBModel):
 
 
     )
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
+    google_class_id = models.CharField(max_length=255, blank=True)
 
     # Ticket access info
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
@@ -866,7 +860,6 @@ class TicketTier(DBModel):
     )
     additional_information = models.TextField(
         blank=True,
-        default="",
         help_text="Additional information for this tier provided by the host.",
     )
 
@@ -879,7 +872,6 @@ class TicketTier(DBModel):
     category = models.CharField(
         max_length=50,
         choices=Category.choices,
-        default="",
         blank=True,
     )
 
@@ -932,7 +924,6 @@ class TicketTier(DBModel):
     token_address = models.CharField(
         max_length=42,
         blank=True,
-        default="",
         help_text="What is the contract address of your NFT collection?",
     )
     token_id = ArrayField(
@@ -1052,7 +1043,6 @@ class CheckoutSession(DBModel):
     waitlist_status = models.CharField(
         max_length=50,
         choices=WaitlistStatus.choices,
-        default="",
         blank=True,
     )
 
@@ -1072,19 +1062,17 @@ class CheckoutSession(DBModel):
     stripe_session_id = models.CharField(
         max_length=255,
         blank=True,
-        default="",
         help_text="Stripe checkout session ID.",
     )
     stripe_session_url = models.TextField(
         blank=True,
-        default="",
         help_text="Stripe checkout session URL.",
     )
     stripe_line_items = models.JSONField(blank=True, null=True)
 
     # Session Type Fields - Asset Ownership
-    wallet_address = models.CharField(max_length=42, blank=True, default="")
-    signed_message = models.TextField(blank=True, default="")
+    wallet_address = models.CharField(max_length=42, blank=True)
+    signed_message = models.TextField(blank=True)
     is_wallet_address_verified = models.BooleanField(blank=True, null=True)
     delegated_wallet = models.BooleanField(blank=True, null=True)
     redeemed_nfts = models.JSONField(blank=True, default=list)

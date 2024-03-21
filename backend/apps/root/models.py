@@ -1072,7 +1072,7 @@ class CheckoutSession(DBModel):
         blank=False,
     )
 
-    # TX Type Fields - Fiat
+    # Session Type Fields - Fiat
     stripe_session_id = models.CharField(
         max_length=255,
         blank=True,
@@ -1086,16 +1086,12 @@ class CheckoutSession(DBModel):
     )
     stripe_line_items = models.JSONField(blank=True, null=True)
 
-    # TX Type Fields - Asset Ownership
-    wallet_address = models.CharField(max_length=42, blank=False, default="")
-    signed_message = models.TextField(blank=False, default="")
-    is_wallet_address_verified = models.BooleanField(
-        default=False, blank=False, null=False
-    )
-    delegated_wallet = models.BooleanField(
-        default=False, blank=False, null=False
-    )
-    redeemed_nfts = models.JSONField(default=list)
+    # Session Type Fields - Asset Ownership
+    wallet_address = models.CharField(max_length=42, blank=True, default="")
+    signed_message = models.TextField(blank=True, default="")
+    is_wallet_address_verified = models.BooleanField(blank=True, null=True)
+    delegated_wallet = models.BooleanField(blank=True, null=True)
+    redeemed_nfts = models.JSONField(blank=True, default=list)
 
     def __str__(self):
         return f"CheckoutSession: {self.email}"

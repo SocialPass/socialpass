@@ -67,27 +67,67 @@
 		}
 	});
 </script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDChv6Fl3rYj_sbx3hEoLbJ1FNO3QAP8Ts&libraries=places"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDChv6Fl3rYj_sbx3hEoLbJ1FNO3QAP8Ts&loading=async&callback=initialize&libraries=places,marker"></script>
 <script type="text/javascript">
+	// Form fields
 	const geoAddress = document.getElementById("id_geo_address");
-	google.maps.event.addDomListener(window, "load", initialize);
+	const geoType = document.getElementById("id_geo_type");
+	const geoPlaceId = document.getElementById("id_geo_place_id");
+	const geoLatitude = document.getElementById("id_geo_latitude");
+	const geoLongitude = document.getElementById("id_geo_longitude");
+	const geoResetBtn = document.getElementById("reset_geo_form_btn")
+
+	// disable form on page-load
+	geoAddress.readOnly = true;
+	geoResetBtn.classList.remove("invisible")
+
+	// Google maps initialization / handler
+	const geoMap = document.getElementById("geo_map")
 	function initialize() {
 		const autocomplete = new google.maps.places.Autocomplete(geoAddress);
 		autocomplete.addListener("place_changed", function () {
+			// Set place info
 			const place = autocomplete.getPlace();
-			document.getElementById("id_geo_type").value = "GOOGLE";
-			document.getElementById("id_geo_place_id").value = place.place_id;
-			document.getElementById("id_geo_latitude").value = place.geometry.location.lat().toFixed(6);
-			document.getElementById("id_geo_longitude").value = place.geometry.location.lng().toFixed(6);
+			geoType.value = "GOOGLE";
+			geoPlaceId.value = place.place_id;
+			geoLatitude.value = place.geometry.location.lat().toFixed(6);
+			geoLongitude.value = place.geometry.location.lng().toFixed(6);
+
+			// Set map info
+			geoMap.style.height = "150px";
+			geoMap.style.width = "100%";
+			var map = new google.maps.Map(geoMap, {
+				mapId: "DEMO_MAP_ID"
+			});
+			map.setCenter(place.geometry.location);
+			map.setZoom(15);
+			var marker = new google.maps.marker.AdvancedMarkerElement({
+				map: map,
+				position: place.geometry.location,
+			});
+
+			// disable form
+			geoAddress.readOnly = true;
+			geoResetBtn.classList.remove("invisible")
 		});
 	}
-	geoAddress.addEventListener("input", function() {
-		if (geoAddress.value === "") {
-			document.getElementById("id_geo_type").value = "MANUAL";
-			document.getElementById("id_geo_place_id").value = "";
-			document.getElementById("id_geo_latitude").value = "";
-			document.getElementById("id_geo_longitude").value = "";
-		}
-	});
+	function resetGeoForm(){
+		// Reset form fields
+		geoType.value = "MANUAL";
+		geoPlaceId.value = "";
+		geoLatitude.value = "";
+		geoLongitude.value = "";
+		geoAddress.value = "";
+
+		// Hide map
+		geoMap.style.height = "0px";
+		geoMap.style.width = "0px";
+
+		// set readonly -> false
+		geoAddress.readOnly = false;
+
+		// hide button
+		geoResetBtn.classList.add("invisible")
+	}
 </script>
 {% endblock %}

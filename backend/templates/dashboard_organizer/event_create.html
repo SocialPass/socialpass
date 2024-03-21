@@ -89,7 +89,7 @@
 			geoLongitude.value = place.geometry.location.lng().toFixed(6);
 
 			// Set map info
-			geoMap.style.height = "250px";
+			geoMap.style.height = "150px";
 			geoMap.style.width = "100%";
 			var map = new google.maps.Map(geoMap, {
 				mapId: "DEMO_MAP_ID"
@@ -102,7 +102,7 @@
 			});
 
 			// disable form
-			geoAddress.disabled = true;
+			geoAddress.readOnly = true;
 			geoResetBtn.classList.remove("invisible")
 		});
 	}
@@ -119,21 +119,10 @@
 		geoMap.style.width = "0px";
 
 		// set readonly -> false
-		geoAddress.disabled = false;
+		geoAddress.readOnly = false;
 
 		// hide button
 		geoResetBtn.classList.add("invisible")
 	}
-	geoAddress.addEventListener("focusin", function() {
-		// Reset form fields
-		geoType.value = "MANUAL";
-		geoPlaceId.value = "";
-		geoLatitude.value = "";
-		geoLongitude.value = "";
-
-		// Hide map
-		geoMap.style.height = "0px";
-		geoMap.style.width = "0px";
-	});
 </script>
 {% endblock %}

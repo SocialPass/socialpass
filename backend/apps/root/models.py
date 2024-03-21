@@ -1273,7 +1273,7 @@ class CheckoutSession(DBModel):
         duplicate_emails = CheckoutSession.objects.filter(
             event=self.event,
             email=self.email,
-            order_status=CheckoutSession.OrderStatus.FULFILLED
+            session_type=CheckoutSession.SessionType.FREE
         ).exclude(id=self.id)
         if duplicate_emails:
             self.order_status = CheckoutSession.OrderStatus.FAILED

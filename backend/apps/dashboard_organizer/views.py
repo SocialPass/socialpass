@@ -446,7 +446,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
 
 class EventTicketsView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     """
-    Show the tickets (and CTAs) for an event. Also show ticketing preferences 
+    Show the tickets (and CTAs) for an event. Also show ticketing preferences
     form.
     """
 
@@ -1593,21 +1593,14 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
 
-        # If session is not valid, we simply return (error on template)
-        if self.object.order_status != CheckoutSession.OrderStatus.VALID:
-            return render(
-                self.request,
-                template_name="dashboard_organizer/waiting_queue_post.html",
-                context=context,
-            )
+        # Accept non-fiat sessions
+        # Session already processed, so simply fulfill
+        if self.object.session_type != CheckoutSession.SessionType.FIAT:
+            self.object.fulfill_session()
 
-        # Update waitlist status as approved
-        self.object.waitlist_status = self.object.WaitlistStatus.WAITLIST_APPROVED
-        self.object.save()
-
-        # Process session
+        # Accept Fiat sessions
+        # Session not processed, so send payment link for them to complete
         if self.object.session_type == CheckoutSession.SessionType.FIAT:
-            # Send email with payment link
             domain = Site.objects.all().first().domain
             domain = f"http://{domain}" # http works in local, converted to https on prod
             url = reverse(
@@ -1639,13 +1632,10 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 [self.object.email,],
                 html_message=msg_html,
             )
-        else:
-            try:
-                self.object.process_session()
-                self.object.fulfill_session()
-            except Exception:
-                rollbar.report_exc_info()
 
+        # OK. Update waitlist status as approved and return
+        self.object.waitlist_status = self.object.WaitlistStatus.WAITLIST_APPROVED
+        self.object.save()
         return render(
             self.request,
             template_name="dashboard_organizer/waiting_queue_post.html",

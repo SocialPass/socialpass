@@ -1052,7 +1052,7 @@ class CheckoutSession(DBModel):
     class WaitlistStatus(models.TextChoices):
         WAITLIST_JOINED = "WAITLIST_JOINED", "Waitlist joined"
         WAITLIST_APPROVED = "WAITLIST_APPROVED", "Waitlist approved"
-        WAITLIST_REJECTED = "WAITLIST_REJECTED", "Waitlist approved"
+        WAITLIST_REJECTED = "WAITLIST_REJECTED", "Waitlist rejected"
     waitlist_status = models.CharField(
         max_length=50,
         choices=WaitlistStatus.choices,

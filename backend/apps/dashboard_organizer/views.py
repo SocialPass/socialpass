@@ -18,6 +18,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView, SingleObjectMixin
@@ -366,8 +367,10 @@ class EventListView(TeamContextMixin, ListView):
         qs = qs.filter(team__slug=self.kwargs["team_slug"])
 
         query_state = self.request.GET.get("state", "")
-        if query_state == "LIVE" or query_state == "DRAFT":
-            qs = qs.filter(state=query_state)
+        if query_state == "Upcoming":
+            qs = qs.filter(start_date__gt=timezone.now())
+        elif query_state == "Past":
+            qs = qs.filter(start_date__lt=timezone.now())
 
         return qs
 

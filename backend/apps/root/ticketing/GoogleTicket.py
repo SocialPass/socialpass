@@ -66,7 +66,7 @@ class GoogleTicket:
                 "name": {
                     "defaultValue": {
                         "language": "en-us",
-                        "value": venue_name,
+                        "value": event_obj.geo_address,
                     }
                 },
                 "address": {

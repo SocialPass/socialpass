@@ -1,10 +1,3 @@
-# Event exceptions
-class EventStateTranstionError(Exception):
-    pass
-
-class GoogleWalletAPIRequestError(Exception):
-    pass
-
 # Checkout Session exceptions
 class AssetOwnershipCheckoutError(Exception):
     pass
@@ -17,4 +10,9 @@ class ForbiddenRedemptionError(Exception):
     pass
 
 class AlreadyRedeemedError(Exception):
+    pass
+
+# 3rd Party API Exceptions
+# Google
+class GoogleWalletAPIRequestError(Exception):
     pass

@@ -1,6 +1,5 @@
 import json
 import uuid
-from datetime import date, timedelta
 
 import jwt
 import rollbar
@@ -15,12 +14,11 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail, send_mass_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q, Count, F
+from django.db.models import F
 from django.db.models.functions import Round
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from eth_account import Account
 from eth_account.messages import encode_defunct
@@ -30,7 +28,6 @@ from moralis import evm_api
 from apps.root.countries import COUNTRIES
 from apps.root.exceptions import (
     AlreadyRedeemedError,
-    EventStateTranstionError,
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
     AssetOwnershipCheckoutError,

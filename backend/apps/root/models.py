@@ -22,7 +22,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
-from djmoney.settings import CURRENCY_CHOICES
 from eth_account import Account
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
@@ -325,9 +324,7 @@ class Event(DBModel):
     fiat_currency = models.CharField(
         max_length=3,
         help_text="The fiat currency to use for all tickets of this event.",
-
-        default="USD",
-        choices=CURRENCY_CHOICES,
+        default="USD"
     )
     total_capacity = models.IntegerField(
         blank=True,

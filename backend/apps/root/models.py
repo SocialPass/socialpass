@@ -134,7 +134,6 @@ class Team(DBModel):
         upload_to="team__image",
     )
     description = models.TextField(blank=True)
-    theme = models.JSONField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     whitelabel = models.OneToOneField(
         WhiteLabel,

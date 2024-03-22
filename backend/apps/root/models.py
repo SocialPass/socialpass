@@ -20,6 +20,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.translation import gettext as _
 from eth_account import Account
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
@@ -125,8 +126,8 @@ class Team(DBModel):
     name = models.CharField(max_length=255,  unique=True)
     slug = AutoSlugField(populate_from="name", null=True, unique=True)
     image = models.ImageField(
-        help_text="A brand image for your team. Please make sure the image is "
-        "square, non-transparent, and ideally in the PNG format.",
+        help_text=_("A brand image for your team. Please make sure the image is "
+        "square, non-transparent, and ideally in the PNG format."),
         blank=True,
         null=True,
         height_field=None,
@@ -148,17 +149,17 @@ class Team(DBModel):
     tmp_stripe_account_id = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Temporary Stripe account ID used to create account links.",
+        help_text=_("Temporary Stripe account ID used to create account links."),
     )
     stripe_account_id = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Connected Stripe account ID.",
+        help_text=_("Connected Stripe account ID."),
     )
     stripe_account_country = models.CharField(
         max_length=10,
         blank=True,
-        help_text="Connected Stripe account country.",
+        help_text=_("Connected Stripe account country."),
     )
 
     def __str__(self):
@@ -294,14 +295,14 @@ class Event(DBModel):
     # Basic Info
     title = models.CharField(
         max_length=255,
-        help_text="Brief name for your event. Must be unique!",
+        help_text=_("Brief name for your event. Must be unique!"),
     )
     description = models.TextField(
-        help_text="A short description of your event.",
+        help_text=_("A short description of your event."),
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event. Please make sure the image "
-        "is a high quality landscape image, ideally 960 x 720 pixels (4:3).",
+        help_text=_("A banner image for your event. Please make sure the image "
+        "is a high quality landscape image, ideally 960 x 720 pixels (4:3)."),
         blank=True,
         null=True,
         upload_to="event__cover_image",
@@ -312,25 +313,25 @@ class Event(DBModel):
         blank=True,
     )
     start_date = models.DateTimeField(
-        help_text="When your event will start.",
+        help_text=_("When your event will start."),
         blank=True,
         null=True,
     )
     end_date = models.DateTimeField(
-        help_text="When your event will end (optional).",
+        help_text=_("When your event will end (optional)."),
         blank=True,
         null=True,
     )
     fiat_currency = models.CharField(
         max_length=3,
-        help_text="The fiat currency to use for all tickets of this event.",
+        help_text=_("The fiat currency to use for all tickets of this event."),
         default="USD"
     )
     total_capacity = models.IntegerField(
         blank=True,
         null=True,
         validators=[MinValueValidator(1)],
-        help_text="Denotes the total capacity for the venue, across all ticket tiers.",
+        help_text=_("Denotes the total capacity for the venue, across all ticket tiers."),
     )
     waiting_queue_enabled = models.BooleanField(default=False)
 
@@ -352,12 +353,12 @@ class Event(DBModel):
     # Publish info
     slug = AutoSlugField(populate_from="title", null=True)
     sales_start = models.DateTimeField(
-        help_text="When your event sales will start (optional).",
+        help_text=_("When your event sales will start (optional)."),
         blank=True,
         null=True,
     )
     sales_end = models.DateTimeField(
-        help_text="When your event sales will end (optional).",
+        help_text=_("When your event sales will end (optional)."),
         blank=True,
         null=True,
     )
@@ -609,26 +610,26 @@ class TicketTier(DBModel):
     name = models.CharField(
         max_length=255,
 
-        help_text="A short descriptive label for your ticket tier.",
+        help_text=_("A short descriptive label for your ticket tier."),
     )
     capacity = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event.",
+        help_text=_("Maximum amount of attendees for your event."),
         blank=True,
 
     )
     max_per_person = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee.",
+        help_text=_("Maximum amount of tickets per attendee."),
 
 
     )
     allowed_guests = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        help_text="Maximum number of guests allowed for one ticket.",
+        help_text=_("Maximum number of guests allowed for one ticket."),
 
 
     )
@@ -636,7 +637,7 @@ class TicketTier(DBModel):
         blank=True,
         null=True,
         validators=[MinValueValidator(0)],
-        help_text="Denotes the total guest capacity.",
+        help_text=_("Denotes the total guest capacity."),
     )
 
     # Display fields
@@ -644,17 +645,17 @@ class TicketTier(DBModel):
         default=False,
 
 
-        help_text="Whether or not this tier is hidden from the public",
+        help_text=_("Whether or not this tier is hidden from the public"),
     )
     hidden_availability = models.BooleanField(
         default=False,
 
 
-        help_text="Whether or not to hide the number of available tickets from the public.",
+        help_text=_("Whether or not to hide the number of available tickets from the public."),
     )
     additional_information = models.TextField(
         blank=True,
-        help_text="Additional information for this tier provided by the host.",
+        help_text=_("Additional information for this tier provided by the host."),
     )
 
     # Category field
@@ -701,7 +702,7 @@ class TicketTier(DBModel):
         choices=NetworkChoices.choices,
         default=NetworkChoices.ETH,
 
-        help_text="Which blockchain is your NFT collection on?",
+        help_text=_("Which blockchain is your NFT collection on?"),
     )
     asset_type = models.CharField(
         max_length=50,
@@ -713,18 +714,18 @@ class TicketTier(DBModel):
         default=1,
 
 
-        help_text="The number of NFTs required to claim your ticket tier.",
+        help_text=_("The number of NFTs required to claim your ticket tier."),
     )
     token_address = models.CharField(
         max_length=42,
         blank=True,
-        help_text="What is the contract address of your NFT collection?",
+        help_text=_("What is the contract address of your NFT collection?"),
     )
     token_id = ArrayField(
         models.IntegerField(),
         null=True,
         blank=True,
-        help_text="Which specific token IDs of the NFT collection are required?",
+        help_text=_("Which specific token IDs of the NFT collection are required?"),
     )
     deprecated_issued_token_id = ArrayField(
         models.IntegerField(), blank=True, default=list
@@ -735,7 +736,7 @@ class TicketTier(DBModel):
         max_digits=19,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        help_text="Price of one ticket for this tier.",
+        help_text=_("Price of one ticket for this tier."),
         default=0,
 
 
@@ -856,11 +857,11 @@ class CheckoutSession(DBModel):
     stripe_session_id = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Stripe checkout session ID.",
+        help_text=_("Stripe checkout session ID."),
     )
     stripe_session_url = models.TextField(
         blank=True,
-        help_text="Stripe checkout session URL.",
+        help_text=_("Stripe checkout session URL."),
     )
     stripe_line_items = models.JSONField(blank=True, null=True)
 

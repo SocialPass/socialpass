@@ -299,7 +299,6 @@ class Event(DBModel):
     title = models.CharField(
         max_length=255,
         help_text="Brief name for your event. Must be unique!",
-
     )
     description = models.TextField(
         help_text="A short description of your event.",
@@ -310,6 +309,11 @@ class Event(DBModel):
         blank=True,
         null=True,
         upload_to="event__cover_image",
+    )
+    timezone = models.CharField(
+        verbose_name="time zone",
+        max_length=30,
+        blank=True,
     )
     start_date = models.DateTimeField(
         help_text="When your event will start.",
@@ -334,28 +338,6 @@ class Event(DBModel):
     )
     waiting_queue_enabled = models.BooleanField(default=False)
 
-    # Location info
-    # timezone of event
-    timezone = models.CharField(
-        verbose_name="time zone",
-        max_length=30,
-        blank=True,
-    )
-    # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=True)
-    # The street/location address (part 2)
-    address_2 = models.CharField(max_length=255, blank=True)
-    # The city
-    city = models.CharField(max_length=255, blank=True)
-    # The ISO 3166-2 2- or 3-character region code
-    region = models.CharField(max_length=4, blank=True)
-    # The postal code
-    postal_code = models.CharField(max_length=12, blank=True)
-    # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=True)
-    # Hide address (except for ticket holders)
-    hide_address = models.BooleanField(default=False)
-
     # Location Info (v1)
     class GeographyType(models.TextChoices):
         GOOGLE = "GOOGLE", "Google"
@@ -369,6 +351,7 @@ class Event(DBModel):
     geo_place_id = models.CharField(blank=True)
     geo_latitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
     geo_longitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
+    hide_address = models.BooleanField(default=False) # Hide address, except for attendees
 
     # Publish info
     slug = AutoSlugField(populate_from="title", null=True)
@@ -425,49 +408,6 @@ class Event(DBModel):
                 "Something went wrong while handling the Google event class."
             )
         return super().clean(*args, **kwargs)
-
-    @cached_property
-    def localized_address_display(self):
-        """
-        localized_address_display will be
-        "address_1, address_2, city, country, postal_code" joined
-        """
-        if self.geo_address:
-            return self.geo_address
-
-        if not self.city and not self.address_1:
-            return "Not set"
-
-        # add postal code to city if exists
-        if self.postal_code:
-            city = self.city + "-" + self.postal_code
-        else:
-            city = self.city
-
-        address_fields = [
-            self.address_1,
-            city,
-            COUNTRIES[self.country],
-        ]
-
-        # add address_2 to second list position if exists
-        if self.address_2:
-            address_fields.insert(1, self.address_2)
-
-        # join fields
-        localized_address_display = ", ".join(address_fields)
-        return localized_address_display
-
-    @cached_property
-    def localized_address_display_without_venue(self):
-        """
-        returns localized_address_display without venue
-        so this is till the first comma in the string
-        """
-        localized_address_display = self.localized_address_display
-        return localized_address_display[
-            (localized_address_display.index(",") + 1):
-        ].strip()
 
     @cached_property
     def tickets_sold_count(self):
@@ -529,27 +469,6 @@ class Event(DBModel):
             return self.cover_image.url
         else:
             return staticfiles_storage.url("images/event_cover_placeholder.jpg")
-
-    @cached_property
-    def has_required_fields(self):
-        missing_fields = []
-        required_fields = {
-            "self.title": self.title,
-            "self.description": self.description,
-            "self.start_date": self.start_date,
-            "self.timezone": self.timezone,
-            "self.address_1": self.address_1,
-            "self.address_2": self.address_2,
-            "self.city": self.city,
-            "self.postal_code": self.postal_code,
-            "self.country": self.country,
-        }
-        for k, v in required_fields.items():
-            if v is None:
-                missing_fields.append(k)
-        if missing_fields:
-            return False, missing_fields
-        return True, []
 
     @cached_property
     def ticket_tier_counts(self):

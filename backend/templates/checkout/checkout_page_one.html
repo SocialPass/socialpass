@@ -122,7 +122,7 @@
 									<div class="ms-3">
 										{% if not event.hide_address %}
 											<div class="fw-bold">
-												{{ event.address_1 }}
+												{{ event.geo_address }}
 											</div>
 										{% else %}
 											<div class="fw-bold">
@@ -137,7 +137,7 @@
 								<div class="mt-2">
 									<span class="text-body-secondary">
 										{% if not event.hide_address %}
-										<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display_without_venue }}">{{ event.localized_address_display_without_venue }}</a>
+										<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.geo_address }}">{{ event.geo_address }}</a>
 										{% else %}
 											{% trans "Address will only be provided to ticket holders." %}
 										{% endif %}

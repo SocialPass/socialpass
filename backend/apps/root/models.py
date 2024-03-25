@@ -288,7 +288,7 @@ class Event(DBModel):
     This event supports multiple states as well as multiple ticker tiers.
     """
     # Keys
-    user = models.ForeignKey("User", on_delete=models.SET_NULL,  null=True)
+    user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=True, null=True)
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
     google_class_id = models.CharField(max_length=255, blank=True)
 
@@ -612,8 +612,6 @@ class TicketTier(DBModel):
         default=1,
         validators=[MinValueValidator(1)],
         help_text=_("Maximum amount of attendees for your event."),
-        blank=True,
-
     )
     max_per_person = models.IntegerField(
         default=1,

@@ -135,7 +135,7 @@ class AppleTicket:
 
         if not event.geo_address:
             raise Exception(
-                "The event object does not have an geo_address"
+                "The event object does not have a geo_address"
             )
 
         self.org_name = event.team.name

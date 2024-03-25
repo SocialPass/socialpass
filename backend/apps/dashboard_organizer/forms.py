@@ -399,17 +399,3 @@ class MessageBatchForm(forms.ModelForm):
                }
            ),
         }
-
-
-class ManualAttendeesForm(forms.Form):
-    """
-    Bulk create manual attendees.
-    """
-
-    names_or_emails = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": _("John Doe, jane@example.com, Jack, kevin@example.com")
-            }
-        ),
-    )

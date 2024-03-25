@@ -6,7 +6,6 @@ from apps.root.models import (
     CheckoutSession,
     Event,
     Invitation,
-    ManualAttendee,
     Membership,
     MessageBatch,
     RSVPBatch,
@@ -222,8 +221,3 @@ class RSVPBatchAdmin(CustomDBAdmin):
 @admin.register(MessageBatch)
 class MessageBatchAdmin(CustomDBAdmin):
     list_display = ["__str__", "event", "ticket_tier"] + CustomDBAdmin.list_display
-
-
-@admin.register(ManualAttendee)
-class ManualAttendeeAdmin(CustomDBAdmin):
-    list_display = ["__str__", "event"] + CustomDBAdmin.list_display

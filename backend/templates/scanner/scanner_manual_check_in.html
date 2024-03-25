@@ -14,7 +14,7 @@
 				</h1>
 			</div>
 			<p class="text-body-secondary">
-				{% trans "Use the following form to search and manually check-in VIP list members and ticket holders." %}
+				{% trans "Use the following form to search and manually check-in ticket holders." %}
 			</p>
 			<form>
 				<div class="input-group">
@@ -29,31 +29,13 @@
 			      	<li class="nav-item">
 			        	<button
 			        		type="button"
-			        		class="nav-link {% if manual_attendees.count > 0 %}active{% endif %}"
-			        		id="nav-vip-list-tab"
-			        		data-bs-toggle="tab"
-			        		data-bs-target="#nav-vip-list"
-			        		role="tab"
-			        		aria-controls="nav-vip-list"
-			        		{% if manual_attendees.count > 0 %}
-			        			aria-selected="true"
-			        		{% endif %}
-			        	>
-			        		{% trans "VIP List" %} ({{ manual_attendees.count }})
-			        	</button>
-			      	</li>
-			      	<li class="nav-item">
-			        	<button
-			        		type="button"
-			        		class="nav-link {% if not manual_attendees.count > 0 %}active{% endif %}"
+			        		class="nav-link active"
 			        		id="nav-tickets-tab"
 			        		data-bs-toggle="tab"
 			        		data-bs-target="#nav-tickets"
 			        		role="tab"
 			        		aria-controls="nav-tickets"
-			        		{% if not manual_attendees.count > 0 %}
-			        			aria-selected="true"
-			        		{% endif %}
+		        			aria-selected="true"
 			        	>
 			        		{% trans "Tickets" %} ({{ tickets.count }})
 			        	</button>
@@ -63,52 +45,7 @@
 			<div class="card-body">
 				<div class="tab-content">
 					<div
-						class="tab-pane fade {% if manual_attendees.count > 0 %}show active{% endif %}"
-						id="nav-vip-list"
-						role="tabpanel"
-						aria-labelledby="nav-vip-list-tab"
-						tabindex="0"
-					>
-						{% if manual_attendees.count > 0 %}
-							{% for manual_attendee in manual_attendees %}
-								<div class="pt-2 {% if not forloop.first %}mt-2 border-top{% endif %}">
-									<div class="d-flex align-items-center">
-										<div class="text-break fw-bold">{{ manual_attendee.name_or_email}}</div>
-										{% if manual_attendee.redeemed_at %}
-											<div class="ms-auto">
-												<span class="btn btn-secondary btn-sm d-block specific-w-100 disabled pe-none">{% trans "Checked-In" %}</span>
-											</div>
-										{% else %}
-											<form
-												class="ms-auto"
-												hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-												hx-post="{% url 'dashboard_organizer:scanner_manual_attendee_post' object.scanner_id manual_attendee.pk %}"
-												hx-trigger="submit"
-											>
-												<button type="submit" class="btn btn-primary btn-sm d-block specific-w-100">{% trans "Check-In" %}</button>
-											</form>
-										{% endif %}
-									</div>
-									{% if manual_attendee.redeemed_at %}
-										<div class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">
-											<i class="fa-light fa-clock me-1"></i>
-											<strong>{% trans "Redeemed at" %}:</strong>
-											{{ manual_attendee.redeemed_at }}
-										</div>
-									{% endif %}
-								</div>
-							{% endfor %}
-						{% else %}
-							<div class="mx-auto specific-w-200">
-								<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
-							</div>
-							<p class="text-body-secondary text-center">
-								{% trans "Nothing found." %}
-							</p>
-						{% endif %}
-					</div>
-					<div
-						class="tab-pane fade {% if not manual_attendees.count > 0 %}show active{% endif %}"
+						class="tab-pane fade show active"
 						id="nav-tickets"
 						role="tabpanel"
 						aria-labelledby="nav-tickets-tab"

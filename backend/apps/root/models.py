@@ -1321,20 +1321,3 @@ class MessageBatch(DBModel):
             [email]
         ) for email in emails]
         send_mass_mail(messages)
-
-
-class ManualAttendee(DBModel):
-    """
-    Represents a person on the VIP list for an event.
-    """
-
-    event = models.ForeignKey("Event", on_delete=models.CASCADE)
-    name_or_email = models.CharField(max_length=255)
-    redeemed_at = models.DateTimeField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"ManualAttendee: {self.public_id}"
-
-    def redeem(self):
-        self.redeemed_at = timezone.now()
-        self.save()

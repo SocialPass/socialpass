@@ -35,7 +35,6 @@ from apps.dashboard_organizer.forms import (
     TierFiatForm,
     RSVPCreateTicketsForm,
     MessageBatchForm,
-    ManualAttendeesForm,
 )
 from apps.root.models import (
     Event,
@@ -48,7 +47,6 @@ from apps.root.models import (
     CheckoutSession,
     CheckoutItem,
     RSVPBatch,
-    ManualAttendee,
 )
 from apps.root import exceptions
 
@@ -975,30 +973,12 @@ class EventScannerStats(DetailView):
     model = Event
     slug_field = "scanner_id"
     slug_url_kwarg = "scanner_id"
+    template_name = "scanner/scanner_stats.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(dict(current_team=self.object.team))
         return context
-
-    def get(self, *args, **kwargs):
-        self.object = self.get_object()
-        context = super().get_context_data(**kwargs)
-
-        # VIP list
-        context["manual_attendees_total"] = ManualAttendee.objects.filter(
-            event=self.object,
-        ).count()
-        context["manual_attendees_redeemed"] = ManualAttendee.objects.filter(
-            event=self.object,
-            redeemed_at__isnull=False,
-        ).count()
-
-        return render(
-            self.request,
-            template_name="scanner/scanner_stats.html",
-            context=context,
-        )
 
 
 class EventScanner2(DetailView):
@@ -1010,16 +990,6 @@ class EventScanner2(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(dict(current_team=self.object.team))
-
-        # VIP list
-        context["manual_attendees_total"] = ManualAttendee.objects.filter(
-            event=self.object,
-        ).count()
-        context["manual_attendees_redeemed"] = ManualAttendee.objects.filter(
-            event=self.object,
-            redeemed_at__isnull=False,
-        ).count()
-
         return context
 
     def post(self, *args, **kwargs):
@@ -1090,7 +1060,6 @@ class EventScannerManualCheckIn(DetailView):
         # Empty state
         if not self.request.GET.get("search"):
             context["tickets"] = Ticket.objects.none()
-            context["manual_attendees"] = ManualAttendee.objects.none()
             return context
 
         # Search for tickets
@@ -1101,38 +1070,7 @@ class EventScannerManualCheckIn(DetailView):
             Q(checkout_session__email__icontains=self.request.GET.get("search"))
         ).order_by("-redeemed_at")
 
-        # Search for manual attendees
-        context["manual_attendees"] = ManualAttendee.objects.filter(
-            event=self.object,
-            name_or_email__icontains=self.request.GET.get("search"),
-        ).order_by("-redeemed_at")
-
         return context
-
-
-class EventScannerManualAttendeePost(DetailView):
-    model = Event
-    slug_field = "scanner_id"
-    slug_url_kwarg = "scanner_id"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(dict(current_team=self.object.team))
-        return context
-
-    def post(self, *args, **kwargs):
-        self.object = self.get_object()
-        context = super().get_context_data(**kwargs)
-        context["manual_attendee"] = ManualAttendee.objects.get(
-            event=self.object,
-            pk=self.kwargs["manual_attendee_pk"],
-        )
-        context["manual_attendee"].redeem()
-        return render(
-            self.request,
-            template_name="scanner/manual_attendee_post.html",
-            context=context,
-        )
 
 
 class EventScannerManualTicketPost(DetailView):
@@ -1356,64 +1294,6 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         )
         return reverse(
             "dashboard_organizer:message_batches",
-            args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
-        )
-
-
-class ManualAttendeesView(TeamContextMixin, TemplateView):
-    """
-    Show the manual attendees for an event.
-    """
-
-    template_name = "dashboard_organizer/manual_attendees.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
-        )
-        context["manual_attendees"] = ManualAttendee.objects.filter(
-            event=context["event"]
-        ).order_by("-created")
-        context["manual_attendees_redeemed_count"] = 0
-        for manual_attendee in context["manual_attendees"]:
-            if manual_attendee.redeemed_at:
-                context["manual_attendees_redeemed_count"] += 1
-        return context
-
-
-class ManualAttendeesCreateView(TeamContextMixin, FormView):
-    """
-    Bulk create manual attendees.
-    """
-
-    template_name = "dashboard_organizer/manual_attendees_create.html"
-    form_class = ManualAttendeesForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["event"] = Event.objects.get(
-            pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
-        )
-        return context
-
-    def form_valid(self, form, **kwargs):
-        context = self.get_context_data(**kwargs)
-        names_or_emails = form.cleaned_data["names_or_emails"].split(",")
-        for name_or_email in names_or_emails:
-            ManualAttendee.objects.create(
-                event=context["event"], name_or_email=name_or_email.strip(),
-            )
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            "Successfully added attendees to the VIP list."
-        )
-        return reverse(
-            "dashboard_organizer:manual_attendees",
             args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
         )
 

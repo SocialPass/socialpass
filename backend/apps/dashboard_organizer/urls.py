@@ -145,16 +145,6 @@ urlpatterns = [
         name="message_batch_create",
     ),
     path(
-        "<slug:team_slug>/events/<int:event_pk>/vip-list/",
-        views.ManualAttendeesView.as_view(),
-        name="manual_attendees",
-    ),
-    path(
-        "<slug:team_slug>/events/<int:event_pk>/vip-list-add-attendees/",
-        views.ManualAttendeesCreateView.as_view(),
-        name="manual_attendees_create",
-    ),
-    path(
         "<slug:team_slug>/events/<int:event_pk>/waitlist/",
         views.WaitingQueueView.as_view(),
         name="waiting_queue",
@@ -184,11 +174,6 @@ urlpatterns = [
         "scanner/<uuid:scanner_id>/manual-check-in/",
         views.EventScannerManualCheckIn.as_view(),
         name="scanner_manual_check_in",
-    ),
-    path(
-        "scanner/<uuid:scanner_id>/manual-attendee-post/<int:manual_attendee_pk>",
-        views.EventScannerManualAttendeePost.as_view(),
-        name="scanner_manual_attendee_post",
     ),
     path(
         "scanner/<uuid:scanner_id>/manual-ticket-post/<int:ticket_pk>",

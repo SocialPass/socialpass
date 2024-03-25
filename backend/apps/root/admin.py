@@ -31,13 +31,13 @@ class CustomDBAdmin(admin.ModelAdmin):
 
 @admin.register(CheckoutItem)
 class CheckoutItemAdmin(CustomDBAdmin):
-    list_display = [
+    list_display = CustomDBAdmin.list_display + [
         "__str__",
         "ticket_tier",
         "quantity",
         "selected_guests",
         "checkout_session",
-    ] + CustomDBAdmin.list_display
+    ]
     search_fields = [
         "checkout_session__name",
         "checkout_session__email",
@@ -48,14 +48,14 @@ class CheckoutItemAdmin(CustomDBAdmin):
 
 @admin.register(CheckoutSession)
 class CheckoutSessionAdmin(CustomDBAdmin):
-    list_display = [
+    list_display = CustomDBAdmin.list_display + [
         "__str__",
         "event",
         "name",
         "email",
         "session_type",
         "order_status",
-    ] + CustomDBAdmin.list_display
+    ]
     search_fields = ["event__title", "name", "email", "public_id"]
     list_select_related = [
         "event",
@@ -64,7 +64,7 @@ class CheckoutSessionAdmin(CustomDBAdmin):
 
 @admin.register(Event)
 class EventAdmin(CustomDBAdmin):
-    list_display = [
+    list_display = CustomDBAdmin.list_display + [
         "__str__",
         "title",
         "user",
@@ -73,7 +73,7 @@ class EventAdmin(CustomDBAdmin):
         "end_date",
         "sales_start",
         "sales_end",
-    ] + CustomDBAdmin.list_display
+    ]
     search_fields = [
         "title",
         "user__username",
@@ -85,13 +85,13 @@ class EventAdmin(CustomDBAdmin):
 
 @admin.register(Invitation)
 class InvitationAdmin(CustomDBAdmin):
-    list_display = [
+    list_display = CustomDBAdmin.list_display + [
         "__str__",
         "inviter",
         "team",
         "email",
         "accepted",
-    ] + CustomDBAdmin.list_display
+    ]
     list_select_related = [
         "inviter",
         "team",
@@ -106,7 +106,7 @@ class InvitationAdmin(CustomDBAdmin):
 
 @admin.register(Membership)
 class MembershipAdmin(CustomDBAdmin):
-    list_display = ["__str__", "user", "team"] + CustomDBAdmin.list_display
+    list_display = CustomDBAdmin.list_display + ["__str__", "user", "team"]
     list_select_related = ["user", "team"]
     raw_id_fields = ["user", "team"]
 
@@ -130,25 +130,25 @@ class TeamAdmin(CustomDBAdmin):
 
     inlines = [MembershipInline]
     exclude = ("members",)
-    list_display = [
+    list_display = CustomDBAdmin.list_display + [
         "__str__",
         "name",
         "description",
         "whitelabel",
-    ] + CustomDBAdmin.list_display
+    ]
     search_fields = ["name"]
 
 
 @admin.register(TicketTier)
 class TicketTierAdmin(CustomDBAdmin):
-    list_display = [
+    list_display = CustomDBAdmin.list_display + [
         "__str__",
         "name",
         "event",
         "capacity",
         "tickets_sold_count",
         "max_per_person",
-    ] + CustomDBAdmin.list_display
+    ]
     search_fields = [
         "name",
         "event__title",
@@ -163,7 +163,7 @@ class TicketTierAdmin(CustomDBAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(CustomDBAdmin):
-    list_display = [
+    list_display = CustomDBAdmin.list_display + [
         "__str__",
         "event",
         "ticket_tier",
@@ -171,7 +171,7 @@ class TicketAdmin(CustomDBAdmin):
         "checkout_session",
         "embed_code",
         "redeemed_at",
-    ] + CustomDBAdmin.list_display
+    ]
     search_fields = [
         "event__title",
         "checkout_session__name",
@@ -191,14 +191,14 @@ class TicketAdmin(CustomDBAdmin):
 
 @admin.register(WhiteLabel)
 class WhiteLabelAdmin(CustomDBAdmin):
-    list_display = ["__str__", "brand_name"] + CustomDBAdmin.list_display
+    list_display = CustomDBAdmin.list_display + ["__str__", "brand_name"]
 
 
 @admin.register(RSVPBatch)
 class RSVPBatchAdmin(CustomDBAdmin):
-    list_display = ["__str__", "event"] + CustomDBAdmin.list_display
+    list_display = CustomDBAdmin.list_display + ["__str__", "event"]
 
 
 @admin.register(MessageBatch)
 class MessageBatchAdmin(CustomDBAdmin):
-    list_display = ["__str__", "event", "ticket_tier"] + CustomDBAdmin.list_display
+    list_display = CustomDBAdmin.list_display + ["__str__", "event", "ticket_tier"]

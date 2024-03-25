@@ -1,27 +1,18 @@
-from django.core.exceptions import ValidationError
-
-
-class BaseValidationError(ValidationError):
-    pass
-
-class AlreadyRedeemedError(BaseValidationError):
-    pass
-
-class EventStateTranstionError(BaseValidationError):
-    pass
-
-class ForbiddenRedemptionError(BaseValidationError):
-    pass
-
-class GoogleWalletAPIRequestError(BaseValidationError):
-    pass
-
-# Transaction Exceptions
+# Checkout Session exceptions
 class AssetOwnershipCheckoutError(Exception):
     pass
 
 class FreeCheckoutError(Exception):
     pass
 
+# Scanner exceptions
+class ForbiddenRedemptionError(Exception):
+    pass
 
+class AlreadyRedeemedError(Exception):
+    pass
 
+# 3rd Party API Exceptions
+# Google
+class GoogleWalletAPIRequestError(Exception):
+    pass

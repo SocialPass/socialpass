@@ -133,9 +133,9 @@ class AppleTicket:
     def generate_pass_from_ticket(self, ticket):
         event = ticket.event
 
-        if not event.localized_address_display:
+        if not event.geo_address:
             raise Exception(
-                "The event object does not have an localized_address_display"
+                "The event object does not have a geo_address"
             )
 
         self.org_name = event.team.name
@@ -186,7 +186,7 @@ class AppleTicket:
             event.start_date.strftime("%d %B, %Y"),
             event.title,
             name,
-            event.localized_address_display,
+            event.geo_address,
         )
         self.generate_pass()
 

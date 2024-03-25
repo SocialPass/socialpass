@@ -68,7 +68,7 @@
 						<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
 					</div>
 					<div class="mt-2 border-bottom pb-3">
-						<span class="text-body-secondary">{{ object.event.localized_address_display }}</span>
+						<span class="text-body-secondary">{{ object.event.geo_address }}</span>
 					</div>
 					<div class="alert alert-primary mt-3 text-primary-emphasis fw-bold d-flex align-items-center" role="alert">
 						<i class="fa-light fa-check me-2"></i>
@@ -97,7 +97,7 @@
 								</h6>
 								<div class="mt-1 text-body-secondary" style="font-size: var(--bs-font-size-sm);">
 									{% trans "Allowed Guest(s):" %}
-									{{ item.extra_party }}
+									{{ item.selected_guests }}
 								</div>
 							</div>
 							<!-- Order item end -->

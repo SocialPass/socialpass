@@ -1,5 +1,5 @@
 {% extends "dashboard_organizer/base.html" %}
-{% load static i18n get_theme_value get_user_primary_email format_to_event_timezone %}
+{% load static i18n get_user_primary_email format_to_event_timezone %}
 
 {% block head_title %}{% trans "Promote" %} | {{ event.title }} - SocialPass{% endblock head_title %}
 
@@ -85,7 +85,7 @@
 					<div class="fw-bold">{{ event.title }}</div>
 					{% if not object.hide_address %}
 						<div class="text-body-secondary" style="font-size: 12px;">
-							{% trans "Date & Time" %}: {{ object.start_date }} | {% trans "Location" %}: {{ object.localized_address_display }} | {% trans "Get your tickets now!" %}
+							{% trans "Date & Time" %}: {{ object.start_date }} | {% trans "Location" %}: {{ object.geo_address }} | {% trans "Get your tickets now!" %}
 						</div>
 					{% else %}
 						<div class="text-body-secondary" style="font-size: 12px;">

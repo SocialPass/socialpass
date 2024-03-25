@@ -249,7 +249,7 @@ class TicketTierForm(forms.ModelForm):
     class Meta:
         model = TicketTier
         fields = [
-            "name", "capacity", "max_per_person", "allowed_guests",
+            "name", "capacity", "max_per_person", "guests_allowed",
             "guest_supply", "hidden_from_public", "hidden_availability", "additional_information",
         ]
         widgets = {
@@ -262,7 +262,7 @@ class TicketTierForm(forms.ModelForm):
             ),
             "capacity": forms.NumberInput(attrs={"min": 1}),
             "max_per_person": forms.NumberInput(attrs={"min": 1}),
-            "allowed_guests": forms.NumberInput(attrs={"min": 0}),
+            "guests_allowed": forms.NumberInput(attrs={"min": 0}),
             "guest_supply": forms.NumberInput(
                 attrs={
                     "min": 0,
@@ -281,7 +281,7 @@ class TicketTierForm(forms.ModelForm):
             "name": _("Name of ticket tier"),
             "capacity": _("Capacity"),
             "max_per_person": _("Max per person"),
-            "allowed_guests": _("Max guest(s) allowed per ticket"),
+            "guests_allowed": _("Max guest(s) allowed per ticket"),
             "hidden_from_public": _("Hide tier from public"),
             "hidden_availability": _("Hide tickets available from public"),
         }
@@ -364,7 +364,7 @@ class RSVPCreateTicketsForm(forms.Form):
     """
 
     ticket_tier = forms.ModelChoiceField(queryset=TicketTier.objects.none())
-    allowed_guests = forms.IntegerField(
+    guests_allowed = forms.IntegerField(
         widget=forms.NumberInput(
             attrs={
                 "min": 0,
@@ -399,17 +399,3 @@ class MessageBatchForm(forms.ModelForm):
                }
            ),
         }
-
-
-class ManualAttendeesForm(forms.Form):
-    """
-    Bulk create manual attendees.
-    """
-
-    names_or_emails = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": _("John Doe, jane@example.com, Jack, kevin@example.com")
-            }
-        ),
-    )

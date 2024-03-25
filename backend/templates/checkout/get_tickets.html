@@ -68,7 +68,7 @@
 					{% trans "Location:" %}
 				</div>
 				<div class="mt-1">
-					{{ checkout_session.event.localized_address_display }}
+					{{ checkout_session.event.geo_address }}
 				</div>
 				<div class="specific-w-200 specific-h-200 mx-auto mt-4 mb-1">
 					<img src="{{ ticket.qrcode }}" class="w-100 h-100" alt="QR Code" />
@@ -116,10 +116,10 @@
 								<div>
 									<div>
 										<strong>{% trans "Address: " %}</strong>
-										<span>{{ checkout_session.event.localized_address_display }}</span>
+										<span>{{ checkout_session.event.geo_address }}</span>
 									</div>
 									<div style="font-size: var(--bs-font-size-sm);">
-										<a href="https://www.google.com/maps/search/?api=1&query={{ checkout_session.event.localized_address_display }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
+										<a href="https://www.google.com/maps/search/?api=1&query={{ checkout_session.event.geo_address }}" class="stretched-link text-decoration-none" target="_blank" rel="noreferrer">
 											{% trans "Open in map" %}
 											<i class="fa-regular fa-external-link ms-1"></i>
 										</a>
@@ -152,7 +152,7 @@
 									</h6>
 									<div class="mt-1 text-body-secondary" style="font-size: var(--bs-font-size-sm);">
 										{% trans "Allowed Guest(s):" %}
-										{{ item.extra_party }}
+										{{ item.selected_guests }}
 									</div>
 								</div>
 								<!-- Order item end -->
@@ -251,7 +251,7 @@
 									<strong class="text-primary-emphasis ms-3">{% trans "Location" %}</strong>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">{{ checkout_session.event.localized_address_display }}</span>
+									<span class="text-body-secondary">{{ checkout_session.event.geo_address }}</span>
 								</div>
 							</div>
 						</div>

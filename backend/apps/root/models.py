@@ -1,6 +1,5 @@
 import json
 import uuid
-from datetime import date, timedelta
 
 import jwt
 import rollbar
@@ -15,15 +14,13 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail, send_mass_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q, Count, F
+from django.db.models import F
 from django.db.models.functions import Round
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
-from django_fsm import FSMField, transition
-from djmoney.settings import CURRENCY_CHOICES
+from django.utils.translation import gettext as _
 from eth_account import Account
 from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
@@ -32,7 +29,6 @@ from moralis import evm_api
 from apps.root.countries import COUNTRIES
 from apps.root.exceptions import (
     AlreadyRedeemedError,
-    EventStateTranstionError,
     ForbiddenRedemptionError,
     GoogleWalletAPIRequestError,
     AssetOwnershipCheckoutError,
@@ -96,7 +92,7 @@ class WhiteLabel(DBModel):
         null=True,
         upload_to="whitelabel__favicon",
     )
-    css = models.TextField(blank=True, default="")
+    css = models.TextField(blank=True)
     font_regular = models.FileField(
         blank=True,
         null=True,
@@ -124,22 +120,21 @@ class Team(DBModel):
     """
 
     # keys
-    members = models.ManyToManyField("User", through="Membership", blank=False)
+    members = models.ManyToManyField("User", through="Membership")
 
     # basic info
-    name = models.CharField(max_length=255, blank=False, unique=True)
+    name = models.CharField(max_length=255,  unique=True)
     slug = AutoSlugField(populate_from="name", null=True, unique=True)
     image = models.ImageField(
-        help_text="A brand image for your team. Please make sure the image is "
-        "square, non-transparent, and ideally in the PNG format.",
+        help_text=_("A brand image for your team. Please make sure the image is "
+        "square, non-transparent, and ideally in the PNG format."),
         blank=True,
         null=True,
         height_field=None,
         width_field=None,
         upload_to="team__image",
     )
-    description = models.TextField(blank=True, default="")
-    theme = models.JSONField(blank=True, null=True)
+    description = models.TextField(blank=True)
     is_verified = models.BooleanField(default=False)
     whitelabel = models.OneToOneField(
         WhiteLabel,
@@ -154,20 +149,17 @@ class Team(DBModel):
     tmp_stripe_account_id = models.CharField(
         max_length=255,
         blank=True,
-        default="",
-        help_text="Temporary Stripe account ID used to create account links.",
+        help_text=_("Temporary Stripe account ID used to create account links."),
     )
     stripe_account_id = models.CharField(
         max_length=255,
         blank=True,
-        default="",
-        help_text="Connected Stripe account ID.",
+        help_text=_("Connected Stripe account ID."),
     )
     stripe_account_country = models.CharField(
         max_length=10,
         blank=True,
-        default="",
-        help_text="Connected Stripe account country.",
+        help_text=_("Connected Stripe account country."),
     )
 
     def __str__(self):
@@ -176,7 +168,7 @@ class Team(DBModel):
         """
         return f"Team: {self.name}"
 
-    @property
+    @cached_property
     def stripe_account_payouts_enabled(self):
         status = {
             "details_submitted": False,
@@ -196,7 +188,7 @@ class Team(DBModel):
         # Return status
         return status
 
-    @property
+    @cached_property
     def stripe_refresh_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -208,7 +200,7 @@ class Team(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def stripe_return_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -220,7 +212,7 @@ class Team(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def stripe_express_dashboard_link(self):
         if self.stripe_account_id:
             login_link = stripe.Account.create_login_link(
@@ -267,7 +259,7 @@ class Invitation(DBModel):
     def __str__(self):
         return f"Invitation: {self.email}<>{self.team.name}"
 
-    @property
+    @cached_property
     def is_expired(self):
         if timezone.now() > (self.created + timezone.timedelta(days=30)):
             return True
@@ -295,90 +287,53 @@ class Event(DBModel):
     Represents an event on SocialPass
     This event supports multiple states as well as multiple ticker tiers.
     """
-
-    class StateStatus(models.TextChoices):
-        DRAFT = "DRAFT", "Draft"
-        LIVE = "LIVE", "Live"
-
     # Keys
-    user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=False, null=True)
-    team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=False, null=False)
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
-
-    # state
-    state = FSMField(
-        choices=StateStatus.choices,
-        default=StateStatus.DRAFT,
-        protected=True,
-        blank=False,
-        null=False,
-    )
+    user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=True, null=True)
+    team = models.ForeignKey("Team", on_delete=models.CASCADE)
+    google_class_id = models.CharField(max_length=255, blank=True)
 
     # Basic Info
     title = models.CharField(
         max_length=255,
-        help_text="Brief name for your event. Must be unique!",
-        blank=False,
+        help_text=_("Brief name for your event. Must be unique!"),
     )
     description = models.TextField(
-        help_text="A short description of your event.",
-        blank=False,
-        default="",
+        help_text=_("A short description of your event."),
     )
     cover_image = models.ImageField(
-        help_text="A banner image for your event. Please make sure the image "
-        "is a high quality landscape image, ideally 960 x 720 pixels (4:3).",
+        help_text=_("A banner image for your event. Please make sure the image "
+        "is a high quality landscape image, ideally 960 x 720 pixels (4:3)."),
         blank=True,
         null=True,
         upload_to="event__cover_image",
     )
+    timezone = models.CharField(
+        verbose_name="time zone",
+        max_length=30,
+        blank=True,
+    )
     start_date = models.DateTimeField(
-        help_text="When your event will start.",
+        help_text=_("When your event will start."),
         blank=True,
         null=True,
     )
     end_date = models.DateTimeField(
-        help_text="When your event will end (optional).",
+        help_text=_("When your event will end (optional)."),
         blank=True,
         null=True,
     )
     fiat_currency = models.CharField(
         max_length=3,
-        help_text="The fiat currency to use for all tickets of this event.",
-        blank=False,
-        default="USD",
-        choices=CURRENCY_CHOICES,
+        help_text=_("The fiat currency to use for all tickets of this event."),
+        default="USD"
     )
     total_capacity = models.IntegerField(
         blank=True,
         null=True,
         validators=[MinValueValidator(1)],
-        help_text="Denotes the total capacity for the venue, across all ticket tiers.",
+        help_text=_("Denotes the total capacity for the venue, across all ticket tiers."),
     )
     waiting_queue_enabled = models.BooleanField(default=False)
-
-    # Location info
-    # timezone of event
-    timezone = models.CharField(
-        verbose_name="time zone",
-        max_length=30,
-        blank=True,
-        default="",
-    )
-    # The street/location address (part 1)
-    address_1 = models.CharField(max_length=255, blank=True, default="")
-    # The street/location address (part 2)
-    address_2 = models.CharField(max_length=255, blank=True, default="")
-    # The city
-    city = models.CharField(max_length=255, blank=True, default="")
-    # The ISO 3166-2 2- or 3-character region code
-    region = models.CharField(max_length=4, blank=True, default="")
-    # The postal code
-    postal_code = models.CharField(max_length=12, blank=True, default="")
-    # The ISO 3166-1 2-character international code for the country
-    country = models.CharField(max_length=2, blank=True, default="")
-    # Hide address (except for ticket holders)
-    hide_address = models.BooleanField(default=False)
 
     # Location Info (v1)
     class GeographyType(models.TextChoices):
@@ -389,46 +344,33 @@ class Event(DBModel):
         choices=GeographyType.choices,
         default=GeographyType.MANUAL,
     )
-    geo_address = models.TextField(default="")
-    geo_place_id = models.CharField(default="", blank=True)
+    geo_address = models.TextField()
+    geo_place_id = models.CharField(blank=True)
     geo_latitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
     geo_longitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
+    hide_address = models.BooleanField(default=False) # Hide address, except for attendees
 
     # Publish info
-    is_featured_top = models.BooleanField(default=False)
     slug = AutoSlugField(populate_from="title", null=True)
     sales_start = models.DateTimeField(
-        help_text="When your event sales will start (optional).",
+        help_text=_("When your event sales will start (optional)."),
         blank=True,
         null=True,
     )
     sales_end = models.DateTimeField(
-        help_text="When your event sales will end (optional).",
+        help_text=_("When your event sales will end (optional)."),
         blank=True,
         null=True,
     )
 
     # Scanner Info
-    scanner_id = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
+    scanner_id = models.UUIDField(default=uuid.uuid4)
 
     class Meta:
         unique_together = [["team", "title"], ["team", "slug"]]
 
     def __str__(self):
         return f"Event: {self.title}"
-
-    def get_absolute_url(self):
-        if self.state == Event.StateStatus.DRAFT:
-            _success_url = "dashboard_organizer:event_update"
-        elif self.state == Event.StateStatus.LIVE:
-            _success_url = "dashboard_organizer:event_update"
-        return reverse(
-            _success_url,
-            args=(
-                self.team.public_id,
-                self.pk,
-            ),
-        )
 
     def handle_google_event_class(self):
         """
@@ -456,161 +398,29 @@ class Event(DBModel):
         clean method
         runs all clean_* methods
         """
-
         # clean the handling of the Google event class
-        if self.state == Event.StateStatus.LIVE:
-            google_event_class_id = self.handle_google_event_class()
-            if not google_event_class_id:
-                raise GoogleWalletAPIRequestError(
-                    "Something went wrong while handling the Google event class."
-                )
-
+        google_event_class_id = self.handle_google_event_class()
+        if not google_event_class_id:
+            raise GoogleWalletAPIRequestError(
+                "Something went wrong while handling the Google event class."
+            )
         return super().clean(*args, **kwargs)
 
-    def transition_draft(self, save=True):
-        """
-        wrapper around _transition_draft
-        allows for saving after transition
-        """
-        try:
-            self._transition_draft()
-            # Save unless explicilty told not to
-            # This implies the caller will handle saving post-transition
-            if save:
-                self.save()
-        except Exception as e:
-            raise EventStateTranstionError({"state": str(e)})
-
-    def transition_live(self, save=True, ignore_google_api=False):
-        """
-        wrapper around _transition_live
-        allows for saving after transition
-        """
-        try:
-            self._transition_live(ignore_google_api=ignore_google_api)
-            # Save unless explicilty told not to
-            # This implies the caller will handle saving post-transition
-            if save:
-                self.save()
-        except Exception as e:
-            raise EventStateTranstionError({"state": str(e)})
-
-    @transition(field=state, target=StateStatus.DRAFT)
-    def _transition_draft(self):
-        """
-        This function handles state transition to DRAFT
-        Side effects include
-        -
-        """
-        pass
-
-    @transition(field=state, target=StateStatus.LIVE)
-    def _transition_live(self, ignore_google_api=False):
-        """
-        This function handles state transition from DRAFT to LIVE
-        Side effects include
-        - Create ticket scanner object
-        - Handle Google event class
-        - Send success emails
-        """
-        # - Handle Google event class
-        if not ignore_google_api:
-            google_event_class_id = self.handle_google_event_class()
-            if not google_event_class_id:
-                raise GoogleWalletAPIRequestError(
-                    "Something went wrong while handling the Google event class."
-                )
-
-        # Send emails to team members (fail silently)
-        try:
-            ctx = {
-                "event": self,
-            }
-            emails = []
-            memberships = Membership.objects.select_related("user").filter(
-                team=self.team
-            )
-            for m in memberships:
-                emails.append(m.user.email)
-            msg_plain = render_to_string(
-                "dashboard_organizer/email/go_live_message.txt", ctx
-            )
-            msg_html = render_to_string("dashboard_organizer/email/go_live.html", ctx)
-            send_mail(
-                "[SocialPass] Your event is live - " + self.title,
-                msg_plain,
-                "tickets-no-reply@socialpass.io",
-                emails,
-                html_message=msg_html,
-            )
-        except Exception as e:
-            rollbar.report_message("EMAIL ERROR: " + str(e))
-
-    @property
-    def has_ended(self):
-        if self.end_date:
-            return date.today() > self.end_date.date()
-        else:
-            return False
-
-    @property
-    def localized_address_display(self):
-        """
-        localized_address_display will be
-        "address_1, address_2, city, country, postal_code" joined
-        """
-        if self.geo_address:
-            return self.geo_address
-
-        if not self.city and not self.address_1:
-            return "Not set"
-
-        # add postal code to city if exists
-        if self.postal_code:
-            city = self.city + "-" + self.postal_code
-        else:
-            city = self.city
-
-        address_fields = [
-            self.address_1,
-            city,
-            COUNTRIES[self.country],
-        ]
-
-        # add address_2 to second list position if exists
-        if self.address_2:
-            address_fields.insert(1, self.address_2)
-
-        # join fields
-        localized_address_display = ", ".join(address_fields)
-        return localized_address_display
-
-    @property
-    def localized_address_display_without_venue(self):
-        """
-        returns localized_address_display without venue
-        so this is till the first comma in the string
-        """
-        localized_address_display = self.localized_address_display
-        return localized_address_display[
-            (localized_address_display.index(",") + 1):
-        ].strip()
-
-    @property
+    @cached_property
     def tickets_sold_count(self):
         return Ticket.objects.filter(event=self).count()
 
-    @property
+    @cached_property
     def tickets_scanned_count(self):
         return Ticket.objects.filter(event=self, redeemed_at__isnull=False).count()
 
-    @property
+    @cached_property
     def attendees_count(self):
         sold = Ticket.objects.filter(event=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"]
         return sold_with_party or 0
 
-    @property
+    @cached_property
     def attendees_scanned_count(self):
         redeemed = Ticket.objects.filter(event=self, redeemed_at__isnull=False)
         redeemed_with_party = redeemed.aggregate(models.Sum("party_size"))[
@@ -618,7 +428,7 @@ class Event(DBModel):
         ]
         return redeemed_with_party or 0
 
-    @property
+    @cached_property
     def description_html(self):
         description_html = ""
         try:
@@ -627,7 +437,7 @@ class Event(DBModel):
             pass
         return description_html
 
-    @property
+    @cached_property
     def currency_symbol(self):
         """
         Not all currencies will have recognizable symbols. If we just store the
@@ -650,33 +460,12 @@ class Event(DBModel):
         }
         return CURRENCY_SYMBOLS.get(self.fiat_currency, self.fiat_currency + " ")
 
-    @property
+    @cached_property
     def cover_image_url(self):
         if self.cover_image:
             return self.cover_image.url
         else:
             return staticfiles_storage.url("images/event_cover_placeholder.jpg")
-
-    @property
-    def has_required_fields(self):
-        missing_fields = []
-        required_fields = {
-            "self.title": self.title,
-            "self.description": self.description,
-            "self.start_date": self.start_date,
-            "self.timezone": self.timezone,
-            "self.address_1": self.address_1,
-            "self.address_2": self.address_2,
-            "self.city": self.city,
-            "self.postal_code": self.postal_code,
-            "self.country": self.country,
-        }
-        for k, v in required_fields.items():
-            if v is None:
-                missing_fields.append(k)
-        if missing_fields:
-            return False, missing_fields
-        return True, []
 
     @cached_property
     def ticket_tier_counts(self):
@@ -708,37 +497,33 @@ class Ticket(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     checkout_item = models.ForeignKey(
         "CheckoutItem",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     checkout_session = models.ForeignKey(
         "CheckoutSession",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
-    google_class_id = models.CharField(max_length=255, blank=True, default="")
+    google_class_id = models.CharField(max_length=255, blank=True)
 
     # Ticket access info
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
-    extra_party = models.GeneratedField(
-        expression=F("party_size") - 1,
-        output_field=models.IntegerField(),
-        db_persist=True,
-    )
-    embed_code = models.UUIDField(default=uuid.uuid4, blank=False, null=False)
+    selected_guests = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    embed_code = models.UUIDField(default=uuid.uuid4)
     redeemed_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -748,19 +533,15 @@ class Ticket(DBModel):
         """Redeems a ticket."""
         # Check if redeemed
         if self.redeemed_at:
-            raise AlreadyRedeemedError({"redeemed": "Ticket is already redeemed."})
+            raise AlreadyRedeemedError("Ticket is already redeemed.")
 
         # # Check if redemption key was passed
         if not scanner_id:
-            raise ForbiddenRedemptionError(
-                {"scanner_id": "Access key was not passed in"}
-            )
+            raise ForbiddenRedemptionError("Access key was not passed in")
 
         # Check if match on redemption access key
         if self.event.scanner_id != scanner_id:
-            raise ForbiddenRedemptionError(
-                {"event": "Event does not match redemption key"}
-            )
+            raise ForbiddenRedemptionError("Event does not match redemption key")
 
         # Redeem & save
         self.redeemed_at = timezone.now()
@@ -817,61 +598,58 @@ class TicketTier(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
 
     # Ticket information fields
     name = models.CharField(
         max_length=255,
-        blank=False,
-        help_text="A short descriptive label for your ticket tier.",
+
+        help_text=_("A short descriptive label for your ticket tier."),
     )
     capacity = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1)],
-        help_text="Maximum amount of attendees for your event.",
-        blank=True,
-        null=False,
+        help_text=_("Maximum amount of attendees for your event."),
     )
     max_per_person = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
-        help_text="Maximum amount of tickets per attendee.",
-        blank=False,
-        null=False,
+        help_text=_("Maximum amount of tickets per attendee."),
+
+
     )
-    allowed_guests = models.IntegerField(
+    guests_allowed = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        help_text="Maximum number of guests allowed for one ticket.",
-        blank=False,
-        null=False,
+        help_text=_("Maximum number of guests allowed for one ticket."),
+
+
     )
     guest_supply = models.IntegerField(
         blank=True,
         null=True,
         validators=[MinValueValidator(0)],
-        help_text="Denotes the total guest capacity.",
+        help_text=_("Denotes the total guest capacity."),
     )
 
     # Display fields
     hidden_from_public = models.BooleanField(
         default=False,
-        blank=False,
-        null=False,
-        help_text="Whether or not this tier is hidden from the public",
+
+
+        help_text=_("Whether or not this tier is hidden from the public"),
     )
     hidden_availability = models.BooleanField(
         default=False,
-        blank=False,
-        null=False,
-        help_text="Whether or not to hide the number of available tickets from the public.",
+
+
+        help_text=_("Whether or not to hide the number of available tickets from the public."),
     )
     additional_information = models.TextField(
         blank=True,
-        default="",
-        help_text="Additional information for this tier provided by the host.",
+        help_text=_("Additional information for this tier provided by the host."),
     )
 
     # Category field
@@ -883,7 +661,6 @@ class TicketTier(DBModel):
     category = models.CharField(
         max_length=50,
         choices=Category.choices,
-        default="",
         blank=True,
     )
 
@@ -913,37 +690,36 @@ class TicketTier(DBModel):
         max_length=50,
         choices=BlockchainChoices.choices,
         default=BlockchainChoices.ETH,
-        blank=False,
+
     )
     network = models.IntegerField(
         choices=NetworkChoices.choices,
         default=NetworkChoices.ETH,
-        blank=False,
-        help_text="Which blockchain is your NFT collection on?",
+
+        help_text=_("Which blockchain is your NFT collection on?"),
     )
     asset_type = models.CharField(
         max_length=50,
         choices=AssetChoices.choices,
         default=AssetChoices.NFT,
-        blank=False,
+
     )
     balance_required = models.IntegerField(
         default=1,
-        blank=False,
-        null=False,
-        help_text="The number of NFTs required to claim your ticket tier.",
+
+
+        help_text=_("The number of NFTs required to claim your ticket tier."),
     )
     token_address = models.CharField(
         max_length=42,
         blank=True,
-        default="",
-        help_text="What is the contract address of your NFT collection?",
+        help_text=_("What is the contract address of your NFT collection?"),
     )
     token_id = ArrayField(
         models.IntegerField(),
         null=True,
         blank=True,
-        help_text="Which specific token IDs of the NFT collection are required?",
+        help_text=_("Which specific token IDs of the NFT collection are required?"),
     )
     deprecated_issued_token_id = ArrayField(
         models.IntegerField(), blank=True, default=list
@@ -954,10 +730,10 @@ class TicketTier(DBModel):
         max_digits=19,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        help_text="Price of one ticket for this tier.",
+        help_text=_("Price of one ticket for this tier."),
         default=0,
-        blank=False,
-        null=False,
+
+
     )
     price_per_ticket_cents = models.GeneratedField(
         expression=Round(F("price_per_ticket") * 100),
@@ -1020,8 +796,8 @@ class CheckoutSession(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     rsvp_batch = models.ForeignKey(
         "RSVPBatch",
@@ -1031,8 +807,8 @@ class CheckoutSession(DBModel):
     )
 
     # Checkout session information fields
-    name = models.CharField(max_length=255, blank=False)
-    email = models.EmailField(max_length=255, blank=False, null=False)
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
     passcode = models.CharField(max_length=6, default=get_random_passcode)
 
     # Session Status field
@@ -1045,7 +821,7 @@ class CheckoutSession(DBModel):
         max_length=50,
         choices=OrderStatus.choices,
         default=OrderStatus.VALID,
-        blank=False,
+
     )
 
     # Waitlist Status field
@@ -1056,7 +832,6 @@ class CheckoutSession(DBModel):
     waitlist_status = models.CharField(
         max_length=50,
         choices=WaitlistStatus.choices,
-        default="",
         blank=True,
     )
 
@@ -1069,26 +844,24 @@ class CheckoutSession(DBModel):
         max_length=50,
         choices=SessionType.choices,
         default=SessionType.FIAT,
-        blank=False,
+
     )
 
     # Session Type Fields - Fiat
     stripe_session_id = models.CharField(
         max_length=255,
         blank=True,
-        default="",
-        help_text="Stripe checkout session ID.",
+        help_text=_("Stripe checkout session ID."),
     )
     stripe_session_url = models.TextField(
         blank=True,
-        default="",
-        help_text="Stripe checkout session URL.",
+        help_text=_("Stripe checkout session URL."),
     )
     stripe_line_items = models.JSONField(blank=True, null=True)
 
     # Session Type Fields - Asset Ownership
-    wallet_address = models.CharField(max_length=42, blank=True, default="")
-    signed_message = models.TextField(blank=True, default="")
+    wallet_address = models.CharField(max_length=42, blank=True)
+    signed_message = models.TextField(blank=True)
     is_wallet_address_verified = models.BooleanField(blank=True, null=True)
     delegated_wallet = models.BooleanField(blank=True, null=True)
     redeemed_nfts = models.JSONField(blank=True, default=list)
@@ -1096,7 +869,7 @@ class CheckoutSession(DBModel):
     def __str__(self):
         return f"CheckoutSession: {self.email}"
 
-    @property
+    @cached_property
     def get_tickets_link(self):
         """
         get link to get the tickets for this session
@@ -1112,7 +885,7 @@ class CheckoutSession(DBModel):
         tickets_link = domain + url
         return tickets_link
 
-    @property
+    @cached_property
     def total_price(self):
         if self.session_type == CheckoutSession.SessionType.FIAT:
             total_price = 0
@@ -1124,7 +897,7 @@ class CheckoutSession(DBModel):
         else:
             return "N/A"
 
-    @property
+    @cached_property
     def stripe_checkout_cancel_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -1144,7 +917,7 @@ class CheckoutSession(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def stripe_checkout_success_link(self):
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}" # http works in local, converted to https on prod
@@ -1164,7 +937,7 @@ class CheckoutSession(DBModel):
         )
         return domain + url
 
-    @property
+    @cached_property
     def application_fee_amount(self):
         """
         application fee that will be requested to be applied to the payment,
@@ -1181,7 +954,7 @@ class CheckoutSession(DBModel):
         application_fee_amount = round(application_fee_amount)
         return application_fee_amount
 
-    @property
+    @cached_property
     def unsigned_message(self):
         return (
             "Greetings from SocialPass."
@@ -1219,10 +992,11 @@ class CheckoutSession(DBModel):
         for checkout_item in self.checkoutitem_set.all():
             ticket_keys = {
                 "checkout_session": checkout_item.checkout_session,
+                "checkout_item": checkout_item,
                 "event": checkout_item.checkout_session.event,
                 "ticket_tier": checkout_item.ticket_tier,
-                "checkout_item": checkout_item,
-                "party_size": checkout_item.calculated_party_size,
+                "selected_guests": checkout_item.selected_guests,
+                "party_size": checkout_item.selected_guests + 1
             }
             tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
         Ticket.objects.bulk_create(tickets_to_create)
@@ -1278,7 +1052,7 @@ class CheckoutSession(DBModel):
         if duplicate_emails:
             self.order_status = CheckoutSession.OrderStatus.FAILED
             self.save()
-            raise FreeCheckoutError(f"The email ({self.email}) has already been used for this ticket tier.")
+            raise FreeCheckoutError(f"The email ({self.email}) has already been used for this event.")
 
 
     def _process_wallet_address(self):
@@ -1446,14 +1220,14 @@ class CheckoutItem(DBModel):
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     checkout_session = models.ForeignKey(
         "CheckoutSession",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
 
     # basic info
@@ -1461,9 +1235,9 @@ class CheckoutItem(DBModel):
         default=0,
         validators=[MinValueValidator(0)],
         blank=True,
-        null=False,
+
     )
-    extra_party = models.IntegerField(
+    selected_guests = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)],
     )
@@ -1471,7 +1245,7 @@ class CheckoutItem(DBModel):
     def __str__(self):
         return f"CheckoutItem: {str(self.id)}"
 
-    @property
+    @cached_property
     def unit_amount(self):
         if not self.ticket_tier.category == TicketTier.Category.FIAT:
             return "N/A"
@@ -1479,19 +1253,6 @@ class CheckoutItem(DBModel):
         price_per_ticket_cents = self.ticket_tier.price_per_ticket_cents
         unit_amount = price_per_ticket_cents * self.quantity
         return unit_amount
-
-    @property
-    def calculated_party_size(self):
-        """
-        Calculates party size on a few factors
-        - extra_party + 1 (Indicates attendee + their number of guests)
-        - self.extra_party vs self.ticket_tier.allowed_guests (Handle any overflow)
-        """
-        extra_party = self.extra_party
-        if extra_party > self.ticket_tier.allowed_guests:
-            extra_party = self.ticket_tier.allowed_guests
-
-        return extra_party + 1
 
 
 class RSVPBatch(DBModel):
@@ -1502,8 +1263,8 @@ class RSVPBatch(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     success_list = models.TextField(blank=True)
     failure_list = models.TextField(blank=True)
@@ -1520,17 +1281,17 @@ class MessageBatch(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+
+
     )
-    subject = models.CharField(max_length=255, blank=False)
-    message = models.TextField(blank=False)
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
     total_recipients = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)]
@@ -1558,25 +1319,3 @@ class MessageBatch(DBModel):
             [email]
         ) for email in emails]
         send_mass_mail(messages)
-
-
-class ManualAttendee(DBModel):
-    """
-    Represents a person on the VIP list for an event.
-    """
-
-    event = models.ForeignKey(
-        "Event",
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-    )
-    name_or_email = models.CharField(max_length=255, blank=False)
-    redeemed_at = models.DateTimeField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"ManualAttendee: {self.public_id}"
-
-    def redeem(self):
-        self.redeemed_at = timezone.now()
-        self.save()

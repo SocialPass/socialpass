@@ -15,7 +15,7 @@ function updateTierData() {
 		data.push({
 			id: tier.getAttribute("data-pk"),
 			amount: tier.getAttribute("data-amount"),
-			extra_party: tier.getAttribute("data-extra-party"),
+			selected_guests: tier.getAttribute("data-extra-party"),
 		});
 		if (!isNaN(tier.getAttribute("data-price-per-ticket"))) {
 			totalPrice +=

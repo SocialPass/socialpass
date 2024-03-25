@@ -53,10 +53,6 @@ class GoogleTicket:
         """
         Get the payload for inserting/updating a ticket class.
         """
-        # Create the address from the fields
-        venue_name = event_obj.address_1
-        address = event_obj.localized_address_display.replace(venue_name + ", ", "", 1)
-
         # Create the payload
         payload = {
             "eventName": {
@@ -70,13 +66,13 @@ class GoogleTicket:
                 "name": {
                     "defaultValue": {
                         "language": "en-us",
-                        "value": venue_name,
+                        "value": event_obj.geo_address,
                     }
                 },
                 "address": {
                     "defaultValue": {
                         "language": "en-us",
-                        "value": address,
+                        "value": event_obj.geo_address,
                     }
                 },
             },

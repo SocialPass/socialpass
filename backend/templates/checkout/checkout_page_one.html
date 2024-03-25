@@ -9,10 +9,8 @@
 		{% trans "You are viewing this page as an organizer." %}
 		<div class="d-flex ms-md-auto mt-1 mt-md-0">
 			<a href="{% url 'dashboard_organizer:event_update' event.team.slug event.pk %}">{% trans "Edit Event" %}</a>
-			{% if event.state == event.StateStatus.LIVE %}
 			<span class="vr mx-2"></span>
 			<a href="?view_as_attendee=True">{% trans "View as Attendee" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
-			{% endif %}
 		</div>
 	</div>
 {% endif %}
@@ -31,34 +29,32 @@
 	<div class="p-3 p-sm-4 mt-3">
 		<div class="container-fluid overflow-hidden">
 			<div class="row g-3">
-
-				<!-- Team image and name start -->
-				<div class="d-flex align-items-center mb-2f">
-					<div class="specific-w-50 specific-h-50 rounded overflow-hidden" style="border-color: var(--bs-content-bg) !important;">
-						{% if event.team.image %}
-							<img src="{{ event.team.image.url }}" class="d-block w-100 h-auto" alt="Team image">
-						{% else %}
-							<div class="w-100 h-100 rounded d-flex align-items-center justify-content-center bg-secondary-subtle flex-shrink-0">
-								<span class="text-uppercase fs-3 mt-1 fw-bold">{{ event.team.name|slice:"0:1" }}</span>
-							</div>
-						{% endif %}
-					</div>
-					<h6 class="ms-2">
-						<span class="fw-normal">{% trans "Hosted By" %}</span>
-						<span class="text-primary-emphasis">{{ event.team.name }}</span>
-						{% if event.team.is_verified %}
-							<i class="fa-solid fa-badge-check text-primary ms-1"></i>
-						{% endif %}
-					</h6>
-				</div>
-				<hr/>
-				<!-- Team image and name end -->
-
 				<div class="col-lg-6">
-					<h1 class="text-body-emphasis display-6 m-0 text-break">
+					<h1 class="text-body-emphasis display-6 text-break">
 						{{ event.title }}
 					</h1>
-					<div id="desc-cont" class="my-3 overflow-hidden position-relative max-h-200">
+					<div class="d-flex align-items-center">
+						<div class="rounded overflow-hidden" style="width: 40px; height: 40px; border-color: var(--bs-content-bg) !important;">
+							{% if event.team.image %}
+								<img src="{{ event.team.image.url }}" class="d-block w-100 h-auto" alt="Team image">
+							{% else %}
+								<div class="w-100 h-100 rounded d-flex align-items-center justify-content-center bg-secondary-subtle flex-shrink-0">
+									<span class="text-uppercase fs-3 mt-1 fw-bold">{{ event.team.name|slice:"0:1" }}</span>
+								</div>
+							{% endif %}
+						</div>
+						<div class="ms-3">
+							<div>{% trans "Hosted By" %}</div>
+							<div class="fw-bold text-primary-emphasis">
+								{{ event.team.name }}
+								{% if event.team.is_verified %}
+									<i class="fa-solid fa-badge-check text-primary ms-1"></i>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					<hr />
+					<div id="desc-cont" class="mb-3 overflow-hidden position-relative max-h-200">
 						{{ event.description_html | safe }}
 						<div id="desc-read" class="d-none position-absolute bottom-0 start-0 w-100 text-center pb-1">
 							<button
@@ -113,7 +109,7 @@
 									</span>
 								</div>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-sm-6 position-relative">
 								<div class="d-flex align-items-start">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
 										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">{% trans "MAP" %}</div>
@@ -124,7 +120,7 @@
 									<div class="ms-3">
 										{% if not event.hide_address %}
 											<div class="fw-bold">
-												{{ event.address_1 }}
+												{{ event.geo_address }}
 											</div>
 										{% else %}
 											<div class="fw-bold">
@@ -137,13 +133,17 @@
 									</div>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">
+									<div class="text-body-secondary">
 										{% if not event.hide_address %}
-										<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.localized_address_display_without_venue }}">{{ event.localized_address_display_without_venue }}</a>
+											{% if event.geo_type == "GOOGLE" %}
+												<div class="text-center">
+													<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.geo_address }}" class="stretched-link" rel="noreferrer">{% trans "Open in Map" %}<i class="fa-light fa-external-link ms-2"></i></a>
+												</div>
+											{% endif %}
 										{% else %}
 											{% trans "Address will only be provided to ticket holders." %}
 										{% endif %}
-									</span>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -269,7 +269,8 @@
 							>
 							<label for="ASSET_OWNERSHIP" class="ticket-tier-label">
 								<h6 class="m-0">
-									<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i> {% trans "Token-Gated" %}
+									<i class="fa-solid fa-hexagon-image me-1 opacity-75"></i>
+									<span class="text-nowrap">{% trans "Token-Gated" %}</span>
 								</h6>
 							</label>
 						</div>
@@ -326,7 +327,7 @@
 		<div class="col-lg-5">
 			<div class="card border-0 rounded-4 shadow-sm overflow-hidden">
 				<div class="card-body">
-					{% if sales_status != "UPCOMING" and sales_status != "OVER" and event.state == "LIVE" %}
+					{% if sales_status != "UPCOMING" and sales_status != "OVER" %}
 						<form class="position-relative" method="POST">
 							{% csrf_token %}
 							{{ form.ticket_tier_data }}
@@ -341,7 +342,7 @@
 									{% include "forms/input.html" %}
 								{% endwith %}
 							</div>
-							<button type="submit" class="btn btn-info btn-lg d-block w-100" onclick="submitForm(event)" {% if event.state != "LIVE" %}disabled{% endif %}>
+							<button type="submit" class="btn btn-info btn-lg d-block w-100" onclick="submitForm(event)">
 								{% if not event.waiting_queue_enabled %}
 									{% trans "Get Tickets" %}
 								{% else %}

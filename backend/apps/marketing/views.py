@@ -1,6 +1,4 @@
 from django.views.generic import TemplateView
-from apps.root.models import Event
-
 
 class MarketingIndex(TemplateView):
     template_name = "landing/index.html"

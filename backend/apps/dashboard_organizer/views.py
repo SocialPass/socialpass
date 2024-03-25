@@ -1,4 +1,3 @@
-import secrets
 import uuid
 
 import rollbar
@@ -21,7 +20,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
-from django.views.generic.detail import DetailView, SingleObjectMixin
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
@@ -1170,7 +1169,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         email=email.strip(),
                         session_type=ticket_tier.category,
                     )
-                    checkout_item = CheckoutItem.objects.create(
+                    CheckoutItem.objects.create(
                         ticket_tier=ticket_tier,
                         checkout_session=checkout_session,
                         quantity=1,

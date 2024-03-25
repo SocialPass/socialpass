@@ -5,7 +5,6 @@ from django.utils.translation import gettext as _
 from django_quill.forms import QuillFormField
 from eth_utils import is_address
 
-from apps.root.countries import COUNTRIES
 from apps.root.models import (
     Event,
     Invitation,
@@ -13,7 +12,6 @@ from apps.root.models import (
     Team,
     TicketTier,
 )
-from apps.root.exceptions import GoogleWalletAPIRequestError
 
 
 class InvitationForm(forms.Form):

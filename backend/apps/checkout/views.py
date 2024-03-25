@@ -16,7 +16,6 @@ from django.db.models import Prefetch
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import View
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import DetailView
@@ -498,11 +497,8 @@ class CheckoutFiat(CheckoutPageTwoBase):
                 + f"?name={self.object.name}&email={self.object.email}"
             )
 
-        # Set local variables
-        context = self.get_context_data()
-        stripe.api_key = settings.STRIPE_API_KEY
-
         # Create line items using Stripe PRICES API
+        stripe.api_key = settings.STRIPE_API_KEY
         stripe_line_items = []
         checkout_items = self.object.checkoutitem_set.all()
         for item in checkout_items:

@@ -26,7 +26,6 @@ from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
 from moralis import evm_api
 
-from apps.root.countries import COUNTRIES
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     ForbiddenRedemptionError,

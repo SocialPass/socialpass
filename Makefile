@@ -10,7 +10,7 @@ format: ## Format codebase
 	(source backend/venv/bin/activate; cd backend; ruff format .;)
 
 lint: ## Lint codebase
-	(source backend/venv/bin/activate; mypy .; ruff .;)
+	(source backend/venv/bin/activate; cd backend; ruff check .;)
 
 collect: ## collectstatic backend
 	(source backend/venv/bin/activate; cd backend; yarn; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)

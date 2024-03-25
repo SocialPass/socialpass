@@ -14,8 +14,6 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail, send_mass_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import F
-from django.db.models.functions import Round
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -723,11 +721,6 @@ class TicketTier(DBModel):
         help_text=_("Price of one ticket for this tier."),
         default=0,
     )
-    price_per_ticket_cents = models.GeneratedField(
-        expression=Round(F("price_per_ticket") * 100),
-        output_field=models.IntegerField(),
-        db_persist=True,
-    )
 
     # Category fields - Free
     deprecated_issued_emails = ArrayField(models.EmailField(), blank=True, default=list)
@@ -771,6 +764,10 @@ class TicketTier(DBModel):
         except Exception:
             pass
         return additional_information_html
+
+    @cached_property
+    def price_per_ticket_cents(self):
+        return round(self.price_per_ticket * 100)
 
 
 class CheckoutSession(DBModel):

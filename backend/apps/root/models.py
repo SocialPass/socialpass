@@ -119,7 +119,7 @@ class Team(DBModel):
     """
 
     # keys
-    members = models.ManyToManyField("User", through="Membership")
+    members = models.ManyToManyField(to="root.User", through="root.Membership")
 
     # basic info
     name = models.CharField(max_length=255, unique=True)

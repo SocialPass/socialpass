@@ -21,7 +21,7 @@
         {% endif %}
         data-amount="0"
         data-extra-party="0"
-        data-allowed-guests="{{ tier.allowed_guests }}"
+        data-allowed-guests="{{ tier.guests_allowed }}"
         data-price-per-ticket="{{ tier.price_per_ticket }}"
         {% if tier.guests_available and not tier.event.waiting_queue_enabled %}
             data-guests-available="{{ tier.guests_available }}"
@@ -65,9 +65,9 @@
                         {% endif %}
                     {% else %}
                         {% trans "Available" %}
-                        {% if tier.allowed_guests > 0 %}
+                        {% if tier.guests_allowed > 0 %}
                             <span>
-                                | + {{ tier.allowed_guests }} {% trans "Guest(s) Allowed" %}
+                                | + {{ tier.guests_allowed }} {% trans "Guest(s) Allowed" %}
                             </span>
                         {% endif %}
                     {% endif %}
@@ -103,7 +103,7 @@
         <!-- End Fiat Price label -->
 
         <!-- Guests available information -->
-        {% if tier.allowed_guests > 0 %}
+        {% if tier.guests_allowed > 0 %}
             <div class="ticket-tier-guest ticket-tier-controls border-top mt-2 pt-3">
                 {% if tier.guest_supply >= 0 and not tier.event.waiting_queue_enabled %}
                     {% if tier.guests_count >= tier.guest_supply %}

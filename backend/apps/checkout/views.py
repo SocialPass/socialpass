@@ -207,7 +207,7 @@ class CheckoutPageOne(DetailView):
                 ticket_tier_id=int(item["id"]),
                 checkout_session=checkout_session,
                 quantity=int(item["amount"]),
-                extra_party=int(item["extra_party"]),
+                selected_guests=int(item["selected_guests"]),
             )
 
         # Handle redirect cases
@@ -324,7 +324,7 @@ class CheckoutPageTwoBase(DetailView):
         if self.object.event.total_capacity:
             new_attendees_count = self.object.event.attendees_count
             for item in checkout_items:
-                new_attendees_count += item.quantity + (item.quantity * item.extra_party)
+                new_attendees_count += item.quantity + (item.quantity * item.selected_guests)
             if new_attendees_count > self.object.event.total_capacity:
                 return {
                     "is_error": True,
@@ -338,7 +338,7 @@ class CheckoutPageTwoBase(DetailView):
         # Verify each checkout item in the checkout session
         for item in checkout_items:
             # Make sure none of the item's guests exceed the tier's supply
-            new_guests_count = item.ticket_tier.guests_count + item.extra_party
+            new_guests_count = item.ticket_tier.guests_count + item.selected_guests
             if item.ticket_tier.guest_supply and new_guests_count > item.ticket_tier.guest_supply:
                 return {
                     "is_error": True,

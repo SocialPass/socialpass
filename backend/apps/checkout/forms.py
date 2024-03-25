@@ -52,7 +52,7 @@ class CheckoutForm(forms.Form):
             for tier in self.tiers_all:
                 if int(item["id"]) == tier.id:
                     amount = int(item["amount"])
-                    extra_party = int(item["extra_party"])
+                    selected_guests = int(item["selected_guests"])
 
                     # 1. Max Per Person
                     if amount > tier.max_per_person:
@@ -69,9 +69,9 @@ class CheckoutForm(forms.Form):
                             raise ValidationError(f"Only {available} is available.")
 
                     # 3. Extra Party
-                    if extra_party > tier.allowed_guests:
+                    if selected_guests > tier.guests_allowed:
                         raise ValidationError(
-                            f"Only {tier.allowed_guests} guest(s) allowed."
+                            f"Only {tier.guests_allowed} guest(s) allowed."
                         )
 
         # OK

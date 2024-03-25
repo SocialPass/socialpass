@@ -1263,7 +1263,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                         ticket_tier=ticket_tier,
                         checkout_session=checkout_session,
                         quantity=1,
-                        extra_party=form.cleaned_data["allowed_guests"],
+                        selected_guests=form.cleaned_data["guests_allowed"],
                     )
                 success_list.append(email)
             except Exception as e:

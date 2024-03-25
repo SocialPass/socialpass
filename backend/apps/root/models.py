@@ -522,11 +522,7 @@ class Ticket(DBModel):
 
     # Ticket access info
     party_size = models.IntegerField(default=1, validators=[MinValueValidator(1)])
-    extra_party = models.GeneratedField(
-        expression=F("party_size") - 1,
-        output_field=models.IntegerField(),
-        db_persist=True,
-    )
+    selected_guests = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     embed_code = models.UUIDField(default=uuid.uuid4)
     redeemed_at = models.DateTimeField(blank=True, null=True)
 
@@ -626,7 +622,7 @@ class TicketTier(DBModel):
 
 
     )
-    allowed_guests = models.IntegerField(
+    guests_allowed = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         help_text=_("Maximum number of guests allowed for one ticket."),
@@ -998,10 +994,11 @@ class CheckoutSession(DBModel):
         for checkout_item in self.checkoutitem_set.all():
             ticket_keys = {
                 "checkout_session": checkout_item.checkout_session,
+                "checkout_item": checkout_item,
                 "event": checkout_item.checkout_session.event,
                 "ticket_tier": checkout_item.ticket_tier,
-                "checkout_item": checkout_item,
-                "party_size": checkout_item.calculated_party_size,
+                "selected_guests": checkout_item.selected_guests,
+                "party_size": checkout_item.selected_guests + 1
             }
             tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
         Ticket.objects.bulk_create(tickets_to_create)
@@ -1242,7 +1239,7 @@ class CheckoutItem(DBModel):
         blank=True,
 
     )
-    extra_party = models.IntegerField(
+    selected_guests = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)],
     )
@@ -1258,19 +1255,6 @@ class CheckoutItem(DBModel):
         price_per_ticket_cents = self.ticket_tier.price_per_ticket_cents
         unit_amount = price_per_ticket_cents * self.quantity
         return unit_amount
-
-    @cached_property
-    def calculated_party_size(self):
-        """
-        Calculates party size on a few factors
-        - extra_party + 1 (Indicates attendee + their number of guests)
-        - self.extra_party vs self.ticket_tier.allowed_guests (Handle any overflow)
-        """
-        extra_party = self.extra_party
-        if extra_party > self.ticket_tier.allowed_guests:
-            extra_party = self.ticket_tier.allowed_guests
-
-        return extra_party + 1
 
 
 class RSVPBatch(DBModel):

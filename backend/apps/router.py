@@ -26,9 +26,7 @@ urlpatterns = [
 ]
 
 # Django settings URLs (admin and media)
-urlpatterns += static(
-    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-)  # type: ignore
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # type: ignore
 urlpatterns += [path(settings.ADMIN_URL, admin.site.urls)]
 
 

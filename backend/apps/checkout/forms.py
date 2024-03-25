@@ -11,9 +11,7 @@ class PasscodeForm(forms.Form):
     passcode = forms.CharField(
         min_length=6,
         max_length=6,
-        widget=forms.TextInput(
-            attrs={"placeholder": "Enter your 6-character passcode"}
-        ),
+        widget=forms.TextInput(attrs={"placeholder": "Enter your 6-character passcode"}),
     )
 
 
@@ -41,9 +39,7 @@ class CheckoutForm(forms.Form):
         cleaned_data = super().clean()
         ticket_tier_data = json.loads(cleaned_data["ticket_tier_data"])
         if not isinstance(ticket_tier_data, list):
-            raise ValidationError(
-                f"Something went wrong."
-            )
+            raise ValidationError(f"Something went wrong.")
 
         # Clean Form Inputs against Ticket Tier Data
         # Max Per Person, Amount, Extra Party

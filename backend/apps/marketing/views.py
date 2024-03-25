@@ -5,6 +5,7 @@ from apps.root.models import Event
 class MarketingIndex(TemplateView):
     template_name = "landing/index.html"
 
+
 """
 class MarketingHostIndex(TemplateView):
     template_name = "marketing/landing/index_host.html"

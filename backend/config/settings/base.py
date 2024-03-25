@@ -1,6 +1,7 @@
 """
 Base settings to build other settings files upon.
 """
+
 import sys
 from pathlib import Path
 
@@ -55,9 +56,7 @@ if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
             "DJANGO_DATABASE_URL", default="postgres:///local_socialpass_db"
         ),
     }
-    DATABASES["default"]["CONN_MAX_AGE"] = env.int(
-        "CONN_MAX_AGE", default=60
-    )  # noqa F405
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
     DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
@@ -126,7 +125,7 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": "696835379568-qi9tn8fnktqsbb63r1hk1bes0uf7q5m2.apps.googleusercontent.com",
             "secret": env("GOOGLE_OAUTH_CLIENT_SECRET"),
-            "key": ""
+            "key": "",
         },
         "SCOPE": [
             "profile",
@@ -134,7 +133,7 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         "AUTH_PARAMS": {
             "access_type": "online",
-        }
+        },
     }
 }
 
@@ -150,9 +149,7 @@ PASSWORD_HASHERS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},

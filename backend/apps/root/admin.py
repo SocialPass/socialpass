@@ -28,6 +28,7 @@ class CustomDBAdmin(admin.ModelAdmin):
     ordering = ["-modified"]
     list_per_page = 1
 
+
 @admin.register(CheckoutItem)
 class CheckoutItemAdmin(CustomDBAdmin):
     list_display = [
@@ -41,10 +42,7 @@ class CheckoutItemAdmin(CustomDBAdmin):
         "checkout_session__name",
         "checkout_session__email",
     ]
-    list_select_related = [
-        "ticket_tier",
-        "checkout_session"
-    ]
+    list_select_related = ["ticket_tier", "checkout_session"]
     raw_id_fields = []
 
 
@@ -58,15 +56,11 @@ class CheckoutSessionAdmin(CustomDBAdmin):
         "session_type",
         "order_status",
     ] + CustomDBAdmin.list_display
-    search_fields = [
-        "event__title",
-        "name",
-        "email",
-        "public_id"
-    ]
+    search_fields = ["event__title", "name", "email", "public_id"]
     list_select_related = [
         "event",
     ]
+
 
 @admin.register(Event)
 class EventAdmin(CustomDBAdmin):
@@ -85,20 +79,18 @@ class EventAdmin(CustomDBAdmin):
         "user__username",
         "team__name",
     ]
-    list_select_related = [
-        "user",
-        "team"
-    ]
-    raw_id_fields = [
-        "user",
-        "team"
-    ]
+    list_select_related = ["user", "team"]
+    raw_id_fields = ["user", "team"]
 
 
 @admin.register(Invitation)
 class InvitationAdmin(CustomDBAdmin):
     list_display = [
-        "__str__", "inviter", "team", "email", "accepted"
+        "__str__",
+        "inviter",
+        "team",
+        "email",
+        "accepted",
     ] + CustomDBAdmin.list_display
     list_select_related = [
         "inviter",
@@ -115,25 +107,14 @@ class InvitationAdmin(CustomDBAdmin):
 @admin.register(Membership)
 class MembershipAdmin(CustomDBAdmin):
     list_display = ["__str__", "user", "team"] + CustomDBAdmin.list_display
-    list_select_related = [
-        "user",
-        "team"
-    ]
-    raw_id_fields = [
-        "user",
-        "team"
-    ]
+    list_select_related = ["user", "team"]
+    raw_id_fields = ["user", "team"]
 
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = [
-        "email",
-        "username",
-        "is_staff",
-        "is_active",
-        "date_joined"
-    ]
+    list_display = ["email", "username", "is_staff", "is_active", "date_joined"]
+
     class MembershipInline(admin.TabularInline):
         model = Team.members.through
 
@@ -202,9 +183,9 @@ class TicketAdmin(CustomDBAdmin):
         "checkout_session",
     ]
     raw_id_fields = [
-       "event",
-       "ticket_tier",
-       "checkout_session",
+        "event",
+        "ticket_tier",
+        "checkout_session",
     ]
 
 

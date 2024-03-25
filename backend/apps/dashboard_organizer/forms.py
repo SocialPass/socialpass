@@ -46,26 +46,27 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ["name", "description", "image"]
         widgets = {
-           "name": forms.TextInput(attrs={"placeholder": _("Event Planner Company")}),
-           "description": forms.Textarea(
-               attrs={
-                   "placeholder": _("Your premier event planning company specializing in unforgettable experiences."),
-                   "rows": 3,
-               }
-           ),
+            "name": forms.TextInput(attrs={"placeholder": _("Event Planner Company")}),
+            "description": forms.Textarea(
+                attrs={
+                    "placeholder": _(
+                        "Your premier event planning company specializing in unforgettable experiences."
+                    ),
+                    "rows": 3,
+                }
+            ),
         }
         labels = {
-           "name": _("Name"),
-           "description": _("Description"),
-           "image": _("Profile Image"),
+            "name": _("Name"),
+            "description": _("Description"),
+            "image": _("Profile Image"),
         }
         help_texts = {
-           "image": _(
-               "A personal image for your profile. Please make sure the image is "
-               "square, non-transparent, and ideally in the PNG format."
-           ),
+            "image": _(
+                "A personal image for your profile. Please make sure the image is "
+                "square, non-transparent, and ideally in the PNG format."
+            ),
         }
-
 
 
 class EventCreateForm(forms.ModelForm):
@@ -105,9 +106,9 @@ class EventForm(forms.ModelForm):
     """
 
     description = QuillFormField()
-    timezone = forms.ChoiceField(choices=[
-        (x, x) for x in sorted(zoneinfo.available_timezones())
-    ])
+    timezone = forms.ChoiceField(
+        choices=[(x, x) for x in sorted(zoneinfo.available_timezones())]
+    )
 
     class Meta:
         model = Event
@@ -249,8 +250,14 @@ class TicketTierForm(forms.ModelForm):
     class Meta:
         model = TicketTier
         fields = [
-            "name", "capacity", "max_per_person", "guests_allowed",
-            "guest_supply", "hidden_from_public", "hidden_availability", "additional_information",
+            "name",
+            "capacity",
+            "max_per_person",
+            "guests_allowed",
+            "guest_supply",
+            "hidden_from_public",
+            "hidden_availability",
+            "additional_information",
         ]
         widgets = {
             "name": forms.TextInput(
@@ -308,7 +315,7 @@ class TierAssetOwnershipForm(TicketTierForm):
                 ),
                 "token_id": forms.TextInput(attrs={"placeholder": _("e.g. 1,2,3,4,5")}),
                 "balance_required": forms.NumberInput(attrs={"min": 1}),
-            }
+            },
         }
         labels = {
             **TicketTierForm.Meta.labels,
@@ -316,7 +323,7 @@ class TierAssetOwnershipForm(TicketTierForm):
                 "token_address": _("NFT Collection Token Address"),
                 "balance_required": _("Balance Required"),
                 "token_id": _("OPTIONAL: Token IDs Required"),
-            }
+            },
         }
 
     def clean_token_address(self):
@@ -348,13 +355,13 @@ class TierFiatForm(TicketTierForm):
                         "min": "0.01",
                     }
                 ),
-            }
+            },
         }
         labels = {
             **TicketTierForm.Meta.labels,
             **{
                 "price_per_ticket": _("Price/ticket"),
-            }
+            },
         }
 
 
@@ -391,11 +398,11 @@ class MessageBatchForm(forms.ModelForm):
         model = MessageBatch
         fields = ["ticket_tier", "subject", "message"]
         widgets = {
-           "subject": forms.TextInput(attrs={"placeholder": _("Subject of the email")}),
-           "message": forms.Textarea(
-               attrs={
-                   "placeholder": _("Message of the email"),
-                   "rows": 3,
-               }
-           ),
+            "subject": forms.TextInput(attrs={"placeholder": _("Subject of the email")}),
+            "message": forms.Textarea(
+                attrs={
+                    "placeholder": _("Message of the email"),
+                    "rows": 3,
+                }
+            ),
         }

@@ -157,9 +157,7 @@ class InvitationDetailView(View):
         context["invitation"] = invitation
 
         # Stash email address
-        DefaultAccountAdapter().stash_verified_email(
-            self.request, invitation.email
-        )
+        DefaultAccountAdapter().stash_verified_email(self.request, invitation.email)
 
         # Check if email belongs to user
         context["email_belongs_to_user"] = self.email_belongs_to_user(
@@ -170,9 +168,7 @@ class InvitationDetailView(View):
         # We check for verified email because if that exists, then user account
         # also exists
         account_exists = False
-        if EmailAddress.objects.filter(
-            email=invitation.email, verified=True
-        ).exists():
+        if EmailAddress.objects.filter(email=invitation.email, verified=True).exists():
             account_exists = True
         context["account_exists"] = account_exists
 
@@ -193,12 +189,12 @@ class InvitationDetailView(View):
         # Generic error message because we don't expect this to happen under
         # any normal circumstances. The GET method would handle proper messaging
         # via the template
-        if (invitation.accepted or
-            invitation.is_expired or
-            not self.email_belongs_to_user(self.request.user, invitation)):
-            messages.add_message(
-                self.request, messages.ERROR, "Something went wrong."
-            )
+        if (
+            invitation.accepted
+            or invitation.is_expired
+            or not self.email_belongs_to_user(self.request.user, invitation)
+        ):
+            messages.add_message(self.request, messages.ERROR, "Something went wrong.")
             return redirect(
                 "dashboard_organizer:invitation_detail",
                 invitation.public_id,
@@ -214,9 +210,7 @@ class InvitationDetailView(View):
         invitation.membership = membership
         invitation.accepted = True
         invitation.save()
-        messages.add_message(
-            self.request, messages.SUCCESS, "Invitation accepted."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Invitation accepted.")
         return redirect(
             "dashboard_organizer:event_list",
             invitation.team.slug,
@@ -321,9 +315,7 @@ class TeamUpdateView(TeamContextMixin, UpdateView):
         messages.add_message(
             self.request, messages.SUCCESS, "Team information updated successfully."
         )
-        return reverse(
-            "dashboard_organizer:team_detail", args=(self.kwargs["team_slug"],)
-        )
+        return reverse("dashboard_organizer:team_detail", args=(self.kwargs["team_slug"],))
 
 
 class EventListView(TeamContextMixin, ListView):
@@ -432,21 +424,21 @@ class EventTicketsView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     template_name = "dashboard_organizer/event_ticket_tiers.html"
 
     def get_object(self):
-        return Event.objects.prefetch_related(
-            "tickettier_set"
-        ).get(
-            pk=self.kwargs["pk"],
-            team__slug=self.kwargs["team_slug"]
+        return Event.objects.prefetch_related("tickettier_set").get(
+            pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
         )
 
     def get_success_message(self, *args, **kwargs):
         return "Ticketing preferences have been updated."
 
     def get_success_url(self, *args, **kwargs):
-        return reverse(
-            "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_slug"], self.object.pk),
-        ) + "?showprefs=true"
+        return (
+            reverse(
+                "dashboard_organizer:event_tickets",
+                args=(self.kwargs["team_slug"], self.object.pk),
+            )
+            + "?showprefs=true"
+        )
 
 
 class EventDeleteView(TeamContextMixin, DeleteView):
@@ -459,15 +451,11 @@ class EventDeleteView(TeamContextMixin, DeleteView):
     template_name = "dashboard_organizer/event_delete.html"
 
     def get_object(self):
-        return Event.objects.get(
-            pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
-        )
+        return Event.objects.get(pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"])
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Event has been deleted.")
-        return reverse(
-            "dashboard_organizer:event_list", args=(self.kwargs["team_slug"],)
-        )
+        return reverse("dashboard_organizer:event_list", args=(self.kwargs["team_slug"],))
 
 
 class EventStatsView(TeamContextMixin, DetailView):
@@ -497,13 +485,13 @@ class EventStatsView(TeamContextMixin, DetailView):
         ).filter(event=event)
         results = []
         for ticket in tickets:
-            if ticket.checkout_session.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
-                wallet_address = (
-                    ticket.checkout_session.wallet_address
-                )
+            if (
+                ticket.checkout_session.session_type
+                == CheckoutSession.SessionType.ASSET_OWNERSHIP
+            ):
+                wallet_address = ticket.checkout_session.wallet_address
                 redeemed_nfts = [
-                    nft['token_id'] for nft
-                    in ticket.checkout_session.redeemed_nfts
+                    nft["token_id"] for nft in ticket.checkout_session.redeemed_nfts
                 ]
             else:
                 wallet_address = None
@@ -620,9 +608,7 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
     def dispatch(self, request, *args, **kwargs):
         team = Team.objects.get(slug=self.kwargs["team_slug"])
         stripe_status = team.stripe_account_payouts_enabled
-        if not (
-            stripe_status["details_submitted"] and stripe_status["payouts_enabled"]
-        ):
+        if not (stripe_status["details_submitted"] and stripe_status["payouts_enabled"]):
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -729,15 +715,12 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
     template_name = "dashboard_organizer/ticket_tier_delete.html"
 
     def get_object(self):
-        return TicketTier.objects.prefetch_related(
-            "ticket_set",
-            "checkoutitem_set",
-            "checkoutitem_set__checkout_session"
-        ).select_related(
-            "event"
-        ).get(
-            pk=self.kwargs["pk"],
-            event__team__slug=self.kwargs["team_slug"]
+        return (
+            TicketTier.objects.prefetch_related(
+                "ticket_set", "checkoutitem_set", "checkoutitem_set__checkout_session"
+            )
+            .select_related("event")
+            .get(pk=self.kwargs["pk"], event__team__slug=self.kwargs["team_slug"])
         )
 
     def has_sales(self):
@@ -764,7 +747,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
                 self.request,
                 messages.ERROR,
                 "This ticket tier cannot be deleted. Tickets have been issued, "
-                "or there are sessions in the waitlist with this tier."
+                "or there are sessions in the waitlist with this tier.",
             )
             return redirect(
                 "dashboard_organizer:ticket_tier_delete",
@@ -775,11 +758,7 @@ class TicketTierDeleteView(TeamContextMixin, DeleteView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            "Ticket has been deleted."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Ticket has been deleted.")
         return reverse(
             "dashboard_organizer:event_tickets",
             args=(self.kwargs["team_slug"], self.kwargs["event_pk"]),
@@ -1000,23 +979,17 @@ class EventScanner2(DetailView):
         # Get embed code & Check for valid UUID
         embed_code = self.request.POST.get("embed_code")
         if not embed_code:
-            return render(
-                self.request, template_name="scanner/scanner_error.html"
-            )
+            return render(self.request, template_name="scanner/scanner_error.html")
         try:
             embed_code = uuid.UUID(str(embed_code))
         except ValueError:
-            return render(
-                self.request, template_name="scanner/scanner_error.html"
-            )
+            return render(self.request, template_name="scanner/scanner_error.html")
 
         # Retrieve ticket
         try:
             ticket = Ticket.objects.get(embed_code=embed_code, event=self.object)
         except Ticket.DoesNotExist:
-            return render(
-                self.request, template_name="scanner/scanner_error.html"
-            )
+            return render(self.request, template_name="scanner/scanner_error.html")
 
         # Redeem ticket
         try:
@@ -1063,12 +1036,14 @@ class EventScannerManualCheckIn(DetailView):
             return context
 
         # Search for tickets
-        context["tickets"] = self.object.ticket_set.select_related(
-            "checkout_session"
-        ).filter(
-            Q(checkout_session__name__icontains=self.request.GET.get("search")) |
-            Q(checkout_session__email__icontains=self.request.GET.get("search"))
-        ).order_by("-redeemed_at")
+        context["tickets"] = (
+            self.object.ticket_set.select_related("checkout_session")
+            .filter(
+                Q(checkout_session__name__icontains=self.request.GET.get("search"))
+                | Q(checkout_session__email__icontains=self.request.GET.get("search"))
+            )
+            .order_by("-redeemed_at")
+        )
 
         return context
 
@@ -1115,11 +1090,11 @@ class RSVPTicketsView(TeamContextMixin, TemplateView):
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
-        context["rsvp_batches"] = RSVPBatch.objects.prefetch_related(
-            "checkoutsession_set"
-        ).filter(
-            event=context["event"]
-        ).order_by("-created")
+        context["rsvp_batches"] = (
+            RSVPBatch.objects.prefetch_related("checkoutsession_set")
+            .filter(event=context["event"])
+            .order_by("-created")
+        )
         return context
 
 
@@ -1163,9 +1138,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         emails = form.cleaned_data["customer_emails"].split(",")
         if len(emails) > 30:
             messages.add_message(
-                self.request,
-                messages.ERROR,
-                "Only up to 30 emails are allowed per batch."
+                self.request, messages.ERROR, "Only up to 30 emails are allowed per batch."
             )
             return super().form_invalid(form)
 
@@ -1178,7 +1151,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                 messages.add_message(
                     self.request,
                     messages.ERROR,
-                    "Please make sure each email address is valid."
+                    "Please make sure each email address is valid.",
                 )
                 return super().form_invalid(form)
 
@@ -1225,7 +1198,10 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         )
         return reverse(
             "dashboard_organizer:rsvp_tickets",
-            args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
+            args=(
+                self.kwargs["team_slug"],
+                self.kwargs["event_pk"],
+            ),
         )
 
 
@@ -1246,11 +1222,11 @@ class MessageBatchesView(TeamContextMixin, TemplateView):
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
-        context["message_batches"] = MessageBatch.objects.select_related(
-            "ticket_tier"
-        ).filter(
-            event=context["event"]
-        ).order_by("-created")
+        context["message_batches"] = (
+            MessageBatch.objects.select_related("ticket_tier")
+            .filter(event=context["event"])
+            .order_by("-created")
+        )
         return context
 
 
@@ -1289,12 +1265,13 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Messages sent successfully."
-        )
+        messages.add_message(self.request, messages.SUCCESS, "Messages sent successfully.")
         return reverse(
             "dashboard_organizer:message_batches",
-            args=(self.kwargs["team_slug"], self.kwargs["event_pk"],)
+            args=(
+                self.kwargs["team_slug"],
+                self.kwargs["event_pk"],
+            ),
         )
 
 
@@ -1316,8 +1293,8 @@ class WaitingQueueView(TeamContextMixin, ListView):
 
         if self.request.GET.get("search"):
             qs = qs.filter(
-                Q(name__icontains=self.request.GET.get("search")) |
-                Q(email__icontains=self.request.GET.get("search")),
+                Q(name__icontains=self.request.GET.get("search"))
+                | Q(email__icontains=self.request.GET.get("search")),
                 ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
                 event__team__slug=self.kwargs["team_slug"],
@@ -1347,7 +1324,8 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
     def get_object(self):
         if not self.object:
             self.object = CheckoutSession.objects.select_related(
-                "event", "event__team",
+                "event",
+                "event__team",
             ).get(
                 ~Q(waitlist_status=""),
                 event__pk=self.kwargs["event_pk"],
@@ -1369,7 +1347,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
         # Session not processed, so send payment link for them to complete
         if self.object.session_type == CheckoutSession.SessionType.FIAT:
             domain = Site.objects.all().first().domain
-            domain = f"http://{domain}" # http works in local, converted to https on prod
+            domain = f"http://{domain}"  # http works in local, converted to https on prod
             url = reverse(
                 "checkout:checkout_fiat",
                 args=[
@@ -1383,8 +1361,7 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 "payment_link": domain + url,
             }
             msg_subject = str(
-                "[SocialPass] Complete payment to get tickets - " +
-                self.object.event.title
+                "[SocialPass] Complete payment to get tickets - " + self.object.event.title
             )
             msg_plain = render_to_string(
                 "dashboard_organizer/email/wq_complete_payment_message.txt", ctx
@@ -1396,7 +1373,9 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
                 msg_subject,
                 msg_plain,
                 "tickets-no-reply@socialpass.io",
-                [self.object.email,],
+                [
+                    self.object.email,
+                ],
                 html_message=msg_html,
             )
 

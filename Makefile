@@ -6,7 +6,10 @@ SHELL := /bin/bash
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-lint: ## Lint backend repo
+format: ## Format codebase
+	(source backend/venv/bin/activate; cd backend; ruff format .;)
+
+lint: ## Lint codebase
 	(source backend/venv/bin/activate; mypy .; ruff .;)
 
 collect: ## collectstatic backend
@@ -33,7 +36,7 @@ run: ## Run Backend Server
 superuser: ## Create backend superuser
 	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)
 
-test: ## Test backend repo
+test: ## Test codebase
 	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test --failfast)
 
 turtle: ## Run shell_plus

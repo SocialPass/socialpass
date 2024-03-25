@@ -21,7 +21,6 @@ urlpatterns = [
         views.CheckoutPageOneRedirect.as_view(),
         name="checkout_one_redirect",
     ),
-
     # Main checkout flow
     path(
         "e/<slug:team_slug>/<slug:event_slug>/",
@@ -63,7 +62,6 @@ urlpatterns = [
         views.JoinedWaitingQueue.as_view(),
         name="joined_waiting_queue",
     ),
-
     # Tickets download
     path(
         "get-tickets/<uuid:checkout_session_public_id>",

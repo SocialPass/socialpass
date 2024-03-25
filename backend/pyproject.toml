@@ -23,3 +23,31 @@ exclude = [
 	"venv",
 	"migrations"
 ]
+
+[tool.mypy]
+mypy_path = "./backend"
+exclude = [
+	"migrations/*",
+	"staticfiles/*"
+]
+plugins = ["mypy_django_plugin.main"]
+python_version = "3.11"
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+strict_equality = true
+strict_optional = true
+warn_no_return = true
+warn_unreachable = true
+warn_return_any = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+# TODO check_untyped_defs = true
+# TODO disallow_any_unimported = true
+# TODO disallow_incomplete_defs = true
+# TODO disallow_untyped_decorators = true
+
+[tool.django-stubs]
+ignore_missing_model_attributes = true
+django_settings_module = "config.settings.local"

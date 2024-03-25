@@ -7,7 +7,7 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 lint: ## Lint backend repo
-	(source backend/venv/bin/activate; cd backend; black --exclude ".*\/(migrations|venv|node_modules|staticfiles)\/.*" .; mypy .; ruff .;)
+	(source backend/venv/bin/activate; mypy .; ruff .;)
 
 collect: ## collectstatic backend
 	(source backend/venv/bin/activate; cd backend; yarn; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)

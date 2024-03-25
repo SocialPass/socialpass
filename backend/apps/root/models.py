@@ -1052,7 +1052,7 @@ class CheckoutSession(DBModel):
         if duplicate_emails:
             self.order_status = CheckoutSession.OrderStatus.FAILED
             self.save()
-            raise FreeCheckoutError(f"The email ({self.email}) has already been used for this ticket tier.")
+            raise FreeCheckoutError(f"The email ({self.email}) has already been used for this event.")
 
 
     def _process_wallet_address(self):

@@ -109,7 +109,7 @@
 									</span>
 								</div>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-sm-6 position-relative">
 								<div class="d-flex align-items-start">
 									<div class="specific-w-50 specific-h-50 flex-shrink-0 bg-primary-subtle rounded text-center">
 										<div class="bg-primary bg-opacity-25 text-uppercase rounded-top" style="font-size: 10px;">{% trans "MAP" %}</div>
@@ -133,13 +133,17 @@
 									</div>
 								</div>
 								<div class="mt-2">
-									<span class="text-body-secondary">
+									<div class="text-body-secondary">
 										{% if not event.hide_address %}
-										<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.geo_address }}">{{ event.geo_address }}</a>
+											{% if event.geo_type == "GOOGLE" %}
+												<div class="text-center">
+													<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.geo_address }}" class="stretched-link" rel="noreferrer">{% trans "Open in Map" %}<i class="fa-light fa-external-link ms-2"></i></a>
+												</div>
+											{% endif %}
 										{% else %}
 											{% trans "Address will only be provided to ticket holders." %}
 										{% endif %}
-									</span>
+									</div>
 								</div>
 							</div>
 						</div>

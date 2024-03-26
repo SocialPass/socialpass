@@ -359,17 +359,6 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     form_class = EventForm
     template_name = "dashboard_organizer/event_create.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
-        self.initial["team"] = context["current_team"].pk
-        return context
-
-    def get_initial(self):
-        initial = super().get_initial()
-        initial["team"] = self.team
-        return initial
-
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
@@ -400,7 +389,6 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = self.object
-        context["GMAPS_API_KEY"] = settings.GMAPS_API_KEY
         return context
 
     def form_valid(self, form, **kwargs):

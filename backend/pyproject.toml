@@ -51,3 +51,10 @@ warn_unused_configs = true
 [tool.django-stubs]
 ignore_missing_model_attributes = true
 django_settings_module = "config.settings.local"
+
+[tool.djlint]
+profile="django"
+use_gitignore=true
+max_line_length=80
+blank_line_after_tag="load,extends,include"
+ignore="H016,H030,H006,H013,H021,H008,H031,H023,H029,H025,T003,T002"

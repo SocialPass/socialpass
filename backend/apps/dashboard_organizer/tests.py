@@ -4,7 +4,6 @@ from django.http import Http404
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
-from django.utils import timezone
 
 from apps.root.models import Event, Membership, Team, User
 
@@ -119,11 +118,17 @@ class TestEventListCreateView(TestCase):
 				"team": self.team,
 				"title": "Test event create post",
 				"description": "Description",
-				"start_date": timezone.now(),
-				"timezone": "Asia/Dhaka",
+				"start_date": datetime(2024, 1, 1, 0, 0),
+				"timezone": "US/Eastern",
+				"geo_type": Event.GeographyType.MANUAL,
 				"geo_address": "Address",
 			},
 			follow=True,
 		)
-		self.assertEqual(Event.objects.filter(team=self.team).count(), 1)
+		self.assertEqual(
+			Event.objects.filter(
+				team=self.team,
+				title="Test event create post",
+			).count(), 1
+		)
 		self.assertEqual(response.status_code, 200)

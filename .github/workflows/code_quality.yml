@@ -11,21 +11,21 @@ jobs:
         with:
           python-version: "3.11"
           cache: 'pip'
-      - name: Install dependencies
+      - name: install dependencies
         working-directory: ./backend
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r config/requirements/local.txt
-      - name: Ruff quality checks
+      - name: ruff quality checks
         working-directory: ./backend
         run: |
           ruff check .
           ruff format . --check
-      - name: Mypy quality checks
+      - name: mypy quality checks
         working-directory: ./backend
         run: |
           mypy . --install-types --non-interactive --ignore-missing-imports
-      - name: Mypy quality checks
+      - name: djlint quality checks
         working-directory: ./backend
         run: |
           djlint . --lint

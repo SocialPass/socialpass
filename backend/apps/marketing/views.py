@@ -1,5 +1,6 @@
 from django.views.generic import TemplateView
 
+
 class MarketingIndex(TemplateView):
     template_name = "landing/index.html"
 

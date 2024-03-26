@@ -1,10 +1,12 @@
-from django.contrib import auth
+from datetime import datetime
 from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.urls import reverse
+from django.utils import timezone
 
-from apps.root.models import Membership, Team, User
+from apps.root.models import Event, Membership, Team, User
 
 from . import views
 
@@ -23,12 +25,10 @@ class TestTeamContextMixin(TestCase):
 		self.member = User.objects.create_user(
 			username="testuser1",
 			email="testuser1@example.com",
-			password="password",
 		)
 		self.non_member = User.objects.create_user(
 			username="testuser2",
 			email="testuser2@example.com",
-			password="password",
 		)
 		self.membership = Membership.objects.create(
 			team=self.team,
@@ -58,3 +58,72 @@ class TestTeamContextMixin(TestCase):
 			response = views.EventListView.as_view()(request, **kwargs)
 		except Exception as e:
 			self.assertEqual(type(e), Http404)
+
+
+class TestEventListCreateView(TestCase):
+	"""
+	Test the event list and create views.
+	"""
+
+	def setUp(self):
+		self.factory = RequestFactory()
+		self.team = Team.objects.create(
+			name="testteam",
+		)
+		self.user = User.objects.create_user(
+			username="testuser",
+			email="testuser@example.com",
+		)
+		self.user.set_password("password")
+		self.user.save()
+		self.membership = Membership.objects.create(
+			team=self.team,
+			user=self.user,
+		)
+		return super().setUp()
+
+	def test_event_list_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_list",
+				args=(self.team.slug,)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_create_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_create",
+				args=(self.team.slug,)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_create_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:event_create",
+				args=(self.team.slug,)
+			),
+			data={
+				"team": self.team,
+				"title": "Test event create post",
+				"description": "Description",
+				"start_date": timezone.now(),
+				"timezone": "Asia/Dhaka",
+				"geo_address": "Address",
+			},
+			follow=True,
+		)
+		self.assertEqual(Event.objects.filter(team=self.team).count(), 1)
+		self.assertEqual(response.status_code, 200)

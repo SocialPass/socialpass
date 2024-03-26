@@ -2,65 +2,75 @@
 
 <!DOCTYPE html>
 {% get_debug_status as debug %}
-<html lang="en" class="{% block html_class %}{% endblock %}" spellcheck="false" data-bs-theme="{% get_color_mode %}">
-	<head>
-		<!-- Meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-
-		<!-- Title -->
-		<title>{% block head_title %}{% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %} - {% trans "Hosting the Next Generation of Events" %}{% endblock head_title %}</title>
-
-		<!-- Fav icon -->
-		{% if organizer_team.whitelabel.favicon %}
-			<link rel="icon" href="{{ organizer_team.whitelabel.favicon.url }}">
-		{% else %}
-			<link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
-		{% endif %}
-
-		<!-- Halfmoon CSS -->
-		<link href="{% static 'css/halfmoon.min.css' %}" rel="stylesheet" />
-
-		<!-- SocialPass CSS theme -->
-		<link href="{% static 'css/sp-theme.css' %}" rel="stylesheet" />
-
-		<!-- Font Awesome 6 -->
-		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
-
-		<!-- SEO -->
-		{% if not object.hide_address %}
-			<meta name="description" content="Date & Time: {{ object.start_date }} | Location: {{ object.geo_address }} | Get your tickets now!">
-		{% else %}
-			<meta name="description" content="Date & Time: {{ object.start_date }} | Get your tickets now!">
-		{% endif %}
-		<meta name="author" content="{{ object.team.name }}">
-		<meta property="url" content="{{ request.build_absolute_uri }}">
-		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting, fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
-
-		<!-- Open Graph -->
-		<meta property="og:type" content="article">
-		<meta property="og:url" content="{{ request.build_absolute_uri }}">
-		<meta property="og:title" content="{{ object.title }}">
-		{% if not object.hide_address %}
-			<meta property="og:description" content="Date & Time: {{ object.start_date }} | Location: {{ object.geo_address }} | Get your tickets now!">
-		{% else %}
-			<meta property="og:description" content="Date & Time: {{ object.start_date }} | Get your tickets now!">
-		{% endif %}
-		<meta property="og:image" content="{{ object.cover_image_url }}">
-
-		<!-- Google Tag Manager -->
-		{% if not debug %}
-			<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
-			<script>
+<html lang="en"
+      class="{% block html_class %}{% endblock %}"
+      spellcheck="false"
+      data-bs-theme="{% get_color_mode %}">
+    <head>
+        <!-- Meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Title -->
+        <title>
+            {% block head_title %}
+                {% if organizer_team.whitelabel.brand_name %}
+                    {{ organizer_team.whitelabel.brand_name }}
+                {% else %}
+                    SocialPass
+                {% endif %}
+                - {% trans "Hosting the Next Generation of Events" %}
+            {% endblock head_title %}
+        </title>
+        <!-- Fav icon -->
+        {% if organizer_team.whitelabel.favicon %}
+            <link rel="icon" href="{{ organizer_team.whitelabel.favicon.url }}">
+        {% else %}
+            <link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
+        {% endif %}
+        <!-- Halfmoon CSS -->
+        <link href="{% static 'css/halfmoon.min.css' %}" rel="stylesheet" />
+        <!-- SocialPass CSS theme -->
+        <link href="{% static 'css/sp-theme.css' %}" rel="stylesheet" />
+        <!-- Font Awesome 6 -->
+        <script src="https://kit.fontawesome.com/e222fd7f73.js"
+                crossorigin="anonymous"></script>
+        <!-- SEO -->
+        {% if not object.hide_address %}
+            <meta name="description"
+                  content="Date & Time: {{ object.start_date }} | Location: {{ object.geo_address }} | Get your tickets now!">
+        {% else %}
+            <meta name="description"
+                  content="Date & Time: {{ object.start_date }} | Get your tickets now!">
+        {% endif %}
+        <meta name="author" content="{{ object.team.name }}">
+        <meta property="url" content="{{ request.build_absolute_uri }}">
+        <meta name="keywords"
+              content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting, fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
+        <!-- Open Graph -->
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        <meta property="og:title" content="{{ object.title }}">
+        {% if not object.hide_address %}
+            <meta property="og:description"
+                  content="Date & Time: {{ object.start_date }} | Location: {{ object.geo_address }} | Get your tickets now!">
+        {% else %}
+            <meta property="og:description"
+                  content="Date & Time: {{ object.start_date }} | Get your tickets now!">
+        {% endif %}
+        <meta property="og:image" content="{{ object.cover_image_url }}">
+        <!-- Google Tag Manager -->
+        {% if not debug %}
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
+            <script>
 				window.dataLayer = window.dataLayer || [];
 				function gtag(){dataLayer.push(arguments);}
 				gtag('js', new Date());
 				gtag('config', 'G-FQKKDVZZVX');
-			</script>
-		{% endif %}
-
-		<!-- Start of sociapass support Widget -->
-		<script>
+			
+            </script>
+        {% endif %}
+        <!-- Start of sociapass support Widget -->
+        <script>
 		  	(function(d,t) {
 				var BASE_URL="https://support.socialpass.io";
 				var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -75,11 +85,11 @@
 			  		})
 				}
 		  	})(document,"script");
-		</script>
-		<!-- End of sociapass support Widget -->
-
-		<!-- Custom styles -->
-		<style type="text/css">
+		
+        </script>
+        <!-- End of sociapass support Widget -->
+        <!-- Custom styles -->
+        <style type="text/css">
 			/* Ticket tier (checkbox or radio) */
 
 			.tiers-container {
@@ -245,10 +255,10 @@
 			.sp-checkbox-container .form-check-label {
 				font-weight: bold;
 			}
-		</style>
-
-		{% if organizer_team.whitelabel.css %}
-			<style type="text/css">
+		
+        </style>
+        {% if organizer_team.whitelabel.css %}
+            <style type="text/css">
 				{{ organizer_team.whitelabel.css }}
 				{% if organizer_team.whitelabel.font_regular and organizer_team.whitelabel.font_bold %}
 					@font-face {
@@ -267,80 +277,114 @@
 						--bs-body-font-family: "Custom";
 					}
 				{% endif %}
-			</style>
-		{% endif %}
-
-		{% block extra_head %}{% endblock extra_head %}
-	</head>
-
-	{% with request.resolver_match.url_name as url_name %}
-	<body class="bg-body-secondary">
-		{% block body %}{% endblock body %}
-
-		<!-- Navbar start -->
-		<div class="d-flex align-items-center px-3 px-sm-4 py-2">
-			{% if organizer_team.whitelabel.logo %}
-				<div class="d-flex align-items-center">
-					<img src="{{ organizer_team.whitelabel.logo.url }}" alt="Brand Logo" height="60" class="d-block flex-shrink-0">
-					<span class="specific-w-25 mx-1 text-center">
-						<i class="fa-light fa-times"></i>
-					</span>
-					<a href="{% url 'marketing:index' %}" class="d-block" target="_blank" rel="noreferrer">
-						<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Logo" height="60" class="d-block flex-shrink-0">
-					</a>
-				</div>
-			{% else %}
-				<a href="{% url 'marketing:index' %}" class="d-block" target="_blank" rel="noreferrer">
-					<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block">
-				</a>
-			{% endif %}
-			<button type="button" class="btn btn-link rounded-pill px-0 ms-3" aria-label="Toggle dark mode" style="width: 37px;" onclick="toggleDarkMode()">
-				<i class="fa-solid fa-moon"></i>
-			</button>
-		</div>
-		{% block navbar %}{% endblock %}
-		{% block messages %}{% include "components/django_messages.html" %}{% endblock %}
-		<!-- Navbar end -->
-
-		<!-- Content start -->
-		<div class="container-xl px-3 px-sm-4 mw-100" style="width: 1080px;">
-			{% block content %}{% endblock %}
-			<!-- Footer start -->
-			<footer class="mt-3 pt-3 pb-4 border-top">
-				<div class="navbar justify-content-center">
-					<a class="navbar-brand d-flex align-items-center m-0" href="{% url 'marketing:index' %}">
-				      	<img src="{% static 'images/SVG-05.svg' %}" alt="Logo" height="48" class="d-block">
-				    </a>
-				</div>
-				<div class="text-center">
-			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer">
-						Docs
-			   		</a>
-			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://support.socialpass.io/widget?website_token=YCzxapxfua4vyELnoZ68v5Dm" target="_blank" rel="noreferrer">
-						Contact
-			   		</a>
-			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="https://blog.socialpass.io/" target="_blank" rel="noreferrer">
-						Blog
-			   		</a>
-			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/terms-of-use.pdf' %}" target="_blank" rel="noreferrer">
-						Terms of Use
-			   		</a>
-			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/organizer-terms-and-conditions.pdf' %}" target="_blank" rel="noreferrer">
-						Organizer Terms
-			   		</a>
-			   		<a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased" href="{% static 'legal/privacy-policy.pdf' %}" target="_blank" rel="noreferrer">
-						Privacy Policy
-			   		</a>
-				</div>
-			</footer>
-			<!-- Footer end -->
-		</div>
-		<!-- Content end -->
-
-		<!-- Bootstrap bundle JS -->
-		<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-
-		<script type="text/javascript">
+			
+            </style>
+        {% endif %}
+        {% block extra_head %}
+        {% endblock extra_head %}
+    </head>
+    {% with request.resolver_match.url_name as url_name %}
+        <body class="bg-body-secondary">
+            {% block body %}
+            {% endblock body %}
+            <!-- Navbar start -->
+            <div class="d-flex align-items-center px-3 px-sm-4 py-2">
+                {% if organizer_team.whitelabel.logo %}
+                    <div class="d-flex align-items-center">
+                        <img src="{{ organizer_team.whitelabel.logo.url }}"
+                             alt="Brand Logo"
+                             height="60"
+                             class="d-block flex-shrink-0">
+                        <span class="specific-w-25 mx-1 text-center">
+                            <i class="fa-light fa-times"></i>
+                        </span>
+                        <a href="{% url 'marketing:index' %}"
+                           class="d-block"
+                           target="_blank"
+                           rel="noreferrer">
+                            <img src="{% static 'images/SocialPass-Icon.svg' %}"
+                                 alt="SocialPass Logo"
+                                 height="60"
+                                 class="d-block flex-shrink-0">
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'marketing:index' %}"
+                       class="d-block"
+                       target="_blank"
+                       rel="noreferrer">
+                        <img src="{% static 'images/SVG-05.svg' %}"
+                             alt="SocialPass Logo"
+                             height="60"
+                             class="d-block">
+                    </a>
+                {% endif %}
+                <button type="button"
+                        class="btn btn-link rounded-pill px-0 ms-3"
+                        aria-label="Toggle dark mode"
+                        style="width: 37px"
+                        onclick="toggleDarkMode()">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+            {% block navbar %}{% endblock %}
+            {% block messages %}
+                {% include "components/django_messages.html" %}
+            {% endblock %}
+            <!-- Navbar end -->
+            <!-- Content start -->
+            <div class="container-xl px-3 px-sm-4 mw-100" style="width: 1080px;">
+                {% block content %}{% endblock %}
+                <!-- Footer start -->
+                <footer class="mt-3 pt-3 pb-4 border-top">
+                    <div class="navbar justify-content-center">
+                        <a class="navbar-brand d-flex align-items-center m-0"
+                           href="{% url 'marketing:index' %}">
+                            <img src="{% static 'images/SVG-05.svg' %}"
+                                 alt="Logo"
+                                 height="48"
+                                 class="d-block">
+                        </a>
+                    </div>
+                    <div class="text-center">
+                        <a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased"
+                           href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass"
+                           target="_blank"
+                           rel="noreferrer">Docs</a>
+                        <a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased"
+                           href="https://support.socialpass.io/widget?website_token=YCzxapxfua4vyELnoZ68v5Dm"
+                           target="_blank"
+                           rel="noreferrer">Contact</a>
+                        <a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased"
+                           href="https://blog.socialpass.io/"
+                           target="_blank"
+                           rel="noreferrer">Blog</a>
+                        <a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased"
+                           href="{% static 'legal/terms-of-use.pdf' %}"
+                           target="_blank"
+                           rel="noreferrer">
+                            Terms of Use
+                        </a>
+                        <a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased"
+                           href="{% static 'legal/organizer-terms-and-conditions.pdf' %}"
+                           target="_blank"
+                           rel="noreferrer">
+                            Organizer Terms
+                        </a>
+                        <a class="text-reset text-decoration-none mx-3 my-2 d-inline-block antialiased"
+                           href="{% static 'legal/privacy-policy.pdf' %}"
+                           target="_blank"
+                           rel="noreferrer">
+                            Privacy Policy
+                        </a>
+                    </div>
+                </footer>
+                <!-- Footer end -->
+            </div>
+            <!-- Content end -->
+            <!-- Bootstrap bundle JS -->
+            <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+            <script type="text/javascript">
 			/* Enable all tooltips */
 			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -372,10 +416,10 @@
 
 				setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
 			}
-		</script>
-
-		{% if debug %}
-		<script type="text/javascript">
+		
+            </script>
+            {% if debug %}
+                <script type="text/javascript">
 			/**
 			 * Handle the keydown event (only on debug mode).
 			 *
@@ -408,10 +452,11 @@
 					}
 				}
 			});
-		</script>
-		{% endif %}
-
-		{% block extra_body %}{% endblock extra_body %}
-	</body>
-	{% endwith %}
+		
+                </script>
+            {% endif %}
+            {% block extra_body %}
+            {% endblock extra_body %}
+        </body>
+    {% endwith %}
 </html>

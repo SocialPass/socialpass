@@ -1,66 +1,53 @@
 {% extends "account/base.html" %}
 
-{% block title %}User Details - SocialPass {% endblock %}
-
+{% block title %}User Details - SocialPass{% endblock %}
 {% block navbar_page_name_1 %}User Details{% endblock %}
 {% block navbar_page_name_2 %}User Details{% endblock %}
-
 {% block inner %}
-<div class="row">
-  <div class="col-sm-10 col-md-8 mx-auto">
-    <div class="card mb-4">
-      <div class="card-header py-0">
-        <div class="d-flex align-items-center py-3">
-          <div class="pe-2">
-            <h6 class="m-0">User Details</h6>
-            <div class="text-muted text-xs mb-3">
-              Details of a particular user.
+    <div class="row">
+        <div class="col-sm-10 col-md-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header py-0">
+                    <div class="d-flex align-items-center py-3">
+                        <div class="pe-2">
+                            <h6 class="m-0">User Details</h6>
+                            <div class="text-muted text-xs mb-3">
+                                Details of a particular user.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body py-2">
+                    <div>
+                        <h1 class="fw-bold fs-3">{{ request.user.name }}</h1>
+                        <div class="text-muted text-xs mb-3">
+                            <div>Created: {{ request.user.date_joined }}</div>
+                            <div class="mt-1">
+                                Last Login: {{ request.user.last_login }}
+                            </div>
+                        </div>
+                        {% if request.user.description %}
+                            <p class="text-muted">{{ request.user.description }}</p>
+                        {% else %}
+                            <p class="text-muted">Description not set.</p>
+                        {% endif %}
+                    </div>
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="align-middle fw-bold">Name</td>
+                                    <td class="align-middle">{{ request.user.username }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="align-middle fw-bold">Email</td>
+                                    <td class="align-middle">{{ request.user.email }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <div class="card-body py-2">
-        <div>
-          <h1 class="fw-bold fs-3">{{ request.user.name }}</h1>
-          <div class="text-muted text-xs mb-3">
-            <div>
-              Created: {{ request.user.date_joined }}
-            </div>
-            <div class="mt-1">
-              Last Login: {{ request.user.last_login }}
-            </div>
-          </div>
-          {% if request.user.description %}
-          <p class="text-muted">{{ request.user.description }}</p>
-          {% else %}
-          <p class="text-muted">Description not set.</p>
-          {% endif %}
-        </div>
-        <div class="table-responsive p-0">
-          <table class="table align-items-center mb-0">
-            <tbody>
-              <tr>
-                <td class="align-middle fw-bold">
-                  Name
-                </td>
-                <td class="align-middle">
-                  {{ request.user.username }}
-                </td>
-              </tr>
-              <tr>
-                <td class="align-middle fw-bold">
-                  Email
-                </td>
-                <td class="align-middle">
-                  {{ request.user.email }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
-
 {% endblock %}

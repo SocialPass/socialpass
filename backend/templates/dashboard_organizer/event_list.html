@@ -1,137 +1,153 @@
 {% extends "dashboard_organizer/base.html" %}
+
 {% load static i18n get_user_primary_email %}
 
-{% block head_title %}{% trans "Events" %} - SocialPass{% endblock head_title %}
-
-{% block navbar_title %}{% trans "Events" %} &mdash; <span class="text-primary-emphasis">{{ current_team.name }}</span>{% endblock navbar_title %}
-
-{% block navbar_title_2 %}{% trans "Events" %} &mdash; <span class="text-primary-emphasis">{{ current_team.name }}</span>{% endblock navbar_title_2 %}
-
+{% block head_title %}
+    {% trans "Events" %} - SocialPass
+{% endblock head_title %}
+{% block navbar_title %}
+    {% trans "Events" %} &mdash; <span class="text-primary-emphasis">{{ current_team.name }}</span>
+{% endblock navbar_title %}
+{% block navbar_title_2 %}
+    {% trans "Events" %} &mdash; <span class="text-primary-emphasis">{{ current_team.name }}</span>
+{% endblock navbar_title_2 %}
 {% block sticky_navbar_tabs %}
-<div class="container-lg px-3 px-sm-4 d-flex">
-	<ul class="nav nav-underline align-self-end">
-		<li class="nav-item">
-			<a
-				href="{% url 'dashboard_organizer:event_list' current_team.slug %}"
-				class="nav-link px-2 fw-bold antialiased {% if not request.GET.state %}active{% endif %}"
-				{% if not request.GET.state %}aria-current="true"{% endif %}
-			>
-				{% trans "All" %}
-			</a>
-		</li>
-		<li class="nav-item">
-			<a
-				href="?state=Upcoming"
-				class="nav-link px-2 fw-bold antialiased {% if request.GET.state == 'Upcoming' %}active{% endif %}"
-				{% if request.GET.state == "Upcoming" %}aria-current="true"{% endif %}
-			>
-				{% trans "Upcoming" %}
-			</a>
-		</li>
-		<li class="nav-item">
-			<a
-				href="?state=Past"
-				class="nav-link px-2 fw-bold antialiased {% if request.GET.state == 'Past' %}active{% endif %}"
-				{% if request.GET.state == "Past" %}aria-current="true"{% endif %}
-			>
-				{% trans "Past" %}
-			</a>
-		</li>
-	</ul>
-	<a href="{% url 'dashboard_organizer:event_create' current_team.slug %}" class="btn btn-primary btn-sm ms-auto align-self-center mb-2">
-		{% trans "Create" %}
-		<span class="d-none d-sm-inline"> {% trans "Event" %}</span>
-		<i class="fa-regular fa-plus ms-1"></i>
-	</a>
-</div>
+    <div class="container-lg px-3 px-sm-4 d-flex">
+        <ul class="nav nav-underline align-self-end">
+            <li class="nav-item">
+                <a href="{% url 'dashboard_organizer:event_list' current_team.slug %}"
+                   class="nav-link px-2 fw-bold antialiased {% if not request.GET.state %}active{% endif %}"
+                   {% if not request.GET.state %}aria-current="true"{% endif %}>
+                    {% trans "All" %}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?state=Upcoming"
+                   class="nav-link px-2 fw-bold antialiased {% if request.GET.state == 'Upcoming' %}active{% endif %}"
+                   {% if request.GET.state == "Upcoming" %}aria-current="true"{% endif %}>
+                    {% trans "Upcoming" %}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?state=Past"
+                   class="nav-link px-2 fw-bold antialiased {% if request.GET.state == 'Past' %}active{% endif %}"
+                   {% if request.GET.state == "Past" %}aria-current="true"{% endif %}>
+                    {% trans "Past" %}
+                </a>
+            </li>
+        </ul>
+        <a href="{% url 'dashboard_organizer:event_create' current_team.slug %}"
+           class="btn btn-primary btn-sm ms-auto align-self-center mb-2">
+            {% trans "Create" %}
+            <span class="d-none d-sm-inline">{% trans "Event" %}</span>
+            <i class="fa-regular fa-plus ms-1"></i>
+        </a>
+    </div>
 {% endblock sticky_navbar_tabs %}
-
 {% block content %}
-{% if events.count > 0 %}
-	<!-- Event list start -->
-	<div class="mt-4 mb-3">
-		<div class="card border-0 rounded-4 shadow-sm">
-			<div class="d-flex align-items-center p-3 text-primary-emphasis bg-primary-subtle rounded-top fw-bold">
-				<div class="w-lg-50">{% trans "Event" %}</div>
-				<div class="w-lg-50 ps-lg-5 d-none d-lg-block">{% trans "Tickets Sold" %}</div>
-			</div>
-			{% for event in events %}
-				<div class="event-list-link d-lg-flex align-items-center p-3 position-relative">
-					<div class="d-flex align-items-start w-lg-50">
-						<div class="specific-w-75 specific-h-75 d-flex align-items-center justify-content-center overflow-hidden rounded position-relative flex-shrink-0">
-							<img src="{{ event.cover_image_url }}" alt="{{ event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
-							<img src="{{ event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ event.title }} cover image">
-						</div>
-						<div class="ps-3">
-							<h5>{{ event.title }}</h5>
-							<div class="d-flex align-items-start">
-								<i class="fa-light fa-calendars specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
-								<span class="text-body-secondary">
-									{% if event.start_date %}
-										{{ event.start_date }}
-									{% else %}
-										{% trans "Not set" %}
-									{% endif %}
-								</span>
-							</div>
-							<div class="d-flex align-items-start">
-								<i class="fa-light fa-location-dot specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
-								<span class="text-body-secondary">{{ event.geo_address }}</span>
-							</div>
-						</div>
-					</div>
-					<div class="d-flex align-items-center w-lg-50 mt-3 mt-lg-0 ps-lg-5">
-						<div class="flex-shrink-0">
-							<span class="d-lg-none text-primary-emphasis fw-bold">
-								{% trans "Tickets Sold" %}:
-							</span>
-							{{ event.tickets_sold_count }}
-						</div>
-						<a href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}" class="btn btn-sm text-body-secondary focus-ring rounded-pill flex-shrink-0 ms-auto stretched-link">
-							{% trans "Manage" %}
-							<i class="fa-light fa-angle-right ms-1"></i>
-						</a>
-					</div>
-				</div>
-				{% if not forloop.last %}<hr class="m-0" />{% endif %}
-			{% endfor %}
-		</div>
-	</div>
-	<!-- Event list end -->
-
-	<!-- Pagination start -->
-	<div class="mb-3 mt-auto d-flex align-items-center">
-		<div>
-			{% if page_obj.has_previous %}
-			<a class="btn btn-link" href="?page={{ page_obj.previous_page_number }}&state={{ request.GET.state }}">{% trans "Prev" %}</a>
-			{% else %}
-			<button class="btn btn-link" disabled>{% trans "Prev" %}</button>
-			{% endif %}
-		</div>
-		<div class="ms-auto">
-			{% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
-		</div>
-		<div class="ms-auto">
-			{% if page_obj.has_next %}
-			<a class="btn btn-link" href="?page={{ page_obj.next_page_number }}&state={{ request.GET.state }}">{% trans "Next" %}</a>
-			{% else %}
-			<button class="btn btn-link" disabled>{% trans "Next" %}</button>
-			{% endif %}
-		</div>
-	</div>
-	<!-- Pagination end -->
-{% else %}
-	<div class="mt-4">
-		<div class="mx-auto specific-w-200">
-			<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
-		</div>
-		<div class="h4 text-center">{% trans "No Events" %}</div>
-		<p class="text-body-secondary text-center">
-			{% trans "You have not created any events. Why not host one now?" %}
-		</p>
-		<div class="text-center">
-			<a href="{% url 'dashboard_organizer:event_create' current_team.slug %}" class="btn btn-primary">{% trans "Create Event" %} <i class="fa-regular fa-plus ms-1"></i></a>
-		</div>
-	</div>
-{% endif %}
+    {% if events.count > 0 %}
+        <!-- Event list start -->
+        <div class="mt-4 mb-3">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="d-flex align-items-center p-3 text-primary-emphasis bg-primary-subtle rounded-top fw-bold">
+                    <div class="w-lg-50">{% trans "Event" %}</div>
+                    <div class="w-lg-50 ps-lg-5 d-none d-lg-block">
+                        {% trans "Tickets Sold" %}
+                    </div>
+                </div>
+                {% for event in events %}
+                    <div class="event-list-link d-lg-flex align-items-center p-3 position-relative">
+                        <div class="d-flex align-items-start w-lg-50">
+                            <div class="specific-w-75 specific-h-75 d-flex align-items-center justify-content-center overflow-hidden rounded position-relative flex-shrink-0">
+                                <img src="{{ event.cover_image_url }}"
+                                     alt="{{ event.title }} background image"
+                                     class="position-absolute top-50 start-50 translate-middle opacity-50"
+                                     style="width: 200%;
+                                            height: auto;
+                                            filter: blur(1.5rem)">
+                                <img src="{{ event.cover_image_url }}"
+                                     class="img-fluid position-relative z-1"
+                                     alt="{{ event.title }} cover image">
+                            </div>
+                            <div class="ps-3">
+                                <h5>{{ event.title }}</h5>
+                                <div class="d-flex align-items-start">
+                                    <i class="fa-light fa-calendars specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
+                                    <span class="text-body-secondary">
+                                        {% if event.start_date %}
+                                            {{ event.start_date }}
+                                        {% else %}
+                                            {% trans "Not set" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-start">
+                                    <i class="fa-light fa-location-dot specific-w-25 text-primary-emphasis mt-1 flex-shrink-0"></i>
+                                    <span class="text-body-secondary">{{ event.geo_address }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center w-lg-50 mt-3 mt-lg-0 ps-lg-5">
+                            <div class="flex-shrink-0">
+                                <span class="d-lg-none text-primary-emphasis fw-bold">
+                                    {% trans "Tickets Sold" %}:
+                                </span>
+                                {{ event.tickets_sold_count }}
+                            </div>
+                            <a href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}"
+                               class="btn btn-sm text-body-secondary focus-ring rounded-pill flex-shrink-0 ms-auto stretched-link">
+                                {% trans "Manage" %}
+                                <i class="fa-light fa-angle-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}<hr class="m-0" />{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Event list end -->
+        <!-- Pagination start -->
+        <div class="mb-3 mt-auto d-flex align-items-center">
+            <div>
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-link"
+                       href="?page={{ page_obj.previous_page_number }}&state={{ request.GET.state }}">{% trans "Prev" %}</a>
+                {% else %}
+                    <button class="btn btn-link" disabled>
+                        {% trans "Prev" %}
+                    </button>
+                {% endif %}
+            </div>
+            <div class="ms-auto">
+                {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+            </div>
+            <div class="ms-auto">
+                {% if page_obj.has_next %}
+                    <a class="btn btn-link"
+                       href="?page={{ page_obj.next_page_number }}&state={{ request.GET.state }}">{% trans "Next" %}</a>
+                {% else %}
+                    <button class="btn btn-link" disabled>
+                        {% trans "Next" %}
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Pagination end -->
+    {% else %}
+        <div class="mt-4">
+            <div class="mx-auto specific-w-200">
+                <img src="{% static 'images/empty.png' %}"
+                     alt="empty"
+                     class="d-block img-fluid">
+            </div>
+            <div class="h4 text-center">{% trans "No Events" %}</div>
+            <p class="text-body-secondary text-center">
+                {% trans "You have not created any events. Why not host one now?" %}
+            </p>
+            <div class="text-center">
+                <a href="{% url 'dashboard_organizer:event_create' current_team.slug %}"
+                   class="btn btn-primary">{% trans "Create Event" %} <i class="fa-regular fa-plus ms-1"></i></a>
+            </div>
+        </div>
+    {% endif %}
 {% endblock content %}

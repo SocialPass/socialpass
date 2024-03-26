@@ -1,178 +1,199 @@
 {% extends "checkout/base.html" %}
+
 {% load static i18n crispy_forms_tags %}
 
-{% block head_title %}{{ object.event.title }} - {% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
-
+{% block head_title %}
+    {{ object.event.title }} -
+    {% if organizer_team.whitelabel.brand_name %}
+        {{ organizer_team.whitelabel.brand_name }}
+    {% else %}
+        SocialPass
+    {% endif %}
+{% endblock head_title %}
 {% block content %}
-<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
-	<!-- Cover image start -->
-	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-250">
-		<img src="{{ object.event.cover_image_url }}" alt="{{ object.event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
-		<img src="{{ object.event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ object.event.title }} cover image">
-		<div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-start p-3 p-sm-4" style="background-image: linear-gradient(transparent, black);">
-			<div>
-				<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}" class="btn btn-secondary rounded-pill w-auto">
-					<i class="fa-light fa-arrow-left me-1"></i>
-					{% trans "Go Back" %}
-				</a>
-			</div>
-			<h2 class="mt-auto mb-0">{{ object.event.title }}</h2>
-			<h6 class="m-0">{% trans "By" %} {{ object.event.team.name }}</h6>
-		</div>
-	</div>
-	<!-- Cover image start -->
-
-	<!-- Checkout start -->
-	<div class="p-3 p-sm-4 mt-3">
-		<div class="container-fluid overflow-hidden">
-			<div class="row g-3">
-				<div class="col-lg-7">
-					{% if object.event.waiting_queue_enabled %}
-						<div class="alert alert-primary text-primary-emphasis d-flex align-items-center fw-bold">
-							<i class="fa-light fa-hourglass-clock me-3"></i>
-							{% trans "Please note, you are joining the waiting queue for this event. You'll only get tickets if the organizer decides to bump you up to the attendee list." %}
-						</div>
-					{% endif %}
-					<h1 class="text-body-emphasis display-6 m-0 text-break">
-						{% trans "Complete Checkout" %}
-					</h1>
-					{% if object.session_type == "FREE" %}
-						<p class="mt-2">
-							{% trans "You are about to checkout with FREE ticket(s) only. Please take note of the following:" %}
-						</p>
-						<ul>
-							<li>
-								{% trans "FREE tickets require no payment/verfication. The only constraint is the	availability at checkout." %}
-							</li>
-							<li>
-								{% trans "Due to the above point, event organizers may give less priority to free tickets in the case of capacity issues." %}
-							</li>
-						</ul>
-						<p>
-							{% trans "If all of that sounds good, please click on the" %} <strong>{% trans "Continue" %}</strong> {% trans "button to get your ticket(s)." %}
-						</p>
-					{% elif object.session_type == "ASSET_OWNERSHIP" %}
-						<div class="alert alert-primary pe-none user-select-none mt-3" role="alert">
-							<h6 class="m-0">
-								<i class="fa-light fa-check-square text-primary-emphasis me-1"></i>
-								{% trans "Proof of NFT ownership" %}
-							</h6>
-							<p class="mt-1 mb-0">
-								{% trans "Prove ownership of the required digital assets (NFTs) to get your ticket(s)." %}
-							</p>
-						</div>
-						<p>
-							{% trans "Please connect your wallet & sign a message to get your ticket(s)." %}
-						</p>
-
-						<div class="position-relative w-100" style="min-height: 50px;">
-							<!-- Web3Modal -->
-							<w3m-button />
-							<!-- End Web3Modal -->
-						</div>
-
-
-						<p class="text-body-secondary border-top pt-3 mt-3">
-							<i class="fa-light fa-info-circle me-1 mt-1 flex-shrink-0"></i>
-							{% trans "It's worth noting again that you only need to prove the ownership of the required digital asset(s). This is not a trade, but only a verification." %}
-						</p>
-					{% endif %}
-				</div>
-				<div class="col-lg-5 ps-lg-4">
-					<div class="bg-secondary-subtle p-3 border border-secondary border-opacity-25" style="border-style: dotted !important;">
-						<div class="d-flex align-items-center">
-							<h6 class="m-0">{% trans "Summary" %}</h6>
-							<div class="ms-auto">
-								<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}">{% trans "Edit" %}</a>
-							</div>
-						</div>
-						{% for item in object.checkoutitem_set.all %}
-							<!-- Order item start -->
-							<div class="pt-3 mt-3 border-top">
-								<h6 class="m-0 d-flex align-items-center">
-									<span>{{ item.ticket_tier.name }}</span>
-									<span class="ms-auto ps-1 fw-normal">
-										&times; {{ item.quantity }}
-									</span>
-								</h6>
-								<div class="mt-1 text-body-secondary" style="font-size: var(--bs-font-size-sm);">
-									{% trans "Allowed Guest(s):" %}
-									{{ item.selected_guests }}
-								</div>
-							</div>
-							<!-- Order item end -->
-						{% endfor %}
-					</div>
-					<h6 class="mt-4 mb-0">
-						{% trans "Confirm Order" %}
-					</h6>
-					<hr>
-					<form class="checkout-form my-3" id="asset_ownership_form" method="POST">
-						{% csrf_token %}
-						{% if object.session_type == "ASSET_OWNERSHIP" %}
-							{{ form.wallet_address }}
-							{{ form.signed_message }}
-						{% endif %}
-						<div class="mb-3">
-							{% with form.name as input %}
-								{% include "forms/input.html" %}
-							{% endwith %}
-						</div>
-						<div class="mb-3">
-							{% with form.email as input %}
-								{% include "forms/input.html" %}
-							{% endwith %}
-						</div>
-						<!-- Delegate -->
-						{% if object.session_type == "ASSET_OWNERSHIP" %}
-						<div class="mb-3 p-3 pb-0 rounded border border-secondary border-opacity-25">
-							<label class="d-flex align-items-start" for="{{ form.delegated_wallet.id_for_label }}">
-								<img src="{% static 'images/delegate.png' %}" height="24px" width="24px" alt="Delegate" class="d-block me-3 flex-shrink-0">
-								<div>
-									<div class="fw-bold">Delegate</div>
-									<div class="text-body-secondary" style="font-size: var(--bs-font-size-sm);">{% trans "Check the following to use a delegated wallet to verify asset ownership:" %}</div>
-								</div>
-							</label>
-							<div class="text-center mt-2">
-								<div class="sp-checkbox-container d-inline-block">
-									{{ form.delegated_wallet | as_crispy_field }}
-								</div>
-							</div>
-						</div>
-						{% endif %}
-						<!-- End Delegate -->
-						<button
-							id="checkout-submit-btn"
-							type="submit"
-							{% if object.session_type == "ASSET_OWNERSHIP" %}
-								onclick="signWallet(message, event)"
-							{% endif %}
-							class="btn btn-info btn-lg d-block w-100"
-						>
-							{% if not object.event.waiting_queue_enabled %}
-								{% trans "Get Tickets" %}
-							{% else %}
-								{% trans "Join Waiting Queue" %}
-							{% endif %}
-						</button>
-						<div class="text-danger-emphasis fw-bold mt-2 d-none" role="alert" id="wallet-address-error-message">
-							{% trans "Please connect your wallet first!" %}
-						</div>
-						<div class="text-danger-emphasis fw-bold d-none" role="alert" id="wallet-signature-error-message">
-							{% trans "Please sign the message with your wallet address to continue." %}
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Checkout end -->
-</div>
+    <div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
+        <!-- Cover image start -->
+        <div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-250">
+            <img src="{{ object.event.cover_image_url }}"
+                 alt="{{ object.event.title }} background image"
+                 class="position-absolute top-50 start-50 translate-middle opacity-50"
+                 style="width: 200%;
+                        height: auto;
+                        filter: blur(1.5rem)">
+            <img src="{{ object.event.cover_image_url }}"
+                 class="img-fluid position-relative z-1"
+                 alt="{{ object.event.title }} cover image">
+            <div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-start p-3 p-sm-4"
+                 style="background-image: linear-gradient(transparent, black)">
+                <div>
+                    <a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}"
+                       class="btn btn-secondary rounded-pill w-auto">
+                        <i class="fa-light fa-arrow-left me-1"></i>
+                        {% trans "Go Back" %}
+                    </a>
+                </div>
+                <h2 class="mt-auto mb-0">{{ object.event.title }}</h2>
+                <h6 class="m-0">
+                    {% trans "By" %} {{ object.event.team.name }}
+                </h6>
+            </div>
+        </div>
+        <!-- Cover image start -->
+        <!-- Checkout start -->
+        <div class="p-3 p-sm-4 mt-3">
+            <div class="container-fluid overflow-hidden">
+                <div class="row g-3">
+                    <div class="col-lg-7">
+                        {% if object.event.waiting_queue_enabled %}
+                            <div class="alert alert-primary text-primary-emphasis d-flex align-items-center fw-bold">
+                                <i class="fa-light fa-hourglass-clock me-3"></i>
+                                {% trans "Please note, you are joining the waiting queue for this event. You'll only get tickets if the organizer decides to bump you up to the attendee list." %}
+                            </div>
+                        {% endif %}
+                        <h1 class="text-body-emphasis display-6 m-0 text-break">
+                            {% trans "Complete Checkout" %}
+                        </h1>
+                        {% if object.session_type == "FREE" %}
+                            <p class="mt-2">
+                                {% trans "You are about to checkout with FREE ticket(s) only. Please take note of the following:" %}
+                            </p>
+                            <ul>
+                                <li>
+                                    {% trans "FREE tickets require no payment/verfication. The only constraint is the	availability at checkout." %}
+                                </li>
+                                <li>
+                                    {% trans "Due to the above point, event organizers may give less priority to free tickets in the case of capacity issues." %}
+                                </li>
+                            </ul>
+                            <p>
+                                {% trans "If all of that sounds good, please click on the" %} <strong>{% trans "Continue" %}</strong> {% trans "button to get your ticket(s)." %}
+                            </p>
+                        {% elif object.session_type == "ASSET_OWNERSHIP" %}
+                            <div class="alert alert-primary pe-none user-select-none mt-3"
+                                 role="alert">
+                                <h6 class="m-0">
+                                    <i class="fa-light fa-check-square text-primary-emphasis me-1"></i>
+                                    {% trans "Proof of NFT ownership" %}
+                                </h6>
+                                <p class="mt-1 mb-0">
+                                    {% trans "Prove ownership of the required digital assets (NFTs) to get your ticket(s)." %}
+                                </p>
+                            </div>
+                            <p>
+                                {% trans "Please connect your wallet & sign a message to get your ticket(s)." %}
+                            </p>
+                            <div class="position-relative w-100" style="min-height: 50px;">
+                                <!-- Web3Modal -->
+                                <w3m-button />
+                                <!-- End Web3Modal -->
+                            </div>
+                            <p class="text-body-secondary border-top pt-3 mt-3">
+                                <i class="fa-light fa-info-circle me-1 mt-1 flex-shrink-0"></i>
+                                {% trans "It's worth noting again that you only need to prove the ownership of the required digital asset(s). This is not a trade, but only a verification." %}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-5 ps-lg-4">
+                        <div class="bg-secondary-subtle p-3 border border-secondary border-opacity-25"
+                             style="border-style: dotted !important">
+                            <div class="d-flex align-items-center">
+                                <h6 class="m-0">{% trans "Summary" %}</h6>
+                                <div class="ms-auto">
+                                    <a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}">{% trans "Edit" %}</a>
+                                </div>
+                            </div>
+                            {% for item in object.checkoutitem_set.all %}
+                                <!-- Order item start -->
+                                <div class="pt-3 mt-3 border-top">
+                                    <h6 class="m-0 d-flex align-items-center">
+                                        <span>{{ item.ticket_tier.name }}</span>
+                                        <span class="ms-auto ps-1 fw-normal">
+                                            &times; {{ item.quantity }}
+                                        </span>
+                                    </h6>
+                                    <div class="mt-1 text-body-secondary"
+                                         style="font-size: var(--bs-font-size-sm)">
+                                        {% trans "Allowed Guest(s):" %}
+                                        {{ item.selected_guests }}
+                                    </div>
+                                </div>
+                                <!-- Order item end -->
+                            {% endfor %}
+                        </div>
+                        <h6 class="mt-4 mb-0">{% trans "Confirm Order" %}</h6>
+                        <hr>
+                        <form class="checkout-form my-3" id="asset_ownership_form" method="POST">
+                            {% csrf_token %}
+                            {% if object.session_type == "ASSET_OWNERSHIP" %}
+                                {{ form.wallet_address }}
+                                {{ form.signed_message }}
+                            {% endif %}
+                            <div class="mb-3">
+                                {% with form.name as input %}
+                                    {% include "forms/input.html" %}
+                                {% endwith %}
+                            </div>
+                            <div class="mb-3">
+                                {% with form.email as input %}
+                                    {% include "forms/input.html" %}
+                                {% endwith %}
+                            </div>
+                            <!-- Delegate -->
+                            {% if object.session_type == "ASSET_OWNERSHIP" %}
+                                <div class="mb-3 p-3 pb-0 rounded border border-secondary border-opacity-25">
+                                    <label class="d-flex align-items-start"
+                                           for="{{ form.delegated_wallet.id_for_label }}">
+                                        <img src="{% static 'images/delegate.png' %}"
+                                             height="24px"
+                                             width="24px"
+                                             alt="Delegate"
+                                             class="d-block me-3 flex-shrink-0">
+                                        <div>
+                                            <div class="fw-bold">Delegate</div>
+                                            <div class="text-body-secondary" style="font-size: var(--bs-font-size-sm)">
+                                                {% trans "Check the following to use a delegated wallet to verify asset ownership:" %}
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <div class="text-center mt-2">
+                                        <div class="sp-checkbox-container d-inline-block">
+                                            {{ form.delegated_wallet | as_crispy_field }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- End Delegate -->
+                            <button id="checkout-submit-btn"
+                                    type="submit"
+                                    {% if object.session_type == "ASSET_OWNERSHIP" %} onclick="signWallet(message, event)" {% endif %}
+                                    class="btn btn-info btn-lg d-block w-100">
+                                {% if not object.event.waiting_queue_enabled %}
+                                    {% trans "Get Tickets" %}
+                                {% else %}
+                                    {% trans "Join Waiting Queue" %}
+                                {% endif %}
+                            </button>
+                            <div class="text-danger-emphasis fw-bold mt-2 d-none"
+                                 role="alert"
+                                 id="wallet-address-error-message">
+                                {% trans "Please connect your wallet first!" %}
+                            </div>
+                            <div class="text-danger-emphasis fw-bold d-none"
+                                 role="alert"
+                                 id="wallet-signature-error-message">
+                                {% trans "Please sign the message with your wallet address to continue." %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Checkout end -->
+    </div>
 {% endblock content %}
-
 {% block extra_body %}
-<script src="{% static 'js/dist/bundle.js' %}"></script>
-<script>
+    <script src="{% static 'js/dist/bundle.js' %}"></script>
+    <script>
 	const message = `{{object.unsigned_message}}`
-</script>
+    </script>
 {% endblock extra_body %}

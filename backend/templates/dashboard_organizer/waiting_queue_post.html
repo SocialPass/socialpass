@@ -1,20 +1,28 @@
 {% load i18n %}
+
 {% if object.order_status == "FULFILLED" %}
-	<span class="btn btn-secondary specific-w-100 disabled pe-none wq-fulfilled">
-		{% trans "Fulfilled" %}
-	</span>
+    <span class="btn btn-secondary specific-w-100 disabled pe-none wq-fulfilled">
+        {% trans "Fulfilled" %}
+    </span>
 {% elif object.waitlist_status == object.WaitlistStatus.WAITLIST_APPROVED %}
-	<div class="ms-auto">
-		<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
-			{% trans "Waiting..." %}
-		</span>
-		<div class="specific-w-100 text-center text-primary-emphasis fw-bold mt-1" style="font-size: 10px;">{% trans "Payment link sent" %}</div>
-	</div>
+    <div class="ms-auto">
+        <span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
+            {% trans "Waiting..." %}
+        </span>
+        <div class="specific-w-100 text-center text-primary-emphasis fw-bold mt-1"
+             style="font-size: 10px">
+            {% trans "Payment link sent" %}
+        </div>
+    </div>
 {% else %}
-	<div>
-		<button type="submit" class="btn btn-primary d-block specific-w-100 wq-fulfill-button">
-			{% trans "Fulfill" %}
-		</button>
-		<div class="specific-w-100 text-center text-danger-emphasis fw-bold mt-1" style="font-size: 10px;">{% trans "Try again" %}</div>
-	</div>
+    <div>
+        <button type="submit"
+                class="btn btn-primary d-block specific-w-100 wq-fulfill-button">
+            {% trans "Fulfill" %}
+        </button>
+        <div class="specific-w-100 text-center text-danger-emphasis fw-bold mt-1"
+             style="font-size: 10px">
+            {% trans "Try again" %}
+        </div>
+    </div>
 {% endif %}

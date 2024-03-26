@@ -2,44 +2,50 @@
 
 <!DOCTYPE html>
 {% get_debug_status as debug %}
-<html lang="en" class="{% block html_class %}{% endblock %}" spellcheck="false" data-bs-theme="{% get_color_mode %}">
-	<head>
-		<!-- Meta tags -->
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-
-		<!-- Title -->
-		<title>{% block head_title %}SocialPass - {% trans "Hosting the Next Generation of Events" %}{% endblock head_title %}</title>
-
-		<!-- Fav icon -->
-		<link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
-
-		<!-- Halfmoon CSS -->
-		<link href="{% static 'css/halfmoon.min.css' %}" rel="stylesheet" />
-
-		<!-- SocialPass CSS theme -->
-		<link href="{% static 'css/sp-theme.css' %}" rel="stylesheet" />
-
-		<!-- Font Awesome 6 -->
-		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
-
-		<!-- SEO -->
-		<meta name="description" content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
-		<meta name="author" content="SocialPass">
-		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket">
-
-		<!-- Open graph -->
-		<meta property="og:type" content="article">
-		<meta property="og:url" content="{{ request.build_absolute_uri }}">
-		<meta property="og:title" content="SocialPass - Hosting the Next Generation of Events">
-		<meta property="og:description" content="SocialPass is the go-to events platform, powered by Web3">
-		<meta property="og:image" content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
-		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:site" content="@socialpass_io">
-
-		<!-- Custom styles -->
-		<style type="text/css">
+<html lang="en"
+      class="{% block html_class %}{% endblock %}"
+      spellcheck="false"
+      data-bs-theme="{% get_color_mode %}">
+    <head>
+        <!-- Meta tags -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <!-- Title -->
+        <title>
+            {% block head_title %}
+                SocialPass - {% trans "Hosting the Next Generation of Events" %}
+            {% endblock head_title %}
+        </title>
+        <!-- Fav icon -->
+        <link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
+        <!-- Halfmoon CSS -->
+        <link href="{% static 'css/halfmoon.min.css' %}" rel="stylesheet" />
+        <!-- SocialPass CSS theme -->
+        <link href="{% static 'css/sp-theme.css' %}" rel="stylesheet" />
+        <!-- Font Awesome 6 -->
+        <script src="https://kit.fontawesome.com/e222fd7f73.js"
+                crossorigin="anonymous"></script>
+        <!-- SEO -->
+        <meta name="description"
+              content="Offering hosted solutions and packaged SDKs to grow and manage your Web3 Community.">
+        <meta name="author" content="SocialPass">
+        <meta name="keywords"
+              content="web3, nft, web2, bayc, crypto, ticketing, ticket">
+        <!-- Open graph -->
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        <meta property="og:title"
+              content="SocialPass - Hosting the Next Generation of Events">
+        <meta property="og:description"
+              content="SocialPass is the go-to events platform, powered by Web3">
+        <meta property="og:image"
+              content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@socialpass_io">
+        <!-- Custom styles -->
+        <style type="text/css">
 			#sidebar {
 				width: 320px;
 				max-width: 100%;
@@ -128,22 +134,22 @@
 			.waiting-queue-card:has(.wq-waiting) {
 				box-shadow: 0 0 0 2px var(--bs-warning);
 			}
-		</style>
-
-		<!-- Google Tag Manager -->
-		{% if not debug %}
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
-		<script>
+		
+        </style>
+        <!-- Google Tag Manager -->
+        {% if not debug %}
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
+            <script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
 			gtag('config', 'G-FQKKDVZZVX');
-		</script>
-		{% endif %}
-		<!-- End Google Tag Manager -->
-
-		<!-- Start of sociapass support Widget -->
-		<script>
+		
+            </script>
+        {% endif %}
+        <!-- End Google Tag Manager -->
+        <!-- Start of sociapass support Widget -->
+        <script>
 		  (function(d,t) {
 			var BASE_URL="https://support.socialpass.io";
 			var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -158,173 +164,238 @@
 			  })
 			}
 		  })(document,"script");
-		</script>
-		<!-- End of sociapass support Widget -->
-
-		{% if request.resolver_match.url_name == 'event_create' or request.resolver_match.url_name == 'event_update' %}
-			{{ form.media }}
-			<!-- Quill CSS overrides -->
-			<link href="{% static 'quill-text-editor/quill.snow.new.css' %}" rel="stylesheet">
-		{% endif %}
-
-		{% block extra_head %}{% endblock extra_head %}
-	</head>
-
-	{% with request.resolver_match.url_name as url_name %}
-	<body class="bg-body-secondary">
-		{% block body %}{% endblock body %}
-
-		<!-- Sidebar start -->
-		<div class="offcanvas-xl offcanvas-start" tabindex="-1" id="sidebar">
-			<div class="offcanvas-header d-flex align-items-center justify-content-start" style="height: 68px;">
-				<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block me-auto">
-				<button type="button" class="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" style="width: 37px;" onclick="toggleDarkMode()">
-					<i class="fa-solid fa-moon"></i>
-				</button>
-				<button type="button" class="btn-close d-xl-none ms-2" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#sidebar"></button>
-			</div>
-			<div class="offcanvas-body p-3 flex-column">
-				<div class="dropdown-center w-100">
-					<button class="btn btn-secondary btn-lg d-flex align-items-center w-100 text-body bg-primary-subtle border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-						{% if current_team.image %}
-						<div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden my-2" style="width: 40px; height: 40px;">
-							<img src="{{ current_team.image.url }}" class="img-fluid" alt="{{ current_team.name }} image">
-						</div>
-						{% else %}
-						<div class="rounded-circle d-flex align-items-center justify-content-center text-bg-primary flex-shrink-0 my-2" style="width: 40px; height: 40px;">
-							<span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
-						</div>
-						{% endif %}
-						<h6 class="mb-0 mx-3 text-truncate">{{ current_team.name }}</h6>
-						<i class="fa-light fa-angle-down ms-auto"></i>
-					</button>
-					<ul class="dropdown-menu w-100">
-						<li><h6 class="dropdown-header">{% trans "Switch Teams" %}</h6></li>
-						{% get_other_teams current_team.slug as other_teams %}
-						{% if other_teams|length > 0 %}
-						{% for team in other_teams %}
-						<li>
-							<a href="{% url 'dashboard_organizer:event_list' team.slug %}" class="dropdown-item text-truncate">
-								{{ team.name }}
-							</a>
-						</li>
-						{% endfor %}
-						{% else %}
-						<li><span class="dropdown-item-text text-body-secondary">{% trans "None found" %}</span></li>
-						{% endif %}
-						<li><hr class="dropdown-divider"></li>
-						<li>
-							<a href="{% url 'dashboard_organizer:team_create' %}" class="dropdown-item d-flex align-items-center text-primary-emphasis fw-bold antialiased">
-								{% trans "Create new Team" %}
-								<i class="fa-regular fa-plus flex-shrink-0 ms-auto"></i>
-							</a>
-						</li>
-					</ul>
-				</div>
-				<div class="text-body-secondary text-uppercase mt-4">
-					<small>{% trans "Events Manager" %}</small>
-				</div>
-				<a href="{% url 'dashboard_organizer:event_create' current_team.slug %}" class="btn btn-primary d-flex align-items-center w-100 mt-2 text-start">
-					<span class="ms-1">{% trans "Create Event" %}</span>
-					<i class="fa-regular fa-plus flex-shrink-0 ms-auto me-1"></i>
-				</a>
-				<a href="{% url 'dashboard_organizer:event_list' current_team.slug %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
-					<i class="fa-light fa-party-horn flex-shrink-0" style="width: 32px;"></i>
-					{% trans "Events" %}
-				</a>
-				<div class="text-body-secondary text-uppercase mt-4">
-					<small>{% trans "Team Manager" %}</small>
-				</div>
-				<a href="{% url 'dashboard_organizer:team_detail' current_team.slug %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
-					<i class="fa-light fa-cog flex-shrink-0" style="width: 32px;"></i>
-					{% trans "Team Details" %}
-				</a>
-				<a href="{% url 'dashboard_organizer:team_members' current_team.slug %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
-					<i class="fa-light fa-users flex-shrink-0" style="width: 32px;"></i>
-					{% trans "Manage Members" %}
-				</a>
-				<a href="{% url 'dashboard_organizer:payment_detail' current_team.slug %}" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
-					<i class="fa-light fa-wallet flex-shrink-0" style="width: 32px;"></i>
-					{% trans "Payment Details" %}
-				</a>
-				<div class="text-body-secondary text-uppercase mt-4">
-					<small>{% trans "Support" %}</small>
-				</div>
-				<a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass" target="_blank" rel="noreferrer" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
-					<i class="fa-light fa-question-circle flex-shrink-0" style="width: 32px;"></i>
-					{% trans "Help Center" %}
-				</a>
-				<a href="https://blog.socialpass.io/" target="_blank" rel="noreferrer" class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
-					<i class="fa-light fa-edit flex-shrink-0" style="width: 32px;"></i>
-					{% trans "Blog" %}
-				</a>
-			</div>
-		</div>
-		<!-- Sidebar end -->
-
-		<!-- Navbars start -->
-		<div class="sticky-navbar sticky-top border-bottom border-secondary border-opacity-10 pt-2 pt-md-3">
-			<div class="container-lg px-3 px-sm-4 pb-2 pb-md-3 d-flex align-items-center">
-				<button class="btn btn-link flex-shrink-0 px-0 me-2 d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Toggle sidebar" style="width: 37px;">
-					<i class="fa-solid fa-bars"></i>
-				</button>
-				<div class="flex-shrink-0 me-2 d-xl-none">
-					<img src="{% static 'images/SocialPass-Icon.svg' %}" alt="SocialPass Logo" height="44" class="d-block">
-				</div>
-				<div class="h5 lh-sm mb-0 me-2 d-none d-md-block">
-					{% block navbar_title %}{% endblock navbar_title %}
-				</div>
-				<div class="h6 lh-sm mb-0 me-2 d-md-none">
-					{% block navbar_title_2 %}{% endblock navbar_title_2 %}
-				</div>
-				<div class="dropdown ms-auto">
-					<button class="btn btn-link rounded-pill px-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="My account" style="width: 37px;">
-						<i class="fa-solid fa-user"></i>
-					</button>
-					<ul class="dropdown-menu dropdown-menu-end">
-						<li>
-							<div class="dropdown-item-text">
-								<h6 class="mb-0 text-truncate">{% get_user_primary_email %}</h6>
-							</div>
-						</li>
-						<li><hr class="dropdown-divider" /></li>
-						<li>
-							<a href="{% url 'account_change_password' %}" class="dropdown-item d-flex align-items-center">
-								<i class="fa-light fa-key specific-w-25 flex-shrink-0"></i>
-								{% trans "Change Password" %}
-							</a>
-						</li>
-						<li>
-							<a href="{% url 'account_email' %}" class="dropdown-item d-flex align-items-center">
-								<i class="fa-light fa-envelope specific-w-25 flex-shrink-0"></i>
-								{% trans "Manage Emails" %}
-							</a>
-						</li>
-						<li><hr class="dropdown-divider" /></li>
-						<li>
-							<a href="{% url 'account_logout' %}" class="dropdown-item d-flex align-items-center fw-bold text-danger-emphasis">
-								<i class="fa-light fa-sign-out specific-w-25 flex-shrink-0"></i>
-								{% trans "Sign Out" %}
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			{% block sticky_navbar_tabs %}{% endblock sticky_navbar_tabs %}
-		</div>
-		<!-- Navbars end -->
-
-		<!-- Content start -->
-		{% include "components/django_messages.html" %}
-		<div class="container-lg px-3 px-sm-4 d-flex flex-column content-container">
-			{% block content %}{% endblock content %}
-		</div>
-		<!-- Content end -->
-
-		<!-- Bootstrap bundle JS -->
-		<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-
-		<script type="text/javascript">
+		
+        </script>
+        <!-- End of sociapass support Widget -->
+        {% if request.resolver_match.url_name == 'event_create' or request.resolver_match.url_name == 'event_update' %}
+            {{ form.media }}
+            <!-- Quill CSS overrides -->
+            <link href="{% static 'quill-text-editor/quill.snow.new.css' %}"
+                  rel="stylesheet">
+        {% endif %}
+        {% block extra_head %}
+        {% endblock extra_head %}
+    </head>
+    {% with request.resolver_match.url_name as url_name %}
+        <body class="bg-body-secondary">
+            {% block body %}
+            {% endblock body %}
+            <!-- Sidebar start -->
+            <div class="offcanvas-xl offcanvas-start" tabindex="-1" id="sidebar">
+                <div class="offcanvas-header d-flex align-items-center justify-content-start"
+                     style="height: 68px">
+                    <img src="{% static 'images/SVG-05.svg' %}"
+                         alt="SocialPass Logo"
+                         height="60"
+                         class="d-block me-auto">
+                    <button type="button"
+                            class="btn btn-link rounded-pill px-0"
+                            aria-label="Toggle dark mode"
+                            style="width: 37px"
+                            onclick="toggleDarkMode()">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <button type="button"
+                            class="btn-close d-xl-none ms-2"
+                            data-bs-dismiss="offcanvas"
+                            aria-label="Close"
+                            data-bs-target="#sidebar">
+                    </button>
+                </div>
+                <div class="offcanvas-body p-3 flex-column">
+                    <div class="dropdown-center w-100">
+                        <button class="btn btn-secondary btn-lg d-flex align-items-center w-100 text-body bg-primary-subtle border-0"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            {% if current_team.image %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden my-2"
+                                     style="width: 40px;
+                                            height: 40px">
+                                    <img src="{{ current_team.image.url }}"
+                                         class="img-fluid"
+                                         alt="{{ current_team.name }} image">
+                                </div>
+                            {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-bg-primary flex-shrink-0 my-2"
+                                     style="width: 40px;
+                                            height: 40px">
+                                    <span class="text-uppercase fs-base-p8 fw-bold">{{ current_team.name|slice:"0:1" }}</span>
+                                </div>
+                            {% endif %}
+                            <h6 class="mb-0 mx-3 text-truncate">
+                                {{ current_team.name }}
+                            </h6>
+                            <i class="fa-light fa-angle-down ms-auto"></i>
+                        </button>
+                        <ul class="dropdown-menu w-100">
+                            <li>
+                                <h6 class="dropdown-header">{% trans "Switch Teams" %}</h6>
+                            </li>
+                            {% get_other_teams current_team.slug as other_teams %}
+                            {% if other_teams|length > 0 %}
+                                {% for team in other_teams %}
+                                    <li>
+                                        <a href="{% url 'dashboard_organizer:event_list' team.slug %}"
+                                           class="dropdown-item text-truncate">
+                                            {{ team.name }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li>
+                                    <span class="dropdown-item-text text-body-secondary">{% trans "None found" %}</span>
+                                </li>
+                            {% endif %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_organizer:team_create' %}"
+                                   class="dropdown-item d-flex align-items-center text-primary-emphasis fw-bold antialiased">
+                                    {% trans "Create new Team" %}
+                                    <i class="fa-regular fa-plus flex-shrink-0 ms-auto"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="text-body-secondary text-uppercase mt-4">
+                        <small>{% trans "Events Manager" %}</small>
+                    </div>
+                    <a href="{% url 'dashboard_organizer:event_create' current_team.slug %}"
+                       class="btn btn-primary d-flex align-items-center w-100 mt-2 text-start">
+                        <span class="ms-1">{% trans "Create Event" %}</span>
+                        <i class="fa-regular fa-plus flex-shrink-0 ms-auto me-1"></i>
+                    </a>
+                    <a href="{% url 'dashboard_organizer:event_list' current_team.slug %}"
+                       class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+                        <i class="fa-light fa-party-horn flex-shrink-0" style="width: 32px;"></i>
+                        {% trans "Events" %}
+                    </a>
+                    <div class="text-body-secondary text-uppercase mt-4">
+                        <small>{% trans "Team Manager" %}</small>
+                    </div>
+                    <a href="{% url 'dashboard_organizer:team_detail' current_team.slug %}"
+                       class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+                        <i class="fa-light fa-cog flex-shrink-0" style="width: 32px;"></i>
+                        {% trans "Team Details" %}
+                    </a>
+                    <a href="{% url 'dashboard_organizer:team_members' current_team.slug %}"
+                       class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+                        <i class="fa-light fa-users flex-shrink-0" style="width: 32px;"></i>
+                        {% trans "Manage Members" %}
+                    </a>
+                    <a href="{% url 'dashboard_organizer:payment_detail' current_team.slug %}"
+                       class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+                        <i class="fa-light fa-wallet flex-shrink-0" style="width: 32px;"></i>
+                        {% trans "Payment Details" %}
+                    </a>
+                    <div class="text-body-secondary text-uppercase mt-4">
+                        <small>{% trans "Support" %}</small>
+                    </div>
+                    <a href="https://docs.socialpass.io/gitbook/introduction/welcome-to-socialpass"
+                       target="_blank"
+                       rel="noreferrer"
+                       class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+                        <i class="fa-light fa-question-circle flex-shrink-0" style="width: 32px"></i>
+                        {% trans "Help Center" %}
+                    </a>
+                    <a href="https://blog.socialpass.io/"
+                       target="_blank"
+                       rel="noreferrer"
+                       class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+                        <i class="fa-light fa-edit flex-shrink-0" style="width: 32px;"></i>
+                        {% trans "Blog" %}
+                    </a>
+                </div>
+            </div>
+            <!-- Sidebar end -->
+            <!-- Navbars start -->
+            <div class="sticky-navbar sticky-top border-bottom border-secondary border-opacity-10 pt-2 pt-md-3">
+                <div class="container-lg px-3 px-sm-4 pb-2 pb-md-3 d-flex align-items-center">
+                    <button class="btn btn-link flex-shrink-0 px-0 me-2 d-xl-none"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#sidebar"
+                            aria-label="Toggle sidebar"
+                            style="width: 37px">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="flex-shrink-0 me-2 d-xl-none">
+                        <img src="{% static 'images/SocialPass-Icon.svg' %}"
+                             alt="SocialPass Logo"
+                             height="44"
+                             class="d-block">
+                    </div>
+                    <div class="h5 lh-sm mb-0 me-2 d-none d-md-block">
+                        {% block navbar_title %}
+                        {% endblock navbar_title %}
+                    </div>
+                    <div class="h6 lh-sm mb-0 me-2 d-md-none">
+                        {% block navbar_title_2 %}
+                        {% endblock navbar_title_2 %}
+                    </div>
+                    <div class="dropdown ms-auto">
+                        <button class="btn btn-link rounded-pill px-0"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                aria-label="My account"
+                                style="width: 37px">
+                            <i class="fa-solid fa-user"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <div class="dropdown-item-text">
+                                    <h6 class="mb-0 text-truncate">
+                                        {% get_user_primary_email %}
+                                    </h6>
+                                </div>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                            <li>
+                                <a href="{% url 'account_change_password' %}"
+                                   class="dropdown-item d-flex align-items-center">
+                                    <i class="fa-light fa-key specific-w-25 flex-shrink-0"></i>
+                                    {% trans "Change Password" %}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'account_email' %}"
+                                   class="dropdown-item d-flex align-items-center">
+                                    <i class="fa-light fa-envelope specific-w-25 flex-shrink-0"></i>
+                                    {% trans "Manage Emails" %}
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                            <li>
+                                <a href="{% url 'account_logout' %}"
+                                   class="dropdown-item d-flex align-items-center fw-bold text-danger-emphasis">
+                                    <i class="fa-light fa-sign-out specific-w-25 flex-shrink-0"></i>
+                                    {% trans "Sign Out" %}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                {% block sticky_navbar_tabs %}
+                {% endblock sticky_navbar_tabs %}
+            </div>
+            <!-- Navbars end -->
+            <!-- Content start -->
+            {% include "components/django_messages.html" %}
+            <div class="container-lg px-3 px-sm-4 d-flex flex-column content-container">
+                {% block content %}
+                {% endblock content %}
+            </div>
+            <!-- Content end -->
+            <!-- Bootstrap bundle JS -->
+            <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+            <script type="text/javascript">
 			/* Enable all tooltips */
 			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -374,10 +445,10 @@
 					copyBtn.innerHTML = "Copy";
 				}, 2000);
 			}
-		</script>
-
-		{% if debug %}
-		<script type="text/javascript">
+		
+            </script>
+            {% if debug %}
+                <script type="text/javascript">
 			/**
 			 * Handle the keydown event (only on debug mode).
 			 *
@@ -410,10 +481,11 @@
 					}
 				}
 			});
-		</script>
-		{% endif %}
-
-		{% block extra_body %}{% endblock extra_body %}
-	</body>
-	{% endwith %}
+		
+                </script>
+            {% endif %}
+            {% block extra_body %}
+            {% endblock extra_body %}
+        </body>
+    {% endwith %}
 </html>

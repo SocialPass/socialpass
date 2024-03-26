@@ -1,97 +1,99 @@
 {% extends "account/base.html" %}
+
 {% load account socialaccount static i18n %}
 
-{% block head_title %}{% trans "Sign In" %} - SocialPass{% endblock %}
-
-{% block inner %}
-<div class="card border-0 rounded-4 shadow-sm">
-	<div class="card-body p-lg-4">
-		{% if request.GET.next %}
-			<div class="alert alert-primary mb-3" role="alert">
-				{% trans "Please sign in to your account to continue." %}
-			</div>
-		{% endif %}
-		<h1 class="h3 mb-4">{% trans "Sign In" %}</h1>
-		<a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3" href="{% provider_login_url 'google' %}">
-			<img src="{% static 'images/g-logo.svg' %}" alt="Google" height="28px" class="d-block w-auto me-2">
-			{% trans "Sign in with Google" %}
-		</a>
-		<div class="position-relative my-4 opacity-50">
-			<hr />
-			<div class="position-absolute top-50 start-50 translate-middle px-3 text-body-secondary" style="background-color: var(--bs-content-bg);">{% trans "OR" %}</div>
-		</div>
-		<form class="login" method="POST" action="{% url 'account_login' %}">
-			{% csrf_token %}
-			{% if form.non_field_errors %}
-				<div class="alert alert-danger" role="alert">
-					<ul class="mb-0">
-						{% for error in form.non_field_errors %}
-							<li>{{ error|escape }}</li>
-						{% endfor %}
-					</ul>
-				</div>
-			{% endif %}
-			{% for input in form.hidden_fields %}
-				{{ input }}
-			{% endfor %}
-			<div class="mb-3">
-				{% with form.login as input %}
-					{% include "forms/input.html" %}
-				{% endwith %}
-			</div>
-			<div class="mb-3">
-				{% with form.password as input %}
-					{% include "forms/input.html" %}
-				{% endwith %}
-			</div>
-			<div class="container-fluid g-0 mb-3">
-				<div class="row g-0">
-					<div class="col">
-						{% with form.remember as input %}
-							<div class="form-check">
-								<input
-									type="{{ input.field.widget.input_type }}"
-									name="{{ input.name }}"
-									value="{{ input.value|default_if_none:'' }}"
-									{% if input.field.widget.input_type != "hidden" %}
-										class="form-check-input rounded-1"
-										id="{{ input.auto_id }}"
-									{% endif %}
-									{% if input.field.required %}
-										required="required"
-									{% endif %}
-									{% for k,v in input.field.widget.attrs.items %}
-										{{ k }}="{{ v }}"
-									{% endfor %}
-								/>
-								<label class="form-check-label" style="margin-top: 1px;" for="{{ input.id_for_label }}">{{ input.label }}</label>
-							</div>
-						{% endwith %}
-					</div>
-					<div class="col text-end form-text">
-						{% trans "Forgot password?" %} <a href="{% url 'account_reset_password' %}">{% trans "Reset" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
-					</div>
-				</div>
-			</div>
-			{% if redirect_field_value %}
-				<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-			{% endif %}
-			<div>
-				<button class="btn btn-primary w-100 d-block" type="submit">{% trans "Sign In" %}</button>
-			</div>
-		</form>
-		<p class="text-center text-body-secondary pt-2 mt-3 mb-0 border-top">
-			{% trans "Don't have an account?" %} <a href="{% url 'account_signup' %}">{% trans "Sign up" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
-		</p>
-	</div>
-</div>
+{% block head_title %}
+    {% trans "Sign In" %} - SocialPass
 {% endblock %}
-
+{% block inner %}
+    <div class="card border-0 rounded-4 shadow-sm">
+        <div class="card-body p-lg-4">
+            {% if request.GET.next %}
+                <div class="alert alert-primary mb-3" role="alert">
+                    {% trans "Please sign in to your account to continue." %}
+                </div>
+            {% endif %}
+            <h1 class="h3 mb-4">{% trans "Sign In" %}</h1>
+            <a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3"
+               href="{% provider_login_url 'google' %}">
+                <img src="{% static 'images/g-logo.svg' %}"
+                     alt="Google"
+                     height="28px"
+                     class="d-block w-auto me-2">
+                {% trans "Sign in with Google" %}
+            </a>
+            <div class="position-relative my-4 opacity-50">
+                <hr />
+                <div class="position-absolute top-50 start-50 translate-middle px-3 text-body-secondary"
+                     style="background-color: var(--bs-content-bg)">
+                    {% trans "OR" %}
+                </div>
+            </div>
+            <form class="login" method="POST" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0">
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error|escape }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {% for input in form.hidden_fields %}
+                    {{ input }}
+                {% endfor %}
+                <div class="mb-3">
+                    {% with form.login as input %}
+                        {% include "forms/input.html" %}
+                    {% endwith %}
+                </div>
+                <div class="mb-3">
+                    {% with form.password as input %}
+                        {% include "forms/input.html" %}
+                    {% endwith %}
+                </div>
+                <div class="container-fluid g-0 mb-3">
+                    <div class="row g-0">
+                        <div class="col">
+                            {% with form.remember as input %}
+                                <div class="form-check">
+                                    <input type="{{ input.field.widget.input_type }}" name="{{ input.name }}" value="{{ input.value|default_if_none:'' }}" {% if input.field.widget.input_type != "hidden" %} class="form-check-input rounded-1" id="{{ input.auto_id }}" {% endif %} {% if input.field.required %} required="required" {% endif %} {% for k,v in input.field.widget.attrs.items %} {{ k }}="{{ v }}" {% endfor %} />
+                                    <label class="form-check-label"
+                                           style="margin-top: 1px"
+                                           for="{{ input.id_for_label }}">
+                                        {{ input.label }}
+                                    </label>
+                                </div>
+                            {% endwith %}
+                        </div>
+                        <div class="col text-end form-text">
+                            {% trans "Forgot password?" %} <a href="{% url 'account_reset_password' %}">{% trans "Reset" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                           name="{{ redirect_field_name }}"
+                           value="{{ redirect_field_value }}" />
+                {% endif %}
+                <div>
+                    <button class="btn btn-primary w-100 d-block" type="submit">
+                        {% trans "Sign In" %}
+                    </button>
+                </div>
+            </form>
+            <p class="text-center text-body-secondary pt-2 mt-3 mb-0 border-top">
+                {% trans "Don't have an account?" %} <a href="{% url 'account_signup' %}">{% trans "Sign up" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
 {% block extra_body %}
-<script type="text/javascript">
+    <script type="text/javascript">
 	const searchParams = new URLSearchParams(window.location.search);
 	if (searchParams.has("email")) {
 		document.getElementById("id_login").value = searchParams.get("email");
 	}
-</script>
+    </script>
 {% endblock %}

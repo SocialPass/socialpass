@@ -1,71 +1,90 @@
 {% extends "account/base.html" %}
+
 {% load account socialaccount static i18n %}
 
-{% block head_title %}{% trans "Sign Up" %} - SocialPass{% endblock %}
-
+{% block head_title %}
+    {% trans "Sign Up" %} - SocialPass
+{% endblock %}
 {% block inner %}
-<div class="card border-0 rounded-4 shadow-sm">
-	<div class="card-body p-lg-4">
-		<h1 class="h3 mb-4">{% trans "Sign Up" %}</h1>
-		<a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3" href="{% provider_login_url 'google' %}">
-			<img src="{% static 'images/g-logo.svg' %}" alt="Google" height="28px" class="d-block w-auto me-2">
-			{% trans "Sign up with Google" %}
-		</a>
-		<div class="position-relative my-4 opacity-50">
-			<hr />
-			<div class="position-absolute top-50 start-50 translate-middle px-3 text-body-secondary" style="background-color: var(--bs-content-bg);">{% trans "OR" %}</div>
-		</div>
-		<form class="signup" method="POST" action="{% url 'account_signup' %}">
-			{% csrf_token %}
-			{% if form.non_field_errors %}
-				<div class="alert alert-danger" role="alert">
-					<ul class="mb-0">
-						{% for error in form.non_field_errors %}
-							<li>{{ error|escape }}</li>
-						{% endfor %}
-					</ul>
-				</div>
-			{% endif %}
-			{% for input in form.hidden_fields %}
-				{{ input }}
-			{% endfor %}
-			<div class="mb-3">
-				{% with form.email as input %}
-					{% include "forms/input.html" %}
-				{% endwith %}
-			</div>
-			<div class="mb-3">
-				{% with form.password1 as input %}
-					{% include "forms/input.html" %}
-				{% endwith %}
-			</div>
-			<div class="mb-3">
-				{% with form.password2 as input %}
-					{% include "forms/input.html" %}
-				{% endwith %}
-			</div>
-			{% if redirect_field_value %}
-				<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-			{% endif %}
-			<div class="mb-3">
-				<div class="form-check">
-					<input type="checkbox" id="agree-to-terms" name="agree-to-terms" class="form-check-input rounded-1">
-					<label for="agree-to-terms" class="form-check-label" style="margin-top: 1px;">
-						{% trans "I agree to the" %} <a href="{% static 'legal/organizer-terms-and-conditions.pdf' %}" target="_blank">{% trans "Terms & Conditions" %}<i class="fa-light fa-external-link ms-1"></i></a>
-					</label>
-				</div>
-			</div>
-			<div>
-				<button class="btn btn-primary w-100 d-block" type="submit" id="submit-btn" disabled>{% trans "Sign Up" %}</button>
-			</div>
-		</form>
-		<p class="text-center text-body-secondary pt-2 mt-3 mb-0 border-top">
-			{% trans "Already have an account?" %} <a href="{% url 'account_login' %}">{% trans "Sign in" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
-		</p>
-	</div>
-</div>
-
-<script type="text/javascript">
+    <div class="card border-0 rounded-4 shadow-sm">
+        <div class="card-body p-lg-4">
+            <h1 class="h3 mb-4">{% trans "Sign Up" %}</h1>
+            <a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3"
+               href="{% provider_login_url 'google' %}">
+                <img src="{% static 'images/g-logo.svg' %}"
+                     alt="Google"
+                     height="28px"
+                     class="d-block w-auto me-2">
+                {% trans "Sign up with Google" %}
+            </a>
+            <div class="position-relative my-4 opacity-50">
+                <hr />
+                <div class="position-absolute top-50 start-50 translate-middle px-3 text-body-secondary"
+                     style="background-color: var(--bs-content-bg)">
+                    {% trans "OR" %}
+                </div>
+            </div>
+            <form class="signup" method="POST" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0">
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error|escape }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {% for input in form.hidden_fields %}
+                    {{ input }}
+                {% endfor %}
+                <div class="mb-3">
+                    {% with form.email as input %}
+                        {% include "forms/input.html" %}
+                    {% endwith %}
+                </div>
+                <div class="mb-3">
+                    {% with form.password1 as input %}
+                        {% include "forms/input.html" %}
+                    {% endwith %}
+                </div>
+                <div class="mb-3">
+                    {% with form.password2 as input %}
+                        {% include "forms/input.html" %}
+                    {% endwith %}
+                </div>
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                           name="{{ redirect_field_name }}"
+                           value="{{ redirect_field_value }}" />
+                {% endif %}
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox"
+                               id="agree-to-terms"
+                               name="agree-to-terms"
+                               class="form-check-input rounded-1">
+                        <label for="agree-to-terms" class="form-check-label" style="margin-top: 1px">
+                            {% trans "I agree to the" %} <a href="{% static 'legal/organizer-terms-and-conditions.pdf' %}"
+    target="_blank">{% trans "Terms & Conditions" %}<i class="fa-light fa-external-link ms-1"></i></a>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-primary w-100 d-block"
+                            type="submit"
+                            id="submit-btn"
+                            disabled>
+                        {% trans "Sign Up" %}
+                    </button>
+                </div>
+            </form>
+            <p class="text-center text-body-secondary pt-2 mt-3 mb-0 border-top">
+                {% trans "Already have an account?" %} <a href="{% url 'account_login' %}">{% trans "Sign in" %}<i class="fa-light fa-arrow-right ms-1"></i></a>
+            </p>
+        </div>
+    </div>
+    <script type="text/javascript">
 	const agreeToTerms = document.getElementById("agree-to-terms");
 	const submitBtn = document.getElementById("submit-btn");
 
@@ -76,5 +95,5 @@
 			submitBtn.setAttribute("disabled", "disabled");
 		}
 	});
-</script>
+    </script>
 {% endblock %}

@@ -1,155 +1,156 @@
 {% extends "dashboard_staff/base.html" %}
+
 {% load static %}
 
 {% block content %}
-<!-- Item card start -->
-<div class="card my-3 p-3">
-	<div class="row">
-		<div class="col-md-5 align-self-center">
-			<div class="content">
-				<h2 class="h4">Total Organizer Signups</h2>
-				<div class="d-flex align-items-center">
-					<strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
-					{{ organizers_total|floatformat }}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
-					{{ organizers_weekly|last }}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
-					{{ organizers_monthly|floatformat }}
-				</div>
-			</div>
-		</div>
-		<div class="col-md-7 align-self-center">
-			<div class="content d-flex justify-content-center">
-				<canvas class="chart specific-w-500 h-auto mw-100" data-values="organizers_weekly"></canvas>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card my-3 p-3">
-	<div class="row">
-		<div class="col-md-5 align-self-center">
-			<div class="content">
-				<h2 class="h4">Total Events Created</h2>
-				<div class="d-flex align-items-center">
-					<strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
-					{{ events_total|floatformat }}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
-					{{ events_weekly|last }}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
-					{{ events_monthly|floatformat }}
-				</div>
-			</div>
-		</div>
-		<div class="col-md-7 align-self-center">
-			<div class="content d-flex justify-content-center">
-				<canvas class="chart specific-w-500 h-auto mw-100" data-values="events_weekly"></canvas>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card my-3 p-3">
-	<div class="row">
-		<div class="col-md-5 align-self-center">
-			<div class="content">
-				<h2 class="h4">Total Tickets Sold</h2>
-				<div class="d-flex align-items-center">
-					<strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
-					{{ tickets_total|floatformat }}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
-					{{tickets_weekly|last}}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
-					{{ tickets_monthly|floatformat }}
-				</div>
-			</div>
-		</div>
-		<div class="col-md-7 align-self-center">
-			<div class="content d-flex justify-content-center">
-				<canvas class="chart specific-w-500 h-auto mw-100" data-values="tickets_weekly"></canvas>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card my-3 p-3">
-	<div class="row">
-		<div class="col-md-5 align-self-center">
-			<div class="content">
-				<h2 class="h4">Total Attendees</h2>
-				<div class="d-flex align-items-center">
-					<strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
-					{{ attendees_total|floatformat }}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
-					{{attendees_weekly|last}}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
-					{{ attendees_monthly|floatformat }}
-				</div>
-			</div>
-		</div>
-		<div class="col-md-7 align-self-center">
-			<div class="content d-flex justify-content-center">
-				<canvas class="chart specific-w-500 h-auto mw-100" data-values="attendees_weekly"></canvas>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Item card start -->
-<div class="card my-3 p-3">
-	<div class="row">
-		<div class="col-md-5 align-self-center">
-			<div class="content">
-				<h2 class="h4">Average Time to Ticket</h2>
-				<div class="d-flex align-items-center">
-					<strong class="specific-w-200 flex-shrink-0">Total (Average): </strong>
-					{{ ticket_time_total|floatformat }}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
-					{{ticket_time_weekly|last}}
-				</div>
-				<div class="d-flex align-items-center mt-1">
-					<strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
-					{{ ticket_time_monthly|floatformat }}
-				</div>
-			</div>
-		</div>
-		<div class="col-md-7 align-self-center">
-			<div class="content d-flex justify-content-center">
-				<canvas class="chart specific-w-500 h-auto mw-100" data-values="ticket_time_weekly"></canvas>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- Item card end -->
-
-<!-- Chart JS -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="text/javascript">
+    <!-- Item card start -->
+    <div class="card my-3 p-3">
+        <div class="row">
+            <div class="col-md-5 align-self-center">
+                <div class="content">
+                    <h2 class="h4">Total Organizer Signups</h2>
+                    <div class="d-flex align-items-center">
+                        <strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
+                        {{ organizers_total|floatformat }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
+                        {{ organizers_weekly|last }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
+                        {{ organizers_monthly|floatformat }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <div class="content d-flex justify-content-center">
+                    <canvas class="chart specific-w-500 h-auto mw-100"
+                            data-values="organizers_weekly"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Item card end -->
+    <!-- Item card start -->
+    <div class="card my-3 p-3">
+        <div class="row">
+            <div class="col-md-5 align-self-center">
+                <div class="content">
+                    <h2 class="h4">Total Events Created</h2>
+                    <div class="d-flex align-items-center">
+                        <strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
+                        {{ events_total|floatformat }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
+                        {{ events_weekly|last }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
+                        {{ events_monthly|floatformat }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <div class="content d-flex justify-content-center">
+                    <canvas class="chart specific-w-500 h-auto mw-100"
+                            data-values="events_weekly"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Item card end -->
+    <!-- Item card start -->
+    <div class="card my-3 p-3">
+        <div class="row">
+            <div class="col-md-5 align-self-center">
+                <div class="content">
+                    <h2 class="h4">Total Tickets Sold</h2>
+                    <div class="d-flex align-items-center">
+                        <strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
+                        {{ tickets_total|floatformat }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
+                        {{ tickets_weekly|last }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
+                        {{ tickets_monthly|floatformat }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <div class="content d-flex justify-content-center">
+                    <canvas class="chart specific-w-500 h-auto mw-100"
+                            data-values="tickets_weekly"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Item card end -->
+    <!-- Item card start -->
+    <div class="card my-3 p-3">
+        <div class="row">
+            <div class="col-md-5 align-self-center">
+                <div class="content">
+                    <h2 class="h4">Total Attendees</h2>
+                    <div class="d-flex align-items-center">
+                        <strong class="specific-w-200 flex-shrink-0">Total (Cumulative): </strong>
+                        {{ attendees_total|floatformat }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
+                        {{ attendees_weekly|last }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
+                        {{ attendees_monthly|floatformat }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <div class="content d-flex justify-content-center">
+                    <canvas class="chart specific-w-500 h-auto mw-100"
+                            data-values="attendees_weekly"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Item card end -->
+    <!-- Item card start -->
+    <div class="card my-3 p-3">
+        <div class="row">
+            <div class="col-md-5 align-self-center">
+                <div class="content">
+                    <h2 class="h4">Average Time to Ticket</h2>
+                    <div class="d-flex align-items-center">
+                        <strong class="specific-w-200 flex-shrink-0">Total (Average): </strong>
+                        {{ ticket_time_total|floatformat }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Week (7 days): </strong>
+                        {{ ticket_time_weekly|last }}
+                    </div>
+                    <div class="d-flex align-items-center mt-1">
+                        <strong class="specific-w-200 flex-shrink-0">Last Month (30 days): </strong>
+                        {{ ticket_time_monthly|floatformat }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <div class="content d-flex justify-content-center">
+                    <canvas class="chart specific-w-500 h-auto mw-100"
+                            data-values="ticket_time_weekly"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Item card end -->
+    <!-- Chart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
 	const charts = document.querySelectorAll(".chart")
 	const weeks = {{ weeks|safe }};
 	for (var i = 0; i <= charts.length; i++) {
@@ -204,5 +205,5 @@
 			}
 		})
 	}
-</script>
+    </script>
 {% endblock %}

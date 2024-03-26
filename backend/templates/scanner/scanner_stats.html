@@ -1,17 +1,24 @@
 {% load i18n static %}
+
 <h1 class="h4 text-primary-emphasis mt-0">
-	{{ object.title }}
+    {{ object.title }}
 </h1>
-<div><i class="fa-regular fa-clock me-1"></i> {{ object.start_date }}</div>
+<div>
+    <i class="fa-regular fa-clock me-1"></i> {{ object.start_date }}
+</div>
 <div class="row mt-3">
-	<div class="col">
-		<div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
-			<strong class="antialiased">{% trans "Attendees:" %} <br class="d-sm-none" />{{ object.attendees_count }}</strong>
-		</div>
-	</div>
-	<div class="col">
-		<div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
-			<strong class="antialiased">{% trans "Check-Ins:" %} <br class="d-sm-none" />{{ object.attendees_scanned_count }}</strong>
-		</div>
-	</div>
+    <div class="col">
+        <div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
+            <strong class="antialiased">{% trans "Attendees:" %}
+                <br class="d-sm-none" />
+            {{ object.attendees_count }}</strong>
+        </div>
+    </div>
+    <div class="col">
+        <div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
+            <strong class="antialiased">{% trans "Check-Ins:" %}
+                <br class="d-sm-none" />
+            {{ object.attendees_scanned_count }}</strong>
+        </div>
+    </div>
 </div>

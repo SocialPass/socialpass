@@ -2,8 +2,8 @@
 
 <!DOCTYPE html>
 <html lang="en" class="socialpass-event-discovery" spellcheck="false">
-  <head>
-    <style type="text/css">
+    <head>
+        <style type="text/css">
       .tg td {
         border-color: transparent;
         border-style: solid;
@@ -74,82 +74,82 @@
         font-weight: bold;
         color: #959191;
       }
-    </style>
-  </head>
-  <body>
-    <div class="root">
-      <table class="tg">
-        <thead>
-          {% if event_logo_url %}
-          <tr>
-            <th class="header" colspan="2">
-              <img src="{{ event_logo_url }}" />
-            </th>
-          </tr>
-          {% endif %}
-        </thead>
-        <tbody>
-          <tr>
-            <th class="congratulations-message" colspan="2">
-              <h1 class="title">Congratulations!</h1>
-              <p class="message">
-                We've verified your NFT ownership and generated your ticket!
-              </p>
-            </th>
-          </tr>
-          <tr>
-            {% if barcode_image %}
-            <td class="qrcode-column" rowspan="4">
-              <img
-                src="data:image/png;base64,{{ barcode_image }}"
-                width="250"
-              />
-            </td>
-            {% endif %}
-
-            <td>
-              {% if event_title %}
-              <div class="event-title">{{event_title}}</div>
-              {% endif %} {% if order_number %}
-              <div class="event-order">Order #{{order_number}}</div>
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              {% if ticket_quantity %}
-              <div class="info ticket-number">{{ticket_quantity}} x Ticket</div>
-              {% endif %} {% if name %}
-
-              <div class="subinfo ticket-type">{{name}}</div>
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              {% if location_name %}
-
-              <div class="info location-name">{{location_name}}</div>
-              {% endif %} {% if location_address %}
-
-              <div class="subinfo location-address">{{location_address}}</div>
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              {% if event_date %}
-              <div class="info event-date">{{event_date}}</div>
-              {% endif %} {% if event_timezone and event_time %}
-
-              <div class="subinfo event-time">
-                {{event_time}} ({{event_timezone}})
-              </div>
-              {% endif %}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </body>
+        </style>
+    </head>
+    <body>
+        <div class="root">
+            <table class="tg">
+                <thead>
+                    {% if event_logo_url %}
+                        <tr>
+                            <th class="header" colspan="2">
+                                <img src="{{ event_logo_url }}" />
+                            </th>
+                        </tr>
+                    {% endif %}
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="congratulations-message" colspan="2">
+                            <h1 class="title">Congratulations!</h1>
+                            <p class="message">
+                                We've verified your NFT ownership and generated your ticket!
+                            </p>
+                        </th>
+                    </tr>
+                    <tr>
+                        {% if barcode_image %}
+                            <td class="qrcode-column" rowspan="4">
+                                <img src="data:image/png;base64,{{ barcode_image }}" width="250" />
+                            </td>
+                        {% endif %}
+                        <td>
+                            {% if event_title %}
+                                <div class="event-title">{{ event_title }}</div>
+                            {% endif %}
+                            {% if order_number %}
+                                <div class="event-order">Order #{{ order_number }}</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if ticket_quantity %}
+                                <div class="info ticket-number">
+                                    {{ ticket_quantity }} x Ticket
+                                </div>
+                            {% endif %}
+                            {% if name %}
+                                <div class="subinfo ticket-type">{{ name }}</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if location_name %}
+                                <div class="info location-name">{{ location_name }}</div>
+                            {% endif %}
+                            {% if location_address %}
+                                <div class="subinfo location-address">
+                                    {{ location_address }}
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if event_date %}
+                                <div class="info event-date">{{ event_date }}</div>
+                            {% endif %}
+                            {% if event_timezone and event_time %}
+                                <div class="subinfo event-time">
+                                    {{ event_time }} ({{ event_timezone }})
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
 </html>

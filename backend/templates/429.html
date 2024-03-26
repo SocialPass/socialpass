@@ -1,22 +1,30 @@
 {% extends "dashboard_organizer/base_simple.html" %}
+
 {% load static i18n %}
 
-{% block head_title %}{% trans "Too many requests" %} - SocialPass{% endblock %}
-
+{% block head_title %}
+    {% trans "Too many requests" %} - SocialPass
+{% endblock %}
 {% block content %}
-<div class="specific-w-400 mw-100 d-flex align-items-center justify-content-center mx-auto p-1">
-    <img src="{% static 'images/illustrations/something_went_wrong.svg' %}" alt="something_went_wrong" class="img-fluid">
-</div>
-<h1 class="text-center display-1">429</h1>
-<h2 class="text-center fs-4">{% trans "Too many requests" %}</h2>
-<p class="text-center">
-    {% if exception %}
-        {{ exception }}
-    {% else %}
-    	{% trans "Sorry, but too many requests have been sent from this client. Please try again later." %}
-    {% endif %}
-</p>
-<p class="text-center">
-    <a href="https://support.socialpass.io/widget?website_token=YCzxapxfua4vyELnoZ68v5Dm" target="_blank" rel="noreferrer">{% trans "Contact Us" %}</a>
-</p>
+    <div class="specific-w-400 mw-100 d-flex align-items-center justify-content-center mx-auto p-1">
+        <img src="{% static 'images/illustrations/something_went_wrong.svg' %}"
+             alt="something_went_wrong"
+             class="img-fluid">
+    </div>
+    <h1 class="text-center display-1">429</h1>
+    <h2 class="text-center fs-4">
+        {% trans "Too many requests" %}
+    </h2>
+    <p class="text-center">
+        {% if exception %}
+            {{ exception }}
+        {% else %}
+            {% trans "Sorry, but too many requests have been sent from this client. Please try again later." %}
+        {% endif %}
+    </p>
+    <p class="text-center">
+        <a href="https://support.socialpass.io/widget?website_token=YCzxapxfua4vyELnoZ68v5Dm"
+           target="_blank"
+           rel="noreferrer">{% trans "Contact Us" %}</a>
+    </p>
 {% endblock %}

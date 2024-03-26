@@ -1,23 +1,17 @@
 <div class="form-floating">
-    <select
-        type="{{ input.field.widget.input_type }}"
-        name="{{ input.html_name }}"
-        {% if input.field.widget.input_type != "hidden" %}
-            class="form-select {% if input.errors %}is-invalid{% endif %}"
-            id="{{ input.auto_id }}"
-        {% endif %}
-        {% if input.field.required %}
-            required="required"
-        {% endif %}
-        {% for k,v in input.field.widget.attrs.items %}
-            {{ k }}="{{ v }}"
-        {% endfor %}
-    >
+    <select type="{{ input.field.widget.input_type }}" name="{{ input.html_name }}" {% if input.field.widget.input_type != "hidden" %} class="form-select {% if input.errors %}is-invalid{% endif %}" id="{{ input.auto_id }}" {% endif %} {% if input.field.required %} required="required" {% endif %} {% for k,v in input.field.widget.attrs.items %} {{ k }}="{{ v }}" {% endfor %}>
         {% for x, y in input.field.choices %}
-            <option value="{{ x }}"{% if input.value == x %} selected{% endif %}>{{ y }}</option>
+            <option value="{{ x }}"{% if input.value == x %} selected{% endif %}>
+                {{ y }}
+            </option>
         {% endfor %}
     </select>
-    <label for="{{ input.id_for_label }}">{{ input.label }}{% if input.field.required or "required" in input.field.widget.attrs %}*{% endif %}</label>
+    <label for="{{ input.id_for_label }}">
+        {{ input.label }}
+        {% if input.field.required or "required" in input.field.widget.attrs %}
+            *
+        {% endif %}
+    </label>
 </div>
 {% if input.errors %}
     <ul class="text-danger-emphasis fw-bold mt-3">

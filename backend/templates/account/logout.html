@@ -2,29 +2,34 @@
 
 {% load i18n %}
 
-{% block title %}{% translate "Sign Out - SocialPass" %}{% endblock %}
+{% block title %}
+    {% translate "Sign Out - SocialPass" %}
+{% endblock %}
 {% block navbar_page_name_1 %}Sign Out{% endblock %}
 {% block navbar_page_name_2 %}Sign Out{% endblock %}
-
 {% block inner %}
-<div class="row">
-  <div class="col-sm-10 col-md-8 mx-auto">
-    <div class="card mb-4">
-      <div class="card-header py-0">
-      </div>
-      <div class="card-body py-2">
-        <h3 class="font-weight-bolder">{% translate "Sign Out" %}</h3>
-        <p>{% translate 'Are you sure you want to sign out?' %}</p>
-        <form method="post" action="{% url 'account_logout' %}">
-          {% csrf_token %}
-          {% if redirect_field_value %}
-          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-          {% endif %}
-          <button class="btn btn-danger btn-sm" type="submit">{% translate 'Sign Out' %}</button>
-        </form>
-      </div>
+    <div class="row">
+        <div class="col-sm-10 col-md-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header py-0"></div>
+                <div class="card-body py-2">
+                    <h3 class="font-weight-bolder">
+                        {% translate "Sign Out" %}
+                    </h3>
+                    <p>{% translate 'Are you sure you want to sign out?' %}</p>
+                    <form method="post" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        {% if redirect_field_value %}
+                            <input type="hidden"
+                                   name="{{ redirect_field_name }}"
+                                   value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        <button class="btn btn-danger btn-sm" type="submit">
+                            {% translate 'Sign Out' %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-
 {% endblock %}

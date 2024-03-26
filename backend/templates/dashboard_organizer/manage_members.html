@@ -1,90 +1,103 @@
 {% extends "dashboard_organizer/base.html" %}
+
 {% load static i18n get_user_primary_email %}
 
-{% block head_title %}{% trans "Manage Members" %} - SocialPass{% endblock head_title %}
-
-{% block navbar_title %}{% trans "Manage" %} <span class="text-primary-emphasis">{% trans "Members" %}</span>{% endblock navbar_title %}
-
-{% block navbar_title_2 %}{% trans "Manage" %} <span class="text-primary-emphasis">{% trans "Members" %}{% endblock navbar_title_2 %}
-
+{% block head_title %}
+    {% trans "Manage Members" %} - SocialPass
+{% endblock head_title %}
+{% block navbar_title %}
+    {% trans "Manage" %} <span class="text-primary-emphasis">{% trans "Members" %}</span>
+{% endblock navbar_title %}
+{% block navbar_title_2 %}
+    {% trans "Manage" %} <span class="text-primary-emphasis">{% trans "Members" %}
+{% endblock navbar_title_2 %}
 {% block content %}
-<!-- Team members start -->
-<div class="mb-3 mt-4">
-	<h2 class="h5">{% trans "Team Members" %} | {{ current_team.members.count }}</h2>
-	<div class="card border-0 rounded-4 shadow-sm">
-		<div class="card-body px-lg-5 py-lg-4">
-			<div class="row row-cols-auto justify-content-center justify-content-lg-start g-4">
-				{% for membership in memberships %}
-					<div class="col" style="max-width: 300px;">
-						<div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto position-relative">
-							<span class="text-uppercase h4 m-0">{{ membership.user.email|slice:"0:1" }}</span>
-							{% if membership.user != request.user %}
-								<a href="{% url 'dashboard_organizer:team_member_delete' team_slug=current_team.slug member_pk=membership.id %}" class="btn btn-danger btn-sm rounded-pill position-absolute top-0 start-100 translate-middle px-0 mt-3 me-4" aria-label="Remove Member" style="width: 31px;">
-									<i class="fa-solid fa-times"></i>
-								</a>
-							{% endif %}
-						</div>
-						<div class="h5 mt-3 mb-0 text-center text-truncate">
-							{{ membership.user.email }}
-						</div>
-						<div class="text-center text-truncate">
-							{% if request.user.email == membership.user.email %}
-								({% trans "You" %})
-							{% else %}
-								{{request.user.first_name}}
-							{% endif %}
-						</div>
-					</div>
-				{% endfor %}
-				{% for invitation in current_team.invitation_set.all %}
-					{% if invitation.accepted != True %}
-						<div class="col" style="max-width: 300px;">
-							<div class="rounded-circle d-flex align-items-center justify-content-center text-secondary-emphasis bg-secondary-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
-								<i class="fa-light fa-user h4 m-0"></i>
-							</div>
-							{% if not invitation.is_expired %}
-								<div class="h5 mt-3 mb-0 text-center text-truncate">
-									{% trans "Invitation Sent" %}
-								</div>
-							{% else %}
-								<div class="h6 mt-3 mb-0 text-center text-truncate text-danger-emphasis">
-									{% trans "Expired (Invite again)" %}
-								</div>
-							{% endif %}
-							<div class="text-center text-truncate">{{ invitation.email }}</div>
-						</div>
-					{% endif %}
-				{% endfor %}
-			</div>
-		</div>
-	</div>
-</div>
-<!-- Team members end -->
-
-<!-- Member invite start -->
-<div class="mb-3 mt-4">
-	<h2 class="h5">{% trans "Invite Team Members" %}</h2>
-	<form method="POST" class="specific-w-400 mw-100 d-flex align-items-center mt-4">
-		{% csrf_token %}
-		{% if form.non_field_errors %}
-			<div class="alert alert-danger" role="alert">
-				<ul class="mb-0">
-					{% for error in form.non_field_errors %}
-						<li>{{ error|escape }}</li>
-					{% endfor %}
-				</ul>
-			</div>
-		{% endif %}
-		{% for input in form.hidden_fields %}
-			{{ input }}
-		{% endfor %}
-		<div class="flex-grow-1">
-			{% with form.email as input %}
-				{% include "forms/input.html" %}
-			{% endwith %}
-		</div>
-		<button type="submit" class="btn btn-primary ms-3 align-self-stretch px-4">{% trans "Send Invite" %}</button>
-	</form>
-</div>
-<!-- Member invite end -->
+    <!-- Team members start -->
+    <div class="mb-3 mt-4">
+        <h2 class="h5">
+            {% trans "Team Members" %} | {{ current_team.members.count }}
+        </h2>
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-body px-lg-5 py-lg-4">
+                <div class="row row-cols-auto justify-content-center justify-content-lg-start g-4">
+                    {% for membership in memberships %}
+                        <div class="col" style="max-width: 300px;">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-warning-emphasis bg-warning-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto position-relative">
+                                <span class="text-uppercase h4 m-0">{{ membership.user.email|slice:"0:1" }}</span>
+                                {% if membership.user != request.user %}
+                                    <a href="{% url 'dashboard_organizer:team_member_delete' team_slug=current_team.slug member_pk=membership.id %}"
+                                       class="btn btn-danger btn-sm rounded-pill position-absolute top-0 start-100 translate-middle px-0 mt-3 me-4"
+                                       aria-label="Remove Member"
+                                       style="width: 31px">
+                                        <i class="fa-solid fa-times"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="h5 mt-3 mb-0 text-center text-truncate">
+                                {{ membership.user.email }}
+                            </div>
+                            <div class="text-center text-truncate">
+                                {% if request.user.email == membership.user.email %}
+                                    ({% trans "You" %})
+                                {% else %}
+                                    {{ request.user.first_name }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% for invitation in current_team.invitation_set.all %}
+                        {% if invitation.accepted != True %}
+                            <div class="col" style="max-width: 300px;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-secondary-emphasis bg-secondary-subtle flex-shrink-0 specific-w-75 specific-h-75 mx-auto">
+                                    <i class="fa-light fa-user h4 m-0"></i>
+                                </div>
+                                {% if not invitation.is_expired %}
+                                    <div class="h5 mt-3 mb-0 text-center text-truncate">
+                                        {% trans "Invitation Sent" %}
+                                    </div>
+                                {% else %}
+                                    <div class="h6 mt-3 mb-0 text-center text-truncate text-danger-emphasis">
+                                        {% trans "Expired (Invite again)" %}
+                                    </div>
+                                {% endif %}
+                                <div class="text-center text-truncate">
+                                    {{ invitation.email }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Team members end -->
+    <!-- Member invite start -->
+    <div class="mb-3 mt-4">
+        <h2 class="h5">{% trans "Invite Team Members" %}</h2>
+        <form method="POST"
+              class="specific-w-400 mw-100 d-flex align-items-center mt-4">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul class="mb-0">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error|escape }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% for input in form.hidden_fields %}
+                {{ input }}
+            {% endfor %}
+            <div class="flex-grow-1">
+                {% with form.email as input %}
+                    {% include "forms/input.html" %}
+                {% endwith %}
+            </div>
+            <button type="submit" class="btn btn-primary ms-3 align-self-stretch px-4">
+                {% trans "Send Invite" %}
+            </button>
+        </form>
+    </div>
+    <!-- Member invite end -->
 {% endblock content %}

@@ -1,22 +1,30 @@
 {% extends "dashboard_organizer/base_simple.html" %}
+
 {% load static i18n %}
 
-{% block head_title %}{% trans "Server error" %} - SocialPass{% endblock %}
-
+{% block head_title %}
+    {% trans "Server error" %} - SocialPass
+{% endblock %}
 {% block content %}
-<div class="specific-w-400 mw-100 d-flex align-items-center justify-content-center mx-auto p-1">
-    <img src="{% static 'images/illustrations/something_went_wrong.svg' %}" alt="something_went_wrong" class="img-fluid">
-</div>
-<h1 class="text-center display-1">500</h1>
-<h2 class="text-center fs-4">{% trans "Server error" %}</h2>
-<p class="text-center">
-    {% if exception %}
-        {{ exception }}
-    {% else %}
-    	{% trans "We track these errors automatically, so you can try refreshing the page after some time." %}
-    {% endif %}
-</p>
-<p class="text-center">
-    <a href="https://support.socialpass.io/widget?website_token=YCzxapxfua4vyELnoZ68v5Dm" target="_blank" rel="noreferrer">{% trans "Contact Us" %}</a>
-</p>
+    <div class="specific-w-400 mw-100 d-flex align-items-center justify-content-center mx-auto p-1">
+        <img src="{% static 'images/illustrations/something_went_wrong.svg' %}"
+             alt="something_went_wrong"
+             class="img-fluid">
+    </div>
+    <h1 class="text-center display-1">500</h1>
+    <h2 class="text-center fs-4">
+        {% trans "Server error" %}
+    </h2>
+    <p class="text-center">
+        {% if exception %}
+            {{ exception }}
+        {% else %}
+            {% trans "We track these errors automatically, so you can try refreshing the page after some time." %}
+        {% endif %}
+    </p>
+    <p class="text-center">
+        <a href="https://support.socialpass.io/widget?website_token=YCzxapxfua4vyELnoZ68v5Dm"
+           target="_blank"
+           rel="noreferrer">{% trans "Contact Us" %}</a>
+    </p>
 {% endblock %}

@@ -1,48 +1,64 @@
 {% extends "checkout/base.html" %}
+
 {% load static i18n %}
 
-{% block head_title %}{{ object.event.title }} - {% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %}{% endblock head_title %}
-
+{% block head_title %}
+    {{ object.event.title }} -
+    {% if organizer_team.whitelabel.brand_name %}
+        {{ organizer_team.whitelabel.brand_name }}
+    {% else %}
+        SocialPass
+    {% endif %}
+{% endblock head_title %}
 {% block content %}
-<div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
-	<!-- Cover image start -->
-	<div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-250">
-		<img src="{{ object.event.cover_image_url }}" alt="{{ object.event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);">
-		<img src="{{ object.event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ object.event.title }} cover image">
-		<div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-start p-3 p-sm-4" style="background-image: linear-gradient(transparent, black);">
-			<div>
-				<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}" class="btn btn-secondary rounded-pill w-auto">
-					<i class="fa-light fa-arrow-left me-1"></i>
-					{% trans "Go Back" %}
-				</a>
-			</div>
-			<h2 class="mt-auto mb-0">{{ object.event.title }}</h2>
-			<h6 class="m-0">{% trans "By" %} {{ object.event.team.name }}</h6>
-		</div>
-	</div>
-	<!-- Cover image start -->
-
-	{% include "components/django_messages.html" %}
-
-	<!-- Content start -->
-	<div class="p-3 p-sm-4 mt-3 position-relative">
-		<div class="specific-w-400 mw-100 mx-auto py-4 text-center">
-			<h3>
-				<span class="text-success-emphasis me-1">
-					<i class="fa-light fa-check"></i>
-				</span>
-				{% trans "Joined Waitlist" %}
-			</h3>
-			<p>
-				{% trans "You have successfully joined the waitlist. The event organizer reviews all submissions, and if selected, you will receive your tickets." %}
-			</p>
-			<div>
-				<a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}">
-					<i class="fa-light fa-arrow-left me-1"></i>{% trans "Go Back to Event" %}
-				</a>
-			</div>
-		</div>
-	</div>
-	<!-- Content end -->
-</div>
+    <div class="card border-0 rounded-4 shadow-sm overflow-hidden my-3 my-sm-4">
+        <!-- Cover image start -->
+        <div class="position-relative overflow-hidden d-flex align-items-center justify-content-center specific-h-250">
+            <img src="{{ object.event.cover_image_url }}"
+                 alt="{{ object.event.title }} background image"
+                 class="position-absolute top-50 start-50 translate-middle opacity-50"
+                 style="width: 200%;
+                        height: auto;
+                        filter: blur(1.5rem)">
+            <img src="{{ object.event.cover_image_url }}"
+                 class="img-fluid position-relative z-1"
+                 alt="{{ object.event.title }} cover image">
+            <div class="position-absolute top-0 start-0 z-1 text-white w-100 h-100 d-flex flex-column justify-content-start p-3 p-sm-4"
+                 style="background-image: linear-gradient(transparent, black)">
+                <div>
+                    <a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}"
+                       class="btn btn-secondary rounded-pill w-auto">
+                        <i class="fa-light fa-arrow-left me-1"></i>
+                        {% trans "Go Back" %}
+                    </a>
+                </div>
+                <h2 class="mt-auto mb-0">{{ object.event.title }}</h2>
+                <h6 class="m-0">
+                    {% trans "By" %} {{ object.event.team.name }}
+                </h6>
+            </div>
+        </div>
+        <!-- Cover image start -->
+        {% include "components/django_messages.html" %}
+        <!-- Content start -->
+        <div class="p-3 p-sm-4 mt-3 position-relative">
+            <div class="specific-w-400 mw-100 mx-auto py-4 text-center">
+                <h3>
+                    <span class="text-success-emphasis me-1">
+                        <i class="fa-light fa-check"></i>
+                    </span>
+                    {% trans "Joined Waitlist" %}
+                </h3>
+                <p>
+                    {% trans "You have successfully joined the waitlist. The event organizer reviews all submissions, and if selected, you will receive your tickets." %}
+                </p>
+                <div>
+                    <a href="{% url 'checkout:checkout_one' object.event.team.slug object.event.slug %}?checkout_type={{ object.session_type }}&name={{ object.name }}&email={{ object.email }}">
+                        <i class="fa-light fa-arrow-left me-1"></i>{% trans "Go Back to Event" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Content end -->
+    </div>
 {% endblock content %}

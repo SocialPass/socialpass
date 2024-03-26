@@ -1,64 +1,71 @@
 {% extends "dashboard_staff/base.html" %}
+
 {% load static %}
 
 {% block content %}
-<h2 class="h4 text-primary-emphasis">Overflow Sessions</h2>
-{% for obj in object_list %}
-<!-- Item card start -->
-<div class="card my-3 p-3">
-	<h3 class="h5">ID: {{ obj.public_id }}</h3>
-	<div>
-		<strong>Created: </strong>{{ obj.created }}<br />
-		{% if obj.session_type == obj.SessionType.FIAT %}
-			<strong>Total Price: </strong>{{ obj.event.fiat_currency_symbol }}{{ obj.total_price }}
-		{% endif %}
-	</div>
-	{% for item in obj.checkoutitem_set.all %}
-		<div class="pt-3 mt-3 border-top">
-			<h6 class="d-flex align-items-center">
-				<span>{{ item.ticket_tier.name }}</span>
-				<span class="ps-1 fw-normal">
-					&times; {{ item.quantity }}
-				</span>
-			</h6>
-			{% if obj.session_type == obj.SessionType.FIAT %}
-				<div>
-					Price &times; 1 &mdash;
-					{{ object.event.currency_symbol }}
-					{{ item.ticket_tier.price_per_ticket  }}
-				</div>
-			{% endif %}
-			<div class="mt-1 text-body-secondary">
-				Allowed Guest(s):
-				{{ item.selected_guests }}
-			</div>
-		</div>
-	{% endfor %}
-</div>
-<!-- Item card end -->
-{% endfor %}
-
-<!-- Pagination start -->
-<div class="card my-3">
-	<div class="card-body d-flex align-items-center">
-		<div>
-			{% if page_obj.has_previous %}
-				<a class="btn btn-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}">Prev</a>
-			{% else %}
-				<button class="btn btn-secondary btn-sm" disabled="disabled">Prev</button>
-			{% endif %}
-		</div>
-		<div class="ms-auto">
-			Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-		</div>
-		<div class="ms-auto">
-			{% if page_obj.has_next %}
-				<a class="btn btn-secondary btn-sm" href="?page={{ page_obj.next_page_number }}">Next</a>
-			{% else %}
-				<button class="btn btn-secondary btn-sm" disabled="disabled">Next</button>
-			{% endif %}
-		</div>
-	</div>
-</div>
-<!-- Pagination end -->
+    <h2 class="h4 text-primary-emphasis">Overflow Sessions</h2>
+    {% for obj in object_list %}
+        <!-- Item card start -->
+        <div class="card my-3 p-3">
+            <h3 class="h5">ID: {{ obj.public_id }}</h3>
+            <div>
+                <strong>Created:</strong>{{ obj.created }}
+                <br />
+                {% if obj.session_type == obj.SessionType.FIAT %}
+                    <strong>Total Price:</strong>{{ obj.event.fiat_currency_symbol }}{{ obj.total_price }}
+                {% endif %}
+            </div>
+            {% for item in obj.checkoutitem_set.all %}
+                <div class="pt-3 mt-3 border-top">
+                    <h6 class="d-flex align-items-center">
+                        <span>{{ item.ticket_tier.name }}</span>
+                        <span class="ps-1 fw-normal">
+                            &times; {{ item.quantity }}
+                        </span>
+                    </h6>
+                    {% if obj.session_type == obj.SessionType.FIAT %}
+                        <div>
+                            Price &times; 1 &mdash;
+                            {{ object.event.currency_symbol }}
+                            {{ item.ticket_tier.price_per_ticket }}
+                        </div>
+                    {% endif %}
+                    <div class="mt-1 text-body-secondary">
+                        Allowed Guest(s):
+                        {{ item.selected_guests }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Item card end -->
+    {% endfor %}
+    <!-- Pagination start -->
+    <div class="card my-3">
+        <div class="card-body d-flex align-items-center">
+            <div>
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-secondary btn-sm"
+                       href="?page={{ page_obj.previous_page_number }}">Prev</a>
+                {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled="disabled">
+                        Prev
+                    </button>
+                {% endif %}
+            </div>
+            <div class="ms-auto">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+            <div class="ms-auto">
+                {% if page_obj.has_next %}
+                    <a class="btn btn-secondary btn-sm"
+                       href="?page={{ page_obj.next_page_number }}">Next</a>
+                {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled="disabled">
+                        Next
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Pagination end -->
 {% endblock %}

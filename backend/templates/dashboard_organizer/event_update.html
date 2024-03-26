@@ -1,30 +1,33 @@
 {% extends "dashboard_organizer/base.html" %}
+
 {% load static i18n get_user_primary_email crispy_forms_tags %}
 
-{% block head_title %}{% trans "Overview" %} | {{ event.title }} - SocialPass{% endblock head_title %}
-
-{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title %}
-
-{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title_2 %}
-
+{% block head_title %}
+    {% trans "Overview" %} | {{ event.title }} - SocialPass
+{% endblock head_title %}
+{% block navbar_title %}
+    <span class="text-primary-emphasis">{{ event.title }}</span>
+{% endblock navbar_title %}
+{% block navbar_title_2 %}
+    <span class="text-primary-emphasis">{{ event.title }}</span>
+{% endblock navbar_title_2 %}
 {% block sticky_navbar_tabs %}
-{% include "dashboard_organizer/event_details_tabs.html" %}
+    {% include "dashboard_organizer/event_details_tabs.html" %}
 {% endblock sticky_navbar_tabs %}
-
 {% block content %}
-<div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
-	<h1 class="h3 mb-0">{% trans "Overview" %}</h1>
-	<p class="text-body-secondary mb-0">
-		{% trans "View and edit your event details." %}
-	</p>
-</div>
-<div class="card border-0 rounded-4 shadow-sm mb-3 mw-100 mx-auto" style="width: 720px;">
-	{% include "dashboard_organizer/event_form.html" %}
-</div>
+    <div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
+        <h1 class="h3 mb-0">{% trans "Overview" %}</h1>
+        <p class="text-body-secondary mb-0">
+            {% trans "View and edit your event details." %}
+        </p>
+    </div>
+    <div class="card border-0 rounded-4 shadow-sm mb-3 mw-100 mx-auto"
+         style="width: 720px">
+        {% include "dashboard_organizer/event_form.html" %}
+    </div>
 {% endblock content %}
-
 {% block extra_body %}
-<script>
+    <script>
 	var startDateInput = document.getElementById("id_start_date");
 	var endDateInput = document.getElementById("id_end_date");
 	var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
@@ -49,8 +52,8 @@
 
 	startDateInput.addEventListener("change", dateValidate);
 	endDateInput.addEventListener("change", dateValidate);
-</script>
-<script type="text/javascript">
+    </script>
+    <script type="text/javascript">
 	const coverImgPlaceholder = document.getElementById("cover-img-placeholder").value;
 	const coverImgBg = document.getElementById("cover-img-bg");
 	const coverImgPreview = document.getElementById("cover-img-preview");
@@ -66,9 +69,10 @@
 			coverImgPreview.src = coverImgPlaceholder;
 		}
 	});
-</script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDChv6Fl3rYj_sbx3hEoLbJ1FNO3QAP8Ts&loading=async&callback=initialize&libraries=places,marker"></script>
-<script type="text/javascript">
+    </script>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDChv6Fl3rYj_sbx3hEoLbJ1FNO3QAP8Ts&loading=async&callback=initialize&libraries=places,marker"></script>
+    <script type="text/javascript">
 	// Form fields
 	const geoAddress = document.getElementById("id_geo_address");
 	const geoType = document.getElementById("id_geo_type");
@@ -147,5 +151,5 @@
 		// hide button
 		geoResetBtn.classList.add("d-none")
 	}
-</script>
+    </script>
 {% endblock %}

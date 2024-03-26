@@ -19,9 +19,7 @@ class AppleTicket:
     Class responsible for creating Apple Wallet Pass
     """
 
-    def __init__(
-        self, serial_number: str = "", description: str = "", org_name: str = ""
-    ):
+    def __init__(self, serial_number: str = "", description: str = "", org_name: str = ""):
         # instantiation values
         self.org_name = org_name
         self.description = description
@@ -42,9 +40,7 @@ class AppleTicket:
         self.password: str = settings.APPLE_WALLET_PASSWORD
         self.pass_type_id: str = settings.APPLE_WALLET_PASS_TYPE_ID
         self.certificate_key: str = self.format_certificate(settings.APPLE_WALLET_KEY)
-        self.certificate: str = self.format_certificate(
-            settings.APPLE_WALLET_CERTIFICATE
-        )
+        self.certificate: str = self.format_certificate(settings.APPLE_WALLET_CERTIFICATE)
         self.wwrd_certificate: str = self.format_certificate(
             settings.APPLE_WALLET_WWDR_CERTIFICATE
         )
@@ -134,9 +130,7 @@ class AppleTicket:
         event = ticket.event
 
         if not event.geo_address:
-            raise Exception(
-                "The event object does not have a geo_address"
-            )
+            raise Exception("The event object does not have a geo_address")
 
         self.org_name = event.team.name
         self.label_color = "rgb(255,255,255)"

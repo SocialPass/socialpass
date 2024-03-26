@@ -1,38 +1,60 @@
 {% load static i18n crispy_forms_tags %}
 
 {% if request.resolver_match.url_name == "event_create" %}
-	<input type="hidden" value="{% static 'images/event_cover_placeholder.jpg' %}" id="cover-img-placeholder">
+    <input type="hidden"
+           value="{% static 'images/event_cover_placeholder.jpg' %}"
+           id="cover-img-placeholder">
 {% elif request.resolver_match.url_name == "event_update" %}
-	<input type="hidden" value="{{ event.cover_image_url }}" id="cover-img-placeholder">
+    <input type="hidden"
+           value="{{ event.cover_image_url }}"
+           id="cover-img-placeholder">
 {% endif %}
 <form class="card-body p-sm-4" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% if form.non_field_errors %}
-	    <div class="alert alert-danger" role="alert">
-	        <ul class="mb-0">
-	            {% for error in form.non_field_errors %}
-	            <li>{{ error|escape }}</li>
-	            {% endfor %}
-	        </ul>
-	    </div>
+        <div class="alert alert-danger" role="alert">
+            <ul class="mb-0">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error|escape }}</li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endif %}
     {% for input in form.hidden_fields %}
-    	{{ input }}
+        {{ input }}
     {% endfor %}
     <div>{{ form.team.as_hidden }}</div>
     <div class="row g-3 g-lg-4 mb-4">
         <div class="col-12 col-md-auto">
             <div class="specific-w-md-250 specific-h-250 h-md-100 position-relative overflow-hidden d-flex align-items-center justify-content-center rounded bg-secondary-subtle">
-            	{% if request.resolver_match.url_name == "event_create" %}
-					<img src="{% static 'images/event_cover_placeholder.jpg' %}" alt="Background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);" id="cover-img-bg">
-                	<img src="{% static 'images/event_cover_placeholder.jpg' %}" class="img-fluid position-relative z-1" alt="Cover image" id="cover-img-preview">
-				{% elif request.resolver_match.url_name == "event_update" %}
-					<img src="{{ event.cover_image_url }}" alt="{{ event.title }} background image" class="position-absolute top-50 start-50 translate-middle opacity-50" style="width: 200%; height: auto; filter: blur(1.5rem);" id="cover-img-bg">
-					<img src="{{ event.cover_image_url }}" class="img-fluid position-relative z-1" alt="{{ event.title }} cover image" id="cover-img-preview">
-				{% endif %}
+                {% if request.resolver_match.url_name == "event_create" %}
+                    <img src="{% static 'images/event_cover_placeholder.jpg' %}"
+                         alt="Background image"
+                         class="position-absolute top-50 start-50 translate-middle opacity-50"
+                         style="width: 200%;
+                                height: auto;
+                                filter: blur(1.5rem)"
+                         id="cover-img-bg">
+                    <img src="{% static 'images/event_cover_placeholder.jpg' %}"
+                         class="img-fluid position-relative z-1"
+                         alt="Cover image"
+                         id="cover-img-preview">
+                {% elif request.resolver_match.url_name == "event_update" %}
+                    <img src="{{ event.cover_image_url }}"
+                         alt="{{ event.title }} background image"
+                         class="position-absolute top-50 start-50 translate-middle opacity-50"
+                         style="width: 200%;
+                                height: auto;
+                                filter: blur(1.5rem)"
+                         id="cover-img-bg">
+                    <img src="{{ event.cover_image_url }}"
+                         class="img-fluid position-relative z-1"
+                         alt="{{ event.title }} cover image"
+                         id="cover-img-preview">
+                {% endif %}
                 <div class="cover-img-input position-absolute top-0 end-0 z-1">
                     {% with form.cover_image as input %}
-                    	{{ input|as_crispy_field }}
+                        {{ input|as_crispy_field }}
                     {% endwith %}
                 </div>
             </div>
@@ -40,18 +62,18 @@
         <div class="col-12 col-md">
             <div class="mb-3">
                 {% with form.title as input %}
-                	{% include "forms/input.html" %}
+                    {% include "forms/input.html" %}
                 {% endwith %}
             </div>
             <div class="vertical-form-group">
                 {% with form.start_date as input %}
-                	{% include "forms/input.html" %}
+                    {% include "forms/input.html" %}
                 {% endwith %}
                 {% with form.end_date as input %}
-                	{% include "forms/input.html" %}
+                    {% include "forms/input.html" %}
                 {% endwith %}
                 {% with form.timezone as input %}
-                	{% include "forms/select.html" %}
+                    {% include "forms/select.html" %}
                 {% endwith %}
             </div>
             <div class="text-danger-emphasis mt-2 d-none" id="end-date-extra-feedback">
@@ -63,7 +85,13 @@
         {% with form.geo_address as input %}
             {% include "forms/input.html" %}
         {% endwith %}
-        <button type="button" id="reset_geo_form_btn" class="btn btn-danger btn-sm shadow-sm position-absolute top-50 end-0 me-3 p-0 translate-middle-y d-flex align-items-center justify-content-center d-none" onclick="resetGeoForm()" aria-label="Reset" style="width: 28px; height: 28px;">
+        <button type="button"
+                id="reset_geo_form_btn"
+                class="btn btn-danger btn-sm shadow-sm position-absolute top-50 end-0 me-3 p-0 translate-middle-y d-flex align-items-center justify-content-center d-none"
+                onclick="resetGeoForm()"
+                aria-label="Reset"
+                style="width: 28px;
+                       height: 28px">
             <i class="fa-solid fa-times"></i>
         </button>
     </div>
@@ -78,22 +106,24 @@
     {{ form.geo_latitude.as_hidden }}
     {{ form.geo_longitude.as_hidden }}
     <h4 class="mt-3 mb-1">{% trans "Description" %}</h4>
-    <div class="text-body-secondary mb-3">{% trans "You can add links and sauce up your content to grab your customers' attention." %}</div>
+    <div class="text-body-secondary mb-3">
+        {% trans "You can add links and sauce up your content to grab your customers' attention." %}
+    </div>
     {% with input=form.description %}
-	    <div class="mb-3">
-	        {{ input }}
-	        {% if input.errors %}
-		        <ul class="invalid-feedback">
-		            {% for error in input.errors %}
-		            	<li>{{ error }}</li>
-		            {% endfor %}
-		        </ul>
-	        {% endif %}
-	    </div>
+        <div class="mb-3">
+            {{ input }}
+            {% if input.errors %}
+                <ul class="invalid-feedback">
+                    {% for error in input.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     {% endwith %}
     <div class="text-end">
         <button type="submit" class="btn btn-primary btn-lg px-3">
-        	{% trans "Save & Continue" %}
+            {% trans "Save & Continue" %}
         </button>
     </div>
 </form>

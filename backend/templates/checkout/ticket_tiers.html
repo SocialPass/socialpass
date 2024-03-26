@@ -1,133 +1,133 @@
 {% load i18n %}
+
 {% for tier in tiers %}
-
-<!-- Handle tier filtering -->
-{% if not tier.hidden_from_public %}
-{% if tier_type == "tiers-FREE" and tier.category == tier.Category.FREE or tier_type == "tiers-FIAT" and tier.category == tier.Category.FIAT or tier_type == "tiers-ASSET_OWNERSHIP" and tier.category == tier.Category.ASSET_OWNERSHIP %}
-<div class="ticket-tier mb-3">
-    <input
-        id="{{ tier.public_id }}"
-        {% if not tier.event.waiting_queue_enabled %}
-            {% if tier.capacity <= tier.tickets_sold_count %}disabled{% endif %}
-        {% endif %}
-        type="checkbox"
-        class="ticket-tier-input"
-        data-pk="{{ tier.id }}"
-        data-max-per-person="{{ tier.max_per_person }}"
-        {% if not tier.event.waiting_queue_enabled %}
-            data-availability="{{ tier.tickets_available }}"
-        {% else %}
-            data-availability="{{ tier.max_per_person }}"
-        {% endif %}
-        data-amount="0"
-        data-extra-party="0"
-        data-allowed-guests="{{ tier.guests_allowed }}"
-        data-price-per-ticket="{{ tier.price_per_ticket }}"
-        {% if tier.guests_available and not tier.event.waiting_queue_enabled %}
-            data-guests-available="{{ tier.guests_available }}"
-        {% endif %}
-        onchange="tierOnchange(this)"
-    >
-    <label for="{{ tier.public_id }}" class="ticket-tier-label">
-
-        <!-- Additional Information -->
-        {% if tier.additional_information != "" %}
-            <div class="alert alert-primary bg-primary bg-opacity-25 border-0 ticket-tier-additional-info" role="alert" style="font-size: var(--bs-font-size-sm);">
-                {{tier.additional_information|linebreaks}}
-            </div>
-        {% endif %}
-        <!-- End additional information -->
-
-        <!-- Tickets Available Information -->
-        <div class="d-sm-flex align-items-center">
-            <div class="pe-sm-3">
-                <h5 class="mb-1 text-truncate">
-                    {% if tier.tickets_available > 0 or tier.event.waiting_queue_enabled %}
-                        <span class="ticket-tier-uncheck">
-                            <i class="fa-light fa-square"></i>
-                        </span>
-                        <span class="ticket-tier-check">
-                            <i class="fa-solid fa-check-square"></i>
-                        </span>
+    <!-- Handle tier filtering -->
+    {% if not tier.hidden_from_public %}
+        {% if tier_type == "tiers-FREE" and tier.category == tier.Category.FREE or tier_type == "tiers-FIAT" and tier.category == tier.Category.FIAT or tier_type == "tiers-ASSET_OWNERSHIP" and tier.category == tier.Category.ASSET_OWNERSHIP %}
+            <div class="ticket-tier mb-3">
+                <input id="{{ tier.public_id }}"
+                       {% if not tier.event.waiting_queue_enabled %} {% if tier.capacity <= tier.tickets_sold_count %}disabled{% endif %}
+                       {% endif %}
+                       type="checkbox"
+                       class="ticket-tier-input"
+                       data-pk="{{ tier.id }}"
+                       data-max-per-person="{{ tier.max_per_person }}"
+                       {% if not tier.event.waiting_queue_enabled %} data-availability="{{ tier.tickets_available }}" {% else %} data-availability="{{ tier.max_per_person }}" {% endif %}
+                       data-amount="0"
+                       data-extra-party="0"
+                       data-allowed-guests="{{ tier.guests_allowed }}"
+                       data-price-per-ticket="{{ tier.price_per_ticket }}"
+                       {% if tier.guests_available and not tier.event.waiting_queue_enabled %} data-guests-available="{{ tier.guests_available }}" {% endif %}
+                       onchange="tierOnchange(this)">
+                <label for="{{ tier.public_id }}" class="ticket-tier-label">
+                    <!-- Additional Information -->
+                    {% if tier.additional_information != "" %}
+                        <div class="alert alert-primary bg-primary bg-opacity-25 border-0 ticket-tier-additional-info"
+                             role="alert"
+                             style="font-size: var(--bs-font-size-sm)">
+                            {{ tier.additional_information|linebreaks }}
+                        </div>
                     {% endif %}
-                    {{ tier.name }}
-                </h5>
-                <p class="m-0">
-                    {% if not tier.event.waiting_queue_enabled %}
-                        {% if tier.tickets_available < 1 %}
-                            <strong class="text-danger-emphasis">
-                                <i class="fa-light fa-ban me-1"></i> {% trans "Sold out!" %}
-                            </strong>
-                        {% else %}
-                            {% if not tier.hidden_availability %}
-                                {{ tier.tickets_available }} {% trans "available" %}
-                            {% endif %}
-                        {% endif %}
-                    {% else %}
-                        {% trans "Available" %}
-                        {% if tier.guests_allowed > 0 %}
-                            <span>
-                                | + {{ tier.guests_allowed }} {% trans "Guest(s) Allowed" %}
-                            </span>
-                        {% endif %}
-                    {% endif %}
-                </p>
-            </div>
-            <div class="ticket-tier-controls ms-auto mt-2 mt-sm-0">
-                <div class="input-group input-group-sm input-group-pill specific-w-100 mx-auto">
-                    <button class="btn btn-secondary specific-w-25 px-0" onclick="subtractAmount(this)">-</button>
-                    <input type="text" class="ticket-tier-amount form-control text-center" readonly value="0">
-                    <button class="btn btn-secondary specific-w-25 px-0" onclick="addAmount(this)">+</button>
-                </div>
-                <div class="text-body-secondary text-center mt-1" style="font-size: var(--bs-font-size-sm);">
-                    {% trans "Max per person:" %} {{ tier.max_per_person }}
-                </div>
-            </div>
-        </div>
-        <!-- End Tickets Available Information -->
-
-        <!-- Fiat price label -->
-        {% if tier.category == tier.Category.FIAT %}
-            <div class="border-top mt-2 pt-2">
-                <div class="rounded-pill px-3 py-2 bg-primary-subtle border border-primary lh-sm d-inline-block mt-2">
-                    <i class="fa-light fa-tag me-1"></i>
-                    <strong>{% trans "Price" %} &times; 1: </strong>
-                    {{ tier.event.currency_symbol }}{{ tier.price_per_ticket }}
-                </div>
-                <div class="text-body-secondary mt-3 d-flex align-items-start">
-                    <i class="fa-light fa-info-circle me-2 mt-1 flex-shrink-0"></i>
-                    {% trans "Purchase with debit, credit, or Apple Pay." %}
-                </div>
-            </div>
-        {% endif %}
-        <!-- End Fiat Price label -->
-
-        <!-- Guests available information -->
-        {% if tier.guests_allowed > 0 %}
-            <div class="ticket-tier-guest ticket-tier-controls border-top mt-2 pt-3">
-                {% if tier.guest_supply >= 0 and not tier.event.waiting_queue_enabled %}
-                    {% if tier.guests_count >= tier.guest_supply %}
-                        <div>
-                            <div class="fw-bold">{% trans "Extra Guest(s) - Free" %}</div>
-                            <div class="lh-sm text-danger-emphasis fw-bold">
-                                {% trans "The guest supply allotment for this tier is full." %}
+                    <!-- End additional information -->
+                    <!-- Tickets Available Information -->
+                    <div class="d-sm-flex align-items-center">
+                        <div class="pe-sm-3">
+                            <h5 class="mb-1 text-truncate">
+                                {% if tier.tickets_available > 0 or tier.event.waiting_queue_enabled %}
+                                    <span class="ticket-tier-uncheck">
+                                        <i class="fa-light fa-square"></i>
+                                    </span>
+                                    <span class="ticket-tier-check">
+                                        <i class="fa-solid fa-check-square"></i>
+                                    </span>
+                                {% endif %}
+                                {{ tier.name }}
+                            </h5>
+                            <p class="m-0">
+                                {% if not tier.event.waiting_queue_enabled %}
+                                    {% if tier.tickets_available < 1 %}
+                                        <strong class="text-danger-emphasis">
+                                            <i class="fa-light fa-ban me-1"></i> {% trans "Sold out!" %}
+                                        </strong>
+                                    {% else %}
+                                        {% if not tier.hidden_availability %}
+                                            {{ tier.tickets_available }} {% trans "available" %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {% trans "Available" %}
+                                    {% if tier.guests_allowed > 0 %}
+                                        <span>
+                                            | + {{ tier.guests_allowed }} {% trans "Guest(s) Allowed" %}
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="ticket-tier-controls ms-auto mt-2 mt-sm-0">
+                            <div class="input-group input-group-sm input-group-pill specific-w-100 mx-auto">
+                                <button class="btn btn-secondary specific-w-25 px-0"
+                                        onclick="subtractAmount(this)">
+                                    -
+                                </button>
+                                <input type="text"
+                                       class="ticket-tier-amount form-control text-center"
+                                       readonly
+                                       value="0">
+                                <button class="btn btn-secondary specific-w-25 px-0"
+                                        onclick="addAmount(this)">
+                                    +
+                                </button>
+                            </div>
+                            <div class="text-body-secondary text-center mt-1"
+                                 style="font-size: var(--bs-font-size-sm)">
+                                {% trans "Max per person:" %} {{ tier.max_per_person }}
                             </div>
                         </div>
-                    {% else %}
-                        {% include "checkout/ticket_tiers_guest.html" %}
+                    </div>
+                    <!-- End Tickets Available Information -->
+                    <!-- Fiat price label -->
+                    {% if tier.category == tier.Category.FIAT %}
+                        <div class="border-top mt-2 pt-2">
+                            <div class="rounded-pill px-3 py-2 bg-primary-subtle border border-primary lh-sm d-inline-block mt-2">
+                                <i class="fa-light fa-tag me-1"></i>
+                                <strong>{% trans "Price" %} &times; 1:</strong>
+                                {{ tier.event.currency_symbol }}{{ tier.price_per_ticket }}
+                            </div>
+                            <div class="text-body-secondary mt-3 d-flex align-items-start">
+                                <i class="fa-light fa-info-circle me-2 mt-1 flex-shrink-0"></i>
+                                {% trans "Purchase with debit, credit, or Apple Pay." %}
+                            </div>
+                        </div>
                     {% endif %}
-                {% else %}
-                    {% include "checkout/ticket_tiers_guest.html" %}
-                {% endif %}
-                <div class="text-center text-sm-end mt-3 pt-2">
-                    <strong>{% trans "Total # of guests" %}:</strong> <span class="ticket-tier-total-guests">0</span> {% trans "(Quantity × Guests)" %}
-                </div>
+                    <!-- End Fiat Price label -->
+                    <!-- Guests available information -->
+                    {% if tier.guests_allowed > 0 %}
+                        <div class="ticket-tier-guest ticket-tier-controls border-top mt-2 pt-3">
+                            {% if tier.guest_supply >= 0 and not tier.event.waiting_queue_enabled %}
+                                {% if tier.guests_count >= tier.guest_supply %}
+                                    <div>
+                                        <div class="fw-bold">
+                                            {% trans "Extra Guest(s) - Free" %}
+                                        </div>
+                                        <div class="lh-sm text-danger-emphasis fw-bold">
+                                            {% trans "The guest supply allotment for this tier is full." %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    {% include "checkout/ticket_tiers_guest.html" %}
+                                {% endif %}
+                            {% else %}
+                                {% include "checkout/ticket_tiers_guest.html" %}
+                            {% endif %}
+                            <div class="text-center text-sm-end mt-3 pt-2">
+                                <strong>{% trans "Total # of guests" %}:</strong> <span class="ticket-tier-total-guests">0</span> {% trans "(Quantity × Guests)" %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- End Guests available information -->
+                </label>
             </div>
         {% endif %}
-        <!-- End Guests available information -->
-
-    </label>
-</div>
-{% endif %}
-{% endif %}
+    {% endif %}
 {% endfor %}

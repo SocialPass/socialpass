@@ -13,8 +13,7 @@ moralis==0.1.39 #https://github.com/MoralisWeb3/Moralis-Python-SDK
 
 # Django
 # ------------------------------------------------------------------------------
-git+https://github.com/SocialPass/django-quill-editor
-git+https://github.com/SocialPass/passbook.git
+git+https://github.com/SocialPass/passbook.git@7a3614e974c1862a24e7b02ced11313c8320c14b
 crispy-bootstrap5==2024.2 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==5.0.3  # https://www.djangoproject.com/
 django-autoslug==1.9.9 # https://github.com/justinmayer/django-autoslug
@@ -23,4 +22,5 @@ django-crispy-forms==2.1 # https://github.com/django-crispy-forms/django-crispy-
 django-environ==0.11.2 # https://github.com/joke2k/django-environ
 django-model-utils==4.4.0  # https://github.com/jazzband/django-model-utils
 django-storages[boto3]==1.14.2  # https://github.com/jschneier/django-storages
+django-quill-editor==0.1.40 # https://github.com/LeeHanYeong/django-quill-editor
 whitenoise==6.6.0 # https://github.com/evansd/whitenoise/

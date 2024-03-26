@@ -14,8 +14,6 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.mail import send_mail, send_mass_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import F
-from django.db.models.functions import Round
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -26,7 +24,6 @@ from eth_account.messages import encode_defunct
 from model_utils.models import TimeStampedModel
 from moralis import evm_api
 
-from apps.root.countries import COUNTRIES
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     ForbiddenRedemptionError,
@@ -120,14 +117,16 @@ class Team(DBModel):
     """
 
     # keys
-    members = models.ManyToManyField("User", through="Membership")
+    members = models.ManyToManyField(to="root.User", through="root.Membership")
 
     # basic info
-    name = models.CharField(max_length=255,  unique=True)
+    name = models.CharField(max_length=255, unique=True)
     slug = AutoSlugField(populate_from="name", null=True, unique=True)
     image = models.ImageField(
-        help_text=_("A brand image for your team. Please make sure the image is "
-        "square, non-transparent, and ideally in the PNG format."),
+        help_text=_(
+            "A brand image for your team. Please make sure the image is "
+            "square, non-transparent, and ideally in the PNG format."
+        ),
         blank=True,
         null=True,
         height_field=None,
@@ -191,7 +190,7 @@ class Team(DBModel):
     @cached_property
     def stripe_refresh_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"http://{domain}" # http works in local, converted to https on prod
+        domain = f"http://{domain}"  # http works in local, converted to https on prod
         url = reverse(
             "dashboard_organizer:stripe_refresh",
             args=[
@@ -203,7 +202,7 @@ class Team(DBModel):
     @cached_property
     def stripe_return_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"http://{domain}" # http works in local, converted to https on prod
+        domain = f"http://{domain}"  # http works in local, converted to https on prod
         url = reverse(
             "dashboard_organizer:stripe_return",
             args=[
@@ -232,9 +231,7 @@ class Membership(DBModel):
 
     # keys
     team = models.ForeignKey("Team", on_delete=models.CASCADE, blank=True, null=True)
-    user = models.ForeignKey(
-        "root.User", on_delete=models.CASCADE, blank=True, null=True
-    )
+    user = models.ForeignKey("root.User", on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return f"Membership: {self.user.email}<>{self.team.name}"
@@ -287,6 +284,7 @@ class Event(DBModel):
     Represents an event on SocialPass
     This event supports multiple states as well as multiple ticker tiers.
     """
+
     # Keys
     user = models.ForeignKey("User", on_delete=models.SET_NULL, blank=True, null=True)
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
@@ -301,8 +299,10 @@ class Event(DBModel):
         help_text=_("A short description of your event."),
     )
     cover_image = models.ImageField(
-        help_text=_("A banner image for your event. Please make sure the image "
-        "is a high quality landscape image, ideally 960 x 720 pixels (4:3)."),
+        help_text=_(
+            "A banner image for your event. Please make sure the image "
+            "is a high quality landscape image, ideally 960 x 720 pixels (4:3)."
+        ),
         blank=True,
         null=True,
         upload_to="event__cover_image",
@@ -325,7 +325,7 @@ class Event(DBModel):
     fiat_currency = models.CharField(
         max_length=3,
         help_text=_("The fiat currency to use for all tickets of this event."),
-        default="USD"
+        default="USD",
     )
     total_capacity = models.IntegerField(
         blank=True,
@@ -339,6 +339,7 @@ class Event(DBModel):
     class GeographyType(models.TextChoices):
         GOOGLE = "GOOGLE", "Google"
         MANUAL = "MANUAL", "Manual"
+
     geo_type = models.CharField(
         max_length=50,
         choices=GeographyType.choices,
@@ -346,9 +347,13 @@ class Event(DBModel):
     )
     geo_address = models.TextField()
     geo_place_id = models.CharField(blank=True)
-    geo_latitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
-    geo_longitude = models.DecimalField(null=True, blank=True, max_digits=9, decimal_places=6)
-    hide_address = models.BooleanField(default=False) # Hide address, except for attendees
+    geo_latitude = models.DecimalField(
+        null=True, blank=True, max_digits=9, decimal_places=6
+    )
+    geo_longitude = models.DecimalField(
+        null=True, blank=True, max_digits=9, decimal_places=6
+    )
+    hide_address = models.BooleanField(default=False)  # Hide address, except for attendees
 
     # Publish info
     slug = AutoSlugField(populate_from="title", null=True)
@@ -469,12 +474,14 @@ class Event(DBModel):
 
     @cached_property
     def ticket_tier_counts(self):
-        tiers = TicketTier.objects.filter(event_id=self.id, hidden_from_public=False).values('event_id')
+        tiers = TicketTier.objects.filter(
+            event_id=self.id, hidden_from_public=False
+        ).values("event_id")
         tier_counts = {
             "fiat_count": 0,
             "free_count": 0,
             "asset_ownership_count": 0,
-            "total_count": 0
+            "total_count": 0,
         }
         if not tiers:
             return tier_counts
@@ -482,7 +489,9 @@ class Event(DBModel):
         # Return tiers with annotated counts
         tier_counts["fiat_count"] = tiers.filter(category=TicketTier.Category.FIAT).count()
         tier_counts["free_count"] = tiers.filter(category=TicketTier.Category.FREE).count()
-        tier_counts["asset_ownership_count"] = tiers.filter(category=TicketTier.Category.ASSET_OWNERSHIP).count()
+        tier_counts["asset_ownership_count"] = tiers.filter(
+            category=TicketTier.Category.ASSET_OWNERSHIP
+        ).count()
         tier_counts["total_count"] = sum(tier_counts.values())
         return tier_counts
 
@@ -497,26 +506,18 @@ class Ticket(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-
-
     )
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-
-
     )
     checkout_item = models.ForeignKey(
         "CheckoutItem",
         on_delete=models.CASCADE,
-
-
     )
     checkout_session = models.ForeignKey(
         "CheckoutSession",
         on_delete=models.CASCADE,
-
-
     )
     google_class_id = models.CharField(max_length=255, blank=True)
 
@@ -594,18 +595,16 @@ class TicketTier(DBModel):
     Represents a ticker tier for a respective ticket.
     This tier contains details for a ticket, ++ pricing and payment method information.
     """
+
     # key fields
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-
-
     )
 
     # Ticket information fields
     name = models.CharField(
         max_length=255,
-
         help_text=_("A short descriptive label for your ticket tier."),
     )
     capacity = models.IntegerField(
@@ -617,15 +616,11 @@ class TicketTier(DBModel):
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
         help_text=_("Maximum amount of tickets per attendee."),
-
-
     )
     guests_allowed = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         help_text=_("Maximum number of guests allowed for one ticket."),
-
-
     )
     guest_supply = models.IntegerField(
         blank=True,
@@ -637,15 +632,13 @@ class TicketTier(DBModel):
     # Display fields
     hidden_from_public = models.BooleanField(
         default=False,
-
-
         help_text=_("Whether or not this tier is hidden from the public"),
     )
     hidden_availability = models.BooleanField(
         default=False,
-
-
-        help_text=_("Whether or not to hide the number of available tickets from the public."),
+        help_text=_(
+            "Whether or not to hide the number of available tickets from the public."
+        ),
     )
     additional_information = models.TextField(
         blank=True,
@@ -690,24 +683,19 @@ class TicketTier(DBModel):
         max_length=50,
         choices=BlockchainChoices.choices,
         default=BlockchainChoices.ETH,
-
     )
     network = models.IntegerField(
         choices=NetworkChoices.choices,
         default=NetworkChoices.ETH,
-
         help_text=_("Which blockchain is your NFT collection on?"),
     )
     asset_type = models.CharField(
         max_length=50,
         choices=AssetChoices.choices,
         default=AssetChoices.NFT,
-
     )
     balance_required = models.IntegerField(
         default=1,
-
-
         help_text=_("The number of NFTs required to claim your ticket tier."),
     )
     token_address = models.CharField(
@@ -732,13 +720,6 @@ class TicketTier(DBModel):
         validators=[MinValueValidator(0)],
         help_text=_("Price of one ticket for this tier."),
         default=0,
-
-
-    )
-    price_per_ticket_cents = models.GeneratedField(
-        expression=Round(F("price_per_ticket") * 100),
-        output_field=models.IntegerField(),
-        db_persist=True,
     )
 
     # Category fields - Free
@@ -779,12 +760,14 @@ class TicketTier(DBModel):
     def additional_information_html(self):
         additional_information_html = ""
         try:
-            additional_information_html = json.loads(self.additional_information)[
-                "html"
-            ]
+            additional_information_html = json.loads(self.additional_information)["html"]
         except Exception:
             pass
         return additional_information_html
+
+    @cached_property
+    def price_per_ticket_cents(self):
+        return round(self.price_per_ticket * 100)
 
 
 class CheckoutSession(DBModel):
@@ -792,12 +775,11 @@ class CheckoutSession(DBModel):
     Represents a time-limited checkout session (aka 'cart') for an event organizer
     This model holds the relations to cart items for checkout purposes
     """
+
     # Key fields
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-
-
     )
     rsvp_batch = models.ForeignKey(
         "RSVPBatch",
@@ -817,11 +799,11 @@ class CheckoutSession(DBModel):
         PROCESSING = "PROCESSING", "Processing"  # Session has entered processing
         FAILED = "FAILED", "Failed"  # TX has failed
         FULFILLED = "FULFILLED", "Fulfilled"  # TX has been filled
+
     order_status = models.CharField(
         max_length=50,
         choices=OrderStatus.choices,
         default=OrderStatus.VALID,
-
     )
 
     # Waitlist Status field
@@ -829,6 +811,7 @@ class CheckoutSession(DBModel):
         WAITLIST_JOINED = "WAITLIST_JOINED", "Waitlist joined"
         WAITLIST_APPROVED = "WAITLIST_APPROVED", "Waitlist approved"
         WAITLIST_REJECTED = "WAITLIST_REJECTED", "Waitlist rejected"
+
     waitlist_status = models.CharField(
         max_length=50,
         choices=WaitlistStatus.choices,
@@ -840,11 +823,11 @@ class CheckoutSession(DBModel):
         FIAT = "FIAT", "Fiat"
         FREE = "FREE", "Free"
         ASSET_OWNERSHIP = "ASSET_OWNERSHIP", "Asset Ownership"
+
     session_type = models.CharField(
         max_length=50,
         choices=SessionType.choices,
         default=SessionType.FIAT,
-
     )
 
     # Session Type Fields - Fiat
@@ -875,7 +858,7 @@ class CheckoutSession(DBModel):
         get link to get the tickets for this session
         """
         domain = Site.objects.all().first().domain
-        domain = f"http://{domain}" # http works in local, converted to https on prod
+        domain = f"http://{domain}"  # http works in local, converted to https on prod
         url = reverse(
             "checkout:get_tickets",
             args=[
@@ -889,7 +872,9 @@ class CheckoutSession(DBModel):
     def total_price(self):
         if self.session_type == CheckoutSession.SessionType.FIAT:
             total_price = 0
-            checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(checkout_session=self)
+            checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(
+                checkout_session=self
+            )
             for item in checkout_items:
                 tier_price = item.ticket_tier.price_per_ticket
                 total_price += item.quantity * tier_price
@@ -900,7 +885,7 @@ class CheckoutSession(DBModel):
     @cached_property
     def stripe_checkout_cancel_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"http://{domain}" # http works in local, converted to https on prod
+        domain = f"http://{domain}"  # http works in local, converted to https on prod
         token = jwt.encode(
             {"public_id": str(self.public_id)},
             settings.STRIPE_API_KEY,
@@ -920,7 +905,7 @@ class CheckoutSession(DBModel):
     @cached_property
     def stripe_checkout_success_link(self):
         domain = Site.objects.all().first().domain
-        domain = f"http://{domain}" # http works in local, converted to https on prod
+        domain = f"http://{domain}"  # http works in local, converted to https on prod
         token = jwt.encode(
             {"public_id": str(self.public_id)},
             settings.STRIPE_API_KEY,
@@ -996,9 +981,11 @@ class CheckoutSession(DBModel):
                 "event": checkout_item.checkout_session.event,
                 "ticket_tier": checkout_item.ticket_tier,
                 "selected_guests": checkout_item.selected_guests,
-                "party_size": checkout_item.selected_guests + 1
+                "party_size": checkout_item.selected_guests + 1,
             }
-            tickets_to_create.extend([Ticket(**ticket_keys) for _ in range(checkout_item.quantity)])
+            tickets_to_create.extend(
+                [Ticket(**ticket_keys) for _ in range(checkout_item.quantity)]
+            )
         Ticket.objects.bulk_create(tickets_to_create)
 
     def process_session(self):
@@ -1035,7 +1022,6 @@ class CheckoutSession(DBModel):
         self.order_status = CheckoutSession.OrderStatus.PROCESSING
         self.save()
 
-
     def process_free(self):
         """
         Go through the states, only stop to check for issued emails.
@@ -1047,13 +1033,14 @@ class CheckoutSession(DBModel):
         duplicate_emails = CheckoutSession.objects.filter(
             event=self.event,
             email=self.email,
-            session_type=CheckoutSession.SessionType.FREE
+            session_type=CheckoutSession.SessionType.FREE,
         ).exclude(id=self.id)
         if duplicate_emails:
             self.order_status = CheckoutSession.OrderStatus.FAILED
             self.save()
-            raise FreeCheckoutError(f"The email ({self.email}) has already been used for this event.")
-
+            raise FreeCheckoutError(
+                f"The email ({self.email}) has already been used for this event."
+            )
 
     def _process_wallet_address(self):
         """
@@ -1078,8 +1065,7 @@ class CheckoutSession(DBModel):
         # Now check if addresses match
         if recovered_address != self.wallet_address:
             self.order_status = CheckoutSession.OrderStatus.FAILED
-            raise AssetOwnershipCheckoutError(
-                "Address was recovered, but did not match")
+            raise AssetOwnershipCheckoutError("Address was recovered, but did not match")
 
         # Success, mark as verified
         self.is_wallet_address_verified = True
@@ -1088,19 +1074,31 @@ class CheckoutSession(DBModel):
     def _process_delegate_ownership(self, wallet_address=None, tier=None):
         # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
         import requests
-        url = f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
+
+        url = (
+            f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
+        )
         response = requests.get(url)
         incomingDelegations = response.json()
         delegated_wallets = []
 
         # 2. Filter out these delegations to only include the NFT Contact you are looking to claim tickets for.
-        filteredDelegations = [delegation for delegation in incomingDelegations if
-        delegation['type'] == "ALL" or
-        (delegation['type'] == "CONTRACT" and delegation['contract'] == tier.token_address) or
-        (delegation['type'] == "ERC721" and delegation['contract'] == tier.token_address)]
+        filteredDelegations = [
+            delegation
+            for delegation in incomingDelegations
+            if delegation["type"] == "ALL"
+            or (
+                delegation["type"] == "CONTRACT"
+                and delegation["contract"] == tier.token_address
+            )
+            or (
+                delegation["type"] == "ERC721"
+                and delegation["contract"] == tier.token_address
+            )
+        ]
 
         # Get all the NFT's of each unique from address in the above list and return
-        delegated_wallets = set(delegation['from'] for delegation in filteredDelegations)
+        delegated_wallets = set(delegation["from"] for delegation in filteredDelegations)
         if not delegated_wallets:
             raise AssetOwnershipCheckoutError("No delegated wallets found.")
 
@@ -1115,9 +1113,8 @@ class CheckoutSession(DBModel):
             # Either single address, or list of delegated wallets
             if self.delegated_wallet:
                 wallets = self._process_delegate_ownership(
-                    wallet_address=self.wallet_address,
-                    tier=ticket_tier
-                 )
+                    wallet_address=self.wallet_address, tier=ticket_tier
+                )
             else:
                 wallets = [self.wallet_address]
 
@@ -1145,9 +1142,9 @@ class CheckoutSession(DBModel):
                     if wallet == wallets[-1]:
                         raise AssetOwnershipCheckoutError(
                             (
-                            "Quantity requested exceeds the queried balance. "
-                            f"Expected Balance: {expected}. "
-                            f"Actual Balance: {actual}."
+                                "Quantity requested exceeds the queried balance. "
+                                f"Expected Balance: {expected}. "
+                                f"Actual Balance: {actual}."
                             )
                         )
                     else:
@@ -1159,9 +1156,9 @@ class CheckoutSession(DBModel):
                     for nfts in CheckoutItem.objects.filter(
                         ticket_tier=ticket_tier,
                         checkout_session__event=self.event,
-                        checkout_session__redeemed_nfts__contains=[{
-                            "token_address": ticket_tier.token_address.lower()
-                        }]
+                        checkout_session__redeemed_nfts__contains=[
+                            {"token_address": ticket_tier.token_address.lower()}
+                        ],
                     ).values_list("checkout_session__redeemed_nfts", flat=True)
                     for i in nfts
                 )
@@ -1220,14 +1217,10 @@ class CheckoutItem(DBModel):
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-
-
     )
     checkout_session = models.ForeignKey(
         "CheckoutSession",
         on_delete=models.CASCADE,
-
-
     )
 
     # basic info
@@ -1235,7 +1228,6 @@ class CheckoutItem(DBModel):
         default=0,
         validators=[MinValueValidator(0)],
         blank=True,
-
     )
     selected_guests = models.IntegerField(
         default=0,
@@ -1263,8 +1255,6 @@ class RSVPBatch(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-
-
     )
     success_list = models.TextField(blank=True)
     failure_list = models.TextField(blank=True)
@@ -1281,21 +1271,14 @@ class MessageBatch(DBModel):
     event = models.ForeignKey(
         "Event",
         on_delete=models.CASCADE,
-
-
     )
     ticket_tier = models.ForeignKey(
         "TicketTier",
         on_delete=models.CASCADE,
-
-
     )
     subject = models.CharField(max_length=255)
     message = models.TextField()
-    total_recipients = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)]
-    )
+    total_recipients = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     def __str__(self) -> str:
         return f"MessageBatch: {self.public_id}"
@@ -1312,10 +1295,13 @@ class MessageBatch(DBModel):
 
         # Send mass emails
         # This function opens a connection to the mail server only once
-        messages = [(
-            "[SocialPass] " + self.subject,
-            self.message,
-            "tickets-no-reply@socialpass.io",
-            [email]
-        ) for email in emails]
+        messages = [
+            (
+                "[SocialPass] " + self.subject,
+                self.message,
+                "tickets-no-reply@socialpass.io",
+                [email],
+            )
+            for email in emails
+        ]
         send_mass_mail(messages)

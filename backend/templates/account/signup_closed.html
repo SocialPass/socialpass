@@ -2,18 +2,22 @@
 
 {% load account %}
 
-{% block head_title %}Sign Up Closed - SocialPass{% endblock %}
-
+{% block head_title %}
+    Sign Up Closed - SocialPass
+{% endblock %}
 {% block inner %}
-<p class="mb-5">
-	<a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Sign In</a>
-</p>
-<h1 class="fsr-3 text-strong fw-700 mt-0">Sign Up Closed</h1>
-<div class="alert alert-warning d-flex align-items-center px-15 py-10 my-20" role="alert">
-	<i class="fa-regular fa-warning me-15 text-warning-dim-lm text-warning-light-dm"></i>
-	<span>We're sorry, but the sign up process is currently closed.</span>
-</div>
-<p>
-	If your team already has an account, you can ask one of its members to send you an invitation.
-</p>
+    <p class="mb-5">
+        <a href="{% url 'account_login' %}" class="fw-bold"><i class="fa-regular fa-arrow-left me-5"></i> Sign In</a>
+    </p>
+    <h1 class="fsr-3 text-strong fw-700 mt-0">
+        Sign Up Closed
+    </h1>
+    <div class="alert alert-warning d-flex align-items-center px-15 py-10 my-20"
+         role="alert">
+        <i class="fa-regular fa-warning me-15 text-warning-dim-lm text-warning-light-dm"></i>
+        <span>We're sorry, but the sign up process is currently closed.</span>
+    </div>
+    <p>
+        If your team already has an account, you can ask one of its members to send you an invitation.
+    </p>
 {% endblock %}

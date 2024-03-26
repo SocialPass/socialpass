@@ -16,7 +16,6 @@ from django.db.models import Prefetch
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import View
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import DetailView
@@ -27,10 +26,7 @@ from apps.root.models import (
     Ticket,
     Membership,
 )
-from apps.root.exceptions import (
-    AssetOwnershipCheckoutError,
-    FreeCheckoutError
-)
+from apps.root.exceptions import AssetOwnershipCheckoutError, FreeCheckoutError
 from apps.checkout.forms import (
     PasscodeForm,
     CheckoutForm,
@@ -50,15 +46,13 @@ class CheckoutPageOneRedirect(RedirectView):
         try:
             # Handle existing events on production as of 7th Nov, 2023
             if (
-                self.kwargs.get("event_slug") and
-                self.kwargs.get("event_slug") in OLD_EVENTS_SLUG_TO_PK
+                self.kwargs.get("event_slug")
+                and self.kwargs.get("event_slug") in OLD_EVENTS_SLUG_TO_PK
             ):
                 event = (
                     Event.objects.select_related("team")
                     .prefetch_related("tickettier_set")
-                    .get(
-                        pk=OLD_EVENTS_SLUG_TO_PK[self.kwargs.get("event_slug")]
-                    )
+                    .get(pk=OLD_EVENTS_SLUG_TO_PK[self.kwargs.get("event_slug")])
                 )
             # Handle Migrated Checkout (react app)
             # Page rule from cloudflare tickets.socialpass.io/<UUID> to here
@@ -108,11 +102,10 @@ class CheckoutPageOne(DetailView):
     template_name = "checkout/checkout_page_one.html"
 
     def get_object(self):
-        self.object = Event.objects.select_related("team").prefetch_related(
-            "tickettier_set"
-        ).get(
-            team__slug=self.kwargs["team_slug"],
-            slug=self.kwargs["event_slug"]
+        self.object = (
+            Event.objects.select_related("team")
+            .prefetch_related("tickettier_set")
+            .get(team__slug=self.kwargs["team_slug"], slug=self.kwargs["event_slug"])
         )
         if not self.object:
             raise Http404
@@ -120,16 +113,29 @@ class CheckoutPageOne(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         # Check if team member
-        is_team_member = self.request.user.is_authenticated and Membership.objects.filter(
-            team__public_id=self.object.team.public_id, user=self.request.user
-        ).exists()
+        is_team_member = (
+            self.request.user.is_authenticated
+            and Membership.objects.filter(
+                team__public_id=self.object.team.public_id, user=self.request.user
+            ).exists()
+        )
         is_team_member = is_team_member and not self.request.GET.get("view_as_attendee")
 
         # Handle Ticket Sales Start / Sales End
         # Determine the sales status of an event based on its sales start and end times.
-        now = datetime.datetime.now(ZoneInfo(self.object.timezone) if self.object.timezone else ZoneInfo("UTC"))
-        sales_start = self.object.sales_start.replace(tzinfo=now.tzinfo) if self.object.sales_start else datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
-        sales_end = self.object.sales_end.replace(tzinfo=now.tzinfo) if self.object.sales_end else datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
+        now = datetime.datetime.now(
+            ZoneInfo(self.object.timezone) if self.object.timezone else ZoneInfo("UTC")
+        )
+        sales_start = (
+            self.object.sales_start.replace(tzinfo=now.tzinfo)
+            if self.object.sales_start
+            else datetime.datetime(1900, 1, 1, tzinfo=now.tzinfo)
+        )
+        sales_end = (
+            self.object.sales_end.replace(tzinfo=now.tzinfo)
+            if self.object.sales_end
+            else datetime.datetime(3000, 1, 1, tzinfo=now.tzinfo)
+        )
         if now < sales_start:
             sales_status = "UPCOMING"
         elif now > sales_end:
@@ -179,11 +185,7 @@ class CheckoutPageOne(DetailView):
             rollbar.report_message("CHECKOUT ERROR: " + str(form.errors.as_json()))
             for k, v in json.loads(form.errors.as_json()).items():
                 for error in v:
-                    messages.add_message(
-                        self.request,
-                        messages.ERROR,
-                        error["message"]
-                    )
+                    messages.add_message(self.request, messages.ERROR, error["message"])
             return redirect(
                 "checkout:checkout_one",
                 self.kwargs["team_slug"],
@@ -212,10 +214,12 @@ class CheckoutPageOne(DetailView):
 
         # Handle redirect cases
         # Handle FIAT checkout
-        if (checkout_session.session_type == CheckoutSession.SessionType.FIAT):
+        if checkout_session.session_type == CheckoutSession.SessionType.FIAT:
             # Handle case where checkout is FIAT and is waitlist checkout
             if self.object.waiting_queue_enabled:
-                checkout_session.waitlist_status = CheckoutSession.WaitlistStatus.WAITLIST_JOINED
+                checkout_session.waitlist_status = (
+                    CheckoutSession.WaitlistStatus.WAITLIST_JOINED
+                )
                 checkout_session.save()
                 return redirect(
                     "checkout:joined_waiting_queue",
@@ -264,7 +268,7 @@ class CheckoutPageTwoBase(DetailView):
             .prefetch_related(
                 Prefetch(
                     "checkoutitem_set",
-                    queryset=CheckoutItem.objects.select_related("ticket_tier")
+                    queryset=CheckoutItem.objects.select_related("ticket_tier"),
                 )
             )
             .get(public_id=self.kwargs["checkout_session_public_id"])
@@ -287,7 +291,7 @@ class CheckoutPageTwoBase(DetailView):
         self.get_object()
         if self.object.order_status in [
             CheckoutSession.OrderStatus.PROCESSING,
-            CheckoutSession.OrderStatus.FULFILLED
+            CheckoutSession.OrderStatus.FULFILLED,
         ]:
             return {
                 "is_error": True,
@@ -324,7 +328,9 @@ class CheckoutPageTwoBase(DetailView):
         if self.object.event.total_capacity:
             new_attendees_count = self.object.event.attendees_count
             for item in checkout_items:
-                new_attendees_count += item.quantity + (item.quantity * item.selected_guests)
+                new_attendees_count += item.quantity + (
+                    item.quantity * item.selected_guests
+                )
             if new_attendees_count > self.object.event.total_capacity:
                 return {
                     "is_error": True,
@@ -339,7 +345,10 @@ class CheckoutPageTwoBase(DetailView):
         for item in checkout_items:
             # Make sure none of the item's guests exceed the tier's supply
             new_guests_count = item.ticket_tier.guests_count + item.selected_guests
-            if item.ticket_tier.guest_supply and new_guests_count > item.ticket_tier.guest_supply:
+            if (
+                item.ticket_tier.guest_supply
+                and new_guests_count > item.ticket_tier.guest_supply
+            ):
                 return {
                     "is_error": True,
                     "error_message": str(
@@ -373,7 +382,9 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
     """
 
     def get_template_names(self):
-        return ["checkout/checkout_page_two.html",]
+        return [
+            "checkout/checkout_page_two.html",
+        ]
 
     def get_form_class(self):
         if self.object.session_type == CheckoutSession.SessionType.FREE:
@@ -387,9 +398,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         validate_post = self.validate_post()
         if validate_post["is_error"]:
             messages.add_message(
-                self.request,
-                messages.ERROR,
-                validate_post["error_message"]
+                self.request, messages.ERROR, validate_post["error_message"]
             )
             return redirect(
                 reverse(
@@ -398,7 +407,8 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                         self.kwargs["team_slug"],
                         self.kwargs["event_slug"],
                     ),
-                ) + f"?name={self.object.name}&email={self.object.email}"
+                )
+                + f"?name={self.object.name}&email={self.object.email}"
             )
 
         # Finalize transaction using form data
@@ -408,7 +418,6 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
             self.object.signed_message = form_data.cleaned_data["signed_message"]
             self.object.delegated_wallet = form_data.cleaned_data["delegated_wallet"]
             self.object.save()
-
 
         # Process session and handle exceptions
         try:
@@ -451,7 +460,8 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
             reverse(
                 "checkout:get_tickets",
                 args=(self.kwargs["checkout_session_public_id"],),
-            ) + f"?passcode={self.object.passcode}&is_checkout_flow=True"
+            )
+            + f"?passcode={self.object.passcode}&is_checkout_flow=True"
         )
 
 
@@ -461,7 +471,9 @@ class CheckoutFiat(CheckoutPageTwoBase):
     """
 
     def get_template_names(self):
-        return ["checkout/checkout_paid.html",]
+        return [
+            "checkout/checkout_paid.html",
+        ]
 
     def get_form_class(self):
         return CheckoutFormFiat
@@ -472,9 +484,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
         validate_post = self.validate_post()
         if validate_post["is_error"]:
             messages.add_message(
-                self.request,
-                messages.ERROR,
-                validate_post["error_message"]
+                self.request, messages.ERROR, validate_post["error_message"]
             )
             return redirect(
                 reverse(
@@ -483,14 +493,12 @@ class CheckoutFiat(CheckoutPageTwoBase):
                         self.kwargs["team_slug"],
                         self.kwargs["event_slug"],
                     ),
-                ) + f"?name={self.object.name}&email={self.object.email}"
+                )
+                + f"?name={self.object.name}&email={self.object.email}"
             )
 
-        # Set local variables
-        context = self.get_context_data()
-        stripe.api_key = settings.STRIPE_API_KEY
-
         # Create line items using Stripe PRICES API
+        stripe.api_key = settings.STRIPE_API_KEY
         stripe_line_items = []
         checkout_items = self.object.checkoutitem_set.all()
         for item in checkout_items:
@@ -649,10 +657,13 @@ class StripeCheckoutSuccess(RedirectView):
         # Redirect to tickets page
         checkout_session.process_session()
         checkout_session.fulfill_session()
-        return reverse(
-            "checkout:get_tickets",
-            args=(self.kwargs["checkout_session_public_id"],),
-        ) + f"?passcode={checkout_session.passcode}&is_checkout_flow=True"
+        return (
+            reverse(
+                "checkout:get_tickets",
+                args=(self.kwargs["checkout_session_public_id"],),
+            )
+            + f"?passcode={checkout_session.passcode}&is_checkout_flow=True"
+        )
 
 
 class CheckoutPageSuccess(DetailView):
@@ -751,9 +762,11 @@ class GetTickets(View):
                     # validation was successful, so we send over the tickets
                     # and change the template
                     template_name = "get_tickets.html"
-                    ctx[
-                        "checkout_items"
-                    ] = checkout_session.checkoutitem_set.select_related("ticket_tier").all()
+                    ctx["checkout_items"] = (
+                        checkout_session.checkoutitem_set.select_related(
+                            "ticket_tier"
+                        ).all()
+                    )
                     tickets = Ticket.objects.select_related("ticket_tier").filter(
                         checkout_session=checkout_session
                     )
@@ -817,15 +830,12 @@ class JoinedWaitingQueue(DetailView):
     template_name = "checkout/joined_waiting_queue.html"
 
     def get_object(self):
-        self.object = (
-            CheckoutSession.objects.select_related(
-                "event",
-                "event__team",
-                "event__team__whitelabel",
-            )
-            .get(
-                public_id=self.kwargs["checkout_session_public_id"],
-            )
+        self.object = CheckoutSession.objects.select_related(
+            "event",
+            "event__team",
+            "event__team__whitelabel",
+        ).get(
+            public_id=self.kwargs["checkout_session_public_id"],
         )
         if not self.object:
             raise Http404

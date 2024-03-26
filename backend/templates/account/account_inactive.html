@@ -2,11 +2,12 @@
 
 {% load i18n %}
 
-{% block head_title %}{% translate "Account Inactive" %}{% endblock %}
-
-{% block inner %}
-<h3 class="font-weight-bolder text-info text-gradient">{% translate "Account Inactive" %}</h3>
-
-<p>{% translate "This account is inactive." %}</p>
+{% block head_title %}
+    {% translate "Account Inactive" %}
 {% endblock %}
-
+{% block inner %}
+    <h3 class="font-weight-bolder text-info text-gradient">
+        {% translate "Account Inactive" %}
+    </h3>
+    <p>{% translate "This account is inactive." %}</p>
+{% endblock %}

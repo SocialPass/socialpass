@@ -6,8 +6,11 @@ SHELL := /bin/bash
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-lint: ## Lint backend repo
-	(source backend/venv/bin/activate; cd backend; black --exclude ".*\/(migrations|venv|node_modules|staticfiles)\/.*" .; mypy .; ruff .;)
+format: ## Format codebase
+	(source backend/venv/bin/activate; cd backend; ruff format .; djlint . --reformat;)
+
+lint: ## Lint codebase
+	(source backend/venv/bin/activate; cd backend; ruff check .; mypy .; djlint . --lint;)
 
 collect: ## collectstatic backend
 	(source backend/venv/bin/activate; cd backend; yarn; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)
@@ -33,7 +36,7 @@ run: ## Run Backend Server
 superuser: ## Create backend superuser
 	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)
 
-test: ## Test backend repo
+test: ## Test codebase
 	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test --failfast)
 
 turtle: ## Run shell_plus

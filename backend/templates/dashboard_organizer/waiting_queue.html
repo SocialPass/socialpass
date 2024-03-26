@@ -1,163 +1,187 @@
 {% extends "dashboard_organizer/base.html" %}
+
 {% load static i18n get_user_primary_email crispy_forms_tags format_to_event_timezone %}
 
-{% block head_title %}{% trans "Waitlist" %} | {{ event.title }} - SocialPass{% endblock head_title %}
-
-{% block navbar_title %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title %}
-
-{% block navbar_title_2 %}<span class="text-primary-emphasis">{{ event.title }}</span>{% endblock navbar_title_2 %}
-
+{% block head_title %}
+    {% trans "Waitlist" %} | {{ event.title }} - SocialPass
+{% endblock head_title %}
+{% block navbar_title %}
+    <span class="text-primary-emphasis">{{ event.title }}</span>
+{% endblock navbar_title %}
+{% block navbar_title_2 %}
+    <span class="text-primary-emphasis">{{ event.title }}</span>
+{% endblock navbar_title_2 %}
 {% block sticky_navbar_tabs %}
-{% include "dashboard_organizer/event_details_tabs.html" %}
+    {% include "dashboard_organizer/event_details_tabs.html" %}
 {% endblock sticky_navbar_tabs %}
-
 {% block content %}
-<div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
-	<h1 class="h3 mb-0">{% trans "Waitlist" %}</h1>
-	<p class="text-body-secondary">
-		{% trans "Bump up customers to the attendee list and issue tickets." %}
-	</p>
-	<form class="ms-auto mb-3">
-		<div class="position-relative">
-			<input type="text" name="search" class="form-control" style="padding-right: 100px;" value="{{ request.GET.search }}" placeholder="Search using name or email">
-			<button type="submit" class="btn focus-ring text-primary-emphasis position-absolute top-50 end-0 translate-middle-y">
-				{% trans "Search" %}
-				<i class="fa-solid fa-search ms-1"></i>
-			</button>
-		</div>
-	</form>
-	{% if waiting_queue.count > 0 %}
-		{% for checkout_session in waiting_queue %}
-			<div class="card border-0 rounded-4 mb-3 waiting-queue-card">
-				<div class="card-body">
-					<div class="d-flex align-items-center mb-3">
-						{% if checkout_session.session_type == "FIAT" %}
-							<span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
-								<i class="fa-light fa-money-check-dollar me-1"></i>
-								{% trans "Paid" %}
-							</span>
-						{% endif %}
-						{% if checkout_session.session_type == "FREE" %}
-							<span class="px-3 py-2 rounded-pill fw-bold bg-warning-subtle text-warning-emphasis me-3">
-								<i class="fa-light fa-gift me-1"></i>
-								{% trans "Free" %}
-							</span>
-						{% endif %}
-						{% if checkout_session.session_type == "ASSET_OWNERSHIP" %}
-							<span class="px-3 py-2 rounded-pill fw-bold bg-info-subtle text-info-emphasis me-3">
-								<i class="fa-light fa-hexagon-vertical-nft me-1"></i>
-								{% trans "NFT-Gated" %}
-							</span>
-						{% endif %}
-						{% if checkout_session.order_status == "FULFILLED" %}
-							<div class="ms-auto">
-								<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-fulfilled">
-									{% trans "Fulfilled" %}
-								</span>
-							</div>
-						{% elif checkout_session.session_type == "FIAT" and checkout_session.waitlist_status == checkout_session.WaitlistStatus.WAITLIST_APPROVED %}
-							<div class="ms-auto">
-								<span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
-									{% trans "Waiting..." %}
-								</span>
-								<div class="specific-w-100 text-center text-primary-emphasis fw-bold mt-1" style="font-size: 10px;">{% trans "Payment link sent" %}</div>
-							</div>
-						{% else %}
-							<form
-								class="ms-auto"
-								hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-								hx-post="{% url 'dashboard_organizer:waiting_queue_post' current_team.slug event.pk checkout_session.pk %}"
-								hx-trigger="submit"
-							>
-								<button type="submit" class="btn btn-primary d-block specific-w-100 wq-fulfill-button">
-									{% trans "Fulfill" %}
-								</button>
-							</form>
-						{% endif %}
-					</div>
-					<div class="fw-bold">
-						{% trans "Customer:" %}
-						<span class="fw-normal">{{ checkout_session.name }} | <a href="mailto:{{ checkout_session.email }}" class="text-decoration-none">{{ checkout_session.email }}</a></span>
-					</div>
-					<div class="fw-bold text-body-secondary mt-2" style="font-size: var(--bs-font-size-sm);">
-						<span class="text-body">{% trans "ID:" %}</span>
-						<span class="fw-normal">{{ checkout_session.public_id }}</span>
-					</div>
-					<div class="fw-bold text-body-secondary" style="font-size: var(--bs-font-size-sm);">
-						<span class="text-body">{% trans "Created:" %}</span>
-						<span class="fw-normal">{{ checkout_session.created }}</span>
-					</div>
-					<hr />
-					<div>
-						<div class="text-primary-emphasis h6">
-							<i class="fa-light fa-cart-shopping me-1"></i>
-							{% trans "Checkout Data:" %}
-						</div>
-						{% for item in checkout_session.checkoutitem_set.all %}
-							<!-- Order item start -->
-							<div class="{% if not forloop.last %}border-bottom border-secondary border-opacity-25 pb-2 mb-2{% endif %}" style="font-size: var(--bs-font-size-sm);">
-								<div class="fw-bold d-flex align-items-center">
-									<span>{{ item.ticket_tier.name }}</span>
-									<span class="ms-auto ps-1 fw-normal">
-										&times; {{ item.quantity }}
-									</span>
-								</div>
-								{% if checkout_session.session_type == "FIAT" %}
-									<div>
-										{% trans "Price" %} &times; 1 &mdash; {{ event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket  }}
-									</div>
-								{% endif %}
-								<div class="text-body-secondary">
-									{% trans "Allowed Guest(s):" %}
-									{{ item.selected_guests }}
-								</div>
-							</div>
-							<!-- Order item end -->
-						{% endfor %}
-					</div>
-				</div>
-			</div>
-		{% endfor %}
-		<!-- Pagination start -->
-		<div class="mb-3 mt-auto d-flex align-items-center">
-			<div>
-				{% if page_obj.has_previous %}
-					<a class="btn btn-link" href="?page={{ page_obj.previous_page_number }}&state={{ request.GET.state }}">{% trans "Prev" %}</a>
-				{% else %}
-					<button class="btn btn-link" disabled>{% trans "Prev" %}</button>
-				{% endif %}
-			</div>
-			<div class="ms-auto">
-				{% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
-			</div>
-			<div class="ms-auto">
-				{% if page_obj.has_next %}
-					<a class="btn btn-link" href="?page={{ page_obj.next_page_number }}&state={{ request.GET.state }}">{% trans "Next" %}</a>
-				{% else %}
-					<button class="btn btn-link" disabled>{% trans "Next" %}</button>
-				{% endif %}
-			</div>
-		</div>
-		<!-- Pagination end -->
-	{% else %}
-		<div class="card border-0 rounded-4 shadow-sm">
-			<div class="card-body">
-				<div class="mx-auto specific-w-200">
-					<img src="{% static 'images/empty.png' %}" alt="empty" class="d-block img-fluid">
-				</div>
-				<div class="h4 text-center">{% trans "Nothing found" %}</div>
-				<p class="text-body-secondary text-center specific-w-250 mw-100 mx-auto">
-					{% trans "Could not find anything on the waitlist." %}
-				</p>
-			</div>
-		</div>
-	{% endif %}
-</div>
+    <div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
+        <h1 class="h3 mb-0">{% trans "Waitlist" %}</h1>
+        <p class="text-body-secondary">
+            {% trans "Bump up customers to the attendee list and issue tickets." %}
+        </p>
+        <form class="ms-auto mb-3">
+            <div class="position-relative">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       style="padding-right: 100px"
+                       value="{{ request.GET.search }}"
+                       placeholder="Search using name or email">
+                <button type="submit"
+                        class="btn focus-ring text-primary-emphasis position-absolute top-50 end-0 translate-middle-y">
+                    {% trans "Search" %}
+                    <i class="fa-solid fa-search ms-1"></i>
+                </button>
+            </div>
+        </form>
+        {% if waiting_queue.count > 0 %}
+            {% for checkout_session in waiting_queue %}
+                <div class="card border-0 rounded-4 mb-3 waiting-queue-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            {% if checkout_session.session_type == "FIAT" %}
+                                <span class="px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+                                    <i class="fa-light fa-money-check-dollar me-1"></i>
+                                    {% trans "Paid" %}
+                                </span>
+                            {% endif %}
+                            {% if checkout_session.session_type == "FREE" %}
+                                <span class="px-3 py-2 rounded-pill fw-bold bg-warning-subtle text-warning-emphasis me-3">
+                                    <i class="fa-light fa-gift me-1"></i>
+                                    {% trans "Free" %}
+                                </span>
+                            {% endif %}
+                            {% if checkout_session.session_type == "ASSET_OWNERSHIP" %}
+                                <span class="px-3 py-2 rounded-pill fw-bold bg-info-subtle text-info-emphasis me-3">
+                                    <i class="fa-light fa-hexagon-vertical-nft me-1"></i>
+                                    {% trans "NFT-Gated" %}
+                                </span>
+                            {% endif %}
+                            {% if checkout_session.order_status == "FULFILLED" %}
+                                <div class="ms-auto">
+                                    <span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-fulfilled">
+                                        {% trans "Fulfilled" %}
+                                    </span>
+                                </div>
+                            {% elif checkout_session.session_type == "FIAT" and checkout_session.waitlist_status == checkout_session.WaitlistStatus.WAITLIST_APPROVED %}
+                                <div class="ms-auto">
+                                    <span class="btn btn-secondary d-block specific-w-100 disabled pe-none wq-waiting">
+                                        {% trans "Waiting..." %}
+                                    </span>
+                                    <div class="specific-w-100 text-center text-primary-emphasis fw-bold mt-1"
+                                         style="font-size: 10px">
+                                        {% trans "Payment link sent" %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <form class="ms-auto"
+                                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                                      hx-post="{% url 'dashboard_organizer:waiting_queue_post' current_team.slug event.pk checkout_session.pk %}"
+                                      hx-trigger="submit">
+                                    <button type="submit"
+                                            class="btn btn-primary d-block specific-w-100 wq-fulfill-button">
+                                        {% trans "Fulfill" %}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div class="fw-bold">
+                            {% trans "Customer:" %}
+                            <span class="fw-normal">{{ checkout_session.name }} | <a href="mailto:{{ checkout_session.email }}"
+    class="text-decoration-none">{{ checkout_session.email }}</a></span>
+                        </div>
+                        <div class="fw-bold text-body-secondary mt-2"
+                             style="font-size: var(--bs-font-size-sm)">
+                            <span class="text-body">{% trans "ID:" %}</span>
+                            <span class="fw-normal">{{ checkout_session.public_id }}</span>
+                        </div>
+                        <div class="fw-bold text-body-secondary"
+                             style="font-size: var(--bs-font-size-sm)">
+                            <span class="text-body">{% trans "Created:" %}</span>
+                            <span class="fw-normal">{{ checkout_session.created }}</span>
+                        </div>
+                        <hr />
+                        <div>
+                            <div class="text-primary-emphasis h6">
+                                <i class="fa-light fa-cart-shopping me-1"></i>
+                                {% trans "Checkout Data:" %}
+                            </div>
+                            {% for item in checkout_session.checkoutitem_set.all %}
+                                <!-- Order item start -->
+                                <div class="{% if not forloop.last %}border-bottom border-secondary border-opacity-25 pb-2 mb-2{% endif %}"
+                                     style="font-size: var(--bs-font-size-sm)">
+                                    <div class="fw-bold d-flex align-items-center">
+                                        <span>{{ item.ticket_tier.name }}</span>
+                                        <span class="ms-auto ps-1 fw-normal">
+                                            &times; {{ item.quantity }}
+                                        </span>
+                                    </div>
+                                    {% if checkout_session.session_type == "FIAT" %}
+                                        <div>
+                                            {% trans "Price" %} &times; 1 &mdash; {{ event.currency_symbol }}{{ item.ticket_tier.tier_fiat.price_per_ticket }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="text-body-secondary">
+                                        {% trans "Allowed Guest(s):" %}
+                                        {{ item.selected_guests }}
+                                    </div>
+                                </div>
+                                <!-- Order item end -->
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <!-- Pagination start -->
+            <div class="mb-3 mt-auto d-flex align-items-center">
+                <div>
+                    {% if page_obj.has_previous %}
+                        <a class="btn btn-link"
+                           href="?page={{ page_obj.previous_page_number }}&state={{ request.GET.state }}">{% trans "Prev" %}</a>
+                    {% else %}
+                        <button class="btn btn-link" disabled>
+                            {% trans "Prev" %}
+                        </button>
+                    {% endif %}
+                </div>
+                <div class="ms-auto">
+                    {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+                </div>
+                <div class="ms-auto">
+                    {% if page_obj.has_next %}
+                        <a class="btn btn-link"
+                           href="?page={{ page_obj.next_page_number }}&state={{ request.GET.state }}">{% trans "Next" %}</a>
+                    {% else %}
+                        <button class="btn btn-link" disabled>
+                            {% trans "Next" %}
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Pagination end -->
+        {% else %}
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-body">
+                    <div class="mx-auto specific-w-200">
+                        <img src="{% static 'images/empty.png' %}"
+                             alt="empty"
+                             class="d-block img-fluid">
+                    </div>
+                    <div class="h4 text-center">
+                        {% trans "Nothing found" %}
+                    </div>
+                    <p class="text-body-secondary text-center specific-w-250 mw-100 mx-auto">
+                        {% trans "Could not find anything on the waitlist." %}
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock content %}
-
 {% block extra_body %}
-<script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
-<script type="text/javascript">
+    <script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
+    <script type="text/javascript">
 	let fulfillButtons = document.querySelectorAll(".wq-fulfill-button");
 	for (let i = 0; i < fulfillButtons.length; i++) {
 		fulfillButtons[i].addEventListener("click", (e) => {
@@ -170,5 +194,5 @@
 			e.target.innerHTML = "<i class='fa-light fa-circle-notch fa-spin'></i>";
 		});
 	}
-</script>
+    </script>
 {% endblock %}

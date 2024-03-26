@@ -1,1 +1,0 @@
-[SocialPass] Your event is live - {{ event.title }}

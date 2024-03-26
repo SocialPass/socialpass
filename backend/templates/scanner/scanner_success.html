@@ -1,16 +1,15 @@
 {% load i18n static %}
-<div
-	id="fade-me-in"
-	class="text-bg-success fw-bold text-center px-3 py-2"
-	data-scan-indicator="<i class='fa-solid fa-check-circle text-success-emphasis'></i>"
->
-	<i class="fa-solid fa-check-circle me-1"></i>
-	{% trans "Successfully scanned!" %}
-	<div class="fw-normal">
-		{% trans "Ticket Tier:" %} <strong>{{ticket.ticket_tier.name}}</strong>
-	</div>
-	<div class="fw-normal">
-		{% trans "Party Size:" %} <strong>{{ ticket.party_size }}</strong>
-	</div>
+
+<div id="fade-me-in"
+     class="text-bg-success fw-bold text-center px-3 py-2"
+     data-scan-indicator="<i class='fa-solid fa-check-circle text-success-emphasis'></i>">
+    <i class="fa-solid fa-check-circle me-1"></i>
+    {% trans "Successfully scanned!" %}
+    <div class="fw-normal">
+        {% trans "Ticket Tier:" %} <strong>{{ ticket.ticket_tier.name }}</strong>
+    </div>
+    <div class="fw-normal">
+        {% trans "Party Size:" %} <strong>{{ ticket.party_size }}</strong>
+    </div>
 </div>
-<audio id="myAudio" src="{% static 'sounds/success.wav' %}"/>
+<audio id="myAudio" src="{% static 'sounds/success.wav' %}" />

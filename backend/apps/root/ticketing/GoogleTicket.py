@@ -55,9 +55,7 @@ class GoogleTicket:
         """
         # Create the payload
         payload = {
-            "eventName": {
-                "defaultValue": {"language": "en-us", "value": event_obj.title}
-            },
+            "eventName": {"defaultValue": {"language": "en-us", "value": event_obj.title}},
             "reviewStatus": "UNDER_REVIEW",
             "dateTime": {
                 "start": event_obj.start_date.isoformat(),

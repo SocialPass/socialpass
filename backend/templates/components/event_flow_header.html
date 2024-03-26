@@ -1,31 +1,32 @@
 {% load i18n %}
+
 <div class="row mt-4 mb-3">
     <div class="col-lg-8 mx-auto d-flex align-items-center">
-        <a href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}" class="specific-w-75 specific-w-sm-100 text-primary-emphasis text-decoration-none d-block text-center flex-shrink-0 antialiased" {% if step != "1" %}style="filter: grayscale(1);"{% endif %}>
+        <a href="{% url 'dashboard_organizer:event_update' current_team.slug event.pk %}"
+           class="specific-w-75 specific-w-sm-100 text-primary-emphasis text-decoration-none d-block text-center flex-shrink-0 antialiased"
+           {% if step != "1" %}style="filter: grayscale(1);"{% endif %}>
             <div class="specific-w-50 specific-h-50 bg-primary-subtle d-flex align-items-center justify-content-center mx-auto rounded-circle">
                 <i class="fa-light fa-square-list" style="font-size: 24px;"></i>
             </div>
-            <div class="mt-1 fw-bold">
-                {% trans "Event Edit" %}
-            </div>
+            <div class="mt-1 fw-bold">{% trans "Event Edit" %}</div>
         </a>
         <div class="flex-grow-1 rounded-pill border"></div>
-        <a href="{% url 'dashboard_organizer:event_tickets' current_team.slug event.pk %}" class="specific-w-75 specific-w-sm-100 text-primary-emphasis text-decoration-none d-block text-center flex-shrink-0 antialiased" {% if step != "2" %}style="filter: grayscale(1);"{% endif %}>
+        <a href="{% url 'dashboard_organizer:event_tickets' current_team.slug event.pk %}"
+           class="specific-w-75 specific-w-sm-100 text-primary-emphasis text-decoration-none d-block text-center flex-shrink-0 antialiased"
+           {% if step != "2" %}style="filter: grayscale(1);"{% endif %}>
             <div class="specific-w-50 specific-h-50 bg-primary-subtle d-flex align-items-center justify-content-center mx-auto rounded-circle">
                 <i class="fa-light fa-ticket" style="font-size: 24px;"></i>
             </div>
-            <div class="mt-1 fw-bold">
-                {% trans "Ticket Tiers" %}
-            </div>
+            <div class="mt-1 fw-bold">{% trans "Ticket Tiers" %}</div>
         </a>
         <div class="flex-grow-1 rounded-pill border"></div>
-        <a href="{% url 'dashboard_organizer:event_go_live' current_team.slug event.pk %}" class="specific-w-75 specific-w-sm-100 text-primary-emphasis text-decoration-none d-block text-center flex-shrink-0 antialiased" {% if step != "3" %}style="filter: grayscale(1);"{% endif %}>
+        <a href="{% url 'dashboard_organizer:event_go_live' current_team.slug event.pk %}"
+           class="specific-w-75 specific-w-sm-100 text-primary-emphasis text-decoration-none d-block text-center flex-shrink-0 antialiased"
+           {% if step != "3" %}style="filter: grayscale(1);"{% endif %}>
             <div class="specific-w-50 specific-h-50 bg-primary-subtle d-flex align-items-center justify-content-center mx-auto rounded-circle">
                 <i class="fa-light fa-party-horn" style="font-size: 24px;"></i>
             </div>
-            <div class="mt-1 fw-bold">
-                {% trans "Party Time!" %}
-            </div>
+            <div class="mt-1 fw-bold">{% trans "Party Time!" %}</div>
         </a>
     </div>
 </div>

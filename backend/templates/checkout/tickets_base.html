@@ -2,57 +2,64 @@
 
 <!DOCTYPE html>
 {% get_debug_status as debug %}
-<html lang="en" class="{% block html_class %}{% endblock %}" spellcheck="false" data-bs-theme="{% get_color_mode %}">
-	<head>
-		<!-- Meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-
-		<!-- Title -->
-		<title>{% block head_title %}{% if organizer_team.whitelabel.brand_name %}{{ organizer_team.whitelabel.brand_name }}{% else %}SocialPass{% endif %} - {% trans "Hosting the Next Generation of Events" %}{% endblock head_title %}</title>
-
-		<!-- Fav icon -->
-		{% if organizer_team.whitelabel.favicon %}
-			<link rel="icon" href="{{ organizer_team.whitelabel.favicon.url }}">
-		{% else %}
-			<link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
-		{% endif %}
-
-		<!-- Halfmoon CSS -->
-		<link href="{% static 'css/halfmoon.min.css' %}" rel="stylesheet" />
-
-		<!-- SocialPass CSS theme -->
-		<link href="{% static 'css/sp-theme.css' %}" rel="stylesheet" />
-
-		<!-- Font Awesome 6 -->
-		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
-
-		<!-- SEO -->
-		<meta name="description" content="Enter your passcode to get your tickets.">
-		<meta name="author" content="{{ organizer_team.name }}">
-		<meta property="url" content="{{ request.build_absolute_uri }}">
-		<meta name="keywords" content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting, fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
-
-		<!-- Open Graph -->
-		<meta property="og:type" content="article">
-		<meta property="og:url" content="{{ request.build_absolute_uri }}">
-		<meta property="og:title" content="Get Tickets">
-		<meta property="og:description" content="Enter your passcode to get your tickets.">
-		<meta property="og:image" content="{{ object.cover_image_url }}">
-
-		<!-- Google Tag Manager -->
-		{% if not debug %}
-			<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
-			<script>
+<html lang="en"
+      class="{% block html_class %}{% endblock %}"
+      spellcheck="false"
+      data-bs-theme="{% get_color_mode %}">
+    <head>
+        <!-- Meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Title -->
+        <title>
+            {% block head_title %}
+                {% if organizer_team.whitelabel.brand_name %}
+                    {{ organizer_team.whitelabel.brand_name }}
+                {% else %}
+                    SocialPass
+                {% endif %}
+                - {% trans "Hosting the Next Generation of Events" %}
+            {% endblock head_title %}
+        </title>
+        <!-- Fav icon -->
+        {% if organizer_team.whitelabel.favicon %}
+            <link rel="icon" href="{{ organizer_team.whitelabel.favicon.url }}">
+        {% else %}
+            <link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
+        {% endif %}
+        <!-- Halfmoon CSS -->
+        <link href="{% static 'css/halfmoon.min.css' %}" rel="stylesheet" />
+        <!-- SocialPass CSS theme -->
+        <link href="{% static 'css/sp-theme.css' %}" rel="stylesheet" />
+        <!-- Font Awesome 6 -->
+        <script src="https://kit.fontawesome.com/e222fd7f73.js"
+                crossorigin="anonymous"></script>
+        <!-- SEO -->
+        <meta name="description" content="Enter your passcode to get your tickets.">
+        <meta name="author" content="{{ organizer_team.name }}">
+        <meta property="url" content="{{ request.build_absolute_uri }}">
+        <meta name="keywords"
+              content="web3, nft, web2, bayc, crypto, ticketing, ticket, events, event hosting, fair, online, digital asset, concert, stadium, wallet, future, creator, transparent, easy, quick, simple,token, tokengate, tokengate, host an event, tickets online">
+        <!-- Open Graph -->
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        <meta property="og:title" content="Get Tickets">
+        <meta property="og:description"
+              content="Enter your passcode to get your tickets.">
+        <meta property="og:image" content="{{ object.cover_image_url }}">
+        <!-- Google Tag Manager -->
+        {% if not debug %}
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
+            <script>
 				window.dataLayer = window.dataLayer || [];
 				function gtag(){dataLayer.push(arguments);}
 				gtag('js', new Date());
 				gtag('config', 'G-FQKKDVZZVX');
-			</script>
-		{% endif %}
-
-		<!-- Start of sociapass support Widget -->
-		<script>
+			
+            </script>
+        {% endif %}
+        <!-- Start of sociapass support Widget -->
+        <script>
 		  	(function(d,t) {
 				var BASE_URL="https://support.socialpass.io";
 				var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -67,11 +74,11 @@
 			  		})
 				}
 		  	})(document,"script");
-		</script>
-		<!-- End of sociapass support Widget -->
-
-		{% if organizer_team.whitelabel.css %}
-			<style type="text/css">
+		
+        </script>
+        <!-- End of sociapass support Widget -->
+        {% if organizer_team.whitelabel.css %}
+            <style type="text/css">
 				{{ organizer_team.whitelabel.css }}
 				{% if organizer_team.whitelabel.font_regular and organizer_team.whitelabel.font_bold %}
 					@font-face {
@@ -90,43 +97,49 @@
 						--bs-body-font-family: "Custom";
 					}
 				{% endif %}
-			</style>
-		{% endif %}
-
-		{% block extra_head %}{% endblock extra_head %}
-	</head>
-
-	{% with request.resolver_match.url_name as url_name %}
-	<body class="bg-body-secondary">
-		{% block tickets %}{% endblock %}
-
-		<!-- Main container start -->
-		<div id="main-container">
-			<!-- Navbar start -->
-			<div class="d-flex align-items-center px-3 px-sm-4 py-2">
-				{% if organizer_team.whitelabel.logo %}
-					<img src="{{ organizer_team.whitelabel.logo.url }}" alt="Brand Logo" height="60" class="d-block">
-				{% else %}
-					<img src="{% static 'images/SVG-05.svg' %}" alt="SocialPass Logo" height="60" class="d-block">
-				{% endif %}
-				<button type="button" class="btn btn-link rounded-pill px-0 ms-2" aria-label="Toggle dark mode" style="width: 37px;" onclick="toggleDarkMode()">
-					<i class="fa-solid fa-moon"></i>
-				</button>
-			</div>
-			<!-- Navbar end -->
-
-			<!-- Content start -->
-			<div class="container-xl px-3 px-sm-4 mw-100" style="width: 1080px;">
-				{% block content %}{% endblock %}
-			</div>
-			<!-- Content end -->
-		</div>
-		<!-- Main container end -->
-
-		<!-- Bootstrap bundle JS -->
-		<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-
-		<script type="text/javascript">
+			
+            </style>
+        {% endif %}
+        {% block extra_head %}
+        {% endblock extra_head %}
+    </head>
+    {% with request.resolver_match.url_name as url_name %}
+        <body class="bg-body-secondary">
+            {% block tickets %}{% endblock %}
+            <!-- Main container start -->
+            <div id="main-container">
+                <!-- Navbar start -->
+                <div class="d-flex align-items-center px-3 px-sm-4 py-2">
+                    {% if organizer_team.whitelabel.logo %}
+                        <img src="{{ organizer_team.whitelabel.logo.url }}"
+                             alt="Brand Logo"
+                             height="60"
+                             class="d-block">
+                    {% else %}
+                        <img src="{% static 'images/SVG-05.svg' %}"
+                             alt="SocialPass Logo"
+                             height="60"
+                             class="d-block">
+                    {% endif %}
+                    <button type="button"
+                            class="btn btn-link rounded-pill px-0 ms-2"
+                            aria-label="Toggle dark mode"
+                            style="width: 37px"
+                            onclick="toggleDarkMode()">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                <!-- Navbar end -->
+                <!-- Content start -->
+                <div class="container-xl px-3 px-sm-4 mw-100" style="width: 1080px;">
+                    {% block content %}{% endblock %}
+                </div>
+                <!-- Content end -->
+            </div>
+            <!-- Main container end -->
+            <!-- Bootstrap bundle JS -->
+            <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+            <script type="text/javascript">
 			/* Enable all tooltips */
 			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -158,10 +171,10 @@
 
 				setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
 			}
-		</script>
-
-		{% if debug %}
-		<script type="text/javascript">
+		
+            </script>
+            {% if debug %}
+                <script type="text/javascript">
 			/**
 			 * Handle the keydown event (only on debug mode).
 			 *
@@ -194,10 +207,11 @@
 					}
 				}
 			});
-		</script>
-		{% endif %}
-
-		{% block extra_body %}{% endblock extra_body %}
-	</body>
-	{% endwith %}
+		
+                </script>
+            {% endif %}
+            {% block extra_body %}
+            {% endblock extra_body %}
+        </body>
+    {% endwith %}
 </html>

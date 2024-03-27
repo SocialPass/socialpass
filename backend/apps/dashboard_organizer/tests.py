@@ -226,6 +226,18 @@ class TestEventDetailViews(TestCase):
 		)
 		self.assertEqual(response.status_code, 200)
 
+	def test_event_waitlist_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:waiting_queue",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
 	def test_event_promote_get(self):
 		self.assertTrue(
 			self.client.login(username=self.user.username, password="password")

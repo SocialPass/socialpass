@@ -144,6 +144,8 @@ class TestTeamViews(TestCase):
 				"description": "Description edit",
 			},
 		)
+		team = Team.objects.get(name="testteam edit")
+		self.assertEqual(team.description, "Description edit")
 		self.assertEqual(response.status_code, 302)
 
 
@@ -327,10 +329,12 @@ class TestEventDetailViews(TestCase):
 				"start_date": datetime(2024, 1, 1, 0, 0),
 				"timezone": "US/Eastern",
 				"geo_type": Event.GeographyType.MANUAL,
-				"geo_address": "Address", # Edited
+				"geo_address": "Address edit", # Edited
 			},
 			follow=True,
 		)
+		event = Event.objects.get(title="Test event detail edit")
+		self.assertEqual(event.geo_address, "Address edit")
 		self.assertEqual(response.status_code, 200)
 
 	def test_event_stats_get(self):

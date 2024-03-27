@@ -5,7 +5,16 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
 
-from apps.root.models import Event, Membership, Team, User
+from apps.root.models import (
+	CheckoutSession,
+	Event,
+	Membership,
+	RSVPBatch,
+	Team,
+	Ticket,
+	TicketTier,
+	User,
+)
 
 from . import views
 
@@ -143,6 +152,8 @@ class TestEventDetailViews(TestCase):
 		self.factory = RequestFactory()
 		self.team = Team.objects.create(
 			name="testteam",
+			allow_rsvp=True,
+			allow_messaging=True,
 		)
 		self.user = User.objects.create_user(
 			username="testuser",
@@ -162,6 +173,11 @@ class TestEventDetailViews(TestCase):
 			timezone="US/Eastern",
 			geo_type=Event.GeographyType.MANUAL,
 			geo_address="Address",
+		)
+		self.ticket_tier = TicketTier.objects.create(
+			event=self.event,
+			name="Test ticket tier",
+			category=TicketTier.Category.FREE,
 		)
 		return super().setUp()
 
@@ -231,5 +247,44 @@ class TestEventDetailViews(TestCase):
 				"dashboard_organizer:event_check_in_guests",
 				args=(self.team.slug, self.event.pk)
 			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_rsvp_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:rsvp_tickets",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_rsvp_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:rsvp_create_tickets",
+				args=(self.team.slug, self.event.pk)
+			),
+			data={
+				"ticket_tier": self.ticket_tier.pk,
+				"guests_allowed": 0,
+				"customer_emails": "x@socialpass.io, y@socialpass.io",
+			},
+			follow=True,
+		)
+		self.assertEqual(
+			RSVPBatch.objects.filter(event=self.event).count(), 1
+		)
+		self.assertEqual(
+			Ticket.objects.filter(
+				event=self.event,
+				ticket_tier=self.ticket_tier
+			).count(), 2
 		)
 		self.assertEqual(response.status_code, 200)

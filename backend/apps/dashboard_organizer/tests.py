@@ -59,7 +59,7 @@ class TestTeamContextMixin(TestCase):
 			self.assertEqual(type(e), Http404)
 
 
-class TestEventListCreateView(TestCase):
+class TestEventListCreateViews(TestCase):
 	"""
 	Test the event list and create views.
 	"""
@@ -130,5 +130,70 @@ class TestEventListCreateView(TestCase):
 				team=self.team,
 				title="Test event create post",
 			).count(), 1
+		)
+		self.assertEqual(response.status_code, 200)
+
+
+class TestEventDetailViews(TestCase):
+	"""
+	Test the event detail views.
+	"""
+
+	def setUp(self):
+		self.factory = RequestFactory()
+		self.team = Team.objects.create(
+			name="testteam",
+		)
+		self.user = User.objects.create_user(
+			username="testuser",
+			email="testuser@example.com",
+		)
+		self.user.set_password("password")
+		self.user.save()
+		self.membership = Membership.objects.create(
+			team=self.team,
+			user=self.user,
+		)
+		self.event = Event.objects.create(
+			team=self.team,
+			title="Test event detail",
+			description="Description",
+			start_date=datetime(2024, 1, 1, 0, 0),
+			timezone="US/Eastern",
+			geo_type=Event.GeographyType.MANUAL,
+			geo_address="Address",
+		)
+		return super().setUp()
+
+	def test_event_update_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_update",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_update_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:event_update",
+				args=(self.team.slug, self.event.pk)
+			),
+			data={
+				"title": "Test event detail edit", # Edited
+				"description": "Description",
+				"start_date": datetime(2024, 1, 1, 0, 0),
+				"timezone": "US/Eastern",
+				"geo_type": Event.GeographyType.MANUAL,
+				"geo_address": "Address", # Edited
+			},
+			follow=True,
 		)
 		self.assertEqual(response.status_code, 200)

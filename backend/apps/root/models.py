@@ -27,7 +27,6 @@ from moralis import evm_api
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     ForbiddenRedemptionError,
-    GoogleWalletAPIRequestError,
     AssetOwnershipCheckoutError,
     FreeCheckoutError,
 )
@@ -397,19 +396,6 @@ class Event(DBModel):
         else:
             rollbar.report_message("handle_google_event_class ERROR: " + response.text)
             return False
-
-    def clean(self, *args, **kwargs):
-        """
-        clean method
-        runs all clean_* methods
-        """
-        # clean the handling of the Google event class
-        google_event_class_id = self.handle_google_event_class()
-        if not google_event_class_id:
-            raise GoogleWalletAPIRequestError(
-                "Something went wrong while handling the Google event class."
-            )
-        return super().clean(*args, **kwargs)
 
     @cached_property
     def tickets_sold_count(self):

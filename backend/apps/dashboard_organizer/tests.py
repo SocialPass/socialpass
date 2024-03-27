@@ -8,6 +8,7 @@ from django.urls import reverse
 from apps.root.models import (
 	CheckoutSession,
 	Event,
+	Invitation,
 	Membership,
 	MessageBatch,
 	RSVPBatch,
@@ -449,5 +450,103 @@ class TestEventDetailViews(TestCase):
 		)
 		self.assertEqual(
 			MessageBatch.objects.filter(event=self.event).count(), 1
+		)
+		self.assertEqual(response.status_code, 200)
+
+
+class TestMiscViews(TestCase):
+	"""
+	Test misc. views such as manage members, delete member, payment details, etc.
+	"""
+
+	def setUp(self):
+		self.factory = RequestFactory()
+		self.team = Team.objects.create(
+			name="testteam",
+		)
+		self.user = User.objects.create_user(
+			username="testuser1",
+			email="testuser1@example.com",
+		)
+		self.user.set_password("password")
+		self.user.save()
+		self.membership = Membership.objects.create(
+			team=self.team,
+			user=self.user,
+		)
+		self.member_to_delete = User.objects.create_user(
+			username="testuser2",
+			email="testuser2@example.com",
+		)
+		Membership.objects.create(
+			team=self.team,
+			user=self.member_to_delete,
+		)
+		return super().setUp()
+
+	def test_manage_members_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:team_members",
+				args=(self.team.slug,)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_manage_members_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:team_members",
+				args=(self.team.slug,)
+			),
+			data={
+				"email": "x@socialpass.io"
+			},
+			follow=True,
+		)
+		self.assertEqual(Invitation.objects.filter(team=self.team).count(), 1)
+		self.assertEqual(response.status_code, 200)
+
+	def test_member_delete_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:team_member_delete",
+				args=(self.team.slug, self.member_to_delete.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_member_delete_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:team_member_delete",
+				args=(self.team.slug, self.member_to_delete.pk)
+			),
+			follow=True,
+		)
+		self.assertEqual(Membership.objects.filter(team=self.team).count(), 1)
+		self.assertEqual(response.status_code, 200)
+
+	def payment_detail_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:payment_detail",
+				args=(self.team.slug,)
+			)
 		)
 		self.assertEqual(response.status_code, 200)

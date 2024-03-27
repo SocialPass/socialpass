@@ -146,9 +146,9 @@ class TestTeamViews(TestCase):
 		self.assertEqual(response.status_code, 302)
 
 
-class TestEventListCreateViews(TestCase):
+class TestEventListCreateDeleteViews(TestCase):
 	"""
-	Test the event list and create views.
+	Test the event list, create, and delete views.
 	"""
 
 	def setUp(self):
@@ -165,6 +165,15 @@ class TestEventListCreateViews(TestCase):
 		self.membership = Membership.objects.create(
 			team=self.team,
 			user=self.user,
+		)
+		self.event_to_delete = Event.objects.create(
+			team=self.team,
+			title="Test event to delete",
+			description="Description",
+			start_date=datetime(2024, 1, 1, 0, 0),
+			timezone="US/Eastern",
+			geo_type=Event.GeographyType.MANUAL,
+			geo_address="Address",
 		)
 		return super().setUp()
 
@@ -217,6 +226,37 @@ class TestEventListCreateViews(TestCase):
 				team=self.team,
 				title="Test event create post",
 			).count(), 1
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_delete_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_delete",
+				args=(self.team.slug, self.event_to_delete.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_delete_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:event_delete",
+				args=(self.team.slug, self.event_to_delete.pk)
+			),
+			follow=True,
+		)
+		self.assertEqual(
+			Event.objects.filter(
+				team=self.team,
+				title="Test event to delete",
+			).count(), 0
 		)
 		self.assertEqual(response.status_code, 200)
 

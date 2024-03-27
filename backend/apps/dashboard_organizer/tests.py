@@ -69,6 +69,83 @@ class TestTeamContextMixin(TestCase):
 			self.assertEqual(type(e), Http404)
 
 
+class TestTeamViews(TestCase):
+	"""
+	Test team create, details, and update views.
+	"""
+
+	def setUp(self):
+		self.factory = RequestFactory()
+		self.team = Team.objects.create(
+			name="testteam",
+		)
+		self.user = User.objects.create_user(
+			username="testuser",
+			email="testuser@example.com",
+		)
+		self.user.set_password("password")
+		self.user.save()
+		self.membership = Membership.objects.create(
+			team=self.team,
+			user=self.user,
+		)
+		return super().setUp()
+
+	def test_team_create_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(reverse("dashboard_organizer:team_create"))
+		self.assertEqual(response.status_code, 200)
+
+	def test_team_create_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse("dashboard_organizer:team_create"),
+			data={
+				"name": "testteam2",
+				"description": "Description",
+			},
+			follow=True,
+		)
+		self.assertEqual(Team.objects.all().count(), 2)
+		self.assertEqual(Membership.objects.all().count(), 2)
+		self.assertEqual(response.status_code, 200)
+
+	def test_team_detail_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse("dashboard_organizer:team_detail", args=(self.team.slug,))
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_team_update_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse("dashboard_organizer:team_update", args=(self.team.slug,))
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_team_update_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse("dashboard_organizer:team_update", args=(self.team.slug,)),
+			data={
+				"name": "testteam edit",
+				"description": "Description edit",
+			},
+		)
+		self.assertEqual(response.status_code, 302)
+
+
 class TestEventListCreateViews(TestCase):
 	"""
 	Test the event list and create views.

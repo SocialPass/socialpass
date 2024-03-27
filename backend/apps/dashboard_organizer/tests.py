@@ -197,3 +197,39 @@ class TestEventDetailViews(TestCase):
 			follow=True,
 		)
 		self.assertEqual(response.status_code, 200)
+
+	def test_event_stats_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_stats",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_promote_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_promote",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_check_in_guests_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_check_in_guests",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)

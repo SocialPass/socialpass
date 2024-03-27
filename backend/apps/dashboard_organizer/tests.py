@@ -468,6 +468,8 @@ class TestTicketTierViews(TestCase):
 		self.factory = RequestFactory()
 		self.team = Team.objects.create(
 			name="testteam",
+			stripe_account_id="acct_1NadTgR6q1S0w5XG",
+			stripe_account_country="US",
 		)
 		self.user = User.objects.create_user(
 			username="testuser",
@@ -534,6 +536,121 @@ class TestTicketTierViews(TestCase):
 		self.assertEqual(event.total_capacity, 100)
 		self.assertEqual(event.waiting_queue_enabled, True)
 		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_create_free_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:ticket_tier_free_create",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_create_free_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:ticket_tier_free_create",
+				args=(self.team.slug, self.event.pk)
+			),
+			data={
+				"name": "Free",
+				"capacity": 200,
+				"max_per_person": 1,
+				"guests_allowed": 1,
+				"guest_supply": 10,
+				"hidden_from_public": False,
+				"hidden_availability": False,
+				"additional_information": "Additional",
+			}
+		)
+		self.assertEqual(
+			TicketTier.objects.filter(event=self.event, name="Free").count(), 1
+		)
+		self.assertEqual(response.status_code, 302)
+
+	def test_ticket_tier_create_fiat_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:ticket_tier_fiat_create",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_create_fiat_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:ticket_tier_fiat_create",
+				args=(self.team.slug, self.event.pk)
+			),
+			data={
+				"name": "Paid",
+				"capacity": 200,
+				"max_per_person": 1,
+				"guests_allowed": 1,
+				"guest_supply": 10,
+				"hidden_from_public": False,
+				"hidden_availability": False,
+				"additional_information": "Additional",
+				"price_per_ticket": 20.00,
+			}
+		)
+		self.assertEqual(
+			TicketTier.objects.filter(event=self.event, name="Paid").count(), 1
+		)
+		self.assertEqual(response.status_code, 302)
+
+	def test_ticket_tier_create_nft_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:ticket_tier_nft_create",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_create_nft_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:ticket_tier_nft_create",
+				args=(self.team.slug, self.event.pk)
+			),
+			data={
+				"name": "NFT",
+				"capacity": 200,
+				"max_per_person": 1,
+				"guests_allowed": 1,
+				"guest_supply": 10,
+				"hidden_from_public": False,
+				"hidden_availability": False,
+				"additional_information": "Additional",
+				"balance_required": 1,
+				"network": TicketTier.NetworkChoices.ETH,
+				"token_address": "0xb794f5ea0ba39494ce839613fffba74279579268",
+			}
+		)
+		self.assertEqual(
+			TicketTier.objects.filter(event=self.event, name="NFT").count(), 1
+		)
+		self.assertEqual(response.status_code, 302)
 
 	def test_ticket_tier_update_get(self):
 		self.assertTrue(

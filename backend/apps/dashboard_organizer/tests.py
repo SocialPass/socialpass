@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.contrib.auth.models import AnonymousUser
+from django.core import mail
 from django.http import Http404
 from django.test import TestCase
 from django.test.client import RequestFactory
@@ -396,6 +397,9 @@ class TestEventDetailViews(TestCase):
                 "customer_emails": "x@socialpass.io, y@socialpass.io",
             },
         )
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].to, ["x@socialpass.io"])
+        self.assertEqual(mail.outbox[1].to, ["y@socialpass.io"])
         self.assertEqual(RSVPBatch.objects.filter(event=self.event).count(), 1)
         self.assertEqual(
             Ticket.objects.filter(event=self.event, ticket_tier=self.ticket_tier).count(),
@@ -429,6 +433,7 @@ class TestEventDetailViews(TestCase):
                 "message": "Message",
             },
         )
+        self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(MessageBatch.objects.filter(event=self.event).count(), 1)
         self.assertEqual(response.status_code, 302)
 
@@ -747,6 +752,8 @@ class TestMiscViews(TestCase):
             reverse("dashboard_organizer:team_members", args=(self.team.slug,)),
             data={"email": "x@socialpass.io"},
         )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["x@socialpass.io"])
         self.assertEqual(Invitation.objects.filter(team=self.team).count(), 1)
         self.assertEqual(response.status_code, 302)
 

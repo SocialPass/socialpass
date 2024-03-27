@@ -9,6 +9,7 @@ from apps.root.models import (
 	CheckoutSession,
 	Event,
 	Membership,
+	MessageBatch,
 	RSVPBatch,
 	Team,
 	Ticket,
@@ -298,5 +299,38 @@ class TestEventDetailViews(TestCase):
 				event=self.event,
 				ticket_tier=self.ticket_tier
 			).count(), 2
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_messaging_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:message_batches",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_event_messaging_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:message_batch_create",
+				args=(self.team.slug, self.event.pk)
+			),
+			data={
+				"ticket_tier": self.ticket_tier.pk,
+				"subject": "Subject",
+				"message": "Message",
+			},
+			follow=True,
+		)
+		self.assertEqual(
+			MessageBatch.objects.filter(event=self.event).count(), 1
 		)
 		self.assertEqual(response.status_code, 200)

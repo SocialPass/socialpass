@@ -110,11 +110,10 @@ class TestTeamViews(TestCase):
                 "name": "testteam2",
                 "description": "Description",
             },
-            follow=True,
         )
         self.assertEqual(Team.objects.all().count(), 2)
         self.assertEqual(Membership.objects.all().count(), 2)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_team_detail_get(self):
         self.assertTrue(
@@ -214,7 +213,6 @@ class TestEventListCreateDeleteViews(TestCase):
                 "geo_type": Event.GeographyType.MANUAL,
                 "geo_address": "Address",
             },
-            follow=True,
         )
         self.assertEqual(
             Event.objects.filter(
@@ -223,7 +221,7 @@ class TestEventListCreateDeleteViews(TestCase):
             ).count(),
             1,
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_event_delete_get(self):
         self.assertTrue(
@@ -246,7 +244,6 @@ class TestEventListCreateDeleteViews(TestCase):
                 "dashboard_organizer:event_delete",
                 args=(self.team.slug, self.event_to_delete.pk),
             ),
-            follow=True,
         )
         self.assertEqual(
             Event.objects.filter(
@@ -255,7 +252,7 @@ class TestEventListCreateDeleteViews(TestCase):
             ).count(),
             0,
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestEventDetailViews(TestCase):
@@ -323,11 +320,10 @@ class TestEventDetailViews(TestCase):
                 "geo_type": Event.GeographyType.MANUAL,
                 "geo_address": "Address edit",  # Edited
             },
-            follow=True,
         )
         event = Event.objects.get(title="Test event detail edit")
         self.assertEqual(event.geo_address, "Address edit")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_event_stats_get(self):
         self.assertTrue(
@@ -399,14 +395,13 @@ class TestEventDetailViews(TestCase):
                 "guests_allowed": 0,
                 "customer_emails": "x@socialpass.io, y@socialpass.io",
             },
-            follow=True,
         )
         self.assertEqual(RSVPBatch.objects.filter(event=self.event).count(), 1)
         self.assertEqual(
             Ticket.objects.filter(event=self.event, ticket_tier=self.ticket_tier).count(),
             2,
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_event_messaging_get(self):
         self.assertTrue(
@@ -433,10 +428,9 @@ class TestEventDetailViews(TestCase):
                 "subject": "Subject",
                 "message": "Message",
             },
-            follow=True,
         )
         self.assertEqual(MessageBatch.objects.filter(event=self.event).count(), 1)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestTicketTierViews(TestCase):
@@ -507,13 +501,12 @@ class TestTicketTierViews(TestCase):
                 "total_capacity": 100,
                 "waiting_queue_enabled": True,
             },
-            follow=True,
         )
         event = Event.objects.get(pk=self.event.pk)
         self.assertEqual(event.sales_start, now)
         self.assertEqual(event.total_capacity, 100)
         self.assertEqual(event.waiting_queue_enabled, True)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_ticket_tier_create_free_get(self):
         self.assertTrue(
@@ -662,7 +655,6 @@ class TestTicketTierViews(TestCase):
                 args=(self.team.slug, self.event.pk, self.ticket_tier_to_update.pk),
             ),
             data=data,
-            follow=True,
         )
         ticket_tier = TicketTier.objects.get(pk=self.ticket_tier_to_update.pk)
         self.assertEqual(
@@ -678,7 +670,7 @@ class TestTicketTierViews(TestCase):
             },
             data,
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_ticket_tier_delete_get(self):
         self.assertTrue(
@@ -701,12 +693,11 @@ class TestTicketTierViews(TestCase):
                 "dashboard_organizer:ticket_tier_delete",
                 args=(self.team.slug, self.event.pk, self.ticket_tier_to_delete.pk),
             ),
-            follow=True,
         )
         self.assertEqual(
             TicketTier.objects.filter(name="Ticket tier to delete").count(), 0
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestMiscViews(TestCase):
@@ -755,10 +746,9 @@ class TestMiscViews(TestCase):
         response = self.client.post(
             reverse("dashboard_organizer:team_members", args=(self.team.slug,)),
             data={"email": "x@socialpass.io"},
-            follow=True,
         )
         self.assertEqual(Invitation.objects.filter(team=self.team).count(), 1)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_member_delete_get(self):
         self.assertTrue(
@@ -781,10 +771,9 @@ class TestMiscViews(TestCase):
                 "dashboard_organizer:team_member_delete",
                 args=(self.team.slug, self.member_to_delete.pk),
             ),
-            follow=True,
         )
         self.assertEqual(Membership.objects.filter(team=self.team).count(), 1)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def payment_detail_get(self):
         self.assertTrue(

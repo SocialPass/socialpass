@@ -27,7 +27,6 @@ from moralis import evm_api
 from apps.root.exceptions import (
     AlreadyRedeemedError,
     ForbiddenRedemptionError,
-    GoogleWalletAPIRequestError,
     AssetOwnershipCheckoutError,
     FreeCheckoutError,
 )

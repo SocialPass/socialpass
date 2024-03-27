@@ -4,6 +4,7 @@ from django.http import Http404
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.root.models import (
 	CheckoutSession,
@@ -454,6 +455,161 @@ class TestEventDetailViews(TestCase):
 		)
 		self.assertEqual(
 			MessageBatch.objects.filter(event=self.event).count(), 1
+		)
+		self.assertEqual(response.status_code, 200)
+
+
+class TestTicketTierViews(TestCase):
+	"""
+	Test ticket tier list, create, update and delete.
+	"""
+
+	def setUp(self):
+		self.factory = RequestFactory()
+		self.team = Team.objects.create(
+			name="testteam",
+		)
+		self.user = User.objects.create_user(
+			username="testuser",
+			email="testuser@example.com",
+		)
+		self.user.set_password("password")
+		self.user.save()
+		self.membership = Membership.objects.create(
+			team=self.team,
+			user=self.user,
+		)
+		self.event = Event.objects.create(
+			team=self.team,
+			title="Test event",
+			description="Description",
+			start_date=datetime(2024, 1, 1, 0, 0),
+			timezone="US/Eastern",
+			geo_type=Event.GeographyType.MANUAL,
+			geo_address="Address",
+		)
+		self.ticket_tier_to_update = TicketTier.objects.create(
+			event=self.event,
+			name="Ticket tier to update",
+			category=TicketTier.Category.FIAT,
+		)
+		self.ticket_tier_to_delete = TicketTier.objects.create(
+			event=self.event,
+			name="Ticket tier to delete",
+			category=TicketTier.Category.ASSET_OWNERSHIP,
+		)
+		return super().setUp()
+
+	def test_ticket_tier_list_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:event_tickets",
+				args=(self.team.slug, self.event.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_list_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		now = timezone.now()
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:event_tickets",
+				args=(self.team.slug, self.event.pk)
+			),
+			data={
+				"sales_start": now,
+				"total_capacity": 100,
+				"waiting_queue_enabled": True,
+			},
+			follow=True,
+		)
+		event = Event.objects.get(pk=self.event.pk)
+		self.assertEqual(event.sales_start, now)
+		self.assertEqual(event.total_capacity, 100)
+		self.assertEqual(event.waiting_queue_enabled, True)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_update_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:ticket_tier_update",
+				args=(self.team.slug, self.event.pk, self.ticket_tier_to_update.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_update_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		data = {
+			"name": "Edit",
+			"capacity": 100,
+			"max_per_person": 2,
+			"guests_allowed": 1,
+			"guest_supply": 50,
+			"hidden_from_public": True,
+			"hidden_availability": True,
+			"additional_information": "Additional",
+		}
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:ticket_tier_update",
+				args=(self.team.slug, self.event.pk, self.ticket_tier_to_update.pk)
+			),
+			data=data,
+			follow=True,
+		)
+		ticket_tier = TicketTier.objects.get(pk=self.ticket_tier_to_update.pk)
+		self.assertEqual(
+			{
+				"name": ticket_tier.name,
+				"capacity": ticket_tier.capacity,
+				"max_per_person": ticket_tier.max_per_person,
+				"guests_allowed": ticket_tier.guests_allowed,
+				"guest_supply": ticket_tier.guest_supply,
+				"hidden_from_public": ticket_tier.hidden_from_public,
+				"hidden_availability": ticket_tier.hidden_availability,
+				"additional_information": ticket_tier.additional_information,
+			},
+			data
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_delete_get(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.get(
+			reverse(
+				"dashboard_organizer:ticket_tier_delete",
+				args=(self.team.slug, self.event.pk, self.ticket_tier_to_delete.pk)
+			)
+		)
+		self.assertEqual(response.status_code, 200)
+
+	def test_ticket_tier_delete_post(self):
+		self.assertTrue(
+			self.client.login(username=self.user.username, password="password")
+		)
+		response = self.client.post(
+			reverse(
+				"dashboard_organizer:ticket_tier_delete",
+				args=(self.team.slug, self.event.pk, self.ticket_tier_to_delete.pk)
+			),
+			follow=True,
+		)
+		self.assertEqual(
+			TicketTier.objects.filter(name="Ticket tier to delete").count(), 0
 		)
 		self.assertEqual(response.status_code, 200)
 

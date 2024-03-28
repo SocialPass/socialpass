@@ -62,7 +62,7 @@ class TestCheckoutViews(TestCase):
         self.session_fulfilled = CheckoutSession.objects.create(
             event=self.event,
             name="Fulfilled",
-            email="x@socialpass.io",
+            email="y@socialpass.io",
             session_type=CheckoutSession.SessionType.FREE,
             order_status=CheckoutSession.OrderStatus.FULFILLED,
         )
@@ -124,6 +124,15 @@ class TestCheckoutViews(TestCase):
         self.assertEqual(checkout_session.order_status, CheckoutSession.OrderStatus.FULFILLED)
         self.assertEqual(tickets.count(), 1)
         self.assertEqual(response.status_code, 302)
+
+    def test_team_checkout_page_success_get(self):
+        response = self.client.get(
+            reverse(
+                "checkout:checkout_success",
+                args=(self.team.slug, self.event.slug, self.session_fulfilled.public_id),
+            )
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 

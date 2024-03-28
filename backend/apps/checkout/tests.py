@@ -134,5 +134,26 @@ class TestCheckoutViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_get_tickets_get(self):
+        response = self.client.get(
+            reverse(
+                "checkout:get_tickets",
+                args=(self.session_fulfilled.public_id,),
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_tickets_post(self):
+        response = self.client.post(
+            reverse(
+                "checkout:get_tickets",
+                args=(self.session_to_fulfill.public_id,),
+            ),
+            data={
+                "passcode": self.session_fulfilled.passcode,
+            }
+        )
+        self.assertEqual(response.status_code, 200) # No redirect here
+
 
 

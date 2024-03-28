@@ -154,12 +154,9 @@ class TestCheckoutViews(TestCase):
                 "checkout:get_tickets",
                 args=(self.session_fulfilled.public_id,),
             ),
-            data={
-                "passcode": self.session_fulfilled.passcode,
-                "passcode_submit": True
-            },
+            data={"passcode": self.session_fulfilled.passcode, "passcode_submit": True},
         )
-        self.assertEqual(response.context['passcode_form'].is_valid(), True)
+        self.assertEqual(response.context["passcode_form"].is_valid(), True)
         self.assertEqual(response.status_code, 200)  # No redirect here
 
     def test_get_tickets_post_resend_passcode(self):
@@ -168,9 +165,7 @@ class TestCheckoutViews(TestCase):
                 "checkout:get_tickets",
                 args=(self.session_fulfilled.public_id,),
             ),
-            data={
-                "resend_passcode": True
-            },
+            data={"resend_passcode": True},
         )
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["y@socialpass.io"])

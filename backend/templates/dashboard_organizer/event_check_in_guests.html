@@ -41,11 +41,11 @@
                    target="_blank"
                    id="scanner-link">
                     {% if request.is_secure %}
-                        https://
+                        https://{{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}
                     {% else %}
-                        http://
+                        http://{{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}
                     {% endif %}
-                {{ request.get_host }}{% url 'dashboard_organizer:scanner' event.scanner_id %}</a>
+                </a>
                 <button type="button"
                         class="btn btn-secondary btn-sm flex-shrink-0 specific-w-75 ms-auto"
                         onclick="copyToClipboard(this, document.getElementById('scanner-link'));">

@@ -41,11 +41,11 @@
                    target="_blank"
                    id="public-link">
                     {% if request.is_secure %}
-                        https://
+                        https://{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}
                     {% else %}
-                        http://
+                        http://{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}
                     {% endif %}
-                {{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}</a>
+                </a>
                 <button type="button"
                         class="btn btn-secondary btn-sm flex-shrink-0 specific-w-75 ms-auto"
                         onclick="copyToClipboard(this, document.getElementById('public-link'));">

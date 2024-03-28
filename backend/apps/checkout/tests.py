@@ -122,6 +122,8 @@ class TestCheckoutViews(TestCase):
         )
         checkout_session = CheckoutSession.objects.get(pk=self.session_to_fulfill.pk)
         tickets = Ticket.objects.filter(checkout_session=checkout_session)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["x@socialpass.io"])
         self.assertEqual(
             checkout_session.order_status, CheckoutSession.OrderStatus.FULFILLED
         )

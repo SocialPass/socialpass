@@ -149,10 +149,12 @@ class TestCheckoutViews(TestCase):
         response = self.client.post(
             reverse(
                 "checkout:get_tickets",
-                args=(self.session_to_fulfill.public_id,),
+                args=(self.session_fulfilled.public_id,),
             ),
             data={
                 "passcode": self.session_fulfilled.passcode,
+                "passcode_submit": True
             },
         )
+        self.assertEqual(response.context['passcode_form'].is_valid(), True)
         self.assertEqual(response.status_code, 200)  # No redirect here

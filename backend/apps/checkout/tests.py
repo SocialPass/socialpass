@@ -4,14 +4,13 @@ from django.test.client import RequestFactory
 from django.urls import reverse
 
 from apps.root.models import (
+    CheckoutItem,
     CheckoutSession,
     Event,
     Team,
     Ticket,
     TicketTier,
 )
-
-from . import views
 
 
 class TestCheckoutViews(TestCase):
@@ -48,6 +47,25 @@ class TestCheckoutViews(TestCase):
             category=TicketTier.Category.FREE,
             capacity=50,
         )
+        self.session_to_fulfill = CheckoutSession.objects.create(
+            event=self.event,
+            name="Test fulfill",
+            email="x@socialpass.io",
+            session_type=CheckoutSession.SessionType.FREE,
+        )
+        CheckoutItem.objects.create(
+            ticket_tier=self.ticket_tier_1,
+            checkout_session=self.session_to_fulfill,
+            quantity=1,
+            selected_guests=1,
+        )
+        self.session_fulfilled = CheckoutSession.objects.create(
+            event=self.event,
+            name="Fulfilled",
+            email="x@socialpass.io",
+            session_type=CheckoutSession.SessionType.FREE,
+            order_status=CheckoutSession.OrderStatus.FULFILLED,
+        )
         return super().setUp()
 
     def test_team_checkout_page_one_get(self):
@@ -79,6 +97,32 @@ class TestCheckoutViews(TestCase):
             ).count(),
             1,
         )
+        self.assertEqual(response.status_code, 302)
+
+    def test_team_checkout_page_two_get(self):
+        response = self.client.get(
+            reverse(
+                "checkout:checkout_two",
+                args=(self.team.slug, self.event.slug, self.session_to_fulfill.public_id),
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_team_checkout_page_two_post(self):
+        response = self.client.post(
+            reverse(
+                "checkout:checkout_two",
+                args=(self.team.slug, self.event.slug, self.session_to_fulfill.public_id),
+            ),
+            data={
+                "name": "Test fulfill",
+                "email": "x@socialpass.io",
+            }
+        )
+        checkout_session = CheckoutSession.objects.get(pk=self.session_to_fulfill.pk)
+        tickets = Ticket.objects.filter(checkout_session=checkout_session)
+        self.assertEqual(checkout_session.order_status, CheckoutSession.OrderStatus.FULFILLED)
+        self.assertEqual(tickets.count(), 1)
         self.assertEqual(response.status_code, 302)
 
 

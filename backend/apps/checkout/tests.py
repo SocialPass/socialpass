@@ -68,7 +68,7 @@ class TestCheckoutViews(TestCase):
         )
         return super().setUp()
 
-    def test_team_checkout_page_one_get(self):
+    def test_team_checkout_one_get(self):
         response = self.client.get(
             reverse(
                 "checkout:checkout_one",
@@ -77,7 +77,7 @@ class TestCheckoutViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_team_checkout_page_one_post(self):
+    def test_team_checkout_one_post(self):
         response = self.client.post(
             reverse(
                 "checkout:checkout_one",
@@ -99,7 +99,7 @@ class TestCheckoutViews(TestCase):
         )
         self.assertEqual(response.status_code, 302)
 
-    def test_team_checkout_page_two_get(self):
+    def test_team_checkout_two_get(self):
         response = self.client.get(
             reverse(
                 "checkout:checkout_two",
@@ -108,7 +108,7 @@ class TestCheckoutViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_team_checkout_page_two_post(self):
+    def test_team_checkout_two_post(self):
         response = self.client.post(
             reverse(
                 "checkout:checkout_two",
@@ -125,7 +125,7 @@ class TestCheckoutViews(TestCase):
         self.assertEqual(tickets.count(), 1)
         self.assertEqual(response.status_code, 302)
 
-    def test_team_checkout_page_success_get(self):
+    def test_team_checkout_success_get(self):
         response = self.client.get(
             reverse(
                 "checkout:checkout_success",

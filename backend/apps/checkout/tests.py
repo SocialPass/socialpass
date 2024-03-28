@@ -88,7 +88,7 @@ class TestCheckoutViews(TestCase):
                 "email": "x@socialpass.io",
                 "checkout_type": "FREE",
                 "ticket_tier_data": f'[{{"id":"{self.ticket_tier_1.pk}","amount":"1","selected_guests":"1"}},{{"id":"{self.ticket_tier_2.pk}","amount":"1","selected_guests":"0"}}]',
-            }
+            },
         )
         self.assertEqual(
             CheckoutSession.objects.filter(
@@ -117,11 +117,13 @@ class TestCheckoutViews(TestCase):
             data={
                 "name": "Test fulfill",
                 "email": "x@socialpass.io",
-            }
+            },
         )
         checkout_session = CheckoutSession.objects.get(pk=self.session_to_fulfill.pk)
         tickets = Ticket.objects.filter(checkout_session=checkout_session)
-        self.assertEqual(checkout_session.order_status, CheckoutSession.OrderStatus.FULFILLED)
+        self.assertEqual(
+            checkout_session.order_status, CheckoutSession.OrderStatus.FULFILLED
+        )
         self.assertEqual(tickets.count(), 1)
         self.assertEqual(response.status_code, 302)
 
@@ -151,9 +153,6 @@ class TestCheckoutViews(TestCase):
             ),
             data={
                 "passcode": self.session_fulfilled.passcode,
-            }
+            },
         )
-        self.assertEqual(response.status_code, 200) # No redirect here
-
-
-
+        self.assertEqual(response.status_code, 200)  # No redirect here

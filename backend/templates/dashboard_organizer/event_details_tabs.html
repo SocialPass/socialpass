@@ -17,10 +17,10 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}"
-               class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_stats' %}active{% endif %}"
-               {% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}>
-                {% trans "Stats" %}
+            <a href="{% url 'dashboard_organizer:event_promote' current_team.slug event.pk %}"
+               class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_promote' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'event_promote' %}aria-current="true"{% endif %}>
+                {% trans "Share" %}
             </a>
         </li>
         <li class="nav-item">
@@ -49,17 +49,17 @@
             </li>
         {% endif %}
         <li class="nav-item">
-            <a href="{% url 'dashboard_organizer:event_promote' current_team.slug event.pk %}"
-               class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_promote' %}active{% endif %}"
-               {% if request.resolver_match.url_name == 'event_promote' %}aria-current="true"{% endif %}>
-                {% trans "Promote" %}
-            </a>
-        </li>
-        <li class="nav-item">
             <a href="{% url 'dashboard_organizer:event_check_in_guests' current_team.slug event.pk %}"
                class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_check_in_guests' %}active{% endif %}"
                {% if request.resolver_match.url_name == 'event_check_in_guests' %}aria-current="true"{% endif %}>
                 {% trans "Check-in Guests" %}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}"
+               class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'event_stats' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}>
+                {% trans "Stats" %}
             </a>
         </li>
     </ul>
@@ -75,18 +75,18 @@
             {% trans "Overview" %}
         {% elif request.resolver_match.url_name == 'event_tickets' or request.resolver_match.url_name == 'ticket_tier_free_create' or request.resolver_match.url_name == 'ticket_tier_fiat_create' or request.resolver_match.url_name == 'ticket_tier_nft_create' or request.resolver_match.url_name == 'ticket_tier_update' or request.resolver_match.url_name == 'ticket_tier_delete' %}
             {% trans "Ticketing" %}
-        {% elif request.resolver_match.url_name == 'event_stats' %}
-            {% trans "Stats" %}
+        {% elif request.resolver_match.url_name == 'event_promote' %}
+            {% trans "Share" %}
         {% elif request.resolver_match.url_name == 'waiting_queue' %}
             {% trans "Waitlist" %}
         {% elif request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}
             {% trans "RSVP" %}
         {% elif request.resolver_match.url_name == 'message_batches' or request.resolver_match.url_name == 'message_batch_create' %}
             {% trans "Messaging" %}
-        {% elif request.resolver_match.url_name == 'event_promote' %}
-            {% trans "Promote" %}
         {% elif request.resolver_match.url_name == 'event_check_in_guests' %}
             {% trans "Check-in Guests" %}
+        {% elif request.resolver_match.url_name == 'event_stats' %}
+            {% trans "Stats" %}
         {% endif %}
         <i class="fa-regular fa-angle-down ms-auto"></i>
     </button>
@@ -108,10 +108,10 @@
                     </a>
                 </li>
                 <li class="mb-2"
-                    {% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}>
-                    <a href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}"
-                       class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_stats' %}text-primary-emphasis fw-bold antialiased{% endif %}">
-                        {% trans "Stats" %}
+                    {% if request.resolver_match.url_name == 'event_promote' %}aria-current="true"{% endif %}>
+                    <a href="{% url 'dashboard_organizer:event_promote' current_team.slug event.pk %}"
+                       class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_promote' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+                        {% trans "Share" %}
                     </a>
                 </li>
                 <li class="mb-2"
@@ -139,17 +139,17 @@
                         </a>
                     </li>
                 {% endif %}
-                <li class="mb-2"
-                    {% if request.resolver_match.url_name == 'event_promote' %}aria-current="true"{% endif %}>
-                    <a href="{% url 'dashboard_organizer:event_promote' current_team.slug event.pk %}"
-                       class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_promote' %}text-primary-emphasis fw-bold antialiased{% endif %}">
-                        {% trans "Promote" %}
-                    </a>
-                </li>
                 <li {% if request.resolver_match.url_name == 'event_check_in_guests' %}aria-current="true"{% endif %}>
                     <a href="{% url 'dashboard_organizer:event_check_in_guests' current_team.slug event.pk %}"
                        class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_check_in_guests' %}text-primary-emphasis fw-bold antialiased{% endif %}">
                         {% trans "Check-in Guests" %}
+                    </a>
+                </li>
+                <li class="mb-2"
+                    {% if request.resolver_match.url_name == 'event_stats' %}aria-current="true"{% endif %}>
+                    <a href="{% url 'dashboard_organizer:event_stats' current_team.slug event.pk %}"
+                       class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'event_stats' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+                        {% trans "Stats" %}
                     </a>
                 </li>
             </ul>

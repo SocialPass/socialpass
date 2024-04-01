@@ -22,7 +22,7 @@ django-allauth==0.61.1  # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.1 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.11.2 # https://github.com/joke2k/django-environ
 django-fsm==2.8.1 # https://github.com/viewflow/django-fsm
-django-model-utils==4.4.0  # https://github.com/jazzband/django-model-utils
+django-model-utils==4.5.0  # https://github.com/jazzband/django-model-utils
 django-storages[boto3]==1.14.2  # https://github.com/jschneier/django-storages
 django-money==3.3.0 # https://github.com/django-money/django-money
 whitenoise==6.6.0 # https://github.com/evansd/whitenoise/

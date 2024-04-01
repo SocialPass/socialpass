@@ -185,6 +185,7 @@ class EventForm(forms.ModelForm):
                     "%Y-%m-%dT%H:%M"
                 )
         else:
+            self.fields["description"].initial = _("We hope to see you there!")
             self.fields["title"].widget.attrs.update({"autofocus": "autofocus"})
 
 

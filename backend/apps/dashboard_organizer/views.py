@@ -505,13 +505,13 @@ class EventStatsView(TeamContextMixin, DetailView):
         return context
 
 
-class EventPromoteView(TeamContextMixin, DetailView):
+class EventShareView(TeamContextMixin, DetailView):
     """
     Show public link, sharing, embed, etc.
     """
 
     model = Event
-    template_name = "dashboard_organizer/event_promote.html"
+    template_name = "dashboard_organizer/event_share.html"
     object = None
 
     def get_object(self):

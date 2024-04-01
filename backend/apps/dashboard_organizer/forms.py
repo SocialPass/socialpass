@@ -66,6 +66,11 @@ class TeamForm(forms.ModelForm):
             ),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:
+            self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
+
 
 class EventCreateForm(forms.ModelForm):
     """
@@ -179,6 +184,8 @@ class EventForm(forms.ModelForm):
                 self.initial["end_date"] = self.instance.end_date.strftime(
                     "%Y-%m-%dT%H:%M"
                 )
+        else:
+            self.fields["title"].widget.attrs.update({"autofocus": "autofocus"})
 
 
 class TicketingSetupForm(forms.ModelForm):
@@ -289,6 +296,11 @@ class TicketTierForm(forms.ModelForm):
             "hidden_from_public": _("Hide tier from public"),
             "hidden_availability": _("Hide number of tickets available from public"),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:
+            self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
 
 
 class TierAssetOwnershipForm(TicketTierForm):

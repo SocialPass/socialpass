@@ -263,7 +263,12 @@
 
 .btn-link,
 .btn-link:hover,
-.btn-link:active,
+.btn-link:active {
+	background-color: var(--bs-primary-bg-subtle) !important;
+	border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25) !important;
+	text-decoration: none;
+}
+
 .btn-link:focus-visible {
 	background-color: var(--bs-primary-bg-subtle) !important;
 	border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25) !important;

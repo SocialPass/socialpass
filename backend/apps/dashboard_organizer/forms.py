@@ -287,7 +287,7 @@ class TicketTierForm(forms.ModelForm):
             "max_per_person": _("Max per person"),
             "guests_allowed": _("Max guest(s) allowed per ticket"),
             "hidden_from_public": _("Hide tier from public"),
-            "hidden_availability": _("Hide tickets available from public"),
+            "hidden_availability": _("Hide number of tickets available from public"),
         }
 
 

@@ -1248,6 +1248,11 @@ class RSVPBatch(DBModel):
         "Event",
         on_delete=models.CASCADE,
     )
+    ticket_tier = models.ForeignKey(
+        "TicketTier",
+        on_delete=models.CASCADE,
+        null=True
+    )
     success_list = models.TextField(blank=True)
     failure_list = models.TextField(blank=True)
 

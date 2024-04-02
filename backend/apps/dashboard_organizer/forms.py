@@ -1,3 +1,4 @@
+import zoneinfo
 from datetime import date
 from django import forms
 from django.utils.translation import gettext as _
@@ -155,6 +156,11 @@ class EventForm(forms.ModelForm):
                 attrs={
                     "placeholder": _("Timezone"),
                     "required": "required",
+                    "pattern": "|".join([
+                        timezone for timezone in sorted(
+                            zoneinfo.available_timezones()
+                        )
+                    ]),
                     "list": "timezone-list",
                 }
             ),

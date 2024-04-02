@@ -31,7 +31,7 @@ reset: ## Reset Database
 	(source backend/venv/bin/activate; cd backend; ./manage.py reset_db)
 
 run: ## Run Backend Server
-	(source backend/venv/bin/activate; cd backend; ./manage.py runserver)
+	(source backend/venv/bin/activate; cd backend; ./manage.py procrastinate worker & ./manage.py runserver)
 
 superuser: ## Create backend superuser
 	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)

@@ -90,6 +90,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount.providers.google",
     "crispy_forms",
     "crispy_bootstrap5",
+    "procrastinate.contrib.django",
     "django_quill",
     "storages",
 ]
@@ -356,3 +357,11 @@ QUILL_CONFIGS = {
 # STRIPE
 # ------------------------------------------------------------------------------
 STRIPE_API_KEY = env("STRIPE_API_KEY")
+
+
+# PROCRASTINATE
+# ------------------------------------------------------------------------------
+# https://procrastinate.readthedocs.io/en/stable/reference.html#procrastinate.App.run_worker_async
+PROCRASTINATE_WORKER_DEFAULTS = {
+    "delete_jobs": "successful"
+}

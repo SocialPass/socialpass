@@ -156,11 +156,9 @@ class EventForm(forms.ModelForm):
                 attrs={
                     "placeholder": _("Timezone"),
                     "required": "required",
-                    "pattern": "|".join([
-                        timezone for timezone in sorted(
-                            zoneinfo.available_timezones()
-                        )
-                    ]),
+                    "pattern": "|".join(
+                        [timezone for timezone in sorted(zoneinfo.available_timezones())]
+                    ),
                     "list": "timezone-list",
                 }
             ),

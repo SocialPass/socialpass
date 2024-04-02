@@ -356,13 +356,13 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-    def get_success_message(self, *args, **kwargs):
-        return "Your event has been created successfully!"
-
     def get_success_url(self, *args, **kwargs):
-        return reverse(
-            "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_slug"], self.object.pk),
+        return (
+            reverse(
+                "dashboard_organizer:event_tickets",
+                args=(self.kwargs["team_slug"], self.object.pk),
+            )
+            + "?create_flow=true"
         )
 
 

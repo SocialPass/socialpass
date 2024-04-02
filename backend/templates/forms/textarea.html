@@ -3,7 +3,7 @@
     <label for="{{ input.id_for_label }}">
         {{ input.label }}
         {% if input.field.required or "required" in input.field.widget.attrs %}
-            *
+            <strong class="text-danger-emphasis">*</strong>
         {% endif %}
     </label>
 </div>

@@ -362,6 +362,3 @@ STRIPE_API_KEY = env("STRIPE_API_KEY")
 # PROCRASTINATE
 # ------------------------------------------------------------------------------
 # https://procrastinate.readthedocs.io/en/stable/reference.html#procrastinate.App.run_worker_async
-PROCRASTINATE_WORKER_DEFAULTS = {
-    "delete_jobs": "successful"
-}

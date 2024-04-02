@@ -2,6 +2,7 @@ import uuid
 
 import rollbar
 import stripe
+import zoneinfo
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.admin import EmailAddress
 from django.conf import settings
@@ -350,6 +351,13 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     form_class = EventForm
     template_name = "dashboard_organizer/event_create.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["timezones"] = [
+            timezone for timezone in sorted(zoneinfo.available_timezones())
+        ]
+        return context
+
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
@@ -380,6 +388,9 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = self.object
+        context["timezones"] = [
+            timezone for timezone in sorted(zoneinfo.available_timezones())
+        ]
         return context
 
     def form_valid(self, form, **kwargs):

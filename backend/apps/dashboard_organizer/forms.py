@@ -1,4 +1,3 @@
-import zoneinfo
 from datetime import date
 from django import forms
 from django.utils.translation import gettext as _
@@ -109,9 +108,6 @@ class EventForm(forms.ModelForm):
     """
 
     description = QuillFormField()
-    timezone = forms.ChoiceField(
-        choices=[(x, x) for x in sorted(zoneinfo.available_timezones())]
-    )
 
     class Meta:
         model = Event
@@ -154,6 +150,13 @@ class EventForm(forms.ModelForm):
                     "type": "datetime-local",
                     "min": date.today().strftime("%Y-%m-%dT%H:%M"),
                 },
+            ),
+            "timezone": forms.TextInput(
+                attrs={
+                    "placeholder": _("Timezone"),
+                    "required": "required",
+                    "list": "timezone-list",
+                }
             ),
             "geo_address": forms.TextInput(
                 attrs={

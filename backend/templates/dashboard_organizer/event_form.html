@@ -73,9 +73,14 @@
                     {% include "forms/input.html" %}
                 {% endwith %}
                 {% with form.timezone as input %}
-                    {% include "forms/select.html" %}
+                    {% include "forms/input.html" %}
                 {% endwith %}
             </div>
+            <datalist id="timezone-list">
+                {% for timezone in timezones %}
+                    <option value="{{ timezone }}">
+                {% endfor %}
+            </datalist>
             <div class="text-danger-emphasis mt-2 d-none" id="end-date-extra-feedback">
                 {% trans "The event end date must come after the start date." %}
             </div>

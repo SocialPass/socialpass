@@ -90,9 +90,9 @@ urlpatterns = [
         name="event_stats",
     ),
     path(
-        "<slug:team_slug>/events/<int:pk>/promote/",
-        views.EventPromoteView.as_view(),
-        name="event_promote",
+        "<slug:team_slug>/events/<int:pk>/share/",
+        views.EventShareView.as_view(),
+        name="event_share",
     ),
     path(
         "<slug:team_slug>/events/<int:pk>/check-in-guests/",

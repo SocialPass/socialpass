@@ -25,6 +25,9 @@
 {% endblock content %}
 {% block extra_body %}
     <script type="text/javascript">
+    if (document.getElementById("id_title").hasAttribute("autofocus")) {
+    	document.getElementById("id_title").focus();
+    }
 	document.getElementById("id_timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     </script>
     <script>

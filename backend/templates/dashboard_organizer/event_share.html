@@ -3,7 +3,7 @@
 {% load static i18n get_user_primary_email format_to_event_timezone %}
 
 {% block head_title %}
-    {% trans "Promote" %} | {{ event.title }} - SocialPass
+    {% trans "Sharing" %} | {{ event.title }} - SocialPass
 {% endblock head_title %}
 {% block navbar_title %}
     <span class="text-primary-emphasis">{{ event.title }}</span>
@@ -16,7 +16,7 @@
 {% endblock sticky_navbar_tabs %}
 {% block content %}
     <div class="mw-100 mx-auto mt-4 mb-3" style="width: 720px;">
-        <h1 class="h3 mb-0">{% trans "Promote" %}</h1>
+        <h1 class="h3 mb-0">{% trans "Sharing" %}</h1>
         <p class="text-body-secondary mb-0">
             {% trans "Grab the public link and share your event with the world!" %}
         </p>
@@ -130,7 +130,7 @@
         </div>
     </div>
     <script>
-	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}"
+	const socialpassLinkMessage = "Join {{event.team.name}} at {{event.title}}. Tickets are available now! For event details and ticket info, visit {% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'checkout:checkout_one' event.team.slug event.slug %}"
 	const twitterShareAnchor = document.getElementById("twitter-share")
 	const facebookShareAnchor = document.getElementById("facebook-share")
   	const emailShareAnchor = document.getElementById("email-share")

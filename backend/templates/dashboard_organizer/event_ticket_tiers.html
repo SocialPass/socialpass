@@ -128,7 +128,7 @@
                 {% if request.GET.showprefs %}aria-expanded="true"{% else %}aria-expanded="false"{% endif %}
                 aria-controls="ticketing-preferences">
             <div>
-                {% trans "Ticketing Preferences" %}
+                {% trans "Preferences (Optional)" %}
                 <div class="fw-normal fs-6">
                     {% trans "Click to show/hide" %}
                 </div>
@@ -154,7 +154,7 @@
                             {{ input }}
                         {% endfor %}
                         <h6 class="mb-2">
-                            {% trans "Schedule Sales (Optional)" %}
+                            {% trans "Schedule Sales" %}
                         </h6>
                         <p class="text-body-secondary">
                             {% trans "By default, your ticket sales are scheduled to start right away. However, you can put in a time range here to control the window of ticket sales." %}

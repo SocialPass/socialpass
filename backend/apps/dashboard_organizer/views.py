@@ -11,7 +11,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.core.validators import validate_email
-from django.db import transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -44,13 +43,12 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     CheckoutSession,
-    CheckoutItem,
     RSVPBatch,
 )
 from apps.root.tasks import (
     task_handle_event_google_class,
     task_handle_message_batch_delivery,
-    task_handle_rsvp_delivery
+    task_handle_rsvp_delivery,
 )
 from apps.root import exceptions
 
@@ -1126,8 +1124,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
 
         # Create RSVPBatch object
         rsvp_batch = RSVPBatch.objects.create(
-            event=context["event"],
-            ticket_tier=form.cleaned_data["ticket_tier"]
+            event=context["event"], ticket_tier=form.cleaned_data["ticket_tier"]
         )
 
         # Validate all emails
@@ -1148,7 +1145,7 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
         task_handle_rsvp_delivery.defer(
             rsvp_batch_pk=rsvp_batch.pk,
             emails=emails,
-            guests_allowed=form.cleaned_data["guests_allowed"]
+            guests_allowed=form.cleaned_data["guests_allowed"],
         )
 
         return super().form_valid(form)
@@ -1226,9 +1223,7 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         response = super().form_valid(form)
 
         # Deliver message via background task
-        task_handle_message_batch_delivery.defer(
-            message_batch_pk=form.instance.pk
-        )
+        task_handle_message_batch_delivery.defer(message_batch_pk=form.instance.pk)
         return response
 
     def get_success_url(self):

@@ -11,7 +11,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.core.mail import send_mail, send_mass_mail
+from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.template.loader import render_to_string
@@ -1227,11 +1227,7 @@ class RSVPBatch(DBModel):
         "Event",
         on_delete=models.CASCADE,
     )
-    ticket_tier = models.ForeignKey(
-        "TicketTier",
-        on_delete=models.CASCADE,
-        null=True
-    )
+    ticket_tier = models.ForeignKey("TicketTier", on_delete=models.CASCADE, null=True)
     success_list = models.TextField(blank=True)
     failure_list = models.TextField(blank=True)
 

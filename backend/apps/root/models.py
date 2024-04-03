@@ -332,7 +332,7 @@ class Event(DBModel):
         validators=[MinValueValidator(1)],
         help_text=_("Denotes the total capacity for the venue, across all ticket tiers."),
     )
-    waiting_queue_enabled = models.BooleanField(default=False)
+    waitlist_enabled = models.BooleanField(default=False)
 
     # Location Info (v1)
     class GeographyType(models.TextChoices):

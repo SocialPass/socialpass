@@ -343,7 +343,7 @@ class TestEventDetailViews(TestCase):
         )
         response = self.client.get(
             reverse(
-                "dashboard_organizer:waiting_queue", args=(self.team.slug, self.event.pk)
+                "dashboard_organizer:waitlist", args=(self.team.slug, self.event.pk)
             )
         )
         self.assertEqual(response.status_code, 200)
@@ -504,13 +504,13 @@ class TestTicketTierViews(TestCase):
             data={
                 "sales_start": now,
                 "total_capacity": 100,
-                "waiting_queue_enabled": True,
+                "waitlist_enabled": True,
             },
         )
         event = Event.objects.get(pk=self.event.pk)
         self.assertEqual(event.sales_start, now)
         self.assertEqual(event.total_capacity, 100)
-        self.assertEqual(event.waiting_queue_enabled, True)
+        self.assertEqual(event.waitlist_enabled, True)
         self.assertEqual(response.status_code, 302)
 
     def test_ticket_tier_create_free_get(self):

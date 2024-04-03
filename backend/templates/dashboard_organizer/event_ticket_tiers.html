@@ -185,7 +185,7 @@
                             {% trans "When set, customers will join a waitlist, instead of getting actual tickets. You can bump them up as needed to the attendee list (and issue tickets) via the dashboard." %}
                         </p>
                         <div class="sp-checkbox-container">
-                            {{ form.waiting_queue_enabled | as_crispy_field }}
+                            {{ form.waitlist_enabled | as_crispy_field }}
                         </div>
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary">

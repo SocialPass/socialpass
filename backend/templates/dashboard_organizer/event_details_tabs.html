@@ -24,9 +24,9 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{% url 'dashboard_organizer:waiting_queue' current_team.slug event.pk %}"
-               class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'waiting_queue' %}active{% endif %}"
-               {% if request.resolver_match.url_name == 'waiting_queue' %}aria-current="true"{% endif %}>
+            <a href="{% url 'dashboard_organizer:waitlist' current_team.slug event.pk %}"
+               class="nav-link px-lg-2 fw-bold antialiased {% if request.resolver_match.url_name == 'waitlist' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'waitlist' %}aria-current="true"{% endif %}>
                 {% trans "Waitlist" %}
             </a>
         </li>
@@ -77,7 +77,7 @@
             {% trans "Ticketing" %}
         {% elif request.resolver_match.url_name == 'event_share' %}
             {% trans "Sharing" %}
-        {% elif request.resolver_match.url_name == 'waiting_queue' %}
+        {% elif request.resolver_match.url_name == 'waitlist' %}
             {% trans "Waitlist" %}
         {% elif request.resolver_match.url_name == 'rsvp_tickets' or request.resolver_match.url_name == 'rsvp_create_tickets' %}
             {% trans "RSVP" %}
@@ -115,9 +115,9 @@
                     </a>
                 </li>
                 <li class="mb-2"
-                    {% if request.resolver_match.url_name == 'waiting_queue' %}aria-current="true"{% endif %}>
-                    <a href="{% url 'dashboard_organizer:waiting_queue' current_team.slug event.pk %}"
-                       class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'waiting_queue' %}text-primary-emphasis fw-bold antialiased{% endif %}">
+                    {% if request.resolver_match.url_name == 'waitlist' %}aria-current="true"{% endif %}>
+                    <a href="{% url 'dashboard_organizer:waitlist' current_team.slug event.pk %}"
+                       class="text-reset text-decoration-none {% if request.resolver_match.url_name == 'waitlist' %}text-primary-emphasis fw-bold antialiased{% endif %}">
                         {% trans "Waitlist" %}
                     </a>
                 </li>

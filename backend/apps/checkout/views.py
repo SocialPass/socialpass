@@ -216,13 +216,13 @@ class CheckoutPageOne(DetailView):
         # Handle FIAT checkout
         if checkout_session.session_type == CheckoutSession.SessionType.FIAT:
             # Handle case where checkout is FIAT and is waitlist checkout
-            if self.object.waiting_queue_enabled:
+            if self.object.waitlist_enabled:
                 checkout_session.waitlist_status = (
                     CheckoutSession.WaitlistStatus.WAITLIST_JOINED
                 )
                 checkout_session.save()
                 return redirect(
-                    "checkout:joined_waiting_queue",
+                    "checkout:joined_waitlist",
                     checkout_session.public_id,
                 )
             # Handle case where checkout is FIAT and is standard checkout
@@ -315,7 +315,7 @@ class CheckoutPageTwoBase(DetailView):
 
         # Waitlist checkout
         # If waiting queue is enabled, we ignore everything and return the form
-        if self.object.event.waiting_queue_enabled:
+        if self.object.event.waitlist_enabled:
             return {
                 "is_error": False,
                 "error_message": "",
@@ -446,11 +446,11 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
 
         # OK. Redirect on success
         # If waiting queue is enabled, redirect to the waiting queue success page
-        if self.object.event.waiting_queue_enabled:
+        if self.object.event.waitlist_enabled:
             self.object.waitlist_status = CheckoutSession.WaitlistStatus.WAITLIST_JOINED
             self.object.save()
             return redirect(
-                "checkout:joined_waiting_queue",
+                "checkout:joined_waitlist",
                 self.kwargs["checkout_session_public_id"],
             )
 
@@ -827,7 +827,7 @@ class JoinedWaitlist(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
     slug_url_kwarg = "checkout_session_public_id"
-    template_name = "checkout/joined_waiting_queue.html"
+    template_name = "checkout/joined_waitlist.html"
 
     def get_object(self):
         self.object = CheckoutSession.objects.select_related(

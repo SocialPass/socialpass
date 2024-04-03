@@ -1257,8 +1257,8 @@ class WaitlistView(TeamContextMixin, ListView):
     model = CheckoutSession
     paginate_by = 15
     ordering = ["-created"]
-    context_object_name = "waiting_queue"
-    template_name = "dashboard_organizer/waiting_queue.html"
+    context_object_name = "waitlist"
+    template_name = "dashboard_organizer/waitlist.html"
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -1357,6 +1357,6 @@ class WaitlistPostView(TeamContextMixin, DetailView):
         self.object.save()
         return render(
             self.request,
-            template_name="dashboard_organizer/waiting_queue_post.html",
+            template_name="dashboard_organizer/waitlist_post.html",
             context=context,
         )

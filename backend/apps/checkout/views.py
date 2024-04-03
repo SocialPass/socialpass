@@ -823,7 +823,7 @@ class GetTickets(View):
         return render(self.request, f"checkout/{template_name}", ctx)
 
 
-class JoinedWaitingQueue(DetailView):
+class JoinedWaitlist(DetailView):
     model = CheckoutSession
     slug_field = "public_id"
     slug_url_kwarg = "checkout_session_public_id"

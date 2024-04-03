@@ -1248,7 +1248,7 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         )
 
 
-class WaitingQueueView(TeamContextMixin, ListView):
+class WaitlistView(TeamContextMixin, ListView):
     """
     Show the checkout sessions in the waiting queue, and allow organizers to
     bump them up to the attendee list (and issue tickets) as needed.
@@ -1290,7 +1290,7 @@ class WaitingQueueView(TeamContextMixin, ListView):
         return context
 
 
-class WaitingQueuePostView(TeamContextMixin, DetailView):
+class WaitlistPostView(TeamContextMixin, DetailView):
     model = CheckoutSession
     object = None
 

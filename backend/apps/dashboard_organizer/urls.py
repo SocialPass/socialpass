@@ -146,12 +146,12 @@ urlpatterns = [
     ),
     path(
         "<slug:team_slug>/events/<int:event_pk>/waitlist/",
-        views.WaitingQueueView.as_view(),
+        views.WaitlistView.as_view(),
         name="waiting_queue",
     ),
     path(
         "<slug:team_slug>/events/<int:event_pk>/waitlist-post/<int:checkout_session_pk>/",
-        views.WaitingQueuePostView.as_view(),
+        views.WaitlistPostView.as_view(),
         name="waiting_queue_post",
     ),
     # Scanner

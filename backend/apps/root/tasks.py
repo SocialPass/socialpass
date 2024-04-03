@@ -2,6 +2,7 @@ import json
 import rollbar
 
 from django.core.mail import send_mass_mail
+from procrastinate import RetryStrategy
 from procrastinate.contrib.django import app
 from apps.root.models import (
 	Event,
@@ -11,9 +12,10 @@ from apps.root.models import (
 	RSVPBatch,
 	Ticket
 )
+from apps.root.exceptions import GoogleWalletAPIRequestError
 from apps.root.ticketing import GoogleTicket
 
-@app.task
+@app.task(retry=RetryStrategy(max_attempts=5, linear_wait=5))
 def task_handle_event_google_class(event_pk):
 	"""
 	insert/update Google class for event
@@ -33,9 +35,8 @@ def task_handle_event_google_class(event_pk):
 		event_obj.google_class_id = json.loads(response.text)["id"]
 		event_obj.save()
 	else:
-		print(response.text)
 		rollbar.report_message("set_google_event_class ERROR: " + response.text)
-		return False
+		raise GoogleWalletAPIRequestError(response.text)
 
 @app.task
 def task_handle_rsvp_delivery(rsvp_batch_pk, emails, guests_allowed):
@@ -62,7 +63,7 @@ def task_handle_rsvp_delivery(rsvp_batch_pk, emails, guests_allowed):
 			)
 			success_list.append(email)
 		except Exception as e:
-			print(e)
+			raise e
 			failure_list.append(email)
 	rsvp_batch_obj.success_list = ", ".join(map(str, success_list))
 	rsvp_batch_obj.failure_list = ", ".join(map(str, failure_list))

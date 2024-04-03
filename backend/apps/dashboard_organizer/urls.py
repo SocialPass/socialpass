@@ -53,11 +53,6 @@ urlpatterns = [
         views.StripeReturn.as_view(),
         name="stripe_return",
     ),
-    path(
-        "<slug:team_slug>/stripe-delete/",
-        views.StripeDelete.as_view(),
-        name="stripe_delete",
-    ),
     # Ticketing
     path(
         "<slug:team_slug>/events/",

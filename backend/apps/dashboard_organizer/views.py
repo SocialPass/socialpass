@@ -2,6 +2,7 @@ import uuid
 
 import rollbar
 import stripe
+import zoneinfo
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.admin import EmailAddress
 from django.conf import settings
@@ -353,6 +354,13 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
     form_class = EventForm
     template_name = "dashboard_organizer/event_create.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["timezones"] = [
+            timezone for timezone in sorted(zoneinfo.available_timezones())
+        ]
+        return context
+
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
@@ -361,13 +369,13 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         task_handle_event_google_class.defer(event_pk=form.instance.pk)
         return response
 
-    def get_success_message(self, *args, **kwargs):
-        return "Your event has been created successfully!"
-
     def get_success_url(self, *args, **kwargs):
-        return reverse(
-            "dashboard_organizer:event_tickets",
-            args=(self.kwargs["team_slug"], self.object.pk),
+        return (
+            reverse(
+                "dashboard_organizer:event_tickets",
+                args=(self.kwargs["team_slug"], self.object.pk),
+            )
+            + "?create_flow=true"
         )
 
 
@@ -385,6 +393,9 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["event"] = self.object
+        context["timezones"] = [
+            timezone for timezone in sorted(zoneinfo.available_timezones())
+        ]
         return context
 
     def form_valid(self, form, **kwargs):
@@ -511,13 +522,13 @@ class EventStatsView(TeamContextMixin, DetailView):
         return context
 
 
-class EventPromoteView(TeamContextMixin, DetailView):
+class EventShareView(TeamContextMixin, DetailView):
     """
     Show public link, sharing, embed, etc.
     """
 
     model = Event
-    template_name = "dashboard_organizer/event_promote.html"
+    template_name = "dashboard_organizer/event_share.html"
     object = None
 
     def get_object(self):

@@ -12,6 +12,35 @@
     <span class="text-primary-emphasis">{% trans "Payment" %}</span> {% trans "Details" %}
 {% endblock navbar_title_2 %}
 {% block content %}
+    <div class="modal fade"
+         id="remove-stripe-modal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">
+                        {% trans "Remove/Switch Stripe Account" %}
+                    </h1>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        {% trans "Do you want to remove your connected Stripe account, or maybe switch to a different one? Please get in touch with our support." %}
+                    </p>
+                    <div>
+                        <a class="btn btn-info d-flex align-items-center w-100 py-2 px-3"
+                           href="https://support.socialpass.io/widget?website_token=YCzxapxfua4vyELnoZ68v5Dm#/"
+                           target="_blank"
+                           rel="noreferrer">{% trans "SocialPass Support" %} <i class="fa-regular fa-external-link ms-auto"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Payment details start -->
     <div class="mb-3 mt-4">
         {% if current_team.stripe_account_id %}
@@ -24,12 +53,14 @@
                         {% trans "The following Stripe account is connected to your team." %}
                     </p>
                 </div>
-                <a href="{% url 'dashboard_organizer:stripe_delete' current_team.slug %}"
-                   class="btn btn-danger ms-auto"
-                   aria-label="Remove Stripe Account">
+                <button type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#remove-stripe-modal"
+                        class="btn btn-danger ms-auto"
+                        aria-label="Remove/Switch Account">
                     <i class="fa-solid fa-trash-can"></i>
-                    <span class="ms-1 d-none d-sm-inline">{% trans "Remove Stripe Account" %}</span>
-                </a>
+                    <span class="ms-1 d-none d-sm-inline">{% trans "Remove/Switch  Account" %}</span>
+                </button>
             </div>
             <div class="card border-0 rounded-4 shadow-sm">
                 <div class="card-body px-lg-5 py-lg-4">

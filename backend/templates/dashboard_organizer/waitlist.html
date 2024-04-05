@@ -35,8 +35,8 @@
                 </button>
             </div>
         </form>
-        {% if waiting_queue.count > 0 %}
-            {% for checkout_session in waiting_queue %}
+        {% if waitlist.count > 0 %}
+            {% for checkout_session in waitlist %}
                 <div class="card border-0 rounded-4 mb-3 waiting-queue-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
@@ -77,7 +77,7 @@
                             {% else %}
                                 <form class="ms-auto"
                                       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                                      hx-post="{% url 'dashboard_organizer:waiting_queue_post' current_team.slug event.pk checkout_session.pk %}"
+                                      hx-post="{% url 'dashboard_organizer:waitlist_post' current_team.slug event.pk checkout_session.pk %}"
                                       hx-trigger="submit">
                                     <button type="submit"
                                             class="btn btn-primary d-block specific-w-100 wq-fulfill-button">

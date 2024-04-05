@@ -58,7 +58,7 @@ class CheckoutForm(forms.Form):
 
                     # 2. Amount
                     # Don't check if waiting queue is enabled
-                    if not self.event.waiting_queue_enabled:
+                    if not self.event.waitlist_enabled:
                         total_selected = amount
                         available = tier.capacity - tier.tickets_sold_count
                         if total_selected > available:

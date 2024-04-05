@@ -260,7 +260,7 @@
         <div class="row g-3 g-sm-4">
             <!-- Ticket tiers start -->
             <div class="col-lg-7">
-                {% if event.waiting_queue_enabled %}
+                {% if event.waitlist_enabled %}
                     <div class="alert alert-primary text-primary-emphasis d-flex align-items-center fw-bold">
                         <i class="fa-light fa-hourglass-clock me-3"></i>
                         {% trans "Please note, you are joining the waiting queue for this event. You'll only get tickets if the organizer decides to bump you up to the attendee list." %}
@@ -369,7 +369,7 @@
                                 <button type="submit"
                                         class="btn btn-info btn-lg d-block w-100"
                                         onclick="submitForm(event)">
-                                    {% if not event.waiting_queue_enabled %}
+                                    {% if not event.waitlist_enabled %}
                                         {% trans "Get Tickets" %}
                                     {% else %}
                                         {% trans "Join Waiting Queue" %}

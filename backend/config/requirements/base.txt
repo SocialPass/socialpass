@@ -10,6 +10,7 @@ qrcode==7.4.2 # https://github.com/lincolnloop/python-qrcode
 rollbar==1.0.0 #https://github.com/rollbar/pyrollbar/
 stripe==5.5.0 #https://github.com/stripe/stripe-python/
 moralis==0.1.39 #https://github.com/MoralisWeb3/Moralis-Python-SDK
+procrastinate==2.1.0 #https://github.com/procrastinate-org/procrastinate
 
 # Django
 # ------------------------------------------------------------------------------

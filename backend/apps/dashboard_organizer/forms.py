@@ -207,7 +207,7 @@ class TicketingSetupForm(forms.ModelForm):
             "sales_start",
             "sales_end",
             "total_capacity",
-            "waiting_queue_enabled",
+            "waitlist_enabled",
         ]
 
         widgets = {
@@ -237,7 +237,7 @@ class TicketingSetupForm(forms.ModelForm):
         labels = {
             "sales_start": _("Ticket Sales Start"),
             "sales_end": _("Ticket Sales End"),
-            "waiting_queue_enabled": _("Turn on Waitlist"),
+            "waitlist_enabled": _("Turn on Waitlist"),
         }
 
     def __init__(self, *args, **kwargs):

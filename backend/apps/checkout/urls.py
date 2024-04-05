@@ -59,8 +59,8 @@ urlpatterns = [
     ),
     path(
         "joined-waiting-queue/<uuid:checkout_session_public_id>/",
-        views.JoinedWaitingQueue.as_view(),
-        name="joined_waiting_queue",
+        views.JoinedWaitlist.as_view(),
+        name="joined_waitlist",
     ),
     # Tickets download
     path(

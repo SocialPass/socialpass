@@ -7,7 +7,6 @@ import django.contrib.auth.validators
 import django.core.validators
 import django.db.models.deletion
 import django.utils.timezone
-import django_fsm
 import model_utils.fields
 from django.conf import settings
 from django.db import migrations, models
@@ -283,11 +282,10 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "state",
-                    django_fsm.FSMField(
+                    models.CharField(
                         choices=[("Draft", "Draft"), ("Live", "Live")],
                         default="Draft",
                         max_length=50,
-                        protected=True,
                     ),
                 ),
                 (

@@ -12,7 +12,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.core.validators import validate_email
-from django.db import transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -45,8 +44,12 @@ from apps.root.models import (
     Ticket,
     TicketTier,
     CheckoutSession,
-    CheckoutItem,
     RSVPBatch,
+)
+from apps.root.tasks import (
+    task_handle_event_google_class,
+    task_handle_message_batch_delivery,
+    task_handle_rsvp_delivery,
 )
 from apps.root import exceptions
 
@@ -362,7 +365,9 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        task_handle_event_google_class.defer(event_pk=form.instance.pk)
+        return response
 
     def get_success_url(self, *args, **kwargs):
         return (
@@ -397,6 +402,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+        task_handle_event_google_class.defer(event_pk=self.object.pk)
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -1100,18 +1106,11 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
 
         # Create RSVPBatch object
         rsvp_batch = RSVPBatch.objects.create(
-            event=context["event"],
+            event=context["event"], ticket_tier=form.cleaned_data["ticket_tier"]
         )
 
-        # Limit to 30 emails per batch
-        emails = form.cleaned_data["customer_emails"].split(",")
-        if len(emails) > 30:
-            messages.add_message(
-                self.request, messages.ERROR, "Only up to 30 emails are allowed per batch."
-            )
-            return super().form_invalid(form)
-
         # Validate all emails
+        emails = form.cleaned_data["customer_emails"].split(",")
         for email in emails:
             try:
                 validate_email(email.strip())
@@ -1124,46 +1123,20 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                 )
                 return super().form_invalid(form)
 
-        # Create checkout session and items
-        # Also track success and failure
-        success_list = []
-        failure_list = []
-
-        ticket_tier = form.cleaned_data["ticket_tier"]
-        for email in emails:
-            try:
-                with transaction.atomic():
-                    checkout_session = CheckoutSession.objects.create(
-                        event=context["event"],
-                        rsvp_batch=rsvp_batch,
-                        email=email.strip(),
-                        session_type=ticket_tier.category,
-                    )
-                    CheckoutItem.objects.create(
-                        ticket_tier=ticket_tier,
-                        checkout_session=checkout_session,
-                        quantity=1,
-                        selected_guests=form.cleaned_data["guests_allowed"],
-                    )
-                success_list.append(email)
-            except Exception as e:
-                print(e)
-                failure_list.append(email)
-        rsvp_batch.success_list = ", ".join(map(str, success_list))
-        rsvp_batch.failure_list = ", ".join(map(str, failure_list))
-        rsvp_batch.save()
-
-        # Fulfill checkout sessions once everything has been set up
-        # Querying again, we ensure we get the correct public IDs for the emails
-        checkout_sessions = CheckoutSession.objects.filter(rsvp_batch=rsvp_batch)
-        for checkout_session in checkout_sessions:
-            checkout_session.fulfill_session()
+        # Deliver RSVPs via background task
+        task_handle_rsvp_delivery.defer(
+            rsvp_batch_pk=rsvp_batch.pk,
+            emails=emails,
+            guests_allowed=form.cleaned_data["guests_allowed"],
+        )
 
         return super().form_valid(form)
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "RSVP tickets created successfully."
+            self.request,
+            messages.SUCCESS,
+            "RSVP tickets created successfully. This page may take a few moments to update.",
         )
         return reverse(
             "dashboard_organizer:rsvp_tickets",
@@ -1228,13 +1201,21 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         return form
 
     def form_valid(self, form, **kwargs):
+        # Set event to context
         context = self.get_context_data(**kwargs)
         form.instance.event = context["event"]
-        form.instance.send_emails()
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # Deliver message via background task
+        task_handle_message_batch_delivery.defer(message_batch_pk=form.instance.pk)
+        return response
 
     def get_success_url(self):
-        messages.add_message(self.request, messages.SUCCESS, "Messages sent successfully.")
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Messages sent successfully. This page may take a few moments to update.",
+        )
         return reverse(
             "dashboard_organizer:message_batches",
             args=(
@@ -1244,7 +1225,7 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         )
 
 
-class WaitingQueueView(TeamContextMixin, ListView):
+class WaitlistView(TeamContextMixin, ListView):
     """
     Show the checkout sessions in the waiting queue, and allow organizers to
     bump them up to the attendee list (and issue tickets) as needed.
@@ -1253,8 +1234,8 @@ class WaitingQueueView(TeamContextMixin, ListView):
     model = CheckoutSession
     paginate_by = 15
     ordering = ["-created"]
-    context_object_name = "waiting_queue"
-    template_name = "dashboard_organizer/waiting_queue.html"
+    context_object_name = "waitlist"
+    template_name = "dashboard_organizer/waitlist.html"
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -1286,7 +1267,7 @@ class WaitingQueueView(TeamContextMixin, ListView):
         return context
 
 
-class WaitingQueuePostView(TeamContextMixin, DetailView):
+class WaitlistPostView(TeamContextMixin, DetailView):
     model = CheckoutSession
     object = None
 
@@ -1353,6 +1334,6 @@ class WaitingQueuePostView(TeamContextMixin, DetailView):
         self.object.save()
         return render(
             self.request,
-            template_name="dashboard_organizer/waiting_queue_post.html",
+            template_name="dashboard_organizer/waitlist_post.html",
             context=context,
         )

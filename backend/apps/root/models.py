@@ -11,7 +11,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.core.mail import send_mail, send_mass_mail
+from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.template.loader import render_to_string
@@ -332,7 +332,7 @@ class Event(DBModel):
         validators=[MinValueValidator(1)],
         help_text=_("Denotes the total capacity for the venue, across all ticket tiers."),
     )
-    waiting_queue_enabled = models.BooleanField(default=False)
+    waitlist_enabled = models.BooleanField(default=False)
 
     # Location Info (v1)
     class GeographyType(models.TextChoices):
@@ -375,27 +375,6 @@ class Event(DBModel):
 
     def __str__(self):
         return f"Event: {self.title}"
-
-    def handle_google_event_class(self):
-        """
-        insert/update Google class for event
-        - object is NOT saved afterwards (done manually)
-        - return class ID for success case, False otherwise
-        - we use Boolean to handle fail case (not exceptions), because this
-          functionality should be non-blocking during fail case
-        """
-        is_insert = True
-        if self.google_class_id != "":
-            is_insert = False
-        response = GoogleTicket.GoogleTicket.insert_update_event_class(
-            event_obj=self, is_insert=is_insert
-        )
-        if 200 <= response.status_code <= 299:
-            self.google_class_id = json.loads(response.text)["id"]
-            return self.google_class_id
-        else:
-            rollbar.report_message("handle_google_event_class ERROR: " + response.text)
-            return False
 
     @cached_property
     def tickets_sold_count(self):
@@ -1248,6 +1227,7 @@ class RSVPBatch(DBModel):
         "Event",
         on_delete=models.CASCADE,
     )
+    ticket_tier = models.ForeignKey("TicketTier", on_delete=models.CASCADE, null=True)
     success_list = models.TextField(blank=True)
     failure_list = models.TextField(blank=True)
 
@@ -1274,26 +1254,3 @@ class MessageBatch(DBModel):
 
     def __str__(self) -> str:
         return f"MessageBatch: {self.public_id}"
-
-    def send_emails(self):
-        emails = []
-        tickets = Ticket.objects.select_related("checkout_session").filter(
-            event=self.event, ticket_tier=self.ticket_tier
-        )
-        for ticket in tickets:
-            emails.append(ticket.checkout_session.email)
-        emails = list(set(emails))
-        self.total_recipients = len(emails)
-
-        # Send mass emails
-        # This function opens a connection to the mail server only once
-        messages = [
-            (
-                "[SocialPass] " + self.subject,
-                self.message,
-                "tickets-no-reply@socialpass.io",
-                [email],
-            )
-            for email in emails
-        ]
-        send_mass_mail(messages)

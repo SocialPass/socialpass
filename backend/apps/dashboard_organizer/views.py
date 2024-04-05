@@ -1163,7 +1163,9 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
 
     def get_success_url(self):
         messages.add_message(
-            self.request, messages.SUCCESS, "RSVP tickets created successfully. This page may take a few moments to update."
+            self.request,
+            messages.SUCCESS,
+            "RSVP tickets created successfully. This page may take a few moments to update.",
         )
         return reverse(
             "dashboard_organizer:rsvp_tickets",
@@ -1238,7 +1240,11 @@ class MessageBatchCreateView(TeamContextMixin, CreateView):
         return response
 
     def get_success_url(self):
-        messages.add_message(self.request, messages.SUCCESS, "Messages sent successfully. This page may take a few moments to update.")
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Messages sent successfully. This page may take a few moments to update.",
+        )
         return reverse(
             "dashboard_organizer:message_batches",
             args=(

@@ -47,38 +47,30 @@
                     {% for input in form.hidden_fields %}
                         {{ input }}
                     {% endfor %}
-                    <h5 class="pb-1">{% trans "Name & how many tickets you want to sell" %}</h5>
+                    <h5 class="pb-1">{% trans "What is the name of your ticket tier?" %}</h5>
                     <div class="row g-3 mb-3">
                         <div class="col-lg-6">
                             {% with form.name as input %}
                                 {% include "forms/input.html" %}
                             {% endwith %}
                         </div>
+                    </div>
+                    <br />
+                    <h5 class="pb-1">{% trans "How many tickets do you want to sell?" %}</h5>
+                    <div class="row g-3 mb-3">
                         <div class="col-lg-6">
                             {% with form.capacity as input %}
                                 {% include "forms/input.html" %}
                             {% endwith %}
                         </div>
                     </div>
-                    <br />
+                    <br/>
                     <h5 class="pb-1">
-                        {% trans "How many guests per attendee?" %}
+                        {% trans "How many guests per ticket?" %}
                     </h5>
                     <div class="row g-3 mb-3">
                         <div class="col-lg-6">
                             {% with form.guests_allowed as input %}
-                                {% include "forms/input.html" %}
-                            {% endwith %}
-                        </div>
-                    </div>
-                    <br />
-                    <h5 class="pb-1">{% trans "How many guests in total?" %}</h5>
-                    <p class="text-body-secondary">
-                        {% trans "When set, our system will make sure that the total number of guests allowed for this tier (via issued tickets) does not exceed this number." %}
-                    </p>
-                    <div class="row g-3 mb-3">
-                        <div class="col-lg-6">
-                            {% with form.guest_supply as input %}
                                 {% include "forms/input.html" %}
                             {% endwith %}
                         </div>
@@ -99,6 +91,7 @@
                     </div>
                     <br />
                     <button class="btn btn-link btn-lg w-100 text-start d-flex align-items-center mb-3"
+                            id="extra-information-toggle"
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#extra-information"
@@ -113,18 +106,42 @@
                         <i class="fa-light fa-angle-down ms-auto"></i>
                     </button>
                     <div class="collapse" id="extra-information">
+                        <h6>{% trans "Max per person" %}</h6>
+                        <p class="text-body-secondary mb-2">
+                            {% trans "Use this field to limit the maximum tickets that attendees can buy at once." %}
+                        </p>
                         <div class="row g-3 mb-3">
                             <div class="col-lg-6">
                                 {% with form.max_per_person as input %}
                                     {% include "forms/input.html" %}
                                 {% endwith %}
                             </div>
+                        </div>
+                        <br />
+                        <h6>{% trans "Guest Supply" %}</h6>
+                        <p class="text-body-secondary mb-2">
+                            {% trans "When set, our system will make sure that the total number of guests allowed for this tier (via issued tickets) does not exceed this number." %}
+                        </p>
+                        <div class="row g-3 mb-3">
+                            <div class="col-lg-6">
+                                {% with form.guest_supply as input %}
+                                    {% include "forms/input.html" %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                        <br />
+                        <h6>{% trans "Additional information" %}</h6>
+                        <p class="text-body-secondary mb-2">
+                            {% trans "Use this field to provide further information about this ticket tier." %}
+                        </p>
+                        <div class="row g-3 mb-3">
                             <div class="col-lg-6">
                                 {% with form.additional_information as input %}
                                     {% include "forms/input.html" %}
                                 {% endwith %}
                             </div>
                         </div>
+                        <br />
                         <div class="sp-checkbox-container mb-3">
                             {{ form.hidden_from_public | as_crispy_field }}
                         </div>

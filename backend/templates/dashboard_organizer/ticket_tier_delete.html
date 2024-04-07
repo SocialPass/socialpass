@@ -47,7 +47,7 @@
                                 <a href="{% url 'dashboard_organizer:event_tickets' current_team.slug object.event.pk %}#ticket-tiers"
                                    class="btn btn-secondary">{% trans "Go back" %}</a>
                             {% else %}
-                                <a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.slug object.event.pk object.pk %}#extra-information"
+                                <a href="{% url 'dashboard_organizer:ticket_tier_update' current_team.slug object.event.pk object.pk %}#extra-information-toggle"
                                    class="btn btn-secondary">{% trans "Edit to hide from public" %}</a>
                             {% endif %}
                         </div>

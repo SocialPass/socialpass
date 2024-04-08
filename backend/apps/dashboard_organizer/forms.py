@@ -272,28 +272,18 @@ class TicketTierForm(forms.ModelForm):
             "additional_information",
         ]
         widgets = {
-            "name": forms.TextInput(
-                attrs={
-                    "placeholder": _(
-                        "Short name for free ticket tier e.g. General Admission"
-                    )
-                }
-            ),
+            "name": forms.TextInput(attrs={"placeholder": _("E.g. General Admission")}),
             "capacity": forms.NumberInput(attrs={"min": 1}),
             "max_per_person": forms.NumberInput(attrs={"min": 1}),
             "guests_allowed": forms.NumberInput(attrs={"min": 0}),
             "guest_supply": forms.NumberInput(
                 attrs={
                     "min": 0,
-                    "placeholder": _("Total number of guests allowed."),
+                    "placeholder": _("Total number of guests allowed"),
                 }
             ),
             "additional_information": forms.TextInput(
-                attrs={
-                    "placeholder": _(
-                        "Additional information for this tier provided by the host."
-                    )
-                }
+                attrs={"placeholder": _("Extra information for this tier")}
             ),
         }
         labels = {
@@ -305,11 +295,6 @@ class TicketTierForm(forms.ModelForm):
             "hidden_availability": _("Hide number of tickets available from public"),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.instance.pk:
-            self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
-
 
 class TierAssetOwnershipForm(TicketTierForm):
     """
@@ -319,27 +304,21 @@ class TierAssetOwnershipForm(TicketTierForm):
     class Meta:
         model = TicketTier
         fields = TicketTierForm.Meta.fields + [
-            "balance_required",
             "network",
             "token_address",
-            "token_id",
         ]
         widgets = {
             **TicketTierForm.Meta.widgets,
             **{
                 "token_address": forms.TextInput(
-                    attrs={"placeholder": _("e.g. 0xb53...4394n")}
+                    attrs={"required": "required", "placeholder": _("e.g. 0xb53...4394n")}
                 ),
-                "token_id": forms.TextInput(attrs={"placeholder": _("e.g. 1,2,3,4,5")}),
-                "balance_required": forms.NumberInput(attrs={"min": 1}),
             },
         }
         labels = {
             **TicketTierForm.Meta.labels,
             **{
                 "token_address": _("NFT Collection Token Address"),
-                "balance_required": _("Balance Required"),
-                "token_id": _("OPTIONAL: Token IDs Required"),
             },
         }
 

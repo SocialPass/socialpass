@@ -272,13 +272,7 @@ class TicketTierForm(forms.ModelForm):
             "additional_information",
         ]
         widgets = {
-            "name": forms.TextInput(
-                attrs={
-                    "placeholder": _(
-                        "E.g. General Admission"
-                    )
-                }
-            ),
+            "name": forms.TextInput(attrs={"placeholder": _("E.g. General Admission")}),
             "capacity": forms.NumberInput(attrs={"min": 1}),
             "max_per_person": forms.NumberInput(attrs={"min": 1}),
             "guests_allowed": forms.NumberInput(attrs={"min": 0}),
@@ -289,11 +283,7 @@ class TicketTierForm(forms.ModelForm):
                 }
             ),
             "additional_information": forms.TextInput(
-                attrs={
-                    "placeholder": _(
-                        "Extra information for this tier"
-                    )
-                }
+                attrs={"placeholder": _("Extra information for this tier")}
             ),
         }
         labels = {
@@ -321,10 +311,7 @@ class TierAssetOwnershipForm(TicketTierForm):
             **TicketTierForm.Meta.widgets,
             **{
                 "token_address": forms.TextInput(
-                    attrs={
-                        "required": "required",
-                        "placeholder": _("e.g. 0xb53...4394n")
-                    }
+                    attrs={"required": "required", "placeholder": _("e.g. 0xb53...4394n")}
                 ),
             },
         }

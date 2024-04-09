@@ -1106,9 +1106,10 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
 
         # Validate all emails
         emails = form.cleaned_data["customer_emails"].split(",")
-        for email in emails:
+        for index, email in enumerate(emails):
             try:
-                validate_email(email.strip())
+                emails[index] = email.strip()
+                validate_email(emails[index])
             except Exception as e:
                 print(e)
                 messages.add_message(

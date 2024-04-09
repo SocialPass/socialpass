@@ -43,12 +43,6 @@ def task_handle_event_google_class(event_pk):
 @app.task
 def task_handle_rsvp_delivery(rsvp_batch_pk, emails, guests_allowed):
     rsvp_batch_obj = RSVPBatch.objects.get(pk=rsvp_batch_pk)
-
-    # Create checkout session and items
-    # Also track success and failure
-    success_list = []
-    failure_list = []
-
     for email in emails:
         try:
             checkout_session = CheckoutSession.objects.create(
@@ -63,12 +57,10 @@ def task_handle_rsvp_delivery(rsvp_batch_pk, emails, guests_allowed):
                 quantity=1,
                 selected_guests=guests_allowed,
             )
-            success_list.append(email)
+            rsvp_batch_obj.success_list.append(email)
         except Exception as e:
             raise e
-            failure_list.append(email)
-    rsvp_batch_obj.success_list = ", ".join(map(str, success_list))
-    rsvp_batch_obj.failure_list = ", ".join(map(str, failure_list))
+            rsvp_batch_obj.failure_list.append(email)
     rsvp_batch_obj.save()
 
     # Fulfill checkout sessions once everything has been set up

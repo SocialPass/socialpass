@@ -1228,8 +1228,8 @@ class RSVPBatch(DBModel):
         on_delete=models.CASCADE,
     )
     ticket_tier = models.ForeignKey("TicketTier", on_delete=models.CASCADE, null=True)
-    success_list = models.TextField(blank=True)
-    failure_list = models.TextField(blank=True)
+    success_list = ArrayField(models.EmailField(), blank=True, default=list)
+    failure_list = ArrayField(models.EmailField(), blank=True, default=list)
 
     def __str__(self) -> str:
         return f"RSVPBatch: {self.public_id}"

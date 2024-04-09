@@ -57,7 +57,7 @@
                                 </div>
                                 <p class="text-body-secondary mb-2">
                                     {% if rsvp_batch.failure_list %}
-                                        {{ rsvp_batch.failure_list }}
+                                        {{ rsvp_batch.failure_list|join:", " }}
                                     {% else %}
                                         ---
                                     {% endif %}
@@ -67,7 +67,7 @@
                                 </div>
                                 <p class="text-body-secondary mb-0">
                                     {% if rsvp_batch.success_list %}
-                                        {{ rsvp_batch.success_list }}
+                                        {{ rsvp_batch.success_list|join:", " }}
                                     {% else %}
                                         ---
                                     {% endif %}

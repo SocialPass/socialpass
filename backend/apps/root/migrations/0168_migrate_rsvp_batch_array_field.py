@@ -10,18 +10,15 @@ def migrate_rsvp_batch_array_field(apps, schema_editor):
     for batch in rsvp_batches:
         # Convert success list into proper list
         if batch.success_list:
-            batch.success_list = {email.strip() for email in batch.success_list.split(',') if email.strip()}
+            batch.success_list = {batch.success_list}
         else:
             batch.success_list = {}
         # Convert failure list into proper list
         if batch.failure_list:
-            batch.failure_list = {email.strip() for email in batch.failure_list.split(',') if email.strip()}
+            batch.failure_list = {batch.failure_list}
         else:
             batch.failure_list = {}
-
         batch.save()
-        print(batch.success_list)
-        print(batch.failure_list)
 
 class Migration(migrations.Migration):
 

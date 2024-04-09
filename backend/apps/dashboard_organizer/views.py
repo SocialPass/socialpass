@@ -1104,11 +1104,6 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
     def form_valid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        # Create RSVPBatch object
-        rsvp_batch = RSVPBatch.objects.create(
-            event=context["event"], ticket_tier=form.cleaned_data["ticket_tier"]
-        )
-
         # Validate all emails
         emails = form.cleaned_data["customer_emails"].split(",")
         for email in emails:
@@ -1124,6 +1119,9 @@ class RSVPCreateTicketsView(TeamContextMixin, FormView):
                 return super().form_invalid(form)
 
         # Deliver RSVPs via background task
+        rsvp_batch = RSVPBatch.objects.create(
+            event=context["event"], ticket_tier=form.cleaned_data["ticket_tier"]
+        )
         task_handle_rsvp_delivery.defer(
             rsvp_batch_pk=rsvp_batch.pk,
             emails=emails,

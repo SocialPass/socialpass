@@ -103,9 +103,6 @@ class WhiteLabel(DBModel):
     ticket_text_color = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return f"WhiteLabel: {self.brand_name}"
 
 
@@ -161,13 +158,14 @@ class Team(DBModel):
     )
 
     def __str__(self):
-        """
-        return string representation of model
-        """
         return f"Team: {self.name}"
 
     @cached_property
     def stripe_account_payouts_enabled(self):
+        """
+        Use the Stripe API to determine if the team is ready to accept payouts 
+        or not. If not, then we block the creation of paid ticket tiers.
+        """
         status = {
             "details_submitted": False,
             "payouts_enabled": False,
@@ -188,6 +186,9 @@ class Team(DBModel):
 
     @cached_property
     def stripe_refresh_link(self):
+        """
+        Get link to refresh Stripe session.
+        """
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}"  # http works in local, converted to https on prod
         url = reverse(
@@ -200,6 +201,9 @@ class Team(DBModel):
 
     @cached_property
     def stripe_return_link(self):
+        """
+        Link to return to from Stripe session.
+        """
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}"  # http works in local, converted to https on prod
         url = reverse(
@@ -212,6 +216,9 @@ class Team(DBModel):
 
     @cached_property
     def stripe_express_dashboard_link(self):
+        """
+        Link to Stripe Connect dashboard.
+        """
         if self.stripe_account_id:
             login_link = stripe.Account.create_login_link(
                 self.stripe_account_id,
@@ -263,6 +270,9 @@ class Invitation(DBModel):
             return False
 
     def send_invitation(self, request, **kwargs):
+        """
+        Send invitation (link to accept and join team) via email.
+        """
         invitation_url = reverse(
             "dashboard_organizer:invitation_detail", args=[self.public_id]
         )
@@ -378,20 +388,32 @@ class Event(DBModel):
 
     @cached_property
     def tickets_sold_count(self):
+        """
+        Number of tickets sold.
+        """
         return Ticket.objects.filter(event=self).count()
 
     @cached_property
     def tickets_scanned_count(self):
+        """
+        Number of tickets scanned.
+        """
         return Ticket.objects.filter(event=self, redeemed_at__isnull=False).count()
 
     @cached_property
     def attendees_count(self):
+        """
+        Number of ticket holders + guests (for all tickets).
+        """
         sold = Ticket.objects.filter(event=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"]
         return sold_with_party or 0
 
     @cached_property
     def attendees_scanned_count(self):
+        """
+        Number of ticket holders + guests (for scanned tickets).
+        """
         redeemed = Ticket.objects.filter(event=self, redeemed_at__isnull=False)
         redeemed_with_party = redeemed.aggregate(models.Sum("party_size"))[
             "party_size__sum"
@@ -400,6 +422,9 @@ class Event(DBModel):
 
     @cached_property
     def description_html(self):
+        """
+        Used for the Quill editor + rich text description.
+        """
         description_html = ""
         try:
             description_html = json.loads(self.description)["html"]
@@ -432,6 +457,9 @@ class Event(DBModel):
 
     @cached_property
     def cover_image_url(self):
+        """
+        Events will always have a placeholder cover image by default.
+        """
         if self.cover_image:
             return self.cover_image.url
         else:
@@ -439,6 +467,9 @@ class Event(DBModel):
 
     @cached_property
     def ticket_tier_counts(self):
+        """
+        Used to get the number of available tiers on the checkout app.
+        """
         tiers = TicketTier.objects.filter(
             event_id=self.id, hidden_from_public=False
         ).values("event_id")
@@ -496,7 +527,9 @@ class Ticket(DBModel):
         return f"Ticket: {str(self.id)}"
 
     def redeem_ticket(self, scanner_id):
-        """Redeems a ticket."""
+        """
+        Redeems a ticket (scan via the scanner app).
+        """
         # Check if redeemed
         if self.redeemed_at:
             raise AlreadyRedeemedError("Ticket is already redeemed.")
@@ -515,7 +548,7 @@ class Ticket(DBModel):
 
     def get_google_ticket_url(self):
         """
-        retrieve the save URL for the Google ticket
+        Retrieve the save URL for the Google ticket
         - create a Google ticket if one doesn't exist, set ID, save object
         - return save URL for success case, False otherwise
         - we use Boolean to handle fail case (not exceptions), because this
@@ -539,7 +572,7 @@ class Ticket(DBModel):
 
     def get_apple_ticket_bytes(self):
         """
-        retrieve the bytes for the Apple ticket
+        Retrieve the bytes for the Apple ticket
         - return bytes for success case, False otherwise
         - we use Boolean to handle fail case (not exceptions), because this
           functionality should be non-blocking during fail case
@@ -704,24 +737,39 @@ class TicketTier(DBModel):
 
     @cached_property
     def tickets_sold_count(self):
+        """
+        Number of tickets sold.
+        """
         return Ticket.objects.filter(ticket_tier=self).count()
 
     @cached_property
     def tickets_available(self):
+        """
+        Number of tickets available for sale.
+        """
         return self.capacity - self.tickets_sold_count
 
     @cached_property
     def tickets_sold_exceeding_capacity(self):
+        """
+        In case of overflow, where number of tickets sold exceeds the capacity.
+        """
         return abs(int(self.capacity - self.tickets_sold_count))
 
     @cached_property
     def guests_count(self):
+        """
+        Number of guests.
+        """
         sold = Ticket.objects.filter(ticket_tier=self)
         sold_with_party = sold.aggregate(models.Sum("party_size"))["party_size__sum"] or 0
         return sold_with_party - self.tickets_sold_count
 
     @cached_property
     def guests_available(self):
+        """
+        Number of guests available for allocation.
+        """
         if self.guest_supply:
             return self.guest_supply - self.guests_count
         else:
@@ -729,6 +777,9 @@ class TicketTier(DBModel):
 
     @cached_property
     def additional_information_html(self):
+        """
+        Support for HTML on the additional_information field.
+        """
         additional_information_html = ""
         try:
             additional_information_html = json.loads(self.additional_information)["html"]
@@ -738,6 +789,9 @@ class TicketTier(DBModel):
 
     @cached_property
     def price_per_ticket_cents(self):
+        """
+        Convert the price per ticket to cents.
+        """
         return round(self.price_per_ticket * 100)
 
 
@@ -826,7 +880,7 @@ class CheckoutSession(DBModel):
     @cached_property
     def get_tickets_link(self):
         """
-        get link to get the tickets for this session
+        Get link to get the tickets for this session
         """
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}"  # http works in local, converted to https on prod
@@ -841,6 +895,10 @@ class CheckoutSession(DBModel):
 
     @cached_property
     def total_price(self):
+        """
+        Calculate the total price of all the checkout items in the session.
+        Only used for FIAT tiers for now.
+        """
         if self.session_type == CheckoutSession.SessionType.FIAT:
             total_price = 0
             checkout_items = CheckoutItem.objects.select_related("ticket_tier").filter(
@@ -855,6 +913,9 @@ class CheckoutSession(DBModel):
 
     @cached_property
     def stripe_checkout_cancel_link(self):
+        """
+        Link to return to in case the Stripe payment session is cancelled.
+        """
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}"  # http works in local, converted to https on prod
         token = jwt.encode(
@@ -875,6 +936,10 @@ class CheckoutSession(DBModel):
 
     @cached_property
     def stripe_checkout_success_link(self):
+        """
+        Link to return to in case the Stripe payment session is fulfilled 
+        successfully, ie, payment is made.
+        """
         domain = Site.objects.all().first().domain
         domain = f"http://{domain}"  # http works in local, converted to https on prod
         token = jwt.encode(
@@ -896,7 +961,7 @@ class CheckoutSession(DBModel):
     @cached_property
     def application_fee_amount(self):
         """
-        application fee that will be requested to be applied to the payment,
+        Application fee that will be requested to be applied to the payment,
         & transferred to the application owner’s Stripe account.
 
         Current model is 4% + $2 Per Ticket (i.e., $100 ticket we would take $6)
@@ -912,6 +977,9 @@ class CheckoutSession(DBModel):
 
     @cached_property
     def unsigned_message(self):
+        """
+        Used during the NFT verification process.
+        """
         return (
             "Greetings from SocialPass."
             "\nSign this message to prove ownership"
@@ -922,7 +990,7 @@ class CheckoutSession(DBModel):
 
     def send_confirmation_email(self, custom_message=None):
         """
-        send the confirmation link to the attendee's email
+        Send the confirmation link to the attendee's email
         """
         ctx = {
             "event": self.event,
@@ -942,7 +1010,8 @@ class CheckoutSession(DBModel):
 
     def create_tickets(self):
         """
-        Create Tickets for all related checkout_item objects and bulk insert into the database.
+        Create Tickets for all related checkout_item objects and bulk insert 
+        into the database.
         """
         tickets_to_create = []
         for checkout_item in self.checkoutitem_set.all():
@@ -975,8 +1044,8 @@ class CheckoutSession(DBModel):
 
     def fulfill_session(self):
         """
-        # Create tickets, send confirmation email, and set as FULFILLED
-        # Also wrap in try/catch for better error reporting
+        Create tickets, send confirmation email, and set as FULFILLED.
+        Also wrap in try/catch for better error reporting.
         """
         try:
             self.create_tickets()
@@ -1068,7 +1137,7 @@ class CheckoutSession(DBModel):
             )
         ]
 
-        # Get all the NFT's of each unique from address in the above list and return
+        # Get all the NFTs of each unique from address in the above list and return
         delegated_wallets = set(delegation["from"] for delegation in filteredDelegations)
         if not delegated_wallets:
             raise AssetOwnershipCheckoutError("No delegated wallets found.")
@@ -1210,6 +1279,10 @@ class CheckoutItem(DBModel):
 
     @cached_property
     def unit_amount(self):
+        """
+        Get the total price of the checkout item in cents. Only used for FIAT 
+        tiers for now.
+        """
         if not self.ticket_tier.category == TicketTier.Category.FIAT:
             return "N/A"
 

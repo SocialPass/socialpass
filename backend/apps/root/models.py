@@ -163,7 +163,7 @@ class Team(DBModel):
     @cached_property
     def stripe_account_payouts_enabled(self):
         """
-        Use the Stripe API to determine if the team is ready to accept payouts 
+        Use the Stripe API to determine if the team is ready to accept payouts
         or not. If not, then we block the creation of paid ticket tiers.
         """
         status = {
@@ -937,7 +937,7 @@ class CheckoutSession(DBModel):
     @cached_property
     def stripe_checkout_success_link(self):
         """
-        Link to return to in case the Stripe payment session is fulfilled 
+        Link to return to in case the Stripe payment session is fulfilled
         successfully, ie, payment is made.
         """
         domain = Site.objects.all().first().domain
@@ -1010,7 +1010,7 @@ class CheckoutSession(DBModel):
 
     def create_tickets(self):
         """
-        Create Tickets for all related checkout_item objects and bulk insert 
+        Create Tickets for all related checkout_item objects and bulk insert
         into the database.
         """
         tickets_to_create = []
@@ -1280,7 +1280,7 @@ class CheckoutItem(DBModel):
     @cached_property
     def unit_amount(self):
         """
-        Get the total price of the checkout item in cents. Only used for FIAT 
+        Get the total price of the checkout item in cents. Only used for FIAT
         tiers for now.
         """
         if not self.ticket_tier.category == TicketTier.Category.FIAT:

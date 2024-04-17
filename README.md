@@ -41,6 +41,7 @@ pip install -r backend/config/requirements/local.txt
 # Example using: https://postgresapp.com/
 psql
 create database local_socialpass_db;
+\q
 
 # Run migrations (if necessary)
 python backend/manage.py migrate
@@ -66,6 +67,7 @@ pip install -r backend/config/requirements/local.txt
 # Example using: https://postgresapp.com/
 psql
 create database local_socialpass_db;
+\q
 
 # Run migrations (if necessary)
 python backend/manage.py migrate

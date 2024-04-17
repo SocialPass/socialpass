@@ -100,9 +100,11 @@ window.signWallet = signWallet;
 watchAccount((account) => {
 	if (account.address) {
 		document.getElementById("id_wallet_address").value = account.address;
+		document.getElementById("delegate-section").classList.remove("d-none");
 	}
 	// #3 Wallet has disconnected
 	if (!account.address) {
 		document.getElementById("id_wallet_address").value = "";
+		document.getElementById("delegate-section").classList.add("d-none");
 	}
 });

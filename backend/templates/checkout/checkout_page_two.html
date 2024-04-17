@@ -92,29 +92,31 @@
                             </div>
                             <!-- Delegate -->
                             {% if object.session_type == "ASSET_OWNERSHIP" %}
-                                <button type="button"
-                                        class="btn btn-secondary d-flex align-items-center w-100 py-2"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#delegate-collapse"
-                                        aria-expanded="false"
-                                        aria-controls="delegate-collapse">
-                                    <img src="{% static 'images/delegate.png' %}"
-                                         height="24px"
-                                         width="24px"
-                                         alt="Delegate"
-                                         class="d-block me-3 flex-shrink-0">
-                                    <div class="fw-bold mt-1">Use Delegated Wallet</div>
-                                    <i class="fa-light fa-angle-down ms-auto"></i>
-                                </button>
-                                <div class="collapse mt-2 p-3 pb-0 rounded border"
-                                     id="delegate-collapse"
-                                     style="background-color: var(--bs-action-bg)">
-                                    <label for="{{ form.delegated_wallet.id_for_label }}">
-                                        {% trans "Check to use a delegated wallet to verify asset ownership:" %}
-                                    </label>
-                                    <div class="mt-1">
-                                        <div class="sp-checkbox-container d-inline-block">
-                                            {{ form.delegated_wallet | as_crispy_field }}
+                                <div id="delegate-section" class="d-none">
+                                    <button type="button"
+                                            class="btn btn-secondary d-flex align-items-center w-100 py-2"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#delegate-collapse"
+                                            aria-expanded="false"
+                                            aria-controls="delegate-collapse">
+                                        <img src="{% static 'images/delegate.png' %}"
+                                             height="24px"
+                                             width="24px"
+                                             alt="Delegate"
+                                             class="d-block me-3 flex-shrink-0">
+                                        <div class="fw-bold mt-1">Use Delegated Wallet</div>
+                                        <i class="fa-light fa-angle-down ms-auto"></i>
+                                    </button>
+                                    <div class="collapse mt-2 p-3 pb-0 rounded border"
+                                         id="delegate-collapse"
+                                         style="background-color: var(--bs-action-bg)">
+                                        <label for="{{ form.delegated_wallet.id_for_label }}">
+                                            {% trans "Check to use a delegated wallet to verify asset ownership:" %}
+                                        </label>
+                                        <div class="mt-1">
+                                            <div class="sp-checkbox-container d-inline-block">
+                                                {{ form.delegated_wallet | as_crispy_field }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -359,6 +359,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context["timezones"] = [
             timezone for timezone in sorted(zoneinfo.available_timezones())
         ]
+        context["form"].fields["team"].initial = context["current_team"]
         return context
 
     def form_valid(self, form, **kwargs):

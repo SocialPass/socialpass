@@ -18,6 +18,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from eth_account import Account
 from eth_account.messages import encode_defunct
@@ -355,7 +356,7 @@ class Event(DBModel):
     hide_address = models.BooleanField(default=False)  # Hide address, except for attendees
 
     # Publish info
-    slug = AutoSlugField(populate_from="title", null=True)
+    slug = models.SlugField(null=True, blank=True)
     sales_start = models.DateTimeField(
         help_text=_("When your event sales will start (optional)."),
         blank=True,
@@ -375,6 +376,9 @@ class Event(DBModel):
 
     def __str__(self):
         return f"Event: {self.title}"
+
+    def clean_slug(self):
+        return slugify(self.title)
 
     @cached_property
     def tickets_sold_count(self):

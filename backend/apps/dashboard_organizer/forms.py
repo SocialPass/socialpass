@@ -113,7 +113,9 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = [
+            "team",
             "title",
+            "slug",
             "description",
             "cover_image",
             "start_date",

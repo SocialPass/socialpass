@@ -30,3 +30,7 @@ jobs:
         run: |
           djlint . --lint
           djlint . --check
+      - name: django testing
+        working-directory: ./backend
+        run : |
+        ./manage.py test --settings=config.settings.test --failfast

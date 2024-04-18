@@ -143,6 +143,10 @@ class InvitationDetailView(View):
         )
 
     def email_belongs_to_user(self, user, invitation):
+        """
+        Check if the recipient email (of the invitation) belongs to the logged
+        in user or not.
+        """
         if user.is_authenticated:
             for emailaddress in user.emailaddress_set.all():
                 if invitation.email == emailaddress.email and emailaddress.verified:

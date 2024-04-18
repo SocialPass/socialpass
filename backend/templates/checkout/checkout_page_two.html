@@ -42,7 +42,10 @@
         <!-- Checkout start -->
         <div class="p-3 p-sm-4 mt-3">
             <div class="container-fluid overflow-hidden">
-                <div class="row g-3">
+                <form {% if object.session_type == "ASSET_OWNERSHIP" %}id="asset_ownership_form"{% endif %}
+                      class="checkout-form row g-3"
+                      method="POST">
+                    {% csrf_token %}
                     <div class="col-lg-7">
                         {% if object.event.waitlist_enabled %}
                             <div class="alert alert-primary text-primary-emphasis d-flex align-items-center fw-bold">
@@ -87,6 +90,38 @@
                                 <w3m-button />
                                 <!-- End Web3Modal -->
                             </div>
+                            <!-- Delegate -->
+                            {% if object.session_type == "ASSET_OWNERSHIP" %}
+                                <div id="delegate-section" class="d-none">
+                                    <button type="button"
+                                            class="btn btn-secondary d-flex align-items-center w-100 py-2"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#delegate-collapse"
+                                            aria-expanded="false"
+                                            aria-controls="delegate-collapse">
+                                        <img src="{% static 'images/delegate.png' %}"
+                                             height="24px"
+                                             width="24px"
+                                             alt="Delegate"
+                                             class="d-block me-3 flex-shrink-0">
+                                        <div class="fw-bold mt-1">Use Delegated Wallet</div>
+                                        <i class="fa-light fa-angle-down ms-auto"></i>
+                                    </button>
+                                    <div class="collapse mt-2 p-3 pb-0 rounded border"
+                                         id="delegate-collapse"
+                                         style="background-color: var(--bs-action-bg)">
+                                        <label for="{{ form.delegated_wallet.id_for_label }}">
+                                            {% trans "Check to use a delegated wallet to verify asset ownership:" %}
+                                        </label>
+                                        <div class="mt-1">
+                                            <div class="sp-checkbox-container d-inline-block">
+                                                {{ form.delegated_wallet | as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- End Delegate -->
                             <p class="text-body-secondary border-top pt-3 mt-3">
                                 <i class="fa-light fa-info-circle me-1 mt-1 flex-shrink-0"></i>
                                 {% trans "It's worth noting again that you only need to prove the ownership of the required digital asset(s). This is not a trade, but only a verification." %}
@@ -122,8 +157,7 @@
                         </div>
                         <h6 class="mt-4 mb-0">{% trans "Confirm Order" %}</h6>
                         <hr>
-                        <form class="checkout-form my-3" id="asset_ownership_form" method="POST">
-                            {% csrf_token %}
+                        <div class="my-3">
                             {% if object.session_type == "ASSET_OWNERSHIP" %}
                                 {{ form.wallet_address }}
                                 {{ form.signed_message }}
@@ -138,31 +172,6 @@
                                     {% include "forms/input.html" %}
                                 {% endwith %}
                             </div>
-                            <!-- Delegate -->
-                            {% if object.session_type == "ASSET_OWNERSHIP" %}
-                                <div class="mb-3 p-3 pb-0 rounded border border-secondary border-opacity-25">
-                                    <label class="d-flex align-items-start"
-                                           for="{{ form.delegated_wallet.id_for_label }}">
-                                        <img src="{% static 'images/delegate.png' %}"
-                                             height="24px"
-                                             width="24px"
-                                             alt="Delegate"
-                                             class="d-block me-3 flex-shrink-0">
-                                        <div>
-                                            <div class="fw-bold">Delegate</div>
-                                            <div class="text-body-secondary" style="font-size: var(--bs-font-size-sm)">
-                                                {% trans "Check the following to use a delegated wallet to verify asset ownership:" %}
-                                            </div>
-                                        </div>
-                                    </label>
-                                    <div class="text-center mt-2">
-                                        <div class="sp-checkbox-container d-inline-block">
-                                            {{ form.delegated_wallet | as_crispy_field }}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <!-- End Delegate -->
                             <button id="checkout-submit-btn"
                                     type="submit"
                                     {% if object.session_type == "ASSET_OWNERSHIP" %} onclick="signWallet(message, event)" {% endif %}
@@ -183,17 +192,19 @@
                                  id="wallet-signature-error-message">
                                 {% trans "Please sign the message with your wallet address to continue." %}
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
         <!-- Checkout end -->
     </div>
 {% endblock content %}
 {% block extra_body %}
-    <script src="{% static 'js/dist/bundle.js' %}"></script>
-    <script>
-	const message = `{{object.unsigned_message}}`
-    </script>
+    {% if object.session_type == "ASSET_OWNERSHIP" %}
+        <script src="{% static 'js/dist/bundle.js' %}"></script>
+        <script>
+    	const message = `{{object.unsigned_message}}`
+        </script>
+    {% endif %}
 {% endblock extra_body %}

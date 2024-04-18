@@ -44,6 +44,17 @@
                             {{ input }}
                         {% endfor %}
                         <h4 class="h5">{% trans "Team Name" %}</h4>
+                        <div id="slug-change-warning"
+                             class="alert alert-warning d-none"
+                             role="alert">
+                            <div class="fw-bold text-warning-emphasis">
+                                <i class="fa-solid fa-warning me-1"></i>
+                                {% trans "Warning" %}
+                            </div>
+                            <div class="mt-1" style="font-size: var(--bs-font-size-sm);">
+                                {% trans "Changing the name of your team will also change all of the public URLs of your events. In case you've shared any of the URLs already, you'll need to make sure to share the new ones." %}
+                            </div>
+                        </div>
                         <div class="mb-3">
                             {% with form.name as input %}
                                 {% include "forms/input.html" %}
@@ -73,3 +84,10 @@
     </div>
     <!-- Team form end -->
 {% endblock content %}
+{% block extra_body %}
+    <script type="text/javascript">
+    document.getElementById("id_name").addEventListener("input", function(e) {
+        document.getElementById("slug-change-warning").classList.remove("d-none");
+    });
+    </script>
+{% endblock extra_body %}

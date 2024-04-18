@@ -60,6 +60,17 @@
             </div>
         </div>
         <div class="col-12 col-md">
+            <div id="slug-change-warning"
+                 class="alert alert-warning d-none"
+                 role="alert">
+                <div class="fw-bold text-warning-emphasis">
+                    <i class="fa-solid fa-warning me-1"></i>
+                    {% trans "Warning" %}
+                </div>
+                <div class="mt-1" style="font-size: var(--bs-font-size-sm);">
+                    {% trans "Changing the title will also change the public URL of this event. In case you've shared the URL already, you'll need to make sure to share the new one." %}
+                </div>
+            </div>
             <div class="mb-3">
                 {% with form.title as input %}
                     {% include "forms/input.html" %}

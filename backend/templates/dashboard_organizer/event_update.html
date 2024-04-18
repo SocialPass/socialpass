@@ -27,6 +27,12 @@
     </div>
 {% endblock content %}
 {% block extra_body %}
+    <script type="text/javascript">
+	document.getElementById("id_title").addEventListener("input", function(e) {
+		document.getElementById("slug-change-warning").classList.remove("d-none");
+	});
+	
+    </script>
     <script>
 	var startDateInput = document.getElementById("id_start_date");
 	var endDateInput = document.getElementById("id_end_date");

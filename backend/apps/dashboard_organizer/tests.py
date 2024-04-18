@@ -346,13 +346,13 @@ class TestEventDetailViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_event_promote_get(self):
+    def test_event_share_get(self):
         self.assertTrue(
             self.client.login(username=self.user.username, password="password")
         )
         response = self.client.get(
             reverse(
-                "dashboard_organizer:event_promote", args=(self.team.slug, self.event.pk)
+                "dashboard_organizer:event_share", args=(self.team.slug, self.event.pk)
             )
         )
         self.assertEqual(response.status_code, 200)

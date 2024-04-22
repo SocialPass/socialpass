@@ -89,7 +89,7 @@
                         <div class="fw-bold">
                             {% trans "Customer:" %}
                             <span class="fw-normal">{{ checkout_session.name }} | <a href="mailto:{{ checkout_session.email }}"
-    class="text-decoration-none">{{ checkout_session.email }}</a></span>
+                                                                                     class="text-decoration-none">{{ checkout_session.email }}</a></span>
                         </div>
                         <div class="fw-bold text-body-secondary mt-2"
                              style="font-size: var(--bs-font-size-sm)">
@@ -182,17 +182,17 @@
 {% block extra_body %}
     <script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
     <script type="text/javascript">
-	let fulfillButtons = document.querySelectorAll(".wq-fulfill-button");
-	for (let i = 0; i < fulfillButtons.length; i++) {
-		fulfillButtons[i].addEventListener("click", (e) => {
-			if (document.activeElement === e.target) {
-				document.activeElement.blur();
-			}
-			e.target.classList.add("disabled");
-			e.target.classList.add("pe-none");
-			e.target.setAttribute("tabindex", "-1");
-			e.target.innerHTML = "<i class='fa-light fa-circle-notch fa-spin'></i>";
-		});
-	}
+        let fulfillButtons = document.querySelectorAll(".wq-fulfill-button");
+        for (let i = 0; i < fulfillButtons.length; i++) {
+            fulfillButtons[i].addEventListener("click", (e) => {
+                if (document.activeElement === e.target) {
+                    document.activeElement.blur();
+                }
+                e.target.classList.add("disabled");
+                e.target.classList.add("pe-none");
+                e.target.setAttribute("tabindex", "-1");
+                e.target.innerHTML = "<i class='fa-light fa-circle-notch fa-spin'></i>";
+            });
+        }
     </script>
 {% endblock %}

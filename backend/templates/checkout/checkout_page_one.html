@@ -410,9 +410,9 @@
                         <p class="text-body-secondary mb-0"
                            style="font-size: var(--bs-font-size-sm)">
                             {% trans "By clicking on the above button, you're also agreeing to our" %} <a href="{% static 'legal/terms-of-use.pdf' %}"
-    class="fw-bold"
-    target="_blank"
-    rel="noreferrer">{% trans "Terms of Use" %}<i class="fa-light fa-external-link mx-1"></i></a>
+                                                                                                          class="fw-bold"
+                                                                                                          target="_blank"
+                                                                                                          rel="noreferrer">{% trans "Terms of Use" %}<i class="fa-light fa-external-link mx-1"></i></a>
                         </p>
                     </div>
                 </div>
@@ -424,53 +424,53 @@
 {% endblock %}
 {% block extra_body %}
     <script type="text/javascript">
-	if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
-		document.getElementById("desc-read").classList.remove("d-none");
-	}
+        if (document.getElementById("desc-cont").scrollHeight > document.getElementById("desc-cont").clientHeight) {
+            document.getElementById("desc-read").classList.remove("d-none");
+        }
     </script>
     <script src="{% static 'js/TicketSelector.js' %}"></script>
     {% if sales_status == "UPCOMING" %}
         <script>
 		// The data/time we want to countdown to
-	    var countDownDate = new Date("{{ sales_start_with_tzinfo.isoformat }}").getTime();
+            var countDownDate = new Date("{{ sales_start_with_tzinfo.isoformat }}").getTime();
 
 		// Run countdownIntervalFunc every second
-	    var countdownIntervalFunc = setInterval(function() {
-			var now = new Date().getTime();
-	    	var timeleft = countDownDate - now;
+            var countdownIntervalFunc = setInterval(function() {
+                var now = new Date().getTime();
+                var timeleft = countDownDate - now;
 
 		    // Calculating the days, hours, minutes and seconds left
-		    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-		    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-		    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-		    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+                var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
 
 		    // Result is output to the specific element
-		   	document.getElementById("days").innerHTML = `${days}`;
-			document.getElementById("hours").innerHTML = `${hours}`;
-			document.getElementById("mins").innerHTML = `${minutes}`;
-			document.getElementById("secs").innerHTML = `${seconds}`;
+                document.getElementById("days").innerHTML = `${days}`;
+                document.getElementById("hours").innerHTML = `${hours}`;
+                document.getElementById("mins").innerHTML = `${minutes}`;
+                document.getElementById("secs").innerHTML = `${seconds}`;
 
 		    // Countdown is over
-		    if (timeleft < 0) {
+                if (timeleft < 0) {
 		    	// Clear interval
-		        clearInterval(countdownIntervalFunc);
+                    clearInterval(countdownIntervalFunc);
 
 		        // Reset UI
-			    document.getElementById("days").innerHTML = "";
-			    document.getElementById("hours").innerHTML = "";
-			    document.getElementById("mins").innerHTML = "";
-			    document.getElementById("secs").innerHTML = "";
-			    document.getElementById("countdown-timer").classList.add("d-none");
-			    document.getElementById("ticket-sales-has-started").classList.remove("d-none");
+                    document.getElementById("days").innerHTML = "";
+                    document.getElementById("hours").innerHTML = "";
+                    document.getElementById("mins").innerHTML = "";
+                    document.getElementById("secs").innerHTML = "";
+                    document.getElementById("countdown-timer").classList.add("d-none");
+                    document.getElementById("ticket-sales-has-started").classList.remove("d-none");
 
 			    // Re-load page after 3 seconds
-			    setInterval(function() {
-			    	location.reload();
-			    }, 3000);
-			}
-	    }, 1000);
-	
+                    setInterval(function() {
+                        location.reload();
+                    }, 3000);
+                }
+            }, 1000);
+
         </script>
     {% endif %}
 {% endblock %}

@@ -46,125 +46,125 @@
         <meta name="twitter:site" content="@socialpass_io">
         <!-- Custom styles -->
         <style type="text/css">
-			#sidebar {
-				width: 320px;
-				max-width: 100%;
-				border-right: 0;
-			}
+            #sidebar {
+                width: 320px;
+                max-width: 100%;
+                border-right: 0;
+            }
 
-			@media (min-width: 1200px) {
-				body {
-					padding-left: 320px;
-				}
+            @media (min-width: 1200px) {
+                body {
+                    padding-left: 320px;
+                }
 
-				#sidebar {
-					position: fixed;
-					top: 0;
-					left: 0;
-					height: 100%;
-					background-color: var(--bs-content-bg) !important;
-					overflow-y: auto;
-				}
-			}
+                #sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    background-color: var(--bs-content-bg) !important;
+                    overflow-y: auto;
+                }
+            }
 
-			.sticky-navbar {
-				background-color: hsla(var(--bs-secondary-bg-hsl), 0.75);
-				backdrop-filter: blur(8px);
-				-webkit-backdrop-filter: blur(8px);
-			}
+            .sticky-navbar {
+                background-color: hsla(var(--bs-secondary-bg-hsl), 0.75);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
 
-			.content-container :target {
-				scroll-margin-top: 140px;
-			}
+            .content-container :target {
+                scroll-margin-top: 140px;
+            }
 
-			.event-list-link:hover {
-				background-color: hsla(var(--bs-primary-hsl), 0.05);
-			}
+            .event-list-link:hover {
+                background-color: hsla(var(--bs-primary-hsl), 0.05);
+            }
 
-			.cover-img-input {
-				width: 116px;
-				padding: var(--bs-spacer-1);
-				margin: var(--bs-spacer-1);
-				border-radius: var(--bs-border-radius);
-				overflow: hidden;
-			}
+            .cover-img-input {
+                width: 116px;
+                padding: var(--bs-spacer-1);
+                margin: var(--bs-spacer-1);
+                border-radius: var(--bs-border-radius);
+                overflow: hidden;
+            }
 
-			.cover-img-input .form-label,
-			.cover-img-input .form-text,
-			.cover-img-input .input-group {
-				display: none;
-			}
+            .cover-img-input .form-label,
+            .cover-img-input .form-text,
+            .cover-img-input .input-group {
+                display: none;
+            }
 
-			.cover-img-input * {
-				border-color: transparent !important;
-			}
+            .cover-img-input * {
+                border-color: transparent !important;
+            }
 
-			.vertical-form-group > .form-floating:not(:first-child) {
-				margin-top: -1px;
-			}
+            .vertical-form-group > .form-floating:not(:first-child) {
+                margin-top: -1px;
+            }
 
-			.vertical-form-group > .form-floating:not(:last-child) > .form-control,
-			.vertical-form-group > .form-floating:not(:last-child) > .form-select {
-				border-bottom-left-radius: 0;
-				border-bottom-right-radius: 0;
-			}
+            .vertical-form-group > .form-floating:not(:last-child) > .form-control,
+            .vertical-form-group > .form-floating:not(:last-child) > .form-select {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
 
-			.vertical-form-group > .form-floating:not(:first-child) > .form-control,
-			.vertical-form-group > .form-floating:not(:first-child) > .form-select {
-				border-top-left-radius: 0;
-				border-top-right-radius: 0;
-			}
+            .vertical-form-group > .form-floating:not(:first-child) > .form-control,
+            .vertical-form-group > .form-floating:not(:first-child) > .form-select {
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
 
-			.sp-checkbox-container .form-check-input {
-				border-radius: 4px;
-			}
+            .sp-checkbox-container .form-check-input {
+                border-radius: 4px;
+            }
 
-			.sp-checkbox-container .form-check-label {
-				font-weight: bold;
-			}
+            .sp-checkbox-container .form-check-label {
+                font-weight: bold;
+            }
 
-			.waiting-queue-card {
-				box-shadow: var(--bs-box-shadow-sm);
-			}
+            .waiting-queue-card {
+                box-shadow: var(--bs-box-shadow-sm);
+            }
 
-			.waiting-queue-card:has(.wq-fulfilled) {
-				box-shadow: 0 0 0 2px var(--bs-success);
-			}
+            .waiting-queue-card:has(.wq-fulfilled) {
+                box-shadow: 0 0 0 2px var(--bs-success);
+            }
 
-			.waiting-queue-card:has(.wq-waiting) {
-				box-shadow: 0 0 0 2px var(--bs-warning);
-			}
-		
+            .waiting-queue-card:has(.wq-waiting) {
+                box-shadow: 0 0 0 2px var(--bs-warning);
+            }
+
         </style>
         <!-- Google Tag Manager -->
         {% if not debug %}
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
             <script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'G-FQKKDVZZVX');
-		
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-FQKKDVZZVX');
+
             </script>
         {% endif %}
         <!-- End Google Tag Manager -->
         <!-- Start of sociapass support Widget -->
         <script>
-		  (function(d,t) {
-			var BASE_URL="https://support.socialpass.io";
-			var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-			g.src=BASE_URL+"/packs/js/sdk.js";
-			g.defer = true;
-			g.async = true;
-			s.parentNode.insertBefore(g,s);
-			g.onload=function(){
-			  window.chatwootSDK.run({
-				websiteToken: 'YCzxapxfua4vyELnoZ68v5Dm',
-				baseUrl: BASE_URL
-			  })
-			}
-		  })(document,"script");
-		
+            (function(d,t) {
+                var BASE_URL="https://support.socialpass.io";
+                var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+                g.src=BASE_URL+"/packs/js/sdk.js";
+                g.defer = true;
+                g.async = true;
+                s.parentNode.insertBefore(g,s);
+                g.onload=function(){
+                    window.chatwootSDK.run({
+                        websiteToken: 'YCzxapxfua4vyELnoZ68v5Dm',
+                        baseUrl: BASE_URL
+                    })
+                }
+            })(document,"script");
+
         </script>
         <!-- End of sociapass support Widget -->
         {% if request.resolver_match.url_name == 'event_create' or request.resolver_match.url_name == 'event_update' %}
@@ -397,55 +397,55 @@
             <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
             <script type="text/javascript">
 			/* Enable all tooltips */
-			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
 			/* Setting cookie */
-			function setCookie(name, value, days) {
-			    var expires = "";
-			    if (days) {
-			        var date = new Date();
-			        date.setTime(date.getTime() + (days*24*60*60*1000));
-			        expires = "; expires=" + date.toUTCString();
-			    }
-			    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-			}
+                function setCookie(name, value, days) {
+                    var expires = "";
+                    if (days) {
+                        var date = new Date();
+                        date.setTime(date.getTime() + (days*24*60*60*1000));
+                        expires = "; expires=" + date.toUTCString();
+                    }
+                    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+                }
 
 			/* Toggle dark mode */
-			function toggleDarkMode() {
-				var preference = document.documentElement.getAttribute("data-bs-theme");
-				if (!preference) {
-					document.documentElement.setAttribute("data-bs-theme", "dark");
-				}
-				else {
-					if (preference === "light") {
-						document.documentElement.setAttribute("data-bs-theme", "dark");
-					} else {
-						document.documentElement.setAttribute("data-bs-theme", "light");
-					}
-				}
+                function toggleDarkMode() {
+                    var preference = document.documentElement.getAttribute("data-bs-theme");
+                    if (!preference) {
+                        document.documentElement.setAttribute("data-bs-theme", "dark");
+                    }
+                    else {
+                        if (preference === "light") {
+                            document.documentElement.setAttribute("data-bs-theme", "dark");
+                        } else {
+                            document.documentElement.setAttribute("data-bs-theme", "light");
+                        }
+                    }
 
-				setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
-			}
+                    setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
+                }
 
 			// Copy to clipboard
-			function copyToClipboard(copyBtn, target) {
-				const range = document.createRange();
-				range.selectNode(target);
-				window.getSelection().removeAllRanges();
-				window.getSelection().addRange(range);
-				document.execCommand("copy");
-				window.getSelection().removeAllRanges();
+                function copyToClipboard(copyBtn, target) {
+                    const range = document.createRange();
+                    range.selectNode(target);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    document.execCommand("copy");
+                    window.getSelection().removeAllRanges();
 
 				// Show confirmation
-				copyBtn.innerHTML = "Copied!";
+                    copyBtn.innerHTML = "Copied!";
 
 				// Hide confirmation after 2 seconds
-				setTimeout(function () {
-					copyBtn.innerHTML = "Copy";
-				}, 2000);
-			}
-		
+                    setTimeout(function () {
+                        copyBtn.innerHTML = "Copy";
+                    }, 2000);
+                }
+
             </script>
             {% if debug %}
                 <script type="text/javascript">
@@ -455,33 +455,33 @@
 			 * This is used to create the dark mode and sidebar toggle shortcuts.
 			 * These shortcuts are very useful for testing.
 			 */
-			document.addEventListener("keydown", function (event) {
-				if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
-					event = event || window.event;
+                    document.addEventListener("keydown", function (event) {
+                        if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+                            event = event || window.event;
 
-					if (!(event.ctrlKey || event.metaKey)) {
+                            if (!(event.ctrlKey || event.metaKey)) {
 						// Toggle dark mode when [shift] + [D] keys are pressed
-						if (event.shiftKey && event.which == 68) {
-							if (
-								document.documentElement.getAttribute(
-									"data-bs-theme"
-								) === "light"
-							) {
-								document.documentElement.setAttribute(
-									"data-bs-theme",
-									"dark"
-								);
-							} else {
-								document.documentElement.setAttribute(
-									"data-bs-theme",
-									"light"
-								);
-							}
-						}
-					}
-				}
-			});
-		
+                                if (event.shiftKey && event.which == 68) {
+                                    if (
+                                        document.documentElement.getAttribute(
+                                            "data-bs-theme"
+                                        ) === "light"
+                                    ) {
+                                        document.documentElement.setAttribute(
+                                            "data-bs-theme",
+                                            "dark"
+                                        );
+                                    } else {
+                                        document.documentElement.setAttribute(
+                                            "data-bs-theme",
+                                            "light"
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 </script>
             {% endif %}
             {% block extra_body %}

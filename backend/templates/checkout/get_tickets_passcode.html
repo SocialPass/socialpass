@@ -104,20 +104,20 @@
 {% block extra_body %}
     {% if request.GET.passcode %}
         <script type="text/javascript">
-		document.getElementById("id_passcode")
-			.value = "{{ request.GET.passcode }}";
+            document.getElementById("id_passcode")
+                .value = "{{ request.GET.passcode }}";
 
 		// Show check indicator to user after 2.5 seconds
-		setTimeout(function() {
-			document.getElementById("process-indicator")
-				.innerHTML = "<i class='fa-regular fa-check'></i>";
-		}, 2500);
+            setTimeout(function() {
+                document.getElementById("process-indicator")
+                    .innerHTML = "<i class='fa-regular fa-check'></i>";
+            }, 2500);
 
 		// POST and redirect after 3 seconds (less jarring than sudden redirect)
-		setTimeout(function() {
-			document.getElementById("passcode_submit_btn").click();
-		}, 3000);
-	
+            setTimeout(function() {
+                document.getElementById("passcode_submit_btn").click();
+            }, 3000);
+
         </script>
     {% endif %}
 {% endblock extra_body %}

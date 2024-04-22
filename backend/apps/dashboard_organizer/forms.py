@@ -42,7 +42,7 @@ class TeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ["name", "description", "image"]
+        fields = ["name", "slug", "description", "image"]
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": _("Event Planner Company")}),
             "description": forms.Textarea(

@@ -4,7 +4,6 @@ import uuid
 import jwt
 import rollbar
 import stripe
-from autoslug import AutoSlugField
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -121,7 +120,7 @@ class Team(DBModel):
 
     # basic info
     name = models.CharField(max_length=255, unique=True)
-    slug = AutoSlugField(populate_from="name", null=True, unique=True)
+    slug = models.SlugField(null=True, blank=True, unique=True)
     image = models.ImageField(
         help_text=_(
             "A brand image for your team. Please make sure the image is "
@@ -166,6 +165,9 @@ class Team(DBModel):
         return string representation of model
         """
         return f"Team: {self.name}"
+
+    def clean_slug(self):
+        return slugify(self.name)
 
     @cached_property
     def stripe_account_payouts_enabled(self):

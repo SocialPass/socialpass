@@ -1,0 +1,53 @@
+{% load i18n crispy_forms_tags %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            <ul class="mb-0">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error|escape }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% for input in form.hidden_fields %}
+        {{ input }}
+    {% endfor %}
+    <h4 class="h5">{% trans "Profile Name" %}</h4>
+    <div class="mb-1">
+        {% with form.name as input %}
+            {% include "forms/input.html" %}
+        {% endwith %}
+    </div>
+    <div class="mb-3 text-break" style="font-size: 12px;">
+        <strong>{% trans "For Public URLs (Slug): " %}</strong>
+        <strong class="text-primary-emphasis" id="slug-preview">
+            NOT-SET
+        </strong>
+    </div>
+    {{ form.slug.as_hidden }}
+    {% if form.slug.errors %}
+        <ul class="text-danger-emphasis fw-bold mt-3">
+            {% for error in form.slug.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <h4 class="h5">
+        {% trans "Description & Image (Optional)" %}
+    </h4>
+    <div class="mb-3">
+        {% with form.description as input %}
+            {% include "forms/textarea.html" %}
+        {% endwith %}
+    </div>
+    {% with form.image as input %}
+        {{ input|as_crispy_field }}
+    {% endwith %}
+    <div class="text-end mt-3">
+        <button type="submit" class="btn btn-primary w-100 d-block">
+            {% trans "Submit" %}
+        </button>
+    </div>
+</form>

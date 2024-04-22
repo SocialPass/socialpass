@@ -397,8 +397,8 @@ class TestEventDetailViews(TransactionTestCase):
             },
         )
         # Run worker, complete RSVP task
-        app = app.with_connector(app.connector.get_worker_connector())
-        app.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
+        yapp = app.with_connector(app.connector.get_worker_connector())
+        yapp.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
 
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to, ["x@socialpass.io"])
@@ -437,8 +437,8 @@ class TestEventDetailViews(TransactionTestCase):
             },
         )
         # Run worker, complete message batch task
-        app = app.with_connector(app.connector.get_worker_connector())
-        app.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
+        yapp = app.with_connector(app.connector.get_worker_connector())
+        yapp.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
 
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(MessageBatch.objects.filter(event=self.event).count(), 1)

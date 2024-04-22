@@ -204,7 +204,7 @@
     {% if object.session_type == "ASSET_OWNERSHIP" %}
         <script src="{% static 'js/dist/bundle.js' %}"></script>
         <script>
-    	const message = `{{object.unsigned_message}}`
+            const message = `{{object.unsigned_message}}`
         </script>
     {% endif %}
 {% endblock extra_body %}

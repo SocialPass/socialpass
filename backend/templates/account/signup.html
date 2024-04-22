@@ -66,7 +66,7 @@
                                class="form-check-input rounded-1">
                         <label for="agree-to-terms" class="form-check-label" style="margin-top: 1px">
                             {% trans "I agree to the" %} <a href="{% static 'legal/organizer-terms-and-conditions.pdf' %}"
-    target="_blank">{% trans "Terms & Conditions" %}<i class="fa-light fa-external-link ms-1"></i></a>
+                                                            target="_blank">{% trans "Terms & Conditions" %}<i class="fa-light fa-external-link ms-1"></i></a>
                         </label>
                     </div>
                 </div>
@@ -85,15 +85,15 @@
         </div>
     </div>
     <script type="text/javascript">
-	const agreeToTerms = document.getElementById("agree-to-terms");
-	const submitBtn = document.getElementById("submit-btn");
+        const agreeToTerms = document.getElementById("agree-to-terms");
+        const submitBtn = document.getElementById("submit-btn");
 
-	agreeToTerms.addEventListener('change', (event) => {
-		if (event.currentTarget.checked) {
-			submitBtn.removeAttribute("disabled");
-		} else {
-			submitBtn.setAttribute("disabled", "disabled");
-		}
-	});
+        agreeToTerms.addEventListener('change', (event) => {
+            if (event.currentTarget.checked) {
+                submitBtn.removeAttribute("disabled");
+            } else {
+                submitBtn.setAttribute("disabled", "disabled");
+            }
+        });
     </script>
 {% endblock %}

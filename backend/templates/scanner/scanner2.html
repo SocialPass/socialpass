@@ -4,14 +4,14 @@
 
 {% block extra_head %}
     <style>
-	#fade-me-in.htmx-added {
-		opacity: 0;
-	}
+        #fade-me-in.htmx-added {
+            opacity: 0;
+        }
 
-	#fade-me-in {
-		opacity: 1;
-		transition: opacity 0.25s ease-in;
-	}
+        #fade-me-in {
+            opacity: 1;
+            transition: opacity 0.25s ease-in;
+        }
     </style>
 {% endblock extra_head %}
 {% block content %}
@@ -54,14 +54,14 @@
                         <div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
                             <strong class="antialiased">{% trans "Attendees:" %}
                                 <br class="d-sm-none" />
-                            {{ object.attendees_count }}</strong>
+                                {{ object.attendees_count }}</strong>
                         </div>
                     </div>
                     <div class="col">
                         <div class="bg-primary-subtle text-primary-emphasis rounded-3 px-2 py-1 h-100">
                             <strong class="antialiased">{% trans "Check-Ins:" %}
                                 <br class="d-sm-none" />
-                            {{ object.attendees_scanned_count }}</strong>
+                                {{ object.attendees_scanned_count }}</strong>
                         </div>
                     </div>
                 </div>
@@ -124,55 +124,55 @@
     <script>
 	// Setup
 	// Get elements, setup callback
-	const qrInput = document.getElementById("qr-reader-input");
-	const qrSubmit = document.getElementById("qr-submit");
-	const qrResults = document.getElementById("results");
-	const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        const qrInput = document.getElementById("qr-reader-input");
+        const qrSubmit = document.getElementById("qr-submit");
+        const qrResults = document.getElementById("results");
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
 		// prevent re-scanning of same ticket
-		if (qrInput.value !== decodedText){
-			qrInput.value = decodedText;
-			qrSubmit.disabled = false;
-			qrSubmit.click();
-		}
-	};
+            if (qrInput.value !== decodedText){
+                qrInput.value = decodedText;
+                qrSubmit.disabled = false;
+                qrSubmit.click();
+            }
+        };
 
-	const resetQr = () => {
-		qrInput.value = '';
-		qrResults.innerHTML = '';
-		qrSubmit.disabled = true;
-	}
+        const resetQr = () => {
+            qrInput.value = '';
+            qrResults.innerHTML = '';
+            qrSubmit.disabled = true;
+        }
 
 	// Init scanner
-	const qrScanner = new Html5Qrcode("qr-reader", false);
-	const config = { fps: 10, qrbox: 250 };
-    const didStart = qrScanner
-		.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-		.then(() => true);
+        const qrScanner = new Html5Qrcode("qr-reader", false);
+        const config = { fps: 10, qrbox: 250 };
+        const didStart = qrScanner
+            .start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+            .then(() => true);
 
 	// After swap behavior on POST
-	htmx.on('htmx:afterSwap', function(event) {
-		if (event.detail.requestConfig.verb === 'post'){
+        htmx.on('htmx:afterSwap', function(event) {
+            if (event.detail.requestConfig.verb === 'post'){
 			// Play audio
-			var audio = document.getElementById('myAudio');
-			var scannerStats = document.getElementById('scanner-stats-card');
-			audio.muted = false;
-			audio.play();
+                var audio = document.getElementById('myAudio');
+                var scannerStats = document.getElementById('scanner-stats-card');
+                audio.muted = false;
+                audio.play();
 
 			// Reload stats
-			htmx.trigger(scannerStats, "reload-stats");
+                htmx.trigger(scannerStats, "reload-stats");
 
 			// Reset notification after 4 seconds
-			setTimeout(function() {
-				document.getElementById("last-scan").innerHTML = document.getElementById("fade-me-in").getAttribute("data-scan-indicator");
-				document.getElementById("results").innerHTML = `
+                setTimeout(function() {
+                    document.getElementById("last-scan").innerHTML = document.getElementById("fade-me-in").getAttribute("data-scan-indicator");
+                    document.getElementById("results").innerHTML = `
 					<div class="px-3 py-2 bg-secondary-subtle text-center">
 						<i class="fa-regular fa-barcode-read fa-beat-fade me-1"></i>
 						<strong>Scanning...</strong>
 					</div>
 				`;
-				document.getElementById("qr-reader-input").value = "";
-			}, 4000);
-		}
-	});
+                    document.getElementById("qr-reader-input").value = "";
+                }, 4000);
+            }
+        });
     </script>
 {% endblock %}

@@ -38,8 +38,8 @@
                     <ol>
                         <li>
                             {% trans "Your event is already " %}<a class="text-decoration-none"
-   href="{% url 'dashboard_organizer:event_share' current_team.slug event.pk %}"
-   target="_blank">{% trans "ready to share" %}</a>
+                                                                   href="{% url 'dashboard_organizer:event_share' current_team.slug event.pk %}"
+                                                                   target="_blank">{% trans "ready to share" %}</a>
                         </li>
                         <li>
                             {% trans "You need to create at least one ticket tier to start selling" %}
@@ -258,7 +258,7 @@
                                     <div class="fw-bold text-primary-emphasis h5 mb-0">
                                         {% if ticket_tier.tickets_sold_count > ticket_tier.capacity %}
                                             {{ ticket_tier.capacity }} + {{ ticket_tier.tickets_sold_exceeding_capacity }}<span data-bs-toggle="tooltip"
-      data-bs-title="This exceeds capacity because of the use of the RSVP or waiting queue systems.">*</span>
+                                                                                                                                data-bs-title="This exceeds capacity because of the use of the RSVP or waiting queue systems.">*</span>
                                         {% else %}
                                             {{ ticket_tier.tickets_sold_count }}
                                         {% endif %}

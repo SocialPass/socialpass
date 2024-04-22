@@ -62,222 +62,222 @@
         {% if not debug %}
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
             <script>
-				window.dataLayer = window.dataLayer || [];
-				function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
-				gtag('config', 'G-FQKKDVZZVX');
-			
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-FQKKDVZZVX');
+
             </script>
         {% endif %}
         <!-- Start of sociapass support Widget -->
         <script>
-		  	(function(d,t) {
-				var BASE_URL="https://support.socialpass.io";
-				var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-				g.src=BASE_URL+"/packs/js/sdk.js";
-				g.defer = true;
-				g.async = true;
-				s.parentNode.insertBefore(g,s);
-				g.onload=function(){
-			  		window.chatwootSDK.run({
-						websiteToken: 'YCzxapxfua4vyELnoZ68v5Dm',
-						baseUrl: BASE_URL
-			  		})
-				}
-		  	})(document,"script");
-		
+            (function(d,t) {
+                var BASE_URL="https://support.socialpass.io";
+                var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+                g.src=BASE_URL+"/packs/js/sdk.js";
+                g.defer = true;
+                g.async = true;
+                s.parentNode.insertBefore(g,s);
+                g.onload=function(){
+                    window.chatwootSDK.run({
+                        websiteToken: 'YCzxapxfua4vyELnoZ68v5Dm',
+                        baseUrl: BASE_URL
+                    })
+                }
+            })(document,"script");
+
         </script>
         <!-- End of sociapass support Widget -->
         <!-- Custom styles -->
         <style type="text/css">
 			/* Ticket tier (checkbox or radio) */
 
-			.tiers-container {
-				display: none;
-			}
+            .tiers-container {
+                display: none;
+            }
 
-			.ticket-tier {
-				position: relative;
-				display: block;
-			}
+            .ticket-tier {
+                position: relative;
+                display: block;
+            }
 
-			.ticket-tier-input {
-				position: absolute;
-				opacity: 0;
-				height: 0;
-				width: 0;
-			}
+            .ticket-tier-input {
+                position: absolute;
+                opacity: 0;
+                height: 0;
+                width: 0;
+            }
 
-			.ticket-tier-label {
-				position: relative;
-				display: block;
-				height: 100%;
-				cursor: pointer;
-				-webkit-user-select: none;
-				-moz-user-select: none;
-				-ms-user-select: none;
-				user-select: none;
+            .ticket-tier-label {
+                position: relative;
+                display: block;
+                height: 100%;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
 
-				padding: 16px 24px;
-				background-color: var(--bs-content-bg);
-				border: var(--bs-border-width) solid var(--bs-primary-border-subtle);
-				border-radius: var(--bs-border-radius-xl);
-			}
+                padding: 16px 24px;
+                background-color: var(--bs-content-bg);
+                border: var(--bs-border-width) solid var(--bs-primary-border-subtle);
+                border-radius: var(--bs-border-radius-xl);
+            }
 
-			@media (max-width: 576px) {
-				.ticket-tier-label {
-					padding: 16px;
-				}
-			}
+            @media (max-width: 576px) {
+                .ticket-tier-label {
+                    padding: 16px;
+                }
+            }
 
-			.ticket-tier-input:checked + .ticket-tier-label {
-				background-color: var(--bs-primary-bg-subtle);
-				z-index: 1;
-			}
+            .ticket-tier-input:checked + .ticket-tier-label {
+                background-color: var(--bs-primary-bg-subtle);
+                z-index: 1;
+            }
 
-			.ticket-tier-check {
-				display: none;
-				margin-right: 5px;
-				color: var(--bs-primary-text-emphasis);
-			}
+            .ticket-tier-check {
+                display: none;
+                margin-right: 5px;
+                color: var(--bs-primary-text-emphasis);
+            }
 
-			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-check {
-				display: inline;
-			}
+            .ticket-tier-input:checked + .ticket-tier-label .ticket-tier-check {
+                display: inline;
+            }
 
-			.ticket-tier-uncheck {
-				margin-right: 5px;
-			}
+            .ticket-tier-uncheck {
+                margin-right: 5px;
+            }
 
-			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-uncheck {
-				display: none;
-			}
+            .ticket-tier-input:checked + .ticket-tier-label .ticket-tier-uncheck {
+                display: none;
+            }
 
-			.ticket-tier-input:focus + .ticket-tier-label {
-				box-shadow: 0 0 0 4px hsla(var(--bs-primary-hsl), 0.25);
-				z-index: 2;
-			}
+            .ticket-tier-input:focus + .ticket-tier-label {
+                box-shadow: 0 0 0 4px hsla(var(--bs-primary-hsl), 0.25);
+                z-index: 2;
+            }
 
-			.ticket-tier-input:disabled + .ticket-tier-label {
-				background-color: var(--bs-secondary-bg);
-				border-color: var(--bs-border-color);
-				cursor: not-allowed;
-			}
+            .ticket-tier-input:disabled + .ticket-tier-label {
+                background-color: var(--bs-secondary-bg);
+                border-color: var(--bs-border-color);
+                cursor: not-allowed;
+            }
 
-			.ticket-tier-input:disabled + .ticket-tier-label .ticket-tier-controls {
-				display: none;
-			}
+            .ticket-tier-input:disabled + .ticket-tier-label .ticket-tier-controls {
+                display: none;
+            }
 
-			.ticket-tier-input + .ticket-tier-label .ticket-tier-guest {
-				display: none;
-			}
+            .ticket-tier-input + .ticket-tier-label .ticket-tier-guest {
+                display: none;
+            }
 
-			.ticket-tier-input:checked + .ticket-tier-label .ticket-tier-guest {
-				display: block;
-			}
+            .ticket-tier-input:checked + .ticket-tier-label .ticket-tier-guest {
+                display: block;
+            }
 
 			/* Ticket tier group and radio */
 
-			.ticket-tier-group {
-				display: flex;
-				vertical-align: middle;
-			}
+            .ticket-tier-group {
+                display: flex;
+                vertical-align: middle;
+            }
 
-			.ticket-tier-group > .ticket-tier {
-				flex: 1 1 auto;
-			}
+            .ticket-tier-group > .ticket-tier {
+                flex: 1 1 auto;
+            }
 
-			.ticket-tier-group > .ticket-tier:not(:first-child) > .ticket-tier-label {
-				margin-left: 8px;
-			}
+            .ticket-tier-group > .ticket-tier:not(:first-child) > .ticket-tier-label {
+                margin-left: 8px;
+            }
 
-			.ticket-tier-group > .ticket-tier:not(:last-child) > .ticket-tier-label {
-				margin-right: 8px;
-			}
+            .ticket-tier-group > .ticket-tier:not(:last-child) > .ticket-tier-label {
+                margin-right: 8px;
+            }
 
-			.ticket-tier-input[type=radio] + .ticket-tier-label {
-				border: 0;
-			}
+            .ticket-tier-input[type=radio] + .ticket-tier-label {
+                border: 0;
+            }
 
-			.ticket-tier-input[type=radio]:checked + .ticket-tier-label {
-				color: var(--bs-primary-foreground);
-				background-color: var(--bs-primary);
-			}
+            .ticket-tier-input[type=radio]:checked + .ticket-tier-label {
+                color: var(--bs-primary-foreground);
+                background-color: var(--bs-primary);
+            }
 
-			.ticket-tier-input[type=radio]:not(:focus) + .ticket-tier-label {
-				box-shadow: var(--bs-box-shadow-sm);
-			}
+            .ticket-tier-input[type=radio]:not(:focus) + .ticket-tier-label {
+                box-shadow: var(--bs-box-shadow-sm);
+            }
 
-			.ticket-tier-input[type=radio]:disabled + .ticket-tier-label {
-				border: var(--bs-border-width) solid var(--bs-border-color);
-				box-shadow: none;
-				opacity: 0.6;
-			}
+            .ticket-tier-input[type=radio]:disabled + .ticket-tier-label {
+                border: var(--bs-border-width) solid var(--bs-border-color);
+                box-shadow: none;
+                opacity: 0.6;
+            }
 
-			.ticket-tier-label .ticket-tier-additional-info p:last-child {
-				margin-bottom: 0;
-			}
+            .ticket-tier-label .ticket-tier-additional-info p:last-child {
+                margin-bottom: 0;
+            }
 
 			/* Input group */
 
-			.input-group-pill > *:first-child {
-				border-top-left-radius: var(--bs-border-radius-pill);
-				border-bottom-left-radius: var(--bs-border-radius-pill);
-			}
+            .input-group-pill > *:first-child {
+                border-top-left-radius: var(--bs-border-radius-pill);
+                border-bottom-left-radius: var(--bs-border-radius-pill);
+            }
 
-			.input-group-pill > *:last-child {
-				border-top-right-radius: var(--bs-border-radius-pill);
-				border-bottom-right-radius: var(--bs-border-radius-pill);
-			}
+            .input-group-pill > *:last-child {
+                border-top-right-radius: var(--bs-border-radius-pill);
+                border-bottom-right-radius: var(--bs-border-radius-pill);
+            }
 
 			/* Description */
 
-			#desc-cont p > br {
-				display: none;
-			}
+            #desc-cont p > br {
+                display: none;
+            }
 
-			#desc-read {
-				padding-top: 120px;
-				background-image: linear-gradient(transparent, var(--bs-content-bg));
-				border-bottom: 1px solid var(--bs-border-color);
-			}
+            #desc-read {
+                padding-top: 120px;
+                background-image: linear-gradient(transparent, var(--bs-content-bg));
+                border-bottom: 1px solid var(--bs-border-color);
+            }
 
-			.max-h-200 {
-				max-height: 200px !important;
-			}
+            .max-h-200 {
+                max-height: 200px !important;
+            }
 
 			/* Checkbox */
 
-			.sp-checkbox-container .form-check-input {
-				border-radius: 4px;
-			}
+            .sp-checkbox-container .form-check-input {
+                border-radius: 4px;
+            }
 
-			.sp-checkbox-container .form-check-label {
-				font-weight: bold;
-			}
-		
+            .sp-checkbox-container .form-check-label {
+                font-weight: bold;
+            }
+
         </style>
         {% if organizer_team.whitelabel.css %}
             <style type="text/css">
-				{{ organizer_team.whitelabel.css }}
-				{% if organizer_team.whitelabel.font_regular and organizer_team.whitelabel.font_bold %}
-					@font-face {
-						font-family: "Custom";
-						src: url("{{ organizer_team.whitelabel.font_regular.url }}");
-						font-weight: normal;
-					}
+                {{ organizer_team.whitelabel.css }}
+                {% if organizer_team.whitelabel.font_regular and organizer_team.whitelabel.font_bold %}
+                    @font-face {
+                        font-family: "Custom";
+                        src: url("{{ organizer_team.whitelabel.font_regular.url }}");
+                        font-weight: normal;
+                    }
 
-					@font-face {
-						font-family: "Custom";
-						src: url("{{ organizer_team.whitelabel.font_bold.url }}");
-						font-weight: bold;
-					}
+                    @font-face {
+                        font-family: "Custom";
+                        src: url("{{ organizer_team.whitelabel.font_bold.url }}");
+                        font-weight: bold;
+                    }
 
-					:root {
-						--bs-body-font-family: "Custom";
-					}
-				{% endif %}
-			
+                    :root {
+                        --bs-body-font-family: "Custom";
+                    }
+                {% endif %}
+
             </style>
         {% endif %}
         {% block extra_head %}
@@ -386,37 +386,37 @@
             <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
             <script type="text/javascript">
 			/* Enable all tooltips */
-			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
 			/* Setting cookie */
-			function setCookie(name, value, days) {
-			    var expires = "";
-			    if (days) {
-			        var date = new Date();
-			        date.setTime(date.getTime() + (days*24*60*60*1000));
-			        expires = "; expires=" + date.toUTCString();
-			    }
-			    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-			}
+                function setCookie(name, value, days) {
+                    var expires = "";
+                    if (days) {
+                        var date = new Date();
+                        date.setTime(date.getTime() + (days*24*60*60*1000));
+                        expires = "; expires=" + date.toUTCString();
+                    }
+                    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+                }
 
 			/* Toggle dark mode */
-			function toggleDarkMode() {
-				var preference = document.documentElement.getAttribute("data-bs-theme");
-				if (!preference) {
-					document.documentElement.setAttribute("data-bs-theme", "dark");
-				}
-				else {
-					if (preference === "light") {
-						document.documentElement.setAttribute("data-bs-theme", "dark");
-					} else {
-						document.documentElement.setAttribute("data-bs-theme", "light");
-					}
-				}
+                function toggleDarkMode() {
+                    var preference = document.documentElement.getAttribute("data-bs-theme");
+                    if (!preference) {
+                        document.documentElement.setAttribute("data-bs-theme", "dark");
+                    }
+                    else {
+                        if (preference === "light") {
+                            document.documentElement.setAttribute("data-bs-theme", "dark");
+                        } else {
+                            document.documentElement.setAttribute("data-bs-theme", "light");
+                        }
+                    }
 
-				setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
-			}
-		
+                    setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
+                }
+
             </script>
             {% if debug %}
                 <script type="text/javascript">
@@ -426,33 +426,33 @@
 			 * This is used to create the dark mode and sidebar toggle shortcuts.
 			 * These shortcuts are very useful for testing.
 			 */
-			document.addEventListener("keydown", function (event) {
-				if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
-					event = event || window.event;
+                    document.addEventListener("keydown", function (event) {
+                        if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+                            event = event || window.event;
 
-					if (!(event.ctrlKey || event.metaKey)) {
+                            if (!(event.ctrlKey || event.metaKey)) {
 						// Toggle dark mode when [shift] + [D] keys are pressed
-						if (event.shiftKey && event.which == 68) {
-							if (
-								document.documentElement.getAttribute(
-									"data-bs-theme"
-								) === "light"
-							) {
-								document.documentElement.setAttribute(
-									"data-bs-theme",
-									"dark"
-								);
-							} else {
-								document.documentElement.setAttribute(
-									"data-bs-theme",
-									"light"
-								);
-							}
-						}
-					}
-				}
-			});
-		
+                                if (event.shiftKey && event.which == 68) {
+                                    if (
+                                        document.documentElement.getAttribute(
+                                            "data-bs-theme"
+                                        ) === "light"
+                                    ) {
+                                        document.documentElement.setAttribute(
+                                            "data-bs-theme",
+                                            "dark"
+                                        );
+                                    } else {
+                                        document.documentElement.setAttribute(
+                                            "data-bs-theme",
+                                            "light"
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 </script>
             {% endif %}
             {% block extra_body %}

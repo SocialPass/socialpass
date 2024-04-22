@@ -6,6 +6,7 @@ from django.test import TestCase, TransactionTestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils import timezone
+from procrastinate.contrib.django import app
 
 from apps.root.models import (
     Event,
@@ -396,8 +397,6 @@ class TestEventDetailViews(TransactionTestCase):
             },
         )
         # Run worker, complete RSVP task
-        from procrastinate.contrib.django import app
-
         app = app.with_connector(app.connector.get_worker_connector())
         app.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
 
@@ -438,8 +437,6 @@ class TestEventDetailViews(TransactionTestCase):
             },
         )
         # Run worker, complete message batch task
-        from procrastinate.contrib.django import app
-
         app = app.with_connector(app.connector.get_worker_connector())
         app.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
 

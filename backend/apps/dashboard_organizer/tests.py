@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils import timezone
+from procrastinate.contrib.django import app
 
 from apps.root.models import (
     Event,
@@ -20,7 +21,6 @@ from apps.root.models import (
 )
 
 from . import views
-
 
 class TestTeamContextMixin(TestCase):
     """
@@ -395,6 +395,9 @@ class TestEventDetailViews(TestCase):
                 "customer_emails": "x@socialpass.io, y@socialpass.io",
             },
         )
+        # Run worker, complete RSVP task
+        app.run_worker(wait=False, install_signal_handlers=False)
+
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to, ["x@socialpass.io"])
         self.assertEqual(mail.outbox[1].to, ["y@socialpass.io"])

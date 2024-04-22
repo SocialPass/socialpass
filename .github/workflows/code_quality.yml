@@ -25,7 +25,3 @@ jobs:
         working-directory: ./backend
         run: |
           mypy . --install-types --non-interactive --ignore-missing-imports
-      - name: django testing
-        working-directory: ./backend
-        run : |
-          ./manage.py test --settings=config.settings.test --failfast

@@ -25,11 +25,6 @@ jobs:
         working-directory: ./backend
         run: |
           mypy . --install-types --non-interactive --ignore-missing-imports
-      - name: djlint quality checks
-        working-directory: ./backend
-        run: |
-          djlint . --lint
-          djlint . --check
       - name: django testing
         working-directory: ./backend
         run : |

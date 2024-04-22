@@ -7,7 +7,7 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 format: ## Format codebase
-	(source backend/venv/bin/activate; cd backend; ruff format .;)
+	(source backend/venv/bin/activate; cd backend; ruff format .; djhtml .;)
 
 lint: ## Lint codebase
 	(source backend/venv/bin/activate; cd backend; ruff check .; mypy .;)

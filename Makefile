@@ -7,10 +7,10 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 format: ## Format codebase
-	(source backend/venv/bin/activate; cd backend; ruff format .; djlint . --reformat;)
+	(source backend/venv/bin/activate; cd backend; ruff format .;)
 
 lint: ## Lint codebase
-	(source backend/venv/bin/activate; cd backend; ruff check .; mypy .; djlint . --lint;)
+	(source backend/venv/bin/activate; cd backend; ruff check .; mypy .;)
 
 collect: ## collectstatic backend
 	(source backend/venv/bin/activate; cd backend; yarn; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)

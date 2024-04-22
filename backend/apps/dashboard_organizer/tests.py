@@ -2,11 +2,10 @@ from datetime import datetime
 from django.contrib.auth.models import AnonymousUser
 from django.core import mail
 from django.http import Http404
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils import timezone
-from procrastinate.contrib.django import app
 
 from apps.root.models import (
     Event,
@@ -256,7 +255,7 @@ class TestEventListCreateDeleteViews(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestEventDetailViews(TestCase):
+class TestEventDetailViews(TransactionTestCase):
     """
     Test the event detail views.
     """
@@ -396,7 +395,9 @@ class TestEventDetailViews(TestCase):
             },
         )
         # Run worker, complete RSVP task
-        app.run_worker(wait=False, install_signal_handlers=False)
+        from procrastinate.contrib.django import app
+        app = app.with_connector(app.connector.get_worker_connector())
+        app.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
 
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to, ["x@socialpass.io"])
@@ -434,6 +435,11 @@ class TestEventDetailViews(TestCase):
                 "message": "Message",
             },
         )
+        # Run worker, complete message batch task
+        from procrastinate.contrib.django import app
+        app = app.with_connector(app.connector.get_worker_connector())
+        app.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
+
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(MessageBatch.objects.filter(event=self.event).count(), 1)
         self.assertEqual(response.status_code, 302)

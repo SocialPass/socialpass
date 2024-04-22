@@ -166,8 +166,9 @@ class Team(DBModel):
         """
         return f"Team: {self.name}"
 
-    def clean_slug(self):
-        return slugify(self.name)
+    def clean(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Team, self).clean(*args, **kwargs)
 
     @cached_property
     def stripe_account_payouts_enabled(self):
@@ -379,8 +380,9 @@ class Event(DBModel):
     def __str__(self):
         return f"Event: {self.title}"
 
-    def clean_slug(self):
-        return slugify(self.title)
+    def clean(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Event, self).clean(*args, **kwargs)
 
     @cached_property
     def tickets_sold_count(self):

@@ -151,59 +151,59 @@
     <!-- Chart JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript">
-	const charts = document.querySelectorAll(".chart")
-	const weeks = {{ weeks|safe }};
-	for (var i = 0; i <= charts.length; i++) {
-		var ctx = charts[i]
-		var placeholder = ctx.getAttribute("data-values");
-		let values;
-		let values_label;
-		switch (placeholder) {
-			case 'organizers_weekly':
-				values_label = '# of organizer sign-ups per week'
-				values = {{organizers_weekly|safe}};
-				break;
-			case 'events_weekly':
-				values_label = '# of events created per week'
-				values = {{events_weekly|safe}};
-				break;
-			case 'tickets_weekly':
-				values_label = '# of tickets sold per week'
-				values = {{tickets_weekly|safe}};
-				break;
-			case 'attendees_weekly':
-				values_label = '# of attendees per week'
-				values = {{attendees_weekly|safe}};
-				break;
-			case 'ticket_time_weekly':
-				values_label = 'time to checkout (seconds)';
-				values = {{ticket_time_weekly|safe}}
-			default:
-				break;
-		}
-		Chart.defaults.font.size = 13.69;
-		new Chart(ctx, {
-			type: "line",
-			data: {
-				labels: weeks,
-				datasets: [{
-					label: values_label,
-					data: values,
-					borderWidth: 3,
-					borderColor: 'hsl(197, 53%, 47%)',
-					backgroundColor: 'hsla(197, 53%, 47%, 0.1)',
-					tension: 0.35,
-					fill: true,
-				}]
-			},
-			options: {
-				scales: {
-					y: {
-						beginAtZero: true
-					}
-				}
-			}
-		})
-	}
+        const charts = document.querySelectorAll(".chart")
+        const weeks = {{ weeks|safe }};
+        for (var i = 0; i <= charts.length; i++) {
+            var ctx = charts[i]
+            var placeholder = ctx.getAttribute("data-values");
+            let values;
+            let values_label;
+            switch (placeholder) {
+                case 'organizers_weekly':
+                    values_label = '# of organizer sign-ups per week'
+                    values = {{organizers_weekly|safe}};
+                    break;
+                case 'events_weekly':
+                    values_label = '# of events created per week'
+                    values = {{events_weekly|safe}};
+                    break;
+                case 'tickets_weekly':
+                    values_label = '# of tickets sold per week'
+                    values = {{tickets_weekly|safe}};
+                    break;
+                case 'attendees_weekly':
+                    values_label = '# of attendees per week'
+                    values = {{attendees_weekly|safe}};
+                    break;
+                case 'ticket_time_weekly':
+                    values_label = 'time to checkout (seconds)';
+                    values = {{ticket_time_weekly|safe}}
+                default:
+                    break;
+            }
+            Chart.defaults.font.size = 13.69;
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: weeks,
+                    datasets: [{
+                        label: values_label,
+                        data: values,
+                        borderWidth: 3,
+                        borderColor: 'hsl(197, 53%, 47%)',
+                        backgroundColor: 'hsla(197, 53%, 47%, 0.1)',
+                        tension: 0.35,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            })
+        }
     </script>
 {% endblock %}

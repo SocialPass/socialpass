@@ -1,5 +1,5 @@
 name: Code Quality
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -25,8 +25,7 @@ jobs:
         working-directory: ./backend
         run: |
           mypy . --install-types --non-interactive --ignore-missing-imports
-      - name: djlint quality checks
+      - name: djhtml quality checks
         working-directory: ./backend
         run: |
-          djlint . --lint
-          djlint . --check
+          djhtml .

@@ -34,7 +34,30 @@
                 {% if rsvp_batch.success_list or rsvp_batch.failure_list %}
                     <div class="card border-0 rounded-4 shadow-sm mb-3">
                         <div class="card-body">
-                            <p class="text-body-secondary mb-0">
+                            <div>
+                                {% if rsvp_batch.ticket_tier.category == rsvp_batch.ticket_tier.Category.FIAT %}
+                                    <span class="d-inline-block px-3 py-2 rounded-pill fw-bold bg-success-subtle text-success-emphasis me-3">
+                                        <i class="fa-light fa-money-check-dollar me-1"></i>
+                                        {% trans "Ticket:" %}
+                                        {{ rsvp_batch.ticket_tier.name }}
+                                    </span>
+                                {% endif %}
+                                {% if rsvp_batch.ticket_tier.category == rsvp_batch.ticket_tier.Category.FREE %}
+                                    <span class="d-inline-block px-3 py-2 rounded-pill fw-bold bg-warning-subtle text-warning-emphasis me-3">
+                                        <i class="fa-light fa-gift me-1"></i>
+                                        {% trans "Ticket:" %}
+                                        {{ rsvp_batch.ticket_tier.name }}
+                                    </span>
+                                {% endif %}
+                                {% if rsvp_batch.ticket_tier.category == rsvp_batch.ticket_tier.Category.ASSET_OWNERSHIP %}
+                                    <span class="d-inline-block px-3 py-2 rounded-pill fw-bold bg-info-subtle text-info-emphasis me-3">
+                                        <i class="fa-light fa-hexagon-vertical-nft me-1"></i>
+                                        {% trans "Ticket:" %}
+                                        {{ rsvp_batch.ticket_tier.name }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <p class="text-body-secondary mt-3 mb-0">
                                 <strong class="text-body">{% trans "ID" %}:</strong>
                                 {{ rsvp_batch.public_id }}
                             </p>

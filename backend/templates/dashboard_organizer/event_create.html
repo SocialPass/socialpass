@@ -44,112 +44,112 @@
 	
     </script>
     <script type="text/javascript">
-    if (document.getElementById("id_title").hasAttribute("autofocus")) {
-    	document.getElementById("id_title").focus();
-    }
-	document.getElementById("id_timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (document.getElementById("id_title").hasAttribute("autofocus")) {
+            document.getElementById("id_title").focus();
+        }
+        document.getElementById("id_timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     </script>
     <script>
-	var startDateInput = document.getElementById("id_start_date");
-	var endDateInput = document.getElementById("id_end_date");
-	var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
+        var startDateInput = document.getElementById("id_start_date");
+        var endDateInput = document.getElementById("id_end_date");
+        var endDateExtraFeedback = document.getElementById("end-date-extra-feedback");
 
-	function dateValidate(e) {
-		var startDateVal = startDateInput.value;
-		var endDateVal = endDateInput.value;
+        function dateValidate(e) {
+            var startDateVal = startDateInput.value;
+            var endDateVal = endDateInput.value;
 
-		endDateExtraFeedback.classList.add("d-none");
-		endDateInput.classList.remove("is-invalid");
+            endDateExtraFeedback.classList.add("d-none");
+            endDateInput.classList.remove("is-invalid");
 
-		if (startDateVal && endDateVal) {
-			var startDate = new Date(startDateVal);
-			var endDate = new Date(endDateVal);
+            if (startDateVal && endDateVal) {
+                var startDate = new Date(startDateVal);
+                var endDate = new Date(endDateVal);
 
-			if (startDate >= endDate) {
-				endDateExtraFeedback.classList.remove("d-none");
-				endDateInput.classList.add("is-invalid");
-			}
-		}
-	}
+                if (startDate >= endDate) {
+                    endDateExtraFeedback.classList.remove("d-none");
+                    endDateInput.classList.add("is-invalid");
+                }
+            }
+        }
 
-	startDateInput.addEventListener("change", dateValidate);
-	endDateInput.addEventListener("change", dateValidate);
+        startDateInput.addEventListener("change", dateValidate);
+        endDateInput.addEventListener("change", dateValidate);
     </script>
     <script type="text/javascript">
-	const coverImgPlaceholder = document.getElementById("cover-img-placeholder").value;
-	const coverImgBg = document.getElementById("cover-img-bg");
-	const coverImgPreview = document.getElementById("cover-img-preview");
-	const coverImgInput = document.getElementById("id_cover_image");
-	coverImgInput.addEventListener("change", function(event) {
-		const [file] = coverImgInput.files;
-		if (file) {
-			coverImgBg.src = URL.createObjectURL(file);
-			coverImgPreview.src = URL.createObjectURL(file);
-		}
-		else {
-			coverImgBg.src = coverImgPlaceholder;
-			coverImgPreview.src = coverImgPlaceholder;
-		}
-	});
+        const coverImgPlaceholder = document.getElementById("cover-img-placeholder").value;
+        const coverImgBg = document.getElementById("cover-img-bg");
+        const coverImgPreview = document.getElementById("cover-img-preview");
+        const coverImgInput = document.getElementById("id_cover_image");
+        coverImgInput.addEventListener("change", function(event) {
+            const [file] = coverImgInput.files;
+            if (file) {
+                coverImgBg.src = URL.createObjectURL(file);
+                coverImgPreview.src = URL.createObjectURL(file);
+            }
+            else {
+                coverImgBg.src = coverImgPlaceholder;
+                coverImgPreview.src = coverImgPlaceholder;
+            }
+        });
     </script>
     <script type="text/javascript"
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqA-9QKYnIa4NzoAbXj_Qmp9sDg-N1RgQ&loading=async&callback=initialize&libraries=places,marker,maps"></script>
     <script type="text/javascript">
 	// Form fields
-	const geoAddress = document.getElementById("id_geo_address");
-	const geoType = document.getElementById("id_geo_type");
-	const geoPlaceId = document.getElementById("id_geo_place_id");
-	const geoLatitude = document.getElementById("id_geo_latitude");
-	const geoLongitude = document.getElementById("id_geo_longitude");
-	const geoResetBtn = document.getElementById("reset_geo_form_btn")
+        const geoAddress = document.getElementById("id_geo_address");
+        const geoType = document.getElementById("id_geo_type");
+        const geoPlaceId = document.getElementById("id_geo_place_id");
+        const geoLatitude = document.getElementById("id_geo_latitude");
+        const geoLongitude = document.getElementById("id_geo_longitude");
+        const geoResetBtn = document.getElementById("reset_geo_form_btn")
 
 	// Google maps initialization / handler
-	const geoMap = document.getElementById("geo_map")
-	function initialize() {
-		const autocomplete = new google.maps.places.Autocomplete(geoAddress);
-		autocomplete.addListener("place_changed", function () {
+        const geoMap = document.getElementById("geo_map")
+        function initialize() {
+            const autocomplete = new google.maps.places.Autocomplete(geoAddress);
+            autocomplete.addListener("place_changed", function () {
 			// Set place info
-			const place = autocomplete.getPlace();
-			geoType.value = "GOOGLE";
-			geoPlaceId.value = place.place_id;
-			geoLatitude.value = place.geometry.location.lat().toFixed(6);
-			geoLongitude.value = place.geometry.location.lng().toFixed(6);
+                const place = autocomplete.getPlace();
+                geoType.value = "GOOGLE";
+                geoPlaceId.value = place.place_id;
+                geoLatitude.value = place.geometry.location.lat().toFixed(6);
+                geoLongitude.value = place.geometry.location.lng().toFixed(6);
 
 			// Set map info
-			geoMap.style.height = "150px";
-			geoMap.style.width = "100%";
-			var map = new google.maps.Map(geoMap, {
-				mapId: "DEMO_MAP_ID"
-			});
-			map.setCenter(place.geometry.location);
-			map.setZoom(15);
-			var marker = new google.maps.marker.AdvancedMarkerElement({
-				map: map,
-				position: place.geometry.location,
-			});
+                geoMap.style.height = "150px";
+                geoMap.style.width = "100%";
+                var map = new google.maps.Map(geoMap, {
+                    mapId: "DEMO_MAP_ID"
+                });
+                map.setCenter(place.geometry.location);
+                map.setZoom(15);
+                var marker = new google.maps.marker.AdvancedMarkerElement({
+                    map: map,
+                    position: place.geometry.location,
+                });
 
 			// disable form
-			geoAddress.readOnly = true;
-			geoResetBtn.classList.remove("d-none")
-		});
-	}
-	function resetGeoForm(){
+                geoAddress.readOnly = true;
+                geoResetBtn.classList.remove("d-none")
+            });
+        }
+        function resetGeoForm(){
 		// Reset form fields
-		geoType.value = "MANUAL";
-		geoPlaceId.value = "";
-		geoLatitude.value = "";
-		geoLongitude.value = "";
-		geoAddress.value = "";
+            geoType.value = "MANUAL";
+            geoPlaceId.value = "";
+            geoLatitude.value = "";
+            geoLongitude.value = "";
+            geoAddress.value = "";
 
 		// Hide map
-		geoMap.style.height = "0px";
-		geoMap.style.width = "0px";
+            geoMap.style.height = "0px";
+            geoMap.style.width = "0px";
 
 		// set readonly -> false
-		geoAddress.readOnly = false;
+            geoAddress.readOnly = false;
 
 		// hide button
-		geoResetBtn.classList.add("d-none")
-	}
+            geoResetBtn.classList.add("d-none")
+        }
     </script>
 {% endblock %}

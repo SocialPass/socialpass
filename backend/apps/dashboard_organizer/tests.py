@@ -133,7 +133,7 @@ class TestTeamViews(TestCase):
             self.client.login(username=self.user.username, password="password")
         )
         response = self.client.get(
-            reverse("dashboard_organizer:team_update", args=(self.team.slug,))
+            reverse("dashboard_organizer:team_update", args=(self.team.pk,))
         )
         self.assertEqual(response.status_code, 200)
 
@@ -142,7 +142,7 @@ class TestTeamViews(TestCase):
             self.client.login(username=self.user.username, password="password")
         )
         response = self.client.post(
-            reverse("dashboard_organizer:team_update", args=(self.team.slug,)),
+            reverse("dashboard_organizer:team_update", args=(self.team.pk,)),
             data={
                 "name": "testteam edit",
                 "description": "Description edit",
@@ -211,8 +211,9 @@ class TestEventListCreateDeleteViews(TestCase):
         response = self.client.post(
             reverse("dashboard_organizer:event_create", args=(self.team.slug,)),
             data={
-                "team": self.team,
+                "team": self.team.pk,
                 "title": "Test event create post",
+                "slug": "test-event-create-post",
                 "description": "Description",
                 "start_date": datetime(2024, 1, 1, 0, 0),
                 "timezone": "US/Eastern",
@@ -321,7 +322,9 @@ class TestEventDetailViews(TransactionTestCase):
                 "dashboard_organizer:event_update", args=(self.team.slug, self.event.pk)
             ),
             data={
+                "team": self.team.pk,
                 "title": "Test event detail edit",  # Edited
+                "slug": "test-event-detail-edit",
                 "description": "Description",
                 "start_date": datetime(2024, 1, 1, 0, 0),
                 "timezone": "US/Eastern",

@@ -34,6 +34,7 @@ class TestTeamContextMixin(TestCase):
         self.factory = RequestFactory()
         self.team = Team.objects.create(
             name="testteam",
+            slug="testteam",
         )
         self.member = User.objects.create_user(
             username="testuser1",
@@ -82,6 +83,7 @@ class TestTeamViews(TestCase):
         self.factory = RequestFactory()
         self.team = Team.objects.create(
             name="testteam",
+            slug="testteam",
         )
         self.user = User.objects.create_user(
             username="testuser",
@@ -160,6 +162,7 @@ class TestEventListCreateDeleteViews(TestCase):
         self.factory = RequestFactory()
         self.team = Team.objects.create(
             name="testteam",
+            slug="testteam",
         )
         self.user = User.objects.create_user(
             username="testuser",
@@ -174,6 +177,7 @@ class TestEventListCreateDeleteViews(TestCase):
         self.event_to_delete = Event.objects.create(
             team=self.team,
             title="Test event to delete",
+            slug="test-event-to-delete",
             description="Description",
             start_date=datetime(2024, 1, 1, 0, 0),
             timezone="US/Eastern",
@@ -266,6 +270,7 @@ class TestEventDetailViews(TransactionTestCase):
         self.factory = RequestFactory()
         self.team = Team.objects.create(
             name="testteam",
+            slug="testteam",
             allow_rsvp=True,
             allow_messaging=True,
         )
@@ -282,6 +287,7 @@ class TestEventDetailViews(TransactionTestCase):
         self.event = Event.objects.create(
             team=self.team,
             title="Test event detail",
+            slug="test-event-detail",
             description="Description",
             start_date=datetime(2024, 1, 1, 0, 0),
             timezone="US/Eastern",
@@ -454,6 +460,7 @@ class TestTicketTierViews(TestCase):
         self.factory = RequestFactory()
         self.team = Team.objects.create(
             name="testteam",
+            slug="testteam",
             stripe_account_id="acct_1NadTgR6q1S0w5XG",
             stripe_account_country="US",
         )
@@ -470,6 +477,7 @@ class TestTicketTierViews(TestCase):
         self.event = Event.objects.create(
             team=self.team,
             title="Test event",
+            slug="test-event",
             description="Description",
             start_date=datetime(2024, 1, 1, 0, 0),
             timezone="US/Eastern",
@@ -721,6 +729,7 @@ class TestMiscViews(TestCase):
         self.factory = RequestFactory()
         self.team = Team.objects.create(
             name="testteam",
+            slug="testteam",
         )
         self.user = User.objects.create_user(
             username="testuser1",

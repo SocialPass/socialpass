@@ -1,0 +1,3828 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-23 16:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/dashboard_organizer/forms.py:23
+msgid "Email Address"
+msgstr "ইমেইল"
+
+#: apps/dashboard_organizer/forms.py:47
+msgid "Event Planner Company"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:51
+msgid ""
+"Your premier event planning company specializing in unforgettable "
+"experiences."
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:58 templates/checkout/get_tickets.html:224
+msgid "Name"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:59 apps/dashboard_organizer/forms.py:176
+#: templates/dashboard_organizer/event_form.html:137
+msgid "Description"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:60
+msgid "Profile Image"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:64
+msgid ""
+"A personal image for your profile. Please make sure the image is square, non-"
+"transparent, and ideally in the PNG format."
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:91 apps/dashboard_organizer/forms.py:135
+msgid "Your Event Name Here"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:97
+msgid ""
+"Short description here. Let the people know what’s going on with this event!"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:159 apps/dashboard_organizer/forms.py:179
+#: templates/checkout/checkout_page_one.html:116
+#: templates/checkout/checkout_page_success.html:72
+#: templates/checkout/get_tickets.html:256
+msgid "Timezone"
+msgstr "সময় অঞ্চল"
+
+#: apps/dashboard_organizer/forms.py:169
+msgid "Start typing to find your venue..."
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:175
+msgid "Title"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:177
+#, fuzzy
+#| msgid "Events Manager"
+msgid "Event Start"
+msgstr "ইভেন্ট ম্যানেজার"
+
+#: apps/dashboard_organizer/forms.py:178
+#, fuzzy
+#| msgid "Event"
+msgid "Event End"
+msgstr "ইভেন্ট"
+
+#: apps/dashboard_organizer/forms.py:180
+#: templates/checkout/checkout_page_one.html:140
+msgid "Address"
+msgstr "ঠিকানা"
+
+#: apps/dashboard_organizer/forms.py:181
+msgid "Only allow attendees to see location"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:197
+msgid "We hope to see you there!"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:235
+#: templates/dashboard_organizer/event_ticket_tiers.html:172
+msgid "Total Venue Capacity"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:240
+#: templates/checkout/checkout_page_one.html:195
+#, fuzzy
+#| msgid "Ticket Details"
+msgid "Ticket Sales Start"
+msgstr "টিকিটের বিবরণ"
+
+#: apps/dashboard_organizer/forms.py:241
+#, fuzzy
+#| msgid "Ticket Details"
+msgid "Ticket Sales End"
+msgstr "টিকিটের বিবরণ"
+
+#: apps/dashboard_organizer/forms.py:242
+msgid "Turn on Waitlist"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:277
+msgid "E.g. General Admission"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:284
+msgid "Total number of guests allowed"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:288
+msgid "Extra information for this tier"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:292
+msgid "Name of ticket tier"
+msgstr "টিকিটের স্তরের নাম"
+
+#: apps/dashboard_organizer/forms.py:293
+#: templates/dashboard_organizer/event_ticket_tiers.html:254
+msgid "Capacity"
+msgstr "ক্ষমতা"
+
+#: apps/dashboard_organizer/forms.py:294
+#: templates/dashboard_organizer/event_ticket_tiers.html:275
+#: templates/dashboard_organizer/ticket_tier_free_create.html:99
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:113
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:110
+#: templates/dashboard_organizer/ticket_tier_update.html:97
+msgid "Max per person"
+msgstr "জনপ্রতি সর্বোচ্চ"
+
+#: apps/dashboard_organizer/forms.py:295
+msgid "Max guest(s) allowed per ticket"
+msgstr "প্রতি টিকিটে সর্বাধিক অতিথি(দের) অনুমোদিত"
+
+#: apps/dashboard_organizer/forms.py:296
+msgid "Hide tier from public"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:297
+msgid "Hide number of tickets available from public"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:316
+msgid "e.g. 0xb53...4394n"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:323
+#, fuzzy
+#| msgid "Token Address"
+msgid "NFT Collection Token Address"
+msgstr "টোকেন ঠিকানা"
+
+#: apps/dashboard_organizer/forms.py:351
+msgid "Price of one ticket"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:361
+#, fuzzy
+#| msgid "Tickets"
+msgid "Price/ticket"
+msgstr "টিকিট"
+
+#: apps/dashboard_organizer/forms.py:384
+msgid "john@example.com, jane@example.com, jack.example.com"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:399
+msgid "Subject of the email"
+msgstr ""
+
+#: apps/dashboard_organizer/forms.py:402
+msgid "Message of the email"
+msgstr ""
+
+#: apps/root/models.py:123
+msgid ""
+"A brand image for your team. Please make sure the image is square, non-"
+"transparent, and ideally in the PNG format."
+msgstr ""
+
+#: apps/root/models.py:147
+msgid "Temporary Stripe account ID used to create account links."
+msgstr ""
+
+#: apps/root/models.py:152
+msgid "Connected Stripe account ID."
+msgstr ""
+
+#: apps/root/models.py:157
+msgid "Connected Stripe account country."
+msgstr ""
+
+#: apps/root/models.py:309
+msgid "Brief name for your event. Must be unique!"
+msgstr ""
+
+#: apps/root/models.py:312
+#, fuzzy
+#| msgid "Please confirm the deletion of your event."
+msgid "A short description of your event."
+msgstr "আপনার ইভেন্ট মুছে ফেলা নিশ্চিত করুন৷"
+
+#: apps/root/models.py:316
+msgid ""
+"A banner image for your event. Please make sure the image is a high quality "
+"landscape image, ideally 960 x 720 pixels (4:3)."
+msgstr ""
+
+#: apps/root/models.py:329
+msgid "When your event will start."
+msgstr ""
+
+#: apps/root/models.py:334
+msgid "When your event will end (optional)."
+msgstr ""
+
+#: apps/root/models.py:340
+msgid "The fiat currency to use for all tickets of this event."
+msgstr ""
+
+#: apps/root/models.py:347
+msgid "Denotes the total capacity for the venue, across all ticket tiers."
+msgstr ""
+
+#: apps/root/models.py:374
+msgid "When your event sales will start (optional)."
+msgstr ""
+
+#: apps/root/models.py:379
+msgid "When your event sales will end (optional)."
+msgstr ""
+
+#: apps/root/models.py:614
+msgid "A short descriptive label for your ticket tier."
+msgstr ""
+
+#: apps/root/models.py:619
+msgid "Maximum amount of attendees for your event."
+msgstr ""
+
+#: apps/root/models.py:624
+msgid "Maximum amount of tickets per attendee."
+msgstr ""
+
+#: apps/root/models.py:629
+#, fuzzy
+#| msgid "Max guest(s) allowed per ticket"
+msgid "Maximum number of guests allowed for one ticket."
+msgstr "প্রতি টিকিটে সর্বাধিক অতিথি(দের) অনুমোদিত"
+
+#: apps/root/models.py:635
+msgid "Denotes the total guest capacity."
+msgstr ""
+
+#: apps/root/models.py:641
+msgid "Whether or not this tier is hidden from the public"
+msgstr ""
+
+#: apps/root/models.py:646
+msgid "Whether or not to hide the number of available tickets from the public."
+msgstr ""
+
+#: apps/root/models.py:651
+msgid "Additional information for this tier provided by the host."
+msgstr ""
+
+#: apps/root/models.py:702
+msgid "Which blockchain is your NFT collection on?"
+msgstr ""
+
+#: apps/root/models.py:711
+msgid "The number of NFTs required to claim your ticket tier."
+msgstr ""
+
+#: apps/root/models.py:716
+msgid "What is the contract address of your NFT collection?"
+msgstr ""
+
+#: apps/root/models.py:722
+msgid "Which specific token IDs of the NFT collection are required?"
+msgstr ""
+
+#: apps/root/models.py:733
+#, fuzzy
+#| msgid "Name of ticket tier"
+msgid "Price of one ticket for this tier."
+msgstr "টিকিটের স্তরের নাম"
+
+#: apps/root/models.py:870
+msgid "Stripe checkout session ID."
+msgstr ""
+
+#: apps/root/models.py:874
+msgid "Stripe checkout session URL."
+msgstr ""
+
+#: templates/403.html:6 templates/403.html:16
+msgid "Not authorized"
+msgstr ""
+
+#: templates/403.html:22
+msgid "Sorry, but you do not have the proper permissions to access this page."
+msgstr ""
+
+#: templates/403.html:28 templates/404.html:28 templates/429.html:28
+#: templates/500.html:28
+msgid "Contact Us"
+msgstr ""
+
+#: templates/404.html:6
+#, fuzzy
+#| msgid "None found"
+msgid "Not found"
+msgstr "একটিও পাওয়া যায়নি"
+
+#: templates/404.html:16
+msgid "Page not found"
+msgstr ""
+
+#: templates/404.html:22
+msgid "Sorry, but the page you're looking for could not be found."
+msgstr ""
+
+#: templates/429.html:6 templates/429.html:16
+msgid "Too many requests"
+msgstr ""
+
+#: templates/429.html:22
+msgid ""
+"Sorry, but too many requests have been sent from this client. Please try "
+"again later."
+msgstr ""
+
+#: templates/500.html:6 templates/500.html:16
+msgid "Server error"
+msgstr ""
+
+#: templates/500.html:22
+msgid ""
+"We track these errors automatically, so you can try refreshing the page "
+"after some time."
+msgstr ""
+
+#: templates/account/account_inactive.html:6
+#: templates/account/account_inactive.html:10
+msgid "Account Inactive"
+msgstr ""
+
+#: templates/account/account_inactive.html:12
+msgid "This account is inactive."
+msgstr ""
+
+#: templates/account/base.html:18 templates/checkout/base.html:21
+#: templates/checkout/tickets_base.html:21
+#: templates/dashboard_organizer/base.html:18
+#: templates/dashboard_organizer/base_simple.html:18
+#: templates/landing/index.html:15
+msgid "Hosting the Next Generation of Events"
+msgstr "নতুন প্রজন্মের ইভেন্ট হোস্টিং"
+
+#: templates/account/email.html:6 templates/account/email.html:16
+#: templates/dashboard_organizer/base.html:369
+msgid "Manage Emails"
+msgstr "ইমেল পরিচালনা করুন"
+
+#: templates/account/email.html:13 templates/account/password_change.html:13
+msgid "Back to Dashboard"
+msgstr ""
+
+#: templates/account/email.html:18
+msgid "Manage the email addresses for your account."
+msgstr ""
+
+#: templates/account/email.html:22
+#, fuzzy
+#| msgid "Email Address"
+msgid "Email Addresses"
+msgstr "ইমেইল"
+
+#: templates/account/email.html:25
+msgid "The following email addresses are associated with your account."
+msgstr ""
+
+#: templates/account/email.html:85
+msgid ""
+"You currently do not have any email address associated with your account."
+msgstr ""
+
+#: templates/account/email.html:90 templates/account/email.html:110
+#, fuzzy
+#| msgid "Email Address"
+msgid "Add Email Address"
+msgstr "ইমেইল"
+
+#: templates/account/email/base_message.txt:1
+msgid "Hello from SocialPass!"
+msgstr ""
+
+#: templates/account/email/base_message.txt:5
+msgid "Thank you for using SocialPass!"
+msgstr ""
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this e-mail because user %(user_display)s has given your e-"
+"mail address to register an account on SocialPass.\n"
+"\n"
+"To confirm this is correct, go to %(activate_url)s"
+msgstr ""
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your E-mail Address"
+msgstr ""
+
+#: templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"Yoooo! You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+
+#: templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset E-mail"
+msgstr ""
+
+#: templates/account/email_confirm.html:6
+#: templates/account/email_confirm.html:15
+#, fuzzy
+#| msgid "Email Address"
+msgid "Confirm E-mail Address"
+msgstr "ইমেইল"
+
+#: templates/account/email_confirm.html:12 templates/account/login.html:6
+#: templates/account/login.html:16 templates/account/login.html:82
+#: templates/account/password_reset.html:12
+#: templates/account/password_reset_done.html:12
+#: templates/account/password_reset_from_key.html:12
+#: templates/account/verification_sent.html:12
+#, fuzzy
+#| msgid "Sign Out"
+msgid "Sign In"
+msgstr "সাইন আউট"
+
+#: templates/account/email_confirm.html:21
+msgid "Please confirm that"
+msgstr ""
+
+#: templates/account/email_confirm.html:21
+msgid "is an e-mail address for the user"
+msgstr ""
+
+#: templates/account/email_confirm.html:28
+msgid "Confirm"
+msgstr ""
+
+#: templates/account/email_confirm.html:33
+msgid "This e-mail confirmation link expired or is invalid."
+msgstr ""
+
+#: templates/account/email_confirm.html:35
+msgid "Issue a new e-mail confirmation request"
+msgstr ""
+
+#: templates/account/login.html:13
+msgid "Please sign in to your account to continue."
+msgstr ""
+
+#: templates/account/login.html:23
+msgid "Sign in with Google"
+msgstr ""
+
+#: templates/account/login.html:29 templates/account/signup.html:24
+msgid "OR"
+msgstr ""
+
+#: templates/account/login.html:71
+msgid "Forgot password?"
+msgstr ""
+
+#: templates/account/login.html:71 templates/scanner/scanner2.html:112
+msgid "Reset"
+msgstr ""
+
+#: templates/account/login.html:87
+msgid "Don't have an account?"
+msgstr ""
+
+#: templates/account/login.html:87
+#, fuzzy
+#| msgid "Sign Out"
+msgid "Sign up"
+msgstr "সাইন আউট"
+
+#: templates/account/logout.html:6
+msgid "Sign Out - SocialPass"
+msgstr ""
+
+#: templates/account/logout.html:17 templates/account/logout.html:28
+#: templates/dashboard_organizer/base.html:379
+msgid "Sign Out"
+msgstr "সাইন আউট"
+
+#: templates/account/logout.html:19
+msgid "Are you sure you want to sign out?"
+msgstr ""
+
+#: templates/account/password_change.html:6
+#: templates/account/password_change.html:16
+#: templates/account/password_change.html:41
+#: templates/account/password_reset_from_key.html:6
+#: templates/account/password_reset_from_key.html:18
+#: templates/account/password_reset_from_key.html:57
+#: templates/account/password_reset_from_key_done.html:6
+#: templates/account/password_reset_from_key_done.html:11
+#: templates/dashboard_organizer/base.html:362
+msgid "Change Password"
+msgstr "পাসওয়ার্ড পরিবর্তন করুন"
+
+#: templates/account/password_change.html:18
+msgid "Use the following form to change your password."
+msgstr ""
+
+#: templates/account/password_reset.html:6
+#: templates/account/password_reset.html:14
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:14
+msgid "Password Reset"
+msgstr ""
+
+#: templates/account/password_reset.html:16
+msgid ""
+"Enter your e-mail address below, and we'll send you an e-mail allowing you "
+"to reset your password."
+msgstr ""
+
+#: templates/account/password_reset.html:44
+#, fuzzy
+#| msgid "Change Password"
+msgid "Reset Password"
+msgstr "পাসওয়ার্ড পরিবর্তন করুন"
+
+#: templates/account/password_reset_done.html:16
+msgid ""
+"We have sent you an e-mail that contains a link for resetting your password."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:16
+msgid "Bad Token"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:24
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:24
+msgid "Request new one"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:29
+msgid "Please use the form below to reset your password."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:62
+msgid "You password has been changed."
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:13
+msgid "Your password has been changed successfully!"
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:16
+msgid "Sign in to your account"
+msgstr ""
+
+#: templates/account/password_set.html:10
+#: templates/account/password_set.html:14
+#: templates/account/password_set.html:24
+msgid "Set Password"
+msgstr ""
+
+#: templates/account/signup.html:6 templates/account/signup.html:11
+#: templates/account/signup.html:78
+#, fuzzy
+#| msgid "Sign Out"
+msgid "Sign Up"
+msgstr "সাইন আউট"
+
+#: templates/account/signup.html:18
+msgid "Sign up with Google"
+msgstr ""
+
+#: templates/account/signup.html:68
+msgid "I agree to the"
+msgstr ""
+
+#: templates/account/signup.html:69
+msgid "Terms & Conditions"
+msgstr ""
+
+#: templates/account/signup.html:83
+msgid "Already have an account?"
+msgstr ""
+
+#: templates/account/signup.html:83
+#, fuzzy
+#| msgid "Sign Out"
+msgid "Sign in"
+msgstr "সাইন আউট"
+
+#: templates/account/team_create.html:6 templates/account/team_create.html:19
+#, fuzzy
+#| msgid "Create Team"
+msgid "Create Profile"
+msgstr "দল তৈরি করুন"
+
+#: templates/account/team_create.html:13 templates/account/team_update.html:11
+msgid "Back to dashboard"
+msgstr ""
+
+#: templates/account/team_create.html:21
+msgid ""
+"Use the form below to create your very own profile and get started with "
+"SocialPass."
+msgstr ""
+
+#: templates/account/team_form.html:17
+msgid "Profile Name"
+msgstr ""
+
+#: templates/account/team_form.html:24
+msgid "For Public URLs (Slug): "
+msgstr ""
+
+#: templates/account/team_form.html:38
+msgid "Description & Image (Optional)"
+msgstr ""
+
+#: templates/account/team_form.html:50
+#: templates/checkout/get_tickets_passcode.html:78
+#: templates/scanner/scanner2.html:104
+msgid "Submit"
+msgstr ""
+
+#: templates/account/team_update.html:6 templates/account/team_update.html:15
+msgid "Update Profile"
+msgstr ""
+
+#: templates/account/team_update.html:17
+msgid "Use the form below to update your profile."
+msgstr ""
+
+#: templates/account/team_update.html:24
+#: templates/dashboard_organizer/event_form.html:67
+msgid "Warning"
+msgstr ""
+
+#: templates/account/team_update.html:27
+msgid ""
+"Changing the name of your team will also change all of the public URLs of "
+"your events. In case you've shared any of the URLs already, you'll need to "
+"make sure to share the new ones."
+msgstr ""
+
+#: templates/account/verification_sent.html:6
+#: templates/account/verification_sent.html:15
+#: templates/account/verified_email_required.html:6
+#: templates/account/verified_email_required.html:10
+msgid "Verify Your E-mail Address"
+msgstr ""
+
+#: templates/account/verification_sent.html:18
+msgid ""
+"We have sent an e-mail to you for verification. Follow the link provided to "
+"verify your account."
+msgstr ""
+
+#: templates/account/verified_email_required.html:14
+msgid ""
+"This part of the site requires us to verify that\n"
+"            you are who you claim to be. For this purpose, we require that "
+"you\n"
+"            verify ownership of your e-mail address. "
+msgstr ""
+
+#: templates/account/verified_email_required.html:19
+msgid ""
+"We have sent an e-mail to you for\n"
+"            verification. Please click on the link inside this e-mail. "
+"Please\n"
+"            contact us if you do not receive it within a few minutes."
+msgstr ""
+
+#: templates/account/verified_email_required.html:24
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:17
+msgid "You are viewing this page as an organizer."
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:19
+#, fuzzy
+#| msgid "Live Event"
+msgid "Edit Event"
+msgstr "লাইভ ইভেন্ট"
+
+#: templates/checkout/checkout_page_one.html:21
+msgid "View as Attendee"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:66
+msgid "Hosted By"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:84
+msgid "Read More"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:112
+#: templates/checkout/checkout_page_success.html:68
+#: templates/checkout/get_tickets.html:252
+msgid "End"
+msgstr "শেষ"
+
+#: templates/checkout/checkout_page_one.html:120
+#: templates/checkout/checkout_page_success.html:63
+#: templates/checkout/checkout_page_success.html:76
+#: templates/checkout/get_tickets.html:247
+#: templates/checkout/get_tickets.html:260
+#: templates/dashboard_organizer/event_list.html:80
+msgid "Not set"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:130
+msgid "MAP"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:141
+msgid "Hidden"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:153
+msgid "Open in Map"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:157
+msgid "Address will only be provided to ticket holders."
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:168
+msgid "Stay tuned! Tickets are going live soon. See the timer below."
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:173
+#: templates/checkout/checkout_page_one.html:323
+msgid "Sorry! Tickets are not available for this event."
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:209
+msgid "days"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:216
+msgid "hours"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:223
+msgid "minutes"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:230
+msgid "seconds"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:246
+msgid "Ticket Sales Has Started!"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:251
+msgid "Re-loading page automatically"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:266
+#: templates/checkout/checkout_page_two.html:53
+msgid ""
+"Please note, you are joining the waiting queue for this event. You'll only "
+"get tickets if the organizer decides to bump you up to the attendee list."
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:282
+#: templates/dashboard_organizer/event_ticket_tiers.html:76
+#: templates/dashboard_organizer/event_ticket_tiers.html:119
+#: templates/dashboard_organizer/event_ticket_tiers.html:212
+#: templates/dashboard_organizer/waitlist.html:46
+msgid "Paid"
+msgstr "পেড"
+
+#: templates/checkout/checkout_page_one.html:298
+#, fuzzy
+#| msgid "NFT-Gated"
+msgid "Token-Gated"
+msgstr "NFT- গেটেড"
+
+#: templates/checkout/checkout_page_one.html:313
+#: templates/dashboard_organizer/event_ticket_tiers.html:68
+#: templates/dashboard_organizer/event_ticket_tiers.html:111
+#: templates/dashboard_organizer/event_ticket_tiers.html:218
+#: templates/dashboard_organizer/waitlist.html:52
+msgid "Free"
+msgstr "বিনামূল্যে"
+
+#: templates/checkout/checkout_page_one.html:373
+#: templates/checkout/checkout_page_two.html:180
+#: templates/checkout/get_tickets.html:6
+#: templates/checkout/get_tickets.html:145
+#: templates/checkout/get_tickets_passcode.html:6
+#: templates/checkout/get_tickets_passcode.html:61
+#, fuzzy
+#| msgid "Tickets"
+msgid "Get Tickets"
+msgstr "টিকিট"
+
+#: templates/checkout/checkout_page_one.html:375
+#: templates/checkout/checkout_page_two.html:182
+msgid "Join Waiting Queue"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:395
+msgid "Ticket Sales Not Open"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:402
+msgid "Please select at least one ticket tier to continue."
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:405
+#: templates/checkout/checkout_paid.html:86
+msgid "Total Price"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:407
+#: templates/dashboard_organizer/event_ticket_tiers.html:291
+msgid "N/A"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:412
+msgid "By clicking on the above button, you're also agreeing to our"
+msgstr ""
+
+#: templates/checkout/checkout_page_one.html:415
+msgid "Terms of Use"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:30
+#: templates/checkout/checkout_page_two.html:37
+#: templates/checkout/checkout_paid.html:37
+#: templates/checkout/get_tickets.html:101
+#: templates/checkout/get_tickets_passcode.html:30
+#: templates/checkout/joined_waitlist.html:37
+msgid "By"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:42
+#: templates/checkout/get_tickets.html:118
+msgid "Congratulations!"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:45
+msgid ""
+"You made it! We've generated your ticket(s) for the event. You can get them "
+"on this page, or in the email we sent you at"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:48
+#, fuzzy
+#| msgid "Events by"
+msgid "Event Summary"
+msgstr "ইভেন্ট তালিকা"
+
+#: templates/checkout/checkout_page_success.html:55
+#: templates/checkout/get_tickets.html:239
+#: templates/dashboard_organizer/event_share.html:120
+#: templates/dashboard_organizer/event_share.html:124
+msgid "Date & Time"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:59
+#: templates/checkout/get_tickets.html:243
+msgid "Start"
+msgstr "শুরু"
+
+#: templates/checkout/checkout_page_success.html:84
+#: templates/checkout/get_tickets.html:270
+#: templates/dashboard_organizer/event_share.html:120
+msgid "Location"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:92
+msgid "Your tickets have been sent to your email address."
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:95
+msgid "You can also use the following link to get your tickets:"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:101
+#, fuzzy
+#| msgid "Tickets"
+msgid "Get My Tickets"
+msgstr "টিকিট"
+
+#: templates/checkout/checkout_page_success.html:108
+msgid "Receipt"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:120
+#: templates/checkout/checkout_page_two.html:151
+#: templates/checkout/checkout_paid.html:77
+#: templates/checkout/get_tickets.html:170
+#: templates/dashboard_organizer/waitlist.html:126
+#, fuzzy
+#| msgid "Allowed Guests (per ticket)"
+msgid "Allowed Guest(s):"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: templates/checkout/checkout_page_success.html:129
+msgid "Want to buy more tickets?"
+msgstr ""
+
+#: templates/checkout/checkout_page_success.html:134
+msgid "Order Again"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:32
+#: templates/checkout/checkout_paid.html:32
+#: templates/checkout/joined_waitlist.html:32
+msgid "Go Back"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:57
+#: templates/checkout/checkout_paid.html:48
+msgid "Complete Checkout"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:61
+msgid ""
+"You are about to checkout with FREE ticket(s) only. Please take note of the "
+"following:"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:65
+msgid ""
+"FREE tickets require no payment/verfication. The only constraint is "
+"the\tavailability at checkout."
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:68
+msgid ""
+"Due to the above point, event organizers may give less priority to free "
+"tickets in the case of capacity issues."
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:72
+msgid "If all of that sounds good, please click on the"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:72
+msgid "Continue"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:72
+msgid "button to get your ticket(s)."
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:79
+msgid "Proof of NFT ownership"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:82
+msgid ""
+"Prove ownership of the required digital assets (NFTs) to get your ticket(s)."
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:86
+msgid "Please connect your wallet & sign a message to get your ticket(s)."
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:114
+msgid "Check to use a delegated wallet to verify asset ownership:"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:127
+msgid ""
+"It's worth noting again that you only need to prove the ownership of the "
+"required digital asset(s). This is not a trade, but only a verification."
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:135
+#: templates/checkout/checkout_paid.html:56
+msgid "Summary"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:137
+#: templates/checkout/checkout_paid.html:58
+msgid "Edit"
+msgstr "সম্পাদনা করুন"
+
+#: templates/checkout/checkout_page_two.html:158
+#: templates/checkout/checkout_paid.html:90
+msgid "Confirm Order"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:188
+msgid "Please connect your wallet first!"
+msgstr ""
+
+#: templates/checkout/checkout_page_two.html:193
+msgid "Please sign the message with your wallet address to continue."
+msgstr ""
+
+#: templates/checkout/checkout_paid.html:51
+#, fuzzy
+#| msgid "Please confirm the deletion of your event."
+msgid "Please complete the payment to get your ticket(s)."
+msgstr "আপনার ইভেন্ট মুছে ফেলা নিশ্চিত করুন৷"
+
+#: templates/checkout/checkout_paid.html:71
+#: templates/checkout/ticket_tiers.html:94
+#: templates/dashboard_organizer/waitlist.html:122
+msgid "Price"
+msgstr ""
+
+#: templates/checkout/checkout_paid.html:92
+msgid "Payment secured by"
+msgstr ""
+
+#: templates/checkout/checkout_paid.html:111
+msgid "Continue on"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:21
+msgid "Downloading Ticket"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:24
+msgid ""
+"Please hold tight as we create your ticket image and prepare it for download."
+msgstr ""
+
+#: templates/checkout/get_tickets.html:55
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Ticket Type:"
+msgstr "টিকিট স্তর"
+
+#: templates/checkout/get_tickets.html:59
+msgid "FREE"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:62
+#: templates/scanner/scanner_success.html:12
+#: templates/scanner/scanner_warning.html:12
+msgid "Party Size:"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:65
+msgid "Date & Time:"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:69
+msgid "Location:"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:119
+msgid ""
+"You made it! We've generated your ticket(s) for the event. We've also mailed "
+"you this link (along with instructions) for future use at "
+msgstr ""
+
+#: templates/checkout/get_tickets.html:129
+#, fuzzy
+#| msgid "Address"
+msgid "Address: "
+msgstr "ঠিকানা"
+
+#: templates/checkout/get_tickets.html:137
+msgid "Open in map"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:148
+msgid ""
+"The following ticket(s) were generated for you. You can save a ticket as PNG "
+"by clicking on the download button, or your Google wallet."
+msgstr ""
+
+#: templates/checkout/get_tickets.html:154
+msgid "Order Receipt"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:156
+#: templates/dashboard_organizer/message_batches.html:60
+#: templates/dashboard_organizer/rsvp_tickets.html:61
+msgid "ID"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:193
+#, fuzzy
+#| msgid "Tickets"
+msgid "Ticket"
+msgstr "টিকিট"
+
+#: templates/checkout/get_tickets.html:206
+msgid "Download Ticket"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:208
+msgid "(as PNG)"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:220
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Ticket Type"
+msgstr "টিকিট স্তর"
+
+#: templates/checkout/get_tickets.html:229
+msgid "Party Size"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:292
+#: templates/checkout/get_tickets.html:310
+msgid "Add to"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:294
+msgid "Google Wallet"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:312
+msgid "Apple Wallet"
+msgstr ""
+
+#: templates/checkout/get_tickets.html:323
+msgid "Processing Checkout..."
+msgstr ""
+
+#: templates/checkout/get_tickets.html:326
+msgid ""
+"We are processing your order and generating your ticket(s). Please come back "
+"to this page after some time."
+msgstr ""
+
+#: templates/checkout/get_tickets_passcode.html:45
+msgid "Processing Tickets"
+msgstr ""
+
+#: templates/checkout/get_tickets_passcode.html:48
+msgid ""
+"Please hold tight as we prepare your tickets and make them ready for "
+"download."
+msgstr ""
+
+#: templates/checkout/get_tickets_passcode.html:64
+msgid "We've sent a passcode over to your email address"
+msgstr ""
+
+#: templates/checkout/get_tickets_passcode.html:64
+msgid "Please enter this passcode to download your tickets."
+msgstr ""
+
+#: templates/checkout/get_tickets_passcode.html:86
+msgid ""
+"If you haven't received your passcode (or would like to create another one), "
+"click on the following button."
+msgstr ""
+
+#: templates/checkout/get_tickets_passcode.html:93
+msgid "Resend Passcode"
+msgstr ""
+
+#: templates/checkout/joined_waitlist.html:50
+msgid "Joined Waitlist"
+msgstr ""
+
+#: templates/checkout/joined_waitlist.html:53
+msgid ""
+"You have successfully joined the waitlist. The event organizer reviews all "
+"submissions, and if selected, you will receive your tickets."
+msgstr ""
+
+#: templates/checkout/joined_waitlist.html:57
+msgid "Go Back to Event"
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:50
+#, fuzzy
+#| msgid "Sold"
+msgid "Sold out!"
+msgstr "বিক্রি"
+
+#: templates/checkout/ticket_tiers.html:54
+#: templates/checkout/ticket_tiers_guest.html:11
+msgid "available"
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:58
+msgid "Available"
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:61
+msgid "Guest(s) Allowed"
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:84
+#, fuzzy
+#| msgid "Max per person"
+msgid "Max per person:"
+msgstr "জনপ্রতি সর্বোচ্চ"
+
+#: templates/checkout/ticket_tiers.html:99
+msgid "Purchase with debit, credit, or Apple Pay."
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:111
+#: templates/checkout/ticket_tiers_guest.html:6
+msgid "Extra Guest(s) - Free"
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:114
+msgid "The guest supply allotment for this tier is full."
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:124
+msgid "Total # of guests"
+msgstr ""
+
+#: templates/checkout/ticket_tiers.html:124
+msgid "(Quantity × Guests)"
+msgstr ""
+
+#: templates/checkout/ticket_tiers_guest.html:14
+msgid "Set the number of guest(s) per ticket."
+msgstr ""
+
+#: templates/components/event_flow_header.html:11
+#, fuzzy
+#| msgid "Event"
+msgid "Event Edit"
+msgstr "ইভেন্ট"
+
+#: templates/components/event_flow_header.html:20
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Ticket Tiers"
+msgstr "টিকিট স্তর"
+
+#: templates/components/event_flow_header.html:29
+msgid "Party Time!"
+msgstr ""
+
+#: templates/dashboard_organizer/base.html:233
+msgid "Switch Teams"
+msgstr "দল পাল্টান"
+
+#: templates/dashboard_organizer/base.html:247
+msgid "None found"
+msgstr "একটিও পাওয়া যায়নি"
+
+#: templates/dashboard_organizer/base.html:256
+#, fuzzy
+#| msgid "Create Team"
+msgid "Create new Team"
+msgstr "দল তৈরি করুন"
+
+#: templates/dashboard_organizer/base.html:263
+msgid "Events Manager"
+msgstr "ইভেন্ট ম্যানেজার"
+
+#: templates/dashboard_organizer/base.html:267
+#: templates/dashboard_organizer/event_create.html:6
+#: templates/dashboard_organizer/event_create.html:9
+#: templates/dashboard_organizer/event_create.html:12
+#: templates/dashboard_organizer/event_create.html:16
+#: templates/dashboard_organizer/event_list.html:149
+#, fuzzy
+#| msgid "Create an Event"
+msgid "Create Event"
+msgstr "একটি ইভেন্ট তৈরি করুন"
+
+#: templates/dashboard_organizer/base.html:273
+#: templates/dashboard_organizer/event_list.html:6
+#: templates/dashboard_organizer/event_list.html:9
+#: templates/dashboard_organizer/event_list.html:12
+msgid "Events"
+msgstr "ইভেন্ট তালিকা"
+
+#: templates/dashboard_organizer/base.html:276
+msgid "Team Manager"
+msgstr "দলের ম্যানেজার"
+
+#: templates/dashboard_organizer/base.html:281
+#: templates/dashboard_organizer/team_details.html:6
+msgid "Team Details"
+msgstr "দলের বিবরণ"
+
+#: templates/dashboard_organizer/base.html:286
+#: templates/dashboard_organizer/manage_members.html:6
+#: templates/dashboard_organizer/team_details.html:93
+msgid "Manage Members"
+msgstr "সদস্যদের পরিচালনা করুন"
+
+#: templates/dashboard_organizer/base.html:291
+#: templates/dashboard_organizer/payment_details.html:6
+msgid "Payment Details"
+msgstr "পেমেন্ট বিবরণ"
+
+#: templates/dashboard_organizer/base.html:294
+msgid "Support"
+msgstr "সমর্থন"
+
+#: templates/dashboard_organizer/base.html:301
+msgid "Help Center"
+msgstr "সাহায্য কেন্দ্র"
+
+#: templates/dashboard_organizer/base.html:308
+msgid "Blog"
+msgstr "ব্লগ"
+
+#: templates/dashboard_organizer/event_check_in_guests.html:6
+#: templates/dashboard_organizer/event_check_in_guests.html:19
+#: templates/dashboard_organizer/event_details_tabs.html:55
+#: templates/dashboard_organizer/event_details_tabs.html:87
+#: templates/dashboard_organizer/event_details_tabs.html:145
+msgid "Check-in Guests"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:21
+msgid "Use the scanner app to scan your customers' tickets."
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:32
+msgid "Scanner App"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:34
+msgid ""
+"Want to scan your customers' tickets and check them into the event? Please "
+"go to the following link to use the"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:34
+msgid "scanner app"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:34
+msgid "and do exactly that:"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:58
+msgid "How to use the scanner:"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:62
+msgid "Go to the scanner app link (found above)"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:64
+msgid "Give permission to use the camera"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:66
+msgid ""
+"When someone presents their tickets, point the camera at the QR code (making "
+"sure the QR code is inside the box)"
+msgstr ""
+
+#: templates/dashboard_organizer/event_check_in_guests.html:69
+msgid ""
+"On successful scans, you should see a green notification box pop-up to let "
+"you know that the check-in worked"
+msgstr ""
+
+#: templates/dashboard_organizer/event_create.html:18
+msgid ""
+"The Fun Stuff &mdash; Name your event, add your cover image, and fill in the "
+"necessary details."
+msgstr ""
+
+#: templates/dashboard_organizer/event_delete.html:6
+#: templates/dashboard_organizer/event_delete.html:9
+#: templates/dashboard_organizer/event_delete.html:12
+#: templates/dashboard_organizer/event_delete.html:18
+msgid "Delete Event"
+msgstr "ইভেন্ট মুছুন"
+
+#: templates/dashboard_organizer/event_delete.html:20
+msgid "Please confirm the deletion of your event."
+msgstr "আপনার ইভেন্ট মুছে ফেলা নিশ্চিত করুন৷"
+
+#: templates/dashboard_organizer/event_delete.html:29
+msgid ""
+"You're about to remove the following event. Please note, once this action is "
+"confirmed, it cannot be undone."
+msgstr ""
+"আপনি নিম্নলিখিত ইভেন্টটি সরাতে চলেছেন৷ অনুগ্রহ করে মনে রাখবেন, একবার এই ক্রিয়াটি "
+"নিশ্চিত হয়ে গেলে, এটি পূর্বাবস্থায় ফেরানো যাবে না৷"
+
+#: templates/dashboard_organizer/event_delete.html:38
+#: templates/dashboard_organizer/member_delete.html:38
+#: templates/dashboard_organizer/ticket_tier_delete.html:70
+msgid "Cancel"
+msgstr "বাতিল"
+
+#: templates/dashboard_organizer/event_delete.html:40
+#: templates/dashboard_organizer/ticket_tier_delete.html:72
+#: venv/lib/python3.11/site-packages/django/forms/formsets.py:499
+msgid "Delete"
+msgstr "মুছে ফেলুন"
+
+#: templates/dashboard_organizer/event_details_tabs.html:9
+#: templates/dashboard_organizer/event_details_tabs.html:75
+#: templates/dashboard_organizer/event_details_tabs.html:100
+#: templates/dashboard_organizer/event_update.html:6
+#: templates/dashboard_organizer/event_update.html:19
+#, fuzzy
+#| msgid "Preview"
+msgid "Overview"
+msgstr "পূর্বরূপ"
+
+#: templates/dashboard_organizer/event_details_tabs.html:16
+#: templates/dashboard_organizer/event_details_tabs.html:77
+#: templates/dashboard_organizer/event_details_tabs.html:107
+#: templates/dashboard_organizer/event_ticket_tiers.html:6
+#: templates/dashboard_organizer/event_ticket_tiers.html:89
+#, fuzzy
+#| msgid "Tickets"
+msgid "Ticketing"
+msgstr "টিকিট"
+
+#: templates/dashboard_organizer/event_details_tabs.html:23
+#: templates/dashboard_organizer/event_details_tabs.html:79
+#: templates/dashboard_organizer/event_details_tabs.html:114
+#: templates/dashboard_organizer/event_share.html:6
+#: templates/dashboard_organizer/event_share.html:19
+#: templates/dashboard_organizer/event_share.html:60
+msgid "Sharing"
+msgstr ""
+
+#: templates/dashboard_organizer/event_details_tabs.html:30
+#: templates/dashboard_organizer/event_details_tabs.html:81
+#: templates/dashboard_organizer/event_details_tabs.html:121
+#: templates/dashboard_organizer/event_ticket_tiers.html:181
+#: templates/dashboard_organizer/waitlist.html:6
+#: templates/dashboard_organizer/waitlist.html:19
+msgid "Waitlist"
+msgstr ""
+
+#: templates/dashboard_organizer/event_details_tabs.html:38
+#: templates/dashboard_organizer/event_details_tabs.html:83
+#: templates/dashboard_organizer/event_details_tabs.html:129
+#: templates/dashboard_organizer/rsvp_tickets.html:6
+#: templates/dashboard_organizer/rsvp_tickets.html:21
+msgid "RSVP"
+msgstr ""
+
+#: templates/dashboard_organizer/event_details_tabs.html:47
+#: templates/dashboard_organizer/event_details_tabs.html:85
+#: templates/dashboard_organizer/event_details_tabs.html:138
+#: templates/dashboard_organizer/message_batches.html:6
+#: templates/dashboard_organizer/message_batches.html:21
+msgid "Messaging"
+msgstr ""
+
+#: templates/dashboard_organizer/event_details_tabs.html:62
+#: templates/dashboard_organizer/event_details_tabs.html:89
+#: templates/dashboard_organizer/event_details_tabs.html:152
+#: templates/dashboard_organizer/event_stats.html:6
+#: templates/dashboard_organizer/event_stats.html:20
+#, fuzzy
+#| msgid "Status"
+msgid "Stats"
+msgstr "স্ট্যাটাস"
+
+#: templates/dashboard_organizer/event_form.html:70
+msgid ""
+"Changing the title will also change the public URL of this event. In case "
+"you've shared the URL already, you'll need to make sure to share the new one."
+msgstr ""
+
+#: templates/dashboard_organizer/event_form.html:80
+msgid "Public URL (Slug): "
+msgstr ""
+
+#: templates/dashboard_organizer/event_form.html:109
+msgid "The event end date must come after the start date."
+msgstr ""
+
+#: templates/dashboard_organizer/event_form.html:139
+msgid ""
+"You can add links and sauce up your content to grab your customers' "
+"attention."
+msgstr ""
+
+#: templates/dashboard_organizer/event_form.html:155
+msgid "Save & Continue"
+msgstr ""
+
+#: templates/dashboard_organizer/event_list.html:21
+msgid "All"
+msgstr "সব"
+
+#: templates/dashboard_organizer/event_list.html:28
+msgid "Upcoming"
+msgstr ""
+
+#: templates/dashboard_organizer/event_list.html:35
+msgid "Past"
+msgstr ""
+
+#: templates/dashboard_organizer/event_list.html:41
+#: templates/dashboard_organizer/event_ticket_tiers.html:100
+#: templates/dashboard_organizer/rsvp_tickets.html:28
+msgid "Create"
+msgstr "তৈরি করুন"
+
+#: templates/dashboard_organizer/event_list.html:42
+#: templates/dashboard_organizer/event_list.html:53
+msgid "Event"
+msgstr "ইভেন্ট"
+
+#: templates/dashboard_organizer/event_list.html:55
+#: templates/dashboard_organizer/event_list.html:93
+#: templates/dashboard_organizer/event_stats.html:34
+#: templates/dashboard_organizer/event_ticket_tiers.html:267
+#, fuzzy
+#| msgid "Tickets"
+msgid "Tickets Sold"
+msgstr "টিকিট"
+
+#: templates/dashboard_organizer/event_list.html:99
+#: templates/dashboard_organizer/manage_members.html:9
+#: templates/dashboard_organizer/manage_members.html:12
+#: templates/dashboard_organizer/payment_details.html:88
+msgid "Manage"
+msgstr "পরিচালনা করুন"
+
+#: templates/dashboard_organizer/event_list.html:114
+#: templates/dashboard_organizer/event_list.html:117
+#: templates/dashboard_organizer/waitlist.html:141
+#: templates/dashboard_organizer/waitlist.html:144
+msgid "Prev"
+msgstr "পূর্ববর্তী"
+
+#: templates/dashboard_organizer/event_list.html:122
+#: templates/dashboard_organizer/waitlist.html:149
+msgid "Page"
+msgstr "পৃষ্ঠা"
+
+#: templates/dashboard_organizer/event_list.html:122
+#: templates/dashboard_organizer/waitlist.html:149
+msgid "of"
+msgstr "অব"
+
+#: templates/dashboard_organizer/event_list.html:127
+#: templates/dashboard_organizer/event_list.html:130
+#: templates/dashboard_organizer/waitlist.html:154
+#: templates/dashboard_organizer/waitlist.html:157
+msgid "Next"
+msgstr "পরবর্তী"
+
+#: templates/dashboard_organizer/event_list.html:143
+#, fuzzy
+#| msgid "Events"
+msgid "No Events"
+msgstr "ইভেন্ট তালিকা"
+
+#: templates/dashboard_organizer/event_list.html:145
+msgid "You have not created any events. Why not host one now?"
+msgstr ""
+
+#: templates/dashboard_organizer/event_share.html:21
+msgid "Grab the public link and share your event with the world!"
+msgstr ""
+
+#: templates/dashboard_organizer/event_share.html:32
+msgid "Public Page"
+msgstr "পাবলিক পেজ"
+
+#: templates/dashboard_organizer/event_share.html:34
+msgid "The following is a link to the public page for this event:"
+msgstr ""
+
+#: templates/dashboard_organizer/event_share.html:62
+msgid "Share your event with the world!"
+msgstr ""
+
+#: templates/dashboard_organizer/event_share.html:97
+msgid "Email"
+msgstr ""
+
+#: templates/dashboard_organizer/event_share.html:103
+msgid "Here's a preview of your event being shared on socials:"
+msgstr ""
+
+#: templates/dashboard_organizer/event_share.html:120
+#: templates/dashboard_organizer/event_share.html:124
+#, fuzzy
+#| msgid "Guests per ticket"
+msgid "Get your tickets now!"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: templates/dashboard_organizer/event_stats.html:22
+msgid "Sales, orders, and check-in history of your event."
+msgstr ""
+
+#: templates/dashboard_organizer/event_stats.html:47
+msgid "Attendees (+ Guests)"
+msgstr ""
+
+#: templates/dashboard_organizer/event_stats.html:62
+msgid "Check-Ins"
+msgstr ""
+
+#: templates/dashboard_organizer/event_stats.html:70
+#, fuzzy
+#| msgid "Add Ticket Tier"
+msgid "Sold Tickets List"
+msgstr "টিকিট স্তর যোগ করুন"
+
+#: templates/dashboard_organizer/event_stats.html:75
+msgid "Download CSV"
+msgstr ""
+
+#: templates/dashboard_organizer/event_stats.html:131
+#, fuzzy
+#| msgid "Tickets"
+msgid "No Tickets Sold"
+msgstr "টিকিট"
+
+#: templates/dashboard_organizer/event_stats.html:134
+msgid ""
+"No tickets have been sold for this event yet. Why not try promoting your "
+"event?"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:26
+msgid "Event Created Successfully!"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:36
+msgid "Your event has been created successfully. A few things to note:"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:40
+msgid "Your event is already "
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:42
+msgid "ready to share"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:45
+msgid "You need to create at least one ticket tier to start selling"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:48
+msgid "You can also customize the ticket sales time window on this page"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:57
+#: templates/dashboard_organizer/event_ticket_tiers.html:63
+#: templates/dashboard_organizer/event_ticket_tiers.html:106
+#: templates/dashboard_organizer/ticket_tier_free_create.html:144
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:158
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:155
+#: templates/dashboard_organizer/ticket_tier_update.html:142
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Create Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:72
+#: templates/dashboard_organizer/event_ticket_tiers.html:115
+#: templates/dashboard_organizer/event_ticket_tiers.html:224
+#: templates/dashboard_organizer/waitlist.html:58
+msgid "NFT-Gated"
+msgstr "NFT- গেটেড"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:92
+msgid "Manage your ticket tiers and ticketing preferences."
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:131
+msgid "Preferences (Optional)"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:133
+#: templates/dashboard_organizer/ticket_tier_free_create.html:93
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:107
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:104
+#: templates/dashboard_organizer/ticket_tier_update.html:91
+msgid "Click to show/hide"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:156
+msgid "Schedule Sales"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:158
+msgid ""
+"By default, your ticket sales are scheduled to start right away. However, "
+"you can put in a time range here to control the window of ticket sales."
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:174
+msgid ""
+"When set, our system will make sure that the total number of people "
+"attending (ticket holders + guests) does not exceed this number."
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:183
+msgid ""
+"When set, customers will join a waitlist, instead of getting actual tickets. "
+"You can bump them up as needed to the attendee list (and issue tickets) via "
+"the dashboard."
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:190
+msgid "Save Preferences"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:212
+#: templates/dashboard_organizer/event_ticket_tiers.html:218
+#: templates/dashboard_organizer/event_ticket_tiers.html:224
+#: templates/dashboard_organizer/message_batch_create.html:48
+#: templates/dashboard_organizer/rsvp_create_tickets.html:53
+msgid "Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:243
+#, fuzzy
+#| msgid "Tickets"
+msgid "ticket"
+msgstr "টিকিট"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:283
+#, fuzzy
+#| msgid "Guests per ticket"
+msgid "Guests per tkt"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:295
+msgid "Guest supply"
+msgstr ""
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:303
+msgid "NFT Requirements"
+msgstr "NFT প্রয়োজনীয়তা"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:306
+msgid "Network"
+msgstr "নেটওয়ার্ক"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:309
+msgid "Token Address"
+msgstr "টোকেন ঠিকানা"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:324
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "No Ticket Tiers"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/event_ticket_tiers.html:327
+msgid "No ticket tiers have been created yet. Why not create one?"
+msgstr ""
+
+#: templates/dashboard_organizer/event_update.html:21
+msgid "View and edit your event details."
+msgstr ""
+
+#: templates/dashboard_organizer/manage_members.html:9
+#: templates/dashboard_organizer/manage_members.html:12
+msgid "Members"
+msgstr "সদস্যদের"
+
+#: templates/dashboard_organizer/manage_members.html:18
+#: templates/dashboard_organizer/team_details.html:62
+msgid "Team Members"
+msgstr "দলের সদস্যরা"
+
+#: templates/dashboard_organizer/manage_members.html:41
+#: templates/dashboard_organizer/team_details.html:79
+msgid "You"
+msgstr "আপনি"
+
+#: templates/dashboard_organizer/manage_members.html:56
+#, fuzzy
+#| msgid "Invite Sent"
+msgid "Invitation Sent"
+msgstr "আমন্ত্রণ পাঠানো"
+
+#: templates/dashboard_organizer/manage_members.html:60
+msgid "Expired (Invite again)"
+msgstr ""
+
+#: templates/dashboard_organizer/manage_members.html:76
+msgid "Invite Team Members"
+msgstr "দলের সদস্যদের আমন্ত্রণ"
+
+#: templates/dashboard_organizer/manage_members.html:98
+msgid "Send Invite"
+msgstr "আমন্ত্রণ পাঠান"
+
+#: templates/dashboard_organizer/member_delete.html:6
+#: templates/dashboard_organizer/member_delete.html:18
+msgid "Remove Member"
+msgstr "সদস্য সরান"
+
+#: templates/dashboard_organizer/member_delete.html:9
+#: templates/dashboard_organizer/member_delete.html:12
+#: templates/dashboard_organizer/member_delete.html:40
+msgid "Remove"
+msgstr "সরান"
+
+#: templates/dashboard_organizer/member_delete.html:9
+#: templates/dashboard_organizer/member_delete.html:12
+msgid "Member"
+msgstr "সদস্যদের"
+
+#: templates/dashboard_organizer/member_delete.html:20
+msgid "Please confirm the removal of your team member."
+msgstr "আপনার দলের সদস্য অপসারণ নিশ্চিত করুন৷"
+
+#: templates/dashboard_organizer/member_delete.html:32
+msgid ""
+"You're about to remove this team member. Please note, once this action is "
+"confirmed, it cannot be undone."
+msgstr ""
+"আপনি এই দলের সদস্যকে সরাতে চলেছেন৷ অনুগ্রহ করে মনে রাখবেন, একবার এই ক্রিয়াটি "
+"নিশ্চিত হয়ে গেলে, এটি পূর্বাবস্থায় ফেরানো যাবে না৷"
+
+#: templates/dashboard_organizer/message_batch_create.html:6
+#: templates/dashboard_organizer/message_batch_create.html:26
+msgid "Compose Message"
+msgstr ""
+
+#: templates/dashboard_organizer/message_batch_create.html:28
+msgid "Send an email to ticket holders of a particular tier."
+msgstr ""
+
+#: templates/dashboard_organizer/message_batch_create.html:56
+msgid "Email Content"
+msgstr ""
+
+#: templates/dashboard_organizer/message_batch_create.html:58
+msgid "Please enter the subject and message you want to send."
+msgstr ""
+
+#: templates/dashboard_organizer/message_batch_create.html:72
+#, fuzzy
+#| msgid "Manage Emails"
+msgid "Send Emails"
+msgstr "ইমেল পরিচালনা করুন"
+
+#: templates/dashboard_organizer/message_batches.html:23
+msgid "Send emails to ticket holders."
+msgstr ""
+
+#: templates/dashboard_organizer/message_batches.html:28
+msgid "Compose"
+msgstr ""
+
+#: templates/dashboard_organizer/message_batches.html:40
+#: templates/dashboard_organizer/message_batches.html:47
+#: templates/dashboard_organizer/message_batches.html:54
+#: templates/dashboard_organizer/rsvp_tickets.html:41
+#: templates/dashboard_organizer/rsvp_tickets.html:48
+#: templates/dashboard_organizer/rsvp_tickets.html:55
+#, fuzzy
+#| msgid "Tickets"
+msgid "Ticket:"
+msgstr "টিকিট"
+
+#: templates/dashboard_organizer/message_batches.html:64
+msgid "Sent"
+msgstr ""
+
+#: templates/dashboard_organizer/message_batches.html:72
+msgid "Email(s) Sent"
+msgstr ""
+
+#: templates/dashboard_organizer/message_batches.html:76
+msgid "Subject:"
+msgstr ""
+
+#: templates/dashboard_organizer/message_batches.html:80
+msgid "Message:"
+msgstr ""
+
+#: templates/dashboard_organizer/message_batches.html:97
+#, fuzzy
+#| msgid "None found"
+msgid "No messages found"
+msgstr "একটিও পাওয়া যায়নি"
+
+#: templates/dashboard_organizer/message_batches.html:100
+msgid "Could not find anything. Why not compose one?"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:9
+#: templates/dashboard_organizer/payment_details.html:12
+#, fuzzy
+#| msgid "Payment Details"
+msgid "Payment"
+msgstr "পেমেন্ট বিবরণ"
+
+#: templates/dashboard_organizer/payment_details.html:9
+#: templates/dashboard_organizer/payment_details.html:12
+#: templates/dashboard_organizer/team_details.html:9
+#: templates/dashboard_organizer/team_details.html:12
+msgid "Details"
+msgstr "বিবরণ"
+
+#: templates/dashboard_organizer/payment_details.html:23
+msgid "Remove/Switch Stripe Account"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:32
+msgid ""
+"Do you want to remove your connected Stripe account, or maybe switch to a "
+"different one? Please get in touch with our support."
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:38
+msgid "SocialPass Support"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:50
+msgid "Stripe Account Connected"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:53
+msgid "The following Stripe account is connected to your team."
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:62
+msgid "Remove/Switch  Account"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:76
+msgid "Stripe ID"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:80
+msgid "Country"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:96
+msgid "You can now create paid ticket tiers and accept payments!"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:100
+#: templates/dashboard_organizer/payment_details.html:115
+msgid "Details submitted"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:104
+#: templates/dashboard_organizer/payment_details.html:121
+msgid "Payouts enabled"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:110
+msgid ""
+"Your account can't accept payouts yet! Please correct the following issues "
+"in your Stripe Dashboard."
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:133
+msgid "Host Events & Make Money"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:136
+#, python-format
+msgid ""
+"Sell tickets easily with a Stripe account. We only take a x%% fee for every "
+"ticket sold."
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:149
+msgid "Add Stripe Account"
+msgstr ""
+
+#: templates/dashboard_organizer/payment_details.html:161
+msgid "No Stripe account connected."
+msgstr ""
+
+#: templates/dashboard_organizer/rsvp_create_tickets.html:6
+#: templates/dashboard_organizer/rsvp_create_tickets.html:26
+#: templates/dashboard_organizer/rsvp_create_tickets.html:77
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Create RSVP Tickets"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/rsvp_create_tickets.html:28
+msgid "Issue tickets directly from the dashboard."
+msgstr ""
+
+#: templates/dashboard_organizer/rsvp_create_tickets.html:66
+msgid "Customer Emails"
+msgstr ""
+
+#: templates/dashboard_organizer/rsvp_create_tickets.html:68
+msgid ""
+"Please enter a list of customer email addresses as CSV (Comma Separated "
+"Values)."
+msgstr ""
+
+#: templates/dashboard_organizer/rsvp_tickets.html:23
+msgid "Create and send tickets directly from the dashboard."
+msgstr ""
+
+#: templates/dashboard_organizer/rsvp_tickets.html:65
+#, fuzzy
+#| msgid "Create"
+msgid "Created"
+msgstr "তৈরি করুন"
+
+#: templates/dashboard_organizer/rsvp_tickets.html:73
+#, fuzzy
+#| msgid "Tickets"
+msgid "Ticket(s) Sent"
+msgstr "টিকিট"
+
+#: templates/dashboard_organizer/rsvp_tickets.html:79
+msgid "Fail:"
+msgstr ""
+
+#: templates/dashboard_organizer/rsvp_tickets.html:89
+msgid "Success:"
+msgstr ""
+
+#: templates/dashboard_organizer/rsvp_tickets.html:112
+#: templates/dashboard_organizer/waitlist.html:172
+#, fuzzy
+#| msgid "None found"
+msgid "Nothing found"
+msgstr "একটিও পাওয়া যায়নি"
+
+#: templates/dashboard_organizer/rsvp_tickets.html:115
+msgid "Could not find anything. Why not create RSVP tickets?"
+msgstr ""
+
+#: templates/dashboard_organizer/team_details.html:9
+#: templates/dashboard_organizer/team_details.html:12
+msgid "Team"
+msgstr "দলের"
+
+#: templates/dashboard_organizer/team_details.html:17
+msgid "Team Information"
+msgstr "দলের তথ্য"
+
+#: templates/dashboard_organizer/team_details.html:41
+msgid "Your team does not have a description."
+msgstr "আপনার দলের একটি বিবরণ নেই।"
+
+#: templates/dashboard_organizer/team_details.html:51
+msgid "Edit Team"
+msgstr "দল সম্পাদনা করুন"
+
+#: templates/dashboard_organizer/ticket_tier_delete.html:6
+#: templates/dashboard_organizer/ticket_tier_delete.html:26
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Delete Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/ticket_tier_delete.html:28
+#, fuzzy
+#| msgid "Please confirm the deletion of your event."
+msgid "Please confirm the deletion of your ticket tier."
+msgstr "আপনার ইভেন্ট মুছে ফেলা নিশ্চিত করুন৷"
+
+#: templates/dashboard_organizer/ticket_tier_delete.html:40
+msgid ""
+"This ticket tier cannot be deleted. Tickets have been issued, or there are "
+"sessions in the waitlist with this tier."
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_delete.html:48
+msgid "Go back"
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_delete.html:51
+msgid "Edit to hide from public"
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_delete.html:61
+#, fuzzy
+#| msgid ""
+#| "You're about to remove the following event. Please note, once this action "
+#| "is confirmed, it cannot be undone."
+msgid ""
+"You're about to delete the following ticket tier. Please note, once this "
+"action is confirmed, it cannot be undone."
+msgstr ""
+"আপনি নিম্নলিখিত ইভেন্টটি সরাতে চলেছেন৷ অনুগ্রহ করে মনে রাখবেন, একবার এই ক্রিয়াটি "
+"নিশ্চিত হয়ে গেলে, এটি পূর্বাবস্থায় ফেরানো যাবে না৷"
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:6
+#: templates/dashboard_organizer/ticket_tier_free_create.html:27
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Create Free Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:30
+msgid "Use the following form to create a free ticket tier."
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:51
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:51
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:51
+#: templates/dashboard_organizer/ticket_tier_update.html:49
+#, fuzzy
+#| msgid "Name of ticket tier"
+msgid "What is the name of your ticket tier?"
+msgstr "টিকিটের স্তরের নাম"
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:62
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:62
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:62
+#: templates/dashboard_organizer/ticket_tier_update.html:60
+msgid "How many tickets do you want to sell?"
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:73
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:73
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:73
+#: templates/dashboard_organizer/ticket_tier_update.html:71
+#, fuzzy
+#| msgid "Guests per ticket"
+msgid "How many guests per ticket?"
+msgstr "টিকিট প্রতি অতিথি"
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:91
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:105
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:102
+#: templates/dashboard_organizer/ticket_tier_update.html:89
+msgid "Extra Information (Optional)"
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:101
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:115
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:112
+#: templates/dashboard_organizer/ticket_tier_update.html:99
+msgid ""
+"Use this field to limit the maximum tickets that attendees can buy at once."
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:111
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:125
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:122
+#: templates/dashboard_organizer/ticket_tier_update.html:109
+msgid "Guest Supply"
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:113
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:127
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:124
+#: templates/dashboard_organizer/ticket_tier_update.html:111
+msgid ""
+"When set, our system will make sure that the total number of guests allowed "
+"for this tier (via issued tickets) does not exceed this number."
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:123
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:137
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:134
+#: templates/dashboard_organizer/ticket_tier_update.html:121
+#, fuzzy
+#| msgid "Team Information"
+msgid "Additional information"
+msgstr "দলের তথ্য"
+
+#: templates/dashboard_organizer/ticket_tier_free_create.html:125
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:139
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:136
+#: templates/dashboard_organizer/ticket_tier_update.html:123
+msgid "Use this field to provide further information about this ticket tier."
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:6
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:27
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Create NFT-Gated Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:30
+msgid "Use the following form to create an NFT-gated ticket tier."
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_nft_create.html:83
+msgid "Required NFT Details"
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:6
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:27
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Create Paid Ticket Tier"
+msgstr "টিকিট স্তর"
+
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:30
+msgid "Use the following form to create a paid ticket tier."
+msgstr ""
+
+#: templates/dashboard_organizer/ticket_tier_paid_create.html:84
+#, fuzzy
+#| msgid "Save Ticket Tier"
+msgid "Set Ticket Price"
+msgstr "জমা"
+
+#: templates/dashboard_organizer/ticket_tier_update.html:6
+#: templates/dashboard_organizer/ticket_tier_update.html:26
+msgid "Update Ticket Tier"
+msgstr "টিকিট স্তর আপডেট করুন"
+
+#: templates/dashboard_organizer/ticket_tier_update.html:28
+#, fuzzy
+#| msgid "Create one or multiple ticket tiers."
+msgid "Make changes to your ticket tier."
+msgstr "এক বা একাধিক টিকিটের স্তর তৈরি করুন।"
+
+#: templates/dashboard_organizer/waitlist.html:21
+msgid "Bump up customers to the attendee list and issue tickets."
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:33
+#: templates/scanner/scanner_manual_check_in.html:33
+msgid "Search"
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:64
+#: templates/dashboard_organizer/waitlist_post.html:5
+msgid "Fulfilled"
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:70
+#: templates/dashboard_organizer/waitlist_post.html:10
+msgid "Waiting..."
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:74
+#: templates/dashboard_organizer/waitlist_post.html:14
+#, fuzzy
+#| msgid "Payment Details"
+msgid "Payment link sent"
+msgstr "পেমেন্ট বিবরণ"
+
+#: templates/dashboard_organizer/waitlist.html:84
+#: templates/dashboard_organizer/waitlist_post.html:21
+msgid "Fulfill"
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:90
+msgid "Customer:"
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:96
+msgid "ID:"
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:101
+#, fuzzy
+#| msgid "Create"
+msgid "Created:"
+msgstr "তৈরি করুন"
+
+#: templates/dashboard_organizer/waitlist.html:108
+msgid "Checkout Data:"
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist.html:175
+msgid "Could not find anything on the waitlist."
+msgstr ""
+
+#: templates/dashboard_organizer/waitlist_post.html:25
+#: templates/scanner/manual_ticket_post.html:12
+msgid "Try again"
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:6
+#: templates/invitations/invitation_detail.html:17
+msgid "Invitation to "
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:13
+msgid "Invitation already accepted"
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:15
+msgid "Invitation has expired"
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:22
+msgid ""
+"The invitation has already been accepted. Please go to your dashboard to "
+"start managing your events."
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:26
+msgid ""
+"The invitation has already expired. Please request another one from the "
+"sender."
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:30
+msgid "You "
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:30
+msgid " have been invited to join the "
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:30
+msgid "team."
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:35
+msgid "Please accept this invitation by clicking on the following button."
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:41
+msgid "Accept invitation"
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:47
+msgid ""
+"The invited email does not belong to the account you're currently logged "
+"into. Consider signing out first."
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:51
+#, fuzzy
+#| msgid "Sign Out"
+msgid "Sign out"
+msgstr "সাইন আউট"
+
+#: templates/invitations/invitation_detail.html:58
+msgid ""
+"If you want to accept this invitation, you will need to create an account "
+"first."
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:62
+msgid "Sign up to create account"
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:67
+msgid ""
+"If you want to accept this invitation, you will need to login to your "
+"existing account."
+msgstr ""
+
+#: templates/invitations/invitation_detail.html:71
+msgid "Login to existing account"
+msgstr ""
+
+#: templates/scanner/base_scanner.html:18
+msgid "Scanner"
+msgstr ""
+
+#: templates/scanner/base_scanner.html:90
+msgid "All rights reserved"
+msgstr ""
+
+#: templates/scanner/manual_ticket_post.html:4
+#: templates/scanner/scanner_manual_check_in.html:83
+msgid "Checked-In"
+msgstr ""
+
+#: templates/scanner/manual_ticket_post.html:8
+#: templates/scanner/scanner_manual_check_in.html:91
+#, fuzzy
+#| msgid "Check-In (Scanner)"
+msgid "Check-In"
+msgstr "চেক-ইন (স্ক্যানার)"
+
+#: templates/scanner/scanner.html:13
+msgid "Date:"
+msgstr ""
+
+#: templates/scanner/scanner.html:17
+msgid "Venue:"
+msgstr ""
+
+#: templates/scanner/scanner.html:23
+msgid "Start Scanning"
+msgstr ""
+
+#: templates/scanner/scanner2.html:30
+msgid "Last scan"
+msgstr ""
+
+#: templates/scanner/scanner2.html:36
+msgid "Scanning..."
+msgstr ""
+
+#: templates/scanner/scanner2.html:55 templates/scanner/scanner_stats.html:12
+msgid "Attendees:"
+msgstr ""
+
+#: templates/scanner/scanner2.html:62 templates/scanner/scanner_stats.html:19
+msgid "Check-Ins:"
+msgstr ""
+
+#: templates/scanner/scanner2.html:72
+#: templates/scanner/scanner_manual_check_in.html:18
+msgid "Manual Check-In"
+msgstr ""
+
+#: templates/scanner/scanner2.html:84 templates/scanner/scanner2.html:97
+msgid "QR Reader Input"
+msgstr ""
+
+#: templates/scanner/scanner_manual_check_in.html:22
+msgid "Use the following form to search and manually check-in ticket holders."
+msgstr ""
+
+#: templates/scanner/scanner_manual_check_in.html:50
+msgid "Tickets"
+msgstr "টিকিট"
+
+#: templates/scanner/scanner_manual_check_in.html:99
+msgid "Redeemed at"
+msgstr ""
+
+#: templates/scanner/scanner_manual_check_in.html:112
+#, fuzzy
+#| msgid "None found"
+msgid "Nothing found."
+msgstr "একটিও পাওয়া যায়নি"
+
+#: templates/scanner/scanner_success.html:7
+msgid "Successfully scanned!"
+msgstr ""
+
+#: templates/scanner/scanner_success.html:9
+#: templates/scanner/scanner_warning.html:9
+#, fuzzy
+#| msgid "Ticket Tier"
+msgid "Ticket Tier:"
+msgstr "টিকিট স্তর"
+
+#: venv/lib/python3.11/site-packages/django/contrib/messages/apps.py:16
+msgid "Messages"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/contrib/sitemaps/apps.py:8
+msgid "Site Maps"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/contrib/staticfiles/apps.py:9
+msgid "Static Files"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/contrib/syndication/apps.py:7
+msgid "Syndication"
+msgstr ""
+
+#. Translators: String used to replace omitted page numbers in elided page
+#. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
+#: venv/lib/python3.11/site-packages/django/core/paginator.py:30
+msgid "…"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/paginator.py:32
+msgid "That page number is not an integer"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/paginator.py:33
+msgid "That page number is less than 1"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/paginator.py:34
+msgid "That page contains no results"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:22
+msgid "Enter a valid value."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:104
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:760
+msgid "Enter a valid URL."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:165
+msgid "Enter a valid integer."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:176
+msgid "Enter a valid email address."
+msgstr ""
+
+#. Translators: "letters" means latin letters: a-z and A-Z.
+#: venv/lib/python3.11/site-packages/django/core/validators.py:259
+msgid ""
+"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:267
+msgid ""
+"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
+"hyphens."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:279
+#: venv/lib/python3.11/site-packages/django/core/validators.py:306
+msgid "Enter a valid IPv4 address."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:286
+#: venv/lib/python3.11/site-packages/django/core/validators.py:307
+msgid "Enter a valid IPv6 address."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:298
+#: venv/lib/python3.11/site-packages/django/core/validators.py:305
+msgid "Enter a valid IPv4 or IPv6 address."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:341
+msgid "Enter only digits separated by commas."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:347
+#, python-format
+msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:382
+#, python-format
+msgid "Ensure this value is less than or equal to %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:391
+#, python-format
+msgid "Ensure this value is greater than or equal to %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:400
+#, python-format
+msgid "Ensure this value is a multiple of step size %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:407
+#, python-format
+msgid ""
+"Ensure this value is a multiple of step size %(limit_value)s, starting from "
+"%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:439
+#, python-format
+msgid ""
+"Ensure this value has at least %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at least %(limit_value)d characters (it has "
+"%(show_value)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:457
+#, python-format
+msgid ""
+"Ensure this value has at most %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at most %(limit_value)d characters (it has "
+"%(show_value)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:480
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:355
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:394
+msgid "Enter a number."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:482
+#, python-format
+msgid "Ensure that there are no more than %(max)s digit in total."
+msgid_plural "Ensure that there are no more than %(max)s digits in total."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:487
+#, python-format
+msgid "Ensure that there are no more than %(max)s decimal place."
+msgid_plural "Ensure that there are no more than %(max)s decimal places."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:492
+#, python-format
+msgid ""
+"Ensure that there are no more than %(max)s digit before the decimal point."
+msgid_plural ""
+"Ensure that there are no more than %(max)s digits before the decimal point."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:563
+#, python-format
+msgid ""
+"File extension “%(extension)s” is not allowed. Allowed extensions are: "
+"%(allowed_extensions)s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/core/validators.py:624
+msgid "Null characters are not allowed."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/base.py:1473
+#: venv/lib/python3.11/site-packages/django/forms/models.py:906
+#, fuzzy
+#| msgid "End"
+msgid "and"
+msgstr "শেষ"
+
+#: venv/lib/python3.11/site-packages/django/db/models/base.py:1475
+#, python-format
+msgid "%(model_name)s with this %(field_labels)s already exists."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/constraints.py:20
+#, python-format
+msgid "Constraint “%(name)s” is violated."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:133
+#, python-format
+msgid "Value %(value)r is not a valid choice."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:134
+msgid "This field cannot be null."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:135
+msgid "This field cannot be blank."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:136
+#, python-format
+msgid "%(model_name)s with this %(field_label)s already exists."
+msgstr ""
+
+#. Translators: The 'lookup_type' is one of 'date', 'year' or
+#. 'month'. Eg: "Title must be unique for pub_date year"
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:140
+#, python-format
+msgid ""
+"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:179
+#, python-format
+msgid "Field of type: %(field_type)s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1155
+#, python-format
+msgid "“%(value)s” value must be either True or False."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1156
+#, python-format
+msgid "“%(value)s” value must be either True, False, or None."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1158
+msgid "Boolean (Either True or False)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1208
+#, python-format
+msgid "String (up to %(max_length)s)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1210
+msgid "String (unlimited)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1314
+msgid "Comma-separated integers"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1415
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
+"format."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1419
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1554
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
+"date."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1423
+msgid "Date (without time)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1550
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
+"uuuuuu]][TZ] format."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1558
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
+"[TZ]) but it is an invalid date/time."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1563
+msgid "Date (with time)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1690
+#, python-format
+msgid "“%(value)s” value must be a decimal number."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1692
+msgid "Decimal number"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1853
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
+"uuuuuu] format."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1857
+msgid "Duration"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1909
+#, fuzzy
+#| msgid "Email Address"
+msgid "Email address"
+msgstr "ইমেইল"
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1934
+msgid "File path"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2012
+#, python-format
+msgid "“%(value)s” value must be a float."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2014
+msgid "Floating point number"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2054
+#, python-format
+msgid "“%(value)s” value must be an integer."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2056
+msgid "Integer"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2152
+msgid "Big (8 byte) integer"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2169
+msgid "Small integer"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2177
+#, fuzzy
+#| msgid "Address"
+msgid "IPv4 address"
+msgstr "ঠিকানা"
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2208
+#, fuzzy
+#| msgid "Address"
+msgid "IP address"
+msgstr "ঠিকানা"
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2301
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2302
+#, python-format
+msgid "“%(value)s” value must be either None, True or False."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2304
+msgid "Boolean (Either True, False or None)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2355
+msgid "Positive big integer"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2370
+msgid "Positive integer"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2385
+msgid "Positive small integer"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2401
+#, python-format
+msgid "Slug (up to %(max_length)s)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2437
+msgid "Text"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2512
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
+"format."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2516
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
+"invalid time."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2520
+#, fuzzy
+#| msgid "Timezone"
+msgid "Time"
+msgstr "সময় অঞ্চল"
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2628
+msgid "URL"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2652
+msgid "Raw binary data"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2717
+#, python-format
+msgid "“%(value)s” is not a valid UUID."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2719
+msgid "Universally unique identifier"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/files.py:232
+msgid "File"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/files.py:393
+msgid "Image"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/json.py:26
+msgid "A JSON object"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/json.py:28
+msgid "Value must be valid JSON."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/related.py:939
+#, python-format
+msgid "%(model)s instance with %(field)s %(value)r does not exist."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/related.py:941
+msgid "Foreign Key (type determined by related field)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/related.py:1235
+msgid "One-to-one relationship"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/related.py:1292
+#, python-format
+msgid "%(from)s-%(to)s relationship"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/related.py:1294
+#, python-format
+msgid "%(from)s-%(to)s relationships"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/db/models/fields/related.py:1342
+msgid "Many-to-many relationship"
+msgstr ""
+
+#. Translators: If found as last label character, these punctuation
+#. characters will prevent the default label_suffix to be appended to the label
+#: venv/lib/python3.11/site-packages/django/forms/boundfield.py:185
+msgid ":?.!"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:95
+msgid "This field is required."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:304
+msgid "Enter a whole number."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:475
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:1252
+msgid "Enter a valid date."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:498
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:1253
+msgid "Enter a valid time."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:525
+msgid "Enter a valid date/time."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:559
+msgid "Enter a valid duration."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:560
+#, python-brace-format
+msgid "The number of days must be between {min_days} and {max_days}."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:629
+msgid "No file was submitted. Check the encoding type on the form."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:630
+msgid "No file was submitted."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:631
+msgid "The submitted file is empty."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:633
+#, python-format
+msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
+msgid_plural ""
+"Ensure this filename has at most %(max)d characters (it has %(length)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:638
+msgid "Please either submit a file or check the clear checkbox, not both."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:702
+msgid ""
+"Upload a valid image. The file you uploaded was either not an image or a "
+"corrupted image."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:874
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:960
+#: venv/lib/python3.11/site-packages/django/forms/models.py:1585
+#, python-format
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:962
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:1081
+#: venv/lib/python3.11/site-packages/django/forms/models.py:1583
+msgid "Enter a list of values."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:1082
+msgid "Enter a complete value."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:1321
+msgid "Enter a valid UUID."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/fields.py:1351
+msgid "Enter a valid JSON."
+msgstr ""
+
+#. Translators: This is the default suffix added to form field labels
+#: venv/lib/python3.11/site-packages/django/forms/forms.py:94
+msgid ":"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/forms.py:231
+#, python-format
+msgid "(Hidden field %(name)s) %(error)s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/formsets.py:61
+#, python-format
+msgid ""
+"ManagementForm data is missing or has been tampered with. Missing fields: "
+"%(field_names)s. You may need to file a bug report if the issue persists."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/formsets.py:65
+#, python-format
+msgid "Please submit at most %(num)d form."
+msgid_plural "Please submit at most %(num)d forms."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/forms/formsets.py:70
+#, python-format
+msgid "Please submit at least %(num)d form."
+msgid_plural "Please submit at least %(num)d forms."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/forms/formsets.py:484
+#: venv/lib/python3.11/site-packages/django/forms/formsets.py:491
+msgid "Order"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/models.py:899
+#, python-format
+msgid "Please correct the duplicate data for %(field)s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/models.py:904
+#, python-format
+msgid "Please correct the duplicate data for %(field)s, which must be unique."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/models.py:911
+#, python-format
+msgid ""
+"Please correct the duplicate data for %(field_name)s which must be unique "
+"for the %(lookup)s in %(date_field)s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/models.py:920
+msgid "Please correct the duplicate values below."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/models.py:1357
+msgid "The inline value did not match the parent instance."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/models.py:1448
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/models.py:1587
+#, python-format
+msgid "“%(pk)s” is not a valid value."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/utils.py:227
+#, python-format
+msgid ""
+"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
+"may be ambiguous or it may not exist."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/widgets.py:461
+msgid "Clear"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/widgets.py:462
+msgid "Currently"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/widgets.py:463
+msgid "Change"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/widgets.py:800
+msgid "Unknown"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/widgets.py:801
+msgid "Yes"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/forms/widgets.py:802
+msgid "No"
+msgstr ""
+
+#. Translators: Please do not add spaces around commas.
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:876
+msgid "yes,no,maybe"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:906
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:923
+#, python-format
+msgid "%(size)d byte"
+msgid_plural "%(size)d bytes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:925
+#, python-format
+msgid "%s KB"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:927
+#, python-format
+msgid "%s MB"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:929
+#, python-format
+msgid "%s GB"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:931
+#, python-format
+msgid "%s TB"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:933
+#, python-format
+msgid "%s PB"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dateformat.py:74
+msgid "p.m."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dateformat.py:75
+msgid "a.m."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dateformat.py:80
+msgid "PM"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dateformat.py:81
+msgid "AM"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dateformat.py:153
+msgid "midnight"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dateformat.py:155
+msgid "noon"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:7
+msgid "Monday"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:8
+msgid "Tuesday"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:9
+msgid "Wednesday"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:10
+msgid "Thursday"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:11
+msgid "Friday"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:12
+msgid "Saturday"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:13
+msgid "Sunday"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:16
+msgid "Mon"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:17
+msgid "Tue"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:18
+msgid "Wed"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:19
+msgid "Thu"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:20
+msgid "Fri"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:21
+#, fuzzy
+#| msgid "Start"
+msgid "Sat"
+msgstr "শুরু"
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:22
+msgid "Sun"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:25
+msgid "January"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:26
+msgid "February"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:27
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:28
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:29
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:30
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:31
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:32
+msgid "August"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:33
+#, fuzzy
+#| msgid "Member"
+msgid "September"
+msgstr "সদস্যদের"
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:34
+msgid "October"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:35
+#, fuzzy
+#| msgid "Member"
+msgid "November"
+msgstr "সদস্যদের"
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:36
+#, fuzzy
+#| msgid "Member"
+msgid "December"
+msgstr "সদস্যদের"
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:39
+msgid "jan"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:40
+msgid "feb"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:41
+msgid "mar"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:42
+msgid "apr"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:43
+msgid "may"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:44
+msgid "jun"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:45
+msgid "jul"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:46
+msgid "aug"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:47
+msgid "sep"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:48
+msgid "oct"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:49
+msgid "nov"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:50
+msgid "dec"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:53
+msgctxt "abbrev. month"
+msgid "Jan."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:54
+msgctxt "abbrev. month"
+msgid "Feb."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:55
+msgctxt "abbrev. month"
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:56
+msgctxt "abbrev. month"
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:57
+msgctxt "abbrev. month"
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:58
+msgctxt "abbrev. month"
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:59
+msgctxt "abbrev. month"
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:60
+msgctxt "abbrev. month"
+msgid "Aug."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:61
+msgctxt "abbrev. month"
+msgid "Sept."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:62
+msgctxt "abbrev. month"
+msgid "Oct."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:63
+msgctxt "abbrev. month"
+msgid "Nov."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:64
+msgctxt "abbrev. month"
+msgid "Dec."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:67
+msgctxt "alt. month"
+msgid "January"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:68
+msgctxt "alt. month"
+msgid "February"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:69
+msgctxt "alt. month"
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:70
+msgctxt "alt. month"
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:71
+msgctxt "alt. month"
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:72
+msgctxt "alt. month"
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:73
+msgctxt "alt. month"
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:74
+msgctxt "alt. month"
+msgid "August"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:75
+#, fuzzy
+#| msgid "Member"
+msgctxt "alt. month"
+msgid "September"
+msgstr "সদস্যদের"
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:76
+msgctxt "alt. month"
+msgid "October"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:77
+#, fuzzy
+#| msgid "Member"
+msgctxt "alt. month"
+msgid "November"
+msgstr "সদস্যদের"
+
+#: venv/lib/python3.11/site-packages/django/utils/dates.py:78
+#, fuzzy
+#| msgid "Member"
+msgctxt "alt. month"
+msgid "December"
+msgstr "সদস্যদের"
+
+#: venv/lib/python3.11/site-packages/django/utils/ipv6.py:8
+msgid "This is not a valid IPv6 address."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/text.py:123
+#, python-format
+msgctxt "String to return when truncating text"
+msgid "%(truncated_text)s…"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/text.py:323
+msgid "or"
+msgstr ""
+
+#. Translators: This string is used as a separator between list elements
+#: venv/lib/python3.11/site-packages/django/utils/text.py:342
+#: venv/lib/python3.11/site-packages/django/utils/timesince.py:135
+msgid ", "
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/utils/timesince.py:8
+#, python-format
+msgid "%(num)d year"
+msgid_plural "%(num)d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/utils/timesince.py:9
+#, python-format
+msgid "%(num)d month"
+msgid_plural "%(num)d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/utils/timesince.py:10
+#, python-format
+msgid "%(num)d week"
+msgid_plural "%(num)d weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/utils/timesince.py:11
+#, python-format
+msgid "%(num)d day"
+msgid_plural "%(num)d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/utils/timesince.py:12
+#, python-format
+msgid "%(num)d hour"
+msgid_plural "%(num)d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/utils/timesince.py:13
+#, python-format
+msgid "%(num)d minute"
+msgid_plural "%(num)d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:29
+msgid "Forbidden"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:30
+msgid "CSRF verification failed. Request aborted."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:34
+msgid ""
+"You are seeing this message because this HTTPS site requires a “Referer "
+"header” to be sent by your web browser, but none was sent. This header is "
+"required for security reasons, to ensure that your browser is not being "
+"hijacked by third parties."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:40
+msgid ""
+"If you have configured your browser to disable “Referer” headers, please re-"
+"enable them, at least for this site, or for HTTPS connections, or for “same-"
+"origin” requests."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:45
+msgid ""
+"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
+"including the “Referrer-Policy: no-referrer” header, please remove them. The "
+"CSRF protection requires the “Referer” header to do strict referer checking. "
+"If you’re concerned about privacy, use alternatives like <a "
+"rel=\"noreferrer\" …> for links to third-party sites."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:54
+msgid ""
+"You are seeing this message because this site requires a CSRF cookie when "
+"submitting forms. This cookie is required for security reasons, to ensure "
+"that your browser is not being hijacked by third parties."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:60
+msgid ""
+"If you have configured your browser to disable cookies, please re-enable "
+"them, at least for this site, or for “same-origin” requests."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/csrf.py:66
+msgid "More information is available with DEBUG=True."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:44
+msgid "No year specified"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:64
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:115
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:214
+msgid "Date out of range"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:94
+msgid "No month specified"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:147
+msgid "No day specified"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:194
+msgid "No week specified"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:349
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:380
+#, python-format
+msgid "No %(verbose_name_plural)s available"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:652
+#, python-format
+msgid ""
+"Future %(verbose_name_plural)s not available because %(class_name)s."
+"allow_future is False."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/dates.py:692
+#, python-format
+msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/detail.py:56
+#, python-format
+msgid "No %(verbose_name)s found matching the query"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/list.py:70
+msgid "Page is not “last”, nor can it be converted to an int."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/list.py:77
+#, python-format
+msgid "Invalid page (%(page_number)s): %(message)s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/generic/list.py:169
+#, python-format
+msgid "Empty list and “%(class_name)s.allow_empty” is False."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/static.py:49
+msgid "Directory indexes are not allowed here."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/static.py:51
+#, python-format
+msgid "“%(path)s” does not exist"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/static.py:68
+#: venv/lib/python3.11/site-packages/django/views/templates/directory_index.html:8
+#: venv/lib/python3.11/site-packages/django/views/templates/directory_index.html:11
+#, python-format
+msgid "Index of %(directory)s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:7
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:220
+msgid "The install worked successfully! Congratulations!"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:206
+#, python-format
+msgid ""
+"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
+"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:221
+#, python-format
+msgid ""
+"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" "
+"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
+"configured any URLs."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:229
+msgid "Django Documentation"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:230
+msgid "Topics, references, &amp; how-to’s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:238
+msgid "Tutorial: A Polling App"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:239
+msgid "Get started with Django"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:247
+msgid "Django Community"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:248
+msgid "Connect, get help, or contribute"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:408
+#, python-format
+msgid "Content purported to be compressed with %s but failed to decompress."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:572
+#, python-format
+msgid "Unsupported value for qop: %s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:576
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:654
+#, python-format
+msgid "Unsupported value for algorithm: %s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:649
+msgid "The challenge doesn't contain a server nonce, or this one is empty."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:659
+#, python-format
+msgid "Unsupported value for pw-algorithm: %s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:1468
+msgid "Redirected but the response is missing a Location: header."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/mypy/main.py:391
+#, python-format
+msgid "%(prog)s: error: %(message)s\n"
+msgstr ""
+
+#~ msgid "Short name for free ticket tier e.g. General Admission"
+#~ msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
+
+#~ msgid "Go Live"
+#~ msgstr "লাইভ যান"
+
+#~ msgid "Event is live!"
+#~ msgstr "ইভেন্ট লাইভ"
+
+#~ msgid "This event is live. Check the public page and scanner link!"
+#~ msgstr "এই ইভেন্ট লাইভ. পাবলিক পেজ এবং স্ক্যানার লিঙ্ক চেক করুন"
+
+#~ msgid "Let’s Publish this Event!"
+#~ msgstr "ইভেন্ট প্রকাশ করা যাক"
+
+#~ msgid "If everything looks good, hit go live!"
+#~ msgstr "সবকিছু ভাল দেখায়, লাইভ যান"
+
+#~ msgid "Draft Event"
+#~ msgstr "খসড়া ইভেন্ট"
+
+#~ msgid "Preview Event"
+#~ msgstr "পূর্বরূপ"
+
+#~ msgid "Go Live!"
+#~ msgstr "লাইভ যান"
+
+#~ msgid "Live"
+#~ msgstr "লাইভ"
+
+#~ msgid "Draft"
+#~ msgstr "খসড়া"
+
+#~ msgid "The Tix"
+#~ msgstr "টিকিট"
+
+#, fuzzy
+#~| msgid "Sold"
+#~ msgid "Qty. Sold"
+#~ msgstr "বিক্রি"
+
+#, fuzzy
+#~| msgid "Tickets"
+#~ msgid "No ticket tiers yet."
+#~ msgstr "টিকিট"
+
+#~ msgid "Create a ticket that requires payment"
+#~ msgstr "একটি টিকিট তৈরি করুন যাতে অর্থপ্রদানের প্রয়োজন হয়"
+
+#~ msgid ""
+#~ "Before you can create paid ticket tiers, you need to connect your Stripe "
+#~ "account to your team."
+#~ msgstr ""
+#~ "আপনি পেইড টিকিটের স্তর তৈরি করার আগে, আপনাকে আপনার স্ট্রাইপ অ্যাকাউন্টটি আপনার "
+#~ "দলের সাথে সংযুক্ত করতে হবে।"
+
+#~ msgid "Go to payment details"
+#~ msgstr "পেমেন্টের বিবরণে যান"
+
+#~ msgid "Create free tickets for General Admission"
+#~ msgstr "সাধারণ ভর্তির জন্য বিনামূল্যে টিকিট তৈরি করুন"
+
+#~ msgid "Reward your holders with some sweet tickets"
+#~ msgstr "আপনার ধারকদের কিছু মিষ্টি টিকিট দিয়ে পুরস্কৃত করুন"
+
+#~ msgid "Editing ticket tier"
+#~ msgstr "টিকিটের স্তর সম্পাদনা করা হচ্ছে "

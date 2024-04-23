@@ -7,37 +7,34 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 format: ## Format codebase
-	(source backend/venv/bin/activate; cd backend; ruff format .; djhtml .;)
+	(source venv/bin/activate; ruff format .; djhtml .;)
 
 lint: ## Lint codebase
-	(source backend/venv/bin/activate; cd backend; ruff check .; mypy .;)
+	(source venv/bin/activate; ruff check .; mypy .;)
 
-collect: ## collectstatic backend
-	(source backend/venv/bin/activate; cd backend; yarn; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)
+collect: ## Collect static assets
+	(source venv/bin/activate; yarn; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)
 
 install: ## Install requirements
-	(source backend/venv/bin/activate; cd backend; pip3 install -r config/requirements/local.txt)
+	(source venv/bin/activate; pip3 install -r config/requirements/local.txt)
 
-migration: ## Create backend migrations
-	(source backend/venv/bin/activate; cd backend; ./manage.py makemigrations)
+migration: ## Create migrations
+	(source venv/bin/activate; ./manage.py makemigrations)
 
-migrate: ## Migrate backend migrations
-	(source backend/venv/bin/activate; cd backend; ./manage.py migrate)
+migrate: ## Apply migrations
+	(source venv/bin/activate; ./manage.py migrate)
 
-populate: ## Populate DB
-	(source backend/venv/bin/activate; cd backend; ./manage.py populate_db)
+reset: ## Reset database
+	(source venv/bin/activate; ./manage.py reset_db)
 
-reset: ## Reset Database
-	(source backend/venv/bin/activate; cd backend; ./manage.py reset_db)
+run: ## Run server
+	(source venv/bin/activate; ./manage.py procrastinate worker & ./manage.py runserver)
 
-run: ## Run Backend Server
-	(source backend/venv/bin/activate; cd backend; ./manage.py procrastinate worker & ./manage.py runserver)
-
-superuser: ## Create backend superuser
-	(source backend/venv/bin/activate; cd backend; ./manage.py createsuperuser)
+superuser: ## Create superuser
+	(source venv/bin/activate; ./manage.py createsuperuser)
 
 test: ## Test codebase
-	(source backend/venv/bin/activate; cd backend; ./manage.py test --settings=config.settings.test --failfast)
+	(source venv/bin/activate; ./manage.py test --settings=config.settings.test --failfast)
 
 turtle: ## Run shell_plus
-	(source backend/venv/bin/activate; cd backend; ./manage.py shell_plus)
+	(source venv/bin/activate; ./manage.py shell_plus)

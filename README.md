@@ -35,7 +35,7 @@ pyenv virtualenv 3.10.5 socialpass
 pyenv activate socialpass
 
 # Install development dependencies
-pip install -r backend/config/requirements/local.txt
+pip install -r config/requirements/local.txt
 
 # Run Postgres server locally and create database with creds from settings
 # Example using: https://postgresapp.com/
@@ -44,14 +44,14 @@ create database local_socialpass_db;
 \q
 
 # Run migrations (if necessary)
-python backend/manage.py migrate
+python manage.py migrate
 
 # Run application
 make run
 
 ```
 
-## With regular Python 3 
+## With regular Python 3
 
 If you have a fairly latest version of Python 3 installed on your machine, you can just directly create a virtual environment and start SocialPass that way. All the instructions above (after the pyenv) section will still apply in such a case:
 
@@ -61,7 +61,7 @@ virtualenv -p python3 venv
 source venv/bin/activate
 
 # Install development dependencies
-pip install -r backend/config/requirements/local.txt
+pip install -r config/requirements/local.txt
 
 # Run Postgres server locally and create database with creds from settings
 # Example using: https://postgresapp.com/
@@ -70,7 +70,7 @@ create database local_socialpass_db;
 \q
 
 # Run migrations (if necessary)
-python backend/manage.py migrate
+python manage.py migrate
 
 # Run application
 make run
@@ -81,7 +81,7 @@ make run
 
 There is a weird issue on Mac M1s that stems from the `cryptography` package. In order to get SocialPass running on your M1, please follow these instructions:
 
-1. Remove `git+https://github.com/SocialPass/passbook.git@7a3614e974c1862a24e7b02ced11313c8320c14b` from `backend/config/requirements/base.txt` and uninstall the package in your environment
+1. Remove `git+https://github.com/SocialPass/passbook.git@7a3614e974c1862a24e7b02ced11313c8320c14b` from `config/requirements/base.txt` and uninstall the package in your environment
 2. Install `pip install git@github.com:devartis/passbook.git` instead
 3. Install Homebrew: https://brew.sh/
 4. Install M2Crypto using the following instructions:

@@ -34,22 +34,22 @@
 {% block extra_body %}
     <script src="{% static 'js/slugify.js' %}"></script>
     <script type="text/javascript">
-    const nameInput = document.getElementById("id_name");
-    const slugInput = document.getElementById("id_slug");
-    const slugPreview = document.getElementById("slug-preview")
-    nameInput.addEventListener("input", function(e) {
-        document.getElementById("slug-change-warning").classList.remove("d-none");
-        let slug = slugify(nameInput.value, {lower: true});
+        const nameInput = document.getElementById("id_name");
+        const slugInput = document.getElementById("id_slug");
+        const slugPreview = document.getElementById("slug-preview")
+        nameInput.addEventListener("input", function(e) {
+            document.getElementById("slug-change-warning").classList.remove("d-none");
+            let slug = slugify(nameInput.value, {lower: true});
+            slugInput.value = slug;
+            if (slug === "") slug = "NOT-SET";
+            slugPreview.innerText = slug;
+        });
+
+    // In case of error
+        let slug = slugify(nameInput.value, {lower: true})
         slugInput.value = slug;
         if (slug === "") slug = "NOT-SET";
         slugPreview.innerText = slug;
-    });
 
-    // In case of error
-    let slug = slugify(nameInput.value, {lower: true})
-    slugInput.value = slug;
-    if (slug === "") slug = "NOT-SET";
-    slugPreview.innerText = slug;
-    
     </script>
 {% endblock %}

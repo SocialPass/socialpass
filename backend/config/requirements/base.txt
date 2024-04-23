@@ -17,7 +17,6 @@ procrastinate==2.1.0 #https://github.com/procrastinate-org/procrastinate
 git+https://github.com/SocialPass/passbook.git@7a3614e974c1862a24e7b02ced11313c8320c14b
 crispy-bootstrap5==2024.2 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==5.0.3  # https://www.djangoproject.com/
-django-autoslug==1.9.9 # https://github.com/justinmayer/django-autoslug
 django-allauth==0.61.1  # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.1 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.11.2 # https://github.com/joke2k/django-environ

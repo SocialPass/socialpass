@@ -11,7 +11,6 @@ import time
 
 from django.conf import settings
 from django.contrib import messages
-from django.db import transaction
 from django.db.models import Prefetch
 from django.http import Http404
 from django.shortcuts import render, redirect
@@ -172,7 +171,6 @@ class CheckoutPageOne(DetailView):
         )
         return context
 
-    @transaction.atomic
     def post(self, *args, **kwargs):
         # Validate form
         self.get_object()
@@ -392,7 +390,6 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
         if self.object.session_type == CheckoutSession.SessionType.ASSET_OWNERSHIP:
             return CheckoutFormAssetOwnership
 
-    @transaction.atomic
     def post(self, *args, **kwargs):
         # Validate POST request, redirect if needed
         validate_post = self.validate_post()
@@ -478,7 +475,6 @@ class CheckoutFiat(CheckoutPageTwoBase):
     def get_form_class(self):
         return CheckoutFormFiat
 
-    @transaction.atomic
     def post(self, *args, **kwargs):
         # Validate POST request, redirect if needed
         validate_post = self.validate_post()

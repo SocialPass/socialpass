@@ -27,6 +27,26 @@
     </div>
 {% endblock content %}
 {% block extra_body %}
+    <script src="{% static 'js/slugify.js' %}"></script>
+    <script type="text/javascript">
+        const titleInput = document.getElementById("id_title");
+        const slugInput = document.getElementById("id_slug");
+        const slugPreview = document.getElementById("slug-preview")
+        titleInput.addEventListener("input", function(e) {
+            document.getElementById("slug-change-warning").classList.remove("d-none");
+            let slug = slugify(titleInput.value, {lower: true})
+            slugInput.value = slug;
+            if (slug === "") slug = "NOT-SET";
+            slugPreview.innerText = slug;
+        });
+
+	// In case of error
+        let slug = slugify(titleInput.value, {lower: true})
+        slugInput.value = slug;
+        if (slug === "") slug = "NOT-SET";
+        slugPreview.innerText = slug;
+
+    </script>
     <script>
         var startDateInput = document.getElementById("id_start_date");
         var endDateInput = document.getElementById("id_end_date");

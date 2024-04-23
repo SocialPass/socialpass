@@ -14,6 +14,11 @@ urlpatterns = [
         name="team_create",
     ),
     path(
+        "team-update/<int:pk>/",
+        views.TeamUpdateView.as_view(),
+        name="team_update",
+    ),
+    path(
         "team/invitation-detail/<uuid:invitation_public_id>/",
         views.InvitationDetailView.as_view(),
         name="invitation_detail",
@@ -22,11 +27,6 @@ urlpatterns = [
         "<slug:team_slug>/team-detail/",
         views.TeamDetailView.as_view(),
         name="team_detail",
-    ),
-    path(
-        "<slug:team_slug>/team-update/",
-        views.TeamUpdateView.as_view(),
-        name="team_update",
     ),
     path(
         "<slug:team_slug>/team-members/",

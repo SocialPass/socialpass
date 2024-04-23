@@ -106,6 +106,35 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
         )
 
 
+class TeamUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Updates the user's team.
+    """
+
+    form_class = TeamForm
+    model = Team
+    slug_field = "pk"
+    slug_url_kwarg = "pk"
+    template_name = "account/team_update.html"
+
+    def get_object(self):
+        team = Team.objects.get(pk=self.kwargs["pk"])
+        memberships = Membership.objects.filter(
+            team=team,
+            user=self.request.user,
+        )
+        if memberships.count() > 0:
+            return team
+        else:
+            raise Http404
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, "Team information updated successfully."
+        )
+        return reverse("dashboard_organizer:team_detail", args=(self.object.slug,))
+
+
 class RedirectToTeamView(RedirectView):
     """
     Root URL View
@@ -305,26 +334,6 @@ class TeamMemberDeleteView(TeamContextMixin, DeleteView):
         )
 
 
-class TeamUpdateView(TeamContextMixin, UpdateView):
-    """
-    Updates the user's team.
-    """
-
-    form_class = TeamForm
-    model = Team
-    pk_url_kwarg = "team_slug"
-    template_name = "dashboard_organizer/team_update.html"
-
-    def get_object(self):
-        return self.team
-
-    def get_success_url(self):
-        messages.add_message(
-            self.request, messages.SUCCESS, "Team information updated successfully."
-        )
-        return reverse("dashboard_organizer:team_detail", args=(self.kwargs["team_slug"],))
-
-
 class EventListView(TeamContextMixin, ListView):
     """
     Returns a list of Ticket token gates.
@@ -363,6 +372,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context["timezones"] = [
             timezone for timezone in sorted(zoneinfo.available_timezones())
         ]
+        context["form"].fields["team"].initial = context["current_team"]
         return context
 
     def form_valid(self, form, **kwargs):

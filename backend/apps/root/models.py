@@ -4,7 +4,6 @@ import uuid
 import jwt
 import rollbar
 import stripe
-from autoslug import AutoSlugField
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -18,6 +17,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from eth_account import Account
 from eth_account.messages import encode_defunct
@@ -117,7 +117,7 @@ class Team(DBModel):
 
     # basic info
     name = models.CharField(max_length=255, unique=True)
-    slug = AutoSlugField(populate_from="name", null=True, unique=True)
+    slug = models.SlugField(null=True, blank=True, unique=True)
     image = models.ImageField(
         help_text=_(
             "A brand image for your team. Please make sure the image is "
@@ -159,6 +159,10 @@ class Team(DBModel):
 
     def __str__(self):
         return f"Team: {self.name}"
+
+    def clean(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Team, self).clean(*args, **kwargs)
 
     @cached_property
     def stripe_account_payouts_enabled(self):
@@ -365,7 +369,7 @@ class Event(DBModel):
     hide_address = models.BooleanField(default=False)  # Hide address, except for attendees
 
     # Publish info
-    slug = AutoSlugField(populate_from="title", null=True)
+    slug = models.SlugField(null=True, blank=True)
     sales_start = models.DateTimeField(
         help_text=_("When your event sales will start (optional)."),
         blank=True,
@@ -385,6 +389,10 @@ class Event(DBModel):
 
     def __str__(self):
         return f"Event: {self.title}"
+
+    def clean(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Event, self).clean(*args, **kwargs)
 
     @cached_property
     def tickets_sold_count(self):

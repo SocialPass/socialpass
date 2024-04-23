@@ -25,7 +25,6 @@ exclude = [
 ]
 
 [tool.mypy]
-mypy_path = "./backend"
 exclude = [
 	"migrations/*",
 	"staticfiles/*"

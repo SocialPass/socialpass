@@ -1,5 +1,6 @@
 {
-  "name": "backend",
+  "name": "socialpass",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "author": "rizzo",

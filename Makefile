@@ -12,28 +12,25 @@ format: ## Format codebase
 lint: ## Lint codebase
 	(source venv/bin/activate; ruff check .; mypy .;)
 
-collect: ## collectstatic backend
+collect: ## Collect static assets
 	(source venv/bin/activate; yarn; npx webpack --config webpack.config.js --progress; ./manage.py collectstatic --no-input)
 
 install: ## Install requirements
 	(source venv/bin/activate; pip3 install -r config/requirements/local.txt)
 
-migration: ## Create backend migrations
+migration: ## Create migrations
 	(source venv/bin/activate; ./manage.py makemigrations)
 
-migrate: ## Migrate backend migrations
+migrate: ## Apply migrations
 	(source venv/bin/activate; ./manage.py migrate)
 
-populate: ## Populate DB
-	(source venv/bin/activate; ./manage.py populate_db)
-
-reset: ## Reset Database
+reset: ## Reset database
 	(source venv/bin/activate; ./manage.py reset_db)
 
-run: ## Run Backend Server
+run: ## Run server
 	(source venv/bin/activate; ./manage.py procrastinate worker & ./manage.py runserver)
 
-superuser: ## Create backend superuser
+superuser: ## Create superuser
 	(source venv/bin/activate; ./manage.py createsuperuser)
 
 test: ## Test codebase

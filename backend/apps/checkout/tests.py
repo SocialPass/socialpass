@@ -23,12 +23,14 @@ class TestCheckoutViews(TestCase):
         self.factory = RequestFactory()
         self.team = Team.objects.create(
             name="testteam",
+            slug="testteam",
             allow_rsvp=True,
             allow_messaging=True,
         )
         self.event = Event.objects.create(
             team=self.team,
             title="Test event",
+            slug="test-event",
             description="Description",
             start_date=datetime(2024, 1, 1, 0, 0),
             timezone="US/Eastern",

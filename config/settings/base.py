@@ -122,7 +122,7 @@ LOGIN_URL = "account_login"
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": "696835379568-qi9tn8fnktqsbb63r1hk1bes0uf7q5m2.apps.googleusercontent.com",
+            "client_id": env("GOOGLE_OAUTH_CLIENT_ID"),
             "secret": env("GOOGLE_OAUTH_CLIENT_SECRET"),
             "key": "",
         },

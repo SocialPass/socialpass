@@ -23,15 +23,15 @@
     {% for input in form.hidden_fields %}
         {{ input }}
     {% endfor %}
-    <div class="d-md-none">
-        {% if form.cover_image.errors %}
+    {% if form.cover_image.errors %}
+        <div class="d-md-none">
             <ul class="text-danger-emphasis fw-bold">
                 {% for error in form.cover_image.errors %}
                     <li>{{ error }}</li>
                 {% endfor %}
             </ul>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
     <div class="row g-3 g-lg-4 mb-4">
         <div class="col-12 col-md-auto">
             <div class="specific-w-md-250 specific-h-250 h-md-100 position-relative overflow-hidden d-flex align-items-center justify-content-center rounded bg-secondary-subtle">
@@ -119,15 +119,15 @@
             </div>
         </div>
     </div>
-    <div class="d-none d-md-block">
-        {% if form.cover_image.errors %}
+    {% if form.cover_image.errors %}
+        <div class="d-none d-md-block">
             <ul class="text-danger-emphasis fw-bold">
                 {% for error in form.cover_image.errors %}
                     <li>{{ error }}</li>
                 {% endfor %}
             </ul>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
     <div class="position-relative">
         {% with form.geo_address as input %}
             {% include "forms/input.html" %}

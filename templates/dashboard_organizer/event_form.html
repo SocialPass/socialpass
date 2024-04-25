@@ -23,6 +23,15 @@
     {% for input in form.hidden_fields %}
         {{ input }}
     {% endfor %}
+    <div class="d-md-none">
+        {% if form.cover_image.errors %}
+            <ul class="text-danger-emphasis fw-bold">
+                {% for error in form.cover_image.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
     <div class="row g-3 g-lg-4 mb-4">
         <div class="col-12 col-md-auto">
             <div class="specific-w-md-250 specific-h-250 h-md-100 position-relative overflow-hidden d-flex align-items-center justify-content-center rounded bg-secondary-subtle">
@@ -109,6 +118,15 @@
                 {% trans "The event end date must come after the start date." %}
             </div>
         </div>
+    </div>
+    <div class="d-none d-md-block">
+        {% if form.cover_image.errors %}
+            <ul class="text-danger-emphasis fw-bold">
+                {% for error in form.cover_image.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
     <div class="position-relative">
         {% with form.geo_address as input %}

@@ -10,6 +10,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -106,6 +107,15 @@ class WhiteLabel(DBModel):
         return f"WhiteLabel: {self.brand_name}"
 
 
+def file_size(value):
+    """
+    Make sure images (and files) do not exceed 5MB.
+    """
+    limit = 5 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError(_("File too large. Size should not exceed 5MB."))
+
+
 class Team(DBModel):
     """
     Represents the 'umbrella' model for event organization
@@ -128,6 +138,7 @@ class Team(DBModel):
         height_field=None,
         width_field=None,
         upload_to="team__image",
+        validators=[file_size],
     )
     description = models.TextField(blank=True)
     is_verified = models.BooleanField(default=False)
@@ -319,6 +330,7 @@ class Event(DBModel):
         blank=True,
         null=True,
         upload_to="event__cover_image",
+        validators=[file_size],
     )
     timezone = models.CharField(
         verbose_name="time zone",

@@ -194,6 +194,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "apps.root.context_processors.export_vars"
             ],
         },
     }
@@ -313,7 +314,7 @@ MORALIS_API_KEY = env("MORALIS_API_KEY")
 
 # GMAPS
 # ------------------------------------------------------------------------------
-GMAPS_API_KEY = env("GMAPS_API_KEY")
+GOOGLE_MAPS_API_KEY = env("GOOGLE_MAPS_API_KEY")
 
 # GWALLET
 # ------------------------------------------------------------------------------

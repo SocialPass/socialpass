@@ -188,8 +188,9 @@ class Team(DBModel):
 
     def clean(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        compressed_image = compress_image(self.image)
-        self.image = compressed_image
+        if self.image:
+            compressed_image = compress_image(self.image)
+            self.image = compressed_image
         super(Team, self).clean(*args, **kwargs)
 
     @cached_property
@@ -421,8 +422,9 @@ class Event(DBModel):
 
     def clean(self, *args, **kwargs):
         self.slug = slugify(self.title)
-        compressed_cover_image = compress_image(self.cover_image)
-        self.cover_image = compressed_cover_image
+        if self.cover_image:
+            compressed_cover_image = compress_image(self.cover_image)
+            self.cover_image = compressed_cover_image
         super(Event, self).clean(*args, **kwargs)
 
     @cached_property

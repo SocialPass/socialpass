@@ -10,6 +10,8 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.sites.models import Site
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.core.mail import send_mail
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -21,8 +23,10 @@ from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from eth_account import Account
 from eth_account.messages import encode_defunct
+from io import BytesIO
 from model_utils.models import TimeStampedModel
 from moralis import evm_api
+from PIL import Image
 
 from apps.root.exceptions import (
     AlreadyRedeemedError,
@@ -106,6 +110,27 @@ class WhiteLabel(DBModel):
         return f"WhiteLabel: {self.brand_name}"
 
 
+def file_size(value):
+    """
+    Make sure images (and files) do not exceed 10MB.
+    """
+    limit = 10 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError(_("File too large. Size should not exceed 10MB."))
+
+
+def compress_image(image):
+    """
+    Compress images before upload.
+    """
+    im = Image.open(image)
+    im_rgb = im.convert("RGB")
+    im_io = BytesIO()
+    im_rgb.save(im_io, "JPEG", quality=60)
+    new_image = File(im_io, name=image.name)
+    return new_image
+
+
 class Team(DBModel):
     """
     Represents the 'umbrella' model for event organization
@@ -128,6 +153,7 @@ class Team(DBModel):
         height_field=None,
         width_field=None,
         upload_to="team__image",
+        validators=[file_size],
     )
     description = models.TextField(blank=True)
     is_verified = models.BooleanField(default=False)
@@ -162,6 +188,9 @@ class Team(DBModel):
 
     def clean(self, *args, **kwargs):
         self.slug = slugify(self.name)
+        if self.image:
+            compressed_image = compress_image(self.image)
+            self.image = compressed_image
         super(Team, self).clean(*args, **kwargs)
 
     @cached_property
@@ -319,6 +348,7 @@ class Event(DBModel):
         blank=True,
         null=True,
         upload_to="event__cover_image",
+        validators=[file_size],
     )
     timezone = models.CharField(
         verbose_name="time zone",
@@ -392,6 +422,9 @@ class Event(DBModel):
 
     def clean(self, *args, **kwargs):
         self.slug = slugify(self.title)
+        if self.cover_image:
+            compressed_cover_image = compress_image(self.cover_image)
+            self.cover_image = compressed_cover_image
         super(Event, self).clean(*args, **kwargs)
 
     @cached_property

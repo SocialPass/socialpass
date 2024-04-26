@@ -80,11 +80,21 @@
         const coverImgBg = document.getElementById("cover-img-bg");
         const coverImgPreview = document.getElementById("cover-img-preview");
         const coverImgInput = document.getElementById("id_cover_image");
+        const coverImgInputValue = coverImgInput.value;
+        const maxFileSizeAlert = document.getElementById("max-file-size-alert");
         coverImgInput.addEventListener("change", function(event) {
+            maxFileSizeAlert.classList.add("d-none");
             const [file] = coverImgInput.files;
             if (file) {
-                coverImgBg.src = URL.createObjectURL(file);
-                coverImgPreview.src = URL.createObjectURL(file);
+                const fileSize = file.size / (1024 * 1024);
+                if (fileSize > 10) {
+                    coverImgInput.value = coverImgInputValue;
+                    maxFileSizeAlert.classList.remove("d-none");
+                }
+                else {
+                    coverImgBg.src = URL.createObjectURL(file);
+                    coverImgPreview.src = URL.createObjectURL(file);
+                }
             }
             else {
                 coverImgBg.src = coverImgPlaceholder;

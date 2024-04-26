@@ -25,13 +25,14 @@
     {% endfor %}
     {% if form.cover_image.errors %}
         <div class="d-md-none">
-            <ul class="text-danger-emphasis fw-bold">
-                {% for error in form.cover_image.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
+            {% for error in form.cover_image.errors %}
+                <div class="text-danger-emphasis fw-bold mb-3">{{ error }}</div>
+            {% endfor %}
         </div>
     {% endif %}
+    <div id="max-file-size-alert" class="text-danger-emphasis fw-bold mb-3 d-none">
+        {% trans "File too large. Size should not exceed 10MB." %}
+    </div>
     <div class="row g-3 g-lg-4 mb-4">
         <div class="col-12 col-md-auto">
             <div class="specific-w-md-250 specific-h-250 h-md-100 position-relative overflow-hidden d-flex align-items-center justify-content-center rounded bg-secondary-subtle">
@@ -121,11 +122,9 @@
     </div>
     {% if form.cover_image.errors %}
         <div class="d-none d-md-block">
-            <ul class="text-danger-emphasis fw-bold">
-                {% for error in form.cover_image.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
+            {% for error in form.cover_image.errors %}
+                <div class="text-danger-emphasis fw-bold mb-3">{{ error }}</div>
+            {% endfor %}
         </div>
     {% endif %}
     <div class="position-relative">

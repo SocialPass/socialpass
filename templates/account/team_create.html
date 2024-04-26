@@ -44,4 +44,20 @@
         slugPreview.innerText = slug;
 
     </script>
+    <script type="text/javascript">
+        const imgInput = document.getElementById("id_image");
+        const imgInputValue = imgInput.value;
+        const maxFileSizeAlert = document.getElementById("max-file-size-alert");
+        imgInput.addEventListener("change", function(event) {
+            maxFileSizeAlert.classList.add("d-none");
+            const [file] = imgInput.files;
+            if (file) {
+                const fileSize = file.size / (1024 * 1024);
+                if (fileSize > 10) {
+                    imgInput.value = imgInputValue;
+                    maxFileSizeAlert.classList.remove("d-none");
+                }
+            }
+        });
+    </script>
 {% endblock %}

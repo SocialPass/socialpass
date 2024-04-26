@@ -45,6 +45,9 @@
     {% with form.image as input %}
         {{ input|as_crispy_field }}
     {% endwith %}
+    <div id="max-file-size-alert" class="text-danger-emphasis fw-bold mb-3 d-none">
+        {% trans "File too large. Size should not exceed 10MB." %}
+    </div>
     <div class="text-end mt-3">
         <button type="submit" class="btn btn-primary w-100 d-block">
             {% trans "Submit" %}

@@ -3,6 +3,7 @@ on: [push]
 
 jobs:
   build:
+    environment: testing
     runs-on: ubuntu-latest
     services:
       postgres:

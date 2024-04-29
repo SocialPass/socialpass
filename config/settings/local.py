@@ -79,9 +79,10 @@ SHELL_PLUS_PRINT_SQL = True
 # ------------------------------------------------------------------------------
 MIDDLEWARE += ["rollbar.contrib.django.middleware.RollbarNotifierMiddleware"]
 ROLLBAR_ENV_NAME = env("ROLLBAR_ENV_NAME")
+ROLLBAR_ACCESS_TOKEN = env("ROLLBAR_ACCESS_TOKEN")
 
 ROLLBAR = {
-    "access_token": "411d06b904534d5c82333f20a01d0cd9",
+    "access_token": ROLLBAR_ACCESS_TOKEN,
     "environment": ROLLBAR_ENV_NAME,
     "code_version": "1.0",
     "root": str(ROOT_DIR),

@@ -16,17 +16,17 @@ class GoogleTicket:
         """
         return {
             "type": "service_account",
-            "project_id": "socialpass-358508",
+            "project_id": settings.GOOGLE_WALLET_PROJECT_ID,
             "private_key_id": settings.GOOGLE_WALLET_PRIVATE_KEY_ID,
             # NOTE: must replace newline character from .env value
             # This ensure GOOGLE_WALLET_PRIVATE_KEY is in proper format
             "private_key": settings.GOOGLE_WALLET_PRIVATE_KEY.replace(r"\n", "\n"),
-            "client_email": "wallet-web-client@socialpass-358508.iam.gserviceaccount.com",
+            "client_email": settings.GOOGLE_WALLET_CLIENT_EMAIL,
             "client_id": settings.GOOGLE_WALLET_CLIENT_ID,
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/wallet-web-client%40socialpass-358508.iam.gserviceaccount.com",  # noqa
+            "client_x509_cert_url": settings.GOOGLE_WALLET_CLIENT_CERT_URL,
         }
 
     @staticmethod

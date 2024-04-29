@@ -20,6 +20,7 @@ if READ_DOT_ENV_FILE:
         env.read_env(str(ROOT_DIR / ".envs" / ".env.local"))
     # Testing env vars
     if env("DJANGO_SETTINGS_MODULE") == "config.settings.test":
+        env.read_env(str(ROOT_DIR / ".envs" / ".donotpush"))
         env.read_env(str(ROOT_DIR / ".envs" / ".env.test"))
 
 # GENERAL
@@ -122,7 +123,7 @@ LOGIN_URL = "account_login"
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": "696835379568-qi9tn8fnktqsbb63r1hk1bes0uf7q5m2.apps.googleusercontent.com",
+            "client_id": env("GOOGLE_OAUTH_CLIENT_ID"),
             "secret": env("GOOGLE_OAUTH_CLIENT_SECRET"),
             "key": "",
         },
@@ -194,6 +195,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "apps.root.context_processors.export_vars",
             ],
         },
     }
@@ -313,7 +315,7 @@ MORALIS_API_KEY = env("MORALIS_API_KEY")
 
 # GMAPS
 # ------------------------------------------------------------------------------
-GMAPS_API_KEY = env("GMAPS_API_KEY")
+GOOGLE_MAPS_API_KEY = env("GOOGLE_MAPS_API_KEY")
 
 # GWALLET
 # ------------------------------------------------------------------------------
@@ -321,6 +323,9 @@ GOOGLE_WALLET_PRIVATE_KEY_ID = env("GOOGLE_WALLET_PRIVATE_KEY_ID")
 GOOGLE_WALLET_PRIVATE_KEY = env("GOOGLE_WALLET_PRIVATE_KEY")
 GOOGLE_WALLET_CLIENT_ID = env("GOOGLE_WALLET_CLIENT_ID")
 GOOGLE_WALLET_ISSUER_ID = env("GOOGLE_WALLET_ISSUER_ID")
+GOOGLE_WALLET_PROJECT_ID = env("GOOGLE_WALLET_PROJECT_ID")
+GOOGLE_WALLET_CLIENT_EMAIL = env("GOOGLE_WALLET_CLIENT_ID")
+GOOGLE_WALLET_CLIENT_CERT_URL = env("GOOGLE_WALLET_CLIENT_CERT_URL")
 
 # APPLE WALLET
 # ------------------------------------------------------------------------------

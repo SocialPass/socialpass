@@ -464,7 +464,7 @@ class TestTicketTierViews(TestCase):
         self.team = Team.objects.create(
             name="testteam",
             slug="testteam",
-            stripe_account_id="acct_1NadTgR6q1S0w5XG",
+            stripe_account_id="acct_1PAwqDBFCj9BqmET",
             stripe_account_country="US",
         )
         self.user = User.objects.create_user(

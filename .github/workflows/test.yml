@@ -3,7 +3,6 @@ on: [push]
 
 jobs:
   build:
-    environment: testing
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -31,5 +30,25 @@ jobs:
       - name: Run migrations
         run: ./manage.py migrate
       - name: django testing
+        with: # Set the secret as an input
+          APPLE_WALLET_CERTIFICATE: ${{ secrets.APPLE_WALLET_CERTIFICATE }}
+          APPLE_WALLET_KEY: ${{ secrets.APPLE_WALLET_KEY }}
+          APPLE_WALLET_PASSWORD: ${{ secrets.APPLE_WALLET_PASSWORD }}
+          APPLE_WALLET_PASS_TYPE_ID: ${{ secrets.APPLE_WALLET_PASS_TYPE_ID }}
+          APPLE_WALLET_TEAM_ID: ${{ secrets.APPLE_WALLET_TEAM_ID }}
+          APPLE_WALLET_WWDR_CERTIFICATE: ${{ secrets.APPLE_WALLET_WWDR_CERTIFICATE }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_WALLET_CLIENT_CERT_URL: ${{ secrets.GOOGLE_WALLET_CLIENT_CERT_URL }}
+          GOOGLE_WALLET_CLIENT_EMAIL: ${{ secrets.GOOGLE_WALLET_CLIENT_EMAIL }}
+          GOOGLE_WALLET_CLIENT_ID: ${{ secrets.GOOGLE_WALLET_CLIENT_ID }}
+          GOOGLE_WALLET_ISSUER_ID: ${{ secrets.GOOGLE_WALLET_ISSUER_ID }}
+          GOOGLE_WALLET_PRIVATE_KEY: ${{ secrets.GOOGLE_WALLET_PRIVATE_KEY }}
+          GOOGLE_WALLET_PRIVATE_KEY_ID: ${{ secrets.GOOGLE_WALLET_PRIVATE_KEY_ID }}
+          GOOGLE_WALLET_PROJECT_ID: ${{ secrets.GOOGLE_WALLET_PROJECT_ID }}
+          MORALIS_API_KEY: ${{ secrets.MORALIS_API_KEY }}
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_ACCESS_TOKEN }}
+          STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
         run : |
           ./manage.py test --settings=config.settings.test --failfast --keepdb

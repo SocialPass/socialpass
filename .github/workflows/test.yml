@@ -30,7 +30,7 @@ jobs:
       - name: Run migrations
         run: ./manage.py migrate
       - name: django testing
-        with: # Set the secret as an input
+        env: # Set the secret as an input
           APPLE_WALLET_CERTIFICATE: ${{ secrets.APPLE_WALLET_CERTIFICATE }}
           APPLE_WALLET_KEY: ${{ secrets.APPLE_WALLET_KEY }}
           APPLE_WALLET_PASSWORD: ${{ secrets.APPLE_WALLET_PASSWORD }}

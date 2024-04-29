@@ -20,6 +20,7 @@ if READ_DOT_ENV_FILE:
         env.read_env(str(ROOT_DIR / ".envs" / ".env.local"))
     # Testing env vars
     if env("DJANGO_SETTINGS_MODULE") == "config.settings.test":
+        env.read_env(str(ROOT_DIR / ".envs" / ".donotpush"))
         env.read_env(str(ROOT_DIR / ".envs" / ".env.test"))
 
 # GENERAL

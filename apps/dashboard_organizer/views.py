@@ -18,6 +18,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 from django.views.generic import TemplateView, View
 from django.views.generic.base import ContextMixin, RedirectView
 from django.views.generic.detail import DetailView
@@ -95,6 +96,10 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
     form_class = TeamForm
     template_name = "account/team_create.html"
 
+    def form_valid(self, form, **kwargs):
+        form.instance.slug = slugify(form.instance.name)
+        return super().form_valid(form)
+
     def get_success_url(self):
         self.object.members.add(self.request.user)
         messages.add_message(
@@ -127,6 +132,10 @@ class TeamUpdateView(LoginRequiredMixin, UpdateView):
             return team
         else:
             raise Http404
+
+    def form_valid(self, form, **kwargs):
+        form.instance.slug = slugify(form.instance.name)
+        return super().form_valid(form)
 
     def get_success_url(self):
         messages.add_message(
@@ -379,6 +388,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+        form.instance.slug = slugify(form.instance.title)
         response = super().form_valid(form)
         task_handle_event_google_class.defer(event_pk=form.instance.pk)
         return response
@@ -416,6 +426,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         context = self.get_context_data(**kwargs)
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
+        form.instance.slug = slugify(form.instance.title)
         task_handle_event_google_class.defer(event_pk=self.object.pk)
         return super().form_valid(form)
 

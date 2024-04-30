@@ -1,23 +1,26 @@
 /**
  * Custom slugifier that copies the logic of Django's built-in one.
- * 
+ *
  * @param {string} value
  * @returns {string}
  */
-function slugify(value) {
-  // Convert to lowercase
-  value = value.toLowerCase();
+function slugify(value, allow_unicode = false) {
+   // Convert to lowercase
+   value = value.toLowerCase();
 
-  // Remove characters that aren't alphanumerics, underscores, hyphens, or whitespace
-  value = value.replace(/[^a-zA-Z0-9_\s\-]/g, "");
+   // Normalize Unicode characters if allow_unicode is false
+   if (!allow_unicode) {
+     value = value.normalize('NFKD').replace(/[^\x00-\x7F]/g, "");
+   }
 
-  // Replace any whitespace or repeated dashes with single dashes
-  value = value.replace(/[\s-]+/g, "-");
+   // Remove characters that aren't alphanumerics, underscores, hyphens, or whitespace
+   value = value.replace(/[^a-zA-Z0-9_\s\-]/g, "");
 
-  // Replace leading and trailing whitespace, dashes, and underscores
-  value = value.trim();
-  value = value.replace(/^-+|-+$/g, "");
-  value = value.replace(/^_+|_+$/g, "");
+   // Replace any whitespace or repeated dashes with single dashes
+   value = value.replace(/[\s-]+/g, "-");
 
-  return value;
-}
+   // Replace leading and trailing dashes and underscores
+   value = value.replace(/^-+|-+$/g, "");
+
+   return value;
+ }

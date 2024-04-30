@@ -153,7 +153,7 @@ class TestTeamViews(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestEventListCreateDeleteViews(TestCase):
+class TestEventListCreateDeleteViews(TransactionTestCase):
     """
     Test the event list, create, and delete views.
     """
@@ -221,14 +221,17 @@ class TestEventListCreateDeleteViews(TestCase):
                 "geo_address": "Address",
             },
         )
-        self.assertEqual(
-            Event.objects.filter(
-                team=self.team,
-                title="Test event create post",
-            ).count(),
-            1,
+        event = Event.objects.filter(
+            team=self.team,
+            title="Test event create post",
         )
+        self.assertTrue(event.exists())
         self.assertEqual(response.status_code, 302)
+
+        # Run worker, complete google class task
+        yapp = app.with_connector(app.connector.get_worker_connector())
+        yapp.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
+        self.assertTrue(event.first().google_class_id != "")
 
     def test_event_delete_get(self):
         self.assertTrue(
@@ -335,6 +338,12 @@ class TestEventDetailViews(TransactionTestCase):
         event = Event.objects.get(title="Test event detail edit")
         self.assertEqual(event.geo_address, "Address edit")
         self.assertEqual(response.status_code, 302)
+
+        # Run worker, complete google class task
+        yapp = app.with_connector(app.connector.get_worker_connector())
+        yapp.run_worker(wait=False, install_signal_handlers=False, listen_notify=True)
+        event = Event.objects.get(title="Test event detail edit")
+        self.assertTrue(event.google_class_id != "")
 
     def test_event_stats_get(self):
         self.assertTrue(

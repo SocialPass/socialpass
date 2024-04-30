@@ -95,9 +95,9 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
     form_class = TeamForm
     template_name = "account/team_create.html"
 
-    def form_valid(self):
+    def form_valid(self, form, **kwargs):
         form.instance.slug = text.slugify(form.instance.name)
-        return super().form_valid()
+        return super().form_valid(form)
 
     def get_success_url(self):
         self.object.members.add(self.request.user)
@@ -132,9 +132,9 @@ class TeamUpdateView(LoginRequiredMixin, UpdateView):
         else:
             raise Http404
 
-    def form_valid(self):
+    def form_valid(self, form, **kwargs):
         form.instance.slug = text.slugify(form.instance.name)
-        return super().form_valid()
+        return super().form_valid(form)
 
     def get_success_url(self):
         messages.add_message(

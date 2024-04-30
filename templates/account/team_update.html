@@ -39,14 +39,14 @@
         const slugPreview = document.getElementById("slug-preview")
         nameInput.addEventListener("input", function(e) {
             document.getElementById("slug-change-warning").classList.remove("d-none");
-            let slug = slugify(nameInput.value, {lower: true});
+            let slug = slugify(nameInput.value);
             slugInput.value = slug;
             if (slug === "") slug = "NOT-SET";
             slugPreview.innerText = slug;
         });
 
     // In case of error
-        let slug = slugify(nameInput.value, {lower: true})
+        let slug = slugify(nameInput.value)
         slugInput.value = slug;
         if (slug === "") slug = "NOT-SET";
         slugPreview.innerText = slug;

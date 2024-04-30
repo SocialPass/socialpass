@@ -30,14 +30,14 @@
         const slugInput = document.getElementById("id_slug");
         const slugPreview = document.getElementById("slug-preview")
         titleInput.addEventListener("input", function(e) {
-            let slug = slugify(titleInput.value, {lower: true})
+            let slug = slugify(titleInput.value)
             slugInput.value = slug;
             if (slug === "") slug = "NOT-SET";
             slugPreview.innerText = slug;
         });
 
 	// In case of error
-        let slug = slugify(titleInput.value, {lower: true})
+        let slug = slugify(titleInput.value)
         slugInput.value = slug;
         if (slug === "") slug = "NOT-SET";
         slugPreview.innerText = slug;

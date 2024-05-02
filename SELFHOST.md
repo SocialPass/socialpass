@@ -1,0 +1,117 @@
+> [!WARNING]  
+> This document is a work-in-progress.
+
+# Self-Hosting SocialPass
+
+In order to self-host SocialPass, you need to mainly do the following:
+
+1. Get the Django app running with a PostgreSQL database
+2. Integrate the required and optional 3rd-party APIs
+3. Optional: Whitelabel
+
+The instructions for the first step above is described in details in the **README.md**. For the next two steps, please keep reading this document.
+
+## Integrate 3rd-party APIs
+
+The 3rd-party integrations are handled via environment variables stored in the `.envs/` hidden folder. In the following sections, whenever the names of variables are mentioned as being required for that integration, it just means you need to store the values in any or all of the following files (depending on which environment you want to target):
+
+- `.envs/.env.local`
+- `.envs/.env.production`
+- `.envs/.env.test`
+
+### AWS S3 (for media and file uploads)
+
+By default, SocialPass uses AWS S3 for handling media and file uploads. Please read https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html to get started on AWS S3 by creating your bucket. After that, you need to set up the following environment variables:
+
+```
+DJANGO_AWS_ACCESS_KEY_ID=
+DJANGO_AWS_S3_REGION_NAME=
+DJANGO_AWS_SECRET_ACCESS_KEY=
+DJANGO_AWS_STORAGE_BUCKET_NAME=
+DJANGO_AWS_S3_ENDPOINT_URL=
+```
+
+---
+
+### Mailgun (for email)
+
+> [!NOTE]  
+> This is not required for local. By default, emails will be printed out in your terminal on local.
+
+Mailgun is the preferred choice for sending emails. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
+
+```
+MAILGUN_API_KEY=
+```
+
+---
+
+### Apple Wallet (for tickets)
+
+Work in progress ...
+
+---
+
+### Google Wallet (for tickets)
+
+Work in progress ...
+
+---
+
+### Optional: Google oAuth (for logins and sign ups)
+
+We allow organizers to sign up via their Google accounts. Please read the following to get started: https://docs.allauth.org/en/latest/socialaccount/providers/google.html. Once you have set up your Google project to handle logins and sign ups, you need to set up the `client_id` and `secret` as environment variables:
+
+```
+GOOGLE_OAUTH_CLIENT_ID=
+GOOGLE_OAUTH_CLIENT_SECRET=
+```
+
+**Please note**, this is totally optional. If you want to turn off logins and sign ups via Google accounts, go to `config/settings/base.py` and remove the `google` key from the `SOCIALACCOUNT_PROVIDERS` dictionary:
+
+```python
+...
+
+SOCIALACCOUNT_PROVIDERS = {}
+
+...
+```
+
+---
+
+### Google Maps (for address autocomplete)
+
+We use the Google Places API to support autocomplete for addresses on event forms. In order to integrate this, please read this guide: https://developers.google.com/maps/documentation/places/web-service/get-api-key. Once you have the key, set it as an environment variable:
+
+```
+GOOGLE_MAPS_API_KEY=
+```
+
+---
+
+### Moralis (for NFT-gated tickets)
+
+We use Moralis to handle NFT verification for NFT-gated tickets. Sign up for Moralis and [get your API key](https://docs.moralis.io/2.0/web3-data-api/evm/get-your-api-key), and set that as an environment variable:
+
+> [!NOTE]  
+> If you don't want to support NFT-gated tickets, then this can be safely ignored.
+
+```
+MORALIS_API_KEY=
+```
+
+---
+
+### Rollbar (for logging)
+
+We use Rollbar for logging errors and warnings. Sign up for Rollbar and [get your access token](https://docs.rollbar.com/reference/getting-started-1#project-access-tokens), and set that as an environment variable:
+
+```
+ROLLBAR_ACCESS_TOKEN=
+```
+
+---
+
+### Stripe (for payments)
+
+Work in progress ...

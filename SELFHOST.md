@@ -182,3 +182,5 @@ Once inside the admin site, go to `/admin/root/whitelabel/add/` or `/<DJANGO_ADM
 - **Font bold**: Bold version of the font file to use on website (otf recommended)
 - **Ticket bg color**: Background color of tickets (hex code recommended)
 - **Ticket text color**: Text color on tickets (hex code recommended)
+
+Once you have created your whitelabel object, go to `/admin/root/team/` or `/<DJANGO_ADMIN_URL>/root/team/` and find the team you want to apply this to. Click on the team to open the details/form page. On this form, set the **Whitelabel** field to the whitelabel object you just created. And that's it!

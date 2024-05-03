@@ -46,15 +46,42 @@ MAILGUN_API_KEY=
 
 ---
 
-### Apple Wallet (for tickets)
+### Optional: Apple Wallet (for tickets)
 
-Work in progress ...
+> [!NOTE]
+> If you don't want Apple Wallet support, you can safely ignore this section. In that case, the ticket page will not have a "Save to Apple Wallet" button.
+
+In order to set up Apple Wallet tickets, you need pass ID, a valid certificate, and a `key.pem` file. Please read the following instructions to get started: https://github.com/SocialPass/passbook/?tab=readme-ov-file#getting-started
+
+Once you have your credentials, set the following environment variables:
+
+```
+APPLE_WALLET_CERTIFICATE=
+APPLE_WALLET_PASSWORD=
+APPLE_WALLET_PASS_TYPE_ID=
+APPLE_WALLET_TEAM_ID=
+```
 
 ---
 
-### Google Wallet (for tickets)
+### Optional: Google Wallet (for tickets)
 
-Work in progress ...
+> [!NOTE]
+> If you don't want Google Wallet support, you can safely ignore this section. In that case, the ticket page will not have a "Save to Google Wallet" button.
+
+Google Wallet tickets require their own set of credentials. Please read the following instructions to get started: https://developers.google.com/wallet/generic/getting-started/onboarding-guide
+
+Once you have your credentials, set the following environment variables:
+
+```
+GOOGLE_WALLET_PRIVATE_KEY_ID=
+GOOGLE_WALLET_PRIVATE_KEY=
+GOOGLE_WALLET_CLIENT_ID=
+GOOGLE_WALLET_ISSUER_ID=
+GOOGLE_WALLET_PROJECT_ID=
+GOOGLE_WALLET_CLIENT_EMAIL=
+GOOGLE_WALLET_CLIENT_CERT_URL=
+```
 
 ---
 
@@ -94,7 +121,7 @@ GOOGLE_MAPS_API_KEY=
 We use Moralis to handle NFT verification for NFT-gated tickets. Sign up for Moralis and [get your API key](https://docs.moralis.io/2.0/web3-data-api/evm/get-your-api-key), and set that as an environment variable:
 
 > [!NOTE]  
-> If you don't want to support NFT-gated tickets, then this can be safely ignored.
+> If you don't want to support NFT-gated tickets, then this can be safely ignored. Although, creating NFT-gated ticket tiers from the dashboard would cause problems as there would be no way to verify them.
 
 ```
 MORALIS_API_KEY=
@@ -114,4 +141,12 @@ ROLLBAR_ACCESS_TOKEN=
 
 ### Stripe (for payments)
 
-Work in progress ...
+As of right now, SocialPass *only* supports Stripe Connect, which means that there is one primary account (SocialPass for instance), and each organizer "connects" their secondary account (via the organizer dashboard). This is the ideal choice in regards to our business model. This may change in the future (with more options), but for now, please keep this in mind.
+
+Please read the Stripe Connect docs for a better undestanding (and getting started): https://docs.stripe.com/connect.
+
+Once you have set up your primary account, you only need the API key as an environment variable:
+
+```
+STRIPE_API_KEY=
+```

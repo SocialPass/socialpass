@@ -150,3 +150,35 @@ Once you have set up your primary account, you only need the API key as an envir
 ```
 STRIPE_API_KEY=
 ```
+
+## Whitelabeling
+
+SocialPass supports team-wide whitelabeling. For reference, a team = one organizer. This means that organizers can have their event pages be branded with the proper colors, fonts, and logos. Only the checkout app (customer facing) is affected by the whitelabeling, although we do have plans to expand this to the full scope of the project.
+
+### How to whitelabel
+
+#### Create admin/staff account on Django's admin site
+
+You need to first create an admin account on Django's admin site. The best way to do this is to run the following command on the console (and fill out the details):
+
+```
+python manage.py createsuperuser
+```
+
+You can also ask your webmaster to do it for you, in case you can't access the console. Staff accounts will also work, but in that case, the permissions must be explicitly set to allow the user to create/change whitelabeling objects.
+
+After you have your credentials, log in to the admin site. On local, this is `/admin`, on staging and production, this is `/<DJANGO_ADMIN_URL>` where the `DJANGO_ADMIN_URL` is an environment variable you set up.
+
+Once inside the admin site, go to `/admin/root/whitelabel/add/` or `/<DJANGO_ADMIN_URL>/root/whitelabel/add/` and fill out the form. Given below are descriptions of each field (and what they do):
+
+- **Brand name**: Name of the organizer/team
+- **Logo**: This logo file will be used on the website header (png recommended)
+- **Ticket logo**: Used on PNG tickets (svg recommended)
+- **Ticket logo google**: Used on Google Wallet tickets (Must be link to an image, jpg/png/gif, png recommended)
+- **Ticket logo apple**: Used on Apple Wallet tickets (png recommended)
+- **Favicon**: Icon for the website tab (png or svg recommended)
+- **Css**: This CSS will override the default styles. You only need to override the CSS variables because we use Halfmoon for our project. Please see https://github.com/halfmoonui/halfmoon/blob/master/css/halfmoon.css to get a better idea. In general, we recommend overriding the `--bs-primary-*` and `--bs-info-*` variables to theme out your website. (Work in progress, better instructions and examples will be provided)
+- **Font regular**: Font file to use on website (otf recommended)
+- **Font bold**: Bold version of the font file to use on website (otf recommended)
+- **Ticket bg color**: Background color of tickets (hex code recommended)
+- **Ticket text color**: Text color on tickets (hex code recommended)

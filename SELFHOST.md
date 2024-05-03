@@ -157,6 +157,8 @@ SocialPass supports team-wide whitelabeling. For reference, a team = one organiz
 
 ### How to whitelabel
 
+---
+
 #### Create admin/staff account on Django's admin site
 
 You need to first create an admin account on Django's admin site. The best way to do this is to run the following command on the console (and fill out the details):
@@ -166,6 +168,10 @@ python manage.py createsuperuser
 ```
 
 You can also ask your webmaster to do it for you, in case you can't access the console. Staff accounts will also work, but in that case, the permissions must be explicitly set to allow the user to create/change whitelabeling objects.
+
+---
+
+#### Create whitelabeling from the admin site
 
 After you have your credentials, log in to the admin site. On local, this is `/admin`, on staging and production, this is `/<DJANGO_ADMIN_URL>` where the `DJANGO_ADMIN_URL` is an environment variable you set up.
 

@@ -8,6 +8,8 @@ ARG BUILD_ENVIRONMENT=local
 
 # Install apt packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
+  # git
+  git \
   # dependencies for building Python packages
   build-essential \
   # psycopg dependencies

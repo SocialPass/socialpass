@@ -2,6 +2,6 @@ version: 2
 updates:
   - package-ecosystem: "pip"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
+      interval: "daily"
+    open-pull-requests-limit: 20
     labels: [ ]

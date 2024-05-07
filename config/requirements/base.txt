@@ -10,17 +10,17 @@ qrcode==7.4.2 # https://github.com/lincolnloop/python-qrcode
 rollbar==1.0.0 #https://github.com/rollbar/pyrollbar/
 stripe==5.5.0 #https://github.com/stripe/stripe-python/
 moralis==0.1.39 #https://github.com/MoralisWeb3/Moralis-Python-SDK
-procrastinate==2.1.0 #https://github.com/procrastinate-org/procrastinate
+procrastinate==2.2.0 #https://github.com/procrastinate-org/procrastinate
 
 # Django
 # ------------------------------------------------------------------------------
 git+https://github.com/SocialPass/passbook.git@7a3614e974c1862a24e7b02ced11313c8320c14b
 crispy-bootstrap5==2024.2 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
-django==5.0.3  # https://www.djangoproject.com/
-django-allauth==0.61.1  # https://github.com/pennersr/django-allauth
+django==5.0.5  # https://www.djangoproject.com/
+django-allauth==0.62.1 # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.1 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.11.2 # https://github.com/joke2k/django-environ
-django-model-utils==4.4.0  # https://github.com/jazzband/django-model-utils
-django-storages[boto3]==1.14.2  # https://github.com/jschneier/django-storages
+django-model-utils==4.5.1  # https://github.com/jazzband/django-model-utils
+django-storages[boto3]==1.14.3  # https://github.com/jschneier/django-storages
 django-quill-editor==0.1.40 # https://github.com/LeeHanYeong/django-quill-editor
 whitenoise==6.6.0 # https://github.com/evansd/whitenoise/

@@ -4,8 +4,8 @@
 
 {% block head_title %}
     {% trans "Get Tickets" %} -
-    {% if organizer_team.whitelabel.brand_name %}
-        {{ organizer_team.whitelabel.brand_name }}
+    {% if whitelabel %}
+        {{ whitelabel.brand_name }}
     {% else %}
         SocialPass
     {% endif %}

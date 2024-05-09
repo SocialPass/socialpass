@@ -3,7 +3,7 @@
 {% load static i18n get_user_primary_email %}
 
 {% block head_title %}
-    {% trans "Payment Details" %} - SocialPass
+    {% trans "Payment Details" %} - {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %}
 {% endblock head_title %}
 {% block navbar_title %}
     <span class="text-primary-emphasis">{% trans "Payment" %}</span> {% trans "Details" %}

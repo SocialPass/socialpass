@@ -117,13 +117,9 @@ class GoogleTicket:
             # Set up white-labeling logos only on production
             if not settings.DEBUG:
                 if whitelabel.ticket_logo:
-                    payload["logo"] = {
-                        "sourceUri": {"uri": whitelabel.ticket_logo.url}
-                    }
+                    payload["logo"] = {"sourceUri": {"uri": whitelabel.ticket_logo.url}}
                 else:
-                    payload["logo"] = {
-                        "sourceUri": {"uri": whitelabel.logo.url}
-                    }
+                    payload["logo"] = {"sourceUri": {"uri": whitelabel.logo.url}}
 
         # Insert or update the ticket class
         if is_insert:

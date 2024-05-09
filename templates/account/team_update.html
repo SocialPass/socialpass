@@ -3,7 +3,7 @@
 {% load account static i18n crispy_forms_tags %}
 
 {% block head_title %}
-    {% trans "Update Profile" %} - SocialPass
+    {% trans "Update Profile" %} - {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %}
 {% endblock %}
 {% block inner %}
     <p>

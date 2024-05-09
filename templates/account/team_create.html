@@ -3,7 +3,7 @@
 {% load account static i18n crispy_forms_tags %}
 
 {% block head_title %}
-    {% trans "Create Profile" %} - SocialPass
+    {% trans "Create Profile" %} - {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %}
 {% endblock %}
 {% block inner %}
     {% with request.user.membership_set.all as memberships %}

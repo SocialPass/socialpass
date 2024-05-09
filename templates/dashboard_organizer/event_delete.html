@@ -3,7 +3,7 @@
 {% load static i18n get_user_primary_email %}
 
 {% block head_title %}
-    {% trans "Delete Event" %} - SocialPass
+    {% trans "Delete Event" %} - {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %}
 {% endblock head_title %}
 {% block navbar_title %}
     <span class="text-primary-emphasis">{{ event.title }}</span> &mdash; {% trans "Delete Event" %}

@@ -153,7 +153,7 @@ STRIPE_API_KEY=
 
 ## Whitelabeling
 
-SocialPass supports team-wide whitelabeling. For reference, a team = one organizer. This means that organizers can have their event pages be branded with the proper colors, fonts, and logos. Only the checkout app (customer facing) is affected by the whitelabeling, although we do have plans to expand this to the full scope of the project.
+SocialPass supports project-wide AND team-wide whitelabeling. For reference, a team = one organizer.
 
 ### How to whitelabel
 
@@ -178,111 +178,27 @@ After you have your credentials, log in to the admin site. On local, this is `/a
 Once inside the admin site, go to `/admin/root/whitelabel/add/` or `/<DJANGO_ADMIN_URL>/root/whitelabel/add/` and fill out the form. Given below are descriptions of each field (and what they do):
 
 - **Brand name**: Name of the organizer/team
-- **Logo**: This logo file will be used on the website header (png recommended)
-- **Ticket logo**: Used on PNG tickets (svg recommended)
-- **Ticket logo google**: Used on Google Wallet tickets (Must be link to an image, jpg/png/gif, png recommended)
-- **Ticket logo apple**: Used on Apple Wallet tickets (png recommended)
-- **Favicon**: Icon for the website tab (png or svg recommended)
-- **Css**: This CSS will override the default styles. You only need to override the CSS variables because we use Halfmoon for our project. Please see https://github.com/halfmoonui/halfmoon/blob/master/css/halfmoon.css to get a better idea. In general, we recommend overriding the `--bs-primary-*` and `--bs-info-*` variables to theme out your website. Here's an example that sets both context colors to different shades of blue:
+- **Logo**: The logo for the brand (png, high quality recommended)
+- **Ticket logo (Optional)**: Used on tickets (png, high quality recommended), if not provided, the normal **logo** is used instead
+- **Favicon (Optional)**: Icon for the website tab (png recommended), if not provided, the normal **logo** is used instead
+- **Primary context (Optional)**: Set to a color from our built-in pallette, no need to override CSS
+- **Info context (Optional)**: Set to a color from our built-in pallette, no need to override CSS
+- **Css (Optional)**: This CSS will override the default styles. You only need to override the CSS variables because we use Halfmoon for our project. Please see https://github.com/halfmoonui/halfmoon/blob/master/css/halfmoon.css to get a better idea. In general, we recommend using the two context fields above, but this can be used for font imports and usage (from Google fonts for example):
 
 ```CSS
-:root,
-[data-bs-theme=light] {
-	/* Primary */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-	--bs-primary-hue: var(--bs-blue-hue);
-	--bs-primary-saturation: var(--bs-blue-saturation);
-	--bs-primary-100-hsl: var(--bs-blue-100-hsl);
-	--bs-primary-200-hsl: var(--bs-blue-200-hsl);
-	--bs-primary-300-hsl: var(--bs-blue-300-hsl);
-	--bs-primary-400-hsl: var(--bs-blue-400-hsl);
-	--bs-primary-500-hsl: var(--bs-blue-500-hsl);
-	--bs-primary-600-hsl: var(--bs-blue-600-hsl);
-	--bs-primary-700-hsl: var(--bs-blue-700-hsl);
-	--bs-primary-800-hsl: var(--bs-blue-800-hsl);
-	--bs-primary-900-hsl: var(--bs-blue-900-hsl);
-	--bs-primary-100: var(--bs-blue-100);
-	--bs-primary-200: var(--bs-blue-200);
-	--bs-primary-300: var(--bs-blue-300);
-	--bs-primary-400: var(--bs-blue-400);
-	--bs-primary-500: var(--bs-blue-500);
-	--bs-primary-600: var(--bs-blue-600);
-	--bs-primary-700: var(--bs-blue-700);
-	--bs-primary-800: var(--bs-blue-800);
-	--bs-primary-900: var(--bs-blue-900);
-	--bs-primary-hsl: var(--bs-blue-hsl);
-	--bs-primary: var(--bs-blue);
-	--bs-primary-foreground-hsl: var(--bs-blue-foreground-hsl);
-	--bs-primary-foreground: var(--bs-blue-foreground);
-	--bs-primary-text-emphasis-hsl: var(--bs-blue-text-emphasis-hsl);
-	--bs-primary-text-emphasis: var(--bs-blue-text-emphasis);
-	--bs-primary-hover-bg: var(--bs-blue-hover-bg);
-	--bs-primary-active-bg: var(--bs-blue-active-bg);
-	--bs-primary-bg-subtle: var(--bs-blue-bg-subtle);
-	--bs-primary-border-subtle: var(--bs-blue-border-subtle);
-	--bs-primary-checkbox-svg: var(--bs-blue-checkbox-svg);
-	--bs-primary-dash-svg: var(--bs-blue-dash-svg);
-	--bs-primary-radio-svg: var(--bs-blue-radio-svg);
-	--bs-primary-switch-svg: var(--bs-blue-switch-svg);
-
-	/* Info */
-
-	--bs-info-hue: var(--bs-sky-hue);
-	--bs-info-saturation: var(--bs-sky-saturation);
-	--bs-info-100-hsl: var(--bs-sky-100-hsl);
-	--bs-info-200-hsl: var(--bs-sky-200-hsl);
-	--bs-info-300-hsl: var(--bs-sky-300-hsl);
-	--bs-info-400-hsl: var(--bs-sky-400-hsl);
-	--bs-info-500-hsl: var(--bs-sky-500-hsl);
-	--bs-info-600-hsl: var(--bs-sky-600-hsl);
-	--bs-info-700-hsl: var(--bs-sky-700-hsl);
-	--bs-info-800-hsl: var(--bs-sky-800-hsl);
-	--bs-info-900-hsl: var(--bs-sky-900-hsl);
-	--bs-info-100: var(--bs-sky-100);
-	--bs-info-200: var(--bs-sky-200);
-	--bs-info-300: var(--bs-sky-300);
-	--bs-info-400: var(--bs-sky-400);
-	--bs-info-500: var(--bs-sky-500);
-	--bs-info-600: var(--bs-sky-600);
-	--bs-info-700: var(--bs-sky-700);
-	--bs-info-800: var(--bs-sky-800);
-	--bs-info-900: var(--bs-sky-900);
-	--bs-info-hsl: var(--bs-sky-hsl);
-	--bs-info: var(--bs-sky);
-	--bs-info-foreground-hsl: var(--bs-sky-foreground-hsl);
-	--bs-info-foreground: var(--bs-sky-foreground);
-	--bs-info-text-emphasis-hsl: var(--bs-sky-text-emphasis-hsl);
-	--bs-info-text-emphasis: var(--bs-sky-text-emphasis);
-	--bs-info-hover-bg: var(--bs-sky-hover-bg);
-	--bs-info-active-bg: var(--bs-sky-active-bg);
-	--bs-info-bg-subtle: var(--bs-sky-bg-subtle);
-	--bs-info-border-subtle: var(--bs-sky-border-subtle);
-	--bs-info-checkbox-svg: var(--bs-sky-checkbox-svg);
-	--bs-info-dash-svg: var(--bs-sky-dash-svg);
-	--bs-info-radio-svg: var(--bs-sky-radio-svg);
-	--bs-info-switch-svg: var(--bs-sky-switch-svg);
-}
-
-[data-bs-theme=dark] {
-	/* Primary */
-
-	--bs-primary-text-emphasis-hsl: var(--bs-blue-text-emphasis-hsl);
-	--bs-primary-text-emphasis: var(--bs-blue-text-emphasis);
-	--bs-primary-bg-subtle: var(--bs-blue-bg-subtle);
-	--bs-primary-border-subtle: var(--bs-blue-border-subtle);
-
-	/* Info */
-
-	--bs-info-text-emphasis-hsl: var(--bs-sky-text-emphasis-hsl);
-	--bs-info-text-emphasis: var(--bs-sky-text-emphasis);
-	--bs-info-bg-subtle: var(--bs-sky-bg-subtle);
-	--bs-info-border-subtle: var(--bs-sky-border-subtle);
+:root {
+	--bs-body-font-family: "Roboto", sans-serif;
 }
 ```
 
-- **Font regular**: Font file to use on website (otf recommended)
-- **Font bold**: Bold version of the font file to use on website (otf recommended)
-- **Ticket bg color**: Background color of tickets (hex code recommended)
-- **Ticket text color**: Text color on tickets (hex code recommended)
+- **Font regular (Optional)**: Font file to use on website (otf recommended)
+- **Font bold (Optional)**: Bold version of the font file to use on website (otf recommended)
+- **Ticket bg color (Optional)**: Background color of tickets (hex code recommended)
+- **Ticket text color (Optional)**: Text color on tickets (hex code recommended)
+- **Is global**: If set to true, the whitelabeling will be applied project-wide
 
-Once you have created your whitelabel object, go to `/admin/root/team/` or `/<DJANGO_ADMIN_URL>/root/team/` and find the team you want to apply this to. Click on the team to open the details/form page. On this form, set the **Whitelabel** field to the whitelabel object you just created. And that's it!
+**For project-wide whitelabeling**: Set the **Is global** field to true on the whitelabeling form on admin.
+
+**For team-wide whitelabeling**: Once you have created your whitelabel object, go to `/admin/root/team/` or `/<DJANGO_ADMIN_URL>/root/team/` and find the team you want to apply this to. Click on the team to open the details/form page. On this form, set the **Whitelabel** field to the whitelabel object you just created.

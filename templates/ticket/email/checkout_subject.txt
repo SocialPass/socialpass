@@ -1,1 +1,1 @@
-[SocialPass] Tickets for {{ event.title }}
+{% load get_brand_name %}{% get_brand_name as brand_name %}[{{ brand_name }}] Tickets for {{ event.title }}

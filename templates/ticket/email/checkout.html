@@ -1,3 +1,5 @@
+{% load get_brand_name %}
+{% get_brand_name as brand_name %}
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
             font-size: 16px;
             line-height: 1.5;
@@ -6,17 +8,19 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto">
-    <div style="text-align: center; margin-bottom: 24px;">
-        <img src="https://res.cloudinary.com/nfty-labs/image/upload/v1704373191/socialpass-logo_hnegmd_2_r4hf4t.png"
-             style="display: block"
-             height="32">
-    </div>
+    {% if brand_name == "SocialPass" %}
+        <div style="text-align: center; margin-bottom: 24px;">
+            <img src="https://res.cloudinary.com/nfty-labs/image/upload/v1704373191/socialpass-logo_hnegmd_2_r4hf4t.png"
+                 style="display: block"
+                 height="32">
+        </div>
+    {% endif %}
     {% if custom_message %}
-        <p>A Message From SocialPass</p>
+        <p>A Message From {{ brand_name }}</p>
         <p>{{ custom_message }}</p>
     {% endif %}
     <p>
-        Thank you for purchasing ticket(s) for <strong>{{ event.title }}</strong> on SocialPass. Please go to the following link to download your ticket(s):
+        Thank you for purchasing ticket(s) for <strong>{{ event.title }}</strong> on {{ brand_name }}. Please go to the following link to download your ticket(s):
     </p>
     <p>
         <a href="{{ tickets_link }}">{{ tickets_link }}</a>
@@ -24,8 +28,8 @@
     <p>
         If asked for a passcode, please enter the following: <strong>{{ passcode }}</strong>
     </p>
-    <p>Thank you for using SocialPass!</p>
+    <p>Thank you for using {{ brand_name }}!</p>
     <p style="text-align: right; margin-bottom: 0;">
-        &copy; {% now "Y" %}, SocialPass
+        &copy; {% now "Y" %}, {{ brand_name }}
     </p>
 </div>

@@ -1,3 +1,5 @@
-You have been invited to join {{ team.name }} on SocialPass.
+{% load get_brand_name %}
+{% get_brand_name as brand_name %}
+You have been invited to join {{ team.name }} on {{ brand_name }}.
 
 If you'd like to join, please go to the following link: {{ invitation_url }}

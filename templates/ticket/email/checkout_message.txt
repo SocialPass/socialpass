@@ -1,4 +1,5 @@
-{{ custom_message }}
-Thank you for purchasing ticket(s) for {{ event.title }} on SocialPass.
+{% load get_brand_name %}
+{% get_brand_name as brand_name %}
+Thank you for purchasing ticket(s) for {{ event.title }} on {{ brand_name }}.
 Please go to the following link to download your ticket(s): {{ tickets_link }}.
 If asked for a passcode, please enter the following: {{ passcode }}

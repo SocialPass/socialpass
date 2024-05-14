@@ -191,7 +191,7 @@ class TicketAdmin(CustomDBAdmin):
 
 @admin.register(WhiteLabel)
 class WhiteLabelAdmin(CustomDBAdmin):
-    list_display = CustomDBAdmin.list_display + ["__str__", "brand_name", "is_global",]
+    list_display = CustomDBAdmin.list_display + ["__str__", "brand_name"]
 
 
 @admin.register(RSVPBatch)

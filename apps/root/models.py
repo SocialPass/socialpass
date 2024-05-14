@@ -69,47 +69,28 @@ class WhiteLabel(DBModel):
     A model used to store all of the information required for white-labeling a
     team.
     """
-    class ContextColors(models.TextChoices):
-        RED = "red", "red"
-        SIENNA = "sienna", "sienna"
-        AMBER = "amber", "amber"
-        YELLOW = "yellow", "yellow"
-        LIME = "lime", "lime"
-        GREEN = "green", "green"
-        EMERALD = "emerald", "emerald"
-        TURQUOISE = "turquoise", "turquoise"
-        TEAL = "teal", "teal"
-        CYAN = "cyan", "cyan"
-        SKY = "sky", "sky"
-        BLUE = "blue", "blue"
-        NAVY = "navy", "navy"
-        INDIGO = "indigo", "indigo"
-        VIOLET = "violet", "violet"
-        PURPLE = "purple", "purple"
-        FUCHSIA = "fuchsia", "fuchsia"
-        PINK = "pink", "pink"
 
-    brand_name = models.CharField(max_length=255)
-    logo = models.ImageField(upload_to="whitelabel__logo")
-    ticket_logo = models.ImageField(
+    brand_name = models.CharField(max_length=255, blank=True)
+    logo = models.ImageField(
         blank=True,
         null=True,
-        upload_to="whitelabel__ticketlogo",
+        upload_to="whitelabel__logo",
+    )
+    ticket_logo = models.FileField(  # FileField to support SVGs
+        blank=True,
+        null=True,
+        upload_to="whitelabel__logo",
+    )
+    ticket_logo_google = models.URLField(max_length=255, blank=True)
+    ticket_logo_apple = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="whitelabel__logo",
     )
     favicon = models.ImageField(
         blank=True,
         null=True,
         upload_to="whitelabel__favicon",
-    )
-    primary_context = models.CharField(
-        max_length=255,
-        blank=True,
-        choices=ContextColors.choices,
-    )
-    info_context = models.CharField(
-        max_length=255,
-        blank=True,
-        choices=ContextColors.choices,
     )
     css = models.TextField(blank=True)
     font_regular = models.FileField(
@@ -124,7 +105,6 @@ class WhiteLabel(DBModel):
     )
     ticket_bg_color = models.CharField(max_length=255, blank=True)
     ticket_text_color = models.CharField(max_length=255, blank=True)
-    is_global = models.BooleanField(default=False)
 
     def __str__(self):
         return f"WhiteLabel: {self.brand_name}"

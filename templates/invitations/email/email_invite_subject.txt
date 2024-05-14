@@ -1,1 +1,1 @@
-Invitation to join {{ team.name }}
+[SocialPass] Invitation to join {{ team.name }}

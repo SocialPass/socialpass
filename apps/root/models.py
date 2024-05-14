@@ -1077,11 +1077,10 @@ class CheckoutSession(DBModel):
             "passcode": self.passcode,
             "custom_message": custom_message,
         }
-        msg_subject = render_to_string("ticket/email/checkout_subject.txt", ctx)
         msg_plain = render_to_string("ticket/email/checkout_message.txt", ctx)
         msg_html = render_to_string("ticket/email/checkout.html", ctx)
         send_mail(
-            msg_subject,
+            "[SocialPass] Tickets for " + self.event.title,
             msg_plain,
             "tickets-no-reply@socialpass.io",
             [self.email],

@@ -4,8 +4,8 @@
 
 {% block head_title %}
     {% trans "Get Tickets" %} -
-    {% if organizer_team.whitelabel.brand_name %}
-        {{ organizer_team.whitelabel.brand_name }}
+    {% if whitelabel %}
+        {{ whitelabel.brand_name }}
     {% else %}
         SocialPass
     {% endif %}
@@ -27,13 +27,22 @@
                 <div class="p-4 rounded-5 text-bg-info antialiased">
                     <div class="d-flex justify-content-center pb-3">
                         <div class="d-flex align-items-center">
-                            {% if organizer_team.whitelabel.ticket_logo %}
-                                <div class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
-                                     style="background-image: url('{{ organizer_team.whitelabel.ticket_logo.url }}');
-                                            background-repeat: no-repeat;
-                                            background-size: contain;
-                                            background-position: center center">
-                                </div>
+                            {% if whitelabel %}
+                                {% if whitelabel.ticket_logo %}
+                                    <div class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
+                                         style="background-image: url('{{ whitelabel.ticket_logo.url }}');
+                                                background-repeat: no-repeat;
+                                                background-size: contain;
+                                                background-position: center center">
+                                    </div>
+                                {% else %}
+                                    <div class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
+                                         style="background-image: url('{{ whitelabel.logo.url }}');
+                                                background-repeat: no-repeat;
+                                                background-size: contain;
+                                                background-position: center center">
+                                    </div>
+                                {% endif %}
                             {% else %}
                                 <div class="specific-w-75 specific-h-75 overflow-hidden d-block me-2"
                                      style="background-image: url('{% static 'images/SocialPass-Icon-White.svg' %}');
@@ -41,14 +50,8 @@
                                             background-size: contain;
                                             background-position: center center">
                                 </div>
+                                <strong style="font-size: 28px;">SocialPass</strong>
                             {% endif %}
-                            <strong style="font-size: 28px;">
-                                {% if organizer_team.whitelabel.brand_name %}
-                                    {{ organizer_team.whitelabel.brand_name }}
-                                {% else %}
-                                    SocialPass
-                                {% endif %}
-                            </strong>
                         </div>
                     </div>
                     <h3>{{ checkout_session.event.title }}</h3>

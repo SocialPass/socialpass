@@ -139,29 +139,33 @@ class AppleTicket:
         self.icon = settings.ROOT_DIR / "static" / "images" / "socialpass-white.png"
 
         # White-labeling Apple ticket
-        if event.team.whitelabel:
-            whitelabel = event.team.whitelabel
+        whitelabel = event.team.get_whitelabel()
+        if whitelabel:
             if whitelabel.ticket_text_color:
                 self.label_color = whitelabel.ticket_text_color
                 self.foreground_color = whitelabel.ticket_text_color
             if whitelabel.ticket_bg_color:
                 self.background_color = whitelabel.ticket_bg_color
-            if whitelabel.ticket_logo_apple:
-                if settings.DEBUG:
-                    url = f"http://localhost:8000{whitelabel.ticket_logo_apple.url}"
-                else:
-                    url = whitelabel.ticket_logo_apple.url
 
-                response = requests.get(url)
-                if response.status_code == 200:
-                    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-                        temp_file.write(response.content)
-                        temp_file_path = temp_file.name
-                else:
-                    pass
+            # Set up the ticket logo for Apple
+            if whitelabel.ticket_logo:
+                ticket_logo_apple = whitelabel.ticket_logo
+            else:
+                ticket_logo_apple = whitelabel.logo
 
-                # Now set self.icon using the temp file path
-                self.icon = temp_file_path
+            # Use the logo to create temp file and add to the ticket
+            if settings.DEBUG:
+                url = f"http://localhost:8000{ticket_logo_apple.url}"
+            else:
+                url = ticket_logo_apple.url
+            response = requests.get(url)
+            if response.status_code == 200:
+                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                    temp_file.write(response.content)
+                    temp_file_path = temp_file.name
+            else:
+                pass
+            self.icon = temp_file_path
 
         self.description = event.title
         self.serial_number = str(ticket.public_id)

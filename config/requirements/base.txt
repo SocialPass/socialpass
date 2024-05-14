@@ -11,6 +11,7 @@ rollbar==1.0.0 #https://github.com/rollbar/pyrollbar/
 stripe==5.5.0 #https://github.com/stripe/stripe-python/
 moralis==0.1.46 #https://github.com/MoralisWeb3/Moralis-Python-SDK
 procrastinate==2.2.0 #https://github.com/procrastinate-org/procrastinate
+PyJWT==2.8.0 #https://github.com/jpadilla/pyjwt
 
 # Django
 # ------------------------------------------------------------------------------

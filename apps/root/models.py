@@ -70,27 +70,47 @@ class WhiteLabel(DBModel):
     team.
     """
 
-    brand_name = models.CharField(max_length=255, blank=True)
-    logo = models.ImageField(
+    class ContextColors(models.TextChoices):
+        RED = "red", "red"
+        SIENNA = "sienna", "sienna"
+        AMBER = "amber", "amber"
+        YELLOW = "yellow", "yellow"
+        LIME = "lime", "lime"
+        GREEN = "green", "green"
+        EMERALD = "emerald", "emerald"
+        TURQUOISE = "turquoise", "turquoise"
+        TEAL = "teal", "teal"
+        CYAN = "cyan", "cyan"
+        SKY = "sky", "sky"
+        BLUE = "blue", "blue"
+        NAVY = "navy", "navy"
+        INDIGO = "indigo", "indigo"
+        VIOLET = "violet", "violet"
+        PURPLE = "purple", "purple"
+        FUCHSIA = "fuchsia", "fuchsia"
+        PINK = "pink", "pink"
+
+    brand_name = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to="whitelabel__logo")
+    ticket_logo = models.ImageField(
         blank=True,
         null=True,
-        upload_to="whitelabel__logo",
-    )
-    ticket_logo = models.FileField(  # FileField to support SVGs
-        blank=True,
-        null=True,
-        upload_to="whitelabel__logo",
-    )
-    ticket_logo_google = models.URLField(max_length=255, blank=True)
-    ticket_logo_apple = models.ImageField(
-        blank=True,
-        null=True,
-        upload_to="whitelabel__logo",
+        upload_to="whitelabel__ticketlogo",
     )
     favicon = models.ImageField(
         blank=True,
         null=True,
         upload_to="whitelabel__favicon",
+    )
+    primary_context = models.CharField(
+        max_length=255,
+        blank=True,
+        choices=ContextColors.choices,
+    )
+    info_context = models.CharField(
+        max_length=255,
+        blank=True,
+        choices=ContextColors.choices,
     )
     css = models.TextField(blank=True)
     font_regular = models.FileField(
@@ -105,6 +125,7 @@ class WhiteLabel(DBModel):
     )
     ticket_bg_color = models.CharField(max_length=255, blank=True)
     ticket_text_color = models.CharField(max_length=255, blank=True)
+    is_global = models.BooleanField(default=False)
 
     def __str__(self):
         return f"WhiteLabel: {self.brand_name}"
@@ -192,6 +213,23 @@ class Team(DBModel):
             compressed_image = compress_image(self.image)
             self.image = compressed_image
         super(Team, self).clean(*args, **kwargs)
+
+    def get_whitelabel(self):
+        """
+        Get team whitelabel, or the global one. Used for Google and Apple tickets.
+        """
+        whitelabel = False
+
+        # query the global whitelabel objects first
+        global_whitelabel_qs = WhiteLabel.objects.filter(is_global=True)
+        if global_whitelabel_qs.count() > 0:
+            whitelabel = global_whitelabel_qs[0]
+
+        # check if team has whitelabel object
+        if self.whitelabel:
+            whitelabel = self.whitelabel
+
+        return whitelabel
 
     @cached_property
     def stripe_account_payouts_enabled(self):
@@ -1039,10 +1077,11 @@ class CheckoutSession(DBModel):
             "passcode": self.passcode,
             "custom_message": custom_message,
         }
+        msg_subject = render_to_string("ticket/email/checkout_subject.txt", ctx)
         msg_plain = render_to_string("ticket/email/checkout_message.txt", ctx)
         msg_html = render_to_string("ticket/email/checkout.html", ctx)
         send_mail(
-            "[SocialPass] Tickets for " + self.event.title,
+            msg_subject,
             msg_plain,
             "tickets-no-reply@socialpass.io",
             [self.email],

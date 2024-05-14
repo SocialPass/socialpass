@@ -1,0 +1,119 @@
+<!-- Contexts -->
+<style type="text/css">
+    {% if whitelabel.primary_context %}
+        :root,
+        [data-bs-theme=light] {
+            --bs-primary-hue: var(--bs-{{ whitelabel.primary_context }}-hue);
+            --bs-primary-saturation: var(--bs-{{ whitelabel.primary_context }}-saturation);
+            --bs-primary-100-hsl: var(--bs-{{ whitelabel.primary_context }}-100-hsl);
+            --bs-primary-200-hsl: var(--bs-{{ whitelabel.primary_context }}-200-hsl);
+            --bs-primary-300-hsl: var(--bs-{{ whitelabel.primary_context }}-300-hsl);
+            --bs-primary-400-hsl: var(--bs-{{ whitelabel.primary_context }}-400-hsl);
+            --bs-primary-500-hsl: var(--bs-{{ whitelabel.primary_context }}-500-hsl);
+            --bs-primary-600-hsl: var(--bs-{{ whitelabel.primary_context }}-600-hsl);
+            --bs-primary-700-hsl: var(--bs-{{ whitelabel.primary_context }}-700-hsl);
+            --bs-primary-800-hsl: var(--bs-{{ whitelabel.primary_context }}-800-hsl);
+            --bs-primary-900-hsl: var(--bs-{{ whitelabel.primary_context }}-900-hsl);
+            --bs-primary-100: var(--bs-{{ whitelabel.primary_context }}-100);
+            --bs-primary-200: var(--bs-{{ whitelabel.primary_context }}-200);
+            --bs-primary-300: var(--bs-{{ whitelabel.primary_context }}-300);
+            --bs-primary-400: var(--bs-{{ whitelabel.primary_context }}-400);
+            --bs-primary-500: var(--bs-{{ whitelabel.primary_context }}-500);
+            --bs-primary-600: var(--bs-{{ whitelabel.primary_context }}-600);
+            --bs-primary-700: var(--bs-{{ whitelabel.primary_context }}-700);
+            --bs-primary-800: var(--bs-{{ whitelabel.primary_context }}-800);
+            --bs-primary-900: var(--bs-{{ whitelabel.primary_context }}-900);
+            --bs-primary-hsl: var(--bs-{{ whitelabel.primary_context }}-hsl);
+            --bs-primary: var(--bs-{{ whitelabel.primary_context }});
+            --bs-primary-foreground-hsl: var(--bs-{{ whitelabel.primary_context }}-foreground-hsl);
+            --bs-primary-foreground: var(--bs-{{ whitelabel.primary_context }}-foreground);
+            --bs-primary-text-emphasis-hsl: var(--bs-{{ whitelabel.primary_context }}-text-emphasis-hsl);
+            --bs-primary-text-emphasis: var(--bs-{{ whitelabel.primary_context }}-text-emphasis);
+            --bs-primary-hover-bg: var(--bs-{{ whitelabel.primary_context }}-hover-bg);
+            --bs-primary-active-bg: var(--bs-{{ whitelabel.primary_context }}-active-bg);
+            --bs-primary-bg-subtle: var(--bs-{{ whitelabel.primary_context }}-bg-subtle);
+            --bs-primary-border-subtle: var(--bs-{{ whitelabel.primary_context }}-border-subtle);
+            --bs-primary-checkbox-svg: var(--bs-{{ whitelabel.primary_context }}-checkbox-svg);
+            --bs-primary-dash-svg: var(--bs-{{ whitelabel.primary_context }}-dash-svg);
+            --bs-primary-radio-svg: var(--bs-{{ whitelabel.primary_context }}-radio-svg);
+            --bs-primary-switch-svg: var(--bs-{{ whitelabel.primary_context }}-switch-svg);
+        }
+
+        [data-bs-theme=dark] {
+            --bs-primary-text-emphasis-hsl: var(--bs-{{ whitelabel.primary_context }}-text-emphasis-hsl);
+            --bs-primary-text-emphasis: var(--bs-{{ whitelabel.primary_context }}-text-emphasis);
+            --bs-primary-bg-subtle: var(--bs-{{ whitelabel.primary_context }}-bg-subtle);
+            --bs-primary-border-subtle: var(--bs-{{ whitelabel.primary_context }}-border-subtle);
+        }
+    {% endif %}
+    {% if whitelabel.info_context %}
+        :root,
+        [data-bs-theme=light] {
+            --bs-info-hue: var(--bs-{{ whitelabel.info_context }}-hue);
+            --bs-info-saturation: var(--bs-{{ whitelabel.info_context }}-saturation);
+            --bs-info-100-hsl: var(--bs-{{ whitelabel.info_context }}-100-hsl);
+            --bs-info-200-hsl: var(--bs-{{ whitelabel.info_context }}-200-hsl);
+            --bs-info-300-hsl: var(--bs-{{ whitelabel.info_context }}-300-hsl);
+            --bs-info-400-hsl: var(--bs-{{ whitelabel.info_context }}-400-hsl);
+            --bs-info-500-hsl: var(--bs-{{ whitelabel.info_context }}-500-hsl);
+            --bs-info-600-hsl: var(--bs-{{ whitelabel.info_context }}-600-hsl);
+            --bs-info-700-hsl: var(--bs-{{ whitelabel.info_context }}-700-hsl);
+            --bs-info-800-hsl: var(--bs-{{ whitelabel.info_context }}-800-hsl);
+            --bs-info-900-hsl: var(--bs-{{ whitelabel.info_context }}-900-hsl);
+            --bs-info-100: var(--bs-{{ whitelabel.info_context }}-100);
+            --bs-info-200: var(--bs-{{ whitelabel.info_context }}-200);
+            --bs-info-300: var(--bs-{{ whitelabel.info_context }}-300);
+            --bs-info-400: var(--bs-{{ whitelabel.info_context }}-400);
+            --bs-info-500: var(--bs-{{ whitelabel.info_context }}-500);
+            --bs-info-600: var(--bs-{{ whitelabel.info_context }}-600);
+            --bs-info-700: var(--bs-{{ whitelabel.info_context }}-700);
+            --bs-info-800: var(--bs-{{ whitelabel.info_context }}-800);
+            --bs-info-900: var(--bs-{{ whitelabel.info_context }}-900);
+            --bs-info-hsl: var(--bs-{{ whitelabel.info_context }}-hsl);
+            --bs-info: var(--bs-{{ whitelabel.info_context }});
+            --bs-info-foreground-hsl: var(--bs-{{ whitelabel.info_context }}-foreground-hsl);
+            --bs-info-foreground: var(--bs-{{ whitelabel.info_context }}-foreground);
+            --bs-info-text-emphasis-hsl: var(--bs-{{ whitelabel.info_context }}-text-emphasis-hsl);
+            --bs-info-text-emphasis: var(--bs-{{ whitelabel.info_context }}-text-emphasis);
+            --bs-info-hover-bg: var(--bs-{{ whitelabel.info_context }}-hover-bg);
+            --bs-info-active-bg: var(--bs-{{ whitelabel.info_context }}-active-bg);
+            --bs-info-bg-subtle: var(--bs-{{ whitelabel.info_context }}-bg-subtle);
+            --bs-info-border-subtle: var(--bs-{{ whitelabel.info_context }}-border-subtle);
+            --bs-info-checkbox-svg: var(--bs-{{ whitelabel.info_context }}-checkbox-svg);
+            --bs-info-dash-svg: var(--bs-{{ whitelabel.info_context }}-dash-svg);
+            --bs-info-radio-svg: var(--bs-{{ whitelabel.info_context }}-radio-svg);
+            --bs-info-switch-svg: var(--bs-{{ whitelabel.info_context }}-switch-svg);
+        }
+
+        [data-bs-theme=dark] {
+            --bs-info-text-emphasis-hsl: var(--bs-{{ whitelabel.info_context }}-text-emphasis-hsl);
+            --bs-info-text-emphasis: var(--bs-{{ whitelabel.info_context }}-text-emphasis);
+            --bs-info-bg-subtle: var(--bs-{{ whitelabel.info_context }}-bg-subtle);
+            --bs-info-border-subtle: var(--bs-{{ whitelabel.info_context }}-border-subtle);
+        }
+    {% endif %}
+</style>
+
+<!-- File fonts -->
+<style type="text/css">
+    {{ whitelabel.css|safe }}
+    {% if whitelabel.font_regular %}
+        @font-face {
+            font-family: "Custom";
+            src: url("{{ whitelabel.font_regular.url }}");
+            font-weight: normal;
+        }
+    {% endif %}
+    {% if whitelabel.font_bold %}
+        @font-face {
+            font-family: "Custom";
+            src: url("{{ whitelabel.font_bold.url }}");
+            font-weight: bold;
+        }
+    {% endif %}
+    {% if whitelabel.font_regular or whitelabel.font_bold %}
+        :root {
+            --bs-body-font-family: "Custom";
+        }
+    {% endif %}
+</style>

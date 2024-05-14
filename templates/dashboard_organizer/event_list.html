@@ -3,7 +3,7 @@
 {% load static i18n get_user_primary_email %}
 
 {% block head_title %}
-    {% trans "Events" %} - {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %}
+    {% trans "Events" %} - SocialPass
 {% endblock head_title %}
 {% block navbar_title %}
     {% trans "Events" %} &mdash; <span class="text-primary-emphasis">{{ current_team.name }}</span>

@@ -3,7 +3,7 @@
 {% load static i18n get_user_primary_email crispy_forms_tags format_to_event_timezone %}
 
 {% block head_title %}
-    {% trans "Waitlist" %} | {{ event.title }} - {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %}
+    {% trans "Waitlist" %} | {{ event.title }} - SocialPass
 {% endblock head_title %}
 {% block navbar_title %}
     <span class="text-primary-emphasis">{{ event.title }}</span>

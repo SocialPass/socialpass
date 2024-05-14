@@ -1,8 +1,7 @@
-{% load static i18n get_debug_status get_color_mode get_whitelabel %}
+{% load static i18n get_debug_status get_color_mode %}
 
 <!DOCTYPE html>
 {% get_debug_status as debug %}
-{% get_whitelabel as whitelabel %}
 <html lang="en"
       class="{% block html_class %}{% endblock %}"
       spellcheck="false"
@@ -20,15 +19,7 @@
             {% endblock head_title %}
         </title>
         <!-- Fav icon -->
-        {% if whitelabel %}
-            {% if whitelabel.favicon %}
-                <link rel="icon" href="{{ whitelabel.favicon.url }}">
-            {% else %}
-                <link rel="icon" href="{{ whitelabel.logo.url }}">
-            {% endif %}
-        {% else %}
-            <link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
-        {% endif %}
+        <link rel="icon" href="{% static 'images/SocialPass-Icon.svg' %}">
         <!-- Halfmoon CSS -->
         <link href="{% static 'css/halfmoon.min.css' %}" rel="stylesheet" />
         <!-- SocialPass CSS theme -->
@@ -53,9 +44,6 @@
               content="https://res.cloudinary.com/nfty-labs/image/upload/v1652735701/SocialPass-OG-Image_z35jn3.png">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@socialpass_io">
-        {% if whitelabel %}
-            {% include "whitelabel/whitelabel_css.html" with whitelabel=whitelabel %}
-        {% endif %}
         <!-- Google Tag Manager -->
         {% if not debug %}
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQKKDVZZVX"></script>
@@ -78,17 +66,10 @@
                 <nav>
                     <div class="card border-0 rounded-3 shadow">
                         <div class="card-body d-flex align-items-center">
-                            {% if whitelabel %}
-                                <img src="{{ whitelabel.logo.url }}"
-                                     alt="Logo"
-                                     height="60"
-                                     class="d-block me-auto">
-                            {% else %}
-                                <img src="{% static 'images/SVG-05.svg' %}"
-                                     alt="Logo"
-                                     height="60"
-                                     class="d-block me-auto">
-                            {% endif %}
+                            <img src="{% static 'images/SVG-05.svg' %}"
+                                 alt="SocialPass Logo"
+                                 height="60"
+                                 class="d-block me-auto">
                             <button type="button"
                                     class="btn btn-link rounded-pill px-0"
                                     aria-label="Toggle dark mode"
@@ -106,7 +87,7 @@
                 <!-- Content end -->
                 <!-- Footer start -->
                 <div class="text-center mt-auto pt-3">
-                    &copy; {% now "Y" %}, {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %} {% trans "All rights reserved" %}
+                    &copy; {% now "Y" %}, SocialPass Inc. {% trans "All rights reserved" %}
                 </div>
                 <!-- Footer end -->
             </div>

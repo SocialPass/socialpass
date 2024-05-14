@@ -4,8 +4,8 @@
 
 {% block head_title %}
     {{ object.event.title }} -
-    {% if whitelabel %}
-        {{ whitelabel.brand_name }}
+    {% if organizer_team.whitelabel.brand_name %}
+        {{ organizer_team.whitelabel.brand_name }}
     {% else %}
         SocialPass
     {% endif %}

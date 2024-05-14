@@ -216,7 +216,7 @@ class Team(DBModel):
 
     def get_whitelabel(self):
         """
-        Get team whitelabel, or the global one. Used for Google and Apple tickets.
+        Get team whitelabel, or the global one. Used for Google tickets.
         """
         whitelabel = False
 

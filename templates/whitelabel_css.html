@@ -100,14 +100,14 @@
     {% if whitelabel.font_regular %}
         @font-face {
             font-family: "Custom";
-            src: url("{{ whitelabel.font_regular.url }}");
+            src: url("{{ organizer_team.whitelabel.font_regular.url }}");
             font-weight: normal;
         }
     {% endif %}
     {% if whitelabel.font_bold %}
         @font-face {
             font-family: "Custom";
-            src: url("{{ whitelabel.font_bold.url }}");
+            src: url("{{ organizer_team.whitelabel.font_bold.url }}");
             font-weight: bold;
         }
     {% endif %}

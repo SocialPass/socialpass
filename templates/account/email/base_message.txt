@@ -1,5 +1,6 @@
-{% load get_brand_name %}
-{% get_brand_name as brand_name %}
+{% load i18n %}{% autoescape off %}{% blocktrans with site_name=current_site.name %}Hello from SocialPass!{% endblocktrans %}
+
 {% block content %}{% endblock %}
 
-Thank you for using {{ brand_name }}!
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you for using SocialPass!{% endblocktrans %}
+{% endautoescape %}

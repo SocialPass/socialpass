@@ -214,23 +214,6 @@ class Team(DBModel):
             self.image = compressed_image
         super(Team, self).clean(*args, **kwargs)
 
-    def get_whitelabel(self):
-        """
-        Get team whitelabel, or the global one. Used for Google tickets.
-        """
-        whitelabel = False
-
-        # query the global whitelabel objects first
-        global_whitelabel_qs = WhiteLabel.objects.filter(is_global=True)
-        if global_whitelabel_qs.count() > 0:
-            whitelabel = global_whitelabel_qs[0]
-
-        # check if team has whitelabel object
-        if self.whitelabel:
-            whitelabel = self.whitelabel
-
-        return whitelabel
-
     @cached_property
     def stripe_account_payouts_enabled(self):
         """

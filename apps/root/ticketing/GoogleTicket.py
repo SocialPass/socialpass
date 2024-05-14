@@ -109,21 +109,14 @@ class GoogleTicket:
         payload["logo"] = {"sourceUri": {"uri": logo_uri}}
 
         # White-labeling
-        whitelabel = event_obj.team.get_whitelabel()
-        if whitelabel:
-            payload["issuerName"] = whitelabel.brand_name
+        if event_obj.team.whitelabel:
+            whitelabel = event_obj.team.whitelabel
+            if whitelabel.brand_name:
+                payload["issuerName"] = whitelabel.brand_name
             if whitelabel.ticket_bg_color:
                 payload["hexBackgroundColor"] = whitelabel.ticket_bg_color
-            # Set up white-labeling logos only on production
-            if not settings.DEBUG:
-                if whitelabel.ticket_logo:
-                    payload["logo"] = {
-                        "sourceUri": {"uri": whitelabel.ticket_logo.url}
-                    }
-                else:
-                    payload["logo"] = {
-                        "sourceUri": {"uri": whitelabel.logo.url}
-                    }
+            if whitelabel.ticket_logo_google:
+                payload["logo"] = {"sourceUri": {"uri": whitelabel.ticket_logo_google}}
 
         # Insert or update the ticket class
         if is_insert:

@@ -69,7 +69,6 @@ class WhiteLabel(DBModel):
     A model used to store all of the information required for white-labeling a
     team.
     """
-
     class ContextColors(models.TextChoices):
         RED = "red", "red"
         SIENNA = "sienna", "sienna"

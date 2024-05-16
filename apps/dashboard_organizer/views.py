@@ -390,7 +390,11 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.slug = slugify(form.instance.title)
         response = super().form_valid(form)
-        task_handle_event_google_class.defer(event_pk=form.instance.pk)
+
+        # Only handle Google class if the Wallet setting is enabled
+        if settings.SOCIALPASS_INTEGRATIONS["google_wallet"]:
+            task_handle_event_google_class.defer(event_pk=form.instance.pk)
+
         return response
 
     def get_success_url(self, *args, **kwargs):
@@ -427,7 +431,11 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
         form.instance.slug = slugify(form.instance.title)
-        task_handle_event_google_class.defer(event_pk=self.object.pk)
+
+        # Only handle Google class if the Wallet setting is enabled
+        if settings.SOCIALPASS_INTEGRATIONS["google_wallet"]:
+            task_handle_event_google_class.defer(event_pk=self.object.pk)
+
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):

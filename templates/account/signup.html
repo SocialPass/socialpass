@@ -1,6 +1,6 @@
 {% extends "account/base.html" %}
 
-{% load account socialaccount static i18n settings_value %}
+{% load account socialaccount static i18n %}
 
 {% block head_title %}
     {% trans "Sign Up" %} - {% if whitelabel %}{{ whitelabel.brand_name }}{% else %}SocialPass{% endif %}
@@ -9,8 +9,7 @@
     <div class="card border-0 rounded-4 shadow-sm">
         <div class="card-body p-lg-4">
             <h1 class="h3 mb-4">{% trans "Sign Up" %}</h1>
-            {% settings_value "SOCIALACCOUNT_PROVIDERS" as socialaccount_providers %}
-            {% if socialaccount_providers.google %}
+            {% if socialpass_integrations.google_oauth %}
                 <a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3"
                    href="{% provider_login_url 'google' %}">
                     <img src="{% static 'images/g-logo.svg' %}"

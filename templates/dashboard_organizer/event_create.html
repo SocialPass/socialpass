@@ -99,67 +99,69 @@
             }
         });
     </script>
-    <script 
+    {% if socialpass_integrations.maps_provider == "google" %}
+        <script
             async
             defer
             type="text/javascript"
             src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&loading=async&callback=initialize&libraries=places,marker,maps"></script>
-    <script type="text/javascript">
+        <script type="text/javascript">
 	// Form fields
-        const geoAddress = document.getElementById("id_geo_address");
-        const geoType = document.getElementById("id_geo_type");
-        const geoPlaceId = document.getElementById("id_geo_place_id");
-        const geoLatitude = document.getElementById("id_geo_latitude");
-        const geoLongitude = document.getElementById("id_geo_longitude");
-        const geoResetBtn = document.getElementById("reset_geo_form_btn")
+            const geoAddress = document.getElementById("id_geo_address");
+            const geoType = document.getElementById("id_geo_type");
+            const geoPlaceId = document.getElementById("id_geo_place_id");
+            const geoLatitude = document.getElementById("id_geo_latitude");
+            const geoLongitude = document.getElementById("id_geo_longitude");
+            const geoResetBtn = document.getElementById("reset_geo_form_btn")
 
 	// Google maps initialization / handler
-        const geoMap = document.getElementById("geo_map")
-        function initialize() {
-            const autocomplete = new google.maps.places.Autocomplete(geoAddress);
-            autocomplete.addListener("place_changed", function () {
+            const geoMap = document.getElementById("geo_map")
+            function initialize() {
+                const autocomplete = new google.maps.places.Autocomplete(geoAddress);
+                autocomplete.addListener("place_changed", function () {
 			// Set place info
-                const place = autocomplete.getPlace();
-                geoType.value = "GOOGLE";
-                geoPlaceId.value = place.place_id;
-                geoLatitude.value = place.geometry.location.lat().toFixed(6);
-                geoLongitude.value = place.geometry.location.lng().toFixed(6);
+                    const place = autocomplete.getPlace();
+                    geoType.value = "GOOGLE";
+                    geoPlaceId.value = place.place_id;
+                    geoLatitude.value = place.geometry.location.lat().toFixed(6);
+                    geoLongitude.value = place.geometry.location.lng().toFixed(6);
 
 			// Set map info
-                geoMap.style.height = "150px";
-                geoMap.style.width = "100%";
-                var map = new google.maps.Map(geoMap, {
-                    mapId: "DEMO_MAP_ID"
-                });
-                map.setCenter(place.geometry.location);
-                map.setZoom(15);
-                var marker = new google.maps.marker.AdvancedMarkerElement({
-                    map: map,
-                    position: place.geometry.location,
-                });
+                    geoMap.style.height = "150px";
+                    geoMap.style.width = "100%";
+                    var map = new google.maps.Map(geoMap, {
+                        mapId: "DEMO_MAP_ID"
+                    });
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(15);
+                    var marker = new google.maps.marker.AdvancedMarkerElement({
+                        map: map,
+                        position: place.geometry.location,
+                    });
 
 			// disable form
-                geoAddress.readOnly = true;
-                geoResetBtn.classList.remove("d-none")
-            });
-        }
-        function resetGeoForm(){
+                    geoAddress.readOnly = true;
+                    geoResetBtn.classList.remove("d-none")
+                });
+            }
+            function resetGeoForm(){
 		// Reset form fields
-            geoType.value = "MANUAL";
-            geoPlaceId.value = "";
-            geoLatitude.value = "";
-            geoLongitude.value = "";
-            geoAddress.value = "";
+                geoType.value = "MANUAL";
+                geoPlaceId.value = "";
+                geoLatitude.value = "";
+                geoLongitude.value = "";
+                geoAddress.value = "";
 
 		// Hide map
-            geoMap.style.height = "0px";
-            geoMap.style.width = "0px";
+                geoMap.style.height = "0px";
+                geoMap.style.width = "0px";
 
 		// set readonly -> false
-            geoAddress.readOnly = false;
+                geoAddress.readOnly = false;
 
 		// hide button
-            geoResetBtn.classList.add("d-none")
-        }
-    </script>
+                geoResetBtn.classList.add("d-none")
+            }
+        </script>
+    {% endif %}
 {% endblock %}

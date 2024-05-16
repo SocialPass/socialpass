@@ -1,6 +1,6 @@
 SOCIALPASS_INTEGRATIONS = {
     "google_oauth": True,
-    "google_maps": True,
+    "maps_provider": "google",
     "google_wallet": True,
     "apple_wallet": True,
     "token_verification": "moralis",

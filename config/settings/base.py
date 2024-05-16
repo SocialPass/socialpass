@@ -7,6 +7,8 @@ from pathlib import Path
 
 import environ
 
+from . import integrations
+
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = ROOT_DIR / "apps"
 env = environ.Env()
@@ -365,3 +367,7 @@ STRIPE_API_KEY = env("STRIPE_API_KEY")
 # PROCRASTINATE
 # ------------------------------------------------------------------------------
 # https://procrastinate.readthedocs.io/en/stable/reference.html#procrastinate.App.run_worker_async
+
+# 3RD PARTY INTEGRATIONS
+# ------------------------------------------------------------------------------
+SOCIALPASS_INTEGRATIONS = integrations.SOCIALPASS_INTEGRATIONS

@@ -656,6 +656,10 @@ class Ticket(DBModel):
         - we use Boolean to handle fail case (not exceptions), because this
           functionality should be non-blocking during fail case
         """
+        # If Apple Wallet setting is disabled, return False
+        if not settings.SOCIALPASS_INTEGRATIONS["apple_wallet"]:
+            return False
+
         try:
             # Create pass and return the bytes
             _pass = AppleTicket.AppleTicket()

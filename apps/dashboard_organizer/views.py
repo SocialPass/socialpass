@@ -1,6 +1,5 @@
 import uuid
 
-import rollbar
 import stripe
 import zoneinfo
 from allauth.account.adapter import DefaultAccountAdapter
@@ -36,6 +35,7 @@ from apps.dashboard_organizer.forms import (
     RSVPCreateTicketsForm,
     MessageBatchForm,
 )
+from apps.root.logger import Logger
 from apps.root.models import (
     Event,
     Invitation,
@@ -841,7 +841,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
                     },  # Manual Payouts
                 )
             except Exception:
-                rollbar.report_exc_info()
+                Logger.report_exc_info()
                 messages.add_message(
                     self.request,
                     messages.ERROR,
@@ -863,7 +863,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
                 type="account_onboarding",
             )
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -915,7 +915,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
         try:
             stripe_account = stripe.Account.retrieve(current_team.tmp_stripe_account_id)
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,

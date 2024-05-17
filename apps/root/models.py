@@ -2,7 +2,6 @@ import json
 import uuid
 
 import jwt
-import rollbar
 import stripe
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
@@ -34,6 +33,7 @@ from apps.root.exceptions import (
     AssetOwnershipCheckoutError,
     FreeCheckoutError,
 )
+from apps.root.logger import Logger
 from apps.root.ticketing import AppleTicket, GoogleTicket
 from apps.root.utils import get_random_passcode
 
@@ -249,7 +249,7 @@ class Team(DBModel):
                 status["details_submitted"] = stripe_account["details_submitted"]
                 status["payouts_enabled"] = stripe_account["payouts_enabled"]
             except Exception as e:
-                rollbar.report_message("STRIPE ERROR: " + str(e))
+                Logger.report_message("STRIPE ERROR: " + str(e))
 
         # OK
         # Return status
@@ -646,7 +646,7 @@ class Ticket(DBModel):
                 self.save()
             else:
                 # Error while making API request
-                rollbar.report_message("get_google_ticket_url ERROR: " + response.text)
+                Logger.report_message("get_google_ticket_url ERROR: " + response.text)
                 return False
 
         # Create the save URL and return
@@ -672,7 +672,7 @@ class Ticket(DBModel):
             return _pass.get_bytes()
         except Exception as e:
             # Error while getting the pass
-            rollbar.report_message("APPLE WALLET ERROR: " + str(e))
+            Logger.report_message("APPLE WALLET ERROR: " + str(e))
             return False
 
 
@@ -1142,7 +1142,7 @@ class CheckoutSession(DBModel):
             self.order_status = CheckoutSession.OrderStatus.FULFILLED
             self.save()
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
 
     def process_fiat(self):
         """
@@ -1186,7 +1186,7 @@ class CheckoutSession(DBModel):
                 _msg, signature=self.signed_message
             )
         except Exception as e:
-            rollbar.report_message("AssetOwnershipCheckoutError ERROR: " + str(e))
+            Logger.report_message("AssetOwnershipCheckoutError ERROR: " + str(e))
             self.order_status = CheckoutSession.OrderStatus.FAILED
             raise AssetOwnershipCheckoutError("Error recovering wallet address")
 

@@ -601,6 +601,11 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Only allow if token verification setting is enabled
+        if not settings.SOCIALPASS_INTEGRATIONS["token_verification"]:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )

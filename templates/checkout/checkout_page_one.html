@@ -283,22 +283,24 @@
                             </h6>
                         </label>
                     </div>
-                    <div class="ticket-tier">
-                        <input type="radio"
-                               class="ticket-tier-input"
-                               name="payment-type"
-                               id="ASSET_OWNERSHIP"
-                               value="ASSET_OWNERSHIP"
-                               {% if event.ticket_tier_counts.asset_ownership_count == 0 %}disabled="true"{% endif %}
-                               {% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
-                               onchange="tierTypeOnchange(this)">
-                        <label for="ASSET_OWNERSHIP" class="ticket-tier-label">
-                            <h6 class="m-0">
-                                <i class="fa-solid fa-hexagon-image me-1 opacity-75"></i>
-                                <span class="text-nowrap">{% trans "Token-Gated" %}</span>
-                            </h6>
-                        </label>
-                    </div>
+                    {% if socialpass_integrations.token_verification %}
+                        <div class="ticket-tier">
+                            <input type="radio"
+                                   class="ticket-tier-input"
+                                   name="payment-type"
+                                   id="ASSET_OWNERSHIP"
+                                   value="ASSET_OWNERSHIP"
+                                   {% if event.ticket_tier_counts.asset_ownership_count == 0 %}disabled="true"{% endif %}
+                                   {% if checkout_type == "ASSET_OWNERSHIP" %}checked{% endif %}
+                                   onchange="tierTypeOnchange(this)">
+                            <label for="ASSET_OWNERSHIP" class="ticket-tier-label">
+                                <h6 class="m-0">
+                                    <i class="fa-solid fa-hexagon-image me-1 opacity-75"></i>
+                                    <span class="text-nowrap">{% trans "Token-Gated" %}</span>
+                                </h6>
+                            </label>
+                        </div>
+                    {% endif %}
                     <div class="ticket-tier">
                         <input type="radio"
                                class="ticket-tier-input"

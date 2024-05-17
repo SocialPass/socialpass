@@ -642,6 +642,11 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Only allow if Stripe setting is enabled
+        if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
@@ -813,6 +818,15 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
     """
 
     template_name = "dashboard_organizer/payment_details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Only allow if Stripe setting is enabled
+        if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+            raise Http404
+
+        return context
 
     def post(self, *args, **kwargs):
         """

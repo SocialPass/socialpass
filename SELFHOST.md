@@ -1,4 +1,4 @@
-> [!WARNING]  
+> [!WARNING]
 > This document is a work-in-progress.
 
 # Self-Hosting SocialPass
@@ -35,7 +35,7 @@ DJANGO_AWS_S3_ENDPOINT_URL=
 
 ### Mailgun (for email)
 
-> [!NOTE]  
+> [!NOTE]
 > This is not required for local. By default, emails will be printed out in your terminal on local.
 
 Mailgun is the preferred choice for sending emails. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
@@ -120,7 +120,7 @@ GOOGLE_MAPS_API_KEY=
 
 We use Moralis to handle NFT verification for NFT-gated tickets. Sign up for Moralis and [get your API key](https://docs.moralis.io/2.0/web3-data-api/evm/get-your-api-key), and set that as an environment variable:
 
-> [!NOTE]  
+> [!NOTE]
 > If you don't want to support NFT-gated tickets, then this can be safely ignored. Although, creating NFT-gated ticket tiers from the dashboard would cause problems as there would be no way to verify them.
 
 ```
@@ -129,9 +129,9 @@ MORALIS_API_KEY=
 
 ---
 
-### Rollbar (for logging)
+### Rollbar (for error reporting)
 
-We use Rollbar for logging errors and warnings. Sign up for Rollbar and [get your access token](https://docs.rollbar.com/reference/getting-started-1#project-access-tokens), and set that as an environment variable:
+We use Rollbar for reporting errors and warnings. Sign up for Rollbar and [get your access token](https://docs.rollbar.com/reference/getting-started-1#project-access-tokens), and set that as an environment variable:
 
 ```
 ROLLBAR_ACCESS_TOKEN=

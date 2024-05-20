@@ -5,6 +5,6 @@ SOCIALPASS_INTEGRATIONS = {
     "apple_wallet": True,
     "token_verification": "moralis",
     "email_provider": "mailgun",
-    "logging": "rollbar",
+    "error_reporting": "rollbar",
     "stripe": "connect",
 }

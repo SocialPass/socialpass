@@ -392,7 +392,7 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         response = super().form_valid(form)
 
         # Only handle Google class if the Wallet setting is enabled
-        if settings.SOCIALPASS_INTEGRATIONS["google_wallet"]:
+        if settings.SOCIALPASS_INTEGRATIONS["wallet_google"]:
             task_handle_event_google_class.defer(event_pk=form.instance.pk)
 
         return response
@@ -433,7 +433,7 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         form.instance.slug = slugify(form.instance.title)
 
         # Only handle Google class if the Wallet setting is enabled
-        if settings.SOCIALPASS_INTEGRATIONS["google_wallet"]:
+        if settings.SOCIALPASS_INTEGRATIONS["wallet_google"]:
             task_handle_event_google_class.defer(event_pk=self.object.pk)
 
         return super().form_valid(form)

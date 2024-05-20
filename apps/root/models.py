@@ -634,7 +634,7 @@ class Ticket(DBModel):
           functionality should be non-blocking during fail case
         """
         # If Google Wallet setting is disabled, return False
-        if not settings.SOCIALPASS_INTEGRATIONS["google_wallet"]:
+        if not settings.SOCIALPASS_INTEGRATIONS["wallet_google"]:
             return False
 
         # Google ticket has not been created
@@ -662,7 +662,7 @@ class Ticket(DBModel):
         """
         # If Apple Wallet setting is disabled, return False
         # This will automatically disable everything related to Apple tickets
-        if not settings.SOCIALPASS_INTEGRATIONS["apple_wallet"]:
+        if not settings.SOCIALPASS_INTEGRATIONS["wallet_apple"]:
             return False
 
         try:

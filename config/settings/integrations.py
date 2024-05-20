@@ -1,10 +1,10 @@
 SOCIALPASS_INTEGRATIONS = {
-    "oauth_google": True,
-    "maps_provider": "google",
-    "wallet_google": True,
-    "wallet_apple": True,
-    "token_verification": "moralis",
     "email_provider": "mailgun",
     "error_reporting": "rollbar",
+    "maps_provider": "google",
+    "oauth_google": True,
+    "token_verification": "moralis",
     "stripe": "connect",
+    "wallet_apple": True,
+    "wallet_google": True,
 }

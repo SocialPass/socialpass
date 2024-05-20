@@ -1,5 +1,5 @@
 SOCIALPASS_INTEGRATIONS = {
-    "google_oauth": True,
+    "oauth_google": True,
     "maps_provider": "google",
     "google_wallet": True,
     "apple_wallet": True,

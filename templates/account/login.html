@@ -14,7 +14,7 @@
                 </div>
             {% endif %}
             <h1 class="h3 mb-4">{% trans "Sign In" %}</h1>
-            {% if socialpass_integrations.google_oauth %}
+            {% if socialpass_integrations.oauth_google %}
                 <a class="btn btn-secondary d-flex align-items-center justify-content-center w-100 py-2 mb-3"
                    href="{% provider_login_url 'google' %}">
                     <img src="{% static 'images/g-logo.svg' %}"

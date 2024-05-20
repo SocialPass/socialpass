@@ -5,7 +5,6 @@ import datetime
 import json
 import jwt
 import qrcode
-import rollbar
 import stripe
 import time
 
@@ -26,6 +25,7 @@ from apps.root.models import (
     Membership,
 )
 from apps.root.exceptions import AssetOwnershipCheckoutError, FreeCheckoutError
+from apps.root.logger import Logger
 from apps.checkout.forms import (
     PasscodeForm,
     CheckoutForm,
@@ -72,7 +72,7 @@ class CheckoutPageOneRedirect(RedirectView):
         except Event.DoesNotExist:
             raise Http404()
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
             raise Http404()
 
         return reverse(
@@ -180,7 +180,7 @@ class CheckoutPageOne(DetailView):
             tiers_all=self.object.tickettier_set.all(),
         )
         if not form.is_valid():
-            rollbar.report_message("CHECKOUT ERROR: " + str(form.errors.as_json()))
+            Logger.report_message("CHECKOUT ERROR: " + str(form.errors.as_json()))
             for k, v in json.loads(form.errors.as_json()).items():
                 for error in v:
                     messages.add_message(self.request, messages.ERROR, error["message"])
@@ -428,7 +428,7 @@ class CheckoutPageTwo(CheckoutPageTwoBase):
                 self.kwargs["checkout_session_public_id"],
             )
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -507,7 +507,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
                     },
                 )
             except Exception:
-                rollbar.report_exc_info()
+                Logger.report_exc_info()
                 messages.add_message(
                     self.request,
                     messages.ERROR,
@@ -543,7 +543,7 @@ class CheckoutFiat(CheckoutPageTwoBase):
                 expires_at=int(time.time()) + 1800,  # 30 minutes from now
             )
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,

@@ -1,7 +1,8 @@
-{% load static i18n get_debug_status get_user_primary_email get_other_teams get_color_mode get_whitelabel %}
+{% load static i18n get_debug_status get_user_primary_email get_other_teams get_color_mode settings_value get_whitelabel %}
 
 <!DOCTYPE html>
 {% get_debug_status as debug %}
+{% settings_value "SOCIALPASS_INTEGRATIONS" as socialpass_integrations %}
 {% get_whitelabel current_team as whitelabel %}
 <html lang="en"
       class="min-vh-100 {% block html_class %}{% endblock %}"
@@ -309,11 +310,13 @@
                         <i class="fa-light fa-users flex-shrink-0" style="width: 32px;"></i>
                         {% trans "Manage Members" %}
                     </a>
-                    <a href="{% url 'dashboard_organizer:payment_detail' current_team.slug %}"
-                       class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
-                        <i class="fa-light fa-wallet flex-shrink-0" style="width: 32px;"></i>
-                        {% trans "Payment Details" %}
-                    </a>
+                    {% if socialpass_integrations.stripe %}
+                        <a href="{% url 'dashboard_organizer:payment_detail' current_team.slug %}"
+                           class="btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal">
+                            <i class="fa-light fa-wallet flex-shrink-0" style="width: 32px;"></i>
+                            {% trans "Payment Details" %}
+                        </a>
+                    {% endif %}
                     <div class="text-body-secondary text-uppercase mt-4">
                         <small>{% trans "Support" %}</small>
                     </div>

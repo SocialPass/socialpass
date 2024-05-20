@@ -1,5 +1,4 @@
 import json
-import rollbar
 
 from django.core.mail import send_mass_mail
 from procrastinate import RetryStrategy
@@ -13,6 +12,7 @@ from apps.root.models import (
     Ticket,
 )
 from apps.root.exceptions import GoogleWalletAPIRequestError
+from apps.root.logger import Logger
 from apps.root.ticketing import GoogleTicket
 
 
@@ -36,7 +36,7 @@ def task_handle_event_google_class(event_pk):
         event_obj.google_class_id = json.loads(response.text)["id"]
         event_obj.save()
     else:
-        rollbar.report_message("set_google_event_class ERROR: " + response.text)
+        Logger.report_message("set_google_event_class ERROR: " + response.text)
         raise GoogleWalletAPIRequestError(response.text)
 
 

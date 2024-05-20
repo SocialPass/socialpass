@@ -1,6 +1,5 @@
 import uuid
 
-import rollbar
 import stripe
 import zoneinfo
 from allauth.account.adapter import DefaultAccountAdapter
@@ -36,6 +35,7 @@ from apps.dashboard_organizer.forms import (
     RSVPCreateTicketsForm,
     MessageBatchForm,
 )
+from apps.root.logger import Logger
 from apps.root.models import (
     Event,
     Invitation,
@@ -390,7 +390,11 @@ class EventCreateView(SuccessMessageMixin, TeamContextMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.slug = slugify(form.instance.title)
         response = super().form_valid(form)
-        task_handle_event_google_class.defer(event_pk=form.instance.pk)
+
+        # Only handle Google class if the Wallet setting is enabled
+        if settings.SOCIALPASS_INTEGRATIONS["wallet_google"]:
+            task_handle_event_google_class.defer(event_pk=form.instance.pk)
+
         return response
 
     def get_success_url(self, *args, **kwargs):
@@ -427,7 +431,11 @@ class EventUpdateView(SuccessMessageMixin, TeamContextMixin, UpdateView):
         form.instance.team = context["current_team"]
         form.instance.user = self.request.user
         form.instance.slug = slugify(form.instance.title)
-        task_handle_event_google_class.defer(event_pk=self.object.pk)
+
+        # Only handle Google class if the Wallet setting is enabled
+        if settings.SOCIALPASS_INTEGRATIONS["wallet_google"]:
+            task_handle_event_google_class.defer(event_pk=self.object.pk)
+
         return super().form_valid(form)
 
     def get_success_message(self, *args, **kwargs):
@@ -593,6 +601,11 @@ class TicketTierNFTCreateView(SuccessMessageMixin, TeamContextMixin, CreateView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Only allow if token verification setting is enabled
+        if not settings.SOCIALPASS_INTEGRATIONS["token_verification"]:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
@@ -629,6 +642,11 @@ class TicketTierFiatCreateView(SuccessMessageMixin, TeamContextMixin, CreateView
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Only allow if Stripe setting is enabled
+        if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+            raise Http404
+
         context["event"] = Event.objects.get(
             pk=self.kwargs["event_pk"], team__slug=self.kwargs["team_slug"]
         )
@@ -801,6 +819,15 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
 
     template_name = "dashboard_organizer/payment_details.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Only allow if Stripe setting is enabled
+        if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+            raise Http404
+
+        return context
+
     def post(self, *args, **kwargs):
         """
         Override POST view to handle Stripe flow
@@ -828,7 +855,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
                     },  # Manual Payouts
                 )
             except Exception:
-                rollbar.report_exc_info()
+                Logger.report_exc_info()
                 messages.add_message(
                     self.request,
                     messages.ERROR,
@@ -850,7 +877,7 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
                 type="account_onboarding",
             )
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -902,7 +929,7 @@ class StripeReturn(TeamContextMixin, RedirectView):
         try:
             stripe_account = stripe.Account.retrieve(current_team.tmp_stripe_account_id)
         except Exception:
-            rollbar.report_exc_info()
+            Logger.report_exc_info()
             messages.add_message(
                 self.request,
                 messages.ERROR,

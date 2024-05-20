@@ -1,4 +1,4 @@
-> [!WARNING]  
+> [!WARNING]
 > This document is a work-in-progress.
 
 # Self-Hosting SocialPass
@@ -19,6 +19,8 @@ The 3rd-party integrations are handled via environment variables stored in the `
 - `.envs/.env.production`
 - `.envs/.env.test`
 
+In order to configure the 3rd-party integrations, you can make changes to the `config/settings/integrations.py`. The individual options are discussed in the relevant sections below. More alternatives for each 3rd-party API are coming in the future.
+
 ### AWS S3 (for media and file uploads)
 
 By default, SocialPass uses AWS S3 for handling media and file uploads. Please read https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html to get started on AWS S3 by creating your bucket. After that, you need to set up the following environment variables:
@@ -35,7 +37,7 @@ DJANGO_AWS_S3_ENDPOINT_URL=
 
 ### Mailgun (for email)
 
-> [!NOTE]  
+> [!NOTE]
 > This is not required for local. By default, emails will be printed out in your terminal on local.
 
 Mailgun is the preferred choice for sending emails. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
@@ -44,12 +46,13 @@ Mailgun is the preferred choice for sending emails. Sign up for Mailgun and [get
 MAILGUN_API_KEY=
 ```
 
+##### `config/settings/integrations.py`
+- **Disable**: Set `emai_provider` to `False`
+- **Alternatives**: None yet
+
 ---
 
-### Optional: Apple Wallet (for tickets)
-
-> [!NOTE]
-> If you don't want Apple Wallet support, you can safely ignore this section. In that case, the ticket page will not have a "Save to Apple Wallet" button.
+### Apple Wallet (for tickets)
 
 In order to set up Apple Wallet tickets, you need pass ID, a valid certificate, and a `key.pem` file. Please read the following instructions to get started: https://github.com/SocialPass/passbook/?tab=readme-ov-file#getting-started
 
@@ -62,9 +65,14 @@ APPLE_WALLET_PASS_TYPE_ID=
 APPLE_WALLET_TEAM_ID=
 ```
 
+##### `config/settings/integrations.py`
+- **Disable**: Set `wallet_apple` to `False`
+
+When disabled, the ticket page will not have a "Save to Apple Wallet" button.
+
 ---
 
-### Optional: Google Wallet (for tickets)
+### Google Wallet (for tickets)
 
 > [!NOTE]
 > If you don't want Google Wallet support, you can safely ignore this section. In that case, the ticket page will not have a "Save to Google Wallet" button.
@@ -83,9 +91,14 @@ GOOGLE_WALLET_CLIENT_EMAIL=
 GOOGLE_WALLET_CLIENT_CERT_URL=
 ```
 
+##### `config/settings/integrations.py`
+- **Disable**: Set `wallet_google` to `False`
+
+When disabled, the ticket page will not have a "Save to Google Wallet" button.
+
 ---
 
-### Optional: Google oAuth (for logins and sign ups)
+### Google oAuth (for logins and sign ups)
 
 We allow organizers to sign up via their Google accounts. Please read the following to get started: https://docs.allauth.org/en/latest/socialaccount/providers/google.html. Once you have set up your Google project to handle logins and sign ups, you need to set up the `client_id` and `secret` as environment variables:
 
@@ -94,15 +107,10 @@ GOOGLE_OAUTH_CLIENT_ID=
 GOOGLE_OAUTH_CLIENT_SECRET=
 ```
 
-**Please note**, this is totally optional. If you want to turn off logins and sign ups via Google accounts, go to `config/settings/base.py` and remove the `google` key from the `SOCIALACCOUNT_PROVIDERS` dictionary:
+##### `config/settings/integrations.py`
+- **Disable**: Set `oauth_google` to `False`
 
-```python
-...
-
-SOCIALACCOUNT_PROVIDERS = {}
-
-...
-```
+When disabled, the login and sign up page will not have a button to connect Google accounts.
 
 ---
 
@@ -114,28 +122,43 @@ We use the Google Places API to support autocomplete for addresses on event form
 GOOGLE_MAPS_API_KEY=
 ```
 
+##### `config/settings/integrations.py`
+- **Disable**: Set `maps_provider` to `False`
+- **Alternatives**: None yet
+
+When disabled, the event create and update pages will not have autocomplete support for the address field, and a map will not pop up when an address is entered.
+
 ---
 
-### Moralis (for NFT-gated tickets)
+### Token verification (for NFT-gated tickets)
 
 We use Moralis to handle NFT verification for NFT-gated tickets. Sign up for Moralis and [get your API key](https://docs.moralis.io/2.0/web3-data-api/evm/get-your-api-key), and set that as an environment variable:
-
-> [!NOTE]  
-> If you don't want to support NFT-gated tickets, then this can be safely ignored. Although, creating NFT-gated ticket tiers from the dashboard would cause problems as there would be no way to verify them.
 
 ```
 MORALIS_API_KEY=
 ```
 
+##### `config/settings/integrations.py`
+- **Disable**: Set `token_verification` to `False`
+- **Alternatives**: None yet
+
+When disabled, NFT-gated ticketing will be completely ignored/hidden (on dashboard and checkout app).
+
 ---
 
-### Rollbar (for logging)
+### Logging (for error reporting)
 
-We use Rollbar for logging errors and warnings. Sign up for Rollbar and [get your access token](https://docs.rollbar.com/reference/getting-started-1#project-access-tokens), and set that as an environment variable:
+We use Rollbar for reporting errors and warnings. Sign up for Rollbar and [get your access token](https://docs.rollbar.com/reference/getting-started-1#project-access-tokens), and set that as an environment variable:
 
 ```
 ROLLBAR_ACCESS_TOKEN=
 ```
+
+##### `config/settings/integrations.py`
+- **Disable**: Set `error_reporting` to `False`
+- **Alternatives**: None yet
+
+When disabled, the logging will simply be ignored, so your project will have no logs.
 
 ---
 
@@ -150,6 +173,12 @@ Once you have set up your primary account, you only need the API key as an envir
 ```
 STRIPE_API_KEY=
 ```
+
+##### `config/settings/integrations.py`
+- **Disable**: Set `stripe` to `False`
+- **Alternatives**: None yet, direct support coming in the future
+
+When disabled, paid (fiat) ticketing will be completely ignored/hidden (on dashboard and checkout app).
 
 ## Whitelabeling
 

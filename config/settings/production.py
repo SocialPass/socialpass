@@ -1,5 +1,6 @@
 from .base import *  # noqa
 from .base import MIDDLEWARE, ROOT_DIR, env
+from .integrations import SOCIALPASS_INTEGRATIONS
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -43,7 +44,8 @@ INSTALLED_APPS += ["anymail"]  # noqa F405
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 # https://anymail.readthedocs.io/en/stable/esps/sendgrid/
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+EMAIL_PROVIDER = SOCIALPASS_INTEGRATIONS["email_provider"]
+EMAIL_BACKEND = f"anymail.backends.{EMAIL_PROVIDER}.EmailBackend"
 ANYMAIL = {
     "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),

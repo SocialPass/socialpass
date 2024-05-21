@@ -822,8 +822,8 @@ class PaymentDetailView(TeamContextMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Only allow if Stripe setting is enabled
-        if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+        # Only allow if Stripe setting is set to connect
+        if settings.SOCIALPASS_INTEGRATIONS["stripe"] != "connect":
             raise Http404
 
         return context

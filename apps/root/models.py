@@ -237,6 +237,13 @@ class Team(DBModel):
         Use the Stripe API to determine if the team is ready to accept payouts
         or not. If not, then we block the creation of paid ticket tiers.
         """
+        # If Stripe setting is set to "direct", return OK status
+        if settings.SOCIALPASS_INTEGRATIONS["stripe"] == "direct":
+            return {
+                "details_submitted": True,
+                "payouts_enabled": True,
+            }
+
         status = {
             "details_submitted": False,
             "payouts_enabled": False,

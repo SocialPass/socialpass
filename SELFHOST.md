@@ -176,9 +176,11 @@ STRIPE_API_KEY=
 
 ##### `config/settings/integrations.py`
 - **Disable**: Set `stripe` to `False`
-- **Alternatives**: None yet, direct support coming in the future
+- **Alternatives**: Set `stripe` to `"direct"` for direct payments
 
 When disabled, paid (fiat) ticketing will be completely ignored/hidden (on dashboard and checkout app).
+
+By default, SocialPass uses Stripe Connect. This means that any team that wants to sell paid tickets needs to first link their Stripe account with SocialPass's account. If the alternative of **direct** Stripe payment is used, then this step is ignored. In that case, all transactions will happen via the main SocialPass Stripe account. Learn more about Stripe Connect here: https://docs.stripe.com/connect.
 
 ## Whitelabeling
 

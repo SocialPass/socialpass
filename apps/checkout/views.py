@@ -528,20 +528,32 @@ class CheckoutFiat(CheckoutPageTwoBase):
 
         # Create Stripe session using API
         try:
-            session = stripe.checkout.Session.create(
-                customer_email=self.object.email,
-                mode="payment",
-                line_items=stripe_line_items,
-                payment_intent_data={
-                    "application_fee_amount": self.object.application_fee_amount,
-                    "transfer_data": {
-                        "destination": self.object.event.team.stripe_account_id
+            # In case of connect, we need the payment intent
+            if settings.SOCIALPASS_INTEGRATIONS["stripe"] == "connect":
+                session = stripe.checkout.Session.create(
+                    customer_email=self.object.email,
+                    mode="payment",
+                    line_items=stripe_line_items,
+                    payment_intent_data={
+                        "application_fee_amount": self.object.application_fee_amount,
+                        "transfer_data": {
+                            "destination": self.object.event.team.stripe_account_id
+                        },
                     },
-                },
-                success_url=self.object.stripe_checkout_success_link,
-                cancel_url=self.object.stripe_checkout_cancel_link,
-                expires_at=int(time.time()) + 1800,  # 30 minutes from now
-            )
+                    success_url=self.object.stripe_checkout_success_link,
+                    cancel_url=self.object.stripe_checkout_cancel_link,
+                    expires_at=int(time.time()) + 1800,  # 30 minutes from now
+                )
+            # For direct, we set up a normal checkout session on Stripe
+            elif settings.SOCIALPASS_INTEGRATIONS["stripe"] == "direct":
+                session = stripe.checkout.Session.create(
+                    customer_email=self.object.email,
+                    mode="payment",
+                    line_items=stripe_line_items,
+                    success_url=self.object.stripe_checkout_success_link,
+                    cancel_url=self.object.stripe_checkout_cancel_link,
+                    expires_at=int(time.time()) + 1800,  # 30 minutes from now
+                )
         except Exception:
             Logger.report_exc_info()
             messages.add_message(

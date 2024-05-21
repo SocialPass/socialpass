@@ -327,7 +327,7 @@
                         {% trans "Sorry! Tickets are not available for this event." %}
                     </div>
                 {% else %}
-                    {% with event.tickettier_set.all as tiers %}
+                    {% with event_ticket_tier_set as tiers %}
                         <div class="tiers-container {% if checkout_type == 'FREE' %}d-block{% endif %}"
                              id="tiers-FREE">
                             {% with "tiers-FREE" as tier_type %}

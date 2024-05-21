@@ -22,6 +22,7 @@ from apps.root.models import (
     CheckoutItem,
     Event,
     Ticket,
+    TicketTier,
     Membership,
 )
 from apps.root.exceptions import AssetOwnershipCheckoutError, FreeCheckoutError
@@ -142,21 +143,42 @@ class CheckoutPageOne(DetailView):
         else:
             sales_status = None
 
+        # Filter ticket tiers based on settings
+        event_ticket_tier_set = []
+        event_ticket_tier_counts = {
+            "FIAT": 0,
+            "FREE": 0,
+            "ASSET_OWNERSHIP": 0,
+        }
+        for tier in self.object.tickettier_set.all():
+            # Skip paid tier if Stripe setting is disabled
+            if tier.category == TicketTier.Category.FIAT:
+                if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+                    continue
+            # Skip NFT tier if token verification setting is disabled
+            elif tier.category == TicketTier.Category.ASSET_OWNERSHIP:
+                if not settings.SOCIALPASS_INTEGRATIONS["token_verification"]:
+                    continue
+            # Add tier otherwise and increase count
+            event_ticket_tier_set.append(tier)
+            event_ticket_tier_counts[tier.category] += 1
+
         # Handle checkout type
         # If checkout type not given, we prioritize Fiat < NFTs < Crypto < Free
         checkout_type = self.kwargs.get("checkout_type", "")
         if not checkout_type:
-            if self.object.ticket_tier_counts["fiat_count"] > 0:
+            if event_ticket_tier_counts["FIAT"] > 0:
                 checkout_type = "FIAT"
-            elif self.object.ticket_tier_counts["asset_ownership_count"] > 0:
+            elif event_ticket_tier_counts["ASSET_OWNERSHIP"] > 0:
                 checkout_type = "ASSET_OWNERSHIP"
-            elif self.object.ticket_tier_counts["free_count"] > 0:
+            elif event_ticket_tier_counts["FREE"] > 0:
                 checkout_type = "FREE"
             else:
                 checkout_type = None
 
         # OK, set everything to context
         context = super().get_context_data(*args, **kwargs)
+        context["event_ticket_tier_set"] = event_ticket_tier_set
         context["checkout_type"] = checkout_type
         context["organizer_team"] = self.object.team
         context["is_team_member"] = is_team_member

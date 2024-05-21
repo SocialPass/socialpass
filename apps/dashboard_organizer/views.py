@@ -465,6 +465,25 @@ class EventTicketsView(SuccessMessageMixin, TeamContextMixin, UpdateView):
             pk=self.kwargs["pk"], team__slug=self.kwargs["team_slug"]
         )
 
+    def get_context_data(self, *args, **kwargs):
+        # Filter ticket tiers based on settings
+        event_ticket_tier_set = []
+        for tier in self.object.tickettier_set.all():
+            # Skip paid tier if Stripe setting is disabled
+            if tier.category == TicketTier.Category.FIAT:
+                if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+                    continue
+            # Skip NFT tier if token verification setting is disabled
+            elif tier.category == TicketTier.Category.ASSET_OWNERSHIP:
+                if not settings.SOCIALPASS_INTEGRATIONS["token_verification"]:
+                    continue
+            # Add tier otherwise
+            event_ticket_tier_set.append(tier)
+
+        context = super().get_context_data(*args, **kwargs)
+        context["event_ticket_tier_set"] = event_ticket_tier_set
+        return context
+
     def get_success_message(self, *args, **kwargs):
         return "Ticketing preferences have been updated."
 

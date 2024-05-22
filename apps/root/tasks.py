@@ -1,6 +1,5 @@
 import json
 
-from django.conf import settings
 from django.core.mail import send_mass_mail
 from procrastinate import RetryStrategy
 from procrastinate.contrib.django import app

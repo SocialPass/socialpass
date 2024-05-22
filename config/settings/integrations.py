@@ -1,6 +1,6 @@
 SOCIALPASS_INTEGRATIONS = {
-    "email_provider": "postmark",
-    "email_provider_from": "tahmid@socialpass.io",
+    "email_provider": "mailgun",
+    "email_provider_from": "tickets-no-reply@socialpass.io",
     "error_reporting": "rollbar",
     "maps_provider": "google",
     "oauth_google": True,

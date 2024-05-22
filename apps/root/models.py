@@ -557,12 +557,7 @@ class Event(DBModel):
         Used to get the available tiers, both the counts and the set
         """
         event_ticket_tier_set = []
-        event_ticket_tier_counts = {
-            "FIAT": 0,
-            "FREE": 0,
-            "ASSET_OWNERSHIP": 0,
-            "TOTAL": 0
-        }
+        event_ticket_tier_counts = {"FIAT": 0, "FREE": 0, "ASSET_OWNERSHIP": 0, "TOTAL": 0}
         for tier in self.tickettier_set.all():
             # Skip paid tier if Stripe setting is disabled
             if tier.category == TicketTier.Category.FIAT:
@@ -577,10 +572,7 @@ class Event(DBModel):
             event_ticket_tier_counts[tier.category] += 1
             event_ticket_tier_counts["TOTAL"] += 1
 
-        return {
-            "counts": event_ticket_tier_counts,
-            "queryset": event_ticket_tier_set
-        }
+        return {"counts": event_ticket_tier_counts, "queryset": event_ticket_tier_set}
 
 
 class Ticket(DBModel):

@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.core.mail import send_mass_mail
 from procrastinate import RetryStrategy
 from procrastinate.contrib.django import app
@@ -90,7 +91,7 @@ def task_handle_message_batch_delivery(message_batch_pk):
         (
             "[SocialPass] " + message_batch_obj.subject,
             message_batch_obj.message,
-            "tickets-no-reply@socialpass.io",
+            settings.SOCIALPASS_INTEGRATIONS["email_provider_from"],
             [email],
         )
         for email in emails

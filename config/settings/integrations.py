@@ -1,5 +1,5 @@
 SOCIALPASS_INTEGRATIONS = {
-    "email_provider": "sendgrid",
+    "email_provider": "postmark",
     "error_reporting": "rollbar",
     "maps_provider": "google",
     "oauth_google": True,

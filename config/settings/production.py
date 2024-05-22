@@ -47,9 +47,32 @@ INSTALLED_APPS += ["anymail"]  # noqa F405
 EMAIL_PROVIDER = SOCIALPASS_INTEGRATIONS["email_provider"]
 EMAIL_BACKEND = f"anymail.backends.{EMAIL_PROVIDER}.EmailBackend"
 ANYMAIL = {
+    # Mailgun
     "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
     "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
+    # Mailjet
+    "MAILJET_API_KEY": env("MAILJET_API_KEY"),
+    "MAILJET_SECRET_KEY": env("MAILJET_SECRET_KEY"),
+    # Mandrill
+    "MANDRILL_API_KEY": env("MANDRILL_API_KEY"),
+    "MANDRILL_API_URL": env("MANDRILL_API_URL", default="https://mandrillapp.com/api/1.0"),
+    # Postmark
+    "POSTMARK_SERVER_TOKEN": env("POSTMARK_SERVER_TOKEN"),
+    "POSTMARK_API_URL": env("POSTMARK_API_URL", default="https://api.postmarkapp.com/"),
+    # Sendgrid
+    "SENDGRID_API_KEY": env("SENDGRID_API_KEY"),
+    "SENDGRID_API_URL": env("SENDGRID_API_URL", default="https://api.sendgrid.com/v3/"),
+    # Sendinblue
+    "SENDINBLUE_API_KEY": env("SENDINBLUE_API_KEY"),
+    "SENDINBLUE_API_URL": env(
+        "SENDINBLUE_API_URL", default="https://api.sendinblue.com/v3/"
+    ),
+    # SparkPost
+    "SPARKPOST_API_KEY": env("SPARKPOST_API_KEY"),
+    "SPARKPOST_API_URL": env(
+        "SPARKPOST_API_URL", default="https://api.sparkpost.com/api/v1"
+    ),
 }
 
 # STORAGES

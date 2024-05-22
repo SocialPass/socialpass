@@ -35,7 +35,7 @@ DJANGO_AWS_S3_ENDPOINT_URL=
 
 ---
 
-### Mailgun (for email)
+### Email provider
 
 > [!NOTE]
 > This is not required for local. By default, emails will be printed out in your terminal on local.
@@ -48,7 +48,9 @@ MAILGUN_API_KEY=
 
 ##### `config/settings/integrations.py`
 - **Disable**: Set `emai_provider` to `False`
-- **Alternatives**: None yet
+- **Alternatives**: Set `email_provider` to `"amazon_ses"` OR `"mailjet"` OR `"mandrill"` OR `"postmark"` OR `"sendgrid"` OR `"sendinblue"` OR `"sparkpost"`, after that add the correct API keys and environment variables to use the alternative. 
+
+For reference, please see the `ANYMAIL` dictionary in `config/settings/production.py` to get a better idea of what environment variables are needed to set up each provider.
 
 ---
 

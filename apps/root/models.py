@@ -552,30 +552,35 @@ class Event(DBModel):
             return staticfiles_storage.url("images/event_cover_placeholder.jpg")
 
     @cached_property
-    def ticket_tier_counts(self):
+    def ticket_tiers_available(self):
         """
-        Used to get the number of available tiers on the checkout app.
+        Used to get the available tiers, both the counts and the set
         """
-        tiers = TicketTier.objects.filter(
-            event_id=self.id, hidden_from_public=False
-        ).values("event_id")
-        tier_counts = {
-            "fiat_count": 0,
-            "free_count": 0,
-            "asset_ownership_count": 0,
-            "total_count": 0,
+        event_ticket_tier_set = []
+        event_ticket_tier_counts = {
+            "FIAT": 0,
+            "FREE": 0,
+            "ASSET_OWNERSHIP": 0,
+            "TOTAL": 0
         }
-        if not tiers:
-            return tier_counts
+        for tier in self.tickettier_set.all():
+            # Skip paid tier if Stripe setting is disabled
+            if tier.category == TicketTier.Category.FIAT:
+                if not settings.SOCIALPASS_INTEGRATIONS["stripe"]:
+                    continue
+            # Skip NFT tier if token verification setting is disabled
+            elif tier.category == TicketTier.Category.ASSET_OWNERSHIP:
+                if not settings.SOCIALPASS_INTEGRATIONS["token_verification"]:
+                    continue
+            # Add tier otherwise and increase count
+            event_ticket_tier_set.append(tier)
+            event_ticket_tier_counts[tier.category] += 1
+            event_ticket_tier_counts["TOTAL"] += 1
 
-        # Return tiers with annotated counts
-        tier_counts["fiat_count"] = tiers.filter(category=TicketTier.Category.FIAT).count()
-        tier_counts["free_count"] = tiers.filter(category=TicketTier.Category.FREE).count()
-        tier_counts["asset_ownership_count"] = tiers.filter(
-            category=TicketTier.Category.ASSET_OWNERSHIP
-        ).count()
-        tier_counts["total_count"] = sum(tier_counts.values())
-        return tier_counts
+        return {
+            "counts": event_ticket_tier_counts,
+            "queryset": event_ticket_tier_set
+        }
 
 
 class Ticket(DBModel):

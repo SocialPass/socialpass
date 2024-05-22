@@ -91,7 +91,7 @@ def task_handle_message_batch_delivery(message_batch_pk):
         (
             "[SocialPass] " + message_batch_obj.subject,
             message_batch_obj.message,
-            settings.SOCIALPASS_INTEGRATIONS["email_provider_from"],
+            None,
             [email],
         )
         for email in emails

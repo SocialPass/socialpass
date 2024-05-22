@@ -1099,7 +1099,7 @@ class CheckoutSession(DBModel):
         send_mail(
             msg_subject,
             msg_plain,
-            settings.SOCIALPASS_INTEGRATIONS["email_provider_from"],
+            None,
             [self.email],
             html_message=msg_html,
         )

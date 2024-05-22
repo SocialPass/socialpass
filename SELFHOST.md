@@ -52,7 +52,7 @@ MAILGUN_API_KEY=
 
 For reference, please see the `ANYMAIL` dictionary in `config/settings/production.py` to get a better idea of what environment variables are needed to set up each provider.
 
-Please note, depending on the provider of your choice, you may need to change the `email_provider_from` in the integrations file as well. For example, PostMark requires verified email addresses in the from field, and the default setting of `"tickets-no-reply@socialpass.io"` will not work.
+**Please note**, depending on the provider of your choice, you may need to change the `DJANGO_DEFAULT_FROM_EMAIL` environment variable. For example, PostMark requires verified email addresses in the from field, and the default setting will not work.
 
 ---
 

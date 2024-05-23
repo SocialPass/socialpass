@@ -139,9 +139,8 @@ class WhiteLabel(DBModel):
         if self.is_global:
             for event in Event.objects.all():
                 task_handle_event_google_class.defer(event_pk=event.pk)
-
         # If not global and has team, refresh team-wide google event classes
-        if not self.is_global:
+        else:
             for event in Event.objects.filter(team=self.team):
                 task_handle_event_google_class.defer(event_pk=event.pk)
 

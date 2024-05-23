@@ -8,6 +8,7 @@ from apps.root.exceptions import GoogleWalletAPIRequestError
 from apps.root.logger import Logger
 from apps.root.ticketing import GoogleTicket
 
+
 @app.task(retry=RetryStrategy(max_attempts=5, linear_wait=5))
 def task_handle_event_google_class(event_pk):
     """

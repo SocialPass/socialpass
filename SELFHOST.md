@@ -33,6 +33,15 @@ DJANGO_AWS_STORAGE_BUCKET_NAME=
 DJANGO_AWS_S3_ENDPOINT_URL=
 ```
 
+Under the hood, SocialPass uses `django-storages`, which also provides support for the following S3 compatible service providers:
+
+- Backblaze B2
+- Cloudflare R2
+- Digital Ocean
+- Oracle Cloud
+
+In case you want to use any of the above, please see this page: https://django-storages.readthedocs.io/en/latest/backends/s3_compatible/index.html. You will only need to change the values of the above environment variables to use the ones from your provider of choice.
+
 ---
 
 ### Mailgun (for email)

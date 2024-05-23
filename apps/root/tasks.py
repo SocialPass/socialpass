@@ -3,14 +3,7 @@ import json
 from django.core.mail import send_mass_mail
 from procrastinate import RetryStrategy
 from procrastinate.contrib.django import app
-from apps.root.models import (
-    Event,
-    CheckoutItem,
-    CheckoutSession,
-    MessageBatch,
-    RSVPBatch,
-    Ticket,
-)
+from apps.root import models
 from apps.root.exceptions import GoogleWalletAPIRequestError
 from apps.root.logger import Logger
 from apps.root.ticketing import GoogleTicket
@@ -25,7 +18,7 @@ def task_handle_event_google_class(event_pk):
     - we use Boolean to handle fail case (not exceptions), because this
       functionality should be non-blocking during fail case
     """
-    event_obj = Event.objects.get(pk=event_pk)
+    event_obj = models.Event.objects.get(pk=event_pk)
     is_insert = True
     if event_obj.google_class_id != "":
         is_insert = False
@@ -42,16 +35,16 @@ def task_handle_event_google_class(event_pk):
 
 @app.task
 def task_handle_rsvp_delivery(rsvp_batch_pk, emails, guests_allowed):
-    rsvp_batch_obj = RSVPBatch.objects.get(pk=rsvp_batch_pk)
+    rsvp_batch_obj = models.RSVPBatch.objects.get(pk=rsvp_batch_pk)
     for email in emails:
         try:
-            checkout_session = CheckoutSession.objects.create(
+            checkout_session = models.CheckoutSession.objects.create(
                 event=rsvp_batch_obj.event,
                 rsvp_batch=rsvp_batch_obj,
                 email=email.strip(),
                 session_type=rsvp_batch_obj.ticket_tier.category,
             )
-            CheckoutItem.objects.create(
+            models.CheckoutItem.objects.create(
                 ticket_tier=rsvp_batch_obj.ticket_tier,
                 checkout_session=checkout_session,
                 quantity=1,
@@ -65,17 +58,17 @@ def task_handle_rsvp_delivery(rsvp_batch_pk, emails, guests_allowed):
 
     # Fulfill checkout sessions once everything has been set up
     # Querying again, we ensure we get the correct public IDs for the emails
-    checkout_sessions = CheckoutSession.objects.filter(rsvp_batch=rsvp_batch_obj)
+    checkout_sessions = models.CheckoutSession.objects.filter(rsvp_batch=rsvp_batch_obj)
     for checkout_session in checkout_sessions:
         checkout_session.fulfill_session()
 
 
 @app.task
 def task_handle_message_batch_delivery(message_batch_pk):
-    message_batch_obj = MessageBatch.objects.get(pk=message_batch_pk)
+    message_batch_obj = models.MessageBatch.objects.get(pk=message_batch_pk)
 
     emails = []
-    tickets = Ticket.objects.select_related("checkout_session").filter(
+    tickets = models.Ticket.objects.select_related("checkout_session").filter(
         event=message_batch_obj.event, ticket_tier=message_batch_obj.ticket_tier
     )
     for ticket in tickets:

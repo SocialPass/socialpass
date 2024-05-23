@@ -1099,7 +1099,7 @@ class CheckoutSession(DBModel):
         send_mail(
             msg_subject,
             msg_plain,
-            "tickets-no-reply@socialpass.io",
+            None,
             [self.email],
             html_message=msg_html,
         )

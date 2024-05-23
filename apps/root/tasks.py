@@ -90,7 +90,7 @@ def task_handle_message_batch_delivery(message_batch_pk):
         (
             "[SocialPass] " + message_batch_obj.subject,
             message_batch_obj.message,
-            "tickets-no-reply@socialpass.io",
+            None,
             [email],
         )
         for email in emails

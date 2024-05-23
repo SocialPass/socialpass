@@ -1373,7 +1373,7 @@ class WaitlistPostView(TeamContextMixin, DetailView):
             send_mail(
                 msg_subject,
                 msg_plain,
-                "tickets-no-reply@socialpass.io",
+                None,
                 [
                     self.object.email,
                 ],

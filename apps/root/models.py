@@ -34,6 +34,7 @@ from apps.root.exceptions import (
     FreeCheckoutError,
 )
 from apps.root.logger import Logger
+from apps.root.tasks import task_handle_event_google_class
 from apps.root.ticketing import AppleTicket, GoogleTicket
 from apps.root.utils import get_random_passcode
 
@@ -129,6 +130,22 @@ class WhiteLabel(DBModel):
 
     def __str__(self):
         return f"WhiteLabel: {self.brand_name}"
+
+    def save(self, *args, **kwargs):
+        """
+        On save, refresh relevant google event classes
+        """
+        # If global, refresh site-wide google event classes
+        if self.is_global:
+            for event in Event.objects.all():
+                task_handle_event_google_class.defer(event_pk=event.pk)
+
+        # If not global and has team, refresh team-wide google event classes
+        if not self.is_global:
+            for event in Event.objects.filter(team=self.team):
+                task_handle_event_google_class.defer(event_pk=event.pk)
+
+        super(WhiteLabel, self).save(*args, **kwargs)
 
 
 def file_size(value):

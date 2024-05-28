@@ -5,7 +5,30 @@
 # SocialPass
 SocialPass provides end-to-end event organization software aimed at the next generation of events.
 
-# Overview
+# Features
+
+## Event Management
+- **Organizer Dashboard:** Create and manage events, tickets, and live stats.
+- **Team-based Accounts:** Invite team members and collaborate on events
+- **Messaging:** Send email messages to ticket holders directly from the dashboard.
+- **Ticket Scanner:** Scan tickets quickly, no account or download required.
+
+## Event Ticketing
+- **Ticket Types:** Choose from paid, token-gated, or free tickets.
+- **Waitlist:** Manage demand by allowing customers to join a waitlist and approve accordingly.
+- **RSVP:** Create and send tickets to customers directly from the dashboard
+- **Scheduled Sales:** Set specific start and end times for ticket availability.
+- **Ticket Delivery:** Offer Google Wallet, Apple Wallet, and PNG options.
+
+## Design and Customizability
+- **Modern UI:** Responsive, accessible, with light and dark modes.
+- **Great UX:** Optimized for both customers and organizers.
+- **White-label Support:** Customize colors, fonts, and branding product-wide AND team-wide.
+- **Localization:** Fully adaptable to any language of choice.
+- **Custom Integrations:** Tailor third-party integrations as needed. See [our self hosting guide](./SELFHOST.md) for more information.
+
+
+# Product Overview
 The core of SocialPass consists of three parts:
 
 1. Organizer dashboard - Used by organizers to create and manage events

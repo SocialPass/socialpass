@@ -8,22 +8,25 @@ SocialPass provides end-to-end event organization software aimed at the next gen
 # Features
 
 ## Event Management
-- Comprehensive organizer dashboard to create and manage events, tickets, stats, etc.
-- Team based organizer accounts and dashboard, with Google oAuth support
-- Waitlist feature for events
-- RSVP: create tickets for your customers directly from the dashboard
-- Messaging: send messages (emails) to ticket holders from the dashboard
-- Scanner app for scanning tickets and letting in customers to events
+- **Organizer Dashboard:** Create and manage events, tickets, and live stats.
+- **Team-based Accounts:** Invite team members and collaborate on events
+- **Messaging:** Send email messages to ticket holders directly from the dashboard.
+- **Ticket Scanner:** Scan tickets quickly, no account or download required.
 
 ## Event Ticketing
-- Three ticket types out of the box: paid, token-gated, free
-- PNG tickets, support for Google and Apple Wallet tickets
+- **Ticket Types:** Choose from paid, token-gated, or free tickets.
+- **Waitlist:** Manage demand by allowing customers to join a waitlist and approve accordingly.
+- **RSVP:** Create and send tickets to customers directly from the dashboard
+- **Scheduled Sales:** Set specific start and end times for ticket availability.
+- **Ticket Delivery:** Offer Google Wallet, Apple Wallet, and PNG options.
 
 ## Design and Customizability
-- Modern UI design, responsive, accessible, light and dark modes
-- Great UX, especially for customers getting tickets and organizers creating events
-- Full white-label support: theme out SocialPass's colors, fonts, branding (product-wide AND team-wide)
-- Fully localizable to any language of choice
+- **Modern UI:** Responsive, accessible, with light and dark modes.
+- **Great UX:** Optimized for both customers and organizers.
+- **White-label Support:** Customize colors, fonts, and branding product-wide AND team-wide.
+- **Localization:** Fully adaptable to any language of choice.
+- **Custom Integrations:** Tailor third-party integrations as needed. See [our self hosting guide](./SELFHOST.md) for more information.
+
 
 # Product Overview
 The core of SocialPass consists of three parts:

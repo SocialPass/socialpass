@@ -85,7 +85,7 @@ docker run hello-world
 
 If the command above completes without error you are ready to go!
 
-#### B. Prepare Docker for deployment
+#### B. Prepare Server for deployment
 Next, complete the following steps to get the Docker configuration ready for deployment.
 These can be run by the `kamal` user on your remote server.
 
@@ -102,6 +102,18 @@ docker network create <your_app>-network
 
 *Note: If you are running services on separate servers, you can skip this step and update the Kamal deploy configuration
 to remove the references to the docker network.*
+
+**Create the LetsEncrypt storage**
+
+This is needed if you want Traefik to automatically generate SSL certificates for you (recommended). If not, you can skip
+this step and update the Kamal deploy configuration to remove the references to LetsEncrypt
+(search for `letsencrypt` and `secure`).
+
+On your server run the following command *as root*. You may need to logout `kamal` and back in to `root`:
+
+```shell
+sudo mkdir -p /letsencrypt && sudo touch /letsencrypt/acme.json && sudo chmod 600 /letsencrypt/acme.json
+```
 
 #### C. Prepare Docker Registry
 Before doing deployment, you need a place to store your Docker images, also known as a *Docker registry*.

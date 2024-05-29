@@ -8,6 +8,9 @@ if [ "$1" == "web" ]; then
 
   echo "Running production server"
   exec gunicorn -c config/deploy/gunicorn.py
+elif [ "$1" == "worker" ]; then
+  echo "Starting Procrastinate worker"
+  python manage.py procrastinate worker
 elif [ "$1" == "manage" ]; then
   shift
   exec python manage.py $@

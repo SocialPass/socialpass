@@ -40,7 +40,6 @@ RUN pip install -r production.txt
 
 # Copy application code to the container, excluding files in .dockerignore
 COPY . .
-COPY ./.env .
 
 # Copy built assets from the build stage
 COPY --from=build /opt/app/static/ ./static/

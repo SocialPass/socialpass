@@ -51,4 +51,5 @@ RUN python manage.py collectstatic --clear --noinput
 EXPOSE 8000
 
 # Define the command to run the application
-CMD ["config/deploy/entry", "web"]
+RUN ["chmod", "+x", "/opt/app/config/deploy/entry.sh"]
+CMD ["config/deploy/entry.sh", "web"]

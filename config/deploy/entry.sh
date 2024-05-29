@@ -3,10 +3,6 @@
 set -e
 
 if [ "$1" == "web" ]; then
-  shift
-  echo "Checking DB connection"
-  scripts/waitfordb
-
   echo "Applying migrations"
   python manage.py migrate
 

@@ -7,7 +7,7 @@ if [ "$1" == "web" ]; then
   python manage.py migrate
 
   echo "Running production server"
-  exec gunicorn -c config/deploy/gunicorn.py $@
+  exec gunicorn -c config/deploy/gunicorn.py
 elif [ "$1" == "manage" ]; then
   shift
   exec python manage.py $@

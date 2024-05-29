@@ -26,7 +26,6 @@ if READ_DOT_ENV_FILE:
         env.read_env(str(ROOT_DIR / ".envs" / ".env.test"))
     # Production env vars (kamal)
     if env("DJANGO_SETTINGS_MODULE") == "config.settings.production":
-        print("HELLLOOOO")
         env.read_env(str(ROOT_DIR / ".env"))
 
 # GENERAL

@@ -141,8 +141,37 @@ On MacOS:
 On Linux:
 `alias kamal='docker run -it --rm -v "${PWD}:/workdir" -v "${SSH_AUTH_SOCK}:/ssh-agent" -v /var/run/docker.sock:/var/run/docker.sock -e "SSH_AUTH_SOCK=/ssh-agent" ghcr.io/basecamp/kamal:latest'`
 
-- Create `.env` file in the `deploy` directory
-- Update the Kamal configuration files
+
+#### B. Setup Environment Variables
+Kamal requires a `.env` file in this folder which will contain all the environment variables needed for deployment.
+The `.env` file is not checked into source control. See `deploy/.env.kamal` for the required variables.
+
+*Note that this file is distinct from the `.env` file used for development/production variables for your app.*
+
+```bash
+cd deploy
+cp .env.kamal .env
+```
+
+#### C. Setup Kamal Configuration
+
+The Kamal configuration is in `deploy/config/deploy.yml`.
+You will need to update the following values:
+
+* Docker image repo: `image: <namespace>/<repository-name>` - this is the repository you created above.
+  If you're using Docker Hub, the `namespace` will typically be your username.
+* Your server IP address (or hostname) `<IP-ADDRESS>` (this value is listed once per service).
+* Your app domain name: `Host(``hostname.example.com``)`. This is the DNS endpoint you set up above.
+* Docker registry username: `username: <DOCKER REGISTRY USERNAME>` - the username you chose above.
+
+Additionally, in your `deploy/.env` file you should add the following variables:
+
+* Set `KAMAL_REGISTRY_PASSWORD` to the access token value you created above.
+* Choose secure, unique, and ideally random values for `POSTGRES_PASSWORD` and `SECRET_KEY`.
+* Update the `DATABASE_URL` value (use the same password as `POSTGRES_PASSWORD`).
+
+You can review other settings in `deploy.yml`, but those should be all that you need to set yourself
+to do your first deployment.
 
 ### Step 4: Deployment
 - Deploy
@@ -152,14 +181,6 @@ On Linux:
 - Settings and Secrets
 - Running one-off commands
 - Configuration
-
-
-### Troubleshooting
-- Something went wrong during setup
-- Resolving `ERROR exec /bin/sh: exec format error`
-- Resolving `ERROR /bin/sh: 1: /start: not found`
-- Health checks are failing because of `ALLOWED_HOSTS`
-
 
 ## PaaS Deployment
 ### Digital Ocean App Platform

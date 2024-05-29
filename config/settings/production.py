@@ -5,7 +5,7 @@ from .integrations import SOCIALPASS_INTEGRATIONS
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["example.com"])
 
@@ -78,11 +78,11 @@ ANYMAIL = {
 # STORAGES
 # ------------------------------------------------------------------------------
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
-AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID")
+AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID", default="")
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
-AWS_SECRET_ACCESS_KEY = env("DJANGO_AWS_SECRET_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = env("DJANGO_AWS_SECRET_ACCESS_KEY", default="")
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
-AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME")
+AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME", default="")
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
 AWS_QUERYSTRING_AUTH = False
 # DO NOT change these unless you know what you're doing.
@@ -142,13 +142,13 @@ LOGGING = {
 # Rollbar
 # ------------------------------------------------------------------------------
 MIDDLEWARE += ["rollbar.contrib.django.middleware.RollbarNotifierMiddleware"]
-ROLLBAR_ENV_NAME = env("ROLLBAR_ENV_NAME")
-ROLLBAR_ACCESS_TOKEN = env("ROLLBAR_ACCESS_TOKEN")
+ROLLBAR_ENV_NAME = env("ROLLBAR_ENV_NAME", default="")
+ROLLBAR_ACCESS_TOKEN = env("ROLLBAR_ACCESS_TOKEN", default="")
 
 ROLLBAR = {
     "access_token": ROLLBAR_ACCESS_TOKEN,
     "environment": ROLLBAR_ENV_NAME,
-    "code_version": env("COMMIT_HASH"),
+    "code_version": env("COMMIT_HASH", default=""),
     "root": str(ROOT_DIR),
 }
 

@@ -129,8 +129,8 @@ LOGIN_URL = "account_login"
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": env("GOOGLE_OAUTH_CLIENT_ID"),
-            "secret": env("GOOGLE_OAUTH_CLIENT_SECRET"),
+            "client_id": env("GOOGLE_OAUTH_CLIENT_ID", default=""),
+            "secret": env("GOOGLE_OAUTH_CLIENT_SECRET", default=""),
             "key": "",
         },
         "SCOPE": [
@@ -263,7 +263,7 @@ EMAIL_SUBJECT_PREFIX = env(
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.
-ADMIN_URL = env("DJANGO_ADMIN_URL")
+ADMIN_URL = env("DJANGO_ADMIN_URL", default="")
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -313,34 +313,34 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 # Your stuff...
 # INTERNAL
 # ------------------------------------------------------------------------------
-STAFF_URL = env("STAFF_URL")
+STAFF_URL = env("STAFF_URL", default="")
 
 # MORALIS
 # ------------------------------------------------------------------------------
-MORALIS_API_KEY = env("MORALIS_API_KEY")
+MORALIS_API_KEY = env("MORALIS_API_KEY", default="")
 
 # GMAPS
 # ------------------------------------------------------------------------------
-GOOGLE_MAPS_API_KEY = env("GOOGLE_MAPS_API_KEY")
+GOOGLE_MAPS_API_KEY = env("GOOGLE_MAPS_API_KEY", default="")
 
 # GWALLET
 # ------------------------------------------------------------------------------
-GOOGLE_WALLET_PRIVATE_KEY_ID = env("GOOGLE_WALLET_PRIVATE_KEY_ID")
-GOOGLE_WALLET_PRIVATE_KEY = env("GOOGLE_WALLET_PRIVATE_KEY")
-GOOGLE_WALLET_CLIENT_ID = env("GOOGLE_WALLET_CLIENT_ID")
-GOOGLE_WALLET_ISSUER_ID = env("GOOGLE_WALLET_ISSUER_ID")
-GOOGLE_WALLET_PROJECT_ID = env("GOOGLE_WALLET_PROJECT_ID")
-GOOGLE_WALLET_CLIENT_EMAIL = env("GOOGLE_WALLET_CLIENT_EMAIL")
-GOOGLE_WALLET_CLIENT_CERT_URL = env("GOOGLE_WALLET_CLIENT_CERT_URL")
+GOOGLE_WALLET_PRIVATE_KEY_ID = env("GOOGLE_WALLET_PRIVATE_KEY_ID", default="")
+GOOGLE_WALLET_PRIVATE_KEY = env("GOOGLE_WALLET_PRIVATE_KEY", default="")
+GOOGLE_WALLET_CLIENT_ID = env("GOOGLE_WALLET_CLIENT_ID", default="")
+GOOGLE_WALLET_ISSUER_ID = env("GOOGLE_WALLET_ISSUER_ID", default="")
+GOOGLE_WALLET_PROJECT_ID = env("GOOGLE_WALLET_PROJECT_ID", default="")
+GOOGLE_WALLET_CLIENT_EMAIL = env("GOOGLE_WALLET_CLIENT_EMAIL", default="")
+GOOGLE_WALLET_CLIENT_CERT_URL = env("GOOGLE_WALLET_CLIENT_CERT_URL", default="")
 
 # APPLE WALLET
 # ------------------------------------------------------------------------------
-APPLE_WALLET_CERTIFICATE = env("APPLE_WALLET_CERTIFICATE")
-APPLE_WALLET_KEY = env("APPLE_WALLET_KEY")
-APPLE_WALLET_WWDR_CERTIFICATE = env("APPLE_WALLET_WWDR_CERTIFICATE")
-APPLE_WALLET_PASSWORD = env("APPLE_WALLET_PASSWORD")
-APPLE_WALLET_PASS_TYPE_ID = env("APPLE_WALLET_PASS_TYPE_ID")
-APPLE_WALLET_TEAM_ID = env("APPLE_WALLET_TEAM_ID")
+APPLE_WALLET_CERTIFICATE = env("APPLE_WALLET_CERTIFICATE", default="")
+APPLE_WALLET_KEY = env("APPLE_WALLET_KEY", default="")
+APPLE_WALLET_WWDR_CERTIFICATE = env("APPLE_WALLET_WWDR_CERTIFICATE", default="")
+APPLE_WALLET_PASSWORD = env("APPLE_WALLET_PASSWORD", default="")
+APPLE_WALLET_PASS_TYPE_ID = env("APPLE_WALLET_PASS_TYPE_ID", default="")
+APPLE_WALLET_TEAM_ID = env("APPLE_WALLET_TEAM_ID", default="")
 
 # QUILL RICH TEXT EDITOR
 # ------------------------------------------------------------------------------
@@ -365,7 +365,7 @@ QUILL_CONFIGS = {
 
 # STRIPE
 # ------------------------------------------------------------------------------
-STRIPE_API_KEY = env("STRIPE_API_KEY")
+STRIPE_API_KEY = env("STRIPE_API_KEY", default="")
 
 
 # PROCRASTINATE

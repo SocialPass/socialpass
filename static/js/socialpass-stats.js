@@ -3,7 +3,7 @@
 const url = "https://analytics.socialpass.io";
 
 // Get the diff in hours
-let diff = 0;
+let diff = 24;
 try {
   const now = new Date();
   const statsSent = new Date(localStorage.getItem("socialpass:stats-sent"));

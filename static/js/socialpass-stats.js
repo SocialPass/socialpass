@@ -10,7 +10,8 @@ try {
   diff = (now.getTime() - statsSent.getTime()) / 1000;
   diff /= (60 * 60);
   diff = Math.abs(Math.round(diff));
-} catch {
+} catch (err) {
+  console.error(err);
   diff = 24;
 }
 

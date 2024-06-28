@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime, timedelta
+from django.conf import settings
 from django.utils.timezone import now
 from apps.root.logger import Logger
 
@@ -19,13 +20,20 @@ class LicenseMiddleware:
 
         # Check if ping should be called, based on last_license_check time vs current time
         if current_time - last_run_time >= timedelta(days=1):
-            self.ping()
+            self.ping(request)
             self.last_license_check = current_time.isoformat()
 
         return self.get_response(request)
 
-    def ping(self):
-        try:
-            requests.get("https://analytics.socialpass.io")
-        except Exception:
-            Logger.report_exc_info()
+    def ping(self, request):
+        if not settings.DEBUG:
+            try:
+                requests.post(
+                    "https://registry.socialpass.io",
+                    data={
+                        "domain": request.get_host(),
+                        "license_key": settings.LICENSE_KEY,
+                    },
+                )
+            except Exception:
+                Logger.report_exc_info()

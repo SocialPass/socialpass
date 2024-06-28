@@ -372,3 +372,7 @@ STRIPE_API_KEY = env("STRIPE_API_KEY")
 # 3RD PARTY INTEGRATIONS
 # ------------------------------------------------------------------------------
 SOCIALPASS_INTEGRATIONS = integrations.SOCIALPASS_INTEGRATIONS
+
+# LICENSE KEY
+# ------------------------------------------------------------------------------
+LICENSE_KEY = env("LICENSE_KEY")

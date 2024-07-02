@@ -5,11 +5,6 @@
 This guide covers deploying SocialPass to production cloud servers.
 For configuration of your deployment, please refer to [our self-hosting guide](./SELFHOST.md).
 
-## Supported Platforms
-There are two primary ways of hosting SocialPass
-1. Using a virtual private server (VPS), such as DigitalOcean or Hetzner.
-2. Using a platform-as-a-service (PaaS) platform, such as Heroku, DigitalOcean App Platform, Etc.
-
 ## VPS Deployment (Kamal)
 [Kamal](https://kamal-deploy.org) provides a few key benefits for application deployment:
 - Can be deployed to any Linux server with SSH access
@@ -176,14 +171,27 @@ to do your first deployment.
 ### Step 4: Deployment
 - Deploy
 
+Finally, we can use Kamal to do the rest of the setup. Run the following on your local machine. The kamal setup command must be run from the deploy directory:
+
+cd deploy/
+kamal setup
+This will perform all the tasks necessary to deploy your application (duplicated below from the Kamal docs):
+
+- Connect to the servers over SSH
+- Log into the registry both locally and remotely
+- Build the image using Dockerfile.web in the root of the application.
+- Push the image to the registry.
+- Pull the image from the registry onto the servers.
+- Push the .env file onto the servers.
+- Ensure Traefik is running and accepting traffic on port 80.
+- Ensure your app responds with 200 OK to GET /up (you must have curl installed inside your app image!).
+- Start a new container with the version of the app that matches the current git version hash.
+- Stop the old container running the previous version of the app.
+- Prune unused images and stopped containers to ensure servers don’t fill up.
+- If everything is set up properly then in five or so minutes you should be able to visit your new application at the configured domain. You’re done!
+
 ### Step 5: Post Deployment
 - Manage changes after initial deployment
 - Settings and Secrets
 - Running one-off commands
 - Configuration
-
-## PaaS Deployment
-### Digital Ocean App Platform
-### PythonAnywhere
-### Render
-### Fly

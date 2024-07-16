@@ -4,6 +4,7 @@
 media/
 venv/
 
+
 # docker-volumes
 *.docker-volumes/
 
@@ -291,3 +292,6 @@ media/
 
 .pytest_cache/
 
+### Kamal
+config/deploy.yml
+.env

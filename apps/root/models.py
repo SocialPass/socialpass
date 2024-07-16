@@ -1,4 +1,5 @@
 import json
+import requests
 import uuid
 
 import jwt
@@ -24,7 +25,6 @@ from eth_account import Account
 from eth_account.messages import encode_defunct
 from io import BytesIO
 from model_utils.models import TimeStampedModel
-from moralis import evm_api
 from PIL import Image
 
 from apps.root.exceptions import (
@@ -1222,8 +1222,6 @@ class CheckoutSession(DBModel):
 
     def _process_delegate_ownership(self, wallet_address=None, tier=None):
         # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
-        import requests
-
         url = (
             f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
         )
@@ -1272,14 +1270,23 @@ class CheckoutSession(DBModel):
                 params = {
                     "chain": hex(ticket_tier.network),
                     "format": "decimal",
-                    "media_items": True,
-                    "address": wallet,
-                    "token_addresses": [ticket_tier.token_address],
+                    "media_items": "true",
+                    "token_addresses": ticket_tier.token_address,
                 }
-                api_response = evm_api.nft.get_wallet_nfts(
-                    api_key=settings.MORALIS_API_KEY,
-                    params=params,
-                )
+
+                headers = {
+                    "accept": "application/json",
+                    "X-API-Key": settings.MORALIS_API_KEY
+                }
+
+                url = f"https://deep-index.moralis.io/api/v2.2/{wallet}/nft"
+                api_response = requests.get(url, params=params, headers=headers)
+
+                # Check if the request was successful
+                if api_response.status_code == 200:
+                    api_response = api_response.json()
+                else:
+                    api_response = {}
 
                 # Check if wallet has required balance
                 expected = ticket_tier.balance_required * item.quantity

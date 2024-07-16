@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+# A sample docker-setup hook
+#
+# Sets up a Docker network which can then be used by the application's containers
+system("ssh root@localhost docker network create socialpass-network")

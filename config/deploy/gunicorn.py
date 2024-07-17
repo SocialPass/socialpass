@@ -1,7 +1,7 @@
 # config/gunicorn.py
-
+#
 # Server Socket
-bind = '0.0.0.0:8000'
+bind = f'unix:/var/www/socialpass/socialpass.sock'
 
 # Worker Processes
 workers = 2

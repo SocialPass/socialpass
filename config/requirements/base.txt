@@ -16,7 +16,7 @@ PyJWT==2.9.0 #https://github.com/jpadilla/pyjwt
 git+https://github.com/SocialPass/passbook.git@7a3614e974c1862a24e7b02ced11313c8320c14b
 crispy-bootstrap5==2024.2 # https://github.com/django-crispy-forms/crispy-bootstrap5/stargazers
 django==5.0.7  # https://www.djangoproject.com/
-django-allauth==0.63.6 # https://github.com/pennersr/django-allauth
+django-allauth==64.0.0 # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.3 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.11.2 # https://github.com/joke2k/django-environ
 django-model-utils==4.5.1  # https://github.com/jazzband/django-model-utils

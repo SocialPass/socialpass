@@ -9,7 +9,7 @@ qrcode==7.4.2 # https://github.com/lincolnloop/python-qrcode
 rollbar==1.0.0 #https://github.com/rollbar/pyrollbar/
 stripe==5.5.0 #https://github.com/stripe/stripe-python/
 procrastinate==2.9.1 #https://github.com/procrastinate-org/procrastinate
-PyJWT==2.8.0 #https://github.com/jpadilla/pyjwt
+PyJWT==2.9.0 #https://github.com/jpadilla/pyjwt
 
 # Django
 # ------------------------------------------------------------------------------

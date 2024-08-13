@@ -3,7 +3,7 @@ ARG NODE_VERSION=18
 ARG PYTHON_VERSION=3.11
 
 # Stage 1: Build assets with Node.js
-FROM node:$NODE_VERSION as build
+FROM node:$NODE_VERSION AS build
 
 # Set the working directory inside the container
 WORKDIR /opt/app/
@@ -18,13 +18,16 @@ RUN yarn install
 COPY . .
 
 # Stage 2: Setup the runtime environment with Python!
-FROM python:$PYTHON_VERSION-slim as runtime
+FROM python:$PYTHON_VERSION-slim AS runtime
 
 # Set the working directory inside the container
 WORKDIR /opt/app/
 
 # Update package lists and install necessary packages
-RUN apt-get update -y && apt-get install -y curl postgresql-client git
+RUN apt-get update && apt-get install -y \
+    git \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set up a virtual environment for Python
 ENV PATH="/opt/venv/bin:$PATH"
@@ -47,9 +50,13 @@ COPY --from=build /opt/app/static/ ./static/
 # Collect static files for the Django application
 RUN python manage.py collectstatic --clear --noinput
 
-# Expose the application port
+# Set permissions
+RUN chown -R www-data:www-data /opt/app
+RUN chmod -R 755 /opt/app
+
+# Expose port 8000
 EXPOSE 8000
 
 # Define the command to run the application
-RUN ["chmod", "+x", "/opt/app/config/deploy/entry.sh"]
-CMD ["config/deploy/entry.sh", "web"]
+CMD python manage.py migrate && \
+    gunicorn -c config/deploy/gunicorn.py

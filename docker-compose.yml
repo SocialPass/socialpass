@@ -1,0 +1,61 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/www/socialpass:/var/www/socialpass
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    env_file:
+      - .env
+    depends_on:
+      - db
+    labels:
+      traefik.enable: true
+      traefik.http.routers.web.rule: Host(`${DOMAIN_NAME}`)
+      traefik.http.routers.web.entrypoints: websecure
+      traefik.http.routers.web.tls: true
+      traefik.http.services.web.loadbalancer.server.port: 8000
+      traefik.http.routers.web.tls.certresolver: letsencrypt
+
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    command: postgres -c listen_addresses='*'
+
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.web.http.redirections.entryPoint.to=websecure" # We want to force https
+      - "--entryPoints.web.http.redirections.entryPoint.scheme=https" # We want to force https
+      - "--entryPoints.web.http.redirections.entrypoint.permanent=true" # We want to force https
+      - "--certificatesresolvers.letsencrypt.acme.email=${DOMAIN_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--log.level=DEBUG"  # Enable detailed logging to diagnose issues
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - letsencrypt:/letsencrypt
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  letsencrypt:

@@ -296,3 +296,6 @@ media/
 config/deploy.yml
 .env
 data/
+
+### Integrations
+config/settings/integrations.py

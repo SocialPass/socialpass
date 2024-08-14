@@ -295,3 +295,4 @@ media/
 ### Kamal
 config/deploy.yml
 .env
+data/

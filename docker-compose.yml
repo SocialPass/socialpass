@@ -1,12 +1,13 @@
+version: '3.8'
 services:
   web:
     build: .
     ports:
       - "8000:8000"
     volumes:
-      - /var/www/socialpass:/var/www/socialpass
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
+      - /var/www/socialpass:/app
+      - /var/www/socialpass/data/static:/app/staticfiles
+      - /var/www/socialpass/data/media:/app/media
     env_file:
       - .env
     depends_on:
@@ -24,7 +25,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - /var/www/socialpass/data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -38,24 +39,18 @@ services:
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--entryPoints.web.http.redirections.entryPoint.to=websecure" # We want to force https
-      - "--entryPoints.web.http.redirections.entryPoint.scheme=https" # We want to force https
-      - "--entryPoints.web.http.redirections.entrypoint.permanent=true" # We want to force https
+      - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entryPoints.web.http.redirections.entrypoint.permanent=true"
       - "--certificatesresolvers.letsencrypt.acme.email=${DOMAIN_EMAIL}"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--log.level=DEBUG"  # Enable detailed logging to diagnose issues
+      - "--log.level=DEBUG"
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080" # Dashboard
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - letsencrypt:/letsencrypt
-
-volumes:
-  postgres_data:
-  static_volume:
-  media_volume:
-  letsencrypt:
+      - /var/www/socialpass/data/letsencrypt:/letsencrypt

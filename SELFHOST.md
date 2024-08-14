@@ -21,9 +21,16 @@ The 3rd-party integrations are handled via environment variables stored in the `
 
 In order to configure the 3rd-party integrations, you can make changes to the `config/settings/integrations.py`. The individual options are discussed in the relevant sections below. More alternatives for each 3rd-party API are coming in the future.
 
-### AWS S3 (for media and file uploads)
+### Media storage (for file uploads)
 
-By default, SocialPass uses AWS S3 for handling media and file uploads. Please read https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html to get started on AWS S3 by creating your bucket. After that, you need to set up the following environment variables:
+By default, SocialPass uses local disk storage for all media files. Therefore, you can see that the `media` is set to `"local"` in the `integrations.py` file.
+
+##### `config/settings/integrations.py`
+- **Alternatives**: Set `media` to anything other than `"local"` to use AWS S3.
+
+##### AWS S3
+
+Please read https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html to get started on AWS S3 by creating your bucket. After that, you need to set up the following environment variables:
 
 ```
 DJANGO_AWS_ACCESS_KEY_ID=
@@ -33,7 +40,7 @@ DJANGO_AWS_STORAGE_BUCKET_NAME=
 DJANGO_AWS_S3_ENDPOINT_URL=
 ```
 
-Under the hood, SocialPass uses `django-storages`, which also provides support for the following S3 compatible service providers:
+Under the hood, this uses `django-storages`, which also provides support for the following S3 compatible service providers:
 
 - Backblaze B2
 - Cloudflare R2
@@ -49,19 +56,45 @@ In case you want to use any of the above, please see this page: https://django-s
 > [!NOTE]
 > This is not required for local. By default, emails will be printed out in your terminal on local.
 
-Mailgun is the preferred choice for sending emails. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
+By default, SocialPass uses the local Django SMTP server to send emails. Depending on your machine however, this may not always work properly. Therefore, it is highly recommended that you use one of the alternatives listed below.
+
+##### `config/settings/integrations.py`
+- **Disable**: Set `email_provider` to `False`
+- **Alternative 1**: Set `email_provider` to `"mailgun"` OR  `"amazon_ses"` OR `"mailjet"` OR `"mandrill"` OR `"postmark"` OR `"sendgrid"` OR `"sendinblue"` OR `"sparkpost"` (uses **Anymail**)
+- **Alternative 2**: Set `email_provider` to `gmail` to use **Gmail**
+
+##### Anymail (Mailgun, Mailjet, etc.)
+
+Mailgun is the preferred choice for sending emails when using Anymail. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
 
 ```
 MAILGUN_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
-- **Disable**: Set `emai_provider` to `False`
-- **Alternatives**: Set `email_provider` to `"amazon_ses"` OR `"mailjet"` OR `"mandrill"` OR `"postmark"` OR `"sendgrid"` OR `"sendinblue"` OR `"sparkpost"`, after that add the correct API keys and environment variables to use the alternative. 
-
-For reference, please see the `ANYMAIL` dictionary in `config/settings/production.py` to get a better idea of what environment variables are needed to set up each provider.
+You can also always use an alternative if you prefer that over Mailgun. For reference, please see the `ANYMAIL` dictionary in `config/settings/production.py` to get a better idea of what environment variables are needed to set up each provider.
 
 **Please note**, depending on the provider of your choice, you may need to change the `DJANGO_DEFAULT_FROM_EMAIL` environment variable. For example, PostMark requires verified email addresses in the from field, and the default setting will not work.
+
+##### Gmail
+
+Please follow the steps below to use your Gmail account to send emails:
+
+###### 1. Enable 2-Factor Authentication
+
+Go to My Google Account (https://myaccount.google.com) and enable 2-Factor Authentication for your account.
+
+###### 2. Create an App Password
+
+Go to My Google Account (https://myaccount.google.com) and search for "App Password". Create an app password and keep it handy.
+
+###### 3. Set up environment variables
+
+Set your email address and app password (the one you just created) as environment variables:
+
+```
+GMAIL_HOST_USER=
+GMAIL_HOST_PASSWORD=
+```
 
 ---
 

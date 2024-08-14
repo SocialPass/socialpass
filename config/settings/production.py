@@ -99,9 +99,10 @@ AWS_LOCATION = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}"
 
 # MEDIA
 # ------------------------------------------------------------------------------
-MEDIA_URL = f"{AWS_LOCATION}/public/media/"
-DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"
-PRIVATE_TICKET_STORAGE = "config.storages.PrivateTicketStorage"
+if SOCIALPASS_INTEGRATIONS["media"] != "local":
+    MEDIA_URL = f"{AWS_LOCATION}/public/media/"
+    DEFAULT_FILE_STORAGE = "config.storages.MediaRootS3Boto3Storage"
+    PRIVATE_TICKET_STORAGE = "config.storages.PrivateTicketStorage"
 
 # STATIC
 # ------------------------------------------------------------------------------

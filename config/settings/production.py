@@ -46,12 +46,12 @@ elif SOCIALPASS_INTEGRATIONS["email_provider"] == "gmail":
     # Gmail
     # https://www.codingforentrepreneurs.com/blog/sending-email-in-django-from-gmail/
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST="smtp.gmail.com"
-    EMAIL_PORT=587
-    EMAIL_HOST_USER=env("GMAIL_HOST_USER", default="")
-    EMAIL_HOST_PASSWORD=env("GMAIL_HOST_PASSWORD", default="")
-    EMAIL_USE_TLS=True
-    DEFAULT_FROM_EMAIL=EMAIL_HOST_USER
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = env("GMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD = env("GMAIL_HOST_PASSWORD", default="")
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 else:
     # Anymail
     # https://anymail.readthedocs.io/en/stable/installation/#installing-anymail
@@ -71,13 +71,19 @@ else:
         "MAILJET_SECRET_KEY": env("MAILJET_SECRET_KEY", default=""),
         # Mandrill
         "MANDRILL_API_KEY": env("MANDRILL_API_KEY", default=""),
-        "MANDRILL_API_URL": env("MANDRILL_API_URL", default="https://mandrillapp.com/api/1.0"),
+        "MANDRILL_API_URL": env(
+            "MANDRILL_API_URL", default="https://mandrillapp.com/api/1.0"
+        ),
         # Postmark
         "POSTMARK_SERVER_TOKEN": env("POSTMARK_SERVER_TOKEN", default=""),
-        "POSTMARK_API_URL": env("POSTMARK_API_URL", default="https://api.postmarkapp.com/"),
+        "POSTMARK_API_URL": env(
+            "POSTMARK_API_URL", default="https://api.postmarkapp.com/"
+        ),
         # Sendgrid
         "SENDGRID_API_KEY": env("SENDGRID_API_KEY", default=""),
-        "SENDGRID_API_URL": env("SENDGRID_API_URL", default="https://api.sendgrid.com/v3/"),
+        "SENDGRID_API_URL": env(
+            "SENDGRID_API_URL", default="https://api.sendgrid.com/v3/"
+        ),
         # Sendinblue
         "SENDINBLUE_API_KEY": env("SENDINBLUE_API_KEY", default=""),
         "SENDINBLUE_API_URL": env(

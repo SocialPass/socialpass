@@ -37,43 +37,58 @@ SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_HTTPONLY = True
 
-# Anymail
+# Email provider
 # ------------------------------------------------------------------------------
-# https://anymail.readthedocs.io/en/stable/installation/#installing-anymail
-INSTALLED_APPS += ["anymail"]  # noqa F405
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-# https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
-# https://anymail.readthedocs.io/en/stable/esps/sendgrid/
-EMAIL_PROVIDER = SOCIALPASS_INTEGRATIONS["email_provider"]
-EMAIL_BACKEND = f"anymail.backends.{EMAIL_PROVIDER}.EmailBackend"
-ANYMAIL = {
-    # Mailgun
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY", default=""),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN", default=""),
-    "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
-    # Mailjet
-    "MAILJET_API_KEY": env("MAILJET_API_KEY", default=""),
-    "MAILJET_SECRET_KEY": env("MAILJET_SECRET_KEY", default=""),
-    # Mandrill
-    "MANDRILL_API_KEY": env("MANDRILL_API_KEY", default=""),
-    "MANDRILL_API_URL": env("MANDRILL_API_URL", default="https://mandrillapp.com/api/1.0"),
-    # Postmark
-    "POSTMARK_SERVER_TOKEN": env("POSTMARK_SERVER_TOKEN", default=""),
-    "POSTMARK_API_URL": env("POSTMARK_API_URL", default="https://api.postmarkapp.com/"),
-    # Sendgrid
-    "SENDGRID_API_KEY": env("SENDGRID_API_KEY", default=""),
-    "SENDGRID_API_URL": env("SENDGRID_API_URL", default="https://api.sendgrid.com/v3/"),
-    # Sendinblue
-    "SENDINBLUE_API_KEY": env("SENDINBLUE_API_KEY", default=""),
-    "SENDINBLUE_API_URL": env(
-        "SENDINBLUE_API_URL", default="https://api.sendinblue.com/v3/"
-    ),
-    # SparkPost
-    "SPARKPOST_API_KEY": env("SPARKPOST_API_KEY", default=""),
-    "SPARKPOST_API_URL": env(
-        "SPARKPOST_API_URL", default="https://api.sparkpost.com/api/v1"
-    ),
-}
+if SOCIALPASS_INTEGRATIONS["email_provider"] == "local":
+    # TODO: Handle sending email from the Django SMTP server
+    pass
+elif SOCIALPASS_INTEGRATIONS["email_provider"] == "gmail":
+    # Gmail
+    # https://www.codingforentrepreneurs.com/blog/sending-email-in-django-from-gmail/
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST="smtp.gmail.com"
+    EMAIL_PORT=587
+    EMAIL_HOST_USER=env("GMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD=env("GMAIL_HOST_PASSWORD", default="")
+    EMAIL_USE_TLS=True
+    DEFAULT_FROM_EMAIL=EMAIL_HOST_USER
+else:
+    # Anymail
+    # https://anymail.readthedocs.io/en/stable/installation/#installing-anymail
+    INSTALLED_APPS += ["anymail"]  # noqa F405
+    # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+    # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
+    # https://anymail.readthedocs.io/en/stable/esps/sendgrid/
+    EMAIL_PROVIDER = SOCIALPASS_INTEGRATIONS["email_provider"]
+    EMAIL_BACKEND = f"anymail.backends.{EMAIL_PROVIDER}.EmailBackend"
+    ANYMAIL = {
+        # Mailgun
+        "MAILGUN_API_KEY": env("MAILGUN_API_KEY", default=""),
+        "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN", default=""),
+        "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
+        # Mailjet
+        "MAILJET_API_KEY": env("MAILJET_API_KEY", default=""),
+        "MAILJET_SECRET_KEY": env("MAILJET_SECRET_KEY", default=""),
+        # Mandrill
+        "MANDRILL_API_KEY": env("MANDRILL_API_KEY", default=""),
+        "MANDRILL_API_URL": env("MANDRILL_API_URL", default="https://mandrillapp.com/api/1.0"),
+        # Postmark
+        "POSTMARK_SERVER_TOKEN": env("POSTMARK_SERVER_TOKEN", default=""),
+        "POSTMARK_API_URL": env("POSTMARK_API_URL", default="https://api.postmarkapp.com/"),
+        # Sendgrid
+        "SENDGRID_API_KEY": env("SENDGRID_API_KEY", default=""),
+        "SENDGRID_API_URL": env("SENDGRID_API_URL", default="https://api.sendgrid.com/v3/"),
+        # Sendinblue
+        "SENDINBLUE_API_KEY": env("SENDINBLUE_API_KEY", default=""),
+        "SENDINBLUE_API_URL": env(
+            "SENDINBLUE_API_URL", default="https://api.sendinblue.com/v3/"
+        ),
+        # SparkPost
+        "SPARKPOST_API_KEY": env("SPARKPOST_API_KEY", default=""),
+        "SPARKPOST_API_URL": env(
+            "SPARKPOST_API_URL", default="https://api.sparkpost.com/api/v1"
+        ),
+    }
 
 # STORAGES
 # ------------------------------------------------------------------------------

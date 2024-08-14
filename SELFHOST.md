@@ -25,10 +25,10 @@ In order to configure the 3rd-party integrations, you can make changes to the `c
 
 By default, SocialPass uses local disk storage for all media files. Therefore, you can see that the `media` is set to `"local"` in the `integrations.py` file.
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Alternatives**: Set `media` to anything other than `"local"` to use AWS S3.
 
-##### AWS S3
+#### AWS S3
 
 Please read https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html to get started on AWS S3 by creating your bucket. After that, you need to set up the following environment variables:
 
@@ -58,12 +58,12 @@ In case you want to use any of the above, please see this page: https://django-s
 
 By default, SocialPass uses the local Django SMTP server to send emails. Depending on your machine however, this may not always work properly. Therefore, it is highly recommended that you use one of the alternatives listed below.
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `email_provider` to `False`
 - **Alternative 1**: Set `email_provider` to `"mailgun"` OR  `"amazon_ses"` OR `"mailjet"` OR `"mandrill"` OR `"postmark"` OR `"sendgrid"` OR `"sendinblue"` OR `"sparkpost"` (uses **Anymail**)
 - **Alternative 2**: Set `email_provider` to `gmail` to use **Gmail**
 
-##### Anymail (Mailgun, Mailjet, etc.)
+#### Anymail (Mailgun, Mailjet, etc.)
 
 Mailgun is the preferred choice for sending emails when using Anymail. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
 
@@ -75,19 +75,19 @@ You can also always use an alternative if you prefer that over Mailgun. For refe
 
 **Please note**, depending on the provider of your choice, you may need to change the `DJANGO_DEFAULT_FROM_EMAIL` environment variable. For example, PostMark requires verified email addresses in the from field, and the default setting will not work.
 
-##### Gmail
+#### Gmail
 
 Please follow the steps below to use your Gmail account to send emails:
 
-###### 1. Enable 2-Factor Authentication
+##### 1. Enable 2-Factor Authentication
 
 Go to My Google Account (https://myaccount.google.com) and enable 2-Factor Authentication for your account.
 
-###### 2. Create an App Password
+##### 2. Create an App Password
 
 Go to My Google Account (https://myaccount.google.com) and search for "App Password". Create an app password and keep it handy.
 
-###### 3. Set up environment variables
+##### 3. Set up environment variables
 
 Set your email address and app password (the one you just created) as environment variables:
 
@@ -111,7 +111,7 @@ APPLE_WALLET_PASS_TYPE_ID=
 APPLE_WALLET_TEAM_ID=
 ```
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `wallet_apple` to `False`
 
 When disabled, the ticket page will not have a "Save to Apple Wallet" button.
@@ -137,7 +137,7 @@ GOOGLE_WALLET_CLIENT_EMAIL=
 GOOGLE_WALLET_CLIENT_CERT_URL=
 ```
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `wallet_google` to `False`
 
 When disabled, the ticket page will not have a "Save to Google Wallet" button.
@@ -153,7 +153,7 @@ GOOGLE_OAUTH_CLIENT_ID=
 GOOGLE_OAUTH_CLIENT_SECRET=
 ```
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `oauth_google` to `False`
 
 When disabled, the login and sign up page will not have a button to connect Google accounts.
@@ -168,7 +168,7 @@ We use the Google Places API to support autocomplete for addresses on event form
 GOOGLE_MAPS_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `maps_provider` to `False`
 - **Alternatives**: None yet
 
@@ -184,7 +184,7 @@ We use Moralis to handle NFT verification for NFT-gated tickets. Sign up for Mor
 MORALIS_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `token_verification` to `False`
 - **Alternatives**: None yet
 
@@ -200,7 +200,7 @@ We use Rollbar for reporting errors and warnings. Sign up for Rollbar and [get y
 ROLLBAR_ACCESS_TOKEN=
 ```
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `error_reporting` to `False`
 - **Alternatives**: None yet
 
@@ -220,7 +220,7 @@ Once you have set up your primary account, you only need the API key as an envir
 STRIPE_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
+#### `config/settings/integrations.py`
 - **Disable**: Set `stripe` to `False`
 - **Alternatives**: Set `stripe` to `"direct"` for direct payments
 

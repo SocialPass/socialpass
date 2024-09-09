@@ -19,7 +19,7 @@ django==5.1  # https://www.djangoproject.com/
 django-allauth==64.0.0 # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.3 # https://github.com/django-crispy-forms/django-crispy-forms/stargazers
 django-environ==0.11.2 # https://github.com/joke2k/django-environ
-django-model-utils==4.5.1  # https://github.com/jazzband/django-model-utils
+django-model-utils==5.0.0  # https://github.com/jazzband/django-model-utils
 django-storages[boto3]==1.14.4  # https://github.com/jschneier/django-storages
 django-quill-editor==0.1.40 # https://github.com/LeeHanYeong/django-quill-editor
 whitenoise==6.7.0 # https://github.com/evansd/whitenoise/

@@ -1276,7 +1276,7 @@ class CheckoutSession(DBModel):
 
                 headers = {
                     "accept": "application/json",
-                    "X-API-Key": settings.MORALIS_API_KEY
+                    "X-API-Key": settings.MORALIS_API_KEY,
                 }
 
                 url = f"https://deep-index.moralis.io/api/v2.2/{wallet}/nft"

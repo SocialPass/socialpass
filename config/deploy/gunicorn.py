@@ -7,15 +7,15 @@ bind = "0.0.0.0:8000"
 workers = 2
 
 # Worker Class
-worker_class = 'sync'
+worker_class = "sync"
 
 # Logging
-accesslog = '-'
-errorlog = '-'
-loglevel = 'info'
+accesslog = "-"
+errorlog = "-"
+loglevel = "info"
 
 # Application Import
-wsgi_app = 'config.wsgi:application'
+wsgi_app = "config.wsgi:application"
 
 # Timeout
 timeout = 30

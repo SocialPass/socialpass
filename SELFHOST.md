@@ -11,7 +11,7 @@ In order to self-host SocialPass, you need to mainly do the following:
 
 The instructions for the first step above is described in details in the **README.md**. For the next two steps, please keep reading this document.
 
-## Integrate 3rd-party APIs
+# Integrate 3rd-party APIs
 
 The 3rd-party integrations are handled via environment variables stored in the `.envs/` hidden folder. In the following sections, whenever the names of variables are mentioned as being required for that integration, it just means you need to store the values in any or all of the following files (depending on which environment you want to target):
 
@@ -21,9 +21,16 @@ The 3rd-party integrations are handled via environment variables stored in the `
 
 In order to configure the 3rd-party integrations, you can make changes to the `config/settings/integrations.py`. The individual options are discussed in the relevant sections below. More alternatives for each 3rd-party API are coming in the future.
 
-### AWS S3 (for media and file uploads)
+## Media storage (for file uploads)
 
-By default, SocialPass uses AWS S3 for handling media and file uploads. Please read https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html to get started on AWS S3 by creating your bucket. After that, you need to set up the following environment variables:
+By default, SocialPass uses local disk storage for all media files. Therefore, you can see that the `media` is set to `"local"` in the `integrations.py` file.
+
+### `config/settings/integrations.py`
+- **Alternatives**: Set `media` to anything other than `"local"` to use AWS S3.
+
+### AWS S3
+
+Please read https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html to get started on AWS S3 by creating your bucket. After that, you need to set up the following environment variables:
 
 ```
 DJANGO_AWS_ACCESS_KEY_ID=
@@ -33,7 +40,7 @@ DJANGO_AWS_STORAGE_BUCKET_NAME=
 DJANGO_AWS_S3_ENDPOINT_URL=
 ```
 
-Under the hood, SocialPass uses `django-storages`, which also provides support for the following S3 compatible service providers:
+Under the hood, this uses `django-storages`, which also provides support for the following S3 compatible service providers:
 
 - Backblaze B2
 - Cloudflare R2
@@ -44,28 +51,54 @@ In case you want to use any of the above, please see this page: https://django-s
 
 ---
 
-### Email provider
+## Email provider
 
 > [!NOTE]
 > This is not required for local. By default, emails will be printed out in your terminal on local.
 
-Mailgun is the preferred choice for sending emails. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
+By default, SocialPass uses the local Django SMTP server to send emails. Depending on your machine however, this may not always work properly. Therefore, it is highly recommended that you use one of the alternatives listed below.
+
+### `config/settings/integrations.py`
+- **Disable**: Set `email_provider` to `False`
+- **Alternative 1**: Set `email_provider` to `"mailgun"` OR  `"amazon_ses"` OR `"mailjet"` OR `"mandrill"` OR `"postmark"` OR `"sendgrid"` OR `"sendinblue"` OR `"sparkpost"` (uses **Anymail**)
+- **Alternative 2**: Set `email_provider` to `gmail` to use **Gmail**
+
+### Anymail (Mailgun, Mailjet, etc.)
+
+Mailgun is the preferred choice for sending emails when using Anymail. Sign up for Mailgun and [get your API key](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-keys-and-SMTP-credentials), and set that as an environment variable:
 
 ```
 MAILGUN_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
-- **Disable**: Set `emai_provider` to `False`
-- **Alternatives**: Set `email_provider` to `"amazon_ses"` OR `"mailjet"` OR `"mandrill"` OR `"postmark"` OR `"sendgrid"` OR `"sendinblue"` OR `"sparkpost"`, after that add the correct API keys and environment variables to use the alternative. 
-
-For reference, please see the `ANYMAIL` dictionary in `config/settings/production.py` to get a better idea of what environment variables are needed to set up each provider.
+You can also always use an alternative if you prefer that over Mailgun. For reference, please see the `ANYMAIL` dictionary in `config/settings/production.py` to get a better idea of what environment variables are needed to set up each provider.
 
 **Please note**, depending on the provider of your choice, you may need to change the `DJANGO_DEFAULT_FROM_EMAIL` environment variable. For example, PostMark requires verified email addresses in the from field, and the default setting will not work.
 
+### Gmail
+
+Please follow the steps below to use your Gmail account to send emails:
+
+#### 1. Enable 2-Factor Authentication
+
+Go to My Google Account (https://myaccount.google.com) and enable 2-Factor Authentication for your account.
+
+#### 2. Create an App Password
+
+Go to My Google Account (https://myaccount.google.com) and search for "App Password". Create an app password and keep it handy.
+
+#### 3. Set up environment variables
+
+Set your email address and app password (the one you just created) as environment variables:
+
+```
+GMAIL_HOST_USER=
+GMAIL_HOST_PASSWORD=
+```
+
 ---
 
-### Apple Wallet (for tickets)
+## Apple Wallet (for tickets)
 
 In order to set up Apple Wallet tickets, you need pass ID, a valid certificate, and a `key.pem` file. Please read the following instructions to get started: https://github.com/SocialPass/passbook/?tab=readme-ov-file#getting-started
 
@@ -78,14 +111,14 @@ APPLE_WALLET_PASS_TYPE_ID=
 APPLE_WALLET_TEAM_ID=
 ```
 
-##### `config/settings/integrations.py`
+### `config/settings/integrations.py`
 - **Disable**: Set `wallet_apple` to `False`
 
 When disabled, the ticket page will not have a "Save to Apple Wallet" button.
 
 ---
 
-### Google Wallet (for tickets)
+## Google Wallet (for tickets)
 
 > [!NOTE]
 > If you don't want Google Wallet support, you can safely ignore this section. In that case, the ticket page will not have a "Save to Google Wallet" button.
@@ -104,14 +137,14 @@ GOOGLE_WALLET_CLIENT_EMAIL=
 GOOGLE_WALLET_CLIENT_CERT_URL=
 ```
 
-##### `config/settings/integrations.py`
+### `config/settings/integrations.py`
 - **Disable**: Set `wallet_google` to `False`
 
 When disabled, the ticket page will not have a "Save to Google Wallet" button.
 
 ---
 
-### Google oAuth (for logins and sign ups)
+## Google oAuth (for logins and sign ups)
 
 We allow organizers to sign up via their Google accounts. Please read the following to get started: https://docs.allauth.org/en/latest/socialaccount/providers/google.html. Once you have set up your Google project to handle logins and sign ups, you need to set up the `client_id` and `secret` as environment variables:
 
@@ -120,14 +153,14 @@ GOOGLE_OAUTH_CLIENT_ID=
 GOOGLE_OAUTH_CLIENT_SECRET=
 ```
 
-##### `config/settings/integrations.py`
+### `config/settings/integrations.py`
 - **Disable**: Set `oauth_google` to `False`
 
 When disabled, the login and sign up page will not have a button to connect Google accounts.
 
 ---
 
-### Google Maps (for address autocomplete)
+## Google Maps (for address autocomplete)
 
 We use the Google Places API to support autocomplete for addresses on event forms. In order to integrate this, please read this guide: https://developers.google.com/maps/documentation/places/web-service/get-api-key. Once you have the key, set it as an environment variable:
 
@@ -135,7 +168,7 @@ We use the Google Places API to support autocomplete for addresses on event form
 GOOGLE_MAPS_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
+### `config/settings/integrations.py`
 - **Disable**: Set `maps_provider` to `False`
 - **Alternatives**: None yet
 
@@ -143,7 +176,7 @@ When disabled, the event create and update pages will not have autocomplete supp
 
 ---
 
-### Token verification (for NFT-gated tickets)
+## Token verification (for NFT-gated tickets)
 
 We use Moralis to handle NFT verification for NFT-gated tickets. Sign up for Moralis and [get your API key](https://docs.moralis.io/2.0/web3-data-api/evm/get-your-api-key), and set that as an environment variable:
 
@@ -151,7 +184,7 @@ We use Moralis to handle NFT verification for NFT-gated tickets. Sign up for Mor
 MORALIS_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
+### `config/settings/integrations.py`
 - **Disable**: Set `token_verification` to `False`
 - **Alternatives**: None yet
 
@@ -159,7 +192,7 @@ When disabled, NFT-gated ticketing will be completely ignored/hidden (on dashboa
 
 ---
 
-### Logging (for error reporting)
+## Logging (for error reporting)
 
 We use Rollbar for reporting errors and warnings. Sign up for Rollbar and [get your access token](https://docs.rollbar.com/reference/getting-started-1#project-access-tokens), and set that as an environment variable:
 
@@ -167,7 +200,7 @@ We use Rollbar for reporting errors and warnings. Sign up for Rollbar and [get y
 ROLLBAR_ACCESS_TOKEN=
 ```
 
-##### `config/settings/integrations.py`
+### `config/settings/integrations.py`
 - **Disable**: Set `error_reporting` to `False`
 - **Alternatives**: None yet
 
@@ -175,7 +208,7 @@ When disabled, the logging will simply be ignored, so your project will have no 
 
 ---
 
-### Stripe (for payments)
+## Stripe (for payments)
 
 As of right now, SocialPass *only* supports Stripe Connect, which means that there is one primary account (SocialPass for instance), and each organizer "connects" their secondary account (via the organizer dashboard). This is the ideal choice in regards to our business model. This may change in the future (with more options), but for now, please keep this in mind.
 
@@ -187,7 +220,7 @@ Once you have set up your primary account, you only need the API key as an envir
 STRIPE_API_KEY=
 ```
 
-##### `config/settings/integrations.py`
+### `config/settings/integrations.py`
 - **Disable**: Set `stripe` to `False`
 - **Alternatives**: Set `stripe` to `"direct"` for direct payments
 
@@ -195,15 +228,15 @@ When disabled, paid (fiat) ticketing will be completely ignored/hidden (on dashb
 
 By default, SocialPass uses Stripe Connect. This means that any team that wants to sell paid tickets needs to first link their Stripe account with SocialPass's account. If the alternative of **direct** Stripe payment is used, then this step is ignored. In that case, all transactions will happen via the main SocialPass Stripe account. Learn more about Stripe Connect here: https://docs.stripe.com/connect.
 
-## Whitelabeling
+# Whitelabeling
 
 SocialPass supports project-wide AND team-wide whitelabeling. For reference, a team = one organizer.
 
-### How to whitelabel
+## How to whitelabel
 
 ---
 
-#### Create admin/staff account on Django's admin site
+### Create admin/staff account on Django's admin site
 
 You need to first create an admin account on Django's admin site. The best way to do this is to run the following command on the console (and fill out the details):
 
@@ -215,7 +248,7 @@ You can also ask your webmaster to do it for you, in case you can't access the c
 
 ---
 
-#### Create whitelabeling from the admin site
+### Create whitelabeling from the admin site
 
 After you have your credentials, log in to the admin site. On local, this is `/admin`, on staging and production, this is `/<DJANGO_ADMIN_URL>` where the `DJANGO_ADMIN_URL` is an environment variable you set up.
 

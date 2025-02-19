@@ -1,0 +1,16 @@
+[build]
+  command = "pip install -r config/requirements/production.txt && python manage.py collectstatic --noinput"
+  publish = "staticfiles"
+  functions = "netlify/functions"
+
+[build.environment]
+  PYTHON_VERSION = "3.10.5"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/django"
+  status = 200
+
+[dev]
+  framework = "django"
+  command = "python manage.py runserver" 

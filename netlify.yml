@@ -1,6 +1,8 @@
 build:
   publish: "staticfiles"
   functions: "netlify/functions"
+  # Use a custom build image that includes PostgreSQL libraries and Python 3.11 support
+  image: "netlify/build:jammy"
   environment:
     PYTHON_VERSION: "3.11"
     DJANGO_SETTINGS_MODULE: "config.settings.netlify"

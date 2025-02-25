@@ -11,8 +11,8 @@
   """
   publish = "staticfiles"
   functions = "netlify/functions"
-  # Use a custom build image that includes PostgreSQL libraries
-  image = "netlify/build:focal"
+  # Use a custom build image that includes PostgreSQL libraries and Python 3.11 support
+  image = "netlify/build:jammy"
 
 [build.environment]
   PYTHON_VERSION = "3.11"

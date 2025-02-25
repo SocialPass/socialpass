@@ -1,0 +1,8 @@
+--only-binary :all: --prefer-binary
+-r config/requirements/production.txt
+
+# Netlify specific requirements
+whitenoise==6.6.0  # For serving static files
+dj-database-url==2.1.0  # For parsing DATABASE_URL
+psycopg2-binary==2.9.9  # Binary version of psycopg2 for Netlify
+python-dotenv==1.0.0  # For loading environment variables 

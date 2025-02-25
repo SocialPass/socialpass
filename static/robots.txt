@@ -1,0 +1,12 @@
+# robots.txt for SocialPass
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://socialpass.netlify.app/sitemap.xml
+
+# Disallow admin and sensitive areas
+Disallow: /admin/
+Disallow: /.netlify/
+Disallow: /api/internal/ 

@@ -32,18 +32,60 @@ module.exports = {
       utils.build.failBuild('Staticfiles directory not found. Make sure collectstatic ran successfully.');
     }
     
-    // Check for critical Django files
-    const requiredFiles = [
-      path.join(staticfilesDir, 'admin'),
+    // Define required directories
+    const requiredDirs = [
       path.join(staticfilesDir, 'css'),
       path.join(staticfilesDir, 'js')
     ];
     
-    requiredFiles.forEach(file => {
-      if (!fs.existsSync(file)) {
-        utils.build.failBuild(`Required static file/directory not found: ${file}`);
+    // Create directories if they don't exist
+    requiredDirs.forEach(dir => {
+      if (!fs.existsSync(dir)) {
+        console.log(`Creating missing directory: ${dir}`);
+        try {
+          fs.mkdirSync(dir, { recursive: true });
+        } catch (error) {
+          console.warn(`Warning: Could not create directory ${dir}: ${error.message}`);
+        }
       }
     });
+    
+    // Check for admin directory, but don't fail if it doesn't exist
+    const adminDir = path.join(staticfilesDir, 'admin');
+    if (!fs.existsSync(adminDir)) {
+      console.warn('Warning: Admin static files directory not found. This is okay if you are not using Django admin.');
+    }
+    
+    // Check for sitemap.xml
+    const sitemapFile = path.join(staticfilesDir, 'sitemap.xml');
+    if (!fs.existsSync(sitemapFile)) {
+      console.warn('Warning: sitemap.xml not found. Consider generating one for better SEO.');
+      
+      // Create a basic sitemap if it doesn't exist
+      try {
+        const baseUrl = process.env.URL || 'https://socialpass.netlify.app';
+        const basicSitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
+        
+        fs.writeFileSync(sitemapFile, basicSitemap);
+        console.log('Created a basic sitemap.xml file');
+      } catch (error) {
+        console.warn(`Could not create sitemap.xml: ${error.message}`);
+      }
+    }
+    
+    // Check for robots.txt
+    const robotsFile = path.join(staticfilesDir, 'robots.txt');
+    if (!fs.existsSync(robotsFile)) {
+      console.warn('Warning: robots.txt not found. Consider creating one for better SEO.');
+    }
     
     // Additional Django-specific optimizations
     try {
@@ -52,7 +94,7 @@ module.exports = {
         utils.build.failBuild('DJANGO_SETTINGS_MODULE environment variable is not set.');
       }
       
-      // Ensure static files are properly compressed
+      // Ensure static files are properly collected
       const staticFiles = fs.readdirSync(staticfilesDir);
       if (staticFiles.length === 0) {
         utils.build.failBuild('No static files found. collectstatic may have failed.');

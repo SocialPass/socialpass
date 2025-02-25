@@ -50,6 +50,12 @@
 [build.processing.images]
   compress = true
 
+# Add Brotli compression for better performance
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Content-Encoding = "br"
+
 # Configure different contexts for different deployment environments
 [context.production]
   environment = { DEBUG = "false" }

@@ -1,4 +1,9 @@
---only-binary :all: --prefer-binary
+# Ensure we have up-to-date build tools
+setuptools>=68.0.0
+wheel>=0.41.0
+
+# Use binary packages when available but don't restrict to only binaries
+--prefer-binary
 -r config/requirements/production.txt
 
 # Netlify specific requirements

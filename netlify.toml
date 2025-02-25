@@ -1,5 +1,5 @@
 [build]
-  command = "apt-get update -y && apt-get install -y python3-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev && pip install -r netlify-requirements.txt && python manage.py collectstatic --noinput"
+  command = "apt-get update -y && apt-get install -y python3-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev && pip install --upgrade pip setuptools wheel && pip install -r netlify-requirements.txt && python manage.py collectstatic --noinput"
   publish = "staticfiles"
   functions = "netlify/functions"
 

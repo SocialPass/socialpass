@@ -30,19 +30,18 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # Installed apps (minimal set needed for collectstatic)
 INSTALLED_APPS = [
     "django.contrib.staticfiles",
-    # Add only the apps that provide static files
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.sitemaps",  # Add sitemap support
-    # Add your project apps that have static files here
-    "users",  # If you have a users app
-    "events",  # If you have an events app
-    "tickets",  # If you have a tickets app
-    "core",  # If you have a core app
-    # Add any other apps with static files
+    # Include actual apps from the project
+    "apps.root",
+    "apps.dashboard_staff",
+    "apps.marketing",
+    "apps.checkout",
+    "apps.dashboard_organizer",
 ]
 
 # Middleware (minimal set)

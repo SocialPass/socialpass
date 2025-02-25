@@ -1,6 +1,8 @@
 [build]
   # Alternative approach if apt-get is not allowed
   command = """
+    # Install plugin dependencies
+    cd netlify/plugins/django-optimize && npm install && cd ../../../
     # Install Python dependencies
     pip install --upgrade pip setuptools wheel
     pip install -r netlify-requirements.txt

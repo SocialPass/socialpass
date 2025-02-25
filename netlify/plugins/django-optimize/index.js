@@ -14,7 +14,16 @@ module.exports = {
     console.log('Finalizing Django optimizations...');
     
     // Check for common Django deployment issues
-    const fs = require('fs-extra');
+    let fs;
+    try {
+      // Try to use fs-extra first
+      fs = require('fs-extra');
+      console.log('Using fs-extra module');
+    } catch (error) {
+      // Fall back to standard fs module
+      console.log('fs-extra not found, falling back to standard fs module');
+      fs = require('fs');
+    }
     const path = require('path');
     
     // Ensure staticfiles directory exists

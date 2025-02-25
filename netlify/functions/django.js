@@ -43,7 +43,12 @@ const runDjango = () => {
 // Create the serverless handler
 let handler;
 try {
-  handler = serverless(runDjango());
+  // Add timeout configuration for long-running operations
+  const serverlessOptions = {
+    timeout: 30, // 30 seconds timeout
+    binary: true // Support binary responses
+  };
+  handler = serverless(runDjango(), serverlessOptions);
 } catch (error) {
   console.error('Failed to create serverless handler:', error);
   throw error;

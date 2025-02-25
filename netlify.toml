@@ -65,7 +65,7 @@
 
 # Add our custom Django optimization plugin
 [[plugins]]
-  package = "/netlify/plugins/django-optimize"
+  package = "./netlify/plugins/django-optimize"
 
 [dev]
   # Django is not in Netlify's supported framework list

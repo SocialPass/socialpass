@@ -14,7 +14,7 @@ module.exports = {
     console.log('Finalizing Django optimizations...');
     
     // Check for common Django deployment issues
-    const fs = require('fs');
+    const fs = require('fs-extra');
     const path = require('path');
     
     // Ensure staticfiles directory exists
@@ -35,6 +35,24 @@ module.exports = {
         utils.build.failBuild(`Required static file/directory not found: ${file}`);
       }
     });
+    
+    // Additional Django-specific optimizations
+    try {
+      // Check for Django settings module
+      if (!process.env.DJANGO_SETTINGS_MODULE) {
+        utils.build.failBuild('DJANGO_SETTINGS_MODULE environment variable is not set.');
+      }
+      
+      // Ensure static files are properly compressed
+      const staticFiles = fs.readdirSync(staticfilesDir);
+      if (staticFiles.length === 0) {
+        utils.build.failBuild('No static files found. collectstatic may have failed.');
+      }
+      
+      console.log(`Found ${staticFiles.length} static files/directories.`);
+    } catch (error) {
+      utils.build.failBuild(`Django optimization error: ${error.message}`);
+    }
     
     console.log('Django optimization plugin completed successfully!');
   }

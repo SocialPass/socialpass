@@ -5,8 +5,12 @@ These settings extend the production settings and configure Django to run smooth
 """
 
 import os
+import pathlib
 import dj_database_url
 from dotenv import load_dotenv
+
+# Define BASE_DIR explicitly to avoid NameError
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent.parent
 
 from .production import *  # noqa
 

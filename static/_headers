@@ -6,8 +6,8 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   
-  # HSTS (uncomment when you have HTTPS set up)
-  # Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  # HSTS header for secure HTTPS
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
 # Static assets
 /static/*

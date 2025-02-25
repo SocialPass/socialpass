@@ -1,13 +1,33 @@
 [build]
   # Alternative approach if apt-get is not allowed
   command = """
+    # Run diagnostic script
+    mkdir -p netlify/scripts
+    chmod +x netlify/scripts/diagnose_imports.py
+    python netlify/scripts/diagnose_imports.py > build_diagnostics.log || echo "Diagnostic script failed but continuing build"
+    
     # Install plugin dependencies
-    cd netlify/plugins/django-optimize && npm install && cd ../../../
-    # Install Python dependencies
+    cd netlify/plugins/django-optimize && npm install && cd ../../../ || { echo "Plugin dependencies installation failed"; exit 1; }
+    
+    # Install Python dependencies with verbose output
     pip install --upgrade pip setuptools wheel
-    pip install -r netlify-requirements.txt
-    # Collect static files with build-specific settings
-    DJANGO_SETTINGS_MODULE=config.settings.build python manage.py collectstatic --noinput
+    pip install -v -r netlify-requirements.txt || { echo "Python dependencies installation failed"; exit 1; }
+    
+    # Collect static files with build-specific settings and verbose output
+    echo "Running collectstatic with DJANGO_SETTINGS_MODULE=config.settings.build"
+    DJANGO_SETTINGS_MODULE=config.settings.build python -v manage.py collectstatic --noinput || { 
+      echo "Collectstatic failed, using fallback script"; 
+      chmod +x netlify/scripts/collectstatic_fallback.py
+      python netlify/scripts/collectstatic_fallback.py
+    }
+    
+    # List collected static files for verification
+    echo "Listing collected static files:"
+    ls -la staticfiles/
+    echo "Listing CSS files:"
+    ls -la staticfiles/css/
+    echo "Listing JS files:"
+    ls -la staticfiles/js/
   """
   publish = "staticfiles"
   functions = "netlify/functions"

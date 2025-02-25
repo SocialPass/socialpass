@@ -59,7 +59,9 @@
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
   [plugins.inputs]
-    performance_budget = { speed_index = 2000 }
+    # Replace performance_budget with thresholds
+    thresholds = { performance = 0.8, accessibility = 0.9, best-practices = 0.9, seo = 0.9 }
+    output_path = "reports/lighthouse.html"
 
 # Add our custom Django optimization plugin
 [[plugins]]

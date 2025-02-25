@@ -1,7 +1,16 @@
 [build]
-  command = "pip install --upgrade pip setuptools wheel && pip install -r netlify-requirements.txt && python manage.py collectstatic --noinput"
+  # Alternative approach if apt-get is not allowed
+  command = """
+    # Install Python dependencies
+    pip install --upgrade pip setuptools wheel
+    pip install -r netlify-requirements.txt
+    # Collect static files with build-specific settings
+    DJANGO_SETTINGS_MODULE=config.settings.build python manage.py collectstatic --noinput
+  """
   publish = "staticfiles"
   functions = "netlify/functions"
+  # Use a custom build image that includes PostgreSQL libraries
+  image = "netlify/build:focal"
 
 [build.environment]
   PYTHON_VERSION = "3.11"

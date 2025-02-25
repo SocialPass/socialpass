@@ -1,10 +1,10 @@
 [build]
-  command = "apt-get update -y && apt-get install -y python3-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev && npm install --legacy-peer-deps && pip install --upgrade pip setuptools wheel && pip install -r netlify-requirements.txt && python manage.py collectstatic --noinput"
+  command = "apt-get update -y && apt-get install -y python3-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev && npm install --legacy-peer-deps && pyenv install -s $PYTHON_VERSION && pyenv global $PYTHON_VERSION && pip install --upgrade pip setuptools wheel && pip install -r netlify-requirements.txt && python manage.py collectstatic --noinput"
   publish = "staticfiles"
   functions = "netlify/functions"
 
 [build.environment]
-  PYTHON_VERSION = "3.10.5"
+  PYTHON_VERSION = "3.11.0"
   DJANGO_SETTINGS_MODULE = "config.settings.netlify"
   # Add this to prevent Python from writing bytecode files
   PYTHONDONTWRITEBYTECODE = "1"

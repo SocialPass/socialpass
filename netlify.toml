@@ -66,5 +66,8 @@
   package = "/netlify/plugins/django-optimize"
 
 [dev]
-  framework = "django"
-  command = "python manage.py runserver" 
+  # Django is not in Netlify's supported framework list
+  # Use a generic command instead
+  command = "python manage.py runserver"
+  # Remove the framework setting
+  # framework = "django" 

@@ -1,0 +1,22 @@
+# All paths
+/*
+  # Security headers
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # HSTS (uncomment when you have HTTPS set up)
+  # Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# Static assets
+/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Media files
+/media/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML files
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate 

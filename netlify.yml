@@ -1,0 +1,38 @@
+build:
+  publish: "staticfiles"
+  functions: "netlify/functions"
+  environment:
+    PYTHON_VERSION: "3.11"
+    DJANGO_SETTINGS_MODULE: "config.settings.netlify"
+    PYTHONDONTWRITEBYTECODE: "1"
+    PYTHONUNBUFFERED: "1"
+    # Add cache directories for faster builds
+    NETLIFY_USE_YARN_CACHE: "true"
+    NETLIFY_USE_PIP_CACHE: "true"
+
+# Configure different contexts for different deployment environments
+context:
+  production:
+    environment:
+      DEBUG: "false"
+  
+  branch-deploy:
+    environment:
+      DEBUG: "true"
+  
+  deploy-preview:
+    environment:
+      DEBUG: "true"
+
+plugins:
+  - package: "@netlify/plugin-functions-install-core"
+  # Add more useful plugins
+  - package: "netlify-plugin-inline-critical-css"
+  - package: "@netlify/plugin-lighthouse"
+    config:
+      performance_budget:
+        speed_index: 2000
+  - package: "netlify-plugin-submit-sitemap"
+    config:
+      baseUrl: "https://your-site-name.netlify.app"
+      sitemapPath: "/sitemap.xml" 

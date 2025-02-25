@@ -1,0 +1,5 @@
+# Redirect all requests to the Django serverless function
+/* /.netlify/functions/django 200
+
+# Handle 404 errors
+/* /404.html 404 

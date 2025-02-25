@@ -1,5 +1,5 @@
 [build]
-  command = "apt-get update -y && apt-get install -y python3-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev && npm install --legacy-peer-deps && pip install --upgrade pip setuptools wheel && pip install -r netlify-requirements.txt && python manage.py collectstatic --noinput"
+  command = "pip install --upgrade pip setuptools wheel && pip install -r netlify-requirements.txt && python manage.py collectstatic --noinput"
   publish = "staticfiles"
   functions = "netlify/functions"
 
@@ -10,14 +10,60 @@
   PYTHONDONTWRITEBYTECODE = "1"
   # Add this to configure Python to handle unbuffered output
   PYTHONUNBUFFERED = "1"
+  # Enable Netlify's asset optimization
+  NETLIFY_USE_BUNDLING = "true"
+  NETLIFY_USE_MINIFICATION = "true"
 
+# Redirects are now in the _redirects file for better performance
+# But we'll keep this as a fallback
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/django"
   status = 200
 
+# Enable asset optimization
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true
+
+# Configure different contexts for different deployment environments
+[context.production]
+  environment = { DEBUG = "false" }
+
+[context.branch-deploy]
+  environment = { DEBUG = "true" }
+
+[context.deploy-preview]
+  environment = { DEBUG = "true" }
+
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
+
+# Add more useful plugins
+[[plugins]]
+  package = "netlify-plugin-inline-critical-css"
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+  [plugins.inputs]
+    performance_budget = { speed_index = 2000 }
+
+# Add our custom Django optimization plugin
+[[plugins]]
+  package = "/netlify/plugins/django-optimize"
 
 [dev]
   framework = "django"

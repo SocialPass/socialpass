@@ -1,0 +1,19 @@
+{
+  "name": "netlify-plugin-django-optimize",
+  "version": "1.0.0",
+  "description": "A Netlify build plugin for Django-specific optimizations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "netlify",
+    "netlify-plugin",
+    "django"
+  ],
+  "author": "SocialPass",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^10.0.0"
+  }
+} 

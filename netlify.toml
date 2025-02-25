@@ -93,12 +93,19 @@
 [[plugins]]
   package = "netlify-plugin-inline-critical-css"
 
+# Use our custom after-deploy check plugin instead of Lighthouse
+[[plugins]]
+  package = "./netlify/plugins/netlify-after-deploy-check"
+
+# Keep Lighthouse but in report-only mode (won't fail the build)
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
   [plugins.inputs]
-    # Replace performance_budget with thresholds
-    thresholds = { performance = 0.8, accessibility = 0.9, best-practices = 0.9, seo = 0.9 }
     output_path = "reports/lighthouse.html"
+    # Run Lighthouse after deploy has had time to stabilize
+    deployWaitTime = 300
+    # Don't fail builds - just generate reports
+    failOnOtherError = false
 
 # Add our custom Django optimization plugin
 [[plugins]]

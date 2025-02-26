@@ -10,7 +10,7 @@ fi
 
 # Start Django server in the background
 echo "Starting Django development server..."
-python manage.py runserver &
+python3 manage.py runserver --settings=config.settings.minimal &
 DJANGO_PID=$!
 
 # Start Netlify Functions server in the background

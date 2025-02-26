@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialPass - Local Development</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>SocialPass Local Development</h1>
+            <p class="success-message">✅ Your Django server is running successfully!</p>
+            <p>This is a minimal setup for local development to help you get started.</p>
+            <p>You can continue setting up your development environment by installing additional dependencies as needed.</p>
+            
+            <h2>Next Steps</h2>
+            <ul>
+                <li>Visit the <a href="/admin/">Django Admin</a> to manage your data</li>
+                <li>Install additional dependencies as needed</li>
+                <li>Explore the Netlify Functions at <a href="http://localhost:9999/.netlify/functions/django">http://localhost:9999/.netlify/functions/django</a></li>
+            </ul>
+            
+            <h2>Development Resources</h2>
+            <ul>
+                <li><a href="https://docs.djangoproject.com/en/4.2/" target="_blank">Django 4.2 Documentation</a></li>
+                <li><a href="https://docs.netlify.com/" target="_blank">Netlify Documentation</a></li>
+                <li><a href="https://docs.netlify.com/functions/overview/" target="_blank">Netlify Functions</a></li>
+            </ul>
+            
+            <div style="margin-top: 30px;">
+                <a href="/admin/" class="btn">Go to Admin</a>
+                <a href="http://localhost:9999/.netlify/functions/django" class="btn btn-success">Test Netlify Function</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

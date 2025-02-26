@@ -10,14 +10,14 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
+    "@netlify/functions": "^2.4.1",
     "@wagmi/core": "^1.4.7",
     "@web3modal/wagmi": "^3.3.2",
-    "viem": "^1.19.4",
-    "serverless-http": "^3.2.0",
-    "@netlify/functions": "^2.4.1",
-    "path": "^0.12.7",
     "child_process": "^1.0.2",
-    "fs-extra": "^10.0.0"
+    "fs-extra": "^10.0.0",
+    "path": "^0.12.7",
+    "serverless-http": "^3.2.0",
+    "viem": "^1.19.4"
   },
   "scripts": {
     "build": "webpack --mode production",

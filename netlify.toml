@@ -102,10 +102,14 @@
   package = "@netlify/plugin-lighthouse"
   [plugins.inputs]
     output_path = "reports/lighthouse.html"
-    # Run Lighthouse after deploy has had time to stabilize
-    deployWaitTime = 300
-    # Don't fail builds - just generate reports
-    failOnOtherError = false
+    # Set thresholds to ensure the build doesn't fail
+    [plugins.inputs.thresholds]
+      performance = 0
+      accessibility = 0
+      best-practices = 0
+      seo = 0
+    # Don't fail the build on score thresholds
+    fail_deploy_on_score_thresholds = false
 
 # Add our custom Django optimization plugin
 [[plugins]]

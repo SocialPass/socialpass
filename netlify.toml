@@ -28,6 +28,12 @@
     ls -la staticfiles/css/
     echo "Listing JS files:"
     ls -la staticfiles/js/
+    
+    # Package Django application for the serverless function
+    echo "Packaging Django application for serverless function"
+    npm install -g fs-extra
+    chmod +x netlify/build-scripts/package-django.js
+    node netlify/build-scripts/package-django.js
   """
   publish = "staticfiles"
   functions = "netlify/functions"

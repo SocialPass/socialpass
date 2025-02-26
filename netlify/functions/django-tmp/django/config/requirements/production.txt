@@ -1,0 +1,10 @@
+-r base.txt
+
+# General
+# ------------------------------------------------------------------------------
+gunicorn==23.0.0  # https://github.com/benoitc/gunicorn
+psycopg==3.2.1 # https://github.com/psycopg/psycopg
+
+# Django
+# ------------------------------------------------------------------------------
+django-anymail[mailgun]==11.1  # https://github.com/anymail/django-anymail

@@ -34,6 +34,26 @@
     npm install -g fs-extra
     chmod +x netlify/build-scripts/package-django.js
     node netlify/build-scripts/package-django.js
+    
+    # Setup Django packaging script during build
+    echo "Running Django packaging script..."
+    cd netlify/functions && node package-django.js
+    
+    # Copy the special WSGI adapter to function directory
+    echo "Copying Django adapters to function directory..."
+    cp netlify/functions/wsgi.py netlify/functions/django-tmp/
+    cp netlify/functions/wsgi_adapter.py netlify/functions/django-tmp/
+    
+    # Show the path structure for debugging
+    echo "Function files after packaging:"
+    find netlify/functions -type f -not -path "*/node_modules/*" | sort
+    
+    # List the collected static files for verification
+    echo "Listing collected static files:"
+    find staticfiles -type f | grep "\.css$" | head -n 5
+    find staticfiles -type f | grep "\.js$" | head -n 5
+    
+    echo "Build process completed"
   """
   publish = "staticfiles"
   functions = "netlify/functions"

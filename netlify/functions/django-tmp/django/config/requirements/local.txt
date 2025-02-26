@@ -1,0 +1,11 @@
+-r base.txt
+-r _code_quality.txt
+
+# General
+# ------------------------------------------------------------------------------
+psycopg-binary==3.2.1 # https://github.com/psycopg/psycopg
+
+# Django
+# ------------------------------------------------------------------------------
+django-debug-toolbar==4.3.0 # https://github.com/jazzband/django-debug-toolbar
+django-extensions==3.2.3 # https://github.com/django-extensions/django-extensions

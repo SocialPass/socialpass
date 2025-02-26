@@ -1,0 +1,4 @@
+Your event {{ event.title } is live on SocialPass!
+You can also find stats, embeds, the check-in app and more on the dashboard:
+
+{% url "dashboard_organizer:event_stats" event.team.public_id event.pk %}

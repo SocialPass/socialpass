@@ -1,0 +1,5 @@
+{% load get_brand_name %}
+{% get_brand_name as brand_name %}
+{% block content %}{% endblock %}
+
+Thank you for using {{ brand_name }}!

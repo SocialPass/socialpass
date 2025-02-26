@@ -1,0 +1,5 @@
+You have been added to the attendee list for the event - {{ event.title }}! Previously, you were on the waiting list.
+
+In order to get your tickets, please complete payment using the following link:
+
+{{ payment_link }}

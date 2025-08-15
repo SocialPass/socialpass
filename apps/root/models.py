@@ -1225,7 +1225,8 @@ class CheckoutSession(DBModel):
         url = (
             f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
         )
-        response = requests.get(url)
+        # Add timeout and disable SSL verification for Railway deployment
+        response = requests.get(url, timeout=30, verify=False)
         incomingDelegations = response.json()
         delegated_wallets = []
 
@@ -1280,7 +1281,8 @@ class CheckoutSession(DBModel):
                 }
 
                 url = f"https://deep-index.moralis.io/api/v2.2/{wallet}/nft"
-                api_response = requests.get(url, params=params, headers=headers)
+                # Add timeout and disable SSL verification for Railway deployment
+                api_response = requests.get(url, params=params, headers=headers, timeout=30, verify=False)
 
                 # Check if the request was successful
                 if api_response.status_code == 200:

@@ -197,7 +197,8 @@ class AppleTicket:
                 url = f"http://localhost:8000{ticket_logo_apple.url}"
             else:
                 url = ticket_logo_apple.url
-            response = requests.get(url)
+            # Add timeout and disable SSL verification for Railway deployment
+            response = requests.get(url, timeout=30, verify=False)
             if response.status_code == 200:
                 with tempfile.NamedTemporaryFile(delete=False) as temp_file:
                     temp_file.write(response.content)

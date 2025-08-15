@@ -1,0 +1,6 @@
+# Optional Apple Wallet Support
+# Install these additional dependencies if you want Apple Wallet (.pkpass) functionality
+# NOTE: Requires system-level dependencies (OpenSSL, SWIG, C++ compiler)
+# See README.md for Mac M1 installation instructions
+
+git+https://github.com/devartis/passbook.git

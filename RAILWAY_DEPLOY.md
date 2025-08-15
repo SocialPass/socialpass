@@ -112,14 +112,28 @@ ROLLBAR_ENV_NAME=production
 - Performance metrics
 - Error tracking (with Rollbar)
 
+## 🍎 Apple Wallet Support (Optional)
+
+Apple Wallet (.pkpass) ticket generation requires additional dependencies that may cause deployment issues due to system-level requirements (M2Crypto, OpenSSL, SWIG).
+
+**For Production:** Apple Wallet functionality is disabled by default to ensure reliable deployments.
+
+**To Enable Apple Wallet:**
+1. Uncomment the passbook dependency in `config/requirements/base.txt`
+2. Or install separately: `pip install -r config/requirements/apple_wallet.txt`
+3. Ensure your deployment environment has required system dependencies
+
+**Alternative:** Use Google Wallet (included by default) which doesn't require system dependencies.
+
 ## 🆘 Troubleshooting
 
 ### Common Issues
 
 1. **Build Fails**: Check that all requirements are in `config/requirements/production.txt`
-2. **Database Connection**: Ensure PostgreSQL service is running in Railway
-3. **Static Files**: Run `python manage.py collectstatic` if needed
-4. **Environment Variables**: Double-check all required variables are set
+2. **M2Crypto/Passbook Errors**: Apple Wallet dependencies are disabled by default. If you see M2Crypto errors, ensure the passbook line is commented out in `base.txt`
+3. **Database Connection**: Ensure PostgreSQL service is running in Railway
+4. **Static Files**: Run `python manage.py collectstatic` if needed
+5. **Environment Variables**: Double-check all required variables are set
 
 ### Useful Commands
 

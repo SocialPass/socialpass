@@ -31,14 +31,15 @@ That's it! Your basic SocialPass demo will be live at `https://your-app.up.railw
 
 ## ✅ **What Works with Minimal Setup:**
 
+- ✅ **User signup/signin** (email + password, NO email verification required!)
 - ✅ **Complete event management** (create, edit, manage events)
 - ✅ **Free ticket sales** (paid tickets need Stripe)
 - ✅ **QR code ticket generation** (PNG format)
 - ✅ **Google Wallet tickets** (no Apple Wallet without dependencies)
-- ✅ **User registration/login** (email/password)
 - ✅ **Event scanner** (QR code check-in)
 - ✅ **Admin dashboard** (full organizer features)
 - ✅ **Team collaboration** (invite team members)
+- ✅ **Database-backed user accounts** (all user data persisted)
 
 ## ⚠️ **Demo Limitations:**
 
@@ -52,12 +53,20 @@ That's it! Your basic SocialPass demo will be live at `https://your-app.up.railw
 ## 🎮 **Demo Usage:**
 
 1. **Access your app**: `https://your-app.up.railway.app`
-2. **Create admin user**: Railway → App → Deployments → Latest → View Logs → Command:
+
+2. **Test signup/signin**: 
+   - Click "Sign Up" to create a new account with any email + password
+   - No email verification required - instant account creation!
+   - Login with your credentials to access the dashboard
+
+3. **Create admin user** (optional): Railway → App → Deployments → Latest → View Logs → Command:
    ```bash
    python manage.py createsuperuser
    ```
-3. **Admin access**: `/admin/` (use superuser credentials)
-4. **Create your first event**: Navigate to dashboard and start creating!
+
+4. **Admin access**: `/admin/` (use superuser credentials for advanced admin features)
+
+5. **Create your first event**: Navigate to dashboard and start creating events, selling tickets!
 
 ---
 

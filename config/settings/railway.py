@@ -91,6 +91,16 @@ STRIPE_LIVE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
 STRIPE_TEST_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY", default="")
 STRIPE_TEST_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
 
+# Authentication configuration for Railway demo
+# Disable mandatory email verification since we're using console email backend
+ACCOUNT_EMAIL_VERIFICATION = env("ACCOUNT_EMAIL_VERIFICATION", default="none")
+# Allow immediate login after signup for demo
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+# Keep email as authentication method (email + password)
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+
 # Logging configuration
 LOGGING = {
     "version": 1,

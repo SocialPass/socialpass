@@ -27,6 +27,10 @@ if READ_DOT_ENV_FILE:
     # Production env vars (kamal)
     if env("DJANGO_SETTINGS_MODULE") == "config.settings.production":
         env.read_env(str(ROOT_DIR / ".env"))
+    # Railway env vars (Railway will provide these as environment variables)
+    if env("DJANGO_SETTINGS_MODULE") == "config.settings.railway":
+        # Railway provides environment variables directly, no .env file needed
+        pass
 
 # GENERAL
 # ------------------------------------------------------------------------------

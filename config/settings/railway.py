@@ -15,13 +15,23 @@ DEBUG = False
 # Railway provides DATABASE_URL automatically
 # Skip database config during collectstatic (same as base.py)
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
-    DATABASES = {
-        "default": dj_database_url.parse(
-            env("DATABASE_URL"),
-            conn_max_age=600,
-            conn_health_checks=True,
+    # Get DATABASE_URL from Railway environment
+    database_url = env("DATABASE_URL", default="")
+    if database_url:
+        DATABASES = {
+            "default": dj_database_url.parse(
+                database_url,
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+    else:
+        # Fallback configuration if DATABASE_URL is not available
+        # This should not happen in Railway, but provides better error messaging
+        raise Exception(
+            "DATABASE_URL environment variable is required for Railway deployment. "
+            "Please ensure PostgreSQL service is connected to your Railway app."
         )
-    }
 
 # Railway domain configuration
 RAILWAY_STATIC_URL = env("RAILWAY_STATIC_URL", default="")  # noqa

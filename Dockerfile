@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y \
 # Set up a virtual environment for Python
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE="config.settings.production"
+ENV DJANGO_SETTINGS_MODULE="config.settings.railway"
 RUN python -m venv /opt/venv/
 
 # Install Python dependencies from requirements.txt

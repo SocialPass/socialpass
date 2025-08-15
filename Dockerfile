@@ -27,6 +27,9 @@ WORKDIR /opt/app/
 RUN apt-get update && apt-get install -y \
     git \
     postgresql-client \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up a virtual environment for Python

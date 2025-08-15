@@ -10,6 +10,7 @@ rollbar==1.0.0 #https://github.com/rollbar/pyrollbar/
 stripe==5.5.0 #https://github.com/stripe/stripe-python/
 procrastinate==2.11.0 #https://github.com/procrastinate-org/procrastinate
 PyJWT==2.9.0 #https://github.com/jpadilla/pyjwt
+cryptography==42.0.8 #https://github.com/pyca/cryptography (required for django-allauth)
 
 # Django
 # ------------------------------------------------------------------------------

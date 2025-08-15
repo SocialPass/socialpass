@@ -61,5 +61,6 @@ RUN chmod -R 755 /opt/app
 EXPOSE 8000
 
 # Define the command to run the application
+# Note: migrations run at startup when DATABASE_URL is available
 CMD python manage.py migrate && \
     gunicorn -c config/deploy/gunicorn.py

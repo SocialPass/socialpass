@@ -3,6 +3,7 @@ Railway production settings for SocialPass.
 """
 
 import os
+import sys
 import dj_database_url
 
 from .production import *  # noqa
@@ -12,13 +13,15 @@ from .base import env, BASE_DIR
 DEBUG = False
 
 # Railway provides DATABASE_URL automatically
-DATABASES = {
-    "default": dj_database_url.parse(
-        env("DATABASE_URL"),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+# Skip database config during collectstatic (same as base.py)
+if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
+    DATABASES = {
+        "default": dj_database_url.parse(
+            env("DATABASE_URL"),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 # Railway domain configuration
 RAILWAY_STATIC_URL = env("RAILWAY_STATIC_URL", default="")  # noqa

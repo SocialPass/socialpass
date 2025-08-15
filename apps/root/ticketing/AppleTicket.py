@@ -1,17 +1,53 @@
 from typing import Optional
 
 from django.conf import settings
-from passbook.models import (
-    Alignment,
-    Barcode,
-    BarcodeFormat,
-    EventTicket,
-    Field,
-    Location,
-    Pass,
-)
 import requests
 import tempfile
+
+try:
+    from passbook.models import (
+        Alignment,
+        Barcode,
+        BarcodeFormat,
+        EventTicket,
+        Field,
+        Location,
+        Pass,
+    )
+    PASSBOOK_AVAILABLE = True
+except ImportError:
+    # If passbook is not available, create dummy classes to prevent import errors
+    PASSBOOK_AVAILABLE = False
+    
+    class Alignment:
+        RIGHT = "right"
+    
+    class BarcodeFormat:
+        QR = "QR"
+    
+    class EventTicket:
+        def __init__(self):
+            self.headerFields = []
+        def addPrimaryField(self, *args): pass
+        def addSecondaryField(self, *args): pass  
+        def addAuxiliaryField(self, *args): pass
+        def addBackField(self, *args): pass
+    
+    class Field:
+        def __init__(self, *args): pass
+    
+    class Location:
+        def __init__(self, *args): pass
+        
+    class Barcode:
+        def __init__(self, *args): pass
+        
+    class Pass:
+        def __init__(self, *args, **kwargs): pass
+        def addFile(self, *args): pass
+        def create(self, *args): pass
+        def writetofile(self, *args): pass
+        def read(self): return b""
 
 
 class AppleTicket:
@@ -101,6 +137,9 @@ class AppleTicket:
         self.icon = path
 
     def generate_pass(self) -> Pass:
+        if not PASSBOOK_AVAILABLE:
+            raise Exception("Apple Wallet functionality is not available. Please install the passbook dependency.")
+        
         # creates passfile object
         self.passfile = Pass(
             passInformation=self.event_info,

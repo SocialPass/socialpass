@@ -1,0 +1,6 @@
+# Railway-specific production requirements
+-r production.txt
+
+# Additional packages for Railway deployment
+gunicorn==21.2.0
+whitenoise[brotli]==6.7.0

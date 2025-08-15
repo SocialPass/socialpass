@@ -4,7 +4,12 @@
 # ------------------------------------------------------------------------------
 gunicorn==23.0.0  # https://github.com/benoitc/gunicorn
 psycopg==3.2.1 # https://github.com/psycopg/psycopg
+dj-database-url==2.2.0  # https://github.com/jazzband/dj-database-url
 
 # Django
 # ------------------------------------------------------------------------------
 django-anymail[mailgun]==11.1  # https://github.com/anymail/django-anymail
+
+# Railway-specific
+# ------------------------------------------------------------------------------
+whitenoise[brotli]==6.7.0  # https://github.com/evansd/whitenoise

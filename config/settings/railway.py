@@ -7,7 +7,7 @@ import sys
 import dj_database_url
 
 from .production import *  # noqa
-from .base import env, BASE_DIR
+from .base import env, ROOT_DIR
 
 # Railway-specific settings
 DEBUG = False
@@ -45,7 +45,7 @@ else:
 
 # Static files configuration for Railway
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # noqa
+STATIC_ROOT = os.path.join(ROOT_DIR, "staticfiles")  # noqa
 
 # Whitenoise configuration for serving static files
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -60,7 +60,7 @@ if aws_bucket:
 else:
     # Demo mode: Use local storage (files will be lost on Railway restart)
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+    MEDIA_ROOT = os.path.join(ROOT_DIR, "media")
     MEDIA_URL = "/media/"
 
 # Security settings for Railway

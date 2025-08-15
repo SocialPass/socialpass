@@ -26,14 +26,24 @@ class LicenseMiddleware:
         return self.get_response(request)
 
     def ping(self, request):
-        if not settings.DEBUG:
+        # Skip license checking for demo mode or if no license key
+        if settings.DEBUG or not hasattr(settings, 'LICENSE_KEY') or not settings.LICENSE_KEY or settings.LICENSE_KEY == "DEMO_MODE":
+            return
+            
+        try:
+            # Add timeout and better error handling
+            requests.post(
+                "https://registry.socialpass.io",
+                data={
+                    "domain": request.get_host(),
+                    "license_key": settings.LICENSE_KEY,
+                },
+                timeout=5,  # 5 second timeout
+            )
+        except Exception as e:
+            # Log but don't crash the worker
             try:
-                requests.post(
-                    "https://registry.socialpass.io",
-                    data={
-                        "domain": request.get_host(),
-                        "license_key": settings.LICENSE_KEY,
-                    },
-                )
-            except Exception:
                 Logger.report_exc_info()
+            except:
+                # If logging fails, just pass silently
+                pass

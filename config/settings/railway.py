@@ -119,6 +119,10 @@ ACCOUNT_USERNAME_REQUIRED = False
 ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/")
 STAFF_URL = env("STAFF_URL", default="staff/")
 
+# License configuration for Railway demo
+# Disable license checking for demo mode
+LICENSE_KEY = env("LICENSE_KEY", default="DEMO_MODE")
+
 # Logging configuration
 LOGGING = {
     "version": 1,

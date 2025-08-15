@@ -40,8 +40,13 @@ RAILWAY_PUBLIC_DOMAIN = env("RAILWAY_PUBLIC_DOMAIN", default="")  # noqa
 if RAILWAY_PUBLIC_DOMAIN:
     ALLOWED_HOSTS = [RAILWAY_PUBLIC_DOMAIN, f"*.{RAILWAY_PUBLIC_DOMAIN}"]
 else:
-    # Fallback for Railway's generated domains
-    ALLOWED_HOSTS = ["*.railway.app", "*.up.railway.app"]
+    # Railway's generated domains - handle various patterns
+    ALLOWED_HOSTS = [
+        "*.up.railway.app",  # Main Railway pattern
+        "*.railway.app",     # Alternative pattern
+        "socialpass-production.up.railway.app",  # Specific current URL
+        "*"  # Fallback for demo (remove in production)
+    ]
 
 # Static files configuration for Railway
 STATIC_URL = "/static/"
@@ -100,6 +105,11 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
+
+# URL configuration for Railway demo
+# Provide defaults for admin and staff URLs to prevent routing issues
+ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/")
+STAFF_URL = env("STAFF_URL", default="staff/")
 
 # Logging configuration
 LOGGING = {

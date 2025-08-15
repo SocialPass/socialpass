@@ -119,9 +119,21 @@ ACCOUNT_USERNAME_REQUIRED = False
 ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/")
 STAFF_URL = env("STAFF_URL", default="staff/")
 
-# License configuration for Railway demo
-# Disable license checking for demo mode
-LICENSE_KEY = env("LICENSE_KEY", default="DEMO_MODE")
+# Disable license checking entirely for Railway demo
+# Override MIDDLEWARE to remove LicenseMiddleware completely
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    # LicenseMiddleware removed for Railway demo
+]
 
 # Logging configuration
 LOGGING = {

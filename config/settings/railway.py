@@ -13,12 +13,18 @@ from .base import env, ROOT_DIR
 DEBUG = False
 
 # Security - SECRET_KEY is required for Django to start
-SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
-if not SECRET_KEY:
-    raise Exception(
-        "DJANGO_SECRET_KEY environment variable is required for Railway deployment. "
-        "Please set this to a secure random string in your Railway environment variables."
-    )
+import sys
+if len(sys.argv) > 0 and sys.argv[1] == "collectstatic":
+    # Use dummy secret key during collectstatic build phase
+    SECRET_KEY = "dummy-secret-key-for-collectstatic-build-phase-only"
+else:
+    # Require real secret key for runtime
+    SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
+    if not SECRET_KEY:
+        raise Exception(
+            "DJANGO_SECRET_KEY environment variable is required for Railway deployment. "
+            "Please set this to a secure random string in your Railway environment variables."
+        )
 
 # Railway provides DATABASE_URL automatically
 # Skip database config during collectstatic (same as base.py)

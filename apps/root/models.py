@@ -656,6 +656,11 @@ class Ticket(DBModel):
         # If Google Wallet setting is disabled, return False
         if not settings.SOCIALPASS_INTEGRATIONS["wallet_google"]:
             return False
+            
+        # Skip Google Wallet if API keys not configured (demo mode)
+        if not settings.GOOGLE_WALLET_CLIENT_ID or not settings.GOOGLE_WALLET_PRIVATE_KEY:
+            Logger.report_message("Demo mode: Google Wallet not configured, skipping ticket generation")
+            return False
 
         # Google ticket has not been created
         if self.google_class_id == "":
@@ -1222,6 +1227,12 @@ class CheckoutSession(DBModel):
 
     def _process_delegate_ownership(self, wallet_address=None, tier=None):
         # 1. The first step is to get all the incoming delegations from the wallet that wants to claim the ticket.
+        # Skip delegate API calls if in demo mode (no external API dependencies)
+        if not settings.MORALIS_API_KEY:
+            # Demo mode: return just the original wallet (no delegation checking)
+            Logger.report_message(f"Demo mode: Skipping delegate.xyz API check for wallet {wallet_address}")
+            return [wallet_address]
+            
         url = (
             f"https://api.delegate.xyz/registry/v2/{wallet_address}?chainId={tier.network}"
         )
@@ -1267,6 +1278,12 @@ class CheckoutSession(DBModel):
                 wallets = [self.wallet_address]
 
             for wallet in wallets:
+                # Skip API calls if MORALIS_API_KEY is not configured (demo mode)
+                if not settings.MORALIS_API_KEY:
+                    # Demo mode: assume user has sufficient balance for any ticket tier
+                    Logger.report_message(f"Demo mode: Skipping Moralis API check for wallet {wallet}")
+                    continue
+                
                 # Format & make API lookup
                 params = {
                     "chain": hex(ticket_tier.network),

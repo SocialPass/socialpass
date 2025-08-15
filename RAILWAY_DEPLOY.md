@@ -35,6 +35,9 @@ DJANGO_SETTINGS_MODULE=config.settings.railway
 DJANGO_SECRET_KEY=your-super-secret-key-here
 DJANGO_DEBUG=False
 
+# Database Connection (CRITICAL for Railway)
+DATABASE_URL=${{ Postgres.DATABASE_URL }}
+
 # AWS S3 (for media files)
 AWS_ACCESS_KEY_ID=your-aws-access-key
 AWS_SECRET_ACCESS_KEY=your-aws-secret-key
@@ -131,7 +134,10 @@ Apple Wallet (.pkpass) ticket generation requires additional dependencies that m
 
 1. **Build Fails**: Check that all requirements are in `config/requirements/production.txt`
 2. **M2Crypto/Passbook Errors**: Apple Wallet dependencies are disabled by default. If you see M2Crypto errors, ensure the passbook line is commented out in `base.txt`
-3. **Database Connection**: Ensure PostgreSQL service is running in Railway
+3. **Database Connection Errors**: Most common issue! Ensure you've set:
+   - PostgreSQL service is running in Railway
+   - `DATABASE_URL=${{ Postgres.DATABASE_URL }}` in environment variables (use Railway template syntax)
+   - The PostgreSQL service is **connected** to your app (check Railway dashboard)
 4. **Static Files**: Run `python manage.py collectstatic` if needed
 5. **Environment Variables**: Double-check all required variables are set
 
